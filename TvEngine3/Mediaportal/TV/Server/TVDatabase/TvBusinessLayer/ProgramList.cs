@@ -22,11 +22,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+//
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 
 #endregion
 
-namespace TvDatabase
+namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   /// <summary>
   /// Holds program list partition info. A partition is a contiguous series of programs on the same channel
@@ -45,8 +47,7 @@ namespace TvDatabase
     }
   }
 
-  public class ProgramList
-    : List<Program>, IComparer<Program>
+  public class ProgramList : List<Program>, IComparer<Program>
   {
     #region variables
 
@@ -67,7 +68,7 @@ namespace TvDatabase
       //_alreadySorted = false;
     }
 
-    public ProgramList(IList<Program> source)
+    public ProgramList(IEnumerable<Program> source)
       : base(source)
     {
       //_alreadySorted = false;
@@ -117,10 +118,10 @@ namespace TvDatabase
       for (int i = 1; i < Count; i++)
       {
         Program newProg = this[i];
-        if (newProg.StartTime < prevProg.EndTime) // we have an overlap here
+        if (newProg.startTime < prevProg.endTime) // we have an overlap here
         {
           // let us find out which one is the correct one
-          if (newProg.StartTime > prevProg.StartTime) // newProg will create hole -> delete it
+          if (newProg.startTime > prevProg.startTime) // newProg will create hole -> delete it
           {
             Remove(newProg);
             i--; // stay at the same position
@@ -136,11 +137,11 @@ namespace TvDatabase
           for (int j = i + 1; j < Count; j++)
           {
             Program syncNew = this[j];
-            if (syncPrev.EndTime == syncNew.StartTime)
+            if (syncPrev.endTime == syncNew.startTime)
             {
               prevList.Add(syncNew);
               syncPrev = syncNew;
-              if (syncNew.StartTime > syncProg.EndTime)
+              if (syncNew.startTime > syncProg.endTime)
               {
                 // stop point reached => delete Programs in newList
                 foreach (Program prog in newList) Remove(prog);
@@ -151,11 +152,11 @@ namespace TvDatabase
                 break;
               }
             }
-            else if (syncProg.EndTime == syncNew.StartTime)
+            else if (syncProg.endTime == syncNew.startTime)
             {
               newList.Add(syncNew);
               syncProg = syncNew;
-              if (syncNew.StartTime > syncPrev.EndTime)
+              if (syncNew.startTime > syncPrev.endTime)
               {
                 // stop point reached => delete Programs in prevList
                 foreach (Program prog in prevList) Remove(prog);
@@ -223,19 +224,19 @@ namespace TvDatabase
       {
         Program prog = this[i];
         Program existProg = existingPrograms[j];
-        if (prog.IdChannel == existProg.IdChannel)
+        if (prog.idChannel == existProg.idChannel)
         {
-          if (prog.EndTime <= existProg.StartTime)
+          if (prog.endTime <= existProg.startTime)
           {
             i++;
             //prog = this[i];
           }
-          else if (prog.StartTime >= existProg.EndTime)
+          else if (prog.startTime >= existProg.endTime)
           {
             j++;
             //existProg = existingPrograms[j];
           }
-          else // prog.StratTime < existProg.EndTime && prog.EndTime > existProg.StartTime
+          else // prog.StratTime < existProg.endTime && prog.endTime > existProg.startTime
           {
             RemoveAt(i);
             //prog = this[i];
@@ -286,18 +287,18 @@ namespace TvDatabase
       for (int i = 1; i < Count; i++)
       {
         Program newProg = this[i];
-        if (newProg.StartTime > prevProg.EndTime) // we have a gap here
+        if (newProg.startTime > prevProg.endTime) // we have a gap here
         {
           // try to find data in the database
           foreach (Program dbProg in sourceList)
           {
-            if ((dbProg.StartTime >= prevProg.EndTime) && (dbProg.EndTime <= newProg.StartTime))
+            if ((dbProg.startTime >= prevProg.endTime) && (dbProg.endTime <= newProg.startTime))
             {
-              Insert(i, dbProg.Clone());
+              Insert(i, ProgramFactory.Clone(dbProg));
               i++;
               prevProg = dbProg;
             }
-            if (dbProg.StartTime >= newProg.EndTime) break; // no more data available
+            if (dbProg.startTime >= newProg.endTime) break; // no more data available
           }
         }
         prevProg = newProg;
@@ -314,17 +315,17 @@ namespace TvDatabase
         {
           //correct the times of the current program using the times of the next one
           Program progNext = this[i + 1];
-          if (prog.IdChannel == progNext.IdChannel)
+          if (prog.idChannel == progNext.idChannel)
           {
-            if (prog.StartTime >= prog.EndTime)
+            if (prog.startTime >= prog.endTime)
             {
-              prog.EndTime = progNext.StartTime;
+              prog.endTime = progNext.startTime;
             }
-            if (prog.EndTime > progNext.StartTime)
+            if (prog.endTime > progNext.startTime)
             {
               //if the endTime of this program is later that the start of the next program 
               //it probably needs to be corrected (only needed when the grabber )
-              prog.EndTime = progNext.StartTime;
+              prog.endTime = progNext.startTime;
             }
           }
         }
@@ -342,18 +343,18 @@ namespace TvDatabase
       if (Count != 0)
       {
         SortIfNeeded();
-        ProgramListPartition partition = new ProgramListPartition(this[0].IdChannel, this[0].StartTime, this[0].EndTime);
+        ProgramListPartition partition = new ProgramListPartition(this[0].idChannel, this[0].startTime, this[0].endTime);
         for (int i = 1; i < Count; i++)
         {
           Program currProg = this[i];
-          if (partition.IdChannel.Equals(currProg.IdChannel) && partition.End.Equals(currProg.StartTime))
+          if (partition.IdChannel.Equals(currProg.idChannel) && partition.End.Equals(currProg.startTime))
           {
-            partition.End = currProg.EndTime;
+            partition.End = currProg.endTime;
           }
           else
           {
             partitions.Add(partition);
-            partition = new ProgramListPartition(currProg.IdChannel, currProg.StartTime, currProg.EndTime);
+            partition = new ProgramListPartition(currProg.idChannel, currProg.startTime, currProg.endTime);
           }
         }
         partitions.Add(partition);
@@ -371,14 +372,14 @@ namespace TvDatabase
       if (Count != 0)
       {
         SortIfNeeded();
-        int lastChannelId = this[0].IdChannel;
+        int lastChannelId = this[0].idChannel;
         channelIds.Add(lastChannelId);
         for (int i = 1; i < Count; i++)
         {
           Program currProg = this[i];
-          if (lastChannelId != currProg.IdChannel)
+          if (lastChannelId != currProg.idChannel)
           {
-            lastChannelId = currProg.IdChannel;
+            lastChannelId = currProg.idChannel;
             channelIds.Add(lastChannelId);
           }
         }
@@ -442,12 +443,12 @@ namespace TvDatabase
       if (x == null) return -1;
       if (y == null) return -1;
 
-      if (x.IdChannel != y.IdChannel)
+      if (x.idChannel != y.idChannel)
       {
-        int res = String.Compare(x.ReferencedChannel().DisplayName, y.ReferencedChannel().DisplayName, true);
+        int res = String.Compare(x.Channel.displayName, y.Channel.displayName, true);
         if (res == 0)
         {
-          if (x.IdChannel > y.IdChannel)
+          if (x.idChannel > y.idChannel)
           {
             return 1;
           }
@@ -457,8 +458,8 @@ namespace TvDatabase
           }
         }
       }
-      if (x.StartTime > y.StartTime) return 1;
-      if (x.StartTime < y.StartTime) return -1;
+      if (x.startTime > y.startTime) return 1;
+      if (x.startTime < y.startTime) return -1;
       return 0;
     }
 

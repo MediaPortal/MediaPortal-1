@@ -19,19 +19,19 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using TvLibrary.Log;
-using TvDatabase;
-using MediaPortal.Utils.Time;
-using MediaPortal.Utils.Web;
-using MediaPortal.WebEPG.Config.Grabber;
-using MediaPortal.WebEPG.Parser;
-using Gentle.Framework;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
+using WebEPG.Parser;
+using WebEPG.config.Grabber;
+using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
-namespace MediaPortal.WebEPG
+namespace WebEPG
 {
   /// <summary>
   /// Get the listing for a given Channel
@@ -96,8 +96,10 @@ namespace MediaPortal.WebEPG
 
         XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
 
-        TextReader r = new StreamReader(_strBaseDir + File);
-        _grabber = (GrabberConfigFile)s.Deserialize(r);
+        using (TextReader r = new StreamReader(_strBaseDir + File)) 
+        {
+          _grabber = (GrabberConfigFile)s.Deserialize(r);
+        }
       }
       catch (InvalidOperationException ex)
       {
@@ -266,20 +268,15 @@ namespace MediaPortal.WebEPG
         }
       }
 
-      //TVDatabase.BeginTransaction();
-      //TVDatabase.ClearCache();
-      //TVDatabase.RemoveOldPrograms();
-
       _dbPrograms = new List<Program>();
       _dbLastProg = 0;
 
       try
       {
-        Key epgMapKey = new Key(false, "displayName", displayName);
-        IList<Channel> epgChannels = Broker.RetrieveList<Channel>(epgMapKey);
+        IList<Channel> epgChannels = ChannelManagement.GetChannelsByName(displayName);
         if (epgChannels.Count > 0)
         {
-          _dbPrograms = epgChannels[0].ReferringProgram();
+          _dbPrograms = epgChannels[0].Programs;
         }
       }
       catch (Exception)
@@ -335,10 +332,10 @@ namespace MediaPortal.WebEPG
     /// <summary>
     /// Check the TV database for a program.
     /// </summary>
-    /// <param name="Title">The program title.</param>
-    /// <param name="Start">The program start time.</param>
+    /// <param name="title">The program title.</param>
+    /// <param name="start">The program start time.</param>
     /// <returns>The program record from the TV database</returns>
-    private Program dbProgram(string Title, DateTime Start)
+    private Program dbProgram(string title, DateTime start)
     {
       if (_dbPrograms.Count > 0)
       {
@@ -346,7 +343,7 @@ namespace MediaPortal.WebEPG
         {
           Program prog = (Program)_dbPrograms[i];
 
-          if (prog.Title == Title && prog.StartTime == Start)
+          if (prog.title == title && prog.startTime == start)
           {
             _dbLastProg = i;
             return prog;
@@ -357,7 +354,7 @@ namespace MediaPortal.WebEPG
         {
           Program prog = (Program)_dbPrograms[i];
 
-          if (prog.Title == Title && prog.StartTime == Start)
+          if (prog.title == title && prog.startTime == start)
           {
             _dbLastProg = i;
             return prog;
@@ -436,10 +433,10 @@ namespace MediaPortal.WebEPG
         if (dbProg != null)
         {
           Log.Info("WebEPG: Program already in db");
-          Channel chan = Broker.TryRetrieveInstance<Channel>(new Key(true, "ExternalId", _strID));
+          Channel chan = ChannelManagement.GetChannelByExternalId(_strID);
           if (chan != null)
           {
-            ProgramData dbProgramData = new ProgramData();
+            var dbProgramData = new ProgramData();
             dbProgramData.InitFromProgram(dbProg);
             dbProgramData.ChannelId = _strID;
             return dbProgramData;

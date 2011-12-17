@@ -1,4 +1,6 @@
-﻿namespace SetupControls
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupControls
 {
   partial class SettingsForm
   {
@@ -28,12 +30,12 @@
     protected void InitializeComponent()
     {
       this.sectionTree = new System.Windows.Forms.TreeView();
-      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
+      this.cancelButton = new MPButton();
+      this.okButton = new MPButton();
+      this.headerLabel = new MPGradientLabel();
       this.holderPanel = new System.Windows.Forms.Panel();
-      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.beveledLine1 = new MPBeveledLine();
+      this.applyButton = new MPButton();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
       this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
@@ -159,7 +161,7 @@
       // helpToolStripSplitButton
       // 
       this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-      this.helpToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_help;
+      this.helpToolStripSplitButton.Image = global::Mediaportal.TV.Server.SetupControls.Properties.Resources.icon_help;
       this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
       this.helpToolStripSplitButton.Size = new System.Drawing.Size(52, 22);
@@ -169,7 +171,7 @@
       // 
       // configToolStripSplitButton
       // 
-      this.configToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_folder;
+      this.configToolStripSplitButton.Image = global::Mediaportal.TV.Server.SetupControls.Properties.Resources.icon_folder;
       this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.configToolStripSplitButton.Name = "configToolStripSplitButton";
       this.configToolStripSplitButton.Size = new System.Drawing.Size(129, 22);
@@ -206,13 +208,13 @@
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPButton applyButton;
-    private MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
+    private MPButton cancelButton;
+    private MPButton okButton;
+    private MPButton applyButton;
+    private MPBeveledLine beveledLine1;
     protected System.Windows.Forms.TreeView sectionTree;
     protected System.Windows.Forms.Panel holderPanel;
-    private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
+    private MPGradientLabel headerLabel;
     private System.Windows.Forms.LinkLabel linkLabel1;
     protected System.Windows.Forms.ToolStrip toolStrip1;
     protected System.Windows.Forms.ToolStripButton helpToolStripSplitButton;

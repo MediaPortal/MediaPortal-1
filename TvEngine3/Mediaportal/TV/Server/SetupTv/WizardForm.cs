@@ -22,10 +22,11 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
+using Mediaportal.TV.Server.SetupControls;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
-  public partial class WizardForm : SetupControls.MPForm
+  public partial class WizardForm : MPForm
   {
     internal class SectionHolder
     {

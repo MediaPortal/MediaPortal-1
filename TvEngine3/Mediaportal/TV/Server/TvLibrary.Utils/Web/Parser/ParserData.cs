@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
 {
   /// <summary>
   /// Simple Parser Data class. Stores any Element tag and value in a dictionary.

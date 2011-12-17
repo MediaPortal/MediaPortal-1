@@ -1,4 +1,6 @@
-namespace SetupTv
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV
 {
   partial class SetupDatabaseForm
   {
@@ -31,26 +33,26 @@ namespace SetupTv
       this.gbConnectionSetup = new System.Windows.Forms.GroupBox();
       this.gbDbLogon = new System.Windows.Forms.GroupBox();
       this.labelPwd = new System.Windows.Forms.Label();
-      this.lblUserId = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbPassword = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lblPassword = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbUserID = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblUserId = new MPLabel();
+      this.tbPassword = new MPTextBox();
+      this.lblPassword = new MPLabel();
+      this.tbUserID = new MPTextBox();
       this.gbServerLocation = new System.Windows.Forms.GroupBox();
-      this.tbDatabaseName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lblDbName = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbServiceDependency = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lblServiceName = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lbServerHostname = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbServerHostName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbDatabaseName = new MPTextBox();
+      this.lblDbName = new MPLabel();
+      this.tbServiceDependency = new MPTextBox();
+      this.lblServiceName = new MPLabel();
+      this.lbServerHostname = new MPLabel();
+      this.tbServerHostName = new MPTextBox();
       this.lblDBChoice = new System.Windows.Forms.LinkLabel();
       this.pbMySQL = new System.Windows.Forms.PictureBox();
       this.pbSQLServer = new System.Windows.Forms.PictureBox();
       this.rbMySQL = new System.Windows.Forms.RadioButton();
       this.rbSQLServer = new System.Windows.Forms.RadioButton();
-      this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.btnDrop = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnTest = new MPButton();
+      this.btnSave = new MPButton();
+      this.mpLabel1 = new MPLabel();
+      this.btnDrop = new MPButton();
       this.gbConnectionSetup.SuspendLayout();
       this.gbDbLogon.SuspendLayout();
       this.gbServerLocation.SuspendLayout();
@@ -226,7 +228,7 @@ namespace SetupTv
       // pbMySQL
       // 
       this.pbMySQL.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.pbMySQL.Image = global::SetupTv.Properties.Resources.logo_MySQL;
+      this.pbMySQL.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.logo_MySQL;
       this.pbMySQL.Location = new System.Drawing.Point(204, 41);
       this.pbMySQL.Name = "pbMySQL";
       this.pbMySQL.Size = new System.Drawing.Size(150, 75);
@@ -238,7 +240,7 @@ namespace SetupTv
       // pbSQLServer
       // 
       this.pbSQLServer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.pbSQLServer.Image = global::SetupTv.Properties.Resources.logo_MSSQL;
+      this.pbSQLServer.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.logo_MSSQL;
       this.pbSQLServer.Location = new System.Drawing.Point(19, 41);
       this.pbSQLServer.Name = "pbSQLServer";
       this.pbSQLServer.Size = new System.Drawing.Size(150, 75);
@@ -347,9 +349,9 @@ namespace SetupTv
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPButton btnSave;
-    private MediaPortal.UserInterface.Controls.MPButton btnTest;
+    private MPLabel mpLabel1;
+    private MPButton btnSave;
+    private MPButton btnTest;
     private System.Windows.Forms.GroupBox gbConnectionSetup;
     public System.Windows.Forms.RadioButton rbSQLServer;
     public System.Windows.Forms.RadioButton rbMySQL;
@@ -357,18 +359,18 @@ namespace SetupTv
     private System.Windows.Forms.PictureBox pbMySQL;
     private System.Windows.Forms.LinkLabel lblDBChoice;
     private System.Windows.Forms.GroupBox gbServerLocation;
-    public MediaPortal.UserInterface.Controls.MPTextBox tbServiceDependency;
-    private MediaPortal.UserInterface.Controls.MPLabel lblServiceName;
-    private MediaPortal.UserInterface.Controls.MPLabel lbServerHostname;
-    public MediaPortal.UserInterface.Controls.MPTextBox tbServerHostName;
+    public MPTextBox tbServiceDependency;
+    private MPLabel lblServiceName;
+    private MPLabel lbServerHostname;
+    public MPTextBox tbServerHostName;
     private System.Windows.Forms.GroupBox gbDbLogon;
-    private MediaPortal.UserInterface.Controls.MPLabel lblUserId;
-    public MediaPortal.UserInterface.Controls.MPTextBox tbPassword;
-    private MediaPortal.UserInterface.Controls.MPLabel lblPassword;
-    public MediaPortal.UserInterface.Controls.MPTextBox tbUserID;
-    public MediaPortal.UserInterface.Controls.MPTextBox tbDatabaseName;
-    private MediaPortal.UserInterface.Controls.MPLabel lblDbName;
-    private MediaPortal.UserInterface.Controls.MPButton btnDrop;
+    private MPLabel lblUserId;
+    public MPTextBox tbPassword;
+    private MPLabel lblPassword;
+    public MPTextBox tbUserID;
+    public MPTextBox tbDatabaseName;
+    private MPLabel lblDbName;
+    private MPButton btnDrop;
     private System.Windows.Forms.Label labelPwd;
   }
 }

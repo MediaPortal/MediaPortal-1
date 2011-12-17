@@ -20,10 +20,12 @@
 
 using System;
 using System.Collections.Generic;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.DiskManagement
 {
   public class EpisodeManagement
   {
@@ -32,7 +34,7 @@ namespace TvService
       List<Recording> episodes = new List<Recording>();
       foreach (Recording recording in recordings)
       {
-        if (String.Compare(title, recording.Title, true) == 0)
+        if (String.Compare(title, recording.title, true) == 0)
         {
           episodes.Add(recording);
         }
@@ -46,9 +48,9 @@ namespace TvService
       DateTime oldestDateTime = DateTime.MaxValue;
       foreach (Recording rec in episodes)
       {
-        if (rec.StartTime < oldestDateTime)
+        if (rec.startTime < oldestDateTime)
         {
-          oldestDateTime = rec.StartTime;
+          oldestDateTime = rec.startTime;
           oldestEpisode = rec;
         }
       }
@@ -57,42 +59,45 @@ namespace TvService
 
     #region episode disk management
 
-    public void OnScheduleEnded(string recordingFilename, Schedule recording, TvDatabase.Program program)
+    public void OnScheduleEnded(string recordingFilename, Schedule recording, Program program)
     {
       Log.Write("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
-                program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
+                program.title, (ScheduleRecordingType)recording.scheduleType, recording.maxAirings);
 
       CheckEpsiodesForRecording(recording, program);
     }
 
-    private void CheckEpsiodesForRecording(Schedule schedule, TvDatabase.Program program)
+    private void CheckEpsiodesForRecording(Schedule schedule, Program program)
     {
-      if (!schedule.DoesUseEpisodeManagement)
+
+      if (!ScheduleManagement.DoesScheduleUseEpisodeManagement(schedule))
+      {
         return;
+      }
 
       //check how many episodes we got
       while (true)
       {
-        IList<Recording> recordings = Recording.ListAll();
+        IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
 
-        List<Recording> episodes = GetEpisodes(program.Title, recordings);
-        if (episodes.Count <= schedule.MaxAirings)
+        List<Recording> episodes = GetEpisodes(program.title, recordings);
+        if (episodes.Count <= schedule.maxAirings)
           return;
 
         Recording oldestEpisode = GetOldestEpisode(episodes);
         if (oldestEpisode == null)
           return;
         Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3}",
-                  oldestEpisode.ReferencedChannel(),
-                  oldestEpisode.Title,
-                  oldestEpisode.StartTime.ToLongDateString(),
-                  oldestEpisode.StartTime.ToLongTimeString());
+                  oldestEpisode.Channel,
+                  oldestEpisode.title,
+                  oldestEpisode.startTime.ToLongDateString(),
+                  oldestEpisode.startTime.ToLongTimeString());
 
         // Delete the file from disk and the recording entry from the database.        
-        bool result = RecordingFileHandler.DeleteRecordingOnDisk(oldestEpisode.FileName);
+        bool result = RecordingFileHandler.DeleteRecordingOnDisk(oldestEpisode.fileName);
         if (result)
         {
-          oldestEpisode.Delete();
+          TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(oldestEpisode.idRecording);
         }
       }
     }

@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace DShowNET.TsFileSink
+namespace Mediaportal.TV.Server.TestApp
 {
   [ComVisible(true), ComImport,
    Guid("559E6E81-FAC4-4EBC-9530-662DAA27EDC2"),

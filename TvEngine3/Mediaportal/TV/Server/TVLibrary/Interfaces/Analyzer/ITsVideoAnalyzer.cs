@@ -20,7 +20,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace TvLibrary.Interfaces.Analyzer
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
   /// Interface to the video analyzer com object

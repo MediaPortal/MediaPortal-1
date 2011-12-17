@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace MediaPortal.EPG.config
+namespace WebEPG.config
 {
   /// <summary>
   /// ChannelData holds all the information about a channel that is stored in the config file.

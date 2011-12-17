@@ -21,12 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using TvEngine;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 
-
-namespace TvService
+namespace Mediaportal.TV.Server.TVService
 {
   internal class PluginLoader
   {
@@ -87,7 +86,7 @@ namespace TvService
                 TypeFilter myFilter2 = MyInterfaceFilter;
                 try
                 {
-                  foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
+                  foundInterfaces = t.FindInterfaces(myFilter2, "Mediaportal.TV.Server.Plugins.Base.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
                     if (!CompatibilityManager.IsPluginCompatible(t))

@@ -20,13 +20,14 @@
 
 using System;
 using DirectShowLib;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.Helper;
-using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
-using TvLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 {
   [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
   internal class MpTsAnalyzer {}
@@ -74,7 +75,7 @@ namespace TvLibrary.Implementations.DVB
         {
           throw new TvException("Graph already build");
         }
-        Log.Log.WriteFile("BuildGraph");
+        Log.WriteFile("BuildGraph");
 
         _graphBuilder = (IFilterGraph2)new FilterGraph();
 
@@ -86,7 +87,7 @@ namespace TvLibrary.Implementations.DVB
         int hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
         if (hr != 0)
         {
-          Log.Log.Error("dvbip:Add main InfTee returns:0x{0:X}", hr);
+          Log.Error("dvbip:Add main InfTee returns:0x{0:X}", hr);
           throw new TvException("Unable to add  mainInfTee");
         }
 
@@ -99,12 +100,12 @@ namespace TvLibrary.Implementations.DVB
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
 
-        _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, null, this);
+        _conditionalAccess = new ConditionalAccess.ConditionalAccess(_filterStreamSource, _filterTsWriter, null, this);
         _graphState = GraphState.Created;
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw ex;
@@ -186,32 +187,32 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
     {
-      Log.Log.WriteFile("dvbip:  Tune:{0}", channel);
+      Log.WriteFile("dvbip:  Tune:{0}", channel);
       ITvSubChannel ch = null;
       try
       {
         DVBIPChannel dvbipChannel = channel as DVBIPChannel;
         if (dvbipChannel == null)
         {
-          Log.Log.WriteFile("Channel is not a IP TV channel!!! {0}", channel.GetType().ToString());
+          Log.WriteFile("Channel is not a IP TV channel!!! {0}", channel.GetType().ToString());
           return null;
         }
 
-        Log.Log.Info("dvbip: tune: Assigning oldChannel");
+        Log.Info("dvbip: tune: Assigning oldChannel");
         DVBIPChannel oldChannel = CurrentChannel as DVBIPChannel;
         if (CurrentChannel != null)
         {
           //@FIX this fails for back-2-back recordings
           //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
-          Log.Log.Info("dvbip: tune: Current Channel != null {0}", CurrentChannel.ToString());
+          Log.Info("dvbip: tune: Current Channel != null {0}", CurrentChannel.ToString());
         }
         else
         {
-          Log.Log.Info("dvbip: tune: Current channel is null");
+          Log.Info("dvbip: tune: Current channel is null");
         }
         if (_graphState == GraphState.Idle)
         {
-          Log.Log.Info("dvbip: tune: Building graph");
+          Log.Info("dvbip: tune: Building graph");
           BuildGraph();
           if (_mapSubChannels.ContainsKey(subChannelId) == false)
           {
@@ -220,19 +221,19 @@ namespace TvLibrary.Implementations.DVB
         }
         else
         {
-          Log.Log.Info("dvbip: tune: Graph is running");
+          Log.Info("dvbip: tune: Graph is running");
         }
 
         //_pmtPid = -1;
 
-        Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
+        Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
         if (_mapSubChannels.ContainsKey(subChannelId) == false)
         {
-          Log.Log.Info("dvb:Getting new subchannel");
+          Log.Info("dvb:Getting new subchannel");
           subChannelId = GetNewSubChannel(channel);
         }
         else {}
-        Log.Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
+        Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
         _mapSubChannels[subChannelId].CurrentChannel = channel;
 
         _mapSubChannels[subChannelId].OnBeforeTune();
@@ -242,13 +243,13 @@ namespace TvLibrary.Implementations.DVB
           _interfaceEpgGrabber.Reset();
         }
 
-        Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
+        Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
         _lastSignalUpdate = DateTime.MinValue;
 
         _mapSubChannels[subChannelId].OnAfterTune();
         ch = _mapSubChannels[subChannelId];
-        Log.Log.Info("dvbip: tune: Running graph for channel {0}", ch.ToString());
-        Log.Log.Info("dvbip: tune: SubChannel {0}", ch.SubChannelId);
+        Log.Info("dvbip: tune: Running graph for channel {0}", ch.ToString());
+        Log.Info("dvbip: tune: SubChannel {0}", ch.SubChannelId);
 
         try
         {
@@ -262,7 +263,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
-        Log.Log.Info("dvbip: tune: Graph running. Returning {0}", ch.ToString());
+        Log.Info("dvbip: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
       catch (Exception ex)
@@ -271,7 +272,7 @@ namespace TvLibrary.Implementations.DVB
         {
           FreeSubChannel(ch.SubChannelId);
         }
-        Log.Log.Write(ex);
+        Log.Write(ex);
         throw;
       }
       //unreachable return null;

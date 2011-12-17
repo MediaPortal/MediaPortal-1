@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class ScanSettings
   {
@@ -31,8 +33,8 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageApplication = new System.Windows.Forms.TabPage();
       this.groupBox8 = new System.Windows.Forms.GroupBox();
-      this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lblPriority = new MPLabel();
+      this.mpComboBoxPrio = new MPComboBox();
       this.groupBox6 = new System.Windows.Forms.GroupBox();
       this.label45 = new System.Windows.Forms.Label();
       this.label44 = new System.Windows.Forms.Label();
@@ -41,7 +43,7 @@ namespace SetupTv.Sections
       this.numericUpDownAnalog = new System.Windows.Forms.NumericUpDown();
       this.label21 = new System.Windows.Forms.Label();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.checkBoxEnableLinkageScanner = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableLinkageScanner = new MPCheckBox();
       this.label24 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.numericUpDownSDT = new System.Windows.Forms.NumericUpDown();
@@ -750,7 +752,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPageScan;
     private System.Windows.Forms.GroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableLinkageScanner;
+    private MPCheckBox checkBoxEnableLinkageScanner;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.Label label13;
     private System.Windows.Forms.Label label12;
@@ -763,8 +765,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.TabPage tabPageApplication;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxPrio;
-    private MediaPortal.UserInterface.Controls.MPLabel lblPriority;
+    private MPComboBox mpComboBoxPrio;
+    private MPLabel lblPriority;
     private System.Windows.Forms.NumericUpDown delayDetectUpDown;
     private System.Windows.Forms.Label label44;
     private System.Windows.Forms.GroupBox groupBox6;

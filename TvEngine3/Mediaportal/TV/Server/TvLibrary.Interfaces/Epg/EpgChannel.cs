@@ -20,9 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Epg
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
 {
   /// <summary>
   /// class which holds all epg information received for a specific DVB tv/radio channel

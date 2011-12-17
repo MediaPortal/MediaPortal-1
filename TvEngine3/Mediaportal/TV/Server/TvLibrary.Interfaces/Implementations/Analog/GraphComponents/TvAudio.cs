@@ -22,7 +22,7 @@ using System;
 using System.Xml;
 using DirectShowLib;
 
-namespace TvLibrary.Implementations.Analog.GraphComponents
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents
 {
 
   #region enum

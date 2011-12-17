@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
 {
   /// <summary>
   /// All things related to the skyStar2 specific things go in here

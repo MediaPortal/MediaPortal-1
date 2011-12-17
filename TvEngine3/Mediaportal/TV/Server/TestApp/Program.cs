@@ -21,7 +21,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   internal static class Program
   {

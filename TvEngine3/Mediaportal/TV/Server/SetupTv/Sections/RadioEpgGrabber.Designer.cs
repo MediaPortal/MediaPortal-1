@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class RadioEpgGrabber
   {
@@ -30,12 +32,12 @@ namespace SetupTv.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RadioEpgGrabber));
-      this.mpCheckBoxStoreOnlySelected = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxStoreOnlySelected = new MPCheckBox();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelChannelCount = new MPLabel();
+      this.mpLabel1 = new MPLabel();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.mpListView2 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpListView2 = new MPListView();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.linkLabelLanguageNone = new System.Windows.Forms.LinkLabel();
@@ -44,11 +46,11 @@ namespace SetupTv.Sections
       this.linkLabelRadioGroupedVisible = new System.Windows.Forms.LinkLabel();
       this.linkLabelRadioAllGrouped = new System.Windows.Forms.LinkLabel();
       this.linkLabelRadioAll = new System.Windows.Forms.LinkLabel();
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpListView1 = new MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel2 = new MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SuspendLayout();
@@ -284,19 +286,19 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxStoreOnlySelected;
+    private MPCheckBox mpCheckBoxStoreOnlySelected;
     private System.Windows.Forms.ColumnHeader columnHeader4;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MPLabel mpLabelChannelCount;
+    private MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView2;
+    private MPListView mpListView2;
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.ImageList imageList1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MPLabel mpLabel2;
     private System.Windows.Forms.LinkLabel linkLabelLanguageNone;
     private System.Windows.Forms.LinkLabel linkLabelLanguageAll;
     private System.Windows.Forms.LinkLabel linkLabelRadioNone;

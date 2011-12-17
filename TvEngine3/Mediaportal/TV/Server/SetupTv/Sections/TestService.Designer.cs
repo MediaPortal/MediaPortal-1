@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class TestService
   {
@@ -34,24 +36,24 @@ namespace SetupTv.Sections
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelTunerLocked = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel3 = new MPLabel();
+      this.mpLabelTunerLocked = new MPLabel();
+      this.mpLabelChannel = new MPLabel();
       this.label12 = new System.Windows.Forms.Label();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBox1 = new MPGroupBox();
       this.label3 = new System.Windows.Forms.Label();
-      this.txtDisc = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.txtBytes = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.txtDisc = new MPNumericTextBox();
+      this.txtBytes = new MPNumericTextBox();
       this.label4 = new System.Windows.Forms.Label();
-      this.mpLabelSignalQuality = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelSignalLevel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelRecording = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpButtonTimeShift = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonRec = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabelSignalQuality = new MPLabel();
+      this.mpLabelSignalLevel = new MPLabel();
+      this.mpLabelRecording = new MPLabel();
+      this.mpLabelTimeShift = new MPLabel();
+      this.mpLabel1 = new MPLabel();
+      this.mpButtonTimeShift = new MPButton();
+      this.mpButtonRec = new MPButton();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpListView1 = new MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
@@ -61,11 +63,11 @@ namespace SetupTv.Sections
       this.cardName = new System.Windows.Forms.ColumnHeader();
       this.subchannels = new System.Windows.Forms.ColumnHeader();
       this.buttonRestart = new System.Windows.Forms.Button();
-      this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonReGrabEpg = new MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel2 = new MPLabel();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -433,36 +435,36 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ProgressBar progressBarLevel;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelTunerLocked;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannel;
+    private MPLabel mpLabel3;
+    private MPLabel mpLabelTunerLocked;
+    private MPLabel mpLabelChannel;
     private System.Windows.Forms.Label label12;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MPGroupBox mpGroupBox1;
     private SetupControls.ComboBoxEx mpComboBoxChannels;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonTimeShift;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonRec;
+    private MPLabel mpLabel1;
+    private MPButton mpButtonTimeShift;
+    private MPButton mpButtonRec;
     private System.Windows.Forms.Timer timer1;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private System.Windows.Forms.Button buttonRestart;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonReGrabEpg;
+    private MPButton mpButtonReGrabEpg;
     private System.Windows.Forms.ColumnHeader columnHeader5;
     private System.Windows.Forms.ColumnHeader User;
     private System.Windows.Forms.ColumnHeader cardName;
     private System.Windows.Forms.ImageList imageList1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelRecording;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelTimeShift;
+    private MPLabel mpLabelRecording;
+    private MPLabel mpLabelTimeShift;
     private SetupControls.ComboBoxEx comboBoxGroups;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelSignalLevel;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelSignalQuality;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabelSignalLevel;
+    private MPLabel mpLabelSignalQuality;
     private System.Windows.Forms.Label label4;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtDisc;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtBytes;
+    private MPNumericTextBox txtDisc;
+    private MPNumericTextBox txtBytes;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.ColumnHeader subchannels;
   }

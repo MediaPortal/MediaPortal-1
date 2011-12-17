@@ -21,19 +21,27 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Streaming;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Net;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class StreamingServer : SectionSettings
   {
+    private int _rtspPort = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").value);
+    private string _hostname = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").value;
+
     private class IpAddressOption
     {
+   
       public string DisplayString;
       public string HostName;
 
@@ -48,8 +56,7 @@ namespace SetupTv.Sections
         return DisplayString;
       }
     }
-
-    private Server _ourServer;
+    
 
     public StreamingServer()
       : this("Streaming Server") {}
@@ -58,42 +65,43 @@ namespace SetupTv.Sections
       : base(name)
     {
       InitializeComponent();
+
+      
     }
 
     public override void OnSectionActivated()
     {
-      timer1.Enabled = true;
+      timer1.Enabled = true;      
 
-      _ourServer = Server.Retrieve(RemoteControl.Instance.IdServer);
-      string ourServerName = _ourServer.HostName;
       try
       {
-        ourServerName = Dns.GetHostEntry(_ourServer.HostName).HostName;
+        _hostname = Dns.GetHostEntry(_hostname).HostName;
       }
       catch (Exception ex)
       {
         Log.Error("Failed to get our server host name");
         Log.Write(ex);
       }
-      List<string> ipAdresses = RemoteControl.Instance.ServerIpAdresses;
+      IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
       IpAddressComboBox.Items.Clear();
-      IpAddressComboBox.Items.Add(new IpAddressOption("(auto)", ourServerName));
+      IpAddressComboBox.Items.Add(new IpAddressOption("(auto)", _hostname));
       int selected = 0;
       int counter = 1;
       foreach (string ipAdress in ipAdresses)
       {
         IpAddressComboBox.Items.Add(new IpAddressOption(ipAdress, ipAdress));
-        if (String.Compare(ipAdress, _ourServer.HostName, true) == 0)
+        if (String.Compare(ipAdress, _hostname, true) == 0)
         {
           selected = counter;
         }
         counter++;
       }
       IpAddressComboBox.SelectedIndex = selected;
-      if (_ourServer.RtspPort >= PortNoNumericUpDown.Minimum && _ourServer.RtspPort <= PortNoNumericUpDown.Maximum)
+      
+      if (_rtspPort >= PortNoNumericUpDown.Minimum && _rtspPort <= PortNoNumericUpDown.Maximum)
       {
-        PortNoNumericUpDown.Value = _ourServer.RtspPort;
-        PortNoNumericUpDown.Text = _ourServer.RtspPort.ToString(); // in case value is the same but text is empty
+        PortNoNumericUpDown.Value = _rtspPort;
+        PortNoNumericUpDown.Text = _rtspPort.ToString(); // in case value is the same but text is empty
       }
     }
 
@@ -107,29 +115,25 @@ namespace SetupTv.Sections
 
     private void ApplyStreamingSettings()
     {
-      if (_ourServer != null)
+      string newHostName = ((IpAddressOption)IpAddressComboBox.SelectedItem).HostName;
+      int newRtspPort = (int)PortNoNumericUpDown.Value;
+      bool needRestart = false;
+      //int.TryParse(PortNoNumericUpDown.Text, out newRtspPort);
+      if (_hostname != newHostName ||
+          _rtspPort != newRtspPort)
       {
-        string newHostName = ((IpAddressOption)IpAddressComboBox.SelectedItem).HostName;
-        int newRtspPort = (int)PortNoNumericUpDown.Value;
-        bool needRestart = false;
-        //int.TryParse(PortNoNumericUpDown.Text, out newRtspPort);
-        if (_ourServer.HostName != newHostName ||
-            _ourServer.RtspPort != newRtspPort)
-        {
-          _ourServer.HostName = newHostName;
-          _ourServer.RtspPort = newRtspPort;
-          needRestart = true;
-        }
-        if (_ourServer.IsChanged)
-        {
-          // _ourServer may have changed because RtspPort was 0 in DB and was automatically
-          // changed to the default value (554), so we need to persist anyway
-          _ourServer.Persist();
-        }
-        if (needRestart)
-        {
-          ServiceNeedsToRestart();
-        }
+        _hostname = newHostName;
+        _rtspPort = newRtspPort;
+        needRestart = true;
+      }
+     
+      if (needRestart)
+      {
+
+        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("rtspport", _rtspPort.ToString());
+        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", _hostname);
+
+        ServiceNeedsToRestart();
       }
     }
 
@@ -143,7 +147,7 @@ namespace SetupTv.Sections
         dlgNotify.Show();
         dlgNotify.WaitForDisplay();
 
-        RemoteControl.Instance.Restart();
+        ServiceAgents.Instance.ControllerServiceAgent.Restart();
 
         dlgNotify.Close();
       }
@@ -151,7 +155,7 @@ namespace SetupTv.Sections
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      List<RtspClient> clients = RemoteControl.Instance.StreamingClients;
+      List<RtspClient> clients = ServiceAgents.Instance.ControllerServiceAgent.StreamingClients;
       for (int i = 0; i < clients.Count; ++i)
       {
         RtspClient client = clients[i];
@@ -194,26 +198,26 @@ namespace SetupTv.Sections
 
         IUser user = new User();
         user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;
-
-        IList<Card> dbsCards = Card.ListAll();
+        
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
 
         foreach (Card card in dbsCards)
         {
-          if (!card.Enabled)
+          if (!card.enabled)
             continue;
-          if (!RemoteControl.Instance.CardPresent(card.IdCard))
+          if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
             continue;
 
-          IUser[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
-          foreach (IUser u in users)
+          IDictionary<string, IUser> users = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
+          foreach (KeyValuePair<string, IUser> u in users)
           {
-            if (u.Name == user.Name || u.Name == "setuptv")
+            if (u.Value.Name == user.Name || u.Value.Name == "setuptv")
             {
-              Channel ch = Channel.Retrieve(u.IdChannel);
+              Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(u.Value.IdChannel);
 
-              if (ch.DisplayName == client.Description)
+              if (ch.displayName == client.Description)
               {
-                user.CardId = card.IdCard;
+                user.CardId = card.idCard;
                 break;
               }
             }
@@ -222,7 +226,7 @@ namespace SetupTv.Sections
             break;
         }
 
-        bool res = RemoteControl.Instance.StopTimeShifting(ref user, TvStoppedReason.KickedByAdmin);
+        bool res = ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user, TvStoppedReason.KickedByAdmin);
 
         if (res)
         {

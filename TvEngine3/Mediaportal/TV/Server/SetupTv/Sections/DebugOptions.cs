@@ -19,11 +19,10 @@
 #endregion
 
 using System.Windows.Forms;
-using System.IO;
-using TvLibrary;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVLibrary;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class DebugOptions : SectionSettings
   {

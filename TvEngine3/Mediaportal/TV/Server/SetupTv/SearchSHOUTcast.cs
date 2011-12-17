@@ -25,9 +25,10 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Microsoft.Win32;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   public class SHOUTcastStation
   {
@@ -41,19 +42,19 @@ namespace SetupTv
   /// </summary>
   public class SearchSHOUTcast : SetupControls.MPForm
   {
-    private MediaPortal.UserInterface.Controls.MPButton SearchButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox SearchText;
+    private MPButton SearchButton;
+    private MPTextBox SearchText;
     private ColumnHeader columnHeader1;
     private ColumnHeader columnHeader2;
-    private MediaPortal.UserInterface.Controls.MPListView ResultsBox;
-    private MediaPortal.UserInterface.Controls.MPButton AddButton;
+    private MPListView ResultsBox;
+    private MPButton AddButton;
 
     /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    private MediaPortal.UserInterface.Controls.MPLabel WaitLabel;
+    private MPLabel WaitLabel;
     private ColumnHeader columnHeader3;
 
     private SHOUTcastStation Selected_Radiostation; //Our return station info
@@ -92,14 +93,14 @@ namespace SetupTv
     /// </summary>
     private void InitializeComponent()
     {
-      this.SearchButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.SearchText = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.ResultsBox = new MediaPortal.UserInterface.Controls.MPListView();
+      this.SearchButton = new MPButton();
+      this.SearchText = new MPTextBox();
+      this.ResultsBox = new MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.AddButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.WaitLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.AddButton = new MPButton();
+      this.WaitLabel = new MPLabel();
       this.SuspendLayout();
       // 
       // SearchButton

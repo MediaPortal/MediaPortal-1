@@ -21,7 +21,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
 {
   /// <summary>
   /// Class generic for parser data.

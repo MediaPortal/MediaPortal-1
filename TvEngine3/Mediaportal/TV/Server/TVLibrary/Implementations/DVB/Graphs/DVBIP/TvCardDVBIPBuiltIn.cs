@@ -21,9 +21,12 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 {
   /// <summary>
   /// DVB IP class
@@ -53,7 +56,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="url"></param>
     protected override void AddStreamSourceFilter(string url)
     {
-      Log.Log.WriteFile("dvbip:Add MediaPortal IPTV Source Filter");
+      Log.WriteFile("dvbip:Add MediaPortal IPTV Source Filter");
       _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof (MPIPTVSource).GUID,
                                                                 "MediaPortal IPTV Source Filter");
       AMMediaType mpeg2ProgramStream = new AMMediaType();
@@ -68,11 +71,11 @@ namespace TvLibrary.Implementations.DVB
       mpeg2ProgramStream.formatPtr = IntPtr.Zero;
       ((IFileSourceFilter)_filterStreamSource).Load(url, mpeg2ProgramStream);
       //connect the [stream source] -> [inf tee]
-      Log.Log.WriteFile("dvb:  Render [source]->[inftee]");
+      Log.WriteFile("dvb:  Render [source]->[inftee]");
       int hr = _capBuilder.RenderStream(null, null, _filterStreamSource, null, _infTeeMain);
       if (hr != 0)
       {
-        Log.Log.Error("dvb:Add source returns:0x{0:X}", hr);
+        Log.Error("dvb:Add source returns:0x{0:X}", hr);
         throw new TvException("Unable to add  source filter");
       }
     }
@@ -105,7 +108,7 @@ namespace TvLibrary.Implementations.DVB
         hr = (_graphBuilder as IMediaControl).StopWhenReady();
         if (hr < 0 || hr > 1)
         {
-          Log.Log.WriteFile("dvb:  StopGraph returns: 0x{0:X}", hr);
+          Log.WriteFile("dvb:  StopGraph returns: 0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
         if (_mapSubChannels.ContainsKey(subChannel))
@@ -121,11 +124,11 @@ namespace TvLibrary.Implementations.DVB
       }
       RemoveStreamSourceFilter();
       AddStreamSourceFilter(url);
-      Log.Log.Info("dvb:  RunGraph");
+      Log.Info("dvb:  RunGraph");
       hr = (_graphBuilder as IMediaControl).Run();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
+        Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
       //GetTunerSignalStatistics();

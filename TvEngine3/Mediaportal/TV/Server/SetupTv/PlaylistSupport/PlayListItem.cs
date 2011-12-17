@@ -20,7 +20,7 @@
 
 using System;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   [Serializable]
   public class PlayListItem

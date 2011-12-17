@@ -24,7 +24,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using MWCommon;
 
 /// <summary>
 ///	Mikael Wiberg 2003
@@ -38,7 +37,7 @@ using MWCommon;
 ///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
 /// </summary>
 
-namespace MWControls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// A TreeView Control that allows multiple TreeNodes to be selected at once.

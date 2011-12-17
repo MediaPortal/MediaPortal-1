@@ -23,17 +23,23 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
-using TvEngine.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using System.Threading;
 using System.Diagnostics;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Handles standby/wakeup for EPG grabbing
@@ -95,16 +101,16 @@ namespace TvEngine.PowerScheduler.Handlers
 
     #region Variables
 
-    private IController _controller;
+    private readonly IInternalControllerService _controllerService;
     private Dictionary<object, GrabberSource> _extGrabbers;
 
     #endregion
 
     #region Constructor
 
-    public EpgGrabbingHandler(IController controller)
+    public EpgGrabbingHandler(IInternalControllerService controllerService)
     {
-      _controller = controller;
+      _controllerService = controllerService;
       _extGrabbers = new Dictionary<object, GrabberSource>();
       GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent +=
         new PowerSchedulerEventHandler(EpgGrabbingHandler_OnPowerSchedulerEvent);
@@ -126,13 +132,13 @@ namespace TvEngine.PowerScheduler.Handlers
         case PowerSchedulerEventType.Elapsed:
 
           IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
-          TvBusinessLayer layer = new TvBusinessLayer();
+          
           PowerSetting setting;
           bool enabled;
 
           // Check if standby should be prevented when grabbing EPG
           setting = ps.Settings.GetSetting("PreventStandbyWhenGrabbingEPG");
-          enabled = Convert.ToBoolean(layer.GetSetting("PreventStandbyWhenGrabbingEPG", "false").Value);
+          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("PreventStandbyWhenGrabbingEPG", "false").value);
           if (setting.Get<bool>() != enabled)
           {
             setting.Set<bool>(enabled);
@@ -151,7 +157,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
           // Check if system should wakeup for EPG grabs
           setting = ps.Settings.GetSetting("WakeupSystemForEPGGrabbing");
-          enabled = Convert.ToBoolean(layer.GetSetting("WakeupSystemForEPGGrabbing", "false").Value);
+          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("WakeupSystemForEPGGrabbing", "false").value);
           if (setting.Get<bool>() != enabled)
           {
             setting.Set<bool>(enabled);
@@ -170,7 +176,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
           // Check if a wakeup time is set
           setting = ps.Settings.GetSetting("EPGWakeupConfig");
-          EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
+          EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).value));
 
           if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
@@ -230,8 +236,8 @@ namespace TvEngine.PowerScheduler.Handlers
     /// <param name="action"></param>
     public void RunExternalCommand(String action)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      String cmd = layer.GetSetting("PowerSchedulerEpgCommand", String.Empty).Value;
+      
+      String cmd = SettingsManagement.GetSetting("PowerSchedulerEpgCommand", String.Empty).value;
       if (cmd.Equals(String.Empty))
         return;
       using (Process p = new Process())
@@ -270,8 +276,8 @@ namespace TvEngine.PowerScheduler.Handlers
       // ShouldRun still returns true until LastRun is updated, 
       // shutdown is disallowed until then
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
+      
+      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).value));
 
       Log.Info("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
                config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
@@ -280,8 +286,8 @@ namespace TvEngine.PowerScheduler.Handlers
       RunExternalCommand("epg");
 
       // try a forced start of EPG grabber if not already started 
-      if (!_controller.EpgGrabberEnabled)
-        _controller.EpgGrabberEnabled = true;
+      if (!_controllerService.EpgGrabberEnabled)
+        _controllerService.EpgGrabberEnabled = true;
 
       // Fire the EPGScheduleDue event for EPG grabber plugins
       if (_epgScheduleDue != null)
@@ -300,10 +306,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
       // Update last schedule run status
       config.LastRun = DateTime.Now;
-      Setting s = layer.GetSetting("EPGWakeupConfig", String.Empty);
-      s.Value = config.SerializeAsString();
-      s.Persist();
-
+      SettingsManagement.SaveSetting("EPGWakeupConfig", config.SerializeAsString());      
       _epgThreadRunning = false;
     }
 
@@ -313,8 +316,8 @@ namespace TvEngine.PowerScheduler.Handlers
     /// <returns></returns>
     private bool ShouldRunNow()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
+      
+      EPGWakeupConfig config = new EPGWakeupConfig((SettingsManagement.GetSetting("EPGWakeupConfig", String.Empty).value));
 
       // check if schedule is due
       // check if we've already run today
@@ -403,12 +406,12 @@ namespace TvEngine.PowerScheduler.Handlers
         }
 
         // check if any card is grabbing EPG
-        for (int i = 0; i < _controller.Cards; i++)
+        for (int i = 0; i < _controllerService.Cards; i++)
         {
-          int cardId = _controller.CardId(i);
-          if (_controller.IsGrabbingEpg(cardId))
+          int cardId = _controllerService.CardId(i);
+          if (_controllerService.IsGrabbingEpg(cardId))
           {
-            Log.Debug("EpgGrabbingHandler: card {0} does not allow standby", _controller.CardName(cardId));
+            Log.Debug("EpgGrabbingHandler: card {0} does not allow standby", _controllerService.CardName(cardId));
             return true;
           }
         }

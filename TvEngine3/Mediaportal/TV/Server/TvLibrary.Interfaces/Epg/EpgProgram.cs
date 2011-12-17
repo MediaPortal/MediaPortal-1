@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TvLibrary.Epg
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
 {
   /// <summary>
   /// Class which contains a single epg-program

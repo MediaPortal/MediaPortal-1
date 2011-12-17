@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TvLibrary.ChannelLinkage
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage
 {
   /// <summary>
   /// class which holds all linked channels

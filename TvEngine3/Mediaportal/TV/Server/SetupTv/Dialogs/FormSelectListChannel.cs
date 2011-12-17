@@ -19,17 +19,16 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
-using Gentle.Framework;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormSelectListChannel : Form
   {
@@ -47,11 +46,11 @@ namespace SetupTv.Dialogs
         if (listViewChannels.SelectedItems.Count == 1)
         {
           Channel selectedChannel = listViewChannels.SelectedItems[0].Tag as Channel;
-          if (selectedChannel.IdChannel > -1)
+          if (selectedChannel.idChannel > -1)
           {
-            Log.Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
-                      selectedChannel.IdChannel);
-            return selectedChannel.IdChannel;
+            Log.Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.displayName,
+                      selectedChannel.idChannel);
+            return selectedChannel.idChannel;
           }
         }
         else
@@ -70,22 +69,23 @@ namespace SetupTv.Dialogs
       listViewChannels.BeginUpdate();
       try
       {
-        SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
+        IList<Channel> channels = new List<Channel>();
+        
         if (checkBoxGuideChannels.Checked)
         {
-          sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
+          channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllVisibleChannelsByMediaType(MediaTypeEnum.TV);
         }
-        sb.AddConstraint(Operator.Equals, "isTv", 1);
-        sb.AddOrderByField(true, "sortOrder");
-        sb.AddOrderByField(true, "displayName");
-        SqlStatement stmt = sb.GetStatement(true);
-        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        else
+        {
+          channels =
+            ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).OrderBy(c => c.sortOrder).
+              OrderBy(c => c.displayName).ToList();
+        }                
 
-        for (int i = 0; i < channels.Count; i++)
+        foreach (Channel t in channels)
         {
           // TODO: add imagelist with channel logos from MP :)
-          ListViewItem curItem = new ListViewItem(channels[i].DisplayName);
-          curItem.Tag = channels[i];
+          ListViewItem curItem = new ListViewItem(t.displayName) {Tag = t};
           listViewChannels.Items.Add(curItem);
         }
       }

@@ -19,10 +19,11 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// Tuning part of DVB-C required for scanning
@@ -71,6 +72,7 @@ namespace TvLibrary.Channels
   /// <summary>
   /// class holding all tuning details for DVBC
   /// </summary>
+  [DataContract]  
   [Serializable]
   public class DVBCChannel : DVBBaseChannel
   {
@@ -90,7 +92,10 @@ namespace TvLibrary.Channels
       }
     }
 
+    [DataMember]
     private ModulationType _modulation;
+
+    [DataMember]
     private int _symbolRate;
 
     #endregion

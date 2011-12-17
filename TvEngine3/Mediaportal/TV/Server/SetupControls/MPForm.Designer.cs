@@ -1,4 +1,4 @@
-﻿namespace SetupControls
+﻿namespace Mediaportal.TV.Server.SetupControls
 {
   partial class MPForm
   {

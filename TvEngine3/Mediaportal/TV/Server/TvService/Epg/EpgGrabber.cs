@@ -20,22 +20,25 @@
 
 using System;
 using System.Collections.Generic;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using MediaPortal.Common.Utils.ExtensionMethods;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Threading;
+using Mediaportal.TV.Server.TVService.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.Epg
 {
   public class EpgCardPriorityComparer : IComparer<EpgCard>
   {
     // Highest priority first
     public int Compare(EpgCard x, EpgCard y)
     {
-      if (x.Card.Priority < y.Card.Priority)
+      if (x.Card.priority < y.Card.priority)
         return 1;
-      if (x.Card.Priority == y.Card.Priority)
+      if (x.Card.priority == y.Card.priority)
         return 0;
       return -1;
     }
@@ -50,15 +53,14 @@ namespace TvService
   /// </summary>
   public class EpgGrabber : IDisposable
   {
-    #region variables
-
+    #region variables    
+    
     private int _epgReGrabAfter = 4 * 60; //hours
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
 
     private bool _disposed;
     private bool _isRunning;
-    private bool _reEntrant;
-    private readonly TVController _tvController;
+    private bool _reEntrant;    
     private List<EpgCard> _epgCards;
 
     #endregion
@@ -68,10 +70,8 @@ namespace TvService
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="controller">instance of a TVController</param>
-    public EpgGrabber(TVController controller)
-    {
-      _tvController = controller;
+    public EpgGrabber()
+    {      
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
     }
@@ -98,8 +98,7 @@ namespace TvService
     /// </summary>
     public void Start()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
+      if (SettingsManagement.GetSetting("idleEPGGrabberEnabled", "yes").value != "yes")
       {
         Log.Epg("EPG: grabber disabled");
         return;
@@ -107,10 +106,10 @@ namespace TvService
       if (_isRunning)
       {
         return;
-      }
+      }            
 
-      Setting s = layer.GetSetting("timeoutEPGRefresh", "240");
-      if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
+      Setting s = SettingsManagement.GetSetting("timeoutEPGRefresh", "240");      
+      if (Int32.TryParse(s.value, out _epgReGrabAfter) == false)
       {
         _epgReGrabAfter = 240;
       }
@@ -121,7 +120,7 @@ namespace TvService
       }
       Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
-      IList<Card> cards = Card.ListAll();
+      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
 
       if (_epgCards != null)
       {
@@ -135,25 +134,24 @@ namespace TvService
 
       foreach (Card card in cards)
       {
-        if (!card.Enabled || !card.GrabEPG)
+        if (!card.enabled || !card.grabEPG)
         {
           continue;
         }
         try
         {
-          RemoteControl.HostName = card.ReferencedServer().HostName;
-          if (!_tvController.CardPresent(card.IdCard))
+          RemoteControl.HostName = SettingsManagement.GetSetting("hostname").value;
+          if (!ServiceManager.Instance.InternalControllerService.CardPresent(card.idCard))
           {
             continue;
           }
         }
         catch (Exception e)
         {
-          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name,
-                    card.ReferencedServer().HostName);
+          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.name, RemoteControl.HostName);
         }
 
-        EpgCard epgCard = new EpgCard(_tvController, card);
+        var epgCard = new EpgCard(card);
         _epgCards.Add(epgCard);
       }
       _epgCards.Sort(new EpgCardPriorityComparer());
@@ -181,20 +179,37 @@ namespace TvService
 
     #endregion
 
-    #region IDisposable Members
+    #region IDisposable Members    
 
-    public void Dispose()
-    {
-      if (!_disposed)
-      {
-        _epgTimer.Dispose();
-        foreach (EpgCard epgCard in _epgCards)
+    protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+        if (!_disposed)
         {
-          epgCard.Dispose();
+          _epgTimer.SafeDispose();
+          _epgCards.SafeDispose();
+          _disposed = true;
         }
-        _disposed = true;
-      }
-    }
+		  }
+		  // get rid of unmanaged resources
+		}
+		
+		
+		/// <summary>
+		/// Disposes the EPG card grabber
+		/// </summary>    
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~EpgGrabber()
+		{
+		  Dispose(false);
+		}
 
     #endregion
 
@@ -227,16 +242,16 @@ namespace TvService
         }
         catch (InvalidOperationException) {}
 
-        if (_tvController.AllCardsIdle == false)
+        if (ServiceManager.Instance.InternalControllerService.AllCardsIdle == false)
           return;
         foreach (EpgCard card in _epgCards)
         {
-          //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
+          //Log.Epg("card:{0} grabbing:{1}", card.Card.idCard, card.IsGrabbing);
           if (!_isRunning)
             return;
           if (card.IsGrabbing)
             continue;
-          if (_tvController.AllCardsIdle == false)
+          if (ServiceManager.Instance.InternalControllerService.AllCardsIdle == false)
             return;
           GrabEpgOnCard(card);
         }
@@ -257,7 +272,7 @@ namespace TvService
     /// <param name="epgCard">The epg card.</param>
     private void GrabEpgOnCard(EpgCard epgCard)
     {
-      CardType type = _tvController.Type(epgCard.Card.IdCard);
+      CardType type = ServiceManager.Instance.InternalControllerService.Type(epgCard.Card.idCard);
       //skip analog and webstream cards 
       if (type == CardType.Analog || type == CardType.RadioWebStream)
         return;
@@ -269,15 +284,15 @@ namespace TvService
           continue;
 
         //check if card type is the same as the channel type of the transponder
-        if (type == CardType.Atsc && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 1)
+        if (type == CardType.Atsc && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 1)
           continue;
-        if (type == CardType.DvbC && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 2)
+        if (type == CardType.DvbC && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 2)
           continue;
-        if (type == CardType.DvbS && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 3)
+        if (type == CardType.DvbS && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 3)
           continue;
-        if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4)
+        if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 4)
           continue;
-        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 7)
+        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.channelType != 7)
           continue;
 
         //find next channel to grab
@@ -287,18 +302,19 @@ namespace TvService
           Channel ch = TransponderList.Instance.CurrentTransponder.CurrentChannel;
 
           //check if its time to grab the epg for this channel
-          TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime;
+          TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.lastGrabTime.GetValueOrDefault(DateTime.MinValue);
           if (ts.TotalMinutes < _epgReGrabAfter)
           {
             //Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
-            //         epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
+            //         epgCard.Card.idCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.displayName);
             continue; // less then 2 hrs ago
           }
-          if (epgCard.Card.canTuneTvChannel(ch.IdChannel))
+
+          if (TVDatabase.TVBusinessLayer.CardManagement.CanTuneTvChannel(epgCard.Card, ch.idChannel))
           {
             Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
-                    epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
-                    ch.DisplayName);
+                    epgCard.Card.idCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
+                    ch.displayName);
             //start grabbing
             epgCard.GrabEpg();
             return;

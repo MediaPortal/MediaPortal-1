@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   public class PathManager
   {

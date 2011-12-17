@@ -19,10 +19,9 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace XPListview
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 {
   public enum ImagePosition
   {

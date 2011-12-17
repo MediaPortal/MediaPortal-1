@@ -21,13 +21,16 @@
 using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.Helper;
-using TvDatabase;
-using TvLibrary.Epg;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
 {
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-C BDA cards
@@ -60,10 +63,10 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          Log.Log.Error("dvbc:Graph already built");
+          Log.Error("dvbc:Graph already built");
           throw new TvException("Graph already built");
         }
-        Log.Log.WriteFile("dvbc:BuildGraph");
+        Log.WriteFile("dvbc:BuildGraph");
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
@@ -83,7 +86,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
@@ -95,13 +98,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void CreateTuningSpace()
     {
-      Log.Log.WriteFile("dvbc:CreateTuningSpace()");
+      Log.WriteFile("dvbc:CreateTuningSpace()");
       ITuner tuner = (ITuner)_filterNetworkProvider;
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
         return;
       }
       IEnumTuningSpaces enumTuning;
@@ -127,7 +130,7 @@ namespace TvLibrary.Implementations.DVB
           {
             if (name == "MediaPortal DVBC TuningSpace")
             {
-              Log.Log.WriteFile("dvbc:Found correct tuningspace {0}", name);
+              Log.WriteFile("dvbc:Found correct tuningspace {0}", name);
               _tuningSpace = (IDVBTuningSpace)spaces[0];
               tuner.put_TuningSpace(_tuningSpace);
               _tuningSpace.CreateTuneRequest(out request);
@@ -139,7 +142,7 @@ namespace TvLibrary.Implementations.DVB
         }
         Release.ComObject("IEnumTuningSpaces", enumTuning);
       }
-      Log.Log.WriteFile("dvbc:Create new tuningspace");
+      Log.WriteFile("dvbc:Create new tuningspace");
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
       IDVBTuningSpace tuningSpace = (IDVBTuningSpace)_tuningSpace;
       tuningSpace.put_UniqueName("MediaPortal DVBC TuningSpace");
@@ -184,7 +187,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("dvbc: Scan:{0}", channel);
+      Log.WriteFile("dvbc: Scan:{0}", channel);
       try
       {
         if (!BeforeTune(channel, ref subChannelId))
@@ -202,9 +205,13 @@ namespace TvLibrary.Implementations.DVB
       {
         throw;
       }
+      catch (TvExceptionTuneCancelled)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
         throw;
       }
     }
@@ -217,7 +224,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("dvbc: Tune:{0}", channel);
+      Log.WriteFile("dvbc: Tune:{0}", channel);
       try
       {
         if (!BeforeTune(channel, ref subChannelId))
@@ -226,6 +233,10 @@ namespace TvLibrary.Implementations.DVB
         }
         ITvSubChannel ch = base.Tune(subChannelId, channel);
         return ch;
+      }
+      catch (TvExceptionTuneCancelled)
+      {
+        throw;
       }
       catch (TvExceptionNoSignal)
       {
@@ -237,7 +248,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
         throw;
       }
     }
@@ -247,7 +258,7 @@ namespace TvLibrary.Implementations.DVB
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
       {
-        Log.Log.WriteFile("dvbc:Channel is not a DVBC channel!!! {0}", channel.GetType().ToString());
+        Log.WriteFile("dvbc:Channel is not a DVBC channel!!! {0}", channel.GetType().ToString());
         return false;
       }
       /*if (CurrentChannel != null)
@@ -301,23 +312,23 @@ namespace TvLibrary.Implementations.DVB
     /// <value></value>
     protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
+      
+      if (SettingsManagement.GetSetting("generalGrapOnlyForSameTransponder", "no").value == "yes")
       {
         DVBBaseChannel chan = epgChannel.Channel as DVBBaseChannel;
-        Channel dbchannel = layer.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
+        Channel dbchannel = ChannelManagement.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
         DVBCChannel dvbcchannel = new DVBCChannel();
         if (dbchannel == null)
         {
           return false;
         }
-        foreach (TuningDetail detail in dbchannel.ReferringTuningDetail())
+        foreach (TuningDetail detail in dbchannel.TuningDetails)
         {
-          if (detail.ChannelType == 2)
+          if (detail.channelType == 2)
           {
-            dvbcchannel.Frequency = detail.Frequency;
-            dvbcchannel.ModulationType = (ModulationType)detail.Modulation;
-            dvbcchannel.SymbolRate = detail.Symbolrate;
+            dvbcchannel.Frequency = detail.frequency;
+            dvbcchannel.ModulationType = (ModulationType)detail.modulation;
+            dvbcchannel.SymbolRate = detail.symbolrate;
           }
         }
         return this.CurrentChannel.IsDifferentTransponder(dvbcchannel);

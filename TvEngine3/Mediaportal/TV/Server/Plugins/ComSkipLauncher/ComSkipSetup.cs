@@ -19,22 +19,16 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using TvLibrary.Log;
-using TvEngine;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.ComSkipLauncher
 {
   [CLSCompliant(false)]
-  public partial class ComSkipSetup : SetupTv.SectionSettings
+  public partial class ComSkipSetup : SectionSettings
   {
     #region Constants
 

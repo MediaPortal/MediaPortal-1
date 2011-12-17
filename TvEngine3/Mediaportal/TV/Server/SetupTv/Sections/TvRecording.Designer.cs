@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class TvRecording
   {
@@ -36,40 +38,39 @@ namespace SetupTv.Sections
       this.label48 = new System.Windows.Forms.Label();
       this.numericUpDownMaxFreeCardsToTry = new System.Windows.Forms.NumericUpDown();
       this.lblMaxFreeCards = new System.Windows.Forms.Label();
-      this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxScheduler = new MPGroupBox();
       this.lblWeekend = new System.Windows.Forms.Label();
       this.comboBoxWeekend = new System.Windows.Forms.ComboBox();
-      this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxPreventDupes = new MPCheckBox();
       this.comboBoxEpisodeKey = new System.Windows.Forms.ComboBox();
       this.labelEpisodeKey = new System.Windows.Forms.Label();
-      this.checkboxSchedulerPriority = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxGap = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxGap = new MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.numericUpDownPostRec = new System.Windows.Forms.NumericUpDown();
       this.label3 = new System.Windows.Forms.Label();
       this.numericUpDownPreRec = new System.Windows.Forms.NumericUpDown();
       this.label4 = new System.Windows.Forms.Label();
-      this.checkBoxAutoDelete = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxAutoDelete = new MPCheckBox();
       this.tpCustom = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.labelCustomFormat = new System.Windows.Forms.Label();
       this.textBoxCustomFormat = new System.Windows.Forms.TextBox();
       this.comboBoxFormat = new System.Windows.Forms.ComboBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel1 = new MPLabel();
+      this.mpLabel2 = new MPLabel();
+      this.mpLabel3 = new MPLabel();
+      this.mpLabel4 = new MPLabel();
       this.textBoxSample = new System.Windows.Forms.TextBox();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tpDiskQuota = new System.Windows.Forms.TabPage();
-      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel5 = new MPLabel();
       this.enableDiskQuota = new System.Windows.Forms.CheckBox();
-      this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.mpNumericTextBoxDiskQuota = new MPNumericTextBox();
       this.label14 = new System.Windows.Forms.Label();
       this.comboBoxDrive = new System.Windows.Forms.ComboBox();
       this.labelFreeDiskspace = new System.Windows.Forms.Label();
@@ -208,11 +209,10 @@ namespace SetupTv.Sections
       this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
       this.groupBoxScheduler.Controls.Add(this.comboBoxEpisodeKey);
       this.groupBoxScheduler.Controls.Add(this.labelEpisodeKey);
-      this.groupBoxScheduler.Controls.Add(this.checkboxSchedulerPriority);
       this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduler.Location = new System.Drawing.Point(15, 180);
       this.groupBoxScheduler.Name = "groupBoxScheduler";
-      this.groupBoxScheduler.Size = new System.Drawing.Size(418, 196);
+      this.groupBoxScheduler.Size = new System.Drawing.Size(418, 142);
       this.groupBoxScheduler.TabIndex = 14;
       this.groupBoxScheduler.TabStop = false;
       this.groupBoxScheduler.Text = "Scheduler";
@@ -220,7 +220,7 @@ namespace SetupTv.Sections
       // lblWeekend
       // 
       this.lblWeekend.AutoSize = true;
-      this.lblWeekend.Location = new System.Drawing.Point(15, 130);
+      this.lblWeekend.Location = new System.Drawing.Point(15, 103);
       this.lblWeekend.Name = "lblWeekend";
       this.lblWeekend.Size = new System.Drawing.Size(57, 13);
       this.lblWeekend.TabIndex = 20;
@@ -238,7 +238,7 @@ namespace SetupTv.Sections
             "Wednesday/Thursday",
             "Thursday/Friday",
             "Friday/Saturday"});
-      this.comboBoxWeekend.Location = new System.Drawing.Point(180, 130);
+      this.comboBoxWeekend.Location = new System.Drawing.Point(180, 103);
       this.comboBoxWeekend.Name = "comboBoxWeekend";
       this.comboBoxWeekend.Size = new System.Drawing.Size(137, 21);
       this.comboBoxWeekend.TabIndex = 15;
@@ -250,7 +250,7 @@ namespace SetupTv.Sections
       this.checkBoxPreventDupes.Checked = true;
       this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 55);
+      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 28);
       this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
       this.checkBoxPreventDupes.Size = new System.Drawing.Size(335, 30);
       this.checkBoxPreventDupes.TabIndex = 13;
@@ -267,7 +267,7 @@ namespace SetupTv.Sections
       this.comboBoxEpisodeKey.Items.AddRange(new object[] {
             "Episode Title",
             "Episode Number"});
-      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(180, 92);
+      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(180, 65);
       this.comboBoxEpisodeKey.Name = "comboBoxEpisodeKey";
       this.comboBoxEpisodeKey.Size = new System.Drawing.Size(137, 21);
       this.comboBoxEpisodeKey.TabIndex = 13;
@@ -275,24 +275,11 @@ namespace SetupTv.Sections
       // labelEpisodeKey
       // 
       this.labelEpisodeKey.AutoSize = true;
-      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 95);
+      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 68);
       this.labelEpisodeKey.Name = "labelEpisodeKey";
       this.labelEpisodeKey.Size = new System.Drawing.Size(71, 13);
       this.labelEpisodeKey.TabIndex = 1;
       this.labelEpisodeKey.Text = "Episode key: ";
-      // 
-      // checkboxSchedulerPriority
-      // 
-      this.checkboxSchedulerPriority.AutoSize = true;
-      this.checkboxSchedulerPriority.Checked = true;
-      this.checkboxSchedulerPriority.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkboxSchedulerPriority.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkboxSchedulerPriority.Location = new System.Drawing.Point(15, 23);
-      this.checkboxSchedulerPriority.Name = "checkboxSchedulerPriority";
-      this.checkboxSchedulerPriority.Size = new System.Drawing.Size(342, 17);
-      this.checkboxSchedulerPriority.TabIndex = 8;
-      this.checkboxSchedulerPriority.Text = "Allow server to stop LiveTV to record when no free card is available";
-      this.checkboxSchedulerPriority.UseVisualStyleBackColor = true;
       // 
       // groupBoxGap
       // 
@@ -378,7 +365,7 @@ namespace SetupTv.Sections
       // 
       this.checkBoxAutoDelete.AutoSize = true;
       this.checkBoxAutoDelete.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 382);
+      this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 328);
       this.checkBoxAutoDelete.Name = "checkBoxAutoDelete";
       this.checkBoxAutoDelete.Size = new System.Drawing.Size(252, 17);
       this.checkBoxAutoDelete.TabIndex = 6;
@@ -937,7 +924,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabPage tpSettings;
     private System.Windows.Forms.TabPage tpCustom;
     private System.Windows.Forms.GroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAutoDelete;
+    private MPCheckBox checkBoxAutoDelete;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label2;
@@ -957,10 +944,10 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.ComboBox comboBoxDrive;
     private System.Windows.Forms.Label label9;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel2;
+    private MPLabel mpLabel3;
+    private MPLabel mpLabel4;
     private System.Windows.Forms.TabPage tpRecording;
     private System.Windows.Forms.ComboBox comboBoxCards;
     private System.Windows.Forms.Button buttonBrowse;
@@ -969,9 +956,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.Label label23;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSchedulerPriority;
+    private MPLabel mpLabel5;
+    private MPNumericTextBox mpNumericTextBoxDiskQuota;
     private System.Windows.Forms.NumericUpDown numericUpDownPostRec;
     private System.Windows.Forms.NumericUpDown numericUpDownPreRec;
     private System.Windows.Forms.CheckBox enableDiskQuota;
@@ -988,9 +974,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ComboBox comboBoxEpisodeKey;
     private System.Windows.Forms.Label labelEpisodeKey;
     private System.Windows.Forms.Button buttonSameRecFolder;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxScheduler;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGap;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPreventDupes;
+    private MPGroupBox groupBoxScheduler;
+    private MPGroupBox groupBoxGap;
+    private MPCheckBox checkBoxPreventDupes;
     private System.Windows.Forms.ComboBox comboBoxFormat;
     private System.Windows.Forms.TextBox textBoxCustomFormat;
     private System.Windows.Forms.Label labelCustomFormat;

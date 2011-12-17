@@ -20,8 +20,10 @@
 
 using System;
 using System.Text.RegularExpressions;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.html;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
 {
   /// <summary>
   /// Parses HTML site from given Template

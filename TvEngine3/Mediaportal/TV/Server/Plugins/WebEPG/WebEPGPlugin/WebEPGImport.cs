@@ -19,27 +19,28 @@
 #endregion
 
 using System;
-using System.Net;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.IO;
-using SetupTv;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
-using TvEngine.PowerScheduler.Interfaces;
-using MediaPortal.WebEPG;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.Plugins.WebEPGImport.Config;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using System.Runtime.CompilerServices;
-using Gentle.Common;
-using Gentle.Framework;
-using MediaPortal.EPG;
-using TvEngine.PowerScheduler;
+using WebEPG.Utils;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport
 {
-  public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler //, IStandbyHandler
+  public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler 
   {
     #region constants
 
@@ -105,14 +106,12 @@ namespace TvEngine
     /// <summary>
     /// Starts the plugin
     /// </summary>
-    public void Start(IController controller)
+    public void Start(IInternalControllerService controllerService)
     {
       Log.WriteFile("plugin: webepg started");
 
       //CheckNewTVGuide();
-      _scheduleTimer = new System.Timers.Timer();
-      _scheduleTimer.Interval = 60000;
-      _scheduleTimer.Enabled = true;
+      _scheduleTimer = new System.Timers.Timer {Interval = 60000, Enabled = true};
       _scheduleTimer.Elapsed += new System.Timers.ElapsedEventHandler(_scheduleTimer_Elapsed);
     }
 
@@ -134,9 +133,9 @@ namespace TvEngine
     /// <summary>
     /// returns the setup sections for display in SetupTv
     /// </summary>
-    public SetupTv.SectionSettings Setup
+    public SectionSettings Setup
     {
-      get { return new SetupTv.Sections.WebEPGSetup(); }
+      get { return new WebEPGSetup(); }
     }
 
     /// <summary>
@@ -150,7 +149,7 @@ namespace TvEngine
     /// <summary>
     /// Forces the import of the tvguide. Usable when testing the grabber
     /// </summary>
-    public void ForceImport(WebEPG.ShowProgressHandler showProgress)
+    public void ForceImport(WebEPG.WebEPG.ShowProgressHandler showProgress)
     {
       StartImport(showProgress);
     }
@@ -160,7 +159,7 @@ namespace TvEngine
     #region private members
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    protected void StartImport(WebEPG.ShowProgressHandler showProgress)
+    protected void StartImport(WebEPG.WebEPG.ShowProgressHandler showProgress)
     {
       if (_workerThreadRunning)
         return;
@@ -178,7 +177,7 @@ namespace TvEngine
 
     private class ThreadParams
     {
-      public WebEPG.ShowProgressHandler showProgress;
+      public WebEPG.WebEPG.ShowProgressHandler showProgress;
     } ;
 
     private void ThreadFunctionImportTVGuide(object aparam)
@@ -191,8 +190,8 @@ namespace TvEngine
 
         Setting setting;
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        string destination = layer.GetSetting("webepgDestination", "db").Value;
+        
+        string destination = SettingsManagement.GetSetting("webepgDestination", "db").value;
         string webepgDirectory = PathManager.GetDataPath;
         string configFile = webepgDirectory + @"\WebEPG\WebEPG.xml";
 
@@ -209,7 +208,7 @@ namespace TvEngine
 
           if (destination == "db")
           {
-            bool deleteBeforeImport = Convert.ToBoolean(layer.GetSetting("webepgDeleteBeforeImport", "true").Value);
+            bool deleteBeforeImport = Convert.ToBoolean(SettingsManagement.GetSetting("webepgDeleteBeforeImport", "true").value);
             //// Allow for deleting of all existing programs before adding the new ones. 
             //// Already imported programs might have incorrect data depending on the grabber & setup
             //// f.e when grabbing programs many days ahead
@@ -227,12 +226,12 @@ namespace TvEngine
             string xmltvDirectory = string.Empty;
             if (destination == "xmltv")
             {
-              xmltvDirectory = layer.GetSetting("webepgDestinationFolder", string.Empty).Value;
+              xmltvDirectory = SettingsManagement.GetSetting("webepgDestinationFolder", string.Empty).value;
             }
             if (xmltvDirectory == string.Empty)
             {
               // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
-              xmltvDirectory = layer.GetSetting("xmlTv", PathManager.GetDataPath + @"\xmltv").Value;
+              xmltvDirectory = SettingsManagement.GetSetting("xmlTv", PathManager.GetDataPath + @"\xmltv").value;
             }
             Log.Info("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file
@@ -243,7 +242,7 @@ namespace TvEngine
             epgSink = new XMLTVExport(xmltvDirectory);
           }
 
-          WebEPG epg = new WebEPG(configFile, epgSink, webepgDirectory);
+          WebEPG.WebEPG epg = new WebEPG.WebEPG(configFile, epgSink, webepgDirectory);
           if (param.showProgress != null)
           {
             epg.ShowProgress += param.showProgress;
@@ -254,18 +253,11 @@ namespace TvEngine
             epg.ShowProgress -= param.showProgress;
           }
 
-          setting = layer.GetSetting("webepgResultLastImport", "");
-          setting.Value = DateTime.Now.ToString();
-          setting.Persist();
-          setting = layer.GetSetting("webepgResultChannels", "");
-          setting.Value = epg.ImportStats.Channels.ToString();
-          setting.Persist();
-          setting = layer.GetSetting("webepgResultPrograms", "");
-          setting.Value = epg.ImportStats.Programs.ToString();
-          setting.Persist();
-          setting = layer.GetSetting("webepgResultStatus", "");
-          setting.Value = epg.ImportStats.Status;
-          setting.Persist();
+          SettingsManagement.SaveSetting("webepgResultLastImport", DateTime.Now.ToString());
+          SettingsManagement.SaveSetting("webepgResultChannels", epg.ImportStats.Channels.ToString());
+          SettingsManagement.SaveSetting("webepgResultPrograms", epg.ImportStats.Programs.ToString());
+          SettingsManagement.SaveSetting("webepgResultStatus", epg.ImportStats.Status);
+          
           //Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
         catch (Exception ex)
@@ -274,9 +266,7 @@ namespace TvEngine
           Log.Write(ex);
         }
 
-        setting = layer.GetSetting("webepgResultLastImport", "");
-        setting.Value = DateTime.Now.ToString();
-        setting.Persist();
+        SettingsManagement.SaveSetting("webepgResultLastImport", DateTime.Now.ToString());
       }
       finally
       {
@@ -288,20 +278,19 @@ namespace TvEngine
 
     private void _scheduleTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool scheduleEnabled = Convert.ToBoolean(layer.GetSetting("webepgScheduleEnabled", "true").Value);
+      
+      bool scheduleEnabled = Convert.ToBoolean(SettingsManagement.GetSetting("webepgScheduleEnabled", "true").value);
       if (scheduleEnabled)
       {
-        Setting configSetting = layer.GetSetting("webepgSchedule", String.Empty);
-        EPGWakeupConfig config = new EPGWakeupConfig(configSetting.Value);
+        Setting configSetting = SettingsManagement.GetSetting("webepgSchedule", String.Empty);
+        EPGWakeupConfig config = new EPGWakeupConfig(configSetting.value);
         if (ShouldRunNow())
         {
           Log.Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
                    config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
           StartImport(null);
           config.LastRun = DateTime.Now;
-          configSetting.Value = config.SerializeAsString();
-          configSetting.Persist();
+          SettingsManagement.SaveSetting("webepgSchedule", config.SerializeAsString());
         }
       }
     }
@@ -363,8 +352,8 @@ namespace TvEngine
     /// <returns></returns>
     private bool ShouldRunNow()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      EPGWakeupConfig config = new EPGWakeupConfig(layer.GetSetting("webepgSchedule", String.Empty).Value);
+      
+      EPGWakeupConfig config = new EPGWakeupConfig(SettingsManagement.GetSetting("webepgSchedule", String.Empty).value);
 
       // check if schedule is due
       // check if we've already run today
@@ -409,9 +398,9 @@ namespace TvEngine
 
     private DateTime GetNextWakeupSchedule(DateTime earliestWakeupTime)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
 
-      EPGWakeupConfig cfg = new EPGWakeupConfig(layer.GetSetting("webepgSchedule", String.Empty).Value);
+
+      EPGWakeupConfig cfg = new EPGWakeupConfig(SettingsManagement.GetSetting("webepgSchedule", String.Empty).value);
 
       // Start by thinking we should run today
       DateTime nextRun = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, cfg.Hour, cfg.Minutes, 0);
@@ -453,8 +442,8 @@ namespace TvEngine
     [MethodImpl(MethodImplOptions.Synchronized)]
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool scheduleEnabled = Convert.ToBoolean(layer.GetSetting("webepgScheduleEnabled", "true").Value);
+
+      bool scheduleEnabled = Convert.ToBoolean(SettingsManagement.GetSetting("webepgScheduleEnabled", "true").value);
       if (!scheduleEnabled)
       {
         return DateTime.MaxValue;

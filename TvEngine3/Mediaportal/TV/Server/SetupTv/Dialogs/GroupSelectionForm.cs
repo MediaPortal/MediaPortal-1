@@ -21,11 +21,12 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class GroupSelectionForm : Form
   {
@@ -88,18 +89,18 @@ namespace SetupTv.Sections
     {
       if (groupType == typeof (ChannelGroup))
       {
-        IList<ChannelGroup> tmp = ChannelGroup.ListAll();
+        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
         foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
-                                    group.GroupName == TvConstants.TvGroupNames.AllChannels ||
+                                    group.groupName == TvConstants.TvGroupNames.AllChannels ||
                                     (
                                       _SelectionType == SelectionType.ForRenaming &&
                                       (
-                                        group.GroupName == TvConstants.TvGroupNames.Analog ||
-                                        group.GroupName == TvConstants.TvGroupNames.DVBC ||
-                                        group.GroupName == TvConstants.TvGroupNames.DVBS ||
-                                        group.GroupName == TvConstants.TvGroupNames.DVBT)
+                                        group.groupName == TvConstants.TvGroupNames.Analog ||
+                                        group.groupName == TvConstants.TvGroupNames.DVBC ||
+                                        group.groupName == TvConstants.TvGroupNames.DVBS ||
+                                        group.groupName == TvConstants.TvGroupNames.DVBT)
                                     )
                                   );
 
@@ -109,20 +110,20 @@ namespace SetupTv.Sections
           }
         }
       }
-      else if (groupType == typeof (RadioChannelGroup))
+      else if (groupType == typeof (ChannelGroup))
       {
-        IList<RadioChannelGroup> tmp = RadioChannelGroup.ListAll();
-        foreach (RadioChannelGroup group in tmp)
+        IList<ChannelGroup> tmp = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+        foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
-                                    group.GroupName == TvConstants.RadioGroupNames.AllChannels ||
+                                    group.groupName == TvConstants.RadioGroupNames.AllChannels ||
                                     (
                                       _SelectionType == SelectionType.ForRenaming &&
                                       (
-                                        group.GroupName == TvConstants.RadioGroupNames.Analog ||
-                                        group.GroupName == TvConstants.RadioGroupNames.DVBC ||
-                                        group.GroupName == TvConstants.RadioGroupNames.DVBS ||
-                                        group.GroupName == TvConstants.RadioGroupNames.DVBT)
+                                        group.groupName == TvConstants.RadioGroupNames.Analog ||
+                                        group.groupName == TvConstants.RadioGroupNames.DVBC ||
+                                        group.groupName == TvConstants.RadioGroupNames.DVBS ||
+                                        group.groupName == TvConstants.RadioGroupNames.DVBT)
                                     )
                                   );
 

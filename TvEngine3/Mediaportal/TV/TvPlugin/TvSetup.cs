@@ -22,17 +22,17 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.ServiceProcess;
-using Gentle.Framework;
-using MediaPortal.Configuration;
+
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvSetup : GUIInternalWindow
   {
@@ -122,9 +122,15 @@ namespace TvPlugin
     {
       bool succeeded = true;
 
-      if (!CheckTcpPort(31456)) // TvService.RemoteControl
+      if (!CheckTcpPort(ServiceHelper.PortHttpService)) 
       {
-        portErrors.Add("31456 (TCP) RemoteControl");
+        portErrors.Add(ServiceHelper.PortHttpService + "(HTTP) Service");
+        succeeded = false;
+      }
+
+      if (!CheckTcpPort(ServiceHelper.PortTcpService)) 
+      {
+        portErrors.Add(ServiceHelper.PortTcpService + "(TCP) Service");
         succeeded = false;
       }
 
@@ -132,15 +138,14 @@ namespace TvPlugin
       {
         try
         {
-          int cards = RemoteControl.Instance.Cards;
+          int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
           // Need to setup the database connection string here
           // before checking for database connectivity,
           // otherwhise we will check for the wrong database provider
           TVHome.Navigator.SetupDatabaseConnection();
         }
         catch (Exception)
-        {
-          RemoteControl.Clear();
+        {          
           succeeded = false;
         }
       }
@@ -150,47 +155,15 @@ namespace TvPlugin
     private bool CheckDatabaseConnection(List<string> portErrors)
     {
       bool succeeded = true;
-      string provider = ProviderFactory.GetDefaultProvider().Name;
-      Log.Debug("TvPlugin: Detected provider name is -{0}-", provider);
-      if (provider.ToLower() == "sqlserver")
+      try
       {
-        Log.Debug("TvPlugin: Going to test ports 1433(tcp) and 1434(udp) because of MSSQL detected");
-        if (!CheckTcpPort(1433)) // MS SQL TCP Port
-        {
-          portErrors.Add("1433 (TCP) MS SQL Server");
-          succeeded = false;
-        }
-        if (!CheckUdpPort(1434)) // MS SQL UDP Port
-        {
-          portErrors.Add("1434 (UDP) MS SQL Server");
-          succeeded = false;
-        }
+        IEnumerable<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
       }
-      else if (provider.ToLower() == "mysql")
+      catch (Exception)
       {
-        Log.Debug("TvPlugin: Going to test port 3306(tcp) because of MySQL detected");
-        if (!CheckTcpPort(3306)) // MySQL TCP Port
-        {
-          portErrors.Add("3306 (TCP) MySQL Server");
-          succeeded = false;
-        }
-      }
-      else
-      {
-        //portErrors.Add("SQL connection not tested");
         succeeded = false;
       }
-      if (succeeded)
-      {
-        try
-        {
-          IList<Card> cards = Card.ListAll();
-        }
-        catch (Exception)
-        {
-          succeeded = false;
-        }
-      }
+      
       return succeeded;
     }
 
@@ -201,21 +174,23 @@ namespace TvPlugin
 
       if (tvServerAvailable)
       {
-        RtspPort = RemoteControl.Instance.StreamingPort;
+        RtspPort = ServiceAgents.Instance.ControllerServiceAgent.StreamingPort;
       }
       if (RtspPort == 0 && databaseAvailable)
       {
+        //todo gibman RTSP lookup removed for now, hardcoded to 554
         try
         {
-          IList<Server> servers = Server.ListAll();
-          foreach (Server server in servers)
+          /*IList<Server.TVDatabase.Entities.Server> servers = Server.TVDatabase.Gentle.Server.ListAll();
+          foreach (Server.TVDatabase.Entities.Server server in servers)
           {
-            if (server.IsMaster)
+            if (ServiceAgents.Instance.ControllerService.isMaster)
             {
-              RtspPort = server.RtspPort;
+              RtspPort = ServiceAgents.Instance.ControllerService.rtspPort;
               break;
             }
-          }
+          }*/
+          RtspPort = 554;
         }
         catch (Exception)
         {
@@ -315,9 +290,8 @@ namespace TvPlugin
       if (control == btnChange)
       {
         if (GetKeyboard(ref _hostName))
-        {
-          RemoteControl.Clear();
-          RemoteControl.HostName = _hostName;
+        {                    
+          ServiceAgents.Instance.Hostname = _hostName;
           if (lblHostName != null)
           {
             lblHostName.Label = _hostName;
@@ -354,7 +328,6 @@ namespace TvPlugin
 
             return;
           }
-          RemoteControl.Clear();
           pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           if (pDlgOK != null)
           {
@@ -426,9 +399,8 @@ namespace TvPlugin
 
     protected override void OnPageDestroy(int new_windowId)
     {
-      SaveSettings();
-      RemoteControl.Clear();
-      RemoteControl.HostName = _hostName;
+      SaveSettings();      
+      ServiceAgents.Instance.Hostname = _hostName;
       base.OnPageDestroy(new_windowId);
     }
 

@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class Servers
   {
@@ -30,15 +32,13 @@ namespace SetupTv.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Servers));
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpListView1 = new MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.chooseIPForStreamingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.buttonDelete = new System.Windows.Forms.Button();
-      this.buttonMaster = new System.Windows.Forms.Button();
       this.buttonChooseIp = new System.Windows.Forms.Button();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -107,30 +107,7 @@ namespace SetupTv.Sections
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
       this.imageList1.Images.SetKeyName(0, "computer.gif");
-      // 
-      // buttonDelete
-      // 
-      this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDelete.Location = new System.Drawing.Point(377, 178);
-      this.buttonDelete.Name = "buttonDelete";
-      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
-      this.buttonDelete.TabIndex = 3;
-      this.buttonDelete.Text = "Delete";
-      this.buttonDelete.UseVisualStyleBackColor = true;
-      this.buttonDelete.Visible = false;
-      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-      // 
-      // buttonMaster
-      // 
-      this.buttonMaster.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonMaster.Location = new System.Drawing.Point(167, 178);
-      this.buttonMaster.Name = "buttonMaster";
-      this.buttonMaster.Size = new System.Drawing.Size(135, 23);
-      this.buttonMaster.TabIndex = 2;
-      this.buttonMaster.Text = "Set as master server";
-      this.buttonMaster.UseVisualStyleBackColor = true;
-      this.buttonMaster.Visible = false;
-      this.buttonMaster.Click += new System.EventHandler(this.buttonMaster_Click);
+
       // 
       // buttonChooseIp
       // 
@@ -160,8 +137,6 @@ namespace SetupTv.Sections
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.mpListView1);
-      this.tabPage1.Controls.Add(this.buttonMaster);
-      this.tabPage1.Controls.Add(this.buttonDelete);
       this.tabPage1.Controls.Add(this.buttonChooseIp);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -188,11 +163,9 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.Button buttonDelete;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.Button buttonMaster;
+    private MPListView mpListView1;
+    private System.Windows.Forms.ColumnHeader columnHeader1;    
+    private System.Windows.Forms.ColumnHeader columnHeader2;    
     private System.Windows.Forms.Button buttonChooseIp;
     private System.Windows.Forms.ImageList imageList1;
 		private System.Windows.Forms.TabControl tabControl1;

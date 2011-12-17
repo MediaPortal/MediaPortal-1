@@ -637,27 +637,15 @@ namespace TvPlugin
       List<GUIListItem> itemlist = new List<GUIListItem>();
       try
       {
-        GUIControl.ClearControl(GetID, facadeLayout.GetID);
-
-        IList<RadioGroupMap> radiogroups = RadioGroupMap.ListAll();
-        IList<Recording> recordings = Recording.ListAll();
+        GUIControl.ClearControl(GetID, facadeLayout.GetID);        
+        IList<Recording> recordings = Recording.ListAllRadio();
         if (_currentLabel == string.Empty)
         {
           foreach (Recording rec in recordings)
           {
             // catch exceptions here so MP will go on and list further recs
             try
-            {
-              bool isRadioChannel = false;
-              foreach (RadioGroupMap radiogroup in radiogroups)
-              {
-                if (rec.IdChannel == radiogroup.IdChannel)
-                {
-                  isRadioChannel = true;
-                  break;
-                }
-              }
-              if (isRadioChannel == false) continue;  // only RadioChannels are allowed 
+            {              
               bool add = true;
 
               // combine recordings with the same name to a folder located on top
@@ -1023,7 +1011,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", pItem.ThumbnailImage);
       
       Recording rec = (Recording)pItem.TVTag;
-      IList<Recording> itemlist = Recording.ListAll();
+      IList<Recording> itemlist = Recording.ListAllRadio();
 
       _oActiveRecording = rec;
       _bIsLiveRecording = false;

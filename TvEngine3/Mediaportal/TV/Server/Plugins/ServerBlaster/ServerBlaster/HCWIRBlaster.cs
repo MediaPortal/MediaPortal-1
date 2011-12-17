@@ -20,11 +20,11 @@
 
 using System;
 using System.Runtime.InteropServices;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 //using MediaPortal.GUI.Library;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
   /// <summary>
   /// Summary description for HCWIRBlaster.

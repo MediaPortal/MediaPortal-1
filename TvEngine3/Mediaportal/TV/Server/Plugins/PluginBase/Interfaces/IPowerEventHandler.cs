@@ -22,7 +22,7 @@
 
 #endregion
 
-namespace TvEngine.Interfaces
+namespace Mediaportal.TV.Server.Plugins.Base.Interfaces
 {
   // Summary:
   //     Indicates the system's power status.

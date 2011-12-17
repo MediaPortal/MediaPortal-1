@@ -20,15 +20,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using MediaPortal.UserInterface.Controls;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
 
   #region CustomFileName class

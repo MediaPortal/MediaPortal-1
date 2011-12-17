@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Service class to collect statistics on HTTP pages and bytes of data transfered.

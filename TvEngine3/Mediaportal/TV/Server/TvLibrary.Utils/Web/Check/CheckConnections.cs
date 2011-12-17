@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Check
 {
   /// <summary>
   /// Offers methods to check the current connectivity state of the network interfaces

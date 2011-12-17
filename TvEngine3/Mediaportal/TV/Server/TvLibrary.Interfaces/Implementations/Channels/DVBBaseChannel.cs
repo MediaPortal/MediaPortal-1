@@ -19,28 +19,54 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using System.Runtime.Serialization;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// base class for DVB channels
   /// </summary>
+  [DataContract]
+  [KnownType(typeof(DVBTChannel))]
+  [KnownType(typeof(DVBCChannel))]
+  [KnownType(typeof(DVBSChannel))]
+  [KnownType(typeof(DVBIPChannel))]
+  [KnownType(typeof(ATSCChannel))]
   [Serializable]
   public abstract class DVBBaseChannel : IChannel
   {
     #region variables
 
+    [DataMember]
     private string _channelName;
+
+    [DataMember]
     private string _providerName;
+
+    [DataMember]
     private long _channelFrequency;
+
+    [DataMember]
     private int _networkId;
+
+    [DataMember]
     private int _serviceId;
+
+    [DataMember]
     private int _transportId;
+
+    [DataMember]
     private int _pmtPid;
+
+    [DataMember]
     private int _lcn;
-    private bool _isRadio;
-    private bool _isTv;
+
+    [DataMember]
+    private MediaTypeEnum _mediaType;
+
+    [DataMember]
     private bool _freeToAir;
 
     #endregion
@@ -58,8 +84,7 @@ namespace TvLibrary.Channels
       _transportId = chan._transportId;
       _pmtPid = chan._pmtPid;
       _lcn = chan._lcn;
-      _isRadio = chan._isRadio;
-      _isTv = chan._isTv;
+      _mediaType= chan._mediaType;      
       _freeToAir = chan._freeToAir;
     }
 
@@ -149,25 +174,7 @@ namespace TvLibrary.Channels
     {
       get { return _channelFrequency; }
       set { _channelFrequency = value; }
-    }
-
-    /// <summary>
-    /// boolean indication if this is a radio channel
-    /// </summary>
-    public bool IsRadio
-    {
-      get { return _isRadio; }
-      set { _isRadio = value; }
-    }
-
-    /// <summary>
-    /// boolean indication if this is a tv channel
-    /// </summary>
-    public bool IsTv
-    {
-      get { return _isTv; }
-      set { _isTv = value; }
-    }
+    }    
 
     /// <summary>
     /// boolean indicating if this is a FreeToAir channel or an encrypted channel
@@ -176,6 +183,12 @@ namespace TvLibrary.Channels
     {
       get { return _freeToAir; }
       set { _freeToAir = value; }
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return _mediaType; }
+      set { _mediaType = value; }
     }
 
     #endregion
@@ -188,7 +201,7 @@ namespace TvLibrary.Channels
     /// </returns>
     public override string ToString()
     {
-      string line = IsRadio ? "radio:" : "tv:";
+      string line = MediaType.ToString();
       line += String.Format("{0} {1} Freq:{2} ONID:{3} TSID:{4} SID:{5} PMT:0x{6:X} FTA:{7} LCN:{8}",
                             Provider, Name, Frequency, NetworkId, TransportId, ServiceId, PmtPid, FreeToAir,
                             LogicalChannelNumber);
@@ -209,7 +222,7 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      DVBBaseChannel ch = obj as DVBBaseChannel;
+      var ch = obj as DVBBaseChannel;
       if (ch.FreeToAir != FreeToAir)
       {
         return false;
@@ -218,14 +231,10 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      if (ch.IsRadio != IsRadio)
+      if (ch.MediaType != MediaType)
       {
         return false;
-      }
-      if (ch.IsTv != IsTv)
-      {
-        return false;
-      }
+      }      
       if (ch.Name != Name)
       {
         return false;

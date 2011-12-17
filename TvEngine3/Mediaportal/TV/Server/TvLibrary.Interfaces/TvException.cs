@@ -20,8 +20,36 @@
 
 using System;
 
-namespace TvLibrary
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
+  /// <summary>
+  /// Exception class for the tv library
+  /// </summary>
+  [Serializable]
+  public class TvExceptionTuneCancelled : Exception
+  {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionTuneCancelled"/> class.
+    /// </summary>
+    public TvExceptionTuneCancelled() {}
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionTuneCancelled"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    public TvExceptionTuneCancelled(string message)
+      : base(message) {}
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionTuneCancelled"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public TvExceptionTuneCancelled(string message, Exception innerException)
+      : base(message, innerException) {}
+  }
+
   /// <summary>
   /// Exception class for the tv library
   /// </summary>

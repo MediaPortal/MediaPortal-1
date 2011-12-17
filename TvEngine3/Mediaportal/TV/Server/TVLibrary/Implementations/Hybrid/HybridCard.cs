@@ -19,12 +19,12 @@
 #endregion
 
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
-using System;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations.Hybrid
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
 {
   /// <summary>
   /// This class is a wrapper for all cards that are part of a hybrid card group
@@ -456,30 +456,18 @@ namespace TvLibrary.Implementations.Hybrid
       get { return _group.SubChannels; }
     }
 
+    public void CancelTune(int subChannel)
+    {
+
+    }
+
+    public event OnNewSubChannelDelegate OnNewSubChannelEvent;
+
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
     public void FreeSubChannel(int id)
-    {
-      _group.FreeSubChannel(id);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
-    {
-      FreeSubChannelContinueGraph(id);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    public void FreeSubChannelContinueGraph(int id)
     {
       _group.FreeSubChannel(id);
     }

@@ -20,15 +20,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvNewScheduleSearchType : GUIInternalWindow
   {
@@ -104,11 +107,11 @@ namespace TvPlugin
       }
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(891)); //Select TV Channel
-      IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.GroupMaps;
       foreach (GroupMap chan in channels)
       {
-        GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
+        GUIListItem item = new GUIListItem(chan.Channel.displayName);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Channel.displayName);
         if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
@@ -124,7 +127,7 @@ namespace TvPlugin
         return;
       }
 
-      Channel selectedChannel = (channels[dlg.SelectedLabel]).ReferencedChannel();
+      Channel selectedChannel = (channels[dlg.SelectedLabel]).Channel;
       dlg.Reset();
       dlg.SetHeading(616); //select recording type
       for (int i = 611; i <= 615; ++i)
@@ -134,12 +137,10 @@ namespace TvPlugin
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
-      Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-      rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
-      rec.ScheduleType = (int)ScheduleRecordingType.Once;
+      Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.idChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);      
+      rec.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+      rec.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
+      rec.scheduleType = (int)ScheduleRecordingType.Once;
 
       DateTime dtNow = DateTime.Now;
       int day;
@@ -214,13 +215,13 @@ namespace TvPlugin
 
 
       dtNow = DateTime.Now.AddDays(day);
-      rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
-      rec.EndTime = rec.StartTime.AddMinutes(duration);
-      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.ReferencedChannel().DisplayName + ")";
-
-      rec.Persist();
-      TvServer server = new TvServer();
-      server.OnNewSchedule();
+      rec.startTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
+      rec.endTime = rec.startTime.AddMinutes(duration);
+      rec.programName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.displayName + ")";
+      
+      ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
+      
+      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       GUIWindowManager.ShowPreviousWindow();
     }
 
@@ -234,11 +235,11 @@ namespace TvPlugin
 
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(891)); //Select TV Channel
-      IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> channels = TVHome.Navigator.CurrentGroup.GroupMaps;
       foreach (GroupMap chan in channels)
       {
-        GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
-        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
+        GUIListItem item = new GUIListItem(chan.Channel.displayName);
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Channel.displayName);
         if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
@@ -254,7 +255,7 @@ namespace TvPlugin
         return;
       }
 
-      Channel selectedChannel = (channels[dlg.SelectedLabel]).ReferencedChannel();
+      Channel selectedChannel = (channels[dlg.SelectedLabel]).Channel;
       dlg.Reset();
       dlg.SetHeading(616); //select recording type
       for (int i = 611; i <= 615; ++i)
@@ -264,11 +265,10 @@ namespace TvPlugin
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
       dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
-      Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
+      Schedule rec = ScheduleFactory.CreateSchedule(selectedChannel.idChannel, "", ScheduleFactory.MinSchedule, ScheduleFactory.MinSchedule);
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-      rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+      rec.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+      rec.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1)
@@ -279,28 +279,28 @@ namespace TvPlugin
       switch (dlg.SelectedLabel)
       {
         case 0: //once
-          rec.ScheduleType = (int)ScheduleRecordingType.Once;
+          rec.scheduleType = (int)ScheduleRecordingType.Once;
           break;
         case 1: //everytime, this channel
-          rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
+          rec.scheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
           break;
         case 2: //everytime, all channels
-          rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
+          rec.scheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
           break;
         case 3: //weekly
-          rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
+          rec.scheduleType = (int)ScheduleRecordingType.Weekly;
           break;
         case 4: //daily
-          rec.ScheduleType = (int)ScheduleRecordingType.Daily;
+          rec.scheduleType = (int)ScheduleRecordingType.Daily;
           break;
         case 5: //WorkingDays
-          rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
+          rec.scheduleType = (int)ScheduleRecordingType.WorkingDays;
           break;
         case 6: //Weekend
-          rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+          rec.scheduleType = (int)ScheduleRecordingType.Weekends;
           break;
         case 7://everytime weekly, this channel
-          rec.ScheduleType = (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
+          rec.scheduleType = (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
           break;
       }
 
@@ -394,10 +394,10 @@ namespace TvPlugin
       }
       int duration = (dlg.SelectedLabel + 1) * 30;
 
-      IList<TuningDetail> details = Channel.Retrieve(rec.IdChannel).ReferringTuningDetail();
+      IList<TuningDetail> details = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.idChannel).TuningDetails;
       foreach (TuningDetail detail in details)
       {
-        if (detail.ChannelType == 0)
+        if (detail.channelType == 0)
         {
           TvPriorities.OnSetQuality(rec);
           break;
@@ -406,12 +406,12 @@ namespace TvPlugin
 
 
       dtNow = DateTime.Now.AddDays(day);
-      rec.StartTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
-      rec.EndTime = rec.StartTime.AddMinutes(duration);
-      rec.ProgramName = GUILocalizeStrings.Get(413) + " (" + rec.ReferencedChannel().DisplayName + ")";
-      rec.Persist();
-      TvServer server = new TvServer();
-      server.OnNewSchedule();
+      rec.startTime = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0);
+      rec.endTime = rec.startTime.AddMinutes(duration);
+      rec.programName = GUILocalizeStrings.Get(413) + " (" + rec.Channel.displayName + ")";      
+      ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
+      
+      ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
       GUIWindowManager.ShowPreviousWindow();
     }
 

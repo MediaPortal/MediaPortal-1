@@ -19,11 +19,10 @@
 #endregion
 
 using System.Collections.Generic;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess
 {
   ///<summary>
   /// CA Context 

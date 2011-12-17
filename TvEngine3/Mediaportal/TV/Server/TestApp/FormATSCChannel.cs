@@ -20,10 +20,10 @@
 
 using System;
 using System.Windows.Forms;
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   public partial class FormATSCChannel : Form
   {
@@ -49,7 +49,7 @@ namespace TestApp
     private void buttonOK_Click(object sender, EventArgs e)
     {
       _channel.Frequency = -1;
-      _channel.SymbolRate = -1;
+      //_channel.SymbolRate = -1;
       _channel.TransportId = -1;
       _channel.ModulationType = DirectShowLib.BDA.ModulationType.ModNotSet;
       _channel.PhysicalChannel = Int32.Parse(textboxFreq.Text);

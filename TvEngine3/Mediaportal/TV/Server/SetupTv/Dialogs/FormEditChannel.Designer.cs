@@ -1,4 +1,6 @@
-namespace SetupTv.Dialogs
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormEditChannel
   {
@@ -30,18 +32,18 @@ namespace SetupTv.Dialogs
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEditChannel));
-      this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonOk = new MPButton();
       this.checkBoxVisibleInTvGuide = new System.Windows.Forms.CheckBox();
       this.textBoxName = new System.Windows.Forms.TextBox();
       this.label25 = new System.Windows.Forms.Label();
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpButtonCancel = new MPButton();
+      this.mpListView1 = new MPListView();
       this.id = new System.Windows.Forms.ColumnHeader();
       this.name = new System.Windows.Forms.ColumnHeader();
       this.provider = new System.Windows.Forms.ColumnHeader();
       this.type = new System.Windows.Forms.ColumnHeader();
       this.details = new System.Windows.Forms.ColumnHeader();
-      this.tuningDetailContextMenu = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
+      this.tuningDetailContextMenu = new MPContextMenuStrip();
       this.menuButtonAdd = new System.Windows.Forms.ToolStripMenuItem();
       this.menuButtonEdit = new System.Windows.Forms.ToolStripMenuItem();
       this.menuButtonRemove = new System.Windows.Forms.ToolStripMenuItem();
@@ -263,18 +265,18 @@ namespace SetupTv.Dialogs
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonOk;
+    private MPButton mpButtonOk;
     private System.Windows.Forms.TextBox textBoxName;
     private System.Windows.Forms.Label label25;
     private System.Windows.Forms.CheckBox checkBoxVisibleInTvGuide;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MPButton mpButtonCancel;
+    private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader id;
     private System.Windows.Forms.ColumnHeader name;
     private System.Windows.Forms.ColumnHeader provider;
     private System.Windows.Forms.ColumnHeader type;
     private System.Windows.Forms.ImageList imageList1;
-    private MediaPortal.UserInterface.Controls.MPContextMenuStrip tuningDetailContextMenu;
+    private MPContextMenuStrip tuningDetailContextMenu;
     private System.Windows.Forms.ToolStripMenuItem menuButtonAdd;
     private System.Windows.Forms.ToolStripMenuItem menuButtonRemove;
     private System.Windows.Forms.ToolStripMenuItem menuButtonEdit;

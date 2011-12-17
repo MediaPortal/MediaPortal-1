@@ -21,9 +21,8 @@
 using System.Xml;
 using System.IO;
 using System;
-using SetupTv;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListB4sIO : IPlayListIO
   {

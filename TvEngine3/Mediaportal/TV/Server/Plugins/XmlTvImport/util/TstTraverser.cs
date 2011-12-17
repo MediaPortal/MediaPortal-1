@@ -20,7 +20,7 @@
 
 using System;
 
-namespace Tst
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
 {
   /// <summary>
   /// Defines a <see cref="TstDictionary"/> tree traverser object.

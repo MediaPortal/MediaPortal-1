@@ -20,17 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.Timers;
 using System.Collections;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvEngine.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 using System.Threading;
+using TvEngine.PowerScheduler.Interfaces;
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Represents a network adapter installed on the machine.
@@ -143,14 +143,14 @@ namespace TvEngine.PowerScheduler.Handlers
           if (ps == null)
             return;
 
-          TvBusinessLayer layer = new TvBusinessLayer();
+          
           PowerSetting setting;
 
           bool enabled;
 
           // Check if standby should be prevented
-          setting = ps.Settings.GetSetting("NetworkMonitorEnabled");
-          enabled = Convert.ToBoolean(layer.GetSetting("NetworkMonitorEnabled", "false").Value);
+          setting = ps.Settings.GetSetting("NetworkMonitorEnabled");          
+          enabled = Convert.ToBoolean(SettingsManagement.GetSetting("NetworkMonitorEnabled", "false").value);
 
           if (setting.Get<bool>() != enabled) // Setting changed
           {
@@ -170,7 +170,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
           if (enabled) // Get minimum transferrate considered as network activity
           {
-            idleLimit = Int32.Parse(layer.GetSetting("NetworkMonitorIdleLimit", "2").Value);
+            idleLimit = Int32.Parse(SettingsManagement.GetSetting("NetworkMonitorIdleLimit", "2").value);
             Log.Debug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
           }
 

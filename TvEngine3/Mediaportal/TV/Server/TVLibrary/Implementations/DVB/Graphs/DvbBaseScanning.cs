@@ -21,15 +21,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 {
   /// <summary>
   /// base class for scanning DVB tv/radio channels
@@ -257,14 +259,32 @@ namespace TvLibrary.Implementations.DVB
 
     #region IDisposable
 
-    /// <summary>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (_event != null)
+        {
+          _event.Close();
+        }        
+      }
+      // get rid of unmanaged resources
+  }
+
+
+     /// <summary>
     /// Disposes this instance.
-    /// </summary>
+    /// </summary>    
     public void Dispose()
     {
-      if (_analyzer == null)
-        return;
-      //_analyzer.SetPidFilterCallback(null);
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~DvbBaseScanning()
+    {
+      Dispose(false);
     }
 
     #endregion
@@ -286,7 +306,7 @@ namespace TvLibrary.Implementations.DVB
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
-          Log.Log.WriteFile("Scan: no analyzer interface available");
+          Log.WriteFile("Scan: no analyzer interface available");
           return new List<IChannel>();
         }
         ResetSignalUpdate();
@@ -295,7 +315,7 @@ namespace TvLibrary.Implementations.DVB
           Thread.Sleep(settings.TimeOutTune * 1000);
           ResetSignalUpdate();
         }
-        Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
+        Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
                           _card.SignalQuality);
         if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
@@ -336,7 +356,7 @@ namespace TvLibrary.Implementations.DVB
                                    out pmtPid, out hasVideo, out hasAudio, out hasCaDescriptor);
 
               string name = DvbTextConverter.Convert(serviceName, "");
-              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i, networkId, transportId, serviceId,
+              Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i, networkId, transportId, serviceId,
                             pmtPid, name, serviceType);
 
               found++;
@@ -369,14 +389,14 @@ namespace TvLibrary.Implementations.DVB
               }
               else
               {
-                Log.Log.Write(
+                Log.Write(
                   "Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}",
                   info.service_provider_name, info.service_name, info.serviceType, info.networkID,
                   info.transportStreamID, info.serviceID, info.network_pmt_PID, hasVideo, hasAudio);
               }
             }
 
-            Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
+            Log.Write("Scan Got {0} from {1} channels", found, channelCount);
             return channelsFound;
           }
           finally
@@ -391,7 +411,7 @@ namespace TvLibrary.Implementations.DVB
         }
         else
         {
-          Log.Log.WriteFile("Scan: no signal detected");
+          Log.WriteFile("Scan: no signal detected");
           return new List<IChannel>();
         }
       }
@@ -445,14 +465,14 @@ namespace TvLibrary.Implementations.DVB
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
-          Log.Log.WriteFile("Scan: no analyzer interface available");
+          Log.WriteFile("Scan: no analyzer interface available");
           return new List<IChannel>();
         }
         _analyzer.SetCallBack(null);
         _analyzer.ScanNIT();
         Thread.Sleep(settings.TimeOutTune * 1000);
         ResetSignalUpdate();
-        Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
+        Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
                           _card.SignalQuality);
         if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
@@ -475,7 +495,7 @@ namespace TvLibrary.Implementations.DVB
               DVBSChannel ch = new DVBSChannel();
               ch.Name = name;
               ch.Frequency = freq;
-              Log.Log.Debug("{0},{1},{2},{3}", freq, mod, pol, symbolrate);
+              Log.Debug("{0},{1},{2},{3}", freq, mod, pol, symbolrate);
               switch (mod)
               {
                 default:
@@ -519,7 +539,7 @@ namespace TvLibrary.Implementations.DVB
         }
         else
         {
-          Log.Log.WriteFile("Scan: no signal detected");
+          Log.WriteFile("Scan: no signal detected");
           return new List<IChannel>();
         }
       }
@@ -566,6 +586,20 @@ namespace TvLibrary.Implementations.DVB
     protected virtual bool IsKnownServiceType(int serviceType)
     {
       return IsRadioService(serviceType) || IsTvService(serviceType);
+    }
+
+    protected MediaTypeEnum GetMediaTypeByServiceType (int serviceType)
+    {
+      MediaTypeEnum mediaType = MediaTypeEnum.TV;
+      if (IsTvService(serviceType))
+      {
+        mediaType = MediaTypeEnum.TV;
+      }
+      else if (IsRadioService(serviceType))
+      {
+        mediaType = MediaTypeEnum.Radio;
+      }
+      return mediaType;
     }
 
     /// <summary>

@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class RadioChannels
   {
@@ -30,7 +32,7 @@ namespace SetupTv.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RadioChannels));
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpListView1 = new MPListView();
       this.hdrhekje = new System.Windows.Forms.ColumnHeader();
       this.hdrGroup = new System.Windows.Forms.ColumnHeader();
       this.hdrProvider = new System.Windows.Forms.ColumnHeader();
@@ -45,30 +47,30 @@ namespace SetupTv.Sections
       this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.renumberChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelChannelCount = new MPLabel();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabControl1 = new MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.lblFilterLabel = new System.Windows.Forms.Label();
       this.txtFilterString = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBox1 = new MPGroupBox();
       this.btnPlaylist = new System.Windows.Forms.Button();
-      this.mpButton5 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButton4 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonAdd = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonEdit = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonClear = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpButtonDeleteEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonUncheckEncrypted = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButton5 = new MPButton();
+      this.mpButton4 = new MPButton();
+      this.mpButtonAdd = new MPButton();
+      this.mpButtonEdit = new MPButton();
+      this.mpButtonDel = new MPButton();
+      this.mpButtonPreview = new MPButton();
+      this.mpButtonClear = new MPButton();
+      this.mpGroupBox3 = new MPGroupBox();
+      this.mpButtonDeleteEncrypted = new MPButton();
+      this.mpButtonUncheckEncrypted = new MPButton();
       this.mpButtonTestScrambled = new System.Windows.Forms.Button();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpButtonDelGroup = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonAddGroup = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonRenameGroup = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpGroupBox2 = new MPGroupBox();
+      this.mpButtonDelGroup = new MPButton();
+      this.mpButtonAddGroup = new MPButton();
+      this.mpButtonRenameGroup = new MPButton();
       this.groupTabContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.renameGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -312,7 +314,7 @@ namespace SetupTv.Sections
       // 
       // mpButton5
       // 
-      this.mpButton5.Image = global::SetupTv.Properties.Resources.icon_down;
+      this.mpButton5.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_down;
       this.mpButton5.Location = new System.Drawing.Point(197, 42);
       this.mpButton5.Name = "mpButton5";
       this.mpButton5.Size = new System.Drawing.Size(30, 23);
@@ -322,7 +324,7 @@ namespace SetupTv.Sections
       // 
       // mpButton4
       // 
-      this.mpButton4.Image = global::SetupTv.Properties.Resources.icon_up;
+      this.mpButton4.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_up;
       this.mpButton4.Location = new System.Drawing.Point(197, 16);
       this.mpButton4.Name = "mpButton4";
       this.mpButton4.Size = new System.Drawing.Size(30, 23);
@@ -512,12 +514,12 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader hdrTypes;
-	private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+	private MPLabel mpLabelChannelCount;
 	private System.Windows.Forms.ColumnHeader hdrhekje;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MPTabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.ContextMenuStrip channelListContextMenuStrip;
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
@@ -528,23 +530,23 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem renameSelectedChannelsBySIDToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
 	private System.Windows.Forms.ToolStripMenuItem renumberChannelsBySIDToolStripMenuItem;
-	private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+	private MPGroupBox mpGroupBox1;
 	private System.Windows.Forms.Button btnPlaylist;
-	private MediaPortal.UserInterface.Controls.MPButton mpButton5;
-	private MediaPortal.UserInterface.Controls.MPButton mpButton4;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonAdd;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonEdit;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonClear;
-	private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonDeleteEncrypted;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonUncheckEncrypted;
+	private MPButton mpButton5;
+	private MPButton mpButton4;
+	private MPButton mpButtonAdd;
+	private MPButton mpButtonEdit;
+	private MPButton mpButtonDel;
+	private MPButton mpButtonPreview;
+	private MPButton mpButtonClear;
+	private MPGroupBox mpGroupBox3;
+	private MPButton mpButtonDeleteEncrypted;
+	private MPButton mpButtonUncheckEncrypted;
 	private System.Windows.Forms.Button mpButtonTestScrambled;
-	private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonDelGroup;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonAddGroup;
-	private MediaPortal.UserInterface.Controls.MPButton mpButtonRenameGroup;
+	private MPGroupBox mpGroupBox2;
+	private MPButton mpButtonDelGroup;
+	private MPButton mpButtonAddGroup;
+	private MPButton mpButtonRenameGroup;
   private System.Windows.Forms.Label label2;
   private System.Windows.Forms.ColumnHeader hdrGroup;
   private System.Windows.Forms.ContextMenuStrip groupTabContextMenuStrip;

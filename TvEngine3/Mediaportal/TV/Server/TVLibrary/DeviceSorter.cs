@@ -21,9 +21,10 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
-using similaritymetrics;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics;
 
-namespace TvLibrary
+namespace Mediaportal.TV.Server.TVLibrary
 {
   internal class DeviceSorter
   {
@@ -123,7 +124,7 @@ namespace TvLibrary
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
         return devices;
       }
     }

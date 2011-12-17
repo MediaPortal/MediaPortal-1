@@ -18,14 +18,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
 {
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-C BDA cards
@@ -54,14 +52,13 @@ namespace TvLibrary.Implementations.DVB
       dvbcChannel.SymbolRate = tuningChannel.SymbolRate;
       dvbcChannel.ModulationType = tuningChannel.ModulationType;
       dvbcChannel.Frequency = tuningChannel.Frequency;
-      dvbcChannel.IsTv = IsTvService(info.serviceType);
-      dvbcChannel.IsRadio = IsRadioService(info.serviceType);
+      dvbcChannel.MediaType = GetMediaTypeByServiceType(info.serviceType);                  
       dvbcChannel.NetworkId = info.networkID;
       dvbcChannel.ServiceId = info.serviceID;
       dvbcChannel.TransportId = info.transportStreamID;
       dvbcChannel.PmtPid = info.network_pmt_PID;
       dvbcChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found: {0}", dvbcChannel);
+      Log.Write("Found: {0}", dvbcChannel);
       return dvbcChannel;
     }
   }

@@ -22,12 +22,13 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System;
-using TvDatabase;
-using MediaPortal.WebEPG.Parser;
-using Gentle.Framework;
-using MediaPortal.Utils.Time;
 
-namespace MediaPortal.WebEPG
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+
+using WebEPG.Parser;
+
+namespace WebEPG.Utils
 {
   /// <summary>
   ///
@@ -55,16 +56,6 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region private methods
-
-    private int GetDBChannelId(string externalId)
-    {
-      Channel dbChannel = Broker.TryRetrieveInstance<Channel>(new Key(true, "ExternalId", externalId));
-      if (dbChannel != null)
-      {
-        return dbChannel.IdChannel;
-      }
-      return 0;
-    }
 
     #endregion
 

@@ -21,9 +21,8 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
-using SetupTv;
 
-namespace SetupControls
+namespace Mediaportal.TV.Server.SetupControls
 {
   public partial class SettingsForm : MPForm
   {

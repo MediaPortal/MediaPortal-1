@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class TestChannels
   {
@@ -30,60 +32,62 @@ namespace SetupTv.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestChannels));
-      this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.lblIgnored = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtIgnored = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.lblDisc = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtDisc = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.lblFirstFail = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtFirstFail = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.lblAvgMsec = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtAvgMsec = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpListViewLog = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader12 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader13 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader14 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
-      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.lblTotal = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtTotal = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.lblFailed = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtFailed = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.lblSucceeded = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtSucceded = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabelRecording = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpButtonTimeShift = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabelChannel = new MPLabel();
+      this.mpGroupBox1 = new MPGroupBox();
+      this.btnCustom = new MPButton();
+      this.lblIgnored = new MPLabel();
+      this.txtIgnored = new MPNumericTextBox();
+      this.lblDisc = new MPLabel();
+      this.txtDisc = new MPNumericTextBox();
+      this.lblFirstFail = new MPLabel();
+      this.txtFirstFail = new MPNumericTextBox();
+      this.lblAvgMsec = new MPLabel();
+      this.txtAvgMsec = new MPNumericTextBox();
+      this.mpListViewLog = new MPListView();
+      this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.mpButton1 = new MPButton();
+      this.lblTotal = new MPLabel();
+      this.txtTotal = new MPNumericTextBox();
+      this.lblFailed = new MPLabel();
+      this.txtFailed = new MPNumericTextBox();
+      this.lblSucceeded = new MPLabel();
+      this.txtSucceded = new MPNumericTextBox();
+      this.mpLabelRecording = new MPLabel();
+      this.mpLabelTimeShift = new MPLabel();
+      this.mpButtonTimeShift = new MPButton();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtConcurrentTunes = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.lblNrOfConcurrentUsers = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblEachTuneWillLast = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.txtRndFrom = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.txtRndTo = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.chkRepeatTest = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.txtTuneDelay = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.lblTuneDelayMsec = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.chkShareChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-      this.User = new System.Windows.Forms.ColumnHeader();
-      this.cardName = new System.Windows.Forms.ColumnHeader();
-      this.subchannels = new System.Windows.Forms.ColumnHeader();
-      this.chkSynch = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabel2 = new MPLabel();
+      this.txtConcurrentTunes = new MPNumericTextBox();
+      this.lblNrOfConcurrentUsers = new MPLabel();
+      this.lblEachTuneWillLast = new MPLabel();
+      this.txtRndFrom = new MPNumericTextBox();
+      this.txtRndTo = new MPNumericTextBox();
+      this.mpLabel5 = new MPLabel();
+      this.chkRepeatTest = new MPCheckBox();
+      this.txtTuneDelay = new MPNumericTextBox();
+      this.lblTuneDelayMsec = new MPLabel();
+      this.chkShareChannels = new MPCheckBox();
+      this.mpListView1 = new MPListView();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.User = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.cardName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.subchannels = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.chkSynch = new MPCheckBox();
+      this.chkRndPrio = new MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -99,6 +103,7 @@ namespace SetupTv.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.btnCustom);
       this.mpGroupBox1.Controls.Add(this.lblIgnored);
       this.mpGroupBox1.Controls.Add(this.txtIgnored);
       this.mpGroupBox1.Controls.Add(this.lblDisc);
@@ -125,6 +130,16 @@ namespace SetupTv.Sections
       this.mpGroupBox1.TabIndex = 53;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
+      // 
+      // btnCustom
+      // 
+      this.btnCustom.Location = new System.Drawing.Point(323, 149);
+      this.btnCustom.Name = "btnCustom";
+      this.btnCustom.Size = new System.Drawing.Size(36, 23);
+      this.btnCustom.TabIndex = 80;
+      this.btnCustom.Text = "Custom";
+      this.btnCustom.UseVisualStyleBackColor = true;
+      this.btnCustom.Click += new System.EventHandler(this.btnCustom_Click);
       // 
       // lblIgnored
       // 
@@ -406,7 +421,7 @@ namespace SetupTv.Sections
       // 
       // txtConcurrentTunes
       // 
-      this.txtConcurrentTunes.Location = new System.Drawing.Point(222, 217);
+      this.txtConcurrentTunes.Location = new System.Drawing.Point(105, 217);
       this.txtConcurrentTunes.Name = "txtConcurrentTunes";
       this.txtConcurrentTunes.Size = new System.Drawing.Size(46, 20);
       this.txtConcurrentTunes.TabIndex = 63;
@@ -418,9 +433,9 @@ namespace SetupTv.Sections
       this.lblNrOfConcurrentUsers.AutoSize = true;
       this.lblNrOfConcurrentUsers.Location = new System.Drawing.Point(9, 220);
       this.lblNrOfConcurrentUsers.Name = "lblNrOfConcurrentUsers";
-      this.lblNrOfConcurrentUsers.Size = new System.Drawing.Size(207, 13);
+      this.lblNrOfConcurrentUsers.Size = new System.Drawing.Size(90, 13);
       this.lblNrOfConcurrentUsers.TabIndex = 64;
-      this.lblNrOfConcurrentUsers.Text = "Number of concurrent virtual users (tunes):";
+      this.lblNrOfConcurrentUsers.Text = "Concurrent users:";
       // 
       // lblEachTuneWillLast
       // 
@@ -573,8 +588,6 @@ namespace SetupTv.Sections
       // chkSynch
       // 
       this.chkSynch.AutoSize = true;
-      this.chkSynch.Checked = true;
-      this.chkSynch.CheckState = System.Windows.Forms.CheckState.Checked;
       this.chkSynch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkSynch.Location = new System.Drawing.Point(278, 245);
       this.chkSynch.Name = "chkSynch";
@@ -583,10 +596,25 @@ namespace SetupTv.Sections
       this.chkSynch.Text = "Sync";
       this.chkSynch.UseVisualStyleBackColor = true;
       // 
+      // chkRndPrio
+      // 
+      this.chkRndPrio.AutoSize = true;
+      this.chkRndPrio.Checked = true;
+      this.chkRndPrio.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkRndPrio.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkRndPrio.Location = new System.Drawing.Point(158, 219);
+      this.chkRndPrio.Name = "chkRndPrio";
+      this.chkRndPrio.Size = new System.Drawing.Size(110, 17);
+      this.chkRndPrio.TabIndex = 79;
+      this.chkRndPrio.Text = "Random user prio.";
+      this.chkRndPrio.UseVisualStyleBackColor = true;
+      this.chkRndPrio.CheckedChanged += new System.EventHandler(this.chkRndPrio_CheckedChanged);
+      // 
       // TestChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.chkRndPrio);
       this.Controls.Add(this.chkSynch);
       this.Controls.Add(this.mpListView1);
       this.Controls.Add(this.chkShareChannels);
@@ -614,49 +642,49 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannel;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonTimeShift;
+    private MPLabel mpLabelChannel;
+    private MPGroupBox mpGroupBox1;
+    private MPButton mpButtonTimeShift;
     private System.Windows.Forms.Timer timer1;
     private System.Windows.Forms.ImageList imageList1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelRecording;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelTimeShift;
+    private MPLabel mpLabelRecording;
+    private MPLabel mpLabelTimeShift;
     private SetupControls.ComboBoxEx comboBoxGroups;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtConcurrentTunes;
-    private MediaPortal.UserInterface.Controls.MPLabel lblNrOfConcurrentUsers;
-    private MediaPortal.UserInterface.Controls.MPLabel lblEachTuneWillLast;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtRndFrom;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtRndTo;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-    private MediaPortal.UserInterface.Controls.MPCheckBox chkRepeatTest;
-    private MediaPortal.UserInterface.Controls.MPLabel lblTotal;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtTotal;
-    private MediaPortal.UserInterface.Controls.MPLabel lblFailed;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtFailed;
-    private MediaPortal.UserInterface.Controls.MPLabel lblSucceeded;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtSucceded;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton1;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewLog;
+    private MPLabel mpLabel2;
+    private MPNumericTextBox txtConcurrentTunes;
+    private MPLabel lblNrOfConcurrentUsers;
+    private MPLabel lblEachTuneWillLast;
+    private MPNumericTextBox txtRndFrom;
+    private MPNumericTextBox txtRndTo;
+    private MPLabel mpLabel5;
+    private MPCheckBox chkRepeatTest;
+    private MPLabel lblTotal;
+    private MPNumericTextBox txtTotal;
+    private MPLabel lblFailed;
+    private MPNumericTextBox txtFailed;
+    private MPLabel lblSucceeded;
+    private MPNumericTextBox txtSucceded;
+    private MPButton mpButton1;
+    private MPListView mpListViewLog;
     private System.Windows.Forms.ColumnHeader columnHeader6;
     private System.Windows.Forms.ColumnHeader columnHeader7;
     private System.Windows.Forms.ColumnHeader columnHeader8;
     private System.Windows.Forms.ColumnHeader columnHeader9;
     private System.Windows.Forms.ColumnHeader columnHeader10;
     private System.Windows.Forms.ColumnHeader columnHeader11;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtTuneDelay;
-    private MediaPortal.UserInterface.Controls.MPLabel lblFirstFail;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtFirstFail;
-    private MediaPortal.UserInterface.Controls.MPLabel lblAvgMsec;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtAvgMsec;
+    private MPNumericTextBox txtTuneDelay;
+    private MPLabel lblFirstFail;
+    private MPNumericTextBox txtFirstFail;
+    private MPLabel lblAvgMsec;
+    private MPNumericTextBox txtAvgMsec;
     private System.Windows.Forms.ColumnHeader columnHeader12;
     private System.Windows.Forms.ColumnHeader columnHeader13;
-    private MediaPortal.UserInterface.Controls.MPLabel lblTuneDelayMsec;
-    private MediaPortal.UserInterface.Controls.MPCheckBox chkShareChannels;
+    private MPLabel lblTuneDelayMsec;
+    private MPCheckBox chkShareChannels;
     private System.Windows.Forms.ColumnHeader columnHeader14;
-    private MediaPortal.UserInterface.Controls.MPLabel lblDisc;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtDisc;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MPLabel lblDisc;
+    private MPNumericTextBox txtDisc;
+    private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader3;
@@ -665,8 +693,10 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader User;
     private System.Windows.Forms.ColumnHeader cardName;
     private System.Windows.Forms.ColumnHeader subchannels;
-    private MediaPortal.UserInterface.Controls.MPCheckBox chkSynch;
-    private MediaPortal.UserInterface.Controls.MPLabel lblIgnored;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtIgnored;
+    private MPCheckBox chkSynch;
+    private MPLabel lblIgnored;
+    private MPNumericTextBox txtIgnored;
+    private MPCheckBox chkRndPrio;
+    private MPButton btnCustom;
   }
 }

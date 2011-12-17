@@ -19,11 +19,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
-namespace TvControl
+namespace Mediaportal.TV.Server.TVControl
 {
   public delegate TResult Func<TResult>();
 

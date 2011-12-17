@@ -20,21 +20,30 @@
 
 using System;
 using System.Collections.Generic;
-using TvControl;
-using TvLibrary.Log;
-using TvDatabase;
-using TvEngine.Events;
-using TvLibrary.Interfaces;
+using System.Linq;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 {
   public class ConflictsManager : ITvServerPlugin
   {
     #region variables
 
-    private TvBusinessLayer cmLayer = new TvBusinessLayer();
-    private IList<Schedule> _schedules = Schedule.ListAll();
-    private IList<Card> _cards = Card.ListAll();
+    private IList<Schedule> _schedules = null;
+    private IList<Card> _cards = null;
 
     private IList<Program> _conflictingPrograms;
 
@@ -82,9 +91,13 @@ namespace TvEngine
     /// <summary>
     /// Starts the plugin
     /// </summary>
-    public void Start(IController controller)
+    public void Start(IInternalControllerService controllerService)
     {
       Log.WriteFile("plugin: ConflictsManager started");
+
+      _schedules = ScheduleManagement.ListAllSchedules();
+      _cards = CardManagement.ListAllCards();
+
       _conflictingPrograms = new List<Program>();
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
@@ -118,19 +131,17 @@ namespace TvEngine
           tvEvent.EventType == TvServerEventType.ScheduleDeleted)
       {
         UpdateConflicts();
-        Setting setting = cmLayer.GetSetting("CMLastUpdateTime", DateTime.Now.ToString());
-        setting.Value = DateTime.Now.ToString();
-        setting.Persist();
-        //TvController mycontrol;
+        SettingsManagement.SaveSetting("CMLastUpdateTime", DateTime.Now.ToString());        
+
       }
     }
 
     /// <summary>
     /// Plugin setup form
     /// </summary>
-    public SetupTv.SectionSettings Setup
+    public SectionSettings Setup
     {
-      get { return new SetupTv.Sections.CMSetup(); }
+      get { return new CMSetup(); }
     }
 
     /// <summary>
@@ -146,7 +157,7 @@ namespace TvEngine
       ClearConflictTable();
       ClearConflictPrograms();
       // Gets schedules from db
-      IList<Schedule> scheduleList = Schedule.ListAll();
+      IList<Schedule> scheduleList = ScheduleManagement.ListAllSchedules();
       IList<Schedule> scheduleListToParse = new List<Schedule>();
       // parses all schedules and add the calculated incoming schedules 
       getRecordOnceSchedules(scheduleList, scheduleListToParse);
@@ -160,26 +171,26 @@ namespace TvEngine
       removeCanceledSchedules(scheduleListToParse);
 
       // test section
-      bool cmDebug = cmLayer.GetSetting("CMDebugMode", "false").Value == "true"; // activate debug mode
+      bool cmDebug = SettingsManagement.GetSetting("CMDebugMode", "false").value == "true"; // activate debug mode
 
       #region debug informations
 
       /*
       if (cmDebug)
       {
-        foreach (Schedule schedule in scheduleOnceList) Log.Debug("Record Once schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleOnceList) Log.Debug("Record Once schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleDailyList) Log.Debug("Daily schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleDailyList) Log.Debug("Daily schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeeklyList) Log.Debug("Weekly schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleWeeklyList) Log.Debug("Weekly schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeekendsList) Log.Debug("Weekend schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleWeekendsList) Log.Debug("Weekend schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWorkingDaysList) Log.Debug("Working days schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleWorkingDaysList) Log.Debug("Working days schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.Debug("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.Debug("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
         Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.programName, schedule.startTime, schedule.endTime);
         Log.Debug("------------------------------------------------");
        * 
       }*/
@@ -205,8 +216,8 @@ namespace TvEngine
     {
       foreach (Program prg in _conflictingPrograms)
       {
-        prg.HasConflict = false;
-        prg.Persist();
+        var bll = new ProgramBLL(prg) {HasConflict = false};
+        ProgramManagement.SaveProgram(bll.Entity);        
       }
       _conflictingPrograms.Clear();
     }
@@ -217,8 +228,11 @@ namespace TvEngine
     private static void ClearConflictTable()
     {
       // clears all conflicts in db
-      IList<Conflict> conflictList = Conflict.ListAll();
-      foreach (Conflict aconflict in conflictList) aconflict.Remove();
+      IList<Conflict> conflictList = ConflictManagement.ListAllConflicts();
+      foreach (Conflict aconflict in conflictList)
+      {
+        ConflictManagement.DeleteConflict(aconflict.idConflict);        
+      }
     }
 
     private void Init() {}
@@ -236,18 +250,18 @@ namespace TvEngine
       // sch_2    s--------------------------------e
       // sch_2  ------------------e
       if (
-        ((schedule2.StartTime.AddMinutes(-schedule2.PreRecordInterval) >=
-          schedule1.StartTime.AddMinutes(-schedule1.PreRecordInterval)) &&
-         (schedule2.StartTime.AddMinutes(-schedule2.PreRecordInterval) <
-          schedule1.EndTime.AddMinutes(schedule1.PostRecordInterval))) ||
-        ((schedule2.StartTime.AddMinutes(-schedule2.PreRecordInterval) <=
-          schedule1.StartTime.AddMinutes(-schedule1.PreRecordInterval)) &&
-         (schedule2.EndTime.AddMinutes(schedule2.PostRecordInterval) >=
-          schedule1.EndTime.AddMinutes(schedule1.PostRecordInterval))) ||
-        ((schedule2.EndTime.AddMinutes(schedule2.PostRecordInterval) >
-          schedule1.StartTime.AddMinutes(-schedule1.PreRecordInterval)) &&
-         (schedule2.EndTime.AddMinutes(schedule2.PostRecordInterval) <=
-          schedule1.EndTime.AddMinutes(schedule1.PostRecordInterval)))
+        ((schedule2.startTime.AddMinutes(-schedule2.preRecordInterval) >=
+          schedule1.startTime.AddMinutes(-schedule1.preRecordInterval)) &&
+         (schedule2.startTime.AddMinutes(-schedule2.preRecordInterval) <
+          schedule1.endTime.AddMinutes(schedule1.postRecordInterval))) ||
+        ((schedule2.startTime.AddMinutes(-schedule2.preRecordInterval) <=
+          schedule1.startTime.AddMinutes(-schedule1.preRecordInterval)) &&
+         (schedule2.endTime.AddMinutes(schedule2.postRecordInterval) >=
+          schedule1.endTime.AddMinutes(schedule1.postRecordInterval))) ||
+        ((schedule2.endTime.AddMinutes(schedule2.postRecordInterval) >
+          schedule1.startTime.AddMinutes(-schedule1.preRecordInterval)) &&
+         (schedule2.endTime.AddMinutes(schedule2.postRecordInterval) <=
+          schedule1.endTime.AddMinutes(schedule1.postRecordInterval)))
         ) return true;
       return false;
     }
@@ -257,7 +271,7 @@ namespace TvEngine
     /// <returns>Array of List<Schedule> : one per card, index [0] contains unassigned schedules</returns>
     private List<Schedule>[] AssignSchedulesToCards(IList<Schedule> Schedules)
     {
-      IList<Card> cardsList = cmLayer.Cards;
+      IList<Card> cardsList = CardManagement.ListAllCards();
       // creates an array of Schedule Lists
       // element [0] will be filled with conflicting schedules
       // element [x] will be filled with the schedules assigned to card with idcard=x
@@ -271,7 +285,7 @@ namespace TvEngine
       int n = 1;
       foreach (Card _card in _cards)
       {
-        cardno.Add(_card.IdCard, n);
+        cardno.Add(_card.idCard, n);
         n++;
       }
       //
@@ -284,33 +298,29 @@ namespace TvEngine
 
         foreach (Card card in cardsList)
         {
-          if (card.canViewTvChannel(schedule.IdChannel))
+          if (CardManagement.CanViewTvChannel(card, schedule.id_Schedule))
           {
             // checks if any schedule assigned to this cards overlaps current parsed schedule
             bool free = true;
-            foreach (Schedule assignedShedule in cardSchedules[cardno[card.IdCard]])
+            foreach (Schedule assignedShedule in cardSchedules[cardno[card.idCard]])
             {
-              if (schedule.IsOverlapping(assignedShedule))
-              {
-                if (!(schedule.isSameTransponder(assignedShedule) && card.supportSubChannels))
+              ScheduleBLL bll = new ScheduleBLL(schedule);
+              if (bll.IsOverlapping(assignedShedule))
+              {                                                
+                if (!(bll.IsSameTransponder(assignedShedule)))
                 {
                   free = false;
                   //_overlap = true;
                   lastOverlappingSchedule = assignedShedule;
-                  lastBusyCard = card.IdCard;
+                  lastBusyCard = card.idCard;
                   break;
                 }
               }
             }
             if (free)
             {
-              cardSchedules[cardno[card.IdCard]].Add(schedule);
+              cardSchedules[cardno[card.idCard]].Add(schedule);
               assigned = true;
-              if (overlap)
-              {
-                schedule.RecommendedCard = card.IdCard;
-                schedule.Persist();
-              }
               break;
             }
           }
@@ -318,18 +328,23 @@ namespace TvEngine
         if (!assigned)
         {
           cardSchedules[0].Add(schedule);
-          Conflict newConflict =
-            new Conflict(schedule.IdSchedule, lastOverlappingSchedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
-          newConflict.IdCard = lastBusyCard;
-          newConflict.Persist();
+          var newConflict = new Conflict
+                              {
+                                idSchedule = schedule.id_Schedule,
+                                idConflictingSchedule = lastOverlappingSchedule.id_Schedule,
+                                idChannel = schedule.idChannel,
+                                conflictDate = schedule.startTime,
+                                idCard = lastBusyCard
+                              };
 
-          Program prg = Program.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
-                                                               schedule.EndTime, schedule.IdChannel);
+          ConflictManagement.SaveConflict(newConflict);          
+          Program prg = ProgramManagement.RetrieveByTitleTimesAndChannel(schedule.programName, schedule.startTime,
+                                                               schedule.endTime, schedule.idChannel);
 
           if (prg != null)
           {
-            prg.HasConflict = true;
-            prg.Persist();
+            var bll = new ProgramBLL(prg) {HasConflict = true};
+            ProgramManagement.SaveProgram(bll.Entity);
             _conflictingPrograms.Add(prg);
           }
         }
@@ -347,12 +362,7 @@ namespace TvEngine
     /// <returns>int: number of cards</returns>
     private int howManyCardsCanView(Schedule _shedule)
     {
-      int _counter = 0;
-      foreach (Card _card in _cards)
-      {
-        if (_card.canViewTvChannel(_shedule.IdChannel)) _counter++;
-      }
-      return _counter;
+      return _cards.Count(_card => CardManagement.CanViewTvChannel(_card, _shedule.idChannel));
     }
 
     /// <summary>
@@ -399,9 +409,9 @@ namespace TvEngine
     private void getRecordOnceSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
       foreach (Schedule schedule in schedulesList)
-      {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+      {                
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Once) continue;
         refFillList.Add(schedule);
       }
@@ -418,31 +428,31 @@ namespace TvEngine
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Daily) continue;
         // create a temporay base schedule with today's date
         // (will be used to calculate incoming schedules)
         // and adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-        Schedule baseSchedule = schedule.Clone();
-        if (baseSchedule.StartTime.Day != baseSchedule.EndTime.Day)
+        Schedule baseSchedule = ScheduleFactory.Clone(schedule);
+        if (baseSchedule.startTime.Day != baseSchedule.endTime.Day)
         {
-          baseSchedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                                baseSchedule.StartTime.Hour, baseSchedule.StartTime.Minute,
-                                                baseSchedule.StartTime.Second);
-          baseSchedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                              baseSchedule.EndTime.Hour, baseSchedule.EndTime.Minute,
-                                              baseSchedule.EndTime.Second);
-          baseSchedule.EndTime = baseSchedule.EndTime.AddDays(1);
+          baseSchedule.startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                                baseSchedule.startTime.Hour, baseSchedule.startTime.Minute,
+                                                baseSchedule.startTime.Second);
+          baseSchedule.endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                              baseSchedule.endTime.Hour, baseSchedule.endTime.Minute,
+                                              baseSchedule.endTime.Second);
+          baseSchedule.endTime = baseSchedule.endTime.AddDays(1);
         }
         else
         {
-          baseSchedule.StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                                baseSchedule.StartTime.Hour, baseSchedule.StartTime.Minute,
-                                                baseSchedule.StartTime.Second);
-          baseSchedule.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                                              baseSchedule.EndTime.Hour, baseSchedule.EndTime.Minute,
-                                              baseSchedule.EndTime.Second);
+          baseSchedule.startTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                                baseSchedule.startTime.Hour, baseSchedule.startTime.Minute,
+                                                baseSchedule.startTime.Second);
+          baseSchedule.endTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                                              baseSchedule.endTime.Hour, baseSchedule.endTime.Minute,
+                                              baseSchedule.endTime.Second);
         }
 
         // generate the daily schedules for the next 30 days
@@ -450,13 +460,13 @@ namespace TvEngine
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if (tempDate.Date >= schedule.StartTime.Date)
+          if (tempDate.Date >= schedule.startTime.Date)
           {
-            Schedule incomingSchedule = baseSchedule.Clone();
-            incomingSchedule.StartTime = incomingSchedule.StartTime.AddDays(i);
-            incomingSchedule.EndTime = incomingSchedule.EndTime.AddDays(i);
+            Schedule incomingSchedule = ScheduleFactory.Clone(baseSchedule);
+            incomingSchedule.startTime = incomingSchedule.startTime.AddDays(i);
+            incomingSchedule.endTime = incomingSchedule.endTime.AddDays(i);
             refFillList.Add(incomingSchedule);
-          } //if (_tempDate>=_Schedule.StartTime)
+          } //if (_tempDate>=_Schedule.startTime)
         } //for (int i = 0; i <= 30; i++)
       }
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
@@ -472,43 +482,43 @@ namespace TvEngine
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Weekly) continue;
         DateTime tempDate;
         //  generate the weekly schedules for the next 30 days
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if ((tempDate.DayOfWeek == schedule.StartTime.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
+          if ((tempDate.DayOfWeek == schedule.startTime.DayOfWeek) && (tempDate.Date >= schedule.startTime.Date))
           {
-            Schedule tempSchedule = schedule.Clone();
+            Schedule tempSchedule = ScheduleFactory.Clone(schedule);
 
             #region Set Schedule Time & Date
 
             // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
+            if (tempSchedule.startTime.Day != tempSchedule.endTime.Day)
             {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
-                                                    tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
-                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
+              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
+                                                    tempSchedule.startTime.Second);
+              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
+                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
+              tempSchedule.endTime = tempSchedule.endTime.AddDays(1);
             }
             else
             {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
-                                                    tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
-                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
+              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
+                                                    tempSchedule.startTime.Second);
+              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
+                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
             }
 
             #endregion
 
             refFillList.Add(tempSchedule);
-          } //if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
+          } //if (_tempDate.DayOfWeek == _Schedule.startTime.DayOfWeek && _tempDate >= _Schedule.startTime)
         } //for (int i = 0; i < 30; i++)
       } //foreach (Schedule _Schedule in schedulesList)
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
@@ -524,43 +534,43 @@ namespace TvEngine
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.Weekends) continue;
         DateTime tempDate;
         //  generate the weekly schedules for the next 30 days
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if (WeekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
+          if (WeekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.startTime.Date))
           {
-            Schedule tempSchedule = schedule.Clone();
+            Schedule tempSchedule = ScheduleFactory.Clone(schedule);
 
             #region Set Schedule Time & Date
 
             // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
+            if (tempSchedule.startTime.Day != tempSchedule.endTime.Day)
             {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
-                                                    tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
-                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
+              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
+                                                    tempSchedule.startTime.Second);
+              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
+                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
+              tempSchedule.endTime = tempSchedule.endTime.AddDays(1);
             }
             else
             {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
-                                                    tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
-                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
+              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
+                                                    tempSchedule.startTime.Second);
+              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
+                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
             }
 
             #endregion
 
             refFillList.Add(tempSchedule);
-          } //if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
+          } //if (_tempDate.DayOfWeek == _Schedule.startTime.DayOfWeek && _tempDate >= _Schedule.startTime)
         } //for (int i = 0; i < 30; i++)
       } //foreach (Schedule _Schedule in schedulesList)
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
@@ -576,43 +586,43 @@ namespace TvEngine
     {
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.WorkingDays) continue;
         DateTime tempDate;
         //  generate the weekly schedules for the next 30 days
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if ((WeekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.StartTime.Date))
+          if ((WeekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.startTime.Date))
           {
-            Schedule tempSchedule = schedule.Clone();
+            Schedule tempSchedule = ScheduleFactory.Clone(schedule);
 
             #region Set Schedule Time & Date
 
             // adjusts Endtime for schedules that overlap 2 days (eg : 23:00 - 00:30)
-            if (tempSchedule.StartTime.Day != tempSchedule.EndTime.Day)
+            if (tempSchedule.startTime.Day != tempSchedule.endTime.Day)
             {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
-                                                    tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
-                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
-              tempSchedule.EndTime = tempSchedule.EndTime.AddDays(1);
+              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
+                                                    tempSchedule.startTime.Second);
+              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
+                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
+              tempSchedule.endTime = tempSchedule.endTime.AddDays(1);
             }
             else
             {
-              tempSchedule.StartTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
-                                                    tempSchedule.StartTime.Hour, tempSchedule.StartTime.Minute,
-                                                    tempSchedule.StartTime.Second);
-              tempSchedule.EndTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.EndTime.Hour,
-                                                  tempSchedule.EndTime.Minute, tempSchedule.EndTime.Second);
+              tempSchedule.startTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day,
+                                                    tempSchedule.startTime.Hour, tempSchedule.startTime.Minute,
+                                                    tempSchedule.startTime.Second);
+              tempSchedule.endTime = new DateTime(tempDate.Year, tempDate.Month, tempDate.Day, tempSchedule.endTime.Hour,
+                                                  tempSchedule.endTime.Minute, tempSchedule.endTime.Second);
             }
 
             #endregion
 
             refFillList.Add(tempSchedule);
-          } //if (_tempDate.DayOfWeek == _Schedule.StartTime.DayOfWeek && _tempDate >= _Schedule.StartTime)
+          } //if (_tempDate.DayOfWeek == _Schedule.startTime.DayOfWeek && _tempDate >= _Schedule.startTime)
         } //for (int i = 0; i < 30; i++)
       } //foreach (Schedule _Schedule in schedulesList)
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
@@ -629,23 +639,23 @@ namespace TvEngine
       //IList programsList = Program.ListAll();
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnEveryChannel) continue;
-        IList<Program> programsList = Program.RetrieveByTitleAndTimesInterval(schedule.ProgramName, schedule.StartTime,
-                                                                              schedule.StartTime.AddMonths(1));
+        IList<Program> programsList = ProgramManagement.RetrieveByTitleAndTimesInterval(schedule.programName, schedule.startTime,
+                                                                              schedule.startTime.AddMonths(1));
         foreach (Program program in programsList)
         {
-          if ((program.Title == schedule.ProgramName) && (program.IdChannel == schedule.IdChannel) &&
-              (program.EndTime >= DateTime.Now))
+          if ((program.title == schedule.programName) && (program.idChannel == schedule.idChannel) &&
+              (program.endTime >= DateTime.Now))
           {
-            Schedule incomingSchedule = schedule.Clone();
-            incomingSchedule.IdChannel = program.IdChannel;
-            incomingSchedule.ProgramName = program.Title;
-            incomingSchedule.StartTime = program.StartTime;
-            incomingSchedule.EndTime = program.EndTime;
-            incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
-            incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
+            Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
+            incomingSchedule.idChannel = program.idChannel;
+            incomingSchedule.programName = program.title;
+            incomingSchedule.startTime = program.startTime;
+            incomingSchedule.endTime = program.endTime;
+            incomingSchedule.preRecordInterval = schedule.preRecordInterval;
+            incomingSchedule.postRecordInterval = schedule.postRecordInterval;
             refFillList.Add(incomingSchedule);
           }
         } //foreach (Program _program in _programsList)
@@ -660,32 +670,33 @@ namespace TvEngine
     /// <returns></returns>
     private void getEveryTimeOnThisChannelSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.EveryTimeOnThisChannel) continue;
-        Channel channel = Channel.Retrieve(schedule.IdChannel);
-        IList<Program> programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddMonths(1),
-                                                                  schedule.ProgramName, channel);
+        Channel channel = ChannelManagement.GetChannel(schedule.idChannel);
+
+        IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.idChannel,
+                                                                        schedule.programName, DateTime.Now,
+                                                                        DateTime.Now.AddMonths(1));          
         if (programsList != null)
         {
           foreach (Program program in programsList)
           {
-            Schedule incomingSchedule = schedule.Clone();
-            incomingSchedule.IdChannel = program.IdChannel;
-            incomingSchedule.ProgramName = program.Title;
-            incomingSchedule.StartTime = program.StartTime;
-            incomingSchedule.EndTime = program.EndTime;
+            Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
+            incomingSchedule.idChannel = program.idChannel;
+            incomingSchedule.programName = program.title;
+            incomingSchedule.startTime = program.startTime;
+            incomingSchedule.endTime = program.endTime;
 
-            incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
-            incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
+            incomingSchedule.preRecordInterval = schedule.preRecordInterval;
+            incomingSchedule.postRecordInterval = schedule.postRecordInterval;
             refFillList.Add(incomingSchedule);
           }
         } //foreach (Program _program in _programsList)
       } //foreach (Schedule _Schedule in schedulesList)
-      layer = null;
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
 
@@ -696,35 +707,37 @@ namespace TvEngine
     /// <returns></returns>
     private void getWeeklyEveryTimeOnThisChannelSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
       foreach (Schedule schedule in schedulesList)
       {
-        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
-        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.scheduleType;
+        if (schedule.canceled != Schedule.MinSchedule) continue;
         if (scheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel) continue;
-        Channel channel = Channel.Retrieve(schedule.IdChannel);
-        IList<Program> programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddMonths(1),
-                                                                  schedule.ProgramName, channel);
+        Channel channel = ChannelManagement.GetChannel(schedule.idChannel);
+
+        IList<Program> programsList = ProgramManagement.GetProgramsByChannelAndTitleAndStartEndTimes(channel.idChannel,
+                                                                        schedule.programName, DateTime.Now,
+                                                                        DateTime.Now.AddMonths(1));          
+       
         if (programsList != null)
         {
           foreach (Program program in programsList)
           {
-            if (program.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek)
+            if (program.startTime.DayOfWeek == schedule.startTime.DayOfWeek)
             {
-              Schedule incomingSchedule = schedule.Clone();
-              incomingSchedule.IdChannel = program.IdChannel;
-              incomingSchedule.ProgramName = program.Title;
-              incomingSchedule.StartTime = program.StartTime;
-              incomingSchedule.EndTime = program.EndTime;
+              Schedule incomingSchedule = ScheduleFactory.Clone(schedule);
+              incomingSchedule.idChannel = program.idChannel;
+              incomingSchedule.programName = program.title;
+              incomingSchedule.startTime = program.startTime;
+              incomingSchedule.endTime = program.endTime;
 
-              incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
-              incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
+              incomingSchedule.preRecordInterval = schedule.preRecordInterval;
+              incomingSchedule.postRecordInterval = schedule.postRecordInterval;
               refFillList.Add(incomingSchedule);
             }
           }
         } //foreach (Program _program in _programsList)
       } //foreach (Schedule _Schedule in schedulesList)
-      layer = null;
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
 
@@ -735,12 +748,12 @@ namespace TvEngine
     /// <returns></returns>
     private void removeCanceledSchedules(IList<Schedule> refFillList)
     {
-      IList<CanceledSchedule> canceledList = CanceledSchedule.ListAll();
+      IList<CanceledSchedule> canceledList = CanceledScheduleManagement.ListAllCanceledSchedules();
       foreach (CanceledSchedule canceled in canceledList)
       {
         foreach (Schedule sched in refFillList)
         {
-          if ((canceled.IdSchedule == sched.IdSchedule) && (canceled.CancelDateTime == sched.StartTime))
+          if ((canceled.idSchedule == sched.id_Schedule) && (canceled.cancelDateTime == sched.startTime))
           {
             refFillList.Remove(sched);
             break;

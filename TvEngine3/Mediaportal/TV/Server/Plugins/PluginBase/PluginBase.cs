@@ -18,10 +18,32 @@
 
 #endregion
 
-using TvControl;
+using System;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.Base
 {
+
+  /// <summary>
+  /// Interface for plugins that implement the AddService method.
+  /// </summary>
+  public interface ITvServerPluginCommunciation
+  {
+    /// <summary>
+    /// Supply a service class implementation for client-server plugin communication
+    /// </summary>
+    object GetServiceInstance { get; }
+
+    /// <summary>
+    /// Supply a service class interface for client-server plugin communication
+    /// </summary>
+    Type GetServiceInterfaceForContractType { get; }
+  }
+
   /// <summary>
   /// Interface for plugins that implement the StartedAll method.
   /// </summary>
@@ -55,12 +77,6 @@ namespace TvEngine
     /// </summary>
     string Author { get; }
 
-    /// <summary>
-    /// returns if the plugin should only run on the master server
-    /// or also on slave servers
-    /// </summary>
-    bool MasterOnly { get; }
-
     #endregion
 
     #region  methods
@@ -68,7 +84,7 @@ namespace TvEngine
     /// <summary>
     /// Starts the plugin
     /// </summary>
-    void Start(IController controller);
+    void Start(IInternalControllerService controllerService);
 
     /// <summary>
     /// Stops the plugin
@@ -78,7 +94,7 @@ namespace TvEngine
     /// <summary>
     /// returns the setup sections for display in SetupTv
     /// </summary>
-    SetupTv.SectionSettings Setup { get; }
+    SectionSettings Setup { get; }
 
     #endregion
   }

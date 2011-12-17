@@ -20,7 +20,7 @@
 
 using System.IO;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Class provides HTML caching
@@ -156,9 +156,10 @@ namespace MediaPortal.Utils.Web
     {
       if (File.Exists(file))
       {
-        TextReader CacheFile = new StreamReader(file);
-        _strPageSource = CacheFile.ReadToEnd();
-        CacheFile.Close();
+        using (var cacheFile = new StreamReader(file)) 
+        {
+          _strPageSource = cacheFile.ReadToEnd();
+        }
 
         return true;
       }
@@ -178,9 +179,10 @@ namespace MediaPortal.Utils.Web
         File.Delete(file);
       }
 
-      TextWriter CacheFile = new StreamWriter(file);
-      CacheFile.Write(source);
-      CacheFile.Close();
+      using (TextWriter cacheFile = new StreamWriter(file)) 
+      {
+        cacheFile.Write(source);
+      }
     }
 
     /// <summary>

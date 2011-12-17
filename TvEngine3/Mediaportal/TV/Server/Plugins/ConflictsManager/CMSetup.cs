@@ -19,17 +19,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using TvDatabase;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.ConflictsManager
 {
-  public partial class CMSetup : SetupTv.SectionSettings
+  public partial class CMSetup : SectionSettings
   {
     #region constructors
 
@@ -48,20 +45,14 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      analyzeMode.SelectedIndex = Convert.ToInt32(layer.GetSetting("CMAnalyzeMode", "0").Value);
-      debug.Checked = layer.GetSetting("CMDebugMode", "false").Value == "true";
+      
+      analyzeMode.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMAnalyzeMode", "0").value);
+      debug.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("CMDebugMode", "false").value == "true";
     }
 
     public override void OnSectionDeActivated()
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("CMDebugMode", "false");
-      if (debug.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
+    {            
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("CMDebugMode", debug.Checked ? "true" : "false");
       base.OnSectionDeActivated();
     }
 

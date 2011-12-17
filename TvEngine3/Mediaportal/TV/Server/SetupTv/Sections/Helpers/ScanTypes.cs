@@ -18,12 +18,10 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
   /// <summary>
   /// Type of scan action

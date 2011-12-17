@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class TvEpgGrabber
   {
@@ -37,17 +39,17 @@ namespace SetupTv.Sections
       this.linkLabelTVAll = new System.Windows.Forms.LinkLabel();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.linkLabelTVAllGrouped = new System.Windows.Forms.LinkLabel();
-      this.mpCheckBoxStoreOnlySelected = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpCheckBoxStoreOnlySelected = new MPCheckBox();
+      this.mpLabel2 = new MPLabel();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.mpListView2 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpListView2 = new MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpLabel1 = new MPLabel();
+      this.mpListView1 = new MPListView();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelChannelCount = new MPLabel();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -292,17 +294,17 @@ namespace SetupTv.Sections
     private System.Windows.Forms.LinkLabel linkLabelTVAll;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.LinkLabel linkLabelTVAllGrouped;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBoxStoreOnlySelected;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MPCheckBox mpCheckBoxStoreOnlySelected;
+    private MPLabel mpLabel2;
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.ColumnHeader columnHeader3;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView2;
+    private MPListView mpListView2;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader4;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MPLabel mpLabel1;
+    private MPListView mpListView1;
     private System.Windows.Forms.TabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+    private MPLabel mpLabelChannelCount;
     private System.Windows.Forms.TabControl tabControl1;
   }
 }

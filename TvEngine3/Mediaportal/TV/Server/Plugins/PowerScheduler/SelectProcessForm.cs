@@ -19,15 +19,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   public partial class SelectProcessForm : Form
   {

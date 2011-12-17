@@ -23,7 +23,9 @@
 
 #endregion
 
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.Plugins.TvMovie
 {
   partial class TvMovieSetup
   {
@@ -55,10 +57,10 @@ namespace SetupTv.Sections
     {
       this.components = new System.ComponentModel.Container();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.tabControlTvMovie = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabControlTvMovie = new MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.linkLabelInfo = new System.Windows.Forms.LinkLabel();
-      this.groupBoxEnableTvMovie = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxEnableTvMovie = new MPGroupBox();
       this.groupBoxInstallMethod = new System.Windows.Forms.GroupBox();
       this.buttonBrowse = new System.Windows.Forms.Button();
       this.lbDbPath = new System.Windows.Forms.Label();
@@ -68,38 +70,38 @@ namespace SetupTv.Sections
       this.groupBoxImportTime = new System.Windows.Forms.GroupBox();
       this.progressBarImportTotal = new System.Windows.Forms.ProgressBar();
       this.buttonImportNow = new System.Windows.Forms.Button();
-      this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxSlowImport = new MPCheckBox();
       this.radioButton7d = new System.Windows.Forms.RadioButton();
       this.radioButton2d = new System.Windows.Forms.RadioButton();
       this.radioButton24h = new System.Windows.Forms.RadioButton();
       this.radioButton12h = new System.Windows.Forms.RadioButton();
       this.radioButton6h = new System.Windows.Forms.RadioButton();
-      this.checkBoxEnableImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableImport = new MPCheckBox();
       this.tabPageImportOptions = new System.Windows.Forms.TabPage();
-      this.groupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxLimitActors = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxShowRatings = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxAdditionalInfo = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxMapping = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxDescriptions = new MPGroupBox();
+      this.checkBoxLimitActors = new MPCheckBox();
+      this.checkBoxShowRatings = new MPCheckBox();
+      this.checkBoxAdditionalInfo = new MPCheckBox();
+      this.checkBoxShowAudioFormat = new MPCheckBox();
+      this.checkBoxUseShortDesc = new MPCheckBox();
+      this.tabPageMapChannels = new MPTabPage();
+      this.labelNote = new MPLabel();
+      this.groupBoxMapping = new MPGroupBox();
       this.panelTimeSpan = new System.Windows.Forms.Panel();
       this.maskedTextBoxTimeStart = new System.Windows.Forms.MaskedTextBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MPLabel();
       this.maskedTextBoxTimeEnd = new System.Windows.Forms.MaskedTextBox();
       this.treeViewMpChannels = new System.Windows.Forms.TreeView();
       this.treeViewTvMStations = new System.Windows.Forms.TreeView();
       this.imageListTvmStations = new System.Windows.Forms.ImageList(this.components);
-      this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.listView1 = new MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.listView2 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.listView2 = new MPListView();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.fileDialogDb = new System.Windows.Forms.OpenFileDialog();
       this.numericUpDownActorCount = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxShowLive = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxShowRepeat = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxShowLive = new MPCheckBox();
+      this.checkBoxShowRepeat = new MPCheckBox();
       this.tabControlTvMovie.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
       this.groupBoxEnableTvMovie.SuspendLayout();
@@ -718,41 +720,41 @@ namespace SetupTv.Sections
     #endregion
 
     private System.Windows.Forms.OpenFileDialog openFileDialog;
-    private MediaPortal.UserInterface.Controls.MPTabControl tabControlTvMovie;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPageMapChannels;
-    private MediaPortal.UserInterface.Controls.MPLabel labelNote;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMapping;
+    private MPTabControl tabControlTvMovie;
+    private MPTabPage tabPageMapChannels;
+    private MPLabel labelNote;
+    private MPGroupBox groupBoxMapping;
     private System.Windows.Forms.Panel panelTimeSpan;
     private System.Windows.Forms.MaskedTextBox maskedTextBoxTimeStart;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MPLabel label1;
     private System.Windows.Forms.MaskedTextBox maskedTextBoxTimeEnd;
     private System.Windows.Forms.TreeView treeViewMpChannels;
     private System.Windows.Forms.TreeView treeViewTvMStations;
-    private MediaPortal.UserInterface.Controls.MPListView listView1;
+    private MPListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
-    private MediaPortal.UserInterface.Controls.MPListView listView2;
+    private MPListView listView2;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.TabPage tabPageSettings;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableImport;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxEnableTvMovie;
+    private MPCheckBox checkBoxEnableImport;
+    private MPGroupBox groupBoxEnableTvMovie;
     private System.Windows.Forms.GroupBox groupBoxImportTime;
     private System.Windows.Forms.RadioButton radioButton24h;
     private System.Windows.Forms.RadioButton radioButton12h;
     private System.Windows.Forms.RadioButton radioButton6h;
     private System.Windows.Forms.RadioButton radioButton7d;
     private System.Windows.Forms.RadioButton radioButton2d;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
+    private MPCheckBox checkBoxSlowImport;
     private System.Windows.Forms.LinkLabel linkLabelInfo;
     private System.Windows.Forms.ImageList imageListTvmStations;
     private System.Windows.Forms.ProgressBar progressBarImportTotal;
     private System.Windows.Forms.Button buttonImportNow;
     private System.Windows.Forms.TabPage tabPageImportOptions;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxDescriptions;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxLimitActors;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowRatings;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdditionalInfo;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
+    private MPGroupBox groupBoxDescriptions;
+    private MPCheckBox checkBoxLimitActors;
+    private MPCheckBox checkBoxShowRatings;
+    private MPCheckBox checkBoxAdditionalInfo;
+    private MPCheckBox checkBoxShowAudioFormat;
+    private MPCheckBox checkBoxUseShortDesc;
     private System.Windows.Forms.GroupBox groupBoxInstallMethod;
     private System.Windows.Forms.RadioButton rbManual;
     private System.Windows.Forms.RadioButton rbLocal;
@@ -760,8 +762,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label lbDbPath;
     private System.Windows.Forms.Button buttonBrowse;
     private System.Windows.Forms.OpenFileDialog fileDialogDb;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowRepeat;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowLive;
+    private MPCheckBox checkBoxShowRepeat;
+    private MPCheckBox checkBoxShowLive;
     private System.Windows.Forms.NumericUpDown numericUpDownActorCount;
   }
 }

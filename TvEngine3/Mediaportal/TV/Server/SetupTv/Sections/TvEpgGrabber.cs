@@ -21,14 +21,19 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvControl;
-using Gentle.Framework;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
-using MediaPortal.UserInterface.Controls;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvEpgGrabber : SectionSettings
   {
@@ -54,12 +59,11 @@ namespace SetupTv.Sections
       try
       {
         mpListView2.Items.Clear();
-        TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
+        Languages languages = new Languages();
         List<String> codes = languages.GetLanguageCodes();
         List<String> list = languages.GetLanguages();
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("epgLanguages");
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgLanguages");
 
         string values = "";
         for (int j = 0; j < list.Count; j++)
@@ -67,14 +71,14 @@ namespace SetupTv.Sections
           ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
           mpListView2.Items.Add(item);
           item.Tag = codes[j];
-          if (setting.Value == "")
+          if (setting.value == "")
           {
             values += item.Tag;
             values += ",";
           }
           else
           {
-            if (setting.Value.IndexOf((string)item.Tag) >= 0)
+            if (setting.value.IndexOf((string)item.Tag) >= 0)
             {
               item.Checked = true;
             }
@@ -82,10 +86,10 @@ namespace SetupTv.Sections
         }
         mpListView2.Sort();
 
-        if (setting.Value == "")
+        if (setting.value == "")
         {
-          setting.Value = values;
-          setting.Persist();
+          setting.value = values;
+          ServiceAgents.Instance.SettingServiceAgent.SaveSetting(setting.tag, setting.value);
           //DatabaseManager.Instance.SaveChanges();
         }
       }
@@ -97,10 +101,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgStoreOnlySelected");
-      setting.Value = mpCheckBoxStoreOnlySelected.Checked ? "yes" : "no";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("epgStoreOnlySelected", mpCheckBoxStoreOnlySelected.Checked ? "yes" : "no");
       base.OnSectionDeActivated();
       SaveSettings();
     }
@@ -111,22 +112,19 @@ namespace SetupTv.Sections
       try
       {
         LoadLanguages();
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("epgStoreOnlySelected");
-        mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgStoreOnlySelected");
+        mpCheckBoxStoreOnlySelected.Checked = (setting.value == "yes");
         Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
-        IList<Card> dbsCards = Card.ListAll();
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
         foreach (Card card in dbsCards)
         {
-          cards[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
+          cards[card.devicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
         }
         base.OnSectionActivated();
-        mpListView1.Items.Clear();
+        mpListView1.Items.Clear();        
 
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-        sb.AddOrderByField(true, "sortOrder");
-        SqlStatement stmt = sb.GetStatement(true);
-        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+
 
         foreach (Channel ch in channels)
         {
@@ -137,20 +135,22 @@ namespace SetupTv.Sections
           bool atsc = false;
           bool dvbip = false;
           bool hasFta = false;
-          bool hasScrambled = false;         
-          if (ch.IsTv == false)
+          bool hasScrambled = false;
+          if (ch.mediaType != (decimal) MediaTypeEnum.TV)
             continue;
           if (ch.IsWebstream())
+          {
             continue;
+          }
 
-          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
           {
-            if (detail.FreeToAir)
+            if (detail.freeToAir)
             {
               hasFta = true;
             }
-            if (!detail.FreeToAir)
+            if (!detail.freeToAir)
             {
               hasScrambled = true;
             }
@@ -170,12 +170,12 @@ namespace SetupTv.Sections
             imageIndex = 3;
           }
 
-          ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
-          foreach (ChannelMap map in ch.ReferringChannelMap())
+          ListViewItem item = mpListView1.Items.Add(ch.displayName, imageIndex);
+          foreach (ChannelMap map in ch.ChannelMaps)
           {
-            if (cards.ContainsKey(map.ReferencedCard().DevicePath))
+            if (cards.ContainsKey(map.Card.devicePath))
             {
-              CardType type = cards[map.ReferencedCard().DevicePath];
+              CardType type = cards[map.Card.devicePath];
               switch (type)
               {
                 case CardType.Analog:
@@ -235,7 +235,7 @@ namespace SetupTv.Sections
             line += "DVB-IP";
           }
           item.SubItems.Add(line);
-          item.Checked = ch.GrabEpg;
+          item.Checked = ch.grabEpg;
           item.Tag = ch;
         }
       }
@@ -248,20 +248,20 @@ namespace SetupTv.Sections
     public override void SaveSettings()
     {
       if (false == _loaded)
-        return;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgLanguages");
-      setting.Value = ",";
+        return;      
+      
+      string value = ",";
       for (int i = 0; i < mpListView2.Items.Count; ++i)
       {
         if (mpListView2.Items[i].Checked)
         {
           string code = (string)mpListView2.Items[i].Tag;
-          setting.Value += code;
-          setting.Value += ",";
+          value += code;
+          value += ",";
         }
       }
-      setting.Persist();
+      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("epgLanguages", value);
       base.SaveSettings();
     }
 
@@ -289,8 +289,8 @@ namespace SetupTv.Sections
       Channel channel = e.Item.Tag as Channel;
       if (channel == null)
         return;
-      channel.GrabEpg = e.Item.Checked;
-      channel.Persist();
+      channel.grabEpg = e.Item.Checked;
+      ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
     }
 
     private void linkLabelTVAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -317,7 +317,7 @@ namespace SetupTv.Sections
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           Channel ch = (Channel)mpListView1.Items[i].Tag;
-          mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1);
+          mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1);
           // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
         }
       }
@@ -335,7 +335,7 @@ namespace SetupTv.Sections
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           Channel ch = (Channel)mpListView1.Items[i].Tag;
-          mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1 && ch.VisibleInGuide);
+          mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1 && ch.visibleInGuide);
           // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
         }
       }
@@ -370,18 +370,17 @@ namespace SetupTv.Sections
         {
           mpListView2.Items[i].Checked = true;
         }
-        TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
+        Languages languages = new Languages();
         List<String> codes = languages.GetLanguageCodes();
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("epgLanguages");
-        setting.Value = "";
+        
+        string value = "";
         foreach (string code in codes)
         {
-          setting.Value += code;
-          setting.Value += ",";
+          value += code;
+          value += ",";
         }
-        //Log.WriteFile("tvsetup:epggrabber:all: epglang={0}", setting.Value);
-        setting.Persist();
+        //Log.WriteFile("tvsetup:epggrabber:all: epglang={0}", setting.value);
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgLanguages", value);
       }
       finally
       {
@@ -398,11 +397,8 @@ namespace SetupTv.Sections
         {
           mpListView2.Items[i].Checked = false;
         }
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("epgLanguages");
-        setting.Value = ",";
-        Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.Value);
-        setting.Persist();
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgLanguages", ",");
+        Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.value);
       }
       finally
       {

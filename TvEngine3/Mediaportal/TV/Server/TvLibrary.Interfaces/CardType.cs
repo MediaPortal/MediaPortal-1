@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
   /// Types of cards

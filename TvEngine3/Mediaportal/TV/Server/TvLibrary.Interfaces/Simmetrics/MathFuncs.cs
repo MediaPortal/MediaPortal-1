@@ -20,7 +20,7 @@
 
 using System;
 
-namespace mathSimmetrics
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics
 {
   /// <summary>
   /// Math helper functions

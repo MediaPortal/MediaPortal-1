@@ -21,18 +21,23 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using SetupControls;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvControl;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupTV.Sections;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormPreview : MPForm
   {
     private Channel _channel;
-    private VirtualCard _card;
+    private IVirtualCard _card;
     private Player _player;
 
     public FormPreview()
@@ -48,11 +53,10 @@ namespace SetupTv.Sections
 
     public new DialogResult ShowDialog(IWin32Window owner)
     {
-      Text = "Preview " + _channel.DisplayName;
-
-      TvServer server = new TvServer();
-      IUser user = new User("setuptv", false);
-      TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
+      Text = "Preview " + _channel.displayName;
+      
+      IUser user = UserFactory.CreateBasicUser("setuptv");
+      TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, _channel.idChannel, out _card);
       if (result != TvResult.Succeeded)
       {
         MessageBox.Show("Preview failed:" + result);
@@ -60,7 +64,7 @@ namespace SetupTv.Sections
         return DialogResult.None;
       }
 
-      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, user.SubChannel, user.Name,
+      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.displayName, user.CardId, user.SubChannel, user.Name,
                _card.TimeShiftFileName);
       _player = new Player();
       _player.Play(_card.TimeShiftFileName, this);

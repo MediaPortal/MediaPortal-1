@@ -20,9 +20,9 @@
 
 using System;
 using DirectShowLib;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream
 {
   /// <summary>
   /// class describing an analog audio stream

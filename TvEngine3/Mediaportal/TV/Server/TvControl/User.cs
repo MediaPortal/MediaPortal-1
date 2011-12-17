@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,39 +21,60 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using TvLibrary.Interfaces;
+using System.Runtime.Serialization;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvControl
+namespace Mediaportal.TV.Server.TVControl
 {
   /// <summary>
-  /// Class holding user credentials
+  /// 
   /// </summary>
   [Serializable]
+  [DataContract]
   public class User : ICloneable, IUser
   {
+    [DataMember]
     private string _hostName;
+
+    [DataMember]
     private bool _isAdmin;
+
+    [DataMember]
     private int _cardId;
+
+    [DataMember]
     private int _failedCardId;
+
+    [DataMember]
     private int _subChannel;
+
+    [DataMember]
     private int _idChannel;
+
+    [DataMember]
     private TvStoppedReason _timeshiftStoppedReason;
-    private DateTime _lastHeartBeat;
-    [NonSerialized] private object _history;
+    [NonSerialized]
+    private object _history;
+
+    [DataMember]
     private Dictionary<int, ChannelState> _channelStates; //used primarily for miniepg.
+
+    [DataMember]
+    private int? _priority;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
     public User()
     {
+      _priority = null;
       _hostName = Dns.GetHostName();
       _isAdmin = false;
       _cardId = -1;
       _failedCardId = -1;
       _idChannel = -1;
       _subChannel = -1;
-      _lastHeartBeat = DateTime.MinValue;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
       _channelStates = new Dictionary<int, ChannelState>();
     }
@@ -65,11 +86,13 @@ namespace TvControl
     /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
     public User(string name, bool isAdmin)
     {
+      _priority = null;
       _hostName = name;
       _isAdmin = isAdmin;
       _cardId = -1;
       _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _channelStates = new Dictionary<int, ChannelState>();
     }
 
     /// <summary>
@@ -80,11 +103,40 @@ namespace TvControl
     /// <param name="cardId">The card id.</param>
     public User(string name, bool isAdmin, int cardId)
     {
+      _priority = null;
       _hostName = name;
       _isAdmin = isAdmin;
       _cardId = cardId;
       _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _channelStates = new Dictionary<int, ChannelState>();
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="User"/> class.
+    /// </summary>
+    /// <param name="name">The name.</param>
+    /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
+    /// <param name="cardId">The card id.</param>
+    /// <param name="priority">card lock priority</param>
+    public User(string name, bool isAdmin, int cardId, int priority)
+    {
+      _hostName = name;
+      _isAdmin = isAdmin;
+      _cardId = cardId;
+      _subChannel = -1;
+      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _priority = priority;
+    }
+
+    /// <summary>
+    /// Gets an integer defining the user's card lock priority (higher number=higher priority)
+    /// </summary>    
+    /// <returns>user priority</returns>
+    public int? Priority
+    {
+      get { return _priority; }
+      set { _priority = value; }
     }
 
     /// <summary>
@@ -168,15 +220,6 @@ namespace TvControl
     }
 
     /// <summary>
-    /// Gets/Sets the time of the last heartbeat
-    /// </summary>
-    public DateTime HeartBeat
-    {
-      get { return _lastHeartBeat; }
-      set { _lastHeartBeat = value; }
-    }
-
-    /// <summary>
     /// Gets/Sets the stop reason
     /// </summary>
     public TvStoppedReason TvStoppedReason
@@ -195,13 +238,14 @@ namespace TvControl
     /// </returns>
     public object Clone()
     {
-      User user = new User();
-      user._hostName = _hostName;
-      user._isAdmin = _isAdmin;
-      user._cardId = _cardId;
-      user._subChannel = _subChannel;
-      user._idChannel = _idChannel;
-      user._timeshiftStoppedReason = _timeshiftStoppedReason;
+      IUser user = new User();
+      user.Name = _hostName;
+      user.IsAdmin = _isAdmin;
+      user.CardId = _cardId;
+      user.SubChannel = _subChannel;
+      user.IdChannel = _idChannel;
+      user.TvStoppedReason = _timeshiftStoppedReason;
+      user.Priority = _priority;
       return user;
     }
 

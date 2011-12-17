@@ -20,16 +20,18 @@
 
 using System;
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Teletext;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Implementations.Helper;
-using TvLibrary.Implementations.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Teletext.Implementations;
 
-
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
   /// Base class for a sub channel of a tv card
@@ -318,7 +320,7 @@ namespace TvLibrary.Implementations
       catch (Exception e)
       {
         //cleanup
-        Log.Log.WriteFile("StartTimeShifting failed, cleaning up {0}", e.Message);
+        Log.WriteFile("StartTimeShifting failed, cleaning up {0}", e.Message);
         StopTimeShifting();
       }
       return false;
@@ -349,25 +351,25 @@ namespace TvLibrary.Implementations
     {
       try
       {
-        Log.Log.WriteFile("StartRecording to {0}", fileName);
+        Log.WriteFile("StartRecording to {0}", fileName);
         OnStartRecording(fileName);
         _recordingFileName = fileName;
 
         if (this is AnalogSubChannel)
         {
-          Log.Log.Info("analog subch:{0} Started recording", _subChannelId);
+          Log.Info("analog subch:{0} Started recording", _subChannelId);
         }
         else if (this is HDPVRChannel)
         {
-          Log.Log.Info("HDPVR subch:{0} Started recording", _subChannelId);
+          Log.Info("HDPVR subch:{0} Started recording", _subChannelId);
         }
         else if (this is TvDvbChannel)
         {
-          Log.Log.Info("DVB subch:{0} Started recording", _subChannelId);
+          Log.Info("DVB subch:{0} Started recording", _subChannelId);
         }
         else
         {
-          Log.Log.Info("Unknown subch:{0} Started recording", _subChannelId);
+          Log.Info("Unknown subch:{0} Started recording", _subChannelId);
         }
 
         _dateRecordingStarted = DateTime.Now;
@@ -375,7 +377,7 @@ namespace TvLibrary.Implementations
       }
       catch (Exception e)
       {
-        Log.Log.WriteFile("StartRecording failed, cleaning up {0}", e.Message);
+        Log.WriteFile("StartRecording failed, cleaning up {0}", e.Message);
         //cleanup
         StopRecording();
         return false;
@@ -390,7 +392,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.Log.WriteFile("basesubchannel.StopRecording {}", this._subChannelId);
+      Log.WriteFile("basesubchannel.StopRecording {}", this._subChannelId);
       OnStopRecording();
       _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
       _recordingFileName = "";
@@ -430,7 +432,7 @@ namespace TvLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile(ex.ToString());
+        Log.WriteFile(ex.ToString());
       }
       return 0;
     }
@@ -447,12 +449,12 @@ namespace TvLibrary.Implementations
       _packetHeader = _tsHelper.GetHeader(ptr);
       if (_packetHeader.SyncByte != 0x47)
       {
-        Log.Log.WriteFile("packet sync error");
+        Log.WriteFile("packet sync error");
         return;
       }
       if (_packetHeader.TransportError)
       {
-        Log.Log.WriteFile("packet transport error");
+        Log.WriteFile("packet transport error");
         return;
       }
       // teletext
@@ -477,12 +479,12 @@ namespace TvLibrary.Implementations
     {
       try
       {
-        Log.Log.WriteFile("PID seen - type = {0}", pidType);
+        Log.WriteFile("PID seen - type = {0}", pidType);
         OnAudioVideoEvent(pidType);
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return 0;
     }
@@ -498,19 +500,19 @@ namespace TvLibrary.Implementations
     {
       if (this is AnalogSubChannel)
       {
-        Log.Log.Info("analog subch:{0} Decompose()", _subChannelId);
+        Log.Info("analog subch:{0} Decompose()", _subChannelId);
       }
       else if (this is HDPVRChannel)
       {
-        Log.Log.Info("HDPVR subch:{0} Decompose", _subChannelId);
+        Log.Info("HDPVR subch:{0} Decompose", _subChannelId);
       }
       else if (this is TvDvbChannel)
       {
-        Log.Log.Info("DVB subch:{0} Decompose()", _subChannelId);
+        Log.Info("DVB subch:{0} Decompose()", _subChannelId);
       }
       else
       {
-        Log.Log.Info("Unknown subch:{0} Decompose()", _subChannelId);
+        Log.Info("Unknown subch:{0} Decompose()", _subChannelId);
       }
 
       if (IsRecording)

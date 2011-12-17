@@ -20,10 +20,10 @@
 
 using System.Collections;
 using System.IO;
-using TvLibrary.Log;
-using MediaPortal.WebEPG.Profile;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using WebEPG.MPCode;
 
-namespace MediaPortal.EPG.config
+namespace WebEPG.config
 {
   /// <summary>
   /// Config has methods to save and load the config file.
@@ -142,30 +142,32 @@ namespace MediaPortal.EPG.config
       }
 
       Log.Info("WebEPG Config: Loading Existing WebEPG.xml");
-      Xml xmlreader = new Xml(configFile);
-      _MaxGrab = xmlreader.GetValueAsInt("General", "MaxDays", 1);
-      int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
-      for (int i = 1; i <= channelCount; i++)
+      using (var xmlreader = new Xml(configFile)) 
       {
-        EPGConfigData channel = new EPGConfigData();
-        channel.ChannelID = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
-        channel.DisplayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
-
-        string GrabberID = xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
-        if (GrabberID != "")
+        _MaxGrab = xmlreader.GetValueAsInt("General", "MaxDays", 1);
+        int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
+        for (int i = 1; i <= channelCount; i++)
         {
-          int start = GrabberID.IndexOf("\\") + 1;
-          int end = GrabberID.LastIndexOf(".");
+          EPGConfigData channel = new EPGConfigData();
+          channel.ChannelID = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
+          channel.DisplayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
 
-          string GrabberSite = GrabberID.Substring(start, end - start);
-          GrabberSite = GrabberSite.Replace("_", ".");
-          channel.PrimaryGrabberName = GrabberSite;
-          channel.PrimaryGrabberID = GrabberID;
-          channel.Linked = xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
-          channel.linkStart = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
-          channel.linkEnd = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
+          string GrabberID = xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
+          if (GrabberID != "")
+          {
+            int start = GrabberID.IndexOf("\\") + 1;
+            int end = GrabberID.LastIndexOf(".");
 
-          _ConfigList.Add(channel);
+            string GrabberSite = GrabberID.Substring(start, end - start);
+            GrabberSite = GrabberSite.Replace("_", ".");
+            channel.PrimaryGrabberName = GrabberSite;
+            channel.PrimaryGrabberID = GrabberID;
+            channel.Linked = xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
+            channel.linkStart = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
+            channel.linkEnd = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
+
+            _ConfigList.Add(channel);
+          }
         }
       }
     }
@@ -180,25 +182,26 @@ namespace MediaPortal.EPG.config
           File.Delete(confFile.Replace(".xml", ".bak"));
           File.Move(confFile, confFile.Replace(".xml", ".bak"));
         }
-        Xml xmlwriter = new Xml(confFile);
-
-        xmlwriter.SetValue("General", "MaxDays", _MaxGrab.ToString());
-        xmlwriter.SetValue("ChannelMap", "Count", _ConfigList.Count.ToString());
-
-        for (int i = 0; i < _ConfigList.Count; i++)
+        using (var xmlwriter = new Xml(confFile)) 
         {
-          EPGConfigData channel = (EPGConfigData)_ConfigList[i];
-          xmlwriter.SetValue((i + 1).ToString(), "ChannelID", channel.ChannelID);
-          xmlwriter.SetValue((i + 1).ToString(), "DisplayName", channel.DisplayName);
-          xmlwriter.SetValue((i + 1).ToString(), "Grabber1", channel.PrimaryGrabberID);
-          if (channel.Linked)
+          xmlwriter.SetValue("General", "MaxDays", _MaxGrab.ToString());
+          xmlwriter.SetValue("ChannelMap", "Count", _ConfigList.Count.ToString());
+
+          for (int i = 0; i < _ConfigList.Count; i++)
           {
-            xmlwriter.SetValueAsBool((i + 1).ToString(), "Grabber1-Linked", channel.Linked);
-            xmlwriter.SetValue((i + 1).ToString(), "Grabber1-Start", channel.linkStart);
-            xmlwriter.SetValue((i + 1).ToString(), "Grabber1-End", channel.linkEnd);
+            EPGConfigData channel = (EPGConfigData)_ConfigList[i];
+            xmlwriter.SetValue((i + 1).ToString(), "ChannelID", channel.ChannelID);
+            xmlwriter.SetValue((i + 1).ToString(), "DisplayName", channel.DisplayName);
+            xmlwriter.SetValue((i + 1).ToString(), "Grabber1", channel.PrimaryGrabberID);
+            if (channel.Linked)
+            {
+              xmlwriter.SetValueAsBool((i + 1).ToString(), "Grabber1-Linked", channel.Linked);
+              xmlwriter.SetValue((i + 1).ToString(), "Grabber1-Start", channel.linkStart);
+              xmlwriter.SetValue((i + 1).ToString(), "Grabber1-End", channel.linkEnd);
+            }
           }
+          xmlwriter.Save();
         }
-        xmlwriter.Save();
       }
     }
 

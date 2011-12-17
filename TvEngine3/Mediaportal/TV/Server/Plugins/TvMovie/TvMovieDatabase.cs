@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
@@ -26,11 +27,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.TvMovie
 {
 
   #region TVMChannel struct
@@ -90,8 +94,19 @@ namespace TvEngine
 
   internal class TvMovieDatabase
   {
+
+    public TvMovieDatabase()
+    {
+      IEnumerable<ProgramCategory> categories = ProgramCategoryManagement.ListAllProgramCategories();
+      foreach (var programCategory in categories)
+      {
+        _categories.Add(programCategory.category, programCategory);
+      }
+    }
+
     #region Members
 
+    private readonly IDictionary<string, ProgramCategory> _categories = new ConcurrentDictionary<string, ProgramCategory>();
     private OleDbConnection _databaseConnection = null;
     private bool _canceled = false;
     private List<TVMChannel> _tvmEpgChannels;
@@ -108,7 +123,6 @@ namespace TvEngine
     private bool _showRepeat = false;
 
     private static string _xmlFile;
-    private static TvBusinessLayer _tvbLayer;
 
     #endregion
 
@@ -212,15 +226,7 @@ namespace TvEngine
       get { return _programsCounter; }
     }
 
-    public static TvBusinessLayer TvBLayer
-    {
-      get
-      {
-        if (_tvbLayer == null)
-          _tvbLayer = new TvBusinessLayer();
-        return _tvbLayer;
-      }
-    }
+   
 
     #endregion
 
@@ -231,11 +237,13 @@ namespace TvEngine
       List<Channel> tvChannels = new List<Channel>();
       try
       {
-        IList<Channel> allChannels = Channel.ListAll();
+        IList<Channel> allChannels = ChannelManagement.ListAllChannelsByMediaType(MediaTypeEnum.TV);
         foreach (Channel channel in allChannels)
         {
-          if (channel.IsTv && channel.VisibleInGuide)
+          if (channel.visibleInGuide)
+          {
             tvChannels.Add(channel);
+          }
         }
       }
       catch (Exception ex)
@@ -269,87 +277,89 @@ namespace TvEngine
       string sqlSelect =
         "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
 
-      DataSet tvMovieTable = new DataSet("Sender");
-      try
+      using (var tvMovieTable = new DataSet("Sender")) 
       {
-        _databaseConnection.Open();
-        using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
+        try
         {
-          using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand))
+          _databaseConnection.Open();
+          using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
           {
+            using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand))
+            {
+              try
+              {
+                databaseAdapter.FillSchema(tvMovieTable, SchemaType.Source, "Sender");
+                databaseAdapter.Fill(tvMovieTable);
+              }
+              catch (Exception dsex)
+              {
+                Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
+                return false;
+              }
+            }
+          }
+        }
+        catch (System.Data.OleDb.OleDbException ex)
+        {
+          Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
+          Log.Info("TVMovie: Exception: {0}", ex.StackTrace);
+          _canceled = true;
+          return false;
+        }
+        catch (Exception ex2)
+        {
+          Log.Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
+          _canceled = true;
+          return false;
+        }
+        finally
+        {
+          _databaseConnection.Close();
+        }
+
+        try
+        {
+          _tvmEpgChannels = new List<TVMChannel>();
+          foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
+          {
+            string senderId = sender["ID"].ToString();
+            string senderKennung = sender["SenderKennung"].ToString();
+            string senderBez = sender["Bezeichnung"].ToString();
+            // these are non-vital for now.
+            string senderUrl = String.Empty;
+            string senderSort = "-1";
+            string senderZeichen = @"tvmovie_senderlogoplatzhalter.gif";
+            // Somehow TV Movie's db does not necessarily contain these columns...
             try
             {
-              databaseAdapter.FillSchema(tvMovieTable, SchemaType.Source, "Sender");
-              databaseAdapter.Fill(tvMovieTable);
+              senderUrl = sender["Webseite"].ToString();
             }
-            catch (Exception dsex)
+            catch (Exception) {}
+            try
             {
-              Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
-              return false;
+              senderSort = sender["SortNrTVMovie"].ToString();
             }
+            catch (Exception) {}
+            try
+            {
+              senderZeichen = sender["Zeichen"].ToString();
+            }
+            catch (Exception) {}
+
+            TVMChannel current = new TVMChannel(senderId,
+                                                senderKennung,
+                                                senderBez,
+                                                senderUrl,
+                                                senderSort,
+                                                senderZeichen
+              );
+            _tvmEpgChannels.Add(current);
           }
         }
-      }
-      catch (System.Data.OleDb.OleDbException ex)
-      {
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
-        Log.Info("TVMovie: Exception: {0}", ex.StackTrace);
-        _canceled = true;
-        return false;
-      }
-      catch (Exception ex2)
-      {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
-        _canceled = true;
-        return false;
-      }
-      finally
-      {
-        _databaseConnection.Close();
-      }
-
-      try
-      {
-        _tvmEpgChannels = new List<TVMChannel>();
-        foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
+        catch (Exception ex)
         {
-          string senderId = sender["ID"].ToString();
-          string senderKennung = sender["SenderKennung"].ToString();
-          string senderBez = sender["Bezeichnung"].ToString();
-          // these are non-vital for now.
-          string senderUrl = String.Empty;
-          string senderSort = "-1";
-          string senderZeichen = @"tvmovie_senderlogoplatzhalter.gif";
-          // Somehow TV Movie's db does not necessarily contain these columns...
-          try
-          {
-            senderUrl = sender["Webseite"].ToString();
-          }
-          catch (Exception) {}
-          try
-          {
-            senderSort = sender["SortNrTVMovie"].ToString();
-          }
-          catch (Exception) {}
-          try
-          {
-            senderZeichen = sender["Zeichen"].ToString();
-          }
-          catch (Exception) {}
-
-          TVMChannel current = new TVMChannel(senderId,
-                                              senderKennung,
-                                              senderBez,
-                                              senderUrl,
-                                              senderSort,
-                                              senderZeichen
-            );
-          _tvmEpgChannels.Add(current);
+          Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
         }
-      }
-      catch (Exception ex)
-      {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
       }
 
       _channelList = GetChannels();
@@ -362,9 +372,8 @@ namespace TvEngine
       {
         try
         {
-          TimeSpan restTime = new TimeSpan(Convert.ToInt32(TvBLayer.GetSetting("TvMovieRestPeriod", "24").Value), 0, 0);
-          DateTime lastUpdated = Convert.ToDateTime(TvBLayer.GetSetting("TvMovieLastUpdate", "0").Value);
-          //        if (Convert.ToInt64(TvBLayer.GetSetting("TvMovieLastUpdate", "0").Value) == LastUpdate)
+          TimeSpan restTime = new TimeSpan(Convert.ToInt32(SettingsManagement.GetSetting("TvMovieRestPeriod", "24").value), 0, 0);
+          DateTime lastUpdated = Convert.ToDateTime(SettingsManagement.GetSetting("TvMovieLastUpdate", "0").value);          
           if (lastUpdated >= (DateTime.Now - restTime))
           {
             return false;
@@ -415,9 +424,7 @@ namespace TvEngine
 
       // setting update time of epg import to avoid that the background thread triggers another import
       // if the process lasts longer than the timer's update check interval
-      Setting setting = TvBLayer.GetSetting("TvMovieLastUpdate");
-      setting.Value = DateTime.Now.ToString();
-      setting.Persist();
+      SettingsManagement.SaveSetting("TvMovieLastUpdate", DateTime.Now.ToString());
 
       Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
       int counter = 0;
@@ -425,7 +432,7 @@ namespace TvEngine
       _tvmEpgProgs.Clear();
 
       // get all tv channels from MP DB via gentle.net
-      IList<Channel> allChannels = Channel.ListAll();
+      IList<Channel> allChannels = ChannelManagement.ListAllChannels();
 
       foreach (TVMChannel station in _tvmEpgChannels)
       {
@@ -465,7 +472,7 @@ namespace TvEngine
               Thread.Sleep(32);
 
             // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
-            List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
+            List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);            
             int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
                                                      importPrio);
             Log.Info("TVMovie: Inserted {0} programs", debugCount);
@@ -478,6 +485,7 @@ namespace TvEngine
       }
 
       Log.Debug("TVMovie: Waiting for database to be updated...");
+      //ProgramManagement.WaitForInsertPrograms
       TvBLayer.WaitForInsertPrograms();
       Log.Debug("TVMovie: Database update finished.");
 
@@ -489,9 +497,7 @@ namespace TvEngine
       {
         try
         {
-          setting = TvBLayer.GetSetting("TvMovieLastUpdate");
-          setting.Value = DateTime.Now.ToString();
-          setting.Persist();
+          SettingsManagement.SaveSetting("TvMovieLastUpdate", DateTime.Now.ToString());                    
 
           TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
           Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
@@ -511,14 +517,14 @@ namespace TvEngine
 
     private void LoadMemberSettings()
     {
-      _useShortProgramDesc = TvBLayer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
-      _extendDescription = TvBLayer.GetSetting("TvMovieExtendDescription", "true").Value == "true";
-      _showRatings = TvBLayer.GetSetting("TvMovieShowRatings", "true").Value == "true";
-      _showAudioFormat = TvBLayer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
-      _slowImport = TvBLayer.GetSetting("TvMovieSlowImport", "true").Value == "true";
-      _actorCount = Convert.ToInt32(TvBLayer.GetSetting("TvMovieLimitActors", "5").Value);
-      _showLive = TvBLayer.GetSetting("TvMovieShowLive", "true").Value == "true";
-      _showRepeat = TvBLayer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
+      _useShortProgramDesc = SettingsManagement.GetSetting("TvMovieShortProgramDesc", "false").value == "true";
+      _extendDescription = SettingsManagement.GetSetting("TvMovieExtendDescription", "true").value == "true";
+      _showRatings = SettingsManagement.GetSetting("TvMovieShowRatings", "true").value == "true";
+      _showAudioFormat = SettingsManagement.GetSetting("TvMovieShowAudioFormat", "false").value == "true";
+      _slowImport = SettingsManagement.GetSetting("TvMovieSlowImport", "true").value == "true";
+      _actorCount = Convert.ToInt32(SettingsManagement.GetSetting("TvMovieLimitActors", "5").value);
+      _showLive = SettingsManagement.GetSetting("TvMovieShowLive", "true").value == "true";
+      _showRepeat = SettingsManagement.GetSetting("TvMovieShowRepeating", "false").value == "true";
       _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", PathManager.GetDataPath);
     }
 
@@ -571,7 +577,6 @@ namespace TvEngine
               counter++;
             }
             databaseTransaction.Commit();
-            reader.Close();
           }
         }
         catch (OleDbException ex)
@@ -716,7 +721,7 @@ namespace TvEngine
           Channel progChannel = null;
           foreach (Channel MpChannel in allChannels)
           {
-            if (MpChannel.IdChannel == channelMap.IdChannel)
+            if (MpChannel.idChannel == channelMap.IdChannel)
             {
               progChannel = MpChannel;
               break;
@@ -816,8 +821,17 @@ namespace TvEngine
               description += "Ton: " + audioFormat;
           }
 
-          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre,
-                                     Program.ProgramState.None, OnAirDate, String.Empty, String.Empty, episode,
+          ProgramCategory programCategory;
+          bool hasCategory = _categories.TryGetValue(genre, out programCategory);
+          if (!hasCategory)
+          {
+            programCategory = new ProgramCategory { category = genre };
+            ProgramCategoryManagement.AddCategory(programCategory);
+            _categories[genre] = programCategory;
+          }
+
+          Program prog = ProgramFactory.CreateProgram(progChannel.idChannel, newStartDate, newEndDate, title, description, programCategory,
+                                     ProgramState.None, OnAirDate, String.Empty, String.Empty, episode,
                                      String.Empty, EPGStarRating, classification, parentalRating);
 
           _tvmEpgProgs.Add(prog);
@@ -842,18 +856,18 @@ namespace TvEngine
         {
           try
           {
-            string newStart = mapping.TimeSharingStart;
-            string newEnd = mapping.TimeSharingEnd;
-            string newStation = mapping.StationName;
-            string newChannel = Channel.Retrieve(mapping.IdChannel).DisplayName;
-            int newIdChannel = mapping.IdChannel;
+            string newStart = mapping.timeSharingStart;
+            string newEnd = mapping.timeSharingEnd;
+            string newStation = mapping.stationName;
+            string newChannel = mapping.Channel.displayName;
+            int newIdChannel = mapping.idChannel;            
 
             mappingList.Add(new Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));
           }
           catch (Exception)
           {
             Log.Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
-                     mapping.StationName, mapping.IdChannel);
+                     mapping.stationName, mapping.idChannel);
           }
         }
       }

@@ -31,13 +31,13 @@ using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MySql.Data.MySqlClient;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
 
 #endregion
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   public partial class SetupDatabaseForm : SetupControls.MPForm
   {

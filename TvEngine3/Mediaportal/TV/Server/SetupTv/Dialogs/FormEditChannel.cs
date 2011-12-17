@@ -21,18 +21,22 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using SetupControls;
-using TvDatabase;
-using TvLibrary.Implementations;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormEditChannel : Form
   {
     private bool _newChannel;
-    private bool _isTv = true;
+    private MediaTypeEnum _mediaType = MediaTypeEnum.TV;
     private Channel _channel;
 
     private IList<TuningDetail> _tuningDetails;
@@ -44,16 +48,18 @@ namespace SetupTv.Dialogs
       InitializeComponent();
     }
 
-    public bool IsTv
-    {
-      get { return _isTv; }
-      set { _isTv = value; }
-    }
+    
 
     public Channel Channel
     {
       get { return _channel; }
       set { _channel = value; }
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return _mediaType; }
+      set { _mediaType = value; }
     }
 
     private void buttonOk_Click(object sender, EventArgs e)
@@ -63,38 +69,35 @@ namespace SetupTv.Dialogs
         MessageBox.Show("Please enter a name for this channel");
         return;
       }
-      _channel.DisplayName = textBoxName.Text;
-      _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
-      _channel.IsTv = _isTv;
-      _channel.IsRadio = !_isTv;
-      _channel.Persist();
+      _channel.displayName = textBoxName.Text;
+      _channel.visibleInGuide = checkBoxVisibleInTvGuide.Checked;
+      _channel.mediaType = (int) _mediaType;
+      ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);
       if (_newChannel)
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        if (_isTv)
+        if (_mediaType == MediaTypeEnum.TV)
         {
-          layer.AddChannelToGroup(_channel, TvConstants.TvGroupNames.AllChannels);
+          MappingHelper.AddChannelToGroup(_channel, TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);          
         }
-        else
+        else if (_mediaType == MediaTypeEnum.Radio)
         {
-          layer.AddChannelToRadioGroup(_channel, TvConstants.RadioGroupNames.AllChannels);
+          MappingHelper.AddChannelToGroup(_channel, TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);          
         }
       }
       foreach (TuningDetail detail in _tuningDetails)
       {
-        detail.IdChannel = _channel.IdChannel;
-        detail.IsRadio = !_isTv;
-        detail.IsTv = _isTv;
-        if (string.IsNullOrEmpty(detail.Name))
+        detail.idChannel = _channel.idChannel;
+        detail.mediaType = (int) _mediaType;        
+        if (string.IsNullOrEmpty(detail.name))
         {
-          detail.Name = _channel.DisplayName;
-        }
-        detail.Persist();
+          detail.name = _channel.displayName;
+        }        
+        ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
       }
 
       foreach (TuningDetail detail in _tuningDetailsToDelete)
       {
-        detail.Remove();
+        ServiceAgents.Instance.ChannelServiceAgent.DeleteTuningDetail(detail.idTuning);
       }
 
 
@@ -108,12 +111,12 @@ namespace SetupTv.Dialogs
       if (_channel == null)
       {
         _newChannel = true;
-        _channel = new Channel(false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
-                               "");
+        _channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
+                               "");        
       }
-      textBoxName.Text = _channel.DisplayName;
-      checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
-      _tuningDetails = _channel.ReferringTuningDetail();
+      textBoxName.Text = _channel.displayName;
+      checkBoxVisibleInTvGuide.Checked = _channel.visibleInGuide;
+      _tuningDetails = _channel.TuningDetails;
       _tuningDetailsToDelete = new List<TuningDetail>();
       UpdateTuningDetailList();
     }
@@ -127,60 +130,60 @@ namespace SetupTv.Dialogs
         foreach (TuningDetail detail in _tuningDetails)
         {
           int imageIndex = 1;
-          if (detail.FreeToAir == false)
+          if (detail.freeToAir == false)
             imageIndex = 2;
-          ListViewItem item = new ListViewItem(detail.IdTuning.ToString(), imageIndex);
-          item.SubItems.Add(detail.Name);
-          item.SubItems.Add(detail.Provider);
-          string channelType = detail.ChannelType.ToString();
+          ListViewItem item = new ListViewItem(detail.idTuning.ToString(), imageIndex);
+          item.SubItems.Add(detail.name);
+          item.SubItems.Add(detail.provider);
+          string channelType = detail.channelType.ToString();
           string description = "";
           float frequency;
-          switch (detail.ChannelType)
+          switch (detail.channelType)
           {
             case 0:
               channelType = "Analog";
-              if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
+              if (detail.videoSource == (int)AnalogChannel.VideoInputType.Tuner)
               {
-                frequency = detail.Frequency;
+                frequency = detail.frequency;
                 frequency /= 1000000.0f;
-                description = String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2"));
+                description = String.Format("#{0} {1} MHz", detail.channelNumber, frequency.ToString("f2"));
               }
               else
               {
-                description = detail.VideoSource.ToString();
+                description = detail.videoSource.ToString();
               }
               break;
             case 1:
               channelType = "ATSC";
-              description = String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel,
-                                          detail.MinorChannel);
+              description = String.Format("{0} {1}:{2}", detail.channelNumber, detail.majorChannel,
+                                          detail.minorChannel);
               break;
             case 2:
               channelType = "DVB-C";
-              frequency = detail.Frequency;
+              frequency = detail.frequency;
               frequency /= 1000.0f;
-              description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate);
+              description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.symbolrate);
               break;
             case 3:
               channelType = "DVB-S";
-              frequency = detail.Frequency;
+              frequency = detail.frequency;
               frequency /= 1000.0f;
               description = String.Format("{0} MHz {1}", frequency.ToString("f2"),
-                                          (((Polarisation)detail.Polarisation)));
+                                          (((Polarisation)detail.polarisation)));
               break;
             case 4:
               channelType = "DVB-T";
-              frequency = detail.Frequency;
+              frequency = detail.frequency;
               frequency /= 1000.0f;
-              description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth);
+              description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.bandwidth);
               break;
             case 5:
               channelType = "Web-Stream";
-              description = detail.Url;
+              description = detail.url;
               break;
             case 7:
               channelType = "DVB-IP";
-              description = detail.Url;
+              description = detail.url;
               break;
           }
           item.SubItems.Add(channelType);
@@ -226,7 +229,7 @@ namespace SetupTv.Dialogs
     private void menuButtonAdd_Click(object sender, EventArgs e)
     {
       FormChooseTuningDetailType dlg = new FormChooseTuningDetailType();
-      dlg.IsTv = _isTv;
+      dlg.MediaType = _mediaType;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
         int tuningType = dlg.TuningType;
@@ -245,7 +248,7 @@ namespace SetupTv.Dialogs
       {
         int index = mpListView1.SelectedIndices[0];
         TuningDetail tuningDetailToEdit = _tuningDetails[index];
-        FormTuningDetailCommon form = CreateDialog(tuningDetailToEdit.ChannelType);
+        FormTuningDetailCommon form = CreateDialog(tuningDetailToEdit.channelType);
         form.TuningDetail = tuningDetailToEdit;
         form.ShowDialog(this);
         UpdateTuningDetailList();

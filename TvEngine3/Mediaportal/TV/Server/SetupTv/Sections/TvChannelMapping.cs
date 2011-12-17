@@ -20,15 +20,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
-using TvControl;
-using Gentle.Framework;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using MediaPortal.UserInterface.Controls;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvChannelMapping : SectionSettings
   {
@@ -48,7 +54,7 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return _card.IdCard + " - " + _card.Name;
+        return _card.idCard + " - " + _card.name;
       }
     }
 
@@ -72,14 +78,14 @@ namespace SetupTv.Sections
     }
 
     public override void OnSectionActivated()
-    {
+    {                 
       mpComboBoxCard.Items.Clear();
-      IList<Card> cards = Card.ListAll();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
       foreach (Card card in cards)
       {
-        if (card.Enabled == false)
+        if (card.enabled == false)
           continue;
-        if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
           continue;
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }
@@ -99,15 +105,15 @@ namespace SetupTv.Sections
       try
       {
         ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
-        TvBusinessLayer layer = new TvBusinessLayer();
+        
         foreach (ListViewItem item in selectedItems)
         {
           Channel channel = (Channel)item.Tag;
-          ChannelMap map = layer.MapChannelToCard(card, channel, mpCheckBoxMapForEpgOnly.Checked);
+          ChannelMap map = MappingHelper.AddChannelToCard(channel, card, mpCheckBoxMapForEpgOnly.Checked);          
           mpListViewChannels.Items.Remove(item);
-          string displayName = channel.DisplayName;
+          string displayName = channel.displayName;
           if (mpCheckBoxMapForEpgOnly.Checked)
-            displayName = channel.DisplayName + " (EPG Only)";
+            displayName = channel.displayName + " (EPG Only)";
           ListViewItem newItem = mpListViewMapped.Items.Add(displayName, item.ImageIndex);
           newItem.Tag = map;
         }
@@ -139,10 +145,11 @@ namespace SetupTv.Sections
         {
           ChannelMap map = (ChannelMap)item.Tag;
           mpListViewMapped.Items.Remove(item);
-          Channel referencedChannel = map.ReferencedChannel();
-          ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.DisplayName, item.ImageIndex);
+          Channel referencedChannel = map.Channel;
+          ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.displayName, item.ImageIndex);
           newItem.Tag = referencedChannel;
-          map.Remove();
+
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.idChannelMap);          
         }
         mpListViewChannels.Sort();
         mpListViewMapped.Sort();
@@ -167,19 +174,16 @@ namespace SetupTv.Sections
         mpListViewMapped.Items.Clear();
         mpListViewChannels.Items.Clear();
 
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-        sb.AddOrderByField(true, "sortOrder");
-        SqlStatement stmt = sb.GetStatement(true);
-        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels().ToList();
 
-        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-        IList<ChannelMap> maps = card.ReferringChannelMap();
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(((CardInfo)mpComboBoxCard.SelectedItem).Card.idCard);        
+        IList<ChannelMap> maps = card.ChannelMaps;
 
         // get cardtype, dvb, analogue etc.		
-        CardType cardType = RemoteControl.Instance.Type(card.IdCard);
-        //Card card = Card.Retrieve(card.IdCard);
-        TvBusinessLayer layer = new TvBusinessLayer();
-        bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
+        CardType cardType = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
+        //Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(card.idCard);
+        
+        bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.idCard + "enabledvbs2", "false").value == "true");
 
 
         List<ListViewItem> items = new List<ListViewItem>();
@@ -188,12 +192,12 @@ namespace SetupTv.Sections
           Channel channel = null;
           try
           {
-            channel = map.ReferencedChannel();
+            channel = map.Channel;
           }
           catch (Exception) {}
           if (channel == null)
             continue;
-          if (channel.IsTv == false)
+          if (channel.mediaType != (decimal) MediaTypeEnum.TV)
             continue;
 
 
@@ -202,16 +206,16 @@ namespace SetupTv.Sections
           if (foundValidTuningDetail)
           {
             int imageIndex = GetImageIndex(tuningDetails);
-            string displayName = channel.DisplayName;
-            if (map.EpgOnly)
-              displayName = channel.DisplayName + " (EPG Only)";
+            string displayName = channel.displayName;
+            if (map.epgOnly)
+              displayName = channel.displayName + " (EPG Only)";
             ListViewItem item = new ListViewItem(displayName, imageIndex);
             item.Tag = map;
             items.Add(item);
 
             foreach (Channel ch in channels)
             {
-              if (ch.IdChannel == channel.IdChannel)
+              if (ch.idChannel == channel.idChannel)
               {
                 //No risk of concurrent modification so remove it directly.
                 channels.Remove(ch);
@@ -221,14 +225,14 @@ namespace SetupTv.Sections
           }
           else
           {
-            map.Delete();
+            ServiceAgents.Instance.ChannelServiceAgent.DeleteChannelMap(map.idChannelMap);            
           }
         }
         mpListViewMapped.Items.AddRange(items.ToArray());
         items = new List<ListViewItem>();
         foreach (Channel channel in channels)
         {
-          if (channel.IsTv == false)
+          if (channel.mediaType != (decimal) MediaTypeEnum.TV)
             continue;
           List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
           // only add channel that is tuneable on the device selected.
@@ -236,7 +240,7 @@ namespace SetupTv.Sections
           if (foundValidTuningDetail)
           {
             int imageIndex = GetImageIndex(tuningDetails);
-            ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+            ListViewItem item = new ListViewItem(channel.displayName, imageIndex);
             item.Tag = channel;
             items.Add(item);
           }
@@ -297,47 +301,47 @@ namespace SetupTv.Sections
         return;
       ListViewItem item = mpListViewMapped.SelectedItems[0];
       ChannelMap map = (ChannelMap)item.Tag;
-      Channel channel = map.ReferencedChannel();
-      if (map.EpgOnly)
+      Channel channel = map.Channel;
+      if (map.epgOnly)
       {
-        item.Text = channel.DisplayName;
-        map.EpgOnly = false;
+        item.Text = channel.displayName;
+        map.epgOnly = false;
       }
       else
       {
-        item.Text = channel.DisplayName + " (EPG Only)";
-        map.EpgOnly = true;
+        item.Text = channel.displayName + " (EPG Only)";
+        map.epgOnly = true;
       }
-      map.Persist();
+      ServiceAgents.Instance.ChannelServiceAgent.SaveChannelMap(map);
     }
 
     private static List<TuningDetail> GetTuningDetailsByCardType(Channel channel, CardType cardType, bool enableDVBS2)
     {
       List<TuningDetail> result = new List<TuningDetail>();
-      foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
+      foreach (TuningDetail tDetail in channel.TuningDetails)
       {
         switch (cardType)
         {
           case CardType.Analog:
-            if (tDetail.ChannelType == 0)
+            if (tDetail.channelType == 0)
               result.Add(tDetail);
             break;
           case CardType.Atsc:
-            if (tDetail.ChannelType == 1)
+            if (tDetail.channelType == 1)
               result.Add(tDetail);
             break;
           case CardType.DvbC:
-            if (tDetail.ChannelType == 2)
+            if (tDetail.channelType == 2)
               result.Add(tDetail);
             break;
           case CardType.DvbS:
-            if (tDetail.ChannelType == 3)
+            if (tDetail.channelType == 3)
             {
-              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
+              if (!enableDVBS2 && (tDetail.pilot > -1 || tDetail.rollOff > -1))
               {
                 Log.Debug(String.Format(
                   "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
-                  tDetail.Name));
+                  tDetail.name));
               }
               else
               {
@@ -346,15 +350,15 @@ namespace SetupTv.Sections
             }
             break;
           case CardType.DvbT:
-            if (tDetail.ChannelType == 4)
+            if (tDetail.channelType == 4)
               result.Add(tDetail);
             break;
           case CardType.DvbIP:
-            if (tDetail.ChannelType == 7)
+            if (tDetail.channelType == 7)
               result.Add(tDetail);
             break;
           case CardType.RadioWebStream:
-            if (tDetail.ChannelType == 5)
+            if (tDetail.channelType == 5)
               result.Add(tDetail);
             break;
           default:
@@ -370,11 +374,11 @@ namespace SetupTv.Sections
       bool hasScrambled = false;
       foreach (TuningDetail detail in tuningDetails)
       {
-        if (detail.FreeToAir)
+        if (detail.freeToAir)
         {
           hasFta = true;
         }
-        if (!detail.FreeToAir)
+        if (!detail.freeToAir)
         {
           hasScrambled = true;
         }

@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// Audio stream types

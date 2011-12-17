@@ -22,9 +22,9 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace SetupControls
+namespace Mediaportal.TV.Server.SetupControls
 {
   public partial class FormTuningDetailCommon : Form
   {
@@ -71,14 +71,44 @@ namespace SetupControls
       var pilot = (int)Pilot.NotSet;
       var rollOff = (int)RollOff.NotSet;
       string url = "";
-      return new TuningDetail(-1, channelName, provider,
-                              channelType, channelNumber, (int)channelFrequency, country, false, false,
-                              networkId, transportId, serviceId, pmtPid, true,
-                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                              bandwidth, majorChannel, minorChannel, videoInputType,
-                              audioInputType, false, tunerSource, band,
-                              satIndex,
-                              innerFecRate, pilot, rollOff, url, 0);
+      var initialTuningDetail = new TuningDetail
+                                  {                                    
+                                    name = channelName,
+                                    provider =provider,
+                                    channelType=channelType,
+                                    channelNumber=channelNumber,
+                                    frequency=(int) channelFrequency,
+                                    countryId=country,                                    
+                                    networkId=networkId,
+                                    transportId=transportId,
+                                    serviceId=serviceId,
+                                    pmtPid=pmtPid,
+                                    freeToAir=true,
+                                    modulation=modulation,
+                                    polarisation=polarisation,
+                                    symbolrate=symbolRate,
+                                    diseqc=diseqc,
+                                    switchingFrequency=switchFrequency,
+                                    bandwidth=bandwidth,
+                                    majorChannel=majorChannel,
+                                    minorChannel=minorChannel,
+                                    videoSource=videoInputType,
+                                    audioSource=audioInputType,
+                                    isVCRSignal=false,
+                                    tuningSource=tunerSource,
+                                    band=band,
+                                    satIndex=satIndex,
+                                    innerFecRate = innerFecRate,
+                                    pilot=pilot,
+                                    rollOff = rollOff,
+                                    url = url,
+                                    bitrate=0
+                                  };
+        
+
+      return initialTuningDetail;
+          
+      ;
     }
   }
 }

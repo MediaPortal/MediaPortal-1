@@ -20,10 +20,9 @@
 
 using System;
 using System.IO;
-using SetupTv;
 using System.Text;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListM3uIO : IPlayListIO
   {

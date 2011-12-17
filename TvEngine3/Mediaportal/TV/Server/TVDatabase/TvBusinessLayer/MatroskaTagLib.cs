@@ -22,10 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using TvLibrary.Log;
 using System.Data.SqlTypes;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvDatabase
+namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public class MatroskaTagInfo
   {
@@ -39,6 +39,7 @@ namespace TvDatabase
     public string episodePart = "";
     public DateTime startTime = SqlDateTime.MinValue.Value;
     public DateTime endTime = SqlDateTime.MinValue.Value;
+    public string mediaType = "1";
   }
 
   /// <summary>
@@ -162,6 +163,9 @@ namespace TvDatabase
           string tagName = simpleTag.ChildNodes[0].InnerText;
           switch (tagName)
           {
+            case "MEDIATYPE":
+              info.mediaType = simpleTag.ChildNodes[1].InnerText;
+              break;
             case "TITLE":
               info.title = simpleTag.ChildNodes[1].InnerText;
               break;
@@ -228,6 +232,7 @@ namespace TvDatabase
       XmlNode tagsNode = doc.CreateElement("tags");
       XmlNode tagNode = doc.CreateElement("tag");
       tagNode.AppendChild(AddSimpleTag("TITLE", taginfo.title, doc));
+      tagNode.AppendChild(AddSimpleTag("MEDIATYPE", taginfo.mediaType, doc));
       tagNode.AppendChild(AddSimpleTag("COMMENT", taginfo.description, doc));
       tagNode.AppendChild(AddSimpleTag("GENRE", taginfo.genre, doc));
       tagNode.AppendChild(AddSimpleTag("CHANNEL_NAME", taginfo.channelName, doc));

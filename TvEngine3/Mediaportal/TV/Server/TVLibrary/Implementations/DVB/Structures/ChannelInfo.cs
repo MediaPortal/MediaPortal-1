@@ -20,9 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB.Structures
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures
 {
   /// <summary>
   /// class holding all information about a channel including pids
@@ -230,7 +230,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       int x;
       int len1 = section_length - pointer;
       int len2 = program_info_length;
-      Log.Log.Write("Decode pmt");
+      Log.Write("Decode pmt");
       while (len2 > 0)
       {
         if (pointer + 2 > buf.Length)
@@ -258,7 +258,7 @@ namespace TvLibrary.Implementations.DVB.Structures
           string tmp = "";
           for (int teller = 0; teller < x; ++teller)
             tmp += String.Format("{0:x} ", buf[pointer + teller]);
-          Log.Log.Info("descr1 len:{0:X} {1}", x, tmp);
+          Log.Info("descr1 len:{0:X} {1}", x, tmp);
         }
         len2 -= x;
         pointer += x;
@@ -287,7 +287,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         }
         catch (Exception ex)
         {
-          Log.Log.WriteFile("Error while decoding pmt: ", ex);
+          Log.WriteFile("Error while decoding pmt: ", ex);
         }
 
         switch (pidInfo.stream_type)
@@ -380,7 +380,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     string tmp = "";
                     for (int teller = 0; teller < x; ++teller)
                       tmp += String.Format("{0:x} ", buf[pointer + teller]);
-                    Log.Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
+                    Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
 
                     scrambled = true; // if there is a CA Descriptor, the stream is scrambled
 

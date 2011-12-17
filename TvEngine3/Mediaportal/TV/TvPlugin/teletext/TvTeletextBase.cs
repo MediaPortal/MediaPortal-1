@@ -23,13 +23,11 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using TvLibrary.Teletext;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
 
   #region enum
@@ -545,48 +543,6 @@ namespace TvPlugin
       imgTeletextBackground.RemoveMemoryImageTexture();
     }
 
-    /// <summary>
-    /// Redraws the images
-    /// </summary>
-    /*protected void Redraw()
-    {
-      Log.Info("dvb-teletext redraw()");
-      try
-      {
-        // First update the foreground image. Step 1 make it invisible
-        _updatingForegroundImage = true;
-        imgTeletextForeground.IsVisible = false;
-        // Clear the old image
-        Image img = (Image) bmpTeletextPage.Clone();
-        imgTeletextForeground.FileName = "";
-        GUITextureManager.ReleaseTexture("[teletextpage]");
-        // Set the new image and make the image visible again
-        imgTeletextForeground.MemoryImage = img;
-        imgTeletextForeground.FileName = "[teletextpage]";
-        imgTeletextForeground.Centered = false;
-        imgTeletextForeground.KeepAspectRatio = false;
-        imgTeletextForeground.IsVisible = true;
-        _updatingForegroundImage = false;
-        // Update the background image now. Therefor make image invisible
-        _updatingBackgroundImage = true;
-        imgTeletextBackground.IsVisible = false;
-        // Clear the old image
-        Image img2 = (Image) bmpTeletextPage.Clone();
-        imgTeletextBackground.FileName = "";
-        GUITextureManager.ReleaseTexture("[teletextpage2]");
-        // Set the new image and make the image visible again
-        imgTeletextBackground.MemoryImage = img2;
-        imgTeletextBackground.FileName = "[teletextpage2]";
-        imgTeletextBackground.Centered = false;
-        imgTeletextBackground.KeepAspectRatio = false;
-        imgTeletextBackground.IsVisible = true;
-        _updatingBackgroundImage = false;
-      }
-      catch (Exception ex)
-      {
-        Log.Error(ex);
-      }
-    }*/
     protected void Redraw()
     {
       Bitmap bitmap;

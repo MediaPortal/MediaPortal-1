@@ -19,10 +19,11 @@
 #endregion
 
 using System;
-using MediaPortal.Utils.Web;
-using MediaPortal.WebEPG.Config.Grabber;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
+using WebEPG.config.Grabber;
 
-namespace MediaPortal.WebEPG.Parser
+namespace WebEPG.Parser
 {
   /// <summary>
   ///  Parser class for delimited EPG data

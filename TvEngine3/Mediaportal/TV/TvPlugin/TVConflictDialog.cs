@@ -18,13 +18,11 @@
 
 #endregion
 
-using System;
-using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TVConflictDialog: GUIDialogWindow
   {
@@ -107,14 +105,6 @@ namespace TvPlugin
         return;
       }
       // to be implemented
-    }
-
-    private static string GetRecordingDateTime(TVProgramDescription rec)
-    {
-      return String.Format("{0} {1} - {2}",
-                           MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
-                           rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                           rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
     #endregion

@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class GroupNameForm
   {
@@ -28,10 +30,10 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTextBox1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpButtonSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpLabel1 = new MPLabel();
+      this.mpTextBox1 = new MPTextBox();
+      this.mpButtonSave = new MPButton();
+      this.mpButtonCancel = new MPButton();
       this.SuspendLayout();
       // 
       // mpLabel1
@@ -96,9 +98,9 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPTextBox mpTextBox1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonSave;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
+    private MPLabel mpLabel1;
+    private MPTextBox mpTextBox1;
+    private MPButton mpButtonSave;
+    private MPButton mpButtonCancel;
   }
 }

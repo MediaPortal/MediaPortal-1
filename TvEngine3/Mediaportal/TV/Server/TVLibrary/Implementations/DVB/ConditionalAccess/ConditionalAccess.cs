@@ -21,14 +21,29 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Interfaces;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using DirectShowLib.BDA;
-using TvDatabase;
-using TvLibrary.Hardware;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.HaupPauge;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.KNC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.TechnoTrend;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.TwinHan;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.QAM;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.HardwareProviders;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using DiSEqCMotor = Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC.DiSEqCMotor;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess
 {
   /// <summary>
   /// Class which handles the conditional access modules for a tv card
@@ -46,12 +61,12 @@ namespace TvLibrary.Implementations.DVB
     private readonly int _decryptLimit;
 
     private readonly CamType _CamType = CamType.Default;
-    private readonly DigitalEverywhere _digitalEveryWhere;
+    private readonly DigitalEverywhere.DigitalEverywhere _digitalEveryWhere;
     private readonly TechnoTrendAPI _technoTrend;
     private readonly Twinhan _twinhan;
     private readonly KNCAPI _knc;
     private readonly Hauppauge _hauppauge;
-    private readonly ProfRed _profred;
+    private readonly ProfRed.ProfRed _profred;
     private readonly DiSEqCMotor _diSEqCMotor;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     private readonly GenericBDAS _genericbdas;
@@ -61,7 +76,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly ConexantBDA _conexant;
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
-    private readonly DigitalDevices _DigitalDevices;
+    private readonly DigitalDevices.DigitalDevices _DigitalDevices;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -106,12 +121,11 @@ namespace TvLibrary.Implementations.DVB
         if (card != null && card.DevicePath != null)
         {
           //fetch decrypt limit from DB and apply it.
-          TvBusinessLayer layer = new TvBusinessLayer();
-          Card c = layer.GetCardByDevicePath(card.DevicePath);
-          _decryptLimit = c.DecryptLimit;
+          Card c = CardManagement.GetCardByDevicePath(card.DevicePath);
+          _decryptLimit = c.decryptLimit;
           _useCam = c.CAM;
-          _CamType = (CamType)c.CamType;
-          Log.Log.WriteFile("CAM is {0} model", _CamType);
+          _CamType = (CamType)c.camType;
+          Log.WriteFile("CAM is {0} model", _CamType);
         }
 
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
@@ -124,7 +138,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (isDVBC || isDVBS || isDVBT)
         {
-          Log.Log.WriteFile("Check for KNC");
+          Log.WriteFile("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
           _knc = new KNCAPI(tunerFilter, (uint)DeviceIndex);
@@ -132,70 +146,76 @@ namespace TvLibrary.Implementations.DVB
           {
             //if (_knc.IsCamReady()) 
             _ciMenu = _knc; // Register KNC CI Menu capabilities when CAM detected and ready
-            Log.Log.WriteFile("KNC card detected");
+            Log.WriteFile("KNC card detected");
             return;
           }
-          Release.DisposeToNull(ref _knc);
+          _knc.SafeDispose();
+          _knc = null;
 
-          Log.Log.WriteFile("Check for Digital Everywhere");
-          _digitalEveryWhere = new DigitalEverywhere(tunerFilter);
+          Log.WriteFile("Check for Digital Everywhere");
+          _digitalEveryWhere = new DigitalEverywhere.DigitalEverywhere(tunerFilter);
           if (_digitalEveryWhere.IsDigitalEverywhere)
           {
-            Log.Log.WriteFile("Digital Everywhere card detected");
+            Log.WriteFile("Digital Everywhere card detected");
             _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
 
             if (_digitalEveryWhere.IsCamReady())
             {
-              Log.Log.WriteFile("Digital Everywhere registering CI menu capabilities");
+              Log.WriteFile("Digital Everywhere registering CI menu capabilities");
               _ciMenu = _digitalEveryWhere; // Register FireDTV CI Menu capabilities when CAM detected and ready
             }
             //_digitalEveryWhere.ResetCAM();
             return;
           }
-          Release.DisposeToNull(ref _digitalEveryWhere);
+          _digitalEveryWhere.SafeDispose();
+          _digitalEveryWhere = null;
 
-          Log.Log.WriteFile("Check for Twinhan");
+          Log.WriteFile("Check for Twinhan");
           _twinhan = new Twinhan(tunerFilter);
           if (_twinhan.IsTwinhan)
           {
-            Log.Log.WriteFile("Twinhan card detected");
+            Log.WriteFile("Twinhan card detected");
             _diSEqCMotor = new DiSEqCMotor(_twinhan);
-            Log.Log.WriteFile("Twinhan registering CI menu capabilities");
+            Log.WriteFile("Twinhan registering CI menu capabilities");
             _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
           }
-          Release.DisposeToNull(ref _twinhan);
+          _twinhan.SafeDispose();
+          _twinhan = null;
 
-          Log.Log.WriteFile("Check for TechnoTrend");
+          Log.WriteFile("Check for TechnoTrend");
           _technoTrend = new TechnoTrendAPI(tunerFilter);
           if (_technoTrend.IsTechnoTrend)
           {
             ////if (_technoTrend.IsCamPresent()) 
             _ciMenu = _technoTrend; // Register Technotrend CI Menu capabilities
-            Log.Log.WriteFile("TechnoTrend card detected");
+            Log.WriteFile("TechnoTrend card detected");
             return;
           }
-          Release.DisposeToNull(ref _technoTrend);
+          _technoTrend.SafeDispose();
+          _technoTrend = null;
 
-          Log.Log.WriteFile("Check for Hauppauge");
+          Log.WriteFile("Check for Hauppauge");
           _hauppauge = new Hauppauge(tunerFilter);
           if (_hauppauge.IsHauppauge)
           {
-            Log.Log.WriteFile("Hauppauge card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            Log.WriteFile("Hauppauge card detected");
+            Log.WriteFile("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              Log.WriteFile("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
 
-              Log.Log.WriteFile("WinTV CI registering CI menu capabilities");
+              Log.WriteFile("WinTV CI registering CI menu capabilities");
               _ciMenu = _winTvCiModule; // WinTv CI Menu capabilities 
             }
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
             return;
           }
-          Release.DisposeToNull(ref _hauppauge);
-          Release.DisposeToNull(ref _winTvCiModule);
+          _hauppauge.SafeDispose();
+          _hauppauge = null;
+          _winTvCiModule.SafeDispose();
+          _winTvCiModule = null;
 
           /*Log.Log.Info("Check for anysee");
           _anysee = new anysee(tunerFilter, analyzerFilter);
@@ -205,38 +225,40 @@ namespace TvLibrary.Implementations.DVB
             return;
           }*/
 
-          Log.Log.WriteFile("Check for ProfRed");
-          _profred = new ProfRed(tunerFilter);
+          Log.WriteFile("Check for ProfRed");
+          _profred = new ProfRed.ProfRed(tunerFilter);
           if (_profred.IsProfRed)
           {
-            Log.Log.WriteFile("ProfRed card detected");
+            Log.WriteFile("ProfRed card detected");
             _diSEqCMotor = new DiSEqCMotor(_profred);
             return;
           }
-          Release.DisposeToNull(ref _profred);
+          _profred.SafeDispose();
+          _profred = null;
 
           // TeVii support
           _TeVii = new TeVii();
           _TeVii.Init(tunerFilter);
           _TeVii.DevicePath = card.DevicePath;
-          Log.Log.WriteFile("Check for {0}", _TeVii.Provider);
+          Log.WriteFile("Check for {0}", _TeVii.Provider);
           _TeVii.CheckAndOpen();
           if (_TeVii.IsSupported)
           {
             _diSEqCMotor = new DiSEqCMotor(_TeVii);
             _HWProvider = _TeVii;
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            Log.WriteFile("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              Log.WriteFile("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
           }
-          Release.DisposeToNull(ref _TeVii);
+          _TeVii.SafeDispose();
+          _TeVii = null;
 
           // DigitalDevices support
-          _DigitalDevices = new DigitalDevices(tunerFilter);
+          _DigitalDevices = new DigitalDevices.DigitalDevices(tunerFilter);
           if (_DigitalDevices.IsGenericBDAS)
           {
             _genericbdas = _DigitalDevices;
@@ -246,92 +268,100 @@ namespace TvLibrary.Implementations.DVB
             }
             return; // detected
           }
-          Release.DisposeToNull(ref _DigitalDevices);
+          _DigitalDevices.SafeDispose();
+          _DigitalDevices = null;
 
-          Log.Log.WriteFile("Check for Conexant based card");
+          Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
           if (_conexant.IsConexant)
           {
-            Log.Log.WriteFile("Conexant BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            Log.WriteFile("Conexant BDA card detected");
+            Log.WriteFile("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              Log.WriteFile("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
           }
-          Release.DisposeToNull(ref _conexant);
-          Release.DisposeToNull(ref _winTvCiModule);
-
-          Log.Log.WriteFile("Check for GenPix BDA based card");
+          _conexant.SafeDispose();
+          _conexant = null;
+          _winTvCiModule.SafeDispose();
+          _winTvCiModule = null;
+          Log.WriteFile("Check for GenPix BDA based card");
           _genpix = new GenPixBDA(tunerFilter);
           if (_genpix.IsGenPix)
           {
-            Log.Log.WriteFile("GenPix BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            Log.WriteFile("GenPix BDA card detected");
+            Log.WriteFile("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              Log.WriteFile("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
           }
-          Release.DisposeToNull(ref _genpix);
-          Release.DisposeToNull(ref _winTvCiModule);
+          _genpix.SafeDispose();
+          _genpix = null;
+          _winTvCiModule.SafeDispose();
+          _winTvCiModule = null;
 
-          Log.Log.WriteFile("Check for Generic DVB-S card");
+          Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter);
           if (_genericbdas.IsGenericBDAS)
           {
-            Log.Log.WriteFile("Generic BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            Log.WriteFile("Generic BDA card detected");
+            Log.WriteFile("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              Log.WriteFile("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
           }
-          Release.DisposeToNull(ref _genericbdas);
+          _genericbdas.SafeDispose();
+          _genericbdas = null;
 
           //Final WinTV-CI check for DVB-T hybrid cards
-          Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+          Log.WriteFile("Check for Hauppauge WinTV CI");
           if (winTvUsbCiFilter != null)
           {
-            Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+            Log.WriteFile("WinTV CI detected in graph - using capabilities...");
             _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             return;
-          }
-          Release.DisposeToNull(ref _winTvCiModule);
+          }          
+          _winTvCiModule.SafeDispose();
+          _winTvCiModule = null;
         }
 
         //ATSC checks
         bool isATSC = (card is TvCardATSC);
         if (isATSC)
         {
-          Log.Log.WriteFile("Check for ViXS ATSC QAM card");
+          Log.WriteFile("Check for ViXS ATSC QAM card");
           _isvixsatsc = new ViXSATSC(tunerFilter);
           if (_isvixsatsc.IsViXSATSC)
           {
-            Log.Log.WriteFile("ViXS ATSC QAM card detected");
+            Log.WriteFile("ViXS ATSC QAM card detected");
             return;
           }
-          Release.DisposeToNull(ref _isvixsatsc);
+          _isvixsatsc.SafeDispose();
+          _isvixsatsc = null;
 
-          Log.Log.WriteFile("Check for Generic ATSC QAM card");
+          Log.WriteFile("Check for Generic ATSC QAM card");
           _isgenericatsc = new GenericATSC(tunerFilter);
           if (_isgenericatsc.IsGenericATSC)
           {
-            Log.Log.WriteFile("Generic ATSC QAM card detected");
+            Log.WriteFile("Generic ATSC QAM card detected");
             return;
           }
-          Release.DisposeToNull(ref _isgenericatsc);
+          _isgenericatsc.SafeDispose();
+          _isgenericatsc = null;
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
     }
 
@@ -360,12 +390,12 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_mapSubChannels.ContainsKey(id))
       {
-        Log.Log.WriteFile("FreeSubChannel CA: freeing sub channel : {0}", id);
+        Log.WriteFile("FreeSubChannel CA: freeing sub channel : {0}", id);
         _mapSubChannels.Remove(id);
       }
       else
       {
-        Log.Log.WriteFile("FreeSubChannel CA: tried to free non existing sub channel : {0}", id);
+        Log.WriteFile("FreeSubChannel CA: tried to free non existing sub channel : {0}", id);
       }
     }
 
@@ -426,7 +456,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(),
+          Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(),
                             _technoTrend.IsCamReady());
           if (_technoTrend.IsCamPresent() == false)
           {
@@ -443,13 +473,13 @@ namespace TvLibrary.Implementations.DVB
           int hr = _winTvCiModule.Init();
           if (hr != 0)
             return false;
-          Log.Log.Info("WinTVCI:  CAM initialized");
+          Log.Info("WinTVCI:  CAM initialized");
           return true;
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return true;
     }
@@ -478,7 +508,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
     }
 
@@ -653,10 +683,10 @@ namespace TvLibrary.Implementations.DVB
           int hr = _winTvCiModule.SendPMT(PMT, pmtLength);
           if (hr != 0)
           {
-            Log.Log.Info("Conditional Access:  sendPMT to WinTVCI failed");
+            Log.Info("Conditional Access:  sendPMT to WinTVCI failed");
             return false;
           }
-          Log.Log.Info("Conditional Access:  sendPMT to WinTVCI succeeded");
+          Log.Info("Conditional Access:  sendPMT to WinTVCI succeeded");
           return true;
         }
         if (_knc != null)
@@ -692,7 +722,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return true;
     }
@@ -760,7 +790,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return succeeded;
     }
@@ -816,21 +846,21 @@ namespace TvLibrary.Implementations.DVB
           {
             for (int i = 0; i < HwPids.Count; ++i)
             {
-              Log.Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", HwPids[i]);
+              Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", HwPids[i]);
             }
             _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, true, isAtsc, HwPids);
           }
           else
           {
             pids.Clear();
-            Log.Log.Info("FireDTV: HW Filtering disabled.");
+            Log.Info("FireDTV: HW Filtering disabled.");
             _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
     }
 
@@ -864,10 +894,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModOqpsk;
           }
-          Log.Log.WriteFile("Twinhan DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("Twinhan DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("Twinhan DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("Twinhan DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          Log.WriteFile("Twinhan DVB-S2 modulation set to:{0}", channel.ModulationType);
+          Log.WriteFile("Twinhan DVB-S2 Pilot set to:{0}", channel.Pilot);
+          Log.WriteFile("Twinhan DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          Log.WriteFile("Twinhan DVB-S2 fec set to:{0}", channel.InnerFecRate);
           return channel;
         }
         if (_hauppauge != null)
@@ -900,10 +930,10 @@ namespace TvLibrary.Implementations.DVB
             {
               channel.Pilot = Pilot.Off;
             }
-            Log.Log.WriteFile("Hauppauge DVB-S2 modulation set to:{0}", channel.ModulationType);
-            Log.Log.WriteFile("Hauppauge DVB-S2 Pilot set to:{0}", channel.Pilot);
-            Log.Log.WriteFile("Hauppauge DVB-S2 RollOff set to:{0}", channel.Rolloff);
-            Log.Log.WriteFile("Hauppauge DVB-S2 fec set to:{0}", channel.InnerFecRate);
+            Log.WriteFile("Hauppauge DVB-S2 modulation set to:{0}", channel.ModulationType);
+            Log.WriteFile("Hauppauge DVB-S2 Pilot set to:{0}", channel.Pilot);
+            Log.WriteFile("Hauppauge DVB-S2 RollOff set to:{0}", channel.Rolloff);
+            Log.WriteFile("Hauppauge DVB-S2 fec set to:{0}", channel.InnerFecRate);
             _hauppauge.SetDVBS2PilotRolloff(channel);
           }
           return channel;
@@ -919,10 +949,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModBpsk;
           }
-          Log.Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
+          Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
+          Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
           //}
           return channel;
         }
@@ -945,10 +975,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModOqpsk;
           }
-          Log.Log.WriteFile("Technotrend DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("Technotrend DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("Technotrend DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("Technotrend DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          Log.WriteFile("Technotrend DVB-S2 modulation set to:{0}", channel.ModulationType);
+          Log.WriteFile("Technotrend DVB-S2 Pilot set to:{0}", channel.Pilot);
+          Log.WriteFile("Technotrend DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          Log.WriteFile("Technotrend DVB-S2 fec set to:{0}", channel.InnerFecRate);
           return channel;
         }
         if (_knc != null)
@@ -970,10 +1000,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModOqpsk;
           }
-          Log.Log.WriteFile("KNC DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("KNC DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("KNC DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("KNC DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          Log.WriteFile("KNC DVB-S2 modulation set to:{0}", channel.ModulationType);
+          Log.WriteFile("KNC DVB-S2 Pilot set to:{0}", channel.Pilot);
+          Log.WriteFile("KNC DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          Log.WriteFile("KNC DVB-S2 fec set to:{0}", channel.InnerFecRate);
           return channel;
         }
         if (_digitalEveryWhere != null)
@@ -1013,16 +1043,16 @@ namespace TvLibrary.Implementations.DVB
             BinaryConvolutionCodeRate r = channel.InnerFecRate + _pilot + _rollOff;
             channel.InnerFecRate = r;
           }
-          Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("DigitalEverywhere RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
+          Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
+          Log.WriteFile("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
+          Log.WriteFile("DigitalEverywhere RollOff set to:{0}", channel.Rolloff);
+          Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
           return channel;
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return channel;
     }
@@ -1039,19 +1069,19 @@ namespace TvLibrary.Implementations.DVB
         {
           if (_isgenericatsc != null)
           {
-            Log.Log.Info("Setting Generic ATSC modulation to {0}", channel.ModulationType);
+            Log.Info("Setting Generic ATSC modulation to {0}", channel.ModulationType);
             _isgenericatsc.SetXPATSCQam(channel);
           }
           if (_isvixsatsc != null)
           {
-            Log.Log.Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
+            Log.Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
             _isvixsatsc.SetViXSQam(channel);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return channel;
     }
@@ -1070,7 +1100,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        Log.Write(ex);
       }
       return channel;
     }
@@ -1090,25 +1120,45 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #region IDisposable Member
+      
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+        _knc.SafeDispose();
+        _technoTrend.SafeDispose();
+        _digitalEveryWhere.SafeDispose();
+        _hauppauge.SafeDispose();
+        _conexant.SafeDispose();
+        _genericbdas.SafeDispose();
+        _isgenericatsc.SafeDispose();
+        _isvixsatsc.SafeDispose();
+        _genpix.SafeDispose();
+        _winTvCiModule.SafeDispose();
+        _twinhan.SafeDispose();
+        _profred.SafeDispose();
+        _TeVii.SafeDispose();
+        _DigitalDevices.SafeDispose();
+      }
+
+      // get rid of unmanaged resources
+  
+    }
 
     /// <summary>
     /// Disposing CI and API resources
     /// </summary>
     public void Dispose()
     {
-      Release.Dispose(_knc);
-      Release.Dispose(_technoTrend);
-      Release.Dispose(_digitalEveryWhere);
-      Release.Dispose(_hauppauge);
-      Release.Dispose(_conexant);
-      Release.Dispose(_genericbdas);
-      Release.Dispose(_isgenericatsc);
-      Release.Dispose(_isvixsatsc);
-      Release.Dispose(_genpix);
-      Release.Dispose(_winTvCiModule);
-      Release.Dispose(_twinhan);
-      Release.Dispose(_profred);
-      Release.Dispose(_TeVii);
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~ConditionalAccess()
+    {
+      Dispose(false);
     }
 
     #endregion

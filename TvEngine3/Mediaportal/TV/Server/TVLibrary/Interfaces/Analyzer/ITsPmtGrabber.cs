@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TvLibrary.Interfaces.Analyzer
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
   /// interface to the pmt grabber com object

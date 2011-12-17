@@ -19,12 +19,12 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 {
   /// <summary>
   /// Class which implements scanning for tv/radio channels for ATSC BDA cards
@@ -78,14 +78,13 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;
       atscChannel.MajorChannel = info.majorChannel;
       atscChannel.MinorChannel = info.minorChannel;
-      atscChannel.IsTv = IsTvService(info.serviceType);
-      atscChannel.IsRadio = IsRadioService(info.serviceType);
+      atscChannel.MediaType = GetMediaTypeByServiceType(info.serviceType);
       atscChannel.NetworkId = info.networkID;
       atscChannel.ServiceId = info.serviceID;
       atscChannel.TransportId = info.transportStreamID;
       atscChannel.PmtPid = info.network_pmt_PID;
       atscChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("atsc:Found: {0}", atscChannel);
+      Log.Write("atsc:Found: {0}", atscChannel);
       return atscChannel;
     }
 
@@ -93,14 +92,14 @@ namespace TvLibrary.Implementations.DVB
     {
       if (((ATSCChannel)channel).Frequency > 0)
       {
-        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+        Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
                      ((ATSCChannel)channel).Frequency, info.serviceID);
         info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency,
                                           info.serviceID);
       }
       else
       {
-        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+        Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
                      ((ATSCChannel)channel).PhysicalChannel, info.serviceID);
         info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel,
                                           info.serviceID);

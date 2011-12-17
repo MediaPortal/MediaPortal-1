@@ -22,7 +22,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections;
 
-namespace MediaPortal.UserInterface.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   public class MPListViewStringColumnSorter : IComparer
   {

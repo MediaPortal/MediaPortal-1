@@ -19,9 +19,9 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.VideoStream
 {
   /// <summary>
   /// class which holds the video stream details for a channel

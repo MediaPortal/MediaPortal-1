@@ -19,8 +19,9 @@
 #endregion
 
 using System;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 {
   ///<summary>
   /// Teletext page cache
@@ -283,14 +284,32 @@ namespace TvLibrary.Teletext
     }
 
     #region IDisposable Members
-
-    /// <summary>
-    /// Destructor
-    /// </summary>
-    public void Dispose()
-    {
-      Clear();
-    }
+		
+		protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+        Clear();
+		  }
+		  // get rid of unmanaged resources
+		}
+		
+		
+		/// <summary>
+		/// Disposes the teletextpagecache
+		/// </summary>    
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~TeletextPageCache()
+		{
+		  Dispose(false);
+		}
+		
 
     #endregion
   }

@@ -22,8 +22,9 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
   /// DVB text strings to Unicode converter
@@ -168,7 +169,7 @@ namespace TvLibrary.Interfaces
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while converting dvb text", ex);
+        Log.WriteFile("Error while converting dvb text", ex);
       }
       byte[] text = new byte[len - pos];
       for (int i = 0; i < len - pos; i++)

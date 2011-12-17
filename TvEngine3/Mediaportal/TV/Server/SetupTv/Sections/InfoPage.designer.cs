@@ -1,8 +1,11 @@
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
 #pragma warning disable 108
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  public partial class InfoPage : SetupTv.SectionSettings
+  public partial class InfoPage : SectionSettings
   {
     /// <summary> 
     /// Required designer variable.
@@ -30,8 +33,8 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBoxInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.lblInfoText = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxInfo = new MPGroupBox();
+      this.lblInfoText = new MPLabel();
       this.groupBoxInfo.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -69,7 +72,7 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxInfo;
-    private MediaPortal.UserInterface.Controls.MPLabel lblInfoText;
+    private MPGroupBox groupBoxInfo;
+    private MPLabel lblInfoText;
   }
 }

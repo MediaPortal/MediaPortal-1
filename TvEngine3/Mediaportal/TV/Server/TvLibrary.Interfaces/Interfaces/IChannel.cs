@@ -18,7 +18,9 @@
 
 #endregion
 
-namespace TvLibrary.Interfaces
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
   /// interface which describes a tv/radio channel
@@ -30,15 +32,7 @@ namespace TvLibrary.Interfaces
     /// </summary>
     string Name { get; set; }
 
-    /// <summary>
-    /// boolean indication if this is a radio channel
-    /// </summary>
-    bool IsRadio { get; set; }
-
-    /// <summary>
-    /// boolean indication if this is a tv channel
-    /// </summary>
-    bool IsTv { get; set; }
+    
 
     /// <summary>
     /// Checks if the given channel and this instance are on the different transponder
@@ -52,5 +46,7 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <returns>true, if the channel is FTA</returns>
     bool FreeToAir { get; }
+
+    MediaTypeEnum MediaType { get; set; }
   }
 }

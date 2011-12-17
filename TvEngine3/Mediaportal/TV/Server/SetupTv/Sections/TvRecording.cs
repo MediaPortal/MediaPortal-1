@@ -27,15 +27,20 @@ using System.Data.SqlTypes;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using Gentle.Framework;
-using TvDatabase;
-using TvControl;
-using TvLibrary.Log;
-using SetupTv.Dialogs;
+
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupTV.Dialogs;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 #endregion
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TvRecording : SectionSettings
   {
@@ -52,7 +57,7 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return card.Name;
+        return card.name;
       }
     }
 
@@ -189,23 +194,22 @@ namespace SetupTv.Sections
     {
       numericUpDownPreRec.Value = 5;
       numericUpDownPostRec.Value = 5;
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
 
       numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
-        Convert.ToInt32(layer.GetSetting("recordMaxFreeCardsToTry", "0").Value), 0, 100);
+        Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("recordMaxFreeCardsToTry", "0").value), 0, 100);
 
-      comboBoxWeekend.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstDayOfWeekend", "0").Value);
+      comboBoxWeekend.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("FirstDayOfWeekend", "0").value);
       //default is Saturday=0
 
-      checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
-      checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
-      comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
+      checkBoxAutoDelete.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").value == "yes");
+      checkBoxPreventDupes.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("PreventDuplicates", "no").value == "yes");
+      comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("EpisodeKey", "0").value);
       // default EpisodeName
-      //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
-      checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
+      //checkBoxCreateTagInfoXML.Checked = true; // (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("createtaginfoxml", "yes").value == "yes");
 
-      numericUpDownPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "7").Value);
-      numericUpDownPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "10").Value);
+      numericUpDownPreRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "7").value);
+      numericUpDownPostRec.Value = int.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "10").value);
 
       // Movies formats
       _formatString[0] = new string[4];
@@ -222,16 +226,16 @@ namespace SetupTv.Sections
       _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
       _formatString[1][4] = @"[User custom value]"; // Must be the last one in the array list
 
-      Int32.TryParse(layer.GetSetting("moviesformatindex", "0").Value, out _formatIndex[0]);
-      Int32.TryParse(layer.GetSetting("seriesformatindex", "0").Value, out _formatIndex[1]);
+      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformatindex", "0").value, out _formatIndex[0]);
+      Int32.TryParse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformatindex", "0").value, out _formatIndex[1]);
 
-      _customFormat[0] = layer.GetSetting("moviesformat", "").Value;
-      _customFormat[1] = layer.GetSetting("seriesformat", "").Value;
+      _customFormat[0] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("moviesformat", "").value;
+      _customFormat[1] = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("seriesformat", "").value;
 
       comboBoxMovies.SelectedIndex = 0;
       UpdateFieldDisplay();
 
-      enableDiskQuota.Checked = (layer.GetSetting("diskQuotaEnabled", "False").Value == "True");
+      enableDiskQuota.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("diskQuotaEnabled", "False").value == "True");
       enableDiskQuotaControls();
 
       LoadComboBoxDrive();
@@ -255,57 +259,26 @@ namespace SetupTv.Sections
 
     public override void SaveSettings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("preRecordInterval", "7");
-      setting.Value = numericUpDownPreRec.Value.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("postRecordInterval", "10");
-      setting.Value = numericUpDownPostRec.Value.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("moviesformat", "");
-      setting.Value = _formatIndex[0] == (_formatString[0].Length - 1)
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("preRecordInterval", numericUpDownPreRec.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("postRecordInterval", numericUpDownPostRec.Value.ToString());
+
+
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("moviesformat", _formatIndex[0] == (_formatString[0].Length - 1)
                         ? _customFormat[0]
-                        : _formatString[0][_formatIndex[0]];
-      setting.Persist();
-      setting = layer.GetSetting("moviesformatindex", "0");
-      setting.Value = _formatIndex[0].ToString();
-      setting.Persist();
-      setting = layer.GetSetting("seriesformat", "");
-      setting.Value = _formatIndex[1] == (_formatString[1].Length - 1)
+                        : _formatString[0][_formatIndex[0]]);
+      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("moviesformatindex",_formatIndex[0].ToString());
+      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("seriesformat", _formatIndex[1] == (_formatString[1].Length - 1)
                         ? _customFormat[1]
-                        : _formatString[1][_formatIndex[1]];
-      setting.Persist();
-      setting = layer.GetSetting("seriesformatindex", "0");
-      setting.Value = _formatIndex[1].ToString();
-      setting.Persist();
+                        : _formatString[1][_formatIndex[1]]);
 
-      setting = layer.GetSetting("FirstDayOfWeekend", "0"); //default is Saturday=0
-      setting.Value = comboBoxWeekend.SelectedIndex.ToString();
-      setting.Persist();
-
-      setting = layer.GetSetting("autodeletewatchedrecordings", "no");
-      setting.Value = checkBoxAutoDelete.Checked ? "yes" : "no";
-      setting.Persist();
-
-      //setting = layer.GetSetting("createtaginfoxml", "yes");
-      //setting.Value = checkBoxCreateTagInfoXML.Checked ? "yes" : "no";
-      //setting.Persist();
-
-      setting = layer.GetSetting("scheduleroverlivetv", "yes");
-      setting.Value = checkboxSchedulerPriority.Checked ? "yes" : "no";
-      setting.Persist();
-
-      setting = layer.GetSetting("PreventDuplicates", "no");
-      setting.Value = checkBoxPreventDupes.Checked ? "yes" : "no";
-      setting.Persist();
-
-      setting = layer.GetSetting("EpisodeKey", "0");
-      setting.Value = comboBoxEpisodeKey.SelectedIndex.ToString();
-      setting.Persist();
-
-      setting = layer.GetSetting("recordMaxFreeCardsToTry", "0");
-      setting.Value = numericUpDownMaxFreeCardsToTry.Value.ToString();
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("seriesformatindex", _formatIndex[1].ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("FirstDayOfWeekend", comboBoxWeekend.SelectedIndex.ToString()); //default is Saturday=0      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("autodeletewatchedrecordings", checkBoxAutoDelete.Checked ? "yes" : "no");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("PreventDuplicates", checkBoxPreventDupes.Checked ? "yes" : "no");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("EpisodeKey", comboBoxEpisodeKey.SelectedIndex.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("recordMaxFreeCardsToTry", numericUpDownMaxFreeCardsToTry.Value.ToString());      
 
       UpdateDriveInfo(true);
     }
@@ -362,7 +335,7 @@ namespace SetupTv.Sections
     private void comboBoxCards_SelectedIndexChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      textBoxFolder.Text = info.card.RecordingFolder;
+      textBoxFolder.Text = info.card.recordingFolder;
       if (String.IsNullOrEmpty(textBoxFolder.Text))
       {
         string recPath =
@@ -410,11 +383,11 @@ namespace SetupTv.Sections
       {
         textBoxFolder.Text = dlg.SelectedPath;
         CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-        if (info.card.RecordingFolder != textBoxFolder.Text)
+        if (info.card.recordingFolder != textBoxFolder.Text)
         {
           _needRestart = true;
-          info.card.RecordingFolder = textBoxFolder.Text;
-          info.card.Persist();
+          info.card.recordingFolder = textBoxFolder.Text;
+          ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
           LoadComboBoxDrive();
         }
       }
@@ -426,7 +399,7 @@ namespace SetupTv.Sections
 
       _needRestart = false;
       comboBoxCards.Items.Clear();
-      IList<Card> cards = Card.ListAll();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
       foreach (Card card in cards)
       {
         comboBoxCards.Items.Add(new CardInfo(card));
@@ -454,8 +427,7 @@ namespace SetupTv.Sections
           dlgNotify.Show();
           dlgNotify.WaitForDisplay();
 
-          RemoteControl.Instance.ClearCache();
-          RemoteControl.Instance.Restart();
+          ServiceAgents.Instance.ControllerServiceAgent.Restart();
 
           dlgNotify.Close();
         }
@@ -465,10 +437,10 @@ namespace SetupTv.Sections
     private void textBoxFolder_TextChanged(object sender, EventArgs e)
     {
       CardInfo info = (CardInfo)comboBoxCards.SelectedItem;
-      if (info.card.RecordingFolder != textBoxFolder.Text)
+      if (info.card.recordingFolder != textBoxFolder.Text)
       {
-        info.card.RecordingFolder = textBoxFolder.Text;
-        info.card.Persist();
+        info.card.recordingFolder = textBoxFolder.Text;
+        ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
         _needRestart = true;
         LoadComboBoxDrive();
       }
@@ -481,10 +453,10 @@ namespace SetupTv.Sections
       for (int iIndex = 0; iIndex < comboBoxCards.Items.Count; iIndex++)
       {
         CardInfo info = (CardInfo)comboBoxCards.Items[iIndex];
-        if (info.card.RecordingFolder != textBoxFolder.Text)
+        if (info.card.recordingFolder != textBoxFolder.Text)
         {
-          info.card.RecordingFolder = textBoxFolder.Text;
-          info.card.Persist();
+          info.card.recordingFolder = textBoxFolder.Text;
+          ServiceAgents.Instance.CardServiceAgent.SaveCard(info.card);
           if (!_needRestart)
           {
             _needRestart = true;
@@ -502,7 +474,7 @@ namespace SetupTv.Sections
       if (info.card.RecordingFormat != comboBoxRecordingFormat.SelectedIndex)
       {
         info.card.RecordingFormat = comboBoxRecordingFormat.SelectedIndex;
-        info.card.Persist();
+        info.ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
         _needRestart = true;
       }
     }
@@ -517,10 +489,7 @@ namespace SetupTv.Sections
     {
       enableDiskQuotaControls();
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("diskQuotaEnabled");
-      setting.Value = ((CheckBox)sender).Checked.ToString();
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("diskQuotaEnabled", ((CheckBox)sender).Checked.ToString());      
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -555,21 +524,20 @@ namespace SetupTv.Sections
         labelTotalDiskSpace.Text = "Not available - WMI service not available";
       if (save)
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0]);
+        
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("freediskspace" + drive[0]);
         if (mpNumericTextBoxDiskQuota.Value < 500)
           mpNumericTextBoxDiskQuota.Value = 500;
-        long quota = mpNumericTextBoxDiskQuota.Value * 1024;
-        setting.Value = quota.ToString();
-        setting.Persist();
+        long quota = mpNumericTextBoxDiskQuota.Value * 1024;        
+        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("freediskspace", quota.ToString());
       }
       else
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Setting setting = layer.GetSetting("freediskspace" + drive[0]);
+        
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("freediskspace" + drive[0]);
         try
         {
-          long quota = Int64.Parse(setting.Value);
+          long quota = Int64.Parse(setting.value);
           mpNumericTextBoxDiskQuota.Value = (int)quota / 1024;
         }
         catch (Exception)
@@ -614,12 +582,12 @@ namespace SetupTv.Sections
     private void LoadComboBoxDrive()
     {
       comboBoxDrive.Items.Clear();
-      IList<Card> cards = Card.ListAll();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
       foreach (Card card in cards)
       {
-        if (card.RecordingFolder.Length > 0)
+        if (card.recordingFolder.Length > 0)
         {
-          string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
+          string driveLetter = String.Format("{0}:", card.recordingFolder[0]);
           if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!comboBoxDrive.Items.Contains(driveLetter))
@@ -690,11 +658,11 @@ namespace SetupTv.Sections
       GetRecordingsFromDb();
       try
       {
-        IList<Card> allCards = Card.ListAll();
+        IList<Card> allCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
         foreach (Card tvCard in allCards)
         {
-          if (!string.IsNullOrEmpty(tvCard.RecordingFolder) && !cbRecPaths.Items.Contains(tvCard.RecordingFolder))
-            cbRecPaths.Items.Add(tvCard.RecordingFolder);
+          if (!string.IsNullOrEmpty(tvCard.recordingFolder) && !cbRecPaths.Items.Contains(tvCard.recordingFolder))
+            cbRecPaths.Items.Add(tvCard.recordingFolder);
         }
         if (cbRecPaths.Items.Count > 0)
         {
@@ -763,7 +731,7 @@ namespace SetupTv.Sections
       try
       {
         tvDbRecs.Clear();
-        IList<Recording> recordings = Recording.ListAll();
+        IList<Recording> recordings = ServiceAgents.Instance.RecordingServiceAgent.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
         foreach (Recording rec in recordings)
         {
           TreeNode RecNode = BuildNodeFromRecording(rec);
@@ -830,8 +798,8 @@ namespace SetupTv.Sections
                 Recording currentDbRec = dbRec.Tag as Recording;
                 if (currentDbRec != null)
                 {
-                  if (Path.GetFileNameWithoutExtension(currentDbRec.FileName) ==
-                      Path.GetFileNameWithoutExtension(TagRec.FileName))
+                  if (Path.GetFileNameWithoutExtension(currentDbRec.fileName) ==
+                      Path.GetFileNameWithoutExtension(TagRec.fileName))
                   {
                     RecFileFound = true;
                     break;
@@ -841,9 +809,9 @@ namespace SetupTv.Sections
               if (!RecFileFound)
               {
                 // only add those tags which specify a still valid filename
-                if (File.Exists(TagRec.FileName))
+                if (File.Exists(TagRec.fileName))
                 {
-                  if (TagRec.IdChannel == -1)
+                  if (TagRec.idChannel == -1)
                   {
                     TagNode.ForeColor = SystemColors.GrayText;
                     TagNode.Checked = false;
@@ -888,15 +856,15 @@ namespace SetupTv.Sections
       {
         Channel lookupChannel;
         string channelName = "unknown";
-        string startTime = SqlDateTime.MinValue.Value == aRec.StartTime ? "unknown" : aRec.StartTime.ToString();
-        string endTime = SqlDateTime.MinValue.Value == aRec.EndTime ? "unknown" : aRec.EndTime.ToString();
+        string startTime = SqlDateTime.MinValue.Value == aRec.startTime ? "unknown" : aRec.startTime.ToString();
+        string endTime = SqlDateTime.MinValue.Value == aRec.endTime ? "unknown" : aRec.endTime.ToString();
         try
         {
-          lookupChannel = aRec.ReferencedChannel();
+          lookupChannel = aRec.Channel;
           if (lookupChannel != null)
           {
-            channelName = lookupChannel.DisplayName;
-            lookupChannel.IdChannel.ToString();
+            channelName = lookupChannel.displayName;
+            lookupChannel.idChannel.ToString();
           }
         }
         catch (Exception) {}
@@ -915,14 +883,14 @@ namespace SetupTv.Sections
         //{
         //  subItem.StateImageIndex = -1;
         //}
-        //TreeNode recItem = new TreeNode(aRec.Title, subitems);
+        //TreeNode recItem = new TreeNode(aRec.title, subitems);
 
         string NodeTitle;
         if (startTime != "unknown" && endTime != "unknown")
-          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.Title, channelName, startTime,
+          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.title, channelName, startTime,
                                     endTime);
         else
-          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}", aRec.Title, channelName, startTime);
+          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}", aRec.title, channelName, startTime);
 
         TreeNode recItem = new TreeNode(NodeTitle);
         recItem.Tag = aRec;
@@ -931,7 +899,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.Title, ex.Message));
+        MessageBox.Show(string.Format("Could not build TreeNode from recording: {0}\n{1}", aRec.title, ex.Message));
         return null;
       }
     }
@@ -967,24 +935,27 @@ namespace SetupTv.Sections
         {
           aTag.endTime = GetRecordingEndTime(physicalFile);
         }
-        tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
-                               -1,
+
+        ProgramCategory category =  ServiceAgents.Instance.ProgramServiceAgent.GetProgramCategoryByName(aTag.genre);
+
+        tagRec = RecordingFactory.CreateRecording(GetChannelIdByDisplayName(aTag.channelName),
+                               null,
                                false,
                                aTag.startTime,
                                aTag.endTime,
                                aTag.title,
                                aTag.description,
-                               aTag.genre,
+                               category,
                                physicalFile,
                                0,
                                SqlDateTime.MaxValue.Value,
-                               0,
-                               GetServerId(),
+                               0,                               
                                aTag.episodeName,
                                aTag.seriesNum,
                                aTag.episodeNum,
-                               aTag.episodePart
-          );
+                               aTag.episodePart);                               
+
+        tagRec.mediaType = Convert.ToInt32(aTag.mediaType);
       }
       catch (Exception ex)
       {
@@ -1043,29 +1014,6 @@ namespace SetupTv.Sections
       return recordingFile;
     }
 
-    private static int GetServerId()
-    {
-      int serverId = 1;
-      try
-      {
-        string localHost = System.Net.Dns.GetHostName();
-        string localDomainName =
-          System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.ToLowerInvariant();
-        IList<Server> dbsServers = Server.ListAll();
-        foreach (Server computer in dbsServers)
-        {
-          if (computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant() ||
-              computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant() + "." + localDomainName)
-            serverId = computer.IdServer;
-        }
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show(string.Format("Could not get ServerID for recording!\n{0}", ex.Message));
-      }
-      return serverId;
-    }
-
     private static int GetChannelIdByDisplayName(string aChannelName)
     {
       int channelId = -1;
@@ -1073,24 +1021,24 @@ namespace SetupTv.Sections
         return channelId;
       try
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-        sb.AddConstraint(Operator.Equals, "displayName", aChannelName);
-        sb.SetRowLimit(1);
-        SqlStatement stmt = sb.GetStatement(true);
-        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(aChannelName);
+
         if (channels.Count > 0)
         {
-          channelId = (channels[0]).IdChannel;
+          channelId = (channels[0]).idChannel;
         }
         else
         {
-          sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+          channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByNameContains(aChannelName);
+          /*sb = new SqlBuilder(StatementType.Select, typeof (Channel));
           sb.AddConstraint(Operator.Like, "displayName", "%" + aChannelName + "%");
           sb.SetRowLimit(1);
           stmt = sb.GetStatement(true);
-          channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+          channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());*/
           if (channels.Count > 0)
-            channelId = (channels[0]).IdChannel;
+          {
+            channelId = (channels[0]).idChannel;
+          }
         }
       }
       catch (Exception ex)
@@ -1129,8 +1077,8 @@ namespace SetupTv.Sections
               {
                 try
                 {
-                  currentTagRec.IdChannel = newId;
-                  currentTagRec.Persist();
+                  currentTagRec.idChannel = newId;                  
+                  ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(currentTagRec);
                 }
                 catch (Exception ex)
                 {
@@ -1163,13 +1111,13 @@ namespace SetupTv.Sections
         if (tagRec.Checked) // only import the recordings which the user has selected
         {
           Recording currentTagRec = tagRec.Tag as Recording;
-          if (currentTagRec != null && currentTagRec.IdChannel != -1)
+          if (currentTagRec != null && currentTagRec.idChannel != -1)
           {
-            //if (MessageBox.Show(this, string.Format("Import {0} now? \n{1}", currentTagRec.Title, currentTagRec.FileName), "Recording not found in DB", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            //if (MessageBox.Show(this, string.Format("Import {0} now? \n{1}", currentTagRec.title, currentTagRec.FileName), "Recording not found in DB", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             //{
             try
-            {
-              currentTagRec.Persist();
+            {              
+              ServiceAgents.Instance.RecordingServiceAgent.SaveRecording(currentTagRec);
             }
             catch (Exception ex)
             {
@@ -1196,17 +1144,17 @@ namespace SetupTv.Sections
         Recording currentDbRec = dbRec.Tag as Recording;
         if (currentDbRec != null)
         {
-          if (!File.Exists(currentDbRec.FileName))
+          if (!File.Exists(currentDbRec.fileName))
           {
             if (
               MessageBox.Show(this,
-                              string.Format("Delete entry {0} now? \n{1}", currentDbRec.Title, currentDbRec.FileName),
+                              string.Format("Delete entry {0} now? \n{1}", currentDbRec.title, currentDbRec.fileName),
                               "Recording not found on disk!", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                               MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
               try
               {
-                currentDbRec.Delete();
+                ServiceAgents.Instance.RecordingServiceAgent.DeleteRecording(currentDbRec.idRecording);                
               }
               catch (Exception ex)
               {

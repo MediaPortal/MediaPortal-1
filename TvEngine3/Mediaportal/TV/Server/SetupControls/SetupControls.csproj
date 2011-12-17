@@ -8,14 +8,15 @@
     <ProjectGuid>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SetupControls</RootNamespace>
-    <AssemblyName>SetupControls</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.SetupControls</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.SetupControls</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,14 +52,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gentle.Common, Version=1.5.0.29111, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\Gentle.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Gentle.Framework, Version=1.5.0.29111, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\TVDatabase\references\Gentle.Framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -69,7 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="ComboBoxEx .cs">
@@ -218,13 +211,17 @@
     <Content Include="Resources\icon_refresh.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TVDatabase\TVDatabase.csproj">
-      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
-      <Name>TVDatabase</Name>
+    <ProjectReference Include="..\RuleBasedScheduler\RuleBasedScheduler.csproj">
+      <Project>{D3C57312-F398-48ED-BFE0-F80EF856DD68}</Project>
+      <Name>RuleBasedScheduler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

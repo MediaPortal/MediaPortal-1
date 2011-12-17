@@ -20,12 +20,13 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Action = MediaPortal.GUI.Library.Action;
 
 //using MediaPortal.Utils.Services;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// Summary description for GUISettingsRecordings.
@@ -52,13 +53,12 @@ namespace TvPlugin
       base.OnPageLoad();
       spinPreRecord.SetRange(0, 30);
       spinPostRecord.SetRange(0, 30);
-      TvBusinessLayer layer = new TvBusinessLayer();
 
-      spinPreRecord.Value = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-      spinPostRecord.Value = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+      spinPreRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+      spinPostRecord.Value = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
 
-      cbAutoDeleteRecordings.Selected = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
-      cbCreateTagInfoXML.Selected = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
+      cbAutoDeleteRecordings.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("autodeletewatchedrecordings", "no").value == "yes");
+      cbCreateTagInfoXML.Selected = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("createtaginfoxml", "yes").value == "yes");
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -84,34 +84,22 @@ namespace TvPlugin
 
     private void OnAutoDeleteRecordings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("autodeletewatchedrecordings", "no");
-      setting.Value = cbAutoDeleteRecordings.Selected ? "yes" : "no";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("autodeletewatchedrecordings", cbAutoDeleteRecordings.Selected ? "yes" : "no");
     }
 
     private void OnCreateTagInfoXML()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("createtaginfoxml", "yes");
-      setting.Value = cbCreateTagInfoXML.Selected ? "yes" : "no";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("createtaginfoxml", cbCreateTagInfoXML.Selected ? "yes" : "no");
     }
 
     private void OnPreRecord()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("preRecordInterval", "5");
-      setting.Value = spinPreRecord.Value.ToString();
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("preRecordInterval", spinPreRecord.Value.ToString());      
     }
 
     private void OnPostRecord()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("postRecordInterval", "5");
-      setting.Value = spinPostRecord.Value.ToString();
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", spinPostRecord.Value.ToString());
     }
 
     public override void Process()

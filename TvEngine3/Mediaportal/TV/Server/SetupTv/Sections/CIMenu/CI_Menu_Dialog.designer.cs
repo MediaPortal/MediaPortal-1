@@ -1,4 +1,6 @@
-﻿namespace SetupTv.Sections
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections.CIMenu
 {
     partial class CI_Menu_Dialog
     {
@@ -28,17 +30,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-          this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
-          this.Title = new MediaPortal.UserInterface.Controls.MPLabel();
-          this.Subtitle = new MediaPortal.UserInterface.Controls.MPLabel();
-          this.BottomText = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.btnOk = new MPButton();
+          this.Title = new MPLabel();
+          this.Subtitle = new MPLabel();
+          this.BottomText = new MPLabel();
           this.Choices = new System.Windows.Forms.ListBox();
-          this.btnCloseMenu = new MediaPortal.UserInterface.Controls.MPButton();
-          this.btnSendAnswer = new MediaPortal.UserInterface.Controls.MPButton();
+          this.btnCloseMenu = new MPButton();
+          this.btnSendAnswer = new MPButton();
           this.grpCIMenu = new System.Windows.Forms.GroupBox();
-          this.CiAnswer = new MediaPortal.UserInterface.Controls.MPTextBox();
-          this.CiRequest = new MediaPortal.UserInterface.Controls.MPLabel();
-          this.lblComment = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.CiAnswer = new MPTextBox();
+          this.CiRequest = new MPLabel();
+          this.lblComment = new MPLabel();
           this.grpCIMenu.SuspendLayout();
           this.SuspendLayout();
           // 
@@ -172,16 +174,16 @@
 
         #endregion
 
-        private MediaPortal.UserInterface.Controls.MPButton btnOk;
-        private MediaPortal.UserInterface.Controls.MPLabel Title;
-        private MediaPortal.UserInterface.Controls.MPLabel Subtitle;
-        private MediaPortal.UserInterface.Controls.MPLabel BottomText;
+        private MPButton btnOk;
+        private MPLabel Title;
+        private MPLabel Subtitle;
+        private MPLabel BottomText;
         private System.Windows.Forms.ListBox Choices;
-        private MediaPortal.UserInterface.Controls.MPButton btnCloseMenu;
-        private MediaPortal.UserInterface.Controls.MPButton btnSendAnswer;
+        private MPButton btnCloseMenu;
+        private MPButton btnSendAnswer;
         private System.Windows.Forms.GroupBox grpCIMenu;
-        private MediaPortal.UserInterface.Controls.MPTextBox CiAnswer;
-        private MediaPortal.UserInterface.Controls.MPLabel CiRequest;
-        private MediaPortal.UserInterface.Controls.MPLabel lblComment;
+        private MPTextBox CiAnswer;
+        private MPLabel CiRequest;
+        private MPLabel lblComment;
     }
 }

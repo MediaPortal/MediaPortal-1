@@ -1,4 +1,6 @@
-﻿namespace SetupTv.Sections
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class ThirdPartyChecks
   {
@@ -28,20 +30,20 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpGroupBoxMCS = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpButtonMCS = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpLabelStatusMCS = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelStatus1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBoxMCS = new MPGroupBox();
+      this.mpButtonMCS = new MPButton();
+      this.mpLabelStatusMCS = new MPLabel();
+      this.mpLabelStatus1 = new MPLabel();
+      this.mpGroupBox2 = new MPGroupBox();
       this.linkLabelDVBHotfix = new System.Windows.Forms.LinkLabel();
-      this.mpLabelStatusDVBHotfix = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelStatus2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBoxStreamingPort = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabelStatusDVBHotfix = new MPLabel();
+      this.mpLabelStatus2 = new MPLabel();
+      this.mpGroupBoxStreamingPort = new MPGroupBox();
       this.linkLabelStreamingPort = new System.Windows.Forms.LinkLabel();
-      this.mpLabelStatusStreamingPort = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelStatus3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelStatus4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabelWindowsMediaSharingServiceStatus = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelStatusStreamingPort = new MPLabel();
+      this.mpLabelStatus3 = new MPLabel();
+      this.mpLabelStatus4 = new MPLabel();
+      this.mpLabelWindowsMediaSharingServiceStatus = new MPLabel();
       this.mpGroupBoxMCS.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBoxStreamingPort.SuspendLayout();
@@ -216,19 +218,19 @@
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxMCS;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatus1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatus2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatusMCS;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatusDVBHotfix;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonMCS;
+    private MPGroupBox mpGroupBoxMCS;
+    private MPGroupBox mpGroupBox2;
+    private MPLabel mpLabelStatus1;
+    private MPLabel mpLabelStatus2;
+    private MPLabel mpLabelStatusMCS;
+    private MPLabel mpLabelStatusDVBHotfix;
+    private MPButton mpButtonMCS;
     private System.Windows.Forms.LinkLabel linkLabelDVBHotfix;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxStreamingPort;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatus3;
+    private MPGroupBox mpGroupBoxStreamingPort;
+    private MPLabel mpLabelStatus3;
     private System.Windows.Forms.LinkLabel linkLabelStreamingPort;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatusStreamingPort;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelWindowsMediaSharingServiceStatus;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelStatus4;
+    private MPLabel mpLabelStatusStreamingPort;
+    private MPLabel mpLabelWindowsMediaSharingServiceStatus;
+    private MPLabel mpLabelStatus4;
   }
 }

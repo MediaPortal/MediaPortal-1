@@ -20,12 +20,10 @@
 
 using System;
 using System.Collections;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 
 //*************************************************************
 //
@@ -34,7 +32,7 @@ using System.Windows.Forms;
 //
 //*************************************************************
 
-namespace XPListview
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 {
   public class XPListView : System.Windows.Forms.ListView
   {

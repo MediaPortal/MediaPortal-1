@@ -18,10 +18,9 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 
-namespace XPListview
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 {
   [TypeConverter(typeof (XPListViewGroupConverter))]
   public class XPListViewGroup

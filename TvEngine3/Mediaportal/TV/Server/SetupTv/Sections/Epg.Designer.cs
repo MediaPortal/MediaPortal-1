@@ -1,4 +1,6 @@
-﻿namespace SetupTv.Sections
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class Epg
   {
@@ -43,22 +45,22 @@
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.numericUpDownEpgRefresh = new System.Windows.Forms.NumericUpDown();
       this.numericUpDownEpgTimeOut = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEPGWhileIdle = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableEPGWhileIdle = new MPCheckBox();
       this.label15 = new System.Windows.Forms.Label();
       this.label14 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
       this.numericUpDownTSEpgTimeout = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxEnableEpgWhileTimeshifting = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableEpgWhileTimeshifting = new MPCheckBox();
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
-      this.checkboxSameTransponder = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkboxSameTransponder = new MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.checkBoxEnableCRCCheck = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxAlwaysUpdate = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxEnableCRCCheck = new MPCheckBox();
+      this.checkBoxAlwaysUpdate = new MPCheckBox();
+      this.checkBoxAlwaysFillHoles = new MPCheckBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabControlEpg = new System.Windows.Forms.TabControl();
       this.groupBox9.SuspendLayout();
@@ -490,17 +492,17 @@
     #endregion
 
     private System.Windows.Forms.GroupBox groupBox7;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysUpdate;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAlwaysFillHoles;
+    private MPCheckBox checkBoxAlwaysUpdate;
+    private MPCheckBox checkBoxAlwaysFillHoles;
     private System.Windows.Forms.GroupBox groupBox5;
     private System.Windows.Forms.NumericUpDown numericUpDownTSEpgTimeout;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableEpgWhileTimeshifting;
+    private MPCheckBox checkBoxEnableEpgWhileTimeshifting;
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.NumericUpDown numericUpDownEpgRefresh;
     private System.Windows.Forms.NumericUpDown numericUpDownEpgTimeOut;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableEPGWhileIdle;
+    private MPCheckBox checkBoxEnableEPGWhileIdle;
     private System.Windows.Forms.Label label15;
     private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label label8;
@@ -520,7 +522,7 @@
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabControl tabControlEpg;
     private System.Windows.Forms.Label label1;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableCRCCheck;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSameTransponder;
+    private MPCheckBox checkBoxEnableCRCCheck;
+    private MPCheckBox checkboxSameTransponder;
   }
 }

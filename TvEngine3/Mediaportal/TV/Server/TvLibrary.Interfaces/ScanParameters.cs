@@ -20,7 +20,7 @@
 
 using System;
 
-namespace TvLibrary
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
   /// class which holds all parameters needed during scanning for channels

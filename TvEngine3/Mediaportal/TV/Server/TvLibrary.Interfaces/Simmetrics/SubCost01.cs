@@ -19,9 +19,8 @@
 #endregion
 
 using System;
-using api;
 
-namespace similaritymetrics.costfunctions
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics
 {
   ///<summary>
   ///</summary>

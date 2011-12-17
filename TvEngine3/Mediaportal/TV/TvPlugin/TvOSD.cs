@@ -21,18 +21,23 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using System.IO;
-using Gentle.Framework;
+using System.Linq;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// 
@@ -374,11 +379,7 @@ namespace TvPlugin
           {
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
-            SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-            sb.AddConstraint(Operator.Equals, "istv", 1);
-            sb.AddOrderByField(true, "sortOrder");
-            SqlStatement stmt = sb.GetStatement(true);
-            listTvChannels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
+            listTvChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).ToList();            
 
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
             previousProgram = null;
@@ -423,10 +424,10 @@ namespace TvPlugin
             {
               // only change the audio stream if a different one has been asked for
               //@
-              /*if (RemoteControl.Instance.GetAudioLanguage() != lstAudioStreamList.SelectedListItem.ItemId)
+              /*if (ServiceAgents.Instance.ControllerService.GetAudioLanguage() != lstAudioStreamList.SelectedListItem.ItemId)
               {
                 // Set the audio stream to the one selected
-                RemoteControl.Instance.SetAudioLanguage(lstAudioStreamList.SelectedListItem.ItemId);
+                ServiceAgents.Instance.ControllerService.SetAudioLanguage(lstAudioStreamList.SelectedListItem.ItemId);
                 isSubMenuVisible = false;
                 m_bNeedRefresh = true;
                 PopulateAudioStreams();
@@ -444,28 +445,27 @@ namespace TvPlugin
             {
               if (iControl == btnPreviousProgram.GetID)
               {
-                Program prog = GetChannel().GetProgramAt(m_dateTime);
+                Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.idChannel);                
                 if (prog != null)
                 {
-                  prog =
-                    GetChannel().GetProgramAt(
-                      prog.StartTime.Subtract(new TimeSpan(0, 1, 0)));
+                  prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(
+                      prog.startTime.Subtract(new TimeSpan(0, 1, 0)), GetChannel().Entity.idChannel);
                   if (prog != null)
                   {
-                    m_dateTime = prog.StartTime.AddMinutes(1);
+                    m_dateTime = prog.startTime.AddMinutes(1);
                   }
                 }
                 ShowPrograms();
               }
               if (iControl == btnNextProgram.GetID)
               {
-                Program prog = GetChannel().GetProgramAt(m_dateTime);
+                Program prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(m_dateTime, GetChannel().Entity.idChannel);
                 if (prog != null)
                 {
-                  prog = GetChannel().GetProgramAt(prog.EndTime.AddMinutes(+1));
+                  prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(+1), GetChannel().Entity.idChannel);
                   if (prog != null)
                   {
-                    m_dateTime = prog.StartTime.AddMinutes(1);
+                    m_dateTime = prog.startTime.AddMinutes(1);
                   }
                 }
                 ShowPrograms();
@@ -547,7 +547,7 @@ namespace TvPlugin
                 int id = TVHome.Card.RecordingScheduleId;
                 if (id > 0)
                 {
-                  TVHome.TvServer.StopRecordingSchedule(id);
+                  ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(id);
                 }
               }
               //GUIWindowManager.ShowPreviousWindow();							// go back to the previous window
@@ -779,8 +779,8 @@ namespace TvPlugin
         if (prog != null)
         {
           strTime = String.Format("{0}-{1}",
-                                  prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                  prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
       }
       else
@@ -1185,7 +1185,7 @@ namespace TvPlugin
 
       // Add DVB audio streams
       /*
-      ArrayList audioPidList = RemoteControl.Instance.GetAudioLanguageList();
+      ArrayList audioPidList = ServiceAgents.Instance.ControllerService.GetAudioLanguageList();
       if (audioPidList != null && audioPidList.Count > 0)
       {
         DVBSections.AudioLanguage al;
@@ -1197,7 +1197,7 @@ namespace TvPlugin
           string strItem;
           string strLang = DVBSections.GetLanguageFromCode(al.AudioLanguageCode);
 
-          if (RemoteControl.Instance.GetAudioLanguage() == al.AudioPid)
+          if (ServiceAgents.Instance.ControllerService.GetAudioLanguage() == al.AudioPid)
           {
             // formats to 'Audio Stream X [active]'
             strItem = String.Format(strLang + "  " + strActiveLabel);	// this audio stream is active, show as such
@@ -1478,16 +1478,16 @@ namespace TvPlugin
       }
     }
 
-    private Channel GetChannel()
+    private ChannelBLL GetChannel()
     {
       if (g_Player.IsTVRecording)
       {
         Recording rec = TvRecorded.ActiveRecording();
-        return rec.ReferencedChannel();
+        return new ChannelBLL(rec.Channel);
       }
       else
       {
-        return TVHome.Navigator.ZapChannel;
+        return new ChannelBLL(TVHome.Navigator.ZapChannel);
       }
     }
     private string GetChannelName()
@@ -1499,18 +1499,18 @@ namespace TvPlugin
       }
       else
       {
-        string tmpDisplayName = TVHome.Navigator.ZapChannel.DisplayName;
+        string tmpDisplayName = TVHome.Navigator.ZapChannel.displayName;
         Channel tmpChannel = TVHome.Navigator.ZapChannel;
 
         if (tmpChannel != null)
         {
-          return TVHome.Navigator.ZapChannel.DisplayName;
+          return TVHome.Navigator.ZapChannel.displayName;
         }
         else
         {
           TVHome.Navigator.ReLoad();
           // Let TvHome reload all channel information from the database. This makes sure that recently renamed linked subchannels handled the right way.
-          return TVHome.Navigator.ZapChannel.DisplayName;
+          return TVHome.Navigator.ZapChannel.displayName;
         }
       }
     }
@@ -1546,13 +1546,11 @@ namespace TvPlugin
       }
 
       Program prog = TVHome.Navigator.Channel.CurrentProgram;
-      //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
-
       if (prog != null && !g_Player.IsTVRecording)
       {
         string strTime = String.Format("{0}-{1}",
-                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
         if (lblCurrentTime != null)
         {
@@ -1561,24 +1559,24 @@ namespace TvPlugin
         // On TV Now
         if (tbOnTvNow != null)
         {
-          strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          strTime = String.Format("{0} ", prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
           GUIPropertyManager.SetProperty("#TV.View.start", strTime);
 
-          strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          strTime = String.Format("{0} ", prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.endTime - prog.startTime));
         }
         if (tbProgramDescription != null)
         {
-          tbProgramDescription.Label = prog.Description;
+          tbProgramDescription.Label = prog.description;
         }
 
         // next program
-        Channel chan = GetChannel();
+        ChannelBLL chan = GetChannel();
         if (chan != null)
         {
-          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
+          prog = ServiceAgents.Instance.ProgramServiceAgent.GetProgramAt(prog.endTime.AddMinutes(1), chan.Entity.idChannel);          
 
           if (prog != null)
           {
@@ -1601,12 +1599,16 @@ namespace TvPlugin
         rec = TvRecorded.ActiveRecording();
         if (rec != null)
         {
-          description = rec.Description;
-          title = rec.Title;
-          Channel ch = Channel.Retrieve(rec.IdChannel);
+          description = rec.description;
+          title = rec.title;
+          Channel ch = null;
+          if (rec.idChannel.HasValue)
+          {
+            ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(rec.idChannel.GetValueOrDefault());
+          }
           if (ch != null)
           {
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.displayName);
             if (string.IsNullOrEmpty(strLogo))                          
             {
               strLogo = "defaultVideoBig.png";
@@ -1673,10 +1675,8 @@ namespace TvPlugin
         if (ts.TotalSeconds > 15 || forced)
         {
           bool isRecording = false;
-          VirtualCard card;
-          TvServer server = new TvServer();
-
-          if (server.IsRecording(GetChannel().IdChannel, out card))
+          IVirtualCard card;
+          if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(GetChannel().Entity.idChannel, out card))
           {
             if (g_Player.IsTVRecording)
             {
@@ -1712,12 +1712,12 @@ namespace TvPlugin
           return;
         }
         string strTime = String.Format("{0}-{1}",
-                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        TimeSpan ts = prog.EndTime - prog.StartTime;
+        TimeSpan ts = prog.endTime - prog.startTime;
         double iTotalSecs = ts.TotalSeconds;
-        ts = DateTime.Now - prog.StartTime;
+        ts = DateTime.Now - prog.startTime;
         double iCurSecs = ts.TotalSeconds;
         fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
         fPercent *= 100.0d;
@@ -1728,31 +1728,31 @@ namespace TvPlugin
         if (previousProgram == null)
         {
           m_dateTime = DateTime.Now;
-          previousProgram = prog.Clone();
+          previousProgram = ProgramFactory.Clone(prog);
           ShowPrograms();
           updateProperties = true;
         }
-        else if (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel)
+        else if (previousProgram.startTime != prog.startTime || previousProgram.idChannel != prog.idChannel)
         {
           m_dateTime = DateTime.Now;
-          previousProgram = prog.Clone();
+          previousProgram = ProgramFactory.Clone(prog);
           ShowPrograms();
           updateProperties = true;
         }
         if (updateProperties)
         {
-          GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().DisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.channel", prog.Channel.displayName);
           GUIPropertyManager.SetProperty("#TV.View.start",
-                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                         prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           GUIPropertyManager.SetProperty("#TV.View.stop",
-                                         prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
-          GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
-          GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
+                                         prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.endTime - prog.startTime));
+          GUIPropertyManager.SetProperty("#TV.View.genre", TVUtil.GetCategory(prog.ProgramCategory));
+          GUIPropertyManager.SetProperty("#TV.View.title", prog.title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
-          GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName);
-          GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
-          GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.episodeName);
+          GUIPropertyManager.SetProperty("#TV.View.description", prog.description);
+          GUIPropertyManager.SetProperty("#TV.View.episode", prog.episodeNum);
         }
       }
 
@@ -1775,14 +1775,7 @@ namespace TvPlugin
 
           channelDisplayName = TvRecorded.GetRecordingDisplayName(rec) + " (" + GUILocalizeStrings.Get(604) + ")";
 
-          double fPercent;
-          if (rec == null)
-          {
-            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
-            return;
-          }
-
-          fPercent = ((double)currentPosition) / ((double)duration);
+          double fPercent = ((double)currentPosition) / ((double)duration);
           fPercent *= 100.0d;
 
           GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
@@ -1791,12 +1784,12 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.channel", channelDisplayName);
           GUIPropertyManager.SetProperty("#TV.View.start", startTime);
           GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
-          GUIPropertyManager.SetProperty("#TV.View.genre", rec.Genre);
-          GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
+          GUIPropertyManager.SetProperty("#TV.View.genre", TVUtil.GetCategory(rec.ProgramCategory));
+          GUIPropertyManager.SetProperty("#TV.View.title", rec.title);
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
-          GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
-          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
-          GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
+          GUIPropertyManager.SetProperty("#TV.View.description", rec.description);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.episodeName);
+          GUIPropertyManager.SetProperty("#TV.View.episode", rec.episodeNum);
         }
       }
     }

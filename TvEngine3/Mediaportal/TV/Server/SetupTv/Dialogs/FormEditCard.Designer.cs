@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormEditCard
   {
@@ -28,26 +30,26 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpButtonSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.label1 = new MPLabel();
+      this.label3 = new MPLabel();
+      this.label4 = new MPLabel();
+      this.mpButtonSave = new MPButton();
       this.numericUpDownDecryptLimit = new System.Windows.Forms.NumericUpDown();
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonCancel = new MPButton();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.ComboBoxCamType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label5 = new MPLabel();
+      this.ComboBoxCamType = new MPComboBox();
       this.checkBoxCAMenabled = new System.Windows.Forms.CheckBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.checkBoxAllowEpgGrab = new System.Windows.Forms.CheckBox();
       this.checkBoxPreloadCard = new System.Windows.Forms.CheckBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.lblProvider = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBoxNetProvider = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.radioPauseCard = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.radioStopCard = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblProvider = new MPLabel();
+      this.comboBoxNetProvider = new MPComboBox();
+      this.radioPauseCard = new MPRadioButton();
+      this.radioStopCard = new MPRadioButton();
+      this.mpLabel1 = new MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -310,25 +312,25 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonSave;
+    private MPLabel label1;
+    private MPLabel label3;
+    private MPLabel label4;
+    private MPButton mpButtonSave;
     private System.Windows.Forms.NumericUpDown numericUpDownDecryptLimit;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
+    private MPButton mpButtonCancel;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.CheckBox checkBoxAllowEpgGrab;
     private System.Windows.Forms.CheckBox checkBoxPreloadCard;
     private System.Windows.Forms.GroupBox groupBox3;
     private System.Windows.Forms.CheckBox checkBoxCAMenabled;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPComboBox ComboBoxCamType;
+    private MPLabel label5;
+    private MPComboBox ComboBoxCamType;
     private System.Windows.Forms.GroupBox groupBox4;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNetProvider;
-    private MediaPortal.UserInterface.Controls.MPLabel lblProvider;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioStopCard;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioPauseCard;
+    private MPComboBox comboBoxNetProvider;
+    private MPLabel lblProvider;
+    private MPLabel mpLabel1;
+    private MPRadioButton radioStopCard;
+    private MPRadioButton radioPauseCard;
   }
 }

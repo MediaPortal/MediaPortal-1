@@ -21,17 +21,20 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Gentle.Framework;
-using SetupTv;
-using SetupTv.Sections;
-using TvControl;
-using TvDatabase;
-using TvEngine.Events;
-using TvEngine.PowerScheduler.Interfaces;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces.Events;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVControl.Interfaces;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.PersonalTVGuide
 {
   public class PersonalTVGuide : ITvServerPlugin, IStandbyHandler
   {
@@ -111,12 +114,10 @@ namespace TvEngine
           Log.Info("PersonalTVGuide: Stop Update loop");
           break;
         }
-        UpdateKeyword(key);
+        UpdateKeyword(key);      
       }
-      TvBusinessLayer cmLayer = new TvBusinessLayer();
-      Setting setting = cmLayer.GetSetting("PTVGLastUpdateTime", DateTime.Now.ToString());
-      setting.Value = DateTime.Now.ToString();
-      setting.Persist();
+
+      SettingsManagement.SaveSetting("PTVGLastUpdateTime", DateTime.Now.ToString());      
       if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Stop : " + DateTime.Now.ToLongTimeString());
       _isUpdating = false;
     }
@@ -132,22 +133,23 @@ namespace TvEngine
     }
 
     private void UpdateKeyword(Keyword key)
-    {
-      if (_debugMode) Log.Debug("PersonalTVGuide: Updating Keyword: " + key.Name);
+    {      
+      if (_debugMode) Log.Debug("PersonalTVGuide: Updating Keyword: " + key.keywordName);
       if (key.SearchInTitle)
       {
-        SaveList(key.IdKeyword, ContainsInTitle(key.Name));
+        SaveList(key.idKeyword, ContainsInTitle(key.keywordName));
         Thread.Sleep(100);
       }
+      
       if (key.SearchInDescription)
       {
-        SaveList(key.IdKeyword, ContainsInDescription(key.Name));
+        SaveList(key.idKeyword, ContainsInDescription(key.keywordName));
         Thread.Sleep(100);
       }
 
       if (key.SearchInGenre)
       {
-        SaveList(key.IdKeyword, ContainsInDescription(key.Name));
+        SaveList(key.idKeyword, ContainsInDescription(key.keywordName));
         Thread.Sleep(100);
       }
     }
@@ -157,7 +159,7 @@ namespace TvEngine
       if ((list == null) || (list.Count < 1)) return;
       foreach (Program prog in list)
       {
-        PersonalTVGuideMap map = new PersonalTVGuideMap(IdKeyword, prog.IdProgram);
+        PersonalTVGuideMap map = new PersonalTVGuideMap(IdKeyword, prog.idProgram);
         map.Persist();
       }
     }
@@ -167,33 +169,21 @@ namespace TvEngine
     /// </summary>
     private IList<Program> ContainsInTitle(string Token)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
-      sb.AddConstraint(Operator.Like, "title", "%" + Token + "%");
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+      var stringComparisonEnum = StringComparisonEnum.StartsWith;
+      stringComparisonEnum |= StringComparisonEnum.EndsWith;
+      return ProgramManagement.GetProgramsByTitle(Token, MediaTypeEnum.TV, stringComparisonEnum);
     }
 
     /// <summary>
     /// Get a list which contains token in the description
     /// </summary>
-    private IList<Program> ContainsInDescription(string Token)
+    private IList<Program> ContainsInDescription(string token)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
-      sb.AddConstraint(Operator.Like, "description", "%" + Token + "%");
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+      var stringComparisonEnum = StringComparisonEnum.StartsWith;
+      stringComparisonEnum |= StringComparisonEnum.EndsWith;
+      return ProgramManagement.GetProgramsByDescription(token, MediaTypeEnum.TV, stringComparisonEnum);      
     }
-
-    /// <summary>
-    /// Get a list which contains token in the description
-    /// </summary>
-    private IList<Program> ContainsInGenre(string Token)
-    {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
-      sb.AddConstraint(Operator.Like, "genre", "%" + Token + "%");
-      SqlStatement stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());
-    }
+    
 
     private void LoadSettings()
     {
@@ -249,7 +239,7 @@ namespace TvEngine
     /// <summary>
     /// Starts the plugin
     /// </summary>
-    public void Start(IController controller)
+    public void Start(IInternalControllerService controllerService)
     {
       LoadSettings();
       Log.WriteFile("plugin: PersonalTVGuide started");

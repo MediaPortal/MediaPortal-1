@@ -21,15 +21,15 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Hardware;
-using TvLibrary.Implementations.DVB;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.HardwareProviders;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Hardware
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC
 {
   /// <summary>
   /// TeVii hw control class
@@ -258,20 +258,42 @@ namespace TvLibrary.Hardware
     /// </summary>
     private void Close()
     {
-      Log.Log.Debug("TeVii: Closing card {0} ", m_iDeviceIndex);
+      Log.Debug("TeVii: Closing card {0} ", m_iDeviceIndex);
       CloseDevice(m_iDeviceIndex);
-    }
+    }      
 
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources        
+      }
+
+      // get rid of unmanaged resources
       if (m_bIsTeVii)
       {
         Close();
       }
     }
+
+
+   /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>   
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~TeVii()
+    {
+      Dispose(false);
+    }
+
+    #endregion
 
     #region IHardwareProvider Member
 
@@ -331,7 +353,7 @@ namespace TvLibrary.Hardware
         m_bIsTeVii = false;
         return;
       }
-      Log.Log.Debug("TeVii: number of devices: {0}", numberDevices);
+      Log.Debug("TeVii: number of devices: {0}", numberDevices);
 
       String deviceName = String.Empty;
       String devicePath = String.Empty;
@@ -353,14 +375,14 @@ namespace TvLibrary.Hardware
 
       if (!m_bIsTeVii) return;
 
-      Log.Log.Debug("TeVii: card {0} detected: {1} (API v{2})", m_iDeviceIndex, deviceName, GetAPIVersion());
+      Log.Debug("TeVii: card {0} detected: {1} (API v{2})", m_iDeviceIndex, deviceName, GetAPIVersion());
       if (OpenDevice(m_iDeviceIndex, IntPtr.Zero, IntPtr.Zero) == 0)
       {
-        Log.Log.Debug("TeVii: card {0} open failed !", m_iDeviceIndex);
+        Log.Debug("TeVii: card {0} open failed !", m_iDeviceIndex);
         m_bIsTeVii = false;
         return;
       }
-      Log.Log.Debug("TeVii: card {0} successful opened", m_iDeviceIndex);
+      Log.Debug("TeVii: card {0} successful opened", m_iDeviceIndex);
     }
 
     /// <summary>
@@ -386,7 +408,7 @@ namespace TvLibrary.Hardware
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="HwPids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(int subChannel, TvLibrary.Channels.DVBBaseChannel channel, List<ushort> HwPids) {}
+    public void SendPids(int subChannel, DVBBaseChannel channel, List<ushort> HwPids) {}
 
     /// <summary>
     /// Set parameter to null when stopping the Graph.
@@ -416,7 +438,7 @@ namespace TvLibrary.Hardware
     {
       if (m_bIsTeVii == false)
         return;
-      Log.Log.Debug("TeVii: SendDiseqc: {0},{1}", parameters.ToString(), channel.ToString());
+      Log.Debug("TeVii: SendDiseqc: {0},{1}", parameters.ToString(), channel.ToString());
 
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
@@ -455,11 +477,11 @@ namespace TvLibrary.Hardware
       int res = SendDiSEqC(m_iDeviceIndex, diSEqC, diSEqC.Length, 0, 0);
       if (res == 0)
       {
-        Log.Log.Debug("TeVii: Send DiSEqC failed");
+        Log.Debug("TeVii: Send DiSEqC failed");
         return false;
       }
 
-      Log.Log.Debug("TeVii: Send DiSEqC successful.");
+      Log.Debug("TeVii: Send DiSEqC successful.");
       return true;
     }
 
@@ -470,7 +492,7 @@ namespace TvLibrary.Hardware
     /// <returns></returns>
     public bool ReadDiSEqCCommand(out byte[] reply)
     {
-      Log.Log.Debug("ReadDiSEqCCommand not supported");
+      Log.Debug("ReadDiSEqCCommand not supported");
       reply = new byte[0];
       return true;
     }
@@ -511,7 +533,7 @@ namespace TvLibrary.Hardware
       else
         lnbFrequency = lof1 * 1000;
 
-      Log.Log.Debug("TeVii: Start CustomTune F:{0} SR:{1} LOF:{6} P:{2} HI:{3} M:{4} FEC:{5}",
+      Log.Debug("TeVii: Start CustomTune F:{0} SR:{1} LOF:{6} P:{2} HI:{3} M:{4} FEC:{5}",
                     (int)satelliteChannel.Frequency,
                     satelliteChannel.SymbolRate * 1000,
                     Translate(satelliteChannel.Polarisation),
@@ -530,7 +552,7 @@ namespace TvLibrary.Hardware
                                 Translate(satelliteChannel.ModulationType),
                                 Translate(satelliteChannel.InnerFecRate)
         );
-      Log.Log.Debug("TeVii: Send CustomTune: {0}", res);
+      Log.Debug("TeVii: Send CustomTune: {0}", res);
       return (res == 1);
     }
 

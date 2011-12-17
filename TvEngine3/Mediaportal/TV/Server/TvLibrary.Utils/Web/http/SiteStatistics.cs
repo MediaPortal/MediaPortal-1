@@ -20,7 +20,7 @@
 
 using System;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Holds the page and data byte statistics for a web site.

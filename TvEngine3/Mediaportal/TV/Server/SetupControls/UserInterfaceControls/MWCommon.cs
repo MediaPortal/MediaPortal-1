@@ -34,7 +34,7 @@ using System.Windows.Forms;
 ///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
 /// </summary>
 
-namespace MWCommon
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Common is used for various static methods that are accessed from several places so the code does not have to be duplicated.

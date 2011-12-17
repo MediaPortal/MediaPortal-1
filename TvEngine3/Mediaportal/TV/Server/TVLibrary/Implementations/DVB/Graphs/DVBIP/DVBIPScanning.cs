@@ -18,12 +18,12 @@
 
 #endregion
 
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 {
   /// <summary>
   /// Class for DVBIP scanning
@@ -50,14 +50,13 @@ namespace TvLibrary.Implementations.DVB
       dvbipChannel.LogicalChannelNumber = info.LCN;
       dvbipChannel.Provider = info.service_provider_name;
       dvbipChannel.Url = tuningChannel.Url;
-      dvbipChannel.IsTv = IsTvService(info.serviceType);
-      dvbipChannel.IsRadio = IsRadioService(info.serviceType);
+      dvbipChannel.MediaType = GetMediaTypeByServiceType(info.serviceType);
       dvbipChannel.NetworkId = info.networkID;
       dvbipChannel.ServiceId = info.serviceID;
       dvbipChannel.TransportId = info.transportStreamID;
       dvbipChannel.PmtPid = info.network_pmt_PID;
       dvbipChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found: {0}", dvbipChannel);
+      Log.Write("Found: {0}", dvbipChannel);
       return dvbipChannel;
     }
 

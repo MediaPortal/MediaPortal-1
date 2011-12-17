@@ -25,14 +25,14 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using TvDatabase;
-using TvEngine;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.TvMovie
 {
-  public partial class TvMovieSetup : SetupTv.SectionSettings
+  public partial class TvMovieSetup : SectionSettings
   {
     #region ChannelInfo class
 
@@ -117,76 +117,17 @@ namespace SetupTv.Sections
 
     private void SaveDbSettings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-
-      TvMovie.DatabasePath = tbDbPath.Text;
-
-      Setting setting = layer.GetSetting("TvMovieEnabled", "false");
-      if (checkBoxEnableImport.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieShortProgramDesc", "false");
-      if (checkBoxUseShortDesc.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieExtendDescription", "true");
-      if (checkBoxAdditionalInfo.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieShowAudioFormat", "false");
-      if (checkBoxShowAudioFormat.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieSlowImport", "true");
-      if (checkBoxSlowImport.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieShowRatings", "true");
-      if (checkBoxShowRatings.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieLimitActors", "5");
-      if (checkBoxLimitActors.Checked)
-        setting.Value = numericUpDownActorCount.Value.ToString();
-      else
-        setting.Value = "0";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieShowLive", "true");
-      if (checkBoxShowLive.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieShowRepeating", "false");
-      if (checkBoxShowRepeat.Checked)
-        setting.Value = "true";
-      else
-        setting.Value = "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("TvMovieRestPeriod", "24");
-      setting.Value = GetRestPeriod();
-      setting.Persist();
+      TvMovie.DatabasePath = tbDbPath.Text;      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieEnabled", checkBoxEnableImport.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShortProgramDesc", checkBoxUseShortDesc.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieExtendDescription", checkBoxAdditionalInfo.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowAudioFormat", checkBoxShowAudioFormat.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieSlowImport", checkBoxSlowImport.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowRatings", checkBoxShowRatings.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieLimitActors", checkBoxLimitActors.Checked ? numericUpDownActorCount.Value.ToString() : "0");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowLive", checkBoxShowLive.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieShowRepeating", checkBoxShowRepeat.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("TvMovieRestPeriod", GetRestPeriod());      
     }
 
     public override void OnSectionActivated()
@@ -198,15 +139,14 @@ namespace SetupTv.Sections
 
     private void LoadDbSettings()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      checkBoxEnableImport.Checked = layer.GetSetting("TvMovieEnabled", "false").Value == "true";
-      checkBoxUseShortDesc.Checked = layer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
-      checkBoxAdditionalInfo.Checked = layer.GetSetting("TvMovieExtendDescription", "true").Value == "true";
-      checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "true").Value == "true";
-      checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
-      checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "true").Value == "true";
+      checkBoxEnableImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieEnabled", "false").value == "true";
+      checkBoxUseShortDesc.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShortProgramDesc", "false").value == "true";
+      checkBoxAdditionalInfo.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieExtendDescription", "true").value == "true";
+      checkBoxShowRatings.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRatings", "true").value == "true";
+      checkBoxShowAudioFormat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowAudioFormat", "false").value == "true";
+      checkBoxSlowImport.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieSlowImport", "true").value == "true";
 
-      var tvMovieLimitActors = Convert.ToDecimal(layer.GetSetting("TvMovieLimitActors", "5").Value);
+      var tvMovieLimitActors = Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieLimitActors", "5").value);
       if (tvMovieLimitActors < numericUpDownActorCount.Minimum || tvMovieLimitActors > numericUpDownActorCount.Maximum)
       {
         checkBoxLimitActors.Checked = false;
@@ -218,9 +158,9 @@ namespace SetupTv.Sections
         numericUpDownActorCount.Value = tvMovieLimitActors;
       }
 
-      checkBoxShowLive.Checked = layer.GetSetting("TvMovieShowLive", "true").Value == "true";
-      checkBoxShowRepeat.Checked = layer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
-      SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);
+      checkBoxShowLive.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowLive", "true").value == "true";
+      checkBoxShowRepeat.Checked = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieShowRepeating", "false").value == "true";
+      SetRestPeriod(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("TvMovieRestPeriod", "24").value);
     }
 
     #endregion
@@ -259,8 +199,11 @@ namespace SetupTv.Sections
                     channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
 
                   // convert gif to ico
-                  Bitmap tvmLogo = new Bitmap(channelLogo);
-                  IntPtr iconHandle = tvmLogo.GetHicon();
+                  IntPtr iconHandle;
+                  using (var tvmLogo = new Bitmap(channelLogo)) 
+                  {
+                    iconHandle = tvmLogo.GetHicon();
+                  }
                   Icon stationThumb = Icon.FromHandle(iconHandle);
                   imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
                 }
@@ -290,7 +233,7 @@ namespace SetupTv.Sections
             foreach (Channel channel in mpChannelList)
             {
               //TreeNode[] subItems = new TreeNode[] { new TreeNode(channel.IdChannel.ToString()), new TreeNode(channel.DisplayName) };
-              TreeNode stationNode = new TreeNode(channel.DisplayName);
+              TreeNode stationNode = new TreeNode(channel.displayName);
               stationNode.Tag = channel;
               treeViewMpChannels.Nodes.Add(stationNode);
             }
@@ -376,7 +319,7 @@ namespace SetupTv.Sections
       else
         Log.Info("TvMovieSetup: SaveMapping - no mappingList items");
 
-      TvBusinessLayer layer = new TvBusinessLayer();
+      
 
       foreach (TreeNode channel in treeViewMpChannels.Nodes)
       {
@@ -388,7 +331,7 @@ namespace SetupTv.Sections
           TvMovieMapping mapping = null;
           try
           {
-            mapping = new TvMovieMapping(((Channel)channel.Tag).IdChannel, channelInfo.Name, channelInfo.Start,
+            mapping = new TvMovieMapping(((Channel)channel.Tag).idChannel, channelInfo.Name, channelInfo.Start,
                                          channelInfo.End);
           }
           catch (Exception exm)
@@ -432,18 +375,18 @@ namespace SetupTv.Sections
               string MpChannelName = string.Empty;
               try
               {
-                TreeNode channelNode = FindChannel(mapping.IdChannel);
+                TreeNode channelNode = FindChannel(mapping.idChannel);
                 if (channelNode != null)
                 {
-                  string stationName = mapping.StationName;
+                  string stationName = mapping.stationName;
                   if (FindStation(stationName) != null)
                   {
                     TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
                     ChannelInfo channelInfo = new ChannelInfo();
                     if (stationNode != null)
                     {
-                      string start = mapping.TimeSharingStart;
-                      string end = mapping.TimeSharingEnd;
+                      string start = mapping.timeSharingStart;
+                      string end = mapping.timeSharingEnd;
 
                       if (start != "00:00" || end != "00:00")
                         stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
@@ -494,7 +437,7 @@ namespace SetupTv.Sections
           Channel checkChannel = MpNode.Tag as Channel;
           if (checkChannel != null)
           {
-            if (checkChannel.IdChannel == mpChannelId)
+            if (checkChannel.idChannel == mpChannelId)
               return MpNode;
           }
           else

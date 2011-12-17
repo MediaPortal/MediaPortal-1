@@ -20,7 +20,7 @@
 
 using System;
 
-namespace TvLibrary.Streaming
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
   ///class holding the details about a single rtsp streaming client

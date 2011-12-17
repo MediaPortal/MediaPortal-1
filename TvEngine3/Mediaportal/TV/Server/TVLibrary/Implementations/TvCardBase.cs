@@ -20,13 +20,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DirectShowLib;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.Helper;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
   /// Base class for all tv cards
@@ -110,7 +114,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Indicates, if the card supports pausegraph, otherwise stopgraph will be used when card is idle.
     /// </summary>
-    protected bool _stopGraph;
+    protected bool _stopGraph = true;
 
     /// <summary>
     /// Scanning Paramters
@@ -536,29 +540,22 @@ namespace TvLibrary.Implementations
     protected void GetPreloadBitAndCardId()
     {
       //fetch preload value from db and apply it.
-      IList<Card> cardsInDbs = Card.ListAll();
-      foreach (Card dbsCard in cardsInDbs)
+      Card dbsCard = CardManagement.GetCardByDevicePath(_devicePath);
+
+      if (dbsCard != null)
       {
-        if (dbsCard.DevicePath.Equals(_devicePath))
-        {
-          _preloadCard = dbsCard.PreloadCard;
-          _cardId = dbsCard.IdCard;
-          break;
-        }
+        _preloadCard = dbsCard.preload;
+        _cardId = dbsCard.idCard;      
       }
     }
 
     private void GetSupportsPauseGraph()
     {
       //fetch stopgraph value from db and apply it.
-      IList<Card> cardsInDbs = Card.ListAll();
-      foreach (Card dbsCard in cardsInDbs)
+      Card dbsCard = CardManagement.GetCardByDevicePath(_devicePath);
+      if (dbsCard != null)
       {
-        if (dbsCard.DevicePath.Equals(_devicePath))
-        {
-          _stopGraph = dbsCard.StopGraph;
-          break;
-        }
+        _stopGraph = dbsCard.stopgraph;
       }
     }
 
@@ -566,19 +563,10 @@ namespace TvLibrary.Implementations
     /// Gets the first subchannel being used.
     /// </summary>
     /// <value>The current channel.</value>
-    private int firstSubchannel
+    private int FirstSubchannel
     {
       get
-      {
-        foreach (int i in _mapSubChannels.Keys)
-        {
-          if (_mapSubChannels.ContainsKey(i))
-          {
-            return i;
-          }
-        }
-        return 0;
-      }
+      { return _mapSubChannels.Keys.FirstOrDefault(i => _mapSubChannels.ContainsKey(i)); }
     }
 
     /// <summary>
@@ -591,7 +579,7 @@ namespace TvLibrary.Implementations
       {
         if (_mapSubChannels.Count > 0)
         {
-          return _mapSubChannels[firstSubchannel].CurrentChannel;
+          return _mapSubChannels[FirstSubchannel].CurrentChannel;
         }
         return null;
       }
@@ -599,7 +587,7 @@ namespace TvLibrary.Implementations
       {
         if (_mapSubChannels.Count > 0)
         {
-          _mapSubChannels[firstSubchannel].CurrentChannel = value;
+          _mapSubChannels[FirstSubchannel].CurrentChannel = value;
         }
       }
     }
@@ -616,10 +604,9 @@ namespace TvLibrary.Implementations
     ///<summary>
     /// Checks if the tuner is locked in and a sginal is present
     ///</summary>
-    ///<returns>true, when the tuner is locked and a signal is present</returns>
-    public virtual bool LockedInOnSignal()
+    public virtual void LockInOnSignal()
     {
-      return false;
+      
     }
 
     #endregion
@@ -671,52 +658,21 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public virtual void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
-    {
-      FreeSubChannel(id, true);
-    }
-
-    /// <summary>
-    /// Frees the sub channel. but keeps the graph running.
-    /// </summary>
-    /// <param name="id">Handle to the subchannel.</param>
-    public virtual void FreeSubChannelContinueGraph(int id)
-    {
-      // this method is overriden in tvcardbase      
-      FreeSubChannel(id, true);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
     /// <param name="id">Handle to the subchannel.</param>
     public virtual void FreeSubChannel(int id)
     {
-      FreeSubChannel(id, false);
-    }
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">Handle to the subchannel.</param>
-    /// <param name="continueGraph">Indicates, if the graph should be continued or stopped</param>
-    private void FreeSubChannel(int id, bool continueGraph)
-    {
-      Log.Log.Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1} keep graph={2}", _mapSubChannels.Count, id,
-                   continueGraph);
+      Log.Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1}", _mapSubChannels.Count, id);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
         {
-          Log.Log.Info("tvcard:FreeSubChannel :{0} - is timeshifting (skipped)", id);
+          Log.Info("tvcard:FreeSubChannel :{0} - is timeshifting (skipped)", id);
           return;
         }
 
         if (_mapSubChannels[id].IsRecording)
         {
-          Log.Log.Info("tvcard:FreeSubChannel :{0} - is recording (skipped)", id);
+          Log.Info("tvcard:FreeSubChannel :{0} - is recording (skipped)", id);
           return;
         }
 
@@ -738,14 +694,13 @@ namespace TvLibrary.Implementations
       }
       else
       {
-        Log.Log.Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
+        Log.Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
       }
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
-        if (!continueGraph)
-        {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");
+     
+          Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");
           if (SupportsPauseGraph)
           {
             PauseGraph();
@@ -754,15 +709,11 @@ namespace TvLibrary.Implementations
           {
             StopGraph();
           }
+        
         }
         else
         {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, continueing graph");
-        }
-      }
-      else
-      {
-        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
+        Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
       }
     }
 
@@ -771,7 +722,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected void FreeAllSubChannels()
     {
-      Log.Log.Info("tvcard:FreeAllSubChannels");
+      Log.Info("tvcard:FreeAllSubChannels");
       Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
       while (en.MoveNext())
       {

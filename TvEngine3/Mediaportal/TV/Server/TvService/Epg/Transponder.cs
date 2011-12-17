@@ -20,11 +20,14 @@
 
 using System;
 using System.Collections.Generic;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.Epg
 {
   /// <summary>
   /// Class which holds all channels for a transponder
@@ -124,9 +127,8 @@ namespace TvService
         {
           Log.Error("transponder index out of range:{0}/{1}", Index, Channels.Count);
           return null;
-        }
-        TvBusinessLayer layer = new TvBusinessLayer();
-        return layer.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
+        }                
+        return ChannelManagement.GetTuningChannelByType(Channels[Index], TuningDetail.channelType);
       }
     }
 
@@ -141,9 +143,9 @@ namespace TvService
     {
       if (Index < 0 || Index >= Channels.Count)
         return;
-      Channels[Index].LastGrabTime = DateTime.Now;
-      Channels[Index].Persist();
-      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
+      Channels[Index].lastGrabTime = DateTime.Now;
+      ChannelManagement.SaveChannel(Channels[Index]);
+      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].displayName);
     }
 
     /// <summary>
@@ -156,17 +158,17 @@ namespace TvService
     public override bool Equals(object obj)
     {
       Transponder other = (Transponder)obj;
-      if (other.TuningDetail.ChannelType != TuningDetail.ChannelType)
+      if (other.TuningDetail.channelType != TuningDetail.channelType)
         return false;
-      if (other.TuningDetail.Frequency != TuningDetail.Frequency)
+      if (other.TuningDetail.frequency != TuningDetail.frequency)
         return false;
-      if (other.TuningDetail.Modulation != TuningDetail.Modulation)
+      if (other.TuningDetail.modulation != TuningDetail.modulation)
         return false;
-      if (other.TuningDetail.Symbolrate != TuningDetail.Symbolrate)
+      if (other.TuningDetail.symbolrate != TuningDetail.symbolrate)
         return false;
-      if (other.TuningDetail.Bandwidth != TuningDetail.Bandwidth)
+      if (other.TuningDetail.bandwidth != TuningDetail.bandwidth)
         return false;
-      if (other.TuningDetail.Polarisation != TuningDetail.Polarisation)
+      if (other.TuningDetail.polarisation != TuningDetail.polarisation)
         return false;
       return true;
     }
@@ -176,7 +178,7 @@ namespace TvService
     /// </summary>
     public override int GetHashCode()
     {
-      return TuningDetail.Frequency + TuningDetail.ChannelType;
+      return TuningDetail.frequency + TuningDetail.channelType;
     }
 
     /// <summary>
@@ -184,12 +186,12 @@ namespace TvService
     /// </summary>
     public void Dump()
     {
-      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
-                TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
-                TuningDetail.Polarisation);
+      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.channelType,
+                TuningDetail.frequency, TuningDetail.modulation, TuningDetail.symbolrate, TuningDetail.bandwidth,
+                TuningDetail.polarisation);
       foreach (Channel c in _channels)
       {
-        Log.Write(" {0}", c.DisplayName);
+        Log.Write(" {0}", c.displayName);
       }
     }
 
@@ -202,9 +204,9 @@ namespace TvService
     public override string ToString()
     {
       return string.Format("type:{0} freq:{1} mod:{2} sr:{3} bw:{4} pol:{5}",
-                           TuningDetail.ChannelType, TuningDetail.Frequency,
-                           TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
-                           TuningDetail.Polarisation);
+                           TuningDetail.channelType, TuningDetail.frequency,
+                           TuningDetail.modulation, TuningDetail.symbolrate, TuningDetail.bandwidth,
+                           TuningDetail.polarisation);
     }
 
     #endregion
@@ -251,23 +253,23 @@ namespace TvService
     /// </summary>
     public void RefreshTransponders()
     {
-      Gentle.Common.CacheManager.Clear();
+      ////Gentle.Common.CacheManager.Clear();
       Reset();
       //get all channels
-      IList<Channel> channels = Channel.ListAll();
+      IList<Channel> channels = ChannelManagement.ListAllChannels();
       foreach (Channel channel in channels)
       {
         //if epg grabbing is enabled and channel is a radio or tv channel
-        if (channel.GrabEpg == false)
+        if (channel.grabEpg == false)
           continue;
-        if (channel.IsRadio == false && channel.IsTv == false)
+        if (channel.mediaType == (int)MediaTypeEnum.Radio == false && channel.mediaType == (int)MediaTypeEnum.TV == false)
           continue;
 
         //for each tuning detail of the channel
-        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        foreach (TuningDetail detail in channel.TuningDetails)
         {
           //skip analog channels and webstream channels
-          if (detail.ChannelType == 0 || detail.ChannelType == 5)
+          if (detail.channelType == 0 || detail.channelType == 5)
             continue;
 
           //create a new transponder

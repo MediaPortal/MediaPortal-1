@@ -21,11 +21,13 @@
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 //using MediaPortal.Utils.Services;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvEpgSettings : GUIInternalWindow
   {
@@ -47,22 +49,22 @@ namespace TvPlugin
     {
       base.OnPageLoad();
       Update();
-    }
+    }    
 
     private void Update()
     {
-      listChannels.Clear();
-      IList<Channel> channels = Channel.ListAll();
+      listChannels.Clear();      
+      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel chan in channels)
       {
-        if (chan.IsTv)
+        if (chan.mediaType == (int)MediaTypeEnum.TV)
         {
           continue;
         }
         bool isDigital = false;
-        foreach (TuningDetail detail in chan.ReferringTuningDetail())
+        foreach (TuningDetail detail in chan.TuningDetails)
         {
-          if (detail.ChannelType != 0)
+          if (detail.channelType != 0)
           {
             isDigital = true;
             break;
@@ -71,12 +73,12 @@ namespace TvPlugin
         if (isDigital)
         {
           GUIListItem item = new GUIListItem();
-          item.Label = chan.DisplayName;
+          item.Label = chan.displayName;
           item.IsFolder = false;
-          item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-          item.Selected = chan.GrabEpg;
+          item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.displayName);
+          item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.displayName);
+          item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.displayName);
+          item.Selected = chan.grabEpg;
           item.TVTag = chan;
           listChannels.Add(item);
         }
@@ -88,40 +90,40 @@ namespace TvPlugin
       if (control == listChannels)
       {
         Channel chan = listChannels.SelectedListItem.TVTag as Channel;
-        chan.GrabEpg = !chan.GrabEpg;
-        chan.Persist();
-        listChannels.SelectedListItem.Selected = chan.GrabEpg;
+        chan.grabEpg = !chan.grabEpg;
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);
+        listChannels.SelectedListItem.Selected = chan.grabEpg;
       }
       if (control == btnSelectAll)
       {
-        IList<Channel> channels = Channel.ListAll();
+        IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel chan in channels)
         {
-          if (chan.IsTv)
+          if (chan.mediaType == (int)MediaTypeEnum.TV)
           {
             continue;
           }
-          if (!chan.GrabEpg)
+          if (!chan.grabEpg)
           {
-            chan.GrabEpg = true;
-            chan.Persist();
+            chan.grabEpg = true;
+            ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);            
           }
         }
         Update();
       }
       if (control == btnSelectNone)
       {
-        IList<Channel> channels = Channel.ListAll();
+        IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
         foreach (Channel chan in channels)
         {
-          if (chan.IsTv)
+          if (chan.mediaType == (int)MediaTypeEnum.TV)
           {
             continue;
           }
-          if (chan.GrabEpg)
+          if (chan.grabEpg)
           {
-            chan.GrabEpg = false;
-            chan.Persist();
+            chan.grabEpg = false;
+            ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(chan);
           }
         }
         Update();

@@ -21,7 +21,7 @@
 using System.Collections;
 using System.Windows.Forms;
 
-namespace SetupTv.Sections.WebEPGConfig
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   /// <summary>
   /// This class is an implementation of the 'IComparer' interface.

@@ -18,11 +18,11 @@
 
 #endregion
 
-using System.Windows.Forms;
+using Mediaportal.TV.Server.SetupControls;
 
 #pragma warning disable 108
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class InfoPage : SectionSettings
   {

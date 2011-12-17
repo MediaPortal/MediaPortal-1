@@ -1,4 +1,6 @@
-﻿namespace SetupTv
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV
 {
   partial class WizardForm
   {
@@ -28,13 +30,13 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.nextButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.cancelButton = new MPButton();
+      this.nextButton = new MPButton();
+      this.backButton = new MPButton();
       this.topPanel = new System.Windows.Forms.Panel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.infoLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.topicLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.infoLabel = new MPLabel();
+      this.topicLabel = new MPLabel();
       this.panel1 = new System.Windows.Forms.Panel();
       this.panel2 = new System.Windows.Forms.Panel();
       this.holderPanel = new System.Windows.Forms.Panel();
@@ -90,7 +92,7 @@
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = global::SetupTv.Properties.Resources.wizard_header;
+      this.pictureBox1.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.wizard_header;
       this.pictureBox1.Location = new System.Drawing.Point(528, 14);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(70, 48);
@@ -164,15 +166,15 @@
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private MediaPortal.UserInterface.Controls.MPButton nextButton;
-    private MediaPortal.UserInterface.Controls.MPButton backButton;
+    private MPButton cancelButton;
+    private MPButton nextButton;
+    private MPButton backButton;
     private System.Windows.Forms.Panel topPanel;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Panel panel2;
     private System.Windows.Forms.Panel holderPanel;
-    private MediaPortal.UserInterface.Controls.MPLabel topicLabel;
-    private MediaPortal.UserInterface.Controls.MPLabel infoLabel;
+    private MPLabel topicLabel;
+    private MPLabel infoLabel;
     private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

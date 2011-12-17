@@ -21,13 +21,11 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvEngine.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Generic IWakeupHandler implementation, can be reused or inherited

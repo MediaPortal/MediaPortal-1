@@ -20,7 +20,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace MediaPortal.WebEPG.Parser
+namespace WebEPG.Parser
 {
   /// <summary>
   ///  Finds the rows in source data

@@ -20,7 +20,7 @@
 
 using System.Collections;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.html
 {
   public class MatchTagCollection : CollectionBase
   {

@@ -19,17 +19,20 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// class holding all tuning details for DVBIP
   /// </summary>
+  [DataContract]
   [Serializable]
   public class DVBIPChannel : DVBBaseChannel
   {
     #region variables
 
+    [DataMember]
     private string _url;
 
     #endregion

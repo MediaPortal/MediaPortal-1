@@ -28,8 +28,8 @@
 #---------------------------------------------------------------------------
 # SPECIAL BUILDS
 #---------------------------------------------------------------------------
-##### GIT_BUILD
-# This build will be created by git bot only.
+##### SVN_BUILD
+# This build will be created by svn bot only.
 # Creating such a build, will only include the changed and new files since latest stable release to the installer.
 
 ##### HEISE_BUILD
@@ -44,17 +44,17 @@
 # SKRIPT_NAME is needed to diff between the install scripts in imported headers
 !define SKRIPT_NAME "MediaPortal TV Server / Client"
 # path definitions, all others are done in MediaPortalScriptInit
-!define git_ROOT "..\..\.."
-!define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
+!define svn_ROOT "..\..\.."
+!define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 # common script init
-!include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+!include "${svn_InstallScripts}\include\MediaPortalScriptInit.nsh"
 
 # additional path definitions
-!define TVSERVER.BASE "${git_TVServer}\TVServer.Base"
-!ifdef GIT_BUILD
+!define TVSERVER.BASE "${svn_TVServer}\TVServer.Base"
+!ifdef SVN_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
 !else
-  !define MEDIAPORTAL.BASE "${git_MP}\MediaPortal.Base"
+  !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 !endif
 
 
@@ -73,7 +73,7 @@
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
 
 ; import version from shared file
-!include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
+!include "${svn_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
 
 SetCompressor /SOLID lzma
 
@@ -112,33 +112,33 @@ Var frominstall
 !include FileFunc.nsh
 !include Memento.nsh
 
-!include "${git_InstallScripts}\include\FileAssociation.nsh"
-!include "${git_InstallScripts}\include\LanguageMacros.nsh"
-!include "${git_InstallScripts}\include\LoggingMacros.nsh"
-!include "${git_InstallScripts}\include\MediaPortalDirectories.nsh"
-!include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
-!include "${git_InstallScripts}\include\ProcessMacros.nsh"
-!include "${git_InstallScripts}\include\WinVerEx.nsh"
+!include "${svn_InstallScripts}\include\FileAssociation.nsh"
+!include "${svn_InstallScripts}\include\LanguageMacros.nsh"
+!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+!include "${svn_InstallScripts}\include\MediaPortalDirectories.nsh"
+!include "${svn_InstallScripts}\include\MediaPortalMacros.nsh"
+!include "${svn_InstallScripts}\include\ProcessMacros.nsh"
+!include "${svn_InstallScripts}\include\WinVerEx.nsh"
 
-!include "${git_InstallScripts}\pages\AddRemovePage.nsh"
-!include "${git_InstallScripts}\pages\UninstallModePage.nsh"
+!include "${svn_InstallScripts}\pages\AddRemovePage.nsh"
+!include "${svn_InstallScripts}\pages\UninstallModePage.nsh"
 
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
 #---------------------------------------------------------------------------
 !define MUI_ABORTWARNING
-!define MUI_ICON    "${git_InstallScripts}\Resources\install.ico"
-!define MUI_UNICON  "${git_InstallScripts}\Resources\install.ico"
+!define MUI_ICON    "${svn_InstallScripts}\Resources\install.ico"
+!define MUI_UNICON  "${svn_InstallScripts}\Resources\install.ico"
 
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP              "${git_InstallScripts}\Resources\header.bmp"
+!define MUI_HEADERIMAGE_BITMAP              "${svn_InstallScripts}\Resources\header.bmp"
 !if ${VER_BUILD} == 0       # it's an official release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-tv.bmp"
-!else                       # it's a git release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-tv-snapshot.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-tv.bmp"
+!else                       # it's a svn release
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-tv-svn.bmp"
 !endif
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-tv.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-tv.bmp"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
@@ -163,7 +163,7 @@ Var frominstall
 # INSTALLER INTERFACE
 #---------------------------------------------------------------------------
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "${git_MP}\Docs\MediaPortal License.rtf"
+!insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\MediaPortal License.rtf"
 
 Page custom PageReinstallMode PageLeaveReinstallMode
 
@@ -205,9 +205,9 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 Name          "${PRODUCT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0       # it's an official release
-  OutFile "${git_OUT}\package-tvengine.exe"
-!else                       # it's a git release
-  OutFile "${git_OUT}\Setup-TvEngine-git-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
+  OutFile "${svn_OUT}\package-tvengine.exe"
+!else                       # it's a svn release
+  OutFile "${svn_OUT}\Setup-TvEngine-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
 CRCCheck on
@@ -377,50 +377,50 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   #---------------------------- File Copy ----------------------
   ; Tuning Parameter Directory
   SetOutPath "${COMMON_APPDATA}\TuningParameters"
-  File /r /x .git "${TVSERVER.BASE}\TuningParameters\*"
+  File /r /x .svn "${TVSERVER.BASE}\TuningParameters\*"
   ; WebEPG Grabbers Directory
   SetOutPath "${COMMON_APPDATA}\WebEPG"
-  File /r /x .git "${TVSERVER.BASE}\WebEPG\*"
+  File /r /x .svn "${TVSERVER.BASE}\WebEPG\*"
   ; XMLTV Data Directory
   SetOutPath "${COMMON_APPDATA}\xmltv"
-  File /r /x .git "${TVSERVER.BASE}\xmltv\*"
+  File /r /x .svn "${TVSERVER.BASE}\xmltv\*"
 
   ; The Plugin Directory
   SetOutPath "$INSTDIR\Plugins"
-  File "${git_TVServer}\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll"
-  File "${git_TVServer}\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll"
-  File "${git_TVServer}\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll"
-  File "${git_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
-  File "${git_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
-  File "${git_TVServer}\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll"
-  File "${git_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
-  File "${git_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPGImport.dll"
+  File "${svn_TVServer}\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\ComSkipLauncher.dll"
+  File "${svn_TVServer}\Plugins\ConflictsManager\bin\${BUILD_TYPE}\ConflictsManager.dll"
+  File "${svn_TVServer}\Plugins\PowerScheduler\bin\${BUILD_TYPE}\PowerScheduler.dll"
+  File "${svn_TVServer}\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\ServerBlaster.dll"
+  File "${svn_TVServer}\Plugins\TvMovie\bin\${BUILD_TYPE}\TvMovie.dll"
+  File "${svn_TVServer}\Plugins\XmlTvImport\bin\${BUILD_TYPE}\XmlTvImport.dll"
+  File "${svn_TVServer}\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\WebEPG.dll"
+  File "${svn_TVServer}\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\WebEPGImport.dll"
 
   ; Rest of Files
   SetOutPath "$INSTDIR"
-  File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
-  File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
-  File "${git_TVServer}\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll"
-  File "${git_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
-  File "${git_TVServer}\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\${BUILD_TYPE}\Blaster.exe"
-  File "${git_TVServer}\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
-  File "${git_TVServer}\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
-  File "${git_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
-  File "${git_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-  File "${git_TVServer}\TVDatabase\references\log4net.dll"
-  File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
-  File "${git_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-  File "${git_TVServer}\TVLibrary\bin\${BUILD_TYPE}\TVLibrary.dll"
-  File "${git_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe"
-  File "${git_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
-  File "${git_TVServer}\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll"
-  File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
-  File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  File "${svn_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${svn_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
+  File "${svn_TVServer}\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll"
+  File "${svn_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
+  File "${svn_TVServer}\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\${BUILD_TYPE}\Blaster.exe"
+  File "${svn_TVServer}\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
+  File "${svn_TVServer}\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
+  File "${svn_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${svn_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Common.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
+  File "${svn_TVServer}\TVDatabase\references\log4net.dll"
+  File "${svn_TVServer}\TVDatabase\references\MySql.Data.dll"
+  File "${svn_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
+  File "${svn_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${svn_TVServer}\TVLibrary\bin\${BUILD_TYPE}\TVLibrary.dll"
+  File "${svn_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe"
+  File "${svn_TVServer}\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
+  File "${svn_TVServer}\SetupControls\bin\${BUILD_TYPE}\SetupControls.dll"
+  File "${svn_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
+  File "${svn_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
 
   ; 3rd party assemblys
   File "${TVSERVER.BASE}\hauppauge.dll"
@@ -431,15 +431,15 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
-  File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+  File "${svn_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
-  File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
+  File "${svn_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   ; binary used for skystar2 support
-  File "${git_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
+  File "${svn_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
-  File "${git_Common_MP_TVE3}\Gentle.config"
+  File "${svn_Common_MP_TVE3}\Gentle.config"
   File "${TVSERVER.BASE}\log4net.config"
   File "${TVSERVER.BASE}\TvSetupLog.config"
   
@@ -451,14 +451,14 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; filters for digital tv
   ${IfNot} ${MP023IsInstalled}
   ${AndIfNot} ${MPIsInstalled}
-    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax" "$INSTDIR\TsReader.ax" "$INSTDIR"
   ${EndIf}
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsWriter\bin\${BUILD_TYPE}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\TsWriter\bin\${BUILD_TYPE}\TsWriter.ax" "$INSTDIR\TsWriter.ax" "$INSTDIR"
   ; filters for analog tv
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPWriter\bin\${BUILD_TYPE}\mpFileWriter.ax" "$INSTDIR\mpFileWriter.ax" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\PDMpgMux.ax" "$INSTDIR\PDMpgMux.ax" "$INSTDIR"
   ; filter for IPTV support
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTVSource.ax" "$INSTDIR\MPIPTVSource.ax" "$INSTDIR"
 
   #---------------------------------------------------------------------------
   # SERVICE INSTALLATION
@@ -617,31 +617,31 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Common Files
   SetOutPath "$MPdir.Base"
-  File "${git_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
-  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
-  File "${git_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Common.DLL"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
-  File "${git_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
-  File "${git_TVServer}\TVDatabase\references\log4net.dll"
-  File "${git_TVServer}\TVDatabase\references\MySql.Data.dll"
-  File "${git_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
+  File "${svn_TVServer}\TvControl\bin\${BUILD_TYPE}\TvControl.dll"
+  File "${svn_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${svn_TVServer}\TVDatabase\bin\${BUILD_TYPE}\TVDatabase.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Common.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Framework.DLL"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.MySQL.dll"
+  File "${svn_TVServer}\TVDatabase\references\Gentle.Provider.SQLServer.dll"
+  File "${svn_TVServer}\TVDatabase\references\log4net.dll"
+  File "${svn_TVServer}\TVDatabase\references\MySql.Data.dll"
+  File "${svn_TVServer}\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
-  File "${git_Common_MP_TVE3}\Gentle.config"
+  File "${svn_Common_MP_TVE3}\Gentle.config"
 
   ; The Plugins
   SetOutPath "$MPdir.Plugins\Windows"
-  File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
+  File "${svn_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
   #---------------------------------------------------------------------------
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle2\bin\${BUILD_TYPE}\DVBSub2.ax" "$MPdir.Base\DVBSub2.ax"  "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\mmaacd.ax"                     "$MPdir.Base\mmaacd.ax"   "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\DVBSubtitle2\bin\${BUILD_TYPE}\DVBSub2.ax" "$MPdir.Base\DVBSub2.ax"  "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\mmaacd.ax"                     "$MPdir.Base\mmaacd.ax"   "$MPdir.Base"
 ${MementoSectionEnd}
 !macro Remove_${SecClient}
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal TV Client plugin..."

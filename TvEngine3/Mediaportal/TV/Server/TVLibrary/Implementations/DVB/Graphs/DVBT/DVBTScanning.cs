@@ -18,14 +18,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
 {
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-T BDA cards
@@ -52,15 +50,14 @@ namespace TvLibrary.Implementations.DVB
       dvbtChannel.LogicalChannelNumber = info.LCN;
       dvbtChannel.Provider = info.service_provider_name;
       dvbtChannel.BandWidth = tuningChannel.BandWidth;
-      dvbtChannel.Frequency = tuningChannel.Frequency;
-      dvbtChannel.IsTv = IsTvService(info.serviceType);
-      dvbtChannel.IsRadio = IsRadioService(info.serviceType);
+      dvbtChannel.Frequency = tuningChannel.Frequency;      
+      dvbtChannel.MediaType = GetMediaTypeByServiceType(info.serviceType);
       dvbtChannel.NetworkId = info.networkID;
       dvbtChannel.ServiceId = info.serviceID;
       dvbtChannel.TransportId = info.transportStreamID;
       dvbtChannel.PmtPid = info.network_pmt_PID;
       dvbtChannel.FreeToAir = !info.scrambled;
-      Log.Log.Write("Found: {0}", dvbtChannel);
+      Log.Write("Found: {0}", dvbtChannel);
       return dvbtChannel;
     }
   }

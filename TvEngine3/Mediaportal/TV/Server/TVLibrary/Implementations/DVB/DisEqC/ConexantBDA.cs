@@ -22,9 +22,12 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC
 {
   /// <summary>
   /// Handles the DiSEqC interface for Conexant BDA driver devices
@@ -63,19 +66,19 @@ namespace TvLibrary.Implementations.DVB
                                       out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("Conexant BDA: DVB-S card found!");
+            Log.Debug("Conexant BDA: DVB-S card found!");
             _isConexant = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
-            Log.Log.Debug("Conexant BDA: DVB-S card NOT found!");
+            Log.Debug("Conexant BDA: DVB-S card NOT found!");
             _isConexant = false;
           }
         }
       }
       else
-        Log.Log.Info("Conexant BDA: tuner pin not found!");
+        Log.Info("Conexant BDA: tuner pin not found!");
     }
 
     /// <summary>
@@ -156,13 +159,13 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.Debug("Conexant BDA: SendDiseqCommand: {0}", txt);
+      Log.Debug("Conexant BDA: SendDiseqCommand: {0}", txt);
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+        Log.Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
     }
 
@@ -193,13 +196,13 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.Debug("Conexant BDA: SendDiseqCCommand: {0}", txt);
+      Log.Debug("Conexant BDA: SendDiseqCCommand: {0}", txt);
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+        Log.Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
       return (hr == 0);
     }
@@ -215,14 +218,36 @@ namespace TvLibrary.Implementations.DVB
       return false;
     }
 
-    #endregion
+    #endregion     
+
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+    }
+
 
     /// <summary>
     /// Disposes COM task memory resources
     /// </summary>
     public void Dispose()
     {
-      Marshal.FreeCoTaskMem(_ptrDiseqc);
+      Dispose(true);
+      GC.SuppressFinalize(this);
     }
+
+    ~ConexantBDA()
+    {
+      Dispose(false);
+    }
+
+    #endregion
   }
 }

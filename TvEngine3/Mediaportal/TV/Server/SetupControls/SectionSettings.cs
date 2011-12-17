@@ -21,9 +21,8 @@
 using System;
 using System.Collections;
 using System.Xml;
-using SetupControls;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupControls
 {
   public partial class SectionSettings : System.Windows.Forms.UserControl
   {

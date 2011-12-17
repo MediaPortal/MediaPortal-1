@@ -20,9 +20,9 @@
 
 using System;
 using System.Diagnostics;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   public static class HelpSystem
   {

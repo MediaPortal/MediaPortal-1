@@ -20,11 +20,11 @@
 
 using System;
 using System.Globalization;
-using MediaPortal.Utils.Time;
-using MediaPortal.Utils.Web;
-using MediaPortal.WebEPG.Config.Grabber;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
+using WebEPG.config.Grabber;
 
-namespace MediaPortal.WebEPG
+namespace WebEPG
 {
   /// <summary>
   /// Builds HTTP requests

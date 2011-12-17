@@ -22,12 +22,13 @@ using System;
 using System.Security.AccessControl;
 using System.ServiceProcess;
 using System.Threading;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Microsoft.Win32;
-using TvDatabase;
-using TvControl;
-using TvLibrary.Log;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   /// <summary>
   /// Offers basic control functions for services
@@ -40,8 +41,8 @@ namespace SetupTv
     /// <returns>number of seconds</returns>
     public static int DefaultInitTimeOut()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      return Convert.ToInt16(layer.GetSetting("delayCardDetect", "0").Value) + 10;
+      
+      return Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").value) + 10;
     }
 
     /// <summary>
@@ -134,8 +135,7 @@ namespace SetupTv
       {
         try
         {
-          RemoteControl.Clear();
-          int cards = RemoteControl.Instance.Cards;
+          int cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
           return true;
         }
         catch (System.Runtime.Remoting.RemotingException)

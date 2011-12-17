@@ -19,10 +19,14 @@
 #endregion
 
 using System.Collections.Generic;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVService.CardManagement.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.Scheduler;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 {
   public interface ICardAllocation
   {
@@ -31,7 +35,7 @@ namespace TvService
     /// List is sorted by "same transponder" and priority
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    List<CardDetail> GetFreeCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user,
+    List<CardDetail> GetFreeCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user,
                                             out TvResult result);
 
     /// <summary>
@@ -39,13 +43,21 @@ namespace TvService
     /// List is sorted by "same transponder" and priority
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user, out Dictionary<int, TvResult> cardsUnAvailable);
+    List<CardDetail> GetAvailableCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user, out IDictionary<int, TvResult> cardsUnAvailable);
 
     /// <summary>
     /// Gets a list of all available cards which can receive the channel specified
     /// List is sorted by "same transponder" and priority
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user);
+    List<CardDetail> GetAvailableCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user);
+
+    /// <summary>
+    /// Gets a list of all free cards which can receive the channel specified
+    /// List is sorted.
+    /// </summary>
+    /// <returns>list containg all free cards which can receive the channel</returns>
+    List<CardDetail> GetFreeCardsForChannel(IDictionary<int, ITvCardHandler> cards, Channel dbChannel,
+                                                            ref IUser user);
   }
 }

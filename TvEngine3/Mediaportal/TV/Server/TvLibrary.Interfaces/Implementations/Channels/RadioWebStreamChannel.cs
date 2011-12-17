@@ -19,9 +19,11 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// class holding all tuning details for radio webstream channels
@@ -80,24 +82,7 @@ namespace TvLibrary.Implementations
       get { return _url; }
       set { _url = value; }
     }
-
-    /// <summary>
-    /// boolean indicating if this is a radio channel
-    /// </summary>
-    public bool IsRadio
-    {
-      get { return true; }
-      set { }
-    }
-
-    /// <summary>
-    /// boolean indicating if this is a tv channel
-    /// </summary>
-    public bool IsTv
-    {
-      get { return false; }
-      set { }
-    }
+   
 
     #endregion
 
@@ -172,6 +157,12 @@ namespace TvLibrary.Implementations
     public bool FreeToAir
     {
       get { return true; }
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return MediaTypeEnum.Radio; }
+      set {  }
     }
   }
 }

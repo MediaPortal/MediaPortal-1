@@ -25,19 +25,20 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using MediaPortal.EPG;
-using MediaPortal.EPG.config;
-using MediaPortal.WebEPG.Config;
-using MediaPortal.WebEPG.Config.Grabber;
-using MediaPortal.WebEPG.Profile;
-using SetupTv.Sections.WebEPGConfig;
-using TvDatabase;
-using TvEngine.PowerScheduler;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using WebEPG.MPCode;
+using WebEPG.config;
+using WebEPG.config.Grabber;
+using WebEPG.config.WebEPG;
+using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   public partial class WebEPGSetup : SectionSettings
   {
@@ -58,7 +59,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private delegate void ShowStatusHandler(WebEPG.Stats status);
+    private delegate void ShowStatusHandler(WebEPG.WebEPG.Stats status);
 
     private string _webepgFilesDir;
     private string _configFileDir;
@@ -123,8 +124,8 @@ namespace SetupTv.Sections
 
       Initialize();
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      switch (layer.GetSetting("webepgDestination", "db").Value)
+
+      switch (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDestination", "db").value)
       {
         case "db":
           DestinationComboBox.SelectedIndex = 0;
@@ -140,15 +141,15 @@ namespace SetupTv.Sections
           break;
       }
 
-      textBoxFolder.Text = layer.GetSetting("webepgDestinationFolder").Value;
-      checkBoxDeleteBeforeImport.Checked = Convert.ToBoolean(layer.GetSetting("webepgDeleteBeforeImport", "true").Value);
+      textBoxFolder.Text = ServiceAgents.Instance.SettingServiceAgent.GetSetting("webepgDestinationFolder").value;
+      checkBoxDeleteBeforeImport.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgDeleteBeforeImport", "true").value);
 
       LoadWebepgConfigFile();
       //RedrawList(null);
 
       // Schedule
-      ScheduleGrabCheckBox.Checked = Convert.ToBoolean(layer.GetSetting("webepgScheduleEnabled", "true").Value);
-      EPGWakeupConfig config = new EPGWakeupConfig(layer.GetSetting("webepgSchedule", String.Empty).Value);
+      ScheduleGrabCheckBox.Checked = Convert.ToBoolean(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgScheduleEnabled", "true").value);
+      EPGWakeupConfig config = new EPGWakeupConfig(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgSchedule", String.Empty).value);
       foreach (EPGGrabDays day in config.Days)
       {
         switch (day)
@@ -211,36 +212,29 @@ namespace SetupTv.Sections
       s.Serialize(w, _configFile);
       w.Close();
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("webepgDestination", "db");
+
+      string value = "";      
       switch (DestinationComboBox.SelectedIndex)
       {
         case 0:
-          setting.Value = "db";
+          value = "db";
           break;
         case 1:
-          setting.Value = "defxmltv";
+          value = "defxmltv";
           break;
         case 2:
-          setting.Value = "xmltv";
+          value = "xmltv";
           break;
       }
-      setting.Persist();
 
-      setting = layer.GetSetting("webepgDestinationFolder");
-      setting.Value = textBoxFolder.Text;
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgDestination", value);
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgDestinationFolder", textBoxFolder.Text);
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgDeleteBeforeImport", checkBoxDeleteBeforeImport.Checked ? "true" : "false");
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgScheduleEnabled", ScheduleGrabCheckBox.Checked ? "true" : "false");
 
-      setting = layer.GetSetting("webepgDeleteBeforeImport", "true");
-      setting.Value = checkBoxDeleteBeforeImport.Checked ? "true" : "false";
-      setting.Persist();
 
-      setting = layer.GetSetting("webepgScheduleEnabled", "true");
-      setting.Value = ScheduleGrabCheckBox.Checked ? "true" : "false";
-      setting.Persist();
-
-      setting = layer.GetSetting("webepgSchedule", String.Empty);
-      EPGWakeupConfig cfg = new EPGWakeupConfig(setting.Value);
+      Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgSchedule", String.Empty);
+      EPGWakeupConfig cfg = new EPGWakeupConfig(setting.value);
       EPGWakeupConfig newcfg = new EPGWakeupConfig();
       newcfg.Hour = cfg.Hour;
       newcfg.Minutes = cfg.Minutes;
@@ -259,8 +253,7 @@ namespace SetupTv.Sections
 
       if (!cfg.Equals(newcfg))
       {
-        setting.Value = newcfg.SerializeAsString();
-        setting.Persist();
+        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgSchedule", newcfg.SerializeAsString());                
       }
     }
 
@@ -282,35 +275,27 @@ namespace SetupTv.Sections
       _initialized = true;
     }
 
-    private void ShowStatus(WebEPG.Stats status)
+    private void ShowStatus(WebEPG.WebEPG.Stats status)
     {
       labelLastImport.Text = status.StartTime.ToString();
       labelChannels.Text = status.Channels.ToString();
       labelPrograms.Text = status.Programs.ToString();
       labelStatus.Text = status.Status;
 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("webepgResultLastImport", "");
-      setting.Value = status.StartTime.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("webepgResultChannels", "");
-      setting.Value = status.Channels.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("webepgResultPrograms", "");
-      setting.Value = status.Programs.ToString();
-      setting.Persist();
-      setting = layer.GetSetting("webepgResultStatus", "");
-      setting.Value = status.Status;
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultChannels", status.Channels.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultPrograms", status.Programs.ToString());      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultStatus", status.Status);
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("webepgResultLastImport", status.StartTime.ToString());      
+      
     }
 
     private void ShowStatus()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      labelLastImport.Text = layer.GetSetting("webepgResultLastImport", "").Value;
-      labelChannels.Text = layer.GetSetting("webepgResultChannels", "").Value;
-      labelPrograms.Text = layer.GetSetting("webepgResultPrograms", "").Value;
-      labelStatus.Text = layer.GetSetting("webepgResultStatus", "").Value;
+
+      labelLastImport.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultLastImport", "").value;
+      labelChannels.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultChannels", "").value;
+      labelPrograms.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultPrograms", "").value;
+      labelStatus.Text = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("webepgResultStatus", "").value;
     }
 
     private void LoadCountries()
@@ -770,12 +755,12 @@ namespace SetupTv.Sections
 
     private void buttonManualImport_Click(object sender, EventArgs e)
     {
-      TvEngine.WebEPGImport importer = new TvEngine.WebEPGImport();
+      WebEPGImport importer = new WebEPGImport();
 
       importer.ForceImport(ShowImportProgress);
     }
 
-    private void ShowImportProgress(WebEPG.Stats status)
+    private void ShowImportProgress(WebEPG.WebEPG.Stats status)
     {
       this.Invoke(new ShowStatusHandler(ShowStatus), new object[] {status});
     }

@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.ComponentModel;
 
-namespace TvLibrary.Helper
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
   /// SID Helper methods

@@ -19,9 +19,10 @@
 #endregion
 
 using System.Collections.Generic;
-using TvControl;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.Interfaces
 {
   public interface ITvCardContext
   {
@@ -35,7 +36,7 @@ namespace TvService
     ///   Gets the users.
     /// </summary>
     /// <value>The users.</value>
-    IUser[] Users { get; }
+    IDictionary<string, IUser> Users { get; }
 
     /// <summary>
     ///   Locks the card for the user specifies
@@ -77,8 +78,6 @@ namespace TvService
     /// </summary>
     /// <param name = "user">The user.</param>
     void Remove(IUser user);
-
-    void HeartBeatUser(IUser user);
 
     /// <summary>
     ///   Gets the user.
@@ -144,5 +143,7 @@ namespace TvService
     void OnStopUser(IUser user);
     void OnZap(IUser user);
     void UserNextAvailableSubchannel(IUser user);
+    bool HasUserEqualOrHigherPriority(IUser user);
+    bool HasUserHighestPriority(IUser user);
   }
 }

@@ -19,9 +19,9 @@
 #endregion
 
 using System;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// Class which holds all details about a TV program

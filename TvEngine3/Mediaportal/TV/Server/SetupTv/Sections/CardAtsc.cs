@@ -22,15 +22,23 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
-using TvDatabase;
-using TvControl;
-using TvLibrary.Log;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.SetupTV.Sections.Helpers;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using DirectShowLib.BDA;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class CardAtsc : SectionSettings
   {
@@ -92,23 +100,19 @@ namespace SetupTv.Sections
     {
       base.OnSectionActivated();
       UpdateStatus();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      checkBoxQAM.Checked = (layer.GetSetting("atsc" + _cardNumber + "supportsqam", "false").Value == "true");
+      checkBoxQAM.Checked = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("atsc" + _cardNumber + "supportsqam", "false").value == "true");
     }
 
     public override void OnSectionDeActivated()
     {
       base.OnSectionDeActivated();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("atsc" + _cardNumber + "supportsqam", "false");
-      setting.Value = checkBoxQAM.Checked ? "true" : "false";
-      setting.Persist();
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("atsc" + _cardNumber + "supportsqam", checkBoxQAM.Checked ? "true" : "false");      
     }
 
     private void UpdateStatus()
     {
-      progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
-      progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
+      progressBarLevel.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalLevel(_cardNumber));
+      progressBarQuality.Value = Math.Min(100, ServiceAgents.Instance.ControllerServiceAgent.SignalQuality(_cardNumber));
     }
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
@@ -117,21 +121,21 @@ namespace SetupTv.Sections
       {
         checkBoxQAM.Enabled = false;
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-        if (card.Enabled == false)
+        
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
+        if (card.enabled == false)
         {
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
-        if (!RemoteControl.Instance.CardPresent(card.IdCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
         {
           MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
         }
         // Check if the card is locked for scanning.
         IUser user;
-        if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
+        if (ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
                           "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
@@ -166,13 +170,13 @@ namespace SetupTv.Sections
         _isScanning = true;
         _stopScanning = false;
         mpButtonScanTv.Text = "Cancel...";
-        RemoteControl.Instance.EpgGrabberEnabled = false;
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
         if (_atscChannels.Count == 0)
           return;
         mpComboBoxFrequencies.Enabled = false;
         listViewStatus.Items.Clear();
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
+        
+        Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
         IUser user = new User();
         user.CardId = _cardNumber;
         int minchan = 2;
@@ -220,9 +224,9 @@ namespace SetupTv.Sections
           item.EnsureVisible();
           if (index == minchan)
           {
-            RemoteControl.Instance.Scan(ref user, tuneChannel, -1);
+            ServiceAgents.Instance.ControllerServiceAgent.Scan(ref user, tuneChannel, -1);
           }
-          IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+          IChannel[] channels = ServiceAgents.Instance.ControllerServiceAgent.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
           /*if (channels == null || channels.Length == 0)
           {
@@ -234,13 +238,13 @@ namespace SetupTv.Sections
               tuneChannel.ModulationType = ModulationType.Mod64Qam;
               line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
               item.Text = line;
-              channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
+              channels = ServiceAgents.Instance.ControllerService.Scan(_cardNumber, tuneChannel);
             }
           }*/
           UpdateStatus();
           if (channels == null || channels.Length == 0)
           {
-            if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
+            if (ServiceAgents.Instance.ControllerServiceAgent.TunerLocked(_cardNumber) == false)
             {
               line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal",
                                    tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
@@ -262,49 +266,50 @@ namespace SetupTv.Sections
             ATSCChannel channel = (ATSCChannel)channels[i];
             //No support for channel moving, or merging with existing channels here.
             //We do not know how ATSC works to correctly implement this.
-            TuningDetail currentDetail = layer.GetTuningDetail(channel);
+            TuningDetail currentDetail = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetail(channel);
             if (currentDetail != null)
-              if (channel.Frequency != currentDetail.Frequency)
+              if (channel.Frequency != currentDetail.frequency)
                 currentDetail = null;
             bool exists;
             if (currentDetail == null)
             {
               //add new channel
               exists = false;
-              dbChannel = layer.AddNewChannel(channel.Name);
-              dbChannel.SortOrder = 10000;
+              dbChannel = ChannelFactory.CreateChannel(channel.Name);
+              dbChannel.sortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
-                dbChannel.SortOrder = channel.LogicalChannelNumber;
+                dbChannel.sortOrder = channel.LogicalChannelNumber;
               }
             }
             else
             {
               exists = true;
-              dbChannel = currentDetail.ReferencedChannel();
+              dbChannel = currentDetail.Channel;
             }
-            dbChannel.IsTv = channel.IsTv;
-            dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.Persist();
-            if (dbChannel.IsTv)
+            dbChannel.mediaType = (int)channel.MediaType;
+            dbChannel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(dbChannel);
+            dbChannel.AcceptChanges();
+            if (dbChannel.mediaType == (decimal) MediaTypeEnum.TV)
             {
-              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
+              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.TV);              
             }
-            if (dbChannel.IsRadio)
+            else if (dbChannel.mediaType == (decimal) MediaTypeEnum.Radio)
             {
-              layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+              ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
+              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.Radio);                            
             }
             if (currentDetail == null)
             {
-              layer.AddTuningDetails(dbChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel, channel);
             }
             else
             {
               //update tuning details...
-              TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
-              td.Persist();
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetails(dbChannel, channel);
             }
-            if (channel.IsTv)
+            if (channel.MediaType == MediaTypeEnum.TV)
             {
               if (exists)
               {
@@ -317,7 +322,7 @@ namespace SetupTv.Sections
                 newChannels++;
               }
             }
-            if (channel.IsRadio)
+            if (channel.MediaType == MediaTypeEnum.Radio)
             {
               if (exists)
               {
@@ -329,8 +334,8 @@ namespace SetupTv.Sections
                 radioChannelsNew++;
                 newChannels++;
               }
-            }
-            layer.MapChannelToCard(card, dbChannel, false);
+            }            
+            MappingHelper.AddChannelToCard(dbChannel, card, false);
             line = String.Format("physical channel:{0} frequency:{1} modulation:{2} New:{3} Updated:{4}",
                                  tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType,
                                  newChannels, updatedChannels);
@@ -347,8 +352,8 @@ namespace SetupTv.Sections
       {
         IUser user = new User();
         user.CardId = _cardNumber;
-        RemoteControl.Instance.StopCard(user);
-        RemoteControl.Instance.EpgGrabberEnabled = true;
+        ServiceAgents.Instance.ControllerServiceAgent.StopCard(user);
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         checkBoxQAM.Enabled = true;
         mpComboBoxFrequencies.Enabled = true;

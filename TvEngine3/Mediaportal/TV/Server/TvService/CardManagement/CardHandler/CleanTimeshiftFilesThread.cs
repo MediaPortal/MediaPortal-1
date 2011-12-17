@@ -18,12 +18,11 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Threading;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 {
   /// <summary>
   /// Thread that tries to cleanup timeshift files

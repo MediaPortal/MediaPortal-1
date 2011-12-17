@@ -19,15 +19,19 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using DirectShowLib;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// class holding all tuning details for analog channels
   /// </summary>
   [Serializable]
+  [DataContract]
   public class AnalogChannel : IChannel
   {
     #region enums
@@ -158,15 +162,33 @@ namespace TvLibrary.Implementations
 
     #region variables
 
+
+    [DataMember]
     private string _channelName;
+
+    [DataMember]
     private long _channelFrequency;
+
+    [DataMember]
     private int _channelNumber;
+
+    [DataMember]
     private Country _country;
-    private bool _isRadio;
+
+    [DataMember]
     private TunerInputType _tunerSource;
+
+    [DataMember]
     private VideoInputType _videoInputType;
+
+    [DataMember]
     private AudioInputType _audioInputType;
+
+    [DataMember]
     private bool _vcrSginal;
+
+    [DataMember]
+    private MediaTypeEnum _mediaType;
 
     #endregion
 
@@ -183,7 +205,7 @@ namespace TvLibrary.Implementations
       _videoInputType = VideoInputType.Tuner;
       _audioInputType = AudioInputType.Automatic;
       _channelNumber = 4;
-      _isRadio = false;
+      _mediaType = MediaTypeEnum.TV;
       _vcrSginal = false;
       Name = String.Empty;
     }
@@ -258,23 +280,7 @@ namespace TvLibrary.Implementations
       set { _channelNumber = value; }
     }
 
-    /// <summary>
-    /// boolean indicating if this is a radio channel
-    /// </summary>
-    public bool IsRadio
-    {
-      get { return _isRadio; }
-      set { _isRadio = value; }
-    }
-
-    /// <summary>
-    /// boolean indicating if this is a tv channel
-    /// </summary>
-    public bool IsTv
-    {
-      get { return !_isRadio; }
-      set { _isRadio = !value; }
-    }
+    
 
     /// <summary>
     /// boolean indicating if this is channel provides a vcr signal
@@ -297,7 +303,7 @@ namespace TvLibrary.Implementations
     /// </returns>
     public override string ToString()
     {
-      string line = IsRadio ? "radio:" : "tv:";
+      string line = MediaType.ToString();
       line += String.Format("{0} Freq:{1} Channel:{2} Country:{3} Tuner:{4} Video:{5} Audio:{6}",
                             Name, Frequency, ChannelNumber, Country.Name, TunerSource, VideoSource, AudioSource);
       return line;
@@ -345,14 +351,10 @@ namespace TvLibrary.Implementations
       {
         return false;
       }
-      if (ch.IsRadio != IsRadio)
+      if (ch.MediaType != MediaType)
       {
         return false;
-      }
-      if (ch.IsTv != IsTv)
-      {
-        return false;
-      }
+      }      
       if (ch.IsVCRSignal != IsVCRSignal)
       {
         return false;
@@ -369,7 +371,7 @@ namespace TvLibrary.Implementations
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _channelFrequency.GetHashCode() ^
-             _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
+             _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _mediaType.GetHashCode() ^
              _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^
              _vcrSginal.GetHashCode();
     }
@@ -388,8 +390,7 @@ namespace TvLibrary.Implementations
       {
         return true;
       }
-      return analogChannel.IsTv != IsTv ||
-             analogChannel.IsRadio != IsRadio ||
+      return analogChannel.MediaType != MediaType ||             
              analogChannel.Country.Id != Country.Id ||
              analogChannel.VideoSource != VideoSource ||
              analogChannel.TunerSource != TunerSource ||
@@ -404,6 +405,12 @@ namespace TvLibrary.Implementations
     public bool FreeToAir
     {
       get { return true; }
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return _mediaType; }
+      set { _mediaType = value; }
     }
   }
 }

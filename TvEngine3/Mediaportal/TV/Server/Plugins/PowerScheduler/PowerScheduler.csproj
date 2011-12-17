@@ -8,8 +8,8 @@
     <ProjectGuid>{3F8F1617-A987-4516-BF37-E01D04D2686F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TvEngine.PowerScheduler</RootNamespace>
-    <AssemblyName>PowerScheduler</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.PowerScheduler</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.PowerScheduler</AssemblyName>
     <StartupObject>
     </StartupObject>
     <FileUpgradeFlags>
@@ -17,7 +17,8 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,7 +66,7 @@
   </Target>
   -->
   <ItemGroup>
-    <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+    <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Handlers\ActiveNetworkHandler.cs" />
@@ -99,16 +100,6 @@
     <Compile Include="WindowsController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Gentle.Common, Version=1.2.9.18127, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TVDatabase\references\Gentle.Common.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Gentle.Framework, Version=1.2.9.18134, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TVDatabase\references\Gentle.Framework.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -116,15 +107,21 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
+      <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
+      <Name>PowerScheduler.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServiceAgents\ServiceAgents.csproj">
+      <Project>{DB873507-8095-4877-A489-DA39AB55A9A2}</Project>
+      <Name>ServiceAgents</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\SetupControls\SetupControls.csproj">
       <Project>{A2792D3C-04C1-4A92-9383-A33D59C54D8D}</Project>
@@ -136,14 +133,13 @@
       <Name>TvControl</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
       <Name>TvBusinessLayer</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TVDatabase\TVDatabase.csproj">
-      <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
-      <Name>TVDatabase</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
@@ -151,24 +147,13 @@
       <Name>TvLibrary.Interfaces</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\TVLibrary\TVLibrary.csproj">
-      <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
-      <Name>TVLibrary</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\TvService\TvService.csproj">
-      <Project>{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}</Project>
-      <Name>TvService</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\..\TvService.Interfaces\TvService.Interfaces.csproj">
+      <Project>{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}</Project>
+      <Name>TvService.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
-      <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
-      <Name>PowerScheduler.Interfaces</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

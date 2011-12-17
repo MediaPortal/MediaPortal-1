@@ -19,12 +19,13 @@
 #endregion
 
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Epg;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Implementations.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations.Hybrid
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
 {
   /// <summary>
   /// Hybrid card group wrapper

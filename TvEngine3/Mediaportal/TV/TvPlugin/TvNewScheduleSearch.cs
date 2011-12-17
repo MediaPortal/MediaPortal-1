@@ -20,14 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
-using Action = MediaPortal.GUI.Library.Action;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 using MediaPortal.Dialogs;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
+using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvNewScheduleSearch : GUIInternalWindow
   {
@@ -224,18 +227,24 @@ namespace TvPlugin
     {
       Log.Info("newsearch Search:{0} {1}", _searchKeyword, SearchFor);
       GUIControl.ClearControl(GetID, listResults.GetID);
-      TvBusinessLayer layer = new TvBusinessLayer();
       IList<Program> listPrograms = null;
+      StringComparisonEnum stringComparison = StringComparisonEnum.StartsWith;
+      stringComparison |= StringComparisonEnum.EndsWith;
       switch (SearchFor)
       {
         case SearchType.Genres:
-          listPrograms = layer.SearchProgramsPerGenre("%" + _searchKeyword + "%", "");
+          StringComparisonEnum stringComparisonCategory = StringComparisonEnum.StartsWith;
+            stringComparisonCategory |= StringComparisonEnum.EndsWith;
+            listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndCategoryAndMediaType(_searchKeyword, "",
+                                                                                      MediaTypeEnum.TV,
+                                                                                      stringComparisonCategory,
+                                                                                      StringComparisonEnum.StartsWith).ToList();          
           break;
         case SearchType.KeyWord:
-          listPrograms = layer.SearchProgramsByDescription("%" + _searchKeyword);
+          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescription("%" + _searchKeyword, stringComparison).ToList();
           break;
         case SearchType.Title:
-          listPrograms = layer.SearchPrograms("%" + _searchKeyword);
+          listPrograms = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitle(_searchKeyword, stringComparison).ToList();          
           break;
       }
       if (listPrograms == null)
@@ -251,7 +260,7 @@ namespace TvPlugin
       {
         GUIListItem item = new GUIListItem();
         item.Label = TVUtil.GetDisplayTitle(program);
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.ReferencedChannel().DisplayName);
+        string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.Channel.displayName);
         if (string.IsNullOrEmpty(logo))                            
         {
           logo = "defaultVideoBig.png";

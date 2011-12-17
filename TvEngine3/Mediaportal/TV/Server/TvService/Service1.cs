@@ -25,24 +25,29 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting;
+using System.Security.AccessControl;
 using System.Security.Principal;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting;
 using System.Xml;
-using TvDatabase;
-using TvLibrary.Log;
-using TvControl;
-using TvEngine;
-using TvEngine.Interfaces;
-using TvLibrary.Interfaces;
-using System.Runtime.InteropServices;
-using System.Security.AccessControl;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.Plugins.Base.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Services;
+using MediaPortal.Common.Utils;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService
 {
+
+
   public partial class Service1 : ServiceBase
   {
     private bool _priorityApplied;
@@ -107,7 +112,7 @@ namespace TvService
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
                                     System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = {path};
+        String[] cmdline = { path };
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Install(new Hashtable());
@@ -115,15 +120,17 @@ namespace TvService
       }
       if (opt != null && opt.ToUpperInvariant() == "/UNINSTALL")
       {
-        TransactedInstaller ti = new TransactedInstaller();
-        ProjectInstaller mi = new ProjectInstaller();
-        ti.Installers.Add(mi);
-        String path = String.Format("/assemblypath={0}",
-                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = {path};
-        InstallContext ctx = new InstallContext("", cmdline);
-        ti.Context = ctx;
-        ti.Uninstall(null);
+        using (TransactedInstaller ti = new TransactedInstaller())
+        {
+          ProjectInstaller mi = new ProjectInstaller();
+          ti.Installers.Add(mi);
+          String path = String.Format("/assemblypath={0}",
+                                      System.Reflection.Assembly.GetExecutingAssembly().Location);
+          String[] cmdline = { path };
+          InstallContext ctx = new InstallContext("", cmdline);
+          ti.Context = ctx;
+          ti.Uninstall(null);
+        }
         return;
       }
       // When using /DEBUG switch (in visual studio) the TvService is not run as a service
@@ -131,7 +138,7 @@ namespace TvService
       if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
       {
         Service1 s = new Service1();
-        s.DoStart(new string[] {"/DEBUG"});
+        s.DoStart(new string[] { "/DEBUG" });
         do
         {
           Thread.Sleep(100);
@@ -144,7 +151,7 @@ namespace TvService
       //
       //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
       //
-      ServiceBase[] ServicesToRun = new ServiceBase[] {new Service1()};
+      ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
       ServiceBase.Run(ServicesToRun);
     }
 
@@ -166,15 +173,16 @@ namespace TvService
     {
       if (_tvServiceThread == null)
       {
+        //System.Diagnostics.Debugger.Launch();        
+
         if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
         {
           RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
         }
-        TvServiceThread tvServiceThread = new TvServiceThread();
-        ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
-        _tvServiceThread = new Thread(tvServiceThreadStart);
+        var tvServiceThread = new TvServiceThread();
+        var tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
+        _tvServiceThread = new Thread(tvServiceThreadStart) {IsBackground = false};
 
-        _tvServiceThread.IsBackground = false;
 
         // apply process priority on initial service start.
         if (!_priorityApplied)
@@ -198,18 +206,117 @@ namespace TvService
           Thread.Sleep(20);
         }
       }
+    }    
+
+    private void debug()
+    {
+      /*var rnd = new Random();
+      Program p = ProgramManagement.GetProgram(4971);
+      p.starRating = rnd.Next(1, 1000);
+
+      //p.ChangeTracker.ChangeTrackingEnabled = true;
+
+      ProgramManagement.SaveProgram(p);
+
+      var pNew = new Program();
+
+      pNew.idChannel = 123;
+      pNew.startTime = DateTime.Now;
+      pNew.endTime = DateTime.Now;
+      pNew.title = "anything";
+
+      pNew = ProgramManagement.SaveProgram(pNew);
+      pNew = ProgramManagement.SaveProgram(pNew);
+
+      ProgramManagement.DeleteProgram(pNew.idProgram);
+
+
+      */
+      /* var channels = ChannelManagement.ListAllChannels().ToList();
+      Channel dr1 = channels[0];//ChannelManagement.GetChannel(1);
+      Channel dr2 = channels[1]; //ChannelManagement.GetChannel(2);
+
+      Card card1 = Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.CardManagement.GetCard(2);
+
+      ChannelMap map = new ChannelMap();
+      map.idChannel = dr1.idChannel;
+      map.idCard = card1.idCard;
+
+      dr1.ChannelMaps.Add(map);
+
+      dr1 = ChannelManagement.SaveChannel(dr1);
+
+      ChannelMap map2 = new ChannelMap();
+      map2.idChannel = dr2.idChannel;
+      map2.idCard = card1.idCard;
+
+      dr2.ChannelMaps.Add(map2);
+
+      dr2 = ChannelManagement.SaveChannel(dr2);
+      */
+
+      /*Model mdl = new Model();
+      GenericRepository rep = new GenericRepository(mdl);
+
+      rep.UnitOfWork.BeginTransaction();
+      try
+      {
+        throw new Exception("123");
+        rep.UnitOfWork.CommitTransaction();
+      }
+      catch (Exception)
+      {        
+        rep.UnitOfWork.RollBackTransaction();
+      }*/
+      /*
+      ProgramManagement man = new ProgramManagement();
+      IList<Program> prgs = man.GetProgramsByTitleAndStartEndTimes("Troldspejlet", new DateTime(2011, 10, 22, 11, 35, 0),
+                                             new DateTime(2011, 10, 22, 12, 0, 0)).ToList();
+      */
+      /*ImportParams importParams = new ImportParams();
+      importParams.ProgamsToDelete = DeleteBeforeImportOption.OverlappingPrograms;
+
+
+      List<Program> programs = new List<Program>();
+
+      var prg = new Program();
+      prg.idChannel = 4;
+      prg.startTime = DateTime.Now;
+      prg.endTime = DateTime.Now.AddHours(1);
+      prg.title = "title";
+      prg.description = "description";
+      prg.state = (int)ProgramState.None;
+      prg.originalAirDate = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
+      prg.seriesNum = "seriesNum";
+      prg.episodeNum = "episodeNum";
+      prg.episodeName = "episodeName";
+      prg.episodePart = "episodePart";
+      prg.starRating = 1;
+      prg.classification = "classification";
+      prg.parentalRating = -1;
+      prg.previouslyShown = false;
+
+
+      ProgramCredit credit = new ProgramCredit();
+      for (int i = 0; i < 100; i++)
+      {
+        credit.role += "abc";
+        credit.person += "abc";
+      }      
+      prg.ProgramCredits.Add(credit);
+
+      programs.Add(prg);
+
+      importParams.ProgramList = new ProgramList(programs);
+
+      man.InsertPrograms(importParams);*/
     }
 
     private void applyProcessPriority()
     {
       try
       {
-        string connectionString, provider;
-        GetDatabaseConnectionString(out connectionString, out provider);
-        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
-
-        TvBusinessLayer layer = new TvBusinessLayer();
-        int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
+        int processPriority = Convert.ToInt32(SettingsManagement.GetSetting("processPriority", "3").value);
 
         switch (processPriority)
         {
@@ -275,22 +382,26 @@ namespace TvService
     /// </summary>
     protected override void OnStop()
     {
+      RequestAdditionalTime(60000); // we want to make sure all services etc. are closed before tearing down the process.
+      Log.Write("service.OnStop");
       if (_tvServiceThread != null && _tvServiceThread.IsAlive)
       {
+        Log.Write("aborting tvService thread.");
         _tvServiceThread.Abort();
+        Log.Write("waiting for tvService to abort...");
         _tvServiceThread.Join();
+        Log.Write("tvService thread aborted.");
         _tvServiceThread = null;
-      }
-    }
+      }      
+    } 
   }
 
   public class TvServiceThread : IPowerEventHandler
   {
-    #region variables    
+    #region variables
 
     private EventWaitHandle _InitializedEvent;
     private static bool _started;
-    private TVController _controller;
     private readonly List<PowerEventHandler> _powerEventHandlers;
     private PluginLoader _plugins;
     private List<ITvServerPlugin> _pluginsStarted = new List<ITvServerPlugin>();
@@ -609,7 +720,7 @@ namespace TvService
                powerStatus == PowerEventType.ResumeSuspend
         )
       {
-        _controller.ExecutePendingDeletions();
+        ServiceManager.Instance.InternalControllerService.ExecutePendingDeletions();
         // call Recording-folder cleanup, just in case we have empty folders.
       }
 
@@ -625,13 +736,13 @@ namespace TvService
       {
         case PowerEventType.StandBy:
         case PowerEventType.Suspend:
-          _controller.OnSuspend();
+          ServiceManager.Instance.InternalControllerService.OnSuspend();
           return true;
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
-          if (_controller != null)
+          if (ServiceManager.Instance.InternalControllerService != null)
           {
-            if (_controller.CanSuspend)
+            if (ServiceManager.Instance.InternalControllerService.CanSuspend)
             {
               //OnStop();
               return true;
@@ -641,60 +752,23 @@ namespace TvService
           return true;
         case PowerEventType.QuerySuspendFailed:
         case PowerEventType.QueryStandByFailed:
-          if (!_controller.EpgGrabberEnabled)
-            _controller.EpgGrabberEnabled = true;
+          if (!ServiceManager.Instance.InternalControllerService.EpgGrabberEnabled)
+            ServiceManager.Instance.InternalControllerService.EpgGrabberEnabled = true;
           return true;
         case PowerEventType.ResumeAutomatic:
         case PowerEventType.ResumeCritical:
         case PowerEventType.ResumeSuspend:
-          _controller.OnResume();
+          ServiceManager.Instance.InternalControllerService.OnResume();
           return true;
       }
       return true;
     }
 
-    /// <summary>
-    /// Starts the remoting interface
-    /// </summary>
-    private void StartRemoting()
-    {
-      try
-      {
-        // create the object reference and make the singleton instance available
-        RemotingServices.Marshal(_controller, "TvControl", typeof (IController));
-        RemoteControl.Clear();
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-    }
-
-    /// <summary>
-    /// Stops the remoting interface
-    /// </summary>
-    private void StopRemoting()
-    {
-      Log.WriteFile("TV service StopRemoting");
-      try
-      {
-        if (_controller != null)
-        {
-          RemotingServices.Disconnect(_controller);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-      Log.WriteFile("Remoting stopped");
-    }
 
     #endregion
 
     private void StartPlugins()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
       Log.Info("TV Service: Load plugins");
 
       _plugins = new PluginLoader();
@@ -704,27 +778,33 @@ namespace TvService
       // start plugins
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
-        if (plugin.MasterOnly == false || _controller.IsMaster)
+        Setting setting = SettingsManagement.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+        if (setting.value == "true")
         {
-          Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-          if (setting.Value == "true")
+          if (plugin is ITvServerPluginCommunciation)
           {
-            Log.Info("TV Service: Plugin: {0} started", plugin.Name);
-            try
-            {
-              plugin.Start(_controller);
-              _pluginsStarted.Add(plugin);
-            }
-            catch (Exception ex)
-            {
-              Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
-              Log.Write(ex);
-            }
+            var tvServerPluginCommunciation = (plugin as ITvServerPluginCommunciation);
+            Type interfaceType = tvServerPluginCommunciation.GetServiceInterfaceForContractType;
+            object instance = tvServerPluginCommunciation.GetServiceInstance;
+
+            ServiceManager.Instance.AddService(interfaceType, instance);
           }
-          else
+
+          Log.Info("TV Service: Plugin: {0} started", plugin.Name);
+          try
           {
-            Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
+            plugin.Start(ServiceManager.Instance.InternalControllerService);
+            _pluginsStarted.Add(plugin);
           }
+          catch (Exception ex)
+          {
+            Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
+            Log.Write(ex);
+          }
+        }
+        else
+        {
+          Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
         }
       }
 
@@ -771,7 +851,7 @@ namespace TvService
       Log.Info("TV Service: Plugins stopped");
     }
 
-    public void OnStop()
+    private void OnStop()
     {
       if (!Started)
         return;
@@ -780,13 +860,10 @@ namespace TvService
       if (_InitializedEvent != null)
       {
         _InitializedEvent.Reset();
-      }
-      StopRemoting();
-      RemoteControl.Clear();
-      if (_controller != null)
+      }      
+      if (ServiceManager.Instance.InternalControllerService != null)
       {
-        _controller.DeInit();
-        _controller = null;
+        ServiceManager.Instance.InternalControllerService.DeInit();
       }
 
       StopPlugins();
@@ -817,11 +894,6 @@ namespace TvService
 
           Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
                         OSInfo.OSInfo.GetOSDisplayVersion());
-#if DEBUG
-          Log.Info("Debug build: " + Application.ProductVersion);
-#else
-          Log.Info("Build: " + Application.ProductVersion);
-#endif
 
           //Check for unsupported operating systems
           OSPrerequisites.OSPrerequisites.OsCheck(false);
@@ -830,11 +902,10 @@ namespace TvService
           _powerEventThread.Name = "PowerEventThread";
           _powerEventThread.IsBackground = true;
           _powerEventThread.Start();
-          _controller = new TVController();
-          _controller.Init();
+          ServiceManager.Instance.InternalControllerService.Init();
           StartPlugins();
 
-          StartRemoting();
+
           _started = true;
           if (_InitializedEvent != null)
           {

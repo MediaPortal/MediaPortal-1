@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class RadioChannelMapping
   {
@@ -31,19 +33,19 @@ namespace SetupTv.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RadioChannelMapping));
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.mpButtonUnmap = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonMap = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpButtonUnmap = new MPButton();
+      this.mpButtonMap = new MPButton();
+      this.mpLabel3 = new MPLabel();
+      this.mpListViewMapped = new MPListView();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel2 = new MPLabel();
+      this.mpListViewChannels = new MPListView();
+      this.mpLabel1 = new MPLabel();
+      this.mpComboBoxCard = new MPComboBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelChannelCount = new MPLabel();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tabControl1.SuspendLayout();
@@ -239,19 +241,19 @@ namespace SetupTv.Sections
     #endregion
 
     private System.Windows.Forms.ColumnHeader columnHeader2;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonUnmap;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonMap;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewMapped;
+    private MPButton mpButtonUnmap;
+    private MPButton mpButtonMap;
+    private MPLabel mpLabel3;
+    private MPListView mpListViewMapped;
     private System.Windows.Forms.ColumnHeader columnHeader4;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewChannels;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCard;
+    private MPLabel mpLabel2;
+    private MPListView mpListViewChannels;
+    private MPLabel mpLabel1;
+    private MPComboBox mpComboBoxCard;
     private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
-		private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+		private MPLabel mpLabelChannelCount;
     private System.Windows.Forms.ImageList imageList1;
   }
 }

@@ -20,8 +20,9 @@
 
 using System;
 using System.Security.AccessControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Helper
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   ///<summary>
   /// File Access Helper class
@@ -45,7 +46,7 @@ namespace TvLibrary.Helper
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while setting full write access to everyone for file: {0} : {1}", fileName, ex);
+        Log.WriteFile("Error while setting full write access to everyone for file: {0} : {1}", fileName, ex);
       }
     }
   }

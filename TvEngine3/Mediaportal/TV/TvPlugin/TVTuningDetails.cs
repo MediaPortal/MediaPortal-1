@@ -21,11 +21,13 @@
 using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TVTuningDetails : GUIInternalWindow
   {
@@ -47,7 +49,7 @@ namespace TvPlugin
       base.OnPageLoad();
       GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelName", TVHome.Card.ChannelName);
       GUIPropertyManager.SetProperty("#TV.TuningDetails.RTSPURL", TVHome.Card.RTSPUrl);
-      Channel chan = TVHome.Navigator.Channel;
+      Channel chan = TVHome.Navigator.Channel.Entity;
       if (chan != null)
       {
         try
@@ -59,44 +61,44 @@ namespace TvPlugin
           Log.Error("Error loading TuningDetails /  HasCiMenuSupport:" + ex.StackTrace);
         }
 
-        IList<TuningDetail> details = chan.ReferringTuningDetail();
+        IList<TuningDetail> details = chan.TuningDetails;
         if (details.Count > 0)
         {
           TuningDetail detail = null;
           switch (TVHome.Card.Type)
           {
-            case TvLibrary.Interfaces.CardType.Analog:
+            case CardType.Analog:
               foreach (TuningDetail t in details)
               {
-                if (t.ChannelType == 0)
+                if (t.channelType == 0)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.Atsc:
+            case CardType.Atsc:
               foreach (TuningDetail t in details)
               {
-                if (t.ChannelType == 1)
+                if (t.channelType == 1)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.DvbC:
+            case CardType.DvbC:
               foreach (TuningDetail t in details)
               {
-                if (t.ChannelType == 2)
+                if (t.channelType == 2)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.DvbS:
+            case CardType.DvbS:
               foreach (TuningDetail t in details)
               {
-                if (t.ChannelType == 3)
+                if (t.channelType == 3)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.DvbT:
+            case CardType.DvbT:
               foreach (TuningDetail t in details)
               {
-                if (t.ChannelType == 4)
+                if (t.channelType == 4)
                   detail = t;
               }
               break;
@@ -104,30 +106,30 @@ namespace TvPlugin
               detail = details[0];
               break;
           }
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.Band.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.Bandwidth.ToString());
-          switch (detail.ChannelType)
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Band", detail.band.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.bandwidth.ToString());
+          switch (detail.channelType)
           {
             case 0:
-              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Analog");
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.channelType", "Analog");
               break;
             case 1:
-              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Atsc");
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.channelType", "Atsc");
               break;
             case 2:
-              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-C");
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.channelType", "DVB-C");
               break;
             case 3:
-              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-S");
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.channelType", "DVB-S");
               break;
             case 4:
-              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-T");
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.channelType", "DVB-T");
               break;
           }
 
           IUser user = TVHome.Card.User;
           IVideoStream videoStream = TVHome.Card.GetCurrentVideoStream((User)user);
-          IAudioStream[] audioStreams = TVHome.Card.AvailableAudioStreams;
+          IEnumerable<IAudioStream> audioStreams = TVHome.Card.AvailableAudioStreams;
 
           String audioPids = String.Empty;
           String videoPid = String.Empty;		  
@@ -139,18 +141,18 @@ namespace TvPlugin
 		  
           videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
 
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.Frequency.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.InnerFecRate", detail.InnerFecRate.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Modulation", detail.Modulation.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.NetworkId", detail.NetworkId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.PmtPid", detail.PmtPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Polarisation", detail.Polarisation.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.Provider", detail.Provider);
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.ServiceId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.SymbolRate", detail.Symbolrate.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.TransportId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.countryId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.freeToAir.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.frequency.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.InnerFecRate", detail.innerFecRate.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Modulation", detail.modulation.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.NetworkId", detail.networkId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.PmtPid", detail.pmtPid.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Polarisation", detail.polarisation.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.Provider", detail.provider);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.serviceId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.SymbolRate", detail.symbolrate.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.transportId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", videoStream.PcrPid.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", videoPid);
           GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", audioPids);

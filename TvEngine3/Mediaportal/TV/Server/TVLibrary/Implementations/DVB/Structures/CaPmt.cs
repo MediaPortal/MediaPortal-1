@@ -20,8 +20,9 @@
 
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB.Structures
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures
 {
   /// <summary>
   /// List management type
@@ -237,7 +238,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         string tmp = "";
         for (int x = 0; x < descriptor.Length; ++x)
           tmp += String.Format("{0:X} ", descriptor[x]);
-        Log.Log.Info("emm len:{0:X} {1}", descriptor.Length, tmp);
+        Log.Info("emm len:{0:X} {1}", descriptor.Length, tmp);
         Parse(descriptor, emms);
       }
       return emms;
@@ -357,7 +358,7 @@ namespace TvLibrary.Implementations.DVB.Structures
           string tmp = "";
           for (int x = 0; x < descriptor.Length; ++x)
             tmp += String.Format("{0:X} ", descriptor[x]);
-          Log.Log.Info("ecm len:{0:X} {1}", descriptor.Length, tmp);
+          Log.Info("ecm len:{0:X} {1}", descriptor.Length, tmp);
           Parse(descriptor, ecms);
         }
       }
@@ -374,7 +375,7 @@ namespace TvLibrary.Implementations.DVB.Structures
             string tmp = "";
             for (int x = 0; x < descriptor.Length; ++x)
               tmp += String.Format("{0:X} ", descriptor[x]);
-            Log.Log.Info("ecm len:{0:X} {1}", descriptor.Length, tmp);
+            Log.Info("ecm len:{0:X} {1}", descriptor.Length, tmp);
             Parse(descriptor, ecms);
           }
         }
@@ -437,19 +438,19 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     public void Dump()
     {
-      Log.Log.Write("Ca pmt:");
-      Log.Log.Write("  program number            :{0:X}", ProgramNumber);
-      Log.Log.Write("  VersionNumber             :{0}", VersionNumber);
-      Log.Log.Write("  CurrentNextIndicator      :{0}", CurrentNextIndicator);
-      Log.Log.Write("  ProgramInfoLength         :{0:X} {1}", ProgramInfoLength, Descriptors.Count);
-      Log.Log.Write("  CAPmt_CommandID_PRG       :{0}", CommandId);
+      Log.Write("Ca pmt:");
+      Log.Write("  program number            :{0:X}", ProgramNumber);
+      Log.Write("  VersionNumber             :{0}", VersionNumber);
+      Log.Write("  CurrentNextIndicator      :{0}", CurrentNextIndicator);
+      Log.Write("  ProgramInfoLength         :{0:X} {1}", ProgramInfoLength, Descriptors.Count);
+      Log.Write("  CAPmt_CommandID_PRG       :{0}", CommandId);
       foreach (CaPmtEs pmtes in CaPmtEsList)
       {
-        Log.Log.Write("  StreamType                :{0}", pmtes.StreamType);
-        Log.Log.Write("  ElementaryStreamPID       :{0:X}", pmtes.ElementaryStreamPID);
-        Log.Log.Write("  ElementaryStreamInfoLength:{0:X} {1}", pmtes.ElementaryStreamInfoLength,
+        Log.Write("  StreamType                :{0}", pmtes.StreamType);
+        Log.Write("  ElementaryStreamPID       :{0:X}", pmtes.ElementaryStreamPID);
+        Log.Write("  ElementaryStreamInfoLength:{0:X} {1}", pmtes.ElementaryStreamInfoLength,
                       pmtes.Descriptors.Count);
-        Log.Log.Write("  CAPmt_CommandID_ES        :{0}", pmtes.CommandId);
+        Log.Write("  CAPmt_CommandID_ES        :{0}", pmtes.CommandId);
       }
     }
   }

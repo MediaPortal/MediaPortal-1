@@ -21,11 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using TvEngine;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   public class PluginLoader
   {
@@ -101,11 +101,12 @@ namespace SetupTv
                 TypeFilter myFilter2 = MyInterfaceFilter;
                 try
                 {
-                  foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
+                  foundInterfaces = t.FindInterfaces(myFilter2, "Mediaportal.TV.Server.Plugins.Base.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
                     if (!CompatibilityManager.IsPluginCompatible(t))
                     {
+                      //System.Diagnostics.Debugger.Launch();
                       Log.WriteFile(
                         "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                         t.FullName);
@@ -119,6 +120,7 @@ namespace SetupTv
                 }
                 catch (TargetInvocationException)
                 {
+                  //System.Diagnostics.Debugger.Launch();
                   Log.WriteFile(
                     "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                     t.FullName);

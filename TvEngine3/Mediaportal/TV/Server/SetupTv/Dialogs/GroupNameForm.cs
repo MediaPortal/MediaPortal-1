@@ -21,29 +21,20 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class GroupNameForm : Form
   {
     private string _groupName = "new group";
     private List<string> _groupNames;
 
-    private bool _isRadio = false;
+    private MediaTypeEnum _mediaType = MediaTypeEnum.TV;
 
-    /// <summary>
-    /// Switch for Tv / Radio groups
-    /// </summary>
-    public bool IsRadio
-    {
-      get { return _isRadio; }
-      set
-      {
-        _isRadio = value;
-        GetGroupNames();
-      }
-    }
+   
 
     public GroupNameForm()
     {
@@ -51,9 +42,9 @@ namespace SetupTv.Sections
       InitNew();
     }
 
-    public GroupNameForm(bool isRadio)
+    public GroupNameForm(MediaTypeEnum mediaType)
     {
-      _isRadio = isRadio;
+      _mediaType = mediaType;
       InitializeComponent();
       InitNew();
     }
@@ -81,23 +72,11 @@ namespace SetupTv.Sections
 
     private void GetGroupNames()
     {
-      if (_isRadio)
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaType);
+      _groupNames = new List<string>();
+      foreach (ChannelGroup group in groups)
       {
-        IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
-        _groupNames = new List<string>();
-        foreach (RadioChannelGroup group in groups)
-        {
-          _groupNames.Add(group.GroupName);
-        }
-      }
-      else
-      {
-        IList<ChannelGroup> groups = ChannelGroup.ListAll();
-        _groupNames = new List<string>();
-        foreach (ChannelGroup group in groups)
-        {
-          _groupNames.Add(group.GroupName);
-        }
+        _groupNames.Add(group.groupName);
       }
     }
 
@@ -130,6 +109,12 @@ namespace SetupTv.Sections
     {
       get { return _groupName; }
       set { _groupName = value; }
+    }
+
+    public MediaTypeEnum MediaType
+    {
+      get { return _mediaType; }
+      set { _mediaType = value; }
     }
 
     private void mpTextBox1_KeyUp(object sender, KeyEventArgs e)

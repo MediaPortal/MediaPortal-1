@@ -20,14 +20,12 @@
 
 using System;
 using System.IO;
-using System.Security.AccessControl;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using log4net;
-using TvLibrary.Interfaces;
 
-namespace TvLibrary.Log
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 {
   public class Log4netLogger : ILogger
   {
@@ -44,9 +42,10 @@ namespace TvLibrary.Log
       logPath = logPath + "\\log";
 
       XmlDocument xmlDoc = new XmlDocument();
-      FileStream fs = new FileStream(Path.Combine(appPath, ConfigName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-      xmlDoc.Load(fs);
-      fs.Close();
+      using (var fs = new FileStream(Path.Combine(appPath, ConfigName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) 
+      {
+        xmlDoc.Load(fs);
+      }
 
       XmlNodeList nodeList = xmlDoc.SelectNodes("configuration/log4net/appender/file");
       foreach (XmlNode node in nodeList)
@@ -63,10 +62,12 @@ namespace TvLibrary.Log
           }
         }
       }
-      MemoryStream mStream = new MemoryStream();
-      xmlDoc.Save(mStream);
-      mStream.Seek(0, SeekOrigin.Begin);
-      log4net.Config.XmlConfigurator.Configure(mStream);
+      using (var mStream = new MemoryStream()) 
+      {
+        xmlDoc.Save(mStream);
+        mStream.Seek(0, SeekOrigin.Begin);
+        log4net.Config.XmlConfigurator.Configure(mStream);
+      }
     }
     #endregion
 

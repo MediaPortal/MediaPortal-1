@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.TV.Epg
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 {
   /// <summary>
   /// ISO 6937 to unicode converter

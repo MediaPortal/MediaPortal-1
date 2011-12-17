@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Implementations.Helper
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
   /// Different states of the card

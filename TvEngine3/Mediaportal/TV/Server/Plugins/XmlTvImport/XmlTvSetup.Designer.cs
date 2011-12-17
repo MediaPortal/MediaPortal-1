@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport
 {
   partial class XmlTvSetup
   {
@@ -107,8 +109,8 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
-      this.radioDownloadOnSchedule = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.radioDownloadOnWakeUp = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioDownloadOnSchedule = new MPRadioButton();
+      this.radioDownloadOnWakeUp = new MPRadioButton();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -1023,8 +1025,8 @@ namespace SetupTv.Sections
 		private System.Windows.Forms.Label lblLastTransferAt;
 		private System.Windows.Forms.Label label33;
     private System.Windows.Forms.Label label36;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnWakeUp;
-    private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnSchedule;
+    private MPRadioButton radioDownloadOnWakeUp;
+    private MPRadioButton radioDownloadOnSchedule;
 
 
   }

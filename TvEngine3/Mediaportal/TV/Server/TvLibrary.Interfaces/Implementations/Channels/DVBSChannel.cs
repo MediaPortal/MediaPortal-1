@@ -19,10 +19,11 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// enum describing the DVBS band
@@ -263,20 +264,40 @@ namespace TvLibrary.Channels
   /// <summary>
   /// class holding all tuning details for DVBS
   /// </summary>
+  [DataContract]
   [Serializable]
   public class DVBSChannel : DVBBaseChannel
   {
     #region variables
 
+    [DataMember]
     private Polarisation _polarisation;
+
+    [DataMember]
     private int _symbolRate;
+
+    [DataMember]
     private int _switchingFrequency;
+
+    [DataMember]
     private DisEqcType _disEqc;
+
+    [DataMember]
     private BandType _bandType;
+
+    [DataMember]
     private ModulationType _modulation = ModulationType.ModQpsk;
+
+    [DataMember]
     private BinaryConvolutionCodeRate _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
+
+    [DataMember]
     private Pilot _pilot = Pilot.NotSet;
+
+    [DataMember]
     private RollOff _rollOff = RollOff.NotSet;
+
+    [DataMember]
     private int _satelliteIndex;
 
     #endregion

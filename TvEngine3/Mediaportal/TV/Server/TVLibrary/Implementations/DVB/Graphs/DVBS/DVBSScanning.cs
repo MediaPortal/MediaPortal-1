@@ -18,14 +18,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
 {
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-S BDA cards
@@ -54,9 +52,8 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.SymbolRate = tuningChannel.SymbolRate;
       dvbsChannel.Polarisation = tuningChannel.Polarisation;
       dvbsChannel.SwitchingFrequency = tuningChannel.SwitchingFrequency;
-      dvbsChannel.Frequency = tuningChannel.Frequency;
-      dvbsChannel.IsTv = IsTvService(info.serviceType);
-      dvbsChannel.IsRadio = IsRadioService(info.serviceType);
+      dvbsChannel.Frequency = tuningChannel.Frequency;            
+      dvbsChannel.MediaType = GetMediaTypeByServiceType(info.serviceType);
       dvbsChannel.NetworkId = info.networkID;
       dvbsChannel.ServiceId = info.serviceID;
       dvbsChannel.TransportId = info.transportStreamID;
@@ -69,7 +66,7 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.InnerFecRate = tuningChannel.InnerFecRate;
       dvbsChannel.Pilot = tuningChannel.Pilot;
       dvbsChannel.Rolloff = tuningChannel.Rolloff;
-      Log.Log.Write("Found: {0}", dvbsChannel);
+      Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }
   }

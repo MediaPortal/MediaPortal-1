@@ -19,15 +19,19 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvControl;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 {
-  public class UserManagement
+  public class UserManagement : IUserManagement
   {
     private readonly ITvCardHandler _cardHandler;
 
@@ -48,7 +52,7 @@ namespace TvService
     {
       if (_cardHandler.Card != null)
       {
-        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+        var context = _cardHandler.Card.Context as ITvCardContext;
         context.Lock(user);
       }
     }
@@ -62,7 +66,7 @@ namespace TvService
     {
       if (_cardHandler.Card != null)
       {
-        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+        var context = _cardHandler.Card.Context as ITvCardContext;
         context.Remove(user);
       }
     }
@@ -76,21 +80,7 @@ namespace TvService
     /// </returns>
     public bool IsOwner(IUser user)
     {
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          return RemoteControl.Instance.IsOwner(_cardHandler.DataBaseCard.IdCard, user);
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return false;
-        }
-      }
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       return context.IsOwner(user);
     }
 
@@ -100,27 +90,14 @@ namespace TvService
     /// <param name="user">The user.</param>
     public void RemoveUser(IUser user)
     {
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          RemoteControl.Instance.RemoveUserFromOtherCards(_cardHandler.DataBaseCard.IdCard, user);
-          return;
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return;
-        }
-      }
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return;
       if (!context.DoesExists(user))
         return;
-      context.GetUser(ref user, _cardHandler.DataBaseCard.IdCard);
+      context.GetUser(ref user, _cardHandler.DataBaseCard.idCard);
+
+      Log.Debug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, user.SubChannel, _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.idCard);                  
       context.Remove(user);
       if (!context.ContainsUsersForSubchannel(user.SubChannel))
       {
@@ -140,8 +117,8 @@ namespace TvService
           }
           _cardHandler.Card.FreeSubChannel(user.SubChannel);
           CleanTimeshiftFilesThread cleanTimeshiftFilesThread =
-            new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeShiftFolder,
-                                          String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard,
+            new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.timeshiftingFolder,
+                                          String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.idCard,
                                                         usedSubChannel));
           Thread cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles);
           cleanupThread.IsBackground = true;
@@ -163,20 +140,9 @@ namespace TvService
       }
     }
 
-    public void HeartBeartUser(IUser user)
-    {
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
-      if (context == null)
-        return;
-      if (!context.DoesExists(user))
-        return;
-
-      context.HeartBeatUser(user);
-    }
-
     public TvStoppedReason GetTvStoppedReason(IUser user)
     {
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return TvStoppedReason.UnknownReason;
 
@@ -185,7 +151,7 @@ namespace TvService
 
     public void SetTvStoppedReason(IUser user, TvStoppedReason reason)
     {
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return;
 
@@ -204,7 +170,7 @@ namespace TvService
       user = null;
       if (_cardHandler.Card != null)
       {
-        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+        var context = _cardHandler.Card.Context as ITvCardContext;
         context.IsLocked(out user);
         return (user != null);
       }
@@ -215,26 +181,40 @@ namespace TvService
     /// Gets the users for this card.
     /// </summary>
     /// <returns></returns>
-    public IUser[] GetUsers()
+    public IDictionary<string,IUser> Users
     {
-      if (_cardHandler.IsLocal == false)
+      get
       {
-        try
+        var context = _cardHandler.Card.Context as ITvCardContext;
+        if (context == null)
         {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          return RemoteControl.Instance.GetUsersForCard(_cardHandler.DataBaseCard.IdCard);
+          return new Dictionary<string, IUser>();
         }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return null;
-        }
-      }
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
-      if (context == null)
-        return null;
-      return context.Users;
+        return context.Users; 
+      }      
     }
+
+    public bool HasEqualOrHigherPriority(IUser user)
+    {
+      bool hasEqualOrHigherPriority = false;
+      var context = _cardHandler.Card.Context as ITvCardContext;
+      if (context != null)
+      {
+        hasEqualOrHigherPriority = context.HasUserEqualOrHigherPriority(user);
+  }
+      return hasEqualOrHigherPriority;
+    }
+
+    public bool HasHighestPriority(IUser user)
+    {
+      bool hasHighestPriority = false;
+      var context = _cardHandler.Card.Context as ITvCardContext;
+      if (context != null)
+      {
+        hasHighestPriority = context.HasUserHighestPriority(user);
+      }
+      return hasHighestPriority;         
+    }
+
   }
 }

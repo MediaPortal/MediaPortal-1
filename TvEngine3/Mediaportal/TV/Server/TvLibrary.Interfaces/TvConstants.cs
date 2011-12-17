@@ -18,11 +18,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
   /// Class for definition of globally used constants

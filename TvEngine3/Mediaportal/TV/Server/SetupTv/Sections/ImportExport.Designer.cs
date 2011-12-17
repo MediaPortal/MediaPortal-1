@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
     partial class ImportExport
   {
@@ -32,23 +34,23 @@ namespace SetupTv.Sections
       this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.exportTab = new System.Windows.Forms.TabPage();
-      this.exCheckRadioGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.exCheckTVGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.exportButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.exCheckSchedules = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.exCheckRadioChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.exCheckTVChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.exCheckRadioGroups = new MPCheckBox();
+      this.exCheckTVGroups = new MPCheckBox();
+      this.mpLabel3 = new MPLabel();
+      this.exportButton = new MPButton();
+      this.exCheckSchedules = new MPCheckBox();
+      this.exCheckRadioChannels = new MPCheckBox();
+      this.exCheckTVChannels = new MPCheckBox();
+      this.mpLabel1 = new MPLabel();
       this.importTab = new System.Windows.Forms.TabPage();
-      this.imCheckRadioGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.imCheckTvGroups = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.importButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.imCheckSchedules = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.imCheckRadioChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.imCheckTvChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.imCheckRadioGroups = new MPCheckBox();
+      this.imCheckTvGroups = new MPCheckBox();
+      this.mpLabel2 = new MPLabel();
+      this.importButton = new MPButton();
+      this.imCheckSchedules = new MPCheckBox();
+      this.imCheckRadioChannels = new MPCheckBox();
+      this.imCheckTvChannels = new MPCheckBox();
+      this.mpLabel4 = new MPLabel();
       this.tabControl1.SuspendLayout();
       this.exportTab.SuspendLayout();
       this.importTab.SuspendLayout();
@@ -312,21 +314,21 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage exportTab;
     private System.Windows.Forms.TabPage importTab;
-    private MediaPortal.UserInterface.Controls.MPButton exportButton;
-    private MediaPortal.UserInterface.Controls.MPCheckBox exCheckSchedules;
-    private MediaPortal.UserInterface.Controls.MPCheckBox exCheckRadioChannels;
-    private MediaPortal.UserInterface.Controls.MPCheckBox exCheckTVChannels;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPButton importButton;
-    private MediaPortal.UserInterface.Controls.MPCheckBox imCheckSchedules;
-    private MediaPortal.UserInterface.Controls.MPCheckBox imCheckRadioChannels;
-    private MediaPortal.UserInterface.Controls.MPCheckBox imCheckTvChannels;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-    private MediaPortal.UserInterface.Controls.MPCheckBox exCheckRadioGroups;
-    private MediaPortal.UserInterface.Controls.MPCheckBox exCheckTVGroups;
-    private MediaPortal.UserInterface.Controls.MPCheckBox imCheckRadioGroups;
-    private MediaPortal.UserInterface.Controls.MPCheckBox imCheckTvGroups;
+    private MPButton exportButton;
+    private MPCheckBox exCheckSchedules;
+    private MPCheckBox exCheckRadioChannels;
+    private MPCheckBox exCheckTVChannels;
+    private MPLabel mpLabel1;
+    private MPLabel mpLabel3;
+    private MPLabel mpLabel2;
+    private MPButton importButton;
+    private MPCheckBox imCheckSchedules;
+    private MPCheckBox imCheckRadioChannels;
+    private MPCheckBox imCheckTvChannels;
+    private MPLabel mpLabel4;
+    private MPCheckBox exCheckRadioGroups;
+    private MPCheckBox exCheckTVGroups;
+    private MPCheckBox imCheckRadioGroups;
+    private MPCheckBox imCheckTvGroups;
   }
 }

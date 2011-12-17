@@ -19,10 +19,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Windows.Forms;
 
-namespace XPListview
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 {
   public class XPListViewItemCollection : System.Windows.Forms.ListView.ListViewItemCollection
   {

@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Log
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 {
   public enum LogLevel
   {

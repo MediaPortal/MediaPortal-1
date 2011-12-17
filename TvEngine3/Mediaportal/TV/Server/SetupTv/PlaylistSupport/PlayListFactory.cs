@@ -20,7 +20,7 @@
 
 using System.IO;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   /// <summary>
   /// 

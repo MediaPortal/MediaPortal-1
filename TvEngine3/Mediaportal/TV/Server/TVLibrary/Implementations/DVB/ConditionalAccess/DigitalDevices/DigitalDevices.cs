@@ -24,9 +24,12 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
 using DirectShowLib;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.DigitalDevices
 {
   /// <summary>
   /// DigitalDevices CI control class
@@ -210,7 +213,7 @@ namespace TvLibrary.Implementations.DVB
         {
           CiFilter = nextFilter;
           _isDigitalDevices = true;
-          Log.Log.Debug(FormatMessage(" Common Interface found!"));
+          Log.Debug(FormatMessage(" Common Interface found!"));
           break;
         }
       }
@@ -258,7 +261,7 @@ namespace TvLibrary.Implementations.DVB
         Int32 hr = pControl.KsProperty(ref KsProperty, Marshal.SizeOf(KsProperty),
                                        pSid, paramSize,
                                        ref dwReturned);
-        Log.Log.Debug(
+        Log.Debug(
           FormatMessage(String.Format("--> Setting service id {0} for decrypting returned {1}", serviceId, hr)));
         return (hr == 0);
       }
@@ -566,7 +569,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     private bool ProcessCamMenu(DD_CAM_MENU_DATA CiMenu)
     {
-      Log.Log.Debug("Menu received (ID {0} Type {1} Choices {2})", CiMenu.Id, CiMenu.Type, CiMenu.NumChoices);
+      Log.Debug("Menu received (ID {0} Type {1} Choices {2})", CiMenu.Id, CiMenu.Type, CiMenu.NumChoices);
       //Log.Log.Debug(" Menu Id      = {0}", CiMenu.Id);
       //Log.Log.Debug(" Menu Type    = {0}", CiMenu.Type);
       //Log.Log.Debug(" Menu Choices = {0}", CiMenu.NumChoices);
@@ -591,7 +594,7 @@ namespace TvLibrary.Implementations.DVB
           ciMenuCallbacks.OnCiRequest(false, (uint)CiMenu.NumChoices, CiMenu.Title);
           break;
         default:
-          Log.Log.Debug("Unknown MMI Type {0}", CiMenu.Type);
+          Log.Debug("Unknown MMI Type {0}", CiMenu.Type);
           break;
       }
       return true;
@@ -626,7 +629,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (CiMenuThread == null)
       {
-        Log.Log.Debug(FormatMessage("Starting new CI handler thread"));
+        Log.Debug(FormatMessage("Starting new CI handler thread"));
         StopThread = false;
         CiMenuThread = new Thread(new ThreadStart(CiMenuHandler));
         CiMenuThread.Name = String.Format("{0} CiMenuHandler", _CardName);
@@ -645,7 +648,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void CiMenuHandler()
     {
-      Log.Log.Debug(FormatMessage("CI handler thread start polling status"));
+      Log.Debug(FormatMessage("CI handler thread start polling status"));
       try
       {
         while (!StopThread)
@@ -662,7 +665,7 @@ namespace TvLibrary.Implementations.DVB
       catch (ThreadAbortException) {}
       catch (Exception ex)
       {
-        Log.Log.Debug(FormatMessage("error in CiMenuHandler thread\r\n{0}"), ex.ToString());
+        Log.Debug(FormatMessage("error in CiMenuHandler thread\r\n{0}"), ex.ToString());
         return;
       }
     }
@@ -670,14 +673,31 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region IDisposable members
+   
 
-    /// <summary>
-    /// Disposes COM task memory resources
-    /// </summary>
-    public override void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
-      StopCiHandlerThread();
-      base.Dispose();
+      if (disposing)
+      {
+        // get rid of managed resources
+        StopCiHandlerThread();
+      }
+      // get rid of unmanaged resources            
+    }
+
+
+     /// <summary>
+    /// Disposes COM task memory resources
+    /// </summary>  
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~DigitalDevices()
+    {
+      Dispose(false);
     }
 
     #endregion

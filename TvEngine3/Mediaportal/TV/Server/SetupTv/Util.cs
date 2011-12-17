@@ -27,10 +27,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Microsoft.Win32;
+using Version = System.Version;
 
-
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   /// <summary>
   /// 
@@ -247,7 +251,7 @@ namespace SetupTv
         return String.Empty;
       if (strHTML.Length == 0)
         return String.Empty;
-      string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", string.Empty);
+      string stripped = Regex.Replace(strHTML, @"<(.|\n)*?>", String.Empty);
       return stripped.Trim();
     }
 
@@ -745,7 +749,7 @@ namespace SetupTv
 
     public static string ReplaceTag(string line, string tag, string value)
     {
-      return ReplaceTag(line, tag, value, string.Empty);
+      return ReplaceTag(line, tag, value, String.Empty);
     }
 
     public static ulong GetFreeDiskSpace(string drive)
@@ -791,33 +795,33 @@ namespace SetupTv
         {
           if (CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion))
             validDllFound = true;
-          TvLibrary.Log.Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
+          Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
                                  dllPath);
           if (aParamVersion > mostRecentVer)
             mostRecentVer = aParamVersion;
         }
         else
-          TvLibrary.Log.Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
+          Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
       }
       if (!validDllFound)
       {
         try
         {
-          string ErrorMsg = string.Empty;
+          string ErrorMsg = String.Empty;
           if (dllPaths.Count == 1)
             ErrorMsg =
-              string.Format(
+              String.Format(
                 "Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.",
                 mostRecentVer);
           if (dllPaths.Count > 1)
             ErrorMsg =
-              string.Format(
+              String.Format(
                 "Found {0} occurences of outdated Psisdecd.dll! \nMost recent installed version: {1} \nPlease clean up your system and check our Wiki's requirements page.",
                 dllPaths.Count.ToString(), mostRecentVer.ToString());
           if (dllPaths.Count < 1)
             ErrorMsg = "Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.";
 
-          TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
+          Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (
             MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel,
                             MessageBoxIcon.Exclamation) == DialogResult.OK)
@@ -841,7 +845,7 @@ namespace SetupTv
       {
         Version desiredVersion = new Version(aMinimumVersion);
         FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(aFilePath);
-        if (!string.IsNullOrEmpty(fileVersion.ProductVersion))
+        if (!String.IsNullOrEmpty(fileVersion.ProductVersion))
         {
           aCurrentVersion = new Version(fileVersion.ProductVersion);
           return aCurrentVersion >= desiredVersion;
@@ -883,7 +887,7 @@ namespace SetupTv
                       {
                         string friendlyName = (string)defaultkey.GetValue(null);
                         // Gets the (Default) value from this key            
-                        if (!string.IsNullOrEmpty(friendlyName) &&
+                        if (!String.IsNullOrEmpty(friendlyName) &&
                             friendlyName.ToLowerInvariant().IndexOf(aFilename.ToLowerInvariant()) >= 0)
                         {
                           if (!resultPaths.Contains(friendlyName))
@@ -901,7 +905,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename,
+        MessageBox.Show(String.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename,
                                       ex.Message));
       }
       return resultPaths;
@@ -942,7 +946,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Error checking registry for installed components: {0}", ex.Message));
+        MessageBox.Show(String.Format("Error checking registry for installed components: {0}", ex.Message));
       }
       return AppFound;
     }
@@ -963,6 +967,6 @@ namespace SetupTv
         return strKeyValue;
       }
       return String.Empty;
-    }
+    }    
   }
 }

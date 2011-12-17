@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using System.Collections.Specialized;
@@ -28,12 +27,14 @@ using System.Configuration;
 using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Log;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv
+namespace Mediaportal.TV.Server.SetupTV
 {
   public enum StartupMode
   {
@@ -66,7 +67,7 @@ namespace SetupTv
     /// 
     /// </summary>
     public void Start()
-    {
+    {      
       Form applicationForm = null;
 
       switch (startupMode)
@@ -99,14 +100,16 @@ namespace SetupTv
 
     [STAThread]
     public static void Main(string[] arguments)
-    {
+    {      
       Thread.CurrentThread.Name = "SetupTv";
 
-      Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
+      //System.Diagnostics.Debugger.Launch();
+
+      /*Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
       if (p.Length > 1)
       {
         System.Environment.Exit(0);
-      }
+      }*/
 
       string DeploySql = string.Empty;
       string DeployPwd = string.Empty;
@@ -159,11 +162,6 @@ namespace SetupTv
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
       Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
-#if DEBUG
-      Log.Info("Debug build: " + Application.ProductVersion);
-#else
-      Log.Info("Build: " + Application.ProductVersion);
-#endif
 
       //Check for unsupported operating systems
       OSPrerequisites.OSPrerequisites.OsCheck(true);
@@ -185,9 +183,9 @@ namespace SetupTv
         }
         else
         {
-          if (DeploySql == "mysql")
+          /*if (DeploySql == "mysql")
           {
-            dlg.provider = SetupDatabaseForm.ProviderType.MySql;
+            dlg.provider = SetupDatabaseForm.providerType.MySql;
             dlg.rbMySQL.Checked = true;
             dlg.tbUserID.Text = "root";
             dlg.tbServerHostName.Text = Dns.GetHostName();
@@ -195,7 +193,7 @@ namespace SetupTv
           }
           else
           {
-            dlg.provider = SetupDatabaseForm.ProviderType.SqlServer;
+            dlg.provider = SetupDatabaseForm.providerType.SqlServer;
             dlg.rbSQLServer.Checked = true;
             dlg.tbUserID.Text = "sa";
             dlg.tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
@@ -203,7 +201,7 @@ namespace SetupTv
           }
           dlg.tbPassword.Text = DeployPwd;
           dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
-          dlg.schemaName = dlg.schemaNameDefault;
+          dlg.schemaName = dlg.schemaNameDefault;*/
         }
       }
 
@@ -275,7 +273,7 @@ namespace SetupTv
       int cards = 0;
       try
       {
-        cards = RemoteControl.Instance.Cards;
+        cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
       }
       catch (Exception)
       {
@@ -284,9 +282,8 @@ namespace SetupTv
         ServiceHelper.WaitInitialized();
         try
         {
-          RemoteControl.Clear();
           RemoteControl.HostName = Dns.GetHostName();
-          cards = RemoteControl.Instance.Cards;
+          cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
         }
         catch (Exception ex)
         {
@@ -298,20 +295,19 @@ namespace SetupTv
       }
 
       // Mantis #0001991: disable mpg recording  (part I: force TS recording format)
-      IList<Card> TvCards = Card.ListAll();
+      IList<Card> TvCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
       foreach (Card card in TvCards)
       {
-        if (card.RecordingFormat != 0)
+        if (card.recordingFormat != 0)
         {
-          card.RecordingFormat = 0;
-          Log.Info("Card {0} switched from .MPG to .TS format", card.Name);
-          card.Persist();
+          card.recordingFormat = 0;
+          Log.Info("Card {0} switched from .MPG to .TS format", card.name);
+          ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
         }
       }
 
-      // Mantis #0002138: impossible to configure TVGroups 
-      TvBusinessLayer layer = new TvBusinessLayer();
-      layer.CreateGroup(TvConstants.TvGroupNames.AllChannels);
+      // Mantis #0002138: impossible to configure TVGroups             
+      ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
 
       // Avoid the visual part of SetupTv if in DeployMode
       if (startupMode == StartupMode.DeployMode)

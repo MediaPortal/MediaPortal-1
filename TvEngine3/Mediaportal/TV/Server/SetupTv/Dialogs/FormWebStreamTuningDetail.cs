@@ -19,14 +19,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormWebStreamTuningDetail : SetupControls.FormTuningDetailCommon
   {
@@ -39,8 +34,8 @@ namespace SetupTv.Dialogs
     {
       if (TuningDetail != null)
       {
-        edStreamURL.Text = TuningDetail.Url;
-        nudStreamBitrate.Value = TuningDetail.Bitrate;
+        edStreamURL.Text = TuningDetail.url;
+        nudStreamBitrate.Value = TuningDetail.bitrate;
       }
       else
       {
@@ -74,9 +69,9 @@ namespace SetupTv.Dialogs
 
     private void UpdateTuningDetail()
     {
-      TuningDetail.ChannelType = 5;
-      TuningDetail.Url = edStreamURL.Text;
-      TuningDetail.Bitrate = (int)nudStreamBitrate.Value;
+      TuningDetail.channelType = 5;
+      TuningDetail.url = edStreamURL.Text;
+      TuningDetail.bitrate = (int)nudStreamBitrate.Value;
     }
 
     private bool ValidateInput()

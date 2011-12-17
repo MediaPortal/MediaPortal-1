@@ -21,9 +21,11 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.QAM
 {
   internal class ViXSATSC : IDisposable
   {
@@ -74,19 +76,19 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("ViXS ATSC: DVB-S card found!");
+            Log.Debug("ViXS ATSC: DVB-S card found!");
             _tempValue = Marshal.AllocCoTaskMem(1024);
             _isViXSATSC = true;
           }
           else
           {
-            Log.Log.Debug("ViXS ATSC: card NOT found!");
+            Log.Debug("ViXS ATSC: card NOT found!");
             _isViXSATSC = false;
           }
         }
       }
       else
-        Log.Log.Info("ViXS ATSC: could not find MPEG2 Transport pin!");
+        Log.Info("ViXS ATSC: could not find MPEG2 Transport pin!");
     }
 
     /// <summary>
@@ -98,13 +100,13 @@ namespace TvLibrary.Implementations.DVB
       _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Debug("ViXS ATSC: Set ModulationType value: {0}", (Int32)channel.ModulationType);
+        Log.Debug("ViXS ATSC: Set ModulationType value: {0}", (Int32)channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
         int hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4,
                                   _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("ViXS ATSC: Set returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+          Log.Info("ViXS ATSC: Set returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
     }
@@ -124,18 +126,40 @@ namespace TvLibrary.Implementations.DVB
                                   _tempValue, 4, out length);
         if (hr != 0)
         {
-          Log.Log.Info("ViXS ATSC: Get returned:{0:X}", hr);
+          Log.Info("ViXS ATSC: Get returned:{0:X}", hr);
         }
-        Log.Log.Info("ViXS ATSC: Get ModulationType returned value: {0}", Marshal.ReadInt32(_tempValue));
+        Log.Info("ViXS ATSC: Get ModulationType returned value: {0}", Marshal.ReadInt32(_tempValue));
       }
     }
-
-    /// <summary>
+        
+    #region Dispose
+		
+		protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+		  }
+		
+		  // get rid of unmanaged resources
+		  Marshal.FreeCoTaskMem(_tempValue);
+		}
+		
+		
+	  /// <summary>
     /// Disposes COM task memory resources
     /// </summary>
-    public void Dispose()
-    {
-      Marshal.FreeCoTaskMem(_tempValue);
-    }
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~ViXSATSC()
+		{
+		  Dispose(false);
+		}
+		
+		#endregion
   }
 }

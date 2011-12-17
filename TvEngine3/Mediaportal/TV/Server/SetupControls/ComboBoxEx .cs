@@ -21,7 +21,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SetupControls
+namespace Mediaportal.TV.Server.SetupControls
 {
   public class ComboBoxEx : ComboBox
   {

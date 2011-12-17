@@ -19,10 +19,10 @@
 #endregion
 
 using System;
-using MediaPortal.Utils.Time;
-using MediaPortal.WebEPG.Parser;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using WebEPG.Parser;
 
-namespace MediaPortal.WebEPG
+namespace WebEPG
 {
   /// <summary>
   /// Controls the time in EPG listings

@@ -20,7 +20,7 @@
 
 using System.Xml.Serialization;
 
-namespace MediaPortal.WebEPG.Config.Grabber
+namespace WebEPG.config.Grabber
 {
   /// <summary>
   /// The information for a DataTemplate.

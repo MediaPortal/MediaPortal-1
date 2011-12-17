@@ -25,23 +25,28 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using SetupControls;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 #endregion
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class TestChannels : SectionSettings
   {
-    private readonly object _lastTuneLock = new object();
-    private readonly Dictionary<string, DateTime> _lastTunesList = new Dictionary<string, DateTime>();
+    private DateTime _lastTune;
     private readonly Dictionary<string, bool> _users = new Dictionary<string, bool>();
     private double _avg;
     private IList<Card> _cards;
@@ -49,7 +54,7 @@ namespace SetupTv.Sections
     private int _concurrentTunes;
     private int _failed;
     private int _firstFail;
-    private object _lock = new object();
+    private readonly object _lock = new object();
     private bool _repeat = true;
     private int _rndFrom;
     private int _rndTo;
@@ -59,8 +64,9 @@ namespace SetupTv.Sections
     private int _total;
     private int _tunedelay;
     private bool _usersShareChannels;
+    private readonly object _listViewLock = new object();
+    private bool _rndPrio;
 
-    //Player _player;
     public TestChannels()
       : this("TestChannels") {}
 
@@ -78,14 +84,14 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      _cards = Card.ListAll();
+      _cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
       base.OnSectionActivated();
-      RemoteControl.Instance.EpgGrabberEnabled = true;
+      ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
 
       comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ChannelGroup.ListAll();
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
       foreach (ChannelGroup group in groups)
-        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
+        comboBoxGroups.Items.Add(new ComboBoxExItem(group.groupName, -1, group.idGroup));
       if (comboBoxGroups.Items.Count == 0)
         comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
       comboBoxGroups.SelectedIndex = 0;
@@ -96,14 +102,16 @@ namespace SetupTv.Sections
       _repeat = chkRepeatTest.Checked;
 
       _channelNames = new Dictionary<int, string>();
-      IList<Channel> channels = Channel.ListAll();
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
       foreach (Channel ch in channels)
       {
-        _channelNames.Add(ch.IdChannel, ch.DisplayName);
+        _channelNames.Add(ch.idChannel, ch.displayName);
       }
 
       _rndFrom = txtRndFrom.Value;
       _rndTo = txtRndTo.Value;
+
+      _rndPrio = chkRndPrio.Checked;
     }
 
     public override void OnSectionDeActivated()
@@ -112,7 +120,7 @@ namespace SetupTv.Sections
       timer1.Enabled = false;
       if (RemoteControl.IsConnected)
       {
-        RemoteControl.Instance.EpgGrabberEnabled = false;
+        ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = false;
       }
     }
 
@@ -121,16 +129,17 @@ namespace SetupTv.Sections
     /// </summary>
     /// <typeparam name = "T"></typeparam>
     /// <param name = "list">The list to be chunked.</param>
+    /// <param name="source"></param>
     /// <param name = "chunkSize">The size of each chunk.</param>
     /// <returns>A list of chunks.</returns>
-    public static List<List<T>> SplitIntoChunks<T>(List<T> source, int chunkSize)
+    private static List<List<T>> SplitIntoChunks<T>(List<T> source, int chunkSize)
     {
       if (chunkSize <= 0)
       {
         throw new ArgumentException("chunkSize must be greater than 0.");
       }
 
-      List<List<T>> retVal = new List<List<T>>();
+      var retVal = new List<List<T>>();
       int index = 0;
       while (index < source.Count)
       {
@@ -145,7 +154,7 @@ namespace SetupTv.Sections
 
     private void ChannelTestThread(List<Channel> channelsO)
     {
-      Random rnd = new Random();
+      var rnd = new Random();
 
       while (_running)
       {
@@ -174,15 +183,14 @@ namespace SetupTv.Sections
               IEnumerable<Channel> channelsForUser = channelChunks[i];
               channelsForUser = channelsForUser.Randomize();
 
-              IUser user = new User();
-              user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
+              int priority = GetUserPriority();
+              string name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";              
+              IUser user = UserFactory.CreateBasicUser(name, priority);
 
               while (_users.ContainsKey(user.Name))
               {
-                user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
+                user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500)) + " [" + priority + "]";
               }
-
-              user.IsAdmin = false;
 
               _users.Add(user.Name, true);
               ThreadPool.QueueUserWorkItem(delegate { TuneChannelsForUser(user, channelsForUser); });
@@ -222,6 +230,21 @@ namespace SetupTv.Sections
       }
     }
 
+    private int GetUserPriority()
+    {
+      int rndPrio;
+      if (_rndPrio)
+      {
+        var rnd = new Random();
+        rndPrio = rnd.Next(1, 10);
+      }
+      else
+      {
+        rndPrio = UserFactory.USER_PRIORITY;  
+      }
+      return rndPrio;
+    }
+
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
     {
       if (ServiceHelper.IsStopped) return;
@@ -245,8 +268,8 @@ namespace SetupTv.Sections
         IEnumerable<Channel> channels = new List<Channel>();
         ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
 
-        ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
-        IList<GroupMap> maps = group.ReferringGroupMap();
+        ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroup(idItem.Id);
+        IList<GroupMap> maps = group.GroupMaps;
 
         List<Channel> channelsO = null;
         Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channelsO); }));
@@ -254,14 +277,7 @@ namespace SetupTv.Sections
         channelTestThread.IsBackground = true;
         channelTestThread.Priority = ThreadPriority.Lowest;
         channelsO = channels as List<Channel>;
-        foreach (GroupMap map in maps)
-        {
-          Channel ch = map.ReferencedChannel();
-          if (ch.IsTv)
-          {
-            channelsO.Add(ch);
-          }
-        }
+        channelsO.AddRange(maps.Select(map => map.Channel).Where(ch => ch.mediaType == (int)MediaTypeEnum.TV));
         _usersShareChannels = chkShareChannels.Checked;
         _tunedelay = txtTuneDelay.Value;
         _concurrentTunes = txtConcurrentTunes.Value;
@@ -293,13 +309,13 @@ namespace SetupTv.Sections
             lock (_lock)
             {
               UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-              RemoteControl.Instance.StopTimeShifting(ref user);
+              ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user);
             }
           }
           else
           {
             UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-            RemoteControl.Instance.StopTimeShifting(ref user);
+            ServiceAgents.Instance.ControllerServiceAgent.StopTimeShifting(ref user);
           }
         }
         catch (Exception) {}
@@ -326,10 +342,9 @@ namespace SetupTv.Sections
         return;
       }
 
-      Random rnd = new Random();
+      var rnd = new Random();
       if (channel != null)
       {
-        TvResult result;
         long mSecsElapsed = 0;
         try
         {
@@ -337,13 +352,10 @@ namespace SetupTv.Sections
           {
             while (true)
             {
-              DateTime lastTune = DateTime.MinValue;
-              _lastTunesList.TryGetValue(user.Name, out lastTune);
-              TimeSpan ts = DateTime.Now - lastTune;
+              TimeSpan ts = DateTime.Now - _lastTune;
 
               if (ts.TotalMilliseconds < _tunedelay)
               {
-                //Log.Debug("tune delay");
                 Thread.Sleep(100);
               }
               else
@@ -352,7 +364,11 @@ namespace SetupTv.Sections
               }
             }
           }
-          VirtualCard card = null;
+
+          _lastTune = DateTime.Now;
+
+          IVirtualCard card = null;
+          TvResult result;
           if (chkSynch.Checked)
           {
             lock (_lock)
@@ -371,7 +387,7 @@ namespace SetupTv.Sections
             {
               cardId = card.Id;
             }
-            nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name,
+            nextRowIndexForDiscUpdate = Add2Log("OK", channel.displayName, mSecsElapsed, user.Name,
                                                 Convert.ToString(cardId), "");
             user.CardId = cardId;
             _succeeded++;
@@ -379,12 +395,13 @@ namespace SetupTv.Sections
           else if (result == TvResult.CardIsDisabled ||
                    result == TvResult.AllCardsBusy ||
                    result == TvResult.CardIsDisabled ||
-                   result == TvResult.ChannelNotMappedToAnyCard
+                   result == TvResult.ChannelNotMappedToAnyCard ||
+                   result == TvResult.TuneCancelled
             )
           {
             string err = GetErrMsgFromTVResult(result);
             nextRowIndexForDiscUpdate = -1;
-            nextRowIndexForDiscUpdate = Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);
+            nextRowIndexForDiscUpdate = Add2Log("INF", channel.displayName, mSecsElapsed, user.Name, "N/A", err);
             _ignored++;
           }
           else
@@ -395,14 +412,14 @@ namespace SetupTv.Sections
             {
               _firstFail = mpListViewLog.Items.Count + 1;
             }
-            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name,
+            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.displayName, mSecsElapsed, user.Name,
                                                 Convert.ToString(user.FailedCardId), err);
             _failed++;
           }
         }
         catch (Exception e)
         {
-          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name,
+          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.displayName, mSecsElapsed, user.Name,
                                               Convert.ToString(user.FailedCardId), e.Message);
           _ignored++;
           if (_firstFail == 0 && _running)
@@ -417,21 +434,18 @@ namespace SetupTv.Sections
             _total++;
           }
           UpdateCounters();
-          lock (_lastTuneLock)
-          {
-            _lastTunesList[user.Name] = DateTime.Now;
-          }
+          
           Thread.Sleep(rnd.Next(_rndFrom, _rndTo));
         }
       }
     }
 
     private IUser StartTimeshifting(Channel channel, IUser user, int nextRowIndexForDiscUpdate, out long mSecsElapsed,
-                                    out TvResult result, out VirtualCard card)
+                                    out TvResult result, out IVirtualCard card)
     {
       Stopwatch sw = Stopwatch.StartNew();
-      UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
-      result = RemoteControl.Instance.StartTimeShifting(ref user, channel.IdChannel, out card);
+      UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);      
+      result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, channel.idChannel, out card);
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
       return user;
@@ -490,6 +504,9 @@ namespace SetupTv.Sections
         case TvResult.NoFreeDiskSpace:
           err = "No free disk space";
           break;
+        case TvResult.TuneCancelled:
+          err = "Tune cancelled";
+          break;
       }
       return err;
     }
@@ -513,7 +530,7 @@ namespace SetupTv.Sections
         {
           int discCounter = 0;
           int totalBytes = 0;
-          RemoteControl.Instance.GetStreamQualityCounters(user, out totalBytes, out discCounter);
+          ServiceAgents.Instance.ControllerServiceAgent.GetStreamQualityCounters(user, out totalBytes, out discCounter);
           item.SubItems[7].Text = Convert.ToString(discCounter);
 
           txtDisc.Value += discCounter;
@@ -524,8 +541,6 @@ namespace SetupTv.Sections
         }
       }
     }
-
-    private object _listViewLock = new object();
 
     private int Add2Log(string state, string channel, double msec, string name, string card, string details)
     {
@@ -606,7 +621,7 @@ namespace SetupTv.Sections
         foreach (Card card in _cards)
         {
           IUser user = new User();
-          user.CardId = card.IdCard;
+          user.CardId = card.idCard;
           if (off >= mpListView1.Items.Count)
           {
             item = mpListView1.Items.Add("");
@@ -623,16 +638,16 @@ namespace SetupTv.Sections
             item = mpListView1.Items[off];
           }
 
-          bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
+          bool cardPresent = ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard);
           if (!cardPresent)
           {
-            item.SubItems[0].Text = card.IdCard.ToString();
+            item.SubItems[0].Text = card.idCard.ToString();
             item.SubItems[1].Text = "n/a";
             item.SubItems[2].Text = "n/a";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
+            item.SubItems[6].Text = card.name;
             item.SubItems[7].Text = "0";
             off++;
             continue;
@@ -640,25 +655,25 @@ namespace SetupTv.Sections
 
           ColorLine(card, item);
           VirtualCard vcard = new VirtualCard(user);
-          item.SubItems[0].Text = card.IdCard.ToString();
-          item.SubItems[0].Tag = card.IdCard;
+          item.SubItems[0].Text = card.idCard.ToString();
+          item.SubItems[0].Tag = card.idCard;
           item.SubItems[1].Text = vcard.Type.ToString();
 
-          if (card.Enabled == false)
+          if (card.enabled == false)
           {
-            item.SubItems[0].Text = card.IdCard.ToString();
+            item.SubItems[0].Text = card.idCard.ToString();
             item.SubItems[1].Text = vcard.Type.ToString();
             item.SubItems[2].Text = "disabled";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
+            item.SubItems[6].Text = card.name;
             item.SubItems[7].Text = "0";
             off++;
             continue;
           }
 
-          IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
           if (usersForCard == null)
           {
             string tmp = "idle";
@@ -668,12 +683,12 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
+            item.SubItems[6].Text = card.name;
+            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
             off++;
             continue;
           }
-          if (usersForCard.Length == 0)
+          if (usersForCard.Count == 0)
           {
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
@@ -682,27 +697,27 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
+            item.SubItems[6].Text = card.name;
+            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
             off++;
             continue;
           }
 
 
           bool userFound = false;
-          for (int i = 0; i < usersForCard.Length; ++i)
+          foreach (IUser user1 in usersForCard.Values)             
           {
             string tmp = "idle";
             // Check if the card id fits. Hybrid cards share the context and therefor have
             // the same users.
-            if (usersForCard[i].CardId != card.IdCard)
+            if (user1.CardId != card.idCard)
             {
               continue;
             }
             userFound = true;
-            vcard = new VirtualCard(usersForCard[i]);
-            item.SubItems[0].Text = card.IdCard.ToString();
-            item.SubItems[0].Tag = card.IdCard;
+            vcard = new VirtualCard(user1);
+            item.SubItems[0].Text = card.idCard.ToString();
+            item.SubItems[0].Tag = card.idCard;
             item.SubItems[1].Text = vcard.Type.ToString();
             if (vcard.IsTimeShifting) tmp = "Timeshifting";
             if (vcard.IsRecording && vcard.User.IsAdmin) tmp = "Recording";
@@ -722,9 +737,9 @@ namespace SetupTv.Sections
             {
               item.SubItems[3].Text = vcard.ChannelName;
             }
-            item.SubItems[5].Text = usersForCard[i].Name;
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
+            item.SubItems[5].Text = user1.Name;
+            item.SubItems[6].Text = card.name;
+            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
             off++;
 
             if (off >= mpListView1.Items.Count)
@@ -751,8 +766,8 @@ namespace SetupTv.Sections
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
+            item.SubItems[6].Text = card.name;
+            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
             ;
             off++;
           }
@@ -781,11 +796,11 @@ namespace SetupTv.Sections
       Color lineColor = Color.White;
       int subchannels = 0;
       IUser user;
-      bool cardInUse = RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
+      bool cardInUse = ServiceAgents.Instance.ControllerServiceAgent.IsCardInUse(card.idCard, out user);
 
       if (!cardInUse)
       {
-        subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);
+        subchannels = ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard);
         if (subchannels > 0)
         {
           lineColor = Color.Red;
@@ -804,7 +819,7 @@ namespace SetupTv.Sections
       item.SubItems[3].Text = "";
       item.SubItems[4].Text = "";
       item.SubItems[5].Text = "";
-      item.SubItems[6].Text = card.Name;
+      item.SubItems[6].Text = card.name;
       item.SubItems[7].Text = Convert.ToString(subchannels);
     }
 
@@ -820,7 +835,7 @@ namespace SetupTv.Sections
 
     private void mpButton1_Click(object sender, EventArgs e)
     {
-      StringBuilder buffer = new StringBuilder();
+      var buffer = new StringBuilder();
 
       buffer.Append(lblSucceeded.Text + txtSucceded.Text);
       buffer.Append(Environment.NewLine);
@@ -844,6 +859,9 @@ namespace SetupTv.Sections
       buffer.Append(Environment.NewLine);
 
       buffer.Append(lblNrOfConcurrentUsers.Text + txtConcurrentTunes.Text);
+      buffer.Append(Environment.NewLine);
+
+      buffer.Append(chkRndPrio.Text + ":" + chkRndPrio.Checked);
       buffer.Append(Environment.NewLine);
 
       buffer.Append(lblTuneDelayMsec.Text + txtTuneDelay.Text + " msec");
@@ -897,7 +915,7 @@ namespace SetupTv.Sections
         return;
       }
 
-      ListView listView = mpListViewLog as ListView;
+      var listView = mpListViewLog as ListView;
 
       if (listView == null)
       {
@@ -915,11 +933,6 @@ namespace SetupTv.Sections
         Sorter = (ListViewSorter)listView.ListViewItemSorter;
       }
 
-
-      if (!(listView.ListViewItemSorter is ListViewSorter))
-      {
-        return;
-      }
 
       if (Sorter.LastSort == e.Column)
       {
@@ -951,6 +964,45 @@ namespace SetupTv.Sections
     private delegate void UpdateDiscontinuityCounterDelegate(User user, int nextRowIndexForDiscUpdate);
 
     #endregion
+
+    private void chkRndPrio_CheckedChanged(object sender, EventArgs e)
+    {
+      _rndPrio = chkRndPrio.Checked;
+  }
+
+    private void btnCustom_Click(object sender, EventArgs e)
+    {
+      TvResult result;
+      long mSecsElapsed;
+      IVirtualCard card;      
+
+      Channel tv3_plus = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(9);
+      Channel tv3 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(125);
+
+      Channel nosignal = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(5651);
+
+      IUser low = UserFactory.CreateBasicUser("low", 1);
+      IUser low2 = UserFactory.CreateBasicUser("low2", 1);
+      IUser high = UserFactory.CreateBasicUser("high", 5);
+
+      //StartTimeshifting(tv3, low, 0, out mSecsElapsed, out result, out card);      
+
+
+      //ThreadPool.QueueUserWorkItem(delegate { StartTimeshifting(nosignal, low, 0, out mSecsElapsed, out result, out card); });            
+
+      //Thread.Sleep(1000);
+
+      //ThreadPool.QueueUserWorkItem(delegate { StartTimeshifting(nosignal, low, 0, out mSecsElapsed, out result, out card); });
+
+
+      //StartTimeshifting(tv3_plus, low2, 0, out mSecsElapsed, out result, out card);      
+
+      StartTimeshifting(tv3, high, 0, out mSecsElapsed, out result, out card);
+
+      //Thread.Sleep(3000);
+
+      //StartTimeshifting(tv3_plus, high, 0, out mSecsElapsed, out result, out card);
+    }
   }
 
   public class ListViewSorter : IComparer

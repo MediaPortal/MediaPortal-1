@@ -20,9 +20,8 @@
 
 using System.Text;
 using System.IO;
-using SetupTv;
 
-namespace MediaPortal.Playlists
+namespace Mediaportal.TV.Server.SetupTV.PlaylistSupport
 {
   public class PlayListPLSIO : IPlayListIO
   {

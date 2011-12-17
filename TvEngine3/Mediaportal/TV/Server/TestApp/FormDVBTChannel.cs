@@ -20,10 +20,10 @@
 
 using System;
 using System.Windows.Forms;
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   public partial class FormDVBTChannel : Form
   {

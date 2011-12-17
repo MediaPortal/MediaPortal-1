@@ -19,11 +19,12 @@
 #endregion
 
 using System.Collections.Generic;
-using TvLibrary.ChannelLinkage;
-using TvLibrary.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 
-namespace TvLibrary.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
+  public delegate void OnNewSubChannelDelegate(int id);
   /// <summary>
   /// cam types
   /// </summary>
@@ -298,19 +299,6 @@ namespace TvLibrary.Interfaces
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
 
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    void FreeSubChannelContinueGraph(int id);
-
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    void FreeSubChannelContinueGraph(int id, bool subchannelBusy);
 
     /// <summary>
     /// Frees the sub channel.
@@ -325,5 +313,8 @@ namespace TvLibrary.Interfaces
     ITvSubChannel[] SubChannels { get; }
 
     #endregion
+
+    void CancelTune(int subChannel);    
+    event OnNewSubChannelDelegate OnNewSubChannelEvent;
   }
 }

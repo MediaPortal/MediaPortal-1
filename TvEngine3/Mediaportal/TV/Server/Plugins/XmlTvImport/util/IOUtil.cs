@@ -21,7 +21,7 @@
 using System.IO;
 using System.Text;
 
-namespace TvEngine
+namespace Mediaportal.TV.Server.Plugins.XmlTvImport.util
 {
   internal class IOUtil
   {
@@ -29,27 +29,16 @@ namespace TvEngine
     {
       canRead = false;
       canWrite = false;
-      FileStream fs = null;
-
-      try
+            
+      using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
       {
-        fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
         canRead = fs.CanRead;
       }
-      finally
-      {
-        if (fs != null) fs.Close();
-      }
 
-      try
+      using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Write))
       {
-        fs = new FileStream(fileName, FileMode.Open, FileAccess.Write);
-        canWrite = fs.CanWrite;
-      }
-      finally
-      {
-        if (fs != null) fs.Close();
-      }
+        canWrite = fs.CanWrite; 
+      }      
     }
 
     /// <summary>
@@ -58,33 +47,13 @@ namespace TvEngine
     /// <param name="filename"></param>
     /// <param name="fa">Read,Write,ReadWrite</param>
     /// <param name="fs">Read,ReadWrite...</param>
-    /// <returns></returns>
+    /// <returns></returns>  
     public static void CheckFileAccessRights(string fileName, FileMode fm, FileAccess fa, FileShare fs)
     {
-      FileStream fileStream = null;
-      StreamReader streamReader = null;
-      try
+      Encoding fileEncoding = Encoding.Default;
+      using (var fileStream = File.Open(fileName, fm, fa, fs))
       {
-        Encoding fileEncoding = Encoding.Default;
-        fileStream = File.Open(fileName, fm, fa, fs);
-        streamReader = new StreamReader(fileStream, fileEncoding, true);
-      }
-      finally
-      {
-        try
-        {
-          if (fileStream != null)
-          {
-            fileStream.Close();
-            fileStream.Dispose();
-          }
-          if (streamReader != null)
-          {
-            streamReader.Close();
-            streamReader.Dispose();
-          }
-        }
-        finally {}
+        using (var streamReader = new StreamReader(fileStream, fileEncoding, true)) { }
       }
     }
   }

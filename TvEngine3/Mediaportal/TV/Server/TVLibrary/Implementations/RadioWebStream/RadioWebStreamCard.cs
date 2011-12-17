@@ -21,12 +21,16 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
-using TvLibrary.Interfaces;
-using TvLibrary.Epg;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.ChannelLinkage;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.RadioWebStream
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
 {
   /// <summary>
   /// Dummy card for radio web streams
@@ -114,8 +118,8 @@ namespace TvLibrary.Implementations.RadioWebStream
     protected void StartRecord(bool transportStream, string fileName)
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("RadioWebStream:StartRecord({0})", fileName);
-      Log.Log.WriteFile("RadioWebStream:Recording currently not implemented");
+      Log.WriteFile("RadioWebStream:StartRecord({0})", fileName);
+      Log.WriteFile("RadioWebStream:Recording currently not implemented");
       _dateRecordingStarted = DateTime.Now;
     }
 
@@ -126,7 +130,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     protected static void StopRecord()
     {
       if (!CheckThreadId()) return;
-      Log.Log.WriteFile("RadioWebStream:StopRecord()");
+      Log.WriteFile("RadioWebStream:StopRecord()");
     }
 
     #endregion
@@ -197,7 +201,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(IChannel channel)
     {
-      if (!channel.IsRadio) return false;
+      if (channel.MediaType != MediaTypeEnum.Radio) return false;
       if ((channel as RadioWebStreamChannel) == null) return false;
       return true;
     }
@@ -210,7 +214,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns></returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("RadioWebStream:  Tune:{0}", channel);
+      Log.WriteFile("RadioWebStream:  Tune:{0}", channel);
       return null;
     }
 
@@ -222,7 +226,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns></returns>
     public ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
+      Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
       return null;
     }
 
@@ -276,19 +280,6 @@ namespace TvLibrary.Implementations.RadioWebStream
     public void FreeSubChannel(int id) {}
 
     /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy) {}
-
-    /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    public void FreeSubChannelContinueGraph(int id) {}
-
-    /// <summary>
     /// Gets the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
@@ -306,6 +297,12 @@ namespace TvLibrary.Implementations.RadioWebStream
     {
       get { return new ITvSubChannel[0]; }
     }
+
+    public void CancelTune(int subChannel)
+    {
+    }
+
+    public event OnNewSubChannelDelegate OnNewSubChannelEvent;
 
     /// <summary>
     /// Gets/sets the card name
@@ -405,7 +402,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public virtual void Dispose()
     {
-      Log.Log.WriteFile("RadioWebStream:Dispose()");
+      Log.WriteFile("RadioWebStream:Dispose()");
       if (!CheckThreadId()) return;
     }
 

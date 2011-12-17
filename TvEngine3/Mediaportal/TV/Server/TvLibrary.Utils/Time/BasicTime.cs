@@ -20,7 +20,7 @@
 
 using System;
 
-namespace MediaPortal.Utils.Time
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Time
 {
   /// <summary>
   /// Basic time class has only hours and mintues.

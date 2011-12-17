@@ -21,7 +21,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace MediaPortal.WebEPG.Config
+namespace WebEPG.config.WebEPG
 {
   [XmlRoot("WebEPG")]
   public class WebepgConfigFile

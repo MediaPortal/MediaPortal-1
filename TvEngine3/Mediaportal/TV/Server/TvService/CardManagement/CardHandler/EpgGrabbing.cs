@@ -20,14 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Epg;
-using TvLibrary.Log;
-using TvControl;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 {
-  public class EpgGrabbing
+  public class EpgGrabbing : IEpgGrabbing
   {
     private readonly ITvCardHandler _cardHandler;
 
@@ -49,32 +52,11 @@ namespace TvService
       Log.Epg("EpgGrabbing: Start");
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.DataBaseCard.enabled == false)
         {
           return false;
         }
 
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-          {
-            return false;
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return false;
-        }
-
-        if (_cardHandler.IsLocal == false)
-        {
-          //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          //RemoteControl.Instance.GrabEpg();
-          return false;
-        }
         if (grabber == null)
         {
           return false;
@@ -97,28 +79,8 @@ namespace TvService
       Log.Epg("EpgGrabbing: Abort");
       try
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.DataBaseCard.enabled == false)
         {
-          return;
-        }
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-          {
-            return;
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return;
-        }
-        if (_cardHandler.IsLocal == false)
-        {
-          //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          //RemoteControl.Instance.GrabEpg();
           return;
         }
         _cardHandler.Card.AbortGrabbing();
@@ -139,28 +101,8 @@ namespace TvService
     {
       get
       {
-        if (_cardHandler.DataBaseCard.Enabled == false)
+        if (_cardHandler.DataBaseCard.enabled == false)
         {
-          return new List<EpgChannel>();
-        }
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-          {
-            return new List<EpgChannel>();
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return null;
-        }
-        if (_cardHandler.IsLocal == false)
-        {
-          //RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          //RemoteControl.Instance.GrabEpg();
           return new List<EpgChannel>();
         }
         return _cardHandler.Card.Epg;
@@ -178,38 +120,11 @@ namespace TvService
       {
         try
         {
-          if (_cardHandler.DataBaseCard.Enabled == false)
+          if (_cardHandler.DataBaseCard.enabled == false)
           {
             return false;
           }
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            {
-              return false;
-            }
-          }
-          catch (Exception)
-          {
-            Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
-                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return false;
-          }
-          if (_cardHandler.IsLocal == false)
-          {
-            try
-            {
-              RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-              return RemoteControl.Instance.IsGrabbingEpg(_cardHandler.DataBaseCard.IdCard);
-            }
-            catch (Exception)
-            {
-              Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
-                        _cardHandler.DataBaseCard.ReferencedServer().HostName);
-              return false;
-            }
-          }
+         
           return _cardHandler.Card.IsEpgGrabbing;
         }
         catch (Exception ex)
@@ -227,13 +142,7 @@ namespace TvService
     public void Stop(IUser user)
     {
       Log.Epg("EpgGrabbing: Stop - user {0}", user.Name);
-      if (_cardHandler.IsLocal == false)
-      {
-        // RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-        // RemoteControl.Instance.StopGrabbingEpg();
-        return;
-      }
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context != null)
       {
         context.Remove(user);

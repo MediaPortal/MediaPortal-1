@@ -23,7 +23,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace MediaPortal.UserInterface.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Summary description for GradientLabel.

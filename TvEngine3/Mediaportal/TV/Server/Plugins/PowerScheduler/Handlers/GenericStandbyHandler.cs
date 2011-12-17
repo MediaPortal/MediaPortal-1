@@ -21,14 +21,13 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using MediaPortal.Common.Utils;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Generic IStandbyHandler implementation, can be reused or inherited

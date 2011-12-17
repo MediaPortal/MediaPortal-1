@@ -19,22 +19,14 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Data;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Soap;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Xml.Serialization;
-using MediaPortal.Devices;
-using MediaPortal.GUI.Library;
-using XPListview;
 using System.Threading;
+using Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView;
 
-namespace BlasterTest
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn
 {
   /// <summary>
   /// Summary description for Form1.
@@ -51,7 +43,7 @@ namespace BlasterTest
     private System.Windows.Forms.PropertyGrid propertyGrid;
     private System.Windows.Forms.ImageList imageList;
     private System.Windows.Forms.ColumnHeader columnButton;
-    private XPListView listButtons;
+    private XPListView.XPListView listButtons;
     private System.ComponentModel.IContainer components;
 
     public Form1()
@@ -95,7 +87,7 @@ namespace BlasterTest
       this.buttonTest = new System.Windows.Forms.Button();
       this.timerLearn = new System.Windows.Forms.Timer(this.components);
       this.propertyGrid = new System.Windows.Forms.PropertyGrid();
-      this.listButtons = new XPListview.XPListView();
+      this.listButtons = new XPListView.XPListView();
       this.columnButton = new System.Windows.Forms.ColumnHeader();
       this.SuspendLayout();
       // 

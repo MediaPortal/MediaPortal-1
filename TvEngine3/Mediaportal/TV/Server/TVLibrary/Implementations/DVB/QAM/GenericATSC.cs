@@ -21,9 +21,12 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.QAM
 {
   ///<summary>
   /// Generic ATSC devices BDA calls
@@ -62,20 +65,20 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("GenericATSC: QAM capable card found!");
+            Log.Debug("GenericATSC: QAM capable card found!");
             _isGenericATSC = true;
             _tempValue = Marshal.AllocCoTaskMem(1024);
             _tempInstance = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
-            Log.Log.Debug("GenericATSC: QAM card NOT found!");
+            Log.Debug("GenericATSC: QAM card NOT found!");
             _isGenericATSC = false;
           }
         }
       }
       else
-        Log.Log.Info("GenericATSC: tuner pin not found!");
+        Log.Info("GenericATSC: tuner pin not found!");
     }
 
     /// <summary>
@@ -111,13 +114,13 @@ namespace TvLibrary.Implementations.DVB
       _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("GenericATSC: Set ModulationType: {0}", channel.ModulationType);
+        Log.Info("GenericATSC: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
         int hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32,
                                   _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("GenericATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorString(hr));
+          Log.Info("GenericATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorString(hr));
         }
       }
       //Below is for debug only...
@@ -131,14 +134,36 @@ namespace TvLibrary.Implementations.DVB
       }
       */
     }
-
-    /// <summary>
+        
+    #region Dispose
+		
+		protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+		  }
+		
+		  // get rid of unmanaged resources
+		  Marshal.FreeCoTaskMem(_tempValue);
+      Marshal.FreeCoTaskMem(_tempInstance);
+		}
+		
+		
+		/// <summary>
     /// Disposes COM task memory resources
     /// </summary>
-    public void Dispose()
-    {
-      Marshal.FreeCoTaskMem(_tempValue);
-      Marshal.FreeCoTaskMem(_tempInstance);
-    }
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~GenericATSC()
+		{
+		  Dispose(false);
+		}
+		
+		#endregion
   }
 }

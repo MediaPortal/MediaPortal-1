@@ -22,17 +22,24 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Timers;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.Services;
 
 #endregion
 
 [assembly: InternalsVisibleTo("TVServiceTests")]
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService
 {
   /// <summary>
   ///   Class which holds the context for a specific card
@@ -40,11 +47,10 @@ namespace TvService
   public class TvCardContext : ITvCardContext
   {
     #region variables
-
     private readonly Timer _timer = new Timer();
-    private readonly List<IUser> _users;
+    private readonly IDictionary<string,IUser> _users;
 
-    private readonly List<IUser> _usersOld;
+    private readonly IDictionary<string, IUser> _usersOld;
     //holding a list of all the timeshifting users that have been stopped - mkaing it possible for the client to query the possible stop reason.
 
     private IUser _owner;
@@ -58,8 +64,8 @@ namespace TvService
     /// </summary>
     public TvCardContext()
     {
-      _users = new List<IUser>();
-      _usersOld = new List<IUser>();
+      _users = new Dictionary<string, IUser>();
+      _usersOld = new Dictionary<string, IUser>();
       _owner = null;
       _timer.Interval = 60000;
       _timer.Enabled = true;
@@ -142,15 +148,7 @@ namespace TvService
       {
         _owner = user;
       }
-      int i = _users.FindIndex(t => t.Name == user.Name);
-      if (i > -1)
-      {
-        _users[i] = (User)user.Clone();
-      }
-      else
-      {
-        _users.Add(user);
-      }
+      _users[user.Name] = user; //add or replace
     }
 
     /// <summary>
@@ -161,26 +159,25 @@ namespace TvService
     {
       string username = user.Name;
       Log.Info("user:{0} remove", username);
-      IUser existingUser = _users.Find(t => t.Name.Equals(username));
+      IUser existingUser = GetUserByName(_users, username);
       if (existingUser != null)
       {
         OnStopUser(existingUser);
-        _users.Remove(existingUser);
+        _users.Remove(username);
       }
 
       if (_owner != null && _owner.Name.Equals(username))
       {
         if (_users.Count > 0)
         {
-          IUser existingScheduler = _users.Find(t => t.IsAdmin);
-
+          IUser existingScheduler = _users.Values.FirstOrDefault(t => t.IsAdmin);
           if (existingScheduler != null)
           {
             _owner = existingScheduler;
           }
           else
           {
-            _owner = _users[0];
+            _owner = _users.Values.FirstOrDefault();
           }
         }
         else
@@ -188,18 +185,7 @@ namespace TvService
           _owner = null;
         }
       }
-    }
-
-    public void HeartBeatUser(IUser user)
-    {
-      //Log.Debug("user:{0} heartbeat received", user.Name);
-
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
-      if (existingUser != null)
-      {
-        existingUser.HeartBeat = DateTime.Now;
-      }
-    }
+    }   
 
     /// <summary>
     ///   Gets the user.
@@ -208,13 +194,31 @@ namespace TvService
     public void GetUser(ref IUser user)
     {
       User userCopy = (User)user.Clone();
-      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
+      IUser existingUser = GetUserByNameAndCardId(userCopy.Name, userCopy.CardId);
       if (existingUser != null)
       {
         TvStoppedReason reason = user.TvStoppedReason;
-        user = (User)existingUser.Clone();
+        user = (User) existingUser.Clone();
         user.TvStoppedReason = reason;
       }
+    }
+
+    private IUser GetUserByNameAndCardId (string name, int cardId)
+    {
+      IUser existingUser;
+      bool userFound = _users.TryGetValue(name, out existingUser);
+      if (userFound && existingUser != null && existingUser.CardId == cardId)
+      {
+        return existingUser;
+      }
+      return null;
+    }
+
+    private IUser GetUserByName(IDictionary<string, IUser> users, string name)
+    {
+      IUser existingUser;
+      users.TryGetValue(name, out existingUser);      
+      return existingUser;      
     }
 
     /// <summary>
@@ -225,7 +229,7 @@ namespace TvService
     public void GetUser(ref IUser user, int cardId)
     {
       User userCopy = (User)user.Clone();
-      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == cardId);
+      IUser existingUser = GetUserByNameAndCardId(userCopy.Name, userCopy.CardId);
       if (existingUser != null)
       {
         TvStoppedReason reason = user.TvStoppedReason;
@@ -242,7 +246,7 @@ namespace TvService
     public void GetUser(ref IUser user, out bool exists)
     {
       User userCopy = (User)user.Clone();
-      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
+      IUser existingUser = GetUserByNameAndCardId(userCopy.Name, userCopy.CardId);
       if (existingUser != null)
       {
         TvStoppedReason reason = user.TvStoppedReason;
@@ -261,7 +265,7 @@ namespace TvService
     /// <returns></returns>
     public bool DoesExists(IUser user)
     {
-      return (_users.Exists(t => t.Name == user.Name));
+      return (_users.ContainsKey(user.Name));
     }
 
     /// <summary>
@@ -272,7 +276,7 @@ namespace TvService
     public void GetUser(int subChannelId, out IUser user)
     {
       user = null;
-      IUser existingUser = _users.Find(t => t.SubChannel == subChannelId);
+      IUser existingUser = _users.Values.FirstOrDefault(t => t.SubChannel == subChannelId);
       if (existingUser != null)
       {
         user = (User)existingUser.Clone();
@@ -286,7 +290,7 @@ namespace TvService
     /// <param name = "reason">TvStoppedReason.</param>
     public void SetTimeshiftStoppedReason(IUser user, TvStoppedReason reason)
     {
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      IUser existingUser = GetUserByName(_users, user.Name);      
       if (existingUser != null)
       {
         existingUser.TvStoppedReason = reason;
@@ -299,7 +303,7 @@ namespace TvService
     /// <param name = "user">user.</param>
     public TvStoppedReason GetTimeshiftStoppedReason(IUser user)
     {
-      IUser existingUser = _usersOld.Find(t => t.Name == user.Name);
+      IUser existingUser = GetUserByName(_usersOld, user.Name);      
       if (existingUser != null)
       {
         User userFound = (User)existingUser.Clone();
@@ -310,17 +314,10 @@ namespace TvService
 
     public void UserNextAvailableSubchannel(IUser user)
     {
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      IUser existingUser = GetUserByName(_users, user.Name);            
       if (existingUser != null)
       {
-        int nextSubchannel = -1;
-        foreach (IUser u in _users)
-        {
-          if (u.SubChannel > nextSubchannel)
-          {
-            nextSubchannel = u.SubChannel;
-          }
-        }
+        int nextSubchannel = (from IUser u in _users select u.SubChannel).Concat(new[] {-1}).Max();
 
         if (nextSubchannel >= 0)
         {
@@ -329,18 +326,47 @@ namespace TvService
       }
     }
 
+    public bool HasUserEqualOrHigherPriority(IUser user)
+    {      
+      bool hasEqualOrHigherPriority;
+      ICollection<KeyValuePair<string, IUser>> otherUsers = _users.Where(t => !t.Value.Name.Equals(user.Name)).ToList();
+      if (otherUsers.Count == 0)
+      {
+        hasEqualOrHigherPriority = true;
+      }
+      else
+      {
+        int? maxPriority = otherUsers.Max(t => t.Value.Priority);
+        hasEqualOrHigherPriority = (user.Priority >= maxPriority);
+      }
+
+      return hasEqualOrHigherPriority;
+    }
+
+    public bool HasUserHighestPriority(IUser user)
+    {
+      bool hasHighestPriority;
+      ICollection<KeyValuePair<string, IUser>> otherUsers = _users.Where(t => !t.Value.Name.Equals(user.Name)).ToList();
+      if (otherUsers.Count == 0)
+      {
+        hasHighestPriority = true;        
+      }
+      else
+      {
+        int? maxPriority = otherUsers.Max(t => t.Value.Priority);
+        hasHighestPriority = (user.Priority > maxPriority);
+      }
+
+      return hasHighestPriority;
+    }
+
     /// <summary>
     ///   Gets the users.
     /// </summary>
     /// <value>The users.</value>
-    public IUser[] Users
+    public IDictionary<string, IUser> Users
     {
-      get { return _users.ToArray(); }
-    }
-
-    protected internal IList<IUser> UsersOld
-    {
-      get { return _usersOld; }
+      get { return _users; }
     }
 
     /// <summary>
@@ -352,7 +378,7 @@ namespace TvService
     /// </returns>
     public bool ContainsUsersForSubchannel(int subchannelId)
     {
-      return _users.Exists(t => t.SubChannel == subchannelId);
+      return _users.Values.Any(t => t.SubChannel == subchannelId);
     }
 
     /// <summary>
@@ -360,9 +386,9 @@ namespace TvService
     /// </summary>
     public void Clear()
     {
-      foreach (IUser user in _users)
+      foreach (KeyValuePair<string, IUser> user in _users)
       {
-        OnStopUser(user);
+        OnStopUser(user.Value);
       }
       _users.Clear();
       _owner = null;
@@ -372,38 +398,48 @@ namespace TvService
     public void OnStopUser(IUser user)
     {
       if (!user.IsAdmin)
-      {
-        _usersOld.RemoveAll(t => t.Name == user.Name);
-        _usersOld.Add(user);
+      {        
+        _usersOld[user.Name] = user;        
       }
 
-      History history = user.History as History;
+      var history = user.History as History;
       if (history != null)
       {
-        history.Save();
+         ChannelManagement.SaveChannelHistory(history);
       }
       user.History = null;
     }
 
     public void OnZap(IUser user)
     {
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      IUser existingUser = GetUserByName(_users, user.Name);
       if (existingUser != null)
-      {
-        Channel channel = Channel.Retrieve(user.IdChannel);
+      {                
+        Channel channel = ChannelManagement.GetChannel(user.IdChannel);
         if (channel != null)
         {
           History history = existingUser.History as History;
           if (history != null)
           {
-            history.Save();
+            ChannelManagement.SaveChannelHistory(history);            
           }
           existingUser.History = null;
-          Program p = channel.CurrentProgram;
+          var channelBll = new ChannelBLL(channel);
+          Program p = channelBll.CurrentProgram;
           if (p != null)
-          {
-            existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description,
-                                               p.Genre, false, 0);
+          {            
+            var history1 = new History
+                              {
+                                idChannel = channel.idChannel,
+                                startTime = p.startTime,
+                                endTime = p.endTime,
+                                title = p.title,
+                                description = p.description,
+                                ProgramCategory = p.ProgramCategory,
+                                recorded = false,
+                                watched = 0
+                              };
+            existingUser.History = history1;            
           }
         }
       }
@@ -415,20 +451,31 @@ namespace TvService
     {
       try
       {
-        foreach (IUser existingUser in _users)
+        foreach (KeyValuePair<string, IUser> existingUser in _users)
         {
-          History history = existingUser.History as History;
+          History history = existingUser.Value.History as History;
           if (history != null)
           {
-            Channel channel = Channel.Retrieve(existingUser.IdChannel);
+            Channel channel = ChannelManagement.GetChannel(existingUser.Value.IdChannel);
             if (channel != null)
             {
-              Program p = channel.CurrentProgram;
-              if (p != null && p.StartTime != history.StartTime)
-              {
-                history.Save();
-                existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description,
-                                                   p.Genre, false, 0);
+              Program p = new ChannelBLL(channel).CurrentProgram;
+              if (p != null && p.startTime != history.startTime)
+              {                
+                ChannelManagement.SaveChannelHistory(history);
+                var history1 = new History
+                                 {
+                                   idChannel = channel.idChannel,
+                                   startTime = p.startTime,
+                                   endTime = p.endTime,
+                                   title = p.title,
+                                   description = p.description,
+                                   ProgramCategory = p.ProgramCategory,
+                                   recorded = false,
+                                   watched = 0
+                                 };
+
+                existingUser.Value.History = history1;                
               }
             }
           }

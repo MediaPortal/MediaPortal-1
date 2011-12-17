@@ -18,15 +18,18 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using TvDatabase;
-using TvLibrary.Log;
+using System.Linq;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.DiskManagement
 {
   public class RecordingManagement
   {
-    private readonly System.Timers.Timer _timer;
+    private readonly System.Timers.Timer _timer;    
 
     public RecordingManagement()
     {
@@ -51,19 +54,29 @@ namespace TvService
     /// </remarks>
     private static void DeleteOldRecordings()
     {
-      IList<Recording> recordings = Recording.ListAll();
-      foreach (Recording rec in recordings)
+      IList<Recording> recordings = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
+      foreach (Recording recording in recordings.Where(ShouldBeDeleted))
       {
-        if (!rec.ShouldBeDeleted)
-          continue;
-
         Log.Write("Recorder: delete old recording:{0} date:{1}",
-                  rec.FileName,
-                  rec.StartTime.ToShortDateString());
-        recordings.Remove(rec);
-        rec.Remove();
+                  recording.fileName,
+                  recording.startTime.ToShortDateString());
+        recordings.Remove(recording);        
+        TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(recording.idRecording);
         break;
       }
+    }
+
+    private static bool ShouldBeDeleted(Recording recording)
+    {
+      if (recording.keepUntil != (int)KeepMethodType.TillDate)
+      {
+        return false;
+      }
+      if (recording.keepUntilDate.GetValueOrDefault(DateTime.MinValue) > DateTime.Now)
+      {
+        return false;
+      }
+      return true;
     }
   }
 }

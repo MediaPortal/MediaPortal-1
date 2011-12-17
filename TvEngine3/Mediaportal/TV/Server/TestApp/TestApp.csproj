@@ -8,14 +8,15 @@
     <ProjectGuid>{E9D3F443-A654-4D94-BBAA-080362D25D7C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestApp</RootNamespace>
-    <AssemblyName>TestApp</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.TestApp</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.TestApp</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,7 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Form1.cs">
@@ -139,6 +140,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -150,13 +152,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
-      <Name>TVLibrary</Name>
+      <Name>TVLibrary %28TVLibrary\TVLibrary%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

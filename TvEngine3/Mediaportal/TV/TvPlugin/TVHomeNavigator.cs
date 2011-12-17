@@ -23,19 +23,25 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net;
+using System.Linq;
+using System.ServiceModel.Channels;
 using System.Xml;
-using Gentle.Framework;
+
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// Handles the logic for channel zapping. This is used by the different GUI modules in the TV section.
@@ -81,12 +87,12 @@ namespace TvPlugin
     private int m_currentgroup = 0;
     private DateTime m_zaptime;
     private long m_zapdelay;
-    private Channel m_zapchannel = null;
+    private ChannelBLL m_zapchannel = null;
     private int m_zapChannelNr = -1;
     private int m_zapgroup = -1;
     private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
-    private Channel m_currentChannel = null;
-    private IList channels = new ArrayList();
+    private ChannelBLL m_currentChannel = null;
+    private IList<Channel> channels = new List<Channel>();
     private bool reentrant = false;    
 
     #endregion
@@ -111,13 +117,13 @@ namespace TvPlugin
 
     public void SetupDatabaseConnection()
     {
-      string connectionString, provider;
+      /*string connectionString, provider;
       if (!TVHome.Connected)
       {
         return;
       }
 
-      RemoteControl.Instance.GetDatabaseConnectionString(out connectionString, out provider);
+      ServiceAgents.Instance.ControllerService.GetDatabaseConnectionString(out connectionString, out provider);
 
       try
       {
@@ -134,11 +140,7 @@ namespace TvPlugin
       {
         Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
       }
-
-      Log.Info("ChannelNavigator::Reload()");
-      ProviderFactory.ResetGentle(true);
-      ProviderFactory.SetDefaultProvider(provider);
-      ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+      Log.Info("ChannelNavigator::Reload()");*/
     }
 
     public void ReLoad()
@@ -147,38 +149,31 @@ namespace TvPlugin
       try
       {
         SetupDatabaseConnection();
-        Log.Info("get channels from database");
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-        sb.AddConstraint(Operator.Equals, "isTv", 1);
-        sb.AddOrderByField(true, "sortOrder");
-        SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
+        Log.Info("get channels from database");        
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).ToList();
+
         Log.Info("found:{0} tv channels", channels.Count);
         TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        RadioChannelGroup allRadioChannelsGroup =
-          layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
-        IList<Channel> radioChannels = layer.GetAllRadioChannels();
+        ChannelGroup allRadioChannelsGroup =
+          ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(
+            TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+
+        IList<Channel> radioChannels =
+          ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.Radio).ToList();
+
         if (radioChannels != null)
         {
-          if (radioChannels.Count > allRadioChannelsGroup.ReferringRadioGroupMap().Count)
+          if (allRadioChannelsGroup != null && radioChannels.Count > allRadioChannelsGroup.GroupMaps.Count)
           {
-            foreach (Channel radioChannel in radioChannels)
-            {
-              layer.AddChannelToRadioGroup(radioChannel, allRadioChannelsGroup);
-            }
+            MappingHelper.AddChannelsToGroup(radioChannels, allRadioChannelsGroup);            
           }
         }
         Log.Info("Done.");
 
         Log.Info("get all groups from database");
-        sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
-        sb.AddOrderByField(true, "groupName");
-        stmt = sb.GetStatement(true);
-        IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
-        IList<GroupMap> allgroupMaps = GroupMap.ListAll();
+        IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups().OrderBy(g => g.groupName).ToList();                        
 
         bool hideAllChannelsGroup = false;
         using (
@@ -188,58 +183,45 @@ namespace TvPlugin
           hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         }
 
-
+        IList<Channel> tvchannels = new List<Channel>();
         foreach (ChannelGroup group in groups)
         {
-          if (group.GroupName == TvConstants.TvGroupNames.AllChannels)
+          if (group.groupName == TvConstants.TvGroupNames.AllChannels)
           {
+            IList<GroupMap> allgroupMaps = group.GroupMaps;
             foreach (Channel channel in channels)
             {
-              if (channel.IsTv == false)
+              if (channel.mediaType == (int)MediaTypeEnum.TV)
               {
-                continue;
-              }
-              bool groupContainsChannel = false;
-              foreach (GroupMap map in allgroupMaps)
-              {
-                if (map.IdGroup != group.IdGroup)
+                bool groupContainsChannel = 
+                  allgroupMaps.Where(map => map.idGroup == group.idGroup).Any(map => map.idChannel == channel.idChannel);
+                if (!groupContainsChannel) //not part of allchannels
                 {
-                  continue;
+                  tvchannels.Add(channel);
                 }
-                if (map.IdChannel == channel.IdChannel)
-                {
-                  groupContainsChannel = true;
-                  break;
-                }
-              }
-              if (!groupContainsChannel)
-              {
-                layer.AddChannelToGroup(channel, TvConstants.TvGroupNames.AllChannels);
               }
             }
             break;
           }
         }
 
-        groups = ChannelGroup.ListAll();
+        ChannelGroup allchannelsGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);                
+        MappingHelper.AddChannelsToGroup(radioChannels, allRadioChannelsGroup);            
+
         foreach (ChannelGroup group in groups)
         {
-          //group.GroupMaps.ApplySort(new GroupMap.Comparer(), false);
-          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) && groups.Count > 1)
+          if (hideAllChannelsGroup && group.groupName.Equals(TvConstants.TvGroupNames.AllChannels) && groups.Count > 1)
           {
             continue;
           }
           m_groups.Add(group);
         }
         Log.Info("loaded {0} tv groups", m_groups.Count);
-
-        //TVHome.Connected = true;
       }
       catch (Exception ex)
       {
         Log.Error("TVHome: Error in Reload");
-        Log.Error(ex);
-        //TVHome.Connected = false;
+        Log.Error(ex);        
       }
     }
 
@@ -255,15 +237,15 @@ namespace TvPlugin
     {
       get
       {
-        if (m_currentChannel == null)
+        if (m_currentChannel.Entity == null)
         {
           return null;
         }
-        return m_currentChannel.DisplayName;
+        return m_currentChannel.Entity.displayName;
       }
     }
 
-    public Channel Channel
+    public ChannelBLL Channel
     {
       get { return m_currentChannel; }
     }
@@ -318,9 +300,9 @@ namespace TvPlugin
       {
         if (m_zapchannel == null)
         {
-          return m_currentChannel;
+          return m_currentChannel.Entity;
         }
-        return m_zapchannel;
+        return m_zapchannel.Entity;
       }
     }
 
@@ -356,24 +338,15 @@ namespace TvPlugin
       {
         if (m_zapgroup == -1)
         {
-          return CurrentGroup.GroupName;
+          return CurrentGroup.groupName;
         }
-        return ((ChannelGroup)m_groups[m_zapgroup]).GroupName;
+        return ((ChannelGroup)m_groups[m_zapgroup]).groupName;
       }
     }
 
     #endregion
 
     #region Public methods
-
-    /// <summary>
-    /// Sets last failed channel
-    /// </summary>
-    /// <param name="failedChannel"></param>
-    public void SetFailingChannel(Channel failedChannel)
-    {
-      m_currentChannel = failedChannel;
-    }
 
     public void ZapNow()
     {
@@ -409,11 +382,11 @@ namespace TvPlugin
             {
               // Change current group and zap to the first channel of the group
               m_currentgroup = m_zapgroup;
-              if (CurrentGroup != null && CurrentGroup.ReferringGroupMap().Count > 0)
+              if (CurrentGroup != null && CurrentGroup.GroupMaps.Count > 0)
               {
-                GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
-                Channel chan = (Channel)gm.ReferencedChannel();
-                m_zapchannel = chan;
+                GroupMap gm = CurrentGroup.GroupMaps[0];
+                Channel chan = gm.Channel;
+                m_zapchannel.Entity = chan;
               }
             }
             m_zapgroup = -1;
@@ -423,17 +396,17 @@ namespace TvPlugin
             // Zap to desired channel
             if (m_zapchannel != null) // might be NULL after tuning failed
             {
-              Channel zappingTo = m_zapchannel;
+              Channel zappingTo = m_zapchannel.Entity;
 
               //remember to apply the new group also.
               if (m_zapchannel.CurrentGroup != null)
               {
-                m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
-                Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
+                m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.groupName);
+                Log.Info("Channel change:{0} on group {1}", zappingTo.displayName, m_zapchannel.CurrentGroup.groupName);
               }
               else
               {
-                Log.Info("Channel change:{0}", zappingTo.DisplayName);
+                Log.Info("Channel change:{0}", zappingTo.displayName);
               }
               m_zapchannel = null;
               TVHome.ViewChannel(zappingTo);
@@ -486,7 +459,7 @@ namespace TvPlugin
           id = TVHome.Card.IdChannel;
           if (id >= 0)
           {
-            newChannel = Channel.Retrieve(id);
+            newChannel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(id);
           }
         }
         else
@@ -495,45 +468,39 @@ namespace TvPlugin
           // then get & use that channel
           if (TVHome.IsAnyCardRecording)
           {
-            TvServer server = new TvServer();          
-            for (int i = 0; i < server.Count; ++i)
+            IUser user = new User();
+            IVirtualCard card = new VirtualCard(user);
+            if (card.IsRecording)
             {
-              User user = new User();
-              VirtualCard card = server.CardByIndex(user, i);
-              if (card.IsRecording)
+              id = card.IdChannel;
+              if (id >= 0)
               {
-                id = card.IdChannel;
-                if (id >= 0)
-                {
-                  newChannel = Channel.Retrieve(id);
-                  break;
-                }
+                newChannel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(id);                
               }
             }
           }
         }
         if (newChannel == null)
         {
-          newChannel = m_currentChannel;
+          newChannel = m_currentChannel.Entity;
         }
 
         int currentChannelId = 0;
         int newChannelId = 0;
 
-        if (m_currentChannel != null)
+        if (m_currentChannel.Entity != null)
         {
-          currentChannelId = m_currentChannel.IdChannel;
+          currentChannelId = m_currentChannel.Entity.idChannel;
         }
 
         if (newChannel != null)
         {
-          newChannelId = newChannel.IdChannel;
+          newChannelId = newChannel.idChannel;
         }
 
         if (currentChannelId != newChannelId)
         {
-          m_currentChannel = newChannel;
-          m_currentChannel.CurrentGroup = CurrentGroup;
+          m_currentChannel = new ChannelBLL(newChannel) {CurrentGroup = CurrentGroup};
         }
       }
     }
@@ -545,10 +512,9 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannel(Channel channel, bool useZapDelay)
     {
-      Log.Debug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.DisplayName, useZapDelay);
+      Log.Debug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.displayName, useZapDelay);
       TVHome.UserChannelChanged = true;
-      m_zapchannel = channel;
-      m_zapchannel.CurrentGroup = null;
+      m_zapchannel = new ChannelBLL(channel) {CurrentGroup = null};
 
       if (useZapDelay)
       {
@@ -568,7 +534,7 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannelNumber(int channelNr, bool useZapDelay)
     {
-      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> channels = CurrentGroup.GroupMaps;
       if (channelNr >= 0)
       {
         Log.Debug("channels.Count {0}", channels.Count);
@@ -578,19 +544,19 @@ namespace TvPlugin
         Channel chan;
         while (iCounter < channels.Count && found == false)
         {
-          chan = ((GroupMap)channels[iCounter]).ReferencedChannel();
+          chan = ((GroupMap)channels[iCounter]).Channel;
 
-          Log.Debug("chan {0}", chan.DisplayName);
-          if (chan.VisibleInGuide)
+          Log.Debug("chan {0}", chan.displayName);
+          if (chan.visibleInGuide)
           {
-            foreach (TuningDetail detail in chan.ReferringTuningDetail())
+            foreach (TuningDetail detail in chan.TuningDetails)
             {
-              Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
+              Log.Debug("detail nr {0} id{1}", detail.channelNumber, detail.idChannel);
 
-              if (detail.ChannelNumber == channelNr)
+              if (detail.channelNumber == channelNr)
               {
-                Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}",
-                          iCounter, detail.ChannelNumber, detail.Name, channels.Count);
+                Log.Debug("find channel: iCounter {0}, detail.channelNumber {1}, detail.name {2}, channels.Count {3}",
+                          iCounter, detail.channelNumber, detail.name, channels.Count);
                 found = true;
                 ZapToChannel(iCounter + 1, useZapDelay);
               }
@@ -612,13 +578,13 @@ namespace TvPlugin
     /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
     public void ZapToChannel(int channelNr, bool useZapDelay)
     {
-      IList<GroupMap> channels = CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> groupMaps = CurrentGroup.GroupMaps;
       m_zapChannelNr = channelNr;
       channelNr--;
-      if (channelNr >= 0 && channelNr < channels.Count)
+      if (channelNr >= 0 && channelNr < groupMaps.Count)
       {
-        GroupMap gm = (GroupMap)channels[channelNr];
-        Channel chan = gm.ReferencedChannel();
+        GroupMap gm = groupMaps[channelNr];
+        Channel chan = gm.Channel;
         TVHome.UserChannelChanged = true;
         ZapToChannel(chan, useZapDelay);
       }
@@ -634,35 +600,34 @@ namespace TvPlugin
       int currindex;
       if (m_zapchannel == null)
       {
-        currindex = GetChannelIndex(Channel);
-        currentChan = Channel;
+        currindex = GetChannelIndex(Channel.Entity);
+        currentChan = Channel.Entity;
       }
       else
       {
-        currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel 
-        currentChan = Channel;
+        currindex = GetChannelIndex(m_zapchannel.Entity); // Zap from last zap channel 
+        currentChan = Channel.Entity;
       }
-      GroupMap gm;
-      Channel chan;
+      ChannelBLL chan;
       //check if channel is visible 
       //if not find next visible 
       do
       {
         // Step to next channel 
         currindex++;
-        if (currindex >= CurrentGroup.ReferringGroupMap().Count)
+        if (currindex >= CurrentGroup.GroupMaps.Count)
         {
           currindex = 0;
         }
-        gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
-        chan = (Channel)gm.ReferencedChannel();
-      } while (!chan.VisibleInGuide);
+        GroupMap gm = CurrentGroup.GroupMaps[currindex];
+        chan = new ChannelBLL(gm.Channel);
+      } while (!chan.Entity.visibleInGuide);
 
       TVHome.UserChannelChanged = true;
       m_zapchannel = chan;
       m_zapchannel.CurrentGroup = null;
       m_zapChannelNr = -1;
-      Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
+      Log.Info("Navigator:ZapNext {0}->{1}", currentChan.displayName, m_zapchannel.Entity.displayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -699,13 +664,13 @@ namespace TvPlugin
       int currindex;
       if (m_zapchannel == null)
       {
-        currentChan = Channel;
-        currindex = GetChannelIndex(Channel);
+        currentChan = Channel.Entity;
+        currindex = GetChannelIndex(Channel.Entity);
       }
       else
       {
-        currentChan = m_zapchannel;
-        currindex = GetChannelIndex(m_zapchannel); // Zap from last zap channel 
+        currentChan = m_zapchannel.Entity;
+        currindex = GetChannelIndex(m_zapchannel.Entity); // Zap from last zap channel 
       }
       GroupMap gm;
       Channel chan;
@@ -717,18 +682,17 @@ namespace TvPlugin
         currindex--;
         if (currindex < 0)
         {
-          currindex = CurrentGroup.ReferringGroupMap().Count - 1;
+          currindex = CurrentGroup.GroupMaps.Count - 1;
         }
-        gm = (GroupMap)CurrentGroup.ReferringGroupMap()[currindex];
-        chan = (Channel)gm.ReferencedChannel();
-      } while (!chan.VisibleInGuide);
+        gm = CurrentGroup.GroupMaps[currindex];
+        chan = gm.Channel;
+      } while (!chan.visibleInGuide);
 
       TVHome.UserChannelChanged = true;
-      m_zapchannel = chan;
-      m_zapchannel.CurrentGroup = null;
+      m_zapchannel = new ChannelBLL(chan) {CurrentGroup = null};
       m_zapChannelNr = -1;
       Log.Info("Navigator:ZapPrevious {0}->{1}",
-               currentChan.DisplayName, m_zapchannel.DisplayName);
+               currentChan.displayName, m_zapchannel.Entity.displayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
       {
         if (useZapDelay)
@@ -815,7 +779,7 @@ namespace TvPlugin
       if (_lastViewedChannel != null)
       {
         TVHome.UserChannelChanged = true;
-        m_zapchannel = _lastViewedChannel;
+        m_zapchannel = new ChannelBLL(_lastViewedChannel);
         m_zapChannelNr = -1;
         m_zaptime = DateTime.Now;
         RaiseOnZapChannelEvent();
@@ -832,12 +796,12 @@ namespace TvPlugin
     /// <returns></returns>
     private int GetChannelIndex(Channel ch)
     {
-      IList<GroupMap> groupMaps = CurrentGroup.ReferringGroupMap();
+      IList<GroupMap> groupMaps = CurrentGroup.GroupMaps;
       for (int i = 0; i < groupMaps.Count; i++)
       {
-        GroupMap gm = (GroupMap)groupMaps[i];
-        Channel chan = (Channel)gm.ReferencedChannel();
-        if (chan.IdChannel == ch.IdChannel)
+        GroupMap gm = groupMaps[i];
+        Channel chan = gm.Channel;
+        if (chan.idChannel == ch.idChannel)
         {
           return i;
         }
@@ -854,8 +818,8 @@ namespace TvPlugin
     {
       for (int i = 0; i < m_groups.Count; i++)
       {
-        ChannelGroup group = (ChannelGroup)m_groups[i];
-        if (group.GroupName == groupname)
+        ChannelGroup group = m_groups[i];
+        if (group.groupName == groupname)
         {
           return i;
         }
@@ -863,18 +827,18 @@ namespace TvPlugin
       return -1;
     }
 
-    public Channel GetChannel(int channelId)
+    public ChannelBLL GetChannel(int channelId)
     {
       return GetChannel(channelId, false);
     }
 
-    public Channel GetChannel(int channelId, bool allChannels)
+    public ChannelBLL GetChannel(int channelId, bool allChannels)
     {
       foreach (Channel chan in channels)
       {
-        if (chan.IdChannel == channelId && (allChannels || chan.VisibleInGuide))
+        if (chan.idChannel == channelId && (allChannels || chan.visibleInGuide))
         {
-          return chan;
+          return new ChannelBLL(chan);
         }
       }
       return null;
@@ -882,14 +846,7 @@ namespace TvPlugin
 
     public Channel GetChannel(string channelName)
     {
-      foreach (Channel chan in channels)
-      {
-        if (chan.DisplayName == channelName && chan.VisibleInGuide)
-        {
-          return chan;
-        }
-      }
-      return null;
+      return channels.FirstOrDefault(chan => chan.displayName == channelName && chan.visibleInGuide);
     }
 
     #endregion
@@ -908,17 +865,17 @@ namespace TvPlugin
         m_currentgroup = 0;
       }
 
-      m_currentChannel = GetChannel(currentchannelName);
+      m_currentChannel = new ChannelBLL(GetChannel(currentchannelName));
 
-      if (m_currentChannel == null)
+      if (m_currentChannel.Entity == null)
       {
         if (m_currentgroup < m_groups.Count)
         {
-          ChannelGroup group = (ChannelGroup)m_groups[m_currentgroup];
-          if (group.ReferringGroupMap().Count > 0)
+          ChannelGroup group = m_groups[m_currentgroup];
+          if (group.GroupMaps.Count > 0)
           {
-            GroupMap gm = (GroupMap)group.ReferringGroupMap()[0];
-            m_currentChannel = gm.ReferencedChannel();
+            GroupMap gm = group.GroupMaps[0];
+            m_currentChannel = new ChannelBLL(gm.Channel);
           }
         }
       }
@@ -928,9 +885,9 @@ namespace TvPlugin
 
       bool foundMatchingGroupName = false;
 
-      if (m_currentChannel != null)
+      if (m_currentChannel.Entity != null)
       {
-        foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
+        foreach (GroupMap groupMap in m_currentChannel.Entity.GroupMaps)
         {
           foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupname);
           if (foundMatchingGroupName)
@@ -941,14 +898,14 @@ namespace TvPlugin
       }
 
       //if we still havent found the right group, then iterate through the selected group and find the channelname.      
-      if (!foundMatchingGroupName && m_currentChannel != null && m_groups != null)
+      if (!foundMatchingGroupName && m_currentChannel.Entity != null && m_groups != null)
       {
-        foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).ReferringGroupMap())
+        foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).GroupMaps)
         {
-          if (groupMap.ReferencedChannel().DisplayName == currentchannelName)
+          if (groupMap.Channel.displayName == currentchannelName)
           {
             foundMatchingGroupName = true;
-            m_currentChannel = GetChannel(groupMap.ReferencedChannel().IdChannel);
+            m_currentChannel = GetChannel(groupMap.idChannel);
             break;
           }
         }
@@ -956,16 +913,15 @@ namespace TvPlugin
 
 
       // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
-      if (!foundMatchingGroupName && m_currentChannel != null && m_currentChannel.ReferringGroupMap().Count > 0)
+      if (!foundMatchingGroupName && m_currentChannel.Entity != null && m_currentChannel.Entity.GroupMaps.Count > 0)
       {
-        GroupMap groupMap =
-          (GroupMap) m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
+        GroupMap groupMap = m_currentChannel.Entity.GroupMaps[m_currentChannel.Entity.GroupMaps.Count - 1];
 
-        ChannelGroup group = groupMap.ReferencedChannelGroup();        
+        ChannelGroup group = groupMap.ChannelGroup;        
 
         if (group != null)
         {
-          m_currentgroup = GetGroupIndex(group.GroupName);
+          m_currentgroup = GetGroupIndex(group.groupName);
 
           if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
           {
@@ -978,7 +934,7 @@ namespace TvPlugin
         }        
       }
 
-      if (m_currentChannel != null)
+      if (m_currentChannel.Entity != null)
       {
         m_currentChannel.CurrentGroup = CurrentGroup;
       }
@@ -989,18 +945,18 @@ namespace TvPlugin
       string groupName = "";
       if (CurrentGroup != null)
       {
-        groupName = CurrentGroup.GroupName.Trim();
+        groupName = CurrentGroup.groupName.Trim();
         try
         {
           if (groupName != String.Empty)
           {
             if (m_currentgroup > -1)
             {
-              groupName = ((ChannelGroup)m_groups[m_currentgroup]).GroupName;
+              groupName = ((ChannelGroup)m_groups[m_currentgroup]).groupName;
             }
-            else if (m_currentChannel != null)
+            else if (m_currentChannel.Entity != null)
             {
-              groupName = m_currentChannel.CurrentGroup.GroupName;
+              groupName = m_currentChannel.CurrentGroup.groupName;
             }
 
             if (groupName.Length > 0)
@@ -1012,15 +968,15 @@ namespace TvPlugin
         catch (Exception) {}
       }
 
-      if (m_currentChannel != null)
+      if (m_currentChannel.Entity != null)
       {
         try
         {
-          if (m_currentChannel.IsTv)
+          if (m_currentChannel.Entity.mediaType == (int)MediaTypeEnum.TV)
           {
             bool foundMatchingGroupName = false;
 
-            foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
+            foreach (GroupMap groupMap in m_currentChannel.Entity.GroupMaps)
             {
               foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupName);
               if (foundMatchingGroupName)
@@ -1030,18 +986,18 @@ namespace TvPlugin
             }
             if (foundMatchingGroupName)
             {
-              xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
+              xmlwriter.SetValue("mytv", "channel", m_currentChannel.Entity.displayName);
             }
             else
               //the channel did not belong to the group, then pick the first channel avail in the group and set this as the last channel.
             {
               if (m_currentgroup > -1)
               {
-                ChannelGroup cg = (ChannelGroup)m_groups[m_currentgroup];
-                if (cg.ReferringGroupMap().Count > 0)
+                ChannelGroup cg = m_groups[m_currentgroup];
+                if (cg.GroupMaps.Count > 0)
                 {
-                  GroupMap gm = (GroupMap)cg.ReferringGroupMap()[0];
-                  xmlwriter.SetValue("mytv", "channel", gm.ReferencedChannel().DisplayName);
+                  GroupMap gm = cg.GroupMaps[0];
+                  xmlwriter.SetValue("mytv", "channel", gm.Channel.displayName);
                 }
               }
             }
@@ -1054,8 +1010,8 @@ namespace TvPlugin
     private static bool DoesGroupNameContainGroupName (GroupMap groupMap, string groupname)
     {
       bool foundMatchingGroupName = false;
-      ChannelGroup group = groupMap.ReferencedChannelGroup();
-      if (group != null && group.GroupName == groupname)
+      ChannelGroup group = groupMap.ChannelGroup;
+      if (group != null && group.groupName == groupname)
       {
         foundMatchingGroupName = true;
       }

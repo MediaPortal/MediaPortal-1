@@ -21,17 +21,21 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.DiskManagement
 {
   /// <summary>
   /// Summary description for DiskManagement.
   /// </summary>
   public class DiskManagement
   {
+    
     private readonly System.Timers.Timer _timer;
+    
 
     public DiskManagement()
     {
@@ -43,16 +47,15 @@ namespace TvService
     }
 
 
-    private static List<string> GetDisks()
+    private static IEnumerable<string> GetDisks()
     {
-      List<string> drives = new List<string>();
-
-      IList<Card> cards = Card.ListAll();
+      var drives = new List<string>();
+      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
       foreach (Card card in cards)
       {
-        if (card.RecordingFolder.Length > 0)
+        if (card.recordingFolder.Length > 0)
         {
-          string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
+          string driveLetter = String.Format("{0}:", card.recordingFolder[0]);
           if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!drives.Contains(driveLetter))
@@ -80,8 +83,8 @@ namespace TvService
     private static void CheckFreeDiskSpace()
     {
       //check diskspace every 15 minutes...
-      TvBusinessLayer layer = new TvBusinessLayer();
-      if (!(layer.GetSetting("diskQuotaEnabled", "False").Value == "True"))
+      
+      if (SettingsManagement.GetSetting("diskQuotaEnabled", "False").value != "True")
       {
         //Disk Quota Management disabled: quitting
         return;
@@ -90,7 +93,7 @@ namespace TvService
       Log.Write("DiskManagement: checking free disk space");
 
       //first get all drives..
-      List<string> drives = GetDisks();
+      IEnumerable<string> drives = GetDisks();
 
       // next check diskspace on each drive.
       foreach (string drive in drives)
@@ -101,11 +104,8 @@ namespace TvService
 
     private static bool OutOfDiskSpace(string drive)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-
       ulong minimiumFreeDiskSpace;
-
-      string quotaText = layer.GetSetting("freediskspace" + drive[0], "51200").Value;
+      string quotaText = SettingsManagement.GetSetting("freediskspace" + drive[0], "51200").value;
       try
       {
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
@@ -140,18 +140,20 @@ namespace TvService
 
     private static List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
-      List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
-      IList<Recording> recordedTvShows = Recording.ListAll();
+      var recordings = new List<RecordingFileInfo>();
+      var recordedTvShows = TVDatabase.TVBusinessLayer.RecordingManagement.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
 
       foreach (Recording recorded in recordedTvShows)
       {
-        if (recorded.FileName.ToUpperInvariant()[0] != drive.ToUpperInvariant()[0])
+        if (recorded.fileName.ToUpperInvariant()[0] != drive.ToUpperInvariant()[0])
+        {
           continue;
+        }
 
         bool add = true;
         foreach (RecordingFileInfo fi in recordings)
         {
-          if (String.Compare(fi.filename, recorded.FileName, true) == 0)
+          if (String.Compare(fi.filename, recorded.fileName, true) == 0)
           {
             add = false;
           }
@@ -160,16 +162,16 @@ namespace TvService
         {
           try
           {
-            FileInfo info = new FileInfo(recorded.FileName);
+            FileInfo info = new FileInfo(recorded.fileName);
             RecordingFileInfo fi = new RecordingFileInfo();
             fi.info = info;
-            fi.filename = recorded.FileName;
+            fi.filename = recorded.fileName;
             fi.record = recorded;
             recordings.Add(fi);
           }
           catch (Exception e)
           {
-            Log.Error("DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
+            Log.Error("DiskManagement: Exception at building FileInfo ({0})", recorded.fileName);
             Log.Write(e);
           }
         }
@@ -201,13 +203,13 @@ namespace TvService
       while (OutOfDiskSpace(drive) && recordings.Count > 0)
       {
         RecordingFileInfo fi = recordings[0];
-        if (fi.record.KeepUntil == (int)KeepMethodType.UntilSpaceNeeded)
+        if (fi.record.keepUntil == (int)KeepMethodType.UntilSpaceNeeded)
         {
           // Delete the file from disk and the recording entry from the database.          
-          bool result = RecordingFileHandler.DeleteRecordingOnDisk(fi.record.FileName);
+          bool result = RecordingFileHandler.DeleteRecordingOnDisk(fi.record.fileName);
           if (result)
           {
-            fi.record.Delete();
+            TVDatabase.TVBusinessLayer.RecordingManagement.DeleteRecording(fi.record.idRecording);            
           }
         }
         recordings.RemoveAt(0);

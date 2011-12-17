@@ -19,18 +19,18 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Helper;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.Analog
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 {
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
@@ -160,21 +160,21 @@ namespace TvLibrary.Implementations.Analog
         waitLength = DateTime.Now - dtStartWait;
         if (!pmtFound)
         {
-          Log.Log.Debug("HDPVR: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
+          Log.Debug("HDPVR: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
           if (pid == 0)
           {
-            Log.Log.Debug("Giving up waiting for PMT. You might need to increase the PMT timeout value.");
+            Log.Debug("Giving up waiting for PMT. You might need to increase the PMT timeout value.");
             return false;
           }
           else
           {
-            Log.Log.Debug("Setting pid to 0 to search for new PMT.");
+            Log.Debug("Setting pid to 0 to search for new PMT.");
             pid = 0;
           }
         }
       }
 
-      Log.Log.Debug("HDPVR: found PMT after {0} seconds", waitLength.TotalSeconds);
+      Log.Debug("HDPVR: found PMT after {0} seconds", waitLength.TotalSeconds);
       return HandlePmt();
     }
 
@@ -198,7 +198,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     public override int OnPMTReceived(int pmtPid)
     {
-      Log.Log.WriteFile("HDPVR: OnPMTReceived() subch:{0} pid 0x{1:X}", _subChannelId, pmtPid);
+      Log.WriteFile("HDPVR: OnPMTReceived() subch:{0} pid 0x{1:X}", _subChannelId, pmtPid);
       _pmtPid = pmtPid;
       if (_eventPMT != null)
       {
@@ -228,7 +228,7 @@ namespace TvLibrary.Implementations.Analog
         Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
         int version = ((_pmtData[5] >> 1) & 0x1F);
         int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
-        Log.Log.Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
+        Log.Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
         if (pmtProgramNumber != SERVICE_ID)
         {
           throw new TvException("HDPVRChannel: PMT program number doesn't match expected service ID");

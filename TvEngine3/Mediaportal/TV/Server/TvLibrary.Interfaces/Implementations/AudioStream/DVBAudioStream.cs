@@ -19,9 +19,9 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream
 {
   /// <summary>
   /// class which holds the audio stream details for a DVB channel

@@ -19,22 +19,31 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// class holding all tuning details for ATSC
   /// </summary>
+  [DataContract]
   [Serializable]
   public class ATSCChannel : DVBBaseChannel
   {
     #region variables
 
+    [DataMember]
     private int _physicalChannel;
+
+    [DataMember]
     private int _majorChannel;
+
+    [DataMember]
     private int _minorChannel;
+
+    [DataMember]
     private ModulationType _modulation = ModulationType.ModNotSet;
 
     #endregion

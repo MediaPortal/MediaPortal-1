@@ -23,7 +23,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 
-namespace TvLibrary.Interfaces.Analyzer
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
   /// WinTV_CI_Wrapper class

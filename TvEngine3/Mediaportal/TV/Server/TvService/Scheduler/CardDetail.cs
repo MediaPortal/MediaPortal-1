@@ -19,10 +19,10 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.Scheduler
 {
   /// <summary>
   /// Class which can be used to sort Cards bases on priority
@@ -32,7 +32,7 @@ namespace TvService
     private readonly int _cardId;
     private readonly Card _card;
     private readonly IChannel _detail;
-    private int _priority;
+    private readonly int _priority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
 
@@ -43,13 +43,14 @@ namespace TvService
     /// <param name="card">card dataaccess object</param>
     /// <param name="detail">tuning detail</param>
     /// <param name="sameTransponder">indicates whether it is the same transponder</param>
+    /// <param name="numberOfOtherUsers"></param>
     public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers)
     {
       _sameTransponder = sameTransponder;
       _cardId = id;
       _card = card;
       _detail = detail;
-      _priority = _card.Priority;
+      _priority = _card.priority;
       _numberOfOtherUsers = numberOfOtherUsers;
     }
 
@@ -92,6 +93,7 @@ namespace TvService
     public bool SameTransponder
     {
       get { return _sameTransponder; }
+      set { _sameTransponder = value; }
     }
 
     /// <summary>
@@ -100,6 +102,7 @@ namespace TvService
     public int NumberOfOtherUsers
     {
       get { return _numberOfOtherUsers; }
+      set { _numberOfOtherUsers = value; }
     }
 
     #region IComparable<CardInfo> Members
@@ -112,21 +115,33 @@ namespace TvService
         if (!SameTransponder && (NumberOfOtherUsers != other.NumberOfOtherUsers))
         {
           if (NumberOfOtherUsers > other.NumberOfOtherUsers)
+          {
             return 1;
+          }
           if (NumberOfOtherUsers < other.NumberOfOtherUsers)
+          {
             return -1;
+          }
           return 0;
         }
 
         if (Priority > other.Priority)
+        {
           return -1;
+        }
         if (Priority < other.Priority)
+        {
           return 1;
+        }
+        {
         return 0;
+      }
       }
 
       if (SameTransponder)
+      {
         return -1;
+      }
       return 1;
     }
 

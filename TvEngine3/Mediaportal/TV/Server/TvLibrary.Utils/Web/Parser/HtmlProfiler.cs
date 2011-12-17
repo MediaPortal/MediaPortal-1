@@ -20,8 +20,9 @@
 
 using System;
 using System.Text.RegularExpressions;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.html;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser
 {
   /// <summary>
   /// Builds a profiles of HTML source for paring

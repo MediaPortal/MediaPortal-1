@@ -22,9 +22,13 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Channels;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.ProfRed
 {
   /// <summary>
   /// Handles the DiSEqC interface for ProfRed DVB-S/S2 devices
@@ -64,7 +68,7 @@ namespace TvLibrary.Implementations.DVB
                                       out supported);
           if (((supported & KSPropertySupport.Get) != 0) && ((supported & KSPropertySupport.Set) == 0))
           {
-            Log.Log.Info("ProfRed BDA: DVB-S card found!");
+            Log.Info("ProfRed BDA: DVB-S card found!");
             _isProfRed = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
           }
@@ -102,14 +106,14 @@ namespace TvLibrary.Implementations.DVB
             _previousChannel.InnerFecRate == channel.InnerFecRate)
         {
           _previousChannel = channel;
-          Log.Log.WriteFile("ProfRed: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
+          Log.WriteFile("ProfRed: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
                             channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
         if (_previousChannel.DisEqc == DisEqcType.None && channel.DisEqc == DisEqcType.None)
         {
           _previousChannel = channel;
-          Log.Log.WriteFile("ProfRed: already no diseqc used",
+          Log.WriteFile("ProfRed: already no diseqc used",
                             channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
@@ -117,7 +121,7 @@ namespace TvLibrary.Implementations.DVB
       if (_previousChannel == null && channel.DisEqc == DisEqcType.None)
       {
         _previousChannel = channel;
-        Log.Log.WriteFile("ProfRed: diseqc isn't used - skip it",
+        Log.WriteFile("ProfRed: diseqc isn't used - skip it",
                           channel.DisEqc, channel.Frequency, channel.Polarisation);
         return;
       }
@@ -181,12 +185,12 @@ namespace TvLibrary.Implementations.DVB
       txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, 151)); //send_message_length
       for (int i = 164; i < 188; i += 4)
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.WriteFile("ProfRed: SendDiseq: {0}", txt);
+      Log.WriteFile("ProfRed: SendDiseq: {0}", txt);
 
       int retval; //out value
       int hr = _propertySet.Get(_bdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len, out retval);
-      Log.Log.Info("ProfRed: setdiseqc returned:{0:X}", hr);
+      Log.Info("ProfRed: setdiseqc returned:{0:X}", hr);
     }
 
     #region IDiSEqCController Members
@@ -210,7 +214,7 @@ namespace TvLibrary.Implementations.DVB
       int retval; //out value
       int hr = _propertySet.Get(_bdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len, out retval);
-      Log.Log.Info("ProfRed: setdiseqc returned:{0:X}", hr);
+      Log.Info("ProfRed: setdiseqc returned:{0:X}", hr);
       return (hr == 0);
     }
 
@@ -226,13 +230,36 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
+        
+
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+    }
+
 
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
+    /// </summary>    
     public void Dispose()
     {
-      Marshal.FreeCoTaskMem(_ptrDiseqc);
+      Dispose(true);
+      GC.SuppressFinalize(this);
     }
+
+    ~ProfRed()
+    {
+      Dispose(false);
+    }
+
+    #endregion
   }
 }

@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC
 {
   /// <summary>
   /// interface definition for diseqc devices

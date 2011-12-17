@@ -19,13 +19,10 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 
-namespace MediaPortal.UserInterface.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Summary description for MPTabControl.

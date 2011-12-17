@@ -22,9 +22,10 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-
-namespace TvLibrary.Implementations.Analog
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
 {
   ///<summary>
   /// Hauppauge quality control
@@ -135,11 +136,11 @@ namespace TvLibrary.Implementations.Analog
         string card = Encoding.Unicode.GetString(encodedstring);
 
         hr = new HResult(_Init(filter, card));
-        Log.Log.WriteFile("Hauppauge Quality Control Initializing " + hr.ToDXString());
+        Log.WriteFile("Hauppauge Quality Control Initializing " + hr.ToDXString());
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Init failed " + ex.Message);
+        Log.WriteFile("Hauppauge Init failed " + ex.Message);
       }
     }
 
@@ -161,7 +162,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge SetDNR failed " + ex.Message);
+        Log.WriteFile("Hauppauge SetDNR failed " + ex.Message);
       }
       return false;
     }
@@ -185,7 +186,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Error GetBitrate " + ex.Message);
+        Log.WriteFile("Hauppauge Error GetBitrate " + ex.Message);
       }
 
       return true;
@@ -203,14 +204,14 @@ namespace TvLibrary.Implementations.Analog
           if (_IsHauppauge())
           {
             hr.Set(_SetVidBitRate(maxKbps, minKbps, isVBR));
-            Log.Log.WriteFile("Hauppauge Set Bit Rate " + hr.ToDXString());
+            Log.WriteFile("Hauppauge Set Bit Rate " + hr.ToDXString());
             return true;
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Set Vid Rate " + ex.Message);
+        Log.WriteFile("Hauppauge Set Vid Rate " + ex.Message);
       }
       return false;
     }
@@ -234,7 +235,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Get Audio Bitrate " + ex.Message);
+        Log.WriteFile("Hauppauge Get Audio Bitrate " + ex.Message);
       }
       return false;
     }
@@ -257,7 +258,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Set Audio Bit Rate " + ex.Message);
+        Log.WriteFile("Hauppauge Set Audio Bit Rate " + ex.Message);
       }
       return false;
     }
@@ -281,7 +282,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Get Stream " + ex.Message);
+        Log.WriteFile("Hauppauge Get Stream " + ex.Message);
       }
       return false;
     }
@@ -304,7 +305,7 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Hauppauge Set Stream Type " + ex.Message);
+        Log.WriteFile("Hauppauge Set Stream Type " + ex.Message);
       }
       return false;
     }
@@ -344,8 +345,8 @@ namespace TvLibrary.Implementations.Analog
         }
         catch (Exception ex)
         {
-          Log.Log.WriteFile("Hauppauge exception " + ex.Message);
-          Log.Log.WriteFile("Hauppauge Disposed hcw.txt");
+          Log.WriteFile("Hauppauge exception " + ex.Message);
+          Log.WriteFile("Hauppauge Disposed hcw.txt");
         }
       }
       disposed = true;

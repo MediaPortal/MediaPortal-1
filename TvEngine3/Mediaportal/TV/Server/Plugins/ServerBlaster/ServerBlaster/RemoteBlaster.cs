@@ -23,9 +23,11 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections;
-using TvLibrary.Log; //Logging
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TVEngine.Devices
+//Logging
+
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster
 {
 
   #region Delegates

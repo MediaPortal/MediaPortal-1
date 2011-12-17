@@ -22,16 +22,23 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// </summary>
@@ -77,7 +84,7 @@ namespace TvPlugin
     private SortMethod currentSortMethod = SortMethod.Name;
     private SortMethod chosenSortMethod = SortMethod.Auto;
     private bool sortAscending = true;
-    private IList<Schedule> listRecordings;
+    private IList<ScheduleBLL> listRecordings;
 
     private SearchMode currentSearchMode = SearchMode.Title;
     private int currentLevel = 0;
@@ -172,7 +179,7 @@ namespace TvPlugin
       TVHome.WaitForGentleConnection();
 
       base.OnPageLoad();
-      listRecordings = Schedule.ListAll();
+      LoadSchedules();
 
       if (btnShow != null) btnShow.RestoreSelection = false;
       if (btnEpisode != null) btnEpisode.RestoreSelection = false;
@@ -195,6 +202,16 @@ namespace TvPlugin
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
       if (btnSearchByDescription != null) btnSearchByDescription.Disabled = true;
+    }
+
+    private void LoadSchedules()
+    {
+      listRecordings = new List<ScheduleBLL>();
+      foreach (var schedule in ServiceAgents.Instance.ScheduleServiceAgent.ListAllSchedules())
+      {
+        var scheduleBll = new ScheduleBLL(schedule);
+        listRecordings.Add(scheduleBll);
+      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -536,16 +553,14 @@ namespace TvPlugin
       {
         case SearchMode.Genre:
           if (currentLevel == 0)
-          {
-            IList<string> genres;
-            TvBusinessLayer layer = new TvBusinessLayer();
-            genres = layer.GetGenres();
-            foreach (string genre in genres)
+          {            
+            IEnumerable<ProgramCategory> genres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllProgramCategories();
+            foreach (ProgramCategory genre in genres)
             {
               GUIListItem item = new GUIListItem();
               item.IsFolder = true;
-              item.Label = genre;
-              item.Path = genre;
+              item.Label = genre.category;
+              item.Path = genre.category;
               item.ItemId = currentItemId;
               currentItemId++;
               Utils.SetDefaultIcons(item);
@@ -563,25 +578,25 @@ namespace TvPlugin
             item.Label2 = String.Empty;
             item.Path = String.Empty;
             Utils.SetDefaultIcons(item);
-            //item.IconImage = "defaultFolderBig.png";
-            //item.IconImageBig = "defaultFolderBig.png";
             listView.Add(item);
             titleView.Add(item);
 
-            IList<Program> titles;
-            TvBusinessLayer layer = new TvBusinessLayer();
-            titles = layer.SearchProgramsPerGenre(currentGenre, filterShow,ChannelType.Tv);
+            IEnumerable<Program> titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndCategoryAndMediaType(currentGenre, filterShow,
+                                                                                      MediaTypeEnum.TV,
+                                                                                      StringComparisonEnum.StartsWith,
+                                                                                      StringComparisonEnum.StartsWith);   
+
             foreach (Program program in titles)
             {
               //dont show programs which have ended
-              if (program.EndTime < DateTime.Now)
+              if (program.endTime < DateTime.Now)
               {
                 continue;
               }
               bool add = true;
               foreach (Program prog in programs)
               {
-                if (prog.Title == program.Title)
+                if (prog.title == program.title)
                 {
                   add = false;
                 }
@@ -597,29 +612,29 @@ namespace TvPlugin
 
               if (filterShow != String.Empty)
               {
-                if (program.Title == filterShow)
+                if (program.title == filterShow)
                 {
                   episodes.Add(program);
                 }
               }
 
-              if (filterShow != String.Empty && program.Title != filterShow)
+              if (filterShow != String.Empty && program.title != filterShow)
               {
                 continue;
               }
 
               string strTime = String.Format("{0} {1}",
-                                             Utils.GetShortDayString(program.StartTime),
-                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             Utils.GetShortDayString(program.startTime),
+                                             program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               if (filterEpisode != String.Empty && strTime != filterEpisode)
               {
                 continue;
               }
 
               strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.StartTime),
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                      Utils.GetShortDayString(program.startTime),
+                                      program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                      program.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               item = new GUIListItem();
               
@@ -627,7 +642,7 @@ namespace TvPlugin
               if (filterShow == String.Empty)
               {
                   //not searching for episode data so show just title
-                  item.Label = program.Title;
+                  item.Label = program.title;
                   item.Label2 = String.Empty;
                   item.IsFolder = true;
               }
@@ -638,7 +653,7 @@ namespace TvPlugin
                   item.Label2 = strTime;
                   item.IsFolder = false;
               }
-              item.Path = program.Title;
+              item.Path = program.title;
               item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
@@ -677,29 +692,29 @@ namespace TvPlugin
               listView.Add(item);
               titleView.Add(item);
             }
-            IList<Program> titles = new List<Program>();
-            TvBusinessLayer layer = new TvBusinessLayer();
+            IEnumerable<Program> titles = new List<Program>();
+            StringComparisonEnum stringComparison = StringComparisonEnum.StartsWith;
+            stringComparison |= StringComparisonEnum.EndsWith;
             if (filterLetter == "#")
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]", ChannelType.Tv);
-                //titles = layer.SearchPrograms("");
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType("[^a-z]", MediaTypeEnum.TV, stringComparison);                
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterShow, MediaTypeEnum.TV, stringComparison);                                
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms(filterLetter, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterLetter, MediaTypeEnum.TV, StringComparisonEnum.StartsWith);                                                
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByTitleAndMediaType(filterShow, MediaTypeEnum.TV, stringComparison);                                                                
               }
             }
             foreach (Program program in titles)
@@ -709,7 +724,7 @@ namespace TvPlugin
                 bool add = true;
                 foreach (Program prog in programs)
                 {
-                  if (prog.Title == program.Title)
+                  if (prog.title == program.title)
                   {
                     add = false;
                   }
@@ -725,7 +740,7 @@ namespace TvPlugin
 
                 if (filterShow != String.Empty)
                 {
-                  if (program.Title == filterShow)
+                  if (program.title == filterShow)
                   {
                     episodes.Add(program);
                   }
@@ -736,7 +751,7 @@ namespace TvPlugin
                 bool add = true;
                 foreach (Program prog in programs)
                 {
-                  if (prog.Title == program.Title)
+                  if (prog.title == program.title)
                   {
                     add = false;
                   }
@@ -752,21 +767,21 @@ namespace TvPlugin
 
                 if (filterShow != String.Empty)
                 {
-                  if (program.Title == filterShow)
+                  if (program.title == filterShow)
                   {
                     episodes.Add(program);
                   }
                 }
               }
-              if (filterShow != String.Empty && program.Title != filterShow)
+              if (filterShow != String.Empty && program.title != filterShow)
               {
                 continue;
               }
 
               string strTime = String.Format("{0} {1} - {2}",
-                                             Utils.GetShortDayString(program.StartTime),
-                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                             program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             Utils.GetShortDayString(program.startTime),
+                                             program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                             program.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               GUIListItem item = new GUIListItem();
               
@@ -775,7 +790,7 @@ namespace TvPlugin
               if (filterShow == String.Empty)
               {
                   //not searching for episode data so show just title
-                  item.Label = program.Title;
+                  item.Label = program.title;
                   item.Label2 = String.Empty;
                   item.IsFolder = true;
               }
@@ -785,13 +800,13 @@ namespace TvPlugin
                   item.Label = TVUtil.GetDisplayTitle(program);
                   item.IsFolder = false;
                   //moved this if statement but can not see it is doing anything?
-                  //if (program.StartTime > DateTime.MinValue)
+                  //if (program.startTime > DateTime.MinValue)
                   //{
                       item.Label2 = strTime;
                   //}
               }
 
-              item.Path = program.Title;
+              item.Path = program.title;
               item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
@@ -817,36 +832,32 @@ namespace TvPlugin
           break;
         case SearchMode.Description:
           {
-            IList<Program> titles = new List<Program>();
-            long start = Utils.datetolong(DateTime.Now);
-            long end = Utils.datetolong(DateTime.Now.AddMonths(1));
-            TvBusinessLayer layer = new TvBusinessLayer();
-
+            IEnumerable<Program> titles = new List<Program>();            
             if (filterLetter == "#")
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription("", ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType("", MediaTypeEnum.TV, StringComparisonEnum.StartsWith);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType(filterShow, MediaTypeEnum.TV, StringComparisonEnum.StartsWith); 
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription(filterLetter, ChannelType.Tv);
+                ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType(filterLetter, MediaTypeEnum.TV, StringComparisonEnum.StartsWith);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
+                titles = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByDescriptionAndMediaType(filterShow, MediaTypeEnum.TV, StringComparisonEnum.StartsWith);
               }
             }
             foreach (Program program in titles)
             {
-              if (program.Description.Length == 0)
+              if (program.description.Length == 0)
               {
                 continue;
               }
@@ -856,30 +867,30 @@ namespace TvPlugin
                 
                 if (filterShow != String.Empty)
                 {
-                  if (program.Title == filterShow)
+                  if (program.title == filterShow)
                   {
                     episodes.Add(program);
                   }
                 }
               }
 
-              if (filterShow != String.Empty && program.Title != filterShow)
+              if (filterShow != String.Empty && program.title != filterShow)
               {
                 continue;
               }
 
               string strTime = String.Format("{0} {1}",
-                                             Utils.GetShortDayString(program.StartTime),
-                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             Utils.GetShortDayString(program.startTime),
+                                             program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               if (filterEpisode != String.Empty && strTime != filterEpisode)
               {
                 continue;
               }
 
               strTime = String.Format("{0} {1} - {2}",
-                                      Utils.GetShortDayString(program.StartTime),
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                      program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                      Utils.GetShortDayString(program.startTime),
+                                      program.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                      program.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
@@ -887,7 +898,7 @@ namespace TvPlugin
               item.Label2 = strTime;
               
 
-              item.Path = program.Title;
+              item.Path = program.title;
               item.TVTag = program;
               item.ItemId = currentItemId;
               currentItemId++;
@@ -928,8 +939,8 @@ namespace TvPlugin
       {
         foreach (Program prog in programs)
         {
-          btnShow.Add(prog.Title.ToString());
-          if (filterShow == prog.Title)
+          btnShow.Add(prog.title.ToString());
+          if (filterShow == prog.title)
           {
             selItem = count;
           }
@@ -947,8 +958,8 @@ namespace TvPlugin
         foreach (Program prog in episodes)
         {
           string strTime = String.Format("{0} {1}",
-                                         Utils.GetShortDayString(prog.StartTime),
-                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                         Utils.GetShortDayString(prog.startTime),
+                                         prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           btnEpisode.Add(strTime.ToString());
           if (filterEpisode == strTime)
           {
@@ -1097,7 +1108,7 @@ namespace TvPlugin
               }
               else
               {
-                filterShow = program.Title;
+                filterShow = program.title;
               }
               Update();
             }
@@ -1128,7 +1139,7 @@ namespace TvPlugin
             Program program = item.TVTag as Program;
             if (filterShow == String.Empty)
             {
-              filterShow = program.Title;
+              filterShow = program.title;
               Update();
               return;
             }
@@ -1140,7 +1151,7 @@ namespace TvPlugin
             Program program = item.TVTag as Program;
             /*if (filterShow == String.Empty)
             {
-              filterShow = program.Title;
+              filterShow = program.title;
               Update();
               return;
             }*/
@@ -1156,12 +1167,12 @@ namespace TvPlugin
 
       if (filterShow == String.Empty)
       {
-        strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
+        strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.title);
       }
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))             
       {
-        Channel channel = channelMap[prog.IdChannel];
-        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
+        Channel channel = channelMap[prog.idChannel];
+        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.displayName);
       }
       
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo)) 
@@ -1176,7 +1187,7 @@ namespace TvPlugin
 
     private void OnRecord(Program program)
     {
-      TvServer server = new TvServer();
+      
       if (program == null)
       {
         return;
@@ -1206,64 +1217,63 @@ namespace TvPlugin
         {
           return;
         }
-        Schedule rec = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
+        Schedule rec = ScheduleFactory.CreateSchedule(program.idChannel, program.title, program.startTime, program.endTime);
 
-        TvBusinessLayer layer = new TvBusinessLayer();
-        rec.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
-        rec.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
+        rec.preRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("preRecordInterval", "5").value);
+        rec.postRecordInterval = Int32.Parse(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("postRecordInterval", "5").value);
         switch (dlg.SelectedLabel)
         {
           case 0: //none
-            foreach (Schedule rec1 in listRecordings)
+            foreach (ScheduleBLL rec1 in listRecordings)
             {
               if (rec1.IsRecordingProgram(program, true))
               {
-                if (rec1.ScheduleType != (int)ScheduleRecordingType.Once)
+                if (rec1.Entity.scheduleType != (int)ScheduleRecordingType.Once)
                 {
                   //delete specific series
-                  Schedule sched = Schedule.Retrieve(rec1.IdSchedule);
-                  TVUtil.DeleteRecAndSchedWithPrompt(sched, program.IdChannel);
+                  Schedule sched = ServiceAgents.Instance.ScheduleServiceAgent.GetSchedule(rec1.Entity.id_Schedule);
+                  TVUtil.DeleteRecAndSchedWithPrompt(sched);
                 }
                 else
                 {
                   //cancel recording                                    
-                  server.StopRecordingSchedule(rec1.IdSchedule);
-                  rec1.Delete();
-                  server.OnNewSchedule();
+                  ServiceAgents.Instance.ControllerServiceAgent.StopRecordingSchedule(rec1.Entity.id_Schedule);                  
+                  ServiceAgents.Instance.ScheduleServiceAgent.DeleteSchedule(rec1.Entity.id_Schedule);
+                  ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
                 }
               }
             }
-            listRecordings = Schedule.ListAll();
+            LoadSchedules();
             Update();
             return;
           case 1: //once
-            rec.ScheduleType = (int)ScheduleRecordingType.Once;
+            rec.scheduleType = (int)ScheduleRecordingType.Once;
             break;
           case 2: //everytime, this channel
-            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
+            rec.scheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
             break;
           case 3: //everytime, all channels
-            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
+            rec.scheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
             break;
           case 4: //weekly
-            rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
+            rec.scheduleType = (int)ScheduleRecordingType.Weekly;
             break;
           case 5: //daily
-            rec.ScheduleType = (int)ScheduleRecordingType.Daily;
+            rec.scheduleType = (int)ScheduleRecordingType.Daily;
             break;
           case 6: //WorkingDays
-            rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
+            rec.scheduleType = (int)ScheduleRecordingType.WorkingDays;
             break;
           case 7: //Weekends
-            rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+            rec.scheduleType = (int)ScheduleRecordingType.Weekends;
             break;
           case 8://Weekly everytime, this channel
-            rec.ScheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
+            rec.scheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             break;
-        }
-        rec.Persist();
-        server.OnNewSchedule();
-        listRecordings = Schedule.ListAll();
+        }        
+        ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(rec);
+        ServiceAgents.Instance.ControllerServiceAgent.OnNewSchedule();
+        LoadSchedules();
         Update();
       }
     }
@@ -1272,11 +1282,11 @@ namespace TvPlugin
     {
       bool isRecording = false;
       isSerie = false;
-      foreach (Schedule record in listRecordings)
+      foreach (ScheduleBLL record in listRecordings)
       {
         if (record.IsRecordingProgram(program, true))
         {
-          if (record.ScheduleType != (int)ScheduleRecordingType.Once)
+          if (record.Entity.scheduleType != (int)ScheduleRecordingType.Once)
           {
             isSerie = true;
           }
@@ -1305,7 +1315,7 @@ namespace TvPlugin
     {
       // have commented out setting lblProgramTitle.Label
       // this is because this label was never actually set in 
-      // previous versions of code (Skins are using #TV.Search.Title)
+      // previous versions of code (Skins are using #TV.Search.title)
       // also there is a bug with FadeLabels being set to String.Empty
       // which leads to this label not being updated when it should be
       GUIListItem item = GetSelectedItem();
@@ -1335,37 +1345,37 @@ namespace TvPlugin
         else
         {
           // see comment at top of method
-          //lblProgramTitle.Label = prog.Title;
-          lblProgramGenre.Label = prog.Genre;
-          GUIPropertyManager.SetProperty("#TV.Search.Title", prog.Title);
-          GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
+          //lblProgramTitle.Label = prog.title;
+          lblProgramGenre.Label = TVUtil.GetCategory(prog.ProgramCategory);
+          GUIPropertyManager.SetProperty("#TV.Search.Title", prog.title);
+          GUIPropertyManager.SetProperty("#TV.Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
         }
         return;
       }
       
       string strTime = String.Format("{0} {1} - {2}",
-                                     Utils.GetShortDayString(prog.StartTime),
-                                     prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                     prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                     Utils.GetShortDayString(prog.startTime),
+                                     prog.startTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                     prog.endTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       
       GUIPropertyManager.SetProperty("#TV.Search.Title", TVUtil.GetDisplayTitle(prog));      
       GUIPropertyManager.SetProperty("#TV.Search.Time", strTime);
-      GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
-      GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
-      GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.ReferencedChannel().DisplayName);
+      GUIPropertyManager.SetProperty("#TV.Search.Description", prog.description);
+      GUIPropertyManager.SetProperty("#TV.Search.Genre", TVUtil.GetCategory(prog.ProgramCategory));
+      GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.Channel.displayName);
 
       // see comment at top of method
       //lblProgramTitle.Label = TVUtil.GetDisplayTitle(prog);
       lblProgramTime.Label = strTime;
-      lblProgramDescription.Label = prog.Description;
-      lblProgramGenre.Label = prog.Genre;
+      lblProgramDescription.Label = prog.description;
+      lblProgramGenre.Label = TVUtil.GetCategory(prog.ProgramCategory);
 
       if (lblChannel != null)
       {
-        lblChannel.Label = prog.ReferencedChannel().DisplayName;
+        lblChannel.Label = prog.Channel.displayName;
       }
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.Channel.displayName);
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         strLogo = "defaultVideoBig.png";
@@ -1413,13 +1423,8 @@ namespace TvPlugin
 
     private static Dictionary<int, Channel> GetChannelMap()
     {
-      Dictionary<int, Channel>  channelMap = new Dictionary<int, Channel>();
-      IList<Channel> channels = Channel.ListAll();
-      foreach (Channel channel in channels)
-      {
-        channelMap.Add(channel.IdChannel, channel);
-      }
-      return channelMap;
+      IEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+      return channels.ToDictionary(channel => channel.idChannel);
     }
 
     private class Comparer : IComparer<GUIListItem>
@@ -1480,15 +1485,15 @@ namespace TvPlugin
           case SortMethod.Channel:
             if (prog1 != null && prog2 != null)
             {
-              Channel ch1 = channelMap[prog1.IdChannel];
-              Channel ch2 = channelMap[prog2.IdChannel];
+              Channel ch1 = channelMap[prog1.idChannel];
+              Channel ch2 = channelMap[prog2.idChannel];
               if (sortAscending)
               {
-                iComp = String.Compare(ch1.DisplayName, ch2.DisplayName, true);
+                iComp = String.Compare(ch1.displayName, ch2.displayName, true);
               }
               else
               {
-                iComp = String.Compare(ch2.DisplayName, ch1.DisplayName, true);
+                iComp = String.Compare(ch2.displayName, ch1.displayName, true);
               }
               return iComp;
             }
@@ -1499,11 +1504,11 @@ namespace TvPlugin
             {
               if (sortAscending)
               {
-                iComp = prog1.StartTime.CompareTo(prog2.StartTime);
+                iComp = prog1.startTime.CompareTo(prog2.startTime);
               }
               else
               {
-                iComp = prog2.StartTime.CompareTo(prog1.StartTime);
+                iComp = prog2.startTime.CompareTo(prog1.startTime);
               }
               return iComp;
             }

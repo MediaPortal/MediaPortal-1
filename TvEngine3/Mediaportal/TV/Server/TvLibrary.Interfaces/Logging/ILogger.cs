@@ -20,7 +20,7 @@
 
 using System;
 
-namespace TvLibrary.Log
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 {
   /// <summary>
   /// Interface for all logger implementations.

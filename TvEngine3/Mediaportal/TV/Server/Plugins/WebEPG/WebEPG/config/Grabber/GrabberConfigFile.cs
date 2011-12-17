@@ -21,7 +21,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace MediaPortal.WebEPG.Config.Grabber
+namespace WebEPG.config.Grabber
 {
   /// <summary>
   /// The Grabber Config information.

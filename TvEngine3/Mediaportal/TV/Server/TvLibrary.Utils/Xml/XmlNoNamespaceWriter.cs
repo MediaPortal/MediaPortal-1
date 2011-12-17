@@ -21,7 +21,7 @@
 using System.IO;
 using System.Xml;
 
-namespace MediaPortal.Utils.Xml
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Xml
 {
   /// <summary>
   /// Xml Writer that doesn't write the Namespace attributes when they are standard.

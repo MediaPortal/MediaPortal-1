@@ -20,7 +20,7 @@
 
 using System;
 
-namespace api
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Simmetrics
 {
   /// <summary>
   /// String metric interface

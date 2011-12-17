@@ -1,4 +1,6 @@
-﻿namespace SetupTv.Dialogs
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   partial class FormSelectListChannel
   {
@@ -30,8 +32,8 @@
     {
       this.listViewChannels = new System.Windows.Forms.ListView();
       this.checkBoxGuideChannels = new System.Windows.Forms.CheckBox();
-      this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonCancel = new MPButton();
+      this.mpButtonOk = new MPButton();
       this.SuspendLayout();
       // 
       // listViewChannels
@@ -108,8 +110,8 @@
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonOk;
+    private MPButton mpButtonCancel;
+    private MPButton mpButtonOk;
     private System.Windows.Forms.ListView listViewChannels;
     private System.Windows.Forms.CheckBox checkBoxGuideChannels;
   }

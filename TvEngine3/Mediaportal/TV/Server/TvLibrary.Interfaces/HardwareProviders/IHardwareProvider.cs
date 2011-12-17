@@ -19,15 +19,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using DirectShowLib;
-using TvLibrary.Channels;
-using TvLibrary.Implementations;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Hardware
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.HardwareProviders
 {
   /// <summary>
   /// Capabilities definitions; Bitwise combinations allowed

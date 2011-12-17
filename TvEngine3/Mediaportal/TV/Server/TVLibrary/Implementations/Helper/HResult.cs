@@ -22,7 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 
-namespace TvLibrary
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
   ///  This class handles HResult codes returned by com class

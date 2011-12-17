@@ -21,16 +21,14 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
-using TvEngine.PowerScheduler.Interfaces;
-using TvDatabase;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Handlers
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers
 {
   /// <summary>
   /// Generic IWakeupHandler implementation, can be reused or inherited
@@ -66,8 +64,8 @@ namespace TvEngine.PowerScheduler.Handlers
     [MethodImpl(MethodImplOptions.Synchronized)]
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool remoteSchedulerEnabled = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+      
+      bool remoteSchedulerEnabled = (SettingsManagement.GetSetting("xmlTvRemoteSchedulerEnabled", "false").value == "true");
       if (!remoteSchedulerEnabled)
       {
         return DateTime.MaxValue;
@@ -76,7 +74,7 @@ namespace TvEngine.PowerScheduler.Handlers
       DateTime now = DateTime.Now;
       DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
       string remoteScheduleTimeStr =
-        layer.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
+        SettingsManagement.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).value;
 
       DateTime remoteScheduleTime =
         (DateTime)

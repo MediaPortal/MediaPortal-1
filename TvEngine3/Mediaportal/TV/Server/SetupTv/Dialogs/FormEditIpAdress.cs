@@ -21,9 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvControl;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormEditIpAdress : Form
   {
@@ -37,7 +38,7 @@ namespace SetupTv.Sections
 
     private void FormEditIpAdress_Load(object sender, EventArgs e)
     {
-      List<string> ipAdresses = RemoteControl.Instance.ServerIpAdresses;
+      IEnumerable<string> ipAdresses = ServiceAgents.Instance.ControllerServiceAgent.ServerIpAdresses;
       mpComboBox1.Items.Clear();
       int selected = 0;
       int counter = 0;

@@ -8,14 +8,30 @@
     <ProjectGuid>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TvControl</RootNamespace>
-    <AssemblyName>TvControl</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.TVControl</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.TVControl</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,7 +41,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\TvControl.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Mediaportal.TV.Server.TVControl.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,26 +51,29 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\TvControl.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Mediaportal.TV.Server.TVControl.xml</DocumentationFile>
     <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>bin\Debug\TvControl.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Mediaportal.TV.Server.TVControl.xml</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\TvControl.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Mediaportal.TV.Server.TVControl.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -61,41 +81,87 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Runtime.Remoting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Reference Assemblies\Microsoft\WinFX\v3.0\System.Runtime.Remoting.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
       <Link>OSInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Common-MP-TVE3\OsInfo\OSPrerequisites.cs">
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\OsInfo\OSPrerequisites.cs">
       <Link>OSPrerequisites.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Enums\ChannelState.cs" />
-    <Compile Include="Enums\TvResult.cs" />
-    <Compile Include="Enums\TvStoppedReason.cs" />
-    <Compile Include="Interfaces\IUser.cs" />
+    <Compile Include="Constants\TCPconsts.cs" />
+    <Compile Include="Events\ServerEventEnum.cs" />
+    <Compile Include="Events\TvServerEventArgs.cs" />
+    <Compile Include="Events\TvServerEventArgsTranslator.cs" />
+    <Compile Include="Interfaces\Events\IHeartbeatEventCallback.cs" />
+    <Compile Include="Interfaces\Events\ITvServerEvent.cs" />
+    <Compile Include="Interfaces\Events\IServerEventCallback.cs" />
+    <Compile Include="Interfaces\Events\ITvServerEventCallback.cs" />
+    <Compile Include="Interfaces\Services\ICanceledScheduleService.cs" />
+    <Compile Include="Interfaces\Services\ICardService.cs" />
+    <Compile Include="Interfaces\Services\IChannelGroupService.cs" />
+    <Compile Include="Interfaces\Services\IChannelService.cs" />
+    <Compile Include="Interfaces\Services\IConflictService.cs" />
+    <Compile Include="Interfaces\Services\IControllerService.cs" />
+    <Compile Include="Interfaces\Services\IDiscoverService.cs" />
+    <Compile Include="Interfaces\Services\IEventService.cs" />
+    <Compile Include="Interfaces\Services\IInternalControllerService.cs" />
+    <Compile Include="Interfaces\Services\IProgramCategoriesService.cs" />
+    <Compile Include="Interfaces\Services\IProgramService.cs" />
+    <Compile Include="Interfaces\Services\IRecordingService.cs" />
+    <Compile Include="Interfaces\Services\IScheduleService.cs" />
+    <Compile Include="Interfaces\Services\ISettingService.cs" />
     <Compile Include="RemoteControl.cs" />
-    <Compile Include="TvServer.cs" />
+    <Compile Include="ServiceHelper.cs" />
+    <Compile Include="TCP\PacketProtocol.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="VirtualCard.cs" />
-    <Compile Include="Controller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvService.Interfaces\TvService.Interfaces.csproj">
+      <Project>{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}</Project>
+      <Name>TvService.Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

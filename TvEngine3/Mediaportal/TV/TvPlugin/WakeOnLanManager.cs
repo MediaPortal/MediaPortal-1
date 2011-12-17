@@ -21,17 +21,16 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using Mediaportal.TV.Server.TVControl;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class WakeOnLanManager
   {
@@ -276,7 +275,7 @@ namespace TvPlugin
       // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
       // this will make sure the connection timeout for the remoting framework is increased.
       Log.Debug("WOLMgr: Increasing timeout for RemoteControl");
-      TvControl.RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
+      RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
 
       Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
       if (Ping(wakeupTarget, timeout))

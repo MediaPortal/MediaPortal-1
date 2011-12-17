@@ -22,13 +22,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using System.Threading;
-using SetupControls;
 
-namespace SetupTv.Sections.Helpers
+namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 {
   /// <summary>
   /// Class that handles populating and filtering of a listview with
@@ -43,7 +44,7 @@ namespace SetupTv.Sections.Helpers
     internal Dictionary<int, CardType> _allCards = null; //all available cards
     internal TextBox _currentText = null; //the textbox that contains the text for filtering
     private Thread _fillListViewThread; //the currently active thread
-    private ChannelType _type; //the type of the texbox, currently that's tv or radio
+    private MediaTypeEnum _type; //the type of the texbox, currently that's tv or radio
     private Dictionary<int, ListViewItem> _listViewCache; //A list of allready created listviewitems
 
     /// <summary>
@@ -54,7 +55,7 @@ namespace SetupTv.Sections.Helpers
     /// <param name="allCards"></param>
     /// <param name="textBox"></param>
     internal ChannelListViewHandler(ListView listView, IList<Channel> channels, Dictionary<int, CardType> allCards,
-                                    TextBox textBox, ChannelType type)
+                                    TextBox textBox, MediaTypeEnum type)
     {
       _listView = listView;
       _allChannels = channels;
@@ -124,8 +125,8 @@ namespace SetupTv.Sections.Helpers
 
           Channel ch = _allChannels[i];
 
-          if (ch.DisplayName != null &&
-              (filterText.Equals("") || ContainsCaseInvariant(ch.DisplayName, filterText)))
+          if (ch.displayName != null &&
+              (filterText.Equals("") || ContainsCaseInvariant(ch.displayName, filterText)))
           {
             _listView.Invoke(new MethodInvoker(delegate() { items.Add(CreateListViewItemForChannel(ch, _allCards)); }));
           }
@@ -195,7 +196,7 @@ namespace SetupTv.Sections.Helpers
     /// <returns>Listview item representing the channel</returns>
     internal ListViewItem CreateListViewItemForChannel(Channel ch, Dictionary<int, CardType> cards)
     {
-      if (_listViewCache.ContainsKey(ch.IdChannel)) return _listViewCache[ch.IdChannel];
+      if (_listViewCache.ContainsKey(ch.idChannel)) return _listViewCache[ch.idChannel];
 
       bool analog = false;
       bool dvbc = false;
@@ -212,12 +213,12 @@ namespace SetupTv.Sections.Helpers
       }
       if (notmapped)
       {
-        IList<ChannelMap> maps = ch.ReferringChannelMap();
+        IList<ChannelMap> maps = ch.ChannelMaps;
         foreach (ChannelMap map in maps)
         {
-          if (cards.ContainsKey(map.IdCard))
+          if (cards.ContainsKey(map.idCard))
           {
-            CardType type = cards[map.IdCard];
+            CardType type = cards[map.idCard];
             switch (type)
             {
               case CardType.Analog:
@@ -248,12 +249,17 @@ namespace SetupTv.Sections.Helpers
           }
         }
       }
-      ListViewItem item = new ListViewItem(ch.DisplayName);
-      item.Checked = ch.VisibleInGuide;
+      ListViewItem item = new ListViewItem(ch.displayName);
+      item.Checked = ch.visibleInGuide;
       item.Tag = ch;
 
+      IList<string> groups = new List<string>();
+      foreach (var gm in ch.GroupMaps)
+      {
+        groups.Add((gm.ChannelGroup.groupName));
+      }
 
-      IList<string> groups = ch.GroupNames;
+      
       List<string> groupNames = new List<string>();
       foreach (string groupName in groups)
       {
@@ -268,20 +274,20 @@ namespace SetupTv.Sections.Helpers
       item.SubItems.Add(group);
 
       List<string> providers = new List<string>();
-      IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+      IList<TuningDetail> tuningDetails = ch.TuningDetails;
       bool hasFta = false;
       bool hasScrambled = false;
       foreach (TuningDetail detail in tuningDetails)
       {
-        if (!providers.Contains(detail.Provider) && !String.IsNullOrEmpty(detail.Provider))
+        if (!providers.Contains(detail.provider) && !String.IsNullOrEmpty(detail.provider))
         {
-          providers.Add(detail.Provider);
+          providers.Add(detail.provider);
         }
-        if (detail.FreeToAir)
+        if (detail.freeToAir)
         {
           hasFta = true;
         }
-        if (!detail.FreeToAir)
+        if (!detail.freeToAir)
         {
           hasScrambled = true;
         }
@@ -291,7 +297,7 @@ namespace SetupTv.Sections.Helpers
       item.SubItems.Add(provider);
 
       int imageIndex = 0;
-      if (_type == ChannelType.Tv)
+      if (_type == MediaTypeEnum.TV)
       {
         if (hasFta && hasScrambled)
         {
@@ -306,7 +312,7 @@ namespace SetupTv.Sections.Helpers
           imageIndex = 3;
         }
       }
-      else if (_type == ChannelType.Radio)
+      else if (_type == MediaTypeEnum.Radio)
       {
         if (hasFta && hasScrambled)
         {
@@ -375,7 +381,7 @@ namespace SetupTv.Sections.Helpers
       item.SubItems.Add(builder.ToString());
       item.SubItems.Add(tuningDetails.Count.ToString());
 
-      _listViewCache.Add(ch.IdChannel, item);
+      _listViewCache.Add(ch.idChannel, item);
 
       return item;
     }

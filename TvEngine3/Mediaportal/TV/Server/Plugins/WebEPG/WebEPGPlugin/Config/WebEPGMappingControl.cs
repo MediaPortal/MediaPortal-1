@@ -22,20 +22,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-//using System.Data;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
-using SetupTv.Sections.WebEPGConfig;
-using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
-using MediaPortal.WebEPG.Config;
-using TvLibrary.Log;
-using TvDatabase;
-using Gentle.Framework;
-using System.Globalization;
-using MediaPortal.EPG.config;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace SetupTv.Sections.WebEPGConfig
+using System.Globalization;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using WebEPG.config.WebEPG;
+using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
+//using System.Data;
+
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   public delegate fSelection GetGrabberSelectorCallback();
 
@@ -116,18 +116,18 @@ namespace SetupTv.Sections.WebEPGConfig
         GroupComboBox.Tag = "";
         if (IsTvMapping)
         {
-          IList<ChannelGroup> channelGroups = ChannelGroup.ListAll();
+          IList<ChannelGroup> channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
           foreach (ChannelGroup cg in channelGroups)
           {
-            GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
+            GroupComboBox.Items.Add(new CBChannelGroup(cg.groupName, cg.idGroup));
           }
         }
         else
         {
-          IList<RadioChannelGroup> channelGroups = RadioChannelGroup.ListAll();
-          foreach (RadioChannelGroup cg in channelGroups)
+          IList<ChannelGroup> channelGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
+          foreach (ChannelGroup cg in channelGroups)
           {
-            GroupComboBox.Items.Add(new CBChannelGroup(cg.GroupName, cg.IdGroup));
+            GroupComboBox.Items.Add(new CBChannelGroup(cg.groupName, cg.idGroup));
           }
         }
       }
@@ -231,41 +231,27 @@ namespace SetupTv.Sections.WebEPGConfig
     {
       CBChannelGroup chGroup = (CBChannelGroup)GroupComboBox.SelectedItem;
 
-      IList<Channel> Channels;
+      IList<Channel> channels = new List<Channel>();
+      MediaTypeEnum mediaType = MediaTypeEnum.Radio;
+      if (IsTvMapping)
+      {
+        mediaType = MediaTypeEnum.TV;
+      }
       if (chGroup != null && chGroup.idGroup != -1)
       {
-        SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
-        SqlStatement stmt1 = sb1.GetStatement(true);
-        SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
-                                                      String.Format(
-                                                        "select c.* from Channel c join {0}GroupMap g on c.idChannel=g.idChannel where c.{1} = 1 and g.idGroup = '{2}' order by g.sortOrder",
-                                                        IsTvMapping ? "" : "Radio", IsTvMapping ? "isTv" : "isRadio",
-                                                        chGroup.idGroup), typeof (Channel));
-        Channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
+        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(chGroup.idGroup, mediaType);          
       }
       else
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-        sb.AddOrderByField(true, "sortOrder");
-        if (IsTvMapping)
-        {
-          sb.AddConstraint("isTv = 1");
-        }
-        else
-        {
-          sb.AddConstraint("isRadio = 1");
-        }
-        SqlStatement stmt = sb.GetStatement(true);
-        Channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(mediaType);
       }
 
-      foreach (Channel chan in Channels)
+      foreach (Channel chan in channels)
       {
-        if (!_channelMapping.ContainsKey(chan.DisplayName))
+        if (!_channelMapping.ContainsKey(chan.displayName))
         {
-          ChannelMap channel = new ChannelMap();
-          channel.displayName = chan.DisplayName;
-          _channelMapping.Add(chan.DisplayName, channel);
+          var channel = new ChannelMap {displayName = chan.displayName};
+          _channelMapping.Add(chan.displayName, channel);
         }
       }
     }

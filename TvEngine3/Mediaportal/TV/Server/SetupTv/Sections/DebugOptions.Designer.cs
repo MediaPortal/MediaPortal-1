@@ -1,4 +1,6 @@
-﻿namespace SetupTv.Sections
+﻿using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class DebugOptions
   {
@@ -28,11 +30,11 @@
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpWarningLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpResetGraphCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpUsePatLookupCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpDumpRawTSCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpFormToolTips = new MediaPortal.UserInterface.Controls.MPToolTip();
+      this.mpWarningLabel = new MPLabel();
+      this.mpResetGraphCheckBox = new MPCheckBox();
+      this.mpUsePatLookupCheckBox = new MPCheckBox();
+      this.mpDumpRawTSCheckBox = new MPCheckBox();
+      this.mpFormToolTips = new MPToolTip();
       this.SuspendLayout();
       // 
       // mpWarningLabel
@@ -100,10 +102,10 @@
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPLabel mpWarningLabel;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpResetGraphCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpUsePatLookupCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpDumpRawTSCheckBox;
-    private MediaPortal.UserInterface.Controls.MPToolTip mpFormToolTips;
+    private MPLabel mpWarningLabel;
+    private MPCheckBox mpResetGraphCheckBox;
+    private MPCheckBox mpUsePatLookupCheckBox;
+    private MPCheckBox mpDumpRawTSCheckBox;
+    private MPToolTip mpFormToolTips;
   }
 }

@@ -20,12 +20,12 @@
 
 using System.Runtime.InteropServices;
 using DirectShowLib;
-//using DShowNET.TsFileSink;
-using TvLibrary;
-using TvLibrary.Log;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+//using DShowNET.TsFileSink;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   internal class Player
   {

@@ -22,7 +22,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 
-namespace XPListview
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 {
   internal class XPListViewItemCollectionEditor : System.ComponentModel.Design.CollectionEditor
   {

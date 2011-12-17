@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class Plugins
   {
@@ -37,7 +39,7 @@ namespace SetupTv.Sections
       this.clmnVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelChannelCount = new MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SuspendLayout();
@@ -142,6 +144,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader clmnVersion;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
-		private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+		private MPLabel mpLabelChannelCount;
   }
 }

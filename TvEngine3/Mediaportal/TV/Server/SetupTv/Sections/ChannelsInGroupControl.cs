@@ -20,15 +20,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Windows.Forms;
-using Gentle.Framework;
-using SetupTv.Dialogs;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using MediaPortal.UserInterface.Controls;
-using TvLibrary.Log;
 
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+using Mediaportal.TV.Server.SetupTV.Dialogs;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ChannelsInGroupControl : UserControl
   {
@@ -70,25 +75,17 @@ namespace SetupTv.Sections
         UpdateMenuAndTabs();
 
         listView1.Items.Clear();
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (GroupMap));
+       
 
-        sb.AddConstraint(Operator.Equals, "idGroup", _channelGroup.IdGroup);
-        sb.AddOrderByField(true, "sortOrder");
-
-        SqlStatement stmt = sb.GetStatement(true);
-
-        IList<GroupMap> maps = ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
-
-        foreach (GroupMap map in maps)
+        foreach (GroupMap map in _channelGroup.GroupMaps.OrderBy(c=>c.SortOrder))
         {
-          Channel channel = map.ReferencedChannel();
-          if (!channel.IsTv)
+          Channel channel = map.Channel;
+          if (channel.mediaType == (int)MediaTypeEnum.TV)
           {
-            continue;
+            listView1.Items.Add(CreateItemForChannel(channel, map));
           }
-          listView1.Items.Add(CreateItemForChannel(channel, map));
         }
-        bool isAllChannelsGroup = (_channelGroup.GroupName == TvConstants.TvGroupNames.AllChannels);
+        bool isAllChannelsGroup = (_channelGroup.groupName == TvConstants.TvGroupNames.AllChannels);
         removeChannelFromGroup.Enabled = !isAllChannelsGroup;
         mpButtonDel.Enabled = !isAllChannelsGroup;
       }
@@ -106,14 +103,14 @@ namespace SetupTv.Sections
     {
       bool hasFta = false;
       bool hasScrambled = false;
-      IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
+      IList<TuningDetail> tuningDetails = channel.TuningDetails;
       foreach (TuningDetail detail in tuningDetails)
       {
-        if (detail.FreeToAir)
+        if (detail.freeToAir)
         {
           hasFta = true;
         }
-        if (!detail.FreeToAir)
+        if (!detail.freeToAir)
         {
           hasScrambled = true;
         }
@@ -133,15 +130,15 @@ namespace SetupTv.Sections
         imageIndex = 3;
       }
 
-      ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+      ListViewItem item = new ListViewItem(channel.displayName, imageIndex);
 
-      item.Checked = channel.VisibleInGuide;
+      item.Checked = channel.visibleInGuide;
       item.Tag = map;
 
-      IList<TuningDetail> details = channel.ReferringTuningDetail();
+      IList<TuningDetail> details = channel.TuningDetails;
       if (details.Count > 0)
       {
-        item.SubItems.Add(details[0].ChannelNumber.ToString());
+        item.SubItems.Add(details[0].channelNumber.ToString());
       }
       return item;
     }
@@ -162,7 +159,8 @@ namespace SetupTv.Sections
         if (groupMap.SortOrder != i)
         {
           groupMap.SortOrder = i;
-          groupMap.Persist();
+          groupMap = ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMap(groupMap);
+          groupMap.AcceptChanges();
         }
       }
     }
@@ -174,7 +172,6 @@ namespace SetupTv.Sections
         return;
       }
 
-      TvBusinessLayer layer = new TvBusinessLayer();
       foreach (ListViewItem sourceItem in sourceListView.SelectedItems)
       {
         Channel channel = null;
@@ -184,33 +181,24 @@ namespace SetupTv.Sections
         }
         else if (sourceItem.Tag is GroupMap)
         {
-          channel = layer.GetChannel(((GroupMap)sourceItem.Tag).IdChannel);
+          channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel((((GroupMap)sourceItem.Tag).idChannel));
         }
         else
         {
           continue;
         }
 
-        GroupMap groupMap = null;
+        GroupMap groupMap = MappingHelper.AddChannelToGroup(channel, _channelGroup, MediaTypeEnum.TV);        
 
-        layer.AddChannelToGroup(channel, _channelGroup);
-
-        //get the new group map and set the listitem tag
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (GroupMap));
-
-        sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
-        sb.AddConstraint(Operator.Equals, "idGroup", _channelGroup.IdGroup);
-
-        SqlStatement stmt = sb.GetStatement(true);
-
-        groupMap = ObjectFactory.GetInstance<GroupMap>(stmt.Execute());
-
-        foreach (ListViewItem item in listView1.Items)
+        if (groupMap != null)
         {
-          if ((item.Tag as Channel) == channel)
+          foreach (ListViewItem item in listView1.Items)
           {
-            item.Tag = groupMap;
-            break;
+            if ((item.Tag as Channel) == channel)
+            {
+              item.Tag = groupMap;
+              break;
+            }
           }
         }
       }
@@ -220,11 +208,11 @@ namespace SetupTv.Sections
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
 
-      IList<ChannelGroup> groups = ChannelGroup.ListAll();
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
 
       foreach (ChannelGroup group in groups)
       {
-        ToolStripMenuItem item = new ToolStripMenuItem(group.GroupName);
+        ToolStripMenuItem item = new ToolStripMenuItem(group.groupName);
 
         item.Tag = group;
         item.Click += addToFavoritesToolStripMenuItem_Click;
@@ -243,9 +231,8 @@ namespace SetupTv.Sections
         if (dlg.ShowDialog(this) != DialogResult.OK)
         {
           return;
-        }
-        group = new ChannelGroup(dlg.GroupName, 9999);
-        group.Persist();
+        }        
+        group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(dlg.GroupName);        
         UpdateMenuAndTabs();
       }
       else
@@ -256,13 +243,12 @@ namespace SetupTv.Sections
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
         return;
-      TvBusinessLayer layer = new TvBusinessLayer();
       for (int i = 0; i < indexes.Count; ++i)
       {
         ListViewItem item = listView1.Items[indexes[i]];
         GroupMap map = (GroupMap)item.Tag;
-        Channel channel = map.ReferencedChannel();
-        layer.AddChannelToGroup(channel, group.GroupName);
+        Channel channel = map.Channel;                
+        MappingHelper.AddChannelToGroup(channel, group, MediaTypeEnum.TV);        
       }
     }
 
@@ -300,8 +286,8 @@ namespace SetupTv.Sections
           ListViewItem item = listView1.Items[index];
           listView1.Items.RemoveAt(index);
           GroupMap map = (GroupMap)item.Tag;
-          Channel channel = map.ReferencedChannel();
-          channel.Delete();
+          Channel channel = map.Channel;
+          ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.idChannel);
         }
       }
       dlg.Close();
@@ -321,7 +307,7 @@ namespace SetupTv.Sections
         {
           ListViewItem item = listView1.Items[index];
           GroupMap map = (GroupMap)item.Tag;
-          Channel channel = map.ReferencedChannel();
+          Channel channel = map.Channel;
           FormEditChannel dlg = new FormEditChannel();
           dlg.Channel = channel;
           dlg.ShowDialog();
@@ -340,19 +326,21 @@ namespace SetupTv.Sections
     {
       if (e.Label != null)
       {
-        Channel channel = ((GroupMap)listView1.Items[e.Item].Tag).ReferencedChannel();
-        channel.DisplayName = e.Label;
-        channel.Persist();
+        Channel channel = ((GroupMap)listView1.Items[e.Item].Tag).Channel;
+        channel.displayName = e.Label;
+        channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
+        channel.AcceptChanges();
       }
     }
 
     private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      Channel ch = ((GroupMap)e.Item.Tag).ReferencedChannel();
-      if (ch.VisibleInGuide != e.Item.Checked)
+      Channel ch = ((GroupMap)e.Item.Tag).Channel;
+      if (ch.visibleInGuide != e.Item.Checked)
       {
-        ch.VisibleInGuide = e.Item.Checked;
-        ch.Persist();
+        ch.visibleInGuide = e.Item.Checked;
+        ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
+        ch.AcceptChanges();
       }
     }
 
@@ -364,7 +352,7 @@ namespace SetupTv.Sections
       FormPreview previewWindow = new FormPreview();
 
       GroupMap map = (GroupMap)listView1.Items[indexes[0]].Tag;
-      previewWindow.Channel = map.ReferencedChannel();
+      previewWindow.Channel = map.Channel;
       previewWindow.ShowDialog(this);
     }
 
@@ -442,6 +430,8 @@ namespace SetupTv.Sections
                                       "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
+
+            
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
@@ -450,7 +440,8 @@ namespace SetupTv.Sections
           ListViewItem item = listView1.Items[index];
           listView1.Items.RemoveAt(index);
           GroupMap map = (GroupMap)item.Tag;
-          map.Remove();
+          
+          ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(map.idMap);
         }
       }
       dlg.Close();
@@ -515,18 +506,18 @@ namespace SetupTv.Sections
         switch (lvwColumnSorter.Order)
         {
           case SortOrder.Ascending:
-            buttonSort.Image = global::SetupTv.Properties.Resources.icon_sort_asc;
+            buttonSort.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_asc;
             break;
           case SortOrder.Descending:
-            buttonSort.Image = global::SetupTv.Properties.Resources.icon_sort_dsc;
+            buttonSort.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_dsc;
             break;
           case SortOrder.None:
-            buttonSort.Image = global::SetupTv.Properties.Resources.icon_sort_none;
+            buttonSort.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_none;
             break;
         }
       }
 
-      buttonOther.Image = global::SetupTv.Properties.Resources.icon_sort_none;
+      buttonOther.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_none;
 
       //Reset the SortOrder again. Otherwise manual re-order won't be possible anymore
       lvwColumnSorter.Order = SortOrder.None;

@@ -20,7 +20,7 @@
 
 using System.Collections;
 
-namespace SetupTv.Sections.WebEPGConfig
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   /// <summary>
   /// Summary description for ChannelInfo.

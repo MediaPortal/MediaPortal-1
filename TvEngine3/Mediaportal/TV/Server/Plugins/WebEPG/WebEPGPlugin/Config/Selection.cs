@@ -22,9 +22,9 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.UserInterface.Controls;
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
-namespace SetupTv.Sections.WebEPGConfig
+namespace Mediaportal.TV.Server.Plugins.WebEPGImport.Config
 {
   public class GrabberSelectionInfo
   {
@@ -140,9 +140,9 @@ namespace SetupTv.Sections.WebEPGConfig
     private void InitializeComponent()
     {
       this.treeView1 = new System.Windows.Forms.TreeView();
-      this.gbSelection = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.bClose = new MediaPortal.UserInterface.Controls.MPButton();
-      this.bSelect = new MediaPortal.UserInterface.Controls.MPButton();
+      this.gbSelection = new MPGroupBox();
+      this.bClose = new MPButton();
+      this.bSelect = new MPButton();
       this.gbSelection.SuspendLayout();
       this.SuspendLayout();
       // 

@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class ChannelsInRadioGroupControl
   {
@@ -35,14 +37,14 @@ namespace SetupTv.Sections
       this.removeChannelFromGroup = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpButtonOrderByNumber = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonOrderByName = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonDown = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonUp = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpGroupBox1 = new MPGroupBox();
+      this.mpButtonOrderByNumber = new MPButton();
+      this.mpButtonOrderByName = new MPButton();
+      this.mpButtonDown = new MPButton();
+      this.mpButtonUp = new MPButton();
+      this.mpButtonPreview = new MPButton();
+      this.mpButtonDel = new MPButton();
+      this.listView1 = new MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -108,7 +110,7 @@ namespace SetupTv.Sections
       // mpButtonOrderByNumber
       // 
       this.mpButtonOrderByNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonOrderByNumber.Image = global::SetupTv.Properties.Resources.icon_sort_none;
+      this.mpButtonOrderByNumber.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_none;
       this.mpButtonOrderByNumber.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.mpButtonOrderByNumber.Location = new System.Drawing.Point(125, 45);
       this.mpButtonOrderByNumber.Name = "mpButtonOrderByNumber";
@@ -122,7 +124,7 @@ namespace SetupTv.Sections
       // mpButtonOrderByName
       // 
       this.mpButtonOrderByName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButtonOrderByName.Image = global::SetupTv.Properties.Resources.icon_sort_none;
+      this.mpButtonOrderByName.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_sort_none;
       this.mpButtonOrderByName.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.mpButtonOrderByName.Location = new System.Drawing.Point(125, 19);
       this.mpButtonOrderByName.Name = "mpButtonOrderByName";
@@ -135,7 +137,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonDown
       // 
-      this.mpButtonDown.Image = global::SetupTv.Properties.Resources.icon_down;
+      this.mpButtonDown.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_down;
       this.mpButtonDown.Location = new System.Drawing.Point(242, 45);
       this.mpButtonDown.Name = "mpButtonDown";
       this.mpButtonDown.Size = new System.Drawing.Size(30, 23);
@@ -145,7 +147,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonUp
       // 
-      this.mpButtonUp.Image = global::SetupTv.Properties.Resources.icon_up;
+      this.mpButtonUp.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_up;
       this.mpButtonUp.Location = new System.Drawing.Point(242, 19);
       this.mpButtonUp.Name = "mpButtonUp";
       this.mpButtonUp.Size = new System.Drawing.Size(30, 23);
@@ -244,20 +246,20 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPListView listView1;
+    private MPListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem deleteThisChannelToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonPreview;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
+    private MPGroupBox mpGroupBox1;
+    private MPButton mpButtonPreview;
+    private MPButton mpButtonDel;
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem removeChannelFromGroup;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonDown;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonUp;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonOrderByNumber;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonOrderByName;
+    private MPButton mpButtonDown;
+    private MPButton mpButtonUp;
+    private MPButton mpButtonOrderByNumber;
+    private MPButton mpButtonOrderByName;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ImageList imageList1;
   }

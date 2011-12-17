@@ -21,10 +21,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations.Analog
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
 {
   /// <summary>
   /// Class which implements scanning for tv/radio channels for analog cards
@@ -90,14 +92,14 @@ namespace TvLibrary.Implementations.Analog
       _card.Tune(0, channel);
       if (_card.IsTunerLocked)
       {
-        if (channel.IsTv)
+        if (channel.MediaType == MediaTypeEnum.TV)
         {
           if (_card.VideoFrequency == _previousFrequency)
             return new List<IChannel>();
           _previousFrequency = _card.VideoFrequency;
         }
 
-        if (channel.IsTv)
+        if (channel.MediaType == MediaTypeEnum.TV)
         {
           try
           {

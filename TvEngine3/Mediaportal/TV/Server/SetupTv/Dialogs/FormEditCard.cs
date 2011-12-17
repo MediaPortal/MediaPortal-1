@@ -21,10 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using TvDatabase;
-using TvLibrary.Implementations.DVB;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormEditCard : Form
   {
@@ -59,34 +60,34 @@ namespace SetupTv.Sections
       }
       else
       {
-        ComboBoxCamType.SelectedIndex = _card.CamType;
-        numericUpDownDecryptLimit.Value = _card.DecryptLimit;
+        ComboBoxCamType.SelectedIndex = _card.camType;
+        numericUpDownDecryptLimit.Value = _card.decryptLimit;
         numericUpDownDecryptLimit.Enabled = true;
-        checkBoxAllowEpgGrab.Checked = _card.GrabEPG;
+        checkBoxAllowEpgGrab.Checked = _card.grabEPG;
         checkBoxAllowEpgGrab.Enabled = true;
       }
 
-      IList<CardGroupMap> GrpList = _card.ReferringCardGroupMap();
+      IList<CardGroupMap> GrpList = _card.CardGroupMaps;
       if (GrpList.Count != 0)
       {
         checkBoxPreloadCard.Enabled = false;
-        _card.PreloadCard = false;
+        _card.preload = false;
       }
 
-      checkBoxPreloadCard.Checked = _card.PreloadCard;
+      checkBoxPreloadCard.Checked = _card.preload;
       checkBoxCAMenabled.Checked = _card.CAM;
 
-      radioStopCard.Checked = _card.StopGraph;
+      radioStopCard.Checked = _card.stopgraph;
       radioPauseCard.Checked = !radioStopCard.Checked;
 
       setCAMLimitVisibility();
-      Text += " " + _card.Name;
+      Text += " " + _card.name;
 
       // Add Network provider based on card type into combobox
-      if (_cardType == "DvbT") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBT));
-      if (_cardType == "DvbS") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBS));
-      if (_cardType == "DvbC") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBC));
-      if (_cardType == "Atsc") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.ATSC));
+      if (_cardType == "DvbT") comboBoxNetProvider.Items.Add((DbNetworkProvider.DVBT));
+      if (_cardType == "DvbS") comboBoxNetProvider.Items.Add((DbNetworkProvider.DVBS));
+      if (_cardType == "DvbC") comboBoxNetProvider.Items.Add((DbNetworkProvider.DVBC));
+      if (_cardType == "Atsc") comboBoxNetProvider.Items.Add((DbNetworkProvider.ATSC));
 
       // Guid for generic network provider
       Guid genProviderClsId = new Guid("{B2F3A67C-29DA-4C78-8831-091ED509A475}");
@@ -94,24 +95,24 @@ namespace SetupTv.Sections
       if (FilterGraphTools.IsThisComObjectInstalled(genProviderClsId))
       {
         // Generic Network provider is available, so add it to selection box.
-        comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.Generic));
+        comboBoxNetProvider.Items.Add((DbNetworkProvider.Generic));
       }
-      comboBoxNetProvider.SelectedItem = (TvDatabase.DbNetworkProvider)_card.netProvider;
+      comboBoxNetProvider.SelectedItem = (DbNetworkProvider)_card.NetProvider;
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
       if (!_cardType.Equals("Analog")) //analog does not have these settings
       {
-        _card.CamType = ComboBoxCamType.SelectedIndex;
-        _card.DecryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
-        _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
+        _card.camType = ComboBoxCamType.SelectedIndex;
+        _card.decryptLimit = Convert.ToInt32(numericUpDownDecryptLimit.Value);
+        _card.grabEPG = checkBoxAllowEpgGrab.Checked;
       }
-      _card.PreloadCard = checkBoxPreloadCard.Checked;
-      _card.StopGraph = radioStopCard.Checked;
+      _card.preload = checkBoxPreloadCard.Checked;
+      _card.stopgraph = radioStopCard.Checked;
 
       _card.CAM = checkBoxCAMenabled.Checked;
-      _card.netProvider = (int)comboBoxNetProvider.SelectedItem;
+      _card.NetProvider = (int)comboBoxNetProvider.SelectedItem;
       Close();
     }
 

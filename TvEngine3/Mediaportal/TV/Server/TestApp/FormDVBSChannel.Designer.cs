@@ -1,4 +1,4 @@
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   partial class FormDVBSChannel
   {

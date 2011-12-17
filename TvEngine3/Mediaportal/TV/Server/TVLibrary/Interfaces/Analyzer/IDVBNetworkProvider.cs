@@ -22,7 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib.BDA;
 
-namespace TvLibrary.Interfaces.Analyzer
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
   /// Tuning types enumeration

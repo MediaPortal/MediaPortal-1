@@ -20,12 +20,13 @@
 
 using System;
 using System.Windows.Forms;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
-namespace SetupTv.Dialogs
+namespace Mediaportal.TV.Server.SetupTV.Dialogs
 {
   public partial class FormChooseTuningDetailType : Form
   {
-    private bool _isTv = true;
+    private MediaTypeEnum _mediaType = MediaTypeEnum.TV;
     private int _tuningType;
 
     public int TuningType
@@ -33,11 +34,12 @@ namespace SetupTv.Dialogs
       get { return _tuningType; }
     }
 
-    public bool IsTv
+    public MediaTypeEnum MediaType
     {
-      get { return _isTv; }
-      set { _isTv = value; }
+      get { return _mediaType; }
+      set { _mediaType = value; }
     }
+
 
     public FormChooseTuningDetailType()
     {
@@ -92,7 +94,7 @@ namespace SetupTv.Dialogs
 
     private void FormChooseTuningDetailType_Load(object sender, EventArgs e)
     {
-      if (_isTv)
+      if (_mediaType != MediaTypeEnum.Radio)
       {
         mpRadioButton1.Visible = false;
       }

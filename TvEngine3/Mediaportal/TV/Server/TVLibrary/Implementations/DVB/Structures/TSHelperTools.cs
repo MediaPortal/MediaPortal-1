@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TvLibrary.Implementations.DVB.Structures
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Structures
 {
   /// <summary>
   /// Zusammenfassung für TSHelperTools.

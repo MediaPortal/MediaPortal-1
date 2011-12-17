@@ -20,14 +20,16 @@
 
 using System;
 using System.Collections.Generic;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvControl;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-
-namespace TvService
+namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 {
-  public class AudioStreams
+  public class AudioStreams : IAudioStreams
   {
     private readonly ITvCardHandler _cardHandler;
 
@@ -48,27 +50,10 @@ namespace TvService
     /// <value>The available audio streams.</value>
     public IAudioStream[] Streams(IUser user)
     {
-      if (_cardHandler.DataBaseCard.Enabled == false)
+      if (_cardHandler.DataBaseCard.enabled == false)
         return new List<IAudioStream>().ToArray();
 
-      try
-      {
-        RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-          return new List<IAudioStream>().ToArray();
-        if (_cardHandler.IsLocal == false)
-        {
-          return RemoteControl.Instance.AvailableAudioStreams(user);
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("card: unable to connect to slave controller at:{0}",
-                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
-        return null;
-      }
-
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return new List<IAudioStream>().ToArray();
       context.GetUser(ref user);
@@ -84,27 +69,10 @@ namespace TvService
     /// <returns></returns>
     public IAudioStream GetCurrent(IUser user)
     {
-      if (_cardHandler.DataBaseCard.Enabled == false)
-        return null;
+      if (_cardHandler.DataBaseCard.enabled == false)
+        return null;     
 
-      try
-      {
-        RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-          return null;
-        if (_cardHandler.IsLocal == false)
-        {
-          return RemoteControl.Instance.GetCurrentAudioStream(user);
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("card: unable to connect to slave controller at:{0}",
-                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
-        return null;
-      }
-
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return null;
       context.GetUser(ref user);
@@ -121,31 +89,12 @@ namespace TvService
     /// <param name="stream">The stream.</param>
     public void Set(IUser user, IAudioStream stream)
     {
-      if (_cardHandler.DataBaseCard.Enabled == false)
+      if (_cardHandler.DataBaseCard.enabled == false)
       {
         return;
       }
 
-      try
-      {
-        RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-          return;
-        Log.WriteFile("card: SetCurrentAudioStream: {0} - {1}", _cardHandler.DataBaseCard.IdCard, stream);
-        if (_cardHandler.IsLocal == false)
-        {
-          Log.WriteFile("card: SetCurrentAudioStream: controlling remote instance {0}", RemoteControl.HostName);
-          RemoteControl.Instance.SetCurrentAudioStream(user, stream);
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("card: unable to connect to slave controller at:{0}",
-                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
-        return;
-      }
-
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
       {
         Log.WriteFile("card: SetCurrentAudioStream: TvCardContext == null");

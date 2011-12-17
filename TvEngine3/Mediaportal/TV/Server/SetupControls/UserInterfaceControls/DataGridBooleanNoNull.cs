@@ -22,7 +22,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace MediaPortal.Configuration.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
 
   #region Formattable TextBox Column

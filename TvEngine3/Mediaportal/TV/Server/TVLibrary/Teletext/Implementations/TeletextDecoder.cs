@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 {
   /// <summary>
   /// teletext decoder class

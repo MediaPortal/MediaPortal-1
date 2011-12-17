@@ -24,12 +24,17 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
-using TvLibrary.Implementations;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
-using TvLibrary.Implementations.DVB;
+using Mediaportal.TV.Server.TVLibrary.Implementations;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TestApp
+namespace Mediaportal.TV.Server.TestApp
 {
   public partial class Form1 : Form
   {
@@ -235,7 +240,7 @@ namespace TestApp
       btnEPG.Enabled = false;
       ITVScanning scanner = _currentCard.ScanningInterface;
       scanner.Reset();
-      List<IChannel> channels = scanner.Scan(_currentCard.SubChannels[0].CurrentChannel, new TvLibrary.ScanParameters());
+      List<IChannel> channels = scanner.Scan(_currentCard.SubChannels[0].CurrentChannel, new ScanParameters());
       scanner.Dispose();
       listViewChannels.Items.Clear();
       foreach (IChannel channel in channels)
@@ -297,7 +302,7 @@ namespace TestApp
         {
           File.Delete(fileName);
         }
-        _currentCard.SubChannels[0].StartRecording(false, fileName);
+        _currentCard.SubChannels[0].StartRecording(fileName);
         MessageBox.Show(this, "Recording to:" + fileName);
       }
     }
@@ -417,7 +422,7 @@ namespace TestApp
         MessageBox.Show(this, "Stopped recording");
         return;
       }
-      _currentCard.SubChannels[0].StartRecording(false, "recording.mpg");
+      _currentCard.SubChannels[0].StartRecording("recording.mpg");
       buttonRecordMpg.Text = "Stop .mpg record";
       MessageBox.Show(this, "Recording to recording.mpg");
     }

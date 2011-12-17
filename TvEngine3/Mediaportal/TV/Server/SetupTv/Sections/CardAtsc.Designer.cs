@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class CardAtsc
   {
@@ -33,12 +35,12 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonScanTv = new MPButton();
       this.listViewStatus = new System.Windows.Forms.ListView();
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.checkBoxQAM = new System.Windows.Forms.CheckBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxFrequencies = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MPLabel();
+      this.mpComboBoxFrequencies = new MPComboBox();
       this.SuspendLayout();
       // 
       // progressBarQuality
@@ -173,11 +175,11 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ProgressBar progressBar1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonScanTv;
+    private MPButton mpButtonScanTv;
     private System.Windows.Forms.ListView listViewStatus;
     private System.Windows.Forms.ColumnHeader columnHeader1;
       private System.Windows.Forms.CheckBox checkBoxQAM;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxFrequencies;
+    private MPLabel mpLabel1;
+    private MPComboBox mpComboBoxFrequencies;
   }
 }

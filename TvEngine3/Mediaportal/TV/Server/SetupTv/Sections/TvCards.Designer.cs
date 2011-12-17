@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class TvCards
   {
@@ -38,16 +40,16 @@ namespace SetupTv.Sections
       this.deleteCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteEntireHybridCardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.label3 = new System.Windows.Forms.Label();
-      this.mpCheckBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBox1 = new MPCheckBox();
       this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.label8 = new System.Windows.Forms.Label();
-      this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBox2 = new MPCheckBox();
       this.label9 = new System.Windows.Forms.Label();
-      this.mpCheckBox3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBox3 = new MPCheckBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.treeView1 = new System.Windows.Forms.TreeView();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -60,7 +62,7 @@ namespace SetupTv.Sections
       this.labelHybridCard = new System.Windows.Forms.Label();
       this.labelCardPriority = new System.Windows.Forms.Label();
       this.buttonRemove = new System.Windows.Forms.Button();
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpListView1 = new MPListView();
       this.colEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colPriority = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -79,11 +81,11 @@ namespace SetupTv.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label11 = new System.Windows.Forms.Label();
-      this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboBoxCard = new MPComboBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.label4 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel1 = new MPLabel();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -687,18 +689,18 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ToolStripMenuItem placeInHybridCardToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
     private System.Windows.Forms.Label label3;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBox1;
+    private MPCheckBox mpCheckBox1;
     private System.Windows.Forms.GroupBox groupBox4;
     private System.Windows.Forms.Label label8;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBox2;
+    private MPCheckBox mpCheckBox2;
     private System.Windows.Forms.Label label9;
-    private MediaPortal.UserInterface.Controls.MPCheckBox mpCheckBox3;
+    private MPCheckBox mpCheckBox3;
     private System.Windows.Forms.TabPage tabPage2;
     private System.Windows.Forms.TreeView treeView1;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.Label labelCardPriority;
     private System.Windows.Forms.Button buttonRemove;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private MPListView mpListView1;
     private System.Windows.Forms.ColumnHeader colEnabled;
     private System.Windows.Forms.ColumnHeader colPriority;
     private System.Windows.Forms.ColumnHeader colType;
@@ -713,11 +715,11 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.GroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCard;
+    private MPComboBox mpComboBoxCard;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Label label6;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MPLabel mpLabel1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.TabControl tabControl1;

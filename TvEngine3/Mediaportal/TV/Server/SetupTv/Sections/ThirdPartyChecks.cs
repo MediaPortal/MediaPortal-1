@@ -22,12 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.NetworkInformation;
 using System.ServiceProcess;
+using Mediaportal.TV.Server.SetupControls;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Microsoft.Win32;
 
-namespace SetupTv.Sections
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   public partial class ThirdPartyChecks : SectionSettings
   {
@@ -261,12 +262,11 @@ namespace SetupTv.Sections
 
     private static bool IsStreamingPortAvailable()
     {
-      int RtspPort = TvControl.RemoteControl.Instance.StreamingPort;
+      int RtspPort = ServiceAgents.Instance.ControllerServiceAgent.StreamingPort;
       STREAMING_PORT = RtspPort;
       if (STREAMING_PORT == 0)
-      {
-        TvDatabase.Server ourServer = TvDatabase.Server.Retrieve(TvControl.RemoteControl.Instance.IdServer);
-        STREAMING_PORT = ourServer.RtspPort;
+      {        
+        STREAMING_PORT = Convert.ToInt32(ServiceAgents.Instance.SettingServiceAgent.GetSetting("rtspport").value);
         return false;
       }
 

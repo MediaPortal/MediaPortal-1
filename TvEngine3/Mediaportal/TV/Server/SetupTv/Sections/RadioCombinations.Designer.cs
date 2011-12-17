@@ -1,4 +1,6 @@
-namespace SetupTv.Sections
+using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
+
+namespace Mediaportal.TV.Server.SetupTV.Sections
 {
   partial class RadioCombinations
   {
@@ -37,15 +39,15 @@ namespace SetupTv.Sections
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.btnCombine = new System.Windows.Forms.Button();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpListViewMapped = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpLabel3 = new MPLabel();
+      this.mpListViewMapped = new MPListView();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
+      this.mpLabel2 = new MPLabel();
+      this.mpListViewChannels = new MPListView();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-      this.mpComboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxCard = new MPComboBox();
+      this.mpLabel1 = new MPLabel();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -249,14 +251,14 @@ namespace SetupTv.Sections
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage2;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewMapped;
+    private MPLabel mpLabel3;
+    private MPListView mpListViewMapped;
     private System.Windows.Forms.ColumnHeader columnHeader5;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewChannels;
+    private MPLabel mpLabel2;
+    private MPListView mpListViewChannels;
     private System.Windows.Forms.ColumnHeader columnHeader6;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCard;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MPComboBox mpComboBoxCard;
+    private MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader columnHeader8;
     private System.Windows.Forms.Button btnCombine;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;

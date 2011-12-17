@@ -19,11 +19,10 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
 
 //using mdobler.XPCommonControls.ListViewAPI; 
 
-namespace XPListview
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 {
   public class XPListViewGroupCollection : System.Collections.CollectionBase
   {

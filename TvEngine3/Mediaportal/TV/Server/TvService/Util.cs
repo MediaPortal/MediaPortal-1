@@ -25,13 +25,10 @@ using System.Management;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
-using System.ServiceProcess;
 using System.Windows.Forms;
-using TvLibrary.Log;
-using System.Threading;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-
-namespace TvService
+namespace Mediaportal.TV.Server.TVService
 {
   /// <summary>
   /// 

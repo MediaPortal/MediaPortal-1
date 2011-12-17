@@ -19,9 +19,10 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
+using System.Runtime.Serialization;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Channels
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
 {
   /// <summary>
   /// Tuning part of DVB-T required for scanning
@@ -66,16 +67,20 @@ namespace TvLibrary.Channels
       return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, BandWidth, Offset);
     }
   }
-
+  
   /// <summary>
   /// class holding all tuning details for DVBT
-  /// </summary>
+  /// </summary>  
+  [DataContract]
   [Serializable]
   public class DVBTChannel : DVBBaseChannel
   {
     #region variables
 
+    [DataMember]
     private int _bandWidth;
+
+    [DataMember]
     private int _offset;
 
     #endregion

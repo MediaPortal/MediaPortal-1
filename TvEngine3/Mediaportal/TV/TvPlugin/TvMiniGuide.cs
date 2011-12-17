@@ -24,21 +24,25 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
+using TuningDetail = Mediaportal.TV.Server.TVDatabase.Entities.TuningDetail;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// GUIMiniGuide
@@ -67,7 +71,8 @@ namespace TvPlugin
     private int _parentWindowID = 0;
     private GUIWindow _parentWindow = null;
     */
-    private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
+    private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;    
+
 
     private List<ChannelGroup> _channelGroupList = null;
     private Channel _selectedChannel;
@@ -80,7 +85,7 @@ namespace TvPlugin
     private int _channelNumberMaxLength = 3;
 
     private Dictionary<int, DateTime> _nextEPGupdate = new Dictionary<int, DateTime>();
-    private Dictionary<int, Dictionary<int, NowAndNext>> _listNowNext = new Dictionary<int, Dictionary<int, NowAndNext>>();
+    private IDictionary<int, IDictionary<int, NowAndNext>> _listNowNext = new Dictionary<int, IDictionary<int, NowAndNext>>();
 
     private readonly string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
     private readonly string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
@@ -200,10 +205,10 @@ namespace TvPlugin
         {
           if (TVHome.Navigator.CurrentGroup != null)
           {
-            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
+            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.GroupMaps)
             {
-              Channel ch = chan.ReferencedChannel();
-              if (ch.VisibleInGuide && ch.IsTv)
+              Channel ch = chan.Channel;
+              if (ch.visibleInGuide && ch.mediaType == (int)MediaTypeEnum.TV)
               {
                 _channelList.Add(ch);
               }
@@ -214,7 +219,7 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          Channel newChannel = new Channel(false, true, 0, DateTime.MinValue, false,
+          Channel newChannel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, DateTime.MinValue, false,
                                            DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
           {
@@ -224,26 +229,7 @@ namespace TvPlugin
       }
     }
 
-    /*
-    /// <summary>
-    /// On close
-    /// </summary>
-    private void Close()
-    {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        _running = false;
-        _parentWindow = null;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      GUILayerManager.UnRegisterLayer(this);
-    }
-    */
+ 
 
     /// <summary>
     /// On Message
@@ -263,32 +249,28 @@ namespace TvPlugin
                 // switching logic
                 SelectedChannel = (Channel)lstChannels.SelectedListItem.TVTag;
 
-                Channel changeChannel = null;
+                Server.TVDatabase.Entities.Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  if ((TVHome.Navigator.Channel.IdChannel != SelectedChannel.IdChannel) || g_Player.IsTVRecording)
+                  if ((TVHome.Navigator.Channel.Entity.idChannel != SelectedChannel.idChannel) || g_Player.IsTVRecording)
                   {
-                    List<Channel> tvChannelList = GetChannelListByGroup();
+                    List<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
                     {
-                      changeChannel = (Channel)tvChannelList[lstChannels.SelectedListItemIndex];
+                      changeChannel = tvChannelList[lstChannels.SelectedListItemIndex] as Server.TVDatabase.Entities.Channel;
                     }
                   }
                 }
                 _canceled = false;
                 PageDestroy();
 
-                //This one shows the zapOSD when changing channel from mini GUIDE, this is currently unwanted.
-                /*
-                TvFullScreen TVWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                if (TVWindow != null) TVWindow.UpdateOSD(changeChannel.Name);                
-                */
-
                 TVHome.UserChannelChanged = true;
 
                 if (changeChannel != null)
                 {
-                  TVHome.ViewChannel(changeChannel);
+                  //todo: remove gentle
+                  Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(changeChannel.idChannel);
+                  TVHome.ViewChannel(ch);
                 }
               }
             }
@@ -356,12 +338,6 @@ namespace TvPlugin
     /// </summary>
     protected override void OnPageLoad()
     {
-      //Stopwatch bClock = Stopwatch.StartNew();
-
-      //Log.Debug("TvMiniGuide: onpageload");
-      // following line should stay. Problems with OSD not
-      // appearing are already fixed elsewhere
-      //GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       AllocResources();
       ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset            
 
@@ -378,8 +354,6 @@ namespace TvPlugin
       FillChannelList();
       FillGroupList();
       base.OnPageLoad();
-
-      //Log.Debug("TvMiniGuide: onpageload took {0} msec", bClock.ElapsedMilliseconds);
     }
 
     private GUIListControl getChannelList()
@@ -429,9 +403,9 @@ namespace TvPlugin
       for (int i = 0; i < _channelGroupList.Count; i++)
       {
         current = _channelGroupList[i];
-        spinGroup.AddLabel(current.GroupName, i);
+        spinGroup.AddLabel(current.groupName, i);
         // set selected
-        if (current.GroupName.CompareTo(TVHome.Navigator.CurrentGroup.GroupName) == 0)
+        if (current.groupName.CompareTo(TVHome.Navigator.CurrentGroup.groupName) == 0)
         {
           spinGroup.Value = i;
         }
@@ -446,34 +420,35 @@ namespace TvPlugin
       Log.Debug("TvMiniGuide: FillGroupList finished after {0} ms", benchClock.ElapsedMilliseconds.ToString());
     }
 
-    private List<Channel> GetChannelListByGroup()
+    private List<Server.TVDatabase.Entities.Channel> GetChannelListByGroup()
     {
-      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
+      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
 
       if (_tvGroupChannelListCache == null)
       {
-        _tvGroupChannelListCache = new Dictionary<int, List<Channel>>();
+        _tvGroupChannelListCache = new Dictionary<int, List<Server.TVDatabase.Entities.Channel>>();
       }
 
-      List<Channel> channels = null;
+      List<Server.TVDatabase.Entities.Channel> channels = null;
       if (_tvGroupChannelListCache.TryGetValue(idGroup, out channels))  //already in cache ? then return it.      
       {
         Log.Debug("TvMiniGuide: GetChannelListByGroup returning cached version of channels.");
         return channels;
       }
       else //not in cache, fetch it and update cache, then return.
-      {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        List<Channel> tvChannelList = layer.GetTVGuideChannelsForGroup(idGroup);
-
+      {        
+        List<Server.TVDatabase.Entities.Channel> tvChannelList = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.idGroup, MediaTypeEnum.TV).ToList();
         if (tvChannelList != null)
         {
           Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
           _tvGroupChannelListCache.Add(idGroup, tvChannelList);
           return tvChannelList;
         }
+        else
+        {
+          return new List<Server.TVDatabase.Entities.Channel>();
+        }
       }
-      return new List<Channel>();
     }
 
     /// <summary>
@@ -481,12 +456,12 @@ namespace TvPlugin
     /// </summary>
     public void FillChannelList()
     {
-      List<Channel> tvChannelList = GetChannelListByGroup();
+      List<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
 
       benchClock = Stopwatch.StartNew();
 
       DateTime nextEPGupdate = GetNextEpgUpdate();
-      Dictionary<int, NowAndNext> listNowNext = GetNowAndNext(tvChannelList, nextEPGupdate);
+      IDictionary<int, NowAndNext> listNowNext = GetNowAndNext(tvChannelList, nextEPGupdate);
 
       benchClock.Stop();
       Log.Debug("TvMiniGuide: FillChannelList retrieved {0} programs for {1} channels in {2} ms", listNowNext.Count,
@@ -508,29 +483,7 @@ namespace TvPlugin
         benchClock.Reset();
         benchClock.Start();
 
-        if (TVHome.Navigator.CurrentGroup.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) ||
-            (!g_Player.IsTV && !g_Player.Playing))
-        {
-          //we have no way of using the cached channelstates on the server in the following situations.
-          // 1) when the "all channels" group is selected - too many channels.
-          // 2) when user is not timeshifting - no user object on the server.
-          User currentUser = new User();
-          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
-                                                                            currentUser);
-        }
-        else
-        {
-          // use the more speedy approach
-          // ask the server of the cached list of channel states corresponding to the user.
-          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesCached(TVHome.Card.User);
-
-          if (tvChannelStatesList == null)
-          {
-            //slow approach.
-            tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
-                                                                              TVHome.Card.User);
-          }
-        }
+        tvChannelStatesList = TVHome.TvChannelStatesList;        
 
         benchClock.Stop();
         if (tvChannelStatesList != null)
@@ -542,12 +495,12 @@ namespace TvPlugin
 
       for (int i = 0; i < tvChannelList.Count; i++)
       {
-        Channel CurrentChan = tvChannelList[i];
+        Server.TVDatabase.Entities.Channel currentChan = tvChannelList[i];
 
-        if (CurrentChan.VisibleInGuide)
+        if (currentChan.visibleInGuide)
         {
           ChannelState CurrentChanState = ChannelState.tunable;
-          channelID = CurrentChan.IdChannel;
+          channelID = currentChan.idChannel;
           if (TVHome.ShowChannelStateIcons())
           {
             if (!tvChannelStatesList.TryGetValue(channelID, out CurrentChanState))
@@ -560,14 +513,14 @@ namespace TvPlugin
           sb.Length = 0;
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
-          item.TVTag = CurrentChan;
+          item.TVTag = currentChan;
 
-          sb.Append(CurrentChan.DisplayName);
-          ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
+          sb.Append(currentChan.displayName);
+          ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, currentChan.displayName);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator != null && TVHome.Navigator.Channel != null &&
-              TVHome.Navigator.Channel.IdChannel == channelID)
+          if (TVHome.Navigator != null && TVHome.Navigator.Channel.Entity != null &&
+              TVHome.Navigator.Channel.Entity.idChannel == channelID)
           {
             item.IsRemote = true;
             SelectedID = lstChannels.Count;
@@ -667,10 +620,10 @@ namespace TvPlugin
           {
             sb.Append(" - ");
             if (!_byIndex)
-            {
-              foreach (TuningDetail detail in tvChannelList[i].ReferringTuningDetail())
+            {              
+              foreach (TuningDetail detail in tvChannelList[i].TuningDetails)
               {
-                sb.Append(detail.ChannelNumber);
+                sb.Append(detail.channelNumber);
               }
             }
             else
@@ -736,25 +689,22 @@ namespace TvPlugin
       sbTmp.Length = 0;
     }
 
-    private Dictionary<int, NowAndNext> GetNowAndNext(List<Channel> tvChannelList, DateTime nextEPGupdate)
+    private IDictionary<int, NowAndNext> GetNowAndNext(List<Channel> tvChannelList, DateTime nextEPGupdate)
     {
-      Dictionary<int, NowAndNext> getNowAndNext = new Dictionary<int, NowAndNext>();
-      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
-
-
-      TvBusinessLayer layer = new TvBusinessLayer();
+      IDictionary<int, NowAndNext> getNowAndNext = new Dictionary<int, NowAndNext>();
+      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
       if (_listNowNext.TryGetValue(idGroup, out getNowAndNext))
       {
         bool updateNow = (DateTime.Now >= nextEPGupdate);
         if (updateNow)
         {
-          getNowAndNext = layer.GetNowAndNext(tvChannelList);
+          getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNext(tvChannelList);
           _listNowNext[idGroup] = getNowAndNext;
         }
       }
       else
       {
-        getNowAndNext = layer.GetNowAndNext(tvChannelList);
+        getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNext(tvChannelList);
         _listNowNext.Add(idGroup, getNowAndNext);
       }
       return getNowAndNext;
@@ -762,7 +712,7 @@ namespace TvPlugin
 
     private void SetNextEpgUpdate(DateTime nextEPGupdate)
     {
-      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
+      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
       if (_nextEPGupdate.ContainsKey(idGroup))
       {
         _nextEPGupdate[idGroup] = nextEPGupdate;
@@ -776,7 +726,7 @@ namespace TvPlugin
     private DateTime GetNextEpgUpdate()
     {
       DateTime nextEPGupdate = DateTime.MinValue;
-      int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
+      int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
 
       _nextEPGupdate.TryGetValue(idGroup, out nextEPGupdate);
       return nextEPGupdate;
@@ -807,61 +757,5 @@ namespace TvPlugin
       }
       return fprogress;
     }
-
-    /*
-    /// <summary>
-    /// Do this modal
-    /// </summary>
-    /// <param name="dwParentId"></param>
-    public void DoModal(int dwParentId)
-    {
-      //Log.Debug("TvMiniGuide: domodal");
-      _parentWindowID = dwParentId;
-      _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
-      if (null == _parentWindow)
-      {
-        //Log.Debug("TvMiniGuide: parentwindow = null");
-        _parentWindowID = 0;
-        return;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      GUIWindowManager.RouteToWindow(GetID);
-
-      // activate this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, -1, 0, null);
-      OnMessage(msg);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      _running = true;
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-      while (_running && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-      {
-        GUIWindowManager.Process();
-      }
-
-      Close();
-    }
-
-    // Overlay IRenderLayer members
-
-    #region IRenderLayer
-
-    public bool ShouldRenderLayer()
-    {
-      //TVHome.SendHeartBeat(); //not needed, now sent from tvoverlay.cs
-      return true;
-    }
-
-    public void RenderLayer(float timePassed)
-    {
-      if (_running)
-      {
-        Render(timePassed);
-      }
-    }
-
-    #endregion
-    */
   }
 }

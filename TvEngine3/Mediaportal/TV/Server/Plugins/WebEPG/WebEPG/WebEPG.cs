@@ -22,17 +22,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvDatabase;
-using MediaPortal.Utils.Time;
-using MediaPortal.Utils.Web;
-using MediaPortal.WebEPG;
-using MediaPortal.WebEPG.Config;
-using MediaPortal.WebEPG.Parser;
-using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TvLibrary.Utils.Time;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.http;
+using WebEPG.Parser;
+using WebEPG.Utils;
+using WebEPG.config.WebEPG;
+using ChannelMap = WebEPG.config.WebEPG.ChannelMap;
 
-namespace MediaPortal.EPG
+namespace WebEPG
 {
   /// <summary>
   /// Gets the EPG data from one or more web sites.
@@ -395,9 +394,10 @@ namespace MediaPortal.EPG
       try
       {
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
-        TextReader r = new StreamReader(_configFile);
-        _config = (WebepgConfigFile)s.Deserialize(r);
-        r.Close();
+        using (var r = new StreamReader(_configFile)) 
+        {
+          _config = (WebepgConfigFile)s.Deserialize(r);
+        }
       }
       catch (InvalidOperationException ex)
       {

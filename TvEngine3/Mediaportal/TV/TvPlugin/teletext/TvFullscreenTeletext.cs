@@ -20,7 +20,7 @@
 
 using MediaPortal.GUI.Library;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
   /// <summary>
   /// Fullscreen teletext window of TVE3

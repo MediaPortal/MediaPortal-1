@@ -1,4 +1,4 @@
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   partial class SelectProcessForm
   {

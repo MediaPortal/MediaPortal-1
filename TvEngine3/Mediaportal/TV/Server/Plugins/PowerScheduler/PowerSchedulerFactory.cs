@@ -21,15 +21,18 @@
 #region Usings
 
 using System.Collections.Generic;
-using TvControl;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
-using TvEngine.PowerScheduler.Handlers;
-using TvEngine.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Handlers;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 #endregion
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler
 {
   /// <summary>
   /// Factory for creating various IStandbyHandlers/IWakeupHandlers
@@ -60,8 +63,8 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Creates a new PowerSchedulerFactory
     /// </summary>
-    /// <param name="controller">Reference to tvservice's TVController</param>
-    public PowerSchedulerFactory(IController controller)
+    /// <param name="controllerService">Reference to tvservice's TVController</param>
+    public PowerSchedulerFactory(IInternalControllerService controllerService)
     {
       Log.Info("PowerSchedulerFactory CTOR");
 
@@ -71,9 +74,9 @@ namespace TvEngine.PowerScheduler
       _wakeupHandlers = new List<IWakeupHandler>();
 
       // Add handlers for preventing the system from entering standby
-      standbyHandler = new ActiveStreamsHandler(controller);
+      standbyHandler = new ActiveStreamsHandler(controllerService);
       _standbyHandlers.Add(standbyHandler);
-      standbyHandler = new ControllerActiveHandler(controller);
+      standbyHandler = new ControllerActiveHandler(controllerService);
       _standbyHandlers.Add(standbyHandler);
       standbyHandler = new ProcessActiveHandler();
       _standbyHandlers.Add(standbyHandler);
@@ -90,7 +93,7 @@ namespace TvEngine.PowerScheduler
       _wakeupHandlers.Add(xmltvHandler);
 
       // Activate the EPG grabbing handler
-      _epgHandler = new EpgGrabbingHandler(controller);
+      _epgHandler = new EpgGrabbingHandler(controllerService);
     }
 
     #endregion

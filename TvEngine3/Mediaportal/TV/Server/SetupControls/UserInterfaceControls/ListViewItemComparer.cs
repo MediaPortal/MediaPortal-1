@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 
-namespace MediaPortal.Configuration.Controls
+namespace Mediaportal.TV.Server.SetupControls.UserInterfaceControls
 {
   /// <summary>
   /// Summary description for ListViewItemComparer.

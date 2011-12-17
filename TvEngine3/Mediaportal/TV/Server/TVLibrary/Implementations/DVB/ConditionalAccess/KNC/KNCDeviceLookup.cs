@@ -20,9 +20,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using TvLibrary.Implementations;
-using TvDatabase;
+using System.Linq;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+
 
 /* Code by morpheus_xx to fix handling of multiple KNC1 cards.
  *
@@ -33,7 +34,7 @@ using TvDatabase;
  * 
  */
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.KNC
 {
   /// <summary>
   /// Enumerates all KNC cards, sorts by DevicePath and returns matching index.
@@ -49,20 +50,8 @@ namespace TvLibrary.Implementations.DVB
     public static int GetDeviceIndex(TvCardBase TvCard)
     {
       // temporary list to hold device paths
-      List<String> deviceids = new List<String>();
-      IList<Server> dbsServers = Server.ListAll();
-
-      foreach (Server server in dbsServers)
-      {
-        foreach (Card dbsCard in server.ReferringCard())
-        {
-          // only count all KNC cards
-          if (dbsCard.Name.StartsWith("KNC BDA") || dbsCard.Name.StartsWith("Mystique"))
-          {
-            deviceids.Add(dbsCard.DevicePath);
-          }
-        }
-      }
+      IList<Card> cards = CardManagement.ListAllCards();
+      List<String> deviceids = (from card in cards where card.name.StartsWith("KNC BDA") || card.name.StartsWith("Mystique") select card.devicePath).ToList();            
 
       int idx = -1;
       int found = 0;

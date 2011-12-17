@@ -18,11 +18,11 @@
 
 #endregion
 
-using TvLibrary.Interfaces;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-
-namespace TvLibrary.Implementations.Analog.QualityControl
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
 {
   /// <summary>
   /// Class to create the object that implements the IQuality interface for a card or channel

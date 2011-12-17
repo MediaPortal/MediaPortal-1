@@ -23,8 +23,10 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using System.Drawing;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace TvLibrary.Teletext
+namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 {
   /// <summary>
   /// Zusammenfassung für DVBTeletext.
@@ -437,7 +439,7 @@ namespace TvLibrary.Teletext
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while saving teletext data: ", ex);
+        Log.WriteFile("Error while saving teletext data: ", ex);
       }
     }
 

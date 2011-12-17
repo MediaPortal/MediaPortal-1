@@ -18,16 +18,15 @@
 
 #endregion
 
-using System;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using mshtml;
 using SHDocVw;
 
-namespace MediaPortal.Utils.Web
+namespace Mediaportal.TV.Server.TvLibrary.Utils.Web.http
 {
   /// <summary>
   /// Gets HTML web Page.
@@ -54,7 +53,7 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     public HTMLPage()
     {
-      _cache = GlobalServiceProvider.Instance.TryGet<IHtmlCache>();
+      _cache = GlobalServiceProvider.Instance.Get<IHtmlCache>();
     }
 
     /// <summary>

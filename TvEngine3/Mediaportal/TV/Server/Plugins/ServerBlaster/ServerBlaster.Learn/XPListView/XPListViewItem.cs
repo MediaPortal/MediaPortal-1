@@ -18,17 +18,12 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
-using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 
 //using mdobler.XPCommonControls.ListViewAPI; 
 
-namespace XPListview
+namespace Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.XPListView
 {
   [TypeConverter(typeof (XPListViewItemConverter))]
   public class XPListViewItem : System.Windows.Forms.ListViewItem

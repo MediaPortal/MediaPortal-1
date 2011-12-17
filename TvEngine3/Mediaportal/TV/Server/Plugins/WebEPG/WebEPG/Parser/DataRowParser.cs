@@ -20,9 +20,9 @@
 
 using System.Collections;
 using System.Text.RegularExpressions;
-using MediaPortal.Utils.Web;
+using Mediaportal.TV.Server.TvLibrary.Utils.Web.Parser;
 
-namespace MediaPortal.WebEPG.Parser
+namespace WebEPG.Parser
 {
   /// <summary>
   /// Parses a single data row
