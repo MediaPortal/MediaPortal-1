@@ -218,7 +218,7 @@ namespace WindowPlugins.GUISettings
         if (String.Compare(skin, currentSkin, true) == 0)
         {
           btnSkin.Label = skin;
-          imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, skin, @"media\preview.png"));
+          imgSkinPreview.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\preview.png"));
         }
       }
     }

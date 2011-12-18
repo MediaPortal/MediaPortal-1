@@ -842,7 +842,7 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Get/set current skin name
+    /// Get/set current skin folder path
     /// </summary>
     public static string Skin
     {
@@ -862,7 +862,7 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Get/set current skin theme
+    /// Get/set current skin theme folder path.  Returns the default skin path if no theme folder found.
     /// </summary>
     public static string Theme
     {

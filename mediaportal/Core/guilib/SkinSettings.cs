@@ -55,6 +55,8 @@ namespace MediaPortal.GUI.Library
     private static string _loadedSkinSettings = "";
 
     public const string THEME_SKIN_DEFAULT = "Skin default";
+    public const string THEME_SECTION_NAME = "theme";
+    public const string THEME_NAME_ENTRY = "name";
 
     /// <summary>
     /// Translate the skin string, create the skin string as a transient value if not found.
@@ -330,7 +332,7 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlReader = new Settings(_skinSettingsFileName))
       {
-        GUIGraphicsContext.Theme = xmlReader.GetValueAsString("theme", "name", "");
+        GUIGraphicsContext.Theme = xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, "");
         GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
 
         // Set a property with a comma-separated list of theme names.
@@ -409,7 +411,7 @@ namespace MediaPortal.GUI.Library
         xmlWriter.SetValue("stringsettings", "keys", allSettingNames);
 
         // Save discrete settings.
-        xmlWriter.SetValue("theme", "name", GUIGraphicsContext.ThemeName);
+        xmlWriter.SetValue(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIGraphicsContext.ThemeName);
       }
       Settings.SaveCache();
     }

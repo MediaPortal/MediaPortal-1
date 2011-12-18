@@ -98,7 +98,7 @@
     <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
     <dimColor>ff000000</dimColor>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
     <textXOff>17</textXOff>
     <textYOff>6</textYOff>

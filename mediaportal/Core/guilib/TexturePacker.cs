@@ -184,7 +184,8 @@ namespace MediaPortal.GUI.Library
 
     #region variables
 
-    private List<PackedTexture> _packedTextures;
+    private List<PackedTexture> _packedTextures;   // A list of packed textures
+    private List<string> _texturesNotPacked;       // A list of textures that could not be packed
     private const int MAXTEXTUREDIMENSION = 2048;
     private int _maxTextureWidth = 0;
     private int _maxTextureHeight = 0;
@@ -262,6 +263,7 @@ namespace MediaPortal.GUI.Library
 
     private void SavePackedSkin(string skinName)
     {
+      // Save the packed texture files.
       string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
       using (FileStream fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
@@ -275,12 +277,28 @@ namespace MediaPortal.GUI.Library
         formatter.Serialize(fileStream, packedTextures);
         fileStream.Close();
       }
+
+      // Save a list of the images that were not able to be packed.
+      string notPackedXml = string.Format(@"{0}\notpackedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
+
+      using (FileStream fileStream = new FileStream(notPackedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
+      {
+        ArrayList notPackedTextures = new ArrayList();
+        foreach (string notPacked in _texturesNotPacked)
+        {
+          notPackedTextures.Add(notPacked);
+        }
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(fileStream, notPackedTextures);
+        fileStream.Close();
+      }
     }
 
     private bool LoadPackedSkin(string skinName)
     {
       Log.Debug("Skin Folder : {0}", GUIGraphicsContext.Skin);
       Log.Debug("Cache Folder: {0}", GUIGraphicsContext.SkinCacheFolder);
+      string notPackedXml = string.Format(@"{0}\notpackedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
       string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
       using (Settings xmlreader = new MPSettings())
@@ -288,6 +306,7 @@ namespace MediaPortal.GUI.Library
         if (xmlreader.GetValueAsBool("debug", "skincaching", true) &&
             MediaPortal.Util.Utils.FileExistsInCache(packedXml))
         {
+          // Load textures that were packed.
           using (FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
             try
@@ -301,9 +320,26 @@ namespace MediaPortal.GUI.Library
                 _packedTextures.Add(packed);
               }
               fileStream.Close();
-              return true;
             }
             catch {}
+          }
+
+          // Load the list of textures that were not able to be packed.
+          using (FileStream fileStream = new FileStream(notPackedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+          {
+            try
+            {
+              _texturesNotPacked = new List<string>();
+              ArrayList notPackedTextures = new ArrayList();
+              BinaryFormatter formatter = new BinaryFormatter();
+              notPackedTextures = (ArrayList)formatter.Deserialize(fileStream);
+              foreach (string notPacked in notPackedTextures)
+              {
+                _texturesNotPacked.Add(notPacked);
+              }
+              fileStream.Close();
+            }
+            catch { }
           }
         }
       }
@@ -320,6 +356,7 @@ namespace MediaPortal.GUI.Library
 
       // Create the list of textures to pack.
       _packedTextures = new List<PackedTexture>();
+      _texturesNotPacked = new List<string>();
       List<string> files = new List<string>();
 
       string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
@@ -409,6 +446,8 @@ namespace MediaPortal.GUI.Library
               {
                 if (dontAdd)
                 {
+                  // Keep track of textures that cannot be packed.
+                  _texturesNotPacked.Add(files[i]);
                   files[i] = string.Empty;
                 }
                 else
@@ -576,21 +615,35 @@ namespace MediaPortal.GUI.Library
       }
 
       Settings xmlreader = new SKSettings();
-      string skinThemeTexturePath = xmlreader.GetValueAsString("Theme", "Name", "") + @"\media\";
-      skinThemeTexturePath = skinThemeTexturePath.ToLower();
-
-      // Look for textures first in the current theme location.  Theme textures override default textures.
+      string themeName = xmlreader.GetValueAsString(SkinSettings.THEME_SECTION_NAME, SkinSettings.THEME_NAME_ENTRY, SkinSettings.THEME_SKIN_DEFAULT);
       int index = 0;
       PackedTexture bigOne = null;
-      PackedTextureNode foundNode = null;      
-      foreach (PackedTexture texture in _packedTextures)
+      PackedTextureNode foundNode = null;
+
+      // Look for textures first in the current theme location.  Theme textures override default textures.
+      // If the default theme is selected then avoid looking through the theme.
+      if (!SkinSettings.THEME_SKIN_DEFAULT.Equals(themeName))
       {
-        if ((foundNode = texture.root.Get(skinThemeTexturePath + fileName)) != null)
+        string skinThemeTexturePath = themeName + @"\media\";
+        skinThemeTexturePath = skinThemeTexturePath.ToLower();
+
+        // If a theme texture exists but was not able to be packed then avoid trying to unpack the texture all together.  This prevents
+        // a base skin texture from being unpacked and returned when the base texture could be packed but the overriding theme texture
+        // could not be packed.
+        if (!IsTexturePacked(skinThemeTexturePath + fileName))
         {
-          bigOne = texture;
-          break;
+          return false;
         }
-        index++;
+
+        foreach (PackedTexture texture in _packedTextures)
+        {
+          if ((foundNode = texture.root.Get(skinThemeTexturePath + fileName)) != null)
+          {
+            bigOne = texture;
+            break;
+          }
+          index++;
+        }
       }
 
       // No theme texture was found.  Check the default skin location.
@@ -635,6 +688,19 @@ namespace MediaPortal.GUI.Library
         return true;
       }
       return false;
+    }
+
+    private bool IsTexturePacked(string textureFile)
+    {
+      // Look through the textures that wee not packed (likely a shorter list).
+      foreach (string texture in _texturesNotPacked)
+      {
+        if (texture.IndexOf(textureFile) > 0)
+        {
+          return false;
+        }
+      }
+      return true;
     }
 
     public void Dispose()
