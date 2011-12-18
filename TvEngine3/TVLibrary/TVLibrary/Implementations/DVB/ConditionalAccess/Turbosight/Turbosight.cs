@@ -914,7 +914,7 @@ namespace TvLibrary.Implementations.DVB
             continue;
           }
 
-          // Yes -> clear the response buffer if this is a new message, send, and then check for a response.
+          // Yes -> clear the response buffer if this is a new message and send it.
           if (message != prevMessage)
           {
             for (int i = 0; i < MmiResponseBufferSize; i++)
@@ -926,8 +926,10 @@ namespace TvLibrary.Implementations.DVB
           {
             TBS_ci_MMI_Process(_ciHandle, _mmiMessageBuffer, _mmiResponseBuffer);
           }
-          // (Responses for some messages are retrieved by sending "get MMI" until a response is received.)
-          if (message == TbsMmiMessage.EnterMenu || message == TbsMmiMessage.MenuAnswer)
+
+          // Explicitly request a response if necessary. This is done by sending "get MMI" messages until a
+          // response is received.
+          if (message == TbsMmiMessage.EnterMenu || message == TbsMmiMessage.MenuAnswer || message == TbsMmiMessage.Answer)
           {
             prevMessage = message;
             message = TbsMmiMessage.GetMmi;
@@ -937,10 +939,14 @@ namespace TvLibrary.Implementations.DVB
               TBS_ci_MMI_Process(_ciHandle, _mmiMessageBuffer, _mmiResponseBuffer);
             }
           }
+
+          // Check for a response.
           TbsMmiMessage response = TbsMmiMessage.Null;
           response = (TbsMmiMessage)Marshal.ReadByte(_mmiResponseBuffer, 4);
           if (response == TbsMmiMessage.Null)
           {
+            // Responses don't always arrive quickly so give the CAM time to respond if
+            // the response isn't ready yet.
             Thread.Sleep(2000);
             continue;
           }
@@ -951,7 +957,7 @@ namespace TvLibrary.Implementations.DVB
           byte lsb = Marshal.ReadByte(_mmiResponseBuffer, 5);
           byte msb = Marshal.ReadByte(_mmiResponseBuffer, 6);
           int length = (256 * msb) + lsb;
-          if (length > MmiResponseBufferSize)
+          if (length > MmiResponseBufferSize - 7)
           {
             Log.Log.Debug("Turbosight: response too long, length = {0}", length);
             // We know we haven't got the complete response (DLL internal buffer overflow),
@@ -974,18 +980,25 @@ namespace TvLibrary.Implementations.DVB
 
           if (response == TbsMmiMessage.ApplicationInfo)
           {
-            // If we receive application information then it is because the user wants to
-            // enter the menu (see EnterCIMenu()).
             HandleApplicationInformation(responseBytes, length);
 
-            if (message == TbsMmiMessage.ApplicationInfo)
+            // Special case (see EnterCIMenu()).
+            lock (this)
             {
-              lock (this)
-              {
-                Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.EnterMenu);
-              }
-              continue;
+              Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.CaInfo);
             }
+            continue;
+          }
+          else if (response == TbsMmiMessage.CaInfo)
+          {
+            HandleCaInformation(responseBytes, length);
+
+            // Special case (see EnterCIMenu()).
+            lock (this)
+            {
+              Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.EnterMenu);
+            }
+            continue;
           }
           else if (response == TbsMmiMessage.Menu)
           {
@@ -1023,6 +1036,12 @@ namespace TvLibrary.Implementations.DVB
     private void HandleApplicationInformation(byte[] content, int length)
     {
       Log.Log.Debug("Turbosight: application information");
+      if (length < 5)
+      {
+        Log.Log.Debug("Turbosight: error, response too short");
+        DVB_MMI.DumpBinary(content, 0, length);
+        return;
+      }
       DVB_MMI.ApplicationType type = (DVB_MMI.ApplicationType)content[0];
       int manufacturer = (content[1] << 8) | content[2];
       int code = (content[3] << 8) | content[4];
@@ -1033,9 +1052,39 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("  information  = {0}", text);
     }
 
+    private void HandleCaInformation(byte[] content, int length)
+    {
+      Log.Log.Debug("Turbosight: conditional access information");
+      if (length == 0)
+      {
+        Log.Log.Debug("Turbosight: error, response too short");
+        return;
+      }
+      int numCaIds = content[0];
+      Log.Log.Debug("  # CASIDs = {0}", numCaIds);
+      int i = 0;
+      int l = 1;
+      while (l + 2 <= length)
+      {
+        Log.Log.Debug("  {0,-2}       = 0x{1:x2}{2:x2}", i, content[l + 1], content[l]);
+        l += 2;
+        i++;
+      }
+      if (length != ((numCaIds * 2) + 1))
+      {
+        Log.Log.Debug("Turbosight: error, unexpected numCaIds");
+        //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
+      }
+    }
+
     private void HandleMenu(byte[] content, int length)
     {
       Log.Log.Debug("Turbosight: menu");
+      if (length == 0)
+      {
+        Log.Log.Debug("Turbosight: error, response too short");
+        return;
+      }
       int numChoices = content[0];
       List<String> entries = new List<String>();
       String entry = "";
@@ -1062,6 +1111,12 @@ namespace TvLibrary.Implementations.DVB
       }
       entries.Add(entry);
       entryCount -= 2;
+      if (entryCount < 0)
+      {
+        Log.Log.Debug("Turbosight: error, not enough menu data");
+        DVB_MMI.DumpBinary(content, 0, length);
+        return;
+      }
 
       Log.Log.Debug("  title     = {0}", entries[0]);
       Log.Log.Debug("  sub-title = {0}", entries[1]);
@@ -1092,21 +1147,15 @@ namespace TvLibrary.Implementations.DVB
     private void HandleEnquiry(byte[] content, int length)
     {
       Log.Log.Debug("Turbosight: enquiry");
+      if (length < 3)
+      {
+        Log.Log.Debug("Turbosight: error, response too short");
+        DVB_MMI.DumpBinary(content, 0, length);
+        return;
+      }
       bool blind = (content[0] != 0);
       uint answerLength = content[1];
-      String text = "";
-      for (int i = 2; i < length; i++)
-      {
-        if (content[i] >= 32 && content[i] <= 126)
-        {
-          text += (char)content[i];
-        }
-        else
-        {
-          text += ' ';
-        }
-      }
-
+      String text = DVB_MMI.BytesToString(content, 2, length - 2);
       Log.Log.Debug("  text   = {0}", text);
       Log.Log.Debug("  length = {0}", answerLength);
       Log.Log.Debug("  blind  = {0}", blind);
@@ -1149,8 +1198,14 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Turbosight: enter menu");
 
       // We send an "application info" message here because attempting to enter the menu will fail
-      // if you don't get the application information first. The MMI handler thread knows
-      // to send the "enter menu" request after the application information has been received.
+      // if you don't get the application information first. On seeing this message the MMI handler
+      // thread does the following:
+      // 1. Send the application information request.
+      // 2. Parse and log the application information response if/when it arrives.
+      // 3. Send a CA information request.
+      // 4. Parse and log the CA information response if/when it arrives.
+      // 5. Send an enter menu request.
+      // 6. Parse the response and execute callbacks as necessary.
       lock (this)
       {
         Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.ApplicationInfo);
