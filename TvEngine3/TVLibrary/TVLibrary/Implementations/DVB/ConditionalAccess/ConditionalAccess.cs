@@ -684,7 +684,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_twinhan != null)
         {
-          return _twinhan.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.pmt, context.pmtLength);
+          return _twinhan.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
       }
       catch (Exception ex)
