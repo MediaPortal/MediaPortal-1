@@ -30,6 +30,10 @@
 
 extern void LogDebug(const char *fmt, ...);
 
+#define HALF_SECOND 5000000LL
+#define ONE_SECOND  10000000LL
+#define TWO_SECONDS 10000000LL
+
 CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME playlistOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded)
 {
   playlistFirstPacketTime=firstPacketTime;
@@ -203,9 +207,9 @@ bool CClip::AcceptAudioPacket(Packet* packet)
   {
     if (!firstPacketAccepted)
     {
-      if (abs(packet->rtStart - playlistFirstPacketTime - m_rtClipStartingOffset) > 10000000)
+      firstPacketAccepted = true;
+      if (abs(packet->rtStart - playlistFirstPacketTime - m_rtClipStartingOffset) > ONE_SECOND)
       {
-        firstPacketAccepted = true;
         m_rtClipStartingOffset = packet->rtStart - playlistFirstPacketTime;
       }
     }
@@ -232,9 +236,9 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
   {
     if (!firstPacketAccepted && packet->rtStart != Packet::INVALID_TIME)
     {
-      if (abs(packet->rtStart - playlistFirstPacketTime - m_rtClipStartingOffset) > 10000000)
+      firstPacketAccepted = true;
+      if (abs(packet->rtStart - playlistFirstPacketTime - m_rtClipStartingOffset) > TWO_SECONDS)
       {
-        firstPacketAccepted = true;
         m_rtClipStartingOffset = packet->rtStart - playlistFirstPacketTime;
       }
     }
@@ -369,7 +373,7 @@ REFERENCE_TIME CClip::PlayedDuration()
     finish = videoPlaybackPosition;
   }
   playDuration = finish - playlistFirstPacketTime;
-  if (abs(clipDuration - playDuration) < 5000000LL) 
+  if (abs(clipDuration - playDuration) < HALF_SECOND) 
   {
 //    LogDebug("Clip::Duration 1 %I64d %I64d %I64d ", clipDuration - m_rtClipStartingOffset, clipDuration, m_rtClipStartingOffset);
     return clipDuration - m_rtClipStartingOffset;
