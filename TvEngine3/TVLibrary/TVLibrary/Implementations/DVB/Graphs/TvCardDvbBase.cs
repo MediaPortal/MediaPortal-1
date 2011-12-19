@@ -1000,14 +1000,14 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        int hr = ((IMediaControl)_graphBuilder).Stop();
+        //int hr = ((IMediaControl)_graphBuilder).Stop();
         Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
-        if (hr < 0 || hr > 1)
+        /*if (hr < 0 || hr > 1)
         {
           Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
-        _graphState = GraphState.Created;
+        _graphState = GraphState.Created;*/
       }
     }
 

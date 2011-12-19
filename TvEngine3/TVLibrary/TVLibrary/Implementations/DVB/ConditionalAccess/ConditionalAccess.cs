@@ -160,6 +160,7 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Twinhan card detected");
             _diSEqCMotor = new DiSEqCMotor(_twinhan);
+			_HWProvider = _twinhan;
             Log.Log.WriteFile("Twinhan registering CI menu capabilities");
             _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
@@ -380,7 +381,7 @@ namespace TvLibrary.Implementations.DVB
         //}
         if (_twinhan != null)
         {
-          if (_twinhan.IsCamPresent())
+          //if (_twinhan.IsCamPresent())
             return false;
         }
 
@@ -683,12 +684,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_twinhan != null)
         {
-          ChannelInfo info = new ChannelInfo();
-          info.DecodePmt(pmt);
-
-          int caPmtLen;
-          byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
-          return _twinhan.SendPMT(caPmt, caPmtLen);
+          return _twinhan.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.pmt, context.pmtLength);
         }
       }
       catch (Exception ex)
@@ -725,7 +721,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_twinhan != null)
         {
-          _twinhan.SendDiseqCommand(parameters, channel);
+          _twinhan.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_hauppauge != null)
