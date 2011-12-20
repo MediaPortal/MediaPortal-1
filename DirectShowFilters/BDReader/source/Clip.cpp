@@ -32,31 +32,35 @@ extern void LogDebug(const char *fmt, ...);
 
 #define HALF_SECOND 5000000LL
 #define ONE_SECOND  10000000LL
-#define TWO_SECONDS 10000000LL
+#define TWO_SECONDS 20000000LL
 
-CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME playlistOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded)
+CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME playlistOffset, bool audioPresent, REFERENCE_TIME duration)
 {
-  playlistFirstPacketTime=firstPacketTime;
-  lastVideoPosition=playlistFirstPacketTime;
   nClip=clipNumber;
   nPlaylist = playlistNumber;
+
+  playlistFirstPacketTime=firstPacketTime;
+
+  lastVideoPosition=playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
   audioPlaybackPosition = playlistFirstPacketTime;
+
   clipDuration=duration;
+  clipPlaylistOffset = playlistFirstPacketTime - playlistOffset;
+
+  m_playlistOffset = clipOffset;
+  m_rtClipStartingOffset = 0LL;
+
   noAudio=!audioPresent;
+
   superceeded=0;
-  audioPlaybackpoint = firstPacketTime;
-  clipPlaylistOffset = firstPacketTime - playlistOffset;
+
+  m_videoPmt=NULL;
+
   firstAudio=true;
   firstVideo=true;
-  bSeekNeededVideo = false;
-  bSeekNeededAudio = false;
-  m_videoPmt=NULL;
-  m_playlistOffset = clipOffset;
-  firstAudioPosition = playlistFirstPacketTime;
-  firstVideoPosition = playlistFirstPacketTime;
-  m_rtClipStartingOffset = 0;
   firstPacketAccepted = false;
+  clipReset = false;
 }
 
 CClip::~CClip(void)
@@ -70,21 +74,20 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
 {
   Packet* ret=NULL;
 
-  // Disabled for now - causes issues with clip changes on rare situatios.
-  // we should't need this since audio and video pins are syncronized for the
-  // playlist boundaries. Also Seamless BDs could have issues when clip
-  // joints are having extra data.
-
-  /*if (!noAudio && !firstAudio && m_vecClipAudioPackets.size()==0)
+  if (!firstPacketReturned)
   {
-    LogDebug("Swithching to fake Audio for clip %d",nClip);
-    firstAudio = true;
-    noAudio = true;
-  }*/
+//    CAutoLock lock (&m_sectionRead);
+    firstPacketReturned=true;
+    if (abs(earliestPacketAccepted - playlistFirstPacketTime - m_rtClipStartingOffset) > ONE_SECOND)
+    {
+      m_rtClipStartingOffset = earliestPacketAccepted - playlistFirstPacketTime;
+    }
+    return ReturnNextAudioPacket(playlistOffset);
+  }
 
   if (noAudio)
   {
-    ret=GenerateFakeAudio(audioPlaybackpoint);
+    ret=GenerateFakeAudio(audioPlaybackPosition);
   }
   else
   {
@@ -92,28 +95,22 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
     {
       ivecAudioBuffers it = m_vecClipAudioPackets.begin();
       ret=*it;
-      audioPlaybackpoint=ret->rtStart+FAKE_AUDIO_DURATION;//FAKE_AUDIO_DURATION is a proxy for the real duration (currently)
+      audioPlaybackPosition=ret->rtStart;
       it=m_vecClipAudioPackets.erase(it);
     }
   }
-  if (firstAudio && ret && ret->rtStart!=Packet::INVALID_TIME)
-  {
-    ret->bDiscontinuity=true;
-    firstAudio=false;
-    firstAudioPosition = ret->rtStart;
-  }
-  
   if (ret && ret->rtStart!=Packet::INVALID_TIME)
   {
+    if (firstAudio)
+    {
+      ret->bDiscontinuity=true;
+      firstAudio=false;
+      ret->bNewClip = true;
+    }
+  
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
-    ret->rtClipTime = m_rtClipStartingOffset;
-    audioPlaybackPosition = ret->rtStart;
-  }
-  if (bSeekNeededAudio && ret->rtStart!=Packet::INVALID_TIME)
-  {
-    LogDebug("Setting bSeekRequired Audio on (%d,%d)", nPlaylist, nClip);
-    ret->bSeekRequired = true;
-    bSeekNeededAudio = false;
+    ret->rtClipStartTime = m_rtClipStartingOffset;
+    if (!noAudio) audioPlaybackPosition = ret->rtStart;
   }
 
 //  LogDebug("Clip: aud: return Packet rtStart: %I64d offset: %I64d seekRequired %d",ret->rtStart, ret->rtOffset,ret->bSeekRequired);
@@ -122,6 +119,12 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
 
 Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
 {
+  if (!firstPacketReturned)
+  {
+//    CAutoLock lock (&m_sectionRead);
+    firstPacketReturned=true;
+    return ReturnNextVideoPacket(playlistOffset);
+  }
   Packet* ret=NULL;
   if (m_vecClipVideoPackets.size()>0 && m_videoPmt)
   {
@@ -129,36 +132,30 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
     ret=*it;
     it=m_vecClipVideoPackets.erase(it);
   }
-  if (firstVideo && ret && ret->rtStart!=Packet::INVALID_TIME)
+  if (ret)
   {
-    ret->bDiscontinuity=true;
-    firstVideo=false;
-    firstVideoPosition = ret->rtStart;
-  }
-
-  if (ret) ret->pmt = CreateMediaType(m_videoPmt);
+    if (ret->rtStart!=Packet::INVALID_TIME)
+    {
+      if (firstVideo)
+      {
+        ret->bDiscontinuity=true;
+        ret->bNewClip = true;
+        firstVideo=false;
+        ret->pmt = CreateMediaType(m_videoPmt);
+      }
   
-  if (ret && ret->rtStart!=Packet::INVALID_TIME)
-  {
-    ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
-    ret->rtClipTime = m_rtClipStartingOffset;
-    if (ret->rtStart > videoPlaybackPosition) videoPlaybackPosition = ret->rtStart;
+      ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
+      ret->rtClipStartTime = m_rtClipStartingOffset;
+      if (ret->rtStart > videoPlaybackPosition) videoPlaybackPosition = ret->rtStart;
+    }
   }
-
-  if (bSeekNeededVideo && ret->rtStart!=Packet::INVALID_TIME)
-  {
-    LogDebug("Setting bSeekRequired Video on (%d,%d)", nPlaylist, nClip);
-    ret->bSeekRequired = true;
-    bSeekNeededVideo = false;
-  }
-
 //  LogDebug("Clip: vid: return Packet rtStart: %I64d offset: %I64d seekRequired %d",ret->rtStart, ret->rtOffset,ret->bSeekRequired);
   return ret;
 }
 
 bool CClip::FakeAudioAvailable()
 {
-  return audioPlaybackpoint <= playlistFirstPacketTime + clipDuration;
+  return audioPlaybackPosition <= playlistFirstPacketTime + clipDuration;
 }
 
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
@@ -190,7 +187,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   wfe->Format.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
 
   packet->pmt = CreateMediaType(&pmt);
-  audioPlaybackpoint+=FAKE_AUDIO_DURATION;
+  audioPlaybackPosition+=FAKE_AUDIO_DURATION;
   lastAudioPosition+=FAKE_AUDIO_DURATION;
   return packet;
 }
@@ -205,13 +202,11 @@ bool CClip::AcceptAudioPacket(Packet* packet)
   }
   else
   {
-    if (!firstPacketAccepted)
+    //CAutoLock lock(m_sectionRead);
+    if (!firstPacketReturned)
     {
+      if (earliestPacketAccepted > packet->rtStart) earliestPacketAccepted = packet->rtStart;
       firstPacketAccepted = true;
-      if (abs(packet->rtStart - playlistFirstPacketTime - m_rtClipStartingOffset) > ONE_SECOND)
-      {
-        m_rtClipStartingOffset = packet->rtStart - playlistFirstPacketTime;
-      }
     }
     packet->nClipNumber=nClip;
     m_vecClipAudioPackets.push_back(packet);
@@ -228,7 +223,6 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
 {
   if (packet->nClipNumber != nClip)
   {
-    LogDebug("Packet %64d (%d,%d) deleted in (%d,%d)",packet->rtStart, packet->nPlaylist, packet->nClipNumber, nPlaylist, nClip);
     // Oh dear, not for this clip so throw it away
     delete packet;
   }
@@ -310,23 +304,21 @@ REFERENCE_TIME CClip::Reset(REFERENCE_TIME rtClipStartPoint)
 {
   LogDebug("Reseting (%d,%d)", nPlaylist, nClip);
   REFERENCE_TIME ret = PlayedDuration();
-  clipPlaylistOffset -= ret;
   FlushAudio();
   FlushVideo();
   lastVideoPosition = playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
-  superceeded=0;
-  audioPlaybackpoint = playlistFirstPacketTime;
   clipPlaylistOffset = playlistFirstPacketTime;
+  clipPlaylistOffset -= ret;
   audioPlaybackPosition = rtClipStartPoint;
+  m_rtClipStartingOffset = rtClipStartPoint;
+
+  superceeded=0;
+
   firstAudio=true;
   firstVideo=true;
-//  bSeekNeededAudio=true;
-//  bSeekNeededVideo=true;
-  firstAudioPosition = _I64_MAX;
-  firstVideoPosition = _I64_MAX;
-  m_rtClipStartingOffset = rtClipStartPoint;
   firstPacketAccepted = false;
+  clipReset = true;
   return ret;
 }
 
@@ -342,10 +334,12 @@ bool CClip::HasAudio()
   return false;
 }
 
+//
 bool CClip::HasVideo()
 {
 //  if (!noAudio  && firstAudio ) return false;
   if (!m_videoPmt) return false;
+  if (firstVideo && !IsSuperceeded(SUPERCEEDED_VIDEO_FILL) && m_vecClipVideoPackets.size() < 2) return false;
   if (m_vecClipVideoPackets.size()>0) return true;
   return false;
 }
@@ -375,26 +369,15 @@ REFERENCE_TIME CClip::PlayedDuration()
   playDuration = finish - playlistFirstPacketTime;
   if (abs(clipDuration - playDuration) < HALF_SECOND) 
   {
-//    LogDebug("Clip::Duration 1 %I64d %I64d %I64d ", clipDuration - m_rtClipStartingOffset, clipDuration, m_rtClipStartingOffset);
     return clipDuration - m_rtClipStartingOffset;
   }
-//  LogDebug("Clip::Duration 2 %I64d%I64d %I64d ", finish - start, finish, start);
   return finish - start;
 }
 
 
-void CClip::SetVideoPMT(AM_MEDIA_TYPE *pmt, bool changingMediaType)
+void CClip::SetVideoPMT(AM_MEDIA_TYPE *pmt)
 {
-  bSeekNeededVideo |= changingMediaType;
-  bSeekNeededAudio |= changingMediaType;
   if (m_videoPmt) DeleteMediaType(m_videoPmt);
-  if (changingMediaType)
-  {
-    LogDebug("Clip::Changing video pmt causing stream Reset");
-    bSeekNeededVideo = true;
-    bSeekNeededAudio = true;
-    clipPlaylistOffset = playlistFirstPacketTime;
-  }
   m_videoPmt = CreateMediaType(pmt);
 }
 

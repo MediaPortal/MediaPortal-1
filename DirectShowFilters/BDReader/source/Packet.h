@@ -38,8 +38,8 @@ public:
 
   INT32 nClipNumber;
   INT32 nPlaylist;
-  bool bDiscontinuity, bSyncPoint, bSeekRequired;  
+  bool bDiscontinuity, bSyncPoint, bNewClip;  
   static const REFERENCE_TIME INVALID_TIME = _I64_MIN;  
-  REFERENCE_TIME rtStart, rtStop, rtOffset, rtPlaylistTime, rtClipTime, rtTitleDuration;
+  REFERENCE_TIME rtStart, rtStop, rtOffset, rtPlaylistTime, rtClipStartTime, rtTitleDuration;
   AM_MEDIA_TYPE* pmt;
 };

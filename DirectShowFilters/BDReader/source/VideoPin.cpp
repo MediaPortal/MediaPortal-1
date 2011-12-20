@@ -522,10 +522,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_prevCl = buffer->nClipNumber;
           }
 
-          if (buffer->bSeekRequired || m_prevPl != buffer->nPlaylist || m_prevCl != buffer->nClipNumber)
+
+          if (buffer->bNewClip)
           {
-            LogDebug("vid: Playlist changed to %d - bSeekRequired: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
-              buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+            LogDebug("vid: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
+              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
             m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
@@ -583,7 +584,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               pSample->SetMediaType(&mt);
 
               // Flush the stream if format change is done on the fly
-              if (!buffer->bSeekRequired)
+              if (!buffer->bNewClip)
               {
                 DeliverBeginFlush();
                 DeliverEndFlush();
@@ -783,4 +784,3 @@ void CVideoPin::LogMediaType(AM_MEDIA_TYPE* pmt)
       pmt->subtype.Data4[6], pmt->subtype.Data4[7]);
   }
 }
-

@@ -70,9 +70,6 @@ protected:
   vector<CPlaylist *> m_vecPlaylists;
   vector<CClip*> m_vecNonFilledClips;
 
-  AM_MEDIA_TYPE *m_vPmt;
-  AM_MEDIA_TYPE *m_aPmt;
-
   CPlaylist * m_currentAudioPlayBackPlaylist;
   CPlaylist * m_currentVideoPlayBackPlaylist;
   CPlaylist * m_currentAudioSubmissionPlaylist;

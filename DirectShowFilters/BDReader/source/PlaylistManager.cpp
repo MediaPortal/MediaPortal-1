@@ -37,8 +37,6 @@ CPlaylistManager::CPlaylistManager(void)
   m_bIgnoreAudioSeeking=false;
   m_bIgnoreVideoSeeking=false;
   m_rtPlaylistOffset = 0LL;
-  m_vPmt = NULL;
-  m_aPmt = NULL;
 }
 
 
@@ -127,7 +125,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 
 bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
 {
-  CAutoLock lock (&m_sectionAudio);
+//  CAutoLock lock(&m_sectionAudio);
   bool ret = false;
   if (m_currentAudioSubmissionPlaylist==NULL) 
   {
@@ -514,17 +512,6 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 {
   if (pmt)
   {
-    bool seekRequired = false;
-    if (!m_vPmt)
-    {
-      m_vPmt = pmt;
-    }
-    else if (pmt->subtype != m_vPmt->subtype)  //  TODO check if extra code needed for Cyberlink etc
-    {
-      seekRequired = true;
-      m_vPmt = pmt;
-    }
-    
     LogDebug("CPlaylistManager: Setting video PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
 	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
@@ -533,8 +520,7 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
     CPlaylist* pl=GetPlaylist(nPlaylist);
     if (pl)
     {
-      pl->SetVideoPMT(pmt, nClip, seekRequired);
-      if (seekRequired) m_rtPlaylistOffset = 0;
+      pl->SetVideoPMT(pmt, nClip);
     }  
   }
 }

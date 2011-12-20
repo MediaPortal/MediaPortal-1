@@ -59,7 +59,7 @@ void Packet::CopyProperties(Packet& pSrc, bool pValidateStartTime)
   nPlaylist = pSrc.nPlaylist;
   bDiscontinuity = pSrc.bDiscontinuity;
   bSyncPoint = pSrc.bSyncPoint;
-  bSeekRequired = pSrc.bSeekRequired; 
+  bNewClip = pSrc.bNewClip; 
   
   if (!pValidateStartTime || pSrc.rtStart != INVALID_TIME)
   {
@@ -80,13 +80,13 @@ void Packet::ResetProperties(bool pResetClipInfo)
     nPlaylist = -100;
     rtOffset = 0;//-100; /// is this needed? i.e. fixed somewhere else so that all packets will have a valid offset (initial versions did have some packets where this was left at -100)
     rtPlaylistTime = 0;
-    rtClipTime = 0;
+    rtClipStartTime = 0;
     rtTitleDuration = 0;
   }
 
   bDiscontinuity = false;
   bSyncPoint = false;
-  bSeekRequired = false;
+  bNewClip = false;
   rtStart = INVALID_TIME;
   rtStop = INVALID_TIME;
 }

@@ -271,7 +271,7 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
     ++it;
   }
 
-  m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, discontinuousClip));
+  m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration));
   if (!m_currentAudioPlayBackClip)
   {
     // initialise
@@ -490,12 +490,12 @@ CClip * CPlaylist::GetClip(int nClip)
   return ret;
 }
 
-void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip, bool changingMediaType)
+void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip)
 {
   CClip * clip = GetClip(nClip);
   if (clip)
   {
-    clip->SetVideoPMT(pmt, changingMediaType);
+    clip->SetVideoPMT(pmt);
   }
 }
 

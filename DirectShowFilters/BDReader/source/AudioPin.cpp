@@ -300,10 +300,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             m_prevCl = buffer->nClipNumber;
           }
 
-          if (/*buffer->bSeekRequired ||*/ m_prevPl != buffer->nPlaylist || m_prevCl != buffer->nClipNumber)
+          if (buffer->bNewClip)
           {
-            LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
-              buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+            LogDebug("aud: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
+              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             checkPlaybackState = true;
 
@@ -317,7 +317,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (!m_bUsePCM && buffer->pmt && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
             buffer->pmt->subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
 
-          if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bSeekRequired)
+          if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bNewClip)
           {
             HRESULT hrAccept = S_FALSE;
             LogMediaType(buffer->pmt);
@@ -378,13 +378,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           
           if (checkPlaybackState)
           {
-            if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bSeekRequired)
+            if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bNewClip)
             {
               CMediaType mt(*buffer->pmt);
               SetMediaType(&mt);
             }
           }
-          m_pCachedBuffer->bSeekRequired = false;
+          m_pCachedBuffer->bNewClip = false;
 
           return S_OK;
         }
