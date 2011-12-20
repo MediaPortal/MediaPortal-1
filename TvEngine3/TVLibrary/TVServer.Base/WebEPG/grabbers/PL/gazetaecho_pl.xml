@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="7" timezone="" version="2.0" />
+  <Channels>
+    <Channel id="TVP1" siteId="TV1" />
+    <Channel id="TVP2" siteId="TV2" />
+    <Channel id="TVN" siteId="TVN" />
+    <Channel id="TV4" siteId="TV4" />
+    <Channel id="TVN 7" siteId="TV7" />
+    <Channel id="TV Polonia" siteId="TPO" />
+    <Channel id="Ale Kino!" siteId="ALE" />
+    <Channel id="Canal+" siteId="ACA" />
+    <Channel id="Canal+ Sport" siteId="ACN" />
+    <Channel id="Canal+ Film" siteId="ACZ" />
+    <Channel id="Tele5" siteId="TEL" />
+    <Channel id="13th Street Universal" siteId="HAL" />
+    <Channel id="TVP1@gazetaecho.pl" siteId="TV1" />
+    <Channel id="Zone Reality" siteId="REA" />
+    <Channel id="Planete" siteId="PLA" />
+    <Channel id="Animal Planet" siteId="ANP" />
+    <Channel id="Canal+ HD" siteId="ACH" />
+    <Channel id="Canal+ Film HD" siteId="AZH" />
+    <Channel id="Canal+ Sport HD" siteId="ASH" />
+    <Channel id="Canal+ Sport2" siteId="ACS" />
+    <Channel id="Canal+ Gol" siteId="ACT" />
+    <Channel id="4fun.tv" siteId="FFT" />
+    <Channel id="Al Jazeera English" siteId="AJZ" />
+    <Channel id="Animal Planet HD" siteId="APH" />
+    <Channel id="AXN" siteId="AXN" />
+    <Channel id="AXN Crime" siteId="AXR" />
+    <Channel id="AXN Sci-Fi" siteId="AXS" />
+    <Channel id="BBC HD" siteId="BCH" />
+    <Channel id="BBC Knowledge" siteId="BBK" />
+    <Channel id="BBC Entertainment" siteId="BBE" />
+    <Channel id="BBC World" siteId="BBC" />
+    <Channel id="Cartoon Network" siteId="CNT" />
+    <Channel id="Cinemax" siteId="CIN" />
+    <Channel id="Cinemax HD" siteId="CIH" />
+    <Channel id="Cinemax 2 HD" siteId="CI2" />
+    <Channel id="Cinemax 2" siteId="CN2" />
+    <Channel id="CNBC" siteId="CNB" />
+    <Channel id="CNN" siteId="CNN" />
+    <Channel id="Comedy Central" siteId="CCE" />
+    <Channel id="Comedy Central Family" siteId="MTZ" />
+    <Channel id="Crime &amp; Investigation" siteId="CRI" />
+    <Channel id="Discovery Channel" siteId="DIS" />
+    <Channel id="Discovery Science" siteId="DSC" />
+    <Channel id="Discovery World" siteId="DCV" />
+    <Channel id="Disney Channel" siteId="DCN" />
+    <Channel id="Disney XD" siteId="JET" />
+    <Channel id="Domo.tv" siteId="DOM" />
+    <Channel id="Edusat" siteId="EDU" />
+    <Channel id="ESPN Classic" siteId="ESP" />
+    <Channel id="Eurosport" siteId="EUR" />
+    <Channel id="Eurosport HD" siteId="EUH" />
+    <Channel id="Eurosport 2 HD" siteId="EU2" />
+    <Channel id="Eurosport 2" siteId="ER2" />
+    <Channel id="Extreme Sports Channel" siteId="EXE" />
+    <Channel id="Fashion TV" siteId="FTV" />
+    <Channel id="Filmbox" siteId="FB1" />
+    <Channel id="Filmbox Extra" siteId="FBE" />
+    <Channel id="Filmbox Family" siteId="FBF" />
+    <Channel id="Filmbox HD" siteId="FBH" />
+    <Channel id="Foxlife" siteId="FXL" />
+    <Channel id="Foxlife HD" siteId="FLH" />
+    <Channel id="France 2" siteId="FR2" />
+    <Channel id="France 3" siteId="FR3" />
+    <Channel id="France 5" siteId="FR5" />
+    <Channel id="FRANCE &Ocirc;" siteId="FR6" />
+    <Channel id="HBO HD" siteId="HBH" />
+    <Channel id="HBO" siteId="HBO" />
+    <Channel id="HBO2" siteId="HB2" />
+    <Channel id="HH2" siteId="HBO2 HB" />
+    <Channel id="HBO Comedy HD" siteId="HCO" />
+    <Channel id="HBO Comedy" siteId="HCM" />
+    <Channel id="History" siteId="HIS" />
+    <Channel id="Hyper" siteId="HYP" />
+    <Channel id="ID Investigation Discovery" siteId="DID" />
+    <Channel id="Jim Jam" siteId="JIM" />
+    <Channel id="Kino Polska" siteId="KPL" />
+    <Channel id="Kuchnia.tv" siteId="KTV" />
+    <Channel id="Mezzo" siteId="MEZ" />
+    <Channel id="Mini Mini" siteId="MMI" />
+    <Channel id="Movies 24" siteId="M24" />
+    <Channel id="MTV Polska" siteId="MTV" />
+    <Channel id="MTV Rocks" siteId="MT2" />
+    <Channel id="MTVNHD" siteId="MZZ" />
+    <Channel id="National Geographic Channel" siteId="NGE" />
+    <Channel id="National Geographic HD" siteId="NGH" />
+    <Channel id="Nat Geo Wild" siteId="NGW" />
+    <Channel id="Nat Geo Wild HD" siteId="NWH" />
+    <Channel id="Orange Sport Info" siteId="OSI" />
+    <Channel id="Polonia 1" siteId="POL" />
+    <Channel id="Polsat" siteId="PST" />
+    <Channel id="Polsat 2" siteId="PL2" />
+    <Channel id="Polsat Cafe" siteId="PLC" />
+    <Channel id="Polsat Film" siteId="PLF" />
+    <Channel id="Polsat News" siteId="PLN" />
+    <Channel id="Polsat Play" siteId="PLP" />
+    <Channel id="TV Puls" siteId="PUL" />
+    <Channel id="Religia.tv" siteId="RAT" />
+    <Channel id="SciFi Universal" siteId="SFC" />
+    <Channel id="Sportklub" siteId="SPK" />
+    <Channel id="Superstacja" siteId="SST" />
+    <Channel id="TCM" siteId="TCM" />
+    <Channel id="Trace TV" siteId="TRT" />
+    <Channel id="TLC" siteId="DTR" />
+    <Channel id="Travel Channel" siteId="TCH" />
+    <Channel id="TV Biznes" siteId="TVB" />
+    <Channel id="TV5" siteId="TV5" />
+    <Channel id="TVN CNBC Biznes" siteId="TCB" />
+    <Channel id="TVN Style" siteId="TST" />
+    <Channel id="TNV Turbo" siteId="TTU" />
+    <Channel id="TVN24" siteId="TVP" />
+    <Channel id="TVP HD" siteId="TPH" />
+    <Channel id="TVP Info" siteId="TV3" />
+    <Channel id="TVP Kultura" siteId="TKU" />
+    <Channel id="TVP Seriale" siteId="TSE" />
+    <Channel id="TVP Sport" siteId="TSP" />
+    <Channel id="TVS" siteId="TVS" />
+    <Channel id="Universal Channel" siteId="UNC" />
+    <Channel id="VHE" siteId="VH1 Europe" />
+    <Channel id="VIVA Polska" siteId="VIV" />
+    <Channel id="Zigzap" siteId="MIN" />
+    <Channel id="Club TV" siteId="CLB" />
+    <Channel id="Zone Romantica" siteId="ZRO" />
+    <Channel id="Canal+ 3D" siteId="AC3" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.gazetaecho.pl/&#63;tv/[YYYY].[MM].[DD]/[ID]" post="" external="false" encoding="iso-8859-2" />
+    <Html>
+      <Template name="default" start="wyszukiwanie" end="polecamy">
+        <SectionTemplate tags="T A S">
+          <TemplateText>
+            &lt;TR valign=top onmouseover="" onmouseout=""&gt;&lt;TD class=s style='padding:4px; background-color:#EEEEEE' align=center&gt;&lt;#START&gt;&lt;BR&gt;&lt;img src='' width=13 height=13&gt;&lt;/TD&gt;&lt;TD class=s style='padding:4px' width=99%&gt;&lt;A class=navs HREF=''&gt;&lt;B&gt;&lt;#TITLE&gt;&lt;/B&gt;&lt;/A&gt;&lt;z(&gt;&lt;BR&gt;&lt;span class=vss&gt;&lt;#GENRE&gt;,&lt;#COUNTRY&gt;,&lt;#YEAR&gt;,&lt;#ACTORS&gt;&lt;/span&gt;&lt;/z)?&gt;&lt;/TD&gt;&lt;/TR&gt;
+            </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details" start="emisja" end="polecamy">
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &lt;TD width=95% class=vs&gt;&lt;/TD&gt;&lt;/TR&gt;
+&lt;/TABLE&gt;&lt;BR&gt;&lt;P&gt;&lt;#DESCRIPTION&gt;&lt;/TD&gt;&lt;/TR&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+<DataPreference>
+<Preference template="Details" title="0" subtitle="0" genre="0" description="0" />
+</DataPreference>
+      <Sublinks>
+        <Sublink search="&#63;tv" template="Details">
+          <Link url="http://www.gazetaecho.pl/[1]" post="" external="false" encoding="iso-8859-2" />
+        </Sublink>
+      </Sublinks>
+<Searches>
+<Search match="\([0-9]{1,4}[,][0-9]{0,4}\)" field="#EPISODE" remove="true" /> 
+<Search match="\([0-9]{1,4}\)" field="#EPISODE" remove="true" /> 
+<Search match="\([0-9]{1,4}[/][0-9]{0,4}\)" field="#EPISODE" remove="true" />
+</Searches>
+    </Html>
+  </Listing>
+</Grabber>

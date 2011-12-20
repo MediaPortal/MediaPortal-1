@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info treatErrorAsWarning="true" availableDays="10" timezone="W. Europe Standard Time" version="2.2.0" />
+  <Channels>
+    <Channel id="sport@tv4.se" siteId="1.311852" />
+    <Channel id="eurosport@eurosport.com" siteId="1.324526" />
+    <Channel id="eurosport2@eurosport.com" siteId="1.324530" />
+    <Channel id="viagolf@viasat.se" siteId="1.324533" />
+    <Channel id="sport@viasatsport.se" siteId="1.886761" />
+    <Channel id="sport3@viasatsport.se" siteId="1.324531" />
+    <Channel id="hockey@viasat.se" siteId="1.324506" />
+    <Channel id="sport2@viasatsport.se" siteId="1.323711" />
+    <Channel id="fotbollhd@viasatsport.se" siteId="1.1887689" />
+    <Channel id="premierleagueHD@viasat.se" siteId="1.324542" />
+    <Channel id="hockey@canalplus.se" siteId="1.324506" />
+    <Channel id="fotboll@canalplus.se" siteId="1.324486" />
+    <Channel id="sport@canalplus.se" siteId="1.1225257" />
+    <Channel id="sport2@canalplus.no" siteId="1.840451" />
+    <Channel id="sportextra@canalplus.se" siteId="1.324516" />
+    <Channel id="extra1@canalplus.se" siteId="1.323740" />
+    <Channel id="extra2@canalplus.se" siteId="1.324470" />
+    <Channel id="extra3@canalplus.se" siteId="1.372786" />
+    <Channel id="extra4@canalplus.se" siteId="1.372782" />
+    <Channel id="sporthd@canalplus.no" siteId="1.323739" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://tvplaneten.tv4.se/[ID]?date=[YYYY]-[MM]-[DD]&amp;view=full&amp;selectedArticleContentId=[ID]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!-- PROGRAMTABLE" end="&lt;!-- additional-content">
+        <SectionTemplate tags="UL H3">
+          <TemplateText>
+&lt;li&gt;
+ &lt;h3&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/h3&gt;
+ &lt;#DESCRIPTION&gt;
+&lt;/li&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Searches>
+        <Search match="[^a-z][Dd]el \d+" field="#EPISODE" remove="false"/>
+        <Search match="Säsong \d+" field="#SEASON" remove="false" />
+        <Search match="S\d\d" field="#SEASON" remove="false" /> 
+        <Search match="E\d\d" field="#EPISODE" remove="false" />  
+        <Search match="Textat sid\. \d\d\d" field="#SUBTITLESNOTFALSE" remove="true"/>
+        <Search match="Bredbild." field="#WIDESCREEN" remove="true"/>
+      </Searches>
+    </Html>
+  </Listing>
+  <Actions>
+    <Modify channel="*" field="#TITLE" search=" \? " action="Replace"> - </Modify>
+    <Modify channel="*" field="#TITLE" search="(?&lt;=\w)\?(?=\w)" action="Replace">-</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search=" \? " action="Replace"> - </Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=\d)\?(?=\d)" action="Replace">-</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=[A-Za-z])\?(?=[A-Za-z])" action="Replace">'</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="\?(?=\w(\w|\s)+\?)" action="Replace">"</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=&quot;\w(\w|\s)+)\?" action="Replace">"</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="\.Från" action="Replace">. Från</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="\.Även" action="Replace">. Även</Modify>
+  </Actions>
+</Grabber>
