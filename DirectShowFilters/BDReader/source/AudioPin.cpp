@@ -54,8 +54,8 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bFirstSample(true),
   m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0),
-  m_prevPl(-1),
-  m_prevCl(-1)
+  m_prevPl(NOT_INITIALIZED),
+  m_prevCl(NOT_INITIALIZED)
 {
   m_bConnected = false;
   m_rtStart = 0;
@@ -242,6 +242,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
+      if (m_demux.m_bAudioWaitForSeek)
+      {
+        m_demux.m_bAudioWaitForSeek = false;
+        m_bSeekDone = false;
+      }
+
       if (!m_bSeekDone || m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging() || m_demux.m_bRebuildOngoing || 
         m_demux.m_eAudioPlSeen->Check() )
       {
@@ -280,7 +286,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-        bool useEmptySample = false;
         bool checkPlaybackState = false;
         REFERENCE_TIME rtStart = m_rtStart;
 
@@ -289,32 +294,23 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           CAutoLock lock(m_section);
 
-          if (m_prevPl == -1)
+          if (m_prevPl == NOT_INITIALIZED)
           {
             m_prevPl = buffer->nPlaylist;
             m_prevCl = buffer->nClipNumber;
           }
-          //if (m_prevPl != buffer->nPlaylist)
-          //{
-          //  checkPlaybackState = true;
-          //  m_prevPl = buffer->nPlaylist;
-          //}
 
-          if (m_bZeroStreamOffset)
-          {
-//            m_rtStreamTimeOffset =  buffer->rtClipTime;
-            m_bZeroStreamOffset = false;
-          }
-
-          if (buffer->bSeekRequired)
+          if (/*buffer->bSeekRequired ||*/ m_prevPl != buffer->nPlaylist || m_prevCl != buffer->nClipNumber)
           {
             LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
               buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
-            useEmptySample = true;
+            checkPlaybackState = true;
 
             m_prevPl = buffer->nPlaylist;
             m_prevCl = buffer->nClipNumber;
+
+            m_demux.m_eAudioPlSeen->Set();
           }
 
           // Do not convert LPCM to PCM if audio decoder supports LPCM (LAV audio decoder style)
@@ -356,7 +352,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               LogDebug("aud: graph rebuilding required");
 
               m_demux.m_bAudioRequiresRebuild = true;
-              useEmptySample = true;
+              checkPlaybackState = true;
 
               DeliverEndOfStream();
             }
@@ -374,21 +370,19 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           }
         } // lock ends
 
-        if (useEmptySample)
+        if (checkPlaybackState)
         {
           CreateEmptySample(pSample);
           m_pCachedBuffer = buffer;
           LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
           
-          if (buffer->bSeekRequired || checkPlaybackState)
+          if (checkPlaybackState)
           {
             if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bSeekRequired)
             {
               CMediaType mt(*buffer->pmt);
               SetMediaType(&mt);
             }
-            m_demux.m_eAudioPlSeen->Set();
-//            m_rtStreamTimeOffset =  buffer->rtClipTime;
           }
           m_pCachedBuffer->bSeekRequired = false;
 
@@ -417,8 +411,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             pSample->SetSyncPoint(true); // allow all packets to be seeking targets
-            rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;
-            rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;
+            rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset - m_rtStart;
+            rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset - m_rtStart;
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
 
             m_rtPrevSample = rtCorrectedStopTime;

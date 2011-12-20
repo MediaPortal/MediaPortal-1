@@ -102,8 +102,8 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0),
   m_rtTitleDuration(0),
-  m_prevPl(-1),
-  m_prevCl(-1),
+  m_prevPl(NOT_INITIALIZED),
+  m_prevCl(NOT_INITIALIZED),
   m_bDoFakeSeek(false)
 {
   m_rtStart = 0;
@@ -409,9 +409,6 @@ void CVideoPin::CheckPlaybackState()
 {
   if (m_demux.m_bVideoPlSeen)
   {
-    if (m_demux.m_bVideoRequiresRebuild)
-      DeliverEndOfStream();
-
     m_demux.m_eAudioPlSeen->Wait();
 
     m_pFilter->SetTitleDuration(m_rtTitleDuration);
@@ -425,16 +422,16 @@ void CVideoPin::CheckPlaybackState()
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
       m_demux.m_bRebuildOngoing = true;
     }
-    else if (!m_bStopWait && (m_demux.m_bStreamPaused || m_bDoFakeSeek))    
+    else if (!m_bStopWait && m_bDoFakeSeek)    
     {
       LogDebug("vid: Request zeroing the stream time");
-      DeliverEndOfStream();
       m_eFlushStart->Reset();
+      m_demux.m_bAudioWaitForSeek = true;
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
     }
 
-    m_bStopWait = m_demux.m_bStreamPaused = false;
+    m_bStopWait = m_demux.m_bStreamPaused = m_bDoFakeSeek = false;
 
     m_demux.m_eAudioPlSeen->Reset();
     m_demux.m_bVideoPlSeen = false;
@@ -489,7 +486,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         LogDebug("vid: cached fetch %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
-//        m_rtStreamTimeOffset =  buffer->rtClipTime;
       }
       else
         buffer = m_demux.GetVideo();
@@ -515,51 +511,43 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
       }
       else
       {
-        bool useEmptySample = false;
         bool checkPlaybackState = false;
 
         {
           CAutoLock lock(m_section);
 
-          if (m_prevPl == -1)
+          if (m_prevPl == NOT_INITIALIZED)
           {
             m_prevPl = buffer->nPlaylist;
             m_prevCl = buffer->nClipNumber;
           }
 
-          //if (m_bZeroStreamOffset)
-          //{
-          //  m_rtStreamTimeOffset =  buffer->rtClipTime;
-          //  m_bZeroStreamOffset = false;
-          //}
-
-          if (buffer->bSeekRequired)
+          if (buffer->bSeekRequired || m_prevPl != buffer->nPlaylist || m_prevCl != buffer->nClipNumber)
           {
             LogDebug("vid: Playlist changed to %d - bSeekRequired: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
               buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
- 
-            m_demux.m_bVideoPlSeen = true;
-            buffer->bSeekRequired = false;
-            useEmptySample = true;
-            m_bClipEndingNotified = false;
-
-            m_prevPl = buffer->nPlaylist;
-            m_prevCl = buffer->nClipNumber;
-          }
-          else if (m_prevPl != buffer->nPlaylist || m_prevCl != buffer->nClipNumber)
-          {
-          //  LogDebug("vid: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
 
             m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
             m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
+            
             m_prevPl = buffer->nPlaylist;
-          //  m_prevCl = buffer->nClipNumber;
-          //  m_demux.m_bVideoPlSeen = true;
-          //  useEmptySample = true;
-
-           // checkPlaybackState = true;
-
+            m_prevCl = buffer->nClipNumber;
+            
+            buffer->bSeekRequired = false;
+            m_demux.m_bVideoPlSeen = true;
+ 
             m_bClipEndingNotified = false;
+            checkPlaybackState = true;
+
+            if (m_demux.m_bStreamPaused)
+            {
+              m_bDoFakeSeek = true;
+              m_rtStreamOffset = buffer->rtStart;
+            }
+            else
+              m_rtStreamOffset = 0;
+
+            DeliverEndOfStream();
           }
 
           if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt))
@@ -585,7 +573,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               LogDebug("vid: graph rebuilding required");
 
               m_demux.m_bVideoRequiresRebuild = true;
-              useEmptySample = true;
+              checkPlaybackState = true;
             }
             else
             {
@@ -607,7 +595,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
         m_rtTitleDuration = buffer->rtTitleDuration;
 
-        if (useEmptySample || checkPlaybackState)
+        if (checkPlaybackState)
         {
           m_pCachedBuffer = buffer;
           LogDebug("vid: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
@@ -632,8 +620,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bDiscontinuity = false;
           }
 
-          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;
-          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;
+          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset - m_rtStart;
+          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset - m_rtStart;
 
           if (abs(m_dRateSeeking - 1.0) > 0.5)
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);

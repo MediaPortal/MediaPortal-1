@@ -44,6 +44,8 @@
 #define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * 111 + x / 9)
 #define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / 100 - x / 1000)
 
+#define NOT_INITIALIZED -1
+
 using namespace std;
 
 class CSubtitlePin;

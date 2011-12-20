@@ -122,6 +122,7 @@ public:
   bool m_bVideoRequiresRebuild;
   bool m_bRebuildOngoing;
   bool m_bStreamPaused;
+  bool m_bAudioWaitForSeek;
 
   CCritSec m_sectionRead;
 

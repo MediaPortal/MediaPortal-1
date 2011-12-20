@@ -83,6 +83,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_loopLastSearch = 1;
   m_bDiscontinuousClip = false;
   m_bStreamPaused = false;
+  m_bAudioWaitForSeek = false;
   m_bVideoFormatParsed = false;
   m_bAudioFormatParsed = false;
 
