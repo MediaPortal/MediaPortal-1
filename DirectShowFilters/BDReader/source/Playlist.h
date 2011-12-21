@@ -36,10 +36,10 @@ public:
   Packet* ReturnNextAudioPacket();
   Packet* ReturnNextAudioPacket(int clip);
   Packet* ReturnNextVideoPacket();
-  bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, bool discontinuousClip);
+  bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset);
   bool RemoveRedundantClips(); // returns true if no clips left;
-  bool AcceptAudioPacket(Packet*  packet, bool seeking);
-  bool AcceptVideoPacket(Packet*  packet, bool firstPacket, bool seeking);
+  bool AcceptAudioPacket(Packet*  packet);
+  bool AcceptVideoPacket(Packet*  packet);
   void FlushAudio();
   void FlushVideo();
   bool IsEmptiedAudio();
@@ -51,10 +51,6 @@ public:
   void SetFilledVideo();
   void SetFilledAudio();
   int  nPlaylist;
-  int  CurrentAudioSubmissionClip();
-  int  CurrentVideoSubmissionClip();
-  bool IsFakingAudio();
-  bool IsFakeAudioAvailable();
   REFERENCE_TIME playlistFirstPacketTime;
   REFERENCE_TIME ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint);
   bool HasAudio();
@@ -76,17 +72,19 @@ protected:
   void Reset(int playlistNumber, REFERENCE_TIME firstPacketTime);
 
   vector<CClip*> m_vecClips;
-  CClip * m_currentAudioPlayBackClip;
-  CClip * m_currentVideoPlayBackClip;
-  CClip * m_currentAudioSubmissionClip;
-  CClip * m_currentVideoSubmissionClip;
+  ivecClip m_itCurrentAudioPlayBackClip;
+  ivecClip m_itCurrentVideoPlayBackClip;
+  ivecClip m_itCurrentAudioSubmissionClip;
+  ivecClip m_itCurrentVideoSubmissionClip;
+  int m_itCurrentAudioPlayBackClipPos;
+  int m_itCurrentVideoPlayBackClipPos;
+  int m_itCurrentAudioSubmissionClipPos;
+  int m_itCurrentVideoSubmissionClipPos;
 
   bool playlistFilledAudio;
   bool playlistFilledVideo;
   bool playlistEmptiedVideo;
   bool playlistEmptiedAudio;
-
-  int m_VideoPacketsUntilLatestClip;
 
   bool firstAudioPESPacketSeen;
   bool firstVideoPESPacketSeen;
@@ -94,5 +92,9 @@ protected:
   REFERENCE_TIME firstVideoPESTimeStamp;
 
   bool firstPacketRead;
+
+  void PushClips();
+  void PopClips();
+
 };
 

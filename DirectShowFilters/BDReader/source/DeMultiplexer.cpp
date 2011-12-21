@@ -403,11 +403,6 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSe
   SetHoldSubtitle(false);
 }
 
-void CDeMultiplexer::IgnoreNextDiscontinuity()
-{
-  m_playlistManager->IgnoreNextDiscontinuity();
-}
-
 Packet* CDeMultiplexer::GetSubtitle()
 {
   if (m_currentSubtitlePid == 0) return NULL;

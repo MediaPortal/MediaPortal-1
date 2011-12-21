@@ -534,7 +534,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_prevPl = buffer->nPlaylist;
             m_prevCl = buffer->nClipNumber;
             
-            buffer->bSeekRequired = false;
+            buffer->bNewClip = false;
             m_demux.m_bVideoPlSeen = true;
  
             m_bClipEndingNotified = false;

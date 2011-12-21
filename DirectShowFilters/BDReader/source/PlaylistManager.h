@@ -47,7 +47,6 @@ public:
   void FlushAudio(void);
   void FlushVideo(void);
   void ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint);
-  void IgnoreNextDiscontinuity();
   Packet* GetNextAudioPacket();
   Packet* GetNextAudioPacket(int playlist, int clip);
   Packet* GetNextVideoPacket();
@@ -57,11 +56,15 @@ public:
 protected:
   typedef vector<CPlaylist*>::iterator ivecPlaylists;
   typedef vector<CClip*>::iterator ivecClip;
+
   CPlaylist * GetNextAudioPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextVideoPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextAudioSubmissionPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextVideoSubmissionPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetPlaylist(int playlist);
+
+  void PushPlaylists();
+  void PopPlaylists();
 
   REFERENCE_TIME Incomplete();
   REFERENCE_TIME ClipPlayTime();
@@ -70,17 +73,16 @@ protected:
   vector<CPlaylist *> m_vecPlaylists;
   vector<CClip*> m_vecNonFilledClips;
 
-  CPlaylist * m_currentAudioPlayBackPlaylist;
-  CPlaylist * m_currentVideoPlayBackPlaylist;
-  CPlaylist * m_currentAudioSubmissionPlaylist;
-  CPlaylist * m_currentVideoSubmissionPlaylist;
-
-  int m_VideoPacketsUntilLatestplaylist;
+  ivecPlaylists m_itCurrentAudioPlayBackPlaylist;
+  ivecPlaylists m_itCurrentVideoPlayBackPlaylist;
+  ivecPlaylists m_itCurrentAudioSubmissionPlaylist;
+  ivecPlaylists m_itCurrentVideoSubmissionPlaylist;
+  int m_itCurrentAudioPlayBackPlaylistPos;
+  int m_itCurrentVideoPlayBackPlaylistPos;
+  int m_itCurrentAudioSubmissionPlaylistPos;
+  int m_itCurrentVideoSubmissionPlaylistPos;
 
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
-
-  bool m_bIgnoreAudioSeeking;
-  bool m_bIgnoreVideoSeeking;
 };
 
