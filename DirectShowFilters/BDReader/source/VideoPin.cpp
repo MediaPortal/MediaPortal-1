@@ -209,20 +209,21 @@ HRESULT CVideoPin::GetMediaType(CMediaType* pmt)
 
 bool CVideoPin::CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt)
 {
-  if (lhs_pmt->subtype == rhs_pmt->subtype) return true;
   if (lhs_pmt->subtype == FOURCCMap('1CVW'))
   {
     if (m_decoderType == Arcsoft)
-    {
       lhs_pmt->subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
-    }
     else if (m_decoderType == Cyberlink)
-    {
       lhs_pmt->subtype = MEDIASUBTYPE_WVC1_CYBERLINK;
-    }
-    return (lhs_pmt->subtype == rhs_pmt->subtype);
   }
-  return false;
+
+  return (IsEqualGUID(lhs_pmt->majortype, rhs_pmt->majortype) &&
+    IsEqualGUID(lhs_pmt->subtype, rhs_pmt->subtype) &&
+    IsEqualGUID(lhs_pmt->formattype, rhs_pmt->formattype) &&
+    (lhs_pmt->cbFormat == rhs_pmt->cbFormat) &&
+    ( (lhs_pmt->cbFormat == 0) ||
+      lhs_pmt->pbFormat && rhs_pmt->pbFormat &&
+      (memcmp(lhs_pmt->pbFormat, rhs_pmt->pbFormat, lhs_pmt->cbFormat) == 0))); 
 }
 
 void CVideoPin::SetInitialMediaType(const CMediaType* pmt)
@@ -523,7 +524,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
             m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
             
-            buffer->bNewClip = false;
             m_demux.m_bVideoPlSeen = true;
  
             m_bClipEndingNotified = false;
@@ -567,6 +567,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               m_demux.m_bVideoRequiresRebuild = true;
               checkPlaybackState = true;
 
+              m_rtStreamOffset = 0;
               m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
             }
             else
@@ -591,6 +592,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
         if (checkPlaybackState)
         {
+          buffer->bNewClip = false;
           m_pCachedBuffer = buffer;
           LogDebug("vid: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
          
