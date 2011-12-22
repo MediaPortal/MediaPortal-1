@@ -577,13 +577,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               SetMediaType(&mt);
               pSample->SetMediaType(&mt);
 
-              // Flush the stream if format change is done on the fly
-              if (!buffer->bNewClip)
-              {
-                DeliverBeginFlush();
-                DeliverEndFlush();
-                DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
-              }
+              CreateEmptySample(pSample);
+              buffer->bNewClip = false;
+              m_pCachedBuffer = buffer;
+              return S_OK;
             }
           } // comparemediatypes
         } // lock ends
