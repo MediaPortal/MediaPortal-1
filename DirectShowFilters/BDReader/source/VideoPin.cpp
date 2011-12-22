@@ -421,6 +421,7 @@ void CVideoPin::CheckPlaybackState()
       m_demux.m_bAudioRequiresRebuild = false;
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
       m_demux.m_bRebuildOngoing = true;
+      m_demux.m_bAudioAdjustStreamPosition = true;
     }
     else if (!m_bStopWait && m_bDoFakeSeek)    
     {
@@ -544,6 +545,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             {
               m_bDoFakeSeek = true;
               m_rtStreamOffset = buffer->rtStart;
+              m_rtStreamTimeOffset = 0;
+              m_demux.m_bAudioResetStreamPosition = true;
             }
             else
               m_rtStreamOffset = 0;
@@ -575,6 +578,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
               m_demux.m_bVideoRequiresRebuild = true;
               checkPlaybackState = true;
+
+              m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
             }
             else
             {
@@ -591,7 +596,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
               }
             }
-          }
+          } // comparemediatypes
         } // lock ends
 
         m_rtTitleDuration = buffer->rtTitleDuration;

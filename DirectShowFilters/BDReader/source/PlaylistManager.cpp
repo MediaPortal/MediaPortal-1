@@ -30,6 +30,7 @@ CPlaylistManager::CPlaylistManager(void)
 {
   LogDebug("Playlist Manager Created");
   m_rtPlaylistOffset = 0LL;
+  firstVideo = firstAudio = true;
 }
 
 
@@ -110,7 +111,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     
     PushPlaylists();
     m_vecPlaylists.push_back(newPlaylist);
-    PopPlaylists();
+    PopPlaylists(0);
 
     //mark current playlist as filled
     (*m_itCurrentAudioSubmissionPlaylist)->SetFilledAudio();
@@ -125,7 +126,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 
 bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
 {
-//  CAutoLock lock(&m_sectionAudio);
+  CAutoLock lock(&m_sectionAudio);
   bool ret = false;
   if (m_vecPlaylists.size()==0) 
   {
@@ -192,6 +193,11 @@ Packet* CPlaylistManager::GetNextAudioPacket()
       LogDebug("playlistManager: setting audio playback playlist to %d",(*m_itCurrentAudioPlayBackPlaylist)->nPlaylist);
     }
   }
+  if (firstAudio)
+  {
+    firstAudio = false;
+    ret->bNewClip = false;
+  }
   return ret;
 }
 
@@ -219,6 +225,11 @@ Packet* CPlaylistManager::GetNextVideoPacket()
       ret = (*(m_itCurrentVideoPlayBackPlaylist++))->ReturnNextVideoPacket();
       LogDebug("playlistManager: setting video playback playlist to %d",(*m_itCurrentVideoPlayBackPlaylist)->nPlaylist);
     }
+  }
+  if (firstVideo && ret->rtStart != Packet::INVALID_TIME)
+  {
+    firstVideo = false;
+    ret->bNewClip = false;
   }
   return ret;
 }
@@ -364,24 +375,29 @@ void CPlaylistManager::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtC
   CAutoLock locka (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
 
+  if (m_vecPlaylists.size()==0) return;
   LogDebug("CPlaylistManager::ClearAllButCurrentClip");
+  PushPlaylists();
+  int deletedPl=0;
   ivecPlaylists it = m_vecPlaylists.begin();
-  while (it!=m_vecPlaylists.end())
-  {
-    CPlaylist * playlist=*it;
-    if (playlist==m_vecPlaylists.back())
-    {
-      ++it;
-    }
-    else
-    {
-      it=m_vecPlaylists.erase(it);
-      delete playlist;
-    }
-  }
+  //while (it!=m_vecPlaylists.end())
+  //{
+  //  CPlaylist * playlist=*it;
+  //  if (playlist==m_vecPlaylists.back())
+  //  {
+  //    ++it;
+  //  }
+  //  else
+  //  {
+  //    deletedPl++;
+  //    it=m_vecPlaylists.erase(it);
+  //    delete playlist;
+  //  }
+  //}
+  PopPlaylists(deletedPl);
   if (m_vecPlaylists.size()>0)
   {
-    m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin();
+    m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin() + (m_vecPlaylists.size()-1);
   }
 }
 
@@ -432,11 +448,13 @@ void CPlaylistManager::PushPlaylists()
   m_itCurrentVideoSubmissionPlaylistPos = m_itCurrentVideoSubmissionPlaylist-m_vecPlaylists.begin();
 }
 
-void CPlaylistManager::PopPlaylists()
+void CPlaylistManager::PopPlaylists(int difference)
 {
-  m_itCurrentAudioPlayBackPlaylist = m_vecPlaylists.begin() + m_itCurrentAudioPlayBackPlaylistPos;
-  m_itCurrentVideoPlayBackPlaylist = m_vecPlaylists.begin() + m_itCurrentVideoPlayBackPlaylistPos;
-  m_itCurrentAudioSubmissionPlaylist = m_vecPlaylists.begin() + m_itCurrentAudioSubmissionPlaylistPos;
-  m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin() + m_itCurrentVideoSubmissionPlaylistPos;
+  if (m_itCurrentAudioPlayBackPlaylistPos - difference <0) m_itCurrentAudioPlayBackPlaylistPos = difference;
+  m_itCurrentAudioPlayBackPlaylist = m_vecPlaylists.begin() + (m_itCurrentAudioPlayBackPlaylistPos - difference);
+  if (m_itCurrentVideoPlayBackPlaylistPos - difference <0) m_itCurrentVideoPlayBackPlaylistPos = difference;
+  m_itCurrentVideoPlayBackPlaylist = m_vecPlaylists.begin() + (m_itCurrentVideoPlayBackPlaylistPos - difference);
+  m_itCurrentAudioSubmissionPlaylist = m_vecPlaylists.begin() + (m_itCurrentAudioSubmissionPlaylistPos - difference);
+  m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin() + (m_itCurrentVideoSubmissionPlaylistPos - difference);
 }
 

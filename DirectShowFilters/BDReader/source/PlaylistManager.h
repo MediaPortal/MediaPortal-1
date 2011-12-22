@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "StdAfx.h"
+
 #include <afx.h>
 #include <atlbase.h>
 #include <atlcoll.h>
@@ -64,7 +66,9 @@ protected:
   CPlaylist * GetPlaylist(int playlist);
 
   void PushPlaylists();
-  void PopPlaylists();
+  void PopPlaylists(int difference);
+
+  bool firstVideo, firstAudio;
 
   REFERENCE_TIME Incomplete();
   REFERENCE_TIME ClipPlayTime();

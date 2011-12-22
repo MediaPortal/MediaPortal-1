@@ -100,6 +100,9 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_rtOffset = _I64_MAX;
   m_rtTitleDuration = 0;
+
+  m_bAudioAdjustStreamPosition = false;
+  m_bAudioResetStreamPosition = false;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -1014,7 +1017,12 @@ bool CDeMultiplexer::ParseVideoFormat(Packet* p)
       LogDebug("demux: ParseVideoFormat - failed to parse video format!");
     else
     {
-      LogDebug("demux: ParseVideoFormat - succeeded");
+      LogDebug("demux: ParseVideoFormat - succeeded {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} on %I64d (%d,%d)",
+        m_videoParser->pmt.subtype.Data1, m_videoParser->pmt.subtype.Data2, m_videoParser->pmt.subtype.Data3,
+        m_videoParser->pmt.subtype.Data4[0], m_videoParser->pmt.subtype.Data4[1], m_videoParser->pmt.subtype.Data4[2],
+        m_videoParser->pmt.subtype.Data4[3], m_videoParser->pmt.subtype.Data4[4], m_videoParser->pmt.subtype.Data4[5], 
+        m_videoParser->pmt.subtype.Data4[6], m_videoParser->pmt.subtype.Data4[7], p->rtStart, p->nPlaylist, p->nClipNumber);
+
       if (!m_bStarting)
         m_playlistManager->SetVideoPMT(CreateMediaType(&m_videoParser->pmt), p->nPlaylist, p->nClipNumber);
     }

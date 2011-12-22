@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "StdAfx.h"
+
 #include "Packet.h"
 #include "Clip.h"
 #include <vector>

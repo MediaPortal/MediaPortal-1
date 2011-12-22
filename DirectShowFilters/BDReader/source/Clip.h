@@ -21,6 +21,9 @@
 
 #pragma once
 
+#include "StdAfx.h"
+
+#include <streams.h>
 #include <map>
 #include <vector>
 #include <dshow.h>
@@ -96,7 +99,7 @@ protected:
   AM_MEDIA_TYPE *m_videoPmt;
   int superceeded;
 
-//  CCritSec m_sectionRead;
+  CCritSec m_sectionRead;
 
   // true would indicate that this is the first audio packet
   bool firstAudio;
@@ -109,7 +112,6 @@ protected:
   bool firstPacketReturned;
 
   Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
-
 };
 
 // Silent AC3 frame
