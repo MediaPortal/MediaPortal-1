@@ -117,8 +117,6 @@ protected:
   REFERENCE_TIME m_rtStreamTimeOffset;
   REFERENCE_TIME m_rtTitleDuration;
 
-  INT32 m_prevPl;
-  INT32 m_prevCl;
   bool m_bDoFakeSeek;
   bool m_bZeroStreamOffset;
 };

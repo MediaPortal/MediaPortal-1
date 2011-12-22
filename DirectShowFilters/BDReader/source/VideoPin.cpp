@@ -102,8 +102,6 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0),
   m_rtTitleDuration(0),
-  m_prevPl(NOT_INITIALIZED),
-  m_prevCl(NOT_INITIALIZED),
   m_bDoFakeSeek(false)
 {
   m_rtStart = 0;
@@ -517,13 +515,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         {
           CAutoLock lock(m_section);
 
-          if (m_prevPl == NOT_INITIALIZED)
-          {
-            m_prevPl = buffer->nPlaylist;
-            m_prevCl = buffer->nClipNumber;
-          }
-
-
           if (buffer->bNewClip)
           {
             LogDebug("vid: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
@@ -531,9 +522,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
             m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
             m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
-            
-            m_prevPl = buffer->nPlaylist;
-            m_prevCl = buffer->nClipNumber;
             
             buffer->bNewClip = false;
             m_demux.m_bVideoPlSeen = true;

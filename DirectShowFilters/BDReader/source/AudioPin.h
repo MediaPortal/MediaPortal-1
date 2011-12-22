@@ -118,8 +118,6 @@ protected:
   REFERENCE_TIME m_rtPrevSample;
   REFERENCE_TIME m_rtStreamTimeOffset;
 
-  INT32 m_prevPl;
-  INT32 m_prevCl;
   bool m_bZeroStreamOffset;
 };
 

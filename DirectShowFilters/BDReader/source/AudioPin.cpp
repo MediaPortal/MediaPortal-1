@@ -53,9 +53,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bUsePCM(false),
   m_bFirstSample(true),
   m_rtPrevSample(_I64_MIN),
-  m_rtStreamTimeOffset(0),
-  m_prevPl(NOT_INITIALIZED),
-  m_prevCl(NOT_INITIALIZED)
+  m_rtStreamTimeOffset(0)
 {
   m_bConnected = false;
   m_rtStart = 0;
@@ -294,12 +292,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           CAutoLock lock(m_section);
 
-          if (m_prevPl == NOT_INITIALIZED)
-          {
-            m_prevPl = buffer->nPlaylist;
-            m_prevCl = buffer->nClipNumber;
-          }
-
           if (m_demux.m_bAudioAdjustStreamPosition)
           {
             m_demux.m_bAudioAdjustStreamPosition = false;
@@ -318,9 +310,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             checkPlaybackState = true;
-
-            m_prevPl = buffer->nPlaylist;
-            m_prevCl = buffer->nClipNumber;
 
             m_demux.m_eAudioPlSeen->Set();
           }
