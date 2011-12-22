@@ -884,6 +884,11 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Turbosight: MMI handler thread start polling");
       TbsMmiMessage message = TbsMmiMessage.Null;
       TbsMmiMessage prevMessage = TbsMmiMessage.Null;
+      // Clear the message buffer in preparation for first use.
+      for (int i = 0; i < MmiMessageBufferSize; i++)
+      {
+        Marshal.WriteByte(_mmiMessageBuffer, i, 0);
+      }
       try
       {
         while (!_stopMmiHandlerThread)
