@@ -300,22 +300,22 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             m_prevCl = buffer->nClipNumber;
           }
 
+          if (m_demux.m_bAudioAdjustStreamPosition)
+          {
+            m_demux.m_bAudioAdjustStreamPosition = false;
+            m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
+          }
+
+          if (m_demux.m_bAudioResetStreamPosition)
+          {
+            m_demux.m_bAudioResetStreamPosition = false;
+            m_rtStreamTimeOffset = 0;
+          }
+
           if (buffer->bNewClip)
           {
             LogDebug("aud: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
               buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
-
-            if (m_demux.m_bAudioAdjustStreamPosition)
-            {
-              m_demux.m_bAudioAdjustStreamPosition = false;
-              m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
-            }
-
-            if (m_demux.m_bAudioResetStreamPosition)
-            {
-              m_demux.m_bAudioResetStreamPosition = false;
-              m_rtStreamTimeOffset = 0;
-            }
 
             checkPlaybackState = true;
 
