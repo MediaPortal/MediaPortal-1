@@ -885,6 +885,9 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
   case BD_EVENT_ERROR:
     LogDebug("    BD_EVENT_ERROR - %d", pEvent.param);
     break;
+  case BD_EVENT_READ_ERROR:
+    LogDebug("    BD_EVENT_READ_ERROR - %d", pEvent.param);
+    break;
   case BD_EVENT_ENCRYPTED:
     LogDebug("    BD_EVENT_ENCRYPTED - %d", pEvent.param);
     break;
@@ -950,6 +953,9 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
     break;
   case BD_EVENT_STILL_TIME:
     //LogDebug("    BD_EVENT_STILL_TIME - %d", pEvent.param);
+    break;
+  case BD_EVENT_SOUND_EFFECT:
+    //LogDebug("    BD_EVENT_SOUND_EFFECT - %d", pEvent.param);
     break;
   default:
     LogDebug("    ERROR - no event!");
