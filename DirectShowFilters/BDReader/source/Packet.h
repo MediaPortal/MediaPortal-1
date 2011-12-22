@@ -38,7 +38,7 @@ public:
 
   INT32 nClipNumber;
   INT32 nPlaylist;
-  bool bDiscontinuity, bSyncPoint, bNewClip;  
+  bool bDiscontinuity, bSyncPoint, bNewClip, bResuming;  
   static const REFERENCE_TIME INVALID_TIME = _I64_MIN;  
   REFERENCE_TIME rtStart, rtStop, rtOffset, rtPlaylistTime, rtClipStartTime, rtTitleDuration;
   AM_MEDIA_TYPE* pmt;

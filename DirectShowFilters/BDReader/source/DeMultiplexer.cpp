@@ -714,7 +714,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
           m_bDiscontinuousClip = false;
 
-
           if (interrupted)
           {
             LogDebug("demux: current clip was interrupted - triggering flush");
@@ -1388,6 +1387,12 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
         else
           m_pBuild->rtStart = m_pBuild->rtStop = Packet::INVALID_TIME;
 
+        if (m_bStreamPaused)
+        {
+          m_pBuild->bResuming = true;
+          m_bStreamPaused = false;
+        }
+
         m_pBuild->nClipNumber = m_nClip;
         m_pBuild->nPlaylist = m_nPlaylist;
         m_pBuild->rtTitleDuration = m_rtTitleDuration;
@@ -1510,6 +1515,12 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         else
            m_p->rtStart = m_p->rtStop = Packet::INVALID_TIME;
         
+        if (m_bStreamPaused)
+        {
+          m_p->bResuming = true;
+          m_bStreamPaused = false;
+        }
+
         if (m_nMPEG2LastPlaylist == -1)
           m_nMPEG2LastPlaylist = m_nPlaylist;
 

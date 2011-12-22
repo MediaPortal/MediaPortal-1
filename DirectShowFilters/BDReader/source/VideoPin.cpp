@@ -430,7 +430,7 @@ void CVideoPin::CheckPlaybackState()
       m_eFlushStart->Wait();
     }
 
-    m_bStopWait = m_demux.m_bStreamPaused = m_bDoFakeSeek = false;
+    m_bStopWait = m_bDoFakeSeek = false;
 
     m_demux.m_eAudioPlSeen->Reset();
     m_demux.m_bVideoPlSeen = false;
@@ -529,7 +529,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bClipEndingNotified = false;
             checkPlaybackState = true;
 
-            if (m_demux.m_bStreamPaused)
+            if (buffer->bResuming)
             {
               m_bDoFakeSeek = true;
               m_rtStreamOffset = buffer->rtStart;

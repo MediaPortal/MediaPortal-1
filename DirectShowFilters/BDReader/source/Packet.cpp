@@ -37,9 +37,7 @@ Packet::Packet()
 Packet::~Packet() 
 {
   if (pmt) 
-  {
     DeleteMediaType(pmt);
-  }
 }
 
 int Packet::GetDataSize() 
@@ -60,6 +58,7 @@ void Packet::CopyProperties(Packet& pSrc, bool pValidateStartTime)
   bDiscontinuity = pSrc.bDiscontinuity;
   bSyncPoint = pSrc.bSyncPoint;
   bNewClip = pSrc.bNewClip; 
+  bResuming = pSrc.bResuming;
   
   if (!pValidateStartTime || pSrc.rtStart != INVALID_TIME)
   {
@@ -87,11 +86,12 @@ void Packet::ResetProperties(bool pResetClipInfo)
   bDiscontinuity = false;
   bSyncPoint = false;
   bNewClip = false;
+  bResuming = false;
   rtStart = INVALID_TIME;
   rtStop = INVALID_TIME;
 }
 
-void Packet::TransferProperties(Packet& pSrc,  bool pValidateStartTime, bool pResetClipInfo)
+void Packet::TransferProperties(Packet& pSrc, bool pValidateStartTime, bool pResetClipInfo)
 {
   CopyProperties(pSrc, pValidateStartTime);
   pSrc.ResetProperties(pResetClipInfo);
