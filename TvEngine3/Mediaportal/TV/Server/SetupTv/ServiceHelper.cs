@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Net;
 using System.Security.AccessControl;
 using System.ServiceProcess;
 using System.Threading;
@@ -49,10 +50,11 @@ namespace Mediaportal.TV.Server.SetupTV
     /// Does a given service exist
     /// </summary>
     /// <param name="serviceToFind"></param>
+    /// <param name="hostname"></param>
     /// <returns></returns>
-    public static bool IsInstalled(string serviceToFind)
+    public static bool IsInstalled(string serviceToFind, string hostname)
     {
-      ServiceController[] services = ServiceController.GetServices(ServiceAgents.Instance.Hostname);
+      ServiceController[] services = ServiceController.GetServices(hostname);
       foreach (ServiceController service in services)
       {
         if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
@@ -61,6 +63,16 @@ namespace Mediaportal.TV.Server.SetupTV
         }
       }
       return false;
+    }
+
+    /// <summary>
+    /// Does a given service exist
+    /// </summary>
+    /// <param name="serviceToFind"></param>
+    /// <returns></returns>
+    public static bool IsInstalled(string serviceToFind)
+    {
+      return IsInstalled(serviceToFind, Dns.GetHostName());
     }
 
     /// <summary>
@@ -263,7 +275,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      if (!IsInstalled(@"TvService"))
+      if (!IsInstalled(@"TvService", ServiceAgents.Instance.Hostname))
       {
         return false;
       }

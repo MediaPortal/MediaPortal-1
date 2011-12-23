@@ -33,6 +33,7 @@ using System.Windows.Forms;
 using System.Xml;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 using MySql.Data.MySqlClient;
 
 #endregion
@@ -792,7 +793,7 @@ namespace Mediaportal.TV.Server.SetupTV
       string DBSearchPattern = @"MySQL";
       Color clAllOkay = Color.GreenYellow;
 
-      if (ServiceHelper.IsInstalled(ConfiguredServiceName))
+      if (ServiceHelper.IsInstalled(ConfiguredServiceName, ServiceAgents.Instance.Hostname))
       {
         tbServiceDependency.BackColor = clAllOkay;
         DBSearchPattern = ConfiguredServiceName;
