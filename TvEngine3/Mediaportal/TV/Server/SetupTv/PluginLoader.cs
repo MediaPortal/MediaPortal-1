@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.SetupTV
       _incompatiblePlugins.Clear();
 
       try
-      {
+      {        
         if (System.IO.Directory.Exists("plugins"))
         {
           string[] strFiles = System.IO.Directory.GetFiles("plugins", "*.dll");
@@ -79,21 +79,25 @@ namespace Mediaportal.TV.Server.SetupTV
     }
 
     private void RetrievePluginsFromServer()
-    {
-      IDictionary<string, byte[]> streamList = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinaries();
+    {      
+      bool hasLocalTvService = ServiceHelper.IsInstalled(@"TvService");
 
-      if (!Directory.Exists("plugins"))
+      if (!hasLocalTvService)
       {
-        Directory.CreateDirectory("plugins");
-      }
+        IDictionary<string, byte[]> streamList = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinaries();
+        if (!Directory.Exists("plugins"))
+        {
+          Directory.CreateDirectory("plugins");
+        }
 
-      foreach (KeyValuePair<string, byte[]> stream in streamList)
-      {                        
-        string fileFullPath = @"plugins\" + stream.Key;
-        using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
-        {                    
-          fileStream.Write(stream.Value, 0, stream.Value.Length);
-        }        
+        foreach (KeyValuePair<string, byte[]> stream in streamList)
+        {
+          string fileFullPath = @"plugins\" + stream.Key;
+          using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
+          {
+            fileStream.Write(stream.Value, 0, stream.Value.Length);
+          }
+        }
       }
     }
 
