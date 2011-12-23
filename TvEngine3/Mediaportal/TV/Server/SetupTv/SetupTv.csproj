@@ -479,12 +479,6 @@
       <DependentUpon>TvSchedules.cs</DependentUpon>
     </Compile>
     <Compile Include="ServiceHelper.cs" />
-    <Compile Include="SetupDatabaseForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SetupDatabaseForm.Designer.cs">
-      <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Startup.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
@@ -641,10 +635,6 @@
     <EmbeddedResource Include="SettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SetupDatabaseForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>SetupDatabaseForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

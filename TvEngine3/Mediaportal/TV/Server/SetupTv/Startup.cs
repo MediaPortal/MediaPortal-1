@@ -178,68 +178,13 @@ namespace Mediaportal.TV.Server.SetupTV
       Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      OSPrerequisites.OSPrerequisites.OsCheck(true);
-
-      NameValueCollection appSettings = ConfigurationManager.AppSettings;
-      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
+      OSPrerequisites.OSPrerequisites.OsCheck(true);      
 
       Application.ThreadException += Application_ThreadException;
 
-      //test connection with database
-      Log.Info("---- check connection with database ----");
-      SetupDatabaseForm dlg = new SetupDatabaseForm(startupMode);
+       
 
-      if (startupMode == StartupMode.DeployMode)
-      {
-        if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
-        {
-          dlg.LoadConnectionDetailsFromConfig(true);
-        }
-        else
-        {
-          /*if (DeploySql == "mysql")
-          {
-            dlg.provider = SetupDatabaseForm.providerType.MySql;
-            dlg.rbMySQL.Checked = true;
-            dlg.tbUserID.Text = "root";
-            dlg.tbServerHostName.Text = Dns.GetHostName();
-            dlg.tbServiceDependency.Text = @"MySQL5";
-          }
-          else
-          {
-            dlg.provider = SetupDatabaseForm.providerType.SqlServer;
-            dlg.rbSQLServer.Checked = true;
-            dlg.tbUserID.Text = "sa";
-            dlg.tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
-            dlg.tbServiceDependency.Text = @"SQLBrowser";
-          }
-          dlg.tbPassword.Text = DeployPwd;
-          dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
-          dlg.schemaName = dlg.schemaNameDefault;*/
-        }
-      }
-
-      if (dlg.tbServerHostName.Text.Trim().ToLower() == "localhost" | dlg.tbServerHostName.Text.Trim() == "127.0.0.1")
-      {
-        Log.Info("*****************************************************************");
-        Log.Info("* WARNING, connection host ({0}) not officially supported *", dlg.tbServerHostName.Text);
-        Log.Info("*****************************************************************"); 
-      }
-
-      if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) ||
-          (!dlg.TestConnection(startupMode)))
-      {
-        Log.Info("---- ask user for connection details ----");
-        if (dlg.ShowDialog() != DialogResult.OK || startupMode != StartupMode.DeployMode)
-          return; // close the application without restart here.
-      }
-      dlg.CheckServiceName();
-      if (startupMode == StartupMode.DeployMode)
-      {
-        dlg.SaveGentleConfig();
-      }
-
-      Log.Info("---- check if database needs to be updated/created ----");
+      /*Log.Info("---- check if database needs to be updated/created ----");
       int currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
       if (currentSchemaVersion <= 36) // drop pre-1.0 DBs and handle -1
       {
@@ -268,7 +213,7 @@ namespace Mediaportal.TV.Server.SetupTV
         MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
-
+      */
       Log.Info("---- check if tvservice is running ----");
       if (!ServiceHelper.IsRunning)
       {
