@@ -52,6 +52,7 @@ namespace Mediaportal.TV.Server.SetupTV
   {
     private static StartupMode startupMode = StartupMode.Normal;
     private static bool debugOptions = false;
+    private static ServerMonitor _serverMonitor = new ServerMonitor();
 
     private readonly string sectionsConfiguration = String.Empty;
 
@@ -104,6 +105,19 @@ namespace Mediaportal.TV.Server.SetupTV
       Thread.CurrentThread.Name = "SetupTv";
 
       //System.Diagnostics.Debugger.Launch();
+
+      if (ConfigurationManager.AppSettings.Count > 0)
+      {
+        string appSetting = ConfigurationManager.AppSettings["tvserver"];
+        if (appSetting != null)
+        {
+          ServiceAgents.Instance.Hostname = appSetting;
+        }
+      }
+
+      _serverMonitor.OnServerConnected += new ServerMonitor.ServerConnectedDelegate(_serverMonitor_OnServerConnected);
+      _serverMonitor.OnServerDisconnected += new ServerMonitor.ServerDisconnectedDelegate(_serverMonitor_OnServerDisconnected);
+      _serverMonitor.Start();
 
       /*Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
       if (p.Length > 1)
@@ -327,6 +341,22 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         Log.Write(ex);
       }
+      _serverMonitor.Stop();
+    }
+
+    static void _serverMonitor_OnServerDisconnected()
+    {
+      Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+      InputBoxResult result = InputBox.Show("Type valid hostname for tv server:", "Connection lost.", ConfigurationManager.AppSettings["tvserver"]);      
+      ServiceAgents.Instance.Hostname = result.Text;
+      ConfigurationManager.AppSettings["tvserver"] = result.Text;                  
+      config.Save(ConfigurationSaveMode.Modified);
+      ConfigurationManager.RefreshSection("appSettings");
+    }
+
+    static void _serverMonitor_OnServerConnected()
+    {
+      
     }
 
     private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

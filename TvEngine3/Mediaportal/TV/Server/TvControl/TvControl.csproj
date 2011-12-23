@@ -120,8 +120,8 @@
     <Compile Include="Interfaces\Services\ISettingService.cs" />
     <Compile Include="RemoteControl.cs" />
     <Compile Include="ServiceHelper.cs" />
-    <Compile Include="TCP\PacketProtocol.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UserFactory.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="VirtualCard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

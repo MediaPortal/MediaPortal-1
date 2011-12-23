@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -21,15 +21,12 @@
 using System;
 using System.Collections.Generic;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVControl;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
-namespace Mediaportal.TV.Server.TVService
+namespace Mediaportal.TV.Server.TVControl
 {
   public static class UserFactory
   {

@@ -154,7 +154,6 @@
     <Compile Include="TsCopier.cs" />
     <Compile Include="TvCardContext.cs" />
     <Compile Include="TvController.cs" />
-    <Compile Include="UserFactory.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Services\ChannelService.cs" />
     <Compile Include="Services\ChannelGroupService.cs" />

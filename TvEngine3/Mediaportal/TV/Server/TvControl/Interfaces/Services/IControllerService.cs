@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
@@ -965,5 +966,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract]
     void UnRegisterUserForTvServerEvents(string username);
+
+    [OperationContract]    
+    IDictionary<string, byte[]> GetPluginBinaries();
   }
 }

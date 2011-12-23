@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns></returns>
     public static bool IsInstalled(string serviceToFind)
     {
-      ServiceController[] services = ServiceController.GetServices();
+      ServiceController[] services = ServiceController.GetServices(ServiceAgents.Instance.Hostname);
       foreach (ServiceController service in services)
       {
         if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService"))
+          using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Running;
           }
@@ -167,7 +167,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService"))
+          using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Stopped; // should we consider Stopping as stopped?
           }
@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService"))
+        using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
         {
           switch (sc.Status)
           {
@@ -230,7 +230,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController(aServiceName))
+        using (ServiceController sc = new ServiceController(aServiceName, ServiceAgents.Instance.Hostname))
         {
           switch (sc.Status)
           {
@@ -278,7 +278,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>true when search was successfull - modifies the search pattern to return the correct full name</returns>
     public static bool GetDBServiceName(ref string partOfSvcNameToComplete)
     {
-      ServiceController[] services = ServiceController.GetServices();
+      ServiceController[] services = ServiceController.GetServices(ServiceAgents.Instance.Hostname);
       foreach (ServiceController service in services)
       {
         if (service.ServiceName.Contains(partOfSvcNameToComplete))

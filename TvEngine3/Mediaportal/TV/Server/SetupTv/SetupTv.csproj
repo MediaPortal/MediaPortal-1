@@ -175,6 +175,7 @@
     </Compile>
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
+    <Compile Include="InputBox.cs" />
     <Compile Include="Sections\UserPriorities.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -535,10 +536,6 @@
     <ProjectReference Include="..\TvService.Interfaces\TvService.Interfaces.csproj">
       <Project>{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}</Project>
       <Name>TvService.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TvService\TvService.csproj">
-      <Project>{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}</Project>
-      <Name>TvService</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

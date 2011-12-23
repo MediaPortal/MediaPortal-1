@@ -20,10 +20,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Mediaportal.TV.Server.Plugins.Base;
+using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using MediaPortal.Common.Utils;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV
 {
@@ -55,6 +58,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// </summary>
     public void Load()
     {
+      RetrievePluginsFromServer();
       _plugins.Clear();
       _incompatiblePlugins.Clear();
 
@@ -72,6 +76,25 @@ namespace Mediaportal.TV.Server.SetupTV
         }
       }
       catch (Exception) {}
+    }
+
+    private void RetrievePluginsFromServer()
+    {
+      IDictionary<string, byte[]> streamList = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinaries();
+
+      if (!Directory.Exists("plugins"))
+      {
+        Directory.CreateDirectory("plugins");
+      }
+
+      foreach (KeyValuePair<string, byte[]> stream in streamList)
+      {                        
+        string fileFullPath = @"plugins\" + stream.Key;
+        using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
+        {                    
+          fileStream.Write(stream.Value, 0, stream.Value.Length);
+        }        
+      }
     }
 
     /// <summary>

@@ -51,6 +51,7 @@
     <Compile Include="DiscoverServiceAgent.cs" />
     <Compile Include="EventServiceAgent.cs" />
     <Compile Include="MappingHelper.cs" />
+    <Compile Include="ServerMonitor.cs" />
     <Compile Include="ServiceAgents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
