@@ -301,7 +301,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (m_demux.m_bAudioResetStreamPosition)
           {
             m_demux.m_bAudioResetStreamPosition = false;
-            m_rtStreamTimeOffset = 0;
+            m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
           }
 
           if (buffer->bNewClip)

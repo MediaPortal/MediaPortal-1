@@ -377,27 +377,26 @@ void CPlaylistManager::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtC
 
   if (m_vecPlaylists.size()==0) return;
   LogDebug("CPlaylistManager::ClearAllButCurrentClip");
-  PushPlaylists();
   int deletedPl=0;
   ivecPlaylists it = m_vecPlaylists.begin();
-  //while (it!=m_vecPlaylists.end())
-  //{
-  //  CPlaylist * playlist=*it;
-  //  if (playlist==m_vecPlaylists.back())
-  //  {
-  //    ++it;
-  //  }
-  //  else
-  //  {
-  //    deletedPl++;
-  //    it=m_vecPlaylists.erase(it);
-  //    delete playlist;
-  //  }
-  //}
-  PopPlaylists(deletedPl);
+  while (it!=m_vecPlaylists.end())
+  {
+    CPlaylist * playlist=*it;
+    if (playlist==m_vecPlaylists.back())
+    {
+      ++it;
+    }
+    else
+    {
+      deletedPl++;
+      it=m_vecPlaylists.erase(it);
+      delete playlist;
+    }
+  }
   if (m_vecPlaylists.size()>0)
   {
     m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin() + (m_vecPlaylists.size()-1);
+    //m_rtPlaylistOffset += (*m_itCurrentVideoPlayBackPlaylist)->ClearAllButCurrentClip(true, rtClipStartPoint);
   }
 }
 

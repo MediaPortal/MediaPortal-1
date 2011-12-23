@@ -112,7 +112,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
     }
   
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
-    ret->rtClipStartTime = earliestPacketAccepted - playlistFirstPacketTime;
+    ret->rtClipStartTime = ret->rtStart -  earliestPacketAccepted;
     ret->rtStart -= earliestPacketAccepted - playlistFirstPacketTime;
     ret->rtStop-= earliestPacketAccepted - playlistFirstPacketTime;
     if (!noAudio) audioPlaybackPosition = ret->rtStart;
@@ -150,7 +150,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
       }
   
       ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
-      ret->rtClipStartTime = earliestPacketAccepted - playlistFirstPacketTime;
+      ret->rtClipStartTime = ret->rtStart -  earliestPacketAccepted;
       if (ret->rtStart > videoPlaybackPosition) videoPlaybackPosition = ret->rtStart;
       ret->rtStart -= earliestPacketAccepted - playlistFirstPacketTime;
       ret->rtStop-= earliestPacketAccepted - playlistFirstPacketTime;
@@ -312,6 +312,7 @@ void CClip::FlushVideo(Packet* pPacketToKeep)
 
 REFERENCE_TIME CClip::Reset(REFERENCE_TIME rtClipStartPoint)
 {
+  if (!firstPacketReturned) return 0LL; //this is a jump to menu, details are already correct
   LogDebug("Reseting (%d,%d)", nPlaylist, nClip);
   REFERENCE_TIME ret = PlayedDuration();
   FlushAudio();
@@ -375,6 +376,7 @@ REFERENCE_TIME CClip::PlayedDuration()
     start=earliestPacketAccepted, 
     finish=audioPlaybackPosition,
     playDuration;
+  if (!firstPacketReturned) return 0LL;
   if (audioPlaybackPosition < videoPlaybackPosition)
   {
     finish = videoPlaybackPosition;
@@ -382,7 +384,7 @@ REFERENCE_TIME CClip::PlayedDuration()
   playDuration = finish - playlistFirstPacketTime;
   if (abs(clipDuration - playDuration) < HALF_SECOND) 
   {
-    return clipDuration - m_rtClipStartingOffset;
+    return clipDuration - earliestPacketAccepted + playlistFirstPacketTime;
   }
   return finish - start;
 }
