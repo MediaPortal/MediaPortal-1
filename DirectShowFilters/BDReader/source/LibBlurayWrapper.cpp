@@ -378,7 +378,8 @@ bool CLibBlurayWrapper::SetChapter(UINT32 pChapter)
 
 void CLibBlurayWrapper::SetTitle(UINT32 pTitle)
 {
-  m_currentTitle = pTitle;
+  if (pTitle >= 0)
+    m_currentTitle = pTitle;
 }
 
 bool CLibBlurayWrapper::GetAngle(UINT8* pAngle)
