@@ -98,8 +98,8 @@ Var PREVIOUS_VERSION
 Var PREVIOUS_VERSION_STATE
 Var EXPRESS_UPDATE
 
-Var PREVIOUS_GENTLE_CONFIG
-Var PREVIOUS_GENTLE_CONFIG_PLUGIN
+Var PREVIOUS_TVSERVICE_CONFIG
+Var PREVIOUS_TVSERVICE_CONFIG_PLUGIN
 
 Var frominstall
 
@@ -253,29 +253,29 @@ ShowUninstDetails show
   ${EndIf}
 !macroend
 
-!macro BackupGentleConfig
-  ${If} ${FileExists} "${COMMON_APPDATA}\Gentle.config"
-    GetTempFileName $PREVIOUS_GENTLE_CONFIG
-    ${LOG_TEXT} "INFO" "Backup Gentle.Config (${COMMON_APPDATA}\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\Gentle.config" "$PREVIOUS_GENTLE_CONFIG"
+!macro BackupTVServiceConfig
+  ${If} ${FileExists} "$INSTDIR\TVService.exe.config"
+    GetTempFileName $PREVIOUS_TVSERVICE_CONFIG
+    ${LOG_TEXT} "INFO" "Backup TVService.exe.config ($INSTDIR\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$INSTDIR\TVService.exe.config" "$PREVIOUS_TVSERVICE_CONFIG"
   ${EndIf}
 
-  ${If} ${FileExists} "$MPdir.Config\Gentle.config"
-    GetTempFileName $PREVIOUS_GENTLE_CONFIG_PLUGIN        
-    ${LOG_TEXT} "INFO" "Backup Gentle.Config ($MPdir.Config\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "$MPdir.Config\Gentle.config" "$PREVIOUS_GENTLE_CONFIG_PLUGIN"
+  ${If} ${FileExists} "$MPdir.Config\TVService.exe.config"
+    GetTempFileName $PREVIOUS_TVSERVICE_CONFIG_PLUGIN        
+    ${LOG_TEXT} "INFO" "Backup TVService.exe.config ($MPdir.Config\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$MPdir.Config\TVService.exe.config" "$PREVIOUS_TVSERVICE_CONFIG_PLUGIN"
   ${EndIf}
 !macroend
 
-!macro RestoreGentleConfig
-  ${If} ${FileExists} "$PREVIOUS_GENTLE_CONFIG"
-    ${LOG_TEXT} "INFO" "Restore Gentle.Config (${COMMON_APPDATA}\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "$PREVIOUS_GENTLE_CONFIG" "${COMMON_APPDATA}\Gentle.config" 
+!macro RestoreTVServiceConfig
+  ${If} ${FileExists} "$PREVIOUS_TVSERVICE_CONFIG"
+    ${LOG_TEXT} "INFO" "Restore TVService.exe.config ($INSTDIR\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_TVSERVICE_CONFIG" "$INSTDIR\TVService.exe.config" 
   ${EndIf}
 
-  ${If} ${FileExists} "$PREVIOUS_GENTLE_CONFIG_PLUGIN"
-    ${LOG_TEXT} "INFO" "Restore Gentle.Config ($MPdir.Config\Gentle.config)"
-    CopyFiles /SILENT /FILESONLY "$PREVIOUS_GENTLE_CONFIG_PLUGIN" "$MPdir.Config\Gentle.config"
+  ${If} ${FileExists} "$PREVIOUS_TVSERVICE_CONFIG_PLUGIN"
+    ${LOG_TEXT} "INFO" "Restore TVService.exe.config ($MPdir.Config\TVService.exe.config)"
+    CopyFiles /SILENT /FILESONLY "$PREVIOUS_TVSERVICE_CONFIG_PLUGIN" "$MPdir.Config\TVService.exe.config"
   ${EndIf}
 !macroend
 
@@ -299,7 +299,7 @@ Section "-prepare" SecPrepare
   ${LOG_TEXT} "INFO" "Prepare installation..."
   SetShellVarContext all
 
-;  !insertmacro BackupGentleConfig
+  !insertmacro BackupTVServiceConfig
 	
   ; uninstall old version if necessary
   ${If} $UpdateMode = 1
@@ -443,7 +443,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
-;  File "${git_Common_MP_TVE3}\Gentle.config"
+;  File "${TVSERVER.BASE}\TVService.exe.config"
   File "${TVSERVER.BASE}\log4net.config"
   File "${TVSERVER.BASE}\TvSetupLog.config"
   
@@ -776,7 +776,7 @@ Section -Post
   ; set rights to programmdata directory and reg keys
   !insertmacro SetRights
   
-;  !insertmacro RestoreGentleConfig
+  !insertmacro RestoreTVServiceConfig
   
   
   ;if TV Server was installed exec SetupTv with correct parameters    
