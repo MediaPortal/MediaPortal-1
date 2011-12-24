@@ -101,8 +101,9 @@ namespace Mediaportal.TV.Server.SetupTV
 
     [STAThread]
     public static void Main(string[] arguments)
-    {      
+    {
       Thread.CurrentThread.Name = "SetupTv";
+      Application.SetCompatibleTextRenderingDefault(false);
 
       //System.Diagnostics.Debugger.Launch();
 
@@ -112,6 +113,24 @@ namespace Mediaportal.TV.Server.SetupTV
         if (appSetting != null)
         {
           ServiceAgents.Instance.Hostname = appSetting;
+        }
+      }
+
+      bool tvserviceInstalled = false;
+      while (!tvserviceInstalled)
+      {
+        tvserviceInstalled = ServiceHelper.IsInstalled(@"TvService", ServiceAgents.Instance.Hostname);
+        if (!tvserviceInstalled)
+        {
+          ConnectionLostPrompt("Type valid hostname for tv server:", "TvService not found.");
+        }
+        else
+        { 
+          Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+          config.AppSettings.Settings.Remove("tvserver");
+          config.AppSettings.Settings.Add("tvserver", ServiceAgents.Instance.Hostname);
+          config.Save(ConfigurationSaveMode.Modified);
+          ConfigurationManager.RefreshSection("appSettings");
         }
       }
 
@@ -164,8 +183,6 @@ namespace Mediaportal.TV.Server.SetupTV
           }
         }
       }
-
-      Application.SetCompatibleTextRenderingDefault(false);
 
       // set working dir from application.exe
       string applicationPath = Application.ExecutablePath;
@@ -291,17 +308,22 @@ namespace Mediaportal.TV.Server.SetupTV
 
     static void _serverMonitor_OnServerDisconnected()
     {
+      ConnectionLostPrompt("Type valid hostname for tv server:", "Connection lost.");
+    }
+
+    private static void ConnectionLostPrompt(string prompt, string title)
+    {
       Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-      InputBoxResult result = InputBox.Show("Type valid hostname for tv server:", "Connection lost.", ConfigurationManager.AppSettings["tvserver"]);      
+      InputBoxResult result = InputBox.Show(prompt, title,
+                                            ConfigurationManager.AppSettings["tvserver"]);
       ServiceAgents.Instance.Hostname = result.Text;
-      ConfigurationManager.AppSettings["tvserver"] = result.Text;                  
+      ConfigurationManager.AppSettings["tvserver"] = result.Text;
       config.Save(ConfigurationSaveMode.Modified);
       ConfigurationManager.RefreshSection("appSettings");
     }
 
     static void _serverMonitor_OnServerConnected()
     {
-      
     }
 
     private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

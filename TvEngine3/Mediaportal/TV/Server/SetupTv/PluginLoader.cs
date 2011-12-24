@@ -79,10 +79,10 @@ namespace Mediaportal.TV.Server.SetupTV
     }
 
     private void RetrievePluginsFromServer()
-    {      
-      bool hasLocalTvService = ServiceHelper.IsInstalled(@"TvService");
+    {
+      bool tvserviceExists = File.Exists(@"tvservice.exe");
 
-      if (!hasLocalTvService)
+      if (!tvserviceExists)
       {
         IDictionary<string, byte[]> streamList = ServiceAgents.Instance.ControllerServiceAgent.GetPluginBinaries();
         if (!Directory.Exists("plugins"))

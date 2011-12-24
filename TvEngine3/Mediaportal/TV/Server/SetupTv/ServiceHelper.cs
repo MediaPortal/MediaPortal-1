@@ -54,15 +54,24 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns></returns>
     public static bool IsInstalled(string serviceToFind, string hostname)
     {
-      ServiceController[] services = ServiceController.GetServices(hostname);
-      foreach (ServiceController service in services)
+      try
       {
-        if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
+        ServiceController[] services = ServiceController.GetServices(hostname);
+        foreach (ServiceController service in services)
         {
-          return true;
+          if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
+          {
+            return true;
+          }
         }
+        return false;
       }
-      return false;
+      catch (Exception ex)
+      {
+        Log.Error(
+          "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname.");
+        return false;
+      }
     }
 
     /// <summary>
@@ -127,15 +136,23 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
+        using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
+        {
+          sc.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 0, 0, millisecondsTimeout));
+          return (sc.Status == ServiceControllerStatus.Running);
+        }
+        /*
         EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName,
-                                                                   EventWaitHandleRights.Synchronize);
-        return initialized.WaitOne(millisecondsTimeout);
+                                                                    EventWaitHandleRights.Synchronize);
+        return initialized.WaitOne(millisecondsTimeout);*/
       }
       catch (Exception ex) // either we have no right, or the event does not exist
       {
         Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
         Log.Write(ex);
       }
+
+      /*
       // Fall back: try to call a method on the server (for earlier versions of TvService)
       DateTime expires = millisecondsTimeout == -1
                            ? DateTime.MaxValue
@@ -166,7 +183,7 @@ namespace Mediaportal.TV.Server.SetupTV
           break;
         }
         Thread.Sleep(250);
-      }
+      }*/
       return false;
     }
 
