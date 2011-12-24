@@ -670,11 +670,15 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        applyButton_Click(sender, e);
-        if (null != _previousSection)
+        if (!ServiceHelper.IsStopped)
         {
-          _previousSection.OnSectionDeActivated();
-          _previousSection = null;
+          applyButton_Click(sender, e);
+
+          if (null != _previousSection)
+          {
+            _previousSection.OnSectionDeActivated();
+            _previousSection = null;
+          }
         }
         Close();
       }

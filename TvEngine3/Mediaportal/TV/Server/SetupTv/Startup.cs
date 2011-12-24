@@ -122,10 +122,17 @@ namespace Mediaportal.TV.Server.SetupTV
         tvserviceInstalled = ServiceHelper.IsInstalled(@"TvService", ServiceAgents.Instance.Hostname);
         if (!tvserviceInstalled)
         {
-          ConnectionLostPrompt("Type valid hostname for tv server:", "TvService not found.");
+          if (!String.IsNullOrEmpty(ServiceAgents.Instance.Hostname))
+          {
+            ConnectionLostPrompt("Type valid hostname for tv server:", "TvService not found.");
+          }
+          else
+          {
+            return;
+          }
         }
         else
-        { 
+        {
           Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
           config.AppSettings.Settings.Remove("tvserver");
           config.AppSettings.Settings.Add("tvserver", ServiceAgents.Instance.Hostname);
@@ -308,7 +315,7 @@ namespace Mediaportal.TV.Server.SetupTV
 
     static void _serverMonitor_OnServerDisconnected()
     {
-      ConnectionLostPrompt("Type valid hostname for tv server:", "Connection lost.");
+      //ConnectionLostPrompt("Type valid hostname for tv server:", "Connection lost.");
     }
 
     private static void ConnectionLostPrompt(string prompt, string title)

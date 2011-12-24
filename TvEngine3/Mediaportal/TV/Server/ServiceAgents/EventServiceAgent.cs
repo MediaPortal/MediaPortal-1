@@ -46,9 +46,12 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       _hostname = hostname;
       NetTcpBinding binding = ServiceHelper.GetTcpBinding();
-      var endpoint = new EndpointAddress(ServiceHelper.GetTcpEndpointURL(typeof(IEventService), _hostname));
-      _channelFactory = new DuplexChannelFactory<IEventService>(new InstanceContext(this), binding, endpoint);
-      _channel = _channelFactory.CreateChannel();
+      if (!String.IsNullOrEmpty(_hostname))
+      {
+        var endpoint = new EndpointAddress(ServiceHelper.GetTcpEndpointURL(typeof(IEventService), _hostname));
+        _channelFactory = new DuplexChannelFactory<IEventService>(new InstanceContext(this), binding, endpoint);
+        _channel = _channelFactory.CreateChannel();
+      }
     }
 
     #endregion

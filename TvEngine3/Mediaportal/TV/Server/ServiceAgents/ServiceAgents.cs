@@ -195,37 +195,43 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     private void AddDiscoveryService()
     {
-      bool found = GlobalServiceProvider.IsRegistered<IDiscoverServiceAgent>();
-      IDiscoverServiceAgent discoverServiceAgent = new DiscoverServiceAgent(_hostname);
-
-      ((IClientChannel)discoverServiceAgent.Channel).Faulted += new EventHandler(ServiceAgents_Faulted);
-      ((IClientChannel)discoverServiceAgent.Channel).Closed += new EventHandler(ServiceAgents_Closed);
-
-      if (found)
+      if (!String.IsNullOrEmpty(_hostname))
       {
-        GlobalServiceProvider.Replace(discoverServiceAgent);
-      }
-      else
-      {
-        GlobalServiceProvider.Add(discoverServiceAgent);
+        bool found = GlobalServiceProvider.IsRegistered<IDiscoverServiceAgent>();
+        IDiscoverServiceAgent discoverServiceAgent = new DiscoverServiceAgent(_hostname);
+
+        ((IClientChannel)discoverServiceAgent.Channel).Faulted += new EventHandler(ServiceAgents_Faulted);
+        ((IClientChannel)discoverServiceAgent.Channel).Closed += new EventHandler(ServiceAgents_Closed);
+
+        if (found)
+        {
+          GlobalServiceProvider.Replace(discoverServiceAgent);
+        }
+        else
+        {
+          GlobalServiceProvider.Add(discoverServiceAgent);
+        }
       }
     }
 
     private void AddEventService()
     {
       bool found = GlobalServiceProvider.IsRegistered<IEventServiceAgent>();
-      IEventServiceAgent eventserviceagent = new EventServiceAgent(_hostname);
-
-      ((IClientChannel)eventserviceagent.Channel).Faulted += new EventHandler(ServiceAgents_Faulted);
-      ((IClientChannel)eventserviceagent.Channel).Closed += new EventHandler(ServiceAgents_Closed);
-
-      if (found)
+      if (!String.IsNullOrEmpty(_hostname))
       {
-        GlobalServiceProvider.Replace(eventserviceagent);
-      }
-      else
-      {
-        GlobalServiceProvider.Add(eventserviceagent);
+        IEventServiceAgent eventserviceagent = new EventServiceAgent(_hostname);
+
+        ((IClientChannel)eventserviceagent.Channel).Faulted += new EventHandler(ServiceAgents_Faulted);
+        ((IClientChannel)eventserviceagent.Channel).Closed += new EventHandler(ServiceAgents_Closed);
+
+        if (found)
+        {
+          GlobalServiceProvider.Replace(eventserviceagent);
+        }
+        else
+        {
+          GlobalServiceProvider.Add(eventserviceagent);
+        }
       }
     }
 
@@ -233,21 +239,24 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       bool found = GlobalServiceProvider.IsRegistered<I>();
 
-      var binding = ServiceHelper.GetHttpBinding();
-      var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof(I), _hostname));
-      var channelFactory = new ChannelFactory<I>(binding, endpoint);
-      I channel = channelFactory.CreateChannel();
-
-      ((IClientChannel)channel).Faulted += new EventHandler(ServiceAgents_Faulted);
-      ((IClientChannel)channel).Closed += new EventHandler(ServiceAgents_Closed);
-
-      if (found)
+      if (!String.IsNullOrEmpty(_hostname))
       {
-        GlobalServiceProvider.Replace(channel);
-      }
-      else
-      {
-        GlobalServiceProvider.Add(channel);
+        var binding = ServiceHelper.GetHttpBinding();
+        var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof(I), _hostname));
+        var channelFactory = new ChannelFactory<I>(binding, endpoint);
+        I channel = channelFactory.CreateChannel();
+
+        ((IClientChannel)channel).Faulted += new EventHandler(ServiceAgents_Faulted);
+        ((IClientChannel)channel).Closed += new EventHandler(ServiceAgents_Closed);
+
+        if (found)
+        {
+          GlobalServiceProvider.Replace(channel);
+        }
+        else
+        {
+          GlobalServiceProvider.Add(channel);
+        }
       }
     }
 

@@ -33,9 +33,12 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       var timeout = new TimeSpan(0,0,0,2);
       binding.SendTimeout = timeout;
       binding.OpenTimeout = timeout;
-      var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof(IDiscoverService), hostname));      
-      var channelFactory = new ChannelFactory<IDiscoverService>(binding, endpoint);
-      _channel = channelFactory.CreateChannel();
+      if (!String.IsNullOrEmpty(hostname))
+      {
+        var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof(IDiscoverService), hostname));
+        var channelFactory = new ChannelFactory<IDiscoverService>(binding, endpoint);
+        _channel = channelFactory.CreateChannel();
+      }
     }
 
     public IDiscoverService Channel
