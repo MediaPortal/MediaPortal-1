@@ -50,7 +50,7 @@ namespace MpeCore.Classes.PathProvider
       else
         fontsDir = Path.Combine(fontsDir, "fonts");
 
-      _paths.Add("%Fonts%", fontsDir);
+      //_paths.Add("%Fonts%", fontsDir);
       _paths.Add("%Temp%", Path.GetTempPath());
     }
 
