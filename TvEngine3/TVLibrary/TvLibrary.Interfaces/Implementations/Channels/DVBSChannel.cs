@@ -24,6 +24,8 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
+  #region enums
+
   /// <summary>
   /// enum describing the DVBS band
   /// </summary>
@@ -83,6 +85,34 @@ namespace TvLibrary.Channels
     /// </summary>
     NaCustom2 = 10,
   }
+
+  /// <summary>
+  /// Enum describing tone burst (simple DiSEqC) states.
+  /// </summary>
+  public enum ToneBurst
+  {
+    /// Off
+    Off = 0,
+    /// Tone burst AKA unmodulated, simple A
+    ToneBurst,
+    /// Data burst AKA modulated, simple B
+    DataBurst
+  }
+
+  /// <summary>
+  /// Enum describing 22 kHz oscillator logical states.
+  /// </summary>
+  public enum Tone22k
+  {
+    /// Off
+    Off = 0,
+    /// On
+    On,
+    /// Auto - controlled by LNB frequency parameters.
+    Auto
+  }
+
+  #endregion
 
   /// <summary>
   /// Class for LNB setup and LNB number
