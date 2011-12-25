@@ -64,8 +64,8 @@ namespace TvLibrary.Implementations.DVB
     private enum TwinhanDeviceSpeed : byte
     {
       Pci = 0xff,
-      UsbLow = 0,             // USB 1.1
-      UsbFull = 1,            // USB 1.1
+      UsbLow = 0,             // USB 1.x
+      UsbFull = 1,            // USB 1.x
       UsbHigh = 2             // USB 2.0
     }
 
@@ -96,7 +96,7 @@ namespace TvLibrary.Implementations.DVB
       Empty = 10,             // CI_STATUS_EMPTY
       CamInserted,            // CI_STATUS_INSERTED
       CamOkay,                // CI_STATUS_CAM_OK
-      UnknownCamType          // CI_STATUS_CAM_UNKNOW
+      CamUnknown              // CI_STATUS_CAM_UNKNOW
     }
 
     private enum TwinhanMmiState : uint   // CIMessage
@@ -111,11 +111,11 @@ namespace TvLibrary.Implementations.DVB
 
       // New messages
       SendMenuAnswer = 14,    // MMI_STATUS_ANSWER_SEND - communicating with CAM 
-      MenuOkay,               // MMI_STATUS_GET_MENU_OK - get information from CAM
-      MenuFail,               // MMI_STATUS_GET_MENU_FAIL - fail to get information from CAM
-      MenuInit,               // MMI_STATUS_GET_MENU_INIT
-      MenuClose,              // MMI_STATUS_GET_MENU_CLOSE
-      MenuClosed,             // MMI_STATUS_GET_MENU_CLOSED
+      MenuOkay,               // MMI_STATUS_GET_MENU_OK - full menu successfully received from the CAM and ready to be retrieved
+      MenuFail,               // MMI_STATUS_GET_MENU_FAIL - menu not successfully received from the CAM
+      MenuInit,               // MMI_STATUS_GET_MENU_INIT - menu still being received from the CAM
+      MenuClose,              // MMI_STATUS_GET_MENU_CLOSE - CAM requests that the menu be closed
+      MenuClosed,             // MMI_STATUS_GET_MENU_CLOSED - CAM menu state is closed
     }
 
     private enum TwinhanRawCommandState : uint    // CIMessage
@@ -127,7 +127,7 @@ namespace TvLibrary.Implementations.DVB
     private enum TwinhanPidFilterMode : byte
     {
       Whitelist = 0,          // PID_FILTER_MODE_PASS - PID filter list contains PIDs that pass through
-      Disabled,               // PID_FILTER_MODE_DISABLE
+      Disabled,               // PID_FILTER_MODE_DISABLE - PID filter disabled and all PIDs pass through
       Blacklist               // PID_FILTER_MODE_FILTER - PID filter list contains PIDs that *don't* pass through
     }
 
@@ -957,7 +957,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Twinhan"/> class.
+    /// Initialises a new instance of the <see cref="Twinhan"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     public Twinhan(IBaseFilter tunerFilter)
@@ -1574,7 +1574,7 @@ namespace TvLibrary.Implementations.DVB
             prevCiState = ciState;
             if (ciState == TwinhanCiState.CamInserted ||
               ciState == TwinhanCiState.CamOkay ||
-              ciState == TwinhanCiState.UnknownCamType ||
+              ciState == TwinhanCiState.CamUnknown ||
               ciState == TwinhanCiState.CamOkay1_Old ||
               ciState == TwinhanCiState.CamOkay2_Old)
             {
