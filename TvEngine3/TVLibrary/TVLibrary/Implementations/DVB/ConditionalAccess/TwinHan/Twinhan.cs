@@ -1168,13 +1168,21 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="toneBurstState">The tone/data burst state.</param>
     /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    private bool SetToneState(TwinhanToneBurst toneBurstState, Twinhan22k tone22kState)
+    private bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       Log.Log.Debug("Twinhan: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       LnbParams lnbParams = new LnbParams();
       lnbParams.PowerOn = true;
-      lnbParams.ToneBurst = toneBurstState;
+      lnbParams.ToneBurst = TwinhanToneBurst.Off;
+      if (toneBurstState == ToneBurst.ToneBurst)
+      {
+        lnbParams.ToneBurst = TwinhanToneBurst.ToneBurst;
+      }
+      else if (toneBurstState == ToneBurst.DataBurst)
+      {
+        lnbParams.ToneBurst = TwinhanToneBurst.DataBurst;
+      }
       // It is not critical to set the LNB frequencies as these are set
       // on the tuning space in the tuning request. Even when attempting
       // to use the custom tuning method you specify the intermediate
@@ -1182,7 +1190,11 @@ namespace TvLibrary.Implementations.DVB
       lnbParams.LowBandLof = 0;
       lnbParams.HighBandLof = 0;
       lnbParams.SwitchFrequency = 0;
-      lnbParams.Tone22k = tone22kState;
+      lnbParams.Tone22k = Twinhan22k.Off;
+      if (tone22kState == Tone22k.On)
+      {
+        lnbParams.Tone22k = Twinhan22k.On;
+      }
       lnbParams.DiseqcPort = TwinhanDiseqcPort.Null;
 
       Marshal.StructureToPtr(lnbParams, _responseBuffer, true);
@@ -1228,6 +1240,32 @@ namespace TvLibrary.Implementations.DVB
       {
         _isCamReady = false;
       }
+    }
+
+    /// <summary>
+    /// Set DVB-S2 tuning parameters that could not previously be set through BDA interfaces.
+    /// </summary>
+    /// <param name="channel">The channel to tune.</param>
+    /// <returns>The channel with DVB-S2 parameters set.</returns>
+    public DVBSChannel SetTuningParameters(DVBSChannel channel)
+    {
+      Log.Log.Debug("Twinhan: set tuning parameters");
+      if (channel.ModulationType == ModulationType.ModQpsk || channel.ModulationType == ModulationType.Mod8Psk)
+      {
+        channel.ModulationType = ModulationType.Mod8Vsb;
+      }
+      // I don't think any Twinhan tuners or clones support demodulating anything
+      // higher than 8 PSK. Nevertheless...
+      else if (channel.ModulationType == ModulationType.Mod16Apsk)
+      {
+        channel.ModulationType = ModulationType.Mod16Vsb;
+      }
+      else if (channel.ModulationType == ModulationType.Mod32Apsk)
+      {
+        channel.ModulationType = ModulationType.ModOqpsk;
+      }
+      Log.Log.Debug("  modulation = {0}", channel.ModulationType);
+      return channel;
     }
 
     /// <summary>
@@ -1996,22 +2034,22 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
-      TwinhanToneBurst toneBurst = TwinhanToneBurst.Off;
       bool successDiseqc = true;
+      bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
+      ToneBurst toneBurst = ToneBurst.Off;
       if (channel.DisEqc == DisEqcType.SimpleA)
       {
-        toneBurst = TwinhanToneBurst.ToneBurst;
+        toneBurst = ToneBurst.ToneBurst;
       }
       else if (channel.DisEqc == DisEqcType.SimpleB)
       {
-        toneBurst = TwinhanToneBurst.DataBurst;
+        toneBurst = ToneBurst.DataBurst;
       }
 
-      Twinhan22k tone22k = Twinhan22k.Off;
+      Tone22k tone22k = Tone22k.Off;
       if (isHighBand)
       {
-        tone22k = Twinhan22k.On;
+        tone22k = Tone22k.On;
       }
 
       // TODO: it is important to call SetToneState() before SendDiSEqCCommand()
