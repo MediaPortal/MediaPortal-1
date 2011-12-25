@@ -62,6 +62,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
+    private readonly Omicom _omicom;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -136,6 +137,15 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           Release.DisposeToNull(ref _knc);
+
+          Log.Log.WriteFile("Check for Omicom");
+          _omicom = new Omicom(tunerFilter);
+          if (_omicom.IsOmicom)
+          {
+            _diSEqCMotor = new DiSEqCMotor(_omicom);
+            return;
+          }
+          Release.DisposeToNull(ref _omicom);
 
           Log.Log.WriteFile("Check for Digital Everywhere");
           _digitalEveryWhere = new DigitalEverywhere(tunerFilter);
@@ -758,6 +768,10 @@ namespace TvLibrary.Implementations.DVB
           _TeVii.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
+        if (_omicom != null)
+        {
+          _omicom.SendDiseqcCommand(parameters, channel);
+        }
       }
       catch (Exception ex)
       {
@@ -1020,6 +1034,10 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
           return channel;
         }
+        if (_omicom != null)
+        {
+          return _omicom.SetTuningParameters(channel);
+        }
       }
       catch (Exception ex)
       {
@@ -1110,6 +1128,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_twinhan);
       Release.Dispose(_profred);
       Release.Dispose(_TeVii);
+      Release.Dispose(_omicom);
     }
 
     #endregion
