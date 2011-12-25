@@ -495,22 +495,29 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="toneBurstState">The tone/data burst state.</param>
     /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    protected virtual bool SetToneState(TbsToneBurst toneBurstState, Tbs22k tone22kState)
+    protected virtual bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       Log.Log.Debug("Turbosight: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       BdaExtensionParams command = new BdaExtensionParams();
       command.Command = BdaExtensionCommand.Tone;
-      command.ToneBurst = toneBurstState;
-      if (toneBurstState == TbsToneBurst.DataBurst)
+      command.ToneBurst = TbsToneBurst.Off;
+      command.ToneModulation = TbsToneModulation.Unmodulated;   // Can't use undefined, so use simple A instead.
+      if (toneBurstState == ToneBurst.ToneBurst)
       {
+        command.ToneBurst = TbsToneBurst.ToneBurst;
+      }
+      else if (toneBurstState == ToneBurst.DataBurst)
+      {
+        command.ToneBurst = TbsToneBurst.DataBurst;
         command.ToneModulation = TbsToneModulation.Modulated;
       }
-      else
+
+      command.Tone22k = Tbs22k.Off;
+      if (tone22kState == Tone22k.On)
       {
-        command.ToneModulation = TbsToneModulation.Unmodulated;
+        command.Tone22k = Tbs22k.On;
       }
-      command.Tone22k = tone22kState;
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
       DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
@@ -867,6 +874,11 @@ namespace TvLibrary.Implementations.DVB
       if (_mmiHandlerThread == null)
       {
         Log.Log.Debug("Turbosight: starting new MMI handler thread");
+        // Clear the message buffer in preparation for [first] use.
+        for (int i = 0; i < MmiMessageBufferSize; i++)
+        {
+          Marshal.WriteByte(_mmiMessageBuffer, i, 0);
+        }
         _stopMmiHandlerThread = false;
         _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
         _mmiHandlerThread.Name = "Turbosight MMI handler";
@@ -884,11 +896,6 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Turbosight: MMI handler thread start polling");
       TbsMmiMessage message = TbsMmiMessage.Null;
       TbsMmiMessage prevMessage = TbsMmiMessage.Null;
-      // Clear the message buffer in preparation for first use.
-      for (int i = 0; i < MmiMessageBufferSize; i++)
-      {
-        Marshal.WriteByte(_mmiMessageBuffer, i, 0);
-      }
       try
       {
         while (!_stopMmiHandlerThread)
@@ -1307,15 +1314,15 @@ namespace TvLibrary.Implementations.DVB
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
       bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
-      TbsToneBurst toneBurst = TbsToneBurst.Off;
+      ToneBurst toneBurst = ToneBurst.Off;
       bool successDiseqc = true;
       if (channel.DisEqc == DisEqcType.SimpleA)
       {
-        toneBurst = TbsToneBurst.ToneBurst;
+        toneBurst = ToneBurst.ToneBurst;
       }
       else if (channel.DisEqc == DisEqcType.SimpleB)
       {
-        toneBurst = TbsToneBurst.DataBurst;
+        toneBurst = ToneBurst.DataBurst;
       }
       else if (channel.DisEqc != DisEqcType.None)
       {
@@ -1329,10 +1336,10 @@ namespace TvLibrary.Implementations.DVB
         successDiseqc = SendDiSEqCCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
       }
 
-      Tbs22k tone22k = Tbs22k.Off;
+      Tone22k tone22k = Tone22k.Off;
       if (isHighBand)
       {
-        tone22k = Tbs22k.On;
+        tone22k = Tone22k.On;
       }
       bool successTone = SetToneState(toneBurst, tone22k);
 
@@ -1354,7 +1361,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("Turbosight: using set method");
 
-        if (command.Length > 10)
+        if (command.Length > MaxDiseqcMessageLength)
         {
           Log.Log.Debug("Turbosight: command too long, length = {0}", command.Length);
           return false;

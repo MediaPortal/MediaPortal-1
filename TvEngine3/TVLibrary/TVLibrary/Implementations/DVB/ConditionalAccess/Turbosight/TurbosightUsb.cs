@@ -244,7 +244,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="toneBurstState">The tone/data burst state.</param>
     /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    protected override bool SetToneState(TbsToneBurst toneBurstState, Tbs22k tone22kState)
+    protected override bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       Log.Log.Debug("Turbosight (USB): set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
@@ -263,8 +263,20 @@ namespace TvLibrary.Implementations.DVB
       }
 
       BdaExtensionParams command = new BdaExtensionParams();
-      command.ToneBurst = toneBurstState;
-      command.Tone22k = tone22kState;
+      command.ToneBurst = TbsToneBurst.Off;
+      if (toneBurstState == ToneBurst.ToneBurst)
+      {
+        command.ToneBurst = TbsToneBurst.ToneBurst;
+      }
+      else if (toneBurstState == ToneBurst.DataBurst)
+      {
+        command.ToneBurst = TbsToneBurst.DataBurst;
+      }
+      command.Tone22k = Tbs22k.Off;
+      if (tone22kState == Tone22k.On)
+      {
+        command.Tone22k = Tbs22k.On;
+      }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
       DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
