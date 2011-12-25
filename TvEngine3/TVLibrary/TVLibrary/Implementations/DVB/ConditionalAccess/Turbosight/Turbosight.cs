@@ -367,8 +367,8 @@ namespace TvLibrary.Implementations.DVB
 
     private bool _isTurbosight = false;
     private bool _isCiSlotPresent = false;
-    private bool _isCamReady = false;
     private bool _isCamPresent = false;
+    private bool _isCamReady = false;
 
     private bool _stopMmiHandlerThread = false;
     private Thread _mmiHandlerThread = null;
