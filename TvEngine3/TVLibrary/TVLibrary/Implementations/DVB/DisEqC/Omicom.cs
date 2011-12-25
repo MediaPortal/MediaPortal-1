@@ -155,10 +155,10 @@ namespace TvLibrary.Implementations.DVB
       if (channel.ModulationType == ModulationType.ModQpsk || channel.ModulationType == ModulationType.Mod8Psk)
       {
         // Note: using 8 VSB forces the driver to auto-detect the correct
-        // modulation. This is untested. It may be better to use 8 PSK.
+        // modulation. It may be better to use 8 PSK.
         channel.ModulationType = ModulationType.Mod8Vsb;
       }
-
+      Log.Log.Debug("  modulation = {0}", channel.ModulationType);
       return channel;
     }
 
