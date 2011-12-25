@@ -940,10 +940,10 @@ namespace TvLibrary.Implementations.DVB
     // local buffers to avoid buffer data corruption. Otherwise functions
     // called exclusively by the MMI handler thread use the MMI buffers
     // and other functions use the non-MMI buffers.
-    private readonly IntPtr _commandBuffer = IntPtr.Zero;
-    private readonly IntPtr _responseBuffer = IntPtr.Zero;
-    private readonly IntPtr _mmiCommandBuffer = IntPtr.Zero;
-    private readonly IntPtr _mmiResponseBuffer = IntPtr.Zero;
+    private IntPtr _commandBuffer = IntPtr.Zero;
+    private IntPtr _responseBuffer = IntPtr.Zero;
+    private IntPtr _mmiCommandBuffer = IntPtr.Zero;
+    private IntPtr _mmiResponseBuffer = IntPtr.Zero;
 
     private IKsPropertySet _propertySet = null;
 
