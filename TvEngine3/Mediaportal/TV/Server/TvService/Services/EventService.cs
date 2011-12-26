@@ -14,24 +14,15 @@ namespace Mediaportal.TV.Server.TVService.Services
   {
     public string UserName { get; set; }
     public IServerEventCallback ServerEventCallback { get; set; }
-    //public ServerEventEnum ServerEventEnum { get; set; }
   }
 
   [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
   public class EventService : IEventService, IDisposable
   {
     private static readonly object _subscribersLock = new object();
-    private static readonly IDictionary<string, Subscriber> _subscribers = new ConcurrentDictionary<string, Subscriber>();    
+    private static readonly IDictionary<string, Subscriber> _subscribers = new ConcurrentDictionary<string, Subscriber>();       
 
-    //private static readonly ICollection<string> _tvServerEventsSubscribers = new HashSet<string>();
-    //private static readonly ICollection<string> _heartbeatEventsSubscribers = new HashSet<string>();
-    //private static readonly ICollection<string> _ciMenuEventsSubscribers = new HashSet<string>();
-
-    //private static readonly object _tvServerEventsSubscribersLock = new object();
-    //private static readonly object _heartbeatEventsSubscribersLock = new object();
-    //private static readonly object _ciMenuEventsSubscribersLock = new object();
-
-    public delegate void UserDisconnectedFromServiceDelegate(string username);        
+    public delegate void UserDisconnectedFromServiceDelegate(string username);
     public static UserDisconnectedFromServiceDelegate UserDisconnectedFromService;
 
     #region IDisposable
@@ -67,7 +58,7 @@ namespace Mediaportal.TV.Server.TVService.Services
 
     #endregion
 
-    public void Subscribe(string username/*, ServerEventEnum eventEnum*/)
+    public void Subscribe(string username)
     {
       bool alreadySubscribed;
       lock (_subscribersLock)
@@ -90,18 +81,10 @@ namespace Mediaportal.TV.Server.TVService.Services
         {
           _subscribers[username] = subscriber;
         }
-      }
-      /*else
-      {
-        _subscribers[username].ServerEventEnum |= eventEnum;
-      }*/
-      
-      /*bool isTvServerEventEnum = (eventEnum & ServerEventEnum.TvServerEventEnum) == ServerEventEnum.TvServerEventEnum;
-      bool isHeartbeatEventEnum = (eventEnum & ServerEventEnum.HeartbeatEventEnum) == ServerEventEnum.HeartbeatEventEnum;
-      bool isCiMenuEventEnum = (eventEnum & ServerEventEnum.CiMenuEventEnum) == ServerEventEnum.CiMenuEventEnum;*/
+      }      
     }
 
-    public void Unsubscribe(string username/*, ServerEventEnum eventEnum*/)
+    public void Unsubscribe(string username)
     {
       Subscriber subscriber;
       bool found;
@@ -120,22 +103,6 @@ namespace Mediaportal.TV.Server.TVService.Services
           _subscribers.Remove(username);
         }
       }
-
-
-      /*Subscriber subscriber;
-      bool foundUser = _subscribers.TryGetValue(username, out subscriber);
-      if (foundUser)
-      {
-        subscriber.ServerEventEnum = subscriber.ServerEventEnum | eventEnum;
-        if (subscriber.ServerEventEnum == ServerEventEnum.None)
-        {
-          _subscribers.Remove(username); 
-        }
-        else
-        {
-          _subscribers[username] = subscriber;
-        }
-      }*/
     }
 
     private void EventService_Faulted(object sender, EventArgs e)
