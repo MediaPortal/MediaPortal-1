@@ -399,7 +399,7 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSe
   FlushVideo();
   FlushSubtitle();
 
-  m_playlistManager->ClearAllButCurrentClip(pSeeking, rtSeekTime);
+  m_playlistManager->ClearAllButCurrentClip();
 
   SetHoldAudio(false);
   SetHoldVideo(false);

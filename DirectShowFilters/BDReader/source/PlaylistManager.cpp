@@ -370,7 +370,7 @@ bool CPlaylistManager::HasVideo()
   return false;
 }
 
-void CPlaylistManager::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint)
+void CPlaylistManager::ClearAllButCurrentClip()
 {
   CAutoLock locka (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
@@ -396,7 +396,7 @@ void CPlaylistManager::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtC
   if (m_vecPlaylists.size()>0)
   {
     m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin() + (m_vecPlaylists.size()-1);
-    //m_rtPlaylistOffset += (*m_itCurrentVideoPlayBackPlaylist)->ClearAllButCurrentClip(true, rtClipStartPoint);
+    m_rtPlaylistOffset += (*m_itCurrentVideoPlayBackPlaylist)->ClearAllButCurrentClip(m_rtPlaylistOffset);
   }
 }
 

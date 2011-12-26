@@ -48,7 +48,7 @@ public:
   bool SubmitVideoPacket(Packet * packet);
   void FlushAudio(void);
   void FlushVideo(void);
-  void ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint);
+  void ClearAllButCurrentClip();
   Packet* GetNextAudioPacket();
   Packet* GetNextAudioPacket(int playlist, int clip);
   Packet* GetNextVideoPacket();

@@ -53,7 +53,6 @@ Packet* CPlaylist::ReturnNextAudioPacket()
   if (ret)
   {
     ret->nPlaylist=nPlaylist;
-    CorrectTimeStamp(*m_itCurrentAudioPlayBackClip,ret);
   }
   else
   {
@@ -82,7 +81,6 @@ Packet* CPlaylist::ReturnNextAudioPacket(int clip)
     if (ret!=NULL)
     {
       ret->nPlaylist=nPlaylist;
-      CorrectTimeStamp((*m_itCurrentAudioPlayBackClip),ret);
     }
   }
   if (ret) firstPacketRead=true;
@@ -96,7 +94,6 @@ Packet* CPlaylist::ReturnNextVideoPacket()
   if (ret)
   {
     ret->nPlaylist=nPlaylist;
-    CorrectTimeStamp((*m_itCurrentVideoPlayBackClip),ret);
   }
   else
   {
@@ -265,24 +262,6 @@ void CPlaylist::SetFilledAudio()
   playlistFilledAudio=true;
 }
 
-REFERENCE_TIME CPlaylist::GetPacketTimeStampCorrection(CClip * packetClip)
-{
-//  LogDebug("Correcting timestamp by %I64d - %I64d",packetClip->clipPlaylistOffset, firstPESTimeStamp);
-  return packetClip->clipPlaylistOffset;
-}
-
-Packet * CPlaylist::CorrectTimeStamp(CClip * packetClip, Packet* packet)
-{
-  Packet* ret=packet;
-  if (packet->rtStart!=Packet::INVALID_TIME)
-  {
-    ret->rtStart -= GetPacketTimeStampCorrection(packetClip);
-    ret->rtStop -= GetPacketTimeStampCorrection(packetClip);
-    ret->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 ? 0 - firstAudioPESTimeStamp : 0; // use only audio offset
-  }
-  return ret;
-}
-
 void CPlaylist::FlushAudio()
 {
   ivecClip it = m_vecClips.begin();
@@ -304,8 +283,9 @@ void CPlaylist::FlushVideo()
   }
 }
 
-REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint)
+REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffset)
 {
+  REFERENCE_TIME ret = 0LL;
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
   {
@@ -322,16 +302,11 @@ REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME 
   }
   if (m_vecClips.size()>0)
   {
-    if (resetClip) 
-    {
-      Reset(nPlaylist, playlistFirstPacketTime);
-    }
     m_itCurrentAudioPlayBackClip=m_itCurrentVideoPlayBackClip=m_itCurrentAudioSubmissionClip=m_itCurrentVideoSubmissionClip=m_vecClips.begin();
-    if (resetClip) 
-    {
-      (*m_itCurrentAudioPlayBackClip)->Reset(rtClipStartPoint);
-    }
-    return (*m_itCurrentAudioPlayBackClip)->clipDuration;
+    ret = (*m_itCurrentAudioPlayBackClip)->PlayedDuration();
+    Reset(nPlaylist, playlistFirstPacketTime);
+    (*m_itCurrentAudioPlayBackClip)->Reset(totalStreamOffset + ret);
+    return ret;
   }
   return 0LL;
 }

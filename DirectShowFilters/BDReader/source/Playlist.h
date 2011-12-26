@@ -54,7 +54,7 @@ public:
   void SetFilledAudio();
   int  nPlaylist;
   REFERENCE_TIME playlistFirstPacketTime;
-  REFERENCE_TIME ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint);
+  REFERENCE_TIME ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffset);
   bool HasAudio();
   bool HasVideo();
   REFERENCE_TIME Incomplete();
@@ -69,8 +69,6 @@ protected:
   CClip * GetNextVideoClip(CClip * currentClip, int superceedType);
   CClip * GetClip(int nClip);
 
-  REFERENCE_TIME GetPacketTimeStampCorrection(CClip * packetClip);
-  Packet * CorrectTimeStamp(CClip * packetClip, Packet* packet);
   void Reset(int playlistNumber, REFERENCE_TIME firstPacketTime);
 
   vector<CClip*> m_vecClips;
