@@ -488,6 +488,7 @@ namespace MediaPortal.GUI.Video
       dlg.SetHeading(495); // Sort options
       
       // Watch for enums in VideoSort.cs
+      // Watch for enums in VideoSort.cs
       dlg.AddLocalizedString(365); // name
       dlg.AddLocalizedString(104); // date created (date)
       dlg.AddLocalizedString(105); // size

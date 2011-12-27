@@ -1855,8 +1855,18 @@ namespace TvPlugin
       int width = GetControl((int)Controls.LABEL_TIME1 + 1).XPosition;
       width -= GetControl((int)Controls.LABEL_TIME1).XPosition;
 
-      int height = GetControl((int)Controls.IMG_CHAN1 + 1).YPosition;
-      height -= GetControl((int)Controls.IMG_CHAN1).YPosition;
+      int height = 0;
+      GUIControl guiControl = GetControl((int)Controls.IMG_CHAN1 + 1);
+      if (guiControl != null)
+      {
+        height = guiControl.YPosition;
+        height -= GetControl((int)Controls.IMG_CHAN1).YPosition;
+      }
+      else
+      {
+        height = GetControl((int)Controls.IMG_CHAN1).Height;
+      }
+      
 
       foreach (Program program in programs)
       {
@@ -3739,10 +3749,23 @@ namespace TvPlugin
       }
     }
 
+    
+
     protected override void GetChannels(bool refresh)
     {
       if (refresh || _channelList == null)
       {
+        if (_channelList != null)
+        {
+          if (_channelList.Count < _channelCount)
+          {
+            _previousChannelCount = _channelList.Count;
+          }
+          else
+          {
+            _previousChannelCount = _channelCount;
+          }
+        }
         _channelList = new List<GuideChannel>();
       }
 

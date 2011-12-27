@@ -53,19 +53,15 @@ namespace TvPlugin
     private string channelName = "";
     private string channelNr = "";
     private int idChannel;
-    private String tvErrorMessage = String.Empty;
 
-    private IList tvChannelList;
+    private TVHome.ChannelErrorInfo m_lastError;
 
-    private TvPlugin.TVHome.ChannelErrorInfo m_lastError = null;
-
-    public TvPlugin.TVHome.ChannelErrorInfo LastError
+    public TVHome.ChannelErrorInfo LastError
     {
       get { return m_lastError; }
       set
       {
         m_lastError = value;
-        TVHome.Navigator.SetFailingChannel(m_lastError.FailingChannel);
       }
     }
 
@@ -140,7 +136,6 @@ namespace TvPlugin
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          tvErrorMessage = message.Label; // custom Text to show
           break;
       }
       return base.OnMessage(message);
@@ -164,7 +159,7 @@ namespace TvPlugin
       sb.AddConstraint(Operator.Equals, "istv", 1);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
-      tvChannelList = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
+      ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
 
       AllocResources();
       // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
@@ -287,7 +282,10 @@ namespace TvPlugin
 
     public void UpdateChannelInfo()
     {
-      channelNr = GetChannelNumber();
+      if (LastError != null)
+      {
+        channelNr = GetChannelNumber();
+      }
       channelName = GetChannelName();
       idChannel = GetIdChannel();
       SetCurrentChannelLogo();
@@ -296,7 +294,16 @@ namespace TvPlugin
 
     private void SetCurrentChannelLogo()
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
+      string strLogo = null;
+      if (LastError != null)
+      {
+        strLogo = TVUtil.GetChannelLogo(LastError.FailingChannel);
+      }
+      else
+      {
+        strLogo = TVUtil.GetChannelLogo(TVHome.Navigator.ZapChannel);
+      }
+            
       if (string.IsNullOrEmpty(strLogo))                         
       {
         if (imgTvChannelLogo != null)
@@ -319,13 +326,16 @@ namespace TvPlugin
 
     private string GetChannelName()
     {
+      if (LastError != null)
+      {
+        return LastError.FailingChannel.DisplayName;
+      }
       return TVHome.Navigator.ZapChannel.DisplayName;
     }
 
     private string GetChannelNumber()
     {
-      int zapChannelNr = TVHome.Navigator.ZapChannelNr;
-      
+      int zapChannelNr = TVHome.Navigator.ZapChannelNr;  
       if (zapChannelNr<0)
       {
         return "";
@@ -335,6 +345,10 @@ namespace TvPlugin
 
     private int GetIdChannel()
     {
+      if (LastError != null)
+      {
+        return LastError.FailingChannel.IdChannel;
+      }
       return TVHome.Navigator.ZapChannel.IdChannel;
     }
 
@@ -358,18 +372,20 @@ namespace TvPlugin
         TvServer server = new TvServer();
         imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
       }
-
-      if (lblCurrentChannel != null)
-      {
-        lblCurrentChannel.Label = channelName;
-      }
+      
       if (lblZapToCannelNo != null)
       {
         lblZapToCannelNo.Label = channelNr;
         lblZapToCannelNo.Visible = !string.IsNullOrEmpty(channelNr);
       }
       if (LastError != null)
-      {
+      {        
+        lblStartTime.Label = "";
+        lblEndTime.Label = "";
+        if (LastError.FailingChannel != null)
+        {
+          lblCurrentChannel.Label = LastError.FailingChannel.DisplayName;
+        }
         if (LastError.Messages.Count > 0)
         {
           lblOnTvNow.Label = LastError.Messages[0]; // first line in "NOW"
@@ -383,6 +399,10 @@ namespace TvPlugin
       }
       else
       {
+        if (lblCurrentChannel != null)
+        {
+          lblCurrentChannel.Label = channelName;
+        }
         Channel chan = TVHome.Navigator.GetChannel(idChannel, true);
         Program prog = chan.GetProgramAt(m_dateTime);
         if (prog != null)

@@ -622,7 +622,7 @@ namespace MediaPortal.Video.Database
             string strFname = DatabaseUtility.Get(results, iRow, "strFilename");
             if (bExact)
             {
-              if (strFname.ToLower() == strFileName.ToLower())
+              if (strFname.ToUpperInvariant() == strFileName.ToUpperInvariant())
               {
                 // was just returning 'true' here, but this caused problems with
                 // the bookmarks as these are stored by fileid. forza.
@@ -641,7 +641,7 @@ namespace MediaPortal.Video.Database
                 Int32.TryParse(DatabaseUtility.Get(results, iRow, "idMovie"), out lMovieId);
                 return lFileId;
               }
-              if (strFname.ToLower() == strFileName.ToLower())
+              if (strFname.ToUpperInvariant() == strFileName.ToUpperInvariant())
               {
                 // was just returning 'true' here, but this caused problems with
                 // the bookmarks as these are stored by fileid. forza.

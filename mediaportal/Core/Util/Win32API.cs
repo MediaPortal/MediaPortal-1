@@ -110,6 +110,9 @@ namespace MediaPortal.Util
     public static extern IntPtr DispatchMessageA([In] ref MSG msg);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+    public static extern bool IsWindowUnicode(HandleRef hWnd);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
     public static extern IntPtr GetParent(HandleRef hWnd);
 
     [DllImport("user32", SetLastError = true)]
@@ -444,6 +447,10 @@ namespace MediaPortal.Util
       try
       {
         Show("Shell_TrayWnd", "", bVisible);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Show("Button", "Start", bVisible);
+        }
       }
       catch (Exception) {}
     }
@@ -453,6 +460,10 @@ namespace MediaPortal.Util
       try
       {
         Enable("Shell_TrayWnd", "", bEnable);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Enable("Button", "Start", bEnable);
+        }
       }
       catch (Exception) {}
     }
