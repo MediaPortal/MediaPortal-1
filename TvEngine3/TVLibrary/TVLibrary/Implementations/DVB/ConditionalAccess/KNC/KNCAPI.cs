@@ -21,844 +21,1212 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// KNC CI control class
+  /// A class for handling conditional access and DiSEqC for KNC One tuners, including
+  /// compatible models from Mystique and Satelco.
   /// </summary>
-  public class KNCAPI : IDisposable, ICiMenuActions
+  public class KNCAPI : IDiSEqCController, ICiMenuActions, IDisposable
   {
-    #region Dll Imports
-
-    /// <summary>
-    /// KNC: Enable CI
-    /// </summary>
-    /// <param name="m_iDeviceIndex">device index 0..n</param>
-    /// <param name="tunerFilter">tuner filter</param>
-    /// <param name="callbacks">callback pointer struct</param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_Enable(uint m_iDeviceIndex, IBaseFilter tunerFilter, IntPtr callbacks);
-
-    /// <summary>
-    /// KNC: Disable CI
-    /// </summary>
-    /// <param name="m_iDeviceIndex">device index 0..n</param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Disable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_Disable(uint m_iDeviceIndex);
-
-    /// <summary>
-    /// KNC: Detect if CI is available
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsAvailable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_IsAvailable(uint m_iDeviceIndex);
-
-    /// <summary>
-    /// KNC: Detect if CI is ready
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsReady", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_IsReady(uint m_iDeviceIndex);
-
-    /// <summary>
-    /// KNC: Enable CI Hardware ???
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="param"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_HW_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_HW_Enable(uint m_iDeviceIndex, bool param);
-
-    /// <summary>
-    /// KNC: Query CAM name
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="Name"></param>
-    /// <param name="BufferSize"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_GetName", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_GetName(uint m_iDeviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder Name,
-                                                uint BufferSize);
-
-    /// <summary>
-    /// KNC: Send caPMT to CAM
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="caPMT"></param>
-    /// <param name="caPmtLen"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendPMTCommand", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_SendPMTCommand(uint m_iDeviceIndex, IntPtr caPMT, uint caPmtLen);
-
-    /// <summary>
-    /// KNC: Enter CI menu
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="nSlot"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_EnterMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_EnterMenu(uint m_iDeviceIndex, byte nSlot);
-
-    /// <summary>
-    /// KNC: Select CI menu choice
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="nChoice"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SelectMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_SelectMenu(uint m_iDeviceIndex, byte nSlot, byte nChoice);
-
-    /// <summary>
-    /// KNC: Close CI menu
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="nSlot"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_CloseMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_CloseMenu(uint m_iDeviceIndex, byte nSlot);
-
-    /// <summary>
-    /// KNC: Send CI menu answer
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="cancel"></param>
-    /// <param name="MenuAnswer"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendMenuAnswer", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_SendMenuAnswer(uint m_iDeviceIndex, byte nSlot, bool cancel,
-                                                       [In, MarshalAs(UnmanagedType.LPStr)] String MenuAnswer);
-
-    /// <summary>
-    /// KNC: Enable hardware ???
-    /// </summary>
-    /// <param name="m_iDeviceIndex"></param>
-    /// <param name="tunerFilter"></param>
-    /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
-    public static extern uint KNCBDA_HW_Enable(uint m_iDeviceIndex, IBaseFilter tunerFilter);
-
-    #endregion
-
     #region enums
 
-    /// <summary>
-    /// Status for CI Slot
-    /// </summary>
-    public enum KNCCiSlotStatus
+    private enum KncCiState
     {
-      /// Initializing
-      Initializing = 0,
-      /// Transport
+      Initializing = 0,       // Indicates that a CAM has been inserted.
+
       Transport = 1,
-      /// Resource
       Resource = 2,
-      /// Application
       Application = 3,
-      /// ConditionalAccess
       ConditionalAccess = 4,
-      /// Ready
-      Ready = 5,
-      /// OpenService
+
+      Ready = 5,              // Indicates that the CAM is ready for interaction.
       OpenService = 6,
-      /// Releasing
-      Releasing = 7,
-      /// CloseMMI
-      CloseMMI = 8,
-      /// Request
+      Releasing = 7,          // Indicates that a CAM has been removed.
+
+      CloseMmi = 8,
       Request = 9,
-      /// Menu
       Menu = 10,
-      /// MenuChoice
       MenuChoice = 11,
-      /// OpenDisplay
+
       OpenDisplay = 12,
-      /// CloseDisplay
       CloseDisplay = 13,
-      /// None
+
       None = 99
     }
 
     #endregion
 
+    #region Dll imports
+
+    /// <summary>
+    /// Enable the conditional access interface.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="graphBuilder">The graph containing the tuner filter. Note: should be set to null for non-PCIe tuners.</param>
+    /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
+    /// <param name="callbacks">Callback structure pointer.</param>
+    /// <returns><c>true</c> if the interface is successfully enabled, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Enable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_Enable(int deviceIndex, IGraphBuilder graphBuilder, IBaseFilter filter, IntPtr callbacks);
+
+    /// <summary>
+    /// Disable the conditional access interface.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <returns><c>true</c> if the interface is successfully disabled, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Disable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_Disable(int deviceIndex);
+
+    /// <summary>
+    /// Check if this device currently has conditional access capabilities.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <returns><c>true</c> if a CI slot is connected with a CAM inserted, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsAvailable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_IsAvailable(int deviceIndex);
+
+    /// <summary>
+    /// Detect if the CAM is ready to interact.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <returns><c>true</c> if the CAM is ready, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsReady", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_IsReady(int deviceIndex);
+
+    /// <summary>
+    /// Enable the use of the KNCBDA_CI_* functions.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="param"><c>True</c> to enable the CI slot; <c>false</c>to disable the CI slot.</param>
+    /// <returns>???</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_HW_Enable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_HW_Enable(int deviceIndex, bool param);
+
+    /// <summary>
+    /// Get the name/brand/type of the CAM inserted in the CI slot.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="name">A buffer to hold the CAM name.</param>
+    /// <param name="bufferSize">The size of the CAM name buffer in bytes.</param>
+    /// <returns>the name/brand/type of the CAM</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_GetName", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_GetName(int deviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name,
+                                                uint bufferSize);
+
+    /// <summary>
+    /// Send CA PMT to the CAM to request that one or more services are descrambled.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="caPmt">A pointer to a buffer containing the CA PMT.</param>
+    /// <param name="caPmtLen">The length of the CA PMT buffer in bytes.</param>
+    /// <returns><c>true</c> if the CAM successfully starts to descramble the service, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendPMTCommand", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_SendPMTCommand(int deviceIndex, IntPtr caPmt, uint caPmtLen);
+
+    /// <summary>
+    /// Enter the CAM menu.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
+    /// <returns>???</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_EnterMenu", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_EnterMenu(int deviceIndex, byte slotIndex);
+
+    /// <summary>
+    /// Select an entry in the CAM menu.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
+    /// <param name="choice">The index (0..n) of the menu choice selected by the user.</param>
+    /// <returns>???</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SelectMenu", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_SelectMenu(int deviceIndex, byte slotIndex, byte choice);
+
+    /// <summary>
+    /// Close the CAM menu.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
+    /// <returns>???</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_CloseMenu", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_CloseMenu(int deviceIndex, byte slotIndex);
+
+    /// <summary>
+    /// Send a response from the user to the CAM.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
+    /// <param name="cancel"><c>True</c> to cancel the request.</param>
+    /// <param name="menuAnswer">The user's response.</param>
+    /// <returns>???</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendMenuAnswer", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_SendMenuAnswer(int deviceIndex, byte slotIndex, bool cancel,
+                                                       [In, MarshalAs(UnmanagedType.LPStr)] String menuAnswer);
+
+    /// <summary>
+    /// Enable the use of the KNCBDA_HW_* functions by initialising hardware interfaces.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
+    /// <returns><c>true</c> if the hardware interfaces are successfully initialised, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_Enable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern bool KNCBDA_HW_Enable(int deviceIndex, IBaseFilter filter);
+
+    /// <summary>
+    /// Send a DiSEqC command.
+    /// </summary>
+    /// <param name="deviceIndex">Device index 0..n.</param>
+    /// <param name="command">A pointer to a buffer containing the command.</param>
+    /// <param name="commandLen">The length of the command.</param>
+    /// <param name="repeatCount">The number of times to resend the command.</param>
+    /// <returns><c>true</c> if the tuner successfully sent the command, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_DiSEqCWrite", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern bool KNCBDA_HW_DiSEqCWrite(int deviceIndex, IntPtr command, UInt32 commandLen, UInt32 repeatCount);
+
+    /// <summary>
+    /// PCI-e products (Philips/NXP/Trident SAA7160 based) have a main device filter - one
+    /// main device filter per card. This function enumerates and returns the total number of
+    /// main devices filters in the system. Note that this function does *not* exclude non-KNC
+    /// SAA716x based main devices.
+    /// </summary>
+    /// <returns>the number of SAA716x main device filters in the system</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_EnumerateMainDevices", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern int PCIE_EnumerateMainDevices();
+
+    /// <summary>
+    /// Returns the filter name for a specific main device.
+    /// </summary>
+    /// <param name="mainDeviceIndex">Main device index 0..n.</param>
+    /// <returns>the name for the main device corresponding with the index parameter</returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_GetDeviceItem", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.LPStr)]
+    private static extern String PCIE_GetDeviceItem(int mainDeviceIndex);
+
+    /// <summary>
+    /// Open a main device. You need to do this if you want to swap the CI/CAM inputs on the corresponding
+    /// card. You can only have one main device open at a time.
+    /// </summary>
+    /// <param name="mainDeviceIndex">Main device index 0..n.</param>
+    /// <returns><c>true</c> if the device is successfully opened, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_OpenMainDevice", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern bool PCIE_OpenMainDevice(int mainDeviceIndex);
+
+    /// <summary>
+    /// Close the currently open main device. You can only have one main device open at a time.
+    /// </summary>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_CloseMainDevice", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern void PCIE_CloseMainDevice();
+
+    /// <summary>
+    /// Set the value of a tuner property.
+    /// </summary>
+    /// <param name="propertySet">The GUID of the property set.</param>
+    /// <param name="propertyIndex">The index of the property within the property set.</param>
+    /// <param name="data">A pointer to a buffer containing the property value.</param>
+    /// <param name="dataLen">The length of the property value in bytes.</param>
+    /// <returns><c>true</c> if the value of the property is set successfully, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_SetProperty", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern bool PCIE_SetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, UInt32 dataLen);
+
+    /// <summary>
+    /// Get the value of a tuner property.
+    /// </summary>
+    /// <param name="propertySet">The GUID of the property set.</param>
+    /// <param name="propertyIndex">The index of the property within the property set.</param>
+    /// <param name="data">A pointer to a buffer to hold the property value.</param>
+    /// <param name="dataLen">The length of the property value in bytes.</param>
+    /// <returns><c>true</c> if the value of the property is retrieved successfully, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_GetProperty", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern bool PCIE_GetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, out UInt32 dataLen);
+
+    /// <summary>
+    /// Swap the CI slot/CAM associated with the tuners on a card. Tuners can only access a single
+    /// one CI slot/CAM at any given time.
+    /// </summary>
+    /// <param name="swap"><c>True</c> to swap CI slot/CAM inputs.</param>
+    /// <returns><c>true</c> if the CI slot/CAM inputs on the device are successfully swapped, otherwise <c>false</c></returns>
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_SwapCAMInput", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
+    private static extern bool PCIE_SwapCAMInput(bool swap);
+
+    #endregion
+
     #region constants
 
-    private string[] ValidTuners = new string[]
-                                     {
-                                       "KNC BDA DVB-S",
-                                       "KNC BDA DVB-S2",
-                                       "KNC BDA DVB-C",
-                                       "KNC BDA DVB-T",
-                                       "Mystique SaTiX DVB-S",
-                                       "Mystique SaTiX DVB-S2",
-                                       "Mystique CaBiX DVB-C2",
-                                       "Mystique TeRiX DVB-T2",
-                                       "Mystique SaTiX-S",
-                                       "Mystique SaTiX-S2",
-                                       "Mystique CaBiX-C2",
-                                       "Mystique TeRiX-T2"
-                                     };
+    private static readonly string[] ValidTunerNames = new string[]
+    {
+      "KNC BDA DVB-S",
+      "KNC BDA DVB-S2",
+      "KNC BDA DVB-C",
+      "KNC BDA DVB-T",
+      "7160 KNC BDA DVBS2 Tuner",   // PCI-e: DVB-S2 Twin
+
+      "Mystique SaTiX DVB-S",
+      "Mystique SaTiX DVB-S2",
+      "Mystique CaBiX DVB-C2",
+      "Mystique TeRiX DVB-T2",
+      "Mystique SaTiX-S",
+      "Mystique SaTiX-S2",
+      "Mystique CaBiX-C2",
+      "Mystique TeRiX-T2",
+
+      "Satelco EasyWatch PCI (DVB-S)",
+      "Satelco EasyWatch PCI (DVB-S2)",
+      "Satelco EasyWatch PCI (DVB-C)",
+      "Satelco EasyWatch PCI (DVB-T)"
+    };
+
+    private static readonly string[] ValidDevicePaths = new string[]
+    {
+      // DVB-S - Old
+      "ven_1131&dev_7146&subsys_4f561131",  // KNC
+
+      // DVB-S - SH2
+      "ven_1131&dev_7146&subsys_00101894",  // KNC
+      "ven_1131&dev_7146&subsys_00111894",  // Mystique
+      "ven_1131&dev_7146&subsys_001a1894",  // Satelco
+
+      // DVB-S - X4
+      "ven_1131&dev_7146&subsys_00161894",  // KNC
+      "ven_1131&dev_7146&subsys_00151894",  // Mystique
+      "ven_1131&dev_7146&subsys_001b1894",  // Satelco
+
+      // DVB-S - X4 (no CI)
+      "ven_1131&dev_7146&subsys_00141894",  // KNC
+      "ven_1131&dev_7146&subsys_001e1894",  // Satelco
+
+      // DVB-S - X6
+      "ven_1131&dev_7146&subsys_00191894",  // KNC
+      "ven_1131&dev_7146&subsys_00181894",  // Mystique
+      "ven_1131&dev_7146&subsys_001d1894",  // Satelco
+      "ven_1131&dev_7146&subsys_001f1894",  // Satelco
+
+      // DVB-S2 - Sharp
+      "ven_1131&dev_7146&subsys_00501894",  // KNC
+      "ven_1131&dev_7146&subsys_00511894",  // Mystique
+      "ven_1131&dev_7146&subsys_00521894",  // Satelco
+
+      // DVB-S - X8
+      "ven_1131&dev_7146&subsys_00561894",  // KNC
+      "ven_1131&dev_7146&subsys_00551894",  // Mystique
+      "ven_1131&dev_7146&subsys_005b1894",  // Satelco
+
+      // DVB-S - X8 (no CI)
+      "ven_1131&dev_7146&subsys_00541894",  // KNC
+      "ven_1131&dev_7146&subsys_005e1894",  // Satelco
+
+      // DVB-C - MK2
+      "ven_1131&dev_7146&subsys_00201894",  // KNC
+      "ven_1131&dev_7146&subsys_00211894",  // Mystique
+      "ven_1131&dev_7146&subsys_002a1894",  // Satelco
+
+      // DVB-C - MK3
+      "ven_1131&dev_7146&subsys_00221894",  // KNC
+      "ven_1131&dev_7146&subsys_00231894",  // Mystique
+      "ven_1131&dev_7146&subsys_002c1894",  // Satelco
+
+      // DVB-C - MK32
+      "ven_1131&dev_7146&subsys_00281894",  //KNC
+
+      // DVB-T
+      "ven_1131&dev_7146&subsys_00301894",  // KNC
+      "ven_1131&dev_7146&subsys_00311894",  // Mystique
+      "ven_1131&dev_7146&subsys_003a1894",  // Satelco
+
+      // New KNC PCI-e tuners
+      "ven_1131&dev_7160&subsys_01101894",  // DVB-S/DVB-S2 (not yet released)
+      "ven_1131&dev_7160&subsys_02101894",  // DVB-S2/DVB-S2 (DVB-S2 Twin)
+      "ven_1131&dev_7160&subsys_03101894",  // DVB-T/DVB-C (not yet released)
+    };
+
+    private const int CallbackStructSize = 28;
+    private const int MaxDiseqcCommandLength = 64;
 
     #endregion
 
     #region callbacks
 
-    /// <summary>
-    /// CI MENU CALLBACK STRUCT 
-    /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public unsafe struct KNCCiCallbacks
+    private unsafe struct KncCiCallbacks
     {
       /// context 
-      public UInt32 pParam;
+      public UInt32 Param;
 
       /// delegate for CI state callback
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiState onCiState;
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiState OnCiState;
 
       /// delegate for opening display
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiOpenDisplay onOpenDisplay;
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiOpenDisplay OnOpenDisplay;
 
       /// delegate for CI menu
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiMenu onCiMenu;
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiMenu OnCiMenu;
 
       /// delegate for CI menu choices
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiMenuChoice onCiMenuChoice;
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiMenuChoice OnCiMenuChoice;
 
-      /// deletgate for CI requests
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiRequest onRequest;
+      /// delegate for CI requests
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiRequest OnRequest;
 
       /// delegate for closing CI
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiCloseDisplay onCloseDisplay;
-    } ;
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiCloseDisplay OnCloseDisplay;
+    };
 
     /// <summary>
-    /// KNC: Callbacks from CI
+    /// Called by the tuner driver when the state of a CI slot changes.
     /// </summary>
-    /// <param name="slot"></param>
-    /// <param name="State"></param>
-    /// <param name="lpszMessage"></param>
-    /// <param name="pParam"></param>
+    /// <param name="slotIndex">The index of the CI slot that changed state.</param>
+    /// <param name="state">The new state of the slot.</param>
+    /// <param name="message">A message from the CAM or driver (typically the CAM name/type as retrieved by KNCBDA_CI_GetName()).</param>
+    /// <param name="param">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiState(
-      byte slot, KNCCiSlotStatus State, [MarshalAs(UnmanagedType.LPStr)] String lpszMessage, IntPtr pParam);
+    private unsafe delegate void OnKncCiState(
+      byte slotIndex, KncCiState state, [MarshalAs(UnmanagedType.LPStr)] String message, IntPtr param);
 
     /// <summary>
-    /// KNC: Callbacks from CI
+    /// Called by the tuner driver when the CAM menu is successfully opened.
     /// </summary>
-    /// <param name="slot"></param>
-    /// <param name="pParam"></param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="param">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiOpenDisplay(byte slot, IntPtr pParam);
+    private unsafe delegate void OnKncCiOpenDisplay(byte slotIndex, IntPtr param);
 
     /// <summary>
-    /// KNC: Callbacks from CI
+    /// Called by the tuner driver to pass the menu meta-data when the user is browsing the CAM menu.
     /// </summary>
-    /// <param name="slot"></param>
-    /// <param name="lpszTitle"></param>
-    /// <param name="lpszSubTitle"></param>
-    /// <param name="lpszBottom"></param>
-    /// <param name="nNumChoices"></param>
-    /// <param name="pParam"></param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="title">The menu title.</param>
+    /// <param name="subTitle">The menu sub-title.</param>
+    /// <param name="footer">The menu footer.</param>
+    /// <param name="numChoices">The number of choices in the menu.</param>
+    /// <param name="param">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiMenu(byte slot, [MarshalAs(UnmanagedType.LPStr)] String lpszTitle,
-                                            [MarshalAs(UnmanagedType.LPStr)] String lpszSubTitle,
-                                            [MarshalAs(UnmanagedType.LPStr)] String lpszBottom,
-                                            uint nNumChoices, IntPtr pParam);
+    private unsafe delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] String title,
+                                            [MarshalAs(UnmanagedType.LPStr)] String subTitle,
+                                            [MarshalAs(UnmanagedType.LPStr)] String footer,
+                                            uint numChoices, IntPtr param);
 
     /// <summary>
-    /// KNC: Callbacks from CI
+    /// Called by the tuner driver for each menu entry when the user is browsing the CAM menu.
     /// </summary>
-    /// <param name="slot"></param>
-    /// <param name="nChoice"></param>
-    /// <param name="lpszText"></param>
-    /// <param name="pParam"></param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="choiceIndex">The index of the choice within the menu.</param>
+    /// <param name="text">The text associated with the choice.</param>
+    /// <param name="param">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiMenuChoice(
-      byte slot, uint nChoice, [MarshalAs(UnmanagedType.LPStr)] String lpszText, IntPtr pParam);
+    private unsafe delegate void OnKncCiMenuChoice(
+      byte slotIndex, uint choiceIndex, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr param);
 
     /// <summary>
-    /// KNC: Callbacks from CI
+    /// Called by the tuner driver when the CAM requests input from the user.
     /// </summary>
-    /// <param name="slot"></param>
-    /// <param name="bBlind"></param>
-    /// <param name="nAnswerLength"></param>
-    /// <param name="lpszText"></param>
-    /// <param name="pParam"></param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
+    /// <param name="answerLength">The expected answer length.</param>
+    /// <param name="text">The request context text from the CAM.</param>
+    /// <param name="param">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiRequest(
-      byte slot, bool bBlind, uint nAnswerLength, [MarshalAs(UnmanagedType.LPStr)] String lpszText, IntPtr pParam);
+    private unsafe delegate void OnKncCiRequest(
+      byte slotIndex, bool blind, uint answerLength, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr param);
 
     /// <summary>
-    /// KNC: Callbacks from CI
+    /// Called by the tuner driver when the CAM wants to close the menu.
     /// </summary>
-    /// <param name="slot"></param>
-    /// <param name="nDelay"></param>
-    /// <param name="pParam"></param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
+    /// <param name="param">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiCloseDisplay(byte slot, uint nDelay, IntPtr pParam);
+    private unsafe delegate void OnKncCiCloseDisplay(byte slotIndex, uint delay, IntPtr param);
 
     #endregion
 
     #region variables
 
-    private readonly IntPtr ptrPmt;
-    private readonly IntPtr ptrCallback;
-    private readonly IntPtr _ptrDataInstance;
-    private IBaseFilter m_tunerFilter;
-    private uint m_iDeviceIndex;
-    private bool m_bIsKNC = false;
-    private bool m_bCAM_present = false;
-    private byte m_nSlot = 0;
-    private int m_waitTimeout = 0;
-    private KNCCiSlotStatus m_ciState;
-    private KNCCiCallbacks m_callbacks;
-    private ICiMenuCallbacks m_ciMenuCallback;
+    private readonly IntPtr _diseqcBuffer = IntPtr.Zero;
+    private readonly IntPtr _callbackBuffer = IntPtr.Zero;
+
+    private IBaseFilter _tunerFilter = null;
+    private IBaseFilter _captureFilter = null;
+    private IGraphBuilder _graphBuilder = null;
+
+    private bool _isKnc = false;
+    private int _deviceIndex = -1;
+    private bool _isPcie = false;
+    private bool _isCiSlotPresent = false;
+    private bool _isCamPresent = false;
+    private bool _isCamReady = false;
+    private byte _slotIndex = 0;
+    private KncCiState _ciState = KncCiState.Releasing;
+
+    private KncCiCallbacks _callbacks;
+    private ICiMenuCallbacks _ciMenuCallbacks = null;
 
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="KNCAPI"/> class.
+    /// Initialises a new instance of the <see cref="KNCAPI"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="DeviceIndex">The KNC1 card hardware index (0 based)</param>
-    public KNCAPI(IBaseFilter tunerFilter, uint DeviceIndex)
+    /// <param name="tunerDevicePath">The tuner device path.</param>
+    public KNCAPI(IBaseFilter tunerFilter, String tunerDevicePath)
     {
-      ptrPmt = Marshal.AllocCoTaskMem(1024);
-      ptrCallback = Marshal.AllocCoTaskMem(7 * 4); // 7*Int32
-      _ptrDataInstance = Marshal.AllocCoTaskMem(1024);
-
-      m_tunerFilter = tunerFilter;
-
-      FilterInfo info;
-      tunerFilter.QueryFilterInfo(out info);
-      foreach (String validTuner in ValidTuners)
+      // Stage 1: check if this tuner is supported by the KNC API.
+      FilterInfo tunerInfo;
+      int hr = tunerFilter.QueryFilterInfo(out tunerInfo);
+      if (hr != 0)
       {
-        if (info.achName == validTuner)
+        Log.Log.Debug("KNC: failed to get the tuner name, hr = 0x{0:x} - {1}", HResult.GetDXErrorString(hr));
+        return;
+      }
+      foreach (String validTunerName in ValidTunerNames)
+      {
+        if (tunerInfo.achName.Equals(validTunerName))
         {
-          m_bIsKNC = true;
+          Log.Log.Debug("KNC: supported tuner detected");
+          _isKnc = true;
           break;
         }
       }
-      if (!m_bIsKNC)
+
+      if (_isKnc)
       {
-        return;
-      }
-
-      // iDeviceIndex passed by TvLibrary ! Enumerated by DevicePath
-      m_iDeviceIndex = DeviceIndex;
-      Log.Log.Debug("KNC: card {0} detected: {1}", m_iDeviceIndex, info.achName);
-
-      OpenCI();
-    }
-
-    /// <summary>
-    /// Opens the CI API
-    /// </summary>
-    public void OpenCI()
-    {
-      // HW Enable (always?) succeeds
-      if (KNCBDA_HW_Enable(m_iDeviceIndex, m_tunerFilter) == 0)
-      {
-        Log.Log.Debug("KNC: card {0} HW Enable failed", m_iDeviceIndex);
-      }
-
-      m_callbacks = new KNCCiCallbacks();
-      m_callbacks.onCiMenu = OnCiMenu;
-      m_callbacks.onCiMenuChoice = OnCiMenuChoice;
-      m_callbacks.onCiState = OnCiState;
-      m_callbacks.onCloseDisplay = OnCiCloseDisplay;
-      m_callbacks.onOpenDisplay = OnCiOpenDisplay;
-      m_callbacks.onRequest = OnCiRequest;
-      m_callbacks.pParam = 0;
-
-      unsafe
-      {
-        // prepare structure to be passed as pointer
-        Marshal.StructureToPtr(m_callbacks, ptrCallback, false);
-        if (KNCBDA_CI_Enable(m_iDeviceIndex, m_tunerFilter, ptrCallback) != 0)
+        // Stage 2: attempt to get the KNC device index corresponding with this tuner.
+        _isKnc = false;
+        String devicePath = "";
+        if (tunerDevicePath != null)
         {
-          ////CI_HW_Enable seems to always succeed ?!
-          //if (KNCBDA_CI_HW_Enable(m_iDeviceIndex, true) == 0)
-          //  Log.Log.Debug("KNC: card {0} CI HW enable FAILED!", m_iDeviceIndex);
-
-          // CI Enable succeeds always, only if CAM isReady there is a slot/CAM
-          if (KNCBDA_CI_IsReady(m_iDeviceIndex) != 0)
-          {
-            Log.Log.Debug("KNC: card {0} CI slot enabled successfully", m_iDeviceIndex);
-
-            // remember CAM is present
-            m_bCAM_present = true;
-            // init state to ready (callbacks are only done when changing, so expect it's ready first)
-            m_ciState = KNCCiSlotStatus.Ready;
-
-            StringBuilder nameBuffer = new StringBuilder(100);
-            if (KNCBDA_CI_GetName(m_iDeviceIndex, nameBuffer, (uint)nameBuffer.MaxCapacity) != 0)
-              Log.Log.Debug("KNC: card {0} CAM Type: {1}", m_iDeviceIndex, nameBuffer);
-            else
-              Log.Log.Debug("KNC: CI_GetName failed.");
-          }
-          else
-          {
-            Log.Log.Debug("KNC: card {0} detected without CAM", m_iDeviceIndex);
-          }
+            devicePath = tunerDevicePath.ToLowerInvariant();
         }
-      }
-    }
-
-    /// <summary>
-    /// Closes the CI API
-    /// </summary>
-    public void CloseCI()
-    {
-      Log.Log.Debug("KNC: Disable CI");
-      KNCBDA_CI_Disable(m_iDeviceIndex);
-    }
-
-    /// <summary>
-    /// Reset the CI
-    /// </summary>
-    public void ResetCI()
-    {
-      CloseCI();
-      OpenCI();
-    }
-
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
-    {
-      CloseCI();
-      Log.Log.Debug("KNC: Disposing CI handler");
-      Marshal.FreeCoTaskMem(ptrPmt);
-      Marshal.FreeCoTaskMem(ptrCallback);
-      Marshal.FreeCoTaskMem(_ptrDataInstance);
-    }
-
-    /// <summary>
-    /// Determines whether cam is ready.
-    /// </summary>
-    /// <returns>
-    /// 	<c>true</c> if [is cam ready]; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsCamReady()
-    {
-      bool yesNo = (KNCBDA_CI_IsReady(m_iDeviceIndex) != 0);
-      Log.Log.Info("KNC: IsCAMReady {0}", yesNo);
-      return yesNo;
-    }
-
-    /// <summary>
-    /// Gets a value indicating whether this instance is a KNC card.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is a KNC card; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsKNC
-    {
-      get
-      {
-        Log.Log.Info("KNC: IsKNC {0}", m_bIsKNC);
-        return m_bIsKNC;
-      }
-    }
-
-    /// <summary>
-    /// Sends the PMT.
-    /// </summary>
-    /// <param name="pmt">The PMT.</param>
-    /// <param name="PMTlength">The PM tlength.</param>
-    /// <returns></returns>
-    public bool SendPMT(byte[] pmt, int PMTlength)
-    {
-      bool succeeded = false;
-      for (int i = 0; i < PMTlength; ++i)
-      {
-        Marshal.WriteByte(ptrPmt, i, pmt[i]);
-      }
-      succeeded = KNCBDA_CI_SendPMTCommand(m_iDeviceIndex, ptrPmt, (uint)PMTlength) != 0;
-      Log.Log.Info("KNC: SendPMT success = {0}", succeeded);
-
-      if (!succeeded && m_ciState != KNCCiSlotStatus.Ready)
-      {
-        if (m_waitTimeout != 0)
+        _deviceIndex = GetDeviceIndex(devicePath);
+        if (_deviceIndex < 0)
         {
-          succeeded = true;
-          // if there is no CAM inserted, don't try to resend, as it would lead to "cannot run graph" after timeout
+          Log.Log.Debug("KNC: failed to calculate the device index");
         }
         else
         {
-          m_waitTimeout++; // increase to check it has once failed
-        }
-      }
-
-      return succeeded;
-    }
-
-    /// <summary>
-    /// Sends the diseq command.
-    /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="parameters">The scanparameters.</param>
-    public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
-    {
-      switch (channel.DisEqc)
-      {
-        case DisEqcType.Level1AA:
-          Log.Log.Info("KNC:  Level1AA - SendDiSEqCCommand(0x00)");
-          SendDiSEqCCommand(0x00);
-          break;
-        case DisEqcType.Level1AB:
-          Log.Log.Info("KNC:  Level1AB - SendDiSEqCCommand(0x01)");
-          SendDiSEqCCommand(0x01);
-          break;
-        case DisEqcType.Level1BA:
-          Log.Log.Info("KNC:  Level1BA - SendDiSEqCCommand(0x0100)");
-          SendDiSEqCCommand(0x0100);
-          break;
-        case DisEqcType.Level1BB:
-          Log.Log.Info("KNC:  Level1BB - SendDiSEqCCommand(0x0101)");
-          SendDiSEqCCommand(0x0101);
-          break;
-        case DisEqcType.SimpleA:
-          Log.Log.Info("KNC:  SimpleA - SendDiSEqCCommand(0x00)");
-          SendDiSEqCCommand(0x00);
-          break;
-        case DisEqcType.SimpleB:
-          Log.Log.Info("KNC:  SimpleB - SendDiSEqCCommand(0x01)");
-          SendDiSEqCCommand(0x01);
-          break;
-        default:
-          return;
-      }
-    }
-
-    /// <summary>
-    /// Sends the DiSEqC command.
-    /// </summary>
-    /// <param name="ulRange">The DisEqCPort</param>
-    /// <returns>true if succeeded, otherwise false</returns>
-    protected bool SendDiSEqCCommand(ulong ulRange)
-    {
-      Log.Log.Info("KNC:  SendDiSEqC Command {0}", ulRange);
-      // get ControlNode of tuner control node
-      object ControlNode;
-      int hr = ((IBDA_Topology)m_tunerFilter).GetControlNode(0, 1, 0, out ControlNode);
-      if (hr == 0)
-        // retrieve the BDA_DeviceControl interface 
-      {
-        IBDA_DeviceControl DecviceControl = (IBDA_DeviceControl)m_tunerFilter;
-        if (DecviceControl != null)
-        {
-          if (ControlNode != null)
+          // Stage 3: ensure we can get a reference to the filter that implements the proprietary
+          // interfaces.
+          Log.Log.Debug("KNC: tuner {0}, named {1}", _deviceIndex, tunerInfo.achName);
+          if (devicePath.Contains("dev_7160"))
           {
-            IBDA_FrequencyFilter FrequencyFilter = ControlNode as IBDA_FrequencyFilter;
-            hr = DecviceControl.StartChanges();
-            if (hr == 0)
+            Log.Log.Debug("KNC: this is a PCIe tuner");
+            _isPcie = true;
+
+            // We need a reference to the capture filter.
+            IPin tunerOutputPin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
+            IPin captureInputPin;
+            hr = tunerOutputPin.ConnectedTo(out captureInputPin);
+            Release.ComObject(tunerOutputPin);
+            if (hr != 0)
             {
-              if (FrequencyFilter != null)
+              Log.Log.Debug("KNC: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              _captureFilter = null;
+            }
+            else
+            {
+              PinInfo captureInfo;
+              hr = captureInputPin.QueryPinInfo(out captureInfo);
+              if (hr != 0)
               {
-                hr = FrequencyFilter.put_Range(ulRange);
-                Log.Log.Info("KNC:  put_Range:{0} success:{1}", ulRange, hr);
-                if (hr == 0)
-                {
-                  // did it accept the changes? 
-                  hr = DecviceControl.CheckChanges();
-                  if (hr == 0)
-                  {
-                    hr = DecviceControl.CommitChanges();
-                    if (hr == 0)
-                    {
-                      Log.Log.Info("KNC:  CommitChanges() Succeeded");
-                      return true;
-                    }
-                    // reset configuration
-                    Log.Log.Info("KNC:  CommitChanges() Failed!");
-                    DecviceControl.StartChanges();
-                    DecviceControl.CommitChanges();
-                    return false;
-                  }
-                  Log.Log.Info("KNC:  CheckChanges() Failed!");
-                  return false;
-                }
-                Log.Log.Info("KNC:  put_Range Failed!");
-                return false;
+                Log.Log.Debug("KNC: failed to get the capture filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+                _captureFilter = null;
               }
+              else
+              {
+                _captureFilter = captureInfo.filter;
+                _isKnc = true;
+              }
+              Release.ComObject(captureInputPin);
             }
           }
+          else
+          {
+            // No further work required for PCI devices.
+            _isKnc = true;
+          }
         }
       }
-      Log.Log.Info("KNC:  GetControlNode Failed!");
-      return false;
+
+      if (!_isKnc)
+      {
+        if (tunerInfo.pGraph != null)
+        {
+          Release.ComObject(tunerInfo.pGraph);
+          tunerInfo.pGraph = null;
+        }
+        return;
+      }
+
+      // If we have references to the required filters then allocate buffers.
+      _diseqcBuffer = Marshal.AllocCoTaskMem(MaxDiseqcCommandLength);
+      _callbackBuffer = Marshal.AllocCoTaskMem(CallbackStructSize);
+      _tunerFilter = tunerFilter;
+      _graphBuilder = (IFilterGraph2)tunerInfo.pGraph;
+
+      // Prepare the hardware interface for use. This seems to always succeed...
+      if (!KNCBDA_HW_Enable(_deviceIndex, _isPcie ? _captureFilter : _tunerFilter))
+      {
+        Log.Log.Debug("KNC: failed to enable the hardware");
+      }
+      OpenCi();
     }
 
-    //end SendDiSEqCCommand
+    /// <summary>
+    /// Calculates the correct device index for a given tuner. The index represents a
+    /// position in an ordered list of KNC-compatible tuners installed in the system.
+    /// </summary>
+    /// <param name="devicePath">The device path of the tuner.</param>
+    /// <returns>the device index for this tuner, -1 if the tuner is not KNC-compatible</returns>
+    private static int GetDeviceIndex(String devicePath)
+    {
+      // Build a list of the device paths of all KNC-compatible tuners installed in this system.
+      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
+      List<String> devicePaths = new List<String>();
+      foreach (DsDevice device in devices)
+      {
+        foreach (String validTunerName in ValidTunerNames)
+        {
+          if (device.Name != null && device.Name.Equals(validTunerName))
+          {
+            devicePaths.Add(device.DevicePath);
+            break;
+          }
+        }
+      }
+
+      if (devicePaths.Count == 0)
+      {
+        return -1;
+      }
+
+      // Sort the list - we want the devices in the same order as in Windows device manager.
+      devicePaths.Sort();
+
+      // Find the index of the device.
+      int idx = 0;
+      foreach (String path in devicePaths)
+      {
+        if (devicePath.Equals(path))
+        {
+          return idx;
+        }
+        idx++;
+      }
+      return -1;
+    }
 
     /// <summary>
-    /// Determines whether [is cam present].
+    /// Gets a value indicating whether this tuner is a KNC-compatible tuner.
     /// </summary>
-    /// <returns>
-    /// 	<c>true</c> if [is cam present]; otherwise, <c>false</c>.
-    /// </returns>
+    /// <value><c>true</c> if this tuner is a KNC-compatible tuner, otherwise <c>false</c></value>
+    public bool IsKnc
+    {
+      get
+      {
+        return _isKnc;
+      }
+    }
+
+    /// <summary>
+    /// Set DVB-S2 tuning parameters that could not previously be set through BDA interfaces.
+    /// </summary>
+    /// <param name="channel">The channel to tune.</param>
+    /// <returns>The channel with DVB-S2 parameters set.</returns>
+    public DVBSChannel SetTuningParameters(DVBSChannel channel)
+    {
+      Log.Log.Debug("KNC: set tuning parameters");
+      if (channel.ModulationType == ModulationType.ModQpsk || channel.ModulationType == ModulationType.Mod8Psk)
+      {
+        channel.ModulationType = ModulationType.Mod8Vsb;
+      }
+      // I don't think any KNC tuners or clones support demodulating anything
+      // higher than 8 PSK. Nevertheless...
+      else if (channel.ModulationType == ModulationType.Mod16Apsk)
+      {
+        channel.ModulationType = ModulationType.Mod16Vsb;
+      }
+      else if (channel.ModulationType == ModulationType.Mod32Apsk)
+      {
+        channel.ModulationType = ModulationType.ModOqpsk;
+      }
+      Log.Log.Debug("  modulation = {0}", channel.ModulationType);
+      return channel;
+    }
+
+    #region conditional access
+
+    /// <summary>
+    /// Open the conditional access interface.
+    /// </summary>
+    private void OpenCi()
+    {
+      Log.Log.Debug("KNC: tuner {0} open conditional access interface", _deviceIndex);
+      _callbacks = new KncCiCallbacks();
+      _callbacks.OnCiMenu = OnCiMenu;
+      _callbacks.OnCiMenuChoice = OnCiMenuChoice;
+      _callbacks.OnCiState = OnCiState;
+      _callbacks.OnCloseDisplay = OnCiCloseDisplay;
+      _callbacks.OnOpenDisplay = OnCiOpenDisplay;
+      _callbacks.OnRequest = OnCiRequest;
+      _callbacks.Param = 0;
+
+      _ciState = KncCiState.Releasing;
+
+      unsafe
+      {
+        Marshal.StructureToPtr(_callbacks, _callbackBuffer, true);
+        // Open the conditional access interface.
+        bool result = false;
+        if (_isPcie)
+        {
+          result = KNCBDA_CI_Enable(_deviceIndex, _graphBuilder, _captureFilter, _callbackBuffer);
+        }
+        else
+        {
+          result = KNCBDA_CI_Enable(_deviceIndex, null, _tunerFilter, _callbackBuffer);
+        }
+        if (!result)
+        {
+          Log.Log.Debug("KNC: CI enable failed");
+          return;
+        }
+
+        // Prepare the conditional access interface for use. This seems to always succeed...
+        if (!KNCBDA_CI_HW_Enable(_deviceIndex, true))
+        {
+          Log.Log.Debug("KNC: CI HW enable failed");
+          return;
+        }
+
+        Log.Log.Debug("KNC: CI interface opened successfully");
+
+        // Check if a CI slot is connected.
+        _isCiSlotPresent = IsCiSlotPresent();
+        if (!_isCiSlotPresent)
+        {
+          return;
+        }
+
+        // Check if a CAM is in the CI slot.
+        _isCamPresent = IsCamPresent();
+        if (!_isCiSlotPresent)
+        {
+          return;
+        }
+
+        // Check if the CAM is currently ready. CI state change callbacks will tell us if state changes.
+        _isCamReady = IsCamReady();
+        if (!_isCamReady)
+        {
+          return;
+        }
+
+        StringBuilder nameBuffer = new StringBuilder(100);
+        if (KNCBDA_CI_GetName(_deviceIndex, nameBuffer, (uint)nameBuffer.MaxCapacity))
+        {
+          Log.Log.Debug("KNC: CAM name/type is {0}", nameBuffer);
+        }
+        else
+        {
+          Log.Log.Debug("KNC: failed to get the CAM name/type");
+        }
+      }
+    }
+
+    /// <summary>
+    /// Close the conditional access interface.
+    /// </summary>
+    private void CloseCi()
+    {
+      Log.Log.Debug("KNC: tuner {0} close conditional access interface", _deviceIndex);
+      if (!KNCBDA_CI_Disable(_deviceIndex))
+      {
+        Log.Log.Debug("KNC: CI disable failed");
+      }
+      _isCiSlotPresent = false;
+      _isCamPresent = false;
+      _isCamReady = false;
+      _ciState = KncCiState.Releasing;
+    }
+
+    /// <summary>
+    /// Reset the conditional access interface.
+    /// </summary>
+    public void ResetCi()
+    {
+      CloseCi();
+      OpenCi();
+    }
+
+    /// <summary>
+    /// Determines whether a CI slot is present.
+    /// </summary>
+    /// <returns><c>true</c> if a CI slot is present, otherwise <c>false</c></returns>
+    public bool IsCiSlotPresent()
+    {
+      // It is not possible to tell if a CI slot is present - KNCBDA_CI_IsAvailable()
+      // only returns true when a CI slot is present *and* a CAM is inserted. Best to
+      // assume there is always a CI slot...
+      //Log.Log.Info("KNC: is CI slot present, result = {0}", true);
+      return true;
+    }
+
+    /// <summary>
+    /// Determines whether a CAM is present or not.
+    /// </summary>
+    /// <returns><c>true</c> if a CAM is present, otherwise <c>false</c></returns>
     public bool IsCamPresent()
     {
-      bool yesNo = false;
-      if (m_bIsKNC)
+      Log.Log.Debug("KNC: is CAM present");
+      if (!_isCiSlotPresent)
       {
-        if (KNCBDA_CI_IsAvailable(m_iDeviceIndex) != 0)
-        {
-          yesNo = true;
-        }
+        Log.Log.Debug("KNC: CI slot not present");
+        return false;
       }
-      Log.Log.Info("KNC: IsCIAvailable {0}", yesNo);
-      return yesNo;
-    }
 
-    #region Callback handler 
-
-    /// <summary>
-    /// Callback from driver when CI status changes
-    /// </summary>
-    /// <param name="slot">Slot</param>
-    /// <param name="State">Status</param>
-    /// <param name="lpszMessage">Message</param>
-    /// <param name="pParam">Context pointer</param>
-    public void OnCiState(byte slot, KNCCiSlotStatus State, String lpszMessage, IntPtr pParam)
-    {
-      lock (this)
-      {
-        m_ciState = State; // remember in instance
-        if (m_ciState == KNCCiSlotStatus.Ready)
-        {
-          m_waitTimeout = 0; // allow one new retry
-        }
-        Log.Log.Debug("KNC: card {0} CI State: {1} {2}", m_iDeviceIndex, lpszMessage, State);
-      }
+      bool camPresent = KNCBDA_CI_IsAvailable(_deviceIndex);
+      Log.Log.Debug("KNC: result = {0}", camPresent);
+      return camPresent;
     }
 
     /// <summary>
-    /// Callback from driver on opening CI menu
+    /// Determines whether a CAM is present and ready for interaction.
     /// </summary>
-    /// <param name="slot">Slot</param>
-    /// <param name="pParam">Context pointer</param>
-    public void OnCiOpenDisplay(byte slot, IntPtr pParam)
+    /// <returns><c>true</c> if a CAM is present and ready, otherwise <c>false</c></returns>
+    public bool IsCamReady()
     {
-      lock (this)
-      {
-        Log.Log.Debug("OnKncCiOpenDisplay slot: {0}", slot);
-      }
+      Log.Log.Debug("KNC: is CAM ready");
+      bool camReady = KNCBDA_CI_IsReady(_deviceIndex);
+      Log.Log.Info("KNC: result = {0}", camReady);
+      return camReady;
     }
 
     /// <summary>
-    /// Callback from driver, returning CI menu headers
+    /// Send PMT to the CAM to request that a service be descrambled.
     /// </summary>
-    /// <param name="slot">Slot</param>
-    /// <param name="lpszTitle">Title</param>
-    /// <param name="lpszSubTitle">Subtitle</param>
-    /// <param name="lpszBottom">Bottom text</param>
-    /// <param name="nNumChoices">Number of choices</param>
-    /// <param name="pParam">Context pointer</param>
-    public void OnCiMenu(byte slot, String lpszTitle, String lpszSubTitle, String lpszBottom, uint nNumChoices,
-                         IntPtr pParam)
+    /// <param name="listAction">A list management action for communication with the CAM.</param>
+    /// <param name="command">A decryption command directed to the CAM.</param>
+    /// <param name="pmt">The PMT.</param>
+    /// <param name="length">The length of the PMT in bytes.</param>
+    /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
+    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
     {
+      Log.Log.Debug("KNC: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
+      if (!_isCamPresent)
+      {
+        Log.Log.Debug("KNC: CAM not available");
+        return true;
+      }
+      if (pmt == null || pmt.Length == 0)
+      {
+        Log.Log.Debug("KNC: no PMT");
+        return true;
+      }
+
+      // KNC supports the standard CA PMT format.
+      ChannelInfo info = new ChannelInfo();
+      info.DecodePmt(pmt);
+      info.caPMT.CommandId = command;
+      info.caPMT.CAPmt_Listmanagement = listAction;
+      foreach (CaPmtEs es in info.caPMT.CaPmtEsList)
+      {
+        es.CommandId = command;
+      }
+      int caPmtLength;
+      byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLength);
+
+      // Send the data to the CAM. Use a local buffer since PMT updates are asynchronous.
+      IntPtr pmtBuffer = Marshal.AllocCoTaskMem(caPmtLength);
       try
       {
-        lock (this)
-        {
-          Log.Log.Debug("OnKncCiMenu slot:       {0}", slot);
-          Log.Log.Debug("OnKncCiMenu title:      {0}", lpszTitle);
-          Log.Log.Debug("OnKncCiMenu subtitle:   {0}", lpszSubTitle);
-          Log.Log.Debug("OnKncCiMenu bottom:     {0}", lpszSubTitle);
-          Log.Log.Debug("OnKncCiMenu lpszBottom: {0}", lpszBottom);
-          Log.Log.Debug("OnKncCiMenu nNumChoices:{0}", nNumChoices);
-          if (m_ciMenuCallback != null)
-          {
-            m_ciMenuCallback.OnCiMenu(lpszTitle.ToString(), lpszSubTitle.ToString(), lpszBottom.ToString(),
-                                      (int)nNumChoices);
-          }
-        }
+        Marshal.Copy(caPmt, 0, pmtBuffer, caPmtLength);
+        DVB_MMI.DumpBinary(pmtBuffer, 0, caPmtLength);
+        bool succeeded = KNCBDA_CI_SendPMTCommand(_deviceIndex, pmtBuffer, (uint)caPmtLength);
+        Log.Log.Info("KNC: result = {0}", succeeded);
+        return succeeded;
       }
-      catch (Exception ex)
+      finally
       {
-        Log.Log.Debug("OnKncCiMenu exception: {0}", ex.ToString());
-      }
-    }
-
-    /// <summary>
-    /// Callback from driver for every choice in menu
-    /// </summary>
-    /// <param name="slot">Slot</param>
-    /// <param name="nChoice">current choice number</param>
-    /// <param name="lpszText">choice text</param>
-    /// <param name="pParam">Context pointer</param>
-    public void OnCiMenuChoice(byte slot, uint nChoice, String lpszText, IntPtr pParam)
-    {
-      try
-      {
-        lock (this)
-        {
-          Log.Log.Debug("OnKncCiMenuChoice slot:{0} choice:{1} text:{2}", slot, nChoice, lpszText);
-          if (m_ciMenuCallback != null)
-          {
-            m_ciMenuCallback.OnCiMenuChoice((int)nChoice, lpszText.ToString());
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Debug("OnKncCiMenuChoice exception: {0}", ex.ToString());
-      }
-    }
-
-    /// <summary>
-    /// Callback from driver for requesting user input
-    /// </summary>
-    /// <param name="slot">Slot</param>
-    /// <param name="bBlind">Do blind input (like password)</param>
-    /// <param name="nAnswerLength">Expected answer length</param>
-    /// <param name="lpszText">Request text</param>
-    /// <param name="pParam">Context pointer</param>
-    public void OnCiRequest(byte slot, bool bBlind, uint nAnswerLength, String lpszText, IntPtr pParam)
-    {
-      try
-      {
-        lock (this)
-        {
-          Log.Log.Debug("OnKncCiRequest slot:{0} bBlind:{1} nAnswerLength:{2} text:{3}", slot, bBlind, nAnswerLength,
-                        lpszText);
-          if (m_ciMenuCallback != null)
-          {
-            m_ciMenuCallback.OnCiRequest(bBlind, nAnswerLength, lpszText.ToString());
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Debug("OnKncCiRequest exception: {0}", ex.ToString());
-      }
-    }
-
-    /// <summary>
-    /// Callback from driver to close display
-    /// </summary>
-    /// <param name="slot">Slot</param>
-    /// <param name="nDelay">delay in ms</param>
-    /// <param name="pParam">Context pointer</param>
-    public void OnCiCloseDisplay(byte slot, uint nDelay, IntPtr pParam)
-    {
-      try
-      {
-        lock (this)
-        {
-          Log.Log.Debug("OnKncCiCloseDisplay slot:{0} nDelay:{1}", slot, nDelay);
-          if (m_ciMenuCallback != null)
-          {
-            m_ciMenuCallback.OnCiCloseDisplay((int)nDelay);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Debug("KncCiCloseDisplay exception: {0}", ex.ToString());
+        Marshal.FreeCoTaskMem(pmtBuffer);
       }
     }
 
     #endregion
 
-    #region ICiMenuActions Member
+    #region callback handlers
 
     /// <summary>
-    /// Sets the callback handler
+    /// Called by the tuner driver when the state of a CI slot changes.
     /// </summary>
-    /// <param name="ciMenuHandler"></param>
+    /// <param name="slotIndex">The index of the CI slot that changed state.</param>
+    /// <param name="state">The new state of the slot.</param>
+    /// <param name="message">A message from the CAM or driver (typically the CAM name/type as retrieved by KNCBDA_CI_GetName()).</param>
+    /// <param name="param">???</param>
+    private void OnCiState(byte slotIndex, KncCiState state, String message, IntPtr param)
+    {
+      lock (this)
+      {
+        Log.Log.Debug("KNC: tuner {0} CI state change callback, slot = {1}", _deviceIndex, slotIndex);
+        if (state == KncCiState.Ready)
+        {
+          _isCamPresent = true;
+          _isCamReady = true;
+        }
+        else if (state == KncCiState.Initializing)
+        {
+          _isCamPresent = true;
+          _isCamReady = false;
+        }
+        else if (state == KncCiState.Releasing)
+        {
+          _isCamPresent = false;
+          _isCamReady = false;
+        }
+        Log.Log.Debug("  old state = {0}", _ciState);
+        Log.Log.Debug("  new state = {0}", state);
+        Log.Log.Debug("  message   = {0}", message);
+        _ciState = state;        
+      }
+    }
+
+    /// <summary>
+    /// Called by the tuner driver when the CAM menu is successfully opened.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="param">???</param>
+    private void OnCiOpenDisplay(byte slotIndex, IntPtr param)
+    {
+      lock (this)
+      {
+        Log.Log.Debug("KNC: tuner {0} open menu callback, slot = {1}", _deviceIndex, slotIndex);
+      }
+    }
+
+    /// <summary>
+    /// Called by the tuner driver to pass the menu meta-data when the user is browsing the CAM menu.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="title">The menu title.</param>
+    /// <param name="subTitle">The menu sub-title.</param>
+    /// <param name="footer">The menu footer.</param>
+    /// <param name="numChoices">The number of choices in the menu.</param>
+    /// <param name="param">???</param>
+    private void OnCiMenu(byte slotIndex, String title, String subTitle, String footer, uint numChoices, IntPtr param)
+    {
+      try
+      {
+        lock (this)
+        {
+          Log.Log.Debug("KNC: tuner {0} menu callback, slot = {1}", _deviceIndex, slotIndex);
+          Log.Log.Debug("  title     = {0}", title);
+          Log.Log.Debug("  sub-title = {0}", subTitle);
+          Log.Log.Debug("  footer    = {0}", footer);
+          Log.Log.Debug("  # choices = {0}", numChoices);
+          if (_ciMenuCallbacks != null)
+          {
+            _ciMenuCallbacks.OnCiMenu(title, subTitle, footer, (int)numChoices);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("KNC: menu callback exception: {0}", ex.ToString());
+      }
+    }
+
+    /// <summary>
+    /// Called by the tuner driver for each menu entry when the user is browsing the CAM menu.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="choiceIndex">The index of the choice within the menu.</param>
+    /// <param name="text">The text associated with the choice.</param>
+    /// <param name="param">???</param>
+    private void OnCiMenuChoice(byte slotIndex, uint choiceIndex, String text, IntPtr param)
+    {
+      try
+      {
+        lock (this)
+        {
+          Log.Log.Debug("KNC: tuner {0} menu choice callback, slot = {1}", _deviceIndex, slotIndex);
+          Log.Log.Debug("  choice {0} = {1}", choiceIndex, text);
+          if (_ciMenuCallbacks != null)
+          {
+            _ciMenuCallbacks.OnCiMenuChoice((int)choiceIndex, text);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("KNC: menu choice callback exception: {0}", ex.ToString());
+      }
+    }
+
+    /// <summary>
+    /// Called by the tuner driver when the CAM requests input from the user.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
+    /// <param name="answerLength">The expected answer length.</param>
+    /// <param name="text">The request context text from the CAM.</param>
+    /// <param name="param">???</param>
+    private void OnCiRequest(byte slotIndex, bool blind, uint answerLength, String text, IntPtr param)
+    {
+      try
+      {
+        lock (this)
+        {
+          Log.Log.Debug("KNC: tuner {0} request callback, slot = {1}", _deviceIndex, slotIndex);
+          Log.Log.Debug("  text   = {0}", text);
+          Log.Log.Debug("  length = {0}", answerLength);
+          Log.Log.Debug("  blind  = {0}", blind);
+          if (_ciMenuCallbacks != null)
+          {
+            _ciMenuCallbacks.OnCiRequest(blind, answerLength, text);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("KNC: request callback exception: {0}", ex.ToString());
+      }
+    }
+
+    /// <summary>
+    /// Called by the tuner driver when the CAM wants to close the menu.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
+    /// <param name="param">???</param>
+    private void OnCiCloseDisplay(byte slotIndex, uint delay, IntPtr param)
+    {
+      try
+      {
+        lock (this)
+        {
+          Log.Log.Debug("KNC: tuner {0} request callback, slot = {1}, delay = {2}", _deviceIndex, slotIndex, delay);
+          if (_ciMenuCallbacks != null)
+          {
+            _ciMenuCallbacks.OnCiCloseDisplay((int)delay);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("KNC: close menu callback exception: {0}", ex.ToString());
+      }
+    }
+
+    #endregion
+
+    #region ICiMenuActions members
+
+    /// <summary>
+    /// Sets the CAM callback handler functions.
+    /// </summary>
+    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
+    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
     public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
     {
       if (ciMenuHandler != null)
       {
-        m_ciMenuCallback = ciMenuHandler;
+        _ciMenuCallbacks = ciMenuHandler;
         return true;
       }
       return false;
     }
 
-
     /// <summary>
-    /// Enters the CI menu of KNC1 card
+    /// Sends a request from the user to the CAM to open the menu.
     /// </summary>
-    /// <returns></returns>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
     {
-      if (!m_bCAM_present)
+      if (!_isCamPresent)
+      {
         return false;
-      Log.Log.Debug("KNC: Enter CI Menu");
-      KNCBDA_CI_EnterMenu(m_iDeviceIndex, m_nSlot);
-      return true;
+      }
+      Log.Log.Debug("KNC: tuner {0} slot {1} enter menu", _deviceIndex, _slotIndex);
+      return KNCBDA_CI_EnterMenu(_deviceIndex, _slotIndex);
     }
 
     /// <summary>
-    /// Closes the CI menu of KNC1 card
+    /// Sends a request from the user to the CAM to close the menu.
     /// </summary>
-    /// <returns></returns>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
     {
-      if (!m_bCAM_present)
+      if (!_isCamPresent)
+      {
         return false;
-      Log.Log.Debug("KNC: Close CI Menu");
-      KNCBDA_CI_CloseMenu(m_iDeviceIndex, m_nSlot);
-      return true;
+      }
+      Log.Log.Debug("KNC: tuner {0} slot {1} close menu", _deviceIndex, _slotIndex);
+      return KNCBDA_CI_CloseMenu(_deviceIndex, _slotIndex);
     }
 
     /// <summary>
-    /// Selects a CI menu entry
+    /// Sends a menu entry selection from the user to the CAM.
     /// </summary>
-    /// <param name="choice"></param>
-    /// <returns></returns>
+    /// <param name="choice">The index of the selection as an unsigned byte value.</param>
+    /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      if (!m_bCAM_present)
+      if (!_isCamPresent)
+      {
         return false;
-      Log.Log.Debug("KNC: Select CI Menu entry {0}", choice);
-      KNCBDA_CI_SelectMenu(m_iDeviceIndex, m_nSlot, choice);
+      }
+      Log.Log.Debug("KNC: tuner {0} slot {1} select menu entry, choice = {2}", _deviceIndex, _slotIndex, choice);
+      return KNCBDA_CI_SelectMenu(_deviceIndex, _slotIndex, choice);
+    }
+
+    /// <summary>
+    /// Sends a response from the user to the CAM.
+    /// </summary>
+    /// <param name="cancel"><c>True</c> to cancel the request.</param>
+    /// <param name="answer">The user's response.</param>
+    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool SendMenuAnswer(bool cancel, String answer)
+    {
+      if (!_isCamPresent)
+      {
+        return false;
+      }
+      if (answer == null)
+      {
+        answer = "";
+      }
+      Log.Log.Debug("KNC: tuner {0} slot {1} send menu answer, answer = {2}, cancel = {3}", _deviceIndex, _slotIndex, answer, cancel);
+      return KNCBDA_CI_SendMenuAnswer(_deviceIndex, _slotIndex, cancel, answer);
+    }
+
+    #endregion
+
+    #region IDiSEqCController members
+
+    /// <summary>
+    /// Send the appropriate DiSEqC 1.0 switch command to switch to a given channel.
+    /// </summary>
+    /// <param name="parameters">The scan parameters.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
+    {
+      // TODO: think about how to handle this when this class is merged - maybe it can be done with
+      // a base hardware provider that logs errors on all methods.
+      if (channel.DisEqc == DisEqcType.SimpleA || channel.DisEqc == DisEqcType.SimpleB)
+      {
+        Log.Log.Debug("KNC: tuner {0} tone/data burst not supported", _deviceIndex);
+        return true;    // Don't retry.
+      }
+      else if (channel.DisEqc != DisEqcType.None)
+      {
+        bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
+        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+        bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                              (channel.Polarisation == Polarisation.CircularL));
+        byte command = 0xf0;
+        command |= (byte)(isHighBand ? 1 : 0);
+        command |= (byte)((isHorizontal) ? 2 : 0);
+        command |= (byte)((antennaNr - 1) << 2);
+        return SendDiSEqCCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
+      }
       return true;
     }
 
     /// <summary>
-    /// Sends an answer after CI request
+    /// Send a DiSEqC command.
     /// </summary>
-    /// <param name="Cancel"></param>
-    /// <param name="Answer"></param>
-    /// <returns></returns>
-    public bool SendMenuAnswer(bool Cancel, String Answer)
+    /// <param name="command">The DiSEqC command to send.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendDiSEqCCommand(byte[] command)
     {
-      if (!m_bCAM_present)
-        return false;
-      if (Answer == null) Answer = "";
-      Log.Log.Debug("KNC: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
-      KNCBDA_CI_SendMenuAnswer(m_iDeviceIndex, m_nSlot, Cancel, Answer);
-      return true;
+      Log.Log.Debug("KNC: tuner {0} send DiSEqC message", _deviceIndex);
+
+      int length = command.Length;
+      if (length > MaxDiseqcCommandLength)
+      {
+        length = MaxDiseqcCommandLength;
+      }
+      for (int i = 0; i < length; i++)
+      {
+        Marshal.WriteByte(_diseqcBuffer, i, command[i]);
+      }
+      for (int i = length; i < MaxDiseqcCommandLength; i++)
+      {
+        Marshal.WriteByte(_diseqcBuffer, i, 0);
+      }
+      DVB_MMI.DumpBinary(_diseqcBuffer, 0, length);
+
+      bool success = KNCBDA_HW_DiSEqCWrite(_deviceIndex, _diseqcBuffer, (uint)length, 0);
+      Log.Log.Debug("KNC: result = {0}", success);
+      return success;
+    }
+
+    /// <summary>
+    /// Get a reply to a previously sent DiSEqC command.
+    /// </summary>
+    /// <param name="reply">The reply message.</param>
+    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
+    public bool ReadDiSEqCCommand(out byte[] reply)
+    {
+      // (Not implemented...)
+      reply = null;
+      return false;
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Close the conditional access interface and free unmanaged memory buffers and COM objects.
+    /// </summary>
+    public void Dispose()
+    {
+      if (!_isKnc)
+      {
+        return;
+      }
+      CloseCi();
+      Marshal.FreeCoTaskMem(_diseqcBuffer);
+      Marshal.FreeCoTaskMem(_callbackBuffer);
+      Release.ComObject(_graphBuilder);
+      if (_captureFilter != null)
+      {
+        Release.ComObject(_captureFilter);
+      }
     }
 
     #endregion
