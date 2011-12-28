@@ -532,7 +532,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             if (buffer->bResuming)
             {
               m_bDoFakeSeek = true;
-              m_rtStreamOffset = buffer->rtStart;
+              m_rtStreamOffset = buffer->rtPlaylistTime;
               m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
               m_demux.m_bAudioResetStreamPosition = true;
             }

@@ -39,6 +39,8 @@ CPlaylistManager::~CPlaylistManager(void)
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
   LogDebug("Playlist Manager Closing");
+
+  CAutoLock vectorLock(&m_sectionVector);
   ivecPlaylists it = m_vecPlaylists.begin();
   while (it!=m_vecPlaylists.end())
   {
@@ -52,6 +54,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
+  CAutoLock vectorLock(&m_sectionVector);
   // remove old playlists
   //ivecPlaylists it = m_vecPlaylists.begin();
   //while (it!=m_vecPlaylists.end())
@@ -80,6 +83,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     //first playlist
     CPlaylist * firstPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
     firstPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset);
+
     m_vecPlaylists.push_back(firstPlaylist);
     m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin();
   }
@@ -111,7 +115,6 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     PushPlaylists();
     m_vecPlaylists.push_back(newPlaylist);
     PopPlaylists(0);
-
     //mark current playlist as filled
     (*m_itCurrentAudioSubmissionPlaylist)->SetFilledAudio();
     (*m_itCurrentVideoSubmissionPlaylist)->SetFilledVideo();
@@ -126,6 +129,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
 {
   CAutoLock lock(&m_sectionAudio);
+  CAutoLock vectorLock(&m_sectionVector);
   bool ret = false;
   if (m_vecPlaylists.size()==0) 
   {
@@ -162,6 +166,7 @@ bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
 bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
 {
   CAutoLock lock (&m_sectionVideo);
+  CAutoLock vectorLock(&m_sectionVector);
   bool ret=false;
   if (m_vecPlaylists.size()==0)
   {
@@ -181,6 +186,7 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
 Packet* CPlaylistManager::GetNextAudioPacket()
 {
   CAutoLock lock (&m_sectionAudio);
+  CAutoLock vectorLock(&m_sectionVector);
   Packet* ret=(*m_itCurrentAudioPlayBackPlaylist)->ReturnNextAudioPacket();
   if (!ret)
   {
@@ -202,6 +208,8 @@ Packet* CPlaylistManager::GetNextAudioPacket()
 
 Packet* CPlaylistManager::GetNextAudioPacket(int playlist, int clip)
 {
+  CAutoLock lock (&m_sectionAudio);
+  CAutoLock vectorLock(&m_sectionVector);
   Packet* ret=NULL;
   if ((*m_itCurrentAudioPlayBackPlaylist)->nPlaylist==playlist)
   {
@@ -214,6 +222,7 @@ Packet* CPlaylistManager::GetNextAudioPacket(int playlist, int clip)
 Packet* CPlaylistManager::GetNextVideoPacket()
 {
   CAutoLock lock (&m_sectionVideo);
+  CAutoLock vectorLock(&m_sectionVector);
   Packet* ret=(*m_itCurrentVideoPlayBackPlaylist)->ReturnNextVideoPacket();
   if (!ret)
   {
@@ -236,6 +245,7 @@ Packet* CPlaylistManager::GetNextVideoPacket()
 void CPlaylistManager::FlushAudio(void)
 {
   CAutoLock lock (&m_sectionAudio);
+  CAutoLock vectorLock(&m_sectionVector);
   LogDebug("Playlist Manager Flush Audio");
   ivecPlaylists it = m_vecPlaylists.begin();
   while (it!=m_vecPlaylists.end())
@@ -251,6 +261,7 @@ void CPlaylistManager::FlushAudio(void)
 void CPlaylistManager::FlushVideo(void)
 {
   CAutoLock lock (&m_sectionVideo);
+  CAutoLock vectorLock(&m_sectionVector);
   LogDebug("Playlist Manager Flush Video");
   ivecPlaylists it = m_vecPlaylists.begin();
   while (it!=m_vecPlaylists.end())
@@ -264,6 +275,7 @@ void CPlaylistManager::FlushVideo(void)
 
 bool CPlaylistManager::HasAudio()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   if (m_vecPlaylists.size()==0) return false;
   if ((*m_itCurrentAudioPlayBackPlaylist)->HasAudio()) return true;
   if (++m_itCurrentAudioPlayBackPlaylist==m_vecPlaylists.end()) m_itCurrentAudioPlayBackPlaylist--;
@@ -273,6 +285,7 @@ bool CPlaylistManager::HasAudio()
 
 bool CPlaylistManager::HasVideo()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   if (m_vecPlaylists.size()==0) return false;
   if ((*m_itCurrentVideoPlayBackPlaylist)->HasVideo()) return true;
   if (++m_itCurrentVideoPlayBackPlaylist==m_vecPlaylists.end()) m_itCurrentVideoPlayBackPlaylist--;
@@ -284,6 +297,7 @@ void CPlaylistManager::ClearAllButCurrentClip()
 {
   CAutoLock locka (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
+  CAutoLock vectorLock(&m_sectionVector);
 
   if (m_vecPlaylists.size()==0) return;
   LogDebug("CPlaylistManager::ClearAllButCurrentClip");
@@ -312,6 +326,7 @@ void CPlaylistManager::ClearAllButCurrentClip()
 
 REFERENCE_TIME CPlaylistManager::Incomplete()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   REFERENCE_TIME ret = 0LL;
   if (!m_vecPlaylists.empty())
   {
@@ -323,6 +338,7 @@ REFERENCE_TIME CPlaylistManager::Incomplete()
 
 REFERENCE_TIME CPlaylistManager::ClipPlayTime()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   REFERENCE_TIME ret = 0LL;
   if (!m_vecPlaylists.empty())
   {
@@ -336,6 +352,7 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 {
   if (pmt)
   {
+    CAutoLock vectorLock(&m_sectionVector);
     LogDebug("CPlaylistManager: Setting video PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
 	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],

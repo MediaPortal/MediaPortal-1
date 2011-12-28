@@ -65,10 +65,6 @@ public:
 protected:
   typedef vector<CClip*>::iterator ivecClip;
 
-  CClip * GetNextAudioClip(CClip * currentClip, int superceedType);
-  CClip * GetNextVideoClip(CClip * currentClip, int superceedType);
-  CClip * GetClip(int nClip);
-
   void Reset(int playlistNumber, REFERENCE_TIME firstPacketTime);
 
   vector<CClip*> m_vecClips;
@@ -90,6 +86,8 @@ protected:
   bool firstVideoPESPacketSeen;
   REFERENCE_TIME firstAudioPESTimeStamp;
   REFERENCE_TIME firstVideoPESTimeStamp;
+
+  CCritSec m_sectionVector;
 
   bool firstPacketRead;
 

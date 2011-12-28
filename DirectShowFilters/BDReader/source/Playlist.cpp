@@ -33,6 +33,7 @@ CPlaylist::CPlaylist(int playlistNumber, REFERENCE_TIME firstPacketTime)
 
 CPlaylist::~CPlaylist(void)
 {
+  CAutoLock vectorLock(&m_sectionVector);
   if (m_vecClips.size()>0)
   {
     ivecClip it = m_vecClips.begin();
@@ -47,6 +48,7 @@ CPlaylist::~CPlaylist(void)
 
 Packet* CPlaylist::ReturnNextAudioPacket()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   firstPacketRead=true;
   firstAudioPESPacketSeen=true;
   Packet * ret = (*m_itCurrentAudioPlayBackClip)->ReturnNextAudioPacket(playlistFirstPacketTime);
@@ -74,6 +76,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
 
 Packet* CPlaylist::ReturnNextAudioPacket(int clip)
 {
+  CAutoLock vectorLock(&m_sectionVector);
   Packet* ret=NULL;
   if ((*m_itCurrentAudioPlayBackClip)->nClip==clip)
   {
@@ -89,6 +92,7 @@ Packet* CPlaylist::ReturnNextAudioPacket(int clip)
 
 Packet* CPlaylist::ReturnNextVideoPacket()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   firstPacketRead=true;
   Packet * ret = (*m_itCurrentVideoPlayBackClip)->ReturnNextVideoPacket(playlistFirstPacketTime);
   if (ret)
@@ -114,6 +118,7 @@ Packet* CPlaylist::ReturnNextVideoPacket()
 
 bool CPlaylist::AcceptAudioPacket(Packet*  packet)
 {
+  CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
   if (!m_vecClips.size()) return false;
   if ((*m_itCurrentAudioSubmissionClip)->nClip == packet->nClipNumber)
@@ -138,6 +143,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet)
 
 bool CPlaylist::AcceptVideoPacket(Packet* packet)
 {
+  CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
   REFERENCE_TIME prevVideoPosition = 0;
   if (nPlaylist != packet->nPlaylist)
@@ -162,41 +168,9 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
   return ret;
 }
 
-CClip * CPlaylist::GetNextAudioClip(CClip * currentClip, int superceedType)
-{
-  CClip * ret = currentClip;
-  ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
-  {
-    CClip * clip=*it;
-    if (!clip->IsSuperceeded(superceedType) && currentClip->nClip !=clip->nClip)
-    {
-      return clip;
-    }
-    ++it;
-  }
-  return ret;
-}
-
-CClip * CPlaylist::GetNextVideoClip(CClip * currentClip, int superceedType)
-{
-  CClip * ret = currentClip;
-  ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
-  {
-    CClip * clip=*it;
-    if (!clip->IsSuperceeded(superceedType) && currentClip->nClip !=clip->nClip)
-    {
-      //LogDebug("New Video Clip %d",clip->nClip);
-      return clip;
-    }
-    ++it;
-  }
-  return ret;
-}
-
 bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset)
 {
+  CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
 
   if (m_vecClips.size())
@@ -264,6 +238,7 @@ void CPlaylist::SetFilledAudio()
 
 void CPlaylist::FlushAudio()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
   {
@@ -274,6 +249,7 @@ void CPlaylist::FlushAudio()
 }
 void CPlaylist::FlushVideo()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
   {
@@ -285,6 +261,7 @@ void CPlaylist::FlushVideo()
 
 REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffset)
 {
+  CAutoLock vectorLock(&m_sectionVector);
   REFERENCE_TIME ret = 0LL;
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
@@ -313,6 +290,7 @@ REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(REFERENCE_TIME totalStreamOffse
 
 void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 {
+  CAutoLock vectorLock(&m_sectionVector);
   nPlaylist=playlistNumber;
   playlistFirstPacketTime=firstPacketTime;
   playlistFilledAudio=false;
@@ -330,6 +308,7 @@ void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 
 bool CPlaylist::HasAudio()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   if (!m_vecClips.size()) return false;
   if ((*m_itCurrentAudioPlayBackClip)->HasAudio()) return true;
   if (++m_itCurrentAudioPlayBackClip == m_vecClips.end()) m_itCurrentAudioPlayBackClip--;
@@ -344,6 +323,7 @@ bool CPlaylist::HasAudio()
 
 bool CPlaylist::HasVideo()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   if (!m_vecClips.size()) return false;
   if ((*m_itCurrentVideoPlayBackClip)->HasVideo()) return true;
   if (++m_itCurrentVideoPlayBackClip == m_vecClips.end()) m_itCurrentVideoPlayBackClip--;
@@ -358,6 +338,7 @@ bool CPlaylist::HasVideo()
 
 REFERENCE_TIME CPlaylist::Incomplete()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   if (m_vecClips.size()>0)
   {
     return m_vecClips.back()->Incomplete();
@@ -368,6 +349,7 @@ REFERENCE_TIME CPlaylist::Incomplete()
 
 REFERENCE_TIME CPlaylist::PlayedDuration()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   if (m_vecClips.size()>0)
   {
     return m_vecClips.back()->PlayedDuration();
@@ -376,30 +358,15 @@ REFERENCE_TIME CPlaylist::PlayedDuration()
   return 0LL;
 }
 
-CClip * CPlaylist::GetClip(int nClip)
-{
-  CClip *ret=NULL;
-  ivecClip it = m_vecClips.end();
-  while (it!=m_vecClips.begin())
-  {
-    --it;
-    CClip * clip=*it;
-    if (clip->nClip==nClip) return clip;
-  }
-  return ret;
-}
-
 void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip)
 {
-  CClip * clip = GetClip(nClip);
-  if (clip)
-  {
-    clip->SetVideoPMT(pmt);
-  }
+  CAutoLock vectorLock(&m_sectionVector);
+  (*m_itCurrentVideoSubmissionClip)->SetVideoPMT(pmt);
 }
 
 bool CPlaylist::RemoveRedundantClips()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   ivecClip it = m_vecClips.end();
   if (it != m_vecClips.begin()) --it;
   while (it != m_vecClips.begin())
@@ -421,6 +388,7 @@ bool CPlaylist::RemoveRedundantClips()
 
 vector<CClip*> CPlaylist::Superceed()
 {
+  CAutoLock vectorLock(&m_sectionVector);
   vector<CClip*> ret;
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())

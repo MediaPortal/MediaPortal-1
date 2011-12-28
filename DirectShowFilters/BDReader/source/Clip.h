@@ -100,6 +100,8 @@ protected:
   int superceeded;
 
   CCritSec m_sectionRead;
+  CCritSec m_sectionVectorAudio;
+  CCritSec m_sectionVectorVideo;
 
   // true would indicate that this is the first audio packet
   bool firstAudio;

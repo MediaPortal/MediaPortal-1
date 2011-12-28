@@ -69,6 +69,8 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
 
 CClip::~CClip(void)
 {
+  CAutoLock vectorVLock(&m_sectionVectorVideo);
+  CAutoLock vectorALock(&m_sectionVectorAudio);
   FlushAudio();
   FlushVideo();
   DeleteMediaType(m_videoPmt);
@@ -76,6 +78,7 @@ CClip::~CClip(void)
 
 Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
 {
+  CAutoLock vectorALock(&m_sectionVectorAudio);
   Packet* ret=NULL;
 
   if (!firstPacketReturned)
@@ -124,6 +127,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
 
 Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
 {
+  CAutoLock vectorVLock(&m_sectionVectorVideo);
   if (!firstPacketReturned)
   {
 //    CAutoLock lock (&m_sectionRead);
@@ -202,6 +206,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 
 bool CClip::AcceptAudioPacket(Packet* packet)
 {
+  CAutoLock vectorALock(&m_sectionVectorAudio);
   if (nPlaylist != packet->nPlaylist) return false;
   if (packet->nClipNumber != nClip)
   {
@@ -229,6 +234,7 @@ bool CClip::AcceptAudioPacket(Packet* packet)
 
 bool CClip::AcceptVideoPacket(Packet*  packet)
 {
+  CAutoLock vectorVLock(&m_sectionVectorVideo);
   if (packet->nClipNumber != nClip)
   {
     // Oh dear, not for this clip so throw it away
@@ -273,6 +279,7 @@ bool CClip::IsSuperceeded(int superceedType)
 
 void CClip::FlushAudio(Packet* pPacketToKeep)
 {
+  CAutoLock vectorALock(&m_sectionVectorAudio);
   ivecAudioBuffers ita = m_vecClipAudioPackets.begin();
   while (ita!=m_vecClipAudioPackets.end())
   {
@@ -293,6 +300,7 @@ void CClip::FlushAudio(Packet* pPacketToKeep)
 
 void CClip::FlushVideo(Packet* pPacketToKeep)
 {
+  CAutoLock vectorVLock(&m_sectionVectorVideo);
   ivecVideoBuffers itv = m_vecClipVideoPackets.begin();
   while (itv!=m_vecClipVideoPackets.end())
   {
@@ -313,6 +321,8 @@ void CClip::FlushVideo(Packet* pPacketToKeep)
 
 void CClip::Reset(REFERENCE_TIME totalStreamOffset)
 {
+  CAutoLock vectorVLock(&m_sectionVectorVideo);
+  CAutoLock vectorALock(&m_sectionVectorAudio);
   LogDebug("CClip:: Clip Reset (%d,%d) stream Offset %I64d", nPlaylist, nClip, totalStreamOffset);
   FlushAudio();
   FlushVideo();
@@ -335,6 +345,7 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
 
 bool CClip::HasAudio()
 {
+  CAutoLock vectorALock(&m_sectionVectorAudio);
   if (!m_videoPmt) return false;
   if (m_vecClipAudioPackets.size()>0) return true;
   if (noAudio) 
@@ -348,6 +359,7 @@ bool CClip::HasAudio()
 //
 bool CClip::HasVideo()
 {
+  CAutoLock vectorVLock(&m_sectionVectorVideo);
 //  if (!noAudio  && firstAudio ) return false;
   if (!m_videoPmt) return false;
   if (firstVideo && !IsSuperceeded(SUPERCEEDED_VIDEO_FILL) && m_vecClipVideoPackets.size() < 1) return false;
