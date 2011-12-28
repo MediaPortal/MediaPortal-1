@@ -52,25 +52,24 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
-  bool ret;
   // remove old playlists
-  ivecPlaylists it = m_vecPlaylists.begin();
-  while (it!=m_vecPlaylists.end())
-  {
-    CPlaylist * playlist=*it;
-    if (playlist->RemoveRedundantClips())
-    {
-      it=m_vecPlaylists.erase(it);
-      delete playlist;
-    }
-    else ++it;
-  }
+  //ivecPlaylists it = m_vecPlaylists.begin();
+  //while (it!=m_vecPlaylists.end())
+  //{
+  //  CPlaylist * playlist=*it;
+  //  if (playlist->RemoveRedundantClips())
+  //  {
+  //    it=m_vecPlaylists.erase(it);
+  //    delete playlist;
+  //  }
+  //  else ++it;
+  //}
 
   LogDebug("Playlist Manager new Playlist %d clip %d start %6.3f clipOffset %6.3f Audio %d duration %6.3f",nPlaylist, nClip, firstPacketTime/10000000.0, clipOffsetTime/10000000.0, audioPresent, duration/10000000.0);
 
   REFERENCE_TIME remainingClipTime = Incomplete();
   REFERENCE_TIME playedDuration = ClipPlayTime();
-  ret = remainingClipTime>5000000LL;
+  bool ret = remainingClipTime>5000000LL;
 
   LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
 
@@ -234,95 +233,6 @@ Packet* CPlaylistManager::GetNextVideoPacket()
   return ret;
 }
 
-CPlaylist * CPlaylistManager::GetNextAudioPlaylist(CPlaylist* currentPlaylist)
-{
-  CAutoLock lock (&m_sectionAudio);
-  CPlaylist * ret = currentPlaylist;
-  ivecPlaylists it = m_vecPlaylists.end();
-  while (it!=m_vecPlaylists.begin())
-  {
-    --it;
-    CPlaylist * playlist=*it;
-    if (!playlist->IsEmptiedAudio() && playlist->nPlaylist !=currentPlaylist->nPlaylist)
-    {
-      return playlist;
-    }
-  }
-  return ret;
-}
-
-CPlaylist * CPlaylistManager::GetPlaylist(int nPlaylist)
-{
-  CAutoLock lock (&m_sectionAudio);
-  CPlaylist * ret = NULL;
-  ivecPlaylists it = m_vecPlaylists.end();
-  while (it!=m_vecPlaylists.begin())
-  {
-    --it;
-    CPlaylist * playlist=*it;
-    if (playlist->nPlaylist == nPlaylist)
-    {
-      return playlist;
-    }
-  }
-  LogDebug("Playlist %d not found!",nPlaylist);
-  return ret;
-}
-
-CPlaylist * CPlaylistManager::GetNextVideoPlaylist(CPlaylist* currentPlaylist)
-{
-  CAutoLock lock (&m_sectionVideo);
-  CPlaylist * ret = currentPlaylist;
-  ivecPlaylists it = m_vecPlaylists.begin();
-  while (it!=m_vecPlaylists.end())
-  {
-    CPlaylist * playlist=*it;
-    if (!playlist->IsEmptiedVideo() && playlist->nPlaylist !=currentPlaylist->nPlaylist)
-    {
-//      LogDebug("Next Video Playlist %d",playlist->nPlaylist);
-      return playlist;
-    }
-    ++it;
-  }
-  return ret;
-}
-
-CPlaylist * CPlaylistManager::GetNextAudioSubmissionPlaylist(CPlaylist* currentPlaylist)
-{
-  CAutoLock lock (&m_sectionAudio);
-  CPlaylist * ret = currentPlaylist;
-  ivecPlaylists it = m_vecPlaylists.begin();
-  while (it!=m_vecPlaylists.end())
-  {
-    CPlaylist * playlist=*it;
-    if (!playlist->IsFilledAudio() && playlist->nPlaylist !=currentPlaylist->nPlaylist)
-    {
-      LogDebug("Playlist Manager New Audio Submission Playlist %d",playlist->nPlaylist);
-      return playlist;
-    }
-    ++it;
-  }
-  return ret;
-}
-
-CPlaylist * CPlaylistManager::GetNextVideoSubmissionPlaylist(CPlaylist* currentPlaylist)
-{
-  CAutoLock lock (&m_sectionVideo);
-  CPlaylist * ret = currentPlaylist;
-  ivecPlaylists it = m_vecPlaylists.begin();
-  while (it!=m_vecPlaylists.end())
-  {
-    CPlaylist * playlist=*it;
-    if (!playlist->IsFilledVideo() && playlist->nPlaylist !=currentPlaylist->nPlaylist)
-    {
-      LogDebug("Playlist Manager New Video Submission Playlist %d",playlist->nPlaylist);
-      return playlist;
-    }
-    ++it;
-  }
-  return ret;
-}
-
 void CPlaylistManager::FlushAudio(void)
 {
   CAutoLock lock (&m_sectionAudio);
@@ -431,11 +341,7 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
       pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
       pmt->subtype.Data4[6], pmt->subtype.Data4[7], nPlaylist, nClip);
-    CPlaylist* pl=GetPlaylist(nPlaylist);
-    if (pl)
-    {
-      pl->SetVideoPMT(pmt, nClip);
-    }  
+    (*m_itCurrentVideoSubmissionPlaylist)->SetVideoPMT(pmt, nClip);
   }
 }
 

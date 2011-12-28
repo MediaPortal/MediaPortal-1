@@ -59,12 +59,6 @@ protected:
   typedef vector<CPlaylist*>::iterator ivecPlaylists;
   typedef vector<CClip*>::iterator ivecClip;
 
-  CPlaylist * GetNextAudioPlaylist(CPlaylist* currentPlaylist);
-  CPlaylist * GetNextVideoPlaylist(CPlaylist* currentPlaylist);
-  CPlaylist * GetNextAudioSubmissionPlaylist(CPlaylist* currentPlaylist);
-  CPlaylist * GetNextVideoSubmissionPlaylist(CPlaylist* currentPlaylist);
-  CPlaylist * GetPlaylist(int playlist);
-
   void PushPlaylists();
   void PopPlaylists(int difference);
 
@@ -88,5 +82,6 @@ protected:
 
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
+  CCritSec m_sectionVector;
 };
 

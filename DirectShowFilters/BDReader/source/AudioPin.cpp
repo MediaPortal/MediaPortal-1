@@ -412,8 +412,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             pSample->SetSyncPoint(true); // allow all packets to be seeking targets
-            rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset - m_rtStart;
-            rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset - m_rtStart;
+            rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;//- m_rtStart;
+            rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;// - m_rtStart;
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
 
             m_rtPrevSample = rtCorrectedStopTime;

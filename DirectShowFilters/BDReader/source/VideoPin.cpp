@@ -613,8 +613,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bDiscontinuity = false;
           }
 
-          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset - m_rtStart;
-          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset - m_rtStart;
+          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;// - m_rtStart;
+          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;// - m_rtStart;
 
           if (abs(m_dRateSeeking - 1.0) > 0.5)
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
