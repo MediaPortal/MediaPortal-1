@@ -78,10 +78,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       try
       {
         this.dllFile = dllFile;
-        string[] strArray = dllFile.Split(new char[] {'/', '.', '\\'});
+        string[] strArray = dllFile.Split(new char[] { '/', '.', '\\' });
         this.name = strArray[strArray.Length - 2];
         this.CreateLCDHypeWrapper();
         this.GetDllInfo();
+      }
+      catch (System.IO.FileNotFoundException)
+      {
+        Log.Debug("MiniDisplay:{1}", this.errorMessage);
       }
       catch (TargetInvocationException exception)
       {
@@ -95,7 +99,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           this.errorMessage = exception.Message;
         }
-        Log.Error("MiniDisplay:Error while loading driver {0}: {1}", new object[] {dllFile, this.errorMessage});
+        Log.Error("MiniDisplay:Error while loading driver {0}: {1}", dllFile, this.errorMessage);
       }
     }
 
