@@ -2008,6 +2008,9 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
   Log("OnClockStart");
   m_state = MP_RENDER_STATE_STARTED;
   
+  PauseThread(m_hWorker, &m_workerParams);
+  PauseThread(m_hScheduler, &m_schedulerParams);
+  
   ResetTraceStats();
   ResetFrameStats();
 
