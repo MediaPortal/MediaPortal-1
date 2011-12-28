@@ -182,7 +182,10 @@ bool CDeMultiplexer::SetAudioStream(int stream)
         m_filter.m_bForceSeekOnStop=true;     // Force stream to be resumed after
       }
       else                                    // Mpeg parser info is required or audio graph is already rebuilding.
+      {
         LogDebug("SetAudioStream : Media already changing");   // just wait 1st GOP
+        m_audioChanged = true;
+      }
     }
   }
   else
@@ -1326,9 +1329,9 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
           {
             LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
-            if (m_mpegParserTriggerFormatChange)
+            if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
             {
-              LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser, aud %d, vid 1", m_audioChanged);
+              LogDebug("DeMultiplexer: OnMediaFormatChange triggered by H264Parser, aud %d, vid 1", m_audioChanged);
               SetMediaChanging(true);
               if (m_audioChanged)
                 m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE); //Video and audio
@@ -1336,12 +1339,16 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
                 m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
               m_mpegParserTriggerFormatChange=false;
             }
+            else if (m_mpegParserTriggerFormatChange)
+            {
+              m_videoChanged = true;
+            }
             LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
             m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
           }
           else //video resolution is the unchanged, but there may be other format changes
           {
-            if (m_mpegParserTriggerFormatChange && Gop)
+            if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
             {
               if (m_audioChanged || m_videoChanged)
               {
@@ -1657,7 +1664,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
             {
               LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
-              if (m_mpegParserTriggerFormatChange)
+              if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
               {
                 LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser, aud %d, vid 1", m_audioChanged);
                 SetMediaChanging(true);
@@ -1667,12 +1674,16 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                   m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
                 m_mpegParserTriggerFormatChange=false;
               }
+              else if (m_mpegParserTriggerFormatChange)
+              {
+                m_videoChanged = true;
+              }
               LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
               m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
             }
             else //video resolution is the unchanged, but there may be other format changes
             {
-              if (m_mpegParserTriggerFormatChange && Gop)
+              if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
               {
                 if (m_audioChanged || m_videoChanged)
                 {
