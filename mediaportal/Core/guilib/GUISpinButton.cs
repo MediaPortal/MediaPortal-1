@@ -442,7 +442,7 @@ namespace MediaPortal.GUI.Library
           // If this button has a click setting then execute the setting.
           if (_onclick.Length != 0)
           {
-            GUIInfoManager.Execute(_onclick, GetID);
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
         }
       }

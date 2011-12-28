@@ -1331,7 +1331,16 @@ namespace MediaPortal.GUI.Library
         }
         else if (strTest.Substring(0, 16) == "skin.hassetting(")
         {
-          int skinOffset = SkinSettings.TranslateSkinBool(strTest.Substring(16, strTest.Length - 17), SkinSettings.Kind.PERSISTENT);
+          // this condition uses GUIPropertyManager, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset = SkinSettings.TranslateSkinBool(strTestKeepCase.Substring(16, strTestKeepCase.Length - 17), SkinSettings.Kind.PERSISTENT);
           return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_BOOL : SKIN_BOOL, skinOffset));
         }
         else if (strTest.Substring(0, 12) == "skin.string(")
@@ -1382,7 +1391,16 @@ namespace MediaPortal.GUI.Library
         }
         else if (strTest.Substring(0, 19) == "skin.togglesetting(")
         {
-          int skinOffset = SkinSettings.TranslateSkinBool(strTest.Substring(19, strTest.Length - 20), SkinSettings.Kind.PERSISTENT);
+          // this condition uses GUIPropertyManager, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset = SkinSettings.TranslateSkinBool(strTestKeepCase.Substring(19, strTestKeepCase.Length - 20), SkinSettings.Kind.PERSISTENT);
           return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_BOOL : SKIN_BOOL, skinOffset));
         }
         else if (strTest.Substring(0, 14) == "skin.hastheme(")
@@ -1970,131 +1988,6 @@ namespace MediaPortal.GUI.Library
 
       //CLog::Log(LOGDEBUG,"CButtonTranslator::TranslateWindowString(%s) returned Window ID (%i)", szWindow, wWindowID);
       return wWindowID;
-    }
-
-    public static void Execute(string command, int controlId)
-    {
-      if (command.Length == 0)
-      {
-        return;
-      }
-      string cmd = command;
-      cmd = cmd.ToLower();
-      cmd = cmd.TrimStart(new char[] { ' ' });
-      cmd = cmd.TrimEnd(new char[] { ' ' });
-      if (cmd.Length == 0)
-      {
-        return;
-      }
-
-      int pos = cmd.IndexOf("(");
-      if (pos >= 0)
-      {
-        cmd = cmd.Substring(0, pos + 1);
-      }
-
-      // Preserve case of the setting.
-      string cmdKeepCase = command;
-      cmdKeepCase = cmdKeepCase.TrimStart(new char[] { ' ' });
-      cmdKeepCase = cmdKeepCase.TrimEnd(new char[] { ' ' });
-
-      int condition = 0;
-      if (cmd.Equals("skin.togglesetting("))
-      {
-        // Toggle the boolean setting to the opposite value.
-        condition = TranslateSingleString(cmdKeepCase);
-        SetBool(condition, !GetBool(condition, 0), 0);
-        SkinSettings.Save();
-      }
-      else if (cmd.Equals("skin.setstring("))
-      {
-        // Set the setting to the specified string.  If no value is specified then present the keyboard to input the value.
-        pos = cmdKeepCase.IndexOf(",");
-        if (pos >= 0 && !cmdKeepCase.Contains(",,"))
-        {
-          condition = TranslateSingleString(cmdKeepCase);
-          string newValue = cmdKeepCase.Substring(pos + 1, cmdKeepCase.Length - (pos + 2));
-          SetString(condition, newValue, 0);
-          SkinSettings.Save();
-        }
-        else
-        {
-          // No value was provided for the skin setting.  Display a keyboard and ask for a value.
-          pos = cmdKeepCase.IndexOf(",,");
-          string prompt = "";
-          if (pos >= 0)
-          {
-            prompt = cmdKeepCase.Substring(pos + 2, cmdKeepCase.Length - (pos + 3));
-            GUILocalizeStrings.LocalizeLabel(ref prompt);
-          }
-
-          // Get the current value to initialize the keyboard.
-          condition = TranslateSingleString(cmdKeepCase);
-          string userInput = GetString(condition, 0);
-
-          if (GetUserInputString(ref userInput, prompt))
-          {
-            SetString(condition, userInput, 0);
-            SkinSettings.Save();
-          }
-          else
-          {
-            // No value supplied and no input was entered into the keyboard.
-          }
-        }
-      }
-      else if (cmd.Equals("skin.setbool("))
-      {
-        // Set the setting to true.
-        condition = TranslateSingleString(cmdKeepCase);
-        SetBool(condition, true, 0);
-        SkinSettings.Save();
-      }
-      else if (cmd.Equals("skin.reset("))
-      {
-        // Resets the specifed setting.  Booleans are set false, strings are set to empty string.
-        SkinSettings.ResetSkinBool(cmdKeepCase.Substring(11, cmdKeepCase.Length - 2));
-        SkinSettings.ResetSkinString(cmdKeepCase.Substring(11, cmdKeepCase.Length - 2));
-        SkinSettings.Save();
-      }
-      else if (cmd.Equals("skin.resetsettings"))
-      {
-        // Resets the specifed setting.  Booleans are set false, strings are set to empty string.
-        SkinSettings.ResetAllSkinBool();
-        SkinSettings.ResetAllSkinString();
-        SkinSettings.Save();
-      }
-      else if (cmd.Substring(0, 10) == "skin.theme")
-      {
-        // A single, optional argument of -1 causes the previous theme in the list to be selected.
-        int direction = 1;
-        pos = cmdKeepCase.IndexOf("(-1)");
-        if (pos >= 0)
-        {
-          direction = -1;
-        }
-
-        // Switch the next theme in the list.
-        GUIThemeManager.ActivateThemeNext(direction, controlId);
-      }
-      else if (cmd.Equals("skin.settheme("))
-      {
-        pos = cmdKeepCase.IndexOf("(");
-        if (pos >= 0)
-        {
-          string skinTheme = cmdKeepCase.Substring(pos + 1, cmdKeepCase.Length - (pos + 2));
-
-          // Attempt to get a property from the string.
-          string st = skinTheme;
-          skinTheme = GUIPropertyManager.GetProperty(skinTheme);
-          if (skinTheme == null)
-          {
-            skinTheme = st;
-          }
-
-          GUIThemeManager.ActivateThemeByName(skinTheme, controlId);
-        }
-      }
     }
 
     public static void SetString(int condition, string newValue, int dwContextWindow)
@@ -2973,25 +2866,6 @@ namespace MediaPortal.GUI.Library
         return LISTITEM_PICTURE_DATETIME;
       }
       return 0;
-    }
-
-    private static bool GetUserInputString(ref string sString, string label)
-    {
-      IStandardKeyboard keyboard = (IStandardKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-      if (null == keyboard)
-      {
-        return false;
-      }
-      keyboard.IsSearchKeyboard = true;
-      keyboard.Reset();
-      keyboard.Text = sString;
-      keyboard.Label = label;
-      keyboard.DoModal(GUIWindowManager.ActiveWindowEx);
-      if (keyboard.IsConfirmed)
-      {
-        sString = keyboard.Text;
-      }
-      return keyboard.IsConfirmed;
     }
   }
 }

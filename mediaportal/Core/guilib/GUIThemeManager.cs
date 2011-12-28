@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Library
 
       // Change the theme and save this new setting.
       GUIGraphicsContext.Theme = _themeName;
-      GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
+      GUIPropertyManager.SetProperty("#skin.currenttheme", GUIGraphicsContext.ThemeName);
       SkinSettings.Save();
 
       // Check new theme.

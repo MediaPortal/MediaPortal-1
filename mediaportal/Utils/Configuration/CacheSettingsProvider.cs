@@ -116,6 +116,29 @@ namespace MediaPortal.Profile
       return obj;
     }
 
+    /// <summary>
+    /// Will return a cached dictionary of all settings in the specified section.
+    /// </summary>
+    /// <param name="section"></param>
+    /// <returns></returns>
+    public IDictionary<string, T> GetSection<T>(string section)
+    {
+      SettingKey key = new SettingKey(section, "");
+
+      object obj;
+      if (!cache.TryGetValue(key, out obj))
+      {
+        cacheMiss++;
+        obj = provider.GetSection<T>(section);
+        cache.Add(key, obj);
+      }
+      else
+      {
+        cacheHit++;
+      }
+      return (Dictionary<string, T>)obj;
+    }
+
     public void RemoveEntry(string section, string entry)
     {
       SettingKey key = new SettingKey(section, entry);

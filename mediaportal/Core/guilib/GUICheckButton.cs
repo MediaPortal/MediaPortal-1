@@ -159,7 +159,7 @@ namespace MediaPortal.GUI.Library
 
       checkMark = new GUICheckMarkControl(0, 0, _positionX + _width - _checkMarkWidth, _positionY, _checkMarkWidth,
                                           _checkMarkHeight, _checkMarkFocusTextureName, _checkMarkNoFocusTextureName,
-                                          _checkMarkWidth, _checkMarkWidth, Alignment.ALIGN_LEFT);
+                                          _checkMarkWidth, _checkMarkHeight, Alignment.ALIGN_LEFT);
       checkMark.ParentControl = this;
       checkMark.DimColor = DimColor;
     }
@@ -243,7 +243,14 @@ namespace MediaPortal.GUI.Library
       // Set the selection based on the user specified condition.
       if (_selected.Length != 0)
       {
-        Selected = GUIInfoManager.GetBool(GUIInfoManager.TranslateString(_selected), 0);
+        try
+        {
+          Selected = bool.Parse(GUIPropertyManager.Parse(_selected, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+        }
+        catch (System.Exception)
+        {
+          Log.Debug("GUICheckButton: id={0} <selected> expression does not return a boolean value", GetID);
+        }
       }
 
       // The GUICheckButton has the focus
@@ -374,7 +381,7 @@ namespace MediaPortal.GUI.Library
           // If this button has a click setting then execute the setting.
           if (_onclick.Length != 0)
           {
-            GUIInfoManager.Execute(_onclick, GetID);
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
 
           // If this button contains scriptactions call the scriptactions.

@@ -653,7 +653,7 @@ namespace MediaPortal.GUI.Library
 
           if (_onfocus.Length != 0)
           {
-            GUIInfoManager.Execute(_onfocus, GetID);
+            GUIPropertyManager.Parse(_onfocus, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
         }
         //SetValue(IsFocusedProperty, value);

@@ -610,7 +610,7 @@ namespace MediaPortal.GUI.Library
           // If this button has a click setting then execute the setting.
           if (_onclick.Length != 0)
           {
-            GUIInfoManager.Execute(_onclick, GetID);
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
 
           //If this button contains scriptactions call the scriptactions.
@@ -766,7 +766,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.SafeDispose();
       _imageNonFocusedRight.SafeDispose();
       _imageIcon.SafeDispose();
-      _imageIcon2.Dispose();
+      _imageIcon2.SafeDispose();
 
       _labelControl1.SafeDispose();
       _labelControl2.SafeDispose();

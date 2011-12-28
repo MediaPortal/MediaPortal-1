@@ -32,10 +32,10 @@
         <dialogTitle>90</dialogTitle>
         <valueTextInButton>yes</valueTextInButton>
         <valuePrefixText>94</valuePrefixText>
-        <onclick>Skin.SetTheme(#selectedlabel15)</onclick>
-        <binding>#Skin.CurrentTheme</binding>
+        <onclick>#(skin.settheme(#selectedlabel15))</onclick>
+        <binding>#skin.currenttheme</binding>
         <subitems>
-          <subitem>#Skin.Themes</subitem>
+          <subitem>#skin.themes</subitem>
         </subitems>
       </control>
       <control>

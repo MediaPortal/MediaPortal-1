@@ -149,6 +149,11 @@ namespace MediaPortal.Profile
       }
     }
 
+    public IDictionary<string,T> GetSection<T>(string section)
+    {
+      return xmlDoc.GetSection<T>(section);
+    }
+
     public string GetValue(string section, string entry)
     {
       object value = xmlDoc.GetValue(section, entry);

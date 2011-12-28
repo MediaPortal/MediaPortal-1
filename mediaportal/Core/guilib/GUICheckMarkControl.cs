@@ -146,7 +146,14 @@ namespace MediaPortal.GUI.Library
       // Set the selection based on the user specified condition.
       if (_selected.Length != 0)
       {
-        _isSelected = GUIInfoManager.GetBool(GUIInfoManager.TranslateString(_selected), 0);
+        try
+        {
+          Selected = bool.Parse(GUIPropertyManager.Parse(_selected, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+        }
+        catch (System.Exception)
+        {
+          Log.Debug("GUICheckMarkControl: id={0} <selected> expression does not return a boolean value", GetID);
+        }
       }
 
       if (Focus)
@@ -259,7 +266,7 @@ namespace MediaPortal.GUI.Library
           // If this button has a click setting then execute the setting.
           if (_onclick.Length != 0)
           {
-            GUIInfoManager.Execute(_onclick, GetID);
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
         }
       }

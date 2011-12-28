@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Library
           // If this button has a click setting then execute the setting.
           if (_onclick.Length != 0)
           {
-            GUIInfoManager.Execute(_onclick, GetID);
+            GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
 
           if (ContextMenu != null)
@@ -449,7 +449,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_hyperLinkParameter != null && !_hyperLinkParameter.Equals(""))
             {
-//the link also contains a parameter that we want to pass to the plugin
+              // The link also contains a parameter that we want to pass to the plugin
               GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, GUIPropertyManager.Parse(_hyperLinkParameter),
                                               !_addToHistory);
             }

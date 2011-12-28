@@ -729,6 +729,11 @@ namespace MediaPortal.GUI.Library
           return false;
         }
 
+        // Load #defines specified in the included skin xml document and add them to the existing (parent document) set of #defines.
+        // The dictionary merge replaces the value of duplicates.
+        IDictionary<string, string> includeDefines = LoadDefines(doc);
+        defines = defines.Merge(includeDefines);
+
         if (doc.DocumentElement.Name != "window")
         {
           return false;
@@ -769,7 +774,9 @@ namespace MediaPortal.GUI.Library
             continue;
           }
 
-          table[tokens[0]] = tokens[1];
+          // Parse the #define value as an expression and promote the #define to a property.
+          table[tokens[0]] = GUIExpressionManager.Parse(tokens[1]);
+          GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
         }
       }
       catch (Exception e)
