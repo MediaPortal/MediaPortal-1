@@ -498,7 +498,7 @@ typedef enum {
     BD_EVENT_ANGLE,     /* current angle, 1...N */
     BD_EVENT_TITLE,     /* current title, 1...N (0 = top menu) */
     BD_EVENT_PLAYLIST,  /* current playlist (xxxxx.mpls) */
-    BD_EVENT_PLAYITEM,  /* current play item */
+    BD_EVENT_PLAYITEM,  /* current play item, 0...N-1  */
     BD_EVENT_CHAPTER,   /* current chapter, 1...N */
     BD_EVENT_END_OF_TITLE,
 
@@ -525,7 +525,14 @@ typedef enum {
     /* Still playback for n seconds (reached end of still mode play item) */
     BD_EVENT_STILL_TIME,             /* 0 = infinite ; 1...300 = seconds */
 
+    /* Play sound effect */
     BD_EVENT_SOUND_EFFECT,           /* effect ID */
+
+    /* Pop-Up menu available */
+    BD_EVENT_POPUP,                  /* 0 - no, 1 - yes */
+
+    /* Interactive menu visible */
+    BD_EVENT_MENU,                   /* 0 - no, 1 - yes */
 
     BD_CUSTOM_EVENT_MENU_VISIBILITY = 1000 /* 0 - not shown, 1 shown*/
 
