@@ -338,8 +338,8 @@ namespace TvLibrary.Implementations.DVB
 
     private static readonly string[] TunersWithCiSlot = new string[]
     {
-      "TBS 5980 CI Tuner"
-      //"TBS 6928 DVBS/S2 Tuner"
+      "TBS 5980 CI Tuner",
+      "TBS 6928 DVBS/S2 Tuner"
       //"TBS 6992 DVBS/S2 Tuner A"
       //"TBS 6992 DVBS/S2 Tuner B"
     };
@@ -728,8 +728,8 @@ namespace TvLibrary.Implementations.DVB
       }
 
       Log.Log.Debug("Turbosight: close conditional access interface");
-      _ciHandle = IntPtr.Zero;
       On_Exit_CI(_ciHandle);
+      _ciHandle = IntPtr.Zero;
       Marshal.FreeCoTaskMem(_mmiMessageBuffer);
       Marshal.FreeCoTaskMem(_mmiResponseBuffer);
       Marshal.FreeCoTaskMem(_pmtBuffer);
