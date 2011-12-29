@@ -74,7 +74,7 @@ namespace MediaPortal.GUI.Library
       GUIWaitCursor.Hide();
     }
 
-    public static void ActivateThemeByName(string themeName, int focusControlId)
+    public static string ActivateThemeByName(string themeName, int focusControlId)
     {
       // Change themes in a background thread so that the wait cursor gets presented during the theme change.
       _themeName = themeName;
@@ -85,9 +85,10 @@ namespace MediaPortal.GUI.Library
       ActivateThemeThread.IsBackground = true;
       ActivateThemeThread.Priority = ThreadPriority.Normal;
       ActivateThemeThread.Start();
+      return themeName;
     }
 
-    public static void ActivateThemeNext(int direction, int focusControlId)
+    public static string ActivateThemeNext(int direction, int focusControlId)
     {
       // Switch the next theme in the list; either the next or previous based on the direction.
       // Theme with empty string refers to the skin default (no theme set).
@@ -96,7 +97,7 @@ namespace MediaPortal.GUI.Library
       ArrayList themes = SkinSettings.GetSkinThemes();
       if (themes.Count > 0)
       {
-        int index = themes.IndexOf((string)skinTheme);
+        int index = themes.IndexOf(skinTheme);
         if (index < 0)
         {
           // Theme is default or not in the list, set to first theme.
@@ -118,8 +119,10 @@ namespace MediaPortal.GUI.Library
           index = 0;
         }
 
-        ActivateThemeByName((string)themes[index], focusControlId);
+        skinTheme = themes[index].ToString();
+        ActivateThemeByName(skinTheme, focusControlId);
       }
+      return skinTheme;
     }
   }
 }

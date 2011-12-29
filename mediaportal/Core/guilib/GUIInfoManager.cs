@@ -1389,6 +1389,29 @@ namespace MediaPortal.GUI.Library
           skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(15, strTestKeepCase.Length - 16), SkinSettings.Kind.PERSISTENT);
           return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset));
         }
+        else if (strTest.Substring(0, 13) == "skin.setbool(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            skinOffset = SkinSettings.TranslateSkinBool(strTestKeepCase.Substring(13, pos - 13), SkinSettings.Kind.PERSISTENT);
+            int valueString =
+              ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_BOOL : SKIN_BOOL, skinOffset, valueString));
+          }
+          skinOffset = SkinSettings.TranslateSkinBool(strTestKeepCase.Substring(13, strTestKeepCase.Length - 14), SkinSettings.Kind.PERSISTENT);
+          return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_BOOL : SKIN_BOOL, skinOffset));
+        }
         else if (strTest.Substring(0, 19) == "skin.togglesetting(")
         {
           // this condition uses GUIPropertyManager, which is case sensitive.

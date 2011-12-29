@@ -676,30 +676,33 @@ namespace MediaPortal.GUI.Library
     }
 
     [XMLSkinFunction("skin.setstring")]
-    public static void SkinSetString(params object[] args)
+    public static object SkinSetString(params object[] args)
     {
       // args[0] - setting name
-      // args[1] - new value
-      // args[2] - keyboard prompt
+      // args[1] - (optional) new value
+      // args[2] - (optional) keyboard prompt
+      string newValue = "";
  
       // Set the setting to the specified string.  If no value is specified then present the keyboard to input the value.
-      if (args.Length == 1)
+      if (args.Length == 2)
       {
         int condition = GUIInfoManager.TranslateSingleString("skin.setstring(" + args[0] + ")");
-        GUIInfoManager.SetString(condition, args[1].ToString(), 0);
+        newValue = args[1].ToString();
+        GUIInfoManager.SetString(condition, newValue, 0);
       }
-      else if (args.Length >= 2)
+      else
       {
         // No value was provided for the skin setting.  Display a keyboard and ask for a value.
         string prompt = "";
-        if (args.Length > 2)
+        if (args.Length >= 3)
         {
+          newValue = args[1].ToString();
           prompt = args[2].ToString();
           GUILocalizeStrings.LocalizeLabel(ref prompt);
         }
 
         // Get the current value to initialize the keyboard.
-        int condition = GUIInfoManager.TranslateSingleString("skin.setstring(" + args[0] + "," + args[1] + "," + prompt + ")");
+        int condition = GUIInfoManager.TranslateSingleString("skin.setstring(" + args[0] + "," + newValue + "," + prompt + ")");
         string userInput = GUIInfoManager.GetString(condition, 0);
 
         if (GetUserInputString(ref userInput, prompt))
@@ -711,6 +714,7 @@ namespace MediaPortal.GUI.Library
           // Keyboard cancelled; no value supplied and no input was entered into the keyboard.
         }
       }
+      return newValue;
     }
 
     private static bool GetUserInputString(ref string sString, string label)
@@ -733,12 +737,19 @@ namespace MediaPortal.GUI.Library
     }
 
     [XMLSkinFunction("skin.setbool")]
-    public static object SkinSetBool(string setting)
+    public static object SkinSetBool(params object[] args)
     {
-      // Set the setting to true.
-      int condition = GUIInfoManager.TranslateSingleString("skin.setbool(" + setting + ")");
-      GUIInfoManager.SetBool(condition, true, 0);
-      return true;
+      // args[0] - setting name
+      // args[1] - (optional) new value
+      bool newValue = true;
+
+      if (args.Length == 2)
+      {
+        newValue = bool.Parse(args[1].ToString());
+      }
+      int condition = GUIInfoManager.TranslateSingleString("skin.setbool(" + args[0] + ")");
+      GUIInfoManager.SetBool(condition, newValue, 0);
+      return newValue;
     }
 
     [XMLSkinFunction("skin.reset")]
@@ -772,7 +783,7 @@ namespace MediaPortal.GUI.Library
     public static object SkinTheme(params object[] args)
     {
       // args[0] - theme navigation direction; 1 moves to next, -1 moves to previous
-      // args[1] - the control id to focus on after the theme has been changed
+      // args[1] - (optional) the control id to focus on after the theme has been changed
       int direction = 1;
       int focusControlId = 0;
       if (args.Length > 0)
@@ -785,23 +796,21 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      GUIThemeManager.ActivateThemeNext(direction, focusControlId);
-      return true;
+      return GUIThemeManager.ActivateThemeNext(direction, focusControlId);
     }
 
     [XMLSkinFunction("skin.settheme")]
     public static object SkinSetTheme(params object[] args)
     {
       // args[0] - new skin theme name
-      // args[1] - the control id to focus on after the theme has been changed
+      // args[1] - (optional) the control id to focus on after the theme has been changed
       int focusControlId = 0;
       if (args.Length > 1)
       {
         focusControlId = (int)args[1];
       }
 
-      GUIThemeManager.ActivateThemeByName(args[0].ToString(), focusControlId);
-      return true;
+      return GUIThemeManager.ActivateThemeByName(args[0].ToString(), focusControlId);
     }
 
     #endregion

@@ -346,6 +346,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // Add subitems to the menu.
+      int value = 0;
       for (int i = 0; i < SubItemCount; ++i)
       {
         string strItem = GUIPropertyManager.GetProperty((string)GetSubItem(i));
@@ -359,7 +360,7 @@ namespace MediaPortal.GUI.Library
         ArrayList items = new ArrayList(strItem.Split(new char[] { ',' }));
         for (int j=0; j < items.Count; j++)
         {
-          AddItem(items[j].ToString(), j);
+          AddItem(items[j].ToString(), value++);
         }
       }
 
@@ -381,7 +382,7 @@ namespace MediaPortal.GUI.Library
     private void bindToValue(string strValue)
     {
       string strTemp = strValue;
-      strValue = GUIPropertyManager.GetProperty(strValue);
+      strValue = GUIPropertyManager.Parse(strValue, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
       if (strValue == null || strValue == "")
       {
         strValue = strTemp;
