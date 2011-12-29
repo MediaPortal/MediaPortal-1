@@ -74,7 +74,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   REFERENCE_TIME playedDuration = ClipPlayTime();
   bool ret = remainingClipTime>5000000LL;
 
-  LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
+  //LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
 
   m_rtPlaylistOffset += playedDuration;
 
@@ -195,7 +195,7 @@ Packet* CPlaylistManager::GetNextAudioPacket()
     {
       (*(m_itCurrentAudioPlayBackPlaylist--))->SetEmptiedAudio();
       ret = (*(m_itCurrentAudioPlayBackPlaylist++))->ReturnNextAudioPacket();
-      LogDebug("playlistManager: setting audio playback playlist to %d",(*m_itCurrentAudioPlayBackPlaylist)->nPlaylist);
+      //LogDebug("playlistManager: setting audio playback playlist to %d",(*m_itCurrentAudioPlayBackPlaylist)->nPlaylist);
     }
   }
   if (firstAudio)
@@ -231,7 +231,7 @@ Packet* CPlaylistManager::GetNextVideoPacket()
     {
       (*(m_itCurrentVideoPlayBackPlaylist--))->SetEmptiedVideo();
       ret = (*(m_itCurrentVideoPlayBackPlaylist++))->ReturnNextVideoPacket();
-      LogDebug("playlistManager: setting video playback playlist to %d",(*m_itCurrentVideoPlayBackPlaylist)->nPlaylist);
+      //LogDebug("playlistManager: setting video playback playlist to %d",(*m_itCurrentVideoPlayBackPlaylist)->nPlaylist);
     }
   }
   if (firstVideo && ret->rtStart != Packet::INVALID_TIME)

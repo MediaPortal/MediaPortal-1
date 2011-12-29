@@ -44,6 +44,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   lastVideoPosition=playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
   audioPlaybackPosition = playlistFirstPacketTime;
+  videoPlaybackPosition = playlistFirstPacketTime;
 
   earliestPacketAccepted = _I64_MAX;
 
@@ -64,7 +65,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   firstPacketAccepted = false;
   firstPacketReturned = false;
   clipReset = false;
-  LogDebug("CClip:: New Clip (%d,%d) stream Offset %I64d", nPlaylist, nClip, totalStreamOffset);
+  //LogDebug("CClip:: New Clip (%d,%d) stream Offset %I64d", nPlaylist, nClip, totalStreamOffset);
 }
 
 CClip::~CClip(void)
@@ -84,6 +85,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   if (!firstPacketReturned)
   {
 //    CAutoLock lock (&m_sectionRead);
+    LogDebug("locking earliest packet %I64d(vid)", earliestPacketAccepted);
     firstPacketReturned=true;
     if (abs(earliestPacketAccepted - playlistFirstPacketTime - m_rtClipStartingOffset) > ONE_SECOND)
     {
@@ -131,6 +133,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
   if (!firstPacketReturned)
   {
 //    CAutoLock lock (&m_sectionRead);
+    LogDebug("locking earliest packet %I64d(vid)", earliestPacketAccepted);
     firstPacketReturned=true;
     return ReturnNextVideoPacket(playlistOffset);
   }
@@ -158,7 +161,11 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
         }
       }
 
-      if (ret->rtStart > videoPlaybackPosition) videoPlaybackPosition = ret->rtStart;
+      if (ret->rtStart > videoPlaybackPosition) 
+      {
+        videoPlaybackPosition = ret->rtStart;
+        //LogDebug("Videoplayback position (%d,%d) %I64d", nPlaylist, nClip, videoPlaybackPosition);
+      }
   
       ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
       ret->rtClipStartTime = ret->rtStart -  earliestPacketAccepted;
@@ -269,7 +276,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
 void CClip::Superceed(int superceedType)
 {
   superceeded|=superceedType;
-  LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
+//  LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
   if ((superceedType == SUPERCEEDED_AUDIO_FILL) && firstAudio) 
   {
     LogDebug("Setting Fake Audio for clip %d", nClip);
@@ -335,6 +342,7 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
   lastAudioPosition = playlistFirstPacketTime;
   clipPlaylistOffset = totalStreamOffset;
   audioPlaybackPosition = playlistFirstPacketTime;
+  videoPlaybackPosition = playlistFirstPacketTime;
   m_rtClipStartingOffset = 0LL;
 
   earliestPacketAccepted = INT64_MAX;
@@ -386,11 +394,11 @@ REFERENCE_TIME CClip::Incomplete()
 
 REFERENCE_TIME CClip::PlayedDuration()
 {
-  REFERENCE_TIME
-    start=earliestPacketAccepted, 
-    finish=audioPlaybackPosition,
-    playDuration;
-  if (!firstPacketReturned) 
+  REFERENCE_TIME start = earliestPacketAccepted;
+  REFERENCE_TIME finish = audioPlaybackPosition;
+  REFERENCE_TIME playDuration=0LL;
+  LogDebug("CClip::earliestPacketAccepted %I64d audioPlaybackPosition %I64d videoPlaybackPosition %I64d %d %d", earliestPacketAccepted, audioPlaybackPosition, videoPlaybackPosition, firstAudio, firstVideo);
+  if (!firstPacketReturned || !firstPacketAccepted) 
   {
     LogDebug("CClip::PlayedDuration 0 - clip unplayed");
     return 0LL;
@@ -405,8 +413,13 @@ REFERENCE_TIME CClip::PlayedDuration()
     LogDebug("CClip::PlayedDuration %I64d - clip played to end", clipDuration - earliestPacketAccepted + playlistFirstPacketTime);
     return clipDuration - earliestPacketAccepted + playlistFirstPacketTime;
   }
-  LogDebug("CClip::PlayedDuration %I64d - clip partially played", finish - start);
-  return finish - start;
+  if (earliestPacketAccepted>finish)
+  {
+    LogDebug("CClip::PlayedDuration 0 start>finish");
+    return 0LL;
+  }
+  LogDebug("CClip::PlayedDuration %I64d - clip (%d,%d) partially played finish %I64d start %I64d", finish - earliestPacketAccepted, nPlaylist, nClip, finish, earliestPacketAccepted);
+  return finish - earliestPacketAccepted;
 }
 
 
