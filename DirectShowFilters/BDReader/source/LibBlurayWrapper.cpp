@@ -951,6 +951,16 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
   case BD_EVENT_STILL_TIME:
     //LogDebug("    BD_EVENT_STILL_TIME - %d", pEvent.param);
     break;
+  case BD_EVENT_SOUND_EFFECT:
+    //LogDebug("    BD_EVENT_SOUND_EFFECT - %d", pEvent.param);
+    break;
+  case BD_EVENT_POPUP:
+    LogDebug("    BD_EVENT_POPUP - %d", pEvent.param);
+    break;
+  case BD_EVENT_MENU:
+    LogDebug("    BD_EVENT_MENU - %d", pEvent.param);
+    break;
+
   default:
     LogDebug("    ERROR - no event!");
   }
