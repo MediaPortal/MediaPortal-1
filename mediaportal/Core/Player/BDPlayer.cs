@@ -1417,8 +1417,7 @@ namespace MediaPortal.Player
 
     public int OnOSDUpdate(OSDTexture osdTexture)
     {
-      if (Playing)
-        BDOSDRenderer.GetInstance().DrawItem(osdTexture);
+      BDOSDRenderer.GetInstance().DrawItem(osdTexture);
       return 0;
     }
 
