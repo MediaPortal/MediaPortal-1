@@ -412,7 +412,8 @@ namespace MediaPortal.GUI.Video
         }
 
         // route all unhandled actions to the dvd player
-        g_Player.OnAction(action);
+        if (g_Player.OnAction(action))
+          return;
       }
 
       switch (action.wID)
