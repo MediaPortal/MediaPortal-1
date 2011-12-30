@@ -47,16 +47,28 @@ COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
 COverlayRenderer::~COverlayRenderer()
 {
   if (m_pPlanes[BD_OVERLAY_PG] && m_pPlanes[BD_OVERLAY_IG]->texture)
+  {
     m_pPlanes[BD_OVERLAY_PG]->texture->Release();
+    delete m_pPlanes[BD_OVERLAY_PG];
+  }
 
   if (m_pPlanes[BD_OVERLAY_IG] && m_pPlanes[BD_OVERLAY_IG]->texture)
+  {
     m_pPlanes[BD_OVERLAY_IG]->texture->Release();
+    delete m_pPlanes[BD_OVERLAY_IG];
+  }
 
   if (m_pPlanesBackbuffer[BD_OVERLAY_PG] && m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture)
+  {
     m_pPlanesBackbuffer[BD_OVERLAY_PG]->texture->Release();
+    delete m_pPlanesBackbuffer[BD_OVERLAY_PG];
+  }
 
   if (m_pPlanesBackbuffer[BD_OVERLAY_IG] && m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture)
+  {
     m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture->Release();
+    delete m_pPlanesBackbuffer[BD_OVERLAY_IG];
+  }
 }
 
 void COverlayRenderer::SetD3DDevice(IDirect3DDevice9* device)
@@ -161,9 +173,17 @@ void COverlayRenderer::OpenOverlay(const BD_OVERLAY* pOv)
                                                 D3DPOOL_DEFAULT, &osdTexture->texture, NULL);
 
       if (hr == S_OK)
+      {
+        if (*plane)
+          delete *plane;
         (*plane) = osdTexture;
+      }
       else
+      {
+        delete osdTexture;
+        osdTexture = NULL;
         LogDebug("ovr: OpenOverlay - CreateTexture 0x%08x", hr);
+      }
     }
   }
 }
