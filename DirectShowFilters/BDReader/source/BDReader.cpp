@@ -872,18 +872,6 @@ void CBDReaderFilter::HandleOSDUpdate(OSDTexture& pTexture)
   }
 }
 
-void CBDReaderFilter::HandleMenuStateChange(bool pVisible)
-{
-  BD_EVENT ev;
-  ev.event = BD_CUSTOM_EVENT_MENU_VISIBILITY;
-  ev.param = pVisible ? 1 : 0;
-
-  if (m_pCallback && !m_bFirstPlay)
-  {
-    m_pCallback->OnBDEvent(ev);
-  }
-}
-
 /// method which implements IAMStreamSelect.Count
 /// returns the number of audio streams available
 STDMETHODIMP CBDReaderFilter::Count(DWORD* streamCount)

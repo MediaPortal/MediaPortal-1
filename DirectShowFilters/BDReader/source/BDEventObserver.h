@@ -29,7 +29,6 @@ class BDEventObserver
   public:
     virtual void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos) = 0;
     virtual void HandleOSDUpdate(OSDTexture& pTexture) = 0;
-    virtual void HandleMenuStateChange(bool pVisible) = 0;
     virtual ~BDEventObserver(){};
 };
 

@@ -741,10 +741,6 @@ void CDeMultiplexer::HandleOSDUpdate(OSDTexture& /*pTexture*/)
 { 
 }
 
-void CDeMultiplexer::HandleMenuStateChange(bool /*pVisible*/)
-{
-}
-
 void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 {
   CTsHeader header(tsPacket);

@@ -128,10 +128,6 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
       
       OSDTexture* plane = m_pPlanes[ov->plane];
       m_pLib->HandleOSDUpdate(*plane);
-
-      if (ov->plane == BD_OVERLAY_IG) 
-        m_pLib->HandleMenuStateChange(true);
-      
       break;
     }
 
@@ -186,9 +182,6 @@ void COverlayRenderer::CloseOverlay(const int pPlane)
     // TODO: clear specific plane
     ClearOverlay();
     CopyToFrontBuffer();
-
-    if (pPlane == 1) 
-      m_pLib->HandleMenuStateChange(false);
   }
 }
 

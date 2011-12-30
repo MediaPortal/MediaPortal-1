@@ -132,7 +132,6 @@ public:
   void LogTitleInfo(int pIndex, bool ignoreShort = false);
 
   void HandleOSDUpdate(OSDTexture& pTexture);
-  void HandleMenuStateChange(bool pVisible);
   void MouseMove(UINT64 pPos, UINT16 pX, UINT16 pY);
 
 private:
