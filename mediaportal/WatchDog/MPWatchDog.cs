@@ -50,6 +50,7 @@ namespace WatchDog
     private bool _autoMode = false;
     private bool _watchdog = false;
     private bool _restartMP = false;
+    private bool _restoreTaskbar = false;
     private int _cancelDelay = 10;
     private Process _processMP = null;
     //private int _lastMPLogLevel = 2;
@@ -192,6 +193,10 @@ namespace WatchDog
         WindowState = FormWindowState.Minimized;
         ShowInTaskbar = false;
         tmrWatchdog.Enabled = true;
+        using (MPSettings xmlreader = new MPSettings())
+        {
+          _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+        }
       }
     }
 
@@ -497,6 +502,11 @@ namespace WatchDog
         EnableChoice(false);
         ExportLogsRadioButton.Checked = true;
         ProceedButton.Enabled = true;
+        if (_restoreTaskbar)
+        {
+          MediaPortal.Util.Win32API.EnableStartBar(true);
+          MediaPortal.Util.Win32API.ShowStartBar(true);
+        }
         if (!_restartMP)
         {
           Utils.ErrorDlg("MediaPortal crashed unexpectedly.");
