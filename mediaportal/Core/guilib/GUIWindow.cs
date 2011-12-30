@@ -218,6 +218,9 @@ namespace MediaPortal.GUI.Library
     private bool _hasRendered = false;
     private bool _windowLoaded = false;
     private static bool _hasWindowVisibilityUpdated;
+    protected bool _disableVolumeOverlay = false; // skin file can disable volume overlay
+     protected int _volumeOverlayOffsetX = 0; // default x offset for volume overlay is 0
+    protected int _volumeOverlayOffsetY = 0; // default y offset for volume overlay is 0
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
@@ -606,6 +609,50 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
+
+        // Set volume overlay enabled / disabled
+        XmlNode nodeDisableVolumeOverlay = doc.DocumentElement.SelectSingleNode("/window/disablevolumeoverlay");
+        _disableVolumeOverlay = false;
+        if (nodeDisableVolumeOverlay != null)
+        {
+          if (nodeDisableVolumeOverlay.InnerText != null)
+          {
+            string allowed = nodeDisableVolumeOverlay.InnerText.ToLower();
+            if (allowed == "yes" || allowed == "true")
+            {
+              _disableVolumeOverlay = true;
+            }
+          }
+        }
+
+        XmlNode nodeVolumeOverlayOffsetX = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsetx");
+        _volumeOverlayOffsetX = 0;
+        if (nodeVolumeOverlayOffsetX != null)
+        {
+          if (nodeVolumeOverlayOffsetX.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetX.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetX))
+            {
+              _volumeOverlayOffsetX = 0;
+            }
+          }
+        }
+
+        XmlNode nodeVolumeOverlayOffsetY = doc.DocumentElement.SelectSingleNode("/window/volumeoverlayoffsety");
+        _volumeOverlayOffsetY = 0;
+        if (nodeVolumeOverlayOffsetY != null)
+        {
+          if (nodeVolumeOverlayOffsetY.InnerText != null)
+          {
+            string value = nodeVolumeOverlayOffsetY.InnerText.ToLower();
+            if (!Int32.TryParse(value, out _volumeOverlayOffsetY))
+            {
+              _volumeOverlayOffsetY = 0;
+            }
+          }
+        }
+
         _rememberLastFocusedControl = false;
         if (GUIGraphicsContext.AllowRememberLastFocusedItem)
         {
@@ -620,8 +667,8 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
 
+        XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
         foreach (XmlNode node in nodeList)
         {
           switch (node.Name)
@@ -1563,6 +1610,9 @@ namespace MediaPortal.GUI.Library
               GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
+              GUIGraphicsContext.DisableVolumeOverlay = _disableVolumeOverlay;
+              GUIGraphicsContext.VolumeOverlayOffsetX = _volumeOverlayOffsetX;
+              GUIGraphicsContext.VolumeOverlayOffsetY = _volumeOverlayOffsetY;
 
               if (message.Param1 != (int)Window.WINDOW_INVALID)
               {
