@@ -255,6 +255,20 @@ namespace MediaPortal.Player
       }
     }
 
+    protected override void SyncAudioRenderer()
+    {
+      if (filterCodec._audioRendererFilter != null)
+      {
+        //Log.Info("BDPlayer:set reference clock");
+        IMediaFilter mp = (IMediaFilter)_graphBuilder;
+        IReferenceClock clock = (IReferenceClock)filterCodec._audioRendererFilter;
+        int hr = mp.SetSyncSource(null);
+        hr = mp.SetSyncSource(clock);
+        //Log.Info("BDPlayer:set reference clock:{0:X}", hr);
+        _basicAudio = (IBasicAudio)_graphBuilder;
+      }
+    }
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
     {
@@ -486,6 +500,7 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);*/
           //Log.Info("TSReaderPlayer:set reference clock:{0:X}", hr);
+          SyncAudioRenderer();
           _basicAudio = (IBasicAudio)_graphBuilder;
         }
         if (!_isRadio)
@@ -600,9 +615,9 @@ namespace MediaPortal.Player
     protected override void ReleaseCC()
     {
       //Cleanup Line 21 Analog
-      int hr;
+      /*int hr;
       if (_mediaCtrl != null)
-      hr = _mediaCtrl.Stop();
+      hr = _mediaCtrl.Stop();*/
 
       if (filterCodec.line21VideoCodec != null)
       {
@@ -619,9 +634,10 @@ namespace MediaPortal.Player
     protected override void ReleaseCC2()
     {
       //Cleanup Line 21 Digital
-      int hr;
+      /*int hr;
       if (_mediaCtrl != null)
-      hr = _mediaCtrl.Stop();
+      hr = _mediaCtrl.Stop();*/
+
       if (filterCodec.line21CoreCCParser != null)
       {
         DirectShowUtil.ReleaseComObject(filterCodec.line21CoreCCParser);

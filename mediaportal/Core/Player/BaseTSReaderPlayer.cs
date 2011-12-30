@@ -1856,6 +1856,8 @@ namespace MediaPortal.Player
 
     protected virtual void AudioRendererAdd() { }
 
+    protected virtual void SyncAudioRenderer() { }
+
     protected virtual string MatchFilters(string format) { return format; }
 
     protected virtual void CoreCCParserCheck() { }
@@ -1882,7 +1884,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-              DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
             }
           }
           PostProcessFilterVideo.Clear();
@@ -1903,7 +1905,7 @@ namespace MediaPortal.Player
             if (ppFilter.Value != null)
             {
               DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-              DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
             }
           }
           PostProcessFilterAudio.Clear();
