@@ -35,11 +35,12 @@ namespace MediaPortal.GUI.Library
       Topbar1,
       Topbar2,
       Dialog,
-      MiniEPG
+      MiniEPG,
+      Volume
     }
 
     // layers:
-    //      [GUI] - [PREVIEW] - [VIDEO] - [OSD] - [TOPBAR1] - [TOPBAR2] - [DIALOG]
+    //      [GUI] - [PREVIEW] - [VIDEO] - [OSD] - [TOPBAR1] - [TOPBAR2] - [DIALOG] - [VOLUME]
 
     private const int MAX_LAYERS = 15;
 

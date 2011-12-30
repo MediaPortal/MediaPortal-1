@@ -367,6 +367,8 @@ namespace MediaPortal.GUI.Library
     public const int TOPBAR_HAS_FOCUS = 30002;
     public const int TOPBAR_IS_VISIBLE = 30003;
 
+    public const int VOLUMEOVERLAY_IS_VISIBLE = 30004;
+
     // static string VERSION_STRING = "2.0.0";
 
     // the multiple information vector
@@ -490,6 +492,13 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "topbar.visible")
         {
           ret = TOPBAR_IS_VISIBLE;
+        }
+      }
+      else if (strCategory == "volumeoverlay")
+      {
+        if (strTest == "volumeoverlay.visible")
+        {
+          ret = VOLUMEOVERLAY_IS_VISIBLE;
         }
       }
       else if (strCategory == "player")
@@ -2083,6 +2092,10 @@ namespace MediaPortal.GUI.Library
       else if (condition == TOPBAR_IS_VISIBLE)
       {
         return !GUIGraphicsContext.TopBarHidden;
+      }
+      else if (condition == VOLUMEOVERLAY_IS_VISIBLE)
+      {
+        return GUIGraphicsContext.VolumeOverlay;
       }
       else if (g_Player.Playing)
       {

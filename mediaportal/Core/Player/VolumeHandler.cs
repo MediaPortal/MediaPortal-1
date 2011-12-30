@@ -73,6 +73,7 @@ namespace MediaPortal.Player
       _mixer = new Mixer.Mixer();
       _mixer.Open(0, isDigital);
       _volumeTable = volumeTable;
+      _mixer.ControlChanged += new Mixer.MixerEventHandler(mixer_ControlChanged);
     }
 
     #endregion Constructors
@@ -132,6 +133,8 @@ namespace MediaPortal.Player
         {
           writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
         }
+
+        _instance._mixer.ControlChanged -= mixer_ControlChanged; 
 
         _instance._mixer.SafeDispose();
         _instance._mixer = null;
@@ -233,6 +236,22 @@ namespace MediaPortal.Player
       {
         Log.Info("VolumeHandler.SetVolume: {0}", e.Message);
       }
+    }
+
+    private static void mixer_ControlChanged(object sender, Mixer.MixerEventArgs e)
+    {
+      GUIGraphicsContext.VolumeOverlay = true;
+      GUIGraphicsContext.VolumeOverlayTimeOut = DateTime.Now;
+      Instance.UpdateVolumeProperties();
+    }
+
+    public void UpdateVolumeProperties()
+    {
+      float fRange = (float)(Instance.Maximum - Instance.Minimum);
+      float fPos = (float)(Instance.Volume - Instance.Minimum);
+      float fPercent = (fPos / fRange) * 100.0f;
+      GUIPropertyManager.SetProperty("#volume.percent", ((int)Math.Round(fPercent)).ToString());
+      GUIPropertyManager.SetProperty("#volume.mute", Instance.IsMuted.ToString().ToLowerInvariant());
     }
 
     #endregion Methods
