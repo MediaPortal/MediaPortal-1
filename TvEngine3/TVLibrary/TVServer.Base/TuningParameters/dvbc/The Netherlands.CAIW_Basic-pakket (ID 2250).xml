@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDVBCTuning>
+  <!--Created on 2011-11-27 16:48-->
+  <DVBCTuning>
+    <!--Transponder ID 101 with channels Nederland 1,Nederland 2,Nederland 3,TV West-->
+    <Frequency>538000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 102 with channels Één,Ketnet/Canvas,Nickelodeon-->
+    <Frequency>554000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 103 with channels SBS 6,NET5,Kindernet/Comedy Central,Veronica/DisneyXD,RTL8-->
+    <Frequency>642000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 104 with channels RTL4,RTL5,RTL7-->
+    <Frequency>658000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 105 with channels Hilversum Best 24,Pebble TV,BBC World,euronews,CNN International,TRT Turk,Xite,Consumenten 24-->
+    <Frequency>778000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 106 with channels BBC One,BBC Two,GoedTV,RTM1,Mezzo,Journaal 24,VH1 Classic,Tweede Kamer TV-->
+    <Frequency>570000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 107 with channels Animal Planet/TLC,Discovery Channel,Weer en Verkeer,Gemeente Westland TV,TV Polonia,TV5 Monde,192TV-->
+    <Frequency>682000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 108 with channels Family7,Showroom,MTV NL,ZDF,Das Erste,Sterren.nl,Spirit24-->
+    <Frequency>706000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 109 with channels Eurosport 2,Cultura 24,ARD Das Erste HD,MGM Movie Channel-->
+    <Frequency>650000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 115 with channels WOS,Regio TV InfoThuis-->
+    <Frequency>546000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 118 with channels -->
+    <Frequency>698000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 119 with channels -->
+    <Frequency>714000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 120 with channels -->
+    <Frequency>666000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 122 with channels -->
+    <Frequency>626000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 129 with channels -->
+    <Frequency>794000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6900</SymbolRate>
+  </DVBCTuning>
+</ArrayOfDVBCTuning>

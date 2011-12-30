@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info treatErrorAsWarning="true" availableDays="14" timezone="W. Europe Standard Time" version="2.2.0" />
+  <Channels>
+    <Channel id="animalplanet.com" siteId="1.840448" />
+    <Channel id="axess.tv" siteId="1.323710" />
+    <Channel id="barnkanalen@svt.se" siteId="1.324523" />
+    <Channel id="bbcw@bbc.co.uk" siteId="1.840453" />
+    <Channel id="boom@cartoon-network.co.uk" siteId="1.1959996" />
+    <Channel id="extra1@canalplus.se" siteId="1.323740" />
+    <Channel id="extra2@canalplus.se" siteId="1.324470" />
+    <Channel id="extra3@canalplus.se" siteId="1.372786" />
+    <Channel id="extra4@canalplus.se" siteId="1.372782" />
+    <Channel id="fotboll@canalplus.se" siteId="1.324486" />
+    <Channel id="hockey@canalplus.se" siteId="1.324506" />
+    <Channel id="sf@canalplus.se" siteId="1.323735" />
+    <Channel id="action@canalplus.no" siteId="1.323734" />
+    <Channel id="emotion@canalplus.se" siteId="1.324162" />
+    <Channel id="family@canalplus.se" siteId="1.323738" />
+    <Channel id="first@canalplus.no" siteId="1.324483" />
+    <Channel id="hits@canalplus.no" siteId="1.1288240" />
+    <Channel id="series@canalplus.se" siteId="1.323737" />
+    <Channel id="sport@canalplus.se" siteId="1.1225257" />
+    <Channel id="sport2@canalplus.no" siteId="1.840451" />
+    <Channel id="sportextra@canalplus.se" siteId="1.324516" />
+    <Channel id="sporthd@canalplus.no" siteId="1.323739" />
+    <Channel id="cartoonnetwork.se" siteId="1.323722" />
+    <Channel id="cnn.com" siteId="1.1171146" />
+    <Channel id="comedycentral.com" siteId="1.323713" />
+    <Channel id="discovery@discovery.com" siteId="1.840443" />
+    <Channel id="hd@discoverychannel.co.uk" siteId="1.840449" />
+    <Channel id="Science@discovery.com" siteId="1.322568" />
+    <Channel id="world@discovery.com" siteId="1.840450" />
+    <Channel id="disneychannel.se" siteId="1.840330" />
+    <Channel id="dr1@dr.dk" siteId="1.1959984" />
+    <Channel id="dr2@dr.dk" siteId="1.1959986" />
+    <Channel id="eurosport@eurosport.com" siteId="1.324526" />
+    <Channel id="eurosport2@eurosport.com" siteId="1.324530" />
+    <Channel id="kanal5.se" siteId="1.322560" />
+    <Channel id="kanal9.se" siteId="1.322565" />
+    <Channel id="kanalglobal.se" siteId="1.1960715" />
+    <Channel id="kunskapskanalen@svt.se" siteId="1.324522" />
+    <Channel id="MTV@mtve.com" siteId="1.1959982" />
+    <Channel id="MTVRocks@mtve.com" siteId="1.1959983" />
+    <Channel id="nickelodeon.se" siteId="1.323724" />
+    <Channel id="showtime@canaldigital.se" siteId="1.840501" />
+    <Channel id="silver.no" siteId="1.324548" />
+    <Channel id="SilverHD-se" siteId="1.324543" />
+    <Channel id="sjuan@tv4.se" siteId="1.311785" />
+    <Channel id="star" siteId="1.1959972" />
+    <Channel id="europa@svt.se" siteId="1.323716" />
+    <Channel id="svt1@svt.se" siteId="1.316875" />
+    <Channel id="svt2@svt.se" siteId="1.316885" />
+    <Channel id="24@svt.se" siteId="1.324519" />
+    <Channel id="tcm.tv" siteId="1.840500" />
+    <Channel id="tlc@discovery.com" siteId="1.323728" />
+    <Channel id="tnt7.se" siteId="1.1959977" />
+    <Channel id="tv10@viasat.se" siteId="1.1797845" />
+    <Channel id="tv1000@tv1000.se" siteId="1.322566" />
+    <Channel id="action@tv1000.se" siteId="1.323730" />
+    <Channel id="classic@tv1000.se" siteId="1.323732" />
+    <Channel id="drama@tv1000.se" siteId="1.416727" />
+    <Channel id="family@tv1000.se" siteId="1.1183476" />
+    <Channel id="hd@tv1000.se" siteId="1.1959970" />
+    <Channel id="nordic@tv1000.se" siteId="1.1959966" />
+    <Channel id="tv11@elva.tv" siteId="1.311804" />
+    <Channel id="tv3.se" siteId="1.316889" />
+    <Channel id="tv4@tv4.se" siteId="1.299727" />
+    <Channel id="fakta@tv4.se" siteId="1.311808" />
+    <Channel id="film@tv4.se" siteId="1.311801" />
+    <Channel id="Guld@tv4.se" siteId="1.311843" />
+    <Channel id="Komedi@tv4.se" siteId="1.311850" />
+    <Channel id="scifi@tv4.se" siteId="1.311854" />
+    <Channel id="sport@tv4.se" siteId="1.311852" />
+    <Channel id="tv6.at" siteId="1.322562" />
+    <Channel id="tv8.se" siteId="1.322563" />
+    <Channel id="vh1.com" siteId="1.1959978" />
+    <Channel id="explorer@viasat.se" siteId="1.840438" />
+    <Channel id="sport2@viasatsport.se" siteId="1.323711" />
+    <Channel id="fotbollhd@viasatsport.se" siteId="1.1887689" />
+    <Channel id="viagolf@viasat.se" siteId="1.324533" />
+    <Channel id="history@viasat.se" siteId="1.2082807" />
+    <Channel id="hockey@viasat.se" siteId="1.322569" />
+    <Channel id="sport3@viasatsport.se" siteId="1.324531" />
+    <Channel id="sport3@viasatsport.se" siteId="1.2082813" />
+    <Channel id="action@viasat.se" siteId="1.322567" />
+    <Channel id="premierleagueHD@viasat.se" siteId="1.324542" />
+    <Channel id="sport@viasatsport.se" siteId="1.886761" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://tvplaneten.tv4.se/[ID]?date=[YYYY]-[MM]-[DD]" post="" external="false" encoding="UTF-8" />
+    <Html>
+      <Template name="default" start="&lt;div id=&quot;tabla-01&quot;&gt;" end="&lt;/table&gt;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+	     	<![CDATA[
+				<tr <#GENRE>>
+				<th><#START></th>
+				<td><#TITLE></td>
+				</tr>
+	     	]]>
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="details" start="program-popup-content" end="listbottom">
+        <SectionTemplate tags="HP">
+          <TemplateText>
+	     	<![CDATA[
+				<p><#START> - <#END></p>
+				<h4><#TITLE></h4>
+				<p><#DESCRIPTION></p>
+	     	]]>
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+	  <Sublinks>
+		<Sublink search="popup=true" template="details" />
+	  </Sublinks>
+      <Searches>
+        <Search match="[^a-z][Dd]el \d+" field="#EPISODE" remove="false"/>
+        <Search match="S\d\d" field="#SEASON" remove="false" /> 
+        <Search match="E\d\d" field="#EPISODE" remove="false" />  
+        <Search match="Textat sid\. \d\d\d" field="#SUBTITLESNOTFALSE" remove="true"/>
+      </Searches>
+    </Html>
+  </Listing>
+  <Actions>
+    <Modify channel="*" field="#GENRE" search="title=&quot;Program tillg&amp;auml;ngliga i TV4HD&quot;|class=&quot;|&quot;|background|history|current" action="Replace"></Modify>
+    <Modify channel="*" field="#GENRE" search="ovrigt" action="Replace">övrigt</Modify>
+  </Actions>
+</Grabber>
