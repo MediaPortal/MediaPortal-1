@@ -765,6 +765,35 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
+        case Action.ActionType.ACTION_NEXT_VIDEO:
+          {
+            if (g_Player.VideoStreams > 1)
+            {
+              _showStatus = true;
+              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
+              g_Player.SwitchToNextVideo();
+
+              String language = g_Player.VideoLanguage(g_Player.CurrentVideoStream);
+              if (String.Equals(language, "Video") || String.Equals(language, ""))
+              {
+                msg.Label = string.Format("{0} ({1}/{2})", g_Player.VideoType(g_Player.CurrentVideoStream),
+                                          g_Player.CurrentVideoStream + 1, g_Player.VideoStreams);
+              }
+              else
+              {
+                msg.Label = string.Format("{0} {1} ({2}/{3})", language,
+                                          g_Player.VideoType(g_Player.CurrentVideoStream),
+                                          g_Player.CurrentVideoStream + 1, g_Player.VideoStreams);
+              }
+
+              OnMessage(msg);
+              Log.Info("GUIVideoFullscreen: switched Video to {0}", msg.Label);
+            }
+          }
+          break;
+
         case Action.ActionType.ACTION_NEXT_SUBTITLE:
           {
             int subStreamsCount = g_Player.SubtitleStreams;
@@ -1199,6 +1228,12 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(200090);
       }
 
+      // Video stream selection, show only when more than one streams exists
+      if (g_Player.VideoStreams > 1)
+      {
+        dlg.AddLocalizedString(200095);
+      }
+
       eAudioDualMonoMode dualMonoMode = g_Player.GetAudioDualMonoMode();
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
       {
@@ -1288,6 +1323,10 @@ namespace MediaPortal.GUI.Video
 
         case 200090:
           ShowEditionStreamsMenu();
+          break;
+
+        case 200095:
+          ShowVideoStreamsMenu();
           break;
 
         case 200091:
@@ -1418,6 +1457,51 @@ namespace MediaPortal.GUI.Video
       if (dlg.SelectedLabel != g_Player.CurrentEditionStream)
       {
         g_Player.CurrentEditionStream = dlg.SelectedLabel;
+      }
+    }
+
+    // Add video stream selection to be able to switch video streams
+    private void ShowVideoStreamsMenu()
+    {
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(200095); // Video Streams
+
+      // get the number of videostreams in the current movie
+      int count = g_Player.VideoStreams;
+      // cycle through each videostream and add it to our list control
+      for (int i = 0; i < count; i++)
+      {
+        string videoType = g_Player.VideoType(i);
+        if (videoType == Strings.Unknown || String.Equals(videoType, "") ||
+            videoType.Equals(g_Player.VideoLanguage(i)))
+        {
+          dlg.Add(g_Player.VideoLanguage(i));
+        }
+        else
+        {
+          dlg.Add(String.Format("{0} {1}", g_Player.VideoLanguage(i), videoType));
+        }
+      }
+
+      // select/focus the videostream, which is active atm
+      dlg.SelectedLabel = g_Player.CurrentVideoStream;
+
+      // show dialog and wait for result
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      if (dlg.SelectedLabel != g_Player.CurrentVideoStream)
+      {
+        g_Player.CurrentVideoStream = dlg.SelectedLabel;
       }
     }
 

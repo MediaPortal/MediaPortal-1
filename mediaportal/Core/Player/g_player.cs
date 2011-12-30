@@ -2249,6 +2249,72 @@ namespace MediaPortal.Player
 
     #endregion
 
+    #region Video selection
+
+    /// <summary>
+    /// Property which returns the total number of video streams available
+    /// </summary>
+    public static int VideoStreams
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return 0;
+        }
+        return _player.VideoStreams;
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the current video stream
+    /// </summary>
+    public static int CurrentVideoStream
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return 0;
+        }
+        return _player.CurrentVideoStream;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.CurrentVideoStream = value;
+        }
+      }
+    }
+
+    public static string VideoLanguage(int iStream)
+    {
+      if (_player == null)
+      {
+        return Strings.Unknown;
+      }
+
+      string stream = _player.VideoLanguage(iStream);
+      return Util.Utils.TranslateLanguageString(stream);
+    }
+
+    /// <summary>
+    /// Property to get the type of an edition stream
+    /// </summary>
+    public static string VideoType(int iStream)
+    {
+      if (_player == null)
+      {
+        return Strings.Unknown;
+      }
+
+      string stream = _player.VideoType(iStream);
+      return stream;
+    }
+
+    #endregion
+
     #region Postprocessing selection
 
     /// <summary>
@@ -2726,6 +2792,46 @@ namespace MediaPortal.Player
         if (success == false)
         {
           Log.Info("g_Player: Failed to switch to next editionstream.");
+        }
+      }
+    }
+
+    /// <summary>
+    /// Switches to the next video stream.
+    /// 
+    /// Calls are directly pushed to the embedded player. And care 
+    /// is taken not to do multiple calls to the player.
+    /// </summary>
+    public static void SwitchToNextVideo()
+    {
+      if (_player != null)
+      {
+        // take current stream and number of
+        int streams = _player.VideoStreams;
+        int current = _player.CurrentVideoStream;
+        int next = current;
+        bool success = false;
+        // Loop over the stream, so we skip the disabled streams
+        // stops if the loop is over the current stream again.
+        do
+        {
+          // if next stream is greater then the amount of stream
+          // take first
+          if (++next >= streams)
+          {
+            next = 0;
+          }
+          // set the next stream
+          _player.CurrentVideoStream = next;
+          // if the stream is set in, stop the loop
+          if (next == _player.CurrentVideoStream)
+          {
+            success = true;
+          }
+        } while ((next != current) && (success == false));
+        if (success == false)
+        {
+          Log.Info("g_Player: Failed to switch to next Videostream.");
         }
       }
     }

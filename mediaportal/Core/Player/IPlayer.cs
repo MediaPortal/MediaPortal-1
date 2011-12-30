@@ -500,6 +500,36 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
+    public virtual int VideoStreams
+    {
+      get { return 1; }
+    }
+
+    /// <summary>
+    /// Property to get/set the current Video stream
+    /// </summary>
+    public virtual int CurrentVideoStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    /// <summary>
+    /// Property to get the name for an Video stream
+    /// </summary>
+    public virtual string VideoLanguage(int iStream)
+    {
+      return Strings.Unknown;
+    }
+
+    /// <summary>
+    /// Property to get the type of an Video stream
+    /// </summary>
+    public virtual string VideoType(int iStream)
+    {
+      return Strings.Unknown;
+    }
+
     /// <summary>
     /// Property to get the name for an audio stream
     /// </summary>
