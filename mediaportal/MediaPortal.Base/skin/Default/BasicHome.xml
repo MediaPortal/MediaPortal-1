@@ -70,7 +70,7 @@
     <!--     *************************             3D-Buttons           ********************************  -->
     <!--     *******************************************************************************************  -->
     <control Style="NoShadow">
-      <description>home BM Pictures</description>
+      <description>BasicHome Button Pictures</description>
       <type>button</type>
       <id>3</id>
       <posX>25</posX>
@@ -96,7 +96,7 @@
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="150">WindowClose</animation>
     </control>
     <control Style="NoShadow">
-      <description>home BM Videos</description>
+      <description>BasicHome Button Videos</description>
       <type>button</type>
       <id>4</id>
       <posX>151</posX>
@@ -122,7 +122,7 @@
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="150">WindowClose</animation>
     </control>
     <control Style="NoShadow">
-      <description>home BM TV</description>
+      <description>BasicHome Button TV</description>
       <type>button</type>
       <id>5</id>
       <posX>292</posX>
@@ -148,17 +148,17 @@
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="70">WindowClose</animation>
     </control>
     <control Style="NoShadow">
-      <description>home BM Music</description>
+      <description>BasicHome Button Music</description>
       <type>button</type>
       <id>6</id>
       <posX>447</posX>
       <posY>260</posY>
       <width>123</width>
       <height>160</height>
-      <textureFocus>hover_my music.png</textureFocus>
-      <textureNoFocus>hover_my music.png</textureNoFocus>
-      <hyperlink>501</hyperlink>
-      <label>2</label>
+      <textureFocus>hover_my radio.png</textureFocus>
+    <textureNoFocus>hover_my radio.png</textureNoFocus>
+    <hyperlink>30</hyperlink>
+    <label>665</label>
       <font>font14</font>
       <textalign>center</textalign>
       <textYOff>-70</textYOff>
@@ -166,7 +166,7 @@
       <textcolorNoFocus>0</textcolorNoFocus>
       <keepaspectratio>yes</keepaspectratio>
       <onleft>5</onleft>
-      <onright>7</onright>
+      <onright>3</onright>
       <onup>21</onup>
       <ondown>99</ondown>
       <animation effect="zoom" start="100,100" end="120,120" time="100">focus</animation>
@@ -175,9 +175,9 @@
       <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="150">WindowClose</animation>
     </control>
     <control Style="NoShadow">
-      <description>home BM Weather</description>
+      <description>BasicHome Button Radio</description>
       <type>button</type>
-      <id>7</id>
+      <id>77</id>
       <posX>579</posX>
       <posY>260</posY>
       <width>129</width>
