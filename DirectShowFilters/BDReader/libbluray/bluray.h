@@ -533,9 +533,6 @@ typedef enum {
 
     /* Interactive menu visible */
     BD_EVENT_MENU,                   /* 0 - no, 1 - yes */
-
-    BD_CUSTOM_EVENT_MENU_VISIBILITY = 1000 /* 0 - not shown, 1 shown*/
-
 } bd_event_e;
 
 typedef struct {

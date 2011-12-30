@@ -113,7 +113,6 @@ public:
   // From BDEventObserver
   void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
   void HandleOSDUpdate(OSDTexture& pTexture);
-  void HandleMenuStateChange(bool pVisible);
 
   CAMEvent* m_eAudioPlSeen;
   bool m_bVideoPlSeen;

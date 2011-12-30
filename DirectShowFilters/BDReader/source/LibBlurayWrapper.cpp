@@ -1027,13 +1027,3 @@ void CLibBlurayWrapper::HandleOSDUpdate(OSDTexture& texture)
     ++it;
   }
 }
-
-void CLibBlurayWrapper::HandleMenuStateChange(bool pVisible)
-{
-  ivecObservers it = m_eventObservers.begin();
-  while (it != m_eventObservers.end())
-  {
-    (*it)->HandleMenuStateChange(pVisible);
-    ++it;
-  }
-}

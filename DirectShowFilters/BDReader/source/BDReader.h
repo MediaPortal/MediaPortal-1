@@ -172,7 +172,6 @@ public:
   // BDEventObserver
   void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
   void HandleOSDUpdate(OSDTexture& pTexture);
-  void HandleMenuStateChange(bool pVisible);
 
   // IFileSourceFilter
   STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
