@@ -657,13 +657,13 @@ STDMETHODIMP CBDReaderFilter::Stop()
 
     m_demultiplexer.m_bVideoRequiresRebuild = false;
     m_demultiplexer.m_bAudioRequiresRebuild = false;
-    m_demultiplexer.m_bVideoPlSeen = false;
+    m_demultiplexer.m_bVideoClipSeen = false;
 
     if (m_pVideoPin)
       m_pVideoPin->StopWait();
 
-    if (m_demultiplexer.m_eAudioPlSeen)
-      m_demultiplexer.m_eAudioPlSeen->Set();
+    if (m_demultiplexer.m_eAudioClipSeen)
+      m_demultiplexer.m_eAudioClipSeen->Set();
   }
   
   LogDebug("CBDReaderFilter::Stop()  -stop source");

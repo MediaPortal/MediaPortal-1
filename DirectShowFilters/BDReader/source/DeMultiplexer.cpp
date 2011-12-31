@@ -75,8 +75,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_fHasAccessUnitDelimiters = false;
 
-  m_eAudioPlSeen = new CAMEvent(true);
-  m_bVideoPlSeen = false;
+  m_eAudioClipSeen = new CAMEvent(true);
+  m_bVideoClipSeen = false;
   m_bAudioRequiresRebuild = false;
   m_bVideoRequiresRebuild = false;
   m_playlistManager = new CPlaylistManager();
@@ -110,7 +110,7 @@ CDeMultiplexer::~CDeMultiplexer()
   m_filter.lib.RemoveEventObserver(this);
   m_bShuttingDown = true;
 
-  delete m_eAudioPlSeen;
+  delete m_eAudioClipSeen;
 
   delete m_playlistManager;
 

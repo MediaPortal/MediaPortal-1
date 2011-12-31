@@ -114,8 +114,8 @@ public:
   void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
   void HandleOSDUpdate(OSDTexture& pTexture);
 
-  CAMEvent* m_eAudioPlSeen;
-  bool m_bVideoPlSeen;
+  CAMEvent* m_eAudioClipSeen;
+  bool m_bVideoClipSeen;
   bool m_bAudioRequiresRebuild;
   bool m_bVideoRequiresRebuild;
   bool m_bRebuildOngoing;

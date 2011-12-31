@@ -406,9 +406,9 @@ void CVideoPin::CreateEmptySample(IMediaSample *pSample)
 
 void CVideoPin::CheckPlaybackState()
 {
-  if (m_demux.m_bVideoPlSeen)
+  if (m_demux.m_bVideoClipSeen)
   {
-    m_demux.m_eAudioPlSeen->Wait();
+    m_demux.m_eAudioClipSeen->Wait();
 
     m_pFilter->SetTitleDuration(m_rtTitleDuration);
     m_pFilter->ResetPlaybackOffset(m_rtStreamOffset);
@@ -433,16 +433,16 @@ void CVideoPin::CheckPlaybackState()
 
     m_bStopWait = m_bDoFakeSeek = false;
 
-    m_demux.m_eAudioPlSeen->Reset();
-    m_demux.m_bVideoPlSeen = false;
+    m_demux.m_eAudioClipSeen->Reset();
+    m_demux.m_bVideoClipSeen = false;
   }
   else
   {
     // Audio stream requires a rebuild (in middle of the clip - user initiated)
-    if (!m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
+    if (!m_demux.m_eAudioClipSeen->Check() && !m_demux.m_bVideoClipSeen && m_demux.m_bAudioRequiresRebuild)
     {
       m_demux.m_bAudioRequiresRebuild = false;
-      m_demux.m_eAudioPlSeen->Reset();
+      m_demux.m_eAudioClipSeen->Reset();
 
       LogDebug("vid: REBUILD for audio - keep stream position");
       m_pFilter->IssueCommand(REBUILD, -1);
@@ -474,7 +474,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         return S_FALSE;
       }
 
-      if (m_demux.m_bVideoPlSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_bVideoPlSeen && !m_demux.m_eAudioPlSeen->Check())
+      if (m_demux.m_bVideoClipSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_bVideoClipSeen && !m_demux.m_eAudioClipSeen->Check())
       {
         CreateEmptySample(pSample);
         CheckPlaybackState();
@@ -524,7 +524,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
             m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
             
-            m_demux.m_bVideoPlSeen = true;
+            m_demux.m_bVideoClipSeen = true;
  
             m_bClipEndingNotified = false;
             checkPlaybackState = true;

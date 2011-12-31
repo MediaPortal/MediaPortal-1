@@ -77,8 +77,8 @@ CAudioPin::~CAudioPin()
     delete m_eFlushStart;
   }
 
-  if (m_demux.m_eAudioPlSeen)
-    m_demux.m_eAudioPlSeen->Set();
+  if (m_demux.m_eAudioClipSeen)
+    m_demux.m_eAudioClipSeen->Set();
 
   delete m_pCachedBuffer;
 }
@@ -247,7 +247,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       }
 
       if (!m_bSeekDone || m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging() || m_demux.m_bRebuildOngoing || 
-        m_demux.m_eAudioPlSeen->Check() )
+        m_demux.m_eAudioClipSeen->Check())
       {
         CreateEmptySample(pSample);
         Sleep(1);
@@ -267,7 +267,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         LogDebug("aud: set EOF");
         CreateEmptySample(pSample);
-        m_demux.m_eAudioPlSeen->Set();
+        m_demux.m_eAudioClipSeen->Set();
         return S_FALSE;
       }
 
@@ -311,7 +311,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
             checkPlaybackState = true;
 
-            m_demux.m_eAudioPlSeen->Set();
+            m_demux.m_eAudioClipSeen->Set();
           }
 
           // Do not convert LPCM to PCM if audio decoder supports LPCM (LAV audio decoder style)
@@ -607,8 +607,8 @@ HRESULT CAudioPin::OnThreadStartPlay()
     m_bDiscontinuity = true;
     m_bFirstSample = true;
 
-    if (m_demux.m_eAudioPlSeen)
-      m_demux.m_eAudioPlSeen->Reset();
+    if (m_demux.m_eAudioClipSeen)
+      m_demux.m_eAudioClipSeen->Reset();
   }
 
   return S_OK;
@@ -617,8 +617,8 @@ HRESULT CAudioPin::OnThreadStartPlay()
 HRESULT CAudioPin::OnThreadDestroy()
 {
   // Make sure video pin is not waiting for us
-  if (m_demux.m_eAudioPlSeen)
-    m_demux.m_eAudioPlSeen->Set(); 
+  if (m_demux.m_eAudioClipSeen)
+    m_demux.m_eAudioClipSeen->Set(); 
 
   return S_OK;
 }
