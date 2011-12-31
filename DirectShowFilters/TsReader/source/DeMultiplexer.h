@@ -219,6 +219,8 @@ private:
   bool m_bStarting;
 
   bool m_mpegParserTriggerFormatChange;
+  bool m_videoChanged;
+  bool m_audioChanged;
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
   CPcr m_subtitlePcr;

@@ -403,7 +403,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.checkboxSameTransponder.Name = "checkboxSameTransponder";
       this.checkboxSameTransponder.Size = new System.Drawing.Size(257, 17);
       this.checkboxSameTransponder.TabIndex = 14;
-      this.checkboxSameTransponder.Text = "Grap EPG only for channels on same transponder";
+      this.checkboxSameTransponder.Text = "Grab EPG only for channels on same transponder";
       this.checkboxSameTransponder.UseVisualStyleBackColor = true;
       // 
       // label1

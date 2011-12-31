@@ -45,6 +45,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
   {    
     #region consts
 
+    protected int _previousChannelCount = 0;
     protected const int MAX_DAYS_IN_GUIDE = 30;
     protected const int ROW_ID = 1000;
     protected const int COL_ID = 10;
@@ -470,7 +471,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
           int firstButtonYPos = 0;
           int lastButtonYPos = 0;
 
-          for (int iChannel = 0; iChannel < _channelCount; iChannel++)
+          int channelCount = _channelCount;
+          if (_previousChannelCount > channelCount)
+          {
+            channelCount = _previousChannelCount;
+          }
+
+          for (int iChannel = 0; iChannel < channelCount; iChannel++)
           {
             if (chan >= 0 && chan < _channelList.Count)
             {
