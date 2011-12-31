@@ -1456,6 +1456,17 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the tuner filter must be connected to a capture filter, otherwise <c>false</c></returns>
     private bool UseCaptureFilter()
     {
+      //TODO: hack for testing; should be removed before final merge.
+      if (
+        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-c ctuner") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-t vtuner") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-c)") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-t)")
+      )
+      {
+        return true;
+      }
+
       // First: check the media types and formats on the tuner output
       // pin. The WDK specifies (http://msdn.microsoft.com/en-us/library/ff557729%28v=vs.85%29.aspx)
       // a set of formats that the tuner and capture filter output pins should set
