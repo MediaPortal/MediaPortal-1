@@ -271,7 +271,7 @@ bool CVideoPin::CheckVideoFormat(GUID* pFormat, CLSID* pDecoder)
   else if (IsEqualGUID(*pFormat, MEDIASUBTYPE_MPEG2_VIDEO))
     decoder = &m_MPEG2decoder;
   else
-    decoder = &m_MPEG2decoder;
+    decoder = &m_MPEG2decoder; // MPEG1 uses the same decoder as MPEG2
 
   // When no decoder has been assigned for a specific format
   // assume the current decoder can be used
