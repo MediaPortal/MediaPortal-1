@@ -39,6 +39,13 @@ namespace MediaPortal.Player
   public class VideoPlayerVMR9 : VideoPlayerVMR7
   {
     protected VMR9Util Vmr9 = null;
+    private Guid LATMAAC = new Guid("000000ff-0000-0010-8000-00aa00389b71");
+    private Guid FileSourceSync = new Guid("1AC0BEBD-4D2B-45AD-BCEB-F2C41C5E3788");
+    Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
+    Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    Dictionary<string, object> PostProcessFilterMPAudio = new Dictionary<string, object>();
+    public FilterConfig filterConfig;
+    public FilterCodec filterCodec;
 
     public VideoPlayerVMR9()
     {
@@ -60,57 +67,211 @@ namespace MediaPortal.Player
       }
     }
 
+    public class FilterCodec
+    {
+      public IBaseFilter _audioRendererFilter { get; set; }
+      public IBaseFilter VideoCodec { get; set; }
+      public IBaseFilter AudioCodec { get; set; }
+    }
+
+    public virtual FilterCodec GetFilterCodec()
+    {
+      FilterCodec filterCodec = new FilterCodec();
+
+      filterCodec.VideoCodec = null;
+      filterCodec.AudioCodec = null;
+      filterCodec._audioRendererFilter = null;
+
+      return filterCodec;
+    }
+
+    public class FilterConfig
+    {
+      public FilterConfig()
+      {
+        OtherFilters = new List<string>();
+      }
+
+      public bool bAutoDecoderSettings { get; set; }
+      public bool bForceSourceSplitter { get; set; }
+      public bool wmvAudio { get; set; }
+      public bool autoloadSubtitles { get; set; }
+      public string strsplitterfilter { get; set; }
+      public string strsplitterfilefilter { get; set; }
+      public string Video { get; set; }
+      public string VideoH264 { get; set; }
+      public string VideoVC1 { get; set; }
+      public string VideoVC1I { get; set; }
+      public string VideoXVID { get; set; }
+      public string Audio { get; set; }
+      public string AudioAAC { get; set; }
+      public string AudioRenderer { get; set; }
+      public string strextAudioCodec { get; set; }
+      public string strextAudioSource { get; set; }
+      public List<string> OtherFilters { get; set; }
+    }
+
+    protected virtual FilterConfig GetFilterConfiguration()
+    {
+      FilterConfig filterConfig = new FilterConfig();
+
+      using (Settings xmlreader = new MPSettings())
+      {
+
+        // get pre-defined filter setup
+        filterConfig.bAutoDecoderSettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
+        filterConfig.bForceSourceSplitter = xmlreader.GetValueAsBool("movieplayer", "forcesourcesplitter", false);
+        filterConfig.wmvAudio = xmlreader.GetValueAsBool("movieplayer", "wmvaudio", false);
+        filterConfig.autoloadSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", false);
+        filterConfig.strsplitterfilter = xmlreader.GetValueAsString("movieplayer", "splitterfilter", "");
+        filterConfig.strsplitterfilefilter = xmlreader.GetValueAsString("movieplayer", "splitterfilefilter", "");
+        filterConfig.Video = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+        filterConfig.Audio = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
+        filterConfig.AudioAAC = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
+        filterConfig.VideoH264 = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
+        filterConfig.VideoVC1 = xmlreader.GetValueAsString("movieplayer", "vc1videocodec", "");        
+        filterConfig.VideoVC1I = xmlreader.GetValueAsString("movieplayer", "vc1ivideocodec", "");
+        filterConfig.VideoXVID = xmlreader.GetValueAsString("movieplayer", "xvidvideocodec", "");
+        filterConfig.AudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+        filterConfig.strextAudioSource = xmlreader.GetValueAsString("movieplayer", "AudioExtSplitterFilter", "");
+        filterConfig.strextAudioCodec = xmlreader.GetValueAsString("movieplayer", "AudioExtFilter", "");
+
+        // get post-processing filter setup
+        int i = 0;
+        while (xmlreader.GetValueAsString("movieplayer", "filter" + i, "undefined") != "undefined")
+        {
+          if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + i, false))
+          {
+            filterConfig.OtherFilters.Add(xmlreader.GetValueAsString("movieplayer", "filter" + i, "undefined"));
+          }
+          i++;
+        }
+      }
+      return filterConfig;
+    }
+
+    protected void disableCC()
+    {
+      while (true)
+      {
+        IBaseFilter basefilter;
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.Line21_1, out basefilter);
+        if (basefilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.Line21_2, out basefilter);
+        if (basefilter != null)
+        {
+          graphBuilder.RemoveFilter(basefilter);
+          DirectShowUtil.ReleaseComObject(basefilter);
+          basefilter = null;
+          Log.Info("VideoPlayer9: Cleanup Captions");
+        }
+        else
+          break;
+      }
+    }
+
+    protected void disableISR()
+    {
+      #region Remove isr
+      //remove InternalScriptRenderer as it takes subtitle pin
+      IBaseFilter isr = null;
+      DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.InternalScriptRenderer, out isr);
+      if (isr != null)
+      {
+        graphBuilder.RemoveFilter(isr);
+        DirectShowUtil.ReleaseComObject(isr);
+      }
+      #endregion
+    }
+
+    protected void disableVobsub()
+    {
+      while (true)
+      {
+        IBaseFilter basefilter;
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out basefilter);
+        if (basefilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubNormal, out basefilter);
+        if (basefilter != null)
+        {
+          graphBuilder.RemoveFilter(basefilter);
+          DirectShowUtil.ReleaseComObject(basefilter);
+          basefilter = null;
+          Log.Info("VideoPlayer9: Cleanup DirectVobSub");
+        }
+        else
+          break;
+      }
+    }
+
+    /*protected void EnableClock()
+    {
+      //Get Audio Renderer
+      if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+      {
+        filterCodec._audioRendererFilter = DirectShowUtil.GetFilterByName(graphBuilder, filterConfig.AudioRenderer);
+      }
+      if (filterCodec._audioRendererFilter != null)
+      {
+        IMediaFilter mp = (IMediaFilter)graphBuilder;
+        IReferenceClock clock = (IReferenceClock)filterCodec._audioRendererFilter;
+        int hr = mp.SetSyncSource(null);
+        hr = mp.SetSyncSource(clock);
+      }
+    }*/
+
+    protected void RemoveAudioR()
+    {
+      //Get Audio Renderer
+      if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+      {
+        filterCodec._audioRendererFilter = DirectShowUtil.GetFilterByName(graphBuilder, filterConfig.AudioRenderer);
+      }
+      //Detection if it's the good audio renderer connected
+      bool ResultPinAudioRenderer = false;
+      IPin PinAudioRenderer = DsFindPin.ByDirection(filterCodec._audioRendererFilter, PinDirection.Input, 0); //audio
+      if (PinAudioRenderer != null)
+      DirectShowUtil.IsPinConnected(PinAudioRenderer, out ResultPinAudioRenderer);
+      if (!ResultPinAudioRenderer && filterCodec._audioRendererFilter != null)
+      {
+        this.graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
+        DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
+        filterCodec._audioRendererFilter = null;
+      }
+      if (PinAudioRenderer != null)
+      {
+        DirectShowUtil.ReleaseComObject(PinAudioRenderer);
+        PinAudioRenderer = null;
+      }
+    }
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces()
     {
+      GetInterface = true;
       try
       {
         graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+        _mediaInfo = new MediaInfoWrapper(m_strCurrentFile);
         // add preferred video & audio codecs
         int hr;
-        int intFilters = 0; // FlipGer: count custom filters
-        string strVideoCodec = "";
-        string strH264VideoCodec = "";
-        string strAudioCodec = "";
-        string strAACAudioCodec = "";
-        string strAudiorenderer = "";
-        string strFilters = ""; // FlipGer: collect custom filters        
-        bool wmvAudio;
-        bool autoloadSubtitles;
-        bool bAutoDecoderSettings = false;
+        filterConfig = GetFilterConfiguration();
 
-        using (Settings xmlreader = new MPSettings())
-        {
-          bAutoDecoderSettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
-          strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
-          strH264VideoCodec = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
-          strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
-          strAACAudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
-          strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-          wmvAudio = xmlreader.GetValueAsBool("movieplayer", "wmvaudio", false);
-          autoloadSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", false);
-          // FlipGer: load infos for custom filters
-          int intCount = 0;
-          while (xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
-          {
-            if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + intCount.ToString(), false))
-            {
-              strFilters += xmlreader.GetValueAsString("movieplayer", "filter" + intCount.ToString(), "undefined") + ";";
-              intFilters++;
-            }
-            intCount++;
-          }
-        }
+        string extension = Path.GetExtension(m_strCurrentFile).ToLowerInvariant();
 
-        if (bAutoDecoderSettings)
+        //Get filterCodecName
+        filterCodec = GetFilterCodec();
+
+        if (filterConfig.bAutoDecoderSettings)
         {
-          return AutoRendering(wmvAudio);
+          AutoRenderingCheck = true;
+          return AutoRendering(this.filterConfig.wmvAudio);
         }
 
         //Manually add codecs based on file extension if not in auto-settings
         // switch back to directx fullscreen mode
-        Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
+        Log.Info("VideoPlayer9: Enabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
 
@@ -119,95 +280,59 @@ namespace MediaPortal.Player
         Vmr9 = new VMR9Util();
         Vmr9.AddVMR9(graphBuilder);
         Vmr9.Enable(false);
+               
+        if (extension == ".mpls" || extension == ".bdmv")
+          filterConfig.bForceSourceSplitter = false;
 
-        IBaseFilter source = null;
-        graphBuilder.AddSourceFilter(m_strCurrentFile, null, out source);
-        string extension = Path.GetExtension(m_strCurrentFile).ToLower();
-
-        switch (extension)
+        _interfaceSourceFilter = filterConfig.bForceSourceSplitter ? DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilter) : null;
+        if (_interfaceSourceFilter == null && !filterConfig.bForceSourceSplitter)
         {
-          case ".wmv":
-          case ".asf":
+          graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
+        }
+        else
+        {
+          try
+          {
+            int result = ((IFileSourceFilter)_interfaceSourceFilter).Load(m_strCurrentFile, null);
+            if (result != 0)
             {
-              //strVideoCodec = "WMVideo Decoder DMO"; //allow e.g. ffdshow usage
-              strH264VideoCodec = "";
-              strAudioCodec = "WMAudio Decoder DMO"; // multichannel audio needs this filter
-              strAACAudioCodec = "";
-              break;
+              graphBuilder.RemoveFilter(_interfaceSourceFilter); DirectShowUtil.ReleaseComObject(_interfaceSourceFilter); _interfaceSourceFilter = null;
+              graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);              
             }
-          case ".mkv":
-          case ".m2ts":
-          case ".mp4":
-            {
-              strVideoCodec = "";
-              break;
-            }
-          default:
-            strH264VideoCodec = "";
-            strAACAudioCodec = "";
-            break;
+          }
+
+          catch (Exception ex)
+          {
+            Log.Error("VideoPlayer9: Exception loading Source Filter setup in setting in DShow graph , try to load by merit", ex);
+            graphBuilder.RemoveFilter(_interfaceSourceFilter); DirectShowUtil.ReleaseComObject(_interfaceSourceFilter); _interfaceSourceFilter = null;
+            graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);            
+          }
         }
 
-        if (!string.IsNullOrEmpty(strVideoCodec))
-          DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
-        if (!string.IsNullOrEmpty(strH264VideoCodec) && strVideoCodec != strH264VideoCodec)
-          DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
-        if (!string.IsNullOrEmpty(strAudioCodec))
-          DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-        if (!string.IsNullOrEmpty(strAACAudioCodec) && strAudioCodec != strAACAudioCodec)
-          DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
-
-        if (strAudiorenderer.Length > 0)
+        //Detection of File Source (Async.) as source filter, return true if found
+        IBaseFilter fileSyncbaseFilter = null;
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.FilesyncSource, out fileSyncbaseFilter);
+        if (fileSyncbaseFilter == null)
+          graphBuilder.FindFilterByName("File Source (Async.)", out fileSyncbaseFilter);
+        if (fileSyncbaseFilter != null)
         {
-          DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
-        }
-        //We now add custom filters after the Audio Renderer as AC3Filter failed to connect otherwise.
-        //FlipGer: add custom filters to graph        
-        string[] arrFilters = strFilters.Split(';');
-        for (int i = 0; i < intFilters; i++)
-        {
-          DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
+          FileSync = true;
+          DirectShowUtil.ReleaseComObject(fileSyncbaseFilter);
+          fileSyncbaseFilter = null;
+          Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
         }
 
-        //Set High Resolution Output > 2 channels
-        IBaseFilter baseFilter = null;
-        bool FFDShowLoaded = false;
-        graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
-        if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
+
+        // Add preferred video filters
+        UpdateFilters("Video");
+
+        //Add Audio Renderer
+        if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
         {
-          //Set the filter setting to enable more than 2 audio channels
-          const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
-          object val = true;
-          IPropertyBag propBag = (IPropertyBag)baseFilter;
-          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
-          if (hr != 0)
-          {
-            Log.Info("VideoPlayerVMR9: Unable to turn WMAudio multichannel on. Reason: {0}", hr);
-          }
-          else
-          {
-            Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
-          }
-          if (!FFDShowLoaded)
-          {
-            IBaseFilter FFDShowAudio = DirectShowUtil.GetFilterByName(graphBuilder, FFDSHOW_AUDIO_DECODER_FILTER);
-            if (FFDShowAudio != null)
-            {
-              DirectShowUtil.ReleaseComObject(FFDShowAudio);
-              FFDShowAudio = null;
-            }
-            else
-            {
-              _FFDShowAudio = DirectShowUtil.AddFilterToGraph(graphBuilder, FFDSHOW_AUDIO_DECODER_FILTER);
-            }
-            FFDShowLoaded = true;
-          }
-          DirectShowUtil.ReleaseComObject(baseFilter);
-          baseFilter = null;
+         filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, filterConfig.AudioRenderer, false);
         }
 
         #region load external audio streams
-
         // check if current "File" is a file... it could also be a URL
         // Directory.Getfiles, ... will other give us an exception
         if (File.Exists(m_strCurrentFile))
@@ -238,9 +363,8 @@ namespace MediaPortal.Player
                   }
                   audioSwitcherLoaded = true;
                 }
-               
                 _AudioSourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, FILE_SYNC_FILTER);
-                int result = ((IFileSourceFilter)_AudioSourceFilter).Load(file, null);                
+                int result = ((IFileSourceFilter)_AudioSourceFilter).Load(file, null);
 
                 //Force using LAVFilter
                 _AudioExtSplitterFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, LAV_SPLITTER_FILTER);
@@ -260,7 +384,7 @@ namespace MediaPortal.Player
                     _AudioExtSplitterFilter = null;
                   }
                   //Trying Add Audio decoder in graph
-                  AddFilterToGraphAndRelease(strAudioCodec);
+                  AddFilterToGraphAndRelease(filterConfig.Audio);
                   graphBuilder.RenderFile(file, string.Empty);
                   Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
                   AudioExternal = true;
@@ -268,7 +392,7 @@ namespace MediaPortal.Player
                 }
 
                 //Add Audio decoder in graph
-                _AudioExtFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+                _AudioExtFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.Audio);
 
                 //Connect Filesource with the splitter
                 IPin pinOutAudioExt1 = DsFindPin.ByDirection((IBaseFilter)_AudioSourceFilter, PinDirection.Output, 0);
@@ -327,15 +451,67 @@ namespace MediaPortal.Player
           }
         }
 
-          #endregion
+        #endregion
 
-        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, source);
-        if (source != null)
+        // Add preferred audio filters
+        UpdateFilters("Audio");
+
+        #region Set High Audio
+        //Set High Resolution Output > 2 channels
+        IBaseFilter baseFilter = null;
+        bool FFDShowLoaded = false;
+        graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
+        if (baseFilter != null && filterConfig.wmvAudio != false) //Also check configuration option enabled
         {
-          DirectShowUtil.ReleaseComObject(source);
-          source = null;
+          //Set the filter setting to enable more than 2 audio channels
+          const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
+          object val = true;
+          IPropertyBag propBag = (IPropertyBag)baseFilter;
+          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
+          if (hr != 0)
+          {
+            Log.Info("VideoPlayer9: Unable to turn WMAudio multichannel on. Reason: {0}", hr);
+          }
+          else
+          {
+            Log.Info("VideoPlayer9: WMAudio Decoder now set for > 2 audio channels");
+          }
+          if (!FFDShowLoaded)
+          {
+            IBaseFilter FFDShowAudio = DirectShowUtil.GetFilterByName(graphBuilder, FFDSHOW_AUDIO_DECODER_FILTER);
+            if (FFDShowAudio != null)
+            {
+              DirectShowUtil.ReleaseComObject(FFDShowAudio);
+              FFDShowAudio = null;
+            }
+            else
+            {
+              _FFDShowAudio = DirectShowUtil.AddFilterToGraph(graphBuilder, FFDSHOW_AUDIO_DECODER_FILTER);
+            }
+            FFDShowLoaded = true;
+          }
+          DirectShowUtil.ReleaseComObject(baseFilter);
+          baseFilter = null;
         }
+        #endregion
+
+        if (_interfaceSourceFilter != null)
+        {
+          DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, _interfaceSourceFilter);
+        }
+
+        //Test and remove orphelin Audio Renderer
+        //RemoveAudioR();
+
+        //remove InternalScriptRenderer as it takes subtitle pin
+        disableISR();
+
+        //disable Closed Captions!
+        disableCC();
+
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
+
+        //EnableClock();
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
         {
@@ -371,6 +547,407 @@ namespace MediaPortal.Player
       DirectShowUtil.ReleaseComObject(dsFilter);
     }
 
+    protected override void DoGraphRebuild()
+    {
+      if (mediaCtrl != null)
+      {
+        firstinit = false;
+        FilterState state;
+        int hr = mediaCtrl.GetState(1000, out state);
+        if (state == FilterState.Stopped)
+        {
+          firstinit = true;
+        }
+
+        /*int hr;*/
+        try
+        {
+          hr = mediaCtrl.Stop();
+          DsError.ThrowExceptionForHR(hr);
+        }
+        catch (Exception error)
+        {
+          Log.Error("VideoPlayer9: Error stopping graph: {0}", error.Message);
+          //MovieEnded();
+        }
+
+        try
+        {
+          //Make sure the graph has really stopped
+          hr = mediaCtrl.GetState(1000, out state);
+          DsError.ThrowExceptionForHR(hr);
+          if (state != FilterState.Stopped)
+          {
+            Log.Error("VideoPlayer9: graph still running");
+          }
+        }
+        catch (Exception error)
+        {
+          Log.Error("VideoPlayer9: Error checking graph state: {0}", error.Message);
+        }
+
+        // this is a hack for MS Video Decoder and AC3 audio change
+        // would suggest to always do full audio and video rendering for all filters
+        IBaseFilter MSVideoCodec = null;
+        graphBuilder.FindFilterByName("Microsoft DTV-DVD Video Decoder", out MSVideoCodec);
+        if (MSVideoCodec != null)
+        {
+          iChangedMediaTypes = 3;
+          DirectShowUtil.ReleaseComObject(MSVideoCodec); MSVideoCodec = null;
+        }
+        // hack end
+        switch (iChangedMediaTypes)
+        {
+          case 1: // audio changed
+            Log.Info("VideoPlayer9: Rerendering audio pin of Splitter Source filter.");
+            UpdateFilters("Audio");
+            break;
+          case 2: // video changed
+            Log.Info("VideoPlayer9: Rerendering video pin of Splitter Source filter.");
+            UpdateFilters("Video");
+            break;
+          case 3: // both changed
+            Log.Info("VideoPlayer9: Rerendering audio and video pins of Splitter Source filter.");
+            UpdateFilters("Audio");
+            UpdateFilters("Video");
+            break;
+        }
+        if (iChangedMediaTypes != 1 && VideoChange)
+        {
+          //Release and init Post Process Filter
+          if (PostProcessingEngine.engine != null)
+          {
+            PostProcessingEngine.GetInstance().FreePostProcess();
+          }
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+          if (!postengine.LoadPostProcessing(graphBuilder))
+          {
+            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          }
+
+          //Reload ffdshow or Directvobsub subtitle engine
+          if (SubEngine.engine.ToString() != "MediaPortal.Player.Subtitles.MpcEngine" && SubEngine.engine.ToString() != "MediaPortal.Player.Subtitles.DummyEngine")
+          {
+            disableVobsub();
+            SubEngine.GetInstance().FreeSubtitles();
+            ISubEngine engine = SubEngine.GetInstance(true);
+            if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+            {
+              SubEngine.engine = new SubEngine.DummyEngine();
+            }
+          }
+        }
+        if (iChangedMediaTypes != 2)
+        {
+          if (AudioExternal)
+          {
+            RemoveAudioR();
+          }
+        }
+        if (_interfaceSourceFilter != null)
+        {
+          DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, _interfaceSourceFilter);
+          /*if (AudioExternal)
+            EnableClock();*/
+        }
+        if (iChangedMediaTypes != 1 && VideoChange)
+        {
+          if (SubEngine.engine.ToString() != "MediaPortal.Player.Subtitles.FFDShowEngine" && SubEngine.engine.ToString() != "MediaPortal.Player.Subtitles.DummyEngine")
+          {
+            FFDShowEngine.DisableFFDShowSubtitles(graphBuilder);
+          }
+        }
+
+        //remove InternalScriptRenderer as it takes subtitle pin
+        disableISR();
+
+        //disable Closed Captions!
+        disableCC();
+
+        DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
+
+        if (!firstinit && !g_Player.Paused)
+        {
+          try
+          {
+            hr = mediaCtrl.Run();
+            DsError.ThrowExceptionForHR(hr);
+          }
+          catch (Exception error)
+          {
+            Log.Error("VideoPlayer9: Error starting graph: {0}", error.Message);
+            Cleanup();
+            return;
+          }
+          Log.Info("VideoPlayer9: Reconfigure graph done");
+        }
+      }
+    }
+
+    protected void PostProcessAddVideo()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetVideoCodec().Contains(filter.ToString()) && filter.ToString() != "Core CC Parser")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterVideo.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void PostProcessAddAudio()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetAudioCodec().Contains(filter.ToString()) && filter.ToString() != "MediaPortal AudioSwitcher")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void PostProcessAddMPAudio()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetAudioCodec().Contains(filter.ToString()) && filter.ToString() == "MediaPortal AudioSwitcher")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterMPAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void UpdateFilters(string selection)
+    {
+      if (selection == "Video")
+      {
+        VideoChange = false;
+        if (PostProcessFilterVideo.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterVideo)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterVideo.Clear();
+          Log.Info("VideoPlayer9: UpdateFilters Cleanup PostProcessVideo");
+        }
+      }
+      else
+      {
+        if (PostProcessFilterAudio.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterAudio)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterAudio.Clear();
+          Log.Info("VideoPlayer9: UpdateFilters Cleanup PostProcessAudio");
+        }
+        if (PostProcessFilterMPAudio.Count > 0 && !AudioExternal)
+        {
+          foreach (var ppFilter in PostProcessFilterMPAudio)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterMPAudio.Clear();
+          Log.Info("VideoPlayer9: UpdateFilters Cleanup PostProcessMPAudio");
+        }
+      }
+
+      // we have to find first filter connected to splitter which will be removed
+      IPin pinFrom = FileSync ? DirectShowUtil.FindPin(Splitter, PinDirection.Output, selection) : DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, selection);
+      IPin pinTo;
+      if (pinFrom != null)
+      {
+        int hr = pinFrom.ConnectedTo(out pinTo);
+        if (hr >= 0 && pinTo != null)
+        {
+          PinInfo pInfo;
+          pinTo.QueryPinInfo(out pInfo);
+          FilterInfo fInfo;
+          pInfo.filter.QueryFilterInfo(out fInfo);
+          DirectShowUtil.DisconnectAllPins(graphBuilder, pInfo.filter);
+          graphBuilder.RemoveFilter(pInfo.filter);
+          Log.Debug("VideoPlayer9: UpdateFilters Remove filter - {0}", fInfo.achName);
+          DsUtils.FreePinInfo(pInfo);
+          DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        }
+        DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+      }
+
+      if (selection == "Video")
+      {
+        //Add Post Process Video Codec
+        PostProcessAddVideo();
+
+        //Add Video Codec
+        if (filterCodec.VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
+          filterCodec.VideoCodec = null;
+        }
+        filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this.graphBuilder, MatchFilters(selection));
+
+        VideoChange = true;
+      }
+      else
+      {
+        //Add Post Process MediaPortal AudioSwitcher Audio Codec
+        if (filterConfig.OtherFilters.Contains("MediaPortal AudioSwitcher") && !AudioExternal)
+        {
+          PostProcessAddMPAudio();
+        }
+
+        //Add Post Process Audio Codec
+        PostProcessAddAudio();
+
+        //Add Audio Codec
+        if (filterCodec.AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);
+          filterCodec.AudioCodec = null;
+        }
+        filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this.graphBuilder, MatchFilters(selection));
+      }
+    }
+
+    protected string MatchFilters(string format)
+    {
+      string AACCodec = "AAC";
+      string VC1Codec = "VC-1";
+      bool vc1ICodec = false;
+      bool vc1Codec = false;
+      bool aacCodec = false;
+      bool h264Codec = false;
+      bool xvidCodec = false;
+
+      //video
+      /*if (pinOut0 != null && format == "Video")
+      {
+        //Detection if the Video Stream is VC-1 on output pin of the splitter
+        IEnumMediaTypes enumMediaTypesVideo;
+        int hr = pinOut0.EnumMediaTypes(out enumMediaTypesVideo);
+        while (true)
+        {
+          AMMediaType[] mediaTypes = new AMMediaType[1];
+          int typesFetched;
+          hr = enumMediaTypesVideo.Next(1, mediaTypes, out typesFetched);
+          if (hr != 0 || typesFetched == 0) break;
+          if (mediaTypes[0].majorType == MediaType.Video && mediaTypes[0].subType == MediaSubType.VC1)
+          {
+            Log.Info("VideoPlayer9: found VC-1 video out pin");
+            vc1Codec = true;
+          }
+          if (mediaTypes[0].majorType == MediaType.Video && (mediaTypes[0].subType == MediaSubType.H264 || mediaTypes[0].subType == MediaSubType.AVC1))
+          {
+            Log.Info("VideoPlayer9: found H264 video out pin");
+            h264Codec = true;
+          }
+          if (mediaTypes[0].majorType == MediaType.Video && (mediaTypes[0].subType == MediaSubType.XVID || mediaTypes[0].subType == MediaSubType.xvid))
+          {
+            Log.Info("VideoPlayer9: found XVID video out pin");
+            xvidCodec = true;
+          }
+        }
+        DirectShowUtil.ReleaseComObject(enumMediaTypesVideo);
+        enumMediaTypesVideo = null;
+      }      
+
+      //audio
+      if (pinOut1 != null && format == "Audio")
+      {
+        //Detection if the Audio Stream is AAC on output pin of the splitter
+        IEnumMediaTypes enumMediaTypesAudio;
+        int hr = pinOut1.EnumMediaTypes(out enumMediaTypesAudio);
+        while (true)
+        {
+          AMMediaType[] mediaTypes = new AMMediaType[1];
+          int typesFetched;
+          hr = enumMediaTypesAudio.Next(1, mediaTypes, out typesFetched);
+          if (hr != 0 || typesFetched == 0) break;
+          if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MediaSubType.LATMAAC || mediaTypes[0].subType == LATMAAC)
+          {
+            Log.Info("VideoPlayer9: found AAC Audio out pin");
+            aacCodec = true;
+          }
+        }
+        DirectShowUtil.ReleaseComObject(enumMediaTypesAudio);
+        enumMediaTypesAudio = null;
+      }*/
+
+      //Detection of Interlaced Video, true for all type except .bdmv .mpls
+      if (_mediaInfo.IsInterlaced && (string.Equals(_mediaInfo.VideoCodec, VC1Codec)))
+        vc1ICodec = true;
+      //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
+      if (string.Equals(_mediaInfo.VideoCodec, VC1Codec))
+        vc1Codec = true;
+      //Detection of AAC Audio
+      if (_mediaInfo.AudioCodec.Contains(AACCodec))
+        aacCodec = true;
+      if (_mediaInfo.VideoCodec.Equals("AVC"))
+        h264Codec = true;
+      if (_mediaInfo.VideoCodec.Equals("XVID") || _mediaInfo.VideoCodec.Equals("DIVX") || _mediaInfo.VideoCodec.Equals("DX50"))
+        xvidCodec = true;
+
+      //Video Part
+      if (format == "Video")
+      {
+        if (h264Codec)
+        {
+          return filterConfig.VideoH264;
+        }
+        else if (vc1Codec)
+        {
+          return filterConfig.VideoVC1;
+        }
+        else if (vc1ICodec)
+        {
+          return filterConfig.VideoVC1I;
+        }
+        else if (xvidCodec)
+        {
+          return filterConfig.VideoXVID;
+        }
+        else
+        {
+          return filterConfig.Video;
+        }
+      }
+      else if (aacCodec)
+        {
+          return filterConfig.AudioAAC;
+        }
+        else
+        {
+          return filterConfig.Audio;
+        }
+    }
+
     private bool AutoRendering(bool wmvAudio)
     {
       try
@@ -397,7 +974,7 @@ namespace MediaPortal.Player
         DirectShowUtil.ReleaseComObject(enumFilters);
 
         // switch back to directx fullscreen mode
-        Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
+        Log.Info("VideoPlayer9: Enabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
 
@@ -507,24 +1084,88 @@ namespace MediaPortal.Player
         basicVideo = null;
         SubEngine.GetInstance().FreeSubtitles();
         PostProcessingEngine.GetInstance().FreePostProcess();
+        Log.Info("VideoPlayer9: Cleanup Sub/PostProcess");
+
+        #region Cleanup Sebastiii
+
+        if (Splitter != null)
+        {
+          DirectShowUtil.ReleaseComObject(Splitter);//, 5000);
+          Splitter = null;
+          Log.Info("VideoPlayer9: Cleanup Splitter");
+        }
+
+        if (filterCodec != null && filterCodec.VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);//, 5000);
+          filterCodec.VideoCodec = null;
+          Log.Info("VideoPlayer9: Cleanup VideoCodec");
+        }
+
+        if (filterCodec != null && filterCodec.AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);//, 5000);
+          filterCodec.AudioCodec = null;
+          Log.Info("VideoPlayer9: Cleanup AudioCodec");
+        }
+
+        if (filterCodec != null && filterCodec._audioRendererFilter != null)
+        {
+          //DirectShowUtil.DisconnectAllPins(graphBuilder, filterCodec._audioRendererFilter);
+          //graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
+          //while (DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter) > 0) ;
+          DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
+          filterCodec._audioRendererFilter = null;
+          Log.Info("VideoPlayer9: Cleanup AudioRenderer");
+        }
+
+        if (_interfaceSourceFilter != null)
+        {
+          DirectShowUtil.ReleaseComObject(_interfaceSourceFilter);//, 5000);
+          _interfaceSourceFilter = null;
+          Log.Info("VideoPlayer9: Cleanup InterfaceSourceFilter");
+        }
+
+        //Test to ReleaseComObject from PostProcessFilter list objects.
+        foreach (var ppFilter in PostProcessFilterVideo)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterVideo.Clear();
+        foreach (var ppFilter in PostProcessFilterAudio)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterAudio.Clear();
+        Log.Info("VideoPlayer9: Cleanup PostProcess");
+        foreach (var ppFilter in PostProcessFilterMPAudio)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterMPAudio.Clear();
+        Log.Info("VideoPlayer9: Cleanup MP Audio Swither");
 
         if (_FFDShowAudio != null)
         {
           DirectShowUtil.ReleaseComObject(_FFDShowAudio);
           _FFDShowAudio = null;
+          Log.Info("VideoPlayer9: Cleanup _FFDShowAudio");
         }
-
         if (_audioSwitcher != null)
         {
           DirectShowUtil.ReleaseComObject(_audioSwitcher);
           _audioSwitcher = null;
+          Log.Info("VideoPlayer9: Cleanup _AudioSwitcher");
         }
+
+        #endregion
 
         if (Vmr9 != null)
         {
           Vmr9.Enable(false);
           Vmr9.SafeDispose();
           Vmr9 = null;
+          Log.Info("VideoPlayer9: Cleanup VMR9");
         }
 
         if (graphBuilder != null)
@@ -537,17 +1178,23 @@ namespace MediaPortal.Player
           }
           DirectShowUtil.ReleaseComObject(graphBuilder);
           graphBuilder = null;
+          Log.Info("VideoPlayer9: Cleanup Graphbuilder");
         }
+
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
       }
       catch (Exception ex)
       {
-        Log.Error("VideoPlayerVMR9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("VideoPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
       //switch back to directx windowed mode
-      Log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
+      Log.Info("VideoPlayer9: Disabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msg);
     }

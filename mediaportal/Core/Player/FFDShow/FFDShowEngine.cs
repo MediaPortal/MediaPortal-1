@@ -65,6 +65,34 @@ namespace MediaPortal.Player.Subtitles
           DirectShowUtil.ReleaseComObject(baseFilter);
         }
       }
+    }
+
+    public static void EnableFFDShowSubtitles(IGraphBuilder graphBuilder)
+    {
+      // no instance of engine yet created or no ffdshow api, try to find it
+      IBaseFilter baseFilter = null;
+      DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
+      if (baseFilter == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
+      if (baseFilter == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoRawGuid, out baseFilter);
+
+      if (baseFilter != null)
+      {
+        IffdshowDec ffdshowDec = baseFilter as IffdshowDec;
+        if (ffdshowDec != null)
+        {
+          // use a temporary instance of the API, as it is only used here, to disable subs
+          FFDShowAPI tempffdshowAPI = new FFDShowAPI((object)baseFilter);
+          tempffdshowAPI.DoShowSubtitles = true;
+          Log.Info("FFDshow interfaces found -> Subtitles disabled");
+          tempffdshowAPI.Dispose();
+        }
+        else
+        {
+          DirectShowUtil.ReleaseComObject(baseFilter);
+        }
+      }
     } 
 
     protected override void LoadAdvancedSettings(Settings xmlreader)

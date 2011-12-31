@@ -241,6 +241,16 @@ namespace MediaPortal.Player
     protected IBaseFilter _AudioSourceFilter = null;
     protected IBaseFilter _AudioExtFilter = null;
     protected IBaseFilter _AudioExtSplitterFilter = null;
+    protected static MediaInfoWrapper _mediaInfo = null;
+    protected IBaseFilter _interfaceSourceFilter = null;
+    protected IBaseFilter Splitter = null;
+    protected bool FileSync = false;
+    protected int iChangedMediaTypes;
+    protected bool SourceFilesyncFind = false;
+    protected bool GetInterface = false;
+    protected bool AutoRenderingCheck = false;
+    protected bool VideoChange = false;
+    protected bool firstinit = false;
 
     public override double[] Chapters
     {
@@ -1122,6 +1132,8 @@ namespace MediaPortal.Player
     // VMR7 is no longer used and GetInterfaces() overridden by VideoPlayerVMR9
     protected abstract bool GetInterfaces();
 
+    protected abstract void DoGraphRebuild();
+
     /// <summary> do cleanup and release DirectShow. </summary>
     // VMR7 is no longer used and CloseInterfaces() overridden by VideoPlayerVMR9
     protected abstract void CloseInterfaces();
@@ -1293,7 +1305,7 @@ namespace MediaPortal.Player
         EnableStream(FStreams.GetStreamInfos(StreamType.Audio, value).Id, AMStreamSelectEnableFlags.Enable,
                      FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
 
-        if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Name == "Audio " && AudioExternal)
+        if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Name == "Audio " && AudioExternal && !AutoRenderingCheck && GetInterface)
         {
           EnableStream(FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Id, 0,
                        FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
@@ -1301,6 +1313,11 @@ namespace MediaPortal.Player
                        FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
         }
 
+        if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && !AutoRenderingCheck && GetInterface)
+        {
+          iChangedMediaTypes = 3;
+          //DoGraphRebuild();
+        }
         return;
       }
     }
@@ -1904,7 +1921,7 @@ namespace MediaPortal.Player
                     case StreamType.Audio:
                     case StreamType.Edition:
                     case StreamType.PostProcessing:
-                      if (FSInfos.Type == StreamType.Audio && FSInfos.Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FSInfos.Name == "Audio ")
+                      if (FSInfos.Type == StreamType.Audio && FSInfos.Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FSInfos.Name == "Audio " && !AutoRenderingCheck && GetInterface)
                       {
                         FStreams.AddStreamInfosEx(FSInfos);
                         break;
@@ -1914,6 +1931,11 @@ namespace MediaPortal.Player
                         FSInfos.Current = true;
                         pStrm.Enable(FSInfos.Id, 0);
                         pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
+                        if (FSInfos.Type == StreamType.Audio && FSInfos.Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && GetInterface && !AutoRenderingCheck)
+                        {
+                          iChangedMediaTypes = 1;
+                          //DoGraphRebuild();
+                        }
                       }
                       goto default;
                     default:
