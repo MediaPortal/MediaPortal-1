@@ -32,184 +32,58 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for Turbosight tuners, including
-  /// clones from Prof, Satrade and Omicom.
+  /// A class for handling conditional access and DiSEqC for Turbosight tuners.
   /// </summary>
   public class Turbosight : IDiSEqCController, ICiMenuActions, IDisposable
   {
     #region enums
 
+    // PCIe/PCI only.
     private enum BdaExtensionProperty
     {
-      DiseqcMessage = 0,    // Custom property for DiSEqC messaging.
-      DiseqcInit,           // Custom property for intialising DiSEqC.
-      ScanFrequency,        // (Not supported...)
-      ChannelChange,        // Custom property for changing channel.
-      DemodInfo,            // Custom property for returning demod FW state and version.
-      EffectiveFrequency,   // (Not supported...)
-      SignalStatus,         // Custom property for retrieving signal quality, strength, BER and other attributes.
-      LockStatus,           // Custom property for retrieving demodulator lock indicators.
-      ErrorControl,         // Custom property for controlling error correction and BER window.
-      ChannelInfo,          // Custom property for retrieving the locked values of frequency, symbol rate etc. after corrections and adjustments.
-      NbcParams             // Custom property for setting DVB-S2 parameters that could not initially be set through BDA interfaces.
+      Reserved = 0,
+      BlindScan = 11,     // Property for accessing and controlling the hardware blind scan capabilities.
+      TbsAccess = 21      // TBS property for enabling control of the common properties in the BdaExtensionCommand enum.
     }
 
-    private enum BdaExtensionCommand : uint
+    // USB (QBOX) only.
+    private enum UsbBdaExtensionProperty
     {
-      LnbPower = 0,
-      Motor,
-      Tone,
-      Diseqc
+      Reserved = 0,
+      Ir = 1,             // Property for retrieving IR codes from the device's IR receiver.
+      BlindScan = 9,      // Property for accessing and controlling the hardware blind scan capabilities.
+      TbsAccess = 18      // TBS property for enabling control of the common properties in the TbsAccessMode enum.
     }
 
-    /// <summary>
-    /// Enum listing all possible 22 kHz oscillator states.
-    /// </summary>
-    protected enum Tbs22k : byte
+    // Common properties that can be controlled on all TBS products.
+    private enum TbsAccessMode : uint
     {
-      /// Oscillator off.
-      Off = 0,
-      /// Oscillator on.
-      On
-    }
-
-    /// <summary>
-    /// Enum listing all possible tone burst (simple DiSEqC) messages.
-    /// </summary>
-    protected enum TbsToneBurst : byte
-    {
-      /// Tone burst (simple A).
-      ToneBurst = 0,
-      /// Data burst (simple B).
-      DataBurst,
-      /// Off (no message).
-      Off
-    }
-
-    private enum TbsToneModulation : uint
-    {
-      Undefined = 0,        // (Results in an error - *do not use*!)
-      Modulated,
-      Unmodulated
-    }
-
-    private enum TbsDiseqcReceiveMode : uint
-    {
-      Interrogation = 0,    // Expecting multiple devices attached.
-      QuickReply,           // Expecting 1 response (receiving is suspended after 1st response).
-      NoReply,              // Expecting no response(s).
-    }
-
-    private enum TbsPilot : uint
-    {
-      Off = 0,
-      On,
-      Unknown               // (Not used...)
-    }
-
-    private enum TbsRollOff : uint
-    {
-      Undefined = 0xff,
-      Twenty = 0,           // 0.2
-      TwentyFive,           // 0.25
-      ThirtyFive            // 0.35
-    }
-
-    private enum TbsDvbsStandard : uint
-    {
-      Auto = 0,
-      Dvbs,
-      Dvbs2
+      LnbPower = 0,       // Control the LNB power supply.
+      Diseqc,             // Send and receive DiSEqC messages.
+      Tone                // Control the 22 kHz oscillator state.
     }
 
     private enum TbsLnbPower : uint
     {
       Off = 0,
-      On
+      High,               // 18 V - linear horizontal, circular left.
+      Low,                // 13 V - linear vertical, circular right.
+      On                  // Power on using the previous voltage.
     }
 
-    private enum TbsIrProperty
+    private enum TbsTone : uint
     {
-      Keystrokes = 0,
-      Command
-    }
-
-    /// <summary>
-    /// Enum listing all possible remote button codes.
-    /// </summary>
-    protected enum TbsIrCode : byte
-    {
-      /// Recall
-      Recall = 0x80,
-      /// Up
-      Up1 = 0x81,
-      /// Right
-      Right1 = 0x82,
-      /// Record
-      Record = 0x83,
-      /// Power
-      Power = 0x84,
-      /// 3
-      Three = 0x85,
-      /// 2
-      Two = 0x86,
-      /// 1
-      One = 0x87,
-      /// Down
-      Down1 = 0x88,
-      /// 6
-      Six = 0x89,
-      /// 5
-      Five = 0x8a,
-      /// 4
-      Four = 0x8b,
-      /// Left
-      Left1 = 0x8c,
-      /// 9
-      Nine = 0x8d,
-      /// 8
-      Eight = 0x8e,
-      /// 7
-      Seven = 0x8f,
-      /// Left
-      Left2 = 0x90,
-      /// Up
-      Up2 = 0x91,
-      /// 0
-      Zero = 0x92,
-      /// Right
-      Right2 = 0x93,
-      /// Mute
-      Mute = 0x94,
-      /// Tab
-      Tab = 0x95,
-      /// Down
-      Down2 = 0x96,
-      /// EPG
-      Epg = 0x97,
-      /// Pause
-      Pause = 0x98,
-      /// Okay
-      Ok = 0x99,
-      /// Snapshot (screenshot)
-      Snapshot = 0x9a,
-      /// Information
-      Info = 0x9c,
-      /// Play
-      Play = 0x9b,
-      /// Toggle full screen
-      FullScreen = 0x9d,
-      /// Menu
-      Menu = 0x9e,
-      /// Exit
-      Exit = 0x9f
+      Off = 0,
+      On,                 // Continuous tone on.
+      BurstUnmodulated,   // Simple DiSEqC port A (tone burst).
+      BurstModulated      // Simple DiSEqC port B (data burst).
     }
 
     private enum TbsMmiMessage : byte
     {
       Null = 0,
-      ApplicationInfo = 0x01,     // PC <--
-      CaInfo = 0x02,              // PC <--
+      ApplicationInfo = 0x01,     // PC <-->
+      CaInfo = 0x02,              // PC <-->
       //CaPmt = 0x03,               // PC -->
       //CaPmtReply = 0x04,          // PC <--
       DateTimeEnquiry = 0x05,     // PC <--
@@ -226,12 +100,68 @@ namespace TvLibrary.Implementations.DVB
       //SetDateTime = 0x12          // PC <--
     }
 
+    #region IR remote
+
+    // PCIe/PCI only.
+    private enum TbsIrProperty
+    {
+      Codes = 0,
+      ReceiverCommand
+    }
+
+    private enum TbsIrCode : byte
+    {
+      Recall = 0x80,
+      Up1 = 0x81,
+      Right1 = 0x82,
+      Record = 0x83,
+      Power = 0x84,
+      Three = 0x85,
+      Two = 0x86,
+      One = 0x87,
+      Down1 = 0x88,
+      Six = 0x89,
+      Five = 0x8a,
+      Four = 0x8b,
+      Left1 = 0x8c,
+      Nine = 0x8d,
+      Eight = 0x8e,
+      Seven = 0x8f,
+      Left2 = 0x90,
+      Up2 = 0x91,
+      Zero = 0x92,
+      Right2 = 0x93,
+      Mute = 0x94,
+      Tab = 0x95,
+      Down2 = 0x96,
+      Epg = 0x97,
+      Pause = 0x98,
+      Ok = 0x99,
+      Snapshot = 0x9a,
+      Info = 0x9c,
+      Play = 0x9b,
+      FullScreen = 0x9d,
+      Menu = 0x9e,
+      Exit = 0x9f
+    }
+
+    // PCIe/PCI only.
+    private enum TbsIrReceiverCommand : byte
+    {
+      Start = 1,
+      Stop,
+      Flush
+    }
+
+    #endregion
+
     #endregion
 
     #region DLL imports
 
     /// <summary>
-    /// Open the CI interface.
+    /// Open the CI interface. This function can only be called once after the graph is built. The graph must be destroyed
+    /// and rebuilt if you want to reset the CI interface.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="deviceName">The corresponding DsDevice name.</param>
@@ -276,46 +206,42 @@ namespace TvLibrary.Implementations.DVB
     #region structs
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct NbcPropertyParams
+    private struct TbsAccessParams
     {
-      public TbsRollOff RollOff;
-      public TbsPilot Pilot;
-      public TbsDvbsStandard DvbsStandard;
-      public BinaryConvolutionCodeRate InnerFecRate;
-      public ModulationType ModulationType;
-    }
-
-    /// <summary>
-    /// For use with new TBS tuners such as the TBS6984, TBS6925... etc.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct DiseqcPropertyParams
-    {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
-      public byte[] Message;
-      public byte MessageLength;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct BdaExtensionParams
-    {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcTxMessageLength)]
-      public byte[] DiseqcTransmitMessage;
-      public byte DiseqcTransmitMessageLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcRxMessageLength)]
-      public byte[] DiseqcReceiveMessage;
-      public byte DiseqcReceiveMessageLength;
-      private byte Padding1;
-      private byte Padding2;
-      public TbsToneModulation ToneModulation;
-      public TbsDiseqcReceiveMode ReceiveMode;
-      public BdaExtensionCommand Command;
-      public Tbs22k Tone22k;
-      public TbsToneBurst ToneBurst;
-      public byte MicroControllerParityErrors;        // Parity errors: 0 indicates no errors, binary 1 indicates an error.
-      public byte MicroControllerReplyErrors;         // 1 in bit i indicates error in byte i. 
-      public Int32 IsLastMessage;
+      public TbsAccessMode AccessMode;
+      public TbsTone Tone;
+      private UInt32 Reserved1;
       public TbsLnbPower LnbPower;
+
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      public byte[] DiseqcTransmitMessage;
+      public UInt32 DiseqcTransmitMessageLength;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      public byte[] DiseqcReceiveMessage;
+      public UInt32 DiseqcReceiveMessageLength;
+
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      public byte[] Reserved2;
+    }
+
+    // PCIe/PCI only.
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    private struct IrCommand
+    {
+      public UInt32 Address;
+      public UInt32 Command;
+    }
+
+    // USB (QBOX) only.
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    private struct UsbIrCommand
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+      private byte[] Reserved1;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+      public byte[] Codes;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 244)]
+      private byte[] Reserved2;
     }
 
     #endregion
@@ -323,20 +249,17 @@ namespace TvLibrary.Implementations.DVB
     #region constants
 
     private static readonly Guid BdaExtensionPropertySet = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
+    private static readonly Guid UsbBdaExtensionPropertySet = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
     private static readonly Guid IrPropertySet = new Guid(0xb51c4994, 0x0054, 0x4749, 0x82, 0x43, 0x02, 0x9a, 0x66, 0x86, 0x36, 0x36);
 
-    private const int BdaExtensionParamsSize = 188;
-    private const int NbcPropertyParamsSize = 20;
-    private const int DiseqcPropertyParamsSize = 11;
-    private const int MaxDiseqcMessageLength = 10;
-    private const byte MaxDiseqcTxMessageLength = 151;  // 3 bytes per message * 50 messages
-    private const byte MaxDiseqcRxMessageLength = 9;    // reply fifo size, do not increase (hardware limitation)
+    private const int TbsAccessParamsSize = 536;
+    private const int MaxDiseqcMessageLength = 128;
     private const int MaxPmtLength = 1024;
 
     private const int MmiMessageBufferSize = 512;
     private const int MmiResponseBufferSize = 2048;
 
-    private static readonly string[] TunersWithCiSlot = new string[]
+    private static readonly string[] TunersWithCiSlots = new string[]
     {
       "TBS 5980 CI Tuner",
       "TBS 6928 DVBS/S2 Tuner"
@@ -355,23 +278,26 @@ namespace TvLibrary.Implementations.DVB
 
     /// A buffer for general use in synchronised methods in the
     /// Turbosight and TurbosightUsb classes.
-    protected IntPtr _generalBuffer = IntPtr.Zero;
+    private IntPtr _generalBuffer = IntPtr.Zero;
 
     private IntPtr _ciHandle = IntPtr.Zero;
 
-    /// The device's tuner filter.
-    protected IBaseFilter _tunerFilter = null;
+    private IBaseFilter _tunerFilter = null;
+    private String _tunerFilterName = null;
 
+    private Guid _propertySetGuid = Guid.Empty;
     private IKsPropertySet _propertySet = null;
-    private KSPropertySupport _diseqcSupportMethod = KSPropertySupport.Get;
+    private int _tbsAccessProperty = 0;
 
     private bool _isTurbosight = false;
+    private bool _isUsb = false;
     private bool _isCiSlotPresent = false;
     private bool _isCamPresent = false;
     private bool _isCamReady = false;
 
     private bool _stopMmiHandlerThread = false;
     private Thread _mmiHandlerThread = null;
+    private List<byte> _mmiMessageQueue = null;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
 
     #endregion
@@ -384,46 +310,70 @@ namespace TvLibrary.Implementations.DVB
     {
       if (tunerFilter == null)
       {
+        Log.Log.Debug("Turbosight: tuner filter is null");
         return;
       }
-      IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
-      _propertySet = pin as IKsPropertySet;
-      if (_propertySet == null)
+
+      // Check the tuner filter name first. Other manufacturers that do not support these interfaces
+      // use the same GUIDs which makes things a little tricky.
+      _tunerFilterName = FilterGraphTools.GetFilterName(tunerFilter);
+      if (_tunerFilterName == null || (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX")))
+      {
+        Log.Log.Debug("Turbosight: tuner filter name does not match");
+        return;
+      }
+
+      // Now check for the USB interface first as per TBS SDK recommendations.
+      KSPropertySupport support;
+      int hr;
+      _propertySet = tunerFilter as IKsPropertySet;
+      if (_propertySet != null)
+      {
+        hr = _propertySet.QuerySupported(UsbBdaExtensionPropertySet, (int)UsbBdaExtensionProperty.TbsAccess, out support);
+        if (hr == 0)
+        {
+          // Okay, we've got a USB tuner here.
+          Log.Log.Debug("Turbosight: supported tuner detected (USB interface)");
+          _isTurbosight = true;
+          _isUsb = true;
+          _propertySetGuid = UsbBdaExtensionPropertySet;
+          _tbsAccessProperty = (int)UsbBdaExtensionProperty.TbsAccess;
+        }
+      }
+
+      // If the tuner doesn't support the USB interface then check for the PCIe/PCI interface.
+      if (!_isTurbosight)
+      {
+        IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
+        _propertySet = pin as IKsPropertySet;
+        if (_propertySet != null)
+        {
+          hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.TbsAccess, out support);
+          if (hr == 0)
+          {
+            // Okay, we've got a PCIe or PCI tuner here.
+            Log.Log.Debug("Turbosight: supported tuner detected (PCIe/PCI interface)");
+            _isTurbosight = true;
+            _isUsb = false;
+            _propertySetGuid = BdaExtensionPropertySet;
+            _tbsAccessProperty = (int)BdaExtensionProperty.TbsAccess;
+          }
+        }
+        if (pin != null && !_isTurbosight)
+        {
+          Release.ComObject(pin);
+        }
+      }
+
+      if (!_isTurbosight)
       {
         return;
       }
 
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-                                  out _diseqcSupportMethod);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Turbosight: failed to query property support, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-      // Newer tuners (TBS6984, TBS6925... etc.) support properties using the set method
-      // while older tuners (TBS6980, TBS8920... etc.) use the get method. If the set
-      // method is supported then it is assumed to be the correct method to use even
-      // if the get method is also supported.
-      // TODO: this is a problem for generic Conexant support.
-      if ((_diseqcSupportMethod & KSPropertySupport.Get) != 0)
-      {
-        Log.Log.Debug("Turbosight: get method supported");
-        _isTurbosight = true;
-      }
-      if ((_diseqcSupportMethod & KSPropertySupport.Set) != 0)
-      {
-        Log.Log.Debug("Turbosight: set method supported");
-        _isTurbosight = true;
-      }
-      if (_isTurbosight)
-      {
-        Log.Log.Debug("Turbosight: supported tuner detected");
-        _isTurbosight = true;
-        _tunerFilter = tunerFilter;
-        _generalBuffer = Marshal.AllocCoTaskMem(1024);
-        OpenCi();
-        SetLnbPowerState(true);
-      }
+      _tunerFilter = tunerFilter;
+      _generalBuffer = Marshal.AllocCoTaskMem(TbsAccessParamsSize);
+      OpenCi();
+      SetLnbPowerState(true);
     }
 
     /// <summary>
@@ -443,42 +393,28 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="powerOn"><c>True</c> to turn power supply on, otherwise <c>false</c>.</param>
     /// <returns><c>true</c> if the power supply state is set successfully, otherwise <c>false</c></returns>
-    public virtual bool SetLnbPowerState(bool powerOn)
+    public bool SetLnbPowerState(bool powerOn)
     {
       Log.Log.Debug("Turbosight: set LNB power state, on = {0}", powerOn);
 
-      BdaExtensionParams command = new BdaExtensionParams();
-      command.Command = BdaExtensionCommand.LnbPower;
+      TbsAccessParams accessParams = new TbsAccessParams();
+      accessParams.AccessMode = TbsAccessMode.LnbPower;
       if (powerOn)
       {
-        command.LnbPower = TbsLnbPower.On;
+        accessParams.LnbPower = TbsLnbPower.On;
       }
       else
       {
-        command.LnbPower = TbsLnbPower.Off;
+        accessParams.LnbPower = TbsLnbPower.Off;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
 
-      int hr;
-      if ((_diseqcSupportMethod & KSPropertySupport.Get) == 0)
-      {
-        Log.Log.Debug("Turbosight: using set method");
-        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-          _generalBuffer, BdaExtensionParamsSize,
-          _generalBuffer, BdaExtensionParamsSize
-        );
-      }
-      else
-      {
-        Log.Log.Debug("Turbosight: using get method");
-        int bytesReturned = 0;
-        hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-          _generalBuffer, BdaExtensionParamsSize,
-          _generalBuffer, BdaExtensionParamsSize, out bytesReturned
-        );
-      }
+      int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
+        _generalBuffer, TbsAccessParamsSize,
+        _generalBuffer, TbsAccessParamsSize
+      );
       if (hr == 0)
       {
         Log.Log.Debug("Turbosight: result = success");
@@ -495,59 +431,66 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="toneBurstState">The tone/data burst state.</param>
     /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    protected virtual bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       Log.Log.Debug("Turbosight: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      TbsAccessParams accessParams = new TbsAccessParams();
+      accessParams.AccessMode = TbsAccessMode.Tone;
+      bool success = true;
+      int hr;
 
-      BdaExtensionParams command = new BdaExtensionParams();
-      command.Command = BdaExtensionCommand.Tone;
-      command.ToneBurst = TbsToneBurst.Off;
-      command.ToneModulation = TbsToneModulation.Unmodulated;   // Can't use undefined, so use simple A instead.
-      if (toneBurstState == ToneBurst.ToneBurst)
+      // Send the burst command first.
+      if (toneBurstState != ToneBurst.Off)
       {
-        command.ToneBurst = TbsToneBurst.ToneBurst;
-      }
-      else if (toneBurstState == ToneBurst.DataBurst)
-      {
-        command.ToneBurst = TbsToneBurst.DataBurst;
-        command.ToneModulation = TbsToneModulation.Modulated;
+        accessParams.Tone = TbsTone.BurstUnmodulated;
+        if (toneBurstState == ToneBurst.DataBurst)
+        {
+          accessParams.Tone = TbsTone.BurstModulated;
+        }
+
+        Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+        DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+
+        hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
+          _generalBuffer, TbsAccessParamsSize,
+          _generalBuffer, TbsAccessParamsSize
+        );
+        if (hr == 0)
+        {
+          Log.Log.Debug("Turbosight: burst result = success");
+        }
+        else
+        {
+          Log.Log.Debug("Turbosight: burst result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
+        }
       }
 
-      command.Tone22k = Tbs22k.Off;
+      // Now set the 22 kHz tone state.
+      accessParams.Tone = TbsTone.Off;
       if (tone22kState == Tone22k.On)
       {
-        command.Tone22k = Tbs22k.On;
+        accessParams.Tone = TbsTone.On;
       }
 
-      Marshal.StructureToPtr(command, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
 
-      int hr;
-      if ((_diseqcSupportMethod & KSPropertySupport.Get) == 0)
+      hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
+        _generalBuffer, TbsAccessParamsSize,
+        _generalBuffer, TbsAccessParamsSize
+      );
+      if (hr == 0)
       {
-        Log.Log.Debug("Turbosight: using set method");
-        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-          _generalBuffer, BdaExtensionParamsSize,
-          _generalBuffer, BdaExtensionParamsSize
-        );
+        Log.Log.Debug("Turbosight: 22 kHz result = success");
       }
       else
       {
-        Log.Log.Debug("Turbosight: using get method");
-        int bytesReturned = 0;
-        hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-          _generalBuffer, BdaExtensionParamsSize,
-          _generalBuffer, BdaExtensionParamsSize, out bytesReturned
-        );
-      }
-      if (hr == 0)
-      {
-        Log.Log.Debug("Turbosight: result = success");
-        return true;
+        Log.Log.Debug("Turbosight: 22 kHz result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        success = false;
       }
 
-      Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
+      return success;
     }
 
     /// <summary>
@@ -558,7 +501,6 @@ namespace TvLibrary.Implementations.DVB
     public DVBSChannel SetTuningParameters(DVBSChannel channel)
     {
       Log.Log.Debug("Turbosight: set tuning parameters");
-      NbcPropertyParams command = new NbcPropertyParams();
       switch (channel.InnerFecRate)
       {
         case BinaryConvolutionCodeRate.Rate1_2:
@@ -568,115 +510,40 @@ namespace TvLibrary.Implementations.DVB
         case BinaryConvolutionCodeRate.Rate4_5:
         case BinaryConvolutionCodeRate.Rate5_6:
         case BinaryConvolutionCodeRate.Rate7_8:
-          command.InnerFecRate = channel.InnerFecRate;
+          channel.InnerFecRate = channel.InnerFecRate;
           break;
         case BinaryConvolutionCodeRate.Rate8_9:
-          command.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+          channel.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
           break;
         case BinaryConvolutionCodeRate.Rate9_10:
-          command.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+          channel.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
           break;
         default:
-          command.InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
-          command.DvbsStandard = TbsDvbsStandard.Auto;
+          channel.InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
           break;
       }
-      Log.Log.Debug("  inner FEC rate = {0}", command.InnerFecRate);
-      channel.InnerFecRate = command.InnerFecRate;
+      Log.Log.Debug("  inner FEC rate = {0}", channel.InnerFecRate);
 
-      if (command.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
+      if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
       {
         if (channel.ModulationType == ModulationType.ModNotSet)
         {
-          command.ModulationType = ModulationType.ModQpsk;
-          command.DvbsStandard = TbsDvbsStandard.Dvbs;
+          channel.ModulationType = ModulationType.ModQpsk;
         }
         else if (channel.ModulationType == ModulationType.ModQpsk)
         {
-          command.ModulationType = ModulationType.ModOqpsk;
-          command.DvbsStandard = TbsDvbsStandard.Dvbs2;
+          channel.ModulationType = ModulationType.ModOqpsk;
         }
         else if (channel.ModulationType == ModulationType.Mod8Psk)
         {
-          command.ModulationType = ModulationType.ModBpsk;
-          command.DvbsStandard = TbsDvbsStandard.Dvbs2;
+          channel.ModulationType = ModulationType.ModBpsk;
         }
         else
         {
-          command.ModulationType = ModulationType.ModQpsk;
-          command.DvbsStandard = TbsDvbsStandard.Auto;
+          channel.ModulationType = ModulationType.ModNotDefined;
         }
       }
-      Log.Log.Debug("  modulation     = {0}", command.ModulationType);
-      channel.ModulationType = command.ModulationType;
-      Log.Log.Debug("  DVB standard   = {0}", command.DvbsStandard);
-
-      if (channel.Pilot == Pilot.On)
-      {
-        command.Pilot = TbsPilot.On;
-      }
-      else
-      {
-        command.Pilot = TbsPilot.Off;
-      }
-      Log.Log.Debug("  pilot          = {0}", command.Pilot);
-
-      if (channel.Rolloff == RollOff.Twenty)
-      {
-        command.RollOff = TbsRollOff.Twenty;
-      }
-      else if (channel.Rolloff == RollOff.TwentyFive)
-      {
-        command.RollOff = TbsRollOff.TwentyFive;
-      }
-      else if (channel.Rolloff == RollOff.ThirtyFive)
-      {
-        command.RollOff = TbsRollOff.ThirtyFive;
-      }
-      else
-      {
-        command.RollOff = TbsRollOff.Undefined;
-      }
-      Log.Log.Debug("  roll-off       = {0}", command.RollOff);
-
-      KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-                                  out support);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Turbosight: failed to query property support, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return channel;
-      }
-
-      Marshal.StructureToPtr(command, _generalBuffer, true);
-
-      if ((support & KSPropertySupport.Get) == 0)
-      {
-        Log.Log.Debug("Turbosight: using set method");
-        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-          _generalBuffer, NbcPropertyParamsSize,
-          _generalBuffer, NbcPropertyParamsSize
-        );
-      }
-      else
-      {
-        Log.Log.Debug("Turbosight: using get method");
-        int bytesReturned = 0;
-        hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-          _generalBuffer, NbcPropertyParamsSize,
-          _generalBuffer, NbcPropertyParamsSize, out bytesReturned
-        );
-      }
-      DVB_MMI.DumpBinary(_generalBuffer, 0, NbcPropertyParamsSize);
-
-      if (hr == 0)
-      {
-        Log.Log.Debug("Turbosight: result = success");
-      }
-      else
-      {
-        Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
+      Log.Log.Debug("  modulation     = {0}", channel.ModulationType);
 
       return channel;
     }
@@ -740,8 +607,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void ResetCi()
     {
-      CloseCi();
-      OpenCi();
+      // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple
+      // times on a filter instance *even if On_Exit_CI() is called*. The graph must be rebuilt
+      // to reset the CI.
+      /*CloseCi();
+      OpenCi();*/
     }
 
     /// <summary>
@@ -757,9 +627,9 @@ namespace TvLibrary.Implementations.DVB
       // has a CI slot.
       String tunerFilterName = FilterGraphTools.GetFilterName(_tunerFilter);
       bool ciPresent = false;
-      for (int i = 0; i < TunersWithCiSlot.Length; i++)
+      for (int i = 0; i < TunersWithCiSlots.Length; i++)
       {
-        if (tunerFilterName.Equals(TunersWithCiSlot[i]))
+        if (tunerFilterName.Equals(TunersWithCiSlots[i]))
         {
           ciPresent = true;
           break;
@@ -874,10 +744,15 @@ namespace TvLibrary.Implementations.DVB
       if (_mmiHandlerThread == null)
       {
         Log.Log.Debug("Turbosight: starting new MMI handler thread");
-        // Clear the message buffer in preparation for [first] use.
+        // Clear the message queue and buffers in preparation for [first] use.
+        _mmiMessageQueue = new List<byte>();
         for (int i = 0; i < MmiMessageBufferSize; i++)
         {
           Marshal.WriteByte(_mmiMessageBuffer, i, 0);
+        }
+        for (int i = 0; i < MmiResponseBufferSize; i++)
+        {
+          Marshal.WriteByte(_mmiResponseBuffer, i, 0);
         }
         _stopMmiHandlerThread = false;
         _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
@@ -895,11 +770,12 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Debug("Turbosight: MMI handler thread start polling");
       TbsMmiMessage message = TbsMmiMessage.Null;
-      TbsMmiMessage prevMessage = TbsMmiMessage.Null;
+      ushort sendCount = 0;
       try
       {
         while (!_stopMmiHandlerThread)
         {
+          // Check for CAM state changes.
           bool newState;
           lock (this)
           {
@@ -909,50 +785,75 @@ namespace TvLibrary.Implementations.DVB
           {
             _isCamPresent = newState;
             Log.Log.Debug("Turbosight: CAM state change, CAM present = {0}", _isCamPresent);
+            // If a CAM has just been inserted then clear the message queue - we consider
+            // any old messages as invalid now.
+            if (_isCamPresent)
+            {
+              lock (this)
+              {
+                _mmiMessageQueue = new List<byte>();
+              }
+              message = TbsMmiMessage.Null;
+            }
           }
 
-          // Do we have a message to send?
-          prevMessage = message;
-          message = TbsMmiMessage.Null;
-          lock (this)
-          {
-            message = (TbsMmiMessage)Marshal.ReadByte(_mmiMessageBuffer, 0);
-          }
-
-          // No -> sleep and continue.
-          if (!_isCamPresent || message == TbsMmiMessage.Null)
+          // If there is no CAM then we can't send or receive messages.
+          if (!_isCamPresent)
           {
             Thread.Sleep(2000);
             continue;
           }
 
-          // Yes -> clear the response buffer if this is a new message and send it.
-          if (message != prevMessage)
+          // Are we still trying to get a response?
+          if (message == TbsMmiMessage.Null)
           {
-            for (int i = 0; i < MmiResponseBufferSize; i++)
+            // No -> do we have a message to send?
+            lock (this)
             {
-              Marshal.WriteByte(_mmiResponseBuffer, i, 0);
+              // Yes -> load it into the message buffer.
+              if (_mmiMessageQueue.Count > 0)
+              {
+                ushort messageLength = _mmiMessageQueue[0];
+                message = (TbsMmiMessage)_mmiMessageQueue[1];
+                Log.Log.Debug("Turbosight: sending message {0}", message);
+                for (ushort i = 0; i < messageLength; i++)
+                {
+                  Marshal.WriteByte(_mmiMessageBuffer, i, _mmiMessageQueue[i + 1]);
+                }
+                sendCount = 0;
+              }
+              // No -> poll for unrequested messages from the CAM.
+              else
+              {
+                Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.GetMmi);
+              }
             }
           }
+
+          // Send/resend the message.
           lock (this)
           {
             TBS_ci_MMI_Process(_ciHandle, _mmiMessageBuffer, _mmiResponseBuffer);
           }
 
-          // Explicitly request a response if necessary. This is done by sending "get MMI" messages until a
-          // response is received.
-          if (message == TbsMmiMessage.EnterMenu || message == TbsMmiMessage.MenuAnswer || message == TbsMmiMessage.Answer)
+          // Do we expect a response to this message?
+          if (message == TbsMmiMessage.EnterMenu || message == TbsMmiMessage.MenuAnswer || message == TbsMmiMessage.Answer || message == TbsMmiMessage.CloseMmi)
           {
-            prevMessage = message;
-            message = TbsMmiMessage.GetMmi;
+            // No -> remove this message from the queue and move on.
             lock (this)
             {
-              Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.GetMmi);
-              TBS_ci_MMI_Process(_ciHandle, _mmiMessageBuffer, _mmiResponseBuffer);
+              ushort messageLength = _mmiMessageQueue[0];
+              _mmiMessageQueue.RemoveRange(0, messageLength + 1);
             }
+            message = TbsMmiMessage.Null;
+            if (_mmiMessageQueue.Count == 0)
+            {
+              Log.Log.Debug("Turbosight: resuming polling...");
+            }
+            continue;
           }
 
-          // Check for a response.
+          // Yes -> check for a response.
           TbsMmiMessage response = TbsMmiMessage.Null;
           response = (TbsMmiMessage)Marshal.ReadByte(_mmiResponseBuffer, 4);
           if (response == TbsMmiMessage.Null)
@@ -960,10 +861,33 @@ namespace TvLibrary.Implementations.DVB
             // Responses don't always arrive quickly so give the CAM time to respond if
             // the response isn't ready yet.
             Thread.Sleep(2000);
+
+            // If we are waiting for a response to a message that we sent
+            // directly and we haven't received a response after 10 requests
+            // then give up and move on.
+            if (message != TbsMmiMessage.Null)
+            {
+              sendCount++;
+              if (sendCount >= 10)
+              {
+                lock (this)
+                {
+                  ushort messageLength = _mmiMessageQueue[0];
+                  _mmiMessageQueue.RemoveRange(0, messageLength + 1);
+                }
+                Log.Log.Debug("Turbosight: giving up on message {0}", message);
+                message = TbsMmiMessage.Null;
+                if (_mmiMessageQueue.Count == 0)
+                {
+                  Log.Log.Debug("Turbosight: resuming polling...");
+                }
+              }
+            }
             continue;
           }
 
           Log.Log.Debug("Turbosight: received MMI response {0} to message {1}", response, message);
+          #region response handling
 
           // Get the response bytes.
           byte lsb = Marshal.ReadByte(_mmiResponseBuffer, 5);
@@ -973,10 +897,25 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Debug("Turbosight: response too long, length = {0}", length);
             // We know we haven't got the complete response (DLL internal buffer overflow),
-            // so wipe the message buffer and give up on this message.
-            lock (this)
+            // so wipe the message and response buffers and give up on this message.
+            for (int i = 0; i < MmiResponseBufferSize; i++)
             {
-              Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.Null);
+              Marshal.WriteByte(_mmiResponseBuffer, i, 0);
+            }
+            // If we requested this response directly then remove the request
+            // message from the queue.
+            if (message != TbsMmiMessage.Null)
+            {
+              lock (this)
+              {
+                ushort messageLength = _mmiMessageQueue[0];
+                _mmiMessageQueue.RemoveRange(0, messageLength + 1);
+              }
+              message = TbsMmiMessage.Null;
+              if (_mmiMessageQueue.Count == 0)
+              {
+                Log.Log.Debug("Turbosight: resuming polling...");
+              }
             }
             continue;
           }
@@ -993,24 +932,10 @@ namespace TvLibrary.Implementations.DVB
           if (response == TbsMmiMessage.ApplicationInfo)
           {
             HandleApplicationInformation(responseBytes, length);
-
-            // Special case (see EnterCIMenu()).
-            lock (this)
-            {
-              Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.CaInfo);
-            }
-            continue;
           }
           else if (response == TbsMmiMessage.CaInfo)
           {
             HandleCaInformation(responseBytes, length);
-
-            // Special case (see EnterCIMenu()).
-            lock (this)
-            {
-              Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.EnterMenu);
-            }
-            continue;
           }
           else if (response == TbsMmiMessage.Menu)
           {
@@ -1022,17 +947,32 @@ namespace TvLibrary.Implementations.DVB
           }
           else
           {
-            Log.Log.Debug("Turbosight: unexpected response");
+            Log.Log.Debug("Turbosight: unhandled response message {0}", response);
             DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
           }
 
-          // Clear the message buffer since a request has been handled.
-          // Intermediate requests will be lost, but there is nothing
-          // we can do about that - they are most likely invalid anyway.
-          lock (this)
+          // A message has been handled and now we move on to handling the
+          // next message or revert to polling for messages from the CAM.
+          for (int i = 0; i < MmiResponseBufferSize; i++)
           {
-            Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.Null);
+            Marshal.WriteByte(_mmiResponseBuffer, i, 0);
           }
+          // If we requested this response directly then remove the request
+          // message from the queue.
+          if (message != TbsMmiMessage.Null)
+          {
+            lock (this)
+            {
+              ushort messageLength = _mmiMessageQueue[0];
+              _mmiMessageQueue.RemoveRange(0, messageLength + 1);
+            }
+            message = TbsMmiMessage.Null;
+            if (_mmiMessageQueue.Count == 0)
+            {
+              Log.Log.Debug("Turbosight: resuming polling...");
+            }
+          }
+          #endregion
         }
       }
       catch (ThreadAbortException)
@@ -1074,7 +1014,7 @@ namespace TvLibrary.Implementations.DVB
       }
       int numCaIds = content[0];
       Log.Log.Debug("  # CASIDs = {0}", numCaIds);
-      int i = 0;
+      int i = 1;
       int l = 1;
       while (l + 2 <= length)
       {
@@ -1098,6 +1038,8 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
       int numChoices = content[0];
+
+      // Read all the entries into a list. Entries are null-separated.
       List<String> entries = new List<String>();
       String entry = "";
       int entryCount = 0;
@@ -1125,7 +1067,7 @@ namespace TvLibrary.Implementations.DVB
       entryCount -= 2;
       if (entryCount < 0)
       {
-        Log.Log.Debug("Turbosight: error, not enough menu data");
+        Log.Log.Debug("Turbosight: error, not enough menu entries");
         DVB_MMI.DumpBinary(content, 0, length);
         return;
       }
@@ -1140,15 +1082,13 @@ namespace TvLibrary.Implementations.DVB
       }
       for (int i = 0; i < entryCount; i++)
       {
-        Log.Log.Debug("  choice {0}  = {1}", i, entries[i + 3]);
+        Log.Log.Debug("  choice {0}  = {1}", i + 1, entries[i + 3]);
         if (_ciMenuCallbacks != null)
         {
           _ciMenuCallbacks.OnCiMenuChoice(i, entries[i + 3]);
         }
       }
 
-      // There seems to be a bug in the DLL code - sometimes the response doesn't
-      // contain the full set of choices.
       if (entryCount != numChoices)
       {
         Log.Log.Debug("Turbosight: error, numChoices != entryCount");
@@ -1209,18 +1149,24 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.Debug("Turbosight: enter menu");
 
-      // We send an "application info" message here because attempting to enter the menu will fail
-      // if you don't get the application information first. On seeing this message the MMI handler
-      // thread does the following:
-      // 1. Send the application information request.
-      // 2. Parse and log the application information response if/when it arrives.
-      // 3. Send a CA information request.
-      // 4. Parse and log the CA information response if/when it arrives.
-      // 5. Send an enter menu request.
-      // 6. Parse the response and execute callbacks as necessary.
       lock (this)
       {
-        Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.ApplicationInfo);
+        // Close any existing sessions otherwise the CAM gets confused.
+        _mmiMessageQueue.Add(1);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.CloseMmi);
+        // We send an "application info" message because attempting to enter the menu will fail
+        // if you don't get the application information first.
+        _mmiMessageQueue.Add(1);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.ApplicationInfo);
+        // The CA information is just for information purposes.
+        _mmiMessageQueue.Add(1);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.CaInfo);
+        // The main message.
+        _mmiMessageQueue.Add(1);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.EnterMenu);
+        // We have to request a response.
+        _mmiMessageQueue.Add(1);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.GetMmi);
       }
       return true;
     }
@@ -1238,7 +1184,8 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Turbosight: close menu");
       lock (this)
       {
-        Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.CloseMmi);
+        _mmiMessageQueue.Add(1);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.CloseMmi);
       }
       return true;
     }
@@ -1257,8 +1204,19 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Turbosight: select menu entry, choice = {0}", choice);
       lock (this)
       {
-        Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.MenuAnswer);
-        Marshal.WriteByte(_mmiMessageBuffer, 3, choice);
+        _mmiMessageQueue.Add(4);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.MenuAnswer);
+        _mmiMessageQueue.Add(0);
+        _mmiMessageQueue.Add(0);
+        _mmiMessageQueue.Add(choice);
+        // Don't explicitly request a response for a back request as that
+        // could choke the message queue with a message that the CAM
+        // never answers.
+        if (choice != 0)
+        {
+          _mmiMessageQueue.Add(1);
+          _mmiMessageQueue.Add((byte)TbsMmiMessage.GetMmi);
+        }
       }
       return true;
     }
@@ -1280,8 +1238,15 @@ namespace TvLibrary.Implementations.DVB
         answer = "";
       }
       Log.Log.Debug("Turbosight: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
-      byte lsb = (byte)((answer.Length + 1) % 256);
-      byte msb = (byte)((answer.Length + 1) / 256);
+
+      // The message queue requires that we can specify the entire length of the
+      // message with only one byte => answer size limit of 251.
+      if (answer.Length > 251)
+      {
+        Log.Log.Debug("Turbosight: answer too long, length = {0}", answer.Length);
+        return false;
+      }
+
       byte responseType = (byte)DVB_MMI.ResponseType.Answer;
       if (cancel)
       {
@@ -1289,14 +1254,18 @@ namespace TvLibrary.Implementations.DVB
       }
       lock (this)
       {
-        Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.Answer);
-        Marshal.WriteByte(_mmiMessageBuffer, 1, lsb);
-        Marshal.WriteByte(_mmiMessageBuffer, 2, msb);
-        Marshal.WriteByte(_mmiMessageBuffer, 3, responseType);
+        _mmiMessageQueue.Add((byte)(answer.Length + 4));
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.Answer);
+        _mmiMessageQueue.Add((byte)(answer.Length + 1));
+        _mmiMessageQueue.Add(0);
+        _mmiMessageQueue.Add(responseType);
         for (int i = 0; i < answer.Length; i++)
         {
-          Marshal.WriteByte(_mmiMessageBuffer, 4 + i, (byte)answer[i]);
+          _mmiMessageQueue.Add((byte)answer[i]);
         }
+        // We have to request a response.
+        _mmiMessageQueue.Add(1);
+        _mmiMessageQueue.Add((byte)TbsMmiMessage.GetMmi);
       }
       return true;
     }
@@ -1355,67 +1324,28 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Debug("Turbosight: send DiSEqC command");
 
-      int hr;
-      // TBS6984, 6925... etc.
-      if ((_diseqcSupportMethod & KSPropertySupport.Get) == 0)
+      if (command.Length > MaxDiseqcMessageLength)
       {
-        Log.Log.Debug("Turbosight: using set method");
-
-        if (command.Length > MaxDiseqcMessageLength)
-        {
-          Log.Log.Debug("Turbosight: command too long, length = {0}", command.Length);
-          return false;
-        }
-
-        DiseqcPropertyParams propertyParams = new DiseqcPropertyParams();
-        propertyParams.Message = new byte[MaxDiseqcMessageLength];
-        for (int i = 0; i < command.Length; i++)
-        {
-          propertyParams.Message[i] = command[i];
-        }
-        propertyParams.MessageLength = (byte)command.Length;
-
-        Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
-        DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcPropertyParamsSize);
-
-        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-          _generalBuffer, DiseqcPropertyParamsSize,
-          _generalBuffer, DiseqcPropertyParamsSize
-        );
-      }
-      // TBS6980, 6981, 8920... etc.
-      else
-      {
-        Log.Log.Debug("Turbosight: using get method");
-
-        if (command.Length > MaxDiseqcTxMessageLength)
-        {
-          Log.Log.Debug("Turbosight: command too long, length = {0}", command.Length);
-          return false;
-        }
-
-        BdaExtensionParams propertyParams = new BdaExtensionParams();
-        propertyParams.DiseqcTransmitMessage = new byte[MaxDiseqcTxMessageLength];
-        for (int i = 0; i < command.Length; i++)
-        {
-          propertyParams.DiseqcTransmitMessage[i] = command[i];
-        }
-        propertyParams.DiseqcTransmitMessageLength = (byte)command.Length;
-        propertyParams.Command = BdaExtensionCommand.Diseqc;
-        propertyParams.IsLastMessage = 1;
-        propertyParams.LnbPower = TbsLnbPower.On;
-        propertyParams.ReceiveMode = TbsDiseqcReceiveMode.NoReply;
-
-        Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
-        DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
-
-        int bytesReturned = 0;
-        hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-          _generalBuffer, BdaExtensionParamsSize,
-          _generalBuffer, BdaExtensionParamsSize, out bytesReturned
-        );
+        Log.Log.Debug("Turbosight: command too long, length = {0}", command.Length);
+        return false;
       }
 
+      TbsAccessParams accessParams = new TbsAccessParams();
+      accessParams.AccessMode = TbsAccessMode.Diseqc;
+      accessParams.DiseqcTransmitMessageLength = (uint)command.Length;
+      accessParams.DiseqcTransmitMessage = new byte[MaxDiseqcMessageLength];
+      for (int i = 0; i < command.Length; i++)
+      {
+        accessParams.DiseqcTransmitMessage[i] = command[i];
+      }
+
+      Marshal.StructureToPtr(accessParams, _generalBuffer, true);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+
+      int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
+        _generalBuffer, TbsAccessParamsSize,
+        _generalBuffer, TbsAccessParamsSize
+      );
       if (hr == 0)
       {
         Log.Log.Debug("Turbosight: result = success");
@@ -1433,10 +1363,49 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
     public bool ReadDiSEqCCommand(out byte[] reply)
     {
-      // (Not implemented...)
-      reply = new byte[1];
-      reply[0] = 0;
-      return false;
+      Log.Log.Debug("Turbosight: read DiSEqC command");
+      reply = null;
+
+      for (int i = 0; i < TbsAccessParamsSize; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+
+      TbsAccessParams accessParams = new TbsAccessParams();
+      accessParams.AccessMode = TbsAccessMode.Diseqc;
+      int returnedByteCount;
+      int hr = _propertySet.Get(_propertySetGuid, _tbsAccessProperty,
+        _generalBuffer, TbsAccessParamsSize,
+        _generalBuffer, TbsAccessParamsSize,
+        out returnedByteCount
+      );
+      if (hr != 0)
+      {
+        Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+
+      if (returnedByteCount != TbsAccessParamsSize)
+      {
+        Log.Log.Debug("Turbosight: result = failure, unexpected number of bytes ({0}) returned", returnedByteCount);
+        return false;
+      }
+
+      accessParams = (TbsAccessParams)Marshal.PtrToStructure(_generalBuffer, typeof(TbsAccessParams));
+      if (accessParams.DiseqcReceiveMessageLength > MaxDiseqcMessageLength)
+      {
+        Log.Log.Debug("Turbosight: result = failure, unexpected number of message bytes ({0}) returned", accessParams.DiseqcReceiveMessageLength);
+        return false;
+      }
+      reply = new byte[accessParams.DiseqcReceiveMessageLength];
+      for (int i = 0; i < accessParams.DiseqcReceiveMessageLength; i++)
+      {
+        reply[i] = accessParams.DiseqcReceiveMessage[i];
+      }
+      Log.Log.Debug("Turbosight: result = success");
+      return true;
     }
 
     #endregion
@@ -1458,8 +1427,11 @@ namespace TvLibrary.Implementations.DVB
         }
         CloseCi();
         Marshal.FreeCoTaskMem(_generalBuffer);
+        if (_isUsb)
+        {
+          Release.ComObject(_propertySet);
+        }
       }
-      Release.ComObject(_propertySet);
     }
 
     #endregion

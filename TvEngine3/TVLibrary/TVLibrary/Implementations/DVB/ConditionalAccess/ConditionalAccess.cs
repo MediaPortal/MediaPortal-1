@@ -51,7 +51,6 @@ namespace TvLibrary.Implementations.DVB
     private readonly Twinhan _twinhan;
     private readonly KNCAPI _knc;
     private readonly Hauppauge _hauppauge;
-    private readonly TurbosightUsb _turbosightUsb;
     private readonly Turbosight _turbosight;
     private readonly DiSEqCMotor _diSEqCMotor;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
@@ -205,18 +204,6 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Info("anysee device detected");
             return;
           }*/
-
-          Log.Log.WriteFile("Check for Turbosight (USB)");
-          _turbosightUsb = new TurbosightUsb(tunerFilter);
-          if (_turbosightUsb.IsTurbosightUsb)
-          {
-            Log.Log.WriteFile("Turbosight USB device detected");
-            _diSEqCMotor = new DiSEqCMotor(_turbosightUsb);
-            _ciMenu = _turbosightUsb;
-            _HWProvider = _turbosightUsb;
-            return;
-          }
-          Release.DisposeToNull(ref _turbosightUsb);
 
           Log.Log.WriteFile("Check for Turbosight");
           _turbosight = new Turbosight(tunerFilter);
@@ -455,10 +442,6 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("WinTVCI:  CAM initialized");
           return true;
         }
-        if (_turbosightUsb != null)
-        {
-          return _turbosightUsb.IsCamReady();
-        }
         if (_turbosight != null)
         {
           return _turbosight.IsCamReady();
@@ -491,10 +474,6 @@ namespace TvLibrary.Implementations.DVB
         if (_knc != null)
         {
           _knc.ResetCI();
-        }
-        if (_turbosightUsb != null)
-        {
-          _turbosightUsb.ResetCi();
         }
         if (_turbosight != null)
         {
@@ -720,10 +699,6 @@ namespace TvLibrary.Implementations.DVB
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _twinhan.SendPMT(caPmt, caPmtLen);
         }
-        if (_turbosightUsb != null)
-        {
-          return _turbosightUsb.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
-        }
         if (_turbosight != null)
         {
           return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
@@ -779,11 +754,6 @@ namespace TvLibrary.Implementations.DVB
         if (_conexant != null)
         {
           _conexant.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_turbosightUsb != null)
-        {
-          _turbosightUsb.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_turbosight != null)
@@ -951,10 +921,6 @@ namespace TvLibrary.Implementations.DVB
             _hauppauge.SetDVBS2PilotRolloff(channel);
           }
           return channel;
-        }
-        if (_turbosightUsb != null)
-        {
-          return _turbosightUsb.SetTuningParameters(channel);
         }
         if (_turbosight != null)
         {
@@ -1141,7 +1107,6 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_genpix);
       Release.Dispose(_winTvCiModule);
       Release.Dispose(_twinhan);
-      Release.Dispose(_turbosightUsb);
       Release.Dispose(_turbosight);
       Release.Dispose(_TeVii);
     }
