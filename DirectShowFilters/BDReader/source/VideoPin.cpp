@@ -483,7 +483,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
       if (m_pCachedBuffer)
       {
-        LogDebug("vid: cached fetch %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
+        LogDebug("vid: cached fetch %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
       }
@@ -591,7 +591,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         {
           buffer->bNewClip = false;
           m_pCachedBuffer = buffer;
-          LogDebug("vid: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
+          LogDebug("vid: cached push  %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
          
           CreateEmptySample(pSample);
           CheckPlaybackState();

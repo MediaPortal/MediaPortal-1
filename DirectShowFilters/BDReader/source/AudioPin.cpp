@@ -256,7 +256,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
       if (m_pCachedBuffer)
       {
-        LogDebug("aud: cached fetch %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
+        LogDebug("aud: cached fetch %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
       }
@@ -375,7 +375,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           CreateEmptySample(pSample);
           m_pCachedBuffer = buffer;
-          LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
+          LogDebug("aud: cached push  %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
           
           if (checkPlaybackState)
           {
