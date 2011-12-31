@@ -90,7 +90,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonScanTv.Location = new System.Drawing.Point(312, 72);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
