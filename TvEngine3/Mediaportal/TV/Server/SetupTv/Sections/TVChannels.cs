@@ -121,7 +121,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       tabControl1.TabPages.Clear();
       tabControl1.TabPages.Add(tabPage1);
 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+      include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;      
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);
 
       foreach (ChannelGroup group in groups)
       {
@@ -152,7 +154,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {
@@ -182,7 +184,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _cards[card.idCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
       }
 
-      _allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV);
+      ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
+      include |= ChannelIncludeRelationEnum.ChannelMaps;
+
+      _allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV, include);
 
       tabControl1.TabPages[0].Text = string.Format("Channels ({0})", _allChannels.Count);
 
@@ -265,7 +270,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       NotifyForm dlg = new NotifyForm("Clearing all tv channels...", "This can take some time\n\nPlease be patient...");
       dlg.Show(this);
       dlg.WaitForDisplay();
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+      ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
+      include |= ChannelIncludeRelationEnum.ChannelMaps;
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(include);
       foreach (Channel channel in channels)
       {
         if (channel.mediaType == (int)MediaTypeEnum.TV)

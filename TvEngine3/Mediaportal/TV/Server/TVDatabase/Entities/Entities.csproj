@@ -128,6 +128,8 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="Enums\ChannelGroupIncludeRelationEnum.cs" />
+    <Compile Include="Enums\ChannelIncludeRelationEnum.cs" />
     <Compile Include="Enums\DbNetworkProvider.cs" />
     <Compile Include="Enums\DeleteBeforeImportOption.cs" />
     <Compile Include="Enums\KeepMethodType.cs" />

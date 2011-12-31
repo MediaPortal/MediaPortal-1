@@ -31,6 +31,12 @@ namespace Mediaportal.TV.Server.TVService.Services
       return listAllChannels;
     }
 
+    public IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations)
+    {
+      var listAllChannels = ChannelManagement.ListAllChannels(includeRelations);
+      return listAllChannels;
+    }
+
     public IList<Channel> ListAllVisibleChannelsByMediaType(MediaTypeEnum mediaType)
     {
       var listAllVisisbleChannelsByMediaType = ChannelManagement.ListAllVisibleChannelsByMediaType(mediaType);
@@ -45,6 +51,12 @@ namespace Mediaportal.TV.Server.TVService.Services
     public IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType)
     {
       var listAllChannelsByMediaType = ChannelManagement.ListAllChannelsByMediaType(mediaType);
+      return listAllChannelsByMediaType;
+    }    
+
+    public IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations)
+    {
+      var listAllChannelsByMediaType = ChannelManagement.ListAllChannelsByMediaType(mediaType, includeRelations);
       return listAllChannelsByMediaType;
     }
 
@@ -132,5 +144,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     {
       return ChannelManagement.SaveChannelMap(map);
     }
+
+    
   }
 }

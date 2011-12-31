@@ -37,6 +37,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return channels;     
     }
 
+   
+
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
     {
       IQueryable<TuningDetail> includeRelations =
@@ -45,6 +47,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       return includeRelations;
     }
+    
 
     public IQueryable<Channel> IncludeSelectRelations<T>(IQueryable<Channel> query,
                                                       Expression<Func<Channel, IEnumerable<T>>> inc)
@@ -67,6 +70,49 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       return includeRelations;
     }
+
+    public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations)
+    {
+      bool channelLinkMapsChannelLink = (includeRelations & ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink) == ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink;
+      bool channelLinkMapsChannelPortal = (includeRelations & ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal) == ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal;
+      bool channelMaps = (includeRelations & ChannelIncludeRelationEnum.ChannelMaps) == ChannelIncludeRelationEnum.ChannelMaps;
+      bool channelMapsCard = (includeRelations & ChannelIncludeRelationEnum.ChannelMapsCard) == ChannelIncludeRelationEnum.ChannelMapsCard;
+      bool groupMaps = (includeRelations & ChannelIncludeRelationEnum.GroupMaps) == ChannelIncludeRelationEnum.GroupMaps;
+      bool groupMapsChannelGroup = (includeRelations & ChannelIncludeRelationEnum.GroupMapsChannelGroup) == ChannelIncludeRelationEnum.GroupMapsChannelGroup;
+      bool tuningDetails = (includeRelations & ChannelIncludeRelationEnum.TuningDetails) == ChannelIncludeRelationEnum.TuningDetails;      
+      
+      if (channelLinkMapsChannelLink)
+      {
+        query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelLink));
+      }
+      if (channelLinkMapsChannelPortal)
+      {
+        query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelPortal));
+      }
+      if (channelMaps)
+      {
+        query = query.Include(c => c.ChannelMaps);
+      }
+      if (channelMapsCard)
+      {
+        query = query.Include(c => c.ChannelMaps.Select(card => card.Card));
+      }
+      if (groupMaps)
+      {
+        query = query.Include(c => c.GroupMaps);
+      }
+      if (groupMapsChannelGroup)
+      {
+        query = query.Include(c => c.GroupMaps.Select(g => g.ChannelGroup));
+      }
+      if (tuningDetails)
+      {
+        query = query.Include(c => c.TuningDetails);
+      }
+
+      return query;
+    }
+
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query)
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -12,11 +11,21 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class ChannelGroupManagement
   {
+    public static IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
+    {
+      using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
+      {
+        var query = channelGroupRepository.GetAll<ChannelGroup>();
+        var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
+        return listAllChannelGroups;
+      }
+    }
+
     public static IList<ChannelGroup> ListAllChannelGroups()
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
-        var query = channelGroupRepository.GetAll<ChannelGroup>();        
+        var query = channelGroupRepository.GetAll<ChannelGroup>();
         var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query).ToList();
         return listAllChannelGroups;
       }

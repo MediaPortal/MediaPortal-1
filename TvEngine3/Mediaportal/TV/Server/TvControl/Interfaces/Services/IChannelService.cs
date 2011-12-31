@@ -80,5 +80,11 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void DeleteChannelMap(int idChannelMap);
     [OperationContract]
     ChannelMap SaveChannelMap(ChannelMap map);
+
+    [OperationContract(Name = "ListAllChannelsWithSpecificRelations")]
+    IList<Channel> ListAllChannels(ChannelIncludeRelationEnum includeRelations);
+
+    [OperationContract(Name = "ListAllChannelsByMediaTypeWithSpecificRelations")]
+    IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations);
   } 
 }

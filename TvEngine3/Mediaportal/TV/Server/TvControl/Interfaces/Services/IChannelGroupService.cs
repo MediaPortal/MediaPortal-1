@@ -29,5 +29,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     ChannelGroup SaveGroup(ChannelGroup @group);
     [OperationContract]
     void DeleteChannelGroup(int idGroup);
+
+    [OperationContract(Name = "ListAllChannelGroupsWithSpecificRelations")]    
+    IList<ChannelGroup> ListAllChannelGroups(ChannelGroupIncludeRelationEnum includeRelations);
   }
 }
