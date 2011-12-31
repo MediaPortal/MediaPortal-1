@@ -92,6 +92,7 @@ public:
     virtual void    STDMETHODCALLTYPE SetBDPlayerSettings(bd_player_settings settings) = 0;
     virtual HRESULT STDMETHODCALLTYPE Start() = 0;
     virtual HRESULT STDMETHODCALLTYPE MouseMove(UINT16 x, UINT16 y) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetVideoDecoder(int format, GUID* decoder) = 0;
 };
 
 enum DS_CMD_ID
@@ -163,6 +164,7 @@ public:
   STDMETHODIMP FreeTitleInfo(BLURAY_TITLE_INFO* info);
   STDMETHODIMP Start();
   STDMETHODIMP MouseMove(UINT16 x, UINT16 y);
+  STDMETHODIMP SetVideoDecoder(int format, GUID* decoder);
 
   void STDMETHODCALLTYPE OnGraphRebuild(int info);
   void STDMETHODCALLTYPE ForceTitleBasedPlayback(bool force, UINT32 pTitle);

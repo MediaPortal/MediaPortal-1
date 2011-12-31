@@ -333,9 +333,29 @@ void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pSeekPosition)
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
 {
+  CheckPointer(pCallback, E_INVALIDARG);
   LogDebug("callback set");
   m_pCallback = pCallback;
+
   return S_OK;
+}
+
+STDMETHODIMP CBDReaderFilter::SetVideoDecoder(int format, GUID* decoder)
+{
+  if (format != BLURAY_STREAM_TYPE_VIDEO_H264 ||
+      format != BLURAY_STREAM_TYPE_VIDEO_VC1 ||
+      format != BLURAY_STREAM_TYPE_VIDEO_MPEG2)
+      return E_INVALIDARG;
+
+  CheckPointer(decoder, E_INVALIDARG);
+
+  if (m_pVideoPin)
+  {
+    m_pVideoPin->SetVideoDecoder(format, decoder);
+    return S_OK;
+  }
+
+  return S_FALSE;
 }
 
 STDMETHODIMP CBDReaderFilter::Action(int key)
@@ -403,16 +423,22 @@ STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
 
 STDMETHODIMP CBDReaderFilter::GetAngle(UINT8* angle)
 {
+  CheckPointer(angle, E_INVALIDARG);
+
   return lib.GetAngle(angle) ? S_OK : S_FALSE;
 }
 
 STDMETHODIMP CBDReaderFilter::GetChapter(UINT32* chapter)
 {
+  CheckPointer(chapter, E_INVALIDARG);
+
   return lib.GetChapter(chapter) ? S_OK : S_FALSE;
 }
 
 STDMETHODIMP CBDReaderFilter::GetTitleCount(UINT32* count)
 {
+  CheckPointer(count, E_INVALIDARG);
+
   (*count) = lib.GetTitles(TITLES_ALL);
   return S_OK;
 }
@@ -439,12 +465,17 @@ BLURAY_TITLE_INFO* STDMETHODCALLTYPE CBDReaderFilter::GetTitleInfo(UINT32 pIndex
 
 STDMETHODIMP CBDReaderFilter::GetCurrentClipStreamInfo(BLURAY_STREAM_INFO* stream)
 {
+  CheckPointer(stream, E_INVALIDARG);
+
   (*stream) = lib.CurrentClipInfo()->video_streams[0];
+ 
   return S_OK;
 }
 
 STDMETHODIMP CBDReaderFilter::FreeTitleInfo(BLURAY_TITLE_INFO* info)
 {
+  CheckPointer(info, E_INVALIDARG);
+
   lib.FreeTitleInfo(info);
   return S_OK;
 }

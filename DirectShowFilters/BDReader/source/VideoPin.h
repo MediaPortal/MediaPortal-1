@@ -77,6 +77,7 @@ public:
   bool IsConnected();
   void StopWait();
   void SetInitialMediaType(const CMediaType* pmt);
+  void SetVideoDecoder(int format, GUID* decoder);
 
 protected:
   DWORD ThreadProc();
@@ -87,6 +88,8 @@ protected:
   bool CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt);
   
   void CheckPlaybackState();
+  bool CheckVideoFormat(GUID* pFormat, CLSID* pDecoder);
+  CLSID GetDecoderCLSID();
 
   CBDReaderFilter* const m_pFilter;
   CDeMultiplexer& m_demux;
@@ -99,6 +102,10 @@ protected:
   IPin* m_pReceiver;
 
   CMediaType m_mtInitial;
+
+  CLSID m_VC1decoder;
+  CLSID m_H264decoder;
+  CLSID m_MPEG2decoder;
 
   REFERENCE_TIME m_rtStreamOffset;
 

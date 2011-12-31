@@ -101,7 +101,10 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0),
   m_rtTitleDuration(0),
-  m_bDoFakeSeek(false)
+  m_bDoFakeSeek(false),
+  m_H264decoder(GUID_NULL),
+  m_VC1decoder(GUID_NULL),
+  m_MPEG2decoder(GUID_NULL)
 {
   m_rtStart = 0;
   m_bConnected = false;
@@ -226,6 +229,59 @@ bool CVideoPin::CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt
 void CVideoPin::SetInitialMediaType(const CMediaType* pmt)
 {
   m_mtInitial = *pmt;
+}
+
+void CVideoPin::SetVideoDecoder(int format, GUID* decoder)
+{
+  AM_MEDIA_TYPE tmp;
+
+  if (format == BLURAY_STREAM_TYPE_VIDEO_H264)
+  {
+    LogDebug("vid: SetVideoDecoder for H264");
+    LogMediaType(&tmp);
+    m_H264decoder = tmp.subtype = *decoder;
+  }
+  else if (format == BLURAY_STREAM_TYPE_VIDEO_VC1)
+  {
+    m_VC1decoder = tmp.subtype = *decoder;
+    LogDebug("vid: SetVideoDecoder for VC1");
+    LogMediaType(&tmp);
+  }
+  else if (format == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
+  {
+    m_MPEG2decoder = tmp.subtype = *decoder;
+    LogDebug("vid: SetVideoDecoder for MPEG2");
+    LogMediaType(&tmp);
+  }
+  else
+  {
+    LogDebug("vid: SetVideoDecoder - trying to set a decoder for invalid format %d", format);
+    return;
+  }
+}
+
+bool CVideoPin::CheckVideoFormat(GUID* pFormat, CLSID* pDecoder)
+{
+  GUID* decoder = NULL;
+
+  if (IsEqualGUID(*pFormat, MPG4_SubType))
+    decoder = &m_H264decoder;
+  else if (IsEqualGUID(*pFormat, VC1_SubType))
+    decoder = &m_VC1decoder;
+  else if (IsEqualGUID(*pFormat, MEDIASUBTYPE_MPEG2_VIDEO))
+    decoder = &m_MPEG2decoder;
+  else
+    decoder = &m_MPEG2decoder;
+
+  // When no decoder has been assigned for a specific format
+  // assume the current decoder can be used
+  if (IsEqualGUID(*decoder, GUID_NULL))
+    return true;
+
+  if (IsEqualGUID(*decoder, *pDecoder))
+    return true;
+  else
+    return false;
 }
 
 HRESULT CVideoPin::DecideBufferSize(IMemAllocator* pAlloc, ALLOCATOR_PROPERTIES* pRequest)
@@ -539,13 +595,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             
             HRESULT hrAccept = S_FALSE;
 
-            if (m_pPinConnection)
+            /*
+			if (m_pPinConnection)
               hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
-            else if (m_pReceiver)
+			*/
+            
+			if (m_pReceiver)
             {
-              // Dynamic format changes cause lot of issues - currently not enabled
-              //LogDebug("DynamicQueryAccept - not avail");
-              //hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+              if (CheckVideoFormat(&buffer->pmt->subtype, &GetDecoderCLSID()))
+                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
             }
 
             if (hrAccept != S_OK)
@@ -752,6 +810,26 @@ STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
 STDMETHODIMP CVideoPin::Notify(IBaseFilter* pSender, Quality q)
 {
   return E_NOTIMPL;
+}
+
+CLSID CVideoPin::GetDecoderCLSID()
+{
+  if (!m_pReceiver) 
+    return GUID_NULL;
+
+  CLSID clsid = GUID_NULL;
+  PIN_INFO pi;
+
+  if (SUCCEEDED(m_pReceiver->QueryPinInfo(&pi))) 
+  {
+    if (pi.pFilter)
+    {
+      pi.pFilter->GetClassID(&clsid);
+      pi.pFilter->Release();
+    }
+  }
+
+  return clsid;
 }
 
 void CVideoPin::LogMediaType(AM_MEDIA_TYPE* pmt)
