@@ -82,7 +82,7 @@ namespace MediaPortal.Configuration.Sections
       this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
       this.aacAudioCodecComboBox.Size = new System.Drawing.Size(278, 21);
       this.aacAudioCodecComboBox.Sorted = true;
-      this.aacAudioCodecComboBox.TabIndex = 15;
+      this.aacAudioCodecComboBox.TabIndex = 4;
       // 
       // autoDecoderSettings
       // 
@@ -91,8 +91,8 @@ namespace MediaPortal.Configuration.Sections
       this.autoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.autoDecoderSettings.Location = new System.Drawing.Point(19, 156);
       this.autoDecoderSettings.Name = "autoDecoderSettings";
-      this.autoDecoderSettings.Size = new System.Drawing.Size(309, 30);
-      this.autoDecoderSettings.TabIndex = 0;
+      this.autoDecoderSettings.Size = new System.Drawing.Size(341, 30);
+      this.autoDecoderSettings.TabIndex = 6;
       this.autoDecoderSettings.Text = "Automatic Decoder Settings \r\n(use with caution - knowledge of DirectShow merits r" +
           "equired)";
       this.autoDecoderSettings.UseVisualStyleBackColor = true;
@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
       this.h264videoCodecComboBox.Size = new System.Drawing.Size(278, 21);
       this.h264videoCodecComboBox.Sorted = true;
-      this.h264videoCodecComboBox.TabIndex = 9;
+      this.h264videoCodecComboBox.TabIndex = 2;
       this.h264videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.h264videoCodecComboBox_SelectedIndexChanged);
       // 
       // audioRendererComboBox
@@ -129,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(278, 21);
       this.audioRendererComboBox.Sorted = true;
-      this.audioRendererComboBox.TabIndex = 7;
+      this.audioRendererComboBox.TabIndex = 5;
       // 
       // label3
       // 
@@ -185,9 +185,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabelNote.AutoSize = true;
       this.mpLabelNote.Location = new System.Drawing.Point(106, 26);
       this.mpLabelNote.Name = "mpLabelNote";
-      this.mpLabelNote.Size = new System.Drawing.Size(247, 13);
+      this.mpLabelNote.Size = new System.Drawing.Size(265, 13);
       this.mpLabelNote.TabIndex = 2;
-      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings !";
+      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings!";
       // 
       // mpGroupBox2
       // 

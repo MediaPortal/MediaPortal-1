@@ -251,6 +251,12 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sections\FiltersPowerDVDAudioDecoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersPowerDVDDecoder10.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
@@ -620,6 +626,13 @@
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersPowerDVDAudioDecoder.resx">
+      <DependentUpon>FiltersPowerDVDAudioDecoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersPowerDVDDecoder10.resx">
+      <DependentUpon>FiltersPowerDVDDecoder10.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
