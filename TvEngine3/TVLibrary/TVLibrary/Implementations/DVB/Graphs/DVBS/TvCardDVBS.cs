@@ -339,16 +339,16 @@ namespace TvLibrary.Implementations.DVB
         int lnbSwitch;
         BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
         Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
+        if (lnbSwitch == 0)
+        {
+          lnbSwitch = 18000000;
+        }
         // Some tuners (eg. TBS QBOX series) don't handle multiple LOFs correctly.
+        // We need to pass either the low or high frequency with the switch frequency.
         int lof = lowOsc * 1000;
         if (lnbSwitch != 0 && dvbsChannel.Frequency > lnbSwitch * 1000)
         {
           lof = hiOsc * 1000;
-          lnbSwitch = lof - 1000;
-        }
-        else
-        {
-          lnbSwitch = lof + 1000;
         }
         IDVBSTuningSpace tuningSpace = (IDVBSTuningSpace)_tuningSpace;
         tuningSpace.put_LNBSwitch(lnbSwitch);
