@@ -1281,7 +1281,7 @@ namespace MediaPortal.Music.Database
         string strArtist = aArtist;
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
         string strSQL;
-        strSQL = String.Format("select * from artistinfo where strArtist like '{0}%'", strArtist);
+        strSQL = String.Format("select * from artistinfo where strArtist like '{0}'", strArtist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count != 0)

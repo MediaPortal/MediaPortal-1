@@ -76,7 +76,7 @@ namespace MediaPortal.Configuration.Sections
       this.ddplusAudioCodecComboBox.Name = "ddplusAudioCodecComboBox";
       this.ddplusAudioCodecComboBox.Size = new System.Drawing.Size(278, 21);
       this.ddplusAudioCodecComboBox.Sorted = true;
-      this.ddplusAudioCodecComboBox.TabIndex = 15;
+      this.ddplusAudioCodecComboBox.TabIndex = 5;
       // 
       // labelDDPLUSDecoder
       // 
@@ -96,7 +96,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(278, 21);
       this.audioCodecComboBox.Sorted = true;
-      this.audioCodecComboBox.TabIndex = 5;
+      this.audioCodecComboBox.TabIndex = 3;
       // 
       // labelAACDecoder
       // 
@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
       this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
       this.aacAudioCodecComboBox.Size = new System.Drawing.Size(278, 21);
       this.aacAudioCodecComboBox.Sorted = true;
-      this.aacAudioCodecComboBox.TabIndex = 13;
+      this.aacAudioCodecComboBox.TabIndex = 4;
       // 
       // h264videoCodecComboBox
       // 
@@ -128,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
       this.h264videoCodecComboBox.Size = new System.Drawing.Size(278, 21);
       this.h264videoCodecComboBox.Sorted = true;
-      this.h264videoCodecComboBox.TabIndex = 3;
+      this.h264videoCodecComboBox.TabIndex = 2;
       this.h264videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.h264videoCodecComboBox_SelectedIndexChanged);
       // 
       // labelH264Decoder
@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(278, 21);
       this.audioRendererComboBox.Sorted = true;
-      this.audioRendererComboBox.TabIndex = 7;
+      this.audioRendererComboBox.TabIndex = 6;
       // 
       // mpGroupBox2
       // 
@@ -206,9 +206,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabelNote.AutoSize = true;
       this.mpLabelNote.Location = new System.Drawing.Point(104, 26);
       this.mpLabelNote.Name = "mpLabelNote";
-      this.mpLabelNote.Size = new System.Drawing.Size(247, 13);
+      this.mpLabelNote.Size = new System.Drawing.Size(265, 13);
       this.mpLabelNote.TabIndex = 2;
-      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings !";
+      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings!";
       // 
       // TVCodec
       // 

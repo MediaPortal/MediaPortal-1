@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfDVBCTuning>
+  <!--Created on 2011-11-27 17:14-->
+  <DVBCTuning>
+    <!--Transponder ID 1 with channels Nederland 1,Nederland 2,Nederland 3,RTL 8,NGC,RTL 4-->
+    <Frequency>155000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 2 with channels Een,Ketnet/Canvas,TV West,TV Utrecht,RTV Flevoland,RTL 5-->
+    <Frequency>163000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 3 with channels Kindernet/Comedy Central,MTV,CNE,RTL 7,SBS 6,NET 5-->
+    <Frequency>234000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 4 with channels BBC world,Euronews,CNBC Europe,TV5 monde Europe,France 2,Veronica/DisneyXD-->
+    <Frequency>498000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 6 with channels ARD,WDR,SWR,RTL television-->
+    <Frequency>147000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 7 with channels Gouwestad 2,RTV Bodegraven,Vrolek,Zeezicht,SupremeMasterTV,CNN,Neue Zeiten TV,RTV Drenthe,Omroep Brabant-->
+    <Frequency>698000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 8 with channels TV Rijnmond,Omrop Fryslan,L1mburg,RTV Oost,Omroep Gelderland,RTV Noord Holland,Omroep Zeeland,RTV Noord-->
+    <Frequency>706000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <!--Transponder ID 9 with channels Rekam Infokanaal,Gouwestad_Kabelkrant,aquarium 2,Rai Uno,TVE,Nickelodeon,ZDF-->
+    <Frequency>522000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+</ArrayOfDVBCTuning>
