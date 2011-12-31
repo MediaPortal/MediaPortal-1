@@ -600,7 +600,7 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_DVD_MENU:
-            if (!Playing || _forceTitle)
+            if (!Playing || _forceTitle || menuState != MenuState.None)
               return true;
             Speed = 1;
             //Log.Debug("BDPlayer: Main menu");
@@ -654,7 +654,7 @@ namespace MediaPortal.Player
 
     public override bool CanSeek()
     {
-      return _state == PlayState.Playing;      
+      return _state == PlayState.Playing && menuState == MenuState.None;      
     }
 
     /// <summary>
@@ -1104,6 +1104,9 @@ namespace MediaPortal.Player
 
     public override void Pause()
     {
+      if (menuState != MenuState.None)
+        return;
+
       if (_state == PlayState.Paused)
       {
         Speed = 1;
