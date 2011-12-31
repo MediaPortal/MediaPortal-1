@@ -172,7 +172,7 @@ void COverlayRenderer::OpenOverlay(const BD_OVERLAY* pOv)
       HRESULT hr = m_pD3DDevice->CreateTexture(osdTexture->width, osdTexture->height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, 
                                                 D3DPOOL_DEFAULT, &osdTexture->texture, NULL);
 
-      if (hr == S_OK)
+      if (SUCCEEDED(hr))
       {
         if (*plane)
           delete *plane;

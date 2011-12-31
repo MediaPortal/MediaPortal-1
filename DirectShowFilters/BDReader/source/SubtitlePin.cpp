@@ -67,13 +67,10 @@ bool CSubtitlePin::IsConnected()
 STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IMediaSeeking)
-  {
     return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
-  }
   if (riid == IID_IMediaPosition)
-  {
     return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
-  }
+
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -96,22 +93,17 @@ HRESULT CSubtitlePin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTI
   CheckPointer(pRequest, E_POINTER);
 
   if (pRequest->cBuffers == 0)
-  {
     pRequest->cBuffers = 30;
-  }
+
   pRequest->cbBuffer = 8192;
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
   if (FAILED(hr))
-  {
     return hr;
-  }
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
-  {
     return E_FAIL;
-  }
 
   return S_OK;
 }
@@ -151,13 +143,9 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 
   if (SUCCEEDED(hr))
-  {
     m_bConnected = true;
-  }
   else
-  {
     LogDebug("pin:CompleteConnect() failed:%x", hr);
-  }
 
   REFERENCE_TIME refTime;
   m_pFilter->GetDuration(&refTime);
@@ -188,9 +176,7 @@ void CSubtitlePin::CreateEmptySample(IMediaSample *pSample)
     pSample->SetSyncPoint(false);
   }
   else
-  {
     LogDebug("aud:CreateEmptySample() invalid sample!");
-  }
 }
 
 HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
@@ -279,6 +265,7 @@ HRESULT CSubtitlePin::DeliverBeginFlush()
   m_bSeekDone = false;
   HRESULT hr = __super::DeliverBeginFlush();
   LogDebug("sub: DeliverBeginFlush - hr: %08lX", hr);
+
   return hr;
 }
 
@@ -287,6 +274,7 @@ HRESULT CSubtitlePin::DeliverEndFlush()
   HRESULT hr = __super::DeliverEndFlush();
   LogDebug("sub: DeliverEndFlush - hr: %08lX", hr);
   m_bFlushing = false;
+
   return hr;
 }
 

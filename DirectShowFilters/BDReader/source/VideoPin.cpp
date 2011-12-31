@@ -44,7 +44,7 @@ void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
   FILE* fp = fopen(filename,"a+");
   long iSampleSize;
 
-  if (fp != NULL)
+  if (fp)
   {
     REFERENCE_TIME rtStart, rtStop;
     pSample->GetMediaTime(&rtStart, &rtStop);
@@ -61,8 +61,9 @@ void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
       iFrameNumber, rtStart, rtStop, rtTimeStart, rtTimeStop, bDiscontinuity, bPreRoll, bSyncPoint, iSampleSize);
     fclose(fp);
   }
+
   fp = fopen(frameFilename,"w+");
-  if (fp != NULL)
+  if (fp)
   {
     BYTE * pData;
     pSample->GetPointer(&pData);
@@ -71,9 +72,7 @@ void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
       for (int j=0;j<80;j++)
       {
         if (i*80+j<iSampleSize)
-        {
           fprintf(fp,"%02X",pData[i*16+j]);
-        }
       }
       fprintf(fp,"\n");
     }
@@ -121,6 +120,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
 CVideoPin::~CVideoPin()
 {
   m_eFlushStart->Set();
+
   delete m_eFlushStart;
   delete m_pCachedBuffer;
 }
@@ -173,13 +173,10 @@ bool CVideoPin::IsConnected()
 STDMETHODIMP CVideoPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
   if (riid == IID_IMediaSeeking)
-  {
     return CSourceSeeking::NonDelegatingQueryInterface(riid, ppv);
-  }
   if (riid == IID_IMediaPosition)
-  {
     return CSourceSeeking::NonDelegatingQueryInterface(riid, ppv);
-  }
+
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -221,7 +218,7 @@ bool CVideoPin::CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt
     IsEqualGUID(lhs_pmt->subtype, rhs_pmt->subtype) &&
     IsEqualGUID(lhs_pmt->formattype, rhs_pmt->formattype) &&
     (lhs_pmt->cbFormat == rhs_pmt->cbFormat) &&
-    ( (lhs_pmt->cbFormat == 0) ||
+    ((lhs_pmt->cbFormat == 0) ||
       lhs_pmt->pbFormat && rhs_pmt->pbFormat &&
       (memcmp(lhs_pmt->pbFormat, rhs_pmt->pbFormat, lhs_pmt->cbFormat) == 0))); 
 }
@@ -237,9 +234,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator* pAlloc, ALLOCATOR_PROPERTIES*
   CheckPointer(pRequest, E_POINTER);
 
   if (pRequest->cBuffers == 0)
-  {
     pRequest->cBuffers = 1;
-  }
 
   // Would be better if this would be allocated on sample basis
   pRequest->cbBuffer = 0x1000000;
@@ -247,9 +242,7 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator* pAlloc, ALLOCATOR_PROPERTIES*
   ALLOCATOR_PROPERTIES Actual;
   HRESULT hr = pAlloc->SetProperties(pRequest, &Actual);
   if (FAILED(hr))
-  {
     return hr;
-  }
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
   {
@@ -350,7 +343,7 @@ HRESULT CVideoPin::DoBufferProcessingLoop(void)
 
         // downstream filter returns S_FALSE if it wants us to
         // stop or an error if it's reporting an error.
-        if(hr != S_OK)
+        if (hr != S_OK)
         {
           DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
           return S_OK;
@@ -399,9 +392,7 @@ void CVideoPin::CreateEmptySample(IMediaSample *pSample)
     pSample->SetDiscontinuity(true);
   }
   else
-  {
     LogDebug("aud:CreateEmptySample() invalid sample!");
-  }
 }
 
 void CVideoPin::CheckPlaybackState()
@@ -681,6 +672,7 @@ HRESULT CVideoPin::DeliverBeginFlush()
   m_bSeekDone = false;
   HRESULT hr = __super::DeliverBeginFlush();
   LogDebug("vid: DeliverBeginFlush - hr: %08lX", hr);
+
   return hr;
 }
 
@@ -689,6 +681,7 @@ HRESULT CVideoPin::DeliverEndFlush()
   HRESULT hr = __super::DeliverEndFlush();
   LogDebug("vid: DeliverEndFlush - hr: %08lX", hr);
   m_bFlushing = false;
+
   return hr;
 }
 
@@ -764,9 +757,7 @@ STDMETHODIMP CVideoPin::Notify(IBaseFilter* pSender, Quality q)
 void CVideoPin::LogMediaType(AM_MEDIA_TYPE* pmt)
 {
   if (!pmt)
-  {
     LogDebug("Missing Video PMT");
-  }
   else
   {
     LogDebug("Video format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}", pmt->cbFormat,

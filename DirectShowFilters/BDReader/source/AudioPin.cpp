@@ -86,13 +86,10 @@ CAudioPin::~CAudioPin()
 STDMETHODIMP CAudioPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
   if (riid == IID_IMediaSeeking)
-  {
     return CSourceSeeking::NonDelegatingQueryInterface(riid, ppv);
-  }
   if (riid == IID_IMediaPosition)
-  {
     return CSourceSeeking::NonDelegatingQueryInterface(riid, ppv);
-  }
+
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
 
@@ -155,23 +152,18 @@ HRESULT CAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
   CheckPointer(pRequest, E_POINTER);
 
   if (pRequest->cBuffers == 0)
-  {
     pRequest->cBuffers = 30;
-  }
 
   pRequest->cbBuffer = MAX_BUFFER_SIZE;
 
   ALLOCATOR_PROPERTIES Actual;
   hr = pAlloc->SetProperties(pRequest, &Actual);
+
   if (FAILED(hr))
-  {
     return hr;
-  }
 
   if (Actual.cbBuffer < pRequest->cbBuffer)
-  {
     return E_FAIL;
-  }
 
   return S_OK;
 }
@@ -227,9 +219,7 @@ void CAudioPin::CreateEmptySample(IMediaSample *pSample)
     pSample->SetDiscontinuity(true);
   }
   else
-  {
-    LogDebug("aud:CreateEmptySample() invalid sample!");
-  }
+    LogDebug("aud: CreateEmptySample() invalid sample!");
 }
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
@@ -366,6 +356,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
               CreateEmptySample(pSample);
               m_pCachedBuffer = buffer;
+
               return S_OK;
             }
           }
@@ -453,6 +444,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   {
     LogDebug("aud: FillBuffer exception ...");
   }
+
   return NOERROR;
 }
 
@@ -630,6 +622,7 @@ HRESULT CAudioPin::DeliverBeginFlush()
   m_bSeekDone = false;
   HRESULT hr = __super::DeliverBeginFlush();
   LogDebug("aud: DeliverBeginFlush - hr: %08lX", hr);
+
   return hr;
 }
 
@@ -638,6 +631,7 @@ HRESULT CAudioPin::DeliverEndFlush()
   HRESULT hr = __super::DeliverEndFlush();
   LogDebug("aud: DeliverEndFlush - hr: %08lX", hr);
   m_bFlushing = false;
+
   return hr;
 }
 
@@ -680,10 +674,9 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
   m_pFilter->GetDuration(&refTime);
   m_rtDuration = CRefTime(refTime);
 
-  if (pDuration != NULL)
-  {
+  if (pDuration)
     return CSourceSeeking::GetDuration(pDuration);
-  }
+
   return S_OK;
 }
 
@@ -716,9 +709,7 @@ STDMETHODIMP CAudioPin::Notify(IBaseFilter* pSender, Quality q)
 void CAudioPin::LogMediaType(AM_MEDIA_TYPE* pmt)
 {
   if (!pmt)
-  {
     LogDebug("aud: missing audio PMT");
-  }
   else
   {
     LogDebug("aud: format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}", pmt->cbFormat,

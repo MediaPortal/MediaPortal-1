@@ -355,9 +355,7 @@ bool CLibBlurayWrapper::SetAngle(UINT8 pAngle)
   if (m_pBd && m_pTitleInfo && pAngle < m_pTitleInfo->angle_count)
   {
     if (_bd_select_angle(m_pBd, pAngle) == 1)
-    {
       return true;
-    }
   }
   return false;
 }
@@ -369,9 +367,7 @@ bool CLibBlurayWrapper::SetChapter(UINT32 pChapter)
   {
     INT64 pos = _bd_seek_chapter(m_pBd, pChapter);
     if (pos >= 0)
-    {
       return true;
-    }
   }
   return false;
 }
@@ -472,9 +468,7 @@ bool CLibBlurayWrapper::Play()
       LogDebug("CLibBlurayWrapper - _bd_select_title %d", ret);
 
       if (ret)
-      {
         UpdateTitleInfo();
-      }
     }
   }
 
@@ -502,9 +496,7 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
     {
       // TODO add error handling
       readBytes = _bd_read_ext(m_pBd, pData, pSize, &ev); 
-      {
-        HandleBDEvent(ev, !pIgnoreEvents);
-      }
+      HandleBDEvent(ev, !pIgnoreEvents);
     }
     pPause = m_bStopReading;
   }
@@ -526,9 +518,7 @@ bool CLibBlurayWrapper::SkipStillTime()
   
   bool ret = false;
   if (m_pBd)
-  {
     ret = _bd_read_skip_still(m_pBd) ? true : false;
-  }
 
   return ret;
 }
@@ -538,9 +528,7 @@ void CLibBlurayWrapper::Seek(UINT64 pPos)
   CAutoLock cLibLock(&m_csLibLock);
   
   if (m_pBd)
-  {
     (void)_bd_seek_time(m_pBd, pPos);
-  }
 }
 
 void CLibBlurayWrapper::SetState(FILTER_STATE newState)
@@ -548,23 +536,9 @@ void CLibBlurayWrapper::SetState(FILTER_STATE newState)
   m_state = newState;
 
   if ( m_state == State_Paused && newState == State_Stopped)
-  {
     m_bStopping = true;
-  }
   else
-  {
     m_bStopping = false;
-  }
-
-  /*
-  {
-    CAutoLock cObjectLock(&m_csRenderLock);
-    if (m_state == State_Stopped)
-      _bd_register_overlay_proc(m_pBd, NULL, NULL);
-    else if (m_state == State_Running)
-      _bd_register_overlay_proc(m_pBd, this, StaticOverlayProc);
-  }
-  */
 }
 
 void CLibBlurayWrapper::SetEventObserver(BDEventObserver* pObserver)
@@ -581,10 +555,9 @@ void CLibBlurayWrapper::SetEventObserver(BDEventObserver* pObserver)
     }
     ++it;
   }
+
   if (!found)
-  {
     m_eventObservers.push_back(pObserver);
-  }
 }
 
 void CLibBlurayWrapper::RemoveEventObserver(BDEventObserver* pObserver)
@@ -653,13 +626,10 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents)
 
     case BD_EVENT_PLAYITEM:
       if (m_pTitleInfo && ev.param < m_pTitleInfo->clip_count)
-      {
         m_currentClip = ev.param;
-      }
       else
-      {
         m_currentClip = 0;
-      }
+
       break;
   }
 
@@ -683,9 +653,7 @@ void CLibBlurayWrapper::UpdateTitleInfo()
   LogDebug("UpdateTitleInfo:");
 
   if (m_pTitleInfo)
-  {
     _bd_free_title_info(m_pTitleInfo);
-  }
 
   if (m_playbackMode == TitleBased)
   {
@@ -703,9 +671,7 @@ void CLibBlurayWrapper::UpdateTitleInfo()
   }
 
   if (!m_pTitleInfo) 
-  {
     LogDebug("UpdateTitleInfo (%d) failed", m_currentTitleIdx);
-  }
 }
 
 bool CLibBlurayWrapper::CurrentPosition(UINT64& pPosition, UINT64& pTotal)
@@ -745,13 +711,9 @@ BLURAY_CLIP_INFO* CLibBlurayWrapper::CurrentClipInfo()
   CAutoLock cLibLock(&m_csLibLock);
   
   if (m_pTitleInfo && m_pTitleInfo->clips)
-  {
     return &m_pTitleInfo->clips[m_currentClip];
-  }
   else
-  {
     return NULL;
-  }
 }
 
 bool CLibBlurayWrapper::GetClipInfo(int pClip, UINT64* pClipStartTime, UINT64* pStreamStartTime, UINT64* pBytePos, UINT64* pDuration)
@@ -768,13 +730,9 @@ bool CLibBlurayWrapper::ProvideUserInput(INT64 pPts, UINT32 pKey)
   {
     // libbluray doesn't open the main menu with BD_VK_ROOT_MENU key 
     if (pKey == BD_VK_ROOT_MENU)
-    {
       return OpenMenu(pPts);
-    }
     else
-    {
       return _bd_user_input(m_pBd, pPts, pKey) >= 0 ? true : false;
-    }
   }
   return false;
 }
@@ -784,13 +742,9 @@ bool CLibBlurayWrapper::OpenMenu(INT64 pPts)
   CAutoLock cLibLock(&m_csLibLock); 
   
   if (m_pBd)
-  {
     return _bd_menu_call(m_pBd, pPts) == 1 ? true : false;
-  }
   else
-  {
     return false;
-  }
 }
 
 void CLibBlurayWrapper::StillMode(unsigned pSeconds)
@@ -808,9 +762,7 @@ void CLibBlurayWrapper::StillMode(unsigned pSeconds)
   else if (pSeconds > 0) 
   {
     if (pSeconds > 300) 
-    {
       pSeconds = 300;
-    }
 
     LogDebug("Still image, pause for %d seconds", pSeconds);
     m_nStillEndTime = GetTickCount() / 1000 + pSeconds;
@@ -990,9 +942,7 @@ void CLibBlurayWrapper::LogDiskInfo(const BLURAY_DISC_INFO* pInfo)
     LogDebug("--------------------------");
   }
   else
-  {
     LogDebug("m_pDiscInfo == NULL");
-  }	
 }
 
 void CLibBlurayWrapper::LogTitleInfo(int pIndex, bool ignoreShort)
@@ -1012,9 +962,9 @@ void CLibBlurayWrapper::LogTitleInfo(int pIndex, bool ignoreShort)
       (ti->duration / 90000) / (3600),
       ((ti->duration / 90000) % 3600) / 60,
       ((ti->duration / 90000) % 60),
-      ti->chapter_count, ti->angle_count, ti->clip_count
-    );
+      ti->chapter_count, ti->angle_count, ti->clip_count);
   }
+
   _bd_free_title_info(ti);
 }
 

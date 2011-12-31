@@ -24,7 +24,6 @@
 #include <afx.h>
 #include <streams.h>
 #include "demultiplexer.h"
-#include <cassert>
 #include <bluray.h>
 #include "..\..\shared\adaptionfield.h"
 #include "bdreader.h"
@@ -223,33 +222,23 @@ void CDeMultiplexer::GetAudioStreamPMT(CMediaType& pmt)
     pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
   }
   else
-  {
     pmt = m_audioParser->pmt;
-  }
 }
 
 int CDeMultiplexer::GetAudioStreamType(int stream)
 {
   if (stream < 0 || stream >= (int)m_audioStreams.size())
-  {
     return 0;
-  }
   else
-  {
     return m_audioStreams[stream].audioType;
-  }
 }
 
 int CDeMultiplexer::GetCurrentAudioStreamType()
 {
   if (m_iAudioStream >= m_audioStreams.size())
-  {
     return 0;
-  }
   else
-  {
     return m_audioStreams[m_iAudioStream].audioType;
-  }
 }
 
 // This methods selects the subtitle stream specified
@@ -300,10 +289,7 @@ bool CDeMultiplexer::SetSubtitleResetCallback(int(CALLBACK *cb)(int, void*, int*
 bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
 {
   if (m_iSubtitleStream < 0 || m_iSubtitleStream >= m_subtitleStreams.size())
-  {
-    // Invalid stream number
-    return S_FALSE;
-  }
+    return S_FALSE; // An invalid stream number
 
   type = m_subtitleStreams[m_iSubtitleStream].subtitleType;
   return S_OK;
@@ -312,9 +298,7 @@ bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
 void CDeMultiplexer::GetVideoStreamPMT(CMediaType &pmt)
 {
   if (m_videoParser)
-  {
     pmt = m_videoParser->pmt;
-  }
 }
 
 void CDeMultiplexer::FlushVideo()
@@ -428,42 +412,29 @@ Packet* CDeMultiplexer::GetSubtitle()
 Packet* CDeMultiplexer::GetVideo()
 {
   if (HoldVideo())
-  {
     return NULL;
-  }
 
   while (!m_playlistManager->HasVideo())
   {
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(false, true) <= 0)
-    {
       return NULL;
-    }
   }
-  Packet* ret = m_playlistManager->GetNextVideoPacket();
-  if (!ret)
-  {
-    LogDebug("No Video Data");
-  }
-  return ret;
+
+  return m_playlistManager->GetNextVideoPacket();
 }
 
 Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 {
   if (HoldAudio())
-  {
     return NULL;
-  }
 
   while (!m_playlistManager->HasAudio())
   {
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(true, false) <= 0)
-    {
       return NULL;
-    }
   }
-  Packet* ret = m_playlistManager->GetNextAudioPacket(playlist, clip);
 
-  return ret;
+  return m_playlistManager->GetNextAudioPacket(playlist, clip);
 }
 
 ///
@@ -472,23 +443,15 @@ Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 Packet* CDeMultiplexer::GetAudio()
 {
   if (HoldAudio())
-  {
     return NULL;
-  }
 
   while (!m_playlistManager->HasAudio())
   {
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(true, false) <= 0)
-    {
       return NULL;
-    }
   }
-  Packet * ret = m_playlistManager->GetNextAudioPacket();
-  if (ret==NULL)
-  {
-    LogDebug("No Audio Data");
-  }
-  return ret;
+
+  return m_playlistManager->GetNextAudioPacket();
 }
 
 /// Starts the demuxer
@@ -652,6 +615,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
       if (pDVBSubtitleFilter)
         pDVBSubtitleFilter->NotifyChannelChange();
+
       break;
     }
 
@@ -663,9 +627,8 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       {
         UINT64 start = 0;
         if (title->chapter_count > 0 && title->chapter_count >= pEv.param)
-        {
           start = title->chapters[pEv.param - 1].start;
-        }
+
         LogDebug("demux: New chapter %d - start: %6.3f", pEv.param, CONVERT_90KHz_DS(start) / 10000000.0);
         
         m_filter.lib.FreeTitleInfo(title);
@@ -722,9 +685,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             Flush(true, true, rtClipStart);
           }
           else
-          {
             FlushPESBuffers(false);
-          }
         }
 
         m_bVideoFormatParsed = false;
@@ -890,6 +851,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         {
           if (!m_bAC3Substream)
             LogDebug(" No data");
+
           m_AudioValidPES = false;
         }
       }
@@ -998,9 +960,7 @@ void CDeMultiplexer::PacketDelivery(CAutoPtr<Packet> p)
     }
   }
   else
-  {
     ParseVideoFormat(p);
-  }
 }
 
 bool CDeMultiplexer::ParseVideoFormat(Packet* p)
@@ -1157,6 +1117,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
       CAutoPtr<Packet> p2 = m_pl.RemoveHead();
       p->Append(*p2);
     }
+
     PacketDelivery(p);
   }
 }
@@ -1247,8 +1208,10 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
     PacketDelivery(p2);
    
     if (p)
+    {
       m_p->CopyProperties(*p, true);
       p->rtStart = Packet::INVALID_TIME;
+    }
 
     start = next;
     if (!pFlushBuffers || start!=end)
@@ -1747,6 +1710,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       LogDebug("   Audio    [%4d] %s %s (fake)", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
 
       m_audioStreams.push_back(audio);
+
       return;
     }	
 		
@@ -1764,19 +1728,19 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       audio.pid = clip->audio_streams[i].pid;
 			
       if (strncmp(audio.language, settings.audioLang, 3) == 0 && m_iAudioIdx < 0)
-      {
         m_iAudioIdx = i;
-      }
+      
       LogDebug("   Audio    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
+
       m_audioStreams.push_back(audio);
     }
 		
-    if(m_iAudioIdx < 0)
-    {
+    if (m_iAudioIdx < 0)
       m_iAudioIdx = 0;
-    }
+
     m_iAudioStream = m_iAudioIdx;
     m_AudioStreamType = clip->audio_streams[m_iAudioIdx].coding_type;
+
     LogDebug("demux: ParseAudioStreams - Audio track #%d selected", m_iAudioIdx);
   }
 }
@@ -1809,9 +1773,7 @@ void CDeMultiplexer::ParseSubtitleStreams(BLURAY_CLIP_INFO* clip)
       int bitmap_index = -1;
       (*m_pSubUpdateCallback)(m_subtitleStreams.size(), (m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL), &bitmap_index);
       if (bitmap_index >= 0)
-      {
         SetSubtitleStream(bitmap_index);
-      }
     }
   }
 }
