@@ -1573,20 +1573,17 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("Twinhan: CI state change, old state = {0}, new state = {1}", prevCiState, ciState);
             prevCiState = ciState;
             if (ciState == TwinhanCiState.CamInserted ||
-              ciState == TwinhanCiState.CamOkay ||
-              ciState == TwinhanCiState.CamUnknown ||
+              ciState == TwinhanCiState.CamUnknown)
+            {
+              _isCamPresent = true;
+              _isCamReady = false;
+            }
+            else if (ciState == TwinhanCiState.CamOkay ||
               ciState == TwinhanCiState.CamOkay1_Old ||
               ciState == TwinhanCiState.CamOkay2_Old)
             {
               _isCamPresent = true;
-              if (ciState == TwinhanCiState.CamOkay)
-              {
-                _isCamReady = true;
-              }
-              else
-              {
-                _isCamReady = false;
-              }
+              _isCamReady = true;
             }
             else
             {
@@ -1639,7 +1636,7 @@ namespace TvLibrary.Implementations.DVB
                   }
                   for (int i = 0; i < mmi.ChoiceCount; i++)
                   {
-                    Log.Log.Debug("  choice {0}  = {1}", i, mmi.Choices[i].Text);
+                    Log.Log.Debug("  choice {0}  = {1}", i + 1, mmi.Choices[i].Text);
                     if (_ciMenuCallbacks != null)
                     {
                       _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Choices[i].Text);
@@ -1742,7 +1739,7 @@ namespace TvLibrary.Implementations.DVB
         TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_MMI, IntPtr.Zero, 0, _mmiResponseBuffer, MmiDataSize);
         int returnedByteCount;
         hr = command.Execute(_propertySet, _mmiCommandBuffer, out returnedByteCount);
-        if (hr == 0)// && returnedByteCount == MmiDataSize)
+        if (hr == 0 && returnedByteCount == MmiDataSize)
         {
           Log.Log.Debug("Twinhan: result = success");
           //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, returnedByteCount);
