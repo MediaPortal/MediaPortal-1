@@ -455,9 +455,6 @@ void CVideoPin::CheckPlaybackState()
   {
     m_demux.m_eAudioClipSeen->Wait();
 
-    m_pFilter->SetTitleDuration(m_rtTitleDuration);
-    m_pFilter->ResetPlaybackOffset(m_rtStreamOffset);
-
     if (m_demux.m_bVideoRequiresRebuild || m_demux.m_bAudioRequiresRebuild)
     {
       LogDebug("vid: REBUILD");
@@ -591,10 +588,13 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           {
             LogMediaType(buffer->pmt);
             
+            m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
+            m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
+
             HRESULT hrAccept = S_FALSE;
             
             if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &GetDecoderCLSID()))
-                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+              hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
 
             if (hrAccept != S_OK)
             {
