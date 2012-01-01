@@ -98,7 +98,6 @@ protected:
 
   VIDEO_DECODER m_decoderType;
 
-  IPinConnection* m_pPinConnection;
   IPin* m_pReceiver;
 
   CMediaType m_mtInitial;

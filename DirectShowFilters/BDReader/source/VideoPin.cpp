@@ -87,7 +87,6 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_demux(pDemux),
   m_decoderType(general),
   CSourceSeeking(NAME("pinVideo"), pUnk, phr, pSection),
-  m_pPinConnection(NULL),
   m_pReceiver(NULL),
   m_pCachedBuffer(NULL),
   m_rtStreamOffset(0),
@@ -332,7 +331,6 @@ HRESULT CVideoPin::CompleteConnect(IPin* pReceivePin)
   m_pFilter->GetDuration(&refTime);
   m_rtDuration = CRefTime(refTime);
 
-  pReceivePin->QueryInterface(IID_IPinConnection, (void**)&m_pPinConnection);
   m_pReceiver = pReceivePin;
 
   return hr;
@@ -594,17 +592,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             LogMediaType(buffer->pmt);
             
             HRESULT hrAccept = S_FALSE;
-
-            /*
-			if (m_pPinConnection)
-              hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
-			*/
             
-			if (m_pReceiver)
-            {
-              if (CheckVideoFormat(&buffer->pmt->subtype, &GetDecoderCLSID()))
+            if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &GetDecoderCLSID()))
                 hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
-            }
 
             if (hrAccept != S_OK)
             {
