@@ -150,7 +150,7 @@ namespace MediaPortal.Player
   public interface IBDReaderCallback
   {
     [PreserveSig]
-    int OnMediaTypeChanged(int videoRate, int videoFormat, int audioFormat);    
+    int OnMediaTypeChanged(int videoRate, int videoFormat, int audioFormat);
 
     [PreserveSig]
     int OnBDevent([Out] BDEvent bdEvent);
@@ -615,7 +615,7 @@ namespace MediaPortal.Player
             if (!Playing || _forceTitle || !_bPopupMenuAvailable)
               return true;
             Speed = 1;
-            //Log.Debug("BDPlayer: Popup menu toggle");                        
+            //Log.Debug("BDPlayer: Popup menu toggle");
             menuState = MenuState.PopUp;
             _ireader.Action((int)BDKeys.BD_VK_POPUP);
             return true;
@@ -1432,7 +1432,7 @@ namespace MediaPortal.Player
 
       if (videoFormat != _currentVideoFormat)
       {
-        _mChangedMediaType |= MediaType.Video;        
+        _mChangedMediaType |= MediaType.Video;
         _currentVideoFormat = videoFormat;
       }
 
@@ -1745,10 +1745,10 @@ namespace MediaPortal.Player
             break;
 
           case (int)BDEvents.BD_EVENT_PLAYITEM:
-            Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);            
+            Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);
             CurrentStreamInfo();
             _bPopupMenuAvailable = false;
-            UpdateMenuItems();            
+            UpdateMenuItems();
             break;
 
           case (int)BDEvents.BD_EVENT_TITLE:
@@ -1774,9 +1774,9 @@ namespace MediaPortal.Player
             if (bdevent.Param == 1)
             {
               if (menuState != MenuState.PopUp)
-                menuState = MenuState.Root;              
+                menuState = MenuState.Root;
              
-              GUIGraphicsContext.DisableTopBar = true;              
+              GUIGraphicsContext.DisableTopBar = true;
             }
             else
             {              
@@ -2212,7 +2212,7 @@ namespace MediaPortal.Player
               continue;
             }
 
-            Log.Error("BDPlayer: Failed to start in title based mode file:{0} :0x{1:x}", filename, hr);            
+            Log.Error("BDPlayer: Failed to start in title based mode file:{0} :0x{1:x}", filename, hr);
             return false;
           }
           else
@@ -2265,8 +2265,8 @@ namespace MediaPortal.Player
 
         DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _interfaceBDReader);
         SetVideoDecoder();
-        DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);        
-        
+        DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
         #endregion
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
@@ -2306,7 +2306,7 @@ namespace MediaPortal.Player
 
         if (!_vmr9.IsVMR9Connected)
         {
-          Log.Error("BDPlayer: Failed vmr9 not connected");          
+          Log.Error("BDPlayer: Failed vmr9 not connected");
           return false;
         }
         _vmr9.SetDeinterlaceMode();
@@ -2314,7 +2314,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.Error("BDPlayer: Exception while creating DShow graph {0}", ex.Message);        
+        Log.Error("BDPlayer: Exception while creating DShow graph {0}", ex.Message);
         return false;
       }
     }
@@ -2323,18 +2323,44 @@ namespace MediaPortal.Player
     {
       Guid guid;
       IBaseFilter filter;
-      DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoH264);
-      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoH264);      
+
+      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoH264);
+      if (filter == null)
+        filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoH264);
       filter.GetClassID(out guid);
       _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264, ref guid);
-      DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.Video);
-      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.Video);
-      filter.GetClassID(out guid);
-      _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref guid);
-      DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoVC1);
-      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoVC1);
-      filter.GetClassID(out guid);
-      _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
+
+      if (filterConfig.VideoH264 != filterConfig.Video)
+      {
+        filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.Video);
+        if (filter == null)
+          filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.Video);
+        filter.GetClassID(out guid);
+        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref guid);
+        DirectShowUtil.ReleaseComObject(filter);
+        filter = null;
+      }
+      else
+      {
+        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref guid);
+      }
+
+      if (filterConfig.VideoVC1 != filterConfig.VideoH264 || filterConfig.VideoVC1 != filterConfig.Video)
+      {
+        filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoVC1);
+        if (filter == null)
+          filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoVC1);
+        filter.GetClassID(out guid);
+        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
+        DirectShowUtil.ReleaseComObject(filter);
+        filter = null;
+      }
+      else
+      {
+        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
+      }
+      DirectShowUtil.ReleaseComObject(filter);
+      filter = null;
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
@@ -2578,7 +2604,7 @@ namespace MediaPortal.Player
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG1:
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG1:
           return "MPEG1";
-        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2:        
+        case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2:
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG2:
           return "MPEG2";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_TRUHD:
@@ -2599,6 +2625,6 @@ namespace MediaPortal.Player
       CloseInterfaces();
     }
 
-    #endregion    
+    #endregion
   }
 }
