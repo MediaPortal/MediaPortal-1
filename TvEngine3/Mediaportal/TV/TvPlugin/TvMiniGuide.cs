@@ -33,7 +33,6 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Mediaportal.TV.TvPlugin.Helper;
@@ -192,44 +191,6 @@ namespace Mediaportal.TV.TvPlugin
     }
     */
 
-    private void GetChannels(bool refresh)
-    {
-      if (refresh || _channelList == null)
-      {
-        _channelList = new List<Channel>();
-      }
-
-      if (_channelList.Count == 0)
-      {
-        try
-        {
-          if (TVHome.Navigator.CurrentGroup != null)
-          {
-            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.GroupMaps)
-            {
-              Channel ch = chan.Channel;
-              if (ch.visibleInGuide && ch.mediaType == (int)MediaTypeEnum.TV)
-              {
-                _channelList.Add(ch);
-              }
-            }
-          }
-        }
-        catch { }
-
-        if (_channelList.Count == 0)
-        {
-          Channel newChannel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, DateTime.MinValue, false,
-                                           DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
-          for (int i = 0; i < 10; ++i)
-          {
-            _channelList.Add(newChannel);
-          }
-        }
-      }
-    }
-
- 
 
     /// <summary>
     /// On Message

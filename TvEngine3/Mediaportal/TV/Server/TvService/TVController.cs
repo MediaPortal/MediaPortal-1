@@ -86,7 +86,6 @@ namespace Mediaportal.TV.Server.TVService
     private readonly TvServerEventDispatcher _tvServerEventDispatcher;
     private readonly HeartbeatManager _heartbeatManager;
     private readonly CiMenuManager _ciMenuManager;
-    private readonly IDictionary<int, bool> _cardPresent = new Dictionary<int, bool>();
     private readonly ICardAllocation _cardAllocation;
     private readonly ChannelStates _channelStates;
 
@@ -169,6 +168,9 @@ namespace Mediaportal.TV.Server.TVService
       _channelStates = new ChannelStates();
       _ciMenuManager = new CiMenuManager();
       _cardAllocation = new AdvancedCardAllocation();
+
+      _channelStates.OnChannelStatesSet -= new ChannelStates.OnChannelStatesSetDelegate(channelStates_OnChannelStatesSet);
+      _channelStates.OnChannelStatesSet += new ChannelStates.OnChannelStatesSetDelegate(channelStates_OnChannelStatesSet);
     }
 
     public IDictionary<int, ITvCardHandler> CardCollection
@@ -882,6 +884,7 @@ namespace Mediaportal.TV.Server.TVService
       return _cards[cardId].Tuner.CanTune(channel);
     }
 
+
     /// <summary>
     /// Method to check if card is currently present and detected
     /// </summary>
@@ -891,22 +894,16 @@ namespace Mediaportal.TV.Server.TVService
       bool cardPresent = false;
       if (cardId > 0)
       {
-        bool cardPresentFound = _cardPresent.TryGetValue(cardId, out cardPresent);
-
-        if (!cardPresentFound)
+        if (_cards.ContainsKey(cardId))
         {
-          if (_cards.ContainsKey(cardId))
+          string devicePath = _cards[cardId].Card.DevicePath;
+          if (devicePath.Length > 0)
           {
-            string devicePath = _cards[cardId].Card.DevicePath;
-            if (devicePath.Length > 0)
-            {
-              // Remove it from the local card collection
-              cardPresent =
-                (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
-                  FirstOrDefault();
-            }
+            // Remove it from the local card collection
+            cardPresent =
+              (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
+                FirstOrDefault();
           }
-          _cardPresent.Add(cardId, cardPresent);
         }
       }
       return cardPresent;
@@ -3385,7 +3382,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       Dictionary<int, ChannelState> allChannelStatesCached = null;
 
-      if (user != null && user.CardId > 0)
+      if (user != null && user.CardId > 0 && _cards.Count() > 0)
       {
         IDictionary<string, IUser> users = _cards[user.CardId].UserManagement.Users;
         IUser u;
@@ -3402,41 +3399,6 @@ namespace Mediaportal.TV.Server.TVService
       }
 
       return allChannelStatesCached;
-    }
-
-
-    /// <summary>
-    /// Fetches all channel states for a specific group
-    /// </summary>
-    /// <param name="idGroup"></param>    
-    /// <param name="user"></param>        
-    public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, IUser user)
-    {
-      if (idGroup < 1)
-      {
-        return null;
-      }
-
-      if (user == null)
-      {
-        return null;
-      }
-
-      IList<Channel> tvChannelList = ChannelManagement.GetAllChannelsByGroupIdAndMediaType(idGroup, MediaTypeEnum.TV);
-
-      if (tvChannelList == null || tvChannelList.Count == 0)
-        return null;
-
-      Dictionary<int, ChannelState> channelStatesList = new Dictionary<int, ChannelState>();
-      var channelStates = new ChannelStates();
-
-      if (channelStates != null)
-      {
-        user.Priority = UserFactory.GetDefaultPriority(user.Name);
-        channelStatesList = channelStates.GetChannelStates(_cards, tvChannelList, ref user, this);
-      }
-
-      return channelStatesList;
     }
 
 
@@ -3693,11 +3655,8 @@ namespace Mediaportal.TV.Server.TVService
     private void UpdateChannelStatesForUsers()
     {
       //System.Diagnostics.Debugger.Launch();
-      // this section makes sure that all users are updated in regards to channel states.      
-
-      var channelStates = new ChannelStates();
-
-      channelStates.OnChannelStatesSet += new ChannelStates.OnChannelStatesSetDelegate(channelStates_OnChannelStatesSet);
+      // this section makes sure that all users are updated in regards to channel states.            
+      
       IList<ChannelGroup> groups = ChannelGroupManagement.ListAllChannelGroups();
 
       // populating _tvChannelListGroups is only done once as is therefor cached.
@@ -3730,21 +3689,19 @@ namespace Mediaportal.TV.Server.TVService
           }
         }
       }
-      _channelStates.SetChannelStates(_cards, _tvChannelListGroups, this);
+      _channelStates.SetChannelStatesForAllUsers(_tvChannelListGroups);
 
       IUser idleUser = new User("idle", false, 0);
       idleUser.ChannelStates = new Dictionary<int, ChannelState>();
 
-      ThreadPool.QueueUserWorkItem(delegate { channelStates.GetChannelStates(_cards, _tvChannelListGroups, ref idleUser, this); });
+      ThreadPool.QueueUserWorkItem(delegate { _channelStates.SetChannelStatesForUser(_tvChannelListGroups, ref idleUser); });
 
     }
 
-    private void channelStates_OnChannelStatesSet(Dictionary<int, ChannelState> channelStates)
+    private void channelStates_OnChannelStatesSet(IUser user)
     {
-      _channelStatesCachedForIdleUser = channelStates;
-      User user = new User("channel_states_unknown_user", false);
-      Fire(this,
-                         new TvServerEventArgs(TvServerEventType.ChannelStatesChanged, new VirtualCard(user), user));
+      _channelStatesCachedForIdleUser = user.ChannelStates;
+      Fire(this, new TvServerEventArgs(TvServerEventType.ChannelStatesChanged, new VirtualCard(user), (User) user));
     }
 
     

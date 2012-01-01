@@ -16,10 +16,24 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
       {
         lock (_usersLock)
         {
-          foreach (string username in _users.Keys)
-          {
-            EventService.CallbackTvServerEvent(username, tvEvent);
+          if (tvEvent.EventType == TvServerEventType.ChannelStatesChanged)
+          {            
+            foreach (string username in _users.Keys)
+            {
+              //todo channel states for idle users should ideally only be pushed out to idle users and not all users.
+              if (tvEvent.User.Name.Equals(username) || tvEvent.User.Name.Equals("idle"))
+              {
+                EventService.CallbackTvServerEvent(username, tvEvent); 
+              }              
+            } 
           }
+          else
+          {
+            foreach (string username in _users.Keys)
+            {
+              EventService.CallbackTvServerEvent(username, tvEvent);
+            }
+          }          
         }
       }
     }
