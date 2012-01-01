@@ -342,8 +342,8 @@ STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
 
 STDMETHODIMP CBDReaderFilter::SetVideoDecoder(int format, GUID* decoder)
 {
-  if (format != BLURAY_STREAM_TYPE_VIDEO_H264 ||
-      format != BLURAY_STREAM_TYPE_VIDEO_VC1 ||
+  if (format != BLURAY_STREAM_TYPE_VIDEO_H264 &&
+      format != BLURAY_STREAM_TYPE_VIDEO_VC1 &&
       format != BLURAY_STREAM_TYPE_VIDEO_MPEG2)
       return E_INVALIDARG;
 
