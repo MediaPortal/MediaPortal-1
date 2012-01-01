@@ -202,8 +202,7 @@ namespace TvLibrary.Implementations.DVB
     {
       public TwinhanPidFilterMode FilterMode;
       public byte MaxPids;                                    // Max number of PIDs supported by the PID filter (HW/FW limit, always <= MaxPidFilterPids).
-      private byte Padding1;
-      private byte Padding2;
+      private UInt16 Padding;
       public UInt32 ValidPidMask;                             // A bit mask specifying the current valid PIDs. If the bit is 0 then the PID is ignored. Example: if ValidPidMask = 0x00000005 then there are 2 valid PIDs at indexes 0 and 2.
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPidFilterPids)]
       public UInt16[] FilterPids;                             // Filter PID list.
@@ -214,8 +213,7 @@ namespace TvLibrary.Implementations.DVB
     {
       public bool PowerOn;
       public TwinhanToneBurst ToneBurst;
-      private byte Padding1;
-      private byte Padding2;
+      private UInt16 Padding;
       public UInt32 LowBandLof;                               // unit = kHz
       public UInt32 HighBandLof;                              // unit = kHz
       public UInt32 SwitchFrequency;                          // unit = kHz
@@ -271,13 +269,16 @@ namespace TvLibrary.Implementations.DVB
       public String Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxCamMenuChoices)]
       public MmiMenuChoice[] Choices;
-      private byte Padding1;
-      private byte Padding2;
+      private UInt16 Padding1;
       public Int32 ChoiceCount;
 
-      public Int32 IsEnquiry;
+      public bool IsEnquiry;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+      private byte[] Padding2;
 
-      public Int32 IsBlindAnswer;
+      public bool IsBlindAnswer;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+      private byte[] Padding3;
       public Int32 ExpectedAnswerLength;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Prompt;
@@ -1607,7 +1608,7 @@ namespace TvLibrary.Implementations.DVB
               MmiData mmi;
               if (ReadMmi(out mmi))
               {
-                if (mmi.IsEnquiry != 0)
+                if (mmi.IsEnquiry)
                 {
                   Log.Log.Debug("Twinhan: enquiry");
                   Log.Log.Debug("  blind     = {0}", mmi.IsBlindAnswer);
@@ -1616,7 +1617,7 @@ namespace TvLibrary.Implementations.DVB
                   Log.Log.Debug("  type      = {0}", mmi.Type);
                   if (_ciMenuCallbacks != null)
                   {
-                    _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer != 0, (uint)mmi.ExpectedAnswerLength, mmi.Prompt);
+                    _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer, (uint)mmi.ExpectedAnswerLength, mmi.Prompt);
                   }
                 }
                 else
