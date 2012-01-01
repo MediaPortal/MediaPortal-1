@@ -217,6 +217,9 @@ namespace MediaPortal.Player
 
       [PreserveSig]
       int MouseMove(int x, int y);
+
+      [PreserveSig]
+      int SetVideoDecoder(int format, ref Guid decoder);
     }
     #endregion
 
@@ -2243,7 +2246,7 @@ namespace MediaPortal.Player
         {
           Log.Error(e);
         }
-
+        
         #endregion
 
         #region PostProcessingEngine Detection
@@ -2263,6 +2266,8 @@ namespace MediaPortal.Player
         DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _interfaceBDReader);
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
+        SetVideoDecoder();
+        
         #endregion
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
@@ -2313,6 +2318,21 @@ namespace MediaPortal.Player
         Log.Error("BDPlayer: Exception while creating DShow graph {0}", ex.Message);        
         return false;
       }
+    }
+
+    private void SetVideoDecoder()
+    {
+      Guid guid;
+      IBaseFilter filter;
+      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoH264);      
+      filter.GetClassID(out guid);
+      _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264, ref guid);
+      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.Video);
+      filter.GetClassID(out guid);
+      _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref guid);
+      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoVC1);
+      filter.GetClassID(out guid);
+      _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
