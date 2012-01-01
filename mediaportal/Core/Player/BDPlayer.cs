@@ -2264,9 +2264,8 @@ namespace MediaPortal.Player
         Log.Info("BDPlayer: Render BDReader outputs");
 
         DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _interfaceBDReader);
-        DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
-
         SetVideoDecoder();
+        DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);        
         
         #endregion
 
@@ -2324,12 +2323,15 @@ namespace MediaPortal.Player
     {
       Guid guid;
       IBaseFilter filter;
+      DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoH264);
       filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoH264);      
       filter.GetClassID(out guid);
       _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264, ref guid);
+      DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.Video);
       filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.Video);
       filter.GetClassID(out guid);
       _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref guid);
+      DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoVC1);
       filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoVC1);
       filter.GetClassID(out guid);
       _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
