@@ -2359,8 +2359,11 @@ namespace MediaPortal.Player
       {
         _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
       }
-      DirectShowUtil.ReleaseComObject(filter);
-      filter = null;
+      if (filter != null)
+      {
+        DirectShowUtil.ReleaseComObject(filter);
+        filter = null;
+      }
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
