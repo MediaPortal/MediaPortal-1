@@ -155,7 +155,7 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _digitalEveryWhere);
 
           Log.Log.WriteFile("Check for Twinhan");
-          _twinhan = new Twinhan(tunerFilter);
+          _twinhan = new Twinhan(tunerFilter, card.CardType);
           if (_twinhan.IsTwinhan)
           {
             Log.Log.WriteFile("Twinhan card detected");
@@ -844,7 +844,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_twinhan != null)
         {
-          return _twinhan.SetTuningParameters(channel);
+          return (DVBSChannel)_twinhan.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_hauppauge != null)
         {

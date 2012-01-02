@@ -947,6 +947,7 @@ namespace TvLibrary.Implementations.DVB
     private IntPtr _mmiResponseBuffer = IntPtr.Zero;
 
     private IKsPropertySet _propertySet = null;
+    private CardType _tunerType = CardType.Unknown;
 
     private TwinhanCiSupport _ciApiVersion = TwinhanCiSupport.Unsupported;
     private int _maxPidFilterPids = MaxPidFilterPids;
@@ -961,7 +962,8 @@ namespace TvLibrary.Implementations.DVB
     /// Initialises a new instance of the <see cref="Twinhan"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    public Twinhan(IBaseFilter tunerFilter)
+    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
+    public Twinhan(IBaseFilter tunerFilter, CardType tunerType)
     {
       if (tunerFilter == null)
       {
@@ -985,7 +987,13 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("Twinhan: supported tuner detected");
         _isTwinhan = true;
+        _tunerType = tunerType;
         ReadDeviceInfo();
+        if (_isPidFilterSupported)
+        {
+          ReadPidFilterInfo();
+        }
+        ReadDriverInfo();
 
         _isCiSlotPresent = IsCiSlotPresent();
         if (_isCiSlotPresent)
@@ -997,7 +1005,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
-        SetLnbPowerState(true);
+        SetPowerState(true);
       }
     }
 
@@ -1014,7 +1022,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Attempt to read the device and driver information from the tuner.
+    /// Attempt to read the device information from the tuner.
     /// </summary>
     private void ReadDeviceInfo()
     {
@@ -1036,6 +1044,8 @@ namespace TvLibrary.Implementations.DVB
       //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
       DeviceInfo deviceInfo = (DeviceInfo)Marshal.PtrToStructure(_responseBuffer, typeof(DeviceInfo));
       Log.Log.Debug("  name                        = {0}", deviceInfo.Name);
+
+      // Separate the device type flags into a comma separated string.
       Array deviceTypes = Enum.GetValues(typeof(TwinhanDeviceType));
       String supportedModes = "";
       for (int i = 0; i < deviceTypes.Length; i++)
@@ -1050,18 +1060,10 @@ namespace TvLibrary.Implementations.DVB
           supportedModes += typeName;
         }
       }
+
       Log.Log.Debug("  supported modes             = {0}", supportedModes);
       Log.Log.Debug("  speed/interface             = {0}", deviceInfo.Speed);
-      String macAddress = String.Empty;
-      for (int i = 0; i < deviceInfo.MacAddress.Length; i++)
-      {
-        if (i != 0)
-        {
-          macAddress += "-";
-        }
-        macAddress += String.Format("{0:x2}", deviceInfo.MacAddress[i]);
-      }
-      Log.Log.Debug("  MAC address                 = 0x{0}", macAddress);
+      Log.Log.Debug("  MAC address                 = {0}", BitConverter.ToString(deviceInfo.MacAddress));
       Log.Log.Debug("  CI support                  = {0}", deviceInfo.CiSupport);
       Log.Log.Debug("  TS packet length            = {0}", deviceInfo.TsPacketLength);
       // Handle the PID filter paramter bytes carefully - not all drivers actually return
@@ -1078,41 +1080,52 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("  PID filter bypass supported = {0}", _isPidFilterBypassSupported);
 
       _ciApiVersion = deviceInfo.CiSupport;
+    }
 
-      if (_isPidFilterSupported)
+    /// <summary>
+    /// Attempt to read the PID filter implementation details from the tuner.
+    /// </summary>
+    private void ReadPidFilterInfo()
+    {
+      Log.Log.Debug("Twinhan: read PID filter information");
+      for (int i = 0; i < PidFilterParamsSize; i++)
       {
-        Log.Log.Debug("Twinhan: read PID filter information");
-        for (int i = 0; i < PidFilterParamsSize; i++)
-        {
-          Marshal.WriteByte(_responseBuffer, 0);
-        }
-        command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _responseBuffer, PidFilterParamsSize);
-        hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
-        if (hr != 0)
-        {
-          Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return;
-        }
-
-        //Log.Log.Debug("Twinhan: number of PidFilterParams bytes returned is {0}", returnedByteCount);
-        //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
-        PidFilterParams pidFilterInfo = (PidFilterParams)Marshal.PtrToStructure(_responseBuffer, typeof(PidFilterParams));
-        Log.Log.Debug("  current mode                = {0}", pidFilterInfo.FilterMode);
-        Log.Log.Debug("  maximum PIDs                = {0}", pidFilterInfo.MaxPids);
-
-        if (pidFilterInfo.MaxPids <= MaxPidFilterPids)
-        {
-          _maxPidFilterPids = pidFilterInfo.MaxPids;
-        }
+        Marshal.WriteByte(_responseBuffer, 0);
+      }
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _responseBuffer, PidFilterParamsSize);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      if (hr != 0)
+      {
+        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
       }
 
+      //Log.Log.Debug("Twinhan: number of PidFilterParams bytes returned is {0}", returnedByteCount);
+      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
+      PidFilterParams pidFilterInfo = (PidFilterParams)Marshal.PtrToStructure(_responseBuffer, typeof(PidFilterParams));
+      Log.Log.Debug("  current mode                = {0}", pidFilterInfo.FilterMode);
+      Log.Log.Debug("  maximum PIDs                = {0}", pidFilterInfo.MaxPids);
+
+      if (pidFilterInfo.MaxPids <= MaxPidFilterPids)
+      {
+        _maxPidFilterPids = pidFilterInfo.MaxPids;
+      }
+    }
+
+    /// <summary>
+    /// Attempt to read the driver information from the tuner.
+    /// </summary>
+    private void ReadDriverInfo()
+    {
       Log.Log.Debug("Twinhan: read driver information");
       for (int i = 0; i < DriverInfoSize; i++)
       {
         Marshal.WriteByte(_responseBuffer, 0);
       }
-      command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _responseBuffer, DriverInfoSize);
-      hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _responseBuffer, DriverInfoSize);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
       if (hr != 0)
       {
         Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1135,13 +1148,32 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Turn the LNB power supply on or off.
+    /// Turn the LNB or aerial power supply on or off. 
     /// </summary>
     /// <param name="powerOn"><c>True</c> to turn power supply on, otherwise <c>false</c>.</param>
     /// <returns><c>true</c> if the power supply state is set successfully, otherwise <c>false</c></returns>
-    public bool SetLnbPowerState(bool powerOn)
+    public bool SetPowerState(bool powerOn)
     {
-      Log.Log.Debug("Twinhan: set LNB power state, on = {0}", powerOn);
+      Log.Log.Debug("Twinhan: set power state, on = {0}", powerOn);
+
+      // It is not known for certain whether any Twinhan DVB-T tuners are able to
+      // supply power to the aerial, however the FAQs on TerraTec's website suggest
+      // that none are able.
+      // In practise it seems that there is no problem attempting to enable power
+      // for certain DVB-T tuners (Cinergy T PCIe Dual, Twinhan AD-TP300)
+      // however attempting to execute this function with a TerraTec H7 causes a
+      // hard crash.
+      // Unfortunately there is no way to check whether this property is actually
+      // supported because of the way the Twinhan API has been implemented (ie. one
+      // KsProperty with the actual property codes encoded in the property data).
+      // For that reason and for safety's sake we only execute this function for
+      // satellite tuners.
+      if (_tunerType != CardType.DvbS)
+      {
+        Log.Log.Debug("Twinhan: function disabled for safety");
+        return false;
+      }
+
       if (powerOn)
       {
         Marshal.WriteByte(_responseBuffer, 0, 0x01);
@@ -1169,7 +1201,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="toneBurstState">The tone/data burst state.</param>
     /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    private bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       Log.Log.Debug("Twinhan: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
@@ -1244,29 +1276,34 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Set DVB-S2 tuning parameters that could not previously be set through BDA interfaces.
+    /// Set tuning parameters that can or could not previously be set through BDA interfaces.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <returns>The channel with DVB-S2 parameters set.</returns>
-    public DVBSChannel SetTuningParameters(DVBSChannel channel)
+    /// <returns>The channel with parameters adjusted as necessary.</returns>
+    public DVBBaseChannel SetTuningParameters(DVBBaseChannel channel)
     {
       Log.Log.Debug("Twinhan: set tuning parameters");
-      if (channel.ModulationType == ModulationType.ModQpsk || channel.ModulationType == ModulationType.Mod8Psk)
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
       {
-        channel.ModulationType = ModulationType.Mod8Vsb;
+        return channel;
+      }
+      if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
+      {
+        ch.ModulationType = ModulationType.Mod8Vsb;
       }
       // I don't think any Twinhan tuners or clones support demodulating anything
       // higher than 8 PSK. Nevertheless...
-      else if (channel.ModulationType == ModulationType.Mod16Apsk)
+      else if (ch.ModulationType == ModulationType.Mod16Apsk)
       {
-        channel.ModulationType = ModulationType.Mod16Vsb;
+        ch.ModulationType = ModulationType.Mod16Vsb;
       }
-      else if (channel.ModulationType == ModulationType.Mod32Apsk)
+      else if (ch.ModulationType == ModulationType.Mod32Apsk)
       {
-        channel.ModulationType = ModulationType.ModOqpsk;
+        ch.ModulationType = ModulationType.ModOqpsk;
       }
-      Log.Log.Debug("  modulation = {0}", channel.ModulationType);
-      return channel;
+      Log.Log.Debug("  modulation = {0}", ch.ModulationType);
+      return ch as DVBBaseChannel;
     }
 
     /// <summary>
@@ -2254,6 +2291,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_propertySet != null)
       {
+        SetPowerState(false);
         Release.ComObject(_propertySet);
         Marshal.FreeCoTaskMem(_commandBuffer);
         Marshal.FreeCoTaskMem(_responseBuffer);
