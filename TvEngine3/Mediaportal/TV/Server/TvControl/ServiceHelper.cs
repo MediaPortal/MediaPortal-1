@@ -10,21 +10,24 @@ namespace Mediaportal.TV.Server.TVControl
   {
     public static int PortHttpService = 8000;
     public static int PortTcpService = 8001;
+    private const int MAX_BUFFER_SIZE = Int32.MaxValue;
+    private const string TVSERVICE = "/TVService/";
+    private const BasicHttpSecurityMode HTTP_SECURITY_MODE = BasicHttpSecurityMode.None;
 
     public static NetTcpBinding GetTcpBinding()
     {
       var defaultBinding = new NetTcpBinding
       {
         Name = "netTcpBinding",
-        MaxBufferSize = Int32.MaxValue,
-        MaxReceivedMessageSize = Int32.MaxValue,
+        MaxBufferSize = MAX_BUFFER_SIZE,
+        MaxReceivedMessageSize = MAX_BUFFER_SIZE,
         ReaderQuotas =
         {
-          MaxDepth = 32,
-          MaxStringContentLength = Int32.MaxValue,
-          MaxArrayLength = Int32.MaxValue,
-          MaxBytesPerRead = Int32.MaxValue,
-          MaxNameTableCharCount = Int32.MaxValue
+          MaxDepth = MAX_BUFFER_SIZE,
+          MaxStringContentLength = MAX_BUFFER_SIZE,
+          MaxArrayLength = MAX_BUFFER_SIZE,
+          MaxBytesPerRead = MAX_BUFFER_SIZE,
+          MaxNameTableCharCount = MAX_BUFFER_SIZE
         },
       };
       return defaultBinding;
@@ -33,21 +36,21 @@ namespace Mediaportal.TV.Server.TVControl
     public static BasicHttpBinding GetHttpBinding()
     {
       var defaultBinding = new BasicHttpBinding
-                             {                               
+                             {
                                Name = "defaultBasicHttpBinding",
-                               MaxBufferSize = Int32.MaxValue,
-                               MaxReceivedMessageSize = Int32.MaxValue,
+                               MaxBufferSize = MAX_BUFFER_SIZE,
+                               MaxReceivedMessageSize = MAX_BUFFER_SIZE,
                                ReaderQuotas =
                                  {
-                                   MaxDepth = 32,
-                                   MaxStringContentLength = Int32.MaxValue,
-                                   MaxArrayLength = Int32.MaxValue,
-                                   MaxBytesPerRead = Int32.MaxValue,
-                                   MaxNameTableCharCount = Int32.MaxValue
+                                   MaxDepth = MAX_BUFFER_SIZE,
+                                   MaxStringContentLength = MAX_BUFFER_SIZE,
+                                   MaxArrayLength = MAX_BUFFER_SIZE,
+                                   MaxBytesPerRead = MAX_BUFFER_SIZE,
+                                   MaxNameTableCharCount = MAX_BUFFER_SIZE
                                  },
                                Security =
                                  {
-                                   Mode = BasicHttpSecurityMode.None,
+                                   Mode = HTTP_SECURITY_MODE,
                                    Transport = { ClientCredentialType = HttpClientCredentialType.None }
                                  }
                              };
@@ -56,12 +59,12 @@ namespace Mediaportal.TV.Server.TVControl
 
     public static string GetEndpointURL(Type type, string hostName)
     {
-      return @"http://" + hostName + ":" + PortHttpService + "/TVService/" + type.Name;
+      return @"http://" + hostName + ":" + PortHttpService + TVSERVICE + type.Name;
     }
 
     public static string GetTcpEndpointURL(Type type, string hostName)
     {
-      return @"net.tcp://" + hostName + ":" + PortTcpService + "/TVService/" + type.Name;
+      return @"net.tcp://" + hostName + ":" + PortTcpService + TVSERVICE + type.Name;
     }
   }
 }
