@@ -285,7 +285,7 @@ namespace MediaPortal.Player
 
     protected class BDFilterConfig
     {
-      public string Video { get; set; }
+      public string VideoMPEG { get; set; }
       public string VideoH264 { get; set; }
       public string VideoVC1 { get; set; }
       public string Audio { get; set; }
@@ -1504,7 +1504,7 @@ namespace MediaPortal.Player
       {
 
         // get pre-defined filter setup
-        filterConfig.Video = xmlreader.GetValueAsString("bdplayer", "mpeg2videocodec", "");
+        filterConfig.VideoMPEG = xmlreader.GetValueAsString("bdplayer", "mpeg2videocodec", "");
         filterConfig.Audio = xmlreader.GetValueAsString("bdplayer", "mpeg2audiocodec", "");
         //filterConfig.AudioAAC = xmlreader.GetValueAsString("bdplayer", "aacaudiocodec", "");
         //filterConfig.AudioDDPlus = xmlreader.GetValueAsString("bdplayer", "ddplusaudiocodec", "");
@@ -2087,7 +2087,7 @@ namespace MediaPortal.Player
       {
         if (_currentVideoFormat == (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2)
         {
-          return filterConfig.Video;
+          return filterConfig.VideoMPEG;
         }
         else if (_currentVideoFormat == (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1)
         {
@@ -2332,49 +2332,38 @@ namespace MediaPortal.Player
 
     private void SetVideoDecoder()
     {
+      ExportGuidFilterAndRelease(filterConfig.VideoH264, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264);
+
+      if (filterConfig.VideoMPEG != filterConfig.VideoH264)
+      {
+        ExportGuidFilterAndRelease(filterConfig.VideoMPEG, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2);
+      }
+      else
+      {
+        ExportGuidFilterAndRelease(filterConfig.VideoH264, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2);
+      }
+
+      if (filterConfig.VideoVC1 != filterConfig.VideoH264 || filterConfig.VideoVC1 != filterConfig.VideoMPEG)
+      {
+        ExportGuidFilterAndRelease(filterConfig.VideoVC1, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1);
+      }
+      else
+      {
+        ExportGuidFilterAndRelease(filterConfig.VideoH264, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1);
+      }
+    }
+
+    private void ExportGuidFilterAndRelease(string filter, BluRayStreamFormats BDStream)
+    {
       Guid guid;
-      IBaseFilter filter;
-
-      filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoH264);
-      if (filter == null)
-        filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoH264);
-      filter.GetClassID(out guid);
-      _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264, ref guid);
-
-      if (filterConfig.VideoH264 != filterConfig.Video)
-      {
-        filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.Video);
-        if (filter == null)
-          filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.Video);
-        filter.GetClassID(out guid);
-        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref guid);
-        DirectShowUtil.ReleaseComObject(filter);
-        filter = null;
-      }
-      else
-      {
-        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref guid);
-      }
-
-      if (filterConfig.VideoVC1 != filterConfig.VideoH264 || filterConfig.VideoVC1 != filterConfig.Video)
-      {
-        filter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.VideoVC1);
-        if (filter == null)
-          filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filterConfig.VideoVC1);
-        filter.GetClassID(out guid);
-        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
-        DirectShowUtil.ReleaseComObject(filter);
-        filter = null;
-      }
-      else
-      {
-        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref guid);
-      }
-      if (filter != null)
-      {
-        DirectShowUtil.ReleaseComObject(filter);
-        filter = null;
-      }
+      IBaseFilter dsfilter;
+      dsfilter = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
+      if (dsfilter == null)
+        dsfilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+      dsfilter.GetClassID(out guid);
+      _ireader.SetVideoDecoder((int)BDStream, ref guid);
+      DirectShowUtil.ReleaseComObject(dsfilter);
+      dsfilter = null;
     }
 
     protected void SetVC1Override()
