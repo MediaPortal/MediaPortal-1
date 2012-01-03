@@ -505,14 +505,6 @@ namespace MediaPortal.GUI.Video
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, itemIndex + 1);
     }
 
-    // Reset currentSelectedItem index if view is not title view
-    // Prevents wrong selected item if switch to title view from actors, years, genres..
-    protected override void OnShowViews()
-    {
-      _currentView = handler.CurrentLevelWhere;
-      base.OnShowViews();
-    }
-
     protected override void OnInfo(int itemIndex)
     {
       GUIListItem item = facadeLayout[itemIndex];
