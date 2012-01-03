@@ -93,6 +93,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE Start() = 0;
     virtual HRESULT STDMETHODCALLTYPE MouseMove(UINT16 x, UINT16 y) = 0;
     virtual HRESULT STDMETHODCALLTYPE SetVideoDecoder(int format, GUID* decoder) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetVC1Override(GUID* subtype) = 0;
 };
 
 enum DS_CMD_ID
@@ -165,6 +166,7 @@ public:
   STDMETHODIMP Start();
   STDMETHODIMP MouseMove(UINT16 x, UINT16 y);
   STDMETHODIMP SetVideoDecoder(int format, GUID* decoder);
+  STDMETHODIMP SetVC1Override(GUID* subtype);
 
   void STDMETHODCALLTYPE OnGraphRebuild(int info);
   void STDMETHODCALLTYPE ForceTitleBasedPlayback(bool force, UINT32 pTitle);

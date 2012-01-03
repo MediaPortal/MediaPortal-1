@@ -220,6 +220,9 @@ namespace MediaPortal.Player
 
       [PreserveSig]
       int SetVideoDecoder(int format, ref Guid decoder);
+
+      [PreserveSig]
+      int SetVC1Override(ref Guid decoder);
     }
     #endregion
 
@@ -436,7 +439,14 @@ namespace MediaPortal.Player
       Video = 1,
       Audio = 2
     }
-    
+
+    #endregion
+
+    #region decoder GUIDs
+
+    private static readonly Guid MEDIASUBTYPE_WVC1_CYBERLINK = new Guid(0xD979F77B, 0xDBEA, 0x4BF6, 0x9E, 0x6D, 0x1D, 0x7E, 0x57, 0xFB, 0xAD, 0x53);
+    private static readonly Guid MEDIASUBTYPE_WVC1_ARCSOFT = new Guid(0x629B40AD, 0xAD74, 0x4EF4, 0xA9, 0x85, 0xF0, 0xC8, 0xD9, 0x2E, 0x5E, 0xCA);
+
     #endregion
 
     #region variables
@@ -2265,6 +2275,7 @@ namespace MediaPortal.Player
 
         DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _interfaceBDReader);
         SetVideoDecoder();
+        SetVC1Override();
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
         #endregion
@@ -2364,6 +2375,24 @@ namespace MediaPortal.Player
         DirectShowUtil.ReleaseComObject(filter);
         filter = null;
       }
+    }
+
+    protected void SetVC1Override()
+    {
+      Guid guid = new Guid();
+
+      if (filterConfig.VideoVC1.StartsWith("ArcSoft Video Decoder"))
+      {
+        guid = MEDIASUBTYPE_WVC1_ARCSOFT;
+      }
+      else if (filterConfig.VideoVC1.StartsWith("CyberLink Video Decoder") ||
+               filterConfig.VideoVC1.StartsWith("CyberLink H.264/AVC Decoder") ||
+               filterConfig.VideoVC1.StartsWith("CyberLink VC-1 Decoder"))
+      {
+        guid = MEDIASUBTYPE_WVC1_CYBERLINK;
+      }
+      
+      _ireader.SetVC1Override(ref guid);
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>

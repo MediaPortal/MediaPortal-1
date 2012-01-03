@@ -358,6 +358,19 @@ STDMETHODIMP CBDReaderFilter::SetVideoDecoder(int format, GUID* decoder)
   return S_FALSE;
 }
 
+STDMETHODIMP CBDReaderFilter::SetVC1Override(GUID* subtype)
+{
+  CheckPointer(subtype, E_INVALIDARG);
+
+  if (m_pVideoPin)
+  {
+    m_pVideoPin->SetVC1Override(subtype);
+    return S_OK;
+  }
+
+  return S_FALSE;
+}
+
 STDMETHODIMP CBDReaderFilter::Action(int key)
 {
   lib.LogAction(key);

@@ -24,14 +24,6 @@
 #include "bdreader.h"
 #include <initguid.h>
 
-// D979F77B-DBEA-4BF6-9E6D-1D7E57FBAD53
-DEFINE_GUID(MEDIASUBTYPE_WVC1_CYBERLINK,
-      0xD979F77B, 0xDBEA, 0x4BF6, 0x9E, 0x6D, 0x1D, 0x7E, 0x57, 0xFB, 0xAD, 0x53);
-
-// 629B40AD-AD74-4EF4-A985-F0C8D92E5ECA
-DEFINE_GUID(MEDIASUBTYPE_WVC1_ARCSOFT,
-      0x629B40AD, 0xAD74, 0x4EF4, 0xA9, 0x85, 0xF0, 0xC8, 0xD9, 0x2E, 0x5E, 0xCA);
-
 class CVideoPin : public CSourceStream, public CSourceSeeking
 {
 public:
@@ -78,6 +70,7 @@ public:
   void StopWait();
   void SetInitialMediaType(const CMediaType* pmt);
   void SetVideoDecoder(int format, GUID* decoder);
+  void SetVC1Override(GUID* subtype);
 
 protected:
   DWORD ThreadProc();
@@ -105,6 +98,8 @@ protected:
   CLSID m_VC1decoder;
   CLSID m_H264decoder;
   CLSID m_MPEG2decoder;
+
+  GUID m_VC1Override;
 
   REFERENCE_TIME m_rtStreamOffset;
 

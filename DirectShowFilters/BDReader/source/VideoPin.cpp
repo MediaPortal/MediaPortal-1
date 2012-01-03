@@ -136,11 +136,10 @@ void CVideoPin::DetectVideoDecoder()
   FILTER_INFO filterInfo;
   m_decoderType = general;
   
-  IEnumFilters * piEnumFilters = NULL;
-  if (m_pFilter->GetFilterGraph() && 
-      SUCCEEDED(m_pFilter->GetFilterGraph()->EnumFilters(&piEnumFilters)))
+  IEnumFilters* piEnumFilters = NULL;
+  if (m_pFilter->GetFilterGraph() && SUCCEEDED(m_pFilter->GetFilterGraph()->EnumFilters(&piEnumFilters)))
   {
-    IBaseFilter * pFilter;
+    IBaseFilter* pFilter;
     while (piEnumFilters->Next(1, &pFilter, &fetched) == NOERROR && !decoderFound)
     {
       if (pFilter->QueryFilterInfo(&filterInfo) == S_OK)
@@ -187,20 +186,10 @@ HRESULT CVideoPin::GetMediaType(CMediaType* pmt)
   CDeMultiplexer& demux = m_pFilter->GetDemultiplexer();
   demux.GetVideoStreamPMT(*pmt);
 
-  DetectVideoDecoder();
-
-  if (pmt->subtype == FOURCCMap('1CVW'))
+  if (pmt->subtype == FOURCCMap('1CVW') && m_VC1Override != GUID_NULL)
   {
-    if (m_decoderType == Arcsoft)
-    {
-      LogDebug("vid: GetMediaType - force Arcsoft VC-1 GUID");
-      pmt->subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
-    }
-    else if (m_decoderType == Cyberlink)
-    {
-      LogDebug("vid: GetMediaType - force Cyberlink VC-1 GUID");
-      pmt->subtype = MEDIASUBTYPE_WVC1_CYBERLINK;
-    }
+    pmt->subtype = m_VC1Override;
+    LogDebug("vid: GetMediaType - force VC-1 GUID");
   }
 
   return S_OK;
@@ -208,14 +197,6 @@ HRESULT CVideoPin::GetMediaType(CMediaType* pmt)
 
 bool CVideoPin::CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt)
 {
-  if (lhs_pmt->subtype == FOURCCMap('1CVW'))
-  {
-    if (m_decoderType == Arcsoft)
-      lhs_pmt->subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
-    else if (m_decoderType == Cyberlink)
-      lhs_pmt->subtype = MEDIASUBTYPE_WVC1_CYBERLINK;
-  }
-
   return (IsEqualGUID(lhs_pmt->majortype, rhs_pmt->majortype) &&
     IsEqualGUID(lhs_pmt->subtype, rhs_pmt->subtype) &&
     IsEqualGUID(lhs_pmt->formattype, rhs_pmt->formattype) &&
@@ -233,12 +214,13 @@ void CVideoPin::SetInitialMediaType(const CMediaType* pmt)
 void CVideoPin::SetVideoDecoder(int format, GUID* decoder)
 {
   AM_MEDIA_TYPE tmp;
+  tmp.cbFormat = 0;
 
   if (format == BLURAY_STREAM_TYPE_VIDEO_H264)
   {
+    m_H264decoder = tmp.subtype = *decoder;
     LogDebug("vid: SetVideoDecoder for H264");
     LogMediaType(&tmp);
-    m_H264decoder = tmp.subtype = *decoder;
   }
   else if (format == BLURAY_STREAM_TYPE_VIDEO_VC1)
   {
@@ -257,6 +239,16 @@ void CVideoPin::SetVideoDecoder(int format, GUID* decoder)
     LogDebug("vid: SetVideoDecoder - trying to set a decoder for invalid format %d", format);
     return;
   }
+}
+
+void CVideoPin::SetVC1Override(GUID* subtype)
+{
+  AM_MEDIA_TYPE tmp;
+  tmp.cbFormat = 0;
+  m_VC1Override = tmp.subtype = *subtype; 
+  
+  LogDebug("vid: SetVC1Override");
+  LogMediaType(&tmp);
 }
 
 bool CVideoPin::CheckVideoFormat(GUID* pFormat, CLSID* pDecoder)
@@ -326,6 +318,8 @@ HRESULT CVideoPin::CompleteConnect(IPin* pReceivePin)
     LogDebug("vid:CompleteConnect() failed:%x", hr);
     return hr;
   }
+
+  DetectVideoDecoder();
 
   REFERENCE_TIME refTime;
   m_pFilter->GetDuration(&refTime);
