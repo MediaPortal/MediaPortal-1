@@ -1022,132 +1022,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Attempt to read the device information from the tuner.
-    /// </summary>
-    private void ReadDeviceInfo()
-    {
-      Log.Log.Debug("Twinhan: read device information");
-      for (int i = 0; i < DeviceInfoSize; i++)
-      {
-        Marshal.WriteByte(_responseBuffer, 0);
-      }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DEVICE_INFO, IntPtr.Zero, 0, _responseBuffer, DeviceInfoSize);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-
-      //Log.Log.Debug("Twinhan: number of DeviceInfo bytes returned is {0}", returnedByteCount);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
-      DeviceInfo deviceInfo = (DeviceInfo)Marshal.PtrToStructure(_responseBuffer, typeof(DeviceInfo));
-      Log.Log.Debug("  name                        = {0}", deviceInfo.Name);
-
-      // Separate the device type flags into a comma separated string.
-      Array deviceTypes = Enum.GetValues(typeof(TwinhanDeviceType));
-      String supportedModes = "";
-      for (int i = 0; i < deviceTypes.Length; i++)
-      {
-        if (((int)deviceInfo.Type & (UInt32)deviceTypes.GetValue(i)) != 0)
-        {
-          if (supportedModes.Length != 0)
-          {
-            supportedModes += ", ";
-          }
-          String typeName = Enum.GetName(typeof(TwinhanDeviceType), deviceTypes.GetValue(i));
-          supportedModes += typeName;
-        }
-      }
-
-      Log.Log.Debug("  supported modes             = {0}", supportedModes);
-      Log.Log.Debug("  speed/interface             = {0}", deviceInfo.Speed);
-      Log.Log.Debug("  MAC address                 = {0}", BitConverter.ToString(deviceInfo.MacAddress));
-      Log.Log.Debug("  CI support                  = {0}", deviceInfo.CiSupport);
-      Log.Log.Debug("  TS packet length            = {0}", deviceInfo.TsPacketLength);
-      // Handle the PID filter paramter bytes carefully - not all drivers actually return
-      // meaningful values for them.
-      if (deviceInfo.IsPidFilterBypassSupported == 0x01)
-      {
-        _isPidFilterSupported = true;
-        if (deviceInfo.IsPidFilterBypassSupported == 0)
-        {
-          _isPidFilterBypassSupported = false;
-        }
-      }
-      Log.Log.Debug("  PID filter supported        = {0}", _isPidFilterSupported);
-      Log.Log.Debug("  PID filter bypass supported = {0}", _isPidFilterBypassSupported);
-
-      _ciApiVersion = deviceInfo.CiSupport;
-    }
-
-    /// <summary>
-    /// Attempt to read the PID filter implementation details from the tuner.
-    /// </summary>
-    private void ReadPidFilterInfo()
-    {
-      Log.Log.Debug("Twinhan: read PID filter information");
-      for (int i = 0; i < PidFilterParamsSize; i++)
-      {
-        Marshal.WriteByte(_responseBuffer, 0);
-      }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _responseBuffer, PidFilterParamsSize);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-
-      //Log.Log.Debug("Twinhan: number of PidFilterParams bytes returned is {0}", returnedByteCount);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
-      PidFilterParams pidFilterInfo = (PidFilterParams)Marshal.PtrToStructure(_responseBuffer, typeof(PidFilterParams));
-      Log.Log.Debug("  current mode                = {0}", pidFilterInfo.FilterMode);
-      Log.Log.Debug("  maximum PIDs                = {0}", pidFilterInfo.MaxPids);
-
-      if (pidFilterInfo.MaxPids <= MaxPidFilterPids)
-      {
-        _maxPidFilterPids = pidFilterInfo.MaxPids;
-      }
-    }
-
-    /// <summary>
-    /// Attempt to read the driver information from the tuner.
-    /// </summary>
-    private void ReadDriverInfo()
-    {
-      Log.Log.Debug("Twinhan: read driver information");
-      for (int i = 0; i < DriverInfoSize; i++)
-      {
-        Marshal.WriteByte(_responseBuffer, 0);
-      }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _responseBuffer, DriverInfoSize);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-
-      //Log.Log.Debug("Twinhan: number of DriverInfo bytes returned is {0}", returnedByteCount);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
-      DriverInfo driverInfo = (DriverInfo)Marshal.PtrToStructure(_responseBuffer, typeof(DriverInfo));
-      char[] majorVersion = String.Format("{0:x2}", driverInfo.DriverMajorVersion).ToCharArray();
-      char[] minorVersion = String.Format("{0:x2}", driverInfo.DriverMinorVersion).ToCharArray();
-      Log.Log.Debug("  driver version              = {0}.{1}.{2}.{3}", majorVersion[0], majorVersion[1], minorVersion[0], minorVersion[1]);
-      majorVersion = String.Format("{0:x2}", driverInfo.FirmwareMajorVersion).ToCharArray();
-      minorVersion = String.Format("{0:x2}", driverInfo.FirmwareMinorVersion).ToCharArray();
-      Log.Log.Debug("  firmware version            = {0}.{1}.{2}.{3}", majorVersion[0], majorVersion[1], minorVersion[0], minorVersion[1]);
-      Log.Log.Debug("  date                        = {0}", driverInfo.Date);
-      Log.Log.Debug("  company                     = {0}", driverInfo.Company);
-      Log.Log.Debug("  hardware info               = {0}", driverInfo.HardwareInfo);
-      Log.Log.Debug("  CI event mode supported     = {0}", (driverInfo.CiMmiFlags & 0x01) != 0);
-    }
-
-    /// <summary>
     /// Turn the LNB or aerial power supply on or off. 
     /// </summary>
     /// <param name="powerOn"><c>True</c> to turn power supply on, otherwise <c>false</c>.</param>
@@ -1361,6 +1235,136 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
+
+    #region hardware/software information
+
+    /// <summary>
+    /// Attempt to read the device information from the tuner.
+    /// </summary>
+    private void ReadDeviceInfo()
+    {
+      Log.Log.Debug("Twinhan: read device information");
+      for (int i = 0; i < DeviceInfoSize; i++)
+      {
+        Marshal.WriteByte(_responseBuffer, 0);
+      }
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DEVICE_INFO, IntPtr.Zero, 0, _responseBuffer, DeviceInfoSize);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      if (hr != 0)
+      {
+        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
+      }
+
+      //Log.Log.Debug("Twinhan: number of DeviceInfo bytes returned is {0}", returnedByteCount);
+      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
+      DeviceInfo deviceInfo = (DeviceInfo)Marshal.PtrToStructure(_responseBuffer, typeof(DeviceInfo));
+      Log.Log.Debug("  name                        = {0}", deviceInfo.Name);
+
+      // Separate the device type flags into a comma separated string.
+      Array deviceTypes = Enum.GetValues(typeof(TwinhanDeviceType));
+      String supportedModes = "";
+      for (int i = 0; i < deviceTypes.Length; i++)
+      {
+        if (((int)deviceInfo.Type & (UInt32)deviceTypes.GetValue(i)) != 0)
+        {
+          if (supportedModes.Length != 0)
+          {
+            supportedModes += ", ";
+          }
+          String typeName = Enum.GetName(typeof(TwinhanDeviceType), deviceTypes.GetValue(i));
+          supportedModes += typeName;
+        }
+      }
+
+      Log.Log.Debug("  supported modes             = {0}", supportedModes);
+      Log.Log.Debug("  speed/interface             = {0}", deviceInfo.Speed);
+      Log.Log.Debug("  MAC address                 = {0}", BitConverter.ToString(deviceInfo.MacAddress));
+      Log.Log.Debug("  CI support                  = {0}", deviceInfo.CiSupport);
+      Log.Log.Debug("  TS packet length            = {0}", deviceInfo.TsPacketLength);
+      // Handle the PID filter paramter bytes carefully - not all drivers actually return
+      // meaningful values for them.
+      if (deviceInfo.IsPidFilterBypassSupported == 0x01)
+      {
+        _isPidFilterSupported = true;
+        if (deviceInfo.IsPidFilterBypassSupported == 0)
+        {
+          _isPidFilterBypassSupported = false;
+        }
+      }
+      Log.Log.Debug("  PID filter supported        = {0}", _isPidFilterSupported);
+      Log.Log.Debug("  PID filter bypass supported = {0}", _isPidFilterBypassSupported);
+
+      _ciApiVersion = deviceInfo.CiSupport;
+    }
+
+    /// <summary>
+    /// Attempt to read the PID filter implementation details from the tuner.
+    /// </summary>
+    private void ReadPidFilterInfo()
+    {
+      Log.Log.Debug("Twinhan: read PID filter information");
+      for (int i = 0; i < PidFilterParamsSize; i++)
+      {
+        Marshal.WriteByte(_responseBuffer, 0);
+      }
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _responseBuffer, PidFilterParamsSize);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      if (hr != 0)
+      {
+        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
+      }
+
+      //Log.Log.Debug("Twinhan: number of PidFilterParams bytes returned is {0}", returnedByteCount);
+      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
+      PidFilterParams pidFilterInfo = (PidFilterParams)Marshal.PtrToStructure(_responseBuffer, typeof(PidFilterParams));
+      Log.Log.Debug("  current mode                = {0}", pidFilterInfo.FilterMode);
+      Log.Log.Debug("  maximum PIDs                = {0}", pidFilterInfo.MaxPids);
+
+      if (pidFilterInfo.MaxPids <= MaxPidFilterPids)
+      {
+        _maxPidFilterPids = pidFilterInfo.MaxPids;
+      }
+    }
+
+    /// <summary>
+    /// Attempt to read the driver information from the tuner.
+    /// </summary>
+    private void ReadDriverInfo()
+    {
+      Log.Log.Debug("Twinhan: read driver information");
+      for (int i = 0; i < DriverInfoSize; i++)
+      {
+        Marshal.WriteByte(_responseBuffer, 0);
+      }
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _responseBuffer, DriverInfoSize);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      if (hr != 0)
+      {
+        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
+      }
+
+      //Log.Log.Debug("Twinhan: number of DriverInfo bytes returned is {0}", returnedByteCount);
+      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
+      DriverInfo driverInfo = (DriverInfo)Marshal.PtrToStructure(_responseBuffer, typeof(DriverInfo));
+      char[] majorVersion = String.Format("{0:x2}", driverInfo.DriverMajorVersion).ToCharArray();
+      char[] minorVersion = String.Format("{0:x2}", driverInfo.DriverMinorVersion).ToCharArray();
+      Log.Log.Debug("  driver version              = {0}.{1}.{2}.{3}", majorVersion[0], majorVersion[1], minorVersion[0], minorVersion[1]);
+      majorVersion = String.Format("{0:x2}", driverInfo.FirmwareMajorVersion).ToCharArray();
+      minorVersion = String.Format("{0:x2}", driverInfo.FirmwareMinorVersion).ToCharArray();
+      Log.Log.Debug("  firmware version            = {0}.{1}.{2}.{3}", majorVersion[0], majorVersion[1], minorVersion[0], minorVersion[1]);
+      Log.Log.Debug("  date                        = {0}", driverInfo.Date);
+      Log.Log.Debug("  company                     = {0}", driverInfo.Company);
+      Log.Log.Debug("  hardware info               = {0}", driverInfo.HardwareInfo);
+      Log.Log.Debug("  CI event mode supported     = {0}", (driverInfo.CiMmiFlags & 0x01) != 0);
+    }
+
+    #endregion
 
     #region conditional access
 
@@ -2291,7 +2295,10 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_propertySet != null)
       {
-        SetPowerState(false);
+        if (_isTwinhan)
+        {
+          SetPowerState(false);
+        }
         Release.ComObject(_propertySet);
         Marshal.FreeCoTaskMem(_commandBuffer);
         Marshal.FreeCoTaskMem(_responseBuffer);
