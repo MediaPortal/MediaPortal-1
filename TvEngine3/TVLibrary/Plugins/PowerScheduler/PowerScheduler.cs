@@ -825,32 +825,29 @@ namespace TvEngine.PowerScheduler
         Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
       }
 
-      int reload = 0;
+      LogVerbose("Looping in intervals of {0} seconds", PowerSettings.CheckInterval);
+
       do
       {
         if (!_standby)
         {
           try
           {
-            if (reload++ == _reloadInterval)
-            {
-              reload = 0;
-              CheckForStandby(true);
-              // Clear cache
-              CacheManager.Clear();
-              GC.Collect();
-              LoadSettings();
-              SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
-            }
-            else
-              CheckForStandby(false);
+            CheckForStandby(true);
+
+            // Clear cache
+            CacheManager.Clear();
+            GC.Collect();
+            LoadSettings();
+
+            SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
           }
           catch (Exception ex)
           {
             Log.Write(ex);
           }
         }
-        if (_stopThread.WaitOne(1000)) // Wait one sec / exit
+        if (_stopThread.WaitOne(PowerSettings.CheckInterval * 1000)) // Wait one sec / exit
         {
           LogVerbose("Powerscheduler poll thread - exit");
           return;
