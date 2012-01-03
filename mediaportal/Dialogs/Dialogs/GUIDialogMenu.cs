@@ -51,7 +51,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogMenu.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogMenu.xml"));
     }
 
     public override void OnAction(Action action)
@@ -81,7 +81,7 @@ namespace MediaPortal.Dialogs
         keySelection += key;
         if (keySelection.Length == listItems.Count.ToString().Length)
         {
-          selectOption(keySelection);
+          SelectOption(keySelection);
           keySelection = string.Empty;
           return;
         }
@@ -92,7 +92,7 @@ namespace MediaPortal.Dialogs
       base.OnAction(action);
     }
 
-    public void selectOption(string keySelected)
+    public void SelectOption(string keySelected)
     {
       int selected;
       try
@@ -106,12 +106,7 @@ namespace MediaPortal.Dialogs
       if (selected >= 0 && selected < listItems.Count)
       {
         // Select dialog item
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
-        OnMessage(msg);
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
-        OnMessage(msg);
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
-        OnMessage(msg);
+        selectedItemIndex = selected;
       }
     }
 
@@ -126,7 +121,7 @@ namespace MediaPortal.Dialogs
       {
         string keySelectionCopy = keySelection;
         keySelection = string.Empty;
-        selectOption(keySelectionCopy);
+        SelectOption(keySelectionCopy);
       }
     }
 

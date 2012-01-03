@@ -169,7 +169,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvprogram.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvprogram.xml"));
       return bResult;
     }
 

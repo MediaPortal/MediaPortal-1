@@ -60,6 +60,24 @@ namespace TvPlugin
     protected Channel _currentChannel = null;
     protected int _numberOfBlocks = 4;
 
+    protected bool _useBorderHighlight = false;
+    protected bool _useColorsForButtons = false;
+    protected bool _useColorsForGenres = false;
+    protected bool _specifyMpaaRatedAsMovie = false;
+    protected bool _guideColorsLoadedFromSkinSettings = false;
+    protected long _defaultGenreColorOnNow = 0;
+    protected long _defaultGenreColorOnLater = 0;
+    protected long _guideColorChannelButton = 0;
+    protected long _guideColorChannelButtonSelected = 0;
+    protected long _guideColorGroupButton = 0;
+    protected long _guideColorGroupButtonSelected = 0;
+    protected long _guideColorProgramEnded = 0;
+    protected long _guideColorProgramSelected = 0;
+    protected long _guideColorBorderHighlight = 0;
+    protected Dictionary<string, string> _genreMap = new Dictionary<string, string>();
+    protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
+    protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
+
     protected int ChannelOffset
     {
       get { return _channelOffset; }
@@ -84,6 +102,14 @@ namespace TvPlugin
 
         // sets button visible state
         UpdateGroupButton();
+
+        GUIButton3PartControl cntlChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButton3PartControl;
+        cntlChannelGroup.RenderLeft = false;
+        cntlChannelGroup.RenderRight = false;
+        if (_useColorsForButtons)
+        {
+          cntlChannelGroup.ColourDiffuse = _guideColorGroupButton;
+        }
 
         _updateTimer = DateTime.Now;
         GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
@@ -189,10 +215,11 @@ namespace TvPlugin
           label.SetPosition(xpos, ypos);
         }
 
-        // add channels...        
-        int iItemHeight = cntlChannelTemplate.Height;        
-        UpdateChannelCount();
+        // add channels...
+        int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
+        int iItemHeight = cntlChannelTemplate.Height;
 
+        _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
         for (int iChan = 0; iChan < _channelCount; ++iChan)
         {
           xpos = cntlChannelTemplate.XPosition;
@@ -229,6 +256,13 @@ namespace TvPlugin
               imgBut.TileFillTNFM = buttonTemplate.TileFillTNFM;
               imgBut.TileFillTFR = buttonTemplate.TileFillTFR;
               imgBut.TileFillTNFR = buttonTemplate.TileFillTNFR;
+
+              imgBut.OverlayFileNameTFL = buttonTemplate.OverlayFileNameTFL;
+              imgBut.OverlayFileNameTNFL = buttonTemplate.OverlayFileNameTNFL;
+              imgBut.OverlayFileNameTFM = buttonTemplate.OverlayFileNameTFM;
+              imgBut.OverlayFileNameTNFM = buttonTemplate.OverlayFileNameTNFM;
+              imgBut.OverlayFileNameTFR = buttonTemplate.OverlayFileNameTFR;
+              imgBut.OverlayFileNameTNFR = buttonTemplate.OverlayFileNameTNFR;
             }
             else
             {
@@ -265,12 +299,11 @@ namespace TvPlugin
             imgBut.IconWidth = cntlChannelImg.RenderWidth;
             imgBut.IconHeight = cntlChannelImg.RenderHeight;
             imgBut.IconKeepAspectRatio = cntlChannelImg.KeepAspectRatio;
-            imgBut.IconCentered = cntlChannelImg.Centered;
+            imgBut.IconCentered = (cntlChannelImg.ImageAlignment == GUIControl.Alignment.ALIGN_CENTER);
             imgBut.IconZoom = cntlChannelImg.Zoom;
           }
           imgBut.TextOffsetX1 = cntlChannelLabel.XPosition;
           imgBut.TextOffsetY1 = cntlChannelLabel.YPosition;
-          imgBut.ColourDiffuse = 0xffffffff;
           imgBut.DoUpdate();
         }
 
@@ -331,16 +364,16 @@ namespace TvPlugin
 
         LoadSchedules(false);
 
-        if (ChannelOffset > _channelList.Count)
+        if (_channelOffset > _channelList.Count)
         {
-          ChannelOffset = 0;
+          _channelOffset = 0;
           _cursorX = 0;
         }
 
         for (int i = 0; i < controlList.Count; ++i)
         {
           GUIControl cntl = (GUIControl)controlList[i];
-          if (cntl.GetID >= RadioGuideBase.GUIDE_COMPONENTID_START)
+          if (cntl.GetID >= GUIDE_COMPONENTID_START)
           {
             cntl.IsVisible = false;
           }
@@ -366,10 +399,10 @@ namespace TvPlugin
 
           List<Channel> visibleChannels = new List<Channel>();
 
-          int chan = ChannelOffset;
+          int chan = _channelOffset;
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
-            if (chan >= 0 && chan < _channelList.Count)
+            if (chan < _channelList.Count)
             {
               visibleChannels.Add(_channelList[chan].channel);
             }
@@ -385,7 +418,7 @@ namespace TvPlugin
           // make sure the TV Guide heading is visiable and the single channel labels are not.
           setGuideHeadingVisibility(true);
           setSingleChannelLabelVisibility(false);
-          chan = ChannelOffset;
+          chan = _channelOffset;
 
           int firstButtonYPos = 0;
           int lastButtonYPos = 0;
@@ -398,7 +431,7 @@ namespace TvPlugin
 
           for (int iChannel = 0; iChannel < channelCount; iChannel++)
           {
-            if (chan >= 0 && chan < _channelList.Count)
+            if (chan < _channelList.Count)
             {
               GuideChannel tvGuideChannel = (GuideChannel)_channelList[chan];
               RenderChannel(ref programs, iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
@@ -434,7 +467,7 @@ namespace TvPlugin
             vertLine.Height = lastButtonYPos - vertLine.YPosition + (firstButtonYPos - vertLine.YPosition);
           }
           // update selected channel
-          _singleChannelNumber = _cursorX + ChannelOffset;
+          _singleChannelNumber = _cursorX + _channelOffset;
           if (_singleChannelNumber >= _channelList.Count)
           {
             _singleChannelNumber -= _channelList.Count;

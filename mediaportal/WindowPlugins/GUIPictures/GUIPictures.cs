@@ -436,13 +436,26 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\mypics.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mypics.xml"));
     }
 
     public override void DeInit()
     {
       base.DeInit();
       SaveSettings();
+    }
+
+    protected override void InitViewSelections()
+    {
+      btnViews.ClearMenu();
+
+      // Add the view options to the menu.
+      int index = 0;
+      btnViews.AddItem(GUILocalizeStrings.Get(134), index++); // Shares
+      btnViews.AddItem(GUILocalizeStrings.Get(636), index++); // Date
+
+      // Have the menu select the currently selected view.
+      btnViews.SetSelectedItemByValue((int)disp);
     }
 
     public override void OnAdded()
@@ -517,6 +530,9 @@ namespace MediaPortal.GUI.Pictures
         virtualDirectory.Reset();
       }
       base.OnPageLoad();
+      InitViewSelections();
+      UpdateButtonStates();
+
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
       LoadFolderSettings(currentFolder);
@@ -671,8 +687,41 @@ namespace MediaPortal.GUI.Pictures
             LoadDirectory(currentFolder);
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+
+          // Respond to the correct control.  The value is retrived directly from the control by the called handler.
+          if (message.TargetControlId == btnViews.GetID)
+          {
+            SetView(btnViews.SelectedItemValue);
+            GUIControl.FocusControl(GetID, btnViews.GetID);
+          }
+          break;
       }
       return base.OnMessage(message);
+    }
+
+    protected override void SetView(int selectedViewId)
+    {
+      switch (selectedViewId)
+      {
+        case 0: // Shares
+          if (disp != Display.Files)
+          {
+            disp = Display.Files;
+            LoadDirectory(m_strDirectoryStart);
+          }
+          break;
+
+        case 1: // Date
+          if (disp != Display.Date)
+          {
+            disp = Display.Date;
+            LoadDirectory("");
+          }
+          break;
+      }
     }
 
     protected override void OnShowContextMenu()
@@ -795,9 +844,6 @@ namespace MediaPortal.GUI.Pictures
             OnCreateAllThumbs(item.Path, true, true);
           }
           break;
-        case 457: // Test change view
-          OnShowViews();
-          break;
         case 831:
           string message;
           if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
@@ -897,7 +943,7 @@ namespace MediaPortal.GUI.Pictures
           textLine = GUILocalizeStrings.Get(105);
           break;
       }
-      GUIControl.SetControlLabel(GetID, btnSortBy.GetID, textLine);
+      GUIControl.SetControlLabel(GetID, btnSortBy.GetID, GUILocalizeStrings.Get(96) + textLine);
 
       if (null != facadeLayout)
         facadeLayout.EnableScrollLabel = method == SortMethod.Name;
@@ -1635,50 +1681,6 @@ namespace MediaPortal.GUI.Pictures
 
       dlgFile.DeInit();
       dlgFile = null;
-    }
-
-    protected override void OnShowViews()
-    {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-      {
-        return;
-      }
-      dlg.Reset();
-      dlg.SetHeading(499); // Views menu
-
-      dlg.AddLocalizedString(134); // Shares
-      dlg.AddLocalizedString(636); // date
-
-      // set the focus to currently used view
-      dlg.SelectedLabel = (int)disp;
-
-      // show dialog and wait for result
-      dlg.DoModal(GetID);
-      if (dlg.SelectedId == -1)
-      {
-        return;
-      }
-
-      switch (dlg.SelectedId)
-      {
-        case 134:
-          if (disp != Display.Files)
-          {
-            disp = Display.Files;
-            LoadDirectory(m_strDirectoryStart);
-          }
-          break;
-        case 636:
-          if (disp != Display.Date)
-          {
-            disp = Display.Date;
-            LoadDirectory("");
-          }
-          break;
-      }
-
-      GUIControl.FocusControl(GetID, btnViews.GetID);
     }
 
     #endregion

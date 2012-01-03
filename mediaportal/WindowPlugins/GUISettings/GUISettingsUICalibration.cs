@@ -102,7 +102,7 @@ namespace MediaPortal.GUI.Settings
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settingsUICalibration.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settingsUICalibration.xml"));
     }
 
     public override int GetFocusControlId()
@@ -442,7 +442,7 @@ namespace MediaPortal.GUI.Settings
                 dlgNotify.TimeOut = 1;
                 dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
               }
-              GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, GUIGraphicsContext.Skin, "fonts.xml"));
+              GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
               GUIFontManager.InitializeDeviceObjects();
             }
           }

@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Video
     public override bool Init()
     {
       bool bResult = Load(Path.Combine(Application.StartupPath,
-                                       GUIGraphicsContext.Skin + @"\musicFullScreen.xml"));
+                                       GUIGraphicsContext.GetThemedSkinFile(@"\musicFullScreen.xml")));
 
       GetID = (int)Window.WINDOW_FULLSCREEN_MUSIC;
       return bResult;

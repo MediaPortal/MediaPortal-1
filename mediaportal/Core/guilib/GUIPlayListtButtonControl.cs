@@ -341,7 +341,7 @@ namespace MediaPortal.GUI.Library
       _NavigateLeft = NavigateLeft;
       _NavigateRight = NavigateRight;
 
-      string skinFolderPath = String.Format(@"{0}\media\", GUIGraphicsContext.Skin);
+      string skinFolderPath = GUIGraphicsContext.GetThemedSkinDirectory(@"\media\");
       ImgUpButtonDisabled = GetDisabledButtonImage(skinFolderPath, TextureMoveUpFileName, WindowId, WindowId + 10002,
                                                    UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight);
 

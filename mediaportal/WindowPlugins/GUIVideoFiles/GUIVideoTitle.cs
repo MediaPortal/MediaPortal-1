@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Video
     {
       currentFolder = string.Empty;
       handler.CurrentView = "369";
-      return Load(GUIGraphicsContext.Skin + @"\myvideoTitle.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myvideoTitle.xml"));
     }
 
     protected override string SerializeName
@@ -88,12 +88,6 @@ namespace MediaPortal.GUI.Video
           if (layouts == null)
           {
             layouts = new Layout[handler.Views.Count,50];
-
-            ArrayList viewStrings = new ArrayList();
-            viewStrings.Add("List");
-            viewStrings.Add("Icons");
-            viewStrings.Add("Big Icons");
-            viewStrings.Add("Filmstrip");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {

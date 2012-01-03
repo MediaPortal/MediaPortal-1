@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myVideo.xml"));
     }
 
     public override void OnAdded()

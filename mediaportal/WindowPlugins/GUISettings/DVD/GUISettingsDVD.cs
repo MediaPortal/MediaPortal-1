@@ -73,7 +73,7 @@ namespace WindowPlugins.GUISettings.TV
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\settings_dvd.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_dvd.xml"));
       return bResult;
     }
 

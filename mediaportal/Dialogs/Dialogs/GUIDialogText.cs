@@ -43,7 +43,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogText.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogText.xml"));
     }
 
 

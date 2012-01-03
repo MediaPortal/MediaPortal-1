@@ -341,8 +341,11 @@
     <Compile Include="guilib\GUIInternalOverlayWindow.cs" />
     <Compile Include="guilib\GUIInternalWindow.cs" />
     <Compile Include="guilib\GUIKeyboard.cs" />
+    <Compile Include="guilib\GUIMenuButton.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
+    <Compile Include="guilib\IStandardKeyboard.cs" />
+    <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />

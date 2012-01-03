@@ -64,7 +64,7 @@ namespace WindowPlugins.GUISettings
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settingsSkipSteps.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settingsSkipSteps.xml"));
     }
 
     #region loading

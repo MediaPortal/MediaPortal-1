@@ -45,7 +45,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_Display_Remote.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_Display_Remote.xml"));
     }
 
     private void LoadSettings()

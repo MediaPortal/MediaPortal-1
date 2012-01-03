@@ -318,41 +318,34 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+      // Create the list of textures to pack.
       _packedTextures = new List<PackedTexture>();
       List<string> files = new List<string>();
-      using (Settings xmlreader = new MPSettings())
+
+      string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
+      files.AddRange(skinFiles);
+
+      try
       {
-        if (xmlreader.GetValueAsBool("debug", "packSkinGfx", true))
-        {
-          string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
-          files.AddRange(skinFiles);
-        }
-          // workaround for uncommon rendering implementation of volume osd - it won't show up without packedtextures
-        else
-        {
-          string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "volume*.png");
-          string[] forcedCacheFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "cached*.png");
-          files.Add(String.Format(@"{0}\media\Thumb_Mask.png", skinName));
-          files.AddRange(skinFiles);
-          files.AddRange(forcedCacheFiles);
-        }
-        if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
-        {
-          string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png",
-                                                SearchOption.AllDirectories);
-          string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png",
-                                                   SearchOption.AllDirectories);
-          files.AddRange(tvLogos);
-          files.AddRange(radioLogos);
-        }
-        if (xmlreader.GetValueAsBool("debug", "packPluginGfx", true))
-        {
-          string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
-          string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
-          files.AddRange(weatherFiles);
-          files.AddRange(tetrisFiles);
-        }
+        string[] themeFiles = Directory.GetFiles(String.Format(@"{0}\themes", skinName), "*.png", SearchOption.AllDirectories);
+        files.AddRange(themeFiles);
       }
+      catch (DirectoryNotFoundException)
+      {
+        // The themes directory is not required to exist.
+      }
+
+      string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
+      files.AddRange(tvLogos);
+
+      string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
+      files.AddRange(radioLogos);
+
+      string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
+      files.AddRange(weatherFiles);
+
+      string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
+      files.AddRange(tetrisFiles);
 
       // Determine maximum texture dimensions
       try
@@ -536,12 +529,19 @@ namespace MediaPortal.GUI.Library
       }
 
       string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
-
       int pos = file.IndexOf(skinName);
       if (pos >= 0)
       {
         file = file.Remove(pos, skinName.Length);
       }
+
+      string themeName = String.Format(@"{0}\themes", GUIGraphicsContext.Skin).ToLower();
+      pos = file.IndexOf(themeName);
+      if (pos >= 0)
+      {
+        file = file.Remove(pos, themeName.Length);
+      }
+
       if (file.StartsWith(@"\"))
       {
         file = file.Remove(0, 1);
@@ -574,37 +574,65 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
-      int index = 0;
-      foreach (PackedTexture bigOne in _packedTextures)
-      {
-        PackedTextureNode foundNode = bigOne.root.Get(fileName);
-        if (foundNode != null)
-        {
-          uoffs = ((float)foundNode.Rect.Left + 1) / ((float)bigOne.root.Rect.Width);
-          voffs = ((float)foundNode.Rect.Top + 1) / ((float)bigOne.root.Rect.Height);
-          umax = ((float)foundNode.Rect.Width - 2) / ((float)bigOne.root.Rect.Width);
-          vmax = ((float)foundNode.Rect.Height - 2) / ((float)bigOne.root.Rect.Height);
-          iWidth = foundNode.Rect.Width - 2;
-          iHeight = foundNode.Rect.Height - 2;
-          if (bigOne.texture == null)
-          {
-            LoadPackedGraphics(index);
-          }
 
-          tex = bigOne.texture;
-          if (bigOne.textureNo == -1)
-          {
-            unsafe
-            {
-              IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
-              bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-              Log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
-            }
-          }
-          TextureNo = bigOne.textureNo;
-          return true;
+      Settings xmlreader = new SKSettings();
+      string skinThemeTexturePath = xmlreader.GetValueAsString("Theme", "Name", "") + @"\media\";
+      skinThemeTexturePath = skinThemeTexturePath.ToLower();
+
+      // Look for textures first in the current theme location.  Theme textures override default textures.
+      int index = 0;
+      PackedTexture bigOne = null;
+      PackedTextureNode foundNode = null;      
+      foreach (PackedTexture texture in _packedTextures)
+      {
+        if ((foundNode = texture.root.Get(skinThemeTexturePath + fileName)) != null)
+        {
+          bigOne = texture;
+          break;
         }
         index++;
+      }
+
+      // No theme texture was found.  Check the default skin location.
+      if (foundNode == null)
+      {
+        index = 0;
+        foreach (PackedTexture texture in _packedTextures)
+        {
+          if ((foundNode = texture.root.Get(fileName)) != null)
+          {
+            bigOne = texture;
+            break;
+          }
+          index++;
+        }
+      }
+
+      if (foundNode != null)
+      {
+        uoffs = ((float)foundNode.Rect.Left + 1) / ((float)bigOne.root.Rect.Width);
+        voffs = ((float)foundNode.Rect.Top + 1) / ((float)bigOne.root.Rect.Height);
+        umax = ((float)foundNode.Rect.Width - 2) / ((float)bigOne.root.Rect.Width);
+        vmax = ((float)foundNode.Rect.Height - 2) / ((float)bigOne.root.Rect.Height);
+        iWidth = foundNode.Rect.Width - 2;
+        iHeight = foundNode.Rect.Height - 2;
+        if (bigOne.texture == null)
+        {
+          LoadPackedGraphics(index);
+        }
+
+        tex = bigOne.texture;
+        if (bigOne.textureNo == -1)
+        {
+          unsafe
+          {
+            IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
+            bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+            Log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
+          }
+        }
+        TextureNo = bigOne.textureNo;
+        return true;
       }
       return false;
     }

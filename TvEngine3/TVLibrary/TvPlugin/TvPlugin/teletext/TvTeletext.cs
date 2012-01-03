@@ -53,7 +53,7 @@ namespace TvPlugin.teletext
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myteletext.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myteletext.xml"));
     }
 
     protected override void OnPageDestroy(int newWindowId)

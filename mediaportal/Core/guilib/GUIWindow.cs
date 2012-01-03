@@ -76,6 +76,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_MOVIE_CALIBRATION = 11,
       WINDOW_SETTINGS_SLIDESHOW = 12,
       WINDOW_SETTINGS_MUSIC = 14,
+      WINDOW_SETTINGS_WEATHER = 17,
       WINDOW_SCRIPTS = 20,
       WINDOW_VIDEO_TITLE = 25,
       WINDOW_VIDEO_PLAYLIST = 28,
@@ -204,6 +205,7 @@ namespace MediaPortal.GUI.Library
     protected int _isOverlayAllowedOriginalCondition = GUIInfoManager.SYSTEM_ALWAYS_TRUE;
     private Object instance;
     protected string _loadParameter = null;
+    private bool _skipAnimation = false;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -312,6 +314,17 @@ namespace MediaPortal.GUI.Library
         }
         index++;
       }
+    }
+
+    /// <summary>
+    /// Move the control with the specified id to the end of the control list (will render last; in front of other controls).
+    /// </summary>
+    /// <param name="dwId">ID of the control</param>
+    public void SendToFront(ref GUIControl ctrl)
+    {
+      // Remove the control from the collection and add it back to the end of the collection.
+      Remove(ctrl.GetID);
+      Add(ref ctrl);
     }
 
     /// <summary>
@@ -454,6 +467,9 @@ namespace MediaPortal.GUI.Library
         return false;
       }
 
+      // Load skin specific settings.
+      SkinSettings.Load();
+
       _showAnimation.Reset();
       _closeAnimation.Reset();
 
@@ -461,8 +477,8 @@ namespace MediaPortal.GUI.Library
       // Load the reference controls
       //int iPos = _windowXmlFileName.LastIndexOf('\\');
       //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
-      _windowXmlFileName = GUIGraphicsContext.Skin + _windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\"));
-      string strReferenceFile = GUIGraphicsContext.Skin + @"\references.xml";
+      _windowXmlFileName = GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
+      string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
       GUIControlFactory.LoadReferences(strReferenceFile);
 
       try
@@ -706,7 +722,7 @@ namespace MediaPortal.GUI.Library
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(GUIGraphicsContext.Skin + "\\" + node.InnerText);
+        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + node.InnerText));
 
         if (doc.DocumentElement == null)
         {
@@ -922,7 +938,11 @@ namespace MediaPortal.GUI.Library
 
       SetControlVisibility();
       SetInitialOverlayAllowed();
-      QueueAnimation(AnimationType.WindowOpen);
+
+      if (!_skipAnimation)
+      {
+        QueueAnimation(AnimationType.WindowOpen);
+      }
     }
 
     protected virtual void OnPageDestroy(int new_windowId)
@@ -942,7 +962,7 @@ namespace MediaPortal.GUI.Library
             new_windowId != (int)Window.WINDOW_TVFULLSCREEN)
         {
           // Dialog animations are handled in Close() rather than here
-          if (HasAnimation(AnimationType.WindowClose)) //&& !IsDialog)
+          if (HasAnimation(AnimationType.WindowClose) && !_skipAnimation) //&& !IsDialog)
           {
             // Perform the window out effect
             QueueAnimation(AnimationType.WindowClose);
@@ -1485,7 +1505,11 @@ namespace MediaPortal.GUI.Library
       }
 
       //lock (this)
-      AnimationTrigger(message);
+      _skipAnimation = (message.Param2 == 0 ? false: true);
+      if (!_skipAnimation)
+      {
+        AnimationTrigger(message);
+      }
       int id;
       int iControlId = message.SenderControlId;
       {
@@ -1572,7 +1596,13 @@ namespace MediaPortal.GUI.Library
                 }
               }
 
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,
+              int controlId = _defaultControlId;
+              if (message.Param3 > 0)
+              {
+                controlId = message.Param3;
+              }
+
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, controlId, 0, message.Param2,
                                               null);
               OnMessage(msg);
 
@@ -1599,6 +1629,8 @@ namespace MediaPortal.GUI.Library
               {
                 _previousFocusedControlId = id;
               }
+
+              _skipAnimation = false;
               return true;
               // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
@@ -1614,6 +1646,7 @@ namespace MediaPortal.GUI.Library
                 //long lTotalMemory = GC.GetTotalMemory(true);
                 //Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
                 _shouldRestore = true;
+                _skipAnimation = false;
                 return true;
               }
 

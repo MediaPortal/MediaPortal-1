@@ -32,6 +32,7 @@
 
 using System;
 using System.Drawing;
+using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Weather
@@ -53,11 +54,11 @@ namespace MediaPortal.GUI.Weather
     //    bool simMode = false;
     //    int offset = 0;
 
-    public Geochron(string path)
+    public Geochron()
     {
       // Set up the image URLs
-      Bitmap dayImage = new Bitmap(path + "/animations/day.png");
-      Bitmap nightImage = new Bitmap(path + "/animations/night.png");
+      Bitmap dayImage = new Bitmap(GUIGraphicsContext.GetThemedSkinFile(@"\Media\animations\day.png"));
+      Bitmap nightImage = new Bitmap(GUIGraphicsContext.GetThemedSkinFile(@"\Media\animations\night.png"));
 
 
       this.n_x = dayImage.Width;

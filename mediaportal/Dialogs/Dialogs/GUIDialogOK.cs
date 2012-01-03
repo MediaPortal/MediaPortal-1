@@ -38,7 +38,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogOK.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogOK.xml"));
     }
 
     public override bool OnMessage(GUIMessage message)
