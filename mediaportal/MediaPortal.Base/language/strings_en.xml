@@ -994,13 +994,13 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Set-up Wizard</String>
     <String id="1201">Play video from beginning</String>
-    <String id="1202">Sort by: Auto</String>
+    <String id="1202">Auto</String>
     <String id="1203">Upcoming episodes (active:{0})</String>
     <String id="1204">Play all videos in selected folder</String>
-    <String id="1205">Sort by: Disc#</String>
+    <String id="1205">Disc#</String>
     <String id="1206">Programme is now running for {0} minutes</String>
     <String id="1207">Switch to {0} now?</String>
-    <String id="1208">Sort by: Composer</String>
+    <String id="1208">Composer</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1212">Cancel reminder</String>
     <String id="1213">Listen to this Station</String>
@@ -1010,8 +1010,8 @@
     <String id="1217">Artist Tracks</String>
     <String id="1218">Albums By Age</String>
     <String id="1219">Album Artists (Index)</String>
-    <String id="1220">Sort by: Date Created</String>
-    <String id="1221">Sort by: Date Modified</String>
+    <String id="1220">Date Created</String>
+    <String id="1221">Date Modified</String>
     <String id="1222">Groups</String>
     <String id="1223">Existing Playlist Detected</String>
     <String id="1224">Do you want to clear the current playlist?</String>
