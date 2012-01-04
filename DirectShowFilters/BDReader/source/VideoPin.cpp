@@ -94,6 +94,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bSeekDone(true),
   m_bDiscontinuity(false),
   m_bFirstSample(true),
+  m_bZeroTimeStream(false),
   m_bInitDuration(true),
   m_bClipEndingNotified(false),
   m_bStopWait(false),
@@ -569,7 +570,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             {
               m_bDoFakeSeek = true;
               m_rtStreamOffset = buffer->rtPlaylistTime;
-              m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
+              m_bZeroTimeStream = true;
               m_demux.m_bAudioResetStreamPosition = true;
             }
             else
@@ -600,8 +601,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               m_demux.m_bVideoRequiresRebuild = true;
               checkPlaybackState = true;
 
-              m_rtStreamOffset = 0;
-              m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
+              m_bZeroTimeStream = true;
             }
             else
             {
@@ -638,6 +638,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
         if (hasTimestamp)
         {
+          if (m_bZeroTimeStream)
+          {
+            m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
+            m_bZeroTimeStream=false;
+          }
           if (m_bDiscontinuity)
           {
             LogDebug("vid: set discontinuity");
@@ -738,6 +743,9 @@ HRESULT CVideoPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
   LogDebug("vid: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
   m_rtPrevSample = 0;
+
+  m_bZeroTimeStream = true;
+  m_demux.m_bVideoClipSeen = false;
 
   m_bInitDuration = true;
   

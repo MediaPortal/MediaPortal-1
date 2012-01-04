@@ -154,11 +154,6 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
         ret->bNewClip = true;
         firstVideo=false;
         ret->pmt = CreateMediaType(m_videoPmt);
-        if (clipReset)
-        {
-          ret->bResuming = true;
-          clipReset = false;
-        }
       }
 
       if (ret->rtStart > videoPlaybackPosition) 

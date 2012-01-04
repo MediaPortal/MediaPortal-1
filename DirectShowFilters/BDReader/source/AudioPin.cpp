@@ -52,6 +52,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bDiscontinuity(false),
   m_bUsePCM(false),
   m_bFirstSample(true),
+  m_bZeroTimeStream(false),
   m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0)
 {
@@ -282,16 +283,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           CAutoLock lock(m_section);
 
-          if (m_demux.m_bAudioAdjustStreamPosition)
+          if (m_demux.m_bAudioAdjustStreamPosition || m_demux.m_bAudioResetStreamPosition)
           {
             m_demux.m_bAudioAdjustStreamPosition = false;
-            m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
-          }
-
-          if (m_demux.m_bAudioResetStreamPosition)
-          {
             m_demux.m_bAudioResetStreamPosition = false;
-            m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
+            m_bZeroTimeStream = true;
           }
 
           if (buffer->bNewClip)
@@ -398,6 +394,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           if (hasTimestamp)
           {
+            if (m_bZeroTimeStream)
+            {
+              m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
+              m_bZeroTimeStream=false;
+            }
             // Now we have the final timestamp, set timestamp in sample
             //REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTimeStart;
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
@@ -646,6 +647,10 @@ HRESULT CAudioPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
   LogDebug("aud: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
   m_rtPrevSample = 0;
+
+  m_bZeroTimeStream = true;
+  m_demux.m_eAudioClipSeen->Reset();
+
 
   HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);
   if (FAILED(hr))
