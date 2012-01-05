@@ -121,7 +121,6 @@ public:
   bool m_bRebuildOngoing;
   bool m_bStreamPaused;
   bool m_bAudioWaitForSeek;
-  bool m_bAudioAdjustStreamPosition;
   bool m_bAudioResetStreamPosition;
 
   CCritSec m_sectionRead;

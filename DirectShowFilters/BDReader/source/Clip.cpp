@@ -85,7 +85,6 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   if (!firstPacketReturned)
   {
 //    CAutoLock lock (&m_sectionRead);
-    LogDebug("locking earliest packet %I64d(vid)", earliestPacketAccepted);
     firstPacketReturned=true;
     if (abs(earliestPacketAccepted - playlistFirstPacketTime - m_rtClipStartingOffset) > ONE_SECOND)
     {
@@ -133,7 +132,6 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
   if (!firstPacketReturned)
   {
 //    CAutoLock lock (&m_sectionRead);
-    LogDebug("locking earliest packet %I64d(vid)", earliestPacketAccepted);
     firstPacketReturned=true;
     return ReturnNextVideoPacket(playlistOffset);
   }
@@ -410,7 +408,6 @@ REFERENCE_TIME CClip::PlayedDuration()
   }
   if (earliestPacketAccepted>finish)
   {
-    LogDebug("CClip::PlayedDuration 0 start>finish");
     return 0LL;
   }
   LogDebug("CClip::PlayedDuration %I64d - clip (%d,%d) partially played finish %I64d start %I64d", finish - earliestPacketAccepted, nPlaylist, nClip, finish, earliestPacketAccepted);

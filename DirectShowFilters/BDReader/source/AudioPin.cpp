@@ -283,9 +283,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           CAutoLock lock(m_section);
 
-          if (m_demux.m_bAudioAdjustStreamPosition || m_demux.m_bAudioResetStreamPosition)
+          if (m_demux.m_bAudioResetStreamPosition)
           {
-            m_demux.m_bAudioAdjustStreamPosition = false;
             m_demux.m_bAudioResetStreamPosition = false;
             m_bZeroTimeStream = true;
           }
@@ -631,6 +630,8 @@ HRESULT CAudioPin::DeliverEndFlush()
 {
   HRESULT hr = __super::DeliverEndFlush();
   LogDebug("aud: DeliverEndFlush - hr: %08lX", hr);
+  m_bZeroTimeStream = true;
+  m_demux.m_eAudioClipSeen->Reset();
   m_bFlushing = false;
 
   return hr;
@@ -647,10 +648,6 @@ HRESULT CAudioPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
   LogDebug("aud: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
   m_rtPrevSample = 0;
-
-  m_bZeroTimeStream = true;
-  m_demux.m_eAudioClipSeen->Reset();
-
 
   HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);
   if (FAILED(hr))

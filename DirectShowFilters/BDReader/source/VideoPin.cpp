@@ -457,7 +457,6 @@ void CVideoPin::CheckPlaybackState()
       m_demux.m_bAudioRequiresRebuild = false;
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
       m_demux.m_bRebuildOngoing = true;
-      m_demux.m_bAudioAdjustStreamPosition = true;
     }
     else if (!m_bStopWait && m_bDoFakeSeek)    
     {
@@ -727,6 +726,8 @@ HRESULT CVideoPin::DeliverEndFlush()
 {
   HRESULT hr = __super::DeliverEndFlush();
   LogDebug("vid: DeliverEndFlush - hr: %08lX", hr);
+  m_bZeroTimeStream = true;
+  m_demux.m_bVideoClipSeen = false;
   m_bFlushing = false;
 
   return hr;
@@ -743,9 +744,6 @@ HRESULT CVideoPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
   LogDebug("vid: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
   m_rtPrevSample = 0;
-
-  m_bZeroTimeStream = true;
-  m_demux.m_bVideoClipSeen = false;
 
   m_bInitDuration = true;
   

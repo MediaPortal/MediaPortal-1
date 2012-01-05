@@ -100,7 +100,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_rtOffset = _I64_MAX;
   m_rtTitleDuration = 0;
 
-  m_bAudioAdjustStreamPosition = false;
   m_bAudioResetStreamPosition = false;
 }
 
