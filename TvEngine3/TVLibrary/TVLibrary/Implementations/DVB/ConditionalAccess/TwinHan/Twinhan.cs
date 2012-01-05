@@ -250,7 +250,96 @@ namespace TvLibrary.Implementations.DVB
       public TwinhanMmiState MmiState;
     }
 
-    private struct MmiMenuChoice
+    #region MMI data class
+
+    // A private class to help us handle the two MMI data formats cleanly and easily.
+    private class MmiData
+    {
+      public String Title = String.Empty;
+      public String SubTitle = String.Empty;
+      public String Footer = String.Empty;
+      public List<String> Choices = new List<string>();
+      public Int32 ChoiceCount = 0;
+      public bool IsEnquiry = false;
+      public bool IsBlindAnswer = false;
+      public Int32 ExpectedAnswerLength = 0;
+      public String Prompt = String.Empty;
+      public Int32 ChoiceIndex = 0;
+      public String Answer = String.Empty;
+      public Int32 Type = 0;
+
+      public void WriteToBuffer(IntPtr buffer, bool isTerraTecFormat)
+      {
+        if (isTerraTecFormat)
+        {
+          TerraTecMmiData mmiData = new TerraTecMmiData();
+          mmiData.ChoiceIndex = ChoiceIndex;
+          mmiData.Answer = Answer;
+          mmiData.Type = Type;
+          Marshal.StructureToPtr(mmiData, buffer, true);
+        }
+        else
+        {
+          DefaultMmiData mmiData = new DefaultMmiData();
+          mmiData.ChoiceIndex = ChoiceIndex;
+          mmiData.Answer = Answer;
+          mmiData.Type = Type;
+          Marshal.StructureToPtr(mmiData, buffer, true);
+        }
+      }
+
+      public void ReadFromBuffer(IntPtr buffer, bool isTerraTecFormat)
+      {
+        if (isTerraTecFormat)
+        {
+          TerraTecMmiData mmiData = (TerraTecMmiData)Marshal.PtrToStructure(buffer, typeof(TerraTecMmiData));
+          Title = mmiData.Title;
+          SubTitle = mmiData.SubTitle;
+          Footer = mmiData.Footer;
+          ChoiceCount = mmiData.ChoiceCount;
+          if (ChoiceCount > TerraTecMaxCamMenuChoices)
+          {
+            ChoiceCount = TerraTecMaxCamMenuChoices;
+          }
+          for (int i = 0; i < mmiData.ChoiceCount; i++)
+          {
+            Choices.Add(mmiData.Choices[i].Text);
+          }
+          IsEnquiry = mmiData.IsEnquiry;
+          IsBlindAnswer = mmiData.IsBlindAnswer;
+          ExpectedAnswerLength = mmiData.ExpectedAnswerLength;
+          Prompt = mmiData.Prompt;
+          ChoiceIndex = mmiData.ChoiceIndex;
+          Answer = mmiData.Answer;
+          Type = mmiData.Type;
+        }
+        else
+        {
+          DefaultMmiData mmiData = (DefaultMmiData)Marshal.PtrToStructure(buffer, typeof(DefaultMmiData));
+          Title = mmiData.Title;
+          SubTitle = mmiData.SubTitle;
+          Footer = mmiData.Footer;
+          ChoiceCount = mmiData.ChoiceCount;
+          if (ChoiceCount > DefaultMaxCamMenuChoices)
+          {
+            ChoiceCount = DefaultMaxCamMenuChoices;
+          }
+          for (int i = 0; i < mmiData.ChoiceCount; i++)
+          {
+            Choices.Add(mmiData.Choices[i].Text);
+          }
+          IsEnquiry = mmiData.IsEnquiry;
+          IsBlindAnswer = mmiData.IsBlindAnswer;
+          ExpectedAnswerLength = mmiData.ExpectedAnswerLength;
+          Prompt = mmiData.Prompt;
+          ChoiceIndex = mmiData.ChoiceIndex;
+          Answer = mmiData.Answer;
+          Type = mmiData.Type;
+        }
+      }
+    }
+
+    private struct DefaultMmiMenuChoice
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 42)]
@@ -259,7 +348,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
-    private struct MmiData
+    private struct DefaultMmiData
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Title;
@@ -267,18 +356,15 @@ namespace TvLibrary.Implementations.DVB
       public String SubTitle;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Footer;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxCamMenuChoices)]
-      public MmiMenuChoice[] Choices;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = DefaultMaxCamMenuChoices)]
+      public DefaultMmiMenuChoice[] Choices;
       private UInt16 Padding1;
       public Int32 ChoiceCount;
 
+      // Note: these 2 bools should take up 4 bytes each.
       public bool IsEnquiry;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-      private byte[] Padding2;
 
       public bool IsBlindAnswer;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-      private byte[] Padding3;
       public Int32 ExpectedAnswerLength;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Prompt;
@@ -289,6 +375,44 @@ namespace TvLibrary.Implementations.DVB
 
       public Int32 Type;
     }
+
+    private struct TerraTecMmiMenuChoice
+    {
+      #pragma warning disable 0649
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public String Text;
+      #pragma warning restore 0649
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    private struct TerraTecMmiData
+    {
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public String Title;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public String SubTitle;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public String Footer;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = TerraTecMaxCamMenuChoices)]
+      public TerraTecMmiMenuChoice[] Choices;
+      public Int32 ChoiceCount;
+
+      // Note: these 2 bools should take up 4 bytes each.
+      public bool IsEnquiry;
+
+      public bool IsBlindAnswer;
+      public Int32 ExpectedAnswerLength;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public String Prompt;
+
+      public Int32 ChoiceIndex;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public String Answer;
+
+      public Int32 Type;
+    }
+
+    #endregion
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct ApplicationInfo    // THAppInfo
@@ -328,6 +452,7 @@ namespace TvLibrary.Implementations.DVB
     // GUID_THBDA_CMD
     private static readonly Guid CommandGuid = new Guid(0x255e0082, 0x2017, 0x4b03, 0x90, 0xf8, 0x85, 0x6a, 0x62, 0xcb, 0x3d, 0x67);
 
+    private const int InstanceSize = 24;
     private const int CommandSize = 40;
 
     private const int DeviceInfoSize = 240;
@@ -339,10 +464,17 @@ namespace TvLibrary.Implementations.DVB
     private const int MaxDiseqcMessageLength = 12;
     private const int CiStateInfoSize = 48;
     private const int OldCiStateInfoSize = 8;
-    private const int MmiDataSize = 1684;
-    private const int MaxCamMenuChoices = 9;
     private const int ApplicationInfoSize = 76;
     private const int TuningParamsSize = 16;
+
+    // TerraTec have entended the length and number of
+    // possible CAM menu choices in the MMI data struct
+    // returned by their drivers.
+    private const int DefaultMmiDataSize = 1684;
+    private const int DefaultMaxCamMenuChoices = 9;
+
+    private const int TerraTecMmiDataSize = 33944;
+    private const int TerraTecMaxCamMenuChoices = 255;
 
     #endregion
 
@@ -367,32 +499,43 @@ namespace TvLibrary.Implementations.DVB
         _outBufferSize = outBufferSize;
       }
 
-      public int Execute(IKsPropertySet ps, IntPtr buffer, out int returnedByteCount)
+      public int Execute(IKsPropertySet ps, out int returnedByteCount)
       {
         returnedByteCount = 0;
         int hr = 1; // fail
-        if (ps == null || buffer == IntPtr.Zero)
+        if (ps == null)
         {
           return hr;
         }
 
+        IntPtr instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
+        IntPtr commandBuffer = Marshal.AllocCoTaskMem(CommandSize);
         IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
         try
         {
+          // Clear buffers. This is probably not actually needed, but better
+          // to be safe than sorry!
+          for (int i = 0; i < InstanceSize; i++)
+          {
+            Marshal.WriteByte(instanceBuffer, i, 0);
+          }
+          Marshal.WriteInt32(returnedByteCountBuffer, 0);
+
+          // Fill the command buffer.
           byte[] guidAsBytes = CommandGuid.ToByteArray();
           for (int i = 0; i < guidAsBytes.Length; i++)
           {
-            Marshal.WriteByte(buffer, i, guidAsBytes[i]);
+            Marshal.WriteByte(commandBuffer, i, guidAsBytes[i]);
           }
 
-          Marshal.WriteInt32(buffer, 16, (Int32)_controlCode);
-          Marshal.WriteInt32(buffer, 20, _inBuffer.ToInt32());
-          Marshal.WriteInt32(buffer, 24, _inBufferSize);
-          Marshal.WriteInt32(buffer, 28, _outBuffer.ToInt32());
-          Marshal.WriteInt32(buffer, 32, _outBufferSize);
-          Marshal.WriteInt32(buffer, 36, returnedByteCountBuffer.ToInt32());
+          Marshal.WriteInt32(commandBuffer, 16, (Int32)_controlCode);
+          Marshal.WriteInt32(commandBuffer, 20, _inBuffer.ToInt32());
+          Marshal.WriteInt32(commandBuffer, 24, _inBufferSize);
+          Marshal.WriteInt32(commandBuffer, 28, _outBuffer.ToInt32());
+          Marshal.WriteInt32(commandBuffer, 32, _outBufferSize);
+          Marshal.WriteInt32(commandBuffer, 36, returnedByteCountBuffer.ToInt32());
 
-          hr = ps.Set(BdaExtensionPropertySet, 0, buffer, CommandSize, buffer, CommandSize);
+          hr = ps.Set(BdaExtensionPropertySet, 0, instanceBuffer, InstanceSize, commandBuffer, CommandSize);
           if (hr == 0)
           {
             returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
@@ -400,6 +543,8 @@ namespace TvLibrary.Implementations.DVB
         }
         finally
         {
+          Marshal.FreeCoTaskMem(instanceBuffer);
+          Marshal.FreeCoTaskMem(commandBuffer);
           Marshal.FreeCoTaskMem(returnedByteCountBuffer);
         }
         return hr;
@@ -930,27 +1075,27 @@ namespace TvLibrary.Implementations.DVB
     #region variables
 
     private bool _isTwinhan = false;
+    private bool _isTerraTec = false;
     private bool _isCiSlotPresent = false;
     private bool _isCamPresent = false;
     private bool _isCamReady = false;
     private bool _isPidFilterSupported = false;
     private bool _isPidFilterBypassSupported = true;
 
-    // General use buffers. Functions that are called from both the main
-    // TV service threads as well as the MMI handler thread use their own
-    // local buffers to avoid buffer data corruption. Otherwise functions
-    // called exclusively by the MMI handler thread use the MMI buffers
-    // and other functions use the non-MMI buffers.
-    private IntPtr _commandBuffer = IntPtr.Zero;
-    private IntPtr _responseBuffer = IntPtr.Zero;
-    private IntPtr _mmiCommandBuffer = IntPtr.Zero;
-    private IntPtr _mmiResponseBuffer = IntPtr.Zero;
+    // Functions that are called from both the main TV service threads
+    // as well as the MMI handler thread use their own local buffer to
+    // avoid buffer data corruption. Otherwise functions called exclusively
+    // by the MMI handler thread use the MMI buffer and other functions
+    // use the general buffer.
+    private IntPtr _generalBuffer = IntPtr.Zero;
+    private IntPtr _mmiBuffer = IntPtr.Zero;
 
     private IKsPropertySet _propertySet = null;
     private CardType _tunerType = CardType.Unknown;
 
     private TwinhanCiSupport _ciApiVersion = TwinhanCiSupport.Unsupported;
     private int _maxPidFilterPids = MaxPidFilterPids;
+    private int _mmiDataSize = DefaultMmiDataSize;
 
     private Thread _mmiHandlerThread = null;
     private bool _stopMmiHandlerThread;
@@ -976,18 +1121,33 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
-      _commandBuffer = Marshal.AllocCoTaskMem(CommandSize);
-      _responseBuffer = Marshal.AllocCoTaskMem(DriverInfoSize);
-      _mmiCommandBuffer = Marshal.AllocCoTaskMem(CommandSize);
-      _mmiResponseBuffer = Marshal.AllocCoTaskMem(MmiDataSize);
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CHECK_INTERFACE, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Log.Debug("Twinhan: supported tuner detected");
         _isTwinhan = true;
         _tunerType = tunerType;
+
+        String tunerName = FilterGraphTools.GetFilterName(tunerFilter);
+        if (tunerName != null)
+        {
+          tunerName = tunerName.ToLowerInvariant();
+          if (tunerName.Contains("terratec") || tunerName.Contains("cinergy"))
+          {
+            Log.Log.Debug("Twinhan: this tuner has a TerraTec driver installed");
+            _isTerraTec = true;
+            _mmiDataSize = TerraTecMmiDataSize;
+          }
+        }
+        else
+        {
+          _mmiDataSize = DefaultMmiDataSize;
+        }
+        _mmiBuffer = Marshal.AllocCoTaskMem(_mmiDataSize);
+        _generalBuffer = Marshal.AllocCoTaskMem(DriverInfoSize);
+
         ReadDeviceInfo();
         if (_isPidFilterSupported)
         {
@@ -1034,9 +1194,8 @@ namespace TvLibrary.Implementations.DVB
       // supply power to the aerial, however the FAQs on TerraTec's website suggest
       // that none are able.
       // In practise it seems that there is no problem attempting to enable power
-      // for certain DVB-T tuners (Cinergy T PCIe Dual, Twinhan AD-TP300)
-      // however attempting to execute this function with a TerraTec H7 causes a
-      // hard crash.
+      // for certain DVB-T tuners however attempting to execute this function with
+      // a TerraTec H7 causes a hard crash.
       // Unfortunately there is no way to check whether this property is actually
       // supported because of the way the Twinhan API has been implemented (ie. one
       // KsProperty with the actual property codes encoded in the property data).
@@ -1045,20 +1204,20 @@ namespace TvLibrary.Implementations.DVB
       if (_tunerType != CardType.DvbS)
       {
         Log.Log.Debug("Twinhan: function disabled for safety");
-        return false;
+        return true;    // Don't retry...
       }
 
       if (powerOn)
       {
-        Marshal.WriteByte(_responseBuffer, 0, 0x01);
+        Marshal.WriteByte(_generalBuffer, 0, 0x01);
       }
       else
       {
-        Marshal.WriteByte(_responseBuffer, 0, 0x00);
+        Marshal.WriteByte(_generalBuffer, 0, 0x00);
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_TUNER_POWER, _responseBuffer, 1, IntPtr.Zero, 0);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_TUNER_POWER, _generalBuffer, 1, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Log.Debug("Twinhan: result = success");
@@ -1104,10 +1263,10 @@ namespace TvLibrary.Implementations.DVB
       }
       lnbParams.DiseqcPort = TwinhanDiseqcPort.Null;
 
-      Marshal.StructureToPtr(lnbParams, _responseBuffer, true);
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_LNB_DATA, _responseBuffer, LnbParamsSize, IntPtr.Zero, 0);
+      Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_LNB_DATA, _generalBuffer, LnbParamsSize, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Log.Debug("Twinhan: result = success");
@@ -1130,7 +1289,7 @@ namespace TvLibrary.Implementations.DVB
 
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_RESET_DEVICE, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr != 0)
       {
         Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1181,18 +1340,19 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Set the PIDs for hardware pid filtering. This function is untested. As far as
+    /// Set the PIDs for hardware PID filtering. This function is untested. As far as
     /// I'm aware PID filtering is only supported by the VP-7021 (Starbox) and
     /// VP-7041 (Magicbox) models.
     /// </summary>
-    /// <param name="pids">The pids to filter</param>
-    public void SetHardwareFilterPids(List<ushort> pids)
+    /// <param name="pids">The PIDs to allow through the filter.</param>
+    /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
+    public bool SetHardwareFilterPids(List<ushort> pids)
     {
       Log.Log.Debug("Twinhan: set hardware filter PIDs");
       if (!_isPidFilterSupported)
       {
         Log.Log.Debug("Twinhan: PID filtering not supported");
-        return;
+        return true;    // Don't retry...
       }
 
       PidFilterParams pidFilterParams = new PidFilterParams();
@@ -1221,19 +1381,19 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-      Marshal.StructureToPtr(pidFilterParams, _responseBuffer, true);
-      DVB_MMI.DumpBinary(_responseBuffer, 0, PidFilterParamsSize);
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_PID_FILTER_INFO, _responseBuffer, PidFilterParamsSize, IntPtr.Zero, 0);
+      Marshal.StructureToPtr(pidFilterParams, _generalBuffer, true);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, PidFilterParamsSize);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_PID_FILTER_INFO, _generalBuffer, PidFilterParamsSize, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Log.Debug("Twinhan: result = success");
+        return true;
       }
-      else
-      {
-        Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
+
+      Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
     }
 
     #region hardware/software information
@@ -1246,11 +1406,11 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Twinhan: read device information");
       for (int i = 0; i < DeviceInfoSize; i++)
       {
-        Marshal.WriteByte(_responseBuffer, 0);
+        Marshal.WriteByte(_generalBuffer, 0);
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DEVICE_INFO, IntPtr.Zero, 0, _responseBuffer, DeviceInfoSize);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DEVICE_INFO, IntPtr.Zero, 0, _generalBuffer, DeviceInfoSize);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr != 0)
       {
         Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1258,8 +1418,8 @@ namespace TvLibrary.Implementations.DVB
       }
 
       //Log.Log.Debug("Twinhan: number of DeviceInfo bytes returned is {0}", returnedByteCount);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
-      DeviceInfo deviceInfo = (DeviceInfo)Marshal.PtrToStructure(_responseBuffer, typeof(DeviceInfo));
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+      DeviceInfo deviceInfo = (DeviceInfo)Marshal.PtrToStructure(_generalBuffer, typeof(DeviceInfo));
       Log.Log.Debug("  name                        = {0}", deviceInfo.Name);
 
       // Separate the device type flags into a comma separated string.
@@ -1307,11 +1467,11 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Twinhan: read PID filter information");
       for (int i = 0; i < PidFilterParamsSize; i++)
       {
-        Marshal.WriteByte(_responseBuffer, 0);
+        Marshal.WriteByte(_generalBuffer, 0);
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _responseBuffer, PidFilterParamsSize);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _generalBuffer, PidFilterParamsSize);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr != 0)
       {
         Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1319,8 +1479,8 @@ namespace TvLibrary.Implementations.DVB
       }
 
       //Log.Log.Debug("Twinhan: number of PidFilterParams bytes returned is {0}", returnedByteCount);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
-      PidFilterParams pidFilterInfo = (PidFilterParams)Marshal.PtrToStructure(_responseBuffer, typeof(PidFilterParams));
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+      PidFilterParams pidFilterInfo = (PidFilterParams)Marshal.PtrToStructure(_generalBuffer, typeof(PidFilterParams));
       Log.Log.Debug("  current mode                = {0}", pidFilterInfo.FilterMode);
       Log.Log.Debug("  maximum PIDs                = {0}", pidFilterInfo.MaxPids);
 
@@ -1338,11 +1498,11 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Twinhan: read driver information");
       for (int i = 0; i < DriverInfoSize; i++)
       {
-        Marshal.WriteByte(_responseBuffer, 0);
+        Marshal.WriteByte(_generalBuffer, 0);
       }
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _responseBuffer, DriverInfoSize);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _generalBuffer, DriverInfoSize);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr != 0)
       {
         Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1350,8 +1510,8 @@ namespace TvLibrary.Implementations.DVB
       }
 
       //Log.Log.Debug("Twinhan: number of DriverInfo bytes returned is {0}", returnedByteCount);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, returnedByteCount);
-      DriverInfo driverInfo = (DriverInfo)Marshal.PtrToStructure(_responseBuffer, typeof(DriverInfo));
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+      DriverInfo driverInfo = (DriverInfo)Marshal.PtrToStructure(_generalBuffer, typeof(DriverInfo));
       char[] majorVersion = String.Format("{0:x2}", driverInfo.DriverMajorVersion).ToCharArray();
       char[] minorVersion = String.Format("{0:x2}", driverInfo.DriverMinorVersion).ToCharArray();
       Log.Log.Debug("  driver version              = {0}.{1}.{2}.{3}", majorVersion[0], majorVersion[1], minorVersion[0], minorVersion[1]);
@@ -1401,7 +1561,7 @@ namespace TvLibrary.Implementations.DVB
       {
         TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_STATE, IntPtr.Zero, 0, responseBuffer, bufferSize);
         int returnedByteCount;
-        int hr = command.Execute(_propertySet, commandBuffer, out returnedByteCount);
+        int hr = command.Execute(_propertySet, out returnedByteCount);
         if (hr == 0)
         {
           ciState = (TwinhanCiState)Marshal.ReadInt32(responseBuffer, 0);
@@ -1536,14 +1696,14 @@ namespace TvLibrary.Implementations.DVB
 
       // Send the data to the CAM. Use local buffers since PMT updates are asynchronous.
       IntPtr commandBuffer = Marshal.AllocCoTaskMem(CommandSize);
-      IntPtr responseBuffer = Marshal.AllocCoTaskMem(caPmtLength);
+      IntPtr pmtBuffer = Marshal.AllocCoTaskMem(caPmtLength);
       try
       {
-        Marshal.Copy(caPmt, 0, responseBuffer, caPmtLength);
-        DVB_MMI.DumpBinary(responseBuffer, 0, caPmtLength);
-        TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_CI_SEND_PMT, responseBuffer, caPmtLength, IntPtr.Zero, 0);
+        Marshal.Copy(caPmt, 0, pmtBuffer, caPmtLength);
+        DVB_MMI.DumpBinary(pmtBuffer, 0, caPmtLength);
+        TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_CI_SEND_PMT, pmtBuffer, caPmtLength, IntPtr.Zero, 0);
         int returnedByteCount;
-        int hr = tcommand.Execute(_propertySet, commandBuffer, out returnedByteCount);
+        int hr = tcommand.Execute(_propertySet, out returnedByteCount);
         if (hr == 0)
         {
           Log.Log.Debug("Twinhan: result = success");
@@ -1556,7 +1716,7 @@ namespace TvLibrary.Implementations.DVB
       finally
       {
         Marshal.FreeCoTaskMem(commandBuffer);
-        Marshal.FreeCoTaskMem(responseBuffer);
+        Marshal.FreeCoTaskMem(pmtBuffer);
       }
     }
 
@@ -1668,20 +1828,16 @@ namespace TvLibrary.Implementations.DVB
                   Log.Log.Debug("  sub-title = {0}", mmi.SubTitle);
                   Log.Log.Debug("  footer    = {0}", mmi.Footer);
                   Log.Log.Debug("  # choices = {0}", mmi.ChoiceCount);
-                  if (mmi.ChoiceCount > MaxCamMenuChoices)
-                  {
-                    mmi.ChoiceCount = MaxCamMenuChoices;
-                  }
                   if (_ciMenuCallbacks != null)
                   {
                     _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, mmi.ChoiceCount);
                   }
                   for (int i = 0; i < mmi.ChoiceCount; i++)
                   {
-                    Log.Log.Debug("  choice {0}  = {1}", i + 1, mmi.Choices[i].Text);
+                    Log.Log.Debug("  choice {0}  = {1}", i + 1, mmi.Choices[i]);
                     if (_ciMenuCallbacks != null)
                     {
-                      _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Choices[i].Text);
+                      _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Choices[i]);
                     }
                   }
                   Log.Log.Debug("  type      = {0}", mmi.Type);
@@ -1741,11 +1897,11 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       lock (this)
       {
-        Marshal.StructureToPtr(mmi, _mmiResponseBuffer, true);
-        //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, MmiDataSize);
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_ANSWER, IntPtr.Zero, 0, _mmiResponseBuffer, MmiDataSize);
+        mmi.WriteToBuffer(_mmiBuffer, _isTerraTec);
+        //DVB_MMI.DumpBinary(_mmiBuffer, 0, _mmiDataSize);
+        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_ANSWER, IntPtr.Zero, 0, _mmiBuffer, _mmiDataSize);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, _mmiCommandBuffer, out returnedByteCount);
+        hr = command.Execute(_propertySet, out returnedByteCount);
         if (hr == 0)
         {
           Log.Log.Debug("Twinhan: result = success");
@@ -1774,18 +1930,19 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       lock (this)
       {
-        for (int i = 0; i < MmiDataSize; i++)
+        for (int i = 0; i < _mmiDataSize; i++)
         {
-          Marshal.WriteByte(_mmiResponseBuffer, i, 0);
+          Marshal.WriteByte(_mmiBuffer, i, 0);
         }
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_MMI, IntPtr.Zero, 0, _mmiResponseBuffer, MmiDataSize);
+        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_MMI, IntPtr.Zero, 0, _mmiBuffer, _mmiDataSize);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, _mmiCommandBuffer, out returnedByteCount);
-        if (hr == 0 && returnedByteCount == MmiDataSize)
+        hr = command.Execute(_propertySet, out returnedByteCount);
+        if (hr == 0 && returnedByteCount == _mmiDataSize)
         {
           Log.Log.Debug("Twinhan: result = success");
-          //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, returnedByteCount);
-          mmi = (MmiData)Marshal.PtrToStructure(_mmiResponseBuffer, typeof(MmiData));
+          //DVB_MMI.DumpBinary(_mmiBuffer, 0, returnedByteCount);
+          mmi = new MmiData();
+          mmi.ReadFromBuffer(_mmiBuffer, _isTerraTec);
           return true;
         }
       }
@@ -1831,25 +1988,25 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("Twinhan: application information");
         for (int i = 0; i < ApplicationInfoSize; i++)
         {
-          Marshal.WriteByte(_mmiResponseBuffer, i, 0);
+          Marshal.WriteByte(_mmiBuffer, i, 0);
         }
-        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_APP_INFO, IntPtr.Zero, 0, _mmiResponseBuffer, ApplicationInfoSize);
+        TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_APP_INFO, IntPtr.Zero, 0, _mmiBuffer, ApplicationInfoSize);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, _mmiCommandBuffer, out returnedByteCount);
+        hr = command.Execute(_propertySet, out returnedByteCount);
         if (hr != 0)
         {
           Log.Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
         }
 
-        ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiResponseBuffer, typeof(ApplicationInfo));
+        ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
         Log.Log.Debug("  type         = {0}", (DVB_MMI.ApplicationType)info.ApplicationType);
         Log.Log.Debug("  manufacturer = 0x{0:x}", info.Manufacturer);
         Log.Log.Debug("  code         = 0x{0:x}", info.ManufacturerCode);
         Log.Log.Debug("  information  = {0}", info.Info);
 
         command = new TwinhanCommand(THBDA_IOCTL_CI_INIT_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
-        hr = command.Execute(_propertySet, _mmiCommandBuffer, out returnedByteCount);
+        hr = command.Execute(_propertySet, out returnedByteCount);
       }
       if (hr == 0)
       {
@@ -1877,7 +2034,7 @@ namespace TvLibrary.Implementations.DVB
       {
         TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_CLOSE_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, _mmiCommandBuffer, out returnedByteCount);
+        hr = command.Execute(_propertySet, out returnedByteCount);
       }
       if (hr == 0)
       {
@@ -2045,12 +2202,12 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.Debug("  modulation  = {0}", tuningParams.Modulation);
 
-      Marshal.StructureToPtr(tuningParams, _responseBuffer, true);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, TuningParamsSize);
+      Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TuningParamsSize);
 
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_LOCK_TUNER, _responseBuffer, TuningParamsSize, IntPtr.Zero, 0);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_LOCK_TUNER, _generalBuffer, TuningParamsSize, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Log.Debug("Twinhan: result = success");
@@ -2133,12 +2290,12 @@ namespace TvLibrary.Implementations.DVB
         message.Message[i] = command[i];
       }
 
-      Marshal.StructureToPtr(message, _responseBuffer, true);
-      //DVB_MMI.DumpBinary(_responseBuffer, 0, DiseqcMessageSize);
+      Marshal.StructureToPtr(message, _generalBuffer, true);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
 
-      TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_SET_DiSEqC, _responseBuffer, DiseqcMessageSize, IntPtr.Zero, 0);
+      TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_SET_DiSEqC, _generalBuffer, DiseqcMessageSize, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = tcommand.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = tcommand.Execute(_propertySet, out returnedByteCount);
 
       // The above command seems to return HRESULT 0x8007001f (ERROR_GEN_FAILURE)
       // regardless of whether or not it was actually successful. I tested using
@@ -2160,23 +2317,23 @@ namespace TvLibrary.Implementations.DVB
 
       for (int i = 0; i < DiseqcMessageSize; i++)
       {
-        Marshal.WriteByte(_responseBuffer, i, 0);
+        Marshal.WriteByte(_generalBuffer, i, 0);
       }
 
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _responseBuffer, DiseqcMessageSize);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _generalBuffer, DiseqcMessageSize);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, _commandBuffer, out returnedByteCount);
+      int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Log.Debug("Twinhan: result = success");
-        DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_responseBuffer, typeof(DiseqcMessage));
+        DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_generalBuffer, typeof(DiseqcMessage));
         reply = new byte[message.MessageLength];
         for (int i = 0; i < message.MessageLength; i++)
         {
           reply[i] = message.Message[i];
         }
 
-        DVB_MMI.DumpBinary(_responseBuffer, 0, DiseqcMessageSize);
+        DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
         return true;
       }
 
@@ -2288,22 +2445,21 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void Dispose()
     {
-      if (_mmiHandlerThread != null)
+      if (_isTwinhan)
       {
-        _stopMmiHandlerThread = true;
-        Thread.Sleep(1000);
+        if (_mmiHandlerThread != null)
+        {
+          _stopMmiHandlerThread = true;
+          Thread.Sleep(1000);
+        }
+        SetPowerState(false);
+          
+        Marshal.FreeCoTaskMem(_generalBuffer);
+        Marshal.FreeCoTaskMem(_mmiBuffer);
       }
       if (_propertySet != null)
       {
-        if (_isTwinhan)
-        {
-          SetPowerState(false);
-        }
         Release.ComObject(_propertySet);
-        Marshal.FreeCoTaskMem(_commandBuffer);
-        Marshal.FreeCoTaskMem(_responseBuffer);
-        Marshal.FreeCoTaskMem(_mmiCommandBuffer);
-        Marshal.FreeCoTaskMem(_mmiResponseBuffer);
       }
     }
 
