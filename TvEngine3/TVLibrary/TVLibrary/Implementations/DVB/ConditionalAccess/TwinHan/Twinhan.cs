@@ -452,7 +452,7 @@ namespace TvLibrary.Implementations.DVB
     // GUID_THBDA_CMD
     private static readonly Guid CommandGuid = new Guid(0x255e0082, 0x2017, 0x4b03, 0x90, 0xf8, 0x85, 0x6a, 0x62, 0xcb, 0x3d, 0x67);
 
-    private const int InstanceSize = 24;
+    private const int InstanceSize = 32;
     private const int CommandSize = 40;
 
     private const int DeviceInfoSize = 240;
@@ -1098,8 +1098,8 @@ namespace TvLibrary.Implementations.DVB
     private int _mmiDataSize = DefaultMmiDataSize;
 
     private Thread _mmiHandlerThread = null;
-    private bool _stopMmiHandlerThread;
-    private ICiMenuCallbacks _ciMenuCallbacks;
+    private bool _stopMmiHandlerThread = false;
+    private ICiMenuCallbacks _ciMenuCallbacks = null;
 
     #endregion
 
