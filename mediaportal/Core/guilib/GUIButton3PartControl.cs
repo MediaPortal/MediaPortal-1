@@ -195,6 +195,7 @@ namespace MediaPortal.GUI.Library
     private bool _containsProperty2 = false;
     private bool renderLeftPart = true;
     private bool renderRightPart = true;
+    private bool stretchIfNotRendered = false;
     //Sprite                           sprite=null;
     private bool _property1Changed = false;
     private bool _property2Changed = false;
@@ -484,8 +485,11 @@ namespace MediaPortal.GUI.Library
       // render the 1st line of text on the button
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel1.Length > 0)
       {
-        int widthLeft =
-          (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+        int widthLeft = 0;
+        if (RenderLeft)
+        {
+          widthLeft = (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
+        }
         int xoff = _textOffsetX1 + widthLeft;
 
         if (Disabled)
@@ -1251,6 +1255,22 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      // If either the left or right (or both) parts are not to be rendered then stretching allows for the middle part
+      // to stretch into the left or right parts space.
+      if (stretchIfNotRendered)
+      {
+        if (!RenderLeft)
+        {
+          widthMid += widthLeft;
+          widthLeft = 0;
+        }
+        if (!RenderRight)
+        {
+          widthMid += widthRight;
+          widthRight = 0;
+        }
+      }
+
       _imageFocusedLeft.Width = widthLeft;
       _imageFocusedMid.Width = widthMid;
       _imageFocusedRight.Width = widthRight;
@@ -1315,11 +1335,9 @@ namespace MediaPortal.GUI.Library
       _imageFocusedMid.SetPosition(_positionX + widthLeft, _positionY);
       _imageFocusedRight.SetPosition(_positionX + _width - widthRight, _positionY);
 
-
       _imageNonFocusedLeft.SetPosition(_positionX, _positionY);
       _imageNonFocusedMid.SetPosition(_positionX + widthLeft, _positionY);
       _imageNonFocusedRight.SetPosition(_positionX + _width - widthRight, _positionY);
-
 
       if (_imageIcon != null)
       {
@@ -1832,6 +1850,12 @@ namespace MediaPortal.GUI.Library
       set { renderRightPart = value; }
     }
 
+    public bool StretchIfNotRendered
+    {
+      get { return stretchIfNotRendered; }
+      set { stretchIfNotRendered = value; }
+    }
+    
     public override int Width
     {
       get { return base.Width; }

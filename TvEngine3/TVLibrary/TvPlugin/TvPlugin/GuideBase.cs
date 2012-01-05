@@ -106,6 +106,7 @@ namespace TvPlugin
         GUIButton3PartControl cntlChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButton3PartControl;
         cntlChannelGroup.RenderLeft = false;
         cntlChannelGroup.RenderRight = false;
+        cntlChannelGroup.StretchIfNotRendered = true;
         if (_useColorsForButtons)
         {
           cntlChannelGroup.ColourDiffuse = _guideColorGroupButton;
@@ -289,6 +290,7 @@ namespace TvPlugin
           imgBut.Label1 = String.Empty;
           imgBut.RenderLeft = false;
           imgBut.RenderRight = false;
+          imgBut.StretchIfNotRendered = true;
           imgBut.SetShadow1(cntlChannelLabel.ShadowAngle, cntlChannelLabel.ShadowDistance, cntlChannelLabel.ShadowColor);
 
           if (_showChannelLogos)

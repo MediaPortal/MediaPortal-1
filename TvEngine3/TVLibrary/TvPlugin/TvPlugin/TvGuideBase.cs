@@ -1575,6 +1575,7 @@ namespace TvPlugin
         }
         img.RenderLeft = false;
         img.RenderRight = false;
+        img.StretchIfNotRendered = true;
 
         bool bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending || program.IsPartialRecordingSeriesPending);
         bool bConflict = program.HasConflict;
@@ -1662,6 +1663,7 @@ namespace TvPlugin
           if (buttonRunningTemplate != null)
           {
             buttonRunningTemplate.IsVisible = false;
+
             img.TexutureFocusLeftName = buttonRunningTemplate.TexutureFocusLeftName;
             img.TexutureFocusMidName = buttonRunningTemplate.TexutureFocusMidName;
             img.TexutureFocusRightName = buttonRunningTemplate.TexutureFocusRightName;
@@ -1703,6 +1705,7 @@ namespace TvPlugin
           if (buttonNotifyTemplate != null)
           {
             buttonNotifyTemplate.IsVisible = false;
+
             img.TexutureFocusLeftName = buttonNotifyTemplate.TexutureFocusLeftName;
             img.TexutureFocusMidName = buttonNotifyTemplate.TexutureFocusMidName;
             img.TexutureFocusRightName = buttonNotifyTemplate.TexutureFocusRightName;
@@ -1763,6 +1766,7 @@ namespace TvPlugin
           if (buttonRecordTemplate != null)
           {
             buttonRecordTemplate.IsVisible = false;
+
             img.TexutureFocusLeftName = buttonRecordTemplate.TexutureFocusLeftName;
             img.TexutureFocusMidName = buttonRecordTemplate.TexutureFocusMidName;
             img.TexutureFocusRightName = buttonRecordTemplate.TexutureFocusRightName;
@@ -1787,27 +1791,15 @@ namespace TvPlugin
             // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
             if (bConflict)
             {
-              img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-              img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-              img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-              img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-              img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-              img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+              img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+            }
+            else if (bSeries)
+            {
+              img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
             }
             else
             {
-              if (bConflict)
-              {
-                img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-              }
-              else if (bSeries)
-              {
-                img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
-              }
-              else
-              {
-                img.TexutureIcon = Thumbs.TvRecordingIcon;
-              }
+              img.TexutureIcon = Thumbs.TvRecordingIcon;
             }
             img.IconOffsetX = buttonRecordTemplate.IconOffsetX;
             img.IconOffsetY = buttonRecordTemplate.IconOffsetY;
@@ -2102,6 +2094,7 @@ namespace TvPlugin
           if (_programNotRunningTemplate != null)
           {
             _programNotRunningTemplate.IsVisible = false;
+
             TexutureFocusLeftName = _programNotRunningTemplate.TexutureFocusLeftName;
             TexutureFocusMidName = _programNotRunningTemplate.TexutureFocusMidName;
             TexutureFocusRightName = _programNotRunningTemplate.TexutureFocusRightName;
@@ -2150,6 +2143,7 @@ namespace TvPlugin
 
           img.RenderLeft = false;
           img.RenderRight = false;
+          img.StretchIfNotRendered = true;
 
           img.TexutureIcon = String.Empty;
           if (program.Notify)
@@ -2157,6 +2151,7 @@ namespace TvPlugin
             if (_programNotifyTemplate != null)
             {
               _programNotifyTemplate.IsVisible = false;
+
               TexutureFocusLeftName = _programNotifyTemplate.TexutureFocusLeftName;
               TexutureFocusMidName = _programNotifyTemplate.TexutureFocusMidName;
               TexutureFocusRightName = _programNotifyTemplate.TexutureFocusRightName;
@@ -2216,6 +2211,7 @@ namespace TvPlugin
             if (buttonRecordTemplate != null)
             {
               buttonRecordTemplate.IsVisible = false;
+              
               TexutureFocusLeftName = buttonRecordTemplate.TexutureFocusLeftName;
               TexutureFocusMidName = buttonRecordTemplate.TexutureFocusMidName;
               TexutureFocusRightName = buttonRecordTemplate.TexutureFocusRightName;
@@ -2240,27 +2236,15 @@ namespace TvPlugin
               // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
               if (bConflict)
               {
-                TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-                TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-                TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-                TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-                TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-                TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+                img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+              }
+              else if (bSeries)
+              {
+                img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
               }
               else
               {
-                if (bConflict)
-                {
-                  img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-                }
-                else if (bSeries)
-                {
-                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
-                }
-                else
-                {
-                  img.TexutureIcon = Thumbs.TvRecordingIcon;
-                }
+                img.TexutureIcon = Thumbs.TvRecordingIcon;
               }
               img.IconOffsetX = buttonRecordTemplate.IconOffsetX;
               img.IconOffsetY = buttonRecordTemplate.IconOffsetY;
@@ -2309,23 +2293,41 @@ namespace TvPlugin
             }
           }
 
+          DateTime dt = DateTime.Now;
+
           img.TexutureIcon2 = String.Empty;
           if (bProgramIsHD)
           {
-            if (_programNotRunningTemplate != null)
+            if (program.IsRunningAt(dt) && _programRunningTemplate != null)
+            {
+              img.TexutureIcon2 = _programRunningTemplate.TexutureIcon2;
+              img.Icon2Align = _programRunningTemplate.Icon2Align;
+              img.Icon2VAlign = _programRunningTemplate.Icon2VAlign;
+              img.Icon2OffsetX = _programRunningTemplate.Icon2OffsetX;
+              img.Icon2OffsetY = _programRunningTemplate.Icon2OffsetY;
+              img.Icon2InlineLabel1 = _programRunningTemplate.Icon2InlineLabel1;
+            }
+            else if (!program.IsRunningAt(dt) && _programNotRunningTemplate != null)
             {
               img.TexutureIcon2 = _programNotRunningTemplate.TexutureIcon2;
+              img.Icon2Align = _programNotRunningTemplate.Icon2Align;
+              img.Icon2VAlign = _programNotRunningTemplate.Icon2VAlign;
+              img.Icon2OffsetX = _programNotRunningTemplate.Icon2OffsetX;
+              img.Icon2OffsetY = _programNotRunningTemplate.Icon2OffsetY;
+              img.Icon2InlineLabel1 = _programNotRunningTemplate.Icon2InlineLabel1;
             }
             else
             {
               if (_useHdProgramIcon)
               {
                 img.TexutureIcon2 = "tvguide_hd_program.png";
+                img.Icon2Align = GUIControl.Alignment.ALIGN_LEFT;
+                img.Icon2VAlign = GUIControl.VAlignment.ALIGN_MIDDLE;
+                img.Icon2OffsetX = 5;
+                img.Icon2OffsetY = 0;
+                img.Icon2InlineLabel1 = true;
               }
             }
-            img.Icon2InlineLabel1 = true;
-            img.Icon2VAlign = GUIControl.VAlignment.ALIGN_MIDDLE;
-            img.Icon2OffsetX = 5;
           }
           img.Data = program.Clone();
           iWidth = iEndXPos - iStartXPos;
@@ -2337,8 +2339,6 @@ namespace TvPlugin
           {
             iWidth = 1;
           }
-
-          DateTime dt = DateTime.Now;
 
           img.TextOffsetX1 = 5;
           img.TextOffsetY1 = 5;
@@ -2418,6 +2418,7 @@ namespace TvPlugin
             if (!bRecording && !bPartialRecording && buttonRunningTemplate != null)
             {
               buttonRunningTemplate.IsVisible = false;
+
               TexutureFocusLeftName = buttonRunningTemplate.TexutureFocusLeftName;
               TexutureFocusMidName = buttonRunningTemplate.TexutureFocusMidName;
               TexutureFocusRightName = buttonRunningTemplate.TexutureFocusRightName;
@@ -2470,10 +2471,15 @@ namespace TvPlugin
           {
             img.RenderRight = true;
 
-            TexutureFocusRightName = "tvguide_arrow_selected_right.png";
-            TexutureNoFocusRightName = "tvguide_arrow_light_right.png";
+            // If no template found then use default texture names.
+            // Texture names already set if using template.
+            if (_programNotRunningTemplate == null)
+            {
+              TexutureFocusRightName = "tvguide_arrow_selected_right.png";
+              TexutureNoFocusRightName = "tvguide_arrow_light_right.png";
+            }
 
-            if (program.IsRunningAt(dt))
+            if (program.IsRunningAt(dt) && _programRunningTemplate == null)
             {
               TexutureNoFocusRightName = "tvguide_arrow_right.png";
             }
@@ -2481,10 +2487,14 @@ namespace TvPlugin
           if (bStartsBefore)
           {
             img.RenderLeft = true;
-            TexutureFocusLeftName = "tvguide_arrow_selected_left.png";
-            TexutureNoFocusLeftName = "tvguide_arrow_light_left.png";
 
-            if (program.IsRunningAt(dt))
+            if (_programNotRunningTemplate == null)
+            {
+              TexutureFocusLeftName = "tvguide_arrow_selected_left.png";
+              TexutureNoFocusLeftName = "tvguide_arrow_light_left.png";
+            }
+
+            if (program.IsRunningAt(dt) && _programRunningTemplate == null)
             {
               TexutureNoFocusLeftName = "tvguide_arrow_left.png";
             }
