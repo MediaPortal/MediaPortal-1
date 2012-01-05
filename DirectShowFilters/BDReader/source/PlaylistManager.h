@@ -41,7 +41,7 @@ class CPlaylistManager
 public:
   CPlaylistManager(void);
   ~CPlaylistManager(void);
-  bool CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, bool discontinuousClip);
+  bool CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration);
   void SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip);
 
   bool SubmitAudioPacket(Packet * packet);

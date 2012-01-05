@@ -342,8 +342,8 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
 
   superceeded=0;
 
-  firstAudio=true;
-  firstVideo=true;
+  //firstAudio=true;
+  //firstVideo=true;
   firstPacketAccepted = false;
   firstPacketReturned = false;
   clipReset = true;
@@ -375,6 +375,9 @@ bool CClip::HasVideo()
 
 REFERENCE_TIME CClip::Incomplete()
 {
+  // clip not played so not incomplete
+  if (!firstPacketReturned || !firstPacketAccepted) return 0LL;
+
   REFERENCE_TIME ret = playlistFirstPacketTime + clipDuration - videoPlaybackPosition;
   if (playlistFirstPacketTime + clipDuration - audioPlaybackPosition < ret) ret = playlistFirstPacketTime + clipDuration - audioPlaybackPosition; 
   if (ret > 5000000LL)

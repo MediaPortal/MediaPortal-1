@@ -227,7 +227,6 @@ private:
   INT32 m_nPlaylist;
   INT32 m_nMPEG2LastClip;
   INT32 m_nMPEG2LastPlaylist;
-  bool m_bDiscontinuousClip;
   bool m_bVideoFormatParsed;
   bool m_bAudioFormatParsed;
   

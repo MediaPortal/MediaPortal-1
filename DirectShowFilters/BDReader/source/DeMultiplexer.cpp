@@ -80,7 +80,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bVideoRequiresRebuild = false;
   m_playlistManager = new CPlaylistManager();
   m_loopLastSearch = 1;
-  m_bDiscontinuousClip = false;
   m_bStreamPaused = false;
   m_bAudioWaitForSeek = false;
   m_bVideoFormatParsed = false;
@@ -585,7 +584,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
   switch (pEv.event)
   {
     case BD_EVENT_SEEK:
-      m_bDiscontinuousClip = true;
       break;
 
     case BD_EVENT_STILL_TIME:
@@ -673,8 +671,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
           interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip), 
-            CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
-          m_bDiscontinuousClip = false;
+            CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration));
 
           if (interrupted)
           {
