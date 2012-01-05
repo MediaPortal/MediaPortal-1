@@ -64,7 +64,7 @@ namespace TvPlugin
     protected bool _useColorsForButtons = false;
     protected bool _useColorsForGenres = false;
     protected bool _specifyMpaaRatedAsMovie = false;
-    protected bool _guideColorsLoadedFromSkinSettings = false;
+    protected bool _guideColorsLoaded = false;
     protected long _defaultGenreColorOnNow = 0;
     protected long _defaultGenreColorOnLater = 0;
     protected long _guideColorChannelButton = 0;
@@ -74,6 +74,7 @@ namespace TvPlugin
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
+    protected List<string> _genreList = new List<string>();
     protected Dictionary<string, string> _genreMap = new Dictionary<string, string>();
     protected Dictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected Dictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
@@ -99,6 +100,9 @@ namespace TvPlugin
         {
           return;
         }
+
+        // Skin settings may have changed via the MP GUI, reload them.
+        LoadSkinSettings();
 
         // sets button visible state
         UpdateGroupButton();
@@ -491,6 +495,8 @@ namespace TvPlugin
     protected abstract void GetChannels(bool b);
 
     protected abstract void LoadSchedules(bool b);
+
+    protected abstract void LoadSkinSettings();
 
     protected abstract void RenderSingleChannel(Channel channel);
 

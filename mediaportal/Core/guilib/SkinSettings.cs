@@ -282,6 +282,8 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    #region Persistence
+
     private static void LoadBooleanSettings()
     {
       _skinBoolSettings.Clear();
@@ -354,6 +356,7 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlReader = new Settings(_skinSettingsFileName))
       {
+        // Theme settings.
         GUIGraphicsContext.Theme = xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, "");
         GUIPropertyManager.SetProperty("#skin.currenttheme", GUIGraphicsContext.ThemeName);
 
@@ -402,34 +405,45 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlWriter = new Settings(_skinSettingsFileName))
       {
-        // Save all the boolean settings.
-        Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
-        SkinBool bSetting;
-        while (bEnumer.MoveNext())
-        {
-          bSetting = bEnumer.Current.Value;
-          if (bSetting.Kind == Kind.PERSISTENT)
-          {
-            xmlWriter.SetValue("booleansettings", bSetting.Name, bSetting.Value);
-          }
-        }
-
-        // Save all the string settings.
-        Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
-        SkinString strSetting;
-        while (strEnumer.MoveNext())
-        {
-          strSetting = strEnumer.Current.Value;
-          if (strSetting.Kind == Kind.PERSISTENT)
-          {
-            xmlWriter.SetValue("stringsettings", strSetting.Name, strSetting.Value);
-          }
-        }
-
-        // Save discrete settings.
-        xmlWriter.SetValue(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIGraphicsContext.ThemeName);
+        SaveBooleanSettings(xmlWriter);
+        SaveStringSettings(xmlWriter);
+        SaveDiscreteSettings(xmlWriter);
       }
       Settings.SaveCache();
+    }
+
+    private static void SaveBooleanSettings(Settings xmlWriter)
+    {
+      Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
+      SkinBool bSetting;
+      while (bEnumer.MoveNext())
+      {
+        bSetting = bEnumer.Current.Value;
+        if (bSetting.Kind == Kind.PERSISTENT)
+        {
+          xmlWriter.SetValue("booleansettings", bSetting.Name, bSetting.Value);
+        }
+      }
+    }
+
+    private static void SaveStringSettings(Settings xmlWriter)
+    {
+      Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
+      SkinString strSetting;
+      while (strEnumer.MoveNext())
+      {
+        strSetting = strEnumer.Current.Value;
+        if (strSetting.Kind == Kind.PERSISTENT)
+        {
+          xmlWriter.SetValue("stringsettings", strSetting.Name, strSetting.Value);
+        }
+      }
+    }
+
+    private static void SaveDiscreteSettings(Settings xmlWriter)
+    {
+      // Theme settings
+      xmlWriter.SetValue(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIGraphicsContext.ThemeName);
     }
 
     /// <summary>
@@ -457,5 +471,8 @@ namespace MediaPortal.GUI.Library
       }
       return themes;
     }
+
+    #endregion
+
   }
 }

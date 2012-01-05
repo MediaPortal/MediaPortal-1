@@ -195,6 +195,11 @@ namespace TvPlugin
         Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_hd_program.png"));
     }
 
+    protected override void LoadSkinSettings()
+    {
+      // Nothing to do for RadioGuide.
+    }
+
     private void SaveSettings()
     {
       using (Settings xmlwriter = new MPSettings())
