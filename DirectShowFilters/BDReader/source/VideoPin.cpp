@@ -587,8 +587,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
             HRESULT hrAccept = S_FALSE;
             
-            if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &GetDecoderCLSID()))
-              hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+            CLSID decoder = GetDecoderCLSID();
+
+            if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &decoder))
+            {
+              // Currently no other video decoders than LAV seems to be compatible with
+              // the dynamic format changes
+              if (decoder == CLSID_LAVVideo)
+                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+            }
 
             if (hrAccept != S_OK)
             {
