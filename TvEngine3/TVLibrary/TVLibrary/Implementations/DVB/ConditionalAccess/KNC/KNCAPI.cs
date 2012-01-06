@@ -661,29 +661,35 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Set DVB-S2 tuning parameters that could not previously be set through BDA interfaces.
+    /// Set tuning parameters that can or could not previously be set through BDA interfaces.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <returns>The channel with DVB-S2 parameters set.</returns>
-    public DVBSChannel SetTuningParameters(DVBSChannel channel)
+    /// <returns>The channel with parameters adjusted as necessary.</returns>
+    public DVBBaseChannel SetTuningParameters(DVBBaseChannel channel)
     {
       Log.Log.Debug("KNC: set tuning parameters");
-      if (channel.ModulationType == ModulationType.ModQpsk || channel.ModulationType == ModulationType.Mod8Psk)
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
       {
-        channel.ModulationType = ModulationType.Mod8Vsb;
+        return channel;
+      }
+
+      if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
+      {
+        ch.ModulationType = ModulationType.Mod8Vsb;
       }
       // I don't think any KNC tuners or clones support demodulating anything
       // higher than 8 PSK. Nevertheless...
-      else if (channel.ModulationType == ModulationType.Mod16Apsk)
+      else if (ch.ModulationType == ModulationType.Mod16Apsk)
       {
-        channel.ModulationType = ModulationType.Mod16Vsb;
+        ch.ModulationType = ModulationType.Mod16Vsb;
       }
-      else if (channel.ModulationType == ModulationType.Mod32Apsk)
+      else if (ch.ModulationType == ModulationType.Mod32Apsk)
       {
-        channel.ModulationType = ModulationType.ModOqpsk;
+        ch.ModulationType = ModulationType.ModOqpsk;
       }
-      Log.Log.Debug("  modulation = {0}", channel.ModulationType);
-      return channel;
+      Log.Log.Debug("  modulation = {0}", ch.ModulationType);
+      return ch as DVBBaseChannel;
     }
 
     #region conditional access

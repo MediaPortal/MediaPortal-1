@@ -947,28 +947,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_knc != null)
         {
-          //Set KNC modulation tuning settings
-          if (channel.ModulationType == ModulationType.ModQpsk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod8Psk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod16Apsk)
-          {
-            channel.ModulationType = ModulationType.Mod16Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod32Apsk)
-          {
-            channel.ModulationType = ModulationType.ModOqpsk;
-          }
-          Log.Log.WriteFile("KNC DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("KNC DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("KNC DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("KNC DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          return channel;
+          return (DVBSChannel)_knc.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_digitalEveryWhere != null)
         {
