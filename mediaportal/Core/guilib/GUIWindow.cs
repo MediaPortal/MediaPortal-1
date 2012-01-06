@@ -649,7 +649,7 @@ namespace MediaPortal.GUI.Library
             case "import":
 
               // Allow an include to be conditionally loaded based on a 'condition' expression.
-              bool loadInclude = false;
+              bool loadInclude = true;
               if (node.Attributes["condition"] != null && !string.IsNullOrEmpty(node.Attributes["condition"].Value))
               {
                 try
@@ -659,6 +659,7 @@ namespace MediaPortal.GUI.Library
                 catch (FormatException)
                 {
                   // The include will not be loaded if the expression could not be evaluated.
+                  loadInclude = false;
                   Log.Debug("LoadSkin: {0}, could not evaluate include expression '{1}' ", _windowXmlFileName, node.Attributes["condition"].Value);
                 }
               }
