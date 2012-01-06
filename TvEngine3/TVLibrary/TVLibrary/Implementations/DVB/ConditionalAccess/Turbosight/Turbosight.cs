@@ -373,7 +373,7 @@ namespace TvLibrary.Implementations.DVB
       _tunerFilter = tunerFilter;
       _generalBuffer = Marshal.AllocCoTaskMem(TbsAccessParamsSize);
       OpenCi();
-      SetLnbPowerState(true);
+      SetPowerState(true);
     }
 
     /// <summary>
@@ -389,13 +389,13 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Turn the LNB power supply on or off.
+    /// Turn the LNB or aerial power supply on or off.
     /// </summary>
     /// <param name="powerOn"><c>True</c> to turn power supply on, otherwise <c>false</c>.</param>
     /// <returns><c>true</c> if the power supply state is set successfully, otherwise <c>false</c></returns>
-    public bool SetLnbPowerState(bool powerOn)
+    public bool SetPowerState(bool powerOn)
     {
-      Log.Log.Debug("Turbosight: set LNB power state, on = {0}", powerOn);
+      Log.Log.Debug("Turbosight: set power state, on = {0}", powerOn);
 
       TbsAccessParams accessParams = new TbsAccessParams();
       accessParams.AccessMode = TbsAccessMode.LnbPower;
@@ -494,14 +494,20 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Set DVB-S2 tuning parameters that could not previously be set through BDA interfaces.
+    /// Set tuning parameters that can or could not previously be set through BDA interfaces.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <returns>The channel with DVB-S2 parameters set.</returns>
-    public DVBSChannel SetTuningParameters(DVBSChannel channel)
+    /// <returns>The channel with parameters adjusted as necessary.</returns>
+    public DVBBaseChannel SetTuningParameters(DVBBaseChannel channel)
     {
       Log.Log.Debug("Turbosight: set tuning parameters");
-      switch (channel.InnerFecRate)
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
+      {
+        return channel;
+      }
+
+      switch (ch.InnerFecRate)
       {
         case BinaryConvolutionCodeRate.Rate1_2:
         case BinaryConvolutionCodeRate.Rate2_3:
@@ -510,42 +516,38 @@ namespace TvLibrary.Implementations.DVB
         case BinaryConvolutionCodeRate.Rate4_5:
         case BinaryConvolutionCodeRate.Rate5_6:
         case BinaryConvolutionCodeRate.Rate7_8:
-          channel.InnerFecRate = channel.InnerFecRate;
+          ch.InnerFecRate = ch.InnerFecRate;
           break;
         case BinaryConvolutionCodeRate.Rate8_9:
-          channel.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
+          ch.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
           break;
         case BinaryConvolutionCodeRate.Rate9_10:
-          channel.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
+          ch.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
           break;
         default:
-          channel.InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
+          ch.InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
           break;
       }
-      Log.Log.Debug("  inner FEC rate = {0}", channel.InnerFecRate);
+      Log.Log.Debug("  inner FEC rate = {0}", ch.InnerFecRate);
 
-      if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
+      if (ch.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
       {
-        if (channel.ModulationType == ModulationType.ModNotSet)
+        if (ch.ModulationType == ModulationType.ModNotSet)
         {
-          channel.ModulationType = ModulationType.ModQpsk;
+          ch.ModulationType = ModulationType.ModQpsk;
         }
-        else if (channel.ModulationType == ModulationType.ModQpsk)
+        else if (ch.ModulationType == ModulationType.ModQpsk)
         {
-          channel.ModulationType = ModulationType.ModOqpsk;
+          ch.ModulationType = ModulationType.ModOqpsk;
         }
-        else if (channel.ModulationType == ModulationType.Mod8Psk)
+        else if (ch.ModulationType == ModulationType.Mod8Psk)
         {
-          channel.ModulationType = ModulationType.ModBpsk;
-        }
-        else
-        {
-          channel.ModulationType = ModulationType.ModNotDefined;
+          ch.ModulationType = ModulationType.ModBpsk;
         }
       }
-      Log.Log.Debug("  modulation     = {0}", channel.ModulationType);
+      Log.Log.Debug("  modulation     = {0}", ch.ModulationType);
 
-      return channel;
+      return ch as DVBBaseChannel;
     }
 
     #region conditional access
@@ -1419,7 +1421,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_isTurbosight)
       {
-        SetLnbPowerState(false);
+        SetPowerState(false);
         if (_mmiHandlerThread != null)
         {
           _stopMmiHandlerThread = true;

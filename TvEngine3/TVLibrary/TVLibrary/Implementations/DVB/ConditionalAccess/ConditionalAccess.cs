@@ -924,7 +924,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_turbosight != null)
         {
-          return _turbosight.SetTuningParameters(channel);
+          return (DVBSChannel)_turbosight.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_technoTrend != null)
         {
