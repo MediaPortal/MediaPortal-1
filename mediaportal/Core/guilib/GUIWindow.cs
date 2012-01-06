@@ -777,34 +777,32 @@ namespace MediaPortal.GUI.Library
             continue;
           }
 
-          // Determine if the define be promoted to a property.
+          // Determine if the define should be promoted to a property.
           createAsProperty = false;
-          try
+          if (node.Attributes["property"] != null && !string.IsNullOrEmpty(node.Attributes["property"].Value))
           {
-            createAsProperty = bool.Parse(node.Attributes["property"].Value);
-          }
-          catch (FormatException)
-          {
-            Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
-          }
-          catch (Exception)
-          {
-            // It's okay if the attribute is not specified.
+            try
+            {
+              createAsProperty = bool.Parse(node.Attributes["property"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'property'; {0} is not a boolean value", node.Attributes["property"].Value);
+            }
           }
 
           // Determine if the define should be evaluated now.
           evaluateNow = false;
-          try
+          if (node.Attributes["evaluateNow"] != null && !string.IsNullOrEmpty(node.Attributes["evaluateNow"].Value))
           {
-            evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
-          }
-          catch (FormatException)
-          {
-            Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
-          }
-          catch (Exception)
-          {
-            // It's okay if the attribute is not specified.
+            try
+            {
+              evaluateNow = bool.Parse(node.Attributes["evaluateNow"].Value);
+            }
+            catch (FormatException)
+            {
+              Log.Debug("Window: LoadDefines() - failed to parse define attribute value for 'evaluateNow'; {0} is not a boolean value", node.Attributes["evaluateNow"].Value);
+            }
           }
 
           // If evaluateNow then parse and evaluate the define value expression now.
@@ -817,7 +815,7 @@ namespace MediaPortal.GUI.Library
             table[tokens[0]] = tokens[1];
           }
 
-          // Promte the define to a property if specified.
+          // Promote the define to a property if specified.
           if (createAsProperty)
           {
             GUIPropertyManager.SetProperty(tokens[0], table[tokens[0]]);
