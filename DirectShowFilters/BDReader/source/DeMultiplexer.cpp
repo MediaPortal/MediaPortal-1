@@ -1526,9 +1526,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
       if (!pFlushBuffers)
         while(next <= end - 4 && ((*(DWORD*)next & 0xFFFFFFFF) != 0xb3010000) && ((*(DWORD*)next & 0xFFFFFFFF) != 0x00010000)) next++;
       else
-        next = end - 5;
+        next = end;
 
-      if (next >= end - 4)
+      if ((next >= end - 4) && !pFlushBuffers)
         m_lastStart = next - m_p->GetData();
       else
       {
