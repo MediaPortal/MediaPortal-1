@@ -808,7 +808,7 @@ namespace MediaPortal.GUI.Library
           // If evaluateNow then parse and evaluate the define value expression now.
           if (evaluateNow)
           {
-            table[tokens[0]] = GUIExpressionManager.Parse(tokens[1]);
+            table[tokens[0]] = GUIExpressionManager.Parse(tokens[1], GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
           else
           {
