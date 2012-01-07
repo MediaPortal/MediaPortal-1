@@ -654,7 +654,7 @@ namespace MediaPortal.GUI.Library
               {
                 try
                 {
-                  loadInclude = bool.Parse(node.Attributes["condition"].Value);
+                  loadInclude = bool.Parse(GUIPropertyManager.Parse(node.Attributes["condition"].Value, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
                 }
                 catch (FormatException)
                 {
