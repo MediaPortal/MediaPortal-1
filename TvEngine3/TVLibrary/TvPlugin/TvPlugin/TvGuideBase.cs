@@ -192,19 +192,19 @@ namespace TvPlugin
 
       // Guide coloring options are defined by each skin (and may not be present).  Read the settings from skin properties.
       temp = GUIPropertyManager.GetProperty("#skin.tvguide.usecolorsforbuttons");
-      if (temp.Length != 0)
+      if (temp != null && temp.Length != 0)
       {
         _useColorsForButtons = bool.Parse(temp);
       }
 
       temp = GUIPropertyManager.GetProperty("#skin.tvguide.useborderhighlight");
-      if (temp.Length != 0)
+      if (temp != null && temp.Length != 0)
       {
         _useBorderHighlight = bool.Parse(temp);
       }
 
       temp = GUIPropertyManager.GetProperty("#skin.tvguide.usecolorsforgenre");
-      if (temp.Length != 0)
+      if (temp != null && temp.Length != 0)
       {
         _useColorsForGenres = bool.Parse(temp);
       }
