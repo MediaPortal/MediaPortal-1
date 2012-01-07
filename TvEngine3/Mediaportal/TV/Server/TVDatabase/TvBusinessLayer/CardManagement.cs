@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Objects;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
@@ -200,6 +201,27 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         return map;
       }  
     }
-   
+
+    public static IList<Card> ListAllCards(CardIncludeRelationEnum includeRelations)
+    {
+      using (ICardRepository cardRepository = new CardRepository())
+      {
+        IQueryable<Card> query = cardRepository.GetAll<Card>();
+        query = cardRepository.IncludeAllRelations(query, includeRelations);
+        return query.ToList();
+      }  
+    }
+
+    public static IList<Card> SaveCards(IEnumerable<Card> cards)
+    {
+      using (ICardRepository cardRepository = new CardRepository())
+      {
+        cardRepository.AttachEntityIfChangeTrackingDisabled(cardRepository.ObjectContext.Cards, cards);
+        cardRepository.ApplyChanges(cardRepository.ObjectContext.Cards, cards);
+        cardRepository.UnitOfWork.SaveChanges();
+        cardRepository.ObjectContext.AcceptAllChanges();
+        return cards.ToList();
+      }
+    }
   }
 }

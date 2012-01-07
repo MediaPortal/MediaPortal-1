@@ -30,6 +30,7 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Sections;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -219,7 +220,7 @@ namespace Mediaportal.TV.Server.SetupTV
         cardPage = new TvCards(hostName);
         cardPage.TvCardsChanged += OnTvCardsChanged;
         AddChildSection(servers, cardPage, 0);
-        IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card dbsCard in cards)
         {
           if (dbsCard.enabled && ServiceAgents.Instance.ControllerServiceAgent.CardPresent(dbsCard.idCard))

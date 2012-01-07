@@ -27,6 +27,7 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
@@ -177,10 +178,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       mpListView1.Items.Clear();
       mpComboBoxCard.Items.Clear();
+      IList<Card> cards = new List<Card>();
       try
       {
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
-        foreach (Card card in dbsCards)
+        cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
+        foreach (Card card in cards)
         {
           cardTypes[card.devicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
           mpComboBoxCard.Items.Add(new CardInfo(card));
@@ -189,7 +191,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       catch (Exception) {}
       try
       {
-        IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards().OrderByDescending(c => c.priority).ToList();
+        cards = cards.OrderByDescending(c => c.priority).ToList();
         foreach (Card card in cards)
         {
           string cardType = "";
@@ -367,6 +369,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void ReOrder()
     {
+      IList<Card> cards = new List<Card>();
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
         mpListView1.Items[i].SubItems[1].Text = (mpListView1.Items.Count - i).ToString();
@@ -377,8 +380,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           _needRestart = true;
 
         card.enabled = mpListView1.Items[i].Checked;
-        ServiceAgents.Instance.CardServiceAgent.SaveCard(card);
+        cards.Add(card);
       }
+
+      ServiceAgents.Instance.CardServiceAgent.SaveCards(cards);
     }
 
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)

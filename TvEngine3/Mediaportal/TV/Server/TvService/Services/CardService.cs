@@ -2,6 +2,7 @@
 using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVService.Services
@@ -13,6 +14,17 @@ namespace Mediaportal.TV.Server.TVService.Services
     {
       var listAllCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
       return listAllCards;
+    }
+
+    public IList<Card> ListAllCards(CardIncludeRelationEnum includeRelations)
+    {
+      var listAllCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(includeRelations);
+      return listAllCards;
+    }
+
+    public IList<Card> SaveCards(IEnumerable<Card> cards)
+    {
+      return TVDatabase.TVBusinessLayer.CardManagement.SaveCards(cards);
     }
 
     public Card GetCardByDevicePath(string cardDevice)

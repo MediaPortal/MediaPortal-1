@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 {
@@ -40,5 +41,9 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void DeleteGroupMap(int idMap);
     [OperationContract]
     CardGroupMap SaveCardGroupMap(CardGroupMap map);
+    [OperationContract(Name = "ListAllCardsWithSpecificRelations")]
+    IList<Card> ListAllCards(CardIncludeRelationEnum includeRelations);
+    [OperationContract]
+    IList<Card> SaveCards(IEnumerable<Card> cards);
   }
 }
