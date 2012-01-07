@@ -240,7 +240,7 @@ namespace MediaPortal.GUI.Library
                                           @"|(?<int>[+-]?\d+)" + // an integer
                                           @"|(?<float>[+-]?\d+\.\d*)" + // a float
                                           @"|\'(?<string>([^']|\\\')*)\'" + // a quoted string
-                                          @"|" + FunctionExpr + // a function call
+                                          @"|(" + FunctionExpr + "([;])*)*" + // one or more function expressions separated by ';'
                                           @")\s*"; // require depth to be 0
 
     //private const string ExprTriggerExpr = @"(?:#\(\s*)" + FunctionExpr + @"(?:\s*\))";
