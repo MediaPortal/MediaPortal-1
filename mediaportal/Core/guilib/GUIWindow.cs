@@ -1364,6 +1364,7 @@ namespace MediaPortal.GUI.Library
           foreach (GUIControl control in Children)
           {
             control.UpdateVisibility();
+            control.UpdateEnableState();
             control.DoRender(timePassed, currentTime);
           }
 

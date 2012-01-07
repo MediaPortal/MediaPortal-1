@@ -114,6 +114,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("dimColor")] protected int _dimColor = 0x60ffffff;
     [XMLSkinElement("layoutDetail")] protected ILayoutDetail _layoutDetail;
     [XMLSkinElement("onfocus")] protected string _onfocus = "";
+    [XMLSkinElement("enabled")] protected string _enabledFromSkinExpression = "";
 
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
@@ -2022,6 +2023,21 @@ namespace MediaPortal.GUI.Library
     {
       _visibleCondition = visible;
       _allowHiddenFocus = allowHiddenFocus;
+    }
+
+    public void UpdateEnableState()
+    {
+      if (_enabledFromSkinExpression.Length != 0)
+      {
+        try
+        {
+          IsEnabled = bool.Parse(GUIPropertyManager.Parse(_enabledFromSkinExpression, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS));
+        }
+        catch (System.Exception)
+        {
+          Log.Debug("GUIControl: id={0} <enabled> expression does not return a boolean value", GetID);
+        }
+      }
     }
 
     protected virtual void OnFocus() {}
