@@ -84,11 +84,10 @@ namespace Mediaportal.TV.Server.TVService.Services
       var serviceDebugBehaviour = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
       serviceDebugBehaviour.IncludeExceptionDetailInFaults = true;
 
-      SetMaxItemsInObjectGraph(serviceHost);
-
       ServiceMetadataBehavior serviceMetaDataBehaviour = SetHttpsGetEnabled(serviceHost);
       serviceMetaDataBehaviour.HttpGetUrl = httpUri;
       serviceHost.Open();
+      SetMaxItemsInObjectGraph(serviceHost);
       Log.Debug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
@@ -108,20 +107,18 @@ namespace Mediaportal.TV.Server.TVService.Services
       var serviceDebugBehaviour = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
       serviceDebugBehaviour.IncludeExceptionDetailInFaults = true;
 
-
-      SetMaxItemsInObjectGraph(serviceHost);
       ServiceMetadataBehavior serviceMetaDataBehaviour = SetHttpsGetEnabled(serviceHost);
 
       string endpointHTTPUrl = ServiceHelper.GetEndpointURL(interfaceType, "localhost");
       var httpUri = new Uri(endpointHTTPUrl);
       serviceMetaDataBehaviour.HttpGetUrl = httpUri;
 
-
       var throttle = new ServiceThrottlingBehavior { MaxConcurrentCalls = 3, MaxConcurrentInstances = 20 };
       throttle.MaxConcurrentInstances = 20;
       serviceHost.Description.Behaviors.Add(throttle);
 
       serviceHost.Open();
+      SetMaxItemsInObjectGraph(serviceHost);
       Log.Debug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
     }
