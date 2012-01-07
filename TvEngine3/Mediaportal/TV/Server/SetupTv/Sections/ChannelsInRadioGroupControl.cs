@@ -63,10 +63,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void ChannelsInGroupControl_Load(object sender, EventArgs e) {}
 
+    private bool _ignoreItemCheckedEvent = false;
+
     public void OnActivated()
     {
       try
       {
+        _ignoreItemCheckedEvent = true;
         Application.DoEvents();
 
         Cursor.Current = Cursors.WaitCursor;
@@ -95,6 +98,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       finally
       {
         Cursor.Current = Cursors.Default;
+        _ignoreItemCheckedEvent = true;
       }
     }
 
@@ -201,7 +205,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {
@@ -506,11 +510,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      Channel ch = ((GroupMap)e.Item.Tag).Channel;
-      if (ch.visibleInGuide != e.Item.Checked)
+      if (!_ignoreItemCheckedEvent)
       {
-        ch.visibleInGuide = e.Item.Checked;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
+        Channel ch = ((GroupMap)e.Item.Tag).Channel;
+        if (ch.visibleInGuide != e.Item.Checked)
+        {
+          ch.visibleInGuide = e.Item.Checked;
+          ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
+          ch.AcceptChanges();
+        }
       }
     }
 

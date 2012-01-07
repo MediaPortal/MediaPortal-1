@@ -328,17 +328,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void ReOrder()
     {
+      IList<Channel> channels = new List<Channel>();
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
-        //mpListView1.Items[i].Text = (i + 1).ToString();
-
         Channel channel = (Channel)mpListView1.Items[i].Tag;
         if (channel.sortOrder != i)
         {
-          channel.sortOrder = i;          
-          ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
+          channel.sortOrder = i;
+          channels.Add(channel);
+          channel.AcceptChanges();
         }
       }
+      ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
     }
 
     private void ReOrderGroups()
