@@ -69,6 +69,30 @@ namespace Mediaportal.TV.Server.TVService.Services
       }
     }
 
+    private ServiceHost GetServiceHost(Type interfaceType, Type implType)
+    {
+      var serviceHost = new ServiceHost(implType);
+      BasicHttpBinding defaultBinding = ServiceHelper.GetHttpBinding();
+      string endpointUrl = ServiceHelper.GetEndpointURL(interfaceType, "localhost");
+      var httpUri = new Uri(endpointUrl);
+
+      var endpointAddress = new EndpointAddress(httpUri, EndpointIdentity.CreateSpnIdentity("localhost"));
+      ContractDescription contract = ContractDescription.GetContract(implType);
+      var endpoint = new ServiceEndpoint(contract, defaultBinding, endpointAddress);
+      serviceHost.AddServiceEndpoint(endpoint);
+
+      var serviceDebugBehaviour = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
+      serviceDebugBehaviour.IncludeExceptionDetailInFaults = true;
+
+      SetMaxItemsInObjectGraph(serviceHost);
+
+      ServiceMetadataBehavior serviceMetaDataBehaviour = SetHttpsGetEnabled(serviceHost);
+      serviceMetaDataBehaviour.HttpGetUrl = httpUri;
+      serviceHost.Open();
+      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
+      return serviceHost;
+    }
+
     private ServiceHost GetEventServiceHost(Type interfaceType, Type implType)
     {
       var serviceHost = new ServiceHost(implType);
@@ -84,36 +108,51 @@ namespace Mediaportal.TV.Server.TVService.Services
       var serviceDebugBehaviour = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
       serviceDebugBehaviour.IncludeExceptionDetailInFaults = true;
 
-      var dataContractBehavior = serviceHost.Description.Behaviors.Find<DataContractSerializerOperationBehavior>();
-      if (dataContractBehavior != null)
-      {
-        dataContractBehavior.MaxItemsInObjectGraph = int.MaxValue;
-      }
-      
-      var serviceMetaDataBehaviour = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
-      
-      if (serviceMetaDataBehaviour == null)
-      {
-        serviceMetaDataBehaviour = new ServiceMetadataBehavior { HttpGetEnabled = true };
-        serviceHost.Description.Behaviors.Add(serviceMetaDataBehaviour);
-      }
-      else
-      {
-        serviceMetaDataBehaviour.HttpsGetEnabled = true;
-      }
+
+      SetMaxItemsInObjectGraph(serviceHost);
+      ServiceMetadataBehavior serviceMetaDataBehaviour = SetHttpsGetEnabled(serviceHost);
 
       string endpointHTTPUrl = ServiceHelper.GetEndpointURL(interfaceType, "localhost");
       var httpUri = new Uri(endpointHTTPUrl);
       serviceMetaDataBehaviour.HttpGetUrl = httpUri;
 
 
-      var throttle = new ServiceThrottlingBehavior {MaxConcurrentCalls = 3, MaxConcurrentInstances = 20};
-      throttle.MaxConcurrentInstances = 20;      
+      var throttle = new ServiceThrottlingBehavior { MaxConcurrentCalls = 3, MaxConcurrentInstances = 20 };
+      throttle.MaxConcurrentInstances = 20;
       serviceHost.Description.Behaviors.Add(throttle);
 
       serviceHost.Open();
       Log.Debug("Service '{0}' succesfully started.", endpointUrl);
       return serviceHost;
+    }
+
+    private static ServiceMetadataBehavior SetHttpsGetEnabled(ServiceHost serviceHost)
+    {
+      var serviceMetaDataBehaviour = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+      if (serviceMetaDataBehaviour == null)
+      {
+        serviceMetaDataBehaviour = new ServiceMetadataBehavior {HttpGetEnabled = true};
+        serviceHost.Description.Behaviors.Add(serviceMetaDataBehaviour);
+      }
+      else
+      {
+        serviceMetaDataBehaviour.HttpsGetEnabled = true;
+      }
+      return serviceMetaDataBehaviour;
+    }
+
+  
+
+    private static void SetMaxItemsInObjectGraph(ServiceHost serviceHost)
+    {
+      foreach (OperationDescription operation in serviceHost.Description.Endpoints[0].Contract.Operations)
+      {
+        var dataContractBehavior = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+        if (dataContractBehavior != null)
+        {
+          dataContractBehavior.MaxItemsInObjectGraph = int.MaxValue;
+        }
+      }
     }
 
     public IEventService EventService
@@ -207,42 +246,7 @@ namespace Mediaportal.TV.Server.TVService.Services
       }
     }
 
-    private ServiceHost GetServiceHost(Type interfaceType, Type implType)
-    {
-      var serviceHost = new ServiceHost(implType);
-      BasicHttpBinding defaultBinding = ServiceHelper.GetHttpBinding();
-      string endpointUrl = ServiceHelper.GetEndpointURL(interfaceType, "localhost");
-      var httpUri = new Uri(endpointUrl);
-
-      var endpointAddress = new EndpointAddress(httpUri, EndpointIdentity.CreateSpnIdentity("localhost"));
-      ContractDescription contract = ContractDescription.GetContract(implType);
-      var endpoint = new ServiceEndpoint(contract, defaultBinding, endpointAddress);
-      serviceHost.AddServiceEndpoint(endpoint);
-
-      var serviceDebugBehaviour = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
-      serviceDebugBehaviour.IncludeExceptionDetailInFaults = true;
-
-      var dataContractBehavior = serviceHost.Description.Behaviors.Find<DataContractSerializerOperationBehavior>();
-      if (dataContractBehavior != null)
-      {
-        dataContractBehavior.MaxItemsInObjectGraph = int.MaxValue;
-      }
-
-      var serviceMetaDataBehaviour = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
-      if (serviceMetaDataBehaviour == null)
-      {
-        serviceMetaDataBehaviour = new ServiceMetadataBehavior {HttpGetEnabled = true};
-        serviceHost.Description.Behaviors.Add(serviceMetaDataBehaviour);
-      }
-      else
-      {
-        serviceMetaDataBehaviour.HttpsGetEnabled = true;
-      }
-      serviceMetaDataBehaviour.HttpGetUrl = httpUri;
-      serviceHost.Open();
-      Log.Debug("Service '{0}' succesfully started.", endpointUrl);
-      return serviceHost;
-    }
+    
 
     private void ThrowExceptionIfServiceAlreadyAdded(Type contractType)
     {
