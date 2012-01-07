@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces;
@@ -22,10 +23,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     ~ServiceAgents()
     {
       Dispose();
-    }      
+    }
 
     private void AddServices()
-    {     
+    {
       AddService<ICardService>();
       AddService<IProgramService>();
       AddService<IRecordingService>();
@@ -35,7 +36,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       AddService<IScheduleService>();
       AddService<ICanceledScheduleService>();
       AddService<IConflictService>();
-      AddService<IProgramCategoryService>();      
+      AddService<IProgramCategoryService>();
       AddService<IControllerService>();
 
       AddEventService();
@@ -66,7 +67,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
         }
         return eventServiceAgent;
       }
-    } 
+    }
 
     public IDiscoverServiceAgent DiscoverServiceAgent
     {
@@ -87,7 +88,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<IControllerService>();        
+        return GetOrCreateServiceAgent<IControllerService>();
       }
     }
 
@@ -171,7 +172,6 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       }
     }
 
-  
 
     public string Hostname
     {
@@ -243,7 +243,18 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       {
         var binding = ServiceHelper.GetHttpBinding();
         var endpoint = new EndpointAddress(ServiceHelper.GetEndpointURL(typeof(I), _hostname));
+
         var channelFactory = new ChannelFactory<I>(binding, endpoint);
+
+        foreach (OperationDescription op in channelFactory.Endpoint.Contract.Operations)
+        {
+          var dataContractBehavior = op.Behaviors.Find<DataContractSerializerOperationBehavior>();
+          if (dataContractBehavior != null)
+          {
+            dataContractBehavior.MaxItemsInObjectGraph = int.MaxValue;
+          }
+        }
+
         I channel = channelFactory.CreateChannel();
 
         ((IClientChannel)channel).Faulted += new EventHandler(ServiceAgents_Faulted);
@@ -267,23 +278,23 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     private void RemoveService(object sender)
     {
-      ((ICommunicationObject) sender).Abort();
-      ((ICommunicationObject) sender).Close();
+      ((ICommunicationObject)sender).Abort();
+      ((ICommunicationObject)sender).Close();
 
-      ((ICommunicationObject) sender).Faulted -= new EventHandler(ServiceAgents_Faulted);
-      ((ICommunicationObject) sender).Closed -= new EventHandler(ServiceAgents_Closed);
+      ((ICommunicationObject)sender).Faulted -= new EventHandler(ServiceAgents_Faulted);
+      ((ICommunicationObject)sender).Closed -= new EventHandler(ServiceAgents_Closed);
 
-      Type type = sender.GetType();      
+      Type type = sender.GetType();
       if (type == typeof(IEventService))
       {
         type = typeof(IEventServiceAgent);
       }
       else if (type == typeof(IDiscoverService))
       {
-        type = typeof(IDiscoverServiceAgent);        
+        type = typeof(IDiscoverServiceAgent);
       }
-        
-      bool found = GlobalServiceProvider.IsRegistered(type);  
+
+      bool found = GlobalServiceProvider.IsRegistered(type);
 
       if (found)
       {
@@ -294,11 +305,11 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     private void ServiceAgents_Faulted(object sender, EventArgs e)
     {
       RemoveService(sender);
-    }    
+    }
 
-    public I PluginService<I> ()
+    public I PluginService<I>()
     {
-      return GlobalServiceProvider.Get<I>();      
+      return GlobalServiceProvider.Get<I>();
     }
 
     #region Implementation of IDisposable
@@ -308,7 +319,7 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     /// </summary>
     /// <filterpriority>2</filterpriority>
     public void Dispose()
-    {      
+    {
       DisposeServiceProxy<ICardService>();
       DisposeServiceProxy<ICardService>();
       DisposeServiceProxy<IProgramService>();
@@ -330,10 +341,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       T service = GlobalServiceProvider.Get<T>();
       if (service != null)
       {
-        ((IClientChannel) service).Faulted -= new EventHandler(ServiceAgents_Faulted);
-        ((IClientChannel) service).Closed -= new EventHandler(ServiceAgents_Closed);
-        ((IClientChannel) service).Close();
-        ((IDisposable) service).Dispose();
+        ((IClientChannel)service).Faulted -= new EventHandler(ServiceAgents_Faulted);
+        ((IClientChannel)service).Closed -= new EventHandler(ServiceAgents_Closed);
+        ((IClientChannel)service).Close();
+        ((IDisposable)service).Dispose();
         GlobalServiceProvider.Remove<T>();
       }
     }
