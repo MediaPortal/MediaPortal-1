@@ -179,6 +179,12 @@ namespace MediaPortal.GUI.Library
       return Convert.ToDateTime(value);
     }
 
+    [XMLSkinFunction("cbool")]
+    public static bool ConvertToBool(object value)
+    {
+      return Convert.ToBoolean(value);
+    }
+
     #endregion
 
     #region Conditionals
