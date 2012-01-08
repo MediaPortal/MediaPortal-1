@@ -467,9 +467,6 @@ namespace MediaPortal.GUI.Library
         return false;
       }
 
-      // Load skin specific settings.
-      SkinSettings.Load();
-
       _showAnimation.Reset();
       _closeAnimation.Reset();
 

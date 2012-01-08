@@ -866,7 +866,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static string Theme
     {
-      set { m_strTheme = Skin + (value != SkinSettings.THEME_SKIN_DEFAULT ? @"\Themes\" + value : ""); }
+      set { m_strTheme = Skin + (value != GUIThemeManager.THEME_SKIN_DEFAULT ? @"\Themes\" + value : ""); }
       get { return m_strTheme; }
     }
 
@@ -880,7 +880,7 @@ namespace MediaPortal.GUI.Library
         {
           return m_strTheme.Substring(m_strTheme.LastIndexOf(@"\") + 1);
         }
-        return SkinSettings.THEME_SKIN_DEFAULT;
+        return GUIThemeManager.THEME_SKIN_DEFAULT;
       }
     }
 
@@ -892,7 +892,7 @@ namespace MediaPortal.GUI.Library
     public static bool HasThemeSpecificSkinFile(string filename)
     {
       // Do not check for files in the default theme (base skin).
-      if (ThemeName != SkinSettings.THEME_SKIN_DEFAULT)
+      if (ThemeName != GUIThemeManager.THEME_SKIN_DEFAULT)
       {
         return File.Exists(Theme + filename);
       }

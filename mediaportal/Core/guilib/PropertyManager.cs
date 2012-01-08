@@ -601,5 +601,21 @@ namespace MediaPortal.GUI.Library
 
       return property;
     }
+
+    /// <summary>
+    /// Removes the specified property from the property set.
+    /// </summary>
+    /// <param name="tag">name of the property</param>
+    public static void RemoveProperty(string tag)
+    {
+      string property = string.Empty;
+      if (tag != null && tag.IndexOf('#') > -1 && _properties.ContainsKey(tag))
+      {
+        lock (_properties)
+        {
+          _properties.Remove(tag);
+        }
+      }
+    }
   }
 }

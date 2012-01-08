@@ -23,7 +23,6 @@ using MediaPortal.Profile;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 namespace MediaPortal.GUI.Library
 {
@@ -49,12 +48,10 @@ namespace MediaPortal.GUI.Library
       public Kind Kind;
     } ;
 
-    private static string _skinSettingsFileName = Config.GetFile(Config.Dir.SelectedSkin, "SkinSettings.xml");
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
     private static string _loadedSkinSettings = "";
 
-    public const string THEME_SKIN_DEFAULT = "Skin default";
     public const string THEME_SECTION_NAME = "theme";
     public const string THEME_NAME_ENTRY = "name";
 
@@ -286,8 +283,7 @@ namespace MediaPortal.GUI.Library
 
     private static void LoadBooleanSettings()
     {
-      _skinBoolSettings.Clear();
-      using (Settings xmlReader = new Settings(_skinSettingsFileName))
+      using (Settings xmlReader = new SKSettings())
       {
         IDictionary<string, bool> allBooleanSettings = xmlReader.GetSection<bool>("booleansettings");
 
@@ -320,8 +316,7 @@ namespace MediaPortal.GUI.Library
 
     private static void LoadStringSettings()
     {
-      _skinStringSettings.Clear();
-      using (Settings xmlReader = new Settings(_skinSettingsFileName))
+      using (Settings xmlReader = new SKSettings())
       {
         IDictionary<string, string> allStringSettings = xmlReader.GetSection<string>("stringsettings");
 
@@ -354,25 +349,10 @@ namespace MediaPortal.GUI.Library
 
     private static void LoadDiscreteSettings()
     {
-      using (Settings xmlReader = new Settings(_skinSettingsFileName))
+      using (Settings xmlReader = new SKSettings())
       {
-        // Theme settings.
-        GUIGraphicsContext.Theme = xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, "");
-        GUIPropertyManager.SetProperty("#skin.currenttheme", GUIGraphicsContext.ThemeName);
-
-        // Set a property with a comma-separated list of theme names.
-        string themesCSV = "";
-        ArrayList themes = GetSkinThemes();
-        for (int i = 0; i < themes.Count; i++)
-        {
-          themesCSV += "," + themes[i];
-        }
-
-        if (themesCSV.Length > 0)
-        {
-          themesCSV = themesCSV.Substring(1);
-        }
-        GUIPropertyManager.SetProperty("#skin.themes", themesCSV);
+        // Initialize the theme manager for the selected theme.
+        GUIThemeManager.Init(xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.THEME_SKIN_DEFAULT));
       }
     }
 
@@ -385,6 +365,9 @@ namespace MediaPortal.GUI.Library
       {
         if (_loadedSkinSettings != GUIGraphicsContext.SkinName)
         {
+          // Prior to loading skin settings we need to unload any existing settings; especially inthe case when we are changing skins.
+          ClearAllSettings();
+
           LoadBooleanSettings();
           LoadStringSettings();
           LoadDiscreteSettings();
@@ -394,8 +377,48 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("SkinSettings: Error loading settings from {0} - {1}", _skinSettingsFileName, ex.Message);
+        Log.Error("SkinSettings: Error loading settings from {0} - {1}", SKSettings.ConfigPathName, ex.Message);
       }
+    }
+
+    private static void ClearAllSettings()
+    {
+      ClearBooleanSettings();
+      ClearStringSettings();
+      ClearDiscreteSettings();
+    }
+
+    private static void ClearBooleanSettings()
+    {
+      Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
+      SkinBool bSetting;
+      while (bEnumer.MoveNext())
+      {
+        bSetting = bEnumer.Current.Value;
+        GUIPropertyManager.RemoveProperty(bSetting.Name);
+      }
+
+      // Clear our dictionary.
+      _skinBoolSettings.Clear();
+    }
+
+    private static void ClearStringSettings()
+    {
+      Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
+      SkinString strSetting;
+      while (strEnumer.MoveNext())
+      {
+        strSetting = strEnumer.Current.Value;
+        GUIPropertyManager.RemoveProperty(strSetting.Name);
+      }
+
+      // Clear our dictionary.
+      _skinStringSettings.Clear();
+    }
+
+    private static void ClearDiscreteSettings()
+    {
+      GUIThemeManager.ClearSettings();
     }
 
     /// <summary>
@@ -403,7 +426,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Save()
     {
-      using (Settings xmlWriter = new Settings(_skinSettingsFileName))
+      using (Settings xmlWriter = new SKSettings())
       {
         SaveBooleanSettings(xmlWriter);
         SaveStringSettings(xmlWriter);
@@ -443,33 +466,7 @@ namespace MediaPortal.GUI.Library
     private static void SaveDiscreteSettings(Settings xmlWriter)
     {
       // Theme settings
-      xmlWriter.SetValue(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIGraphicsContext.ThemeName);
-    }
-
-    /// <summary>
-    /// Return a list of available themes for the current skin.  The first entry in the list is always the skin default.
-    /// </summary>
-    /// <returns></returns>
-    public static ArrayList GetSkinThemes()
-    {
-      ArrayList themes = new ArrayList();
-
-      // Add the skin default (no theme selected).
-      themes.Add(THEME_SKIN_DEFAULT);
-      try
-      {
-        string[] themesArray = Directory.GetDirectories(String.Format(@"{0}\Themes", GUIGraphicsContext.Skin), "*", SearchOption.TopDirectoryOnly);
-        for (int i = 0; i < themesArray.Length; i++)
-        {
-          themesArray[i] = themesArray[i].Substring(themesArray[i].LastIndexOf(@"\") + 1);
-        }
-        themes.AddRange(themesArray);
-      }
-      catch (DirectoryNotFoundException)
-      {
-        // The Themes directory was not found.  Ignore and return an empty string.
-      }
-      return themes;
+      xmlWriter.SetValue(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.CurrentTheme);
     }
 
     #endregion

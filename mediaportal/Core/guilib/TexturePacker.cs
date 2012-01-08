@@ -614,17 +614,15 @@ namespace MediaPortal.GUI.Library
         return false;
       }
 
-      Settings xmlreader = new SKSettings();
-      string themeName = xmlreader.GetValueAsString(SkinSettings.THEME_SECTION_NAME, SkinSettings.THEME_NAME_ENTRY, SkinSettings.THEME_SKIN_DEFAULT);
       int index = 0;
       PackedTexture bigOne = null;
       PackedTextureNode foundNode = null;
 
       // Look for textures first in the current theme location.  Theme textures override default textures.
       // If the default theme is selected then avoid looking through the theme.
-      if (!SkinSettings.THEME_SKIN_DEFAULT.Equals(themeName))
+      if (!GUIThemeManager.CurrentThemeIsDefault)
       {
-        string skinThemeTexturePath = themeName + @"\media\";
+        string skinThemeTexturePath = GUIThemeManager.CurrentTheme + @"\media\";
         skinThemeTexturePath = skinThemeTexturePath.ToLower();
 
         // If a theme texture exists but was not able to be packed then avoid trying to unpack the texture all together.  This prevents
