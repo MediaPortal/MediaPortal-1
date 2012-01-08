@@ -179,12 +179,6 @@ namespace MediaPortal.GUI.Library
       return Convert.ToDateTime(value);
     }
 
-    [XMLSkinFunction("cbool")]
-    public static bool ConvertToBool(object value)
-    {
-      return Convert.ToBoolean(value);
-    }
-
     #endregion
 
     #region Conditionals
@@ -195,10 +189,22 @@ namespace MediaPortal.GUI.Library
       return condition ? truePart : falsePart;
     }
 
+    [XMLSkinFunction("iif")]
+    public static object Iif(string condition, object truePart, object falsePart)
+    {
+      return Iif(bool.Parse(condition), truePart, falsePart);
+    }
+
     [XMLSkinFunction("choose")]
     public static object Choose(int index, params object[] values)
     {
       return values[index];
+    }
+
+    [XMLSkinFunction("choose")]
+    public static object Choose(string index, params object[] values)
+    {
+      return Choose(int.Parse(index), values);
     }
 
     [XMLSkinFunction("switch")]
@@ -330,6 +336,12 @@ namespace MediaPortal.GUI.Library
       return !condition;
     }
 
+    [XMLSkinFunction("not")]
+    public static bool Not(string condition)
+    {
+      return Not(bool.Parse(condition));
+    }
+
     [XMLSkinFunction("and")]
     public static bool And(params bool[] conditions)
     {
@@ -343,6 +355,20 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
+    [XMLSkinFunction("and")]
+    public static bool And(params object[] conditions)
+    {
+      bool[] bConditions = new bool[conditions.Length];
+      for (int i = 0; i < conditions.Length; i++)
+      {
+        if (conditions[i].GetType() == typeof(string))
+        {
+          bConditions[i] = bool.Parse(conditions[i].ToString());
+        }
+      }
+      return And(bConditions);
+    }
+
     [XMLSkinFunction("or")]
     public static bool Or(params bool[] conditions)
     {
@@ -354,6 +380,20 @@ namespace MediaPortal.GUI.Library
         }
       }
       return false;
+    }
+
+    [XMLSkinFunction("or")]
+    public static bool Or(params object[] conditions)
+    {
+      bool[] bConditions = new bool[conditions.Length];
+      for (int i = 0; i < conditions.Length; i++)
+      {
+        if (conditions[i].GetType() == typeof(string))
+        {
+          bConditions[i] = bool.Parse(conditions[i].ToString());
+        }
+      }
+      return Or(bConditions);
     }
 
     #endregion
