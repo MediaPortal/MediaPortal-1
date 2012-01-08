@@ -26,9 +26,9 @@ using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using TvLibrary.Hardware;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
-using TvLibrary.Hardware;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -87,35 +87,35 @@ namespace TvLibrary.Implementations.DVB
 
     private enum TwinhanCiState : uint    // CIMessage
     {
-      // Old messages
-      Empty_Old = 0,          // CI_STATUS_EMPTY_OLD - NON_CI_INFO
-      CamOkay1_Old,           // CI_STATUS_CAM_OK1_OLD - ME0
-      CamOkay2_Old,           // CI_STATUS_CAM_OK2_OLD - ME1
+      // Old states - CI API v1.
+      Empty_Old = 0,          // CI_STATUS_EMPTY_OLD - there is no CAM present
+      Cam1Okay_Old,           // CI_STATUS_CAM_OK1_OLD (ME0) - the first slot has a CAM
+      Cam2Okay_Old,           // CI_STATUS_CAM_OK2_OLD (ME1) - the second slot has a CAM
 
-      // New messages
-      Empty = 10,             // CI_STATUS_EMPTY
-      CamInserted,            // CI_STATUS_INSERTED
-      CamOkay,                // CI_STATUS_CAM_OK
+      // New states - CI API v2.
+      Empty = 10,             // CI_STATUS_EMPTY - there is no CAM present
+      CamInserted,            // CI_STATUS_INSERTED - a CAM is present but is still being initialised
+      CamOkay,                // CI_STATUS_CAM_OK - a CAM is present, initialised and ready for interaction
       CamUnknown              // CI_STATUS_CAM_UNKNOW
     }
 
     private enum TwinhanMmiState : uint   // CIMessage
     {
-      Uninitialised = 0,
+      Idle = 0,               // NON_CI_INFO - there are no new MMI objects available
 
-      // Old messages
-      GetMenuOkay1_Old = 3,   // MMI_STATUS_GET_MENU_OK1_OLD - MMI0
-      GetMenuOkay2_Old,       // MMI_STATUS_GET_MENU_OK2_OLD - MMI1
-      GetMenuClose1_Old,      // MMI_STATUS_GET_MENU_CLOSE1_OLD - MMI0_ClOSE
-      GetMenuClose2_Old,      // MMI_STATUS_GET_MENU_CLOSE2_OLD - MMI1_ClOSE
+      // Old states - CI API v1.
+      Menu1Okay_Old = 3,      // MMI_STATUS_GET_MENU_OK1_OLD (MMI0) - the CAM in the first slot has an MMI object waiting
+      Menu2Okay_Old,          // MMI_STATUS_GET_MENU_OK2_OLD (MMI1) - the CAM in the second slot has an MMI object waiting
+      Menu1Close_Old,         // MMI_STATUS_GET_MENU_CLOSE1_OLD (MMI0_ClOSE) - the CAM in the first slot requests that the MMI session be closed
+      Menu2Close_Old,         // MMI_STATUS_GET_MENU_CLOSE2_OLD (MMI1_ClOSE) - the CAM in the second slot requests that the MMI session be closed
 
-      // New messages
-      SendMenuAnswer = 14,    // MMI_STATUS_ANSWER_SEND - communicating with CAM 
-      MenuOkay,               // MMI_STATUS_GET_MENU_OK - full menu successfully received from the CAM and ready to be retrieved
-      MenuFail,               // MMI_STATUS_GET_MENU_FAIL - menu not successfully received from the CAM
-      MenuInit,               // MMI_STATUS_GET_MENU_INIT - menu still being received from the CAM
-      MenuClose,              // MMI_STATUS_GET_MENU_CLOSE - CAM requests that the menu be closed
-      MenuClosed,             // MMI_STATUS_GET_MENU_CLOSED - CAM menu state is closed
+      // New states - CI API v2.
+      SendMenuAnswer = 14,    // MMI_STATUS_ANSWER_SEND 
+      MenuOkay,               // MMI_STATUS_GET_MENU_OK - the CAM has an MMI object waiting
+      MenuFail,               // MMI_STATUS_GET_MENU_FAIL - the CAM failed to assemble or send and MMI object
+      MenuInit,               // MMI_STATUS_GET_MENU_INIT - the CAM is assembling an MMI object
+      MenuClose,              // MMI_STATUS_GET_MENU_CLOSE - the CAM requests that the MMI session be closed
+      MenuClosed,             // MMI_STATUS_GET_MENU_CLOSED - there is no open MMI session
     }
 
     private enum TwinhanRawCommandState : uint    // CIMessage
@@ -1166,6 +1166,7 @@ namespace TvLibrary.Implementations.DVB
         }
 
         SetPowerState(true);
+        StartMmiHandlerThread();
       }
     }
 
@@ -1537,7 +1538,7 @@ namespace TvLibrary.Implementations.DVB
     private int GetCiStatus(out TwinhanCiState ciState, out TwinhanMmiState mmiState)
     {
       ciState = TwinhanCiState.Empty;
-      mmiState = TwinhanMmiState.Uninitialised;
+      mmiState = TwinhanMmiState.Idle;
       int bufferSize = CiStateInfoSize;
       if (_ciApiVersion == TwinhanCiSupport.Unsupported)
       {
@@ -1650,8 +1651,8 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.Debug("Twinhan: CI state = {0}, MMI state = {1}", ciState, mmiState);
       bool camReady = false;
-      if (ciState == TwinhanCiState.CamOkay1_Old ||
-        ciState == TwinhanCiState.CamOkay2_Old ||
+      if (ciState == TwinhanCiState.Cam1Okay_Old ||
+        ciState == TwinhanCiState.Cam2Okay_Old ||
         ciState == TwinhanCiState.CamOkay)
       {
         camReady = true;
@@ -1754,9 +1755,9 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Debug("Twinhan: MMI handler thread start polling");
       TwinhanCiState ciState = TwinhanCiState.Empty_Old;
-      TwinhanMmiState mmiState = TwinhanMmiState.Uninitialised;
+      TwinhanMmiState mmiState = TwinhanMmiState.Idle;
       TwinhanCiState prevCiState = TwinhanCiState.Empty_Old;
-      TwinhanMmiState prevMmiState = TwinhanMmiState.Uninitialised;
+      TwinhanMmiState prevMmiState = TwinhanMmiState.Idle;
       try
       {
         while (!_stopMmiHandlerThread)
@@ -1781,8 +1782,8 @@ namespace TvLibrary.Implementations.DVB
               _isCamReady = false;
             }
             else if (ciState == TwinhanCiState.CamOkay ||
-              ciState == TwinhanCiState.CamOkay1_Old ||
-              ciState == TwinhanCiState.CamOkay2_Old)
+              ciState == TwinhanCiState.Cam1Okay_Old ||
+              ciState == TwinhanCiState.Cam2Okay_Old)
             {
               _isCamPresent = true;
               _isCamReady = true;
@@ -1798,76 +1799,81 @@ namespace TvLibrary.Implementations.DVB
           if (mmiState != prevMmiState)
           {
             Log.Log.Debug("Twinhan: MMI state change, old state = {0}, new state = {1}", prevMmiState, mmiState);
-            prevMmiState = mmiState;
           }
 
-          switch (mmiState)
+          if (
+            // CI API v1
+            mmiState == TwinhanMmiState.Menu1Okay_Old ||
+            mmiState == TwinhanMmiState.Menu2Okay_Old ||
+            // CI API v2
+            (prevMmiState != mmiState && mmiState == TwinhanMmiState.MenuOkay)
+          )
           {
-            case TwinhanMmiState.GetMenuOkay1_Old:
-            case TwinhanMmiState.GetMenuOkay2_Old:
-            case TwinhanMmiState.MenuOkay:
-              MmiData mmi;
-              if (ReadMmi(out mmi))
+            MmiData mmi;
+            if (ReadMmi(out mmi))
+            {
+              if (mmi.IsEnquiry)
               {
-                if (mmi.IsEnquiry)
+                Log.Log.Debug("Twinhan: enquiry");
+                Log.Log.Debug("  blind     = {0}", mmi.IsBlindAnswer);
+                Log.Log.Debug("  length    = {0}", mmi.ExpectedAnswerLength);
+                Log.Log.Debug("  text      = {0}", mmi.Prompt);
+                Log.Log.Debug("  type      = {0}", mmi.Type);
+                if (_ciMenuCallbacks != null)
                 {
-                  Log.Log.Debug("Twinhan: enquiry");
-                  Log.Log.Debug("  blind     = {0}", mmi.IsBlindAnswer);
-                  Log.Log.Debug("  length    = {0}", mmi.ExpectedAnswerLength);
-                  Log.Log.Debug("  text      = {0}", mmi.Prompt);
-                  Log.Log.Debug("  type      = {0}", mmi.Type);
-                  if (_ciMenuCallbacks != null)
-                  {
-                    _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer, (uint)mmi.ExpectedAnswerLength, mmi.Prompt);
-                  }
-                }
-                else
-                {
-                  Log.Log.Debug("Twinhan: menu");
-                  Log.Log.Debug("  title     = {0}", mmi.Title);
-                  Log.Log.Debug("  sub-title = {0}", mmi.SubTitle);
-                  Log.Log.Debug("  footer    = {0}", mmi.Footer);
-                  Log.Log.Debug("  # choices = {0}", mmi.ChoiceCount);
-                  if (_ciMenuCallbacks != null)
-                  {
-                    _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, mmi.ChoiceCount);
-                  }
-                  for (int i = 0; i < mmi.ChoiceCount; i++)
-                  {
-                    Log.Log.Debug("  choice {0}  = {1}", i + 1, mmi.Choices[i]);
-                    if (_ciMenuCallbacks != null)
-                    {
-                      _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Choices[i]);
-                    }
-                  }
-                  Log.Log.Debug("  type      = {0}", mmi.Type);
+                  _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer, (uint)mmi.ExpectedAnswerLength, mmi.Prompt);
                 }
               }
               else
               {
+                Log.Log.Debug("Twinhan: menu");
+                Log.Log.Debug("  title     = {0}", mmi.Title);
+                Log.Log.Debug("  sub-title = {0}", mmi.SubTitle);
+                Log.Log.Debug("  footer    = {0}", mmi.Footer);
+                Log.Log.Debug("  # choices = {0}", mmi.ChoiceCount);
+                if (_ciMenuCallbacks != null)
+                {
+                  _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, mmi.ChoiceCount);
+                }
+                for (int i = 0; i < mmi.ChoiceCount; i++)
+                {
+                  Log.Log.Debug("  choice {0}  = {1}", i + 1, mmi.Choices[i]);
+                  if (_ciMenuCallbacks != null)
+                  {
+                    _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Choices[i]);
+                  }
+                }
+                Log.Log.Debug("  type      = {0}", mmi.Type);
+              }
+            }
+            else
+            {
+              CloseCIMenu();
+            }
+          }
+          else if (
+            // CI API v1
+            mmiState == TwinhanMmiState.Menu1Close_Old ||
+            mmiState == TwinhanMmiState.Menu2Close_Old ||
+            // CI API v2
+            mmiState == TwinhanMmiState.MenuClose)
+          {
+            Log.Log.Debug("Twinhan: menu close request");
+            if (_ciMenuCallbacks != null)
+            {
+              try
+              {
+                _ciMenuCallbacks.OnCiCloseDisplay(0);
                 CloseCIMenu();
               }
-              break;
-            case TwinhanMmiState.GetMenuClose1_Old:
-            case TwinhanMmiState.GetMenuClose2_Old:
-            case TwinhanMmiState.MenuClose:
-              Log.Log.Debug("Twinhan: menu close request");
-              if (_ciMenuCallbacks != null)
+              catch (Exception ex)
               {
-                try
-                {
-                  _ciMenuCallbacks.OnCiCloseDisplay(0);
-                  CloseCIMenu();
-                }
-                catch (Exception ex)
-                {
-                  Log.Log.Debug("Twinhan: close CI menu error in MMI handler thread\r\n{0}", ex.ToString());
-                }
+                Log.Log.Debug("Twinhan: close CI menu error in MMI handler thread\r\n{0}", ex.ToString());
               }
-              break;
-            default:
-              break;
+            }
           }
+          prevMmiState = mmiState;
+
           Thread.Sleep(500);
         }
       }
