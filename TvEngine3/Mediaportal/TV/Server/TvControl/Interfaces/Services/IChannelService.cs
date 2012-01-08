@@ -30,6 +30,9 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<Channel> SaveChannels(IEnumerable<Channel> channels);
 
     [OperationContract]
+    IList<GroupMap> SaveChannelGroupMaps(IEnumerable<GroupMap> groupMaps);
+
+    [OperationContract]
     IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType);
 
     [OperationContract]

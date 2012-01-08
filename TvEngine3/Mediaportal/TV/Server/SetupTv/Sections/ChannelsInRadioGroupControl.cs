@@ -156,15 +156,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void ReOrder()
     {
+      IList<GroupMap> groupMaps = new List<GroupMap>();
       for (int i = 0; i < listView1.Items.Count; ++i)
       {
         GroupMap groupMap = (GroupMap)listView1.Items[i].Tag;
         if (groupMap.SortOrder != i)
         {          
           groupMap.SortOrder = i;
-          ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMap(groupMap);
+          groupMaps.Add(groupMap);
+          groupMap.AcceptChanges();
         }
       }
+      ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(groupMaps);
     }
 
     private void AddSelectedItemsToGroup(MPListView sourceListView)

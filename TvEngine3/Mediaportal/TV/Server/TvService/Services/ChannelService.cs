@@ -48,6 +48,11 @@ namespace Mediaportal.TV.Server.TVService.Services
       return ChannelManagement.SaveChannels(channels);
     }
 
+    public IList<GroupMap> SaveChannelGroupMaps(IEnumerable<GroupMap> groupMaps)
+    {
+      return ChannelManagement.SaveChannelGroupMaps(groupMaps);
+    }
+
     public IList<Channel> ListAllChannelsByMediaType(MediaTypeEnum mediaType)
     {
       var listAllChannelsByMediaType = ChannelManagement.ListAllChannelsByMediaType(mediaType);

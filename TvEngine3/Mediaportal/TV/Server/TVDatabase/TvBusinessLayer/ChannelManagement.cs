@@ -622,6 +622,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static IList<GroupMap> SaveChannelGroupMaps(IEnumerable<GroupMap> groupMaps)
+    {
+      using (IChannelRepository channelRepository = new ChannelRepository())
+      {
+        channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.GroupMaps, groupMaps);
+        channelRepository.ApplyChanges(channelRepository.ObjectContext.GroupMaps, groupMaps);
+        channelRepository.UnitOfWork.SaveChanges();
+        channelRepository.ObjectContext.AcceptAllChanges();
+        return groupMaps.ToList();
+      }
+    }
+
     public static void DeleteChannelMap(int idChannelMap)
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
