@@ -453,7 +453,12 @@ public class MediaPortalApp : D3DApp, IRender
         Config.SkinName = strSkin;
         GUIGraphicsContext.Skin = strSkin;
         SkinSettings.Load();
-        Log.Info("Main: Skin is {0} using theme {1}", strSkin, GUIGraphicsContext.ThemeName);
+
+        // Send a message that the skin has changed.
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
+        GUIGraphicsContext.SendMessage(msg);
+
+        Log.Info("Main: Skin is {0} using theme {1}", strSkin, GUIThemeManager.CurrentTheme);
 
 #if !DEBUG
         string version = ConfigurationManager.AppSettings["version"];
@@ -1781,7 +1786,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.Load();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(68)); // Loading fonts...
     GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIGraphicsContext.ThemeName)); // Loading skin ({0})...
+    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIThemeManager.CurrentTheme)); // Loading skin ({0})...
     GUIFontManager.InitializeDeviceObjects();
     GUIWindowManager.Initialize();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70)); // Loading window plugins...
@@ -3868,7 +3873,12 @@ public class MediaPortalApp : D3DApp, IRender
     Config.SkinName = m_strSkin;
     GUIGraphicsContext.Skin = m_strSkin;
     SkinSettings.Load();
-    Log.Info("Main: User skin is not compatable, using skin {0} with theme {1}", m_strSkin, GUIGraphicsContext.ThemeName);
+
+    // Send a message that the skin has changed.
+    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
+    GUIGraphicsContext.SendMessage(msg);
+
+    Log.Info("Main: User skin is not compatable, using skin {0} with theme {1}", m_strSkin, GUIThemeManager.CurrentTheme);
   }
 
 

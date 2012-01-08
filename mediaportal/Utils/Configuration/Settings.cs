@@ -76,7 +76,7 @@ namespace MediaPortal.Profile
   }
 
   /// <summary>
-  /// SKSettings allows to read and write SkinSetting.xml configuration file.
+  /// SKSettings allows to read and write SkinSetting.xml configuration file.  Each skin can have its own file (same filename different path).
   /// (wrapper class to unify path handling)
   /// </summary>
   public class SKSettings : Settings
@@ -87,25 +87,16 @@ namespace MediaPortal.Profile
     {
       get
       {
-        if (string.IsNullOrEmpty(_configPathName))
-        {
-          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, "SkinSettings.xml");
-        }
+        // Always form the path since switching between skins will cause different files to be returned.
+        _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, "SkinSettings.xml");
         return _configPathName;
       }
       set
       {
-        if (string.IsNullOrEmpty(_configPathName))
+        _configPathName = value;
+        if (!Path.IsPathRooted(_configPathName))
         {
-          _configPathName = value;
-          if (!Path.IsPathRooted(_configPathName))
-          {
-            _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, _configPathName);
-          }
-        }
-        else
-        {
-          throw new InvalidOperationException("ConfigPathName already has a value.");
+          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, _configPathName);
         }
       }
     }
@@ -133,7 +124,8 @@ namespace MediaPortal.Profile
 
     public Settings(string fileName, bool isCached)
     {
-      xmlFileName = Path.GetFileName(fileName).ToLowerInvariant();
+      // Each skin may have its own SkinSettings.xml file so we need to use the entire path to detect a cache hit.
+      xmlFileName = Path.GetFullPath(fileName).ToLowerInvariant();
 
       _isCached = isCached;
 

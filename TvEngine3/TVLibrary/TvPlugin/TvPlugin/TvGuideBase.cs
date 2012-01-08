@@ -168,11 +168,11 @@ namespace TvPlugin
       LoadSkinSettings();
 
       // If guide colors were not loaded from skin settings then attempt to load guide colors from the MP settings.
-      if (_genreColorsOnNow.Count == 0 && !_guideColorsLoaded)
+      if (!_guideColorsLoaded)
       {
         using (Settings xmlreader = new MPSettings())
         {
-          LoadGuideColors(xmlreader);
+          _guideColorsLoaded = LoadGuideColors(xmlreader);
         }
       }
 
@@ -191,18 +191,21 @@ namespace TvPlugin
       String temp;
 
       // Guide coloring options are defined by each skin (and may not be present).  Read the settings from skin properties.
+      _useColorsForButtons = false;
       temp = GUIPropertyManager.GetProperty("#skin.tvguide.usecolorsforbuttons");
       if (temp != null && temp.Length != 0)
       {
         _useColorsForButtons = bool.Parse(temp);
       }
 
+      _useBorderHighlight = false;
       temp = GUIPropertyManager.GetProperty("#skin.tvguide.useborderhighlight");
       if (temp != null && temp.Length != 0)
       {
         _useBorderHighlight = bool.Parse(temp);
       }
 
+      _useColorsForGenres = false;
       temp = GUIPropertyManager.GetProperty("#skin.tvguide.usecolorsforgenre");
       if (temp != null && temp.Length != 0)
       {
@@ -270,8 +273,8 @@ namespace TvPlugin
       }
       else
       {
-        _defaultGenreColorOnNow = 0xff1d355b; // Blue3 dark blue
-        _defaultGenreColorOnLater = 0xff0e517b; // Blue3 light blue
+        _defaultGenreColorOnNow = 0xff1d355b; // Dark blue
+        _defaultGenreColorOnLater = 0xff0e517b; // Light blue
       }
 
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
@@ -727,6 +730,13 @@ namespace TvPlugin
               }
             }
             break;
+
+          case GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED:
+            {
+              base.OnMessage(message);
+              _guideColorsLoaded = false;
+              return true;
+            }
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
             {

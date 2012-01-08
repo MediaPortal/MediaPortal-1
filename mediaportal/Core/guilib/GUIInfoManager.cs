@@ -2496,7 +2496,7 @@ namespace MediaPortal.GUI.Library
         case SKIN_THEME:
           if (info.m_data2 != 0)
           {
-            string prop1 = GUIGraphicsContext.ThemeName;
+            string prop1 = GUIThemeManager.CurrentTheme;
             string prop2 = m_stringParameters[info.m_data2];
 
             string value1 = GUIPropertyManager.Parse(prop1).Trim().ToLowerInvariant();

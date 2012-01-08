@@ -20,12 +20,14 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Threading;
 
 namespace MediaPortal.GUI.Library
 {
-  class GUIThemeManager
+  public class GUIThemeManager
   {
+    public const string THEME_SKIN_DEFAULT = "Skin default";
     private static Thread ActivateThemeThread;
     private static string _themeName = "";
     private static int _focusControlId = 0;
@@ -40,8 +42,7 @@ namespace MediaPortal.GUI.Library
       bool initReferences = (GUIGraphicsContext.HasThemeSpecificSkinFile(@"\references.xml"));
 
       // Change the theme and save this new setting.
-      GUIGraphicsContext.Theme = _themeName;
-      GUIPropertyManager.SetProperty("#skin.currenttheme", GUIGraphicsContext.ThemeName);
+      SetTheme(_themeName);
       SkinSettings.Save();
 
       // Check new theme.
@@ -92,9 +93,9 @@ namespace MediaPortal.GUI.Library
     {
       // Switch the next theme in the list; either the next or previous based on the direction.
       // Theme with empty string refers to the skin default (no theme set).
-      string skinTheme = GUIGraphicsContext.ThemeName;
+      string skinTheme = CurrentTheme;
 
-      ArrayList themes = SkinSettings.GetSkinThemes();
+      ArrayList themes = GetSkinThemes();
       if (themes.Count > 0)
       {
         int index = themes.IndexOf(skinTheme);
@@ -123,6 +124,91 @@ namespace MediaPortal.GUI.Library
         ActivateThemeByName(skinTheme, focusControlId);
       }
       return skinTheme;
+    }
+
+    /// <summary>
+    /// Returns the current theme name.
+    /// </summary>
+    /// <returns></returns>
+    public static string CurrentTheme
+    {
+      get { return GUIGraphicsContext.ThemeName; }
+    }
+
+    /// <summary>
+    /// Set the current theme
+    /// </summary>
+    /// <param name="name"></param>
+    public static void SetTheme(string name)
+    {
+      GUIGraphicsContext.Theme = name;
+      GUIPropertyManager.SetProperty("#skin.currenttheme", name);
+    }
+
+    /// <summary>
+    /// Returns true if the current theme is skin default (no theme set).
+    /// </summary>
+    public static bool CurrentThemeIsDefault
+    {
+      get { return THEME_SKIN_DEFAULT.Equals(CurrentTheme); }
+    }
+
+    /// <summary>
+    /// Initialize ThemeManager, should be called when a new skin is loaded.
+    /// </summary>
+    public static void Init(string name)
+    {
+      // Set the current theme.
+      SetTheme(name);
+
+      // Set a property with a comma-separated list of theme names.
+      string themesCSV = "";
+      ArrayList themes = GetSkinThemes();
+      for (int i = 0; i < themes.Count; i++)
+      {
+        themesCSV += "," + themes[i];
+      }
+
+      if (themesCSV.Length > 0)
+      {
+        themesCSV = themesCSV.Substring(1);
+      }
+      GUIPropertyManager.SetProperty("#skin.themes", themesCSV);
+    }
+
+    /// <summary>
+    /// Clears all properties identifying themes.
+    /// </summary>
+    public static void ClearSettings()
+    {
+      GUIPropertyManager.RemoveProperty("#skin.currenttheme");
+      GUIPropertyManager.RemoveProperty("#skin.themes");
+    }
+
+    /// <summary>
+    /// Return a list of available themes for the current skin.  The first entry in the list is always the skin default.
+    /// </summary>
+    /// <returns></returns>
+    private static ArrayList GetSkinThemes()
+    {
+      ArrayList themes = new ArrayList();
+
+      // Add the skin default (no theme selected).
+      themes.Add(THEME_SKIN_DEFAULT);
+      try
+      {
+        string[] themesArray = Directory.GetDirectories(String.Format(@"{0}\Themes", GUIGraphicsContext.Skin), "*", SearchOption.TopDirectoryOnly);
+        for (int i = 0; i < themesArray.Length; i++)
+        {
+          themesArray[i] = themesArray[i].Substring(themesArray[i].LastIndexOf(@"\") + 1);
+        }
+        themes.AddRange(themesArray);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        // The Themes directory was not found.  Ignore and return an empty string.
+      }
+      return themes;
     }
   }
 }

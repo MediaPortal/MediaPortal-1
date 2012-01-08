@@ -287,6 +287,7 @@ namespace WindowPlugins.GUISettings
       SaveSettings();
       GUITextureManager.Clear();
       GUITextureManager.Init();
+      SkinSettings.Load();
       GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       GUIExpressionManager.ClearExpressionCache();
@@ -320,6 +321,10 @@ namespace WindowPlugins.GUISettings
       {
         BassMusicPlayer.Player.VisualizationWindow.Reinit();
       }
+
+      // Send a message that the skin has changed.
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msg);
     }
 
     private void OnLanguageChanged()
