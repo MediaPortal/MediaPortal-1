@@ -462,6 +462,8 @@ namespace MediaPortal.GUI.Library
           pWindow.OnAction(action);
         }
 
+        bool focus = true;
+
         if (action.wID == Action.ActionType.ACTION_MOVE_UP)
         {
           if (pWindow.GetFocusControlId() < 0)
@@ -482,6 +484,11 @@ namespace MediaPortal.GUI.Library
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pWindow.GetID, 0,
                                               pWindow.PreviousFocusedId, 0, 0, null);
               pWindow.OnMessage(msg);
+              focus = false;
+            }
+            else if (focusState == FocusState.FOCUSED)
+            {
+              focus = false;
             }
           }
         }
@@ -508,10 +515,24 @@ namespace MediaPortal.GUI.Library
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pWindow.GetID, 0,
                                                 pWindow.PreviousFocusedId, 0, 0, null);
                 pWindow.OnMessage(msg);
+                focus = false;
+              }
+              else if (focusState == FocusState.FOCUSED)
+              {
+                focus = false;
               }
             }
           }
         }
+
+        if (focus && pWindow.GetFocusControlId() < 0 &&
+            action.wID != Action.ActionType.ACTION_MOUSE_MOVE)
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pWindow.GetID, 0,
+                                          pWindow.PreviousFocusedId, 0, 0, null);
+          pWindow.OnMessage(msg);
+        }
+        pWindow.ClearControlsDirectionsPassed();
       }
     }
 

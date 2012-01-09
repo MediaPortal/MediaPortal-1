@@ -34,6 +34,14 @@ using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
+  public struct DirectionsPassed
+  {
+    public bool Up;
+    public bool Down;
+    public bool Left;
+    public bool Right;
+  }
+
   public abstract class GUIBaseControl : System.ComponentModel.ISupportInitialize
   {
     protected GUIBaseControl()
@@ -53,7 +61,8 @@ namespace MediaPortal.GUI.Library
       set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
     }
 
-    public bool IsFocused { get; set; }
+    protected internal bool IsFocusedInternal { get; set; }
+    public virtual bool IsFocused { get; set; }
     public bool Focusable { get; set; }
     public MediaPortal.Drawing.Point Location { get; set; }
     public Thickness Margin { get; set; }
@@ -139,6 +148,8 @@ namespace MediaPortal.GUI.Library
     private List<int> _infoList = new List<int>();
 
     private TransformMatrix _transform = new TransformMatrix();
+
+    protected internal DirectionsPassed _directionsPassed = new DirectionsPassed();
 
     /// <summary>
     /// enum to specify the alignment of the control
@@ -388,8 +399,29 @@ namespace MediaPortal.GUI.Library
       }
 
       int nearestIndex = -1;
-      double distanceMin = 10000;
-      double bearingMin = 10000;
+      //double distanceMin = 10000;
+      //double bearingMin = 10000;
+      double errorMin = 10000;
+
+      double targetBearing = 0;
+      if (direction == Direction.Left)
+      {
+        targetBearing = 180;
+      }
+      if (direction == Direction.Right)
+      {
+        targetBearing = 0;
+      }
+      if (direction == Direction.Up)
+      {
+        targetBearing = -90;
+      }
+      if (direction == Direction.Down)
+      {
+        targetBearing = 90;
+      }
+
+      double diag = Math.Sqrt((GUIGraphicsContext.form.Width * GUIGraphicsContext.form.Width) + (GUIGraphicsContext.form.Height * GUIGraphicsContext.form.Height));
 
       foreach (GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).Children))
       {
@@ -406,22 +438,12 @@ namespace MediaPortal.GUI.Library
         double bearing = CalcBearing(new Drawing.Point(currentX, currentY),
                                      new Drawing.Point(control.XPosition, control.YPosition));
 
-        if (direction == Direction.Left && (bearing < 215 || bearing > 325))
-        {
-          continue;
-        }
+        double bearingDistance = targetBearing - bearing;
+        if (bearingDistance > 180) bearingDistance = bearingDistance - 360;
+        if (bearingDistance < -180) bearingDistance = bearingDistance + 360;
+        bearingDistance = Math.Abs(bearingDistance);
 
-        if (direction == Direction.Right && (bearing < -145 || bearing > -35))
-        {
-          continue;
-        }
-
-        if (direction == Direction.Up && (bearing < -45 || bearing > 45))
-        {
-          continue;
-        }
-
-        if (direction == Direction.Down && !(bearing <= -135 || bearing >= 135))
+        if (direction != Direction.None && bearingDistance > 45)
         {
           continue;
         }
@@ -429,13 +451,36 @@ namespace MediaPortal.GUI.Library
         double distance = CalcDistance(new Drawing.Point(currentX, currentY),
                                        new Drawing.Point(control.XPosition, control.YPosition));
 
-        if (!(distance <= distanceMin && bearing <= bearingMin))
+        // skip same point if user is navigation
+        if (direction != Direction.None && distance == 0)
         {
           continue;
         }
 
-        bearingMin = bearing;
-        distanceMin = distance;
+        ////if (!(distance <= distanceMin && bearing <= bearingMin))
+        //bearing = Math.Abs(targetBearing - Math.Abs(bearing));
+        ////if (!(distance <= distanceMin && bearing <= bearingMin))
+        //if (distance + bearing > distanceMin + bearingMin)
+        //{
+        //  continue;
+        //}
+        double WeightBearing = 1;
+        double WeightDistance = 1;
+
+        if (direction == Direction.None)
+          WeightBearing = 0;
+
+        double error = WeightBearing * ((bearingDistance / 180) * (bearingDistance / 180)) + WeightDistance * ((distance / diag) * (distance / diag));
+
+        if (error > errorMin)
+        {
+          continue;
+        }
+
+        //bearingMin = bearingDistance;
+        //distanceMin = distance;
+        errorMin = error;
+
         nearestIndex = control.GetID;
       }
 
@@ -447,13 +492,18 @@ namespace MediaPortal.GUI.Library
       double horzDelta = p2.X - p1.X;
       double vertDelta = p2.Y - p1.Y;
 
-      // arctan gives us the bearing, just need to convert -pi..+pi to 0..360 deg
-      double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta) / Math.PI * 180 + 360) % 360;
+      double bearing = Math.Atan2(vertDelta, horzDelta) / Math.PI * 180;
 
-      // normalize
-      bearing = bearing > 180 ? ((bearing + 180) % 360) - 180 : bearing < -180 ? ((bearing - 180) % 360) + 180 : bearing;
+      //if (horzDelta == 0 && vertDelta == 0) return 0;
 
-      return bearing >= 0 ? bearing - 180 : 180 - bearing;
+      //// arctan gives us the bearing, just need to convert -pi..+pi to 0..360 deg
+      //double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta) / Math.PI * 180 + 360) % 360;
+
+      //// normalize
+      //bearing = bearing > 180 ? ((bearing + 180) % 360) - 180 : bearing < -180 ? ((bearing - 180) % 360) + 180 : bearing;
+
+      //return bearing >= 0 ? bearing - 180 : 180 - bearing;
+      return bearing;
     }
 
     private static double CalcDistance(Drawing.Point p2, Drawing.Point p1)
@@ -533,6 +583,10 @@ namespace MediaPortal.GUI.Library
         {
           case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
 
+            ClearDirectionsPassedIfNeeded((Direction)message.Param1);
+            bool passed = CheckDirectionsPassed((Direction)message.Param1);
+            SetDirectionsPassed((Direction)message.Param1);
+
             // if control is disabled then move 2 the next control
             if (Disabled || !CanFocus())
             {
@@ -554,7 +608,7 @@ namespace MediaPortal.GUI.Library
                   break;
               }
 
-              if (controlId == 0)
+              if (passed || controlId == 0)
               {
                 controlId = Navigate((Direction)message.Param1);
               }
@@ -639,9 +693,13 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual bool Focus
     {
-      get { return IsFocused; }
+      get { return IsFocusedInternal; }
       set
       {
+        if (value)
+        {
+          UnFocusAllOtherControlsOnWindow();
+        }
         if (Focus && !value)
         {
           QueueAnimation(AnimationType.Unfocus);
@@ -651,8 +709,15 @@ namespace MediaPortal.GUI.Library
           QueueAnimation(AnimationType.Focus);
         }
         //SetValue(IsFocusedProperty, value);
-        IsFocused = value;
+        IsFocusedInternal = value;
+        ClearDirectionsPassed();
       }
+    }
+
+    public override bool IsFocused // to maintain compatibility
+    {
+      get { return IsFocusedInternal; }
+      set { Focus = value; }
     }
 
     /// <summary>
@@ -2050,6 +2115,90 @@ namespace MediaPortal.GUI.Library
     {
       get { return _layoutDetail; }
       set { _layoutDetail = value; }
+    }
+
+    internal void ClearDirectionsPassed()
+    {
+      _directionsPassed.Up = false;
+      _directionsPassed.Down = false;
+      _directionsPassed.Left = false;
+      _directionsPassed.Right = false;
+    }
+
+    protected void SetDirectionsPassed(Direction direction)
+    {
+      if (direction == Direction.Up)
+        _directionsPassed.Up = true;
+      if (direction == Direction.Down)
+        _directionsPassed.Down = true;
+      if (direction == Direction.Left)
+        _directionsPassed.Left = true;
+      if (direction == Direction.Right)
+        _directionsPassed.Right = true;
+      if (direction != Direction.None && ParentWindow != null)
+        ParentWindow.AddControlToDirectionsPassed(this);
+    }
+
+    protected void ClearDirectionsPassedIfNeeded(Direction direction)
+    {
+      bool clear = false;
+      if (direction == Direction.Up && !_directionsPassed.Up)
+        clear = true;
+      else if (direction == Direction.Down && !_directionsPassed.Down)
+        clear = true;
+      else if (direction == Direction.Left && !_directionsPassed.Left)
+        clear = true;
+      else if (direction == Direction.Right && !_directionsPassed.Right)
+        clear = true;
+
+      if (clear)
+        ClearDirectionsPassed();
+    }
+
+    protected bool CheckDirectionsPassed(Direction direction)
+    {
+      if (direction == Direction.Up)
+        return _directionsPassed.Up;
+      if (direction == Direction.Down)
+        return _directionsPassed.Down;
+      if (direction == Direction.Left)
+        return _directionsPassed.Left;
+      if (direction == Direction.Right)
+        return _directionsPassed.Right;
+      return false;
+    }
+
+    private void UnFocusAllOtherControlsOnWindow()
+    {
+      //if (ParentControl != null && !(ParentControl is GUIGroup) && !(ParentControl is GUIActionGroup)) return;
+      if (ParentWindow != null && !ParentWindow.HasChild(this)) return;
+
+      GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindowEx);
+      if (win != null)
+      {
+        int focusID = win.GetFocusControlId();
+        while (focusID > 0)
+        {
+          //if (focusID != GetID)
+          {
+            win.GetControl(focusID).Focus = false;
+          }
+          focusID = win.GetFocusControlId();
+        }
+      }
+    }
+
+    private GUIWindow _parentWindow;
+    public GUIWindow ParentWindow
+    {
+      get
+      {
+        if (_parentWindow == null && WindowId >= 0)
+        {
+          _parentWindow = GUIWindowManager.GetWindow(WindowId);
+        }
+        return _parentWindow;
+      }
     }
   }
 }

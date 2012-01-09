@@ -222,6 +222,9 @@ namespace MediaPortal.GUI.Library
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
 
+    private List<GUIControl> _focusControlsTried = new List<GUIControl>();
+    private object _focusControlsTriedLock = new object();
+
     #endregion
 
     #region ctor
@@ -936,6 +939,8 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      ClearControlsDirectionsPassed();
+
       if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
         if (new_windowId != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
@@ -1203,6 +1208,7 @@ namespace MediaPortal.GUI.Library
     {
       for (int x = 0; x < Children.Count; ++x)
       {
+        /*
         GUIGroup grp = Children[x] as GUIGroup;
         if (grp != null)
         {
@@ -1216,6 +1222,8 @@ namespace MediaPortal.GUI.Library
         {
           Children[x].UpdateVisibility();
         }
+        */
+        Children[x].UpdateVisibility();
       }
     }
 
@@ -1964,6 +1972,52 @@ namespace MediaPortal.GUI.Library
     private StoryboardCollection _storyboards;
 
     #endregion Fields
+
+    internal void ClearControlsDirectionsPassed()
+    {
+      lock (_focusControlsTriedLock)
+      {
+        foreach (GUIControl control in _focusControlsTried)
+        {
+          control.ClearDirectionsPassed();
+        }
+        _focusControlsTried.Clear();
+      }
+    }
+
+    internal void AddControlToDirectionsPassed(GUIControl control)
+    {
+      lock (_focusControlsTriedLock)
+      {
+        if (!_focusControlsTried.Contains(control))
+        {
+          _focusControlsTried.Add(control);
+        }
+      }
+    }
+
+    public List<GUIControl> AllChildren
+    {
+      get
+      {
+        List<GUIControl> result = new List<GUIControl>();
+        result.AddRange(Children);
+        foreach (GUIControl ctl in Children)
+        {
+          List<GUIControl> ctlChildren = ctl.AllChildren;
+          if (ctlChildren != null)
+            result.AddRange(ctlChildren);
+        }
+        return result;
+      }
+    }
+
+    public bool HasChild(GUIControl control)
+    {
+      if (AllChildren.Contains(control))
+        return true;
+      return false;
+    }
 
     public void BeginInit() {}
 
