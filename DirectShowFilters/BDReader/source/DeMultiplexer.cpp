@@ -1691,7 +1691,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
   {
     m_audioStreams.clear();
     
-    if (clip->audio_stream_count <= 0)
+    if (clip->audio_stream_count <= 0 || !AudioStreamsAvailable(clip))
     {
       m_AudioStreamType = NO_STREAM;
       stAudioStream audio;
