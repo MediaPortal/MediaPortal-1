@@ -150,6 +150,7 @@
   <ItemGroup>
     <Content Include="how 2 auto generate poco classes.txt" />
     <Content Include="Model.edmx.sql" />
+    <Content Include="Model_MySQL2.edmx.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
