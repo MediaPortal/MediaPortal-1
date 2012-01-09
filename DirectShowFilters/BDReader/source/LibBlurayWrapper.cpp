@@ -451,8 +451,6 @@ bool CLibBlurayWrapper::Play()
   {
     if (m_playbackMode == Navigation)
     {
-      //HandleBDEventQueue();
-
       ret = _bd_play(m_pBd) ? true : false;
       LogDebug("CLibBlurayWrapper - _bd_play %d", ret);
 
@@ -480,7 +478,7 @@ bool CLibBlurayWrapper::Play()
   return ret;
 }
 
-int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool pIgnoreEvents)
+int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool pIgnorePauseEvents)
 {
   CAutoLock cLibLock(&m_csLibLock);
 
@@ -496,7 +494,7 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
     {
       // TODO add error handling
       readBytes = _bd_read_ext(m_pBd, pData, pSize, &ev); 
-      HandleBDEvent(ev, !pIgnoreEvents);
+      HandleBDEvent(ev, pIgnorePauseEvents);
     }
     pPause = m_bStopReading;
   }
@@ -506,7 +504,7 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
     pPause = false;
     
     readBytes = _bd_read(m_pBd, pData, pSize);
-    HandleBDEventQueue(!pIgnoreEvents);
+    HandleBDEventQueue(pIgnorePauseEvents);
   }
 
   return readBytes;
@@ -574,18 +572,18 @@ void CLibBlurayWrapper::RemoveEventObserver(BDEventObserver* pObserver)
   }
 }
 
-void CLibBlurayWrapper::HandleBDEventQueue(bool pBroadcastEvents)
+void CLibBlurayWrapper::HandleBDEventQueue(bool pIgnorePauseEvents)
 {
   BD_EVENT ev;
   while (_bd_get_event(m_pBd, &ev)) 
   {
-    HandleBDEvent(ev, pBroadcastEvents);
+    HandleBDEvent(ev, pIgnorePauseEvents);
     if (ev.event == BD_EVENT_NONE || ev.event == BD_EVENT_ERROR)
       break;
   }
 }
 
-void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents)
+void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pIgnorePauseEvents)
 {
   LogEvent(ev, true);
   switch (ev.event)
@@ -596,13 +594,20 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents)
       break;
 
     case BD_EVENT_STILL_TIME:
-      StillMode(ev.param);
+      if (!pIgnorePauseEvents)
+        StillMode(ev.param);
+      else
+      {
+        m_nStillEndTime = 0;
+        _bd_read_skip_still(m_pBd);
+      }
+
       m_bStopReading = true;
       break;
 
     case BD_EVENT_STILL:
-      // TODO - check if it would be good to pause the graph (at least pl's duration would be correct)
-      m_bStillModeOn = ev.param ? true : false;
+      if (!pIgnorePauseEvents)
+        m_bStillModeOn = ev.param ? true : false;
       break;
 
     case BD_EVENT_ANGLE:
@@ -635,14 +640,11 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents)
 
   UINT64 pos = _bd_tell_time(m_pBd);
 
-  if (pBroadcastEvents)
+  ivecObservers it = m_eventObservers.begin();
+  while (it != m_eventObservers.end())
   {
-    ivecObservers it = m_eventObservers.begin();
-    while (it != m_eventObservers.end())
-    {
-      (*it)->HandleBDEvent(ev, pos);
-      ++it;
-    }
+    (*it)->HandleBDEvent(ev, pos);
+    ++it;
   }
 }
 

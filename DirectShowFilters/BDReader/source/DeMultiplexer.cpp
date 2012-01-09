@@ -414,7 +414,7 @@ Packet* CDeMultiplexer::GetVideo()
 
   while (!m_playlistManager->HasVideo())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(false, true) <= 0)
+    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
 
@@ -428,7 +428,7 @@ Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 
   while (!m_playlistManager->HasAudio())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(true, false) <= 0)
+    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
 
@@ -445,7 +445,7 @@ Packet* CDeMultiplexer::GetAudio()
 
   while (!m_playlistManager->HasAudio())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(true, false) <= 0)
+    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
 
@@ -473,7 +473,7 @@ HRESULT CDeMultiplexer::Start()
 
   while ((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
   {
-    int BytesRead = ReadFromFile(false, false);
+    int BytesRead = ReadFromFile();
 
     if (dwBytesProcessed > INITIAL_READ_SIZE)
     {
@@ -481,9 +481,10 @@ HRESULT CDeMultiplexer::Start()
       break;
     }
 
-    if (!m_videoParser->basicVideoInfo.isValid ||
+    if ((!m_videoParser->basicVideoInfo.isValid ||
         m_videoParser->pmt.formattype == GUID_NULL ||
-        (m_AudioStreamType > NO_STREAM && m_audioParser->pmt.formattype == GUID_NULL))
+        (m_AudioStreamType > NO_STREAM && m_audioParser->pmt.formattype == GUID_NULL)) &&
+        !m_bStreamPaused)
     {
       dwBytesProcessed += BytesRead;
       continue;
@@ -527,14 +528,14 @@ bool CDeMultiplexer::EndOfFile()
 /// and processes the raw data
 /// When a TS packet has been discovered, OnTsPacket(byte* tsPacket) gets called
 //  which in its turn deals with the packet
-int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
+int CDeMultiplexer::ReadFromFile()
 {
   if (m_filter.IsStopping()) return 0;
   CAutoLock lock (&m_sectionRead);
   int dwReadBytes = 0;
   bool pause = false;
 
-  dwReadBytes = m_filter.lib.Read(m_readBuffer, sizeof(m_readBuffer), pause, false);
+  dwReadBytes = m_filter.lib.Read(m_readBuffer, sizeof(m_readBuffer), pause, m_bStarting);
 
   if (dwReadBytes > 0)
   {

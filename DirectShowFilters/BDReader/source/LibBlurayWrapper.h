@@ -107,7 +107,7 @@ public:
   bool GetAngle(UINT8* pAngle);
   bool GetChapter(UINT32* pChapter);
   bool Play();
-  int Read(unsigned char* pData, int pSize, bool& pPause, bool pIgnoreEvents);
+  int Read(unsigned char* pData, int pSize, bool& pPause, bool pIgnorePauseEvents);
   bool SkipStillTime();
   void SetState(FILTER_STATE newState);
   void SetEventObserver(BDEventObserver* pObserver);
@@ -136,8 +136,8 @@ public:
 
 private:
 
-  void HandleBDEventQueue(bool pBroadcastEvents);
-  void HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents);
+  void HandleBDEventQueue(bool pIgnorePauseEvents);
+  void HandleBDEvent(BD_EVENT& ev, bool pIgnorePauseEvents);
   void UpdateTitleInfo();
 
   void StillMode(unsigned int pSeconds);

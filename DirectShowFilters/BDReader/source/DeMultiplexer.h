@@ -151,9 +151,8 @@ private:
 
   int m_nVideoPid;
 
-  int ReadFromFile(bool isAudio, bool isVideo);
+  int ReadFromFile();
   bool m_bEndOfFile;
-  HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
   
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
