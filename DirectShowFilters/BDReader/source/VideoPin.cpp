@@ -104,7 +104,8 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bDoFakeSeek(false),
   m_H264decoder(GUID_NULL),
   m_VC1decoder(GUID_NULL),
-  m_MPEG2decoder(GUID_NULL)
+  m_MPEG2decoder(GUID_NULL),
+  m_VC1Override(GUID_NULL)
 {
   m_rtStart = 0;
   m_bConnected = false;
