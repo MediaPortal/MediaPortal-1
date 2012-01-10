@@ -1471,12 +1471,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         else
            m_p->rtStart = m_p->rtStop = Packet::INVALID_TIME;
         
-        if (m_bStreamPaused)
-        {
-          m_p->bResuming = true;
-          m_bStreamPaused = false;
-        }
-
         if (m_nMPEG2LastPlaylist == -1)
           m_nMPEG2LastPlaylist = m_nPlaylist;
 
@@ -1583,6 +1577,12 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             p->rtTitleDuration = m_p->rtTitleDuration;
 
             ParseVideoFormat(p);
+
+            if (m_bStreamPaused && p->rtStart != Packet::INVALID_TIME)
+            {
+              p->bResuming = true;
+              m_bStreamPaused = false;
+            }
 
             if (!m_bStarting)
               m_playlistManager->SubmitVideoPacket(p);
