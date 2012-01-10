@@ -1,78 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="fi" availableDays="7" timezone="" version="2.1.0" />
+  <Info language="fi" availableDays="14" timezone="FLE Standard Time" version="2.1.1" />
   <Channels>
-    <Channel id="YLE TV1@yle.fi" siteId="tv1" />
-    <Channel id="YLE TV2@yle.fi" siteId="tv2" />
-    <Channel id="MTV3@mtv3.fi" siteId="mtv3" />
-    <Channel id="Nelonen@nelonen.fi" siteId="nelonen" />
-    <Channel id="YLEfst5.fi" siteId="fst5" />
-    <Channel id="Subtv@Subtv.fi" siteId="sub" />
-    <Channel id="yleteema@yle.fi" siteId="yleteema" />
-    <Channel id="liv.fi" siteId="liv" />
-    <Channel id="thevoice.fi" siteId="thevoicetvviisi" />
-    <Channel id="jim@jim.fi" siteId="jim" />
-	<Channel id="suomitv@suomitv.fi" siteId="suomitv" />
-	<Channel id="mtv3ava@mtv3ava.fi" siteId="mtv3ava" />
-	<Channel id="bbcworld@bbc.fi" siteId="imbbcworldeurope" />
-    <Channel id="MTV Finland@MTV.fi" siteId="mtvvfinland" />
-	<Channel id="aljazeera@aljazeera.fi" siteId="imaljazeeraengli" />
-    <Channel id="animalplanet@animalplanet.fi" siteId="animalplanet" />
-    <Channel id="bbcfood@bbc.fi" siteId="imbbcfood" />
-    <Channel id="bbcprime@bbc.fi" siteId="imbbcprime" />
-    <Channel id="bloomberg@bloomberg.fi" siteId="imbloombergtelev" />
-    <Channel id="Canal+ Action@Canal+.fi" siteId="cpnalfilm3" />
-    <Channel id="Canal+ Comedy@Canal+.fi" siteId="cp4" />
-    <Channel id="Canal+ Drama@Canal+.fi" siteId="cpnalpannordic" />
-    <Channel id="Canal+ Extra@Canal+.fi" siteId="cpe" />
-    <Channel id="Canal+ Film HD@Canal+.fi" siteId="cpnalhd" />
-    <Channel id="Canal+ First@Canal+.fi" siteId="cpnalfilm1" />
-    <Channel id="Canal+ Hits@Canal+.fi" siteId="cpnalfilm2" />
-    <Channel id="Canal+ Sport HD@Canal+.fi" siteId="cpd" />
-    <Channel id="Canal+ Sport1@Canal+.fi" siteId="cpnalsportfinlan" />
-    <Channel id="Canal+ Sport2@Canal+.fi" siteId="cpnalsport2" />
-    <Channel id="Cartoon network@Cartoon network.fi" siteId="cartoon" />
-    <Channel id="cnn international@cnn.fi" siteId="imcnninternation" />
-    <Channel id="discovery civilisation@discovery.fi" siteId="discoverycivilis" />
-    <Channel id="discovery science@discovery.fi" siteId="discoveryscience" />
-    <Channel id="discovery travel@discovery.fi" siteId="discoverytravel" />
-    <Channel id="discovery@discovery.fi" siteId="discoverychannel" />
-    <Channel id="disneychannel@disney.fi" siteId="imdisneychannels" />
-    <Channel id="E entertainment@E entertainment.fi" siteId="imeentertainment" />
-    <Channel id="Eurosport 2@Eurosport.fi" siteId="eurosport2" />
-    <Channel id="Eurosport@Eurosport.fi" siteId="imeurosportinter" />
-    <Channel id="imfrance24uk@imfrance24uk.fi" siteId="imfrance24uk" />
-    <Channel id="KinoTV@KinoTV.fi" siteId="kinotv" />
-    <Channel id="mtv3fakta@mtv3fakta.fi" siteId="mtv3fakta" />
-    <Channel id="nationalgeograph@nationalgeograph.fi" siteId="nationalgeograph" />
-    <Channel id="nickelodeon@nickelodeon.fi" siteId="mtvckelodeon" />
-    <Channel id="playhousedisney@disney.fi" siteId="implayhousedisne" />
-    <Channel id="showtime@showtime.fi" siteId="showtime" />
-    <Channel id="silver@silver.fi" siteId="silver" />
-    <Channel id="subtv juniori@subtvjuniori.fi" siteId="subtvjuniori" />
-    <Channel id="svtbarnkanalen@svt.fi" siteId="svtbarnkanalen" />
-    <Channel id="tcm@tcm.fi" siteId="tcm" />
-    <Channel id="ticket1@ticket1.fi" siteId="ticket1" />
-    <Channel id="toondisney@disney.fi" siteId="imtoondisneyscan" />
-    <Channel id="travelchannel@travelchannel.fi" siteId="imtravelchannelt" />
-    <Channel id="tv1000@tv1000.fi" siteId="tv1000" />
-    <Channel id="tv1000action@tv1000action.fi" siteId="tv1000action" />
-    <Channel id="tv1000classic@tv1000classic.fi" siteId="tv1000classic" />
-    <Channel id="tv1000family@tv1000family.fi" siteId="tv1000family" />
-    <Channel id="tv1000nordic@tv1000nordic.fi" siteId="tv1000nordic" />
-    <Channel id="tvfinland@yle.fi" siteId="tvfinland" />
-    <Channel id="urheilukanava +@urheilukanava.fi" siteId="urheiluplus" />
-    <Channel id="urheilukanava@urheilukanava.fi" siteId="urheilukanava" />
-    <Channel id="Viasatexplorer@Viasat.fi" siteId="viasatexplorer" />
-    <Channel id="viasatgolf@viasatgolf.fi" siteId="viasatgolf" />
-    <Channel id="Viasathistory@Viasat.fi" siteId="viasathistory" />
-    <Channel id="ViasatNatureCrime@Viasat.fi" siteId="viasatnaturecrim" />
-    <Channel id="viasatsport1@viasatsport.fi" siteId="viasatsport1" />
-    <Channel id="viasatsport2@viasatsport.fi" siteId="viasatsport2" />
-    <Channel id="viasatsport3@viasatsport.fi" siteId="viasatsport3" />
-    <Channel id="zonereality@zonereality.fi" siteId="zonereality" />
-	<Channel id="mtv3max@mtv3max.fi" siteId="mtv3max" />
-  
+    <Channel id="3sat" siteId="im3sat" />
+    <Channel id="7" siteId="tv7se" />
+    <Channel id="Al Jazeera (English)" siteId="imaljazeeraengli" />
+    <Channel id="Animal Planet HD" siteId="animalplanethd" />
+    <Channel id="Animal Planet" siteId="animalplanet" />
+    <Channel id="Arte" siteId="imartefrance" />
+    <Channel id="BBC Entertainment" siteId="imbbcprime" />
+    <Channel id="BBC HD" siteId="bbchd" />
+    <Channel id="BBC Knowledge" siteId="bbcknow" />
+    <Channel id="BBC Lifestyle" siteId="imbbcfood" />
+    <Channel id="BBC World" siteId="imbbcworldeurope" />
+    <Channel id="Bloomberg Television" siteId="imbloombergtelev" />
+    <Channel id="Canal 69" siteId="cpa" />
+    <Channel id="Canal+ Action" siteId="cpnalfilm3" />
+    <Channel id="Canal+ Drama" siteId="cpnalpannordic" />
+    <Channel id="Canal+ Film HD" siteId="cpnalhd" />
+    <Channel id="Canal+ Film HD" siteId="cpnalhd" />
+    <Channel id="Canal+ First" siteId="cpnalfilm1" />
+    <Channel id="Canal+ Hits" siteId="cpnalfilm2" />
+    <Channel id="Canal+ Series" siteId="cp4" />
+    <Channel id="Canal+ Sport 1" siteId="cpnalsportfinlan" />
+    <Channel id="Canal+ Sport 2" siteId="cpnalsport2" />
+    <Channel id="Canal+ Sport Extra" siteId="cpe" />
+    <Channel id="Canal+ Sport HD" siteId="cpd" />
+    <Channel id="Cartoon Network" siteId="cartoon" />
+    <Channel id="CNN International" siteId="imcnninternation" />
+    <Channel id="Comedy Central" siteId="mtvmedycentral" />
+    <Channel id="Deutsche Welle" siteId="imdeutschewellet" />
+    <Channel id="Discovery Channel" siteId="discoverychannel" />
+    <Channel id="Discovery HD" siteId="discoveryhd" />
+    <Channel id="Discovery Science" siteId="discoveryscience" />
+    <Channel id="Discovery Travel &amp; Living" siteId="discoverytravel" />
+    <Channel id="Discovery World" siteId="discoverycivilis" />
+    <Channel id="Disney Channel" siteId="imdisneychannels" />
+    <Channel id="Entertainment Television" siteId="imeentertainment" />
+    <Channel id="ESPN America" siteId="nasn" />
+    <Channel id="ESPN Europe" siteId="espneurope" />
+    <Channel id="Eurosport 2" siteId="eurosport2" />
+    <Channel id="Eurosport HD" siteId="eurosporthd" />
+    <Channel id="Eurosport" siteId="imeurosportinter" />
+    <Channel id="France 24" siteId="imfrance24uk" />
+    <Channel id="Gaynetwork" siteId="imgaynetwork" />
+    <Channel id="History Channel HD" siteId="historyhd" />
+    <Channel id="History Channel" siteId="history" />
+    <Channel id="JIM" siteId="jim" />
+    <Channel id="Kanal 5" siteId="kanal5" />
+    <Channel id="Kino TV" siteId="kinotv" />
+    <Channel id="Kunskapskanalen" siteId="kunskapskanalen" />
+    <Channel id="Liv" siteId="liv" />
+    <Channel id="MTV Europe" siteId="immtveurope" />
+    <Channel id="MTV Suomi" siteId="mtvvfinland" />
+    <Channel id="MTV Two" siteId="mtv2" />
+    <Channel id="MTV3 Ava" siteId="mtv3ava" />
+    <Channel id="MTV3 Fakta" siteId="mtv3fakta" />
+    <Channel id="MTV3 Leffa" siteId="mtv3leffa" />
+    <Channel id="MTV3 MAX" siteId="mtv3max" />
+    <Channel id="MTV3 Sarja" siteId="mtv3sarja" />
+    <Channel id="MTV3 Scifi" siteId="mtv3scifi" />
+    <Channel id="MTV3" siteId="mtv3" />
+    <Channel id="National Geographic HD" siteId="natgeohd" />
+    <Channel id="National Geographic" siteId="nationalgeograph" />
+    <Channel id="Nelonen Sport Pro" siteId="urheiluplusk" />
+    <Channel id="Nelonen Sport" siteId="urheilukanava" />
+    <Channel id="Nelonen" siteId="nelonen" />
+    <Channel id="Nickelodeon" siteId="mtvckelodeon" />
+    <Channel id="Playboy TV" siteId="playboytv" />
+    <Channel id="Playhouse Disney" siteId="implayhousedisne" />
+    <Channel id="Rai Uno" siteId="imrai1" />
+    <Channel id="RTL 2" siteId="imrtl2" />
+    <Channel id="RTL Television" siteId="imrtltelevision" />
+    <Channel id="Rush HD" siteId="rushhd" />
+    <Channel id="Sat. 1" siteId="imsat1" />
+    <Channel id="Showtime" siteId="showtime" />
+    <Channel id="Silver HD" siteId="silverhd" />
+    <Channel id="Silver" siteId="silver" />
+    <Channel id="Spice" siteId="spice" />
+    <Channel id="Star" siteId="starweek" />
+    <Channel id="Sub Juniori" siteId="subjuniori" />
+    <Channel id="Sub" siteId="sub" />
+    <Channel id="Suomi TV" siteId="suomitv" />
+    <Channel id="SVT 1" siteId="svt1" />
+    <Channel id="SVT 2" siteId="svt2" />
+    <Channel id="SVT 24" siteId="svt24" />
+    <Channel id="SVT B" siteId="svtbarnkanalen" />
+    <Channel id="SVT HD" siteId="svthd" />
+    <Channel id="SVT World" siteId="svtworld" />
+    <Channel id="TCM - Turner Classic Movies" siteId="tcm" />
+    <Channel id="The Adult Channel" siteId="adultchannel" />
+    <Channel id="The Voice" siteId="thevoicetvviisi" />
+    <Channel id="Toon XD" siteId="imtoondisneyscan" />
+    <Channel id="Travel Channel" siteId="imtravelchannelt" />
+    <Channel id="TV Finland" siteId="tvfinland" />
+    <Channel id="TV1000 Action" siteId="tv1000action" />
+    <Channel id="TV1000 Classic" siteId="tv1000classic" />
+    <Channel id="TV1000 Drama" siteId="tv1000drama" />
+    <Channel id="TV1000 Family" siteId="tv1000family" />
+    <Channel id="TV1000 HD" siteId="tv1000hd" />
+    <Channel id="TV1000 HD" siteId="tv1000hd" />
+    <Channel id="TV1000 Nordic" siteId="tv1000nordic" />
+    <Channel id="TV1000" siteId="tv1000" />
+    <Channel id="TV3" siteId="tv3" />
+    <Channel id="TV4 Fakta" siteId="tv4fakta" />
+    <Channel id="TV4 Film" siteId="tv4film" />
+    <Channel id="TV4 Guld" siteId="tv4guld" />
+    <Channel id="TV4 Komedi" siteId="tv4komadi" />
+    <Channel id="TV4 Plus" siteId="tv4plus" />
+    <Channel id="TV4 Sport" siteId="tv4sport" />
+    <Channel id="TV4" siteId="tv4" />
+    <Channel id="TV400" siteId="tv400" />
+    <Channel id="TV5 Monde" siteId="tv5monde" />
+    <Channel id="TV6" siteId="tv6" />
+    <Channel id="TV7" siteId="tv7" />
+    <Channel id="TV8" siteId="tv8" />
+    <Channel id="Urho TV" siteId="urho" />
+    <Channel id="VH1" siteId="vh1" />
+    <Channel id="Viasat Explorer" siteId="viasatexplorer" />
+    <Channel id="Viasat Golf" siteId="viasatgolf" />
+    <Channel id="Viasat History" siteId="viasathistory" />
+    <Channel id="Viasat Hockey" siteId="viasathockey" />
+    <Channel id="Viasat Nature/Crime" siteId="viasatnaturecrim" />
+    <Channel id="Viasat Sport HD" siteId="viasatsporthd" />
+    <Channel id="Viasat Sport" siteId="viasatsport1" />
+    <Channel id="Viva" siteId="imviva" />
+    <Channel id="VOX" siteId="imvox" />
+    <Channel id="YLE FST5" siteId="fst5" />
+    <Channel id="YLE Teema" siteId="yleteema" />
+    <Channel id="YLE TV1" siteId="tv1" />
+    <Channel id="YLE TV2" siteId="tv2" />
+    <Channel id="Zone Reality" siteId="zonereality" />
+    <Channel id="ZTV" siteId="ztv" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.telvis.fi/tvohjelmat/?vw=channel&amp;ch=[ID]&amp;sh=all&amp;dy=[DD].[MM].[YYYY]" post="" external="false" encoding="" />
