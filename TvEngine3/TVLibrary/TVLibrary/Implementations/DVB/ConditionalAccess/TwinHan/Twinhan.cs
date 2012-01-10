@@ -1864,13 +1864,13 @@ namespace TvLibrary.Implementations.DVB
               try
               {
                 _ciMenuCallbacks.OnCiCloseDisplay(0);
-                CloseCIMenu();
               }
               catch (Exception ex)
               {
                 Log.Log.Debug("Twinhan: close CI menu error in MMI handler thread\r\n{0}", ex.ToString());
               }
             }
+            CloseCIMenu();
           }
           prevMmiState = mmiState;
 
