@@ -18,6 +18,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
+using Mediaportal.TV.Server.TVDatabase.EntityModel;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
@@ -341,6 +342,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
+        EntitySqlDebug.ToTraceString(channelRepository.ObjectContext);
         channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.TuningDetails, tuningDetail);
         channelRepository.ApplyChanges(channelRepository.ObjectContext.TuningDetails, tuningDetail);
         channelRepository.UnitOfWork.SaveChanges();
@@ -631,6 +633,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         channelRepository.UnitOfWork.SaveChanges();
         channelRepository.ObjectContext.AcceptAllChanges();
         return groupMaps.ToList();
+        EntitySqlDebug.ToTraceString(channelRepository.ObjectContext);
       }
     }
 

@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntitySQLDebug.cs" />
     <Compile Include="DBaseContext\DbContextBuilder.cs" />
     <Compile Include="DBaseContext\DbContextInitializer.cs" />
     <Compile Include="DBaseContext\DbContextManager.cs" />
