@@ -152,22 +152,26 @@ namespace TvPlugin
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
 
-        // Load the genre map.  All of the genre names to load are in a csv list.
-        String genreNames = xmlreader.GetValueAsString("genremap", "genrenames", String.Empty);
-        _genreList = new List<string>(genreNames.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        // Load the genre map.
         if (_genreMap.Count == 0)
         {
           LoadGenreMap(xmlreader);
         }
 
         // Special genre rules.
-        _specifyMpaaRatedAsMovie = xmlreader.GetValueAsBool("genremap", "specifympaaratedasmovie", false);
+        _specifyMpaaRatedAsMovie = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", false);
       }
 
       // Load settings defined by the skin.
       LoadSkinSettings();
 
-      // If guide colors were not loaded from skin settings then attempt to load guide colors from the MP settings.
+      // Load genre colors.
+      // If guide colors are not loaded from skin settings then attempt to load guide colors from the MP settings.
+      using (Settings xmlreader = new SKSettings())
+      {
+        _guideColorsLoaded = LoadGuideColors(xmlreader);
+      }
+
       if (!_guideColorsLoaded)
       {
         using (Settings xmlreader = new MPSettings())
@@ -211,34 +215,35 @@ namespace TvPlugin
       {
         _useColorsForGenres = bool.Parse(temp);
       }
-
-      if (!_guideColorsLoaded)
-      {
-        using (Settings xmlreader = new SKSettings())
-        {
-          _guideColorsLoaded = LoadGuideColors(xmlreader);
-        }
-      }
     }
 
     private bool LoadGenreMap(Settings xmlreader)
     {
+      string genre;
+      List<string> programGenres;
+      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genrenames");
+
       // Each genre map entry is a csv list of "program" genre names (those that may be compared with the genre from the program listings).
       // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
-      List<string> programGenres;
-      foreach (string genre in _genreList)
+      var enumerator = allGenres.GetEnumerator();
+      if (enumerator != null)
       {
-        programGenres = new List<string>((xmlreader.GetValueAsString("genremap", genre, String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
-
-        foreach (string programGenre in programGenres)
+        while (enumerator.MoveNext())
         {
-          try
+          genre = enumerator.Current.Key;
+          _genreList.Add(genre);
+          programGenres = new List<string>(enumerator.Current.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+
+          foreach (string programGenre in programGenres)
           {
-            _genreMap.Add(programGenre, genre);
-          }
-          catch (ArgumentException)
-          {
-            Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
+            try
+            {
+              _genreMap.Add(programGenre, genre);
+            }
+            catch (ArgumentException)
+            {
+              Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
+            }
           }
         }
       }
@@ -280,6 +285,7 @@ namespace TvPlugin
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
       // If only one value is provided then that value is used for both.
       long color0;
+
       foreach (string genre in _genreList)
       {
         temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", genre, String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));

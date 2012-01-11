@@ -374,6 +374,12 @@ namespace TvControl
     /// <value>The server ip adresses.</value>
     List<string> ServerIpAdresses { get; }
 
+    /// <summary>
+    /// Returns an ordered, distict list of all program genres.
+    /// </summary>
+    /// <returns></returns>
+    IList<string> GetGenres();
+
     #endregion
 
     #region streaming

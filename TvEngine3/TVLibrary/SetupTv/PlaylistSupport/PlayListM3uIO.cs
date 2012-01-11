@@ -130,7 +130,7 @@ namespace MediaPortal.Playlists
       }
       else
       {
-        Utils.GetQualifiedFilename(basePath, ref fileName);
+        SetupTv.Utils.GetQualifiedFilename(basePath, ref fileName);
         newItem.FileName = fileName;
         newItem.Type = PlayListItem.PlayListItemType.Audio;
       }

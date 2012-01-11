@@ -69,12 +69,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
-      <Link>OSInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Common-MP-TVE3\OsInfo\OSPrerequisites.cs">
-      <Link>OSPrerequisites.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
