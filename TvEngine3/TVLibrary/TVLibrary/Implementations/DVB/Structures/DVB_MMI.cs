@@ -127,18 +127,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Sets length info to byte positions
-    /// </summary>
-    /// <param name="length">(word) Length</param>
-    /// <param name="uLength1">(byte) LowByte of Length</param>
-    /// <param name="uLength2">(byte) HighByte of Length</param>
-    public static void SetLength(UInt16 length, ref byte uLength1, ref byte uLength2)
-    {
-      uLength1 = ((byte)(length % 256));
-      uLength2 = ((byte)(length / 256));
-    }
-
-    /// <summary>
     /// Converts bytes to String
     /// </summary>
     /// <param name="sourceData">source byte[]</param>
@@ -229,17 +217,15 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="Cancel">true to cancel</param>
     /// <param name="Answer">answer string</param>
     /// <param name="uData">target buffer</param>
-    /// <param name="uLength1">length byte1</param>
-    /// <param name="uLength2">length byte2</param>
+    /// <param name="uLength">length</param>
     /// <returns>byte array</returns>
-    public static void CreateMMIAnswer(bool Cancel, String Answer, ref byte[] uData, ref byte uLength1,
-                                       ref byte uLength2)
+    public static void CreateMMIAnswer(bool Cancel, String Answer, ref byte[] uData, ref ushort uLength)
     {
       if (Cancel == true)
       {
         uData[3] = 1; // length field
         uData[4] = 0; // answ_id "cancel"
-        SetLength(5, ref uLength1, ref uLength2); // set correct length
+        uLength = 5;  // set correct length
       }
       else
       {
@@ -250,7 +236,7 @@ namespace TvLibrary.Implementations.DVB
         {
           uData[5 + p] = (byte)answerChars[p]; // answer string
         }
-        SetLength((ushort)(5 + answerChars.Length), ref uLength1, ref uLength2); // set correct length
+        uLength = (ushort)(5 + answerChars.Length); // set correct length
       }
       // MMI Tag
       uData[0] = 0x9F;

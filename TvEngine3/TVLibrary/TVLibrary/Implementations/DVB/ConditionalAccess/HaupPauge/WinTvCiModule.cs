@@ -289,10 +289,9 @@ namespace TvLibrary.Implementations.DVB
       if (Answer == null) Answer = "";
       Log.Log.Debug("WinTvCi: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
       byte[] uData = new byte[1024];
-      byte uLength1 = 0;
-      byte uLength2 = 0;
-      DVB_MMI.CreateMMIAnswer(Cancel, Answer, ref uData, ref uLength1, ref uLength2);
-      SendAPDU(uData, uLength1); // send to cam
+      ushort uLength = 0;
+      DVB_MMI.CreateMMIAnswer(Cancel, Answer, ref uData, ref uLength);
+      SendAPDU(uData, uLength); // send to cam
       return true;
     }
 

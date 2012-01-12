@@ -138,7 +138,7 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _knc);
 
           Log.Log.WriteFile("Check for Digital Everywhere");
-          _digitalEveryWhere = new DigitalEverywhere(tunerFilter);
+          _digitalEveryWhere = new DigitalEverywhere(tunerFilter, card.CardType);
           if (_digitalEveryWhere.IsDigitalEverywhere)
           {
             Log.Log.WriteFile("Digital Everywhere card detected");
@@ -460,7 +460,7 @@ namespace TvLibrary.Implementations.DVB
           return;
         if (_digitalEveryWhere != null)
         {
-          _digitalEveryWhere.ResetCAM();
+          _digitalEveryWhere.ResetCi();
         }
         if (_technoTrend != null)
         {
@@ -492,10 +492,10 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void OnStopGraph()
     {
-      if (_digitalEveryWhere != null)
+      /*if (_digitalEveryWhere != null)
       {
         _digitalEveryWhere.OnStopGraph();
-      }
+      }*/
     }
 
 
@@ -674,7 +674,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_digitalEveryWhere != null)
         {
-          return _digitalEveryWhere.SendPMTToFireDTV(_mapSubChannels);
+          return _digitalEveryWhere.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
         if (_technoTrend != null)
         {
@@ -773,7 +773,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="pids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(int subChannel, DVBBaseChannel channel, List<ushort> pids)
+    public bool SendPids(int subChannel, DVBBaseChannel channel, List<ushort> pids)
     {
       try
       {
@@ -790,49 +790,33 @@ namespace TvLibrary.Implementations.DVB
             for (int i = 0; i < enPid.Count; ++i)
             {
               if (!HwPids.Contains(enPid[i]))
+              {
                 HwPids.Add(enPid[i]);
+              }
             }
           }
         }
 
+        ModulationType modulation = ModulationType.ModNotSet;
+        if (channel is DVBSChannel)
+        {
+          modulation = (channel as DVBSChannel).ModulationType;
+        }
+        else if (channel is DVBCChannel)
+        {
+          modulation = (channel as DVBCChannel).ModulationType;
+        }
+
         if (_digitalEveryWhere != null)
         {
-          bool isDvbc = ((channel as DVBCChannel) != null);
-          bool isDvbt = ((channel as DVBTChannel) != null);
-          bool isDvbs = ((channel as DVBSChannel) != null);
-          bool isAtsc = ((channel as ATSCChannel) != null);
-
-          // It is not ideal to have to enable hardware PID filtering because
-          // doing so can limit the number of channels that can be viewed/recorded
-          // simultaneously. However, it does seem that there is a need for filtering
-          // on transponders with high data rates. Problems have been observed with
-          // transponders on Thor 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
-          //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
-          //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
-          if (pids.Count != 0 && isDvbs &&
-              (((DVBSChannel)channel).ModulationType == ModulationType.Mod8Psk ||
-              ((DVBSChannel)channel).ModulationType == ModulationType.Mod16Apsk ||
-              ((DVBSChannel)channel).ModulationType == ModulationType.Mod32Apsk)
-          )
-          {
-            for (int i = 0; i < HwPids.Count; ++i)
-            {
-              Log.Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", HwPids[i]);
-            }
-            _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, true, isAtsc, HwPids);
-          }
-          else
-          {
-            pids.Clear();
-            Log.Log.Info("FireDTV: HW Filtering disabled.");
-            _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
-          }
+          return _digitalEveryWhere.SetHardwareFilterPids(modulation, HwPids);
         }
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
+      return true;
     }
 
     /// <summary>
@@ -979,46 +963,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_digitalEveryWhere != null)
         {
-          if (channel.ModulationType == ModulationType.ModQpsk)
-          {
-            channel.ModulationType = ModulationType.ModNbcQpsk;
-          }
-          if (channel.ModulationType == ModulationType.Mod8Psk)
-          {
-            channel.ModulationType = ModulationType.ModNbc8Psk;
-          }
-          //Check if DVB-S channel if not turn off Pilot & Roll-off regardless
-          if (channel.ModulationType == ModulationType.ModNotSet)
-          {
-            channel.Pilot = Pilot.NotSet;
-            channel.Rolloff = RollOff.NotSet;
-            //Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off are now not set");
-          }
-
-          if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
-          {
-            //Set the DigitalEverywhere binary values for Pilot & Roll-off
-            int _pilot = 0;
-            int _rollOff = 0;
-            if (channel.Pilot == Pilot.On)
-              _pilot = 128;
-            if (channel.Pilot == Pilot.Off)
-              _pilot = 64;
-            if (channel.Rolloff == RollOff.Twenty)
-              _rollOff = 16;
-            if (channel.Rolloff == RollOff.TwentyFive)
-              _rollOff = 32;
-            if (channel.Rolloff == RollOff.ThirtyFive)
-              _rollOff = 48;
-            //The binary values get added to the current InnerFECRate - done!
-            BinaryConvolutionCodeRate r = channel.InnerFecRate + _pilot + _rollOff;
-            channel.InnerFecRate = r;
-          }
-          Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("DigitalEverywhere RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
-          return channel;
+          return (DVBSChannel)_digitalEveryWhere.SetTuningParameters(channel as DVBBaseChannel);
         }
       }
       catch (Exception ex)
