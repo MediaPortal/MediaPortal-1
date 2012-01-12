@@ -2162,16 +2162,6 @@ namespace TvService
     }
 
     /// <summary>
-    /// Returns an ordered, distict list of all program genres.
-    /// </summary>
-    /// <returns></returns>
-    public IList<string> GetGenres()
-    {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      return layer.GetGenres();
-    }
-
-    /// <summary>
     /// Deletes the recording from database and disk
     /// </summary>
     /// <param name="idRecording">The id recording.</param>
@@ -3458,6 +3448,16 @@ namespace TvService
       }
 
       return chanState;
+    }
+
+    /// <summary>
+    /// Returns an ordered, distinct list of all program genres.
+    /// </summary>
+    /// <returns></returns>
+    public IList<string> GetGenres()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      return layer.GetGenres();
     }
 
     #endregion

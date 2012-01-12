@@ -620,7 +620,7 @@ namespace TvControl
     }
 
     /// <summary>
-    /// Returns an ordered, distict list of all program genres.
+    /// Returns an ordered, distinct list of all program genres.
     /// </summary>
     /// <returns></returns>
     public IList<string> GetGenres()
@@ -635,7 +635,7 @@ namespace TvControl
       }
       return new List<string>();
     }
-    
+
     #endregion
   }
 }

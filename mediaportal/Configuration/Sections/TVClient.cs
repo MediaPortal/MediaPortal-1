@@ -475,34 +475,59 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Populate the list of program genres from the tv database.
-      TvControl.TvServer server = new TvControl.TvServer();
-      _allProgramGenres = server.GetGenres();
-
-      // Load the genre map from MP settings.
-      using (Settings xmlreader = new MPSettings())
+      Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+      if (assem != null)
       {
-        if (_genreMap.Count == 0)
+        Type[] types = assem.GetExportedTypes();
+        foreach (Type exportedType in types)
         {
-          LoadGenreMap(xmlreader);
+          try
+          {
+            if (exportedType.Name == "TvServer")
+            {
+              Object genreObject = null;
+              genreObject = Activator.CreateInstance(exportedType);
+              MethodInfo methodInfo = exportedType.GetMethod("GetGenres", BindingFlags.Public | BindingFlags.Instance);
+              _allProgramGenres = methodInfo.Invoke(genreObject, null) as List<String>;
+
+              // Load the genre map from MP settings.
+              using (Settings xmlreader = new MPSettings())
+              {
+                if (_genreMap.Count == 0)
+                {
+                  LoadGenreMap(xmlreader);
+                }
+              }
+
+              // If guide colors are not loaded from skin settings then attempt to load guide colors from the MP settings.
+              using (Settings xmlreader = new SKSettings())
+              {
+                _guideColorsLoaded = LoadGuideColors(xmlreader);
+              }
+
+              if (!_guideColorsLoaded)
+              {
+                using (Settings xmlreader = new MPSettings())
+                {
+                  _guideColorsLoaded = LoadGuideColors(xmlreader);
+                }
+              }
+
+              // Populate the guide genre list with names and colors.
+              PopulateGuideGenreList();
+            }
+          }
+          catch (TargetInvocationException ex)
+          {
+            Log.Warn("TVClient: Failed to load genres {0}", ex.ToString());
+            continue;
+          }
+          catch (Exception gex)
+          {
+            Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
+          }
         }
       }
-
-      // If guide colors are not loaded from skin settings then attempt to load guide colors from the MP settings.
-      using (Settings xmlreader = new SKSettings())
-      {
-        _guideColorsLoaded = LoadGuideColors(xmlreader);
-      }
-
-      if (!_guideColorsLoaded)
-      {
-        using (Settings xmlreader = new MPSettings())
-        {
-          _guideColorsLoaded = LoadGuideColors(xmlreader);
-        }
-      }
-
-      // Populate the guide genre list with names and colors.
-      PopulateGuideGenreList();
 
       mpCheckBoxIsWakeOnLanEnabled_CheckedChanged(null, null);
 
@@ -511,7 +536,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
+        assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();
