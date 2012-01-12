@@ -135,10 +135,8 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader9;
     private ColumnHeader columnHeader10;
     private ColumnHeader columnHeader11;
-    private int[] _genreColorDialogCustomColors = null;
     private string _genreBeforeEdit;
 
-    protected bool _specifyMpaaRatedAsMovie = false;
     protected bool _guideColorsLoaded = false;
     protected long _guideColorProgramOnNow = 0;
     protected long _guideColorProgramOnLater = 0;
@@ -239,9 +237,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("genremap", genre, programGenreCsv.TrimEnd(','));
       }
-
-      // Save genre map options.
-      xmlwriter.SetValueAsBool("genreoptions", "specifympaaratedasmovie", _specifyMpaaRatedAsMovie);
     }
 
     private bool LoadGuideColors(Settings xmlreader)
@@ -466,7 +461,7 @@ namespace MediaPortal.Configuration.Sections
                                                                              true);
         mpTextBoxMacAddress.Text = xmlreader.GetValueAsString("tvservice", "macAddress", "00:00:00:00:00:00");
 
-        mpCheckBoxRatingAsMovie.Checked = xmlreader.GetValueAsBool("mytv", "specifympaaratedasmovie", false);
+        mpCheckBoxRatingAsMovie.Checked = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", false);
         chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
         txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
@@ -698,6 +693,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("tvservice", "isAutoMacAddressEnabled", mpCheckBoxIsAutoMacAddressEnabled.Checked);
         xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
 
+        xmlwriter.SetValueAsBool("genreoptions", "specifympaaratedasmovie", mpCheckBoxRatingAsMovie.Checked);
         xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
         xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
         xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
@@ -1673,8 +1669,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxRatingAsMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpCheckBoxRatingAsMovie.AutoSize = true;
-      this.mpCheckBoxRatingAsMovie.Checked = true;
-      this.mpCheckBoxRatingAsMovie.CheckState = System.Windows.Forms.CheckState.Checked;
       this.mpCheckBoxRatingAsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxRatingAsMovie.Location = new System.Drawing.Point(6, 355);
       this.mpCheckBoxRatingAsMovie.Name = "mpCheckBoxRatingAsMovie";
@@ -1682,7 +1676,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxRatingAsMovie.TabIndex = 15;
       this.mpCheckBoxRatingAsMovie.Text = "Automatically add programs with a movie rating to the \"Movie\" genre           ";
       this.mpCheckBoxRatingAsMovie.UseVisualStyleBackColor = true;
-      this.mpCheckBoxRatingAsMovie.CheckedChanged += new System.EventHandler(this.mpCheckBox2_CheckedChanged);
       // 
       // listViewGuideGenres
       // 
@@ -2442,15 +2435,6 @@ namespace MediaPortal.Configuration.Sections
           _genreList.Add(dlg.Value);
           PopulateGuideGenreList();
         }
-      }
-    }
-
-    private void mpCheckBox2_CheckedChanged(object sender, EventArgs e)
-    {
-      _specifyMpaaRatedAsMovie = false;
-      if (mpCheckBoxRatingAsMovie.Checked)
-      {
-        _specifyMpaaRatedAsMovie = true;
       }
     }
 
