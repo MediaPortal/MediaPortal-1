@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Media.Animation;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -94,8 +95,7 @@ namespace TvPlugin
     private bool _useNewPartialRecordingButtonColor = false;
     private bool _useNewNotifyButtonColor = false;
     private bool _recalculateProgramOffset;
-    private bool _useHdProgramIcon = false;
-    private string _hdtvProgramText = String.Empty;
+    private string _programDecorationCsv = String.Empty;
     private bool _guideContinuousScroll = false;
     
     // current minimum/maximum indexes
@@ -148,7 +148,7 @@ namespace TvPlugin
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
-        _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
+        _programDecorationCsv = xmlreader.GetValueAsString("mytv", "programDecorationCsv", "");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
 
@@ -186,8 +186,6 @@ namespace TvPlugin
         Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_partRecButton_Focus_middle.png"));
       _useNewNotifyButtonColor =
         Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_notifyButton_Focus_middle.png"));
-      _useHdProgramIcon =
-        Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_hd_program.png"));
     }
 
     protected override void LoadSkinSettings()
@@ -2033,7 +2031,21 @@ namespace TvPlugin
           bRecording = IsRecordingNoEPG(channel);
         }
 
-        bool bProgramIsHD = program.Description.Contains(_hdtvProgramText);
+        // Forms a filename of the form program_decoration_x_y.png, where x and y are user supplied strings.
+        // Example: csv="(HDTV),(Dolby)" filename="program_decoration_(HDTV)_(Dolby).png".
+        bool bProgramIsDecorated = false;
+        string filenameDecorators = "";
+        string[] arrDecoration = _programDecorationCsv.Split(',');
+        foreach (string decoration in arrDecoration)
+        {
+          if (program.Description.Contains(decoration))
+          {
+            filenameDecorators += "_" + decoration;
+            bProgramIsDecorated = true;
+          }
+        }
+        string programDecorationFilename = "pgmIcon" + filenameDecorators + ".png";
+        string programDecorationOnNowFilename = "pgmIconOnNow" + filenameDecorators + ".png";
 
         int iStartXPos = 0;
         int iEndXPos = 0;
@@ -2333,11 +2345,11 @@ namespace TvPlugin
           DateTime dt = DateTime.Now;
 
           img.TexutureIcon2 = String.Empty;
-          if (bProgramIsHD)
+          if (bProgramIsDecorated)
           {
             if (program.IsRunningAt(dt) && _programRunningTemplate != null)
             {
-              img.TexutureIcon2 = _programRunningTemplate.TexutureIcon2;
+              img.TexutureIcon2 = programDecorationOnNowFilename;
               img.Icon2Align = _programRunningTemplate.Icon2Align;
               img.Icon2VAlign = _programRunningTemplate.Icon2VAlign;
               img.Icon2OffsetX = _programRunningTemplate.Icon2OffsetX;
@@ -2346,24 +2358,12 @@ namespace TvPlugin
             }
             else if (!program.IsRunningAt(dt) && _programNotRunningTemplate != null)
             {
-              img.TexutureIcon2 = _programNotRunningTemplate.TexutureIcon2;
+              img.TexutureIcon2 = programDecorationFilename;
               img.Icon2Align = _programNotRunningTemplate.Icon2Align;
               img.Icon2VAlign = _programNotRunningTemplate.Icon2VAlign;
               img.Icon2OffsetX = _programNotRunningTemplate.Icon2OffsetX;
               img.Icon2OffsetY = _programNotRunningTemplate.Icon2OffsetY;
               img.Icon2InlineLabel1 = _programNotRunningTemplate.Icon2InlineLabel1;
-            }
-            else
-            {
-              if (_useHdProgramIcon)
-              {
-                img.TexutureIcon2 = "tvguide_hd_program.png";
-                img.Icon2Align = GUIControl.Alignment.ALIGN_LEFT;
-                img.Icon2VAlign = GUIControl.VAlignment.ALIGN_MIDDLE;
-                img.Icon2OffsetX = 5;
-                img.Icon2OffsetY = 0;
-                img.Icon2InlineLabel1 = true;
-              }
             }
           }
           img.Data = program.Clone();
