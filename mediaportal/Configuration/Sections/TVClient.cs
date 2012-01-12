@@ -119,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTabControl tabControl2;
     private MPTabPage tabPageGenreMap;
     private MPGroupBox groupBox4;
-    private MPButton btnDeleteGenre;
+    private MPButton buttonRemoveGenre;
     private MPButton buttonNewGenre;
     private MPButton buttonMapGenres;
     private MPButton buttonUnmapGenres;
@@ -127,8 +127,8 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader12;
     private MPListView listViewMappedGenres;
     private ColumnHeader columnHeader13;
-    private MPButton mpButton2;
-    private MPButton mpButton1;
+    private MPButton mpButtonOnLaterColor;
+    private MPButton mpButtonOnNowColor;
 
     private bool _SingleSeat;
     private MPListView listViewGuideGenres;
@@ -140,8 +140,8 @@ namespace MediaPortal.Configuration.Sections
 
     protected bool _specifyMpaaRatedAsMovie = false;
     protected bool _guideColorsLoaded = false;
-    protected long _defaultGenreColorOnNow = 0;
-    protected long _defaultGenreColorOnLater = 0;
+    protected long _guideColorProgramOnNow = 0;
+    protected long _guideColorProgramOnLater = 0;
     protected long _guideColorChannelButton = 0;
     protected long _guideColorChannelButtonSelected = 0;
     protected long _guideColorGroupButton = 0;
@@ -169,9 +169,13 @@ namespace MediaPortal.Configuration.Sections
     private ColorComboBox colorComboBoxPgmSel;
     private MPLabel mpLabel4;
     private ColorComboBox colorComboBoxPgmEnded;
-    private MPCheckBox mpCheckBox2;
+    private MPCheckBox mpCheckBoxRatingAsMovie;
     private MPLabel mpLabel13;
     private ColorComboBox colorComboBoxPgmBorder;
+    private MPLabel mpLabel14;
+    private ColorComboBox colorComboBoxPgmOnLater;
+    private MPLabel mpLabel15;
+    private ColorComboBox colorComboBoxPgmOnNow;
     protected IDictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
 
     #endregion
@@ -257,18 +261,18 @@ namespace MediaPortal.Configuration.Sections
       temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", "defaultgenre", String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
       if (temp.Count == 2)
       {
-        _defaultGenreColorOnNow = GetColorFromString(temp[0]);
-        _defaultGenreColorOnLater = GetColorFromString(temp[1]);
+        _guideColorProgramOnNow = GetColorFromString(temp[0]);
+        _guideColorProgramOnLater = GetColorFromString(temp[1]);
       }
       else if (temp.Count == 1)
       {
-        _defaultGenreColorOnNow = GetColorFromString(temp[0]);
-        _defaultGenreColorOnLater = _defaultGenreColorOnNow;
+        _guideColorProgramOnNow = GetColorFromString(temp[0]);
+        _guideColorProgramOnLater = _guideColorProgramOnNow;
       }
       else
       {
-        _defaultGenreColorOnNow = 0xff1d355b; // Dark blue
-        _defaultGenreColorOnLater = 0xff0e517b; // Light blue
+        _guideColorProgramOnNow = 0xff1d355b; // Dark blue
+        _guideColorProgramOnLater = 0xff0e517b; // Light blue
       }
 
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
@@ -308,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
       xmlwriter.SetValue("tvguidecolors", "guidecolorprogramselected", String.Format("{0:X8}", (uint)_guideColorProgramSelected));
       xmlwriter.SetValue("tvguidecolors", "guidecolorprogramended", String.Format("{0:X8}", (uint)_guideColorProgramEnded));
       xmlwriter.SetValue("tvguidecolors", "guidecolorborderhighlight", String.Format("{0:X8}", (uint)_guideColorBorderHighlight));
-      xmlwriter.SetValue("tvguidecolors", "defaultgenre", String.Format("{0:X8}", (uint)_defaultGenreColorOnNow) + "," + String.Format("{0:X8}", (uint)_defaultGenreColorOnLater));
+      xmlwriter.SetValue("tvguidecolors", "defaultgenre", String.Format("{0:X8}", (uint)_guideColorProgramOnNow) + "," + String.Format("{0:X8}", (uint)_guideColorProgramOnLater));
 
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
       // If only one value is provided then that value is used for both.
@@ -462,6 +466,7 @@ namespace MediaPortal.Configuration.Sections
                                                                              true);
         mpTextBoxMacAddress.Text = xmlreader.GetValueAsString("tvservice", "macAddress", "00:00:00:00:00:00");
 
+        mpCheckBoxRatingAsMovie.Checked = xmlreader.GetValueAsBool("mytv", "specifympaaratedasmovie", false);
         chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
         txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
@@ -796,14 +801,14 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl2 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageGenreMap = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpCheckBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxRatingAsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.listViewGuideGenres = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.mpButton2 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnDeleteGenre = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonOnLaterColor = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonOnNowColor = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonRemoveGenre = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonNewGenre = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonMapGenres = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonUnmapGenres = new MediaPortal.UserInterface.Controls.MPButton();
@@ -823,6 +828,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel10 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.colorComboBoxChannel = new MediaPortal.WinCustomControls.ColorComboBox();
       this.groupDefaultColors = new System.Windows.Forms.GroupBox();
+      this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.colorComboBoxPgmOnLater = new MediaPortal.WinCustomControls.ColorComboBox();
+      this.mpLabel15 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.colorComboBoxPgmOnNow = new MediaPortal.WinCustomControls.ColorComboBox();
       this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.colorComboBoxPgmBorder = new MediaPortal.WinCustomControls.ColorComboBox();
       this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -1641,11 +1650,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox4.Controls.Add(this.mpCheckBox2);
+      this.groupBox4.Controls.Add(this.mpCheckBoxRatingAsMovie);
       this.groupBox4.Controls.Add(this.listViewGuideGenres);
-      this.groupBox4.Controls.Add(this.mpButton2);
-      this.groupBox4.Controls.Add(this.mpButton1);
-      this.groupBox4.Controls.Add(this.btnDeleteGenre);
+      this.groupBox4.Controls.Add(this.mpButtonOnLaterColor);
+      this.groupBox4.Controls.Add(this.mpButtonOnNowColor);
+      this.groupBox4.Controls.Add(this.buttonRemoveGenre);
       this.groupBox4.Controls.Add(this.buttonNewGenre);
       this.groupBox4.Controls.Add(this.buttonMapGenres);
       this.groupBox4.Controls.Add(this.buttonUnmapGenres);
@@ -1659,20 +1668,21 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
       // 
-      // mpCheckBox2
+      // mpCheckBoxRatingAsMovie
       // 
-      this.mpCheckBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.mpCheckBoxRatingAsMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpCheckBox2.AutoSize = true;
-      this.mpCheckBox2.Checked = true;
-      this.mpCheckBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.mpCheckBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBox2.Location = new System.Drawing.Point(6, 355);
-      this.mpCheckBox2.Name = "mpCheckBox2";
-      this.mpCheckBox2.Size = new System.Drawing.Size(346, 17);
-      this.mpCheckBox2.TabIndex = 15;
-      this.mpCheckBox2.Text = "Automatically add programs with a movie rating to the \"Movie\" genre";
-      this.mpCheckBox2.UseVisualStyleBackColor = true;
+      this.mpCheckBoxRatingAsMovie.AutoSize = true;
+      this.mpCheckBoxRatingAsMovie.Checked = true;
+      this.mpCheckBoxRatingAsMovie.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.mpCheckBoxRatingAsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxRatingAsMovie.Location = new System.Drawing.Point(6, 355);
+      this.mpCheckBoxRatingAsMovie.Name = "mpCheckBoxRatingAsMovie";
+      this.mpCheckBoxRatingAsMovie.Size = new System.Drawing.Size(379, 17);
+      this.mpCheckBoxRatingAsMovie.TabIndex = 15;
+      this.mpCheckBoxRatingAsMovie.Text = "Automatically add programs with a movie rating to the \"Movie\" genre           ";
+      this.mpCheckBoxRatingAsMovie.UseVisualStyleBackColor = true;
+      this.mpCheckBoxRatingAsMovie.CheckedChanged += new System.EventHandler(this.mpCheckBox2_CheckedChanged);
       // 
       // listViewGuideGenres
       // 
@@ -1714,38 +1724,38 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       this.columnHeader11.Width = 100;
       // 
-      // mpButton2
+      // mpButtonOnLaterColor
       // 
-      this.mpButton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButton2.Location = new System.Drawing.Point(102, 147);
-      this.mpButton2.Name = "mpButton2";
-      this.mpButton2.Size = new System.Drawing.Size(90, 22);
-      this.mpButton2.TabIndex = 11;
-      this.mpButton2.Text = "On Later Color";
-      this.mpButton2.UseVisualStyleBackColor = true;
-      this.mpButton2.Click += new System.EventHandler(this.mpButton2_Click);
+      this.mpButtonOnLaterColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonOnLaterColor.Location = new System.Drawing.Point(102, 147);
+      this.mpButtonOnLaterColor.Name = "mpButtonOnLaterColor";
+      this.mpButtonOnLaterColor.Size = new System.Drawing.Size(90, 22);
+      this.mpButtonOnLaterColor.TabIndex = 11;
+      this.mpButtonOnLaterColor.Text = "On Later Color";
+      this.mpButtonOnLaterColor.UseVisualStyleBackColor = true;
+      this.mpButtonOnLaterColor.Click += new System.EventHandler(this.mpButton2_Click);
       // 
-      // mpButton1
+      // mpButtonOnNowColor
       // 
-      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpButton1.Location = new System.Drawing.Point(6, 147);
-      this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(90, 22);
-      this.mpButton1.TabIndex = 10;
-      this.mpButton1.Text = "On Now Color";
-      this.mpButton1.UseVisualStyleBackColor = true;
-      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
+      this.mpButtonOnNowColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonOnNowColor.Location = new System.Drawing.Point(6, 147);
+      this.mpButtonOnNowColor.Name = "mpButtonOnNowColor";
+      this.mpButtonOnNowColor.Size = new System.Drawing.Size(90, 22);
+      this.mpButtonOnNowColor.TabIndex = 10;
+      this.mpButtonOnNowColor.Text = "On Now Color";
+      this.mpButtonOnNowColor.UseVisualStyleBackColor = true;
+      this.mpButtonOnNowColor.Click += new System.EventHandler(this.mpButton1_Click);
       // 
-      // btnDeleteGenre
+      // buttonRemoveGenre
       // 
-      this.btnDeleteGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnDeleteGenre.Location = new System.Drawing.Point(375, 147);
-      this.btnDeleteGenre.Name = "btnDeleteGenre";
-      this.btnDeleteGenre.Size = new System.Drawing.Size(60, 22);
-      this.btnDeleteGenre.TabIndex = 6;
-      this.btnDeleteGenre.Text = "Remove";
-      this.btnDeleteGenre.UseVisualStyleBackColor = true;
-      this.btnDeleteGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
+      this.buttonRemoveGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonRemoveGenre.Location = new System.Drawing.Point(375, 147);
+      this.buttonRemoveGenre.Name = "buttonRemoveGenre";
+      this.buttonRemoveGenre.Size = new System.Drawing.Size(60, 22);
+      this.buttonRemoveGenre.TabIndex = 6;
+      this.buttonRemoveGenre.Text = "Remove";
+      this.buttonRemoveGenre.UseVisualStyleBackColor = true;
+      this.buttonRemoveGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
       // 
       // buttonNewGenre
       // 
@@ -1850,7 +1860,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.colorComboBoxGroupSel);
       this.groupBox3.Controls.Add(this.mpLabel12);
       this.groupBox3.Controls.Add(this.colorComboBoxGroup);
-      this.groupBox3.Location = new System.Drawing.Point(6, 175);
+      this.groupBox3.Location = new System.Drawing.Point(6, 203);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(432, 60);
       this.groupBox3.TabIndex = 12;
@@ -1874,6 +1884,8 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxGroupSel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxGroupSel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxGroupSel.TabIndex = 10;
+      this.colorComboBoxGroupSel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnGroupSelColorChanged);
+      this.colorComboBoxGroupSel.Load += new System.EventHandler(this.colorComboBoxGroupSel_Load);
       // 
       // mpLabel12
       // 
@@ -1892,6 +1904,8 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxGroup.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxGroup.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxGroup.TabIndex = 0;
+      this.colorComboBoxGroup.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnGroupColorChanged);
+      this.colorComboBoxGroup.Load += new System.EventHandler(this.colorComboBoxGroup_Load);
       // 
       // groupBox1
       // 
@@ -1899,7 +1913,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.colorComboBoxChannelSel);
       this.groupBox1.Controls.Add(this.mpLabel10);
       this.groupBox1.Controls.Add(this.colorComboBoxChannel);
-      this.groupBox1.Location = new System.Drawing.Point(6, 109);
+      this.groupBox1.Location = new System.Drawing.Point(6, 137);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(432, 60);
       this.groupBox1.TabIndex = 12;
@@ -1923,6 +1937,8 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxChannelSel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxChannelSel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxChannelSel.TabIndex = 10;
+      this.colorComboBoxChannelSel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnChannelSelColorChanged);
+      this.colorComboBoxChannelSel.Load += new System.EventHandler(this.colorComboBoxChannelSel_Load);
       // 
       // mpLabel10
       // 
@@ -1941,9 +1957,15 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxChannel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxChannel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxChannel.TabIndex = 0;
+      this.colorComboBoxChannel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnChannelColorChanged);
+      this.colorComboBoxChannel.Load += new System.EventHandler(this.colorComboBoxChannel_Load);
       // 
       // groupDefaultColors
       // 
+      this.groupDefaultColors.Controls.Add(this.mpLabel14);
+      this.groupDefaultColors.Controls.Add(this.colorComboBoxPgmOnLater);
+      this.groupDefaultColors.Controls.Add(this.mpLabel15);
+      this.groupDefaultColors.Controls.Add(this.colorComboBoxPgmOnNow);
       this.groupDefaultColors.Controls.Add(this.mpLabel13);
       this.groupDefaultColors.Controls.Add(this.colorComboBoxPgmBorder);
       this.groupDefaultColors.Controls.Add(this.mpLabel8);
@@ -1952,15 +1974,55 @@ namespace MediaPortal.Configuration.Sections
       this.groupDefaultColors.Controls.Add(this.colorComboBoxPgmEnded);
       this.groupDefaultColors.Location = new System.Drawing.Point(6, 12);
       this.groupDefaultColors.Name = "groupDefaultColors";
-      this.groupDefaultColors.Size = new System.Drawing.Size(432, 91);
+      this.groupDefaultColors.Size = new System.Drawing.Size(432, 120);
       this.groupDefaultColors.TabIndex = 0;
       this.groupDefaultColors.TabStop = false;
       this.groupDefaultColors.Text = "Program button color";
       // 
+      // mpLabel14
+      // 
+      this.mpLabel14.AutoSize = true;
+      this.mpLabel14.Location = new System.Drawing.Point(214, 28);
+      this.mpLabel14.Name = "mpLabel14";
+      this.mpLabel14.Size = new System.Drawing.Size(47, 13);
+      this.mpLabel14.TabIndex = 17;
+      this.mpLabel14.Text = "On later:";
+      // 
+      // colorComboBoxPgmOnLater
+      // 
+      this.colorComboBoxPgmOnLater.Extended = false;
+      this.colorComboBoxPgmOnLater.Location = new System.Drawing.Point(274, 23);
+      this.colorComboBoxPgmOnLater.Name = "colorComboBoxPgmOnLater";
+      this.colorComboBoxPgmOnLater.SelectedColor = System.Drawing.Color.Black;
+      this.colorComboBoxPgmOnLater.Size = new System.Drawing.Size(103, 23);
+      this.colorComboBoxPgmOnLater.TabIndex = 16;
+      this.colorComboBoxPgmOnLater.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmOnLaterColorChanged);
+      this.colorComboBoxPgmOnLater.Load += new System.EventHandler(this.colorComboBoxPgmOnLater_Load);
+      // 
+      // mpLabel15
+      // 
+      this.mpLabel15.AutoSize = true;
+      this.mpLabel15.Location = new System.Drawing.Point(47, 28);
+      this.mpLabel15.Name = "mpLabel15";
+      this.mpLabel15.Size = new System.Drawing.Size(47, 13);
+      this.mpLabel15.TabIndex = 15;
+      this.mpLabel15.Text = "On now:";
+      // 
+      // colorComboBoxPgmOnNow
+      // 
+      this.colorComboBoxPgmOnNow.Extended = false;
+      this.colorComboBoxPgmOnNow.Location = new System.Drawing.Point(97, 23);
+      this.colorComboBoxPgmOnNow.Name = "colorComboBoxPgmOnNow";
+      this.colorComboBoxPgmOnNow.SelectedColor = System.Drawing.Color.Black;
+      this.colorComboBoxPgmOnNow.Size = new System.Drawing.Size(103, 23);
+      this.colorComboBoxPgmOnNow.TabIndex = 14;
+      this.colorComboBoxPgmOnNow.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmOnNowColorChanged);
+      this.colorComboBoxPgmOnNow.Load += new System.EventHandler(this.colorComboBoxPgmOnNow_Load);
+      // 
       // mpLabel13
       // 
       this.mpLabel13.AutoSize = true;
-      this.mpLabel13.Location = new System.Drawing.Point(5, 56);
+      this.mpLabel13.Location = new System.Drawing.Point(5, 86);
       this.mpLabel13.Name = "mpLabel13";
       this.mpLabel13.Size = new System.Drawing.Size(83, 13);
       this.mpLabel13.TabIndex = 13;
@@ -1969,16 +2031,18 @@ namespace MediaPortal.Configuration.Sections
       // colorComboBoxPgmBorder
       // 
       this.colorComboBoxPgmBorder.Extended = false;
-      this.colorComboBoxPgmBorder.Location = new System.Drawing.Point(97, 51);
+      this.colorComboBoxPgmBorder.Location = new System.Drawing.Point(97, 81);
       this.colorComboBoxPgmBorder.Name = "colorComboBoxPgmBorder";
       this.colorComboBoxPgmBorder.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmBorder.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmBorder.TabIndex = 12;
+      this.colorComboBoxPgmBorder.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmBorderColorChanged);
+      this.colorComboBoxPgmBorder.Load += new System.EventHandler(this.colorComboBoxPgmBorder_Load);
       // 
       // mpLabel8
       // 
       this.mpLabel8.AutoSize = true;
-      this.mpLabel8.Location = new System.Drawing.Point(214, 27);
+      this.mpLabel8.Location = new System.Drawing.Point(214, 57);
       this.mpLabel8.Name = "mpLabel8";
       this.mpLabel8.Size = new System.Drawing.Size(52, 13);
       this.mpLabel8.TabIndex = 11;
@@ -1987,16 +2051,18 @@ namespace MediaPortal.Configuration.Sections
       // colorComboBoxPgmSel
       // 
       this.colorComboBoxPgmSel.Extended = false;
-      this.colorComboBoxPgmSel.Location = new System.Drawing.Point(274, 22);
+      this.colorComboBoxPgmSel.Location = new System.Drawing.Point(274, 52);
       this.colorComboBoxPgmSel.Name = "colorComboBoxPgmSel";
       this.colorComboBoxPgmSel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmSel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmSel.TabIndex = 10;
+      this.colorComboBoxPgmSel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmSelColorChanged);
+      this.colorComboBoxPgmSel.Load += new System.EventHandler(this.colorComboBoxPgmSel_Load);
       // 
       // mpLabel4
       // 
       this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(47, 27);
+      this.mpLabel4.Location = new System.Drawing.Point(47, 57);
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(41, 13);
       this.mpLabel4.TabIndex = 9;
@@ -2005,13 +2071,14 @@ namespace MediaPortal.Configuration.Sections
       // colorComboBoxPgmEnded
       // 
       this.colorComboBoxPgmEnded.Extended = false;
-      this.colorComboBoxPgmEnded.Location = new System.Drawing.Point(97, 22);
+      this.colorComboBoxPgmEnded.Location = new System.Drawing.Point(97, 52);
       this.colorComboBoxPgmEnded.Name = "colorComboBoxPgmEnded";
       this.colorComboBoxPgmEnded.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmEnded.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmEnded.TabIndex = 0;
+      this.colorComboBoxPgmEnded.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmEndedColorChanged);
       this.colorComboBoxPgmEnded.Load += new System.EventHandler(this.colorComboBoxPgmEnded_Load);
-      this.colorComboBoxPgmEnded.ColorChanged += new ColorChangedHandler(this.OnPgmEndedColorChanged);
+      // 
       // TVClient
       // 
       this.Controls.Add(this.tabControlTVGeneral);
@@ -2378,6 +2445,15 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private void mpCheckBox2_CheckedChanged(object sender, EventArgs e)
+    {
+      _specifyMpaaRatedAsMovie = false;
+      if (mpCheckBoxRatingAsMovie.Checked)
+      {
+        _specifyMpaaRatedAsMovie = true;
+      }
+    }
+
     private void colorComboBoxPgmEnded_Load(object sender, EventArgs e)
     {
       colorComboBoxPgmEnded.SelectedColor = Color.FromArgb((int)_guideColorProgramEnded);
@@ -2386,6 +2462,86 @@ namespace MediaPortal.Configuration.Sections
     protected void OnPgmEndedColorChanged(object sender, ColorChangeArgs e)
     {
       _guideColorProgramEnded = e.color.ToArgb();
+    }
+
+    private void colorComboBoxPgmSel_Load(object sender, EventArgs e)
+    {
+      colorComboBoxPgmSel.SelectedColor = Color.FromArgb((int)_guideColorProgramSelected);
+    }
+
+    protected void OnPgmSelColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorProgramSelected = e.color.ToArgb();
+    }
+
+    private void colorComboBoxPgmBorder_Load(object sender, EventArgs e)
+    {
+      colorComboBoxPgmBorder.SelectedColor = Color.FromArgb((int)_guideColorBorderHighlight);
+    }
+
+    protected void OnPgmBorderColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorBorderHighlight = e.color.ToArgb();
+    }
+
+    private void colorComboBoxChannel_Load(object sender, EventArgs e)
+    {
+      colorComboBoxChannel.SelectedColor = Color.FromArgb((int)_guideColorChannelButton);
+    }
+
+    protected void OnChannelColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorChannelButton = e.color.ToArgb();
+    }
+
+    private void colorComboBoxChannelSel_Load(object sender, EventArgs e)
+    {
+      colorComboBoxChannelSel.SelectedColor = Color.FromArgb((int)_guideColorChannelButtonSelected);
+    }
+
+    protected void OnChannelSelColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorChannelButtonSelected = e.color.ToArgb();
+    }
+
+    private void colorComboBoxGroup_Load(object sender, EventArgs e)
+    {
+      colorComboBoxGroup.SelectedColor = Color.FromArgb((int)_guideColorGroupButton);
+    }
+
+    protected void OnGroupColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorGroupButton = e.color.ToArgb();
+    }
+
+    private void colorComboBoxGroupSel_Load(object sender, EventArgs e)
+    {
+      colorComboBoxGroupSel.SelectedColor = Color.FromArgb((int)_guideColorGroupButtonSelected);
+    }
+
+    protected void OnGroupSelColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorGroupButtonSelected = e.color.ToArgb();
+    }
+
+    private void colorComboBoxPgmOnNow_Load(object sender, EventArgs e)
+    {
+      colorComboBoxPgmOnNow.SelectedColor = Color.FromArgb((int)_guideColorProgramOnNow);
+    }
+
+    protected void OnPgmOnNowColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorProgramOnNow = e.color.ToArgb();
+    }
+
+    private void colorComboBoxPgmOnLater_Load(object sender, EventArgs e)
+    {
+      colorComboBoxPgmOnLater.SelectedColor = Color.FromArgb((int)_guideColorProgramOnLater);
+    }
+
+    protected void OnPgmOnLaterColorChanged(object sender, ColorChangeArgs e)
+    {
+      _guideColorProgramOnLater = e.color.ToArgb();
     }
   }
 }
