@@ -1975,7 +1975,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel14
       // 
       this.mpLabel14.AutoSize = true;
-      this.mpLabel14.Location = new System.Drawing.Point(214, 28);
+      this.mpLabel14.Location = new System.Drawing.Point(219, 28);
       this.mpLabel14.Name = "mpLabel14";
       this.mpLabel14.Size = new System.Drawing.Size(47, 13);
       this.mpLabel14.TabIndex = 17;
@@ -1995,7 +1995,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel15
       // 
       this.mpLabel15.AutoSize = true;
-      this.mpLabel15.Location = new System.Drawing.Point(47, 28);
+      this.mpLabel15.Location = new System.Drawing.Point(41, 28);
       this.mpLabel15.Name = "mpLabel15";
       this.mpLabel15.Size = new System.Drawing.Size(47, 13);
       this.mpLabel15.TabIndex = 15;
