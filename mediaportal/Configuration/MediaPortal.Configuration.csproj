@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -25,8 +26,9 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <ApplicationManifest>Configuration.exe.manifest</ApplicationManifest>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -170,6 +172,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
+    <Reference Include="BassVisAPI.Net, Version=2.4.1.9, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
+    </Reference>
     <Reference Include="CSScriptLibrary, Version=1.9.0.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
@@ -184,6 +190,9 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -203,6 +212,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
@@ -217,9 +230,9 @@
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj">
-      <Project>{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}</Project>
-      <Name>MPInstaller.Library</Name>
+    <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
+      <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
+      <Name>MediaPortal.Support</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
       <Name>RemotePlugins</Name>
@@ -232,14 +245,50 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Common.cs" />
+    <Compile Include="Sections\FiltersPowerDVDAudioDecoder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\FiltersPowerDVDDecoder10.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
+    <Compile Include="Sections\BaseFileExtensions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseFileExtensions.designer.cs">
+      <DependentUpon>BaseFileExtensions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\BaseViews.Designer.cs">
       <DependentUpon>BaseViews.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\GeneralStartupResume.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralStartupResume.Designer.cs">
+      <DependentUpon>GeneralStartupResume.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\GuiControls.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GuiLanguage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Gui.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Gui.Designer.cs">
+      <DependentUpon>Gui.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\GeneralAutoplay.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\DVDZoom.cs">
       <SubType>UserControl</SubType>
@@ -253,17 +302,11 @@
     <Compile Include="Sections\GeneralDynamicRefreshRate.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralWatchdog.cs">
+    <Compile Include="Sections\GuiScreensaver.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralWatchdog.Designer.cs">
-      <DependentUpon>GeneralWatchdog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\GeneralScreensaver.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\GeneralScreensaver.Designer.cs">
-      <DependentUpon>GeneralScreensaver.cs</DependentUpon>
+    <Compile Include="Sections\GuiScreensaver.Designer.cs">
+      <DependentUpon>GuiScreensaver.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MovieCodec.cs">
       <SubType>UserControl</SubType>
@@ -313,6 +356,12 @@
     <Compile Include="Sections\TVZoom.Designer.cs">
       <DependentUpon>TVZoom.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Subdialogs\DlgMpcSubs.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -344,9 +393,6 @@
     </Compile>
     <Compile Include="SectionSettings.designer.cs">
       <DependentUpon>SectionSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\BaseFileExtensions.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\BasePostProcessing.cs">
       <SubType>UserControl</SubType>
@@ -402,7 +448,7 @@
     <Compile Include="Sections\GeneralDaemonTools.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralFileMenu.cs">
+    <Compile Include="Sections\GuiFileMenu.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GeneralKeyboardControl.cs">
@@ -411,16 +457,7 @@
     <Compile Include="Sections\GeneralKeys.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralSkin.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\GeneralStartupDelay.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\GeneralStartupDelay.Designer.cs">
-      <DependentUpon>GeneralStartupDelay.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\GeneralThumbs.cs">
+    <Compile Include="Sections\GuiThumbs.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GeneralVolume.cs">
@@ -471,17 +508,11 @@
     <Compile Include="Subdialogs\DlgProgress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralOSD.cs">
+    <Compile Include="Sections\GuiOSD.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralSkipSteps.cs">
+    <Compile Include="Sections\GuiSkipSteps.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\MusicMisc.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\MusicMisc.Designer.cs">
-      <DependentUpon>MusicMisc.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MusicImport.cs">
       <SubType>UserControl</SubType>
@@ -570,9 +601,6 @@
     <Compile Include="SectionTreeNode.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SettingsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ConfigSplashScreen.cs">
     </Compile>
     <Compile Include="Startup.cs">
@@ -588,6 +616,9 @@
       <DependentUpon>ConfigSplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseFileExtensions.resx">
+      <DependentUpon>BaseFileExtensions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseShares.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseShares.cs</DependentUpon>
@@ -595,6 +626,33 @@
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersPowerDVDAudioDecoder.resx">
+      <DependentUpon>FiltersPowerDVDAudioDecoder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\FiltersPowerDVDDecoder10.resx">
+      <DependentUpon>FiltersPowerDVDDecoder10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
+      <DependentUpon>GeneralStartupResume.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GuiControls.resx">
+      <DependentUpon>GuiControls.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GuiLanguage.resx">
+      <DependentUpon>GuiLanguage.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Gui.resx">
+      <DependentUpon>Gui.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralAutoplay.resx">
+      <DependentUpon>GeneralAutoplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVDZoom.resx">
       <DependentUpon>DVDZoom.cs</DependentUpon>
@@ -608,12 +666,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>GeneralDynamicRefreshRate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralWatchdog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GeneralWatchdog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralScreensaver.resx">
-      <DependentUpon>GeneralScreensaver.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiScreensaver.resx">
+      <DependentUpon>GuiScreensaver.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MovieCodec.resx">
@@ -737,8 +791,8 @@
       <DependentUpon>GeneralDaemonTools.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralFileMenu.resx">
-      <DependentUpon>GeneralFileMenu.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiFileMenu.resx">
+      <DependentUpon>GuiFileMenu.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralKeyboardControl.resx">
@@ -749,17 +803,9 @@
       <DependentUpon>GeneralKeys.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralSkin.resx">
-      <DependentUpon>GeneralSkin.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiThumbs.resx">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralStartupDelay.resx">
-      <DependentUpon>GeneralStartupDelay.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralThumbs.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GeneralThumbs.cs</DependentUpon>
+      <DependentUpon>GuiThumbs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralVolume.resx">
       <DependentUpon>GeneralVolume.cs</DependentUpon>
@@ -797,17 +843,13 @@
       <DependentUpon>DlgProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralOSD.resx">
-      <DependentUpon>GeneralOSD.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiOSD.resx">
+      <DependentUpon>GuiOSD.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralSkipSteps.resx">
+    <EmbeddedResource Include="Sections\GuiSkipSteps.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>GeneralSkipSteps.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MusicMisc.resx">
-      <DependentUpon>MusicMisc.cs</DependentUpon>
-      <SubType>Designer</SubType>
+      <DependentUpon>GuiSkipSteps.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicImport.resx">
       <DependentUpon>MusicImport.cs</DependentUpon>
@@ -875,7 +917,6 @@
     </EmbeddedResource>
     <None Include="Resources\config.ico" />
     <None Include="Resources\wizard_background.png" />
-    <None Include="Resources\wizard_header.jpg" />
     <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
@@ -887,7 +928,6 @@
     <None Include="Resources\remote.MceVista.png" />
     <None Include="Resources\remote.Mce2004.png" />
     <None Include="Resources\remote.Mce2005TT.png" />
-    <EmbeddedResource Include="Resources\mplogo.gif" />
     <None Include="Resources\mepo_donation.png" />
   </ItemGroup>
   <ItemGroup>

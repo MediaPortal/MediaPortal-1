@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Windows.Forms;
 using DirectShowLib;
@@ -30,7 +50,8 @@ namespace SetupTv.Dialogs
         comboBoxAudioSource.SelectedIndex = TuningDetail.AudioSource;
         textBoxAnalogFrequency.Text = SetFrequency(TuningDetail.Frequency, "2");
         checkBoxVCR.Checked = TuningDetail.IsVCRSignal;
-      } else
+      }
+      else
       {
         //Editing
         textBoxChannel.Text = "";
@@ -90,11 +111,12 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a frequency!", "Incorrect input");
         return false;
       }
-      
+
       try
       {
         GetFrequency(textBoxAnalogFrequency.Text, "2");
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
@@ -117,7 +139,13 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please select a video source!", "Incorrect input");
         return false;
       }
-      
+
+      if (comboBoxAudioSource.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a audio source!", "Incorrect input");
+        return false;
+      }
+
       return true;
     }
 

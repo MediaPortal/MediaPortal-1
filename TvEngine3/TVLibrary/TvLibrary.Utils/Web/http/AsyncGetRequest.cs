@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,6 +29,8 @@ namespace MediaPortal.Utils.Web
 {
   public class AsyncGetRequest
   {
+    public const string DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; WindowsNT 5.0; .NET CLR 1 .1.4322)";
+
     public delegate void AsyncGetRequestCompleted(
       List<String> responseStrings, HttpStatusCode responseStatus, String requestedURLCommand);
 
@@ -85,7 +87,7 @@ namespace MediaPortal.Utils.Web
           //request.Timeout = 20000;
           request.Pipelined = false;
 
-          request.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+          request.UserAgent = DefaultUserAgent;
           //request.UserAgent = "User-Agent: Last.fm Client 1.5.1.30182 (Windows)";
           //request.ContentType = "application/x-www-form-urlencoded";
 

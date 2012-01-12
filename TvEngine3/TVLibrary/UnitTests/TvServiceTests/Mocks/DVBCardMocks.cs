@@ -13,7 +13,7 @@ namespace TVServiceTests.Mocks
     protected bool _enabled = true;
     protected bool _present = true;
     protected bool _hasCAM = false;
-    protected User _user;
+    protected IUser _user;
     protected int _numberOfChannelsDecrypting = 0;
     protected int _cardId = 0;
     protected int _decryptLimit = 0;
@@ -28,7 +28,7 @@ namespace TVServiceTests.Mocks
       _cardId = CardManager.GetNextAvailCardId();
     }
 
-    public DVBCardMocks(List <IChannel> tuningDetails, User user)
+    public DVBCardMocks(List<IChannel> tuningDetails, IUser user)
     {
       _cardId = CardManager.GetNextAvailCardId();
       _tuningDetails = tuningDetails;

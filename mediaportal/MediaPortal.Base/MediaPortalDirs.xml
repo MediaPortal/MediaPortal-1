@@ -45,14 +45,6 @@
   <Dir id = "Log">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Log\</Path>
   </Dir>
-      <!-- The Path were the Custom Inputdevice Mappings are located. -->
-  <Dir id = "CustomInputDevice">
-    <Path>%ProgramData%\Team MediaPortal\MediaPortal\InputDeviceMappings\</Path>
-  </Dir>
-  <!-- The Path were the Default Inputdevice Mappings are located. -->
-  <Dir id = "CustomInputDefault">
-    <Path>InputDeviceMappings\defaults\</Path>
-  </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Skin\</Path>
@@ -69,16 +61,8 @@
   <Dir id = "Thumbs">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Thumbs\</Path>
   </Dir>
-  <!-- The Path were all the Weather related files are located. -->
-  <Dir id = "Weather">
-    <Path>Weather\</Path>
-  </Dir>
   <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
   <Dir id = "Cache">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Cache\</Path>
-  </Dir>
-  <!-- The path to CYGWIN files needed for the burner plugin -->
-  <Dir id = "BurnerSupport">
-    <Path>Burner\</Path>
   </Dir>
 </Config>

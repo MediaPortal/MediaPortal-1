@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,13 +23,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.MPInstaller;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using MediaPortal.Common.Utils;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -39,11 +41,6 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList availablePlugins = new ArrayList();
     private bool isLoaded = false;
     private bool wasLastLoadAdvanced = false;
-
-    public MPInstallHelper lst = new MPInstallHelper();
-    public MPInstallHelper lst_online = new MPInstallHelper();
-    private string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
-
 
     private class ItemTag
     {
@@ -58,6 +55,7 @@ namespace MediaPortal.Configuration.Sections
       public bool IsEnabled = false;
       public bool IsPlugins = false;
       public bool ShowDefaultHome = false;
+      public bool IsIncompatible = false;
       private Image activeImage = null;
       private Image inactiveImage = null;
 
@@ -177,8 +175,19 @@ namespace MediaPortal.Configuration.Sections
           continue;
         }
 
+        //Mantis 3772 - Weather.com API is not free any more
+        //temporarily disable plugin
+        if (tag.SetupForm.PluginName() == "Weather")
+        {
+          continue;
+        }
+
         ListViewItem item;
-        if (tag.IsProcess)
+        if (tag.IsIncompatible)
+        {
+          item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupIncompatible"]);
+        }
+        else if (tag.IsProcess)
         {
           item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupProcess"]);
         }
@@ -241,6 +250,14 @@ namespace MediaPortal.Configuration.Sections
                 continue;
               }
 
+              bool isIncompatible = !CompatibilityManager.IsPluginCompatible(type);
+              if (isIncompatible)
+              {
+                Log.Warn(
+                  "Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})",
+                  type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+              }
+
               // Try to locate the interface we're interested in
               if (isPlugin || isGuiWindow)
               {
@@ -300,6 +317,8 @@ namespace MediaPortal.Configuration.Sections
                       tag.ShowDefaultHome = showPlugin.ShowDefaultHome();
                     }
 
+                    tag.IsIncompatible = isIncompatible;
+
                     LoadPluginImages(type, tag);
                     loadedPlugins.Add(tag);
                   }
@@ -344,13 +363,41 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private Image OverlayImage(Image targetImage, Image overlay)
+    {
+      PixelFormat fmt = targetImage.PixelFormat;
+      if (fmt != PixelFormat.Format32bppRgb &&
+          fmt != PixelFormat.Format32bppArgb &&
+          fmt != PixelFormat.Format32bppPArgb &&
+          fmt != PixelFormat.Format24bppRgb)
+      {
+        Image result = new Bitmap(targetImage.Width, targetImage.Height, PixelFormat.Format32bppArgb);
+        using (var g = Graphics.FromImage(result))
+        {
+          g.DrawImage(targetImage, 0, 0);
+          g.CompositingMode = CompositingMode.SourceOver;
+          g.DrawImage(overlay, 0, 0, targetImage.Width, targetImage.Height);
+        }
+        return result;
+      }
+      else
+      {
+        using (var g = Graphics.FromImage(targetImage))
+        {
+          g.CompositingMode = CompositingMode.SourceOver;
+          g.DrawImage(overlay, 0, 0, targetImage.Width, targetImage.Height);
+        }
+        return targetImage;
+      }
+    }
+
     /// <summary>
     /// Checks whether the a plugin has a <see cref="PluginIconsAttribute"/> defined.  If it has, the images that are indicated
     /// in the attribute are loaded
     /// </summary>
     /// <param name="type">The <see cref="Type"/> to examine.</param>
     /// <param name="tag">The <see cref="ItemTag"/> to store the images in.</param>
-    private static void LoadPluginImages(Type type, ItemTag tag)
+    private void LoadPluginImages(Type type, ItemTag tag)
     {
       PluginIconsAttribute[] icons =
         (PluginIconsAttribute[])type.GetCustomAttributes(typeof (PluginIconsAttribute), false);
@@ -364,12 +411,20 @@ namespace MediaPortal.Configuration.Sections
       {
         Log.Debug("PluginsNew: load active image from resource - {0}", resourceName);
         tag.ActiveImage = LoadImageFromResource(type, resourceName);
+        if (tag.IsIncompatible)
+        {
+          tag.ActiveImage = OverlayImage(tag.ActiveImage, imageListLargePlugins.Images[20]);
+        }
       }
       resourceName = icons[0].DeactivatedResourceName;
       if (!string.IsNullOrEmpty(resourceName))
       {
         Log.Debug("PluginsNew: load deactivated image from resource - {0}", resourceName);
         tag.InactiveImage = LoadImageFromResource(type, resourceName);
+        if (tag.IsIncompatible)
+        {
+          tag.InactiveImage = OverlayImage(tag.InactiveImage, imageListLargePlugins.Images[20]);
+        }
       }
     }
 
@@ -450,6 +505,11 @@ namespace MediaPortal.Configuration.Sections
           bool isHome = itemTag.IsHome;
           bool isPlugins = itemTag.IsPlugins;
 
+          if (itemTag.IsIncompatible)
+          {
+            continue;
+          }
+
           xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), isEnabled);
           xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, isEnabled);
 
@@ -470,7 +530,14 @@ namespace MediaPortal.Configuration.Sections
 
     private void listViewPlugins_DoubleClick(object sender, EventArgs e)
     {
+      if (listViewPlugins.FocusedItem == null) return;
+      if (listViewPlugins.FocusedItem.Tag == null) return;
+
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      if (itemTag.IsIncompatible)
+      {
+        return;
+      }
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
       {
@@ -485,31 +552,32 @@ namespace MediaPortal.Configuration.Sections
     {
       ItemTag tag = (ItemTag)item.Tag;
 
+      int incompatibleImageOfs = tag.IsIncompatible ? 10 : 0;
+
       if (tag.IsWindow)
       {
+        item.Font = new Font(item.Font.FontFamily, 8.5f);
         if (tag.IsEnabled)
         {
-          item.Font = new Font(item.Font.FontFamily, 8.5f);
           if (tag.IsHome)
           {
-            item.ImageIndex = 8;
+            item.ImageIndex = 8 + incompatibleImageOfs;
             item.ForeColor = Color.Green;
           }
           else if (tag.IsPlugins)
           {
-            item.ImageIndex = 9;
+            item.ImageIndex = 9 + incompatibleImageOfs;
             item.ForeColor = Color.RoyalBlue;
           }
           else
           {
-            item.ImageIndex = 2;
+            item.ImageIndex = 2 + incompatibleImageOfs;
             item.ForeColor = Color.DarkSlateGray;
           }
         }
         else
         {
-          item.Font = new Font(item.Font.FontFamily, 8.5f);
-          item.ImageIndex = 3;
+          item.ImageIndex = 3 + incompatibleImageOfs;
           item.ForeColor = Color.DimGray;
         }
       }
@@ -528,15 +596,15 @@ namespace MediaPortal.Configuration.Sections
 
         if (tag.IsProcess)
         {
-          item.ImageIndex = tag.IsEnabled ? 4 : 5;
+          item.ImageIndex = (tag.IsEnabled ? 4 : 5) + incompatibleImageOfs;
         }
         else if (tag.IsExternalPlayer)
         {
-          item.ImageIndex = tag.IsEnabled ? 6 : 7;
+          item.ImageIndex = (tag.IsEnabled ? 6 : 7) + incompatibleImageOfs;
         }
         else
         {
-          item.ImageIndex = tag.IsEnabled ? 0 : 1;
+          item.ImageIndex = (tag.IsEnabled ? 0 : 1) + incompatibleImageOfs;
         }
       }
 
@@ -560,7 +628,7 @@ namespace MediaPortal.Configuration.Sections
         }
         item.ImageKey = disabledKey;
       }
-
+     
       listViewPlugins.Refresh();
       //this.Refresh();
     }
@@ -568,6 +636,10 @@ namespace MediaPortal.Configuration.Sections
     private void itemMyPlugins_Click(object sender, EventArgs e)
     {
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      if (itemTag.IsIncompatible)
+      {
+        return;
+      }
       itemTag.IsPlugins = !itemTag.IsPlugins;
       if (itemTag.IsPlugins)
       {
@@ -584,6 +656,10 @@ namespace MediaPortal.Configuration.Sections
     private void itemMyHome_Click(object sender, EventArgs e)
     {
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      if (itemTag.IsIncompatible)
+      {
+        return;
+      }
       itemTag.IsHome = !itemTag.IsHome;
       if (itemTag.IsHome)
       {
@@ -600,6 +676,10 @@ namespace MediaPortal.Configuration.Sections
     private void itemEnabled_Click(object sender, EventArgs e)
     {
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      if (itemTag.IsIncompatible)
+      {
+        return;
+      }
       itemTag.IsEnabled = !itemTag.IsEnabled;
       if (!itemTag.SetupForm.CanEnable())
       {
@@ -612,6 +692,10 @@ namespace MediaPortal.Configuration.Sections
     private void itemConfigure_Click(object sender, EventArgs e)
     {
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      if (itemTag.IsIncompatible)
+      {
+        return;
+      }
       if ((itemTag.SetupForm != null) &&
           (itemTag.SetupForm.HasSetup()))
       {
@@ -700,6 +784,11 @@ namespace MediaPortal.Configuration.Sections
 
         addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
         addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
+        if (itemTag.IsIncompatible)
+        {
+          return;
+        }
+
         addContextMenuSeparator();
         mpButtonEnable.Enabled = true;
 

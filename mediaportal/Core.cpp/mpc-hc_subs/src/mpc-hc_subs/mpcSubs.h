@@ -29,6 +29,7 @@ extern "C" {
 //set default subtitle's style (call before LoadSubtitles to take effect)
 MPCSUBS_API void SetDefaultStyle(const SubtitleStyle* style, BOOL overrideUserStyles);
 MPCSUBS_API void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, BOOL disableAnim);
+MPCSUBS_API void SetShowForcedOnly(BOOL onlyShowForcedSubs);
 
 //load subtitles for video file fn, with given (rendered) graph 
 MPCSUBS_API BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths);
@@ -48,6 +49,7 @@ MPCSUBS_API void SaveToDisk();
 ///
 MPCSUBS_API int GetCount(); //total subtitles
 MPCSUBS_API BSTR GetLanguage(int i); //i  range from 0 to GetCount()-1
+MPCSUBS_API BSTR GetTrackName(int i); //i  range from 0 to GetCount()-1
 MPCSUBS_API int GetCurrent(); 
 MPCSUBS_API void SetCurrent(int i);
 MPCSUBS_API BOOL GetEnable();

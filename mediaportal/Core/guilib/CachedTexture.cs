@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ using DShowNET.Helper;
 using Microsoft.DirectX.Direct3D;
 using System.Runtime.CompilerServices;
 using MediaPortal.ExtensionMethods;
+
 //using MediaPortal.EventSubscriptionManager;
 
 namespace MediaPortal.GUI.Library
@@ -44,7 +45,7 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-    
+
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
@@ -53,9 +54,11 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
-                                                             float uoff, float voff, float umax, float vmax, int color,
-                                                             float[,] matrix, int textureNo2, float uoff2, float voff2,
-                                                             float umax2, float vmax2);
+                                                                  float uoff, float voff, float umax, float vmax,
+                                                                  int color,
+                                                                  float[,] matrix, int textureNo2, float uoff2,
+                                                                  float voff2,
+                                                                  float umax2, float vmax2);
 
     #endregion
 
@@ -102,7 +105,7 @@ namespace MediaPortal.GUI.Library
         {
           unsafe
           {
-          	_image.Disposing -= new EventHandler(D3DTexture_Disposing);
+            _image.Disposing -= new EventHandler(D3DTexture_Disposing);
             _image.Disposing += new EventHandler(D3DTexture_Disposing);
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
             _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
@@ -138,7 +141,6 @@ namespace MediaPortal.GUI.Library
         {
           if (_image != null)
           {
-
             try
             {
               if (logTextures)
@@ -224,8 +226,8 @@ namespace MediaPortal.GUI.Library
               foreach (EventHandler eventDelegate in Disposed.GetInvocationList())
               {
                 Disposed -= eventDelegate;
-              } 
-            }            
+              }
+            }
           }
           disposed = true;
         }
@@ -349,7 +351,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (emtpy) constructor of the CachedTexture class.
     /// </summary>
-    public CachedTexture() { }
+    public CachedTexture() {}
 
     ~CachedTexture()
     {
@@ -358,7 +360,6 @@ namespace MediaPortal.GUI.Library
       // disposed of anyways.
       Dispose(false);
     }
-
 
     #endregion
 
@@ -506,7 +507,8 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      DisposeFrames();//somehow we need to call this always, regardless of state 'this.disposed', otherwise we leak resources.      
+      DisposeFrames();
+      //somehow we need to call this always, regardless of state 'this.disposed', otherwise we leak resources.      
 
       if (Disposed != null)
       {

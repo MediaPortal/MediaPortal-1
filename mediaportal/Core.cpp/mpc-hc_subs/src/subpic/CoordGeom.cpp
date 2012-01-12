@@ -1,20 +1,22 @@
-/* 
- *	Copyright (C) 2003-2006 Gabest
- *	http://www.gabest.org
+/*
+ *  $Id: CoordGeom.cpp 2786 2010-12-17 16:42:55Z XhmikosR $
+ *
+ *  (C) 2003-2006 Gabest
+ *  (C) 2006-2010 see AUTHORS
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -73,7 +75,9 @@ Vector Vector::Pow(float exp)
 Vector Vector::Unit()
 {
 	float l = Length();
-	if(!l || l == 1) return(*this);
+	if(!l || l == 1) {
+		return(*this);
+	}
 	return(*this * (1 / l));
 }
 
@@ -104,9 +108,13 @@ void Vector::Angle(float& u, float& v)
 
 	u = asin(n.y);
 
-	if(IsZero(n.z)) v = PI/2 * Sgn(n.x);
-	else if(n.z > 0) v = atan(n.x / n.z);
-	else if(n.z < 0) v = IsZero(n.x) ? PI : (PI * Sgn(n.x) + atan(n.x / n.z));
+	if(IsZero(n.z)) {
+		v = PI/2 * Sgn(n.x);
+	} else if(n.z > 0) {
+		v = atan(n.x / n.z);
+	} else if(n.z < 0) {
+		v = IsZero(n.x) ? PI : (PI * Sgn(n.x) + atan(n.x / n.z));
+	}
 }
 
 Vector Vector::Angle()
@@ -155,16 +163,21 @@ Vector Vector::Refract(Vector& N, float nFront, float nBack, float* nOut)
 
 	float len_sin_T = sin_T | sin_T;
 
-	if(len_sin_T > 1) 
-	{
-		if(nOut) {*nOut = N_dot_D >= 0 ? nFront : nBack;}
+	if(len_sin_T > 1) {
+		if(nOut) {
+			*nOut = N_dot_D >= 0 ? nFront : nBack;
+		}
 		return((*this).Reflect(N));
 	}
 
 	float N_dot_T = sqrt(1.0 - len_sin_T);
-	if(N_dot_D < 0) N_dot_T = -N_dot_T;
+	if(N_dot_D < 0) {
+		N_dot_T = -N_dot_T;
+	}
 
-	if(nOut) {*nOut = N_dot_D >= 0 ? nBack : nFront;}
+	if(nOut) {
+		*nOut = N_dot_D >= 0 ? nBack : nFront;
+	}
 
 	return(sin_T - (N * N_dot_T));
 }
@@ -181,16 +194,21 @@ Vector Vector::Refract2(Vector& N, float nFrom, float nTo, float* nOut)
 
 	float len_sin_T = sin_T | sin_T;
 
-	if(len_sin_T > 1) 
-	{
-		if(nOut) {*nOut = nFrom;}
+	if(len_sin_T > 1) {
+		if(nOut) {
+			*nOut = nFrom;
+		}
 		return((*this).Reflect(N));
 	}
 
 	float N_dot_T = sqrt(1.0 - len_sin_T);
-	if(N_dot_D < 0) N_dot_T = -N_dot_T;
+	if(N_dot_D < 0) {
+		N_dot_T = -N_dot_T;
+	}
 
-	if(nOut) {*nOut = nTo;}
+	if(nOut) {
+		*nOut = nTo;
+	}
 
 	return(sin_T - (N * N_dot_T));
 }
@@ -217,7 +235,9 @@ Vector Vector::operator - ()
 
 bool Vector::operator == (const Vector& v) const
 {
-	if(IsZero(x - v.x) && IsZero(y - v.y) && IsZero(z - v.z)) return(true);
+	if(IsZero(x - v.x) && IsZero(y - v.y) && IsZero(z - v.z)) {
+		return(true);
+	}
 	return(false);
 }
 
@@ -268,49 +288,65 @@ Vector Vector::operator / (Vector& v)
 
 Vector& Vector::operator += (float d)
 {
-	x += d; y += d; z += d;
+	x += d;
+	y += d;
+	z += d;
 	return(*this);
 }
 
 Vector& Vector::operator += (Vector& v)
 {
-	x += v.x; y += v.y; z += v.z;
+	x += v.x;
+	y += v.y;
+	z += v.z;
 	return(*this);
 }
 
 Vector& Vector::operator -= (float d)
 {
-	x -= d; y -= d; z -= d;
+	x -= d;
+	y -= d;
+	z -= d;
 	return(*this);
 }
 
 Vector& Vector::operator -= (Vector& v)
 {
-	x -= v.x; y -= v.y; z -= v.z;
+	x -= v.x;
+	y -= v.y;
+	z -= v.z;
 	return(*this);
 }
 
 Vector& Vector::operator *= (float d)
 {
-	x *= d; y *= d; z *= d;
+	x *= d;
+	y *= d;
+	z *= d;
 	return(*this);
 }
 
 Vector& Vector::operator *= (Vector& v)
 {
-	x *= v.x; y *= v.y; z *= v.z;
+	x *= v.x;
+	y *= v.y;
+	z *= v.z;
 	return(*this);
 }
 
 Vector& Vector::operator /= (float d)
 {
-	x /= d; y /= d; z /= d;
+	x /= d;
+	y /= d;
+	z /= d;
 	return(*this);
 }
 
 Vector& Vector::operator /= (Vector& v)
 {
-	x /= v.x; y /= v.y; z /= v.z;
+	x /= v.x;
+	y /= v.y;
+	z /= v.z;
 	return(*this);
 }
 
@@ -333,7 +369,9 @@ void Ray::Set(Vector& p, Vector& d)
 float Ray::GetDistanceFrom(Ray& r)
 {
 	float t = (d | r.d);
-	if(IsZero(t)) return(-BIGNUMBER); // plane is paralell to the ray, return -infinite
+	if(IsZero(t)) {
+		return(-BIGNUMBER);    // plane is paralell to the ray, return -infinite
+	}
 	return(((r.p - p) | r.d) / t);
 }
 
@@ -367,15 +405,12 @@ void XForm::Initalize(Ray& r, Vector& s, bool isWorldToLocal)
 	Initalize();
 
 	m_isWorldToLocal = isWorldToLocal;
-	if(isWorldToLocal)
-	{
+	if(isWorldToLocal) {
 		*this -= r.p;
 		*this >>= r.d;
 		*this /= s;
 
-	}
-	else
-	{
+	} else {
 		*this *= s;
 		*this <<= r.d;
 		*this += r.p;
@@ -403,16 +438,22 @@ void XForm::operator += (Vector& v)
 void XForm::operator <<= (Vector& v)
 {
 	Matrix x;
-	x.mat[1][1] = cos(v.x); x.mat[1][2] = -sin(v.x);
-	x.mat[2][1] = sin(v.x); x.mat[2][2] = cos(v.x);
+	x.mat[1][1] = cos(v.x);
+	x.mat[1][2] = -sin(v.x);
+	x.mat[2][1] = sin(v.x);
+	x.mat[2][2] = cos(v.x);
 
 	Matrix y;
-	y.mat[0][0] = cos(v.y); y.mat[0][2] = -sin(v.y);
-	y.mat[2][0] = sin(v.y); y.mat[2][2] = cos(v.y);
+	y.mat[0][0] = cos(v.y);
+	y.mat[0][2] = -sin(v.y);
+	y.mat[2][0] = sin(v.y);
+	y.mat[2][2] = cos(v.y);
 
 	Matrix z;
-	z.mat[0][0] = cos(v.z); z.mat[0][1] = -sin(v.z);
-	z.mat[1][0] = sin(v.z); z.mat[1][1] = cos(v.z);
+	z.mat[0][0] = cos(v.z);
+	z.mat[0][1] = -sin(v.z);
+	z.mat[1][0] = sin(v.z);
+	z.mat[1][1] = cos(v.z);
 
 	m = m_isWorldToLocal ? (m * y * x * z) : (m * z * x * y);
 }
@@ -489,26 +530,38 @@ XForm::Matrix::Matrix()
 
 void XForm::Matrix::Initalize()
 {
-	mat[0][0] = 1; mat[0][1] = 0; mat[0][2] = 0; mat[0][3] = 0;
-	mat[1][0] = 0; mat[1][1] = 1; mat[1][2] = 0; mat[1][3] = 0;
-	mat[2][0] = 0; mat[2][1] = 0; mat[2][2] = 1; mat[2][3] = 0;
-	mat[3][0] = 0; mat[3][1] = 0; mat[3][2] = 0; mat[3][3] = 1;
+	mat[0][0] = 1;
+	mat[0][1] = 0;
+	mat[0][2] = 0;
+	mat[0][3] = 0;
+	mat[1][0] = 0;
+	mat[1][1] = 1;
+	mat[1][2] = 0;
+	mat[1][3] = 0;
+	mat[2][0] = 0;
+	mat[2][1] = 0;
+	mat[2][2] = 1;
+	mat[2][3] = 0;
+	mat[3][0] = 0;
+	mat[3][1] = 0;
+	mat[3][2] = 0;
+	mat[3][3] = 1;
 }
 
 XForm::Matrix XForm::Matrix::operator * (Matrix& m)
 {
 	Matrix ret;
 
-	for(ptrdiff_t i = 0; i < 4; i++)
-	{
-		for(ptrdiff_t j = 0; j < 4; j++)
-		{
+	for(ptrdiff_t i = 0; i < 4; i++) {
+		for(ptrdiff_t j = 0; j < 4; j++) {
 			ret.mat[i][j] = mat[i][0] * m.mat[0][j] +
 							mat[i][1] * m.mat[1][j] +
 							mat[i][2] * m.mat[2][j] +
 							mat[i][3] * m.mat[3][j];
 
-			if(IsZero(ret.mat[i][j])) ret.mat[i][j] = 0;
+			if(IsZero(ret.mat[i][j])) {
+				ret.mat[i][j] = 0;
+			}
 		}
 	}
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -328,7 +328,7 @@ namespace TvLibrary.Implementations.Analog
           name = name.Replace(invalidCharacter.ToString(), "");
         }
       }
-      String pathName = Log.Log.GetPathName();
+      String pathName = PathManager.GetDataPath;
       String fileName = String.Format(@"{0}\AnalogCard\Configuration-{1}-{2}.xml", pathName, cardId, name);
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       return fileName;

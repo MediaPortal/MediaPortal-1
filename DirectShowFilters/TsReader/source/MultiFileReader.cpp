@@ -212,9 +212,8 @@ HRESULT MultiFileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadByte
 
 			if (m_bDebugOutput)
 			{
-				USES_CONVERSION;
-				TCHAR sz[MAX_PATH+128];
-				wsprintf(sz, TEXT("Current File Changed to %s\n"), W2T(file->filename));
+				wchar_t sz[MAX_PATH+128];
+				wsprintfW(sz, L"Current File Changed to %s\n", file->filename);
 				//::OutputDebugString(sz);
 			}
 		}
@@ -431,10 +430,9 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 			if (m_bDebugOutput)
 			{
-				USES_CONVERSION;
-				TCHAR sz[MAX_PATH+128];
-				wsprintf(sz, TEXT("Removing file %s\n"), W2T(file->filename));
-				::OutputDebugString(sz);
+				wchar_t sz[MAX_PATH+128];
+				wsprintfW(sz, L"Removing file %s\n", file->filename);
+				::OutputDebugStringW(sz);
 			}
 			
 			delete file;
@@ -538,11 +536,10 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 			if (m_bDebugOutput)
 			{
-				USES_CONVERSION;
-				TCHAR sz[MAX_PATH+128];
+				wchar_t sz[MAX_PATH+128];
 				int nextStPos = (int)nextStartPosition;
-				wsprintf(sz, TEXT("Adding file %s (%i)\n"), W2T(pFilename), nextStPos);
-				::OutputDebugString(sz);
+				wsprintfW(sz, L"Adding file %s (%i)\n", pFilename, nextStPos);
+				::OutputDebugStringW(sz);
 			}
 
 			file = new MultiFileReaderFile();
@@ -624,8 +621,8 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length)
 	{
 		wchar_t msg[MAX_PATH];
 		DWORD dwErr = GetLastError();
-		swprintf((LPWSTR)&msg, L"Failed to open file %s : 0x%x\n", pFilename, dwErr);
-		::OutputDebugString(W2T((LPWSTR)&msg));
+		swprintf(msg, MAX_PATH, L"Failed to open file %s : 0x%x\n", pFilename, dwErr);
+		::OutputDebugStringW(msg);
 		return HRESULT_FROM_WIN32(dwErr);
 	}
 	return S_OK;

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -37,11 +37,11 @@ namespace MpeInstaller.Classes
       {
         if (File.Exists(s))
           PackageFile = s;
-        if (s.StartsWith("/S"))
+        if (s == "/S")
           Silent = true;
-        if (s.StartsWith("/U"))
+        if (s == "/U")
           Update = true;
-        if (s.StartsWith("/MPQUEUE"))
+        if (s == "/MPQUEUE")
           MpQueue = true;
         if (s.StartsWith("/BK="))
         {
@@ -52,7 +52,7 @@ namespace MpeInstaller.Classes
         if (s.StartsWith("/Uninstall="))
         {
           UninstallPackage = true;
-          PackageID = s.Substring(8).Replace("\"", "");
+          PackageID = s.Substring(11).Replace("\"", "");
         }
       }
     }

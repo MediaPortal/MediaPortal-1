@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,19 +35,35 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for MusicViewHandler.
   /// </summary>
-  public class MusicViewHandler
+  public class MusicViewHandler : ViewHandler
   {
-    private string defaultMusicViews = Config.GetFile(Config.Dir.Base, "defaultMusicViews.xml");
-    private string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
+    private readonly string defaultMusicViews = Path.Combine(DefaultsDirectory, "MusicViews.xml");
+    private readonly string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
 
-    private ViewDefinition currentView;
-    private int currentLevel = 0;
-    private List<ViewDefinition> views = new List<ViewDefinition>();
+    private int previousLevel = 0;
 
     private MusicDatabase database;
     private int restrictionLength = 0; // used to sum up the length of all restrictions
 
     private Song currentSong = null; // holds the current Song selected in the list
+
+    public int PreviousLevel
+    {
+      get { return previousLevel; }
+    }
+
+    public override string CurrentView
+    {
+      get
+      {
+        return base.CurrentView;
+      }
+      set
+      {
+        previousLevel = -1;
+        base.CurrentView = value;
+      }
+    }
 
     public MusicViewHandler()
     {
@@ -74,70 +90,6 @@ namespace MediaPortal.GUI.Music
       database = MusicDatabase.Instance;
     }
 
-    public ViewDefinition View
-    {
-      get { return currentView; }
-      set { currentView = value; }
-    }
-
-
-    public List<ViewDefinition> Views
-    {
-      get { return views; }
-      set { views = value; }
-    }
-
-    public string LocalizedCurrentView
-    {
-      get
-      {
-        if (currentView == null)
-        {
-          return string.Empty;
-        }
-        return currentView.LocalizedName;
-      }
-    }
-
-    public string CurrentView
-    {
-      get
-      {
-        if (currentView == null)
-        {
-          return string.Empty;
-        }
-        return currentView.Name;
-      }
-      set
-      {
-        bool done = false;
-        foreach (ViewDefinition definition in views)
-        {
-          if (definition.Name == value)
-          {
-            currentView = definition;
-            CurrentLevel = 0;
-            done = true;
-            break;
-          }
-        }
-        if (!done)
-        {
-          if (views.Count > 0)
-          {
-            currentView = (ViewDefinition)views[0];
-          }
-        }
-      }
-    }
-
-    public int CurrentViewIndex
-    {
-      get { return views.IndexOf(currentView); }
-    }
-
-
     public void Restore(ViewDefinition view, int level)
     {
       currentView = view;
@@ -149,40 +101,27 @@ namespace MediaPortal.GUI.Music
       return currentView;
     }
 
-    public int CurrentLevel
-    {
-      get { return currentLevel; }
-      set
-      {
-        if (value < 0 || value >= currentView.Filters.Count)
-        {
-          return;
-        }
-        currentLevel = value;
-      }
-    }
-
-    public int MaxLevels
-    {
-      get { return currentView.Filters.Count; }
-    }
-
 
     public void Select(Song song)
     {
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
       definition.SelectedValue = GetFieldValue(song, definition.Where).ToString();
-      if (currentLevel + 1 < currentView.Filters.Count)
+      if (currentLevel < currentView.Filters.Count)
       {
         currentLevel++;
       }
       currentSong = song;
     }
 
-    public List<Song> Execute()
+    public bool Execute(out List<Song> songs)
     {
-      //build the query
-      List<Song> songs = new List<Song>();
+      if (currentLevel < 0)
+      {
+        previousLevel = -1;
+        songs = new List<Song>();
+        return false;
+      }
+
       string whereClause = string.Empty;
       string orderClause = string.Empty;
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
@@ -227,8 +166,21 @@ namespace MediaPortal.GUI.Music
 
           sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX",
                               searchField, definition.Restriction, countField, searchTable);
-          database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
-          return songs;
+          // only group special characters into a "#" entry is field is text based
+          if (defRoot.Where == "rating" || defRoot.Where == "year" || defRoot.Where == "track" || defRoot.Where == "disc#" ||
+              defRoot.Where == "timesplayed" || defRoot.Where == "favourites" || defRoot.Where == "date")
+          {
+            database.GetSongsByFilter(sql, out songs, table);
+          }
+          else
+          {
+            database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
+          }
+
+          previousLevel = currentLevel;
+          
+          return true;  
+
         }
 
         switch (table)
@@ -284,7 +236,10 @@ namespace MediaPortal.GUI.Music
                   songs.Add(song);
                 }
               }
-              return songs;
+
+              previousLevel = currentLevel;
+
+              return true;
             }
             else if (defRoot.Where == "recently added")
             {
@@ -328,15 +283,26 @@ namespace MediaPortal.GUI.Music
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         string table = GetTable(defCurrent.Where);
 
+        // Now we need to check the previous filters, if we were already on the tracks table previously
+        // In this case the from clause must contain the tracks table only
+        bool isUsingTrackTable = false;
+        string allPrevColumns = string.Empty;
+        for (int i = CurrentLevel; i > -1; i--)
+        {
+          FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
+
+          allPrevColumns += " " + GetField(filter.Where) + " ,";
+          if (GetTable(filter.Where) != table)
+          {
+            isUsingTrackTable = true;
+          }
+        }
+        allPrevColumns = allPrevColumns.Remove(allPrevColumns.Length - 1, 1); // remove extra trailing comma
+
         if (defCurrent.SqlOperator == "group")
         {
-          // get previous filter to find out the length of the substr search
-          FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
-          int previousRestriction = 0;
-          if (defPrevious.SqlOperator == "group")
-          {
-            previousRestriction = Convert.ToInt16(defPrevious.Restriction);
-          }
+          // in an odd scenario here as we have a group operator
+          // but not at the first level of view
 
           // Build correct table for search
           string searchTable = GetTable(defCurrent.Where);
@@ -348,25 +314,49 @@ namespace MediaPortal.GUI.Music
             searchTable = "tracks";
             countField = "strAlbumArtist";
           }
-          sql = String.Format("select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {2}), * from {3} {4} {5}",
-                              searchField, previousRestriction + Convert.ToInt16(defCurrent.Restriction), countField,
-                              searchTable, whereClause, orderClause);
 
+          if (isUsingTrackTable && searchTable != "tracks")
+          {
+            // have the messy case where previous filters in view
+            // do not use the same table as the current level
+            // which means we can not just lookup values in search table
+
+            string joinSQL;
+            if (IsMultipleValueField(searchField))
+            {
+              joinSQL = string.Format("and tracks.{1} like '%| '||{0}.{1}||' |%' ",
+                                      searchTable, searchField);
+            }
+            else
+            {
+              joinSQL = string.Format("and tracks.{1} = {0}.{1} ",
+                                      searchTable, searchField);
+            }
+
+            whereClause = whereClause.Replace("group by ix", "");
+            whereClause = string.Format(" where exists ( " +
+                                        "    select 0 " +
+                                        "    from tracks " +
+                                        "    {0} " +
+                                        "    {1} " +
+                                        ") " +
+                                        "group by ix "
+                                        , whereClause, joinSQL);
+          }
+
+          sql = String.Format("select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {2}) from {3} {4} {5}",
+                              searchField, Convert.ToInt16(defCurrent.Restriction), countField,
+                              searchTable, whereClause, orderClause);
           database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
         }
         else
         {
-          // Now we need to check the previous filters, if we were already on the tracks table previously
-          // In this case the from clause must contain the tracks table only
           string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
-          for (int i = CurrentLevel; i > -1; i--)
+
+          if (isUsingTrackTable && table != "album" && defCurrent.Where != "Disc#")
           {
-            FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
-            if (filter.Where != table)
-            {
-              from = String.Format("{0} from tracks", GetField(defCurrent.Where));
-              break;
-            }
+            from = String.Format("{0} from tracks", allPrevColumns);
+            table = "tracks";
           }
 
           // When searching for an album, we need to retrieve the AlbumArtist as well, because we could have same album names for different artists
@@ -377,6 +367,11 @@ namespace MediaPortal.GUI.Music
             from = String.Format("* from tracks", GetField(defCurrent.Where));
             whereClause += " group by strAlbum, strAlbumArtist ";
           }
+          if (defCurrent.Where == "disc#")
+          {
+            from = String.Format("* from tracks", GetField(defCurrent.Where));
+            whereClause += " group by strAlbum, strAlbumArtist, iDisc ";
+          }
 
           sql = String.Format("select distinct {0} {1} {2}", from, whereClause, orderClause);
 
@@ -385,7 +380,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        // get previous filter to see, if we had an album 
+        // get previous filter to see, if we had an album
         FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
         if (defPrevious.Where == "album")
         {
@@ -404,24 +399,35 @@ namespace MediaPortal.GUI.Music
 
         database.GetSongsByFilter(sql, out songs, "tracks");
       }
-      return songs;
-    }
 
-    private void BuildSelect(FilterDefinition filter, ref string whereClause, int filterLevel)
-    {
-      // Clear the WhereClause, if the previous levels contained grouping. otherwise we get wrong results
-      if (CurrentLevel != filterLevel)
+      if (songs.Count == 1 && definition.SkipLevel)
       {
-        if (filterLevel > 0)
+        if (currentLevel < MaxLevels - 1)
         {
-          FilterDefinition filterPrevious = (FilterDefinition)currentView.Filters[filterLevel - 1];
-          if (filterPrevious.SqlOperator == "group")
+          if (previousLevel < currentLevel)
           {
-            whereClause = "";
+            FilterDefinition fd = (FilterDefinition)currentView.Filters[currentLevel];
+            fd.SelectedValue = GetFieldValue(songs[0], fd.Where);
+            currentLevel = currentLevel + 1;
+          }
+          else
+          {
+            currentLevel = currentLevel - 1;
+          }
+          if (!Execute(out songs))
+          {
+            return false;
           }
         }
       }
 
+      previousLevel = currentLevel;
+
+      return true;
+    }
+
+    private void BuildSelect(FilterDefinition filter, ref string whereClause, int filterLevel)
+    {
       if (filter.SqlOperator == "group")
       {
         // Don't need to include the grouping value, when it was on the first level
@@ -434,16 +440,82 @@ namespace MediaPortal.GUI.Music
         {
           whereClause += " and ";
         }
-        // Was the value selected a "#"? Then we have the group of special chars and need to search for values < A
-        if (filter.SelectedValue == "#")
+
+        restrictionLength += Convert.ToInt16(filter.Restriction);
+
+        // muliple value fields are stored in one database field in tracks
+        // table but on different rows in other tables
+        if (IsMultipleValueField(GetField(filter.Where)))
         {
-          whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
+          bool usingTracksTable = true;
+          if (GetTable(CurrentLevelWhere) != "tracks")
+          {
+            usingTracksTable = false;
+          }
+          if (!usingTracksTable)
+          {
+            // current level is not using tracks table so check whether
+            // any filters above this one are using a different table
+            // and if so data will be taken from tracks table
+            FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
+            string table = GetTable(defRoot.Where);
+            for (int i = CurrentLevel; i > -1; i--)
+            {
+              FilterDefinition prevFilter = (FilterDefinition)currentView.Filters[i];
+              if (GetTable(prevFilter.Where) != table)
+              {
+                usingTracksTable = true;
+                break;
+              }
+            }
+          }
+
+          // now we know if we are using the tracks table or not we can
+          // figure out how to format multiple value fields
+          if (usingTracksTable)
+          {
+            if (filter.SelectedValue == "#")
+            {
+              // need a special case here were user selects # from grouped menu
+              // as multiple values can be stored in the same field
+              whereClause += String.Format(" exists ( " +
+                                           "   select 0 from {0} " +
+                                           "   where  {1} < 'A' " +
+                                           "   and    tracks.{1} like '%| '||{0}.{1}||' |%' " +
+                                           " ) ", GetTable(filter.Where), GetField(filter.Where));
+            }
+            else
+            {
+              whereClause += String.Format(" ({0} like '| {1}%' or '| {2}%')", GetField(filter.Where),
+                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+            }
+          }
+          else
+          {
+            if (filter.SelectedValue == "#")
+            {
+              whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
+            }
+            else
+            {
+              whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
+                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+            }
+          }
         }
         else
         {
-          restrictionLength += Convert.ToInt16(filter.Restriction);
-          whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                       filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+          // we are looking for fields which do not contain multiple values
+          if (filter.SelectedValue == "#")
+          {
+            // deal with non standard characters
+            whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
+          }
+          else
+          {
+            whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
+                                         filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+          }
         }
       }
       else
@@ -537,14 +609,23 @@ namespace MediaPortal.GUI.Music
 
     private void BuildOrder(FilterDefinition filter, ref string orderClause)
     {
-      orderClause = " order by " + GetSortField(filter) + " ";
-      if (!filter.SortAscending)
+      string[] sortFields = GetSortField(filter).Split('|');
+      orderClause = " order by ";
+      for (int i = 0; i < sortFields.Length; i++)
       {
-        orderClause += "desc";
-      }
-      else
-      {
-        orderClause += "asc";
+        if (i > 0)
+        {
+          orderClause += ", ";
+        }
+        orderClause += sortFields[i];
+        if (!filter.SortAscending)
+        {
+          orderClause += " desc";
+        }
+        else
+        {
+          orderClause += " asc";
+        }
       }
       if (filter.Limit > 0)
       {
@@ -557,7 +638,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    private bool IsMultipleValueField(string field)
+    private static bool IsMultipleValueField(string field)
     {
       switch (field)
       {
@@ -572,7 +653,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private string GetTable(string where)
+    private static string GetTable(string where)
     {
       if (where == "album")
       {
@@ -626,10 +707,14 @@ namespace MediaPortal.GUI.Music
       {
         return "tracks";
       }
+      if (where == "disc#")
+      {
+        return "tracks";
+      }
       return null;
     }
 
-    private string GetField(string where)
+    private static string GetField(string where)
     {
       if (where == "album")
       {
@@ -687,10 +772,14 @@ namespace MediaPortal.GUI.Music
       {
         return "dateAdded";
       }
+      if (where == "disc#")
+      {
+        return "iDisc";
+      }
       return null;
     }
 
-    private string GetFieldValue(Song song, string where)
+    public static string GetFieldValue(Song song, string where)
     {
       if (where == "album")
       {
@@ -748,10 +837,14 @@ namespace MediaPortal.GUI.Music
       {
         return song.DateTimeModified.ToShortDateString();
       }
+      if (where == "disc#")
+      {
+        return song.DiscId.ToString();
+      }
       return "";
     }
 
-    private string GetSortField(FilterDefinition filter)
+    private static string GetSortField(FilterDefinition filter)
     {
       // Don't allow anything else but the fieldnames itself on Multiple Fields
       if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre" ||
@@ -776,82 +869,64 @@ namespace MediaPortal.GUI.Music
       {
         return "iDuration";
       }
+      if (filter.DefaultSort == "disc#")
+      {
+        return "iDisc";
+      }
+      if (filter.DefaultSort == "Track")
+      {
+        return "iDisc|iTrack"; // We need to sort on Discid + Track
+      }
+
 
       return GetField(filter.Where);
     }
 
-    public void SetLabel(Song song, ref GUIListItem item)
+    protected override string GetLocalizedViewLevel(string lvlName)
     {
-      if (song == null)
-      {
-        return;
+      string localizedLevelName = string.Empty;
+      
+      switch(lvlName)
+      {          
+        case "artist":
+          localizedLevelName = GUILocalizeStrings.Get(133);
+          break;
+        case "albumartist":
+          localizedLevelName = GUILocalizeStrings.Get(528);
+          break;
+        case "album":
+          localizedLevelName = GUILocalizeStrings.Get(132);
+          break;
+        case "genre":
+          localizedLevelName = GUILocalizeStrings.Get(135);
+          break;
+        case "year":
+          localizedLevelName = GUILocalizeStrings.Get(987);
+          break;
+        case "composer":
+          localizedLevelName = GUILocalizeStrings.Get(1214);
+          break;          
+        case "conductor":
+          localizedLevelName = GUILocalizeStrings.Get(1215);
+          break;          
+        case"disc#":
+          localizedLevelName = GUILocalizeStrings.Get(1216);
+          break;          
+        case "title":
+        case "timesplayed":
+        case "rating":
+        case "favorites":
+        case "recently added":
+        case "track":
+          localizedLevelName = GUILocalizeStrings.Get(1052);
+          break;
+        default:
+          localizedLevelName = lvlName;
+          break;
       }
-      FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
-      if (definition.Where == "genre")
-      {
-        item.Label = song.Genre;
-        item.Label2 = string.Empty;
-        item.Label3 = string.Empty;
-      }
-      if (definition.Where == "album")
-      {
-        item.Label = song.Album;
-        // Don't clear the label in case of a Group/Index view, to show the counter
-        if (definition.SqlOperator != "group")
-        {
-          if (song.AlbumArtist != "")
-          {
-            item.Label2 = song.AlbumArtist; // Use the AlbumArtist if it's available
-          }
-          else
-          {
-            item.Label2 = song.Artist;
-          }
-        }
-        item.Label3 = string.Empty;
-      }
-      if (definition.Where == "artist")
-      {
-        item.Label = song.Artist;
-        // Don't clear the label in case of a Group/Index view, to show the counter
-        if (definition.SqlOperator != "group")
-        {
-          item.Label2 = string.Empty;
-        }
-        item.Label3 = string.Empty;
-      }
-      if (definition.Where == "albumartist")
-      {
-        item.Label = song.AlbumArtist;
-        // Don't clear the label in case of a Group/Index view, to show the counter
-        if (definition.SqlOperator != "group")
-        {
-          item.Label2 = string.Empty;
-        }
-        item.Label3 = string.Empty;
-      }
-      if (definition.Where == "composer")
-      {
-        item.Label = song.Composer;
-        // Don't clear the label in case of a Group/Index view, to show the counter
-        if (definition.SqlOperator != "group")
-        {
-          item.Label2 = string.Empty;
-        }
-        item.Label3 = string.Empty;
-      }
-      if (definition.Where == "conductor")
-      {
-        item.Label = song.Conductor;
-        item.Label2 = string.Empty;
-        item.Label3 = string.Empty;
-      }
-      if (definition.Where == "year")
-      {
-        item.Label = song.Year.ToString();
-        item.Label2 = string.Empty;
-        item.Label3 = string.Empty;
-      }
-    }
+      
+      return localizedLevelName;
+    }    
+    
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -55,9 +55,6 @@ namespace MediaPortal.TagReader
     /// </returns>
     public static MusicTag ReadTag(string strFile)
     {
-      if (!IsAudio(strFile))
-        return null;
-
       // Read Cue info
       if (CueUtil.isCueFakeTrackFile(strFile))
       {
@@ -70,6 +67,9 @@ namespace MediaPortal.TagReader
           Log.Warn("TagReader: Exception reading file {0}. {1}", strFile, ex.Message);
         }
       }
+
+      if (!IsAudio(strFile))
+        return null;
 
       char[] trimChars = {' ', '\x00'};
 
@@ -124,7 +124,7 @@ namespace MediaPortal.TagReader
           musictag.CoverArtImageBytes = pics[0].Data.Data;
         musictag.Duration = (int)tag.Properties.Duration.TotalSeconds;
         musictag.FileName = strFile;
-        musictag.FileType = tag.MimeType;
+        musictag.FileType = tag.MimeType.Substring(tag.MimeType.IndexOf("/") + 1);
         string[] genre = tag.Tag.Genres;
         if (genre.Length > 0)
           musictag.Genre = String.Join(";", genre).Trim(trimChars);
@@ -140,13 +140,18 @@ namespace MediaPortal.TagReader
         musictag.TrackTotal = (int)tag.Tag.TrackCount;
         musictag.DiscID = (int)tag.Tag.Disc;
         musictag.DiscTotal = (int)tag.Tag.DiscCount;
-
-        // To display Multiple Disc Albums correctly, we add the discid mupltplied by 100
-        // But, only if track exists and is less than 100, to avoid having wrong track numbers 
-        // if the user specified the discid is part of the track tag.
-        if (musictag.DiscID > 0 && (musictag.Track > 0 && musictag.Track < 100))
-          musictag.Track += (musictag.DiscID * 100);
-
+        musictag.Codec = tag.Properties.Description;
+        if (tag.MimeType == "taglib/mp3")
+        {
+          musictag.BitRateMode = tag.Properties.Description.IndexOf("VBR") > -1 ? "VBR" : "CBR";
+        }
+        else
+        {
+          musictag.BitRateMode = "";
+        }
+        musictag.BPM = (int)tag.Tag.BeatsPerMinute;
+        musictag.Channels = tag.Properties.AudioChannels;
+        musictag.SampleRate = tag.Properties.AudioSampleRate;
         musictag.Year = (int)tag.Tag.Year;
 
         if (tag.MimeType == "taglib/mp3")

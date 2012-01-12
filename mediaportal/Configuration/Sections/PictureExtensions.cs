@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,14 +31,14 @@ namespace MediaPortal.Configuration.Sections
     public PictureExtensions(string name)
       : base(name) {}
 
-    public override void LoadSettings()
+    protected override string SettingsSection
     {
-      base.LoadSettings("pictures", Util.Utils.PictureExtensionsDefault);
+      get { return "pictures"; }
     }
 
-    public override void SaveSettings()
+    protected override string DefaultExtensions
     {
-      base.SaveSettings("pictures");
+      get { return Util.Utils.PictureExtensionsDefault; }
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace MediaPortal.GUI.Library
@@ -34,7 +35,6 @@ namespace MediaPortal.GUI.Library
   {
     // pattern that matches a property tag, e.g. '#myproperty' or '#some.property_string'
     private static Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
     private static Dictionary<string, string> _properties = new Dictionary<string, string>();
     private static bool _isChanged = false;
 
@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Library
       _properties["#file"] = string.Empty; // imdb movie filename
       _properties["#plot"] = string.Empty; // imdb movie plot 
       _properties["#plotoutline"] = string.Empty; // imdb movie plot outline
+      _properties["#userreview"] = string.Empty; // imdb movie user review
       _properties["#rating"] = string.Empty; // imdb movie rating (0-10)
       _properties["#tagline"] = string.Empty; // imdb movie tag line
       _properties["#votes"] = string.Empty; // imdb movie votes
@@ -78,6 +79,44 @@ namespace MediaPortal.GUI.Library
       _properties["#mpaarating"] = string.Empty; // imdb movie MPAA rating
       _properties["#runtime"] = string.Empty; // imdb movie runtime 
       _properties["#iswatched"] = string.Empty; // boolean indication movie has been watched
+      _properties["#music.title"] = string.Empty;
+      _properties["#music.artist"] = string.Empty;
+      _properties["#music.rating"] = string.Empty;
+      _properties["#music.duration"] = string.Empty;
+      _properties["#music.comment"] = string.Empty;
+      _properties["#music.genre"] = string.Empty;
+      _properties["music.year"] = string.Empty;
+      _properties["#music.albumartist"] = string.Empty;
+      _properties["#music.bitrate"] = string.Empty;
+      _properties["#music.composer"] = string.Empty;
+      _properties["#music.conductor"] = string.Empty;
+      _properties["#music.discid"] = string.Empty;
+      _properties["#music.disctotal"] = string.Empty;
+      _properties["#music.lyrics"] = string.Empty;
+      _properties["#music.timesplayed"] = string.Empty;
+      _properties["#music.tracktotal"] = string.Empty;
+      _properties["#music.filetype"] = string.Empty;
+      _properties["#music.codec"] = string.Empty;
+      _properties["#music.bitratemode"] = string.Empty;
+      _properties["#music.bpm"] = string.Empty;
+      _properties["#music.channels"] = string.Empty;
+      _properties["#music.samplerate"] = string.Empty;
+      _properties["#music.datelastplayed"] = string.Empty;
+      _properties["#music.dateadded"] = string.Empty;
+      _properties["#AlbumInfo.Review"] = string.Empty;
+      _properties["#AlbumInfo.Rating"] = string.Empty;
+      _properties["#AlbumInfo.Genre"] = string.Empty;
+      _properties["#AlbumInfo.Styles"] = string.Empty;
+      _properties["#AlbumInfo.Tones"] = string.Empty;
+      _properties["#AlbumInfo.Year"] = string.Empty;
+      _properties["#ArtistInfo.Bio"] = string.Empty;
+      _properties["#ArtistInfo.Born"] = string.Empty;
+      _properties["#ArtistInfo.Genres"] = string.Empty;
+      _properties["#ArtistInfo.Instruments"] = string.Empty;
+      _properties["#ArtistInfo.Styles"] = string.Empty;
+      _properties["#ArtistInfo.Tones"] = string.Empty;
+      _properties["#ArtistInfo.YearsActive"] = string.Empty;
+
       _properties["#thumb"] = string.Empty;
       _properties["#currentplaytime"] = string.Empty;
       _properties["#currentremaining"] = string.Empty;
@@ -143,6 +182,8 @@ namespace MediaPortal.GUI.Library
       _properties["#Radio.Guide.Day"] = string.Empty;
       _properties["#Radio.Guide.thumb"] = string.Empty;
       _properties["#Radio.Guide.Title"] = string.Empty;
+      _properties["#Radio.Guide.SubTitle"] = string.Empty;
+      _properties["#Radio.Guide.CompositeTitle"] = string.Empty;
       _properties["#Radio.Guide.Time"] = string.Empty;
       _properties["#Radio.Guide.Duration"] = string.Empty;
       _properties["#Radio.Guide.TimeFromNow"] = string.Empty;
@@ -156,6 +197,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Radio.Guide.Date"] = string.Empty;
       _properties["#Radio.Guide.StarRating"] = string.Empty;
       _properties["#Radio.Guide.Classification"] = string.Empty;
+      _properties["#Radio.Guide.Group"] = string.Empty;
 
       _properties["#TV.RecordedTV.Title"] = string.Empty;
       _properties["#TV.RecordedTV.Time"] = string.Empty;
@@ -201,6 +243,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Duration"] = string.Empty;
       _properties["#Play.Current.Plot"] = string.Empty;
       _properties["#Play.Current.PlotOutline"] = string.Empty;
+      _properties["#Play.Current.UserReview"] = string.Empty;
       _properties["#Play.Current.Channel"] = string.Empty;
       _properties["#Play.Current.Cast"] = string.Empty;
       _properties["#Play.Current.DVDLabel"] = string.Empty;
@@ -219,6 +262,38 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Lastfm.ArtistInfo"] = string.Empty;
       _properties["#Play.Current.Lastfm.CurrentStream"] = string.Empty;
 
+      _properties["#Play.Current.AlbumArtist"] = string.Empty;
+      _properties["#Play.Current.BitRate"] = string.Empty;
+      _properties["#Play.Current.Composer"] = string.Empty;
+      _properties["#Play.Current.Conductor"] = string.Empty;
+      _properties["#Play.Current.DiscID"] = string.Empty;
+      _properties["#Play.Current.DiscTotal"] = string.Empty;
+      _properties["#Play.Current.Lyrics"] = string.Empty;
+      _properties["#Play.Current.TimesPlayed"] = string.Empty;
+      _properties["#Play.Current.TrackTotal"] = string.Empty;
+      _properties["#Play.Current.FileType"] = string.Empty;
+      _properties["#Play.Current.Codec"] = string.Empty;
+      _properties["#Play.Current.BitRateMode"] = string.Empty;
+      _properties["#Play.Current.BPM"] = string.Empty;
+      _properties["#Play.Current.Channels"] = string.Empty;
+      _properties["#Play.Current.SampleRate"] = string.Empty;
+      _properties["#Play.Current.DateLastPlayed"] = string.Empty;
+      _properties["#Play.Current.DateAdded"] = string.Empty;
+
+      _properties["#Play.AlbumInfo.Review"] = string.Empty;
+      _properties["#Play.AlbumInfo.Rating"] = string.Empty;
+      _properties["#Play.AlbumInfo.Genre"] = string.Empty;
+      _properties["#Play.AlbumInfo.Styles"] = string.Empty;
+      _properties["#Play.AlbumInfo.Tones"] = string.Empty;
+      _properties["#Play.AlbumInfo.Year"] = string.Empty;
+      _properties["#Play.ArtistInfo.Bio"] = string.Empty;
+      _properties["#Play.ArtistInfo.Born"] = string.Empty;
+      _properties["#Play.ArtistInfo.Genres"] = string.Empty;
+      _properties["#Play.ArtistInfo.Instruments"] = string.Empty;
+      _properties["#Play.ArtistInfo.Styles"] = string.Empty;
+      _properties["#Play.ArtistInfo.Tones"] = string.Empty;
+      _properties["#Play.ArtistInfo.YearsActive"] = string.Empty;
+
       _properties["#Play.Next.Thumb"] = string.Empty;
       _properties["#Play.Next.File"] = string.Empty;
       _properties["#Play.Next.Title"] = string.Empty;
@@ -232,6 +307,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Next.Duration"] = string.Empty;
       _properties["#Play.Next.Plot"] = string.Empty;
       _properties["#Play.Next.PlotOutline"] = string.Empty;
+      _properties["#Play.Next.UserReview"] = string.Empty;
       _properties["#Play.Next.Channel"] = string.Empty;
       _properties["#Play.Next.Cast"] = string.Empty;
       _properties["#Play.Next.DVDLabel"] = string.Empty;
@@ -243,6 +319,25 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Next.Runtime"] = string.Empty;
       _properties["#Play.Next.MPAARating"] = string.Empty;
       _properties["#Play.Next.IsWatched"] = string.Empty;
+
+      _properties["#Play.Next.AlbumArtist"] = string.Empty;
+      _properties["#Play.Next.BitRate"] = string.Empty;
+      _properties["#Play.Next.Comment"] = string.Empty;
+      _properties["#Play.Next.Composer"] = string.Empty;
+      _properties["#Play.Next.Conductor"] = string.Empty;
+      _properties["#Play.Next.DiscID"] = string.Empty;
+      _properties["#Play.Next.DiscTotal"] = string.Empty;
+      _properties["#Play.Next.Lyrics"] = string.Empty;
+      _properties["#Play.Next.TimesPlayed"] = string.Empty;
+      _properties["#Play.Next.TrackTotal"] = string.Empty;
+      _properties["#Play.Next.FileType"] = string.Empty;
+      _properties["#Play.Next.Codec"] = string.Empty;
+      _properties["#Play.Next.BitRateMode"] = string.Empty;
+      _properties["#Play.Next.BPM"] = string.Empty;
+      _properties["#Play.Next.Channels"] = string.Empty;
+      _properties["#Play.Next.SampleRate"] = string.Empty;
+      _properties["#Play.Next.DateLastPlayed"] = string.Empty;
+      _properties["#Play.Next.DateAdded"] = string.Empty;
 
       _properties["#Lastfm.Rating.AlbumTrack1"] = string.Empty;
       _properties["#Lastfm.Rating.AlbumTrack2"] = string.Empty;
@@ -260,7 +355,7 @@ namespace MediaPortal.GUI.Library
       _properties["#numberplace.score4"] = string.Empty;
       _properties["#numberplace.score5"] = string.Empty;
 
-      _properties["#facadeview.viewmode"] = string.Empty;
+      _properties["#facadeview.layout"] = string.Empty;
 
       _properties["#VUMeterL"] = string.Empty; // The name of the VUMeterfile Left
       _properties["#VUMeterR"] = string.Empty; // The name of the VUMeterfile Right
@@ -304,11 +399,18 @@ namespace MediaPortal.GUI.Library
       bool changed = false;
       lock (_properties)
       {
-        changed = (!_properties.ContainsKey(tag) || _properties[tag] != tagvalue);
+        string oldValue;
+        changed = !_properties.TryGetValue(tag, out oldValue) || oldValue != tagvalue; // saves one lookup
+        //changed = (!_properties.ContainsKey(tag) || _properties[tag] != tagvalue);
         if (changed)
         {
           _properties[tag] = tagvalue;
         }
+      }
+
+      if (changed)
+      {
+        GUIExpressionManager.InvalidateExpression(tag);
       }
 
       if (changed && OnPropertyChanged != null)
@@ -329,8 +431,8 @@ namespace MediaPortal.GUI.Library
       if (tag != null && tag.IndexOf('#') > -1)
       {
         lock (_properties)
-        {          
-          _properties.TryGetValue(tag, out property);                    
+        {
+          _properties.TryGetValue(tag, out property);
         }
       }
 
@@ -356,6 +458,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Duration", string.Empty);
       SetProperty("#Play.Current.Plot", string.Empty);
       SetProperty("#Play.Current.PlotOutline", string.Empty);
+      SetProperty("#Play.Current.UserReview", string.Empty);
       SetProperty("#Play.Current.Channel", string.Empty);
       SetProperty("#Play.Current.Cast", string.Empty);
       SetProperty("#Play.Current.DVDLabel", string.Empty);
@@ -367,7 +470,29 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Runtime", string.Empty);
       SetProperty("#Play.Current.MPAARating", string.Empty);
       SetProperty("#Play.Current.IsWatched", string.Empty);
-
+      SetProperty("#Play.Current.AlbumArtist", string.Empty);
+      SetProperty("#Play.Current.BitRate", string.Empty);
+      SetProperty("#Play.Current.Comment", string.Empty);
+      SetProperty("#Play.Current.Composer", string.Empty);
+      SetProperty("#Play.Current.Conductor", string.Empty);
+      SetProperty("#Play.Current.DiscID", string.Empty);
+      SetProperty("#Play.Current.DiscTotal", string.Empty);
+      SetProperty("#Play.Current.Lyrics", string.Empty);
+      SetProperty("#Play.Current.TimesPlayed", string.Empty);
+      SetProperty("#Play.Current.TrackTotal", string.Empty);
+      SetProperty("#Play.AlbumInfo.Review", string.Empty);
+      SetProperty("#Play.AlbumInfo.Rating", string.Empty);
+      SetProperty("#Play.AlbumInfo.Genre", string.Empty);
+      SetProperty("#Play.AlbumInfo.Styles", string.Empty);
+      SetProperty("#Play.AlbumInfo.Tones", string.Empty);
+      SetProperty("#Play.AlbumInfo.Year", string.Empty);
+      SetProperty("#Play.ArtistInfo.Bio", string.Empty);
+      SetProperty("#Play.ArtistInfo.Born", string.Empty);
+      SetProperty("#Play.ArtistInfo.Genres", string.Empty);
+      SetProperty("#Play.ArtistInfo.Instruments", string.Empty);
+      SetProperty("#Play.ArtistInfo.Styles", string.Empty);
+      SetProperty("#Play.ArtistInfo.Tones", string.Empty);
+      SetProperty("#Play.ArtistInfo.YearsActive", string.Empty);
 
       SetProperty("#Play.Next.Thumb", string.Empty);
       SetProperty("#Play.Next.File", string.Empty);
@@ -382,6 +507,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.Duration", string.Empty);
       SetProperty("#Play.Next.Plot", string.Empty);
       SetProperty("#Play.Next.PlotOutline", string.Empty);
+      SetProperty("#Play.Next.UserReview", string.Empty);
       SetProperty("#Play.Next.Channel", string.Empty);
       SetProperty("#Play.Next.Cast", string.Empty);
       SetProperty("#Play.Next.DVDLabel", string.Empty);
@@ -393,6 +519,17 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.Runtime", string.Empty);
       SetProperty("#Play.Next.MPAARating", string.Empty);
       SetProperty("#Play.Next.IsWatched", string.Empty);
+
+      SetProperty("#Play.Next.AlbumArtist", string.Empty);
+      SetProperty("#Play.Next.BitRate", string.Empty);
+      SetProperty("#Play.Next.Comment", string.Empty);
+      SetProperty("#Play.Next.Composer", string.Empty);
+      SetProperty("#Play.Next.Conductor", string.Empty);
+      SetProperty("#Play.Next.DiscID", string.Empty);
+      SetProperty("#Play.Next.DiscTotal", string.Empty);
+      SetProperty("#Play.Next.Lyrics", string.Empty);
+      SetProperty("#Play.Next.TimesPlayed", string.Empty);
+      SetProperty("#Play.Next.TrackTotal", string.Empty);
 
       _isChanged = true;
     }
@@ -409,13 +546,18 @@ namespace MediaPortal.GUI.Library
         return string.Empty;
       }
 
+      line = GUIExpressionManager.Parse(line);
+
       if (line.IndexOf('#') > -1)
       {
         // Matches a property tag and replaces it with the value for that property
-        MatchCollection matches = propertyExpr.Matches(line);
-        foreach (Match match in matches)
+        // sort the matches descending by the length of their value, to prevent a match named "#selecteditem" replacing "#selecteditem2" in the line
+        var matches = from Match aMatch in propertyExpr.Matches(line)
+                      orderby aMatch.Value.Length descending
+                      select aMatch.Value;
+        foreach (string match in matches)
         {
-          line = line.Replace(match.Value, ParseProperty(match.Value));
+          line = line.Replace(match, ParseProperty(match));
         }
       }
 
@@ -442,7 +584,7 @@ namespace MediaPortal.GUI.Library
           if (_properties.TryGetValue(tag, out propertyValue))
           {
             return property.Replace(tag, propertyValue);
-          }          
+          }
         }
       }
 

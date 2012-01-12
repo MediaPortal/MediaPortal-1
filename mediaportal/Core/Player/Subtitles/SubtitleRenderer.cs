@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,7 +31,6 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Font = System.Drawing.Font;
 using MediaPortal.ExtensionMethods;
-
 
 
 namespace MediaPortal.Player.Subtitles
@@ -260,7 +259,7 @@ namespace MediaPortal.Player.Subtitles
         _instance._updateTimeoutCallBack = new UpdateTimeoutCallback(_instance.UpdateTimeout);
       }
       return _instance;
-    }    
+    }
 
     public void SetPlayer(IPlayer p)
     {
@@ -403,7 +402,8 @@ namespace MediaPortal.Player.Subtitles
           try
           {
             // allocate new texture
-            texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1, Usage.Dynamic,
+            texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1,
+                                  Usage.Dynamic,
                                   Format.A8R8G8B8, Pool.Default);
 
             if (texture == null)
@@ -413,7 +413,7 @@ namespace MediaPortal.Player.Subtitles
             }
 
             int pitch;
-            using (GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch))
+            using (GraphicsStream a = texture.LockRectangle(0, LockFlags.Discard, out pitch))
             {
               // Quick copy of content
               unsafe
@@ -429,7 +429,7 @@ namespace MediaPortal.Player.Subtitles
                 }
               }
               a.Close();
-            }            
+            }
 
             texture.UnlockRectangle(0);
             subtitle.texture = texture;
@@ -510,7 +510,7 @@ namespace MediaPortal.Player.Subtitles
                   _activeSubPage);
 
         Subtitle subtitle = new Subtitle();
-        
+
         // TODO - RenderText should directly draw to a D3D texture
         subtitle.subBitmap = RenderText(sub.lc);
         subtitle.timeOut = sub.timeOut;
@@ -526,10 +526,10 @@ namespace MediaPortal.Player.Subtitles
         try
         {
           // allocate new texture
-          texture = new Texture(GUIGraphicsContext.DX9Device, subtitle.subBitmap.Width, 
-            subtitle.subBitmap.Height, 1, Usage.Dynamic, Format.A8R8G8B8, Pool.Default);
+          texture = new Texture(GUIGraphicsContext.DX9Device, subtitle.subBitmap.Width,
+                                subtitle.subBitmap.Height, 1, Usage.Dynamic, Format.A8R8G8B8, Pool.Default);
           int pitch;
-          using (GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch))
+          using (GraphicsStream a = texture.LockRectangle(0, LockFlags.Discard, out pitch))
           {
             BitmapData bd = subtitle.subBitmap.LockBits(new Rectangle(0, 0, subtitle.subBitmap.Width,
                                                                       subtitle.subBitmap.Height), ImageLockMode.ReadOnly,
@@ -549,12 +549,12 @@ namespace MediaPortal.Player.Subtitles
               }
             }
 
-
             texture.UnlockRectangle(0);
             subtitle.subBitmap.UnlockBits(bd);
             subtitle.subBitmap.SafeDispose();
             subtitle.subBitmap = null;
             subtitle.texture = texture;
+            a.Close();
           }
         }
         catch (Exception e)
@@ -571,8 +571,6 @@ namespace MediaPortal.Player.Subtitles
         Log.Error("Problem processing text subtitle");
         Log.Error(e);
       }
-
-      return;
     }
 
     public static Bitmap RenderText(LineContent[] lc)
@@ -623,16 +621,16 @@ namespace MediaPortal.Player.Subtitles
 
           // dispose of old subtitle
           _subTexture.SafeDispose();
-          _subTexture = null;          
+          _subTexture = null;
 
           // set new subtitle
           if (subtitle != null)
           {
             _subTexture = subtitle.texture;
             _currentSubtitle = subtitle;
-            
+
             _currentSubtitle.subBitmap.SafeDispose();
-            _currentSubtitle.subBitmap = null;            
+            _currentSubtitle.subBitmap = null;
           }
         }
       }
@@ -682,25 +680,25 @@ namespace MediaPortal.Player.Subtitles
         return;
       }
 
-      if (_clearOnNextRender)
-      {
-        //Log.Debug("SubtitleRenderer: clearOnNextRender");
-        _clearOnNextRender = false;
-        if (_subTexture != null)
-        {
-          _subTexture.SafeDispose();
-        }
-        _subTexture = null;
-        _currentSubtitle = null;
-      }
-
-      if (_renderSubtitles == false)
-      {
-        return;
-      }
-
       lock (_subtitleLock)
       {
+        if (_clearOnNextRender)
+        {
+          //Log.Debug("SubtitleRenderer: clearOnNextRender");
+          _clearOnNextRender = false;
+          if (_subTexture != null)
+          {
+            _subTexture.SafeDispose();
+          }
+          _subTexture = null;
+          _currentSubtitle = null;
+        }
+
+        if (_renderSubtitles == false)
+        {
+          return;
+        }
+
         // ugly temp!
         bool timeForNext = false;
         if (_subtitles.Count > 0)
@@ -711,11 +709,12 @@ namespace MediaPortal.Player.Subtitles
             timeForNext = true;
           }
         }
-        
+
         _posOnLastRender = _player.StreamPosition;
 
         // Check for subtitle if we dont have one currently or if the current one is beyond its timeout
-        if (_currentSubtitle == null || _currentSubtitle.presentTime + _currentSubtitle.timeOut <= _player.StreamPosition ||
+        if (_currentSubtitle == null ||
+            _currentSubtitle.presentTime + _currentSubtitle.timeOut <= _player.StreamPosition ||
             timeForNext)
         {
           //Log.Debug("-Current position: ");
@@ -749,7 +748,7 @@ namespace MediaPortal.Player.Subtitles
                 break;
               }
             }
-            // next wants to be displayed in the future so break
+              // next wants to be displayed in the future so break
             else
             {
               //Log.Debug("-next is in the future");
@@ -766,7 +765,7 @@ namespace MediaPortal.Player.Subtitles
             return;
           }
         }
-        bool alphaTest = false;
+        //bool alphaTest = false;
         bool alphaBlend = false;
         VertexFormats vertexFormat = CustomVertex.TransformedColoredTextured.Format;
 
@@ -786,7 +785,7 @@ namespace MediaPortal.Player.Subtitles
 
             // Get the location to render the subtitle to
             wx = GUIGraphicsContext.OverScanLeft +
-                   (int)(((float)(GUIGraphicsContext.Width - _currentSubtitle.width * rationW)) / 2);
+                 (int)(((float)(GUIGraphicsContext.Width - _currentSubtitle.width * rationW)) / 2);
             wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)_currentSubtitle.firstScanLine);
           }
           else // Video overlay
@@ -795,21 +794,21 @@ namespace MediaPortal.Player.Subtitles
             rationW = rationH;
 
             wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width / 2) -
-                   (int)(((float)_currentSubtitle.width * rationW) / 2);
+                 (int)(((float)_currentSubtitle.width * rationW) / 2);
             wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)_currentSubtitle.firstScanLine);
           }
 
-            wwidth = (int)((float)_currentSubtitle.width * rationW);
-            wheight = (int)((float)_currentSubtitle.height * rationH);
+          wwidth = (int)((float)_currentSubtitle.width * rationW);
+          wheight = (int)((float)_currentSubtitle.height * rationH);
 
           // make sure the vertex buffer is ready and correct for the coordinates
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 
           // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
-          
+
           // enable alpha blending so that the subtitle is rendered with transparent background
           FontEngineSetAlphaBlend(1); //TRUE
-          
+
           // Make sure D3D objects haven't been disposed for some reason. This would  cause
           // an access violation on native side, causing Skin Engine to halt rendering
           if (!_subTexture.Disposed && !_vertexBuffer.Disposed)
@@ -822,7 +821,7 @@ namespace MediaPortal.Player.Subtitles
           else
           {
             Log.Debug("Subtitle renderer: D3D resource was disposed! Not trying to render the texture");
-          }       
+          }
         }
         catch (Exception e)
         {
@@ -856,9 +855,9 @@ namespace MediaPortal.Player.Subtitles
       {
         Log.Debug("Subtitle: Creating vertex buffer");
         _vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
-                                        4, GUIGraphicsContext.DX9Device,
-                                        0, CustomVertex.TransformedTextured.Format,
-                                        GUIGraphicsContext.GetTexturePoolType());
+                                         4, GUIGraphicsContext.DX9Device,
+                                         0, CustomVertex.TransformedTextured.Format,
+                                         GUIGraphicsContext.GetTexturePoolType());
         _wx = _wy = _wwidth = _wheight = 0;
       }
 
@@ -920,11 +919,11 @@ namespace MediaPortal.Player.Subtitles
         {
           _vertexBuffer.SafeDispose();
           _vertexBuffer = null;
-         }
+        }
       }
 
       lock (_alert)
-      {        
+      {
         _subFilter = null;
       }
 

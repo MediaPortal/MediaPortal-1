@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox useMediaInfo;
 
     public DVDPlayer()
-      : this("DVD Discs/Images Player") { }
+      : this("DVD Discs/Images Player") {}
 
     public DVDPlayer(string name)
       : base(name)
@@ -150,9 +150,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.fileNameTextBox);
       this.mpGroupBox1.Controls.Add(this.label1);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 73);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 73);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 104);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 104);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "External Player";
@@ -162,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersButton.Location = new System.Drawing.Point(384, 67);
+      this.parametersButton.Location = new System.Drawing.Point(374, 67);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 6;
@@ -179,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 68);
       this.parametersTextBox.Name = "parametersTextBox";
-      this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
+      this.parametersTextBox.Size = new System.Drawing.Size(198, 20);
       this.parametersTextBox.TabIndex = 5;
       // 
       // label2
@@ -195,7 +195,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.Location = new System.Drawing.Point(384, 43);
+      this.fileNameButton.Location = new System.Drawing.Point(374, 43);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;
@@ -212,7 +212,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 44);
       this.fileNameTextBox.Name = "fileNameTextBox";
-      this.fileNameTextBox.Size = new System.Drawing.Size(208, 20);
+      this.fileNameTextBox.Size = new System.Drawing.Size(198, 20);
       this.fileNameTextBox.TabIndex = 2;
       // 
       // label1
@@ -247,9 +247,9 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.useMediaInfo);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
+      this.mpGroupBox3.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(472, 67);
+      this.mpGroupBox3.Size = new System.Drawing.Size(462, 67);
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Settings";

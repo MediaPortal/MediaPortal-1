@@ -19,4 +19,8 @@
       </Fields>
     </Xml>
   </Listing>
+  <Actions>
+    <Modify channel="*" field="#DESCRIPTION" search="\&lt;!\[CDATA\[" action="Replace"></Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="\]\]\&gt;" action="Replace"></Modify>
+  </Actions>
 </Grabber>

@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,9 +12,10 @@
     <AssemblyName>TVLibrary</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +72,9 @@
       <HintPath>..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -77,6 +82,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="DebugSettings.cs" />
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Components\Capture.cs" />
@@ -118,7 +126,6 @@
     <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPBuiltIn.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPElecard.cs" />
     <Compile Include="Implementations\DVB\Graphs\MDPlug.cs" />
-    <Compile Include="Implementations\DVB\Graphs\SS2\DVBSS2Scanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\TvDvbChannel.cs" />
     <Compile Include="Implementations\DVB\Structures\DVB_MMI.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
@@ -142,6 +149,7 @@
     <Compile Include="Implementations\DVB\Graphs\Iso6937ToUnicode.cs" />
     <Compile Include="Implementations\DVB\Structures\PidInfo.cs" />
     <Compile Include="Implementations\DVB\Structures\TSHelperTools.cs" />
+    <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FileAccess.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\Helper\GraphState.cs" />
@@ -153,6 +161,7 @@
     <Compile Include="Implementations\RadioWebStream\RadioWebStreamCard.cs" />
     <Compile Include="Implementations\TvCardBase.cs" />
     <Compile Include="Implementations\TvCardCollection.cs" />
+    <Compile Include="Interfaces\Analyzer\IDVBNetworkProvider.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IMPRecord.cs">
       <SubType>Code</SubType>

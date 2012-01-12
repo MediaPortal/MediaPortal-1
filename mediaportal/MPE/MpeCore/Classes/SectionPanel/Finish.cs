@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ namespace MpeCore.Classes.SectionPanel
       CheckBoxs.Add(checkBox5);
       CheckBoxs.Add(checkBox6);
       CheckBoxs.Add(checkBox7);
-      
+
       RadioButtons.Add(radioButton1);
       RadioButtons.Add(radioButton2);
       RadioButtons.Add(radioButton3);
@@ -148,7 +148,7 @@ namespace MpeCore.Classes.SectionPanel
       i = 0;
       foreach (var includedGroup in Section.IncludedGroups)
       {
-        if(Section.Params[CONST_RADIO].GetValueAsBool())
+        if (Section.Params[CONST_RADIO].GetValueAsBool())
         {
           RadioButtons[i].Visible = true;
           RadioButtons[i].Text = _packageClass.Groups[includedGroup].DisplayName;
@@ -172,35 +172,38 @@ namespace MpeCore.Classes.SectionPanel
       switch (Section.WizardButtonsEnum)
       {
         case WizardButtonsEnum.BackNextCancel:
+          button_back.Enabled = true;
+          button_next.Enabled = true;
+          button_cancel.Enabled = true;
           button_next.Visible = true;
           button_cancel.Visible = true;
           button_back.Visible = true;
           break;
         case WizardButtonsEnum.NextCancel:
-          button_next.Visible = true;
-          button_cancel.Visible = true;
-          button_back.Visible = false;
+          button_next.Enabled = true;
+          button_cancel.Enabled = true;
+          button_back.Enabled = false;
           break;
         case WizardButtonsEnum.BackFinish:
-          button_next.Visible = true;
-          button_cancel.Visible = false;
-          button_back.Visible = true;
+          button_next.Enabled = true;
+          button_cancel.Enabled = false;
+          button_back.Enabled = true;
           button_next.Text = "Finish";
           break;
         case WizardButtonsEnum.Cancel:
-          button_next.Visible = false;
-          button_cancel.Visible = true;
-          button_back.Visible = false;
+          button_next.Enabled = false;
+          button_cancel.Enabled = true;
+          button_back.Enabled = false;
           break;
         case WizardButtonsEnum.Next:
-          button_next.Visible = true;
-          button_cancel.Visible = false;
-          button_back.Visible = false;
+          button_next.Enabled = true;
+          button_cancel.Enabled = false;
+          button_back.Enabled = false;
           break;
         case WizardButtonsEnum.Finish:
-          button_next.Visible = true;
-          button_cancel.Visible = false;
-          button_back.Visible = false;
+          button_next.Enabled = true;
+          button_cancel.Enabled = false;
+          button_back.Enabled = false;
           button_next.Text = "Finish";
           break;
         default:

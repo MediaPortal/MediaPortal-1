@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -159,8 +159,8 @@ namespace MediaPortal.Utils.Web
         using (TextReader CacheFile = new StreamReader(file))
         {
           _strPageSource = CacheFile.ReadToEnd();
-          CacheFile.Close(); 
-        }        
+          CacheFile.Close();
+        }
 
         return true;
       }
@@ -183,9 +183,8 @@ namespace MediaPortal.Utils.Web
       using (TextWriter CacheFile = new StreamWriter(file))
       {
         CacheFile.Write(source);
-        CacheFile.Close();  
+        CacheFile.Close();
       }
-      
     }
 
     /// <summary>

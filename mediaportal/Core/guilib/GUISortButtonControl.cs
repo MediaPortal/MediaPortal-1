@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Library
           SortChanged -= eventDelegate;
         }
       }
-    } */  
+    } */
 
     public override void PreAllocResources()
     {
@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Library
         _sortImages[3].Width = _sortButtonWidth;
         _sortImages[3].Height = _sortButtonHeight;
       }
-      int sortImageIndex = _isAscending ? isFocused && _isSortImageHot ? 3 : 2 : isFocused && _isSortImageHot ? 1 : 0;
+      int sortImageIndex = _isAscending ? isFocused && _isSortImageHot ? 1 : 0 : isFocused && _isSortImageHot ? 3 : 2;
       // Render only when sortbutton is visible
       if (Visible)
         _sortImages[sortImageIndex].Render(timePassed);

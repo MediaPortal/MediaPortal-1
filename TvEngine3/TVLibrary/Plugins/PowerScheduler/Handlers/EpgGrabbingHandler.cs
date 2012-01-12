@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -242,7 +242,10 @@ namespace TvEngine.PowerScheduler.Handlers
         psi.WindowStyle = ProcessWindowStyle.Minimized;
         psi.Arguments = action;
         psi.ErrorDialog = false;
-        psi.Verb = "runas";
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          psi.Verb = "runas";
+        }
 
         p.StartInfo = psi;
         Log.Debug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);

@@ -12,9 +12,11 @@
     <Channel id="zebra@tv2.no" siteId="tv2zebra" />    
     <Channel id="nyhetskanalen@tv2.no" siteId="tv2nyhet" />
     <Channel id="sport@tv2.no" siteId="tv2sport" />
+    <Channel id="bliss@tv2.no" siteId="tv2bliss" />
     <Channel id="tvnorge.no" siteId="tvn" />
     <Channel id="tvnorgehd.no" siteId="tvnhd" />
     <Channel id="fem@tvnorge.no" siteId="fem" />
+    <Channel id="max@tvnorge.no" siteId="max" />
     <Channel id="tv3.no" siteId="tv3" />
     <Channel id="viasat4@viasat.no" siteId="viasat4" />
     <Channel id="3sat.de" siteId="3sat" />
@@ -98,7 +100,7 @@
     <Channel id="family@tv1000.no" siteId="tv1kfamily" />
     <Channel id="nordic@tv1000.no" siteId="tv1knordic" />
     <Channel id="vh1.com" siteId="vh1" />
-    <Channel id="vh1classic.com" siteId="vh1classic" />
+    <Channel id="classic@vh1.co.uk" siteId="vh1classic" />
     <Channel id="explorer@viasat.no" siteId="viaexpl" />
     <Channel id="sport@viasatsport.no" siteId="viaspo" />
     <Channel id="sport2@viasatsport.no" siteId="viaspo2" />
@@ -108,18 +110,13 @@
     <Channel id="silverhd.no" siteId="silverhd" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" />
+    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" user-agent="Mozilla/4.0 (compatible; MSIE 7.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)" />
     <Html>
-      <Template name="default" end="Templatemodule">
-        <SectionTemplate tags="TFB">
+      <Template name="default" start="tableau">
+        <SectionTemplate tags="TSI">
           <TemplateText>
-&lt;td&gt;
-&lt;font&gt;&lt;b&gt;&lt;#START&gt;&lt;/b&gt;&lt;br&gt;
-&lt;font&gt;&lt;#END&gt;&lt;br&gt;
-&lt;/td&gt;&lt;td&gt;&lt;font&gt;
-&lt;font&gt;&lt;#GENRE&gt;&lt;/td&gt;&lt;td&gt;&lt;font&gt;
-&lt;a&gt;&lt;b&gt;&lt;#TITLE&gt; (&lt;#EPISODE&gt;)&lt;/b&gt;&lt;/a&gt; &lt;z(&gt;(&lt;#REPEAT&gt;)&lt;/z)?&gt; 
-&lt;br&gt;&lt;#SUBTITLENOTUSED&gt;&lt;/td&gt;&lt;td&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;&lt;#START&gt;&lt;/strong&gt;&lt;br&gt;&lt;span&gt;&lt;#END&gt;&lt;/span&gt;&lt;br/&gt;
+&lt;/td&gt;&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;&lt;a&gt;&lt;#TITLE&gt; (&lt;#EPISODE&gt;)&lt;/a&gt;&lt;/strong&gt; &lt;z(&gt;(&lt;#REPEAT&gt;)&lt;/z)?&gt; &lt;br&gt;&lt;#SUBTITLENOTUSED&gt;&lt;/td&gt;&lt;td&gt;&lt;z(&gt;&lt;img&gt;&lt;/z)?&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
@@ -140,7 +137,7 @@
       </Template>
       <Sublinks>
         <Sublink search="guiden" template="Details">
-          <Link url="http://www.sol.no/underholdning/tv/guiden/expand.cgi?[1]" post="" external="false" encoding="utf-8" />
+          <Link url="http://www.sol.no/underholdning/tv/guiden/expand.cgi?[1]" post="" external="false" encoding="utf-8" user-agent="Mozilla/4.0 (compatible; MSIE 7.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)" />
         </Sublink>
       </Sublinks>
       <Searches>

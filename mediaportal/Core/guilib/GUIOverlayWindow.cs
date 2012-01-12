@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,10 +30,10 @@ namespace MediaPortal.GUI.Library
       GUIWindowManager.OnPostRenderAction -= new GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
       GUIWindowManager.OnPostRenderAction += new GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
       base.OnWindowLoaded();
-    }    
+    }
 
     public override void Dispose()
-    {     
+    {
       GUIWindowManager.OnPostRenderAction -= new GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
       base.Dispose();
     }
@@ -117,7 +117,17 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
+        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_DOUBLECLICK)
+        {
+          int x = (int)action.fAmount1;
+          int y = (int)action.fAmount2;
+          if (DoesPostRender() && InWindow(x, y))
+          {
+            OnAction(action);
+            return (int)GUIWindowManager.FocusState.FOCUSED;
+          }
+        }
+        if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
         {
           if (DoesPostRender())
           {

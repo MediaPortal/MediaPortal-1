@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -60,20 +60,22 @@ namespace TvDatabase
     [TableColumn("recordingFormat", NotNull = true)] private int recordingFormat;
     [TableColumn("decryptLimit", NotNull = true)] private int decryptLimit;
     [TableColumn("preload", NotNull = true)] private bool preloadCard;
+    [TableColumn("stopgraph", NotNull = true)] private bool stopGraph;
 
-    [TableColumn("CAM", NotNull = true)] private bool CAModule;
+    [TableColumn("CAM", NotNull = true)] private bool caModule;
     [TableColumn("NetProvider", NotNull = true)] private int NetProvider;
 
     #endregion
 
     #region Constructors
 
-    /// <summary> 
-    /// Create a new object by specifying all fields (except the auto-generated primary key field). 
-    /// </summary> 
+    /// <summary>
+    /// For backwards compatibility: do *not* use.
+    /// </summary>
+    [System.Obsolete("Use the constructor that provides access to all parameters.")]
     public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder,
                 int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat,
-                int decryptLimit, int NetProvider)
+                int decryptLimit, int netProvider)
     {
       isChanged = true;
       this.devicePath = devicePath;
@@ -88,7 +90,36 @@ namespace TvDatabase
       this.timeshiftingFolder = timeshiftingFolder;
       this.recordingFormat = recordingFormat;
       this.decryptLimit = decryptLimit;
-      this.NetProvider = NetProvider;
+      this.preloadCard = false;
+      this.stopGraph = true;
+      this.caModule = false;
+      this.NetProvider = netProvider;
+    }
+
+    /// <summary> 
+    /// Create a new object by specifying all fields (except the auto-generated primary key field). 
+    /// </summary> 
+    public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder,
+                int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat,
+                int decryptLimit, bool preloadCard, bool stopGraph, bool caModule, int netProvider)
+    {
+      isChanged = true;
+      this.devicePath = devicePath;
+      this.name = name;
+      this.priority = priority;
+      this.grabEPG = grabEPG;
+      this.lastEpgGrab = lastEpgGrab;
+      this.recordingFolder = recordingFolder;
+      this.idServer = idServer;
+      this.enabled = enabled;
+      this.camType = camType;
+      this.timeshiftingFolder = timeshiftingFolder;
+      this.recordingFormat = recordingFormat;
+      this.decryptLimit = decryptLimit;
+      this.preloadCard = preloadCard;
+      this.stopGraph = stopGraph;
+      this.caModule = caModule;
+      this.NetProvider = netProvider;
     }
 
     /// <summary> 
@@ -97,7 +128,7 @@ namespace TvDatabase
     /// </summary> 
     public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab,
                 string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder,
-                int recordingFormat, int decryptLimit, int NetProvider)
+                int recordingFormat, int decryptLimit, bool preloadCard, bool stopGraph, bool caModule, int netProvider)
     {
       this.idCard = idCard;
       this.devicePath = devicePath;
@@ -112,7 +143,10 @@ namespace TvDatabase
       this.timeshiftingFolder = timeshiftingFolder;
       this.recordingFormat = recordingFormat;
       this.decryptLimit = decryptLimit;
-      this.NetProvider = NetProvider;
+      this.preloadCard = preloadCard;
+      this.stopGraph = stopGraph;
+      this.caModule = caModule;
+      this.NetProvider = netProvider;
     }
 
     #endregion
@@ -137,6 +171,19 @@ namespace TvDatabase
       {
         isChanged |= preloadCard != value;
         preloadCard = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column stopGraph
+    /// </summary>
+    public bool StopGraph
+    {
+      get { return stopGraph; }
+      set
+      {
+        isChanged |= stopGraph != value;
+        stopGraph = value;
       }
     }
 
@@ -167,11 +214,11 @@ namespace TvDatabase
     /// </summary>
     public bool CAM
     {
-      get { return CAModule; }
+      get { return caModule; }
       set
       {
-        isChanged |= CAModule != value;
-        CAModule = value;
+        isChanged |= caModule != value;
+        caModule = value;
       }
     }
 

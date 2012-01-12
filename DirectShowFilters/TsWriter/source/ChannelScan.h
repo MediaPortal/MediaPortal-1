@@ -53,7 +53,8 @@ DECLARE_INTERFACE_(ITSChannelScan, IUnknown)
 										 char** serviceName,
 										 int* pmtPid,
 										 int* hasVideo,
-										 int* hasAudio)PURE;
+										 int* hasAudio,
+										 int* hasCaDescriptor)PURE;
 	STDMETHOD(SetCallBack)(THIS_ IChannelScanCallback* callback)PURE;
 
 	STDMETHOD(ScanNIT)(THIS_)PURE;
@@ -92,7 +93,8 @@ public:
 										 char** serviceName,
 										 int* pmtPid,
 										 int* hasVideo,
-										 int* hasAudio);
+										 int* hasAudio,
+										 int* hasCaDescriptor);
 	STDMETHODIMP SetCallBack(IChannelScanCallback* callback);
 
 	STDMETHODIMP ScanNIT();

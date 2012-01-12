@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Language name="Croatian" characters="255">
+<Language name="Croatian" characters="512">
   <Section name="unmapped">
     <String id="0" prefix="Moji">Programi</String>
     <String id="1" prefix="Moje">Slike</String>

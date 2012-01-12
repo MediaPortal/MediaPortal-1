@@ -66,8 +66,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
       
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");      
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");      
     }
 
     [Test]
@@ -91,8 +91,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -116,8 +116,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -142,8 +142,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     #endregion
@@ -175,8 +175,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -204,8 +204,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;            
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -233,8 +233,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -262,8 +262,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 2, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(2, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -291,8 +291,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 4, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(4, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -320,8 +320,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -350,8 +350,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 2, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(2, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -380,8 +380,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -410,8 +410,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -440,8 +440,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 3, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(3, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     ///<summary>
@@ -469,8 +469,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 3, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(3, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     ///<summary>
@@ -498,8 +498,8 @@ namespace TvPluginTests
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 4, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(4, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -527,8 +527,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -556,8 +556,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -585,8 +585,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -614,8 +614,35 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
+    }
+
+    ///<summary>
+    /// test for fix : http://mantis.team-mediaportal.com/view.php?id=3330
+    /// streams : 2
+    /// stream1 : mpeg1, lang: dan.
+    /// stream2 : AC3, lang: eng.
+    /// pref_lang : swe
+    /// PreferAC3 : true
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest38()
+    {
+      g_Player.Player = new PlayerMultipleAudioStreams();
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("swe");
+
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = true;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     #endregion
@@ -643,8 +670,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");      
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");      
     }
 
     [Test]
@@ -669,8 +696,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.LEFT_MONO, "dualMonoMode returned should be LEFT_MONO");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.LEFT_MONO, dualMonoMode, "dualMonoMode returned should be LEFT_MONO");
     }
 
     ///<summary>
@@ -694,8 +721,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.RIGHT_MONO, dualMonoMode, "dualMonoMode returned should be RIGHT_MONO");
     }
 
     ///<summary>
@@ -719,8 +746,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     ///<summary>
@@ -745,13 +772,43 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.RIGHT_MONO, dualMonoMode, "dualMonoMode returned should be RIGHT_MONO");
     }
 
     #endregion
 
     #region multiple mixed dualmono audiostream available tests
+
+    ///<summary>
+    /// test for fix : http://mantis.team-mediaportal.com/view.php?id=3330
+    /// streams : 5
+    /// stream1 : mpeg1         , lang: dan
+    /// stream2 : mpeg1 dualmono, lang: left: dan right: eng.  
+    /// stream3 : mpeg1 dualmono, lang: left: deu right: swe.  
+    /// stream4 : ac3           , lang: eng
+    /// stream5 : mpeg1         , lang: eng
+    /// pref_lang : nor
+    /// PreferAC3 : true
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest39()
+    {
+      g_Player.Player = new PlayerMultipleDualMonoAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("nor");
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = true;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(3, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
+    }
 
     ///<summary>
     /// streams : 5
@@ -778,8 +835,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 2, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.LEFT_MONO, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(2, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.LEFT_MONO, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
 
@@ -809,8 +866,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 2, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.LEFT_MONO, "dualMonoMode returned should be LEFT_MONO");
+      Assert.AreEqual(2, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.LEFT_MONO, dualMonoMode, "dualMonoMode returned should be LEFT_MONO");
     }
 
     ///<summary>
@@ -838,8 +895,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 3, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(3, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     ///<summary>
@@ -867,8 +924,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.RIGHT_MONO, dualMonoMode, "dualMonoMode returned should be RIGHT_MONO");
     }
 
     ///<summary>
@@ -896,8 +953,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }  
 
     #endregion
@@ -926,8 +983,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.UNSUPPORTED, dualMonoMode, "dualMonoMode returned should be UNSUPPORTED");
     }
 
     [Test]
@@ -953,8 +1010,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.RIGHT_MONO, dualMonoMode, "dualMonoMode returned should be RIGHT_MONO");
     }
 
     [Test]
@@ -980,8 +1037,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.LEFT_MONO, "dualMonoMode returned should be LEFT_MONO");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.LEFT_MONO, dualMonoMode, "dualMonoMode returned should be LEFT_MONO");
     }
 
     [Test]
@@ -1007,8 +1064,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.LEFT_MONO, "dualMonoMode returned should be LEFT_MONO");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.LEFT_MONO, dualMonoMode, "dualMonoMode returned should be LEFT_MONO");
     }
 
 
@@ -1035,8 +1092,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.RIGHT_MONO, dualMonoMode, "dualMonoMode returned should be RIGHT_MONO");
     }
 
     [Test]
@@ -1064,8 +1121,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 1, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+      Assert.AreEqual(1, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.RIGHT_MONO, dualMonoMode, "dualMonoMode returned should be RIGHT_MONO");
     }
 
     [Test]
@@ -1094,8 +1151,8 @@ namespace TvPluginTests
 
       int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
 
-      Assert.AreEqual(index, 0, "Wrong audio index returned");
-      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+      Assert.AreEqual(0, index, "Wrong audio index returned");
+      Assert.AreEqual(eAudioDualMonoMode.RIGHT_MONO, dualMonoMode, "dualMonoMode returned should be RIGHT_MONO");
     }
 
     #endregion

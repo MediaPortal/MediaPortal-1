@@ -1,20 +1,22 @@
-/* 
- *	Copyright (C) 2003-2006 Gabest
- *	http://www.gabest.org
+/*
+ *  $Id: SubPicImpl.cpp 2786 2010-12-17 16:42:55Z XhmikosR $
+ *
+ *  (C) 2003-2006 Gabest
+ *  (C) 2006-2010 see AUTHORS
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -27,7 +29,7 @@
 // CSubPicImpl
 //
 
-CSubPicImpl::CSubPicImpl() 
+CSubPicImpl::CSubPicImpl()
 	: CUnknown(NAME("CSubPicImpl"), NULL)
 	, m_rtStart(0), m_rtStop(0)
 	, m_rtSegmentStart(0), m_rtSegmentStop(0)
@@ -38,7 +40,7 @@ CSubPicImpl::CSubPicImpl()
 
 STDMETHODIMP CSubPicImpl::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
-	return 
+	return
 		QI(ISubPic)
 		__super::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -57,15 +59,17 @@ STDMETHODIMP_(REFERENCE_TIME) CSubPicImpl::GetStop()
 
 STDMETHODIMP_(REFERENCE_TIME) CSubPicImpl::GetSegmentStart()
 {
-	if (m_rtSegmentStart)
+	if (m_rtSegmentStart) {
 		return(m_rtSegmentStart);
+	}
 	return(m_rtStart);
 }
 
 STDMETHODIMP_(REFERENCE_TIME) CSubPicImpl::GetSegmentStop()
 {
-	if (m_rtSegmentStop)
+	if (m_rtSegmentStop) {
 		return(m_rtSegmentStop);
+	}
 	return(m_rtStop);
 }
 
@@ -93,8 +97,9 @@ STDMETHODIMP_(void) CSubPicImpl::SetStop(REFERENCE_TIME rtStop)
 
 STDMETHODIMP CSubPicImpl::CopyTo(ISubPic* pSubPic)
 {
-	if(!pSubPic)
+	if(!pSubPic) {
 		return E_POINTER;
+	}
 
 	pSubPic->SetStart(m_rtStart);
 	pSubPic->SetStop(m_rtStop);
@@ -117,8 +122,7 @@ STDMETHODIMP CSubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* p
 	CheckPointer (pRcSource, E_POINTER);
 	CheckPointer (pRcDest,	 E_POINTER);
 
-	if(m_size.cx > 0 && m_size.cy > 0)
-	{
+	if(m_size.cx > 0 && m_size.cy > 0) {
 		CRect		rcTemp = m_rcDirty;
 
 		// FIXME
@@ -133,9 +137,9 @@ STDMETHODIMP CSubPicImpl::GetSourceAndDest(SIZE* pSize, RECT* pRcSource, RECT* p
 						  rcTemp.bottom * pSize->cy / m_VirtualTextureSize.cy);
 
 		return S_OK;
-	}
-	else
+	} else {
 		return E_INVALIDARG;
+	}
 }
 
 STDMETHODIMP CSubPicImpl::SetDirtyRect(RECT* pDirtyRect)
@@ -153,20 +157,17 @@ STDMETHODIMP CSubPicImpl::SetSize(SIZE size, RECT vidrect)
 	m_size = size;
 	m_vidrect = vidrect;
 
-	if(m_size.cx > m_maxsize.cx)
-	{
+	if(m_size.cx > m_maxsize.cx) {
 		m_size.cy = MulDiv(m_size.cy, m_maxsize.cx, m_size.cx);
 		m_size.cx = m_maxsize.cx;
 	}
 
-	if(m_size.cy > m_maxsize.cy)
-	{
+	if(m_size.cy > m_maxsize.cy) {
 		m_size.cx = MulDiv(m_size.cx, m_maxsize.cy, m_size.cy);
 		m_size.cy = m_maxsize.cy;
 	}
 
-	if(m_size.cx != size.cx || m_size.cy != size.cy)
-	{
+	if(m_size.cx != size.cx || m_size.cy != size.cy) {
 		m_vidrect.top = MulDiv(m_vidrect.top, m_size.cx, size.cx);
 		m_vidrect.bottom = MulDiv(m_vidrect.bottom, m_size.cx, size.cx);
 		m_vidrect.left = MulDiv(m_vidrect.left, m_size.cy, size.cy);
@@ -181,7 +182,7 @@ STDMETHODIMP CSubPicImpl::SetVirtualTextureSize (const SIZE pSize, const POINT p
 {
 	m_VirtualTextureSize.SetSize (pSize.cx, pSize.cy);
 	m_VirtualTextureTopLeft.SetPoint (pTopLeft.x, pTopLeft.y);
-	
+
 	return S_OK;
 }
 
@@ -200,7 +201,7 @@ CSubPicAllocatorImpl::CSubPicAllocatorImpl(SIZE cursize, bool fDynamicWriteOnly,
 
 STDMETHODIMP CSubPicAllocatorImpl::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
-	return 
+	return
 		QI(ISubPicAllocator)
 		__super::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -209,25 +210,26 @@ STDMETHODIMP CSubPicAllocatorImpl::NonDelegatingQueryInterface(REFIID riid, void
 
 STDMETHODIMP CSubPicAllocatorImpl::SetCurSize(SIZE cursize)
 {
-	m_cursize = cursize; 
+	m_cursize = cursize;
 	return S_OK;
 }
 
 STDMETHODIMP CSubPicAllocatorImpl::SetCurVidRect(RECT curvidrect)
 {
-	m_curvidrect = curvidrect; 
+	m_curvidrect = curvidrect;
 	return S_OK;
 }
 
 STDMETHODIMP CSubPicAllocatorImpl::GetStatic(ISubPic** ppSubPic)
 {
-	if(!ppSubPic)
+	if(!ppSubPic) {
 		return E_POINTER;
+	}
 
-	if(!m_pStatic)
-	{
-		if(!Alloc(true, &m_pStatic) || !m_pStatic) 
+	if(!m_pStatic) {
+		if(!Alloc(true, &m_pStatic) || !m_pStatic) {
 			return E_OUTOFMEMORY;
+		}
 	}
 
 	m_pStatic->SetSize(m_cursize, m_curvidrect);
@@ -239,11 +241,13 @@ STDMETHODIMP CSubPicAllocatorImpl::GetStatic(ISubPic** ppSubPic)
 
 STDMETHODIMP CSubPicAllocatorImpl::AllocDynamic(ISubPic** ppSubPic)
 {
-	if(!ppSubPic)
+	if(!ppSubPic) {
 		return E_POINTER;
+	}
 
-	if(!Alloc(false, ppSubPic) || !*ppSubPic)
+	if(!Alloc(false, ppSubPic) || !*ppSubPic) {
 		return E_OUTOFMEMORY;
+	}
 
 	(*ppSubPic)->SetSize(m_cursize, m_curvidrect);
 

@@ -170,8 +170,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("--------- Fast forward debug ---------");
-  LogDebug("-------------- v0.4.7 ----------------");
+  LogDebug("--------------- v0.4.14 -------------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -223,6 +222,11 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bForceSeekOnStop=false ;
   m_bForceSeekAfterRateChange=false ;
   m_bSeekAfterRcDone=false ;
+  m_videoDecoderCLSID=GUID_NULL;
+  m_bFastSyncFFDShow=false;
+  m_ShowBufferAudio = INIT_SHOWBUFFERAUDIO;
+  m_ShowBufferVideo = INIT_SHOWBUFFERVIDEO;
+  
   m_MPmainThreadID = GetCurrentThreadId() ;
 }
 
@@ -356,7 +360,7 @@ STDMETHODIMP CTsReaderFilter::SetRequestAudioChangeCallback(ITSReaderAudioChange
   return S_OK;
 }
 
-extern int ShowBuffer;
+
 STDMETHODIMP CTsReaderFilter::SetRelaxedMode(BOOL relaxedReading)
 {
   LogDebug("SetRelaxedMode");
@@ -415,7 +419,8 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
     LogDebug("Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GetTickCount()-m_lastPause);
   }
  
-  ShowBuffer=40;
+  m_ShowBufferVideo = INIT_SHOWBUFFERVIDEO;
+  m_ShowBufferAudio = INIT_SHOWBUFFERAUDIO;
 
   CAutoLock cObjectLock(m_pLock);
 
@@ -502,10 +507,13 @@ bool CTsReaderFilter::IsTimeShifting()
 {
   return m_bTimeShifting;
 }
-extern int ShowBuffer;
+
+
 STDMETHODIMP CTsReaderFilter::Pause()
 {
-  ShowBuffer=100 ;
+  //m_ShowBufferVideo = INIT_SHOWBUFFERVIDEO;
+  //m_ShowBufferAudio = INIT_SHOWBUFFERAUDIO;
+
   LogDebug("CTsReaderFilter::Pause() - IsTimeShifting = %d - state = %d", IsTimeShifting(), m_State);
   CAutoLock cObjectLock(m_pLock);
 
@@ -1550,6 +1558,29 @@ void CTsReaderFilter::GetMediaPosition(REFERENCE_TIME *pMediaPos)
   *pMediaPos = (m_MediaPos + m_LastTime - m_BaseTime) ;
   return ; 
 }
+
+//----------------------------------------------------
+// Derived from FFDShow code
+CLSID CTsReaderFilter::GetCLSIDFromPin(IPin* pPin)
+{
+  if (!pPin) 
+  {
+    return GUID_NULL;
+  }
+  CLSID clsid=GUID_NULL;
+  PIN_INFO pi;
+  if (SUCCEEDED(pPin->QueryPinInfo(&pi))) 
+  {
+    if (pi.pFilter) // IBaseFilter pointer
+    {
+      pi.pFilter->GetClassID(&clsid);
+      pi.pFilter->Release();
+    }
+  }
+  return clsid;
+}
+
+
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration

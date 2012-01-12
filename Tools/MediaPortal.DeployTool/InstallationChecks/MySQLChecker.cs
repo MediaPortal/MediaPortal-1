@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -33,7 +28,7 @@ using System.ServiceProcess;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  class MySQLChecker : IInstallationPackage
+  internal class MySQLChecker : IInstallationPackage
   {
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
@@ -41,18 +36,22 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
     private static readonly string prg = "MySQL" + _arch;
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
-    private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\MySQL\\MySQL Server 5.1";
+
+    private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                                       "\\MySQL\\MySQL Server 5.1";
 
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
       WritePrivateProfileString("mysql", "default-character-set", "utf8", iniFile);
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
-      WritePrivateProfileString("mysqld", "basedir", "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
+      WritePrivateProfileString("mysqld", "basedir",
+                                "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
       WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "/Data\"", iniFile);
       WritePrivateProfileString("mysqld", "default-character-set", "utf8", iniFile);
       WritePrivateProfileString("mysqld", "default-storage-engine", "myisam", iniFile);
-      WritePrivateProfileString("mysqld", "sql-mode", "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
+      WritePrivateProfileString("mysqld", "sql-mode",
+                                "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
       WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
       WritePrivateProfileString("mysqld", "table_cache", "64", iniFile);
@@ -124,7 +123,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
       PrepareMyIni(inifile);
       const string ServiceName = "MySQL";
       string cmdExe = Environment.SystemDirectory + "\\sc.exe";
-      string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" + InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld.exe --defaults-file=\\\"" + inifile + "\\\" " + ServiceName + "\"";
+      string cmdParam = "create " + ServiceName + " start= auto DisplayName= " + ServiceName + " binPath= \"" +
+                        InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqld.exe --defaults-file=\\\"" + inifile +
+                        "\\\" " + ServiceName + "\"";
 #if DEBUG
       string ff = "c:\\mysql-srv.bat";
       StreamWriter a = new StreamWriter(ff);
@@ -180,7 +181,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //
       // mysql.exe is used to grant root access from all machines
       //
-      cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" + InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
+      cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] +
+                " --execute=\"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '" +
+                InstallationProperties.Instance["DBMSPassword"] + "' WITH GRANT OPTION\" mysql";
       Process mysql = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe", cmdLine);
       try
       {

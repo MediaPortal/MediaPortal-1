@@ -14,7 +14,7 @@ namespace TVServiceTests.Mocks.DVBSCard
     {      
     }
 
-    public DVBCCardMocks(List<IChannel> tuningDetails, User user)
+    public DVBCCardMocks(List<IChannel> tuningDetails, IUser user)
       : base(tuningDetails, user)
     {    
     }

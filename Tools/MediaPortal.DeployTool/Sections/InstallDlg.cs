@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -41,18 +36,22 @@ namespace MediaPortal.DeployTool.Sections
     }
 
     #region IDeployDialog interface
+
     public override void UpdateUI()
     {
       // This change the description of "Next" button to "Install" or "Download"
       InstallationProperties.Instance.Set("Install_Dialog", "yes");
 
-      labelHeading.Text = InstallationProperties.Instance["InstallType"] == "download_only" ? Localizer.GetBestTranslation("Install_labelHeadingDownload") : Localizer.GetBestTranslation("Install_labelHeadingInstall");
+      labelHeading.Text = InstallationProperties.Instance["InstallType"] == "download_only"
+                            ? Localizer.GetBestTranslation("Install_labelHeadingDownload")
+                            : Localizer.GetBestTranslation("Install_labelHeadingInstall");
 
       listView.Columns[0].Text = Localizer.GetBestTranslation("Install_colApplication");
       listView.Columns[1].Text = Localizer.GetBestTranslation("Install_colState");
       listView.Columns[2].Text = Localizer.GetBestTranslation("Install_colAction");
       labelSectionHeader.Text = "";
     }
+
     public override DeployDialog GetNextDialog()
     {
       foreach (ListViewItem item in listView.Items)
@@ -76,15 +75,18 @@ namespace MediaPortal.DeployTool.Sections
       PopulateListView();
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
     }
+
     public override bool SettingsValid()
     {
       return true;
     }
+
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("finished", "yes");
       InstallationProperties.Instance.Save();
     }
+
     #endregion
 
     private void AddPackageToListView(IInstallationPackage package)
@@ -170,7 +172,8 @@ namespace MediaPortal.DeployTool.Sections
       if (InstallationProperties.Instance["InstallType"] != "download_only")
         AddPackageToListView(new OldPackageChecker());
       AddPackageToListView(new DirectX9Checker());
-      AddPackageToListView(new VCRedist2008Checker());
+      AddPackageToListView(new VCRedistChecker());
+      AddPackageToListView(new VCRedistCheckerOld());
       AddPackageToListView(new WindowsMediaPlayerChecker());
       switch (InstallationProperties.Instance["InstallType"])
       {
@@ -208,10 +211,10 @@ namespace MediaPortal.DeployTool.Sections
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
           break;
-
       }
       if ((InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1" ||
-           InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1") && InstallationProperties.Instance["InstallType"] != "download_only")
+           InstallationProperties.Instance["ConfigureTVServerFirewall"] == "1") &&
+          InstallationProperties.Instance["InstallType"] != "download_only")
         AddPackageToListView(new WindowsFirewallChecker());
       listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
     }
@@ -247,7 +250,8 @@ namespace MediaPortal.DeployTool.Sections
               listView.Update();
               if (!package.Download())
               {
-                Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
+                Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"),
+                                             package.GetDisplayName()));
                 return 2;
               }
             }
@@ -256,7 +260,8 @@ namespace MediaPortal.DeployTool.Sections
             listView.Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"),
+                                           package.GetDisplayName()));
               return 2;
             }
             break;
@@ -267,7 +272,8 @@ namespace MediaPortal.DeployTool.Sections
             listView.Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errConfigureFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errConfigureFailed"),
+                                           package.GetDisplayName()));
               return 2;
             }
             break;
@@ -278,7 +284,8 @@ namespace MediaPortal.DeployTool.Sections
             listView.Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errRemoveFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errRemoveFailed"),
+                                           package.GetDisplayName()));
               return 2;
             }
             break;
@@ -289,7 +296,8 @@ namespace MediaPortal.DeployTool.Sections
             listView.Update();
             if (!package.UnInstall())
             {
-              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errUinstallFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errUinstallFailed"),
+                                           package.GetDisplayName()));
               return 2;
             }
             if (result.needsDownload)
@@ -299,7 +307,8 @@ namespace MediaPortal.DeployTool.Sections
               listView.Update();
               if (!package.Download())
               {
-                Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
+                Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errDownloadFailed"),
+                                             package.GetDisplayName()));
                 return 2;
               }
             }
@@ -308,7 +317,8 @@ namespace MediaPortal.DeployTool.Sections
             listView.Update();
             if (!package.Install())
             {
-              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"),
+                                           package.GetDisplayName()));
               return 2;
             }
             break;
@@ -319,7 +329,8 @@ namespace MediaPortal.DeployTool.Sections
             listView.Update();
             if (!package.Download())
             {
-              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errDownloadFailed"), package.GetDisplayName()));
+              Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errDownloadFailed"),
+                                           package.GetDisplayName()));
               return 2;
             }
             break;

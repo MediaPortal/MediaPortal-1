@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -36,6 +37,9 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Player;
+using Action = MediaPortal.GUI.Library.Action;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
+using WindowPlugins;
 
 namespace MediaPortal.GUI.Pictures
 {
@@ -43,7 +47,7 @@ namespace MediaPortal.GUI.Pictures
   /// Displays pictures and offers methods for exif and rotation
   /// </summary>
   [PluginIcons("WindowPlugins.GUIPictures.Pictures.gif", "WindowPlugins.GUIPictures.PicturesDisabled.gif")]
-  public class GUIPictures : GUIInternalWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
+  public class GUIPictures : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region ThumbCacher class
 
@@ -93,7 +97,7 @@ namespace MediaPortal.GUI.Pictures
             }
             if (String.IsNullOrEmpty(item.Path))
             {
-              return;
+              continue;
             }
             if (path.Length >= item.Path.Length)
             {
@@ -109,15 +113,32 @@ namespace MediaPortal.GUI.Pictures
                 int iRotate = PictureDatabase.GetRotation(item.Path);
                 Thread.Sleep(30);
 
-                if (!item.IsRemote && Util.Utils.IsPicture(item.Path))
+                bool isVideo = Util.Utils.IsVideo(item.Path);
+                bool isPicture = Util.Utils.IsPicture(item.Path);
+                if (!item.IsRemote && (isPicture || isVideo))
                 {
-                  string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures,
-                                                        Util.Utils.EncryptLine(item.Path));
-                  if (recreateThumbs || !File.Exists(thumbnailImage))
+                  string thumbnailImage;
+                  if (isPicture)
+                    thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                  else
+                    thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, Util.Utils.EncryptLine(item.Path));
+
+                  if (recreateThumbs || !Util.Utils.FileExistsInCache(thumbnailImage))
                   {
                     Thread.Sleep(10);
-                    if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
-                                                     (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
+
+                    bool thumbRet;
+                    if (isPicture)
+                    {
+                      iRotate = Util.Picture.GetRotateByExif(item.Path);
+                      Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
+                      thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
+                                                              (int)Thumbs.ThumbResolution, iRotate,
+                                                              Thumbs.SpeedThumbsSmall);
+                    }
+                    else
+                      thumbRet = Util.VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, true);
+                    if (thumbRet)
                     {
                       Thread.Sleep(30);
                       Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
@@ -126,13 +147,22 @@ namespace MediaPortal.GUI.Pictures
 
                   if (autocreateLargeThumbs)
                   {
-                    thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
-                    if (recreateThumbs || !File.Exists(thumbnailImage))
+                    if (isPicture)
+                      thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                    else
+                      thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Videos, Util.Utils.EncryptLine(item.Path));
+                    if (recreateThumbs || !Util.Utils.FileExistsInCache(thumbnailImage))
                     {
                       Thread.Sleep(10);
-                      if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution,
-                                                       (int)Thumbs.ThumbLargeResolution, iRotate,
-                                                       Thumbs.SpeedThumbsLarge))
+                      bool thumbRet;
+                      if (isPicture)
+                        thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage,
+                                                                (int)Thumbs.ThumbLargeResolution,
+                                                                (int)Thumbs.ThumbLargeResolution, iRotate,
+                                                                Thumbs.SpeedThumbsLarge);
+                      else
+                        thumbRet = Util.VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, true);
+                      if (thumbRet)
                       {
                         Thread.Sleep(30);
                         //Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
@@ -147,7 +177,7 @@ namespace MediaPortal.GUI.Pictures
                 if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
                 {
                   string thumbnailImage = item.Path + @"\folder.jpg";
-                  if (recreateThumbs || (!item.IsRemote && !File.Exists(thumbnailImage)))
+                  if (recreateThumbs || (!item.IsRemote && !Util.Utils.FileExistsInCache(thumbnailImage)))
                   {
                     Thread.Sleep(10);
                     if (CreateFolderThumb(item.Path, recreateThumbs))
@@ -216,7 +246,7 @@ namespace MediaPortal.GUI.Pictures
       {
         // Set default view
         _SortBy = (int)SortMethod.Name;
-        _ViewAs = (int)View.Icons;
+        _ViewAs = (int)Layout.SmallIcons;
         _SortAscending = true;
       }
 
@@ -249,18 +279,9 @@ namespace MediaPortal.GUI.Pictures
     private enum SortMethod
     {
       Name = 0,
-      Date = 1,
-      Size = 2
-    }
-
-    private enum View
-    {
-      List = 0,
-      Icons = 1,
-      BigIcons = 2,
-      Albums = 3,
-      Filmstrip = 4,
-      CoverFlow = 5
+      Modified = 1,
+      Created = 2,
+      Size = 3
     }
 
     private enum Display
@@ -269,16 +290,12 @@ namespace MediaPortal.GUI.Pictures
       Date = 1
     }
 
-    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
-    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(4)] protected GUIButtonControl btnSwitchView = null;
     [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
     [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
-    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
 
     private const int MAX_PICS_PER_DATE = 1000;
 
-    public static List<string> thumbCreationPaths = new List<string>();
+    public static HashSet<string> thumbCreationPaths = new HashSet<string>();
     private int selectedItemIndex = -1;
     private GUIListItem selectedListItem = null;
     private DirectoryHistory folderHistory = new DirectoryHistory();
@@ -304,14 +321,14 @@ namespace MediaPortal.GUI.Pictures
 
     public GUIPictures()
     {
-      GetID = (int)Window.WINDOW_PICTURES;  
+      GetID = (int)Window.WINDOW_PICTURES;
     }
 
     #endregion
 
     #region Serialisation
 
-    private void LoadSettings()
+    protected override void LoadSettings()
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
@@ -356,7 +373,7 @@ namespace MediaPortal.GUI.Pictures
           share.FtpPassword = xmlreader.GetValueAsString("pictures", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("pictures", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("pictures", remoteFolder, "/");
-          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("pictures", shareViewPath, (int)Share.Views.List);
+          share.DefaultLayout = (Layout)xmlreader.GetValueAsInt("pictures", shareViewPath, (int)Layout.List);
 
           if (share.Name.Length > 0)
           {
@@ -395,7 +412,7 @@ namespace MediaPortal.GUI.Pictures
           disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);
         }
         _switchRemovableDrives = xmlreader.GetValueAsBool("pictures", "SwitchRemovableDrives", true);
-        //_hideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
+        //_hideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
       }
 
       if (currentFolder.Length > 0 && currentFolder == m_strDirectoryStart)
@@ -411,14 +428,14 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void SaveSettings() {}
+    protected override void SaveSettings() {}
 
     #endregion
 
     #region overrides
 
     public override bool Init()
-    {      
+    {
       return Load(GUIGraphicsContext.Skin + @"\mypics.xml");
     }
 
@@ -442,14 +459,16 @@ namespace MediaPortal.GUI.Pictures
         foreach (string ext in Util.Utils.VideoExtensions)
           virtualDirectory.AddExtension(ext);
       }
+      GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
     }
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        if (facadeView.Focus)
+        if (facadeLayout.Focus)
         {
-          GUIListItem item = facadeView[0];
+          GUIListItem item = facadeLayout[0];
           if (item != null)
           {
             if (item.IsFolder && item.Label == "..")
@@ -511,16 +530,37 @@ namespace MediaPortal.GUI.Pictures
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
         int direction = GUISlideShow.SlideDirection;
         GUISlideShow.SlideDirection = 0;
+
+        //forward
         if (direction == 1)
+        {
           selectedItemIndex++;
-        else
-          if (direction == -1)
-            selectedItemIndex--;
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
-        if (direction != 0)
-          OnClick(selectedItemIndex);
-        else if (SlideShow._currentSlideIndex != -1)
+        }
+        //Backward
+        if (direction == -1)
+        {
+          selectedItemIndex--;
+        }
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+
+        //Slide Show 
+        if (SlideShow._isSlideShow)
+        {
+          if (SlideShow._returnedFromVideoPlayback)
+          {
+            SlideShow._returnedFromVideoPlayback = false;
+          }
           OnSlideShow(selectedItemIndex);
+        }
+          //OnClick
+        else if (direction != 0)
+        {
+          if (SlideShow._returnedFromVideoPlayback)
+          {
+            SlideShow._returnedFromVideoPlayback = false;
+          }
+          OnClick(selectedItemIndex);
+        }
       }
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -537,64 +577,10 @@ namespace MediaPortal.GUI.Pictures
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if (control == btnViewAs)
+      if (control == btnLayouts)
       {
-        switch ((View)mapSettings.ViewAs)
-        {
-          case View.List:
-            mapSettings.ViewAs = (int)View.Icons;
-            break;
-          case View.Icons:
-            mapSettings.ViewAs = (int)View.BigIcons;
-            break;
-          case View.BigIcons:
-            mapSettings.ViewAs = (int)View.Filmstrip;
-            break;
-          case View.Albums:
-            mapSettings.ViewAs = (int)View.Filmstrip;
-            break;
-
-          case View.Filmstrip:
-            mapSettings.ViewAs = (int)View.CoverFlow;
-            break;
-          case View.CoverFlow:
-            mapSettings.ViewAs = (int)View.List;
-            break;
-        }
-        ShowThumbPanel();
-        GUIControl.FocusControl(GetID, control.GetID);
-      }
-      if (control == btnSortBy) // sort by
-      {
-        OnShowSortMenu();
-      }
-
-      if (control == facadeView)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeView.GetID, 0, 0,
-                                        null);
-        OnMessage(msg);
-        int itemIndex = (int)msg.Param1;
-        if (actionType == Action.ActionType.ACTION_SHOW_INFO)
-        {
-          if (virtualDirectory.IsRemote(currentFolder))
-          {
-            return;
-          }
-          OnInfo(itemIndex);
-        }
-        if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
-        {
-          OnClick(itemIndex);
-        }
-        if (actionType == Action.ActionType.ACTION_QUEUE_ITEM)
-        {
-          if (virtualDirectory.IsRemote(currentFolder))
-          {
-            return;
-          }
-          OnQueueItem(itemIndex);
-        }
+        mapSettings.ViewAs = (int)currentLayout;
+        //ShowThumbPanel();
       }
       else if (control == btnSlideShow) // Slide Show
       {
@@ -604,9 +590,22 @@ namespace MediaPortal.GUI.Pictures
       {
         OnSlideShowRecursive();
       }
-      else if (control == btnSwitchView) // Switch View
+    }
+
+    private void GUIWindowManager_OnNewMessage(GUIMessage message)
+    {
+      switch (message.Message)
       {
-        OnSwitchView();
+        case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+          if (message.Param1 == (int)Ripper.AutoPlay.MediaType.PHOTO)
+          {
+            if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
+            {
+              currentFolder = message.Label;
+              OnSlideShowRecursive();
+            }
+          }
+          break;
       }
     }
 
@@ -655,12 +654,12 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
-          GUIFacadeControl pControl = (GUIFacadeControl)GetControl(facadeView.GetID);
+          GUIFacadeControl pControl = (GUIFacadeControl)GetControl(facadeLayout.GetID);
           pControl.OnMessage(message);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED:
-          GUIFacadeControl pControl2 = (GUIFacadeControl)GetControl(facadeView.GetID);
+          GUIFacadeControl pControl2 = (GUIFacadeControl)GetControl(facadeLayout.GetID);
           pControl2.OnMessage(message);
           break;
 
@@ -692,7 +691,7 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-      GUIControl cntl = GetControl(facadeView.GetID);
+      GUIControl cntl = GetControl(facadeLayout.GetID);
       if (cntl == null)
       {
         return; // Control not found
@@ -768,7 +767,7 @@ namespace MediaPortal.GUI.Pictures
           if (fileMenuPinCode != string.Empty)
           {
             string strUserCode = string.Empty;
-            if (GetUserInputString(ref strUserCode) && strUserCode == fileMenuPinCode)
+            if (GetUserPasswordString(ref strUserCode) && strUserCode == fileMenuPinCode)
             {
               OnShowFileMenu();
             }
@@ -797,7 +796,7 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
         case 457: // Test change view
-          OnSwitchView();
+          OnShowViews();
           break;
         case 831:
           string message;
@@ -825,11 +824,11 @@ namespace MediaPortal.GUI.Pictures
 
     #region listview management
 
-    private bool ViewByIcon
+    protected bool ViewByIcon
     {
       get
       {
-        if (mapSettings.ViewAs != (int)View.List)
+        if (mapSettings.ViewAs != (int)Layout.List)
         {
           return true;
         }
@@ -837,11 +836,11 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private bool ViewByLargeIcon
+    protected bool ViewByLargeIcon
     {
       get
       {
-        if (mapSettings.ViewAs == (int)View.BigIcons)
+        if (mapSettings.ViewAs == (int)Layout.LargeIcons)
         {
           return true;
         }
@@ -851,124 +850,80 @@ namespace MediaPortal.GUI.Pictures
 
     private GUIListItem GetSelectedItem()
     {
-      return facadeView.SelectedListItem;
+      return facadeLayout.SelectedListItem;
     }
 
     private GUIListItem GetItem(int itemIndex)
     {
-      if (itemIndex >= facadeView.Count || itemIndex < 0)
+      if (itemIndex >= facadeLayout.Count || itemIndex < 0)
       {
         return null;
       }
-      return facadeView[itemIndex];
+      return facadeLayout[itemIndex];
     }
 
     private int GetSelectedItemNo()
     {
-      return facadeView.SelectedListItemIndex;
+      return facadeLayout.SelectedListItemIndex;
     }
 
     private int GetItemCount()
     {
-      return facadeView.Count;
+      return facadeLayout.Count;
     }
 
-    private void UpdateButtonStates()
+    protected override void UpdateButtonStates()
     {
-      GUIControl.HideControl(GetID, facadeView.GetID);
-      int iControl = facadeView.GetID;
-      GUIControl.ShowControl(GetID, iControl);
-      GUIControl.FocusControl(GetID, iControl);
+      CurrentSortAsc = mapSettings.SortAscending;
+
+      base.UpdateButtonStates();
 
       string textLine = string.Empty;
-      View view = (View)mapSettings.ViewAs;
+
       SortMethod method = (SortMethod)mapSettings.SortBy;
-      bool sortAsc = mapSettings.SortAscending;
-      switch (view)
-      {
-        case View.List:
-          textLine = GUILocalizeStrings.Get(101);
-          break;
-        case View.Icons:
-          textLine = GUILocalizeStrings.Get(100);
-          break;
-        case View.BigIcons:
-          textLine = GUILocalizeStrings.Get(417);
-          break;
-        case View.Albums:
-          textLine = GUILocalizeStrings.Get(417);
-          break;
-        case View.Filmstrip:
-          textLine = GUILocalizeStrings.Get(733);
-          break;
-        case View.CoverFlow:
-          textLine = GUILocalizeStrings.Get(791);
-          break;
-      }
-      GUIControl.SetControlLabel(GetID, btnViewAs.GetID, textLine);
 
       switch (method)
       {
         case SortMethod.Name:
           textLine = GUILocalizeStrings.Get(103);
           break;
-        case SortMethod.Date:
-          textLine = GUILocalizeStrings.Get(104);
+        case SortMethod.Modified:
+          textLine = GUILocalizeStrings.Get(1221);
+          break;
+        case SortMethod.Created:
+          textLine = GUILocalizeStrings.Get(1220);
           break;
         case SortMethod.Size:
           textLine = GUILocalizeStrings.Get(105);
           break;
       }
       GUIControl.SetControlLabel(GetID, btnSortBy.GetID, textLine);
-      btnSortBy.IsAscending = sortAsc;
+
+      if (null != facadeLayout)
+        facadeLayout.EnableScrollLabel = method == SortMethod.Name;
     }
 
     private void ShowThumbPanel()
     {
-      int itemIndex = GetSelectedItemNo();
-      if (mapSettings.ViewAs == (int)View.BigIcons)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
-      }
-      else if (mapSettings.ViewAs == (int)View.Albums)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
-      }
-      else if (mapSettings.ViewAs == (int)View.Icons)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
-      }
-      else if (mapSettings.ViewAs == (int)View.List)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.List;
-      }
-      else if (mapSettings.ViewAs == (int)View.Filmstrip)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
-      }
-      else if (mapSettings.ViewAs == (int)View.CoverFlow)
-      {
-        facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
-      }
-      if (itemIndex > -1)
-      {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, itemIndex);
-      }
+      CurrentLayout = (Layout)mapSettings.ViewAs;
+      SwitchLayout();
       UpdateButtonStates();
     }
 
     /// <summary>
-    /// Set the selected item of the facadeview
+    /// Set the selected item of the facadeLayout
     /// </summary>
     public void SetSelectedItemIndex(int index)
     {
       selectedItemIndex = CountOfNonImageItems + index;
     }
+
     public void IncSelectedItemIndex()
     {
       Log.Debug("GUIPictures: INC selectedItemIndex {0}", selectedItemIndex);
       selectedItemIndex ++;
     }
+
     #endregion
 
     #region folder settings
@@ -1029,7 +984,8 @@ namespace MediaPortal.GUI.Pictures
           {
             mapSettings = new MapSettings();
           }
-          mapSettings.ViewAs = (int)share.DefaultView;
+          mapSettings.ViewAs = (int)share.DefaultLayout;
+          CurrentLayout = (Layout)mapSettings.ViewAs;
         }
       }
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -1040,6 +996,8 @@ namespace MediaPortal.GUI.Pictures
           xmlreader.SetValue("pictures", "lastview", (int)disp);
         }
       }
+      CurrentSortAsc = mapSettings.SortAscending;
+      CurrentLayout = (Layout)mapSettings.ViewAs;
     }
 
     private void SaveFolderSettings(string folder)
@@ -1057,7 +1015,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnSort()
     {
-      facadeView.Sort(this);
+      facadeLayout.Sort(this);
       UpdateButtonStates();
     }
 
@@ -1122,7 +1080,8 @@ namespace MediaPortal.GUI.Pictures
           }
 
 
-        case SortMethod.Date:
+        case SortMethod.Modified:
+        case SortMethod.Created:
           if (item1.FileInfo == null)
           {
             return -1;
@@ -1132,17 +1091,34 @@ namespace MediaPortal.GUI.Pictures
             return -1;
           }
 
-          item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
-                         item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
-                         item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          if (sortAsc)
+          if (method == SortMethod.Modified)
           {
-            return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
+            item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
+                           item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
+                           item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
           else
           {
-            return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
+            item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          }
+
+          if (sortAsc)
+          {
+            if (method == SortMethod.Modified)
+              return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+            else
+              return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
+          }
+          else
+          {
+            if (method == SortMethod.Modified)
+              return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+            else
+              return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
           }
 
         case SortMethod.Size:
@@ -1158,11 +1134,13 @@ namespace MediaPortal.GUI.Pictures
           item2.Label2 = sizeItem2;
           if (sortAsc)
           {
-            return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+            long compare = (item1.FileInfo.Length - item2.FileInfo.Length);
+            return compare == 0 ? 0 : compare < 0 ? -1 : 1;
           }
           else
           {
-            return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+            long compare = (item2.FileInfo.Length - item1.FileInfo.Length);
+            return compare == 0 ? 0 : compare < 0 ? -1 : 1;
           }
       }
       return 0;
@@ -1247,7 +1225,7 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
       if (selectedItemIndex >= 0)
       {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
       }
     }
 
@@ -1272,8 +1250,12 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void OnInfo(int itemNumber)
+    protected override void OnInfo(int itemNumber)
     {
+      if (virtualDirectory.IsRemote(currentFolder))
+      {
+        return;
+      }
       GUIListItem item = GetItem(itemNumber);
       if (item == null)
       {
@@ -1306,7 +1288,7 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
       DoRotatePicture(item.Path, degrees);
-      GUIControl.RefreshControl(GetID, facadeView.GetID);
+      GUIControl.RefreshControl(GetID, facadeLayout.GetID);
     }
 
     public static void DoRotatePicture(string aPicturePath)
@@ -1364,7 +1346,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void OnClick(int itemIndex)
+    protected override void OnClick(int itemIndex)
     {
       GUIListItem item = GetSelectedItem();
       if (item == null)
@@ -1406,8 +1388,6 @@ namespace MediaPortal.GUI.Pictures
         OnShowPicture(item.Path);
       }
     }
-
-    private void OnQueueItem(int itemIndex) {}
 
     private void OnShowPicture(string strFile)
     {
@@ -1565,7 +1545,7 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
     }
 
-    private void OnShowSortMenu()
+    protected override void OnShowSort()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
@@ -1576,7 +1556,8 @@ namespace MediaPortal.GUI.Pictures
       dlg.SetHeading(495); // Sort options
 
       dlg.AddLocalizedString(103); // name
-      dlg.AddLocalizedString(104); // date
+      dlg.AddLocalizedString(1221); // date modified
+      dlg.AddLocalizedString(1220); // date created
       dlg.AddLocalizedString(105); // size
 
       // set the focus to currently used sort method
@@ -1589,13 +1570,17 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
+      CurrentSortAsc = true;
       switch (dlg.SelectedId)
       {
         case 103:
           mapSettings.SortBy = (int)SortMethod.Name;
           break;
-        case 104:
-          mapSettings.SortBy = (int)SortMethod.Date;
+        case 1220:
+          mapSettings.SortBy = (int)SortMethod.Created;
+          break;
+        case 1221:
+          mapSettings.SortBy = (int)SortMethod.Modified;
           break;
         case 105:
           mapSettings.SortBy = (int)SortMethod.Size;
@@ -1642,9 +1627,9 @@ namespace MediaPortal.GUI.Pictures
         LoadDirectory(currentFolder);
         if (selectedItemIndex >= 0)
         {
-          if (selectedItemIndex >= facadeView.Count)
-            selectedItemIndex = facadeView.Count - 1;
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+          if (selectedItemIndex >= facadeLayout.Count)
+            selectedItemIndex = facadeLayout.Count - 1;
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
         }
       }
 
@@ -1652,7 +1637,7 @@ namespace MediaPortal.GUI.Pictures
       dlgFile = null;
     }
 
-    private void OnSwitchView()
+    protected override void OnShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
@@ -1693,7 +1678,7 @@ namespace MediaPortal.GUI.Pictures
           break;
       }
 
-      GUIControl.FocusControl(GetID, btnSwitchView.GetID);
+      GUIControl.FocusControl(GetID, btnViews.GetID);
     }
 
     #endregion
@@ -1741,7 +1726,7 @@ namespace MediaPortal.GUI.Pictures
       itemlist.RemoveAll(ContainsFolderThumb);
     }
 
-    private void LoadDirectory(string strNewDirectory)
+    protected override void LoadDirectory(string strNewDirectory)
     {
       List<GUIListItem> itemlist;
       string objectCount = string.Empty;
@@ -1769,7 +1754,7 @@ namespace MediaPortal.GUI.Pictures
 
       currentFolder = strNewDirectory;
 
-      GUIControl.ClearControl(GetID, facadeView.GetID);
+      GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
       if (disp == Display.Files)
       {
@@ -1782,7 +1767,7 @@ namespace MediaPortal.GUI.Pictures
         {
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
+          facadeLayout.Add(item);
 
           if (item.IsFolder)
           {
@@ -1797,19 +1782,20 @@ namespace MediaPortal.GUI.Pictures
         LoadDateView(strNewDirectory);
       }
 
-      int totalItemCount = facadeView.Count;
+      int totalItemCount = facadeLayout.Count;
       string strSelectedItem = folderHistory.Get(currentFolder);
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
       for (int i = 0; i < totalItemCount; i++)
       {
-        if (facadeView[i].Label == strSelectedItem)
+        if (facadeLayout[i].Label == strSelectedItem)
         {
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
           break;
         }
       }
       if (totalItemCount > 0)
       {
-        GUIListItem rootItem = (GUIListItem)facadeView[0];
+        GUIListItem rootItem = (GUIListItem)facadeLayout[0];
         if (rootItem.Label == "..")
         {
           totalItemCount--;
@@ -1844,7 +1830,7 @@ namespace MediaPortal.GUI.Pictures
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            facadeView.Add(item);
+            facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
           }
         }
@@ -1858,7 +1844,7 @@ namespace MediaPortal.GUI.Pictures
           Util.Utils.SetDefaultIcons(item);
           item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
+          facadeLayout.Add(item);
           CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
           List<string> Months = new List<string>();
@@ -1872,7 +1858,7 @@ namespace MediaPortal.GUI.Pictures
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            facadeView.Add(item);
+            facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
           }
         }
@@ -1891,7 +1877,7 @@ namespace MediaPortal.GUI.Pictures
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            facadeView.Add(item);
+            facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
             List<string> Days = new List<string>();
@@ -1904,7 +1890,7 @@ namespace MediaPortal.GUI.Pictures
               Util.Utils.SetDefaultIcons(item);
               item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
               item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-              facadeView.Add(item);
+              facadeLayout.Add(item);
               CountOfNonImageItems++; // necessary to select the right item later from the slideshow
             }
           }
@@ -1920,7 +1906,7 @@ namespace MediaPortal.GUI.Pictures
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            facadeView.Add(item);
+            facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
             List<string> pics = new List<string>();
@@ -1934,7 +1920,7 @@ namespace MediaPortal.GUI.Pictures
               item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
               item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
               item.FileInfo = new FileInformation(pic, false);
-              facadeView.Add(item);
+              facadeLayout.Add(item);
             }
           }
         }
@@ -1952,7 +1938,7 @@ namespace MediaPortal.GUI.Pictures
             Util.Utils.SetDefaultIcons(item);
             item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
             item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-            facadeView.Add(item);
+            facadeLayout.Add(item);
             CountOfNonImageItems++; // necessary to select the right item later from the slideshow
 
             List<string> pics = new List<string>();
@@ -1968,7 +1954,7 @@ namespace MediaPortal.GUI.Pictures
                 item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
                 item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
                 item.FileInfo = new FileInformation(pic, false);
-                facadeView.Add(item);
+                facadeLayout.Add(item);
               }
               catch (Exception)
               {
@@ -1978,7 +1964,7 @@ namespace MediaPortal.GUI.Pictures
           }
         }
 
-        if (facadeView.Count == 0 && strNewDirectory != "")
+        if (facadeLayout.Count == 0 && strNewDirectory != "")
         {
           // Wrong path for date view, go back to top level
           currentFolder = "";
@@ -1997,6 +1983,11 @@ namespace MediaPortal.GUI.Pictures
       {
         return string.Empty;
       }
+      if (Util.Utils.IsVideo(fileName))
+      {
+        return String.Format(@"{0}\{1}.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
+      }
+
       return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(fileName));
     }
 
@@ -2006,6 +1997,11 @@ namespace MediaPortal.GUI.Pictures
       {
         return string.Empty;
       }
+      if (Util.Utils.IsVideo(fileName))
+      {
+        return String.Format(@"{0}\{1}L.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
+      }
+
       return String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(fileName));
     }
 
@@ -2018,6 +2014,25 @@ namespace MediaPortal.GUI.Pictures
       }
       keyboard.IsSearchKeyboard = true;
       keyboard.Reset();
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+      return keyboard.IsConfirmed;
+    }
+
+    private bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
       keyboard.Text = sString;
       keyboard.DoModal(GetID); // show it...
       if (keyboard.IsConfirmed)
@@ -2044,7 +2059,7 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
       string thumbnailImage = GetLargeThumbnail(item.Path);
-      if (File.Exists(thumbnailImage))
+      if (Util.Utils.FileExistsInCache(thumbnailImage))
       {
         filmstrip.InfoImageFileName = thumbnailImage;
       }

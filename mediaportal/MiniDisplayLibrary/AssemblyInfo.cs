@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,16 +23,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
-[assembly: AssemblyVersion("1.2.0.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
 [assembly: AssemblyKeyName("")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("External Status Display Plugin for MediaPortal")]
 [assembly: AssemblyTitle("MiniDisplayPlugin")]
 [assembly: CompilationRelaxations(8)]

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 #endregion
 
+using System.IO;
 using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.InputDevices;
@@ -37,7 +38,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestDefault";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestDefault.xml"), inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Path.Combine(InputHandler.DefaultsDirectory, "TestDefault.xml"), inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
@@ -45,7 +46,8 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestCustom";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile + ".xml"), inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile + ".xml"),
+                      inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
@@ -53,7 +55,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestFallbackVersion";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestFallbackVersion.xml"),
+      Assert.AreEqual(Path.Combine(InputHandler.DefaultsDirectory, "TestFallbackVersion.xml"),
                       inputHandler.GetXmlPath(xmlFile));
     }
 
@@ -63,7 +65,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestCorrupt";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestCorrupt.xml"), inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Path.Combine(InputHandler.DefaultsDirectory, "TestCorrupt.xml"), inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
@@ -79,7 +81,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestFallbackVersion";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Config.GetFile(Config.Dir.CustomInputDefault, "TestFallbackVersion.xml"),
+      Assert.AreEqual(Path.Combine(InputHandler.DefaultsDirectory, "TestFallbackVersion.xml"),
                       inputHandler.GetXmlPath(xmlFile));
     }
 
@@ -87,7 +89,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     public void LoadMapping()
     {
       string xmlFile = "TestDefault";
-      string xmlPath = Config.GetFile(Config.Dir.CustomInputDefault, "TestDefault.xml");
+      string xmlPath = Path.Combine(InputHandler.DefaultsDirectory, "TestDefault.xml");
       InputHandler inputHandler = new InputHandler(xmlFile);
       inputHandler.LoadMapping(xmlPath);
     }
@@ -97,7 +99,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestDefault";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(3, inputHandler.GetXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "TestDefault.xml")));
+      Assert.AreEqual(3, inputHandler.GetXmlVersion(Path.Combine(InputHandler.DefaultsDirectory, "TestDefault.xml")));
     }
 
     [Test]
@@ -105,7 +107,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestVersion";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(false, inputHandler.CheckXmlFile(Config.GetFile(Config.Dir.CustomInputDefault, "TestVersion.xml")));
+      Assert.AreEqual(false, inputHandler.CheckXmlFile(Path.Combine(InputHandler.DefaultsDirectory, "TestVersion.xml")));
     }
 
     [Test]
@@ -113,7 +115,9 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestVersion2";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(false, inputHandler.CheckXmlFile(Config.GetFile(Config.Dir.CustomInputDevice, "TestVersion2.xml")));
+      Assert.AreEqual(false,
+                      inputHandler.CheckXmlFile(Path.Combine(InputHandler.CustomizedMappingsDirectory,
+                                                             "TestVersion2.xml")));
     }
 
     [Test]

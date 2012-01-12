@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -214,6 +214,18 @@ namespace TvLibrary.Implementations.RadioWebStream
       return null;
     }
 
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      Log.Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
+      return null;
+    }
+
     #endregion
 
     #region quality control
@@ -317,6 +329,23 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     /// <returns></returns>
     public void StopGraph()
+    {
+      if (!CheckThreadId()) return;
+    }
+
+    /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    public bool SupportsPauseGraph
+    {
+      get { return false; }
+    }
+
+    /// <summary>
+    /// Pause the current graph
+    /// </summary>
+    /// <returns></returns>
+    public void PauseGraph()
     {
       if (!CheckThreadId()) return;
     }

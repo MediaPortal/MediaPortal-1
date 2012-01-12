@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ namespace MpeMaker.Sections
   {
     public PackageClass Package { get; set; }
     private DependencyItem SelectedItem { get; set; }
+    private readonly MpeCore.Classes.VersionProvider.MediaPortalVersion MPDependency = new MpeCore.Classes.VersionProvider.MediaPortalVersion();
 
     public RequirementsSection()
     {
@@ -68,6 +69,7 @@ namespace MpeMaker.Sections
     {
       if (SelectedItem == null)
         return;
+      UpdateControlStates();
       SelectedItem.Type = cmb_type.Text;
       SelectedItem.WarnOnly = chk_warn.Checked;
       SelectedItem.Id = txt_id.Text;
@@ -84,6 +86,21 @@ namespace MpeMaker.Sections
       list_versions.SelectedItem = SelectedItem;
       if (MpeInstaller.VersionProviders.ContainsKey(cmb_type.Text))
         lbl_ver.Text = MpeInstaller.VersionProviders[cmb_type.Text].Version(txt_id.Text).ToString();
+    }
+
+    private void UpdateControlStates()
+    {
+      if (cmb_type.Text == MPDependency.DisplayName)
+      {
+        chk_warn.Checked = false;
+        chk_warn.Enabled = false;
+        txt_id.Enabled = false;
+      }
+      else
+      {
+        chk_warn.Enabled = true;
+        txt_id.Enabled = true;
+      }
     }
 
     public void Set(PackageClass pak)
@@ -114,6 +131,7 @@ namespace MpeMaker.Sections
       SelectedItem = null;
       cmb_type.Text = item.Type;
       chk_warn.Checked = item.WarnOnly;
+      UpdateControlStates();
       txt_id.Text = item.Id;
       txt_name.Text = item.Name;
       txt_message.Text = item.Message;

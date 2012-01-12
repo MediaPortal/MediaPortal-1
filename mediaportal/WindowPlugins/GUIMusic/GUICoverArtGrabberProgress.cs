@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ using MediaPortal.Music.Amazon;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -126,7 +127,6 @@ namespace MediaPortal.GUI.Music
     private bool _Abort = false;
     private bool _AbortedByUser = false;
     private bool _GrabCompletedSuccessfully = true;
-    private bool _UseID3 = false;
 
     private int _CoversGrabbed = 0;
     private long ControlColorDisabled;
@@ -240,12 +240,6 @@ namespace MediaPortal.GUI.Music
     public bool GrabCompletedSuccessfully
     {
       get { return _GrabCompletedSuccessfully; }
-    }
-
-    public bool UseID3
-    {
-      get { return _UseID3; }
-      set { _UseID3 = value; }
     }
 
     #endregion
@@ -727,7 +721,7 @@ namespace MediaPortal.GUI.Music
 
               foundAudioFileCount++;
               song = new Song();
-              if (_MusicDatabase.GetSongByFileName(curTrackPath, ref song) && UseID3)
+              if (_MusicDatabase.GetSongByFileName(curTrackPath, ref song))
               {
                 // Make sure the the returned song has a valid file path
                 if (song.FileName.Length == 0)

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -73,6 +73,9 @@ namespace MediaPortal.Player.Subtitles
     protected bool posRelativeToFrame = false;
     protected bool overrideASSStyle;
     protected string subPaths;
+    protected int adjustPosY;
+    protected bool autoShow;
+    protected bool selectionOff;
 
     public void LoadSettings()
     {
@@ -96,6 +99,9 @@ namespace MediaPortal.Player.Subtitles
         posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
         overrideASSStyle = xmlreader.GetValueAsBool("subtitles", "subStyleOverride", false);
         subPaths = xmlreader.GetValueAsString("subtitles", "paths", @".\");
+        adjustPosY = xmlreader.GetValueAsInt("subtitles", "adjustY", 0);
+        autoShow = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+        selectionOff = xmlreader.GetValueAsBool("subtitles", "selectionoff", true);
         LoadAdvancedSettings(xmlreader);
       }
     }

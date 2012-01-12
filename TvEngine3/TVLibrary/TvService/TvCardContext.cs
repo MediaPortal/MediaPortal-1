@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,40 +18,48 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Collections.Generic;
-using TvLibrary.Log;
+using System.Runtime.CompilerServices;
+using System.Timers;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Log;
+
+#endregion
+
+[assembly: InternalsVisibleTo("TVServiceTests")]
 
 namespace TvService
 {
   /// <summary>
-  /// Class which holds the context for a specific card
+  ///   Class which holds the context for a specific card
   /// </summary>
-  public class TvCardContext
+  public class TvCardContext : ITvCardContext
   {
     #region variables
 
-    private readonly List<User> _users;
+    private readonly Timer _timer = new Timer();
+    private readonly List<IUser> _users;
 
-    private readonly List<User> _usersOld;
+    private readonly List<IUser> _usersOld;
     //holding a list of all the timeshifting users that have been stopped - mkaing it possible for the client to query the possible stop reason.
 
-    private User _owner;
-    private readonly System.Timers.Timer _timer = new System.Timers.Timer();
+    private IUser _owner;
 
     #endregion
 
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvCardContext"/> class.
+    ///   Initializes a new instance of the <see cref = "TvCardContext" /> class.
     /// </summary>
     public TvCardContext()
     {
-      _users = new List<User>();
-      _usersOld = new List<User>();
+      _users = new List<IUser>();
+      _usersOld = new List<IUser>();
       _owner = null;
       _timer.Interval = 60000;
       _timer.Enabled = true;
@@ -60,19 +68,19 @@ namespace TvService
 
     #endregion
 
-    #region public methods
+    #region public methods   
 
     /// <summary>
-    /// Locks the card for the user specifies
+    ///   Locks the card for the user specifies
     /// </summary>
-    /// <param name="newUser">The user.</param>
-    public void Lock(User newUser)
+    /// <param name = "newUser">The user.</param>
+    public void Lock(IUser newUser)
     {
       _owner = newUser;
     }
 
     /// <summary>
-    /// Unlocks this card.
+    ///   Unlocks this card.
     /// </summary>
     public void Unlock()
     {
@@ -80,26 +88,26 @@ namespace TvService
     }
 
     /// <summary>
-    /// Determines whether the the card is locked and ifso returns by which used.
+    ///   Determines whether the the card is locked and ifso returns by which used.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name = "user">The user.</param>
     /// <returns>
-    /// 	<c>true</c> if the specified user is locked; otherwise, <c>false</c>.
+    ///   <c>true</c> if the specified user is locked; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsLocked(out User user)
+    public bool IsLocked(out IUser user)
     {
       user = _owner;
       return (user != null);
     }
 
     /// <summary>
-    /// Determines whether the specified user is owner.
+    ///   Determines whether the specified user is owner.
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name = "user">The user.</param>
     /// <returns>
-    /// 	<c>true</c> if the specified user is owner; otherwise, <c>false</c>.
+    ///   <c>true</c> if the specified user is owner; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsOwner(User user)
+    public bool IsOwner(IUser user)
     {
       if (_owner == null)
         return true;
@@ -113,10 +121,10 @@ namespace TvService
     }
 
     /// <summary>
-    /// Sets the owner.
+    ///   Sets the owner.
     /// </summary>
     /// <value>The owner.</value>
-    public User Owner
+    public IUser Owner
     {
       get { return _owner; }
       set { _owner = value; }
@@ -124,227 +132,235 @@ namespace TvService
 
 
     /// <summary>
-    /// Adds the specified user.
+    ///   Adds the specified user.
     /// </summary>
-    /// <param name="user">The user.</param>
-    public void Add(User user)
+    /// <param name = "user">The user.</param>
+    public void Add(IUser user)
     {
       Log.Info("user:{0} add", user.Name);
       if (_owner == null)
-        _owner = user;
-      for (int i = 0; i < _users.Count; ++i)
       {
-        if (_users[i].Name == user.Name)
-        {
-          _users[i] = (User)user.Clone();
-          return;
-        }
+        _owner = user;
       }
-      _users.Add(user);
+      int i = _users.FindIndex(t => t.Name == user.Name);
+      if (i > -1)
+      {
+        _users[i] = (User)user.Clone();
+      }
+      else
+      {
+        _users.Add(user);
+      }
     }
 
     /// <summary>
-    /// Removes the specified user.
+    ///   Removes the specified user.
     /// </summary>
-    /// <param name="user">The user.</param>
-    public void Remove(User user)
+    /// <param name = "user">The user.</param>
+    public void Remove(IUser user)
     {
-      Log.Info("user:{0} remove", user.Name);
-      foreach (User existingUser in _users)
+      string username = user.Name;
+      Log.Info("user:{0} remove", username);
+      IUser existingUser = _users.Find(t => t.Name.Equals(username));
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name)
-        {
-          OnStopUser(existingUser);
-          _users.Remove(existingUser);
-          break;
-        }
+        OnStopUser(existingUser);
+        _users.Remove(existingUser);
       }
-      if (_owner == null)
-        return;
-      if (_owner.Name == user.Name)
-        _owner = null;
-      if (_users.Count > 0)
+
+      if (_owner != null && _owner.Name.Equals(username))
       {
-        _owner = _users[0];
+        if (_users.Count > 0)
+        {
+          IUser existingScheduler = _users.Find(t => t.IsAdmin);
+
+          if (existingScheduler != null)
+          {
+            _owner = existingScheduler;
+          }
+          else
+          {
+            _owner = _users[0];
+          }
+        }
+        else
+        {
+          _owner = null;
+        }
       }
     }
 
-    public void HeartBeatUser(User user)
+    public void HeartBeatUser(IUser user)
     {
       //Log.Debug("user:{0} heartbeat received", user.Name);
 
-      foreach (User existingUser in _users)
+      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name)
-        {
-          existingUser.HeartBeat = DateTime.Now;
-          break;
-        }
+        existingUser.HeartBeat = DateTime.Now;
       }
     }
 
     /// <summary>
-    /// Gets the user.
+    ///   Gets the user.
     /// </summary>
-    /// <param name="user">The user.</param>
-    public void GetUser(ref User user)
+    /// <param name = "user">The user.</param>
+    public void GetUser(ref IUser user)
     {
-      foreach (User existingUser in _users)
+      User userCopy = (User)user.Clone();
+      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name && existingUser.CardId == user.CardId)
-        {
-          TvStoppedReason reason = user.TvStoppedReason;
-          user = (User)existingUser.Clone();
-          user.TvStoppedReason = reason;
-          return;
-        }
+        TvStoppedReason reason = user.TvStoppedReason;
+        user = (User)existingUser.Clone();
+        user.TvStoppedReason = reason;
       }
     }
 
     /// <summary>
-    /// Gets the user.
+    ///   Gets the user.
     /// </summary>
-    /// <param name="user">The user.</param>
-    /// <param name="cardId">The card id of the user to be found</param>
-    public void GetUser(ref User user, int cardId)
+    /// <param name = "user">The user.</param>
+    /// <param name = "cardId">The card id of the user to be found</param>
+    public void GetUser(ref IUser user, int cardId)
     {
-      foreach (User existingUser in _users)
+      User userCopy = (User)user.Clone();
+      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == cardId);
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name && existingUser.CardId == cardId)
-        {
-          TvStoppedReason reason = user.TvStoppedReason;
-          user = (User)existingUser.Clone();
-          user.TvStoppedReason = reason;
-          return;
-        }
+        TvStoppedReason reason = user.TvStoppedReason;
+        user = (User)existingUser.Clone();
+        user.TvStoppedReason = reason;
       }
     }
 
     /// <summary>
-    /// Gets the user.
+    ///   Gets the user.
     /// </summary>
-    /// <param name="user">The user.</param>
-    /// <param name="exists">User exists</param>
-    public void GetUser(ref User user, out bool exists)
+    /// <param name = "user">The user.</param>
+    /// <param name = "exists">IUser exists</param>
+    public void GetUser(ref IUser user, out bool exists)
     {
-      foreach (User existingUser in _users)
+      User userCopy = (User)user.Clone();
+      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name && existingUser.CardId == user.CardId)
-        {
-          TvStoppedReason reason = user.TvStoppedReason;
-          user = (User)existingUser.Clone();
-          user.TvStoppedReason = reason;
-          exists = true;
-          return;
-        }
+        TvStoppedReason reason = user.TvStoppedReason;
+        user = (User)existingUser.Clone();
+        user.TvStoppedReason = reason;
+        exists = true;
+        return;
       }
       exists = false;
     }
 
     /// <summary>
-    /// Returns if the user exists or not
+    ///   Returns if the user exists or not
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name = "user">The user.</param>
     /// <returns></returns>
-    public bool DoesExists(User user)
+    public bool DoesExists(IUser user)
     {
-      foreach (User existingUser in _users)
-      {
-        if (existingUser.Name == user.Name)
-        {
-          return true;
-        }
-      }
-      return false;
+      return (_users.Exists(t => t.Name == user.Name));
     }
 
     /// <summary>
-    /// Gets the user.
+    ///   Gets the user.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id.</param>
-    /// <param name="user">The user.</param>
-    public void GetUser(int subChannelId, out User user)
+    /// <param name = "subChannelId">The sub channel id.</param>
+    /// <param name = "user">The user.</param>
+    public void GetUser(int subChannelId, out IUser user)
     {
       user = null;
-      foreach (User existingUser in _users)
+      IUser existingUser = _users.Find(t => t.SubChannel == subChannelId);
+      if (existingUser != null)
       {
-        if (existingUser.SubChannel == subChannelId)
-        {
-          user = (User)existingUser.Clone();
-          return;
-        }
+        user = (User)existingUser.Clone();
       }
     }
 
     /// <summary>
-    /// Sets the timeshifting stopped reason.
+    ///   Sets the timeshifting stopped reason.
     /// </summary>
-    /// <param name="user">user.</param>		
-    /// <param name="reason">TvStoppedReason.</param>		
-    public void SetTimeshiftStoppedReason(User user, TvStoppedReason reason)
+    /// <param name = "user">user.</param>
+    /// <param name = "reason">TvStoppedReason.</param>
+    public void SetTimeshiftStoppedReason(IUser user, TvStoppedReason reason)
     {
-      foreach (User existingUser in _users)
+      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name)
-        {
-          existingUser.TvStoppedReason = reason;
-          return;
-        }
+        existingUser.TvStoppedReason = reason;
       }
     }
 
     /// <summary>
-    /// Gets the timeshifting stopped reason.
+    ///   Gets the timeshifting stopped reason.
     /// </summary>
-    /// <param name="user">user.</param>		
-    public TvStoppedReason GetTimeshiftStoppedReason(User user)
+    /// <param name = "user">user.</param>
+    public TvStoppedReason GetTimeshiftStoppedReason(IUser user)
     {
-      foreach (User existingUser in _usersOld)
+      IUser existingUser = _usersOld.Find(t => t.Name == user.Name);
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name)
-        {
-          User userFound = (User)existingUser.Clone();
-          //_usersOld.Remove(userFound);
-          return userFound.TvStoppedReason;
-        }
+        User userFound = (User)existingUser.Clone();
+        return userFound.TvStoppedReason;
       }
       return TvStoppedReason.UnknownReason;
     }
 
+    public void UserNextAvailableSubchannel(IUser user)
+    {
+      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      if (existingUser != null)
+      {
+        int nextSubchannel = -1;
+        foreach (IUser u in _users)
+        {
+          if (u.SubChannel > nextSubchannel)
+          {
+            nextSubchannel = u.SubChannel;
+          }
+        }
+
+        if (nextSubchannel >= 0)
+        {
+          existingUser.SubChannel = nextSubchannel + 1;
+        }
+      }
+    }
+
     /// <summary>
-    /// Gets the users.
+    ///   Gets the users.
     /// </summary>
     /// <value>The users.</value>
-    public User[] Users
+    public IUser[] Users
     {
       get { return _users.ToArray(); }
     }
 
-    /// <summary>
-    /// Determines whether one or more users exist for the given subchannel
-    /// </summary>
-    /// <param name="subchannelId">The subchannel id.</param>
-    /// <returns>
-    /// 	<c>true</c> if users exists; otherwise, <c>false</c>.
-    /// </returns>
-    public bool ContainsUsersForSubchannel(int subchannelId)
+    protected internal IList<IUser> UsersOld
     {
-      foreach (User existingUser in _users)
-      {
-        if (existingUser.SubChannel == subchannelId)
-        {
-          return true;
-        }
-      }
-      return false;
+      get { return _usersOld; }
     }
 
     /// <summary>
-    /// Removes all users
+    ///   Determines whether one or more users exist for the given subchannel
+    /// </summary>
+    /// <param name = "subchannelId">The subchannel id.</param>
+    /// <returns>
+    ///   <c>true</c> if users exists; otherwise, <c>false</c>.
+    /// </returns>
+    public bool ContainsUsersForSubchannel(int subchannelId)
+    {
+      return _users.Exists(t => t.SubChannel == subchannelId);
+    }
+
+    /// <summary>
+    ///   Removes all users
     /// </summary>
     public void Clear()
     {
-      foreach (User user in _users)
+      foreach (IUser user in _users)
       {
         OnStopUser(user);
       }
@@ -353,19 +369,11 @@ namespace TvService
     }
 
 
-    public void OnStopUser(User user)
+    public void OnStopUser(IUser user)
     {
       if (!user.IsAdmin)
       {
-        for (int i = 0; i < _usersOld.Count; i++)
-        {
-          User existingUser = _usersOld[i];
-          if (existingUser.Name == user.Name)
-          {
-            _usersOld.Remove(existingUser);
-          }
-        }
-
+        _usersOld.RemoveAll(t => t.Name == user.Name);
         _usersOld.Add(user);
       }
 
@@ -377,27 +385,25 @@ namespace TvService
       user.History = null;
     }
 
-    public void OnZap(User user)
+    public void OnZap(IUser user)
     {
-      foreach (User existingUser in _users)
+      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      if (existingUser != null)
       {
-        if (existingUser.Name == user.Name)
+        Channel channel = Channel.Retrieve(user.IdChannel);
+        if (channel != null)
         {
-          Channel channel = Channel.Retrieve(user.IdChannel);
-          if (channel != null)
+          History history = existingUser.History as History;
+          if (history != null)
           {
-            History history = existingUser.History as History;
-            if (history != null)
-            {
-              history.Save();
-            }
-            existingUser.History = null;
-            TvDatabase.Program p = channel.CurrentProgram;
-            if (p != null)
-            {
-              existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description,
-                                                 p.Genre, false, 0);
-            }
+            history.Save();
+          }
+          existingUser.History = null;
+          Program p = channel.CurrentProgram;
+          if (p != null)
+          {
+            existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description,
+                                               p.Genre, false, 0);
           }
         }
       }
@@ -405,11 +411,11 @@ namespace TvService
 
     #endregion
 
-    private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void _timer_Elapsed(object sender, ElapsedEventArgs e)
     {
       try
       {
-        foreach (User existingUser in _users)
+        foreach (IUser existingUser in _users)
         {
           History history = existingUser.History as History;
           if (history != null)
@@ -417,7 +423,7 @@ namespace TvService
             Channel channel = Channel.Retrieve(existingUser.IdChannel);
             if (channel != null)
             {
-              TvDatabase.Program p = channel.CurrentProgram;
+              Program p = channel.CurrentProgram;
               if (p != null && p.StartTime != history.StartTime)
               {
                 history.Save();

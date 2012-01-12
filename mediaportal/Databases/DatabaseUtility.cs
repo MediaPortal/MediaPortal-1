@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -70,12 +70,31 @@ namespace MediaPortal.Database
       {
         return false;
       }
-      results = m_db.Execute("SELECT * FROM '" + table + "'");
+      // This only works for tables that are not empty
+      //results = m_db.Execute("SELECT * FROM '" + table + "'");
+      //if (results != null)
+      //{
+      //  for (int i = 0; i < results.ColumnNames.Count; ++i)
+      //  {
+      //    if ((string)results.ColumnNames[i] == column)
+      //    {
+      //      return true;
+      //    }
+      //  }
+      //}
+      //return false;
+
+      // We will use --> PRAGMA table_info( your_table_name )
+      // PRAGMA returns one row for each column in the named table. 
+      // Columns in the result set include the columnID, column name, data type, 
+      // whether or not the column can be NULL, and the default value for the column.
+      // More info: http://www.sqlite.org/pragma.html
+      results = m_db.Execute("PRAGMA table_info('" + table + "')");
       if (results != null)
       {
-        for (int i = 0; i < results.ColumnNames.Count; ++i)
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
-          if ((string)results.ColumnNames[i] == column)
+          if ((string)results.Rows[i].fields[1] == column) // fields[1] is column name
           {
             return true;
           }
@@ -127,25 +146,11 @@ namespace MediaPortal.Database
     public static void AddIndex(SQLiteClient dbHandle, string indexName, string strSQL)
     {
       SQLiteResultSet results;
-      bool res = false;
       results =
-        dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName +
-                         "' and type='index' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' ORDER BY name");
-      if (results != null && results.Rows.Count > 0)
-      {
-        if (results.Rows.Count == 1)
-        {
-          SQLiteResultSet.Row arr = results.Rows[0];
-          if (arr.fields.Count == 1)
-          {
-            if (arr.fields[0] == indexName)
-            {
-              res = true;
-            }
-          }
-        }
-      }
-      if (res == true)
+        dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName + "' and type='index' " +
+                         "UNION " +
+                         "SELECT name FROM sqlite_temp_master WHERE name ='" + indexName + "' and type='index'");
+      if (results != null && results.Rows.Count == 1)
       {
         return;
       }
@@ -378,33 +383,6 @@ namespace MediaPortal.Database
     public static void RemoveInvalidChars(ref string strTxt)
     {
       strTxt = FilterText(strTxt);
-      //if (strTxt == null)
-      //{
-      //  strTxt = Strings.Unknown;
-      //  return;
-      //}
-      //if (strTxt.Length == 0)
-      //{
-      //  strTxt = Strings.Unknown;
-      //  return;
-      //}
-      //string strReturn = string.Empty;
-      //for (int i = 0; i < (int)strTxt.Length; ++i)
-      //{
-      //  char k = strTxt[i];
-      //  if (k == '\'')
-      //  {
-      //    strReturn += "'";
-      //  }
-      //  if ((byte)k == 0)// remove 0-bytes from the string
-      //    k = (char)32;
-
-      //  strReturn += k;
-      //}
-      //strReturn = strReturn.Trim();
-      //if (strReturn == string.Empty)
-      //  strReturn = Strings.Unknown;
-      //strTxt = strReturn;
     }
 
     private static string FilterText(string strTxt)

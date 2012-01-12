@@ -28,11 +28,13 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Available plugins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Incompatible Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       this.listView1 = new System.Windows.Forms.ListView();
-      this.clmnEnabled = new System.Windows.Forms.ColumnHeader();
-      this.clmnName = new System.Windows.Forms.ColumnHeader();
-      this.clmnAuthor = new System.Windows.Forms.ColumnHeader();
-      this.clmnVersion = new System.Windows.Forms.ColumnHeader();
+      this.clmnEnabled = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.clmnName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.clmnAuthor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.clmnVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -51,6 +53,13 @@ namespace SetupTv.Sections
             this.clmnName,
             this.clmnAuthor,
             this.clmnVersion});
+      listViewGroup1.Header = "Available plugins";
+      listViewGroup1.Name = "listViewGroupAvailable";
+      listViewGroup2.Header = "Incompatible Plugins";
+      listViewGroup2.Name = "listViewGroupIncompatible";
+      this.listView1.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2});
       this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listView1.Location = new System.Drawing.Point(0, 0);
       this.listView1.Name = "listView1";

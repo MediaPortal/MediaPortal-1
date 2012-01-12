@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,21 +36,21 @@ namespace TvLibrary.Implementations
   /// </summary>
   public abstract class BaseSubChannel : ITvSubChannel
   {
-    #region Audio/Video Observer event and method
+    #region events
 
     /// <summary>
-    /// Delegate for the audio video oberserver events
+    /// Delegate for the audio/video oberserver events.
     /// </summary>
     /// <param name="pidType">Type of the pid</param>
     public delegate void AudioVideoObserverEvent(PidType pidType);
 
     /// <summary>
-    /// Audio observer event
+    /// Audio/video observer event.
     /// </summary>
     public event AudioVideoObserverEvent AudioVideoEvent;
 
     /// <summary>
-    /// Handles the audio video observer event
+    /// Handles the audio/video observer event.
     /// </summary>
     /// <param name="pidType">Type of the pid</param>
     protected void OnAudioVideoEvent(PidType pidType)
@@ -58,6 +58,27 @@ namespace TvLibrary.Implementations
       if (AudioVideoEvent != null)
       {
         AudioVideoEvent(pidType);
+      }
+    }
+
+    /// <summary>
+    /// Delegate for the after tune event.
+    /// </summary>
+    public delegate void OnAfterTuneDelegate();
+
+    /// <summary>
+    /// After tune observer event.
+    /// </summary>
+    public event OnAfterTuneDelegate AfterTuneEvent;
+
+    /// <summary>
+    /// Handles the after tune observer event.
+    /// </summary>
+    protected void OnAfterTuneEvent()
+    {
+      if (AfterTuneEvent != null)
+      {
+        AfterTuneEvent();
       }
     }
 
@@ -349,6 +370,7 @@ namespace TvLibrary.Implementations
           Log.Log.Info("Unknown subch:{0} Started recording", _subChannelId);
         }
 
+        _dateRecordingStarted = DateTime.Now;
         _graphState = GraphState.Recording;
       }
       catch (Exception e)
@@ -609,7 +631,7 @@ namespace TvLibrary.Implementations
     /// false we record in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    public abstract int GetCurrentVideoStream { get; }
+    public abstract IVideoStream GetCurrentVideoStream { get; }
 
     /// <summary>
     /// returns the list of available audio streams

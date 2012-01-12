@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -161,6 +161,14 @@ namespace MediaPortal.Util
         GUIGraphicsContext.SendMessage(msg);
         return true;
       }
+      else if (Utils.IsDVD(path))
+      {
+        Log.Debug("Detected new optical media: {0}", volumeLetter);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED, 0, 0, 0, 0, 0, 0);
+        msg.Label = path;
+        GUIGraphicsContext.SendMessage(msg);
+        return true;
+      }
       return false;
     }
 
@@ -179,6 +187,14 @@ namespace MediaPortal.Util
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
         msg.Label = path;
         msg.Label2 = String.Format("({0})", path);
+        GUIGraphicsContext.SendMessage(msg);
+        return true;
+      }
+      else if (Utils.IsDVD(path))
+      {
+        Log.Debug("Detected optical media removal: {0}", volumeLetter);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED, 0, 0, 0, 0, 0, 0);
+        msg.Label = path;
         GUIGraphicsContext.SendMessage(msg);
         return true;
       }

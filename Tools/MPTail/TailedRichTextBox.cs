@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -39,7 +34,7 @@ namespace MPTail
     private bool followMe = true;
     private bool clearOnCreate = true;
     private string filename;
-    private int maxBytes = 1024*16;
+    private int maxBytes = 1024 * 16;
     private long previousSeekPosition;
     private long previousFileSize;
     private readonly TabPage parentTab;
@@ -182,7 +177,8 @@ namespace MPTail
         try
         {
           node =
-            doc.SelectSingleNode("/mptail/loggers/" + Category.ToString() + "/" + name.Replace(' ', '_') + "/config");
+            doc.SelectSingleNode("/mptail/loggers/" + Category.ToString() + "/" + name.Replace(' ', '_') +
+                                 "/config");
         }
         catch (Exception)
         {
@@ -233,6 +229,7 @@ namespace MPTail
       if (previousSeekPosition == 0 && clearOnCreate)
         Text = "";
       byte[] bytesRead = new byte[maxBytes];
+      byte[] utf8BOMcheck = new byte[4];
       FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
       if (fs.Length < previousFileSize)
       {
@@ -247,18 +244,27 @@ namespace MPTail
         fs.Close();
         return previousFileSize;
       }
+      fs.Read(utf8BOMcheck, 0, 4);
       if (fs.Length > maxBytes)
         previousSeekPosition = fs.Length - maxBytes;
-      previousSeekPosition = (int) fs.Seek(previousSeekPosition, SeekOrigin.Begin);
+      previousSeekPosition = (int)fs.Seek(previousSeekPosition, SeekOrigin.Begin);
       int numBytes = fs.Read(bytesRead, 0, maxBytes);
       fs.Close();
       previousSeekPosition += numBytes;
 
       StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < numBytes; i++)
-        sb.Append((char) bytesRead[i]);
+      if (utf8BOMcheck[0] == 0xef && utf8BOMcheck[1] == 0xbb && utf8BOMcheck[2] == 0xbf)
+      {
+        sb.Append(System.Text.Encoding.UTF8.GetString(bytesRead, 0, numBytes));
+      }
+      else
+      {
+        sb.Append(System.Text.Encoding.Default.GetString(bytesRead, 0, numBytes));
+      }
+
       long lastPos = TextLength;
       AppendText(sb.ToString());
+      SelectionStart = TextLength;
       newText = sb.ToString();
       HighlightSearchTerms(lastPos);
       if (followMe)
@@ -276,9 +282,9 @@ namespace MPTail
       StringComparison comp = StringComparison.InvariantCultureIgnoreCase;
       if (searchParams.caseSensitive)
         comp = StringComparison.InvariantCulture;
-      while ((lastPos = Text.IndexOf(searchParams.searchStr, (int) lastPos, comp)) != -1)
+      while ((lastPos = Text.IndexOf(searchParams.searchStr, (int)lastPos, comp)) != -1)
       {
-        SelectionStart = (int) lastPos;
+        SelectionStart = (int)lastPos;
         SelectionLength = searchParams.searchStr.Length;
         SelectionFont = new Font(Font, FontStyle.Bold);
         SelectionBackColor = searchParams.highlightColor;

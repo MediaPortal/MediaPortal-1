@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,11 +44,11 @@ namespace TvService
     /// Locks the card to the user specified
     /// </summary>
     /// <param name="user">The user.</param>
-    public void Lock(User user)
+    public void Lock(IUser user)
     {
       if (_cardHandler.Card != null)
       {
-        TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         context.Lock(user);
       }
     }
@@ -58,11 +58,11 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// 
-    public void Unlock(User user)
+    public void Unlock(IUser user)
     {
       if (_cardHandler.Card != null)
       {
-        TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         context.Remove(user);
       }
     }
@@ -74,7 +74,7 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if the specified user is owner; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsOwner(User user)
+    public bool IsOwner(IUser user)
     {
       if (_cardHandler.IsLocal == false)
       {
@@ -90,7 +90,7 @@ namespace TvService
           return false;
         }
       }
-      TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       return context.IsOwner(user);
     }
 
@@ -98,7 +98,7 @@ namespace TvService
     /// Removes the user from this card
     /// </summary>
     /// <param name="user">The user.</param>
-    public void RemoveUser(User user)
+    public void RemoveUser(IUser user)
     {
       if (_cardHandler.IsLocal == false)
       {
@@ -115,7 +115,7 @@ namespace TvService
           return;
         }
       }
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return;
       if (!context.DoesExists(user))
@@ -152,13 +152,20 @@ namespace TvService
       }
       if (_cardHandler.IsIdle)
       {
-        _cardHandler.Card.StopGraph();
+        if (_cardHandler.Card.SupportsPauseGraph)
+        {
+          _cardHandler.Card.PauseGraph();
+        }
+        else
+        {
+          _cardHandler.Card.StopGraph();
+        }
       }
     }
 
-    public void HeartBeartUser(User user)
+    public void HeartBeartUser(IUser user)
     {
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return;
       if (!context.DoesExists(user))
@@ -167,18 +174,18 @@ namespace TvService
       context.HeartBeatUser(user);
     }
 
-    public TvStoppedReason GetTvStoppedReason(User user)
+    public TvStoppedReason GetTvStoppedReason(IUser user)
     {
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return TvStoppedReason.UnknownReason;
 
       return context.GetTimeshiftStoppedReason(user);
     }
 
-    public void SetTvStoppedReason(User user, TvStoppedReason reason)
+    public void SetTvStoppedReason(IUser user, TvStoppedReason reason)
     {
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return;
 
@@ -192,12 +199,12 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if the specified card is locked; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsLocked(out User user)
+    public bool IsLocked(out IUser user)
     {
       user = null;
       if (_cardHandler.Card != null)
       {
-        TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         context.IsLocked(out user);
         return (user != null);
       }
@@ -208,7 +215,7 @@ namespace TvService
     /// Gets the users for this card.
     /// </summary>
     /// <returns></returns>
-    public User[] GetUsers()
+    public IUser[] GetUsers()
     {
       if (_cardHandler.IsLocal == false)
       {
@@ -224,7 +231,7 @@ namespace TvService
           return null;
         }
       }
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return null;
       return context.Users;

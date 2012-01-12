@@ -1,5 +1,5 @@
-/* 
- * $Id: HdmvSub.h 1785 2010-04-09 14:12:59Z xhmikosr $
+/*
+ * $Id: HdmvSub.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -32,8 +32,7 @@ public:
 
 	static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
 
-	enum HDMV_SEGMENT_TYPE
-	{
+	enum HDMV_SEGMENT_TYPE {
 		NO_SEGMENT			= 0xFFFF,
 		PALETTE				= 0x14,
 		OBJECT				= 0x15,
@@ -45,22 +44,19 @@ public:
 		HDMV_SUB2			= 0x82
 	};
 
-	
-	struct VIDEO_DESCRIPTOR
-	{
+
+	struct VIDEO_DESCRIPTOR {
 		SHORT		nVideoWidth;
 		SHORT		nVideoHeight;
 		BYTE		bFrameRate;		// <= Frame rate here!
 	};
 
-	struct COMPOSITION_DESCRIPTOR
-	{
+	struct COMPOSITION_DESCRIPTOR {
 		SHORT		nNumber;
 		BYTE		bState;
 	};
 
-	struct SEQUENCE_DESCRIPTOR
-	{
+	struct SEQUENCE_DESCRIPTOR {
 		BYTE		bFirstIn  : 1;
 		BYTE		bLastIn	  : 1;
 		BYTE		bReserved : 8;
@@ -73,18 +69,19 @@ public:
 
 
 	POSITION		GetStartPosition(REFERENCE_TIME rt, double fps);
-	POSITION		GetNext(POSITION pos) { m_pObjects.GetNext(pos); return pos; };
-
-
-	virtual REFERENCE_TIME	GetStart(POSITION nPos)	
-	{
-		CompositionObject*	pObject = m_pObjects.GetAt(nPos);
-		return pObject!=NULL ? pObject->m_rtStart : INVALID_TIME; 
+	POSITION		GetNext(POSITION pos) {
+		m_pObjects.GetNext(pos);
+		return pos;
 	};
-	virtual REFERENCE_TIME	GetStop(POSITION nPos)	
-	{ 
+
+
+	virtual REFERENCE_TIME	GetStart(POSITION nPos) {
 		CompositionObject*	pObject = m_pObjects.GetAt(nPos);
-		return pObject!=NULL ? pObject->m_rtStop : INVALID_TIME; 
+		return pObject!=NULL ? pObject->m_rtStart : INVALID_TIME;
+	};
+	virtual REFERENCE_TIME	GetStop(POSITION nPos) {
+		CompositionObject*	pObject = m_pObjects.GetAt(nPos);
+		return pObject!=NULL ? pObject->m_rtStop : INVALID_TIME;
 	};
 
 	void			Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox);

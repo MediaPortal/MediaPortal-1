@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using Gentle.Framework;
 using TvDatabase;
 using TvControl;
+using TvLibrary.Log;
 using SetupTv.Dialogs;
 
 #endregion
@@ -189,10 +190,15 @@ namespace SetupTv.Sections
       numericUpDownPreRec.Value = 5;
       numericUpDownPostRec.Value = 5;
       TvBusinessLayer layer = new TvBusinessLayer();
+
+      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
+        Convert.ToInt32(layer.GetSetting("recordMaxFreeCardsToTry", "0").Value), 0, 100);
+
+      comboBoxWeekend.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstDayOfWeekend", "0").Value);
+      //default is Saturday=0
+
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
       checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
-      comboBoxFirstWorkingDay.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstWorkingDay", "0").Value);
-      //default is Monday=0       
       comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
       // default EpisodeName
       //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
@@ -210,7 +216,7 @@ namespace SetupTv.Sections
 
       // Series formats
       _formatString[1] = new string[5];
-      _formatString[1][0] = @"%channel%\%title% %date%\%title% [- S%series%] [- E%episode%] [- %name%]";
+      _formatString[1][0] = @"%channel%\%title%\%title% - %date%[ - S%series%][ - E%episode%][ - %name%]";
       _formatString[1][1] = @"%channel%\%title% (%starthh%%startmm% - %endhh%%endmm% %date%)\%title%";
       _formatString[1][2] = @"%title%\%title% - S%series%E%episode% - %name%";
       _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
@@ -230,6 +236,22 @@ namespace SetupTv.Sections
 
       LoadComboBoxDrive();
     }
+
+    private static decimal ValueSanityCheck(int value, int min, int max)
+    {
+      if (value < min)
+      {
+        return min;
+      }
+
+      if (value > max)
+      {
+        return max;
+      }
+
+      return value;
+    }
+
 
     public override void SaveSettings()
     {
@@ -257,12 +279,12 @@ namespace SetupTv.Sections
       setting.Value = _formatIndex[1].ToString();
       setting.Persist();
 
-      setting = layer.GetSetting("autodeletewatchedrecordings", "no");
-      setting.Value = checkBoxAutoDelete.Checked ? "yes" : "no";
+      setting = layer.GetSetting("FirstDayOfWeekend", "0"); //default is Saturday=0
+      setting.Value = comboBoxWeekend.SelectedIndex.ToString();
       setting.Persist();
 
-      setting = layer.GetSetting("FirstWorkingDay", "0"); //default is Monday=0
-      setting.Value = comboBoxFirstWorkingDay.SelectedIndex.ToString();
+      setting = layer.GetSetting("autodeletewatchedrecordings", "no");
+      setting.Value = checkBoxAutoDelete.Checked ? "yes" : "no";
       setting.Persist();
 
       //setting = layer.GetSetting("createtaginfoxml", "yes");
@@ -279,6 +301,10 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("EpisodeKey", "0");
       setting.Value = comboBoxEpisodeKey.SelectedIndex.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("recordMaxFreeCardsToTry", "0");
+      setting.Value = numericUpDownMaxFreeCardsToTry.Value.ToString();
       setting.Persist();
 
       UpdateDriveInfo(true);
@@ -421,8 +447,18 @@ namespace SetupTv.Sections
       SaveSettings();
       if (_needRestart)
       {
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
+        if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        {
+          var dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+          dlgNotify.Show();
+          dlgNotify.WaitForDisplay();
+
+          RemoteControl.Instance.ClearCache();
+          RemoteControl.Instance.Restart();
+
+          dlgNotify.Close();
+        }
       }
     }
 
@@ -493,6 +529,12 @@ namespace SetupTv.Sections
       {
         LoadDbImportSettings();
       }
+    }
+
+    private void comboBoxWeekend_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      Log.Debug("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
+      _needRestart = true;
     }
 
     #endregion

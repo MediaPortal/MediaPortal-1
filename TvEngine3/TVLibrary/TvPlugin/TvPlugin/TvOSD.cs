@@ -23,7 +23,6 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using Gentle.Framework;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -31,6 +30,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -232,6 +232,15 @@ namespace TvPlugin
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE,
                                                (int)Controls.OSD_PAUSE, 0, 0, null);
             OnMessage(msgSet);
+
+            if (g_Player.Paused)
+            {
+              GUIWindowManager.IsPauseOsdVisible = true;
+            }
+            else
+            {
+              GUIWindowManager.IsPauseOsdVisible = false;
+            }
             return;
           }
 
@@ -243,12 +252,8 @@ namespace TvPlugin
             ToggleButton((int)Controls.OSD_REWIND, false); // pop all the relevant
             ToggleButton((int)Controls.OSD_FFWD, false); // buttons back to
             ToggleButton((int)Controls.OSD_PLAY, false); // their up state
-
-            if (g_Player.Paused)
-            {
-              g_Player.Pause();
-              ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
-            }
+            ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
 
@@ -274,7 +279,13 @@ namespace TvPlugin
                 }
               }
             }
-            return;
+            if (g_Player.IsTVRecording)
+            {
+                Log.Debug("TvOSD: stop from recorded TV");
+                g_Player.Stop();
+            }
+            GUIWindowManager.IsPauseOsdVisible = false;
+              return;
           }
 
 
@@ -284,6 +295,8 @@ namespace TvPlugin
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_FFWD,
                                                (int)Controls.OSD_FFWD, 0, 0, null);
             OnMessage(msgSet);
+
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
 
@@ -294,6 +307,8 @@ namespace TvPlugin
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_REWIND,
                                                (int)Controls.OSD_REWIND, 0, 0, null);
             OnMessage(msgSet);
+
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
 
@@ -318,12 +333,14 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           {
+            GUIWindowManager.IsPauseOsdVisible = false;
             OnNextChannel();
             return;
           }
 
         case Action.ActionType.ACTION_PREV_CHANNEL:
           {
+            GUIWindowManager.IsPauseOsdVisible = false;
             OnPreviousChannel();
             return;
           }
@@ -347,7 +364,7 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT: // fired when OSD is hidden
           {
-            FreeResources();
+            Dispose();
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + message.Param1));
             return true;
           }
@@ -427,11 +444,11 @@ namespace TvPlugin
             {
               if (iControl == btnPreviousProgram.GetID)
               {
-                Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
+                Program prog = GetChannel().GetProgramAt(m_dateTime);
                 if (prog != null)
                 {
                   prog =
-                    TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(
+                    GetChannel().GetProgramAt(
                       prog.StartTime.Subtract(new TimeSpan(0, 1, 0)));
                   if (prog != null)
                   {
@@ -442,10 +459,10 @@ namespace TvPlugin
               }
               if (iControl == btnNextProgram.GetID)
               {
-                Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
+                Program prog = GetChannel().GetProgramAt(m_dateTime);
                 if (prog != null)
                 {
-                  prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(+1));
+                  prog = GetChannel().GetProgramAt(prog.EndTime.AddMinutes(+1));
                   if (prog != null)
                   {
                     m_dateTime = prog.StartTime.AddMinutes(1);
@@ -463,7 +480,6 @@ namespace TvPlugin
 
             if (iControl == (int)Controls.OSD_PAUSE)
             {
-              g_Player.Pause(); // Pause/Un-Pause playback
               if (g_Player.Paused)
               {
                 ToggleButton((int)Controls.OSD_PLAY, true);
@@ -493,7 +509,6 @@ namespace TvPlugin
 
             if (iControl == (int)Controls.OSD_PLAY)
             {
-              //TODO
               int iSpeed = g_Player.Speed;
               if (iSpeed != 1) // we're in ffwd or rewind mode
               {
@@ -504,7 +519,7 @@ namespace TvPlugin
               }
               else
               {
-                g_Player.Pause(); // Pause/Un-Pause playback
+                g_Player.Pause(); //Pause/Un-Pause playback
                 if (g_Player.Paused)
                 {
                   ToggleButton((int)Controls.OSD_PLAY, true);
@@ -544,7 +559,6 @@ namespace TvPlugin
                 g_Player.Pause(); // Unpause playback
               }
 
-              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
               if (g_Player.Speed < 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_REWIND, true); // make sure out button is in the down position
@@ -567,7 +581,6 @@ namespace TvPlugin
                 g_Player.Pause(); // Unpause playback
               }
 
-              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Speed > 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_FFWD, true); // make sure out button is in the down position
@@ -762,7 +775,7 @@ namespace TvPlugin
       {
         string strChannel = GetChannelName();
         strTime = strChannel;
-        Program prog = TVHome.Navigator.GetChannel(strChannel).CurrentProgram;
+        Program prog = TVHome.Navigator.Channel.CurrentProgram;
         if (prog != null)
         {
           strTime = String.Format("{0}-{1}",
@@ -1112,7 +1125,28 @@ namespace TvPlugin
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0,
                                               (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
               OnMessage(msg); // retrieve the selected list item
-              g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
+              if (g_Player.SupportsCC) // Subtitle CC
+              {
+                if (g_Player.SupportsCC && msg.Param1 == 0)
+                {
+                  msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, GetID, 0,
+                                              (int)Controls.OSD_SUBTITLE_LIST, msg.Param1, 0, null);
+                  g_Player.EnableSubtitle = false;
+                  g_Player.CurrentSubtitleStream = -1;
+                  Log.Info("Subtitle CC selected ");
+                }
+                else
+                {
+                  Log.Info("Subtitle stream selected " + msg.Label);
+                  g_Player.CurrentSubtitleStream = msg.Param1 - 1; // set the current subtitle
+                  g_Player.EnableSubtitle = true;
+                }
+              }
+              else
+              {
+                Log.Info("Subtitle stream selected " + msg.Label);
+                g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
+              }
               PopulateSubTitles();
             }
           }
@@ -1192,7 +1226,7 @@ namespace TvPlugin
     private void PopulateSubTitles()
     {
       // get the number of subtitles in the current movie
-      int iValue = g_Player.SubtitleStreams;
+      int subStreamsCount = g_Player.SubtitleStreams;
 
       // tell the list control not to show the page x/y spin control
       GUIListControl pControl = GetControl((int)Controls.OSD_SUBTITLE_LIST) as GUIListControl;
@@ -1211,29 +1245,41 @@ namespace TvPlugin
 
       // cycle through each subtitle and add it to our list control
       int currentSubtitleStream = g_Player.CurrentSubtitleStream;
-      for (int i = 0; i < iValue; ++i)
+      if (g_Player.SupportsCC) // The current subtitle CC is not in the list, add it on top of it
+      {
+        string strActive = (g_Player.SupportsCC) ? strActiveLabel : null;
+        string CC1 = "CC1";
+
+        // create a list item object to add to the list
+        GUIListItem pItem = new GUIListItem();
+        pItem.Label = CC1;
+
+        if (currentSubtitleStream == -1)
+          if (strActive != null) pItem.Label = "CC1" + " " + strActiveLabel;
+
+        // add it ...
+        GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID, 0,
+                                         (int)Controls.OSD_SUBTITLE_LIST, 0, 0, pItem);
+        OnMessage(msg2);
+      }
+      for (int i = 0; i < subStreamsCount; ++i)
       {
         string strItem;
         string strLang = g_Player.SubtitleLanguage(i);
-        int ipos = strLang.IndexOf("(");
+        // formats right label2 to '[active]'
+        string strActive = (currentSubtitleStream == i) ? strActiveLabel : null;
+        int ipos = strLang.IndexOf("[");
         if (ipos > 0)
         {
           strLang = strLang.Substring(0, ipos);
         }
-        if (g_Player.CurrentSubtitleStream == i) // this subtitle is active, show as such
-        {
-          // formats to 'Subtitle X [active]'
-          strItem = String.Format(strLang + " " + strActiveLabel); // this audio stream is active, show as such
-        }
-        else
-        {
-          // formats to 'Subtitle X'
-          strItem = String.Format(strLang);
-        }
+        // formats to 'Language'
+        strItem = String.Format(strLang);
 
         // create a list item object to add to the list
-        GUIListItem pItem = new GUIListItem();
-        pItem.Label = strItem;
+        GUIListItem pItem = new GUIListItem(strItem);
+
+        if (strActive != null) pItem.Label = strItem + " " + strActiveLabel;
 
         // add it ...
         GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID, 0,
@@ -1242,9 +1288,27 @@ namespace TvPlugin
       }
 
       // set the current active subtitle as the selected item in the list control
-      GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
-                                         (int)Controls.OSD_SUBTITLE_LIST, g_Player.CurrentSubtitleStream, 0, null);
-      OnMessage(msgSet);
+      if (g_Player.SupportsCC)
+      {
+        if (currentSubtitleStream == -1)
+        {
+          GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
+            (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
+          OnMessage(msgSet);
+        }
+        else
+        {
+          GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
+            (int)Controls.OSD_SUBTITLE_LIST, currentSubtitleStream + 1, 0, null);
+          OnMessage(msgSet);
+        }
+      }
+      else
+      {
+        GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
+          (int)Controls.OSD_SUBTITLE_LIST, g_Player.CurrentSubtitleStream, 0, null);
+        OnMessage(msgSet);
+      }
     }
 
     public override void ResetAllControls()
@@ -1401,7 +1465,7 @@ namespace TvPlugin
 
       if (imgTvChannelLogo != null)
       {
-        if (File.Exists(strLogo))
+        if (!string.IsNullOrEmpty(strLogo))                      
         {
           imgTvChannelLogo.SetFileName(strLogo);
           m_bNeedRefresh = true;
@@ -1414,6 +1478,18 @@ namespace TvPlugin
       }
     }
 
+    private Channel GetChannel()
+    {
+      if (g_Player.IsTVRecording)
+      {
+        Recording rec = TvRecorded.ActiveRecording();
+        return rec.ReferencedChannel();
+      }
+      else
+      {
+        return TVHome.Navigator.ZapChannel;
+      }
+    }
     private string GetChannelName()
     {
       if (g_Player.IsTVRecording)
@@ -1424,7 +1500,7 @@ namespace TvPlugin
       else
       {
         string tmpDisplayName = TVHome.Navigator.ZapChannel.DisplayName;
-        Channel tmpChannel = TVHome.Navigator.GetChannel(tmpDisplayName);
+        Channel tmpChannel = TVHome.Navigator.ZapChannel;
 
         if (tmpChannel != null)
         {
@@ -1456,7 +1532,7 @@ namespace TvPlugin
         tbOnTvNext.Clear();
       }
 
-      SetRecorderStatus();
+      SetRecorderStatus(true);
 
       // Channel icon
       if (imgTvChannelLogo != null)
@@ -1499,7 +1575,7 @@ namespace TvPlugin
         }
 
         // next program
-        Channel chan = TVHome.Navigator.GetChannel(GetChannelName());
+        Channel chan = GetChannel();
         if (chan != null)
         {
           prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
@@ -1531,7 +1607,7 @@ namespace TvPlugin
           if (ch != null)
           {
             string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-            if (!File.Exists(strLogo))
+            if (string.IsNullOrEmpty(strLogo))                          
             {
               strLogo = "defaultVideoBig.png";
             }
@@ -1586,16 +1662,21 @@ namespace TvPlugin
 
     private void SetRecorderStatus()
     {
+      SetRecorderStatus(false);
+    }
+
+    private void SetRecorderStatus(bool forced)
+    {
       if (imgRecIcon != null)
       {
         TimeSpan ts = DateTime.Now - _RecIconLastCheck;
-        if (ts.TotalSeconds > 15)
+        if (ts.TotalSeconds > 15 || forced)
         {
           bool isRecording = false;
           VirtualCard card;
           TvServer server = new TvServer();
 
-          if (server.IsRecording(GetChannelName(), out card))
+          if (server.IsRecording(GetChannel().IdChannel, out card))
           {
             if (g_Player.IsTVRecording)
             {
@@ -1623,7 +1704,7 @@ namespace TvPlugin
       if (!g_Player.IsTVRecording)
       {
         double fPercent;
-        Program prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram;
+        Program prog = GetChannel().CurrentProgram;
 
         if (prog == null)
         {
@@ -1681,7 +1762,6 @@ namespace TvPlugin
         string startTime = "";
         string endTime = "";
         string channelDisplayName = "";
-        string genre = "";
 
         rec = TvRecorded.ActiveRecording();
         if (rec != null)
@@ -1719,23 +1799,6 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
         }
       }
-    }
-
-    public bool InWindow(int x, int y)
-    {
-      for (int i = 0; i < controlList.Count; ++i)
-      {
-        GUIControl control = (GUIControl)controlList[i];
-        int controlID;
-        if (control.IsVisible)
-        {
-          if (control.InControl(x, y, out controlID))
-          {
-            return true;
-          }
-        }
-      }
-      return false;
     }
   }
 }

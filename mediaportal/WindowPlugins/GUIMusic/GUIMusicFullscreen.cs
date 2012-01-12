@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -122,10 +122,6 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-        case Action.ActionType.ACTION_PAUSE:
-          g_Player.Pause();
-          break;
-
         case Action.ActionType.ACTION_SMALL_STEP_BACK:
           {
             if (g_Player.CanSeek)
@@ -136,6 +132,21 @@ namespace MediaPortal.GUI.Video
               if (dPos > 5)
               {
                 g_Player.SeekAbsolute(dPos - 5.0d);
+              }
+            }
+          }
+          break;
+
+        case Action.ActionType.ACTION_SMALL_STEP_FORWARD:
+          {
+            if (g_Player.CanSeek)
+            {
+              // seek forward 5 sec
+              double dPos = g_Player.Duration - g_Player.CurrentPosition;
+
+              if (dPos > 5)
+              {
+                g_Player.SeekAbsolute(g_Player.CurrentPosition + 5.0d);
               }
             }
           }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ namespace MediaPortal.GUI.View
   {
     protected bool distinct = false;
     protected bool sortAscending = true;
+    protected bool skipLevel = false;
     protected string restriction = "";
     protected string whereClause = "";
     protected string fromStatement = "";
@@ -55,6 +56,13 @@ namespace MediaPortal.GUI.View
     {
       get { return sortAscending; }
       set { sortAscending = value; }
+    }
+
+    [XmlElement("SkipLevel")]
+    public bool SkipLevel
+    {
+      get { return skipLevel; }
+      set { skipLevel = value; }
     }
 
     [XmlElement("Restriction")]

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ namespace MpeCore.Classes.SectionPanel
       RefreshControls();
     }
 
-    void RefreshControls()
+    private void RefreshControls()
     {
       lbl_curr_file.Refresh();
       lst_changes.Refresh();
@@ -109,8 +109,9 @@ namespace MpeCore.Classes.SectionPanel
 
     private void SetValues()
     {
-      button_back.Visible = false;
-      button_cancel.Visible = false;
+      button_back.Enabled = false;
+      button_cancel.Enabled = false;
+      this.Width = 500;
     }
 
     #endregion
@@ -131,8 +132,8 @@ namespace MpeCore.Classes.SectionPanel
       if (Mode == ShowModeEnum.Real)
       {
         base.button_next.Enabled = false;
-        base.button_back.Visible = false;
-        base.button_cancel.Visible = false;
+        base.button_back.Enabled = false;
+        base.button_cancel.Enabled = false;
         foreach (var actionItem in Section.Actions.Items)
         {
           if (actionItem.ExecuteLocation != ActionExecuteLocationEnum.AfterPanelShow)

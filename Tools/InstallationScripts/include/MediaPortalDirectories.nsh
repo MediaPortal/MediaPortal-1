@@ -26,7 +26,7 @@
 !include WordFunc.nsh
 
 !ifndef NO_INSTALL_LOG
-  !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+  !include "${git_InstallScripts}\include\LoggingMacros.nsh"
 !else
 
   !ifndef LOG_TEXT
@@ -43,8 +43,8 @@
 !endif
 
 
-!AddPluginDir "${svn_InstallScripts}\XML-plugin\Plugin"
-!include "${svn_InstallScripts}\XML-plugin\Include\XML.nsh"
+!AddPluginDir "${git_InstallScripts}\XML-plugin\Plugin"
+!include "${git_InstallScripts}\XML-plugin\Include\XML.nsh"
 
 #---------------------------------------------------------------------------
 #   Read      Special MediaPortal directories from  xml
@@ -61,15 +61,11 @@ Var MPdir.Base
 Var MPdir.Config
 Var MPdir.Plugins
 Var MPdir.Log
-Var MPdir.CustomInputDevice
-Var MPdir.CustomInputDefault
 Var MPdir.Skin
 Var MPdir.Language
 Var MPdir.Database
 Var MPdir.Thumbs
-Var MPdir.Weather
 Var MPdir.Cache
-Var MPdir.BurnerSupport
 
 #***************************
 #***************************
@@ -124,15 +120,11 @@ Var MPdir.BurnerSupport
 
   StrCpy $MPdir.Plugins             "$MPdir.Base\plugins"
   StrCpy $MPdir.Log                 "$MPdir.Config\log"
-  StrCpy $MPdir.CustomInputDevice   "$MPdir.Config\InputDeviceMappings"
-  StrCpy $MPdir.CustomInputDefault  "$MPdir.Base\InputDeviceMappings\defaults"
   StrCpy $MPdir.Skin                "$MPdir.Config\skin"
   StrCpy $MPdir.Language            "$MPdir.Config\language"
   StrCpy $MPdir.Database            "$MPdir.Config\database"
   StrCpy $MPdir.Thumbs              "$MPdir.Config\thumbs"
-  StrCpy $MPdir.Weather             "$MPdir.Base\weather"
   StrCpy $MPdir.Cache               "$MPdir.Config\cache"
-  StrCpy $MPdir.BurnerSupport       "$MPdir.Base\Burner"
 
 !macroend
 
@@ -169,15 +161,11 @@ Var MPdir.BurnerSupport
   ${ReadMPdir} Config
   ${ReadMPdir} Plugins
   ${ReadMPdir} Log
-  ${ReadMPdir} CustomInputDevice
-  ${ReadMPdir} CustomInputDefault
   ${ReadMPdir} Skin
   ${ReadMPdir} Language
   ${ReadMPdir} Database
   ${ReadMPdir} Thumbs
-  ${ReadMPdir} Weather
   ${ReadMPdir} Cache
-  ${ReadMPdir} BurnerSupport
 
 
   StrCpy $0 "0"
@@ -242,15 +230,11 @@ Var MPdir.BurnerSupport
   ${LOG_TEXT} "INFO" "          Config:  $MPdir.Config"
   ${LOG_TEXT} "INFO" "          Plugins: $MPdir.Plugins"
   ${LOG_TEXT} "INFO" "          Log: $MPdir.Log"
-  ${LOG_TEXT} "INFO" "          CustomInputDevice: $MPdir.CustomInputDevice"
-  ${LOG_TEXT} "INFO" "          CustomInputDefault: $MPdir.CustomInputDefault"
   ${LOG_TEXT} "INFO" "          Skin: $MPdir.Skin"
   ${LOG_TEXT} "INFO" "          Language: $MPdir.Language"
   ${LOG_TEXT} "INFO" "          Database: $MPdir.Database"
   ${LOG_TEXT} "INFO" "          Thumbs: $MPdir.Thumbs"
-  ${LOG_TEXT} "INFO" "          Weather: $MPdir.Weather"
   ${LOG_TEXT} "INFO" "          Cache: $MPdir.Cache"
-  ${LOG_TEXT} "INFO" "          BurnerSupport: $MPdir.BurnerSupport"
 
 
   Pop $0

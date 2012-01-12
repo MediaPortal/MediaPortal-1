@@ -14,7 +14,7 @@ const int RECORD_BUFFER_SIZE = 256000;
 class CFileSinkRecorder: public MediaSink,public CPacketSync 
 {
 public:
-  static CFileSinkRecorder* createNew(UsageEnvironment& env, char const* fileName,unsigned bufferSize = 20000);
+  static CFileSinkRecorder* createNew(UsageEnvironment& env, wchar_t const* fileName,unsigned bufferSize = 20000);
   // "bufferSize" should be at least as large as the largest expected
   //   input frame.
 

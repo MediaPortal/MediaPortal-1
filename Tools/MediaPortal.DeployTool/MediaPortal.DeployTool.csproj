@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -12,10 +13,11 @@
     <ApplicationIcon>Install.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <ApplicationManifest>MediaPortal.DeployTool.exe.manifest</ApplicationManifest>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -64,7 +66,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InstallationChecks\VCRedist2008Checker.cs" />
+    <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
+      <Link>OSInfo.cs</Link>
+    </Compile>
+    <Compile Include="InstallationChecks\OldVCRedistChecker.cs" />
+    <Compile Include="InstallationChecks\VCRedistChecker.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
     <Compile Include="ManualDownloadFileMissing.cs">
@@ -118,7 +124,6 @@
     <Compile Include="MPListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="OSInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeployDialog.resx">
@@ -424,21 +429,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\print.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide.htm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\msie.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\print.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Install.ico" />

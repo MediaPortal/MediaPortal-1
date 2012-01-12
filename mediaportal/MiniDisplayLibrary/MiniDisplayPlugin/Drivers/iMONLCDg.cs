@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using Microsoft.Win32;
 using Win32.Utils.Cd;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -382,6 +383,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public void Dispose()
     {
       Log.Debug("iMONLCDg.Dispose(): called");
+      RestartIrss();
+      Log.Debug("iMONLCDg.Dispose(): completed");
+    }
+
+    public void RestartIrss()
+    {
+      Log.Debug("iMONLCDg.RestartIrss(): called");
       //
       // If IRSS (Input Remote Server Suite by and-81) is installed
       // we need to restart it in order to re-register dll handler
@@ -397,7 +405,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           continue;
         }
-        Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" (service) from IRSS");
+        Log.Debug("iMONLCDg.RestartIrss(): Restarting \"" + irss_app + "\" (service) from IRSS");
         try
         {
           ctrl.Stop();
@@ -409,7 +417,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         catch (Exception ex)
         {
-          Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" (service) from IRSS: " + ex.Message);
+          Log.Error("iMONLCDg.RestartIrss(): Unable to restart \"" + irss_app + "\" (service) from IRSS: " + ex.Message);
         }
       }
       //
@@ -421,7 +429,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Process[] procs = Process.GetProcessesByName(irss_app);
         foreach (Process proc in procs)
         {
-          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" (application) from IRSS");
+          Log.Debug("iMONLCDg.RestartIrss(): Restarting \"" + irss_app + "\" (application) from IRSS");
           proc.Kill();
           proc.WaitForExit(2000);
 
@@ -448,7 +456,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           else
           {
-            Log.Error("iMONLCDg.Dispose(): IRSS registry keys missing, aborting...");
+            Log.Error("iMONLCDg.RestartIrss(): IRSS registry keys missing, aborting...");
             break;
           }
 
@@ -468,13 +476,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           catch (Exception ex)
           {
-            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" (application) from IRSS: " +
+            Log.Error("iMONLCDg.RestartIrss(): Unable to restart \"" + irss_app + "\" (application) from IRSS: " +
                       ex.Message);
           }
           break;
         }
       }
-      Log.Debug("iMONLCDg.Dispose(): completed");
+      Log.Debug("iMONLCDg.RestartIrss(): completed");
     }
 
     public void DrawImage(Bitmap bitmap)
@@ -574,6 +582,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         OpenLcd();
         Clear();
+        if (_ForceManagerRestart)
+        {
+          RestartIrss();
+        }
         Log.Info("(IDisplay) iMONLCDg.Initialize(): completed");
       }
     }
@@ -4247,7 +4259,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           FontData.Rows.Add(row);
         }
         var serializer = new XmlSerializer(typeof (DataTable));
-        using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
+        using (
+          TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
         {
           Log.Debug("SaveFontData(): Serializing data");
           serializer.Serialize(textWriter, FontData);
@@ -4707,13 +4720,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           LIconData.Rows.Add(row);
         }
         var serializer = new XmlSerializer(typeof (DataTable));
-        using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
+        using (
+          TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
           Log.Debug("SaveDefaultLargeIconData(): Serializing data");
           serializer.Serialize(textWriter, LIconData);
           Log.Debug("SaveDefaultLargeIconData(): Writing data to file");
-          textWriter.Close(); 
-        }        
+          textWriter.Close();
+        }
         Log.Debug("SaveDefaultLargeIconData(): completed");
       }
     }

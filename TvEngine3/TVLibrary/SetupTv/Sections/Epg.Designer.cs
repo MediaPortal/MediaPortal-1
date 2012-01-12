@@ -54,13 +54,13 @@
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
+      this.checkboxSameTransponder = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.checkBoxEnableCRCCheck = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAlwaysUpdate = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAlwaysFillHoles = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.tabControlEpg = new System.Windows.Forms.TabControl();
-      this.checkBoxEnableCRCCheck = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.groupBox9.SuspendLayout();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgRefresh)).BeginInit();
@@ -89,7 +89,7 @@
       this.groupBox9.Controls.Add(this.btnTest);
       this.groupBox9.Location = new System.Drawing.Point(3, 200);
       this.groupBox9.Name = "groupBox9";
-      this.groupBox9.Size = new System.Drawing.Size(457, 228);
+      this.groupBox9.Size = new System.Drawing.Size(457, 192);
       this.groupBox9.TabIndex = 41;
       this.groupBox9.TabStop = false;
       this.groupBox9.Text = "Display options";
@@ -100,7 +100,7 @@
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label31.Location = new System.Drawing.Point(326, 80);
       this.label31.Name = "label31";
-      this.label31.Size = new System.Drawing.Size(125, 142);
+      this.label31.Size = new System.Drawing.Size(125, 106);
       this.label31.TabIndex = 37;
       this.label31.Text = "%TITLE%\r\n%DESCRIPTION%\r\n%GENRE%\r\n%STARRATING%\r\n%STARRATING_STR%\r\n%CLASSIFICATION%" +
           "\r\n%PARENTALRATING%\r\n%NEWLINE%";
@@ -188,7 +188,7 @@
       this.edDescriptionTest.Multiline = true;
       this.edDescriptionTest.Name = "edDescriptionTest";
       this.edDescriptionTest.ReadOnly = true;
-      this.edDescriptionTest.Size = new System.Drawing.Size(245, 96);
+      this.edDescriptionTest.Size = new System.Drawing.Size(245, 58);
       this.edDescriptionTest.TabIndex = 26;
       // 
       // btnTest
@@ -370,7 +370,7 @@
       // 
       this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox7.Controls.Add(this.label2);
+      this.groupBox7.Controls.Add(this.checkboxSameTransponder);
       this.groupBox7.Controls.Add(this.label1);
       this.groupBox7.Controls.Add(this.checkBoxEnableCRCCheck);
       this.groupBox7.Controls.Add(this.checkBoxAlwaysUpdate);
@@ -381,6 +381,39 @@
       this.groupBox7.TabIndex = 38;
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "General";
+      // 
+      // checkBoxEnableCRCCheck
+      // 
+      this.checkBoxEnableCRCCheck.AutoSize = true;
+      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
+      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
+      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
+      this.checkBoxEnableCRCCheck.TabIndex = 12;
+      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
+      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
+      //
+      // checkboxSameTransponder
+      // 
+      this.checkboxSameTransponder.AutoSize = true;
+      this.checkboxSameTransponder.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkboxSameTransponder.Location = new System.Drawing.Point(11, 65);
+      this.checkboxSameTransponder.Name = "checkboxSameTransponder";
+      this.checkboxSameTransponder.Size = new System.Drawing.Size(257, 17);
+      this.checkboxSameTransponder.TabIndex = 14;
+      this.checkboxSameTransponder.Text = "Grab EPG only for channels on same transponder";
+      this.checkboxSameTransponder.UseVisualStyleBackColor = true;
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label1.Location = new System.Drawing.Point(132, 39);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(321, 26);
+      this.label1.TabIndex = 13;
+      this.label1.Text = "(This will increase stability of EPG grabbing.If your provider doesn\'t \r\nbroadcas" +
+          "t CRC checksums, you have to disable it)";
       // 
       // checkBoxAlwaysUpdate
       // 
@@ -413,7 +446,7 @@
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(466, 435);
+      this.tabPage1.Size = new System.Drawing.Size(466, 410);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "DVB EPG";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -427,39 +460,8 @@
       this.tabControlEpg.Location = new System.Drawing.Point(0, 0);
       this.tabControlEpg.Name = "tabControlEpg";
       this.tabControlEpg.SelectedIndex = 0;
-      this.tabControlEpg.Size = new System.Drawing.Size(474, 461);
+      this.tabControlEpg.Size = new System.Drawing.Size(474, 436);
       this.tabControlEpg.TabIndex = 1;
-      // 
-      // checkBoxEnableCRCCheck
-      // 
-      this.checkBoxEnableCRCCheck.AutoSize = true;
-      this.checkBoxEnableCRCCheck.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEnableCRCCheck.Location = new System.Drawing.Point(11, 42);
-      this.checkBoxEnableCRCCheck.Name = "checkBoxEnableCRCCheck";
-      this.checkBoxEnableCRCCheck.Size = new System.Drawing.Size(115, 17);
-      this.checkBoxEnableCRCCheck.TabIndex = 12;
-      this.checkBoxEnableCRCCheck.Text = "Enable CRC check";
-      this.checkBoxEnableCRCCheck.UseVisualStyleBackColor = true;
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(132, 44);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(211, 13);
-      this.label1.TabIndex = 13;
-      this.label1.Text = "(This will increase stability of EPG grabbing)";
-      // 
-      // label2
-      // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label2.Location = new System.Drawing.Point(29, 65);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(352, 13);
-      this.label2.TabIndex = 14;
-      this.label2.Text = "If your provider doesn\'t broadcast CRC checksums, you have to disable it";
       // 
       // Epg
       // 
@@ -467,7 +469,7 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControlEpg);
       this.Name = "Epg";
-      this.Size = new System.Drawing.Size(474, 475);
+      this.Size = new System.Drawing.Size(474, 439);
       this.groupBox9.ResumeLayout(false);
       this.groupBox9.PerformLayout();
       this.groupBox2.ResumeLayout(false);
@@ -517,9 +519,8 @@
     private System.Windows.Forms.Button btnTest;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabControl tabControlEpg;
-    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnableCRCCheck;
-
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkboxSameTransponder;
   }
 }

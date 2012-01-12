@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,8 +38,6 @@ namespace MediaPortal.GUI.Library
     protected int _frameCounter = 0;
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
-    protected GUIFont _font = null;
-
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
@@ -49,9 +47,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_MIDDLE;
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    protected GUILabelControl _labelControl = null;
 
     private bool _shadow = false;
 
@@ -95,13 +95,17 @@ namespace MediaPortal.GUI.Library
       _imageAlternativeNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width,
                                                          _height, _alternativeNonFocusTextureName);
       _imageAlternativeNonFocused.ParentControl = this;
-      if (_fontName != "" && _fontName != "-")
-      {
-        _font = GUIFontManager.GetFont(_fontName);
-      }
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
       _shadow = (_shadowAngle > 0) || (_shadowDistance > 0);
+
+      _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                          _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_MIDDLE, false,
+                                          _shadowAngle, _shadowDistance, _shadowColor);
+      _labelControl.TextAlignment = _textAlignment;
+      _labelControl.TextVAlignment = _textVAlignment;
+      _labelControl.DimColor = DimColor;
+      _labelControl.ParentControl = this;
     }
 
     public override void ScaleToScreenResolution()
@@ -161,47 +165,54 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      // render the text on the button
-      if (_label.Length > 0 && _font != null)
+      int labelWidth = _width - 2 * _textOffsetX;
+      if (labelWidth <= 0)
       {
-        /* replaced by the following not commented line
-        long color = _textColor;
-        if (Disabled)
-          color = _disabledColor;
-        if (Dimmed)
-          color &= (DimColor);
-        */
-
-        long color = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
-        if (Dimmed)
-        {
-          color &= (DimColor);
-        }
-
-        // render the text on the button
-        int x = 0;
-
-        switch (_textAlignment)
-        {
-          case Alignment.ALIGN_LEFT:
-            x = _textOffsetX + _positionX;
-            break;
-
-          case Alignment.ALIGN_RIGHT:
-            x = _positionX + _width - _textOffsetX;
-            break;
-        }
-        uint c = (uint)color;
-        c = GUIGraphicsContext.MergeAlpha(c);
-        if (_shadow)
-        {
-          _font.DrawShadowText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, -1, _shadowAngle, _shadowDistance, _shadowColor);
-        }
-        else
-        {
-          _font.DrawText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, -1);
-        }
+        base.Render(timePassed);
+        return;
       }
+      _labelControl.Width = labelWidth;
+      _labelControl.TextAlignment = _textAlignment;
+      _labelControl.TextVAlignment = _textVAlignment;
+      _labelControl.Label = _label;
+      _labelControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+
+      // render the text on the button
+      int x = 0;
+      int y = 0;
+
+      switch (_textAlignment)
+      {
+        case Alignment.ALIGN_LEFT:
+          x = _textOffsetX + _positionX;
+          break;
+
+        case Alignment.ALIGN_RIGHT:
+          x = _positionX + _width - _textOffsetX;
+          break;
+
+        case Alignment.ALIGN_CENTER:
+          x = _positionX + ((_width / 2) - (labelWidth / 2));
+          break;
+      }
+
+      switch (_textVAlignment)
+      {
+        case VAlignment.ALIGN_TOP:
+          y = _textOffsetY + _positionY;
+          break;
+
+        case VAlignment.ALIGN_BOTTOM:
+          y = _positionY + _height - _textOffsetY;
+          break;
+
+        case VAlignment.ALIGN_MIDDLE:
+          y = _positionY + ((_height / 2) - (_labelControl.Height / 2));
+          break;
+      }
+
+      _labelControl.SetPosition(x, y);
+      _labelControl.Render(timePassed);
       base.Render(timePassed);
     }
 
@@ -262,7 +273,6 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       base.AllocResources();
-      _font = GUIFontManager.GetFont(_fontName);
       _frameCounter = 0;
       _imageFocused.AllocResources();
       _imageNonFocused.AllocResources();
@@ -270,6 +280,9 @@ namespace MediaPortal.GUI.Library
       _imageAlternativeNonFocused.AllocResources();
       _width = _imageFocused.Width;
       _height = _imageFocused.Height;
+      _labelControl.Width = _width;
+      _labelControl.Height = _height;
+      _labelControl.AllocResources();
     }
 
     public override void Dispose()
@@ -279,6 +292,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.SafeDispose();
       _imageAlternativeFocused.SafeDispose();
       _imageAlternativeNonFocused.SafeDispose();
+      _labelControl.SafeDispose();
     }
 
     public override void SetPosition(int posX, int posY)
@@ -341,7 +355,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _fontName = value;
-        _font = GUIFontManager.GetFont(_fontName);
+        _labelControl.FontName = _fontName;
       }
     }
 
@@ -355,19 +369,27 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      _label = strLabel;
+      Label = strLabel;
       _textColor = dwColor;
-      if (strFontName != "" && strFontName != "-")
-      {
-        _fontName = strFontName;
-        _font = GUIFontManager.GetFont(_fontName);
-      }
+      _fontName = strFontName;
+
+      _labelControl.FontName = _fontName;
+      _labelControl.TextColor = dwColor;
+      _labelControl.Label = strLabel;
     }
 
     public string Label
     {
       get { return _label; }
-      set { _label = value; }
+      set
+      {
+        if (value == null)
+        {
+          return;
+        }
+        _label = value;
+        _labelControl.Label = _label;
+      }
     }
 
     public int HyperLink
@@ -449,6 +471,10 @@ namespace MediaPortal.GUI.Library
         if (_imageAlternativeNonFocused != null)
         {
           _imageAlternativeNonFocused.DimColor = value;
+        }
+        if (_labelControl != null)
+        {
+          _labelControl.DimColor = value;
         }
       }
     }

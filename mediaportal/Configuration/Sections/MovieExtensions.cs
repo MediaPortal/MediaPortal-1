@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,19 +26,19 @@ namespace MediaPortal.Configuration.Sections
   public class MovieExtensions : BaseFileExtensions
   {
     public MovieExtensions()
-      : this("Video Extensions") { }
+      : this("Video Extensions") {}
 
     public MovieExtensions(string name)
-      : base(name) { }
+      : base(name) {}
 
-    public override void LoadSettings()
+    protected override string SettingsSection
     {
-      base.LoadSettings("movies", Util.Utils.VideoExtensionsDefault);
+      get { return "movies"; }
     }
 
-    public override void SaveSettings()
+    protected override string DefaultExtensions
     {
-      base.SaveSettings("movies");
+      get { return Util.Utils.VideoExtensionsDefault; }
     }
   }
 }

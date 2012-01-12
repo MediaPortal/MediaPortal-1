@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,6 +33,31 @@ namespace TvLibrary.Implementations
   /// </summary>
   public abstract class TvCardBase
   {
+    #region events
+
+    /// <summary>
+    /// Delegate for the after tune event.
+    /// </summary>
+    public delegate void OnAfterTuneDelegate();
+
+    /// <summary>
+    /// After tune observer event.
+    /// </summary>
+    public event OnAfterTuneDelegate AfterTuneEvent;
+
+    /// <summary>
+    /// Handles the after tune observer event.
+    /// </summary>
+    protected void OnAfterTuneEvent()
+    {
+      if (AfterTuneEvent != null)
+      {
+        AfterTuneEvent();
+      }
+    }
+
+    #endregion
+
     #region ctor
 
     ///<summary>
@@ -51,6 +76,7 @@ namespace TvLibrary.Implementations
       if (_devicePath != null)
       {
         GetPreloadBitAndCardId();
+        GetSupportsPauseGraph();
       }
     }
 
@@ -80,6 +106,11 @@ namespace TvLibrary.Implementations
     /// Indicates, if the card should be preloaded
     /// </summary>
     protected bool _preloadCard;
+
+    /// <summary>
+    /// Indicates, if the card supports pausegraph, otherwise stopgraph will be used when card is idle.
+    /// </summary>
+    protected bool _stopGraph;
 
     /// <summary>
     /// Scanning Paramters
@@ -222,6 +253,14 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region properties
+
+    /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    public virtual bool SupportsPauseGraph
+    {
+      get { return !_stopGraph; }
+    }
 
     /// <summary>
     /// Gets or sets the unique id of this card
@@ -509,6 +548,20 @@ namespace TvLibrary.Implementations
       }
     }
 
+    private void GetSupportsPauseGraph()
+    {
+      //fetch stopgraph value from db and apply it.
+      IList<Card> cardsInDbs = Card.ListAll();
+      foreach (Card dbsCard in cardsInDbs)
+      {
+        if (dbsCard.DevicePath.Equals(_devicePath))
+        {
+          _stopGraph = dbsCard.StopGraph;
+          break;
+        }
+      }
+    }
+
     /// <summary>
     /// Gets the first subchannel being used.
     /// </summary>
@@ -588,6 +641,17 @@ namespace TvLibrary.Implementations
     /// </summary>
     ///     
     public abstract void StopGraph();
+
+    /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    ///     
+    public abstract void PauseGraph();
+
+    /// <summary>
+    /// Starts the graph
+    /// </summary>
+    public abstract void RunGraph(int subChannel);
 
     /// <summary>
     /// A derrived class should activate / deactivate the epg grabber
@@ -681,8 +745,15 @@ namespace TvLibrary.Implementations
         _subChannelId = 0;
         if (!continueGraph)
         {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, stopping graph");
-          StopGraph();
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");
+          if (SupportsPauseGraph)
+          {
+            PauseGraph();
+          }
+          else
+          {
+            StopGraph();
+          }
         }
         else
         {

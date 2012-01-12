@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System.ComponentModel;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 
 #pragma warning disable 108
@@ -52,7 +53,7 @@ namespace MediaPortal.Configuration.Sections
 
 
     public TVDebugOptions()
-      : this("Debug Options") { }
+      : this("Debug Options") {}
 
     public TVDebugOptions(string name)
       : base(name)
@@ -96,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof(TVDebugOptions));
+        new System.ComponentModel.ComponentResourceManager(typeof (TVDebugOptions));
       this.groupBoxSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpEnableRecordingFromTimeshiftCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -311,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      singleSeat = Common.IsSingleSeat();
+      singleSeat = Network.IsSingleSeat();
 
       bool rtsp;
       using (Settings xmlreader = new MPSettings())

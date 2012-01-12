@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -76,6 +76,9 @@ namespace SetupTv.Sections
       checkBoxPreloadCard.Checked = _card.PreloadCard;
       checkBoxCAMenabled.Checked = _card.CAM;
 
+      radioStopCard.Checked = _card.StopGraph;
+      radioPauseCard.Checked = !radioStopCard.Checked;
+
       setCAMLimitVisibility();
       Text += " " + _card.Name;
 
@@ -105,6 +108,7 @@ namespace SetupTv.Sections
         _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       }
       _card.PreloadCard = checkBoxPreloadCard.Checked;
+      _card.StopGraph = radioStopCard.Checked;
 
       _card.CAM = checkBoxCAMenabled.Checked;
       _card.netProvider = (int)comboBoxNetProvider.SelectedItem;

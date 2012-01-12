@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ using DirectShowLib.BDA;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
+using TvDatabase;
+using TvLibrary.Epg;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -32,9 +34,7 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
   {
-    #region variables   
-
-    
+    #region variables
 
     #endregion
 
@@ -69,8 +69,12 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
         AddNetworkProviderFilter(typeof (ATSCNetworkProvider).GUID);
-        CreateTuningSpace();
-        AddMpeg2DemuxerToGraph();
+        AddTsWriterFilterToGraph();
+        if (!useInternalNetworkProvider)
+        {
+          CreateTuningSpace();
+          AddMpeg2DemuxerToGraph();
+        }
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
         string graphName = _device.Name + " - ATSC Graph.grf";
@@ -125,10 +129,10 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("ITuningSpace", spaces[0]);
       }
       Release.ComObject("IEnumTuningSpaces", enumTuning);
-      Log.Log.WriteFile("atsc:Create new tuningspace");      
+      Log.Log.WriteFile("atsc:Create new tuningspace");
       _tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
       IATSCTuningSpace tuningSpace = (IATSCTuningSpace)_tuningSpace;
-      
+
       tuningSpace.put_UniqueName("MediaPortal ATSC TuningSpace");
       tuningSpace.put_FriendlyName("MediaPortal ATSC TuningSpace");
       tuningSpace.put__NetworkType(typeof (ATSCNetworkProvider).GUID);
@@ -139,7 +143,7 @@ namespace TvLibrary.Implementations.DVB
       tuningSpace.put_MaxChannel(99); //major channels
       tuningSpace.put_MinMinorChannel(0);
       tuningSpace.put_MinPhysicalChannel(1); //OTA 1, QAM 2
-      tuningSpace.put_MinChannel(1);      
+      tuningSpace.put_MinChannel(1);
 
       IATSCLocator locator = (IATSCLocator)new ATSCLocator();
       locator.put_CarrierFrequency(-1);
@@ -165,75 +169,28 @@ namespace TvLibrary.Implementations.DVB
     #region tuning & recording
 
     /// <summary>
-    /// Tunes the specified channel.
+    /// Scans the specified channel.
     /// </summary>
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("atsc:Tune:{0} ", channel);
       try
       {
-        ATSCChannel atscChannel = channel as ATSCChannel;
-        if (atscChannel == null)
+        if (!BeforeTune(channel))
         {
-          Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
           return null;
         }
-        if (_graphState == GraphState.Idle)
-        {
-          BuildGraph();
-        }        
-        if (_previousChannel == null || _previousChannel.IsDifferentTransponder(atscChannel))
-        {
-          Log.Log.WriteFile("atsc:using new channel tuning settings");
-          ITuneRequest request;
-          int hr = _tuningSpace.CreateTuneRequest(out request);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - CreateTuneRequest");
-          _tuneRequest = (IATSCChannelTuneRequest)request;
-          IATSCChannelTuneRequest tuneRequest = (IATSCChannelTuneRequest)_tuneRequest;
-          ILocator locator;
-          hr = _tuningSpace.get_DefaultLocator(out locator);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - get_DefaultLocator");
-          IATSCLocator atscLocator = (IATSCLocator)locator;
-          hr = atscLocator.put_SymbolRate(-1);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_SymbolRate");
-          hr = atscLocator.put_TSID(-1);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_TSID");
-          hr = atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_CarrierFrequency");
-          hr = atscLocator.put_Modulation(atscChannel.ModulationType);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_Modulation");
-          hr = tuneRequest.put_Channel(atscChannel.MajorChannel);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_Channel");
-          hr = tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_MinorChannel");
-          hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_PhysicalChannel");
-          hr = _tuneRequest.put_Locator(locator);
-          if (hr != 0)
-            Log.Log.WriteFile("atsc: Failed - put_Locator");
-          //set QAM paramters if necessary...
-          _conditionalAccess.CheckATSCQAM(atscChannel);                          
-        }
-        else
-        {
-          Log.Log.WriteFile("atsc:using previous channel tuning settings");          
-        }
-        ITvSubChannel ch = base.Tune(subChannelId, channel);        
+        ITvSubChannel ch = base.Scan(subChannelId, channel);
         return ch;
       }
       catch (TvExceptionNoSignal)
+      {
+        throw;
+      }
+      catch (TvExceptionNoPMT)
       {
         throw;
       }
@@ -244,15 +201,143 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
+    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    {
+      Log.Log.WriteFile("atsc:Tune:{0} ", channel);
+      try
+      {
+        if (!BeforeTune(channel))
+        {
+          return null;
+        }
+        ITvSubChannel ch = base.Tune(subChannelId, channel);
+        return ch;
+      }
+      catch (TvExceptionNoSignal)
+      {
+        throw;
+      }
+      catch (TvExceptionNoPMT)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw;
+      }
+    }
+
+    private bool BeforeTune(IChannel channel)
+    {
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (atscChannel == null)
+      {
+        Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
+        return false;
+      }
+      if (_graphState == GraphState.Idle)
+      {
+        BuildGraph();
+      }
+      if (useInternalNetworkProvider)
+      {
+        return true;
+      }
+      if (_previousChannel == null || _previousChannel.IsDifferentTransponder(atscChannel))
+      {
+        Log.Log.WriteFile("atsc:using new channel tuning settings");
+        ITuneRequest request;
+        int hr = _tuningSpace.CreateTuneRequest(out request);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - CreateTuneRequest");
+        _tuneRequest = request;
+        IATSCChannelTuneRequest tuneRequest = (IATSCChannelTuneRequest)_tuneRequest;
+        ILocator locator;
+        hr = _tuningSpace.get_DefaultLocator(out locator);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - get_DefaultLocator");
+        IATSCLocator atscLocator = (IATSCLocator)locator;
+        hr = atscLocator.put_SymbolRate(-1);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_SymbolRate");
+        hr = atscLocator.put_TSID(-1);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_TSID");
+        hr = atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_CarrierFrequency");
+        hr = atscLocator.put_Modulation(atscChannel.ModulationType);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_Modulation");
+        hr = tuneRequest.put_Channel(atscChannel.MajorChannel);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_Channel");
+        hr = tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_MinorChannel");
+        hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_PhysicalChannel");
+        hr = _tuneRequest.put_Locator(locator);
+        if (hr != 0)
+          Log.Log.WriteFile("atsc: Failed - put_Locator");
+        //set QAM paramters if necessary...
+        _conditionalAccess.CheckATSCQAM(atscChannel);
+      }
+      else
+      {
+        Log.Log.WriteFile("atsc:using previous channel tuning settings");
+      }
+      return true;
+    }
+
     #endregion
 
     #region epg & scanning
 
     /// <summary>
+    /// checks if a received EPGChannel should be filtered from the resultlist
+    /// </summary>
+    /// <value></value>
+    protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
+      {
+        DVBBaseChannel chan = epgChannel.Channel as DVBBaseChannel;
+        Channel dbchannel = layer.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
+        ATSCChannel atscchannel = new ATSCChannel();
+        if (dbchannel == null)
+        {
+          return false;
+        }
+        foreach (TuningDetail detail in dbchannel.ReferringTuningDetail())
+        {
+          if (detail.ChannelType == 1)
+          {
+            atscchannel.MajorChannel = detail.MajorChannel;
+            atscchannel.MinorChannel = detail.MinorChannel;
+            atscchannel.PhysicalChannel = detail.ChannelNumber;
+          }
+        }
+        return this.CurrentChannel.IsDifferentTransponder(atscchannel);
+      }
+      else
+        return false;
+    }
+
+    /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
     /// <value></value>
-    public ITVScanning ScanningInterface
+    public override ITVScanning ScanningInterface
     {
       get { return new ATSCScanning(this); }
     }
@@ -277,11 +362,21 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>
     /// true if card can tune to the channel otherwise false
     /// </returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if ((channel as ATSCChannel) == null)
         return false;
       return true;
+    }
+
+    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
+    {
+      ATSCChannel channel = new ATSCChannel();
+      channel.NetworkId = networkid;
+      channel.TransportId = transportid;
+      channel.ServiceId = serviceid;
+      channel.Name = name;
+      return channel;
     }
   }
 }

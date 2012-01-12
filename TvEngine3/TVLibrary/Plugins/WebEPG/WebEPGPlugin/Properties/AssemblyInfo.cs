@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 #endregion
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -28,12 +28,6 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("WebEPGImport")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Team MediaPortal")]
-[assembly: AssemblyProduct("WebEPGImport")]
-[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -45,15 +39,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("f4d40b2c-9c50-4693-971b-2c5d64732366")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.2.0.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: CompatibleVersion("Own")]
+[assembly: UsesSubsystem("TVE")]

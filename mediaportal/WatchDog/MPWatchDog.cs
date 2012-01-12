@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -37,8 +37,8 @@ namespace WatchDog
   {
     #region Constants
 
-    private const string Default4to3Skin = "Blue3";
-    private const string Default16to9Skin = "Blue3wide";
+    private const string Default4to3Skin = "Default";
+    private const string Default16to9Skin = "DefaultWide";
 
     #endregion
 
@@ -50,9 +50,10 @@ namespace WatchDog
     private bool _autoMode = false;
     private bool _watchdog = false;
     private bool _restartMP = false;
+    private bool _restoreTaskbar = false;
     private int _cancelDelay = 10;
     private Process _processMP = null;
-    private int _lastMPLogLevel = 2;
+    //private int _lastMPLogLevel = 2;
     private int _graphsCreated = 0;
     private List<string> _knownPids = new List<string>();
     private bool _safeMode = false;
@@ -109,8 +110,8 @@ namespace WatchDog
 
       try
       {
-        File.Copy(MPSettings.ConfigPathName, tempSettingsFilename);
-        using (Settings xmlreader = new Settings(tempSettingsFilename))
+        File.Copy(MPSettings.ConfigPathName, tempSettingsFilename, true);
+        using (Settings xmlreader = new Settings(tempSettingsFilename, false))
         {
           xmlreader.SetValue("general", "loglevel", 3);
         }
@@ -161,7 +162,8 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortalLogs_[date]__[time].zip";
+      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) +
+                 "\\MediaPortalLogs_[date]__[time].zip";
       if (!ParseCommandLine())
       {
         Application.Exit();
@@ -191,6 +193,10 @@ namespace WatchDog
         WindowState = FormWindowState.Minimized;
         ShowInTaskbar = false;
         tmrWatchdog.Enabled = true;
+        using (MPSettings xmlreader = new MPSettings())
+        {
+          _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+        }
       }
     }
 
@@ -315,7 +321,7 @@ namespace WatchDog
     {
       PerformPreTestActions(_autoMode);
     }
-    
+
     private void PerformPreTestActions(bool autoClose)
     {
       setStatus("Busy performing pre-test actions...");
@@ -403,7 +409,7 @@ namespace WatchDog
       tmrMPWatcher.Enabled = false;
       if (_processMP.HasExited)
       {
-        if(!string.IsNullOrEmpty(_tempConfig))
+        if (!string.IsNullOrEmpty(_tempConfig))
         {
           File.Delete(_tempConfig);
         }
@@ -496,6 +502,11 @@ namespace WatchDog
         EnableChoice(false);
         ExportLogsRadioButton.Checked = true;
         ProceedButton.Enabled = true;
+        if (_restoreTaskbar)
+        {
+          MediaPortal.Util.Win32API.EnableStartBar(true);
+          MediaPortal.Util.Win32API.ShowStartBar(true);
+        }
         if (!_restartMP)
         {
           Utils.ErrorDlg("MediaPortal crashed unexpectedly.");
@@ -515,6 +526,5 @@ namespace WatchDog
         }
       }
     }
-
   }
 }

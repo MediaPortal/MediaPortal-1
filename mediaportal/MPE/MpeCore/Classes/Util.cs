@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,12 +24,18 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
 namespace MpeCore.Classes
 {
   public class Util
   {
+    public static string InstallerConfigDir
+    {
+      get { return Config.GetSubFolder(Config.Dir.Config, "Installer"); }
+    }
+
     public static void LoadPlugins(string pluginFile)
     {
       if (!File.Exists(pluginFile))
@@ -81,6 +87,63 @@ namespace MpeCore.Classes
       {
         MessageBox.Show(string.Format("Exception in plugin loading :{0}", unknownException.Message));
       }
+    }
+
+    public static bool IsPlugin(string pluginFile)
+    {
+      if (!File.Exists(pluginFile))
+      {
+        return false;
+      }
+      Assembly pluginAssembly = null;
+      try
+      {
+        pluginAssembly = Assembly.LoadFrom(pluginFile);
+      }
+      catch (BadImageFormatException)
+      {
+        return false;
+      }
+      if (pluginAssembly != null)
+      {
+        try
+        {
+          Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+
+          foreach (Type type in exportedTypes)
+          {
+            if (type.IsAbstract)
+            {
+              continue;
+            }
+            if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+            {
+              return true;
+            }
+            if (type.GetInterface("MediaPortal.GUI.Library.IPlugin") != null)
+            {
+              return true;
+            }
+            if (type.GetInterface("MediaPortal.GUI.Library.IWakeable") != null)
+            {
+              return true;
+            }
+            if (type.GetInterface("TvEngine.ITvServerPlugin") != null)
+            {
+              return true;
+            }
+            if(type.IsClass && type.IsSubclassOf(typeof(GUIWindow)))
+            {
+              return true;
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          return false;
+        }
+      }
+      return false;
     }
 
 

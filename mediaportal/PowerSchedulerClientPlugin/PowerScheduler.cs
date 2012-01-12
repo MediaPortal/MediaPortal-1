@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -40,6 +41,7 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
+using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -87,7 +89,6 @@ namespace MediaPortal.Plugins.Process
     private bool _refreshSettings = false;
     private DateTime _lastUserTime = DateTime.Now; // last time the user was doing sth (action/watching)
     private PowerSettings _settings;
-    private PowerManager _powerManager;
     private List<IStandbyHandler> _standbyHandlers;
     private List<IWakeupHandler> _wakeupHandlers;
     private bool _idle;
@@ -146,9 +147,6 @@ namespace MediaPortal.Plugins.Process
         GUIWindowManager.Add(ref win);
       }
 
-
-      _powerManager = new PowerManager();
-
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
       // Create the timer that will wakeup the system after a specific amount of time after the
       // system has been put into standby
@@ -183,8 +181,6 @@ namespace MediaPortal.Plugins.Process
       _wakeupTimer.Close();
       GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnAction);
 
-      _powerManager.AllowStandby();
-      _powerManager = null;
       SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
       Log.Info("PowerScheduler client plugin stopped");
     }
@@ -606,8 +602,6 @@ namespace MediaPortal.Plugins.Process
 
         _currentDisAllowShutdown = false;
 
-        _powerManager.AllowStandby();
-
         return false;
       }
     }
@@ -675,7 +669,7 @@ namespace MediaPortal.Plugins.Process
         bool basicHome;
         using (Settings xmlreader = new MPSettings())
         {
-          basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
         }
 
         int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
@@ -720,9 +714,6 @@ namespace MediaPortal.Plugins.Process
     private bool LoadSettings()
     {
       bool changed = false;
-      bool boolSetting;
-      int intSetting;
-      string stringSetting;
       PowerSetting setting;
       PowerSchedulerEventArgs args;
 
@@ -740,16 +731,17 @@ namespace MediaPortal.Plugins.Process
         if (!_refreshSettings)
         {
           setting = _settings.GetSetting("SingleSeat");
-          stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
-          if (stringSetting != String.Empty && IsLocal(stringSetting))
-          {
-            Log.Info("PowerScheduler: detected a singleseat setup - delegating suspend/hibernate requests to tvserver");
-            setting.Set<bool>(true);
-          }
-          else if (stringSetting == String.Empty)
+          string stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
+                    
+          if (stringSetting == String.Empty)
           {
             Log.Info("Detected client-only setup - using local methods to suspend/hibernate system");
             setting.Set<bool>(false);
+          }
+          else if (Network.IsSingleSeat())
+          {
+            Log.Info("PowerScheduler: detected a singleseat setup - delegating suspend/hibernate requests to tvserver");
+            setting.Set<bool>(true);
           }
           else
           {
@@ -767,7 +759,7 @@ namespace MediaPortal.Plugins.Process
         }
 
         // Check if logging should be verbose
-        boolSetting = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
+        bool boolSetting = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
         if (_settings.ExtensiveLogging != boolSetting)
         {
           _settings.ExtensiveLogging = boolSetting;
@@ -802,7 +794,7 @@ namespace MediaPortal.Plugins.Process
         }
 
         // Check configured PowerScheduler idle timeout
-        intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
+        int intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         if (_settings.IdleTimeout != intSetting)
         {
           _settings.IdleTimeout = intSetting;
@@ -858,36 +850,6 @@ namespace MediaPortal.Plugins.Process
     }
 
     /// <summary>
-    ///  Checks if the given hostname/IP address is the local host
-    /// </summary>
-    /// <param name="serverName">hostname/IP address to check</param>
-    /// <returns>is this name/address local?</returns>
-    private bool IsLocal(string serverName)
-    {
-      LogVerbose("IsLocal(): checking if {0} is local...", serverName);
-      foreach (string name in new string[] {"localhost", "127.0.0.1", Dns.GetHostName()})
-      {
-        LogVerbose("Checking against {0}", name);
-        if (serverName.Equals(name, StringComparison.CurrentCultureIgnoreCase))
-        {
-          return true;
-        }
-      }
-
-      IPHostEntry hostEntry = Dns.GetHostEntry(Dns.GetHostName());
-      foreach (IPAddress address in hostEntry.AddressList)
-      {
-        LogVerbose("Checking against {0}", address);
-        if (address.ToString().Equals(serverName, StringComparison.CurrentCultureIgnoreCase))
-        {
-          return true;
-        }
-      }
-
-      return false;
-    }
-
-    /// <summary>
     /// OnAction handler; if any action is received then last busy time is reset (i.e. idletimeout is reset)
     /// </summary>
     /// <param name="action">action message sent by the system</param>
@@ -928,7 +890,7 @@ namespace MediaPortal.Plugins.Process
         }
         else
         {
-          try 
+          try
           {
             Log.Info("PowerScheduler: Keep server alive");
             RemotePowerControl.Instance.UserActivityDetected(DateTime.Now);
@@ -961,6 +923,7 @@ namespace MediaPortal.Plugins.Process
     /// This implementation only does the following basic checks:
     /// - Checks if the global player is playing. If not, then:
     ///   - (if configured) checks whether or not the system is at the home screen
+    ///   - if slideshow is active
     /// </summary>
     public bool UserInterfaceIdle
     {
@@ -968,10 +931,11 @@ namespace MediaPortal.Plugins.Process
       {
         if (!g_Player.Playing)
         {
+          int activeWindow = GUIWindowManager.ActiveWindow;
+
           // No media is playing, see if user is still active then
           if (_settings.GetSetting("HomeOnly").Get<bool>() && !_shutdownInitiated)
           {
-            int activeWindow = GUIWindowManager.ActiveWindow;
             if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME ||
                 activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME ||
                 activeWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
@@ -983,6 +947,11 @@ namespace MediaPortal.Plugins.Process
               //LogVerbose("PSClientPlugin.UserInterfaceIdle: Not in home screen, {0}", (GUIWindow.Window) GUIWindowManager.ActiveWindow);
               return false;
             }
+          }
+          else if (activeWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+          {
+            LogVerbose("PSClientPlugin.UserInterfaceIdle: slideshow active");
+            return false;
           }
           else
           {
@@ -1271,7 +1240,11 @@ namespace MediaPortal.Plugins.Process
         }
         catch (Exception ex)
         {
-          Log.Error(ex);
+          string tvpluginDir = Config.GetSubFolder(Config.Dir.Plugins, "windows") + "TvPlugin.dll";
+          if (File.Exists(tvpluginDir))
+          {
+            Log.Error(ex);
+          }
           // Should we also clear the connection? 
           //RemotePowerControl.Clear();
         }

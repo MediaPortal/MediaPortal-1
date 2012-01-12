@@ -31,6 +31,7 @@
 #define MAX_BUFFER_TIMEOUT	1500
 
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 MultiFileReader::MultiFileReader():
 	m_TSBufferFile(),
 	m_TSFile()
@@ -431,10 +432,9 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 			if (m_bDebugOutput)
 			{
-				USES_CONVERSION;
-				TCHAR sz[MAX_PATH+128];
-				wsprintf(sz, TEXT("Removing file %s\n"), W2T(file->filename));
-				::OutputDebugString(sz);
+				wchar_t sz[MAX_PATH+128];
+				wsprintfW(sz, L"Removing file %s\n", file->filename);
+				::OutputDebugStringW(sz);
 			}
 			
 			delete file;
@@ -538,11 +538,10 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 			if (m_bDebugOutput)
 			{
-				USES_CONVERSION;
-				TCHAR sz[MAX_PATH+128];
+				wchar_t sz[MAX_PATH+128];
 				int nextStPos = (int)nextStartPosition;
-				wsprintf(sz, TEXT("Adding file %s (%i)\n"), W2T(pFilename), nextStPos);
-				::OutputDebugString(sz);
+				wsprintfW(sz, L"Adding file %s (%i)\n", pFilename, nextStPos);
+				::OutputDebugStringW(sz);
 			}
 
 			file = new MultiFileReaderFile();
@@ -598,8 +597,6 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
 HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length)
 {
-	USES_CONVERSION;
-
 	length = 0;
 
 	// Try to open the file
@@ -624,8 +621,8 @@ HRESULT MultiFileReader::GetFileLength(LPWSTR pFilename, __int64 &length)
 	{
 		wchar_t msg[MAX_PATH];
 		DWORD dwErr = GetLastError();
-		swprintf((LPWSTR)&msg, L"Failed to open file %s : 0x%x\n", pFilename, dwErr);
-		::OutputDebugString(W2T((LPWSTR)&msg));
+		swprintf(msg, MAX_PATH, L"Failed to open file %s : 0x%x\n", pFilename, dwErr);
+		::OutputDebugStringW((LPWSTR)&msg);
 		return HRESULT_FROM_WIN32(dwErr);
 	}
 	return S_OK;

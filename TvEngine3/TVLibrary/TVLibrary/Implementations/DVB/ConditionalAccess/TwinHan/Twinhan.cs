@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -440,7 +440,7 @@ namespace TvLibrary.Implementations.DVB
         }
         Log.Log.WriteFile("Twinhan:  GetPmtReply() returned {0} bytes", back);
         DVB_MMI.DumpBinary(_ptrPmt, 0, back);
-        //Marshal.ReleaseComObject(propertySet);
+        //Release.ComObject(propertySet);
       }
       return "";
     }
@@ -491,7 +491,7 @@ namespace TvLibrary.Implementations.DVB
           }
           break;
         }
-        //Marshal.ReleaseComObject(propertySet);
+        //Release.ComObject(propertySet);
       }
       return suceeded;
     }
@@ -544,7 +544,7 @@ namespace TvLibrary.Implementations.DVB
         }
         else
           Log.Log.WriteFile("Twinhan:  SetLNB ok 0x{0:X}", hr);
-        //Marshal.ReleaseComObject(propertySet);
+        //Release.ComObject(propertySet);
       }
     }
 
@@ -606,7 +606,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("TwinHan DiSEqC succeeded");
           success = true;
         }
-        //Marshal.ReleaseComObject(propertySet);
+        //Release.ComObject(propertySet);
       }
       return success;
     }
@@ -653,7 +653,7 @@ namespace TvLibrary.Implementations.DVB
             reply[i] = Marshal.ReadByte(_ptrDiseqc, 4 + i);
           }
         }
-        //Marshal.ReleaseComObject(propertySet);
+        //Release.ComObject(propertySet);
       }
       return success;
     }

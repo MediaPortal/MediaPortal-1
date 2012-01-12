@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,86 +28,55 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Class for DVBIP scanning
   /// </summary>
-  public class DVBIPScanning : DvbBaseScanning, ITVScanning
+  public class DVBIPScanning : DvbBaseScanning
   {
-    private TvCardDVBIP _card;
-
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="card"></param>
-    public DVBIPScanning(TvCardDVBIP card) : base(card)
-    {
-      _card = card;
-    }
-
-    #region Implementation of ITVScanning
-
-    /// <summary>
-    /// returns tv card
-    /// </summary>
-    public ITVCard TvCard
-    {
-      get { return _card; }
-    }
-
-    #endregion
-
-    /// <summary>
-    /// returns analyzer filter
-    /// </summary>
-    /// <returns></returns>
-    protected override ITsChannelScan GetAnalyzer()
-    {
-      return _card.StreamAnalyzer;
-    }
-
-    /// <summary>
-    /// SetHwPids
-    /// </summary>
-    /// <param name="pids"></param>
-    protected override void SetHwPids(System.Collections.Generic.List<ushort> pids)
-    {
-      _card.SendHwPids(pids);
-    }
-
-    /// <summary>
-    /// ResetSignalUpdate
-    /// </summary>
-    protected override void ResetSignalUpdate()
-    {
-      _card.ResetSignalUpdate();
-    }
+    public DVBIPScanning(TvCardDVBIP card) : base(card) {}
 
     /// <summary>
     /// CreateNewChannel
     /// </summary>
-    /// <param name="info"></param>
-    /// <returns></returns>
-    protected override IChannel CreateNewChannel(ChannelInfo info)
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
     {
-      DVBIPChannel tunningChannel = (DVBIPChannel)_card.CurrentChannel;
+      DVBIPChannel tuningChannel = (DVBIPChannel)channel;
       DVBIPChannel dvbipChannel = new DVBIPChannel();
       dvbipChannel.Name = info.service_name;
       dvbipChannel.LogicalChannelNumber = info.LCN;
       dvbipChannel.Provider = info.service_provider_name;
-      dvbipChannel.Url = tunningChannel.Url;
-      dvbipChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video ||
-                           info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream ||
-                           info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream ||
-                           info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream ||
-                           info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
-      dvbipChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
+      dvbipChannel.Url = tuningChannel.Url;
+      dvbipChannel.IsTv = IsTvService(info.serviceType);
+      dvbipChannel.IsRadio = IsRadioService(info.serviceType);
       dvbipChannel.NetworkId = info.networkID;
       dvbipChannel.ServiceId = info.serviceID;
       dvbipChannel.TransportId = info.transportStreamID;
       dvbipChannel.PmtPid = info.network_pmt_PID;
-      dvbipChannel.PcrPid = info.pcr_pid;
       dvbipChannel.FreeToAir = !info.scrambled;
-      dvbipChannel.VideoPid = info.videoPid;
-      dvbipChannel.AudioPid = info.audioPid;
       Log.Log.Write("Found: {0}", dvbipChannel);
       return dvbipChannel;
+    }
+
+    protected override bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
+    {
+      //In DVB-IP there are several ways to describe a channel. It is possible that no service type is given. 
+      //Until we can fully implement DVB-IP support we check if video or audio is available to determine the channel type.
+      if (info.serviceType <= 0)
+      {
+        if (hasVideo != 0)
+        {
+          info.serviceType = (int)DvbServiceType.DigitalTelevision;
+        }
+        else if (hasAudio != 0)
+        {
+          info.serviceType = (int)DvbServiceType.DigitalRadio;
+        }
+      } 
+      return base.IsValidChannel(info, hasAudio, hasVideo);
     }
   }
 }

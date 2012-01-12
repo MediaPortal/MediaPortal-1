@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
@@ -33,10 +34,68 @@ using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
+  public abstract class GUIBaseControl : System.ComponentModel.ISupportInitialize
+  {
+    protected GUIBaseControl()
+    {
+      // default values
+      IsVisible = true;
+      Focusable = true;
+      IsEnabled = true;
+    }
+
+    public bool IsEnabled { get; set; }
+
+    [XMLSkinElement("visible")]
+    public bool IsVisible
+    {
+      get { return Visibility == Visibility.Visible; }
+      set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
+    }
+
+    public bool IsFocused { get; set; }
+    public bool Focusable { get; set; }
+    public MediaPortal.Drawing.Point Location { get; set; }
+    public Thickness Margin { get; set; }
+    public Size RenderSize { get; set; }
+    public Visibility Visibility { get; set; }
+    public HorizontalAlignment HorizontalAlignment { get; set; }
+    public VerticalAlignment VerticalAlignment { get; set; }
+    public HorizontalAlignment HorizontalContentAlignment { get; set; }
+    public ContextMenu ContextMenu { get; set; }
+    public virtual int Width { get; set; }
+    public virtual int Height { get; set; }
+
+    public void Arrange(Rect finalRect)
+    {
+      Location = finalRect.Location;
+      Width = (int)finalRect.Width;
+      Height = (int)finalRect.Height;
+    }
+
+    // not implemented before either, but probably should?
+    public Size Measure(Size availableSize)
+    {
+      return Size.Empty;
+    }
+
+    // not implemented before either, but probably should?
+    public void BringIntoView() {}
+    public void UpdateLayout() {}
+
+    #region ISupportInitialize
+
+    public virtual void BeginInit() {}
+
+    public virtual void EndInit() {}
+
+    #endregion
+  }
+
   /// <summary>
   /// Base class for GUIControls.
   /// </summary>
-  public abstract class GUIControl : Control, IDisposable
+  public abstract class GUIControl : GUIBaseControl, IDisposable // Control, IDisposable
   {
     [XMLSkinElement("subtype")] protected string _subType = "";
     [XMLSkinElement("onleft")] protected int _leftControlId = 0;
@@ -71,6 +130,7 @@ namespace MediaPortal.GUI.Library
     private bool _visibleFromSkinCondition = true;
     private int _visibleCondition = 0;
     private bool _allowHiddenFocus = false;
+    private bool _visibilityInitialized = false;
     private bool _hasCamera = false;
     private Point _camera;
 
@@ -404,7 +464,7 @@ namespace MediaPortal.GUI.Library
       return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
     }
 
-    private ArrayList FlattenHierarchy(UIElementCollection elements)
+    private ArrayList FlattenHierarchy(ICollection<GUIControl> elements)
     {
       ArrayList targetList = new ArrayList();
 
@@ -413,7 +473,7 @@ namespace MediaPortal.GUI.Library
       return targetList;
     }
 
-    private void FlattenHierarchy(ICollection collection, ArrayList targetList)
+    private void FlattenHierarchy(ICollection<GUIControl> collection, ArrayList targetList)
     {
       foreach (GUIControl control in collection)
       {
@@ -432,22 +492,22 @@ namespace MediaPortal.GUI.Library
         {
           GUIFacadeControl facade = (GUIFacadeControl)control;
 
-          switch (facade.View)
+          switch (facade.CurrentLayout)
           {
-            case GUIFacadeControl.ViewMode.AlbumView:
-              targetList.Add(facade.AlbumListView);
+            case GUIFacadeControl.Layout.AlbumView:
+              targetList.Add(facade.AlbumListLayout);
               break;
-            case GUIFacadeControl.ViewMode.Filmstrip:
-              targetList.Add(facade.FilmstripView);
+            case GUIFacadeControl.Layout.Filmstrip:
+              targetList.Add(facade.FilmstripLayout);
               break;
-            case GUIFacadeControl.ViewMode.CoverFlow:
-              targetList.Add(facade.CoverFlowView);
+            case GUIFacadeControl.Layout.CoverFlow:
+              targetList.Add(facade.CoverFlowLayout);
               break;
-            case GUIFacadeControl.ViewMode.List:
-              targetList.Add(facade.ListView);
+            case GUIFacadeControl.Layout.List:
+              targetList.Add(facade.ListLayout);
               break;
             default:
-              targetList.Add(facade.ThumbnailView);
+              targetList.Add(facade.ThumbnailLayout);
               break;
           }
 
@@ -577,7 +637,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Sets and gets the status of the focus of the control.
     /// </summary>
-    public new virtual bool Focus
+    public virtual bool Focus
     {
       get { return IsFocused; }
       set
@@ -590,7 +650,8 @@ namespace MediaPortal.GUI.Library
         {
           QueueAnimation(AnimationType.Focus);
         }
-        SetValue(IsFocusedProperty, value);
+        //SetValue(IsFocusedProperty, value);
+        IsFocused = value;
       }
     }
 
@@ -614,7 +675,7 @@ namespace MediaPortal.GUI.Library
     {
       Dispose();
     }
-    
+
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
@@ -626,10 +687,9 @@ namespace MediaPortal.GUI.Library
         for (int i = 0; i < _animations.Count; i++)
         {
           _animations[i].ResetAnimation();
-        } 
+        }
       }
 
-      
 
       _hasRendered = false;
     }
@@ -761,14 +821,23 @@ namespace MediaPortal.GUI.Library
         }
         if (IsVisible && !value)
         {
-          QueueAnimation(AnimationType.Hidden);
+          //only do animations after visibility has been initializaed
+          if (_visibilityInitialized)
+            QueueAnimation(AnimationType.Hidden);
         }
         else if (!IsVisible && value)
         {
-          QueueAnimation(AnimationType.Visible);
+          //only do animations after visibility has been initializaed
+          if (_visibilityInitialized)
+            QueueAnimation(AnimationType.Visible);
         }
         IsVisible = value;
       }
+    }
+
+    public bool VisibleFromSkinCondition
+    {
+      get { return _visibleFromSkinCondition; }
     }
 
     /// <summary>
@@ -1210,8 +1279,8 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-      _subItemList.Add(obj);
-    }
+        _subItemList.Add(obj);
+      }
     }
 
     /// <summary>
@@ -1222,8 +1291,8 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-      _subItemList.Remove(obj);
-    }
+        _subItemList.Remove(obj);
+      }
     }
 
     /// <summary>
@@ -1234,12 +1303,12 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-      if (index <= 0 || index >= _subItemList.Count)
-      {
-        return;
+        if (index <= 0 || index >= _subItemList.Count)
+        {
+          return;
+        }
+        _subItemList.RemoveAt(index);
       }
-      _subItemList.RemoveAt(index);
-    }
     }
 
     /// <summary>
@@ -1291,16 +1360,10 @@ namespace MediaPortal.GUI.Library
     /// Property to get the control for a specific control ID
     /// </summary>
     /// <param name="ID">Id of wanted control</param>
-    /// <returns>null if not found or
-    ///          GUIControl if found
-    /// </returns>
+    /// <returns>null if not found orGUIControl if found</returns>
     public virtual GUIControl GetControlById(int ID)
     {
-      if (ID == GetID)
-      {
-        return this;
-      }
-      return null;
+      return ID == GetID ? this : null;
     }
 
     /// <summary>
@@ -1376,8 +1439,8 @@ namespace MediaPortal.GUI.Library
     {
       x = _positionX;
       y = _positionY;
-      width = base.Width;
-      height = base.Height;
+      width = Width;
+      height = Height;
     }
 
     /// <summary>
@@ -1404,7 +1467,9 @@ namespace MediaPortal.GUI.Library
     public List<GUIControl> LoadControl(string xmlFilename)
     {
       XmlDocument doc = new XmlDocument();
+
       doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
+
       List<GUIControl> listControls = new List<GUIControl>();
 
 
@@ -1417,8 +1482,8 @@ namespace MediaPortal.GUI.Library
         return listControls;
       }
 
-      // Load Definitions
-      Hashtable table = new Hashtable();
+      // Load Definitions      
+      IDictionary<string, string> table = new Dictionary<string, string>();
       try
       {
         foreach (XmlNode node in doc.SelectNodes("/window/define"))
@@ -1525,19 +1590,6 @@ namespace MediaPortal.GUI.Library
 
     #endregion Enums
 
-    #region Methods
-
-    protected override Size ArrangeOverride(Rect finalRect)
-    {
-      Size size = base.ArrangeOverride(finalRect);
-
-      Update();
-
-      return size;
-    }
-
-    #endregion Methods
-
     #region Properties
 
     public override int Width
@@ -1566,7 +1618,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override double Opacity
+    public double Opacity
     {
       get { return 255.0 / Color.FromArgb((int)_diffuseColor).A; }
       set { _diffuseColor = Color.FromArgb((int)(255 * value), Color.FromArgb((int)_diffuseColor)).ToArgb(); }
@@ -1574,11 +1626,11 @@ namespace MediaPortal.GUI.Library
 
     public Size Size
     {
-      get { return new Size(base.Width, base.Height); }
+      get { return new Size(Width, Height); }
       set
       {
-        base.Width = (int)value.Width;
-        base.Height = (int)value.Height;
+        Width = (int)value.Width;
+        Height = (int)value.Height;
         Update();
       }
     }
@@ -1657,8 +1709,8 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
-      List<VisualEffect> reverseAnims = GetAnimations((AnimationType)(-(int)animType), false);
-      List<VisualEffect> forwardAnims = GetAnimations(animType, false);
+      List<VisualEffect> reverseAnims = GetAnimations((AnimationType)(-(int)animType), true);
+      List<VisualEffect> forwardAnims = GetAnimations(animType, true);
       bool done = false;
       foreach (VisualEffect reverseAnim in reverseAnims)
       {
@@ -1847,6 +1899,8 @@ namespace MediaPortal.GUI.Library
       if (GUIGraphicsContext.Animations)
       {
         _transform.Reset();
+        float centerX = 0, centerY = 0;
+        GetCenter(ref centerX, ref centerY);
         for (int i = 0; i < _animations.Count; i++)
         {
           VisualEffect anim = _animations[i];
@@ -1856,10 +1910,6 @@ namespace MediaPortal.GUI.Library
           // and render the animation effect
           float centerXOrg = anim.CenterX;
           float centerYOrg = anim.CenterY;
-          float centerX = 0, centerY = 0;
-          GetCenter(ref centerX, ref centerY);
-          //GUIGraphicsContext.ScaleHorizontal(ref centerX);
-          //GUIGraphicsContext.ScaleVertical(ref centerY);
           anim.SetCenter(centerX, centerY);
           anim.RenderAnimation(ref _transform);
           anim.CenterX = centerXOrg;
@@ -1913,8 +1963,12 @@ namespace MediaPortal.GUI.Library
     {
       if (_visibleCondition == 0)
       {
+        _visibilityInitialized = true;
         return;
       }
+      //Make sure to initialize visibility
+      if (!_visibilityInitialized)
+        SetInitialVisibility();
       bool bWasVisible = _visibleFromSkinCondition;
       _visibleFromSkinCondition = GUIInfoManager.GetBool(_visibleCondition, ParentID);
       if (GUIGraphicsContext.Animations == false)
@@ -1926,14 +1980,18 @@ namespace MediaPortal.GUI.Library
       {
         // automatic change of visibility - queue the in effect
         //    CLog::DebugLog("Visibility changed to visible for control id %i", m_dwControlID);
-        QueueAnimation(AnimationType.Visible);
+        if (_visibilityInitialized)
+          QueueAnimation(AnimationType.Visible);
       }
       else if (bWasVisible && !_visibleFromSkinCondition)
       {
         // automatic change of visibility - do the out effect
         //    CLog::DebugLog("Visibility changed to hidden for control id %i", m_dwControlID);
-        QueueAnimation(AnimationType.Hidden);
+        if (_visibilityInitialized)
+          QueueAnimation(AnimationType.Hidden);
       }
+      _visibilityInitialized = true;
+      GUIWindow.HasWindowVisibilityUpdated = false;
     }
 
     public virtual void SetInitialVisibility()
@@ -1986,12 +2044,12 @@ namespace MediaPortal.GUI.Library
         anim.ResetAnimation();
       }
       return;
-    }    
+    }
 
     public ILayoutDetail LayoutDetail
     {
       get { return _layoutDetail; }
       set { _layoutDetail = value; }
-  }
+    }
   }
 }

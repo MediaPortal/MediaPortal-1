@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -128,6 +128,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_REFRESHRATE_CHANGED = 97,
       GUI_MSG_TV_ERROR_NOTIFY = 98, // morpheus_xx, tv error handling
       GUI_MSG_PLAY_DVD = 99, // chefkoch
+      GUI_MSG_NOTIFY_REC = 100,
       PS_ONSTANDBY = 9999
     } ;
 

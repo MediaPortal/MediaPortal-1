@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Threading;
 
 namespace System.Windows
@@ -38,16 +39,6 @@ namespace System.Windows
     #endregion Constructors
 
     #region Methods
-
-    public void ClearValue(DependencyProperty property)
-    {
-      _localValues.Remove(property);
-    }
-
-    public void ClearValue(DependencyPropertyKey key)
-    {
-      _localValues.Remove(key.DependencyProperty);
-    }
 
     public LocalValueEnumerator GetLocalValueEnumerator()
     {
@@ -76,9 +67,10 @@ namespace System.Windows
     {
       object commonValue = DependencyProperty.UnsetValue;
 
-      if (_localValues.ContainsKey(property.GlobalIndex))
+      object commonValueRes;
+      if (_localValues.TryGetValue(property.GlobalIndex, out commonValueRes))
       {
-        commonValue = _localValues[property.GlobalIndex];
+        commonValue = commonValueRes;
       }
 
       if (commonValue != DependencyProperty.UnsetValue)
@@ -223,7 +215,7 @@ namespace System.Windows
 
     private DependencyObjectType _dependencyObjectType = null;
     private bool _isCanBeUnbound = false;
-    private Hashtable _localValues = new Hashtable();
+    private Dictionary<int, object> _localValues = new Dictionary<int, object>();
 
     #endregion Fields
   }

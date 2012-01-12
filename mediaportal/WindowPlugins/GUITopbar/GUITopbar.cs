@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Topbar
 {
@@ -136,7 +137,6 @@ namespace MediaPortal.Topbar
     {
       if (!m_bEnabled ||
           GUIGraphicsContext.DisableTopBar ||
-          GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER ||
           GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION ||
           GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION ||
           MediaPortal.Player.g_Player.IsDVDMenu)
@@ -253,9 +253,7 @@ namespace MediaPortal.Topbar
             m_bTopBarHide = false;
           }
 
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,
-                                          null);
-          OnMessage(msg);
+          GUIControl.FocusControl(GetID, _defaultControlId);
         }
         else
         {
@@ -290,8 +288,7 @@ namespace MediaPortal.Topbar
           {
             if (!bFocus)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, id, 0, 0, null);
-              OnMessage(msg);
+              GUIControl.FocusControl(GetID, id);
               control.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out bFocus);
             }
             control.OnAction(action);

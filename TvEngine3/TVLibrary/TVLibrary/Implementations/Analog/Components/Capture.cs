@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -139,6 +139,14 @@ namespace TvLibrary.Implementations.Analog.Components
     }
 
     /// <summary>
+    /// Gets the video capture device path
+    /// </summary>
+    public String VideoCaptureDevicePath
+    {
+      get { return _videoCaptureDevice.DevicePath; }
+    }
+
+    /// <summary>
     /// Gets the audio capture name
     /// </summary>
     public String AudioCaptureName
@@ -226,23 +234,24 @@ namespace TvLibrary.Implementations.Analog.Components
       if (_filterAudioCapture != null && _filterVideoCapture != _filterAudioCapture)
       {
         Release.ComObject("audio capture filter", _filterAudioCapture);
-        _filterAudioCapture = null;
       }
       if (_filterVideoCapture != null)
       {
         Release.ComObject("video capture filter", _filterVideoCapture);
         _filterVideoCapture = null;
+        _analogVideoDecoder = null;
       }
+      _filterAudioCapture = null;
       if (_audioCaptureDevice != null && _audioCaptureDevice != _videoCaptureDevice)
       {
         DevicesInUse.Instance.Remove(_audioCaptureDevice);
-        _audioCaptureDevice = null;
       }
       if (_videoCaptureDevice != null)
       {
         DevicesInUse.Instance.Remove(_videoCaptureDevice);
         _videoCaptureDevice = null;
       }
+      _audioCaptureDevice = null;
     }
 
     #endregion
@@ -299,8 +308,8 @@ namespace TvLibrary.Implementations.Analog.Components
                                                         IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar,
                                                         TvAudio tvAudio)
     {
-      string videoDeviceName = graph.Capture.AudioCaptureName;
-      string audioDeviceName = graph.Capture.Name;
+      string audioDeviceName = graph.Capture.AudioCaptureName;
+      string videoDeviceName = graph.Capture.Name;
       DsDevice[] devices;
       bool videoConnected = false;
       bool audioConnected = false;
@@ -415,7 +424,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         else
         {
-          i = 0;
+          i = -1; // Go through the devices again from the start...
         }
         if (videoConnected && audioConnected)
         {
@@ -568,7 +577,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         else
         {
-          i = 0;
+          i = -1; // Go through the devices again from the start...
         }
         if (videoConnected && audioConnected)
         {
@@ -599,7 +608,7 @@ namespace TvLibrary.Implementations.Analog.Components
         if (pinVBI != null)
         {
           Log.Log.WriteFile("analog: VideoPortVBI pin found");
-          Marshal.ReleaseComObject(pinVBI);
+          Release.ComObject(pinVBI);
           return;
         }
         pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VBI, 0,

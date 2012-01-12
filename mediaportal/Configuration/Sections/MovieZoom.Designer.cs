@@ -47,7 +47,7 @@ namespace MediaPortal.Configuration.Sections
       this.gAllowedModes.Controls.Add(this.cbAllowStretch);
       this.gAllowedModes.Controls.Add(this.cbAllowNonLinearStretch);
       this.gAllowedModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.gAllowedModes.Location = new System.Drawing.Point(15, 12);
+      this.gAllowedModes.Location = new System.Drawing.Point(6, 0);
       this.gAllowedModes.Name = "gAllowedModes";
       this.gAllowedModes.Size = new System.Drawing.Size(186, 187);
       this.gAllowedModes.TabIndex = 2;
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBoxZoomDefault.Controls.Add(this.defaultZoomModeComboBox);
       this.mpGroupBoxZoomDefault.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxZoomDefault.Location = new System.Drawing.Point(207, 14);
+      this.mpGroupBoxZoomDefault.Location = new System.Drawing.Point(207, 0);
       this.mpGroupBoxZoomDefault.Name = "mpGroupBoxZoomDefault";
       this.mpGroupBoxZoomDefault.Size = new System.Drawing.Size(262, 62);
       this.mpGroupBoxZoomDefault.TabIndex = 3;

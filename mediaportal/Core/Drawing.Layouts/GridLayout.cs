@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ namespace MediaPortal.Drawing.Layouts
 
     #region Methods
 
-    private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+    private void ApplyAlignment(GUIControl element, Thickness t, double x, double y, double w, double h)
     {
       Rect rect = new Rect(x, y, element.Width, element.Height);
 
@@ -132,7 +132,7 @@ namespace MediaPortal.Drawing.Layouts
 
           if (index < element.Children.Count)
           {
-            FrameworkElement component = (FrameworkElement)element.Children[index];
+            var component = element.Children[index];
 
             if (component.Visibility == Visibility.Collapsed)
             {
@@ -166,7 +166,7 @@ namespace MediaPortal.Drawing.Layouts
         rows = (element.Children.Count + cols - 1) / cols;
       }
 
-      foreach (FrameworkElement child in element.Children)
+      foreach (var child in element.Children)
       {
         if (child.Visibility == Visibility.Collapsed)
         {

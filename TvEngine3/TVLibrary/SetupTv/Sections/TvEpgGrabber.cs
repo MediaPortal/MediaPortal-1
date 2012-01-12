@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,11 +33,10 @@ namespace SetupTv.Sections
   public partial class TvEpgGrabber : SectionSettings
   {
     private bool _loaded;
-
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
 
     public TvEpgGrabber()
-      : this("TV Epg grabber") {}
+      : this("TV Epg grabber") { }
 
     public TvEpgGrabber(string name)
       : base(name)
@@ -65,7 +64,7 @@ namespace SetupTv.Sections
         string values = "";
         for (int j = 0; j < list.Count; j++)
         {
-          ListViewItem item = new ListViewItem(new string[] {list[j], codes[j]});
+          ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
           mpListView2.Items.Add(item);
           item.Tag = codes[j];
           if (setting.Value == "")
@@ -124,7 +123,7 @@ namespace SetupTv.Sections
         base.OnSectionActivated();
         mpListView1.Items.Clear();
 
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -137,13 +136,40 @@ namespace SetupTv.Sections
           bool dvbs = false;
           bool atsc = false;
           bool dvbip = false;
+          bool hasFta = false;
+          bool hasScrambled = false;         
           if (ch.IsTv == false)
             continue;
           if (ch.IsWebstream())
             continue;
-          int imageIndex = 1;
-          if (ch.FreeToAir == false)
-            imageIndex = 2;
+
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
+
           ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
           foreach (ChannelMap map in ch.ReferringChannelMap())
           {
@@ -204,7 +230,8 @@ namespace SetupTv.Sections
           }
           if (dvbip)
           {
-            if (line != "") line += ",";
+            if (line != "")
+              line += ",";
             line += "DVB-IP";
           }
           item.SubItems.Add(line);
@@ -218,6 +245,45 @@ namespace SetupTv.Sections
       }
     }
 
+    public override void SaveSettings()
+    {
+      if (false == _loaded)
+        return;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting setting = layer.GetSetting("epgLanguages");
+      setting.Value = ",";
+      for (int i = 0; i < mpListView2.Items.Count; ++i)
+      {
+        if (mpListView2.Items[i].Checked)
+        {
+          string code = (string)mpListView2.Items[i].Tag;
+          setting.Value += code;
+          setting.Value += ",";
+        }
+      }
+      setting.Persist();
+      base.SaveSettings();
+    }
+
+    private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
+                                  ? SortOrder.Descending
+                                  : SortOrder.Ascending;
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter.SortColumn = e.Column;
+        lvwColumnSorter.Order = SortOrder.Ascending;
+      }
+      // Perform the sort with these new sort options.
+      mpListView1.Sort();
+    }
+
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
       Channel channel = e.Item.Tag as Channel;
@@ -227,7 +293,75 @@ namespace SetupTv.Sections
       channel.Persist();
     }
 
-    private void mpButtonAll_Click(object sender, EventArgs e)
+    private void linkLabelTVAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      try
+      {
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        {
+          mpListView1.Items[i].Checked = true;
+        }
+      }
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
+    }
+
+    private void linkLabelTVAllGrouped_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      try
+      {
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        {
+          Channel ch = (Channel)mpListView1.Items[i].Tag;
+          mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1);
+          // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        }
+      }
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
+    }
+
+    private void linkLabelTVGroupedVisible_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      try
+      {
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        {
+          Channel ch = (Channel)mpListView1.Items[i].Tag;
+          mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1 && ch.VisibleInGuide);
+          // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        }
+      }
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
+    }
+
+    private void linkLabelTVNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      try
+      {
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        {
+          mpListView1.Items[i].Checked = false;
+        }
+      }
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
+    }
+
+    private void linkLabelLanguageAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView2.BeginUpdate();
       try
@@ -255,7 +389,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void mpButtonNone_Click(object sender, EventArgs e)
+    private void linkLabelLanguageNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView2.BeginUpdate();
       try
@@ -274,96 +408,6 @@ namespace SetupTv.Sections
       {
         mpListView2.EndUpdate();
       }
-    }
-
-    public override void SaveSettings()
-    {
-      if (false == _loaded)
-        return;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgLanguages");
-      setting.Value = ",";
-      for (int i = 0; i < mpListView2.Items.Count; ++i)
-      {
-        if (mpListView2.Items[i].Checked)
-        {
-          string code = (string)mpListView2.Items[i].Tag;
-          setting.Value += code;
-          setting.Value += ",";
-        }
-      }
-      setting.Persist();
-      base.SaveSettings();
-    }
-
-    private void mpButtonAllChannels_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      try
-      {
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
-        {
-          mpListView1.Items[i].Checked = true;
-        }
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
-    }
-
-    private void mpButtonNoneChannels_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      try
-      {
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
-        {
-          mpListView1.Items[i].Checked = false;
-        }
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
-    }
-
-    private void mpButtonAllGrouped_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      try
-      {
-        for (int i = 0; i < mpListView1.Items.Count; ++i)
-        {
-          Channel ch = (Channel)mpListView1.Items[i].Tag;
-          mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1);
-          // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
-        }
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
-    }
-
-    private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
-    {
-      if (e.Column == lvwColumnSorter.SortColumn)
-      {
-        // Reverse the current sort direction for this column.
-        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
-                                  ? SortOrder.Descending
-                                  : SortOrder.Ascending;
-      }
-      else
-      {
-        // Set the column number that is to be sorted; default to ascending.
-        lvwColumnSorter.SortColumn = e.Column;
-        lvwColumnSorter.Order = SortOrder.Ascending;
-      }
-
-      // Perform the sort with these new sort options.
-      mpListView1.Sort();
     }
   }
 }

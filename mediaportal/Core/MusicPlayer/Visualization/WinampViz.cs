@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
-using Un4seen.Bass.AddOn.Vis;
+using BassVis_Api;
 
 namespace MediaPortal.Visualization
 {
@@ -33,7 +33,7 @@ namespace MediaPortal.Visualization
   {
     #region Variables
 
-    private BASS_VIS_INFO _mediaInfo = null;
+    private BASSVIS_INFO _mediaInfo = null;
 
     private bool RenderStarted = false;
     private bool firstRun = true;
@@ -58,7 +58,7 @@ namespace MediaPortal.Visualization
     {
       Bass.PlaybackStateChanged += new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
 
-      _mediaInfo = new BASS_VIS_INFO("", "");
+      _mediaInfo = new BASSVIS_INFO("", "");
 
       try
       {
@@ -113,15 +113,15 @@ namespace MediaPortal.Visualization
         _mediaInfo.SongTitle = _songTitle;
         _mediaInfo.SongFile = Bass.CurrentFile;
 
-        BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Play);
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
       }
       else if (newState == BassAudioEngine.PlayState.Paused)
       {
-        BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Pause);
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Pause);
       }
       else if (newState == BassAudioEngine.PlayState.Ended)
       {
-        BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Stop);
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
         RenderStarted = false;
       }
     }
@@ -171,7 +171,7 @@ namespace MediaPortal.Visualization
         {
           _mediaInfo.SongTitle = "Mediaportal Preview";
         }
-        BassVis.BASS_VIS_SetInfo(_visParam, _mediaInfo);
+        BassVis.BASSVIS_SetInfo(_visParam, _mediaInfo);
 
         if (RenderStarted)
         {
@@ -185,8 +185,8 @@ namespace MediaPortal.Visualization
           stream = (int)Bass.GetCurrentVizStream();
         }
 
-        BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Play);
-        RenderStarted = BassVis.BASS_VIS_RenderChannel(_visParam, stream);
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
+        RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream);
       }
 
       catch (Exception) {}
@@ -208,16 +208,16 @@ namespace MediaPortal.Visualization
       // We need to stop the Vis first, otherwise some plugins don't allow the config to be called
       if (_visParam.VisHandle != 0)
       {
-        BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Stop);
-        BassVis.BASS_VIS_Free(_visParam);
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
+        BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
         _visParam.VisHandle = 0;
       }
 
-      int tmpVis = BassVis.BASS_VIS_GetPluginHandle(BASSVISPlugin.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
+      int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
       {
-        int numModules = BassVis.BASS_VIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);
-        BassVis.BASS_VIS_Config(_visParam, 0);
+        int numModules = BassVis.BASSVIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);
+        BassVis.BASSVIS_Config(_visParam, 0);
       }
 
       return true;
@@ -281,7 +281,7 @@ namespace MediaPortal.Visualization
 
       if (_visParam.VisHandle != 0)
       {
-        BassVis.BASS_VIS_Free(_visParam);
+        BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
         _visParam.VisHandle = 0;
         RenderStarted = false;
       }
@@ -293,16 +293,16 @@ namespace MediaPortal.Visualization
       _mediaInfo.Duration = 0;
       _mediaInfo.PlaylistPos = 0;
       _mediaInfo.PlaylistLen = 0;
-      BassVis.BASS_VIS_SetInfo(_visParam, _mediaInfo);
+      BassVis.BASSVIS_SetInfo(_visParam, _mediaInfo);
 
       try
       {
         // Create the Visualisation
-        BASS_VIS_EXEC visExec = new BASS_VIS_EXEC(VizPluginInfo.FilePath);
+        BASSVIS_EXEC visExec = new BASSVIS_EXEC(VizPluginInfo.FilePath);
         visExec.AMP_ModuleIndex = VizPluginInfo.PresetIndex;
         visExec.AMP_UseOwnW1 = 1;
         visExec.AMP_UseOwnW2 = 1;
-        BassVis.BASS_VIS_ExecutePlugin(visExec, _visParam);
+        BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
         if (_visParam.VisGenWinHandle != IntPtr.Zero)
         {
           hwndChild = Win32API.GetWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Show);
@@ -311,25 +311,25 @@ namespace MediaPortal.Visualization
             Win32API.MoveWindow(hwndChild, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height, true);
           }
 
-          BassVis.BASS_VIS_SetVisPort(_visParam,
-                                      _visParam.VisGenWinHandle,
-                                      VisualizationWindow.Handle,
-                                      0,
-                                      0,
-                                      VisualizationWindow.Width,
-                                      VisualizationWindow.Height);
+          BassVis.BASSVIS_SetVisPort(_visParam,
+                                     _visParam.VisGenWinHandle,
+                                     VisualizationWindow.Handle,
+                                     0,
+                                     0,
+                                     VisualizationWindow.Width,
+                                     VisualizationWindow.Height);
 
-          BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Play);
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
         }
         else
         {
-          BassVis.BASS_VIS_SetVisPort(_visParam,
-                                      _visParam.VisGenWinHandle,
-                                      IntPtr.Zero,
-                                      0,
-                                      0,
-                                      0,
-                                      0);
+          BassVis.BASSVIS_SetVisPort(_visParam,
+                                     _visParam.VisGenWinHandle,
+                                     IntPtr.Zero,
+                                     0,
+                                     0,
+                                     0,
+                                     0);
         }
 
         // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground

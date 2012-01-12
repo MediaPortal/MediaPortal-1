@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ namespace MediaPortal.Configuration
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SettingsForm : MPConfigForm
+  public partial class SettingsForm : MPConfigForm
   {
     #region ConfigPage struct
 
@@ -94,25 +94,9 @@ namespace MediaPortal.Configuration
 
     private const string _windowName = "MediaPortal - Configuration";
     private int hintShowCount = 0;
-    private LinkLabel linkLabel1;
-    private ToolStrip toolStrip1;
-    private ToolStripSplitButton helpToolStripSplitButton;
-    private ToolStripSplitButton configToolStripSplitButton;
-    private ToolStripMenuItem thumbsToolStripMenuItem;
-    private ToolStripMenuItem logsToolStripMenuItem;
-    private ToolStripMenuItem databaseToolStripMenuItem;
-    private ToolStripMenuItem updateHelpToolStripMenuItem;
-    private ToolStripMenuItem skinsToolStripMenuItem;
     private SectionSettings _previousSection = null;
-    private MPButton cancelButton;
-    private MPButton okButton;
-    private MPBeveledLine beveledLine1;
-    private TreeView sectionTree;
-    private Panel holderPanel;
-    private MPGradientLabel headerLabel;
     private RemoteDirectInput dinputRemote;
     private RemoteSerialUIR serialuir;
-    private MPButton applyButton;
 
     private static ConfigSplashScreen splashScreen = new ConfigSplashScreen();
 
@@ -185,7 +169,7 @@ namespace MediaPortal.Configuration
       string strLanguage;
       using (Settings xmlreader = new MPSettings())
       {
-        strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
+        strLanguage = xmlreader.GetValueAsString("gui", "language", "English");
         hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
 
         if (splashScreen != null)
@@ -210,6 +194,7 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(null, project, false));
 
       AddTabGeneral();
+      AddTabGui();
       AddTabMovies();
       AddTabDvd();
       AddTabTelevision();
@@ -217,7 +202,9 @@ namespace MediaPortal.Configuration
       AddTabPictures();
       AddTabRemote();
       AddTabFilters();
-      AddTabWeather();
+      //Mantis 3772 - Weather.com API is not free any more
+      //temporarily disable plugin
+      //AddTabWeather();
       AddTabPlugins();
       AddTabThirdPartyChecks();
 
@@ -240,7 +227,7 @@ namespace MediaPortal.Configuration
       }
 
       Log.Info("settingsform constructor done");
-      GUIGraphicsContext.Skin = Config.GetFile(Config.Dir.Skin, "Blue3", string.Empty);
+      GUIGraphicsContext.Skin = Config.GetFile(Config.Dir.Skin, "Default", string.Empty);
       Log.Info("SKIN : " + GUIGraphicsContext.Skin);
     }
 
@@ -326,11 +313,6 @@ namespace MediaPortal.Configuration
             FiltersWinDVD7Decoder windvdConfig = new FiltersWinDVD7Decoder();
             AddSection(new ConfigPage(filterSection, windvdConfig, true));
           }
-          if (filter.Contains("CyberLink Audio Decoder"))
-          {
-            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
-            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
-          }
           if (filter.Equals("DScaler Audio Decoder"))
           {
             FiltersDScalerAudio dscalerConfig = new FiltersDScalerAudio();
@@ -340,6 +322,11 @@ namespace MediaPortal.Configuration
           {
             FiltersMPEG2DecAudio mpaConfig = new FiltersMPEG2DecAudio();
             AddSection(new ConfigPage(filterSection, mpaConfig, true));
+          }
+          if (filter.Contains("CyberLink Audio Decoder"))
+          {
+            FiltersPowerDVDAudioDecoder pdvdAudioConfig = new FiltersPowerDVDAudioDecoder();
+            AddSection(new ConfigPage(filterSection, pdvdAudioConfig, true));
           }
         }
       }
@@ -353,6 +340,18 @@ namespace MediaPortal.Configuration
         }
         foreach (string filter in availableVideoFilters)
         {
+          // if we do not have the audio codec installed we want to see the video config nevertheless
+          if (filter.Contains("CyberLink Video/SP Decoder"))
+          {
+            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
+            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
+          }
+          // if we do not have the audio codec installed we want to see the video config nevertheless
+          if (filter.Contains("CyberLink Video Decoder (PDVD10)") || filter.Contains("CyberLink Video Decoder (PDVD11)"))
+          {
+            FiltersPowerDVDDecoder10 pdvdConfig10 = new FiltersPowerDVDDecoder10();
+            AddSection(new ConfigPage(filterSection, pdvdConfig10, true));
+          }
           if (filter.Equals("MPC - MPEG-2 Video Decoder (Gabest)"))
           {
             FiltersMPEG2DecVideo mpvConfig = new FiltersMPEG2DecVideo();
@@ -362,12 +361,6 @@ namespace MediaPortal.Configuration
           {
             FiltersDScalerVideo dscalervConfig = new FiltersDScalerVideo();
             AddSection(new ConfigPage(filterSection, dscalervConfig, true));
-          }
-          // if we do not have the audio codec installed we want to see the video config nevertheless
-          if (filter.Contains("CyberLink Video/SP Decoder"))
-          {
-            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
-            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
         }
       }
@@ -461,8 +454,11 @@ namespace MediaPortal.Configuration
       SectionSettings picture = new Pictures();
       AddSection(new ConfigPage(null, picture, false));
 
+      Log.Info("  add picture shares section");
       AddSection(new ConfigPage(picture, new PictureShares(), false));
+      Log.Info("  add picture thumbs section");
       AddSection(new ConfigPage(picture, new PictureThumbs(), true));
+      Log.Info("  add picture extensions section");
       AddSection(new ConfigPage(picture, new PictureExtensions(), true));
     }
 
@@ -545,6 +541,10 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(dvd, new DVDZoom(), true));
       Log.Info("  add DVD postprocessing section");
       AddSection(new ConfigPage(dvd, new DVDPostProcessing(), true));
+      Log.Info("  add DVD daemon tools section");
+      AddSection(new ConfigPage(dvd, new GeneralDaemonTools(), true));
+      Log.Info("  add DVD autoplay section");
+      AddSection(new ConfigPage(dvd, new GeneralAutoplay(), true));
     }
 
     private void AddTabGeneral()
@@ -558,34 +558,46 @@ namespace MediaPortal.Configuration
       General general = new General();
       AddSection(new ConfigPage(null, general, false));
 
-      //add skins section
-      Log.Info("add skins section");
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Adding skins section...");
-      }
-
-      GeneralSkin skinConfig = new GeneralSkin();
-      AddSection(new ConfigPage(general, skinConfig, false));
-
-      AddSection(new ConfigPage(general, new GeneralThumbs(), false));
+      Log.Info("  add general volume section");
       AddSection(new ConfigPage(general, new GeneralVolume(), false));
-
+      Log.Info("  add general keyboard section");
       AddSection(new ConfigPage(general, new GeneralKeyboardControl(), true));
+      Log.Info("  add general keys section");
       AddSection(new ConfigPage(general, new Keys(), true));
-      AddSection(new ConfigPage(general, new GeneralScreensaver(), true));
-      AddSection(new ConfigPage(general, new GeneralOSD(), true));
-      AddSection(new ConfigPage(general, new GeneralSkipSteps(), true));
-      AddSection(new ConfigPage(general, new GeneralStartupDelay(), true));
-      AddSection(new ConfigPage(general, new GeneralWatchdog(), true));
-      AddSection(new ConfigPage(general, new GeneralDaemonTools(), true));
-      AddSection(new ConfigPage(general, new GeneralFileMenu(), true));
-
-      GeneralDynamicRefreshRate dynRRConfig = new GeneralDynamicRefreshRate();
-      AddSection(new ConfigPage(general, dynRRConfig, true));
+      Log.Info("  add general dynamic refresh section");
+      AddSection(new ConfigPage(general, new GeneralDynamicRefreshRate(), true));
+      Log.Info("  add general startup resume section");
+      AddSection(new ConfigPage(general, new GeneralStartupResume(), false));
 
       // Removed because of various issues with DVD playback
       // AddSection(new ConfigPage(general, new GeneralCDSpeed(), true));
+    }
+
+    private void AddTabGui()
+    {
+      Log.Info("add gui section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding GUI section...");
+      }
+
+      Gui gui = new Gui();
+      AddSection(new ConfigPage(null, gui, false));
+
+      Log.Info("  add gui language section");
+      AddSection(new ConfigPage(gui, new GuiLanguage(), false));
+      Log.Info("  add gui controls section");
+      AddSection(new ConfigPage(gui, new GuiControls(), false));
+      Log.Info("  add gui thumbs section");
+      AddSection(new ConfigPage(gui, new GuiThumbs(), false));
+      Log.Info("  add general screensaver section");
+      AddSection(new ConfigPage(gui, new GuiScreensaver(), true));
+      Log.Info("  add gui file menu section");
+      AddSection(new ConfigPage(gui, new GuiFileMenu(), true));
+      Log.Info("  add gui osd section");
+      AddSection(new ConfigPage(gui, new GuiOSD(), true));
+      Log.Info("  add gui skip steps section");
+      AddSection(new ConfigPage(gui, new GuiSkipSteps(), true));
     }
 
     private void AddTabThirdPartyChecks()
@@ -691,277 +703,6 @@ namespace MediaPortal.Configuration
 
       settingSections.Add(aSection.SectionName, aSection);
     }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        /*if(components != null)
-				{
-					components.Dispose();
-				}*/
-      }
-      base.Dispose(disposing);
-    }
-
-    #region Windows Form Designer generated code
-
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-      this.sectionTree = new System.Windows.Forms.TreeView();
-      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
-      this.holderPanel = new System.Windows.Forms.Panel();
-      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-      this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
-      this.updateHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.configToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
-      this.thumbsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.logsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.skinsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripButtonSwitchAdvanced = new System.Windows.Forms.ToolStripButton();
-      this.toolStrip1.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // sectionTree
-      // 
-      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
-      this.sectionTree.FullRowSelect = true;
-      this.sectionTree.HideSelection = false;
-      this.sectionTree.HotTracking = true;
-      this.sectionTree.Indent = 19;
-      this.sectionTree.ItemHeight = 16;
-      this.sectionTree.Location = new System.Drawing.Point(16, 28);
-      this.sectionTree.Name = "sectionTree";
-      this.sectionTree.Size = new System.Drawing.Size(184, 486);
-      this.sectionTree.TabIndex = 2;
-      this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
-      this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
-      // 
-      // cancelButton
-      // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(621, 537);
-      this.cancelButton.Name = "cancelButton";
-      this.cancelButton.Size = new System.Drawing.Size(75, 23);
-      this.cancelButton.TabIndex = 1;
-      this.cancelButton.Text = "&Cancel";
-      this.cancelButton.UseVisualStyleBackColor = true;
-      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-      // 
-      // okButton
-      // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(540, 537);
-      this.okButton.Name = "okButton";
-      this.okButton.Size = new System.Drawing.Size(75, 23);
-      this.okButton.TabIndex = 0;
-      this.okButton.Text = "&OK";
-      this.okButton.UseVisualStyleBackColor = true;
-      this.okButton.Click += new System.EventHandler(this.okButton_Click);
-      // 
-      // headerLabel
-      // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.headerLabel.Caption = "";
-      this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.Location = new System.Drawing.Point(216, 28);
-      this.headerLabel.Name = "headerLabel";
-      this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(480, 24);
-      this.headerLabel.TabIndex = 3;
-      this.headerLabel.TabStop = false;
-      this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      // 
-      // holderPanel
-      // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.holderPanel.AutoScroll = true;
-      this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
-      this.holderPanel.Location = new System.Drawing.Point(216, 58);
-      this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(480, 456);
-      this.holderPanel.TabIndex = 4;
-      // 
-      // beveledLine1
-      // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 527);
-      this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(696, 2);
-      this.beveledLine1.TabIndex = 5;
-      this.beveledLine1.TabStop = false;
-      // 
-      // applyButton
-      // 
-      this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(459, 537);
-      this.applyButton.Name = "applyButton";
-      this.applyButton.Size = new System.Drawing.Size(75, 23);
-      this.applyButton.TabIndex = 6;
-      this.applyButton.TabStop = false;
-      this.applyButton.Text = "&Apply";
-      this.applyButton.UseVisualStyleBackColor = true;
-      this.applyButton.Visible = false;
-      this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
-      // 
-      // linkLabel1
-      // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(12, 542);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(113, 13);
-      this.linkLabel1.TabIndex = 9;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "Donate to MediaPortal";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-      // 
-      // toolStrip1
-      // 
-      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.helpToolStripSplitButton,
-            this.configToolStripSplitButton,
-            this.toolStripButtonSwitchAdvanced});
-      this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-      this.toolStrip1.Name = "toolStrip1";
-      this.toolStrip1.Size = new System.Drawing.Size(712, 25);
-      this.toolStrip1.TabIndex = 10;
-      this.toolStrip1.Text = "toolStrip1";
-      // 
-      // helpToolStripSplitButton
-      // 
-      this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-      this.helpToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.updateHelpToolStripMenuItem});
-      this.helpToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_help;
-      this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
-      this.helpToolStripSplitButton.Size = new System.Drawing.Size(60, 22);
-      this.helpToolStripSplitButton.Text = "Help";
-      this.helpToolStripSplitButton.ToolTipText = "Opens the online wiki page for the active configuration section.";
-      this.helpToolStripSplitButton.ButtonClick += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
-      // 
-      // updateHelpToolStripMenuItem
-      // 
-      this.updateHelpToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_refresh;
-      this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
-      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
-      this.updateHelpToolStripMenuItem.Text = "Update Help";
-      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Use it if an incorrect wiki page was " +
-          "opened.";
-      this.updateHelpToolStripMenuItem.Click += new System.EventHandler(this.updateHelpToolStripMenuItem_Click);
-      // 
-      // configToolStripSplitButton
-      // 
-      this.configToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.thumbsToolStripMenuItem,
-            this.logsToolStripMenuItem,
-            this.databaseToolStripMenuItem,
-            this.skinsToolStripMenuItem});
-      this.configToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
-      this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.configToolStripSplitButton.Name = "configToolStripSplitButton";
-      this.configToolStripSplitButton.Size = new System.Drawing.Size(117, 22);
-      this.configToolStripSplitButton.Text = "User Config files";
-      this.configToolStripSplitButton.ButtonClick += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
-      // 
-      // thumbsToolStripMenuItem
-      // 
-      this.thumbsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
-      this.thumbsToolStripMenuItem.Name = "thumbsToolStripMenuItem";
-      this.thumbsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-      this.thumbsToolStripMenuItem.Text = "Open Thumbs directory";
-      this.thumbsToolStripMenuItem.Click += new System.EventHandler(this.thumbsToolStripMenuItem_Click);
-      // 
-      // logsToolStripMenuItem
-      // 
-      this.logsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
-      this.logsToolStripMenuItem.Name = "logsToolStripMenuItem";
-      this.logsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-      this.logsToolStripMenuItem.Text = "Open Log directory";
-      this.logsToolStripMenuItem.Click += new System.EventHandler(this.logsToolStripMenuItem_Click);
-      // 
-      // databaseToolStripMenuItem
-      // 
-      this.databaseToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
-      this.databaseToolStripMenuItem.Name = "databaseToolStripMenuItem";
-      this.databaseToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-      this.databaseToolStripMenuItem.Text = "Open Database directory";
-      this.databaseToolStripMenuItem.Click += new System.EventHandler(this.databaseToolStripMenuItem_Click);
-      // 
-      // skinsToolStripMenuItem
-      // 
-      this.skinsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
-      this.skinsToolStripMenuItem.Name = "skinsToolStripMenuItem";
-      this.skinsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-      this.skinsToolStripMenuItem.Text = "Open Skins directory";
-      this.skinsToolStripMenuItem.Click += new System.EventHandler(this.skinsToolStripMenuItem_Click);
-      // 
-      // toolStripButtonSwitchAdvanced
-      // 
-      this.toolStripButtonSwitchAdvanced.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-      this.toolStripButtonSwitchAdvanced.AutoSize = false;
-      this.toolStripButtonSwitchAdvanced.CheckOnClick = true;
-      this.toolStripButtonSwitchAdvanced.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.toolStripButtonSwitchAdvanced.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
-      this.toolStripButtonSwitchAdvanced.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this.toolStripButtonSwitchAdvanced.Name = "toolStripButtonSwitchAdvanced";
-      this.toolStripButtonSwitchAdvanced.Size = new System.Drawing.Size(135, 22);
-      this.toolStripButtonSwitchAdvanced.Text = "Switch to expert mode";
-      this.toolStripButtonSwitchAdvanced.Click += new System.EventHandler(this.toolStripButtonSwitchAdvanced_Click);
-      // 
-      // SettingsForm
-      // 
-      this.AcceptButton = this.okButton;
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScroll = true;
-      this.CancelButton = this.cancelButton;
-      this.ClientSize = new System.Drawing.Size(712, 568);
-      this.Controls.Add(this.toolStrip1);
-      this.Controls.Add(this.linkLabel1);
-      this.Controls.Add(this.applyButton);
-      this.Controls.Add(this.beveledLine1);
-      this.Controls.Add(this.holderPanel);
-      this.Controls.Add(this.headerLabel);
-      this.Controls.Add(this.okButton);
-      this.Controls.Add(this.cancelButton);
-      this.Controls.Add(this.sectionTree);
-      this.Name = "SettingsForm";
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "MediaPortal - Configuration";
-      this.Load += new System.EventHandler(this.SettingsForm_Load);
-      this.Closed += new System.EventHandler(this.SettingsForm_Closed);
-      this.toolStrip1.ResumeLayout(false);
-      this.toolStrip1.PerformLayout();
-      this.ResumeLayout(false);
-      this.PerformLayout();
-
-    }
-
-    #endregion
 
     private void sectionTree_BeforeSelect(object sender, TreeViewCancelEventArgs e)
     {
@@ -1131,19 +872,53 @@ namespace MediaPortal.Configuration
 
     private void cancelButton_Click(object sender, EventArgs e)
     {
+      if (MusicScanRunning())
+      {
+        return;
+      }
+
       Close();
     }
 
     private void okButton_Click(object sender, EventArgs e)
     {
       applyButton_Click(sender, e);
-      if (!AllFilledIn())
+      if (!AllFilledIn() || MusicScanRunning())
       {
         return;
       }
       Close();
     }
 
+    private bool MusicScanRunning()
+    {
+      SectionSettings section = SectionSettings.GetSection("Music Database");
+
+      if (section != null)
+      {
+        bool scanRunning = (bool)section.GetSetting("folderscanning");
+        if (scanRunning)
+        {
+          MessageBox.Show("Music Folderscan running in background.\r\nPlease wait for the scan to finish",
+                          "MediaPortal Settings", MessageBoxButtons.OK,
+                          MessageBoxIcon.Exclamation);
+
+          if (ActivateSection(section))
+          {
+            headerLabel.Caption = section.Text;
+          }
+        }
+        return scanRunning;
+      }
+
+      return false;
+    }
+
+
+    /// <summary>
+    /// Do we have all required fields filled
+    /// </summary>
+    /// <returns></returns>
     private bool AllFilledIn()
     {
       int MaximumShares = 250;
@@ -1297,14 +1072,9 @@ namespace MediaPortal.Configuration
       Process.Start((string)e.Link.LinkData);
     }
 
-    private void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
+    private void helpToolStripSplitButton_Click(object sender, EventArgs e)
     {
       HelpSystem.ShowHelp(_previousSection.ToString());
-    }
-
-    private void updateHelpToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      HelpSystem.UpdateHelpReferences();
     }
 
     private void OpenMpDirectory(Config.Dir dir)

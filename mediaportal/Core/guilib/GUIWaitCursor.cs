@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -40,13 +40,29 @@ namespace MediaPortal.GUI.Library
     private static Thread guiWaitCursorThread = null;
 
     public new static void Dispose()
-    {     
+    {
       if (_animation != null)
       {
         _animation.SafeDispose();
       }
 
       _animation = null;
+    }
+
+    public static void Show()
+    {
+        //do increment here rather than in thread since if wait cursor is running
+        //thread is NOT null, we will not incrment _showCount
+        //after that hide is called twice which result in _showCount less than 0
+        //read - not working wait cursor any more
+        Interlocked.Increment(ref _showCount);
+        if (guiWaitCursorThread == null)
+        {
+            guiWaitCursorThread = new Thread(GUIWaitCursorThread);
+            guiWaitCursorThread.IsBackground = true;
+            guiWaitCursorThread.Name = "Waitcursor";
+            guiWaitCursorThread.Start();
+        }
     }
 
     public static void Hide()
@@ -59,7 +75,9 @@ namespace MediaPortal.GUI.Library
 
     private static void GUIWaitCursorThread()
     {
-      if (Interlocked.Increment(ref _showCount) == 1)
+      //start animation only if _showCount equals 1
+      //this is to prevent animation starting from beginning every time Show() is called, making it "jumpy"
+      if (Interlocked.Equals(_showCount, 1))
       {
         _animation.Begin();
       }
@@ -120,7 +138,7 @@ namespace MediaPortal.GUI.Library
 
       // The count label depends on font rendering.  If the users callback involves reloading fonts then we need to reallocate
       // the labels resources to be sure everything calculates okay (e.g., the x,y position of the control).
-      _countLabel.FreeResources();
+      _countLabel.Dispose();
       _countLabel.AllocResources();
 
       Show();
@@ -140,7 +158,7 @@ namespace MediaPortal.GUI.Library
 
       // The count label depends on font rendering.  If the users callback involves reloading fonts then we need to reallocate
       // the labels resources to be sure everything calculates okay (e.g., the x,y position of the control).
-      _countLabel.FreeResources();
+      _countLabel.Dispose();
       _countLabel.AllocResources();
 
       Show();
@@ -162,9 +180,7 @@ namespace MediaPortal.GUI.Library
       _eventTarget(_eventParam);
     }
 
-    public override void Render(float timePassed)
-    {
-    }
+    public override void Render(float timePassed) {}
 
     public static void Render()
     {
@@ -207,17 +223,6 @@ namespace MediaPortal.GUI.Library
       }
 
       _animation.Render(GUIGraphicsContext.TimePassed);
-    }
-
-    public static void Show()
-    {
-      if (guiWaitCursorThread == null)
-      {
-        guiWaitCursorThread = new Thread(GUIWaitCursorThread);
-        guiWaitCursorThread.IsBackground = true;
-        guiWaitCursorThread.Name = "Waitcursor";
-        guiWaitCursorThread.Start();
-      }
     }
 
     #endregion Methods

@@ -84,10 +84,6 @@ HRESULT FileWriter::SetFileName(LPCWSTR pszFileName)
 //
 HRESULT FileWriter::OpenFile()
 {
-	USES_CONVERSION;
-
-	TCHAR *pFileName = NULL;
-
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE)
 	{
@@ -101,7 +97,7 @@ HRESULT FileWriter::OpenFile()
 	}
 
 	// See the the file is being read.
-	m_hFile = CreateFile(W2T(m_pFileName),      // The filename
+	m_hFile = CreateFileW(m_pFileName,                  // The filename
 						 (DWORD) GENERIC_WRITE,         // File access
 						 (DWORD) NULL,                  // Share access
 						 NULL,                  // Security
@@ -120,7 +116,7 @@ HRESULT FileWriter::OpenFile()
 	CloseHandle(m_hFile);
 
 	// Try to open the file
-	m_hFile = CreateFile(W2T(m_pFileName),      // The filename
+	m_hFile = CreateFileW(m_pFileName,                  // The filename
 						 (DWORD) GENERIC_WRITE,         // File access
 						 (DWORD) FILE_SHARE_READ,       // Share access
 						 NULL,                  // Security

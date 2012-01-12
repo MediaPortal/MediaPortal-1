@@ -31,13 +31,14 @@ namespace SetupTv.Sections
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChannelsInGroupControl));
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+	  this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.removeChannelFromGroup = new System.Windows.Forms.ToolStripMenuItem();
-      this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+	  this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+	  this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpButtonOrderByNumber = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonOrderByName = new MediaPortal.UserInterface.Controls.MPButton();
@@ -45,7 +46,6 @@ namespace SetupTv.Sections
       this.mpButtonUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPreview = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonDel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -53,12 +53,12 @@ namespace SetupTv.Sections
       // contextMenuStrip1
       // 
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addToFavoritesToolStripMenuItem,
-            this.removeChannelFromGroup,
-            this.deleteThisChannelToolStripMenuItem,
-            this.editChannelToolStripMenuItem});
+			this.addToFavoritesToolStripMenuItem,
+			this.removeChannelFromGroup,
+			this.deleteThisChannelToolStripMenuItem,
+			this.editChannelToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(182, 92);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(183, 92);
       // 
       // addToFavoritesToolStripMenuItem
       // 
@@ -70,7 +70,7 @@ namespace SetupTv.Sections
       // removeChannelFromGroup
       // 
       this.removeChannelFromGroup.Name = "removeChannelFromGroup";
-      this.removeChannelFromGroup.Size = new System.Drawing.Size(181, 22);
+      this.removeChannelFromGroup.Size = new System.Drawing.Size(182, 22);
       this.removeChannelFromGroup.Text = "Remove from Group";
       this.removeChannelFromGroup.Click += new System.EventHandler(this.removeChannelFromGroup_Click);
       // 
@@ -92,10 +92,12 @@ namespace SetupTv.Sections
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
-      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
-      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
-      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(0, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(1, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(2, "icon.radio_scrambled_and_fta.png");
+      this.imageList1.Images.SetKeyName(3, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
       // 
       // listView1
       // 
@@ -121,16 +123,21 @@ namespace SetupTv.Sections
       this.listView1.TabIndex = 0;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
-      this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
-      this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
       this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
       this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
+      this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
+      this.listView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listView1_ItemChecked);
       // 
       // columnHeader1
       // 
       this.columnHeader1.Text = "Name";
       this.columnHeader1.Width = 300;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Channel number";
+      this.columnHeader2.Width = 120;
       // 
       // mpGroupBox1
       // 
@@ -219,11 +226,6 @@ namespace SetupTv.Sections
       this.mpButtonDel.UseVisualStyleBackColor = true;
       this.mpButtonDel.Click += new System.EventHandler(this.removeChannelFromGroup_Click);
       // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Channel number";
-      this.columnHeader2.Width = 120;
-      // 
       // ChannelsInGroupControl
       // 
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -245,10 +247,10 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem deleteThisChannelToolStripMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
-    private System.Windows.Forms.ImageList imageList1;
+	private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
+	private System.Windows.Forms.ImageList imageList1;
+	private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem removeChannelFromGroup;
-    private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonOrderByNumber;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonOrderByName;

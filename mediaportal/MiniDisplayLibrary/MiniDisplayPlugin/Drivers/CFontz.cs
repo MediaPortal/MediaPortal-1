@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -65,6 +66,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private SystemStatus MPStatus = new SystemStatus();
     private DateTime SettingsLastModTime;
     private object ThreadMutex = new object();
+
+    #region Public Static Properties
+
+    public static string DefaultMappingPath = Path.Combine(InputHandler.DefaultsDirectory, "CFontz_Keypad.xml");
+    public static string CustomMappingPath = Path.Combine(InputHandler.CustomizedMappingsDirectory, "CFontz_Keypad.xml");
+
+    #endregion
 
     private void AdvancedSettings_OnSettingsChanged()
     {
@@ -754,7 +762,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info(
             "CFontz.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file does not exist - Creating default mapping file",
             new object[0]);
-          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"),
+          XmlTextWriter writer = new XmlTextWriter(Path.Combine(InputHandler.DefaultsDirectory, str + ".xml"),
                                                    Encoding.UTF8);
           writer.Formatting = Formatting.Indented;
           writer.Indentation = 1;
@@ -1914,14 +1922,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         try
         {
-          if (this.TestXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml")) < 3)
+          if (this.TestXmlVersion(DefaultMappingPath) < 3)
           {
             Log.Info(
               "CFontz.CFDisplay.SetupKeypad(): Deleting CFontz_Keypad mapping file with the wrong version stamp.",
               new object[0]);
-            File.Delete(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml"));
+            File.Delete(DefaultMappingPath);
           }
-          if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml")))
+          if (!File.Exists(DefaultMappingPath))
           {
             Log.Info("CFontz.Setup(): Creating default CFontz_Keypad mapping file");
             if (!AdvancedSettings.CreateDefaultKeyPadMapping())
@@ -1980,7 +1988,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public int TestXmlVersion(string xmlPath)
       {
-        if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml")))
+        if (!File.Exists(DefaultMappingPath))
         {
           return 3;
         }

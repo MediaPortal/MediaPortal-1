@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -84,7 +84,8 @@ namespace TvService
         }
         dbLinkedChannnel.DisplayName = lChannel.Name;
         dbLinkedChannnel.Persist();
-        ChannelLinkageMap map = new ChannelLinkageMap(dbPortalChannel.IdChannel, dbLinkedChannnel.IdChannel,lChannel.Name);
+        ChannelLinkageMap map = new ChannelLinkageMap(dbPortalChannel.IdChannel, dbLinkedChannnel.IdChannel,
+                                                      lChannel.Name);
         map.Persist();
       }
     }
@@ -100,7 +101,8 @@ namespace TvService
         Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
                  pChannel.TransportId);
         foreach (LinkedChannel lchan in pChannel.LinkedChannels)
-          Log.Info("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name,lchan.NetworkId,lchan.TransportId,lchan.ServiceId);
+          Log.Info("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name, lchan.NetworkId, lchan.TransportId,
+                   lchan.ServiceId);
         PersistPortalChannel(pChannel);
       }
     }

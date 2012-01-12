@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Windows
 {
@@ -26,7 +27,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    internal LocalValueEnumerator(Hashtable properties)
+    internal LocalValueEnumerator(Dictionary<int, object> properties)
     {
       _properties = properties;
       _enumerator = properties.GetEnumerator();
@@ -75,7 +76,7 @@ namespace System.Windows
     #region Fields
 
     private IDictionaryEnumerator _enumerator;
-    private Hashtable _properties;
+    private Dictionary<int, object> _properties;
 
     #endregion Fields
   }

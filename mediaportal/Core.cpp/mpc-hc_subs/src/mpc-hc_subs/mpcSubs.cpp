@@ -27,6 +27,17 @@ void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, 
 	g_disableAnim = disableAnim;
 }
 
+void SetShowForcedOnly(BOOL onlyShowForcedSubs)
+{
+	if (g_subManager)	{
+	 g_subManager->ToggleForcedOnly(onlyShowForcedSubs != 0);
+	}
+	else {
+	 g_onlyShowForcedSubs = onlyShowForcedSubs;
+	}
+}
+
+
 BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths)
 {
 	g_subManager.Free();
@@ -65,6 +76,11 @@ int GetCount()
 BSTR GetLanguage(int i)
 {
 	return (g_subManager ? g_subManager->GetLanguage(i) : NULL);
+}
+
+BSTR GetTrackName(int i)
+{
+	return (g_subManager ? g_subManager->GetTrackName(i) : NULL);
 }
 
 int GetCurrent()

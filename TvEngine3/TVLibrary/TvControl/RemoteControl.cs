@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,6 +43,8 @@ namespace TvControl
   {
     #region consts
 
+    public const string InitializedEventName = @"Global\MPTVServiceInitializedEvent";
+
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 3000; //msecs
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL = 20000; //msecs
     private const int MAX_TCP_TIMEOUT = 1000; //msecs
@@ -53,6 +55,7 @@ namespace TvControl
     #region delegates / events
 
     public delegate void RemotingDisconnectedDelegate();
+
     public delegate void RemotingConnectedDelegate();
 
     public static event RemotingDisconnectedDelegate OnRemotingDisconnected;
@@ -68,8 +71,8 @@ namespace TvControl
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel = null; // callback channel
     private static bool _useIncreasedTimeoutForInitialConnection = true;
-    
-    #endregion 
+
+    #endregion
 
     #region public constructors
 
@@ -120,7 +123,6 @@ namespace TvControl
 
     #region private static methods
 
-   
     [MethodImpl(MethodImplOptions.Synchronized)]
     private static void RefreshRemotingConnectionStatus()
     {
@@ -149,7 +151,7 @@ namespace TvControl
         if (iterations < 1)
         {
           iterations = 1;
-        }        
+        }
 
         int count = 0;
 
@@ -287,7 +289,7 @@ namespace TvControl
       {
         tcpClient.EndConnect(ar);
       }
-      catch(Exception)
+      catch (Exception)
       {
         // EndConnect will throw an exception here if the connection has failed
         // so we have to catch it or MP will exit with unhandled exception
@@ -311,7 +313,7 @@ namespace TvControl
           REMOTING_PORT, ConnectCallback,
           tcpClient);
 
-        _isRemotingConnected = result.AsyncWaitHandle.WaitOne(MAX_TCP_TIMEOUT, true);        
+        _isRemotingConnected = result.AsyncWaitHandle.WaitOne(MAX_TCP_TIMEOUT, true);
         return _isRemotingConnected;
       }
       catch (Exception)

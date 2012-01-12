@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.ExtensionMethods;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
 {
@@ -80,7 +81,7 @@ namespace MediaPortal.GUI.Video
       AllocResources();
     }
 
-    public override void Render(float timePassed) { }
+    public override void Render(float timePassed) {}
 
     private void OnUpdateState(bool render)
     {
@@ -222,7 +223,7 @@ namespace MediaPortal.GUI.Video
       }
 
       if (GUIGraphicsContext.Overlay == true && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)
-      //&& GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+        //&& GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
       {
         if (_videoWindow.Visible == false)
         {
@@ -231,7 +232,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
       if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)
-      // && GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+        // && GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
       {
         if (_videoWindow.Visible == true)
         {
@@ -270,9 +271,11 @@ namespace MediaPortal.GUI.Video
 
       if ((g_Player.IsVideo || g_Player.IsDVD) && !g_Player.IsTV && g_Player.MediaInfo != null)
       {
-        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.VideoCodec));
+        GUIPropertyManager.SetProperty("#Play.Current.VideoCodec.Texture",
+                                       Util.Utils.MakeFileName(g_Player.MediaInfo.VideoCodec));
         GUIPropertyManager.SetProperty("#Play.Current.VideoResolution", g_Player.MediaInfo.VideoResolution);
-        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture", Util.Utils.MakeFileName(g_Player.MediaInfo.AudioCodec));
+        GUIPropertyManager.SetProperty("#Play.Current.AudioCodec.Texture",
+                                       Util.Utils.MakeFileName(g_Player.MediaInfo.AudioCodec));
         GUIPropertyManager.SetProperty("#Play.Current.AudioChannels", g_Player.MediaInfo.AudioChannelsFriendly);
         GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", g_Player.MediaInfo.HasSubtitles.ToString());
         GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", g_Player.MediaInfo.AspectRatio);
@@ -295,7 +298,7 @@ namespace MediaPortal.GUI.Video
 
           // get the name by stripping the first part : c:\media\movies
           string strName = fileName;
-          int pos = fileName.LastIndexOfAny(new char[] { '\\', '/' });
+          int pos = fileName.LastIndexOfAny(new char[] {'\\', '/'});
           if (pos >= 0 && pos + 1 < fileName.Length - 1)
           {
             strName = fileName.Substring(pos + 1);
@@ -335,30 +338,41 @@ namespace MediaPortal.GUI.Video
       IMDBMovie movieDetails = new IMDBMovie();
       bool bMovieInfoFound = false;
 
-      if (VideoDatabase.HasMovieInfo(fileName))
+      if (!g_Player.IsTVRecording)
       {
-        VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
-        bMovieInfoFound = true;
-      }
-      else if (File.Exists(Path.ChangeExtension(fileName, ".xml")))
-      {
-        MatroskaTagInfo info = MatroskaTagHandler.Fetch(Path.ChangeExtension(fileName, ".xml"));
-        movieDetails.Title = info.title;
-        movieDetails.Plot = info.description;
-        movieDetails.Genre = info.genre;
-        GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
-        string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
-        if (!File.Exists(logo))
+        if (VideoDatabase.HasMovieInfo(fileName))
         {
-          logo = "defaultVideoBig.png";
+          VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
+          bMovieInfoFound = true;
         }
-        GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
-        _thumbLogo = logo;
-        bMovieInfoFound = true;
-      }
-      if (bMovieInfoFound)
-      {
-        movieDetails.SetPlayProperties();
+        else if (File.Exists(Path.ChangeExtension(fileName, ".xml")))
+        {
+          MatroskaTagInfo info = MatroskaTagHandler.Fetch(Path.ChangeExtension(fileName, ".xml"));
+          movieDetails.Title = info.title;
+          movieDetails.Plot = info.description;
+          movieDetails.Genre = info.genre;
+          GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
+          string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
+          if (!Util.Utils.FileExistsInCache(logo))
+          {
+            logo = "defaultVideoBig.png";
+          }
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
+          _thumbLogo = logo;
+          bMovieInfoFound = true;
+        }
+        if (bMovieInfoFound)
+        {
+          movieDetails.SetPlayProperties();
+        }
+        else
+        {
+          GUIListItem item = new GUIListItem();
+          item.IsFolder = false;
+          item.Path = fileName;
+          Util.Utils.SetThumbnails(ref item);
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", item.ThumbnailImage);
+        }
       }
       else if (g_Player.IsTV && g_Player.IsTimeShifting)
       {
@@ -432,7 +446,8 @@ namespace MediaPortal.GUI.Video
 
     public override void Dispose()
     {
-      GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
+      // this is causing Mantis 3128: No video preview in MyVideos in some situations.
+      //GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
 
       _videoRectangle.SafeDispose();
       _videoWindow.SafeDispose();

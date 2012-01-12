@@ -1,20 +1,22 @@
-/* 
- *	Copyright (C) 2003-2006 Gabest
- *	http://www.gabest.org
+/*
+ *  $Id: GFN.cpp 2786 2010-12-17 16:42:55Z XhmikosR $
+ *
+ *  (C) 2003-2006 Gabest
+ *  (C) 2006-2010 see AUTHORS
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -24,30 +26,28 @@
 #include "TextFile.h"
 #include "GFN.h"
 
-TCHAR* exttypestr[] = 
-{
-	_T("srt"), _T("sub"), _T("smi"), _T("psb"), 
-	_T("ssa"), _T("ass"), _T("idx"), _T("usf"), 
+TCHAR* exttypestr[] = {
+	_T("srt"), _T("sub"), _T("smi"), _T("psb"),
+	_T("ssa"), _T("ass"), _T("idx"), _T("usf"),
 	_T("xss"), _T("txt"), _T("ssf"), _T("rt"), _T("sup")
 };
 
-static TCHAR* ext[3][countof(exttypestr)] = 
-{
+static TCHAR* ext[3][countof(exttypestr)] = {
 	{
-		_T(".srt"), _T(".sub"), _T(".smi"), _T(".psb"), 
-		_T(".ssa"), _T(".ass"), _T(".idx"), _T(".usf"), 
+		_T(".srt"), _T(".sub"), _T(".smi"), _T(".psb"),
+		_T(".ssa"), _T(".ass"), _T(".idx"), _T(".usf"),
 		_T(".xss"), _T(".txt"), _T(".ssf"), _T(".rt"), _T(".sup")
 	},
 	{
-		_T(".*.srt"), _T(".*.sub"), _T(".*.smi"), _T(".*.psb"), 
-		_T(".*.ssa"), _T(".*.ass"), _T(".*.dummyidx"), _T(".*.usf"), 
+		_T(".*.srt"), _T(".*.sub"), _T(".*.smi"), _T(".*.psb"),
+		_T(".*.ssa"), _T(".*.ass"), _T(".*.dummyidx"), _T(".*.usf"),
 		_T(".*.xss"), _T(".*.txt"), _T(".*.ssf"), _T(".*.rt"), _T(".*.sup")
-	}, 
+	},
 	{
-		_T("-*.srt"), _T("-*.sub"), _T("-*.smi"), _T("-*.psb"), 
-		_T("-*.ssa"), _T("-*.ass"), _T("-*.dummyidx"), _T("-*.usf"), 
+		_T("-*.srt"), _T("-*.sub"), _T("-*.smi"), _T("-*.psb"),
+		_T("-*.ssa"), _T("-*.ass"), _T("-*.dummyidx"), _T("-*.usf"),
 		_T("-*.xss"), _T("-*.txt"), _T("-*.ssf"), _T("-*.rt"), _T("-*.sup")
-	}, 
+	},
 };
 
 #define WEBSUBEXT _T(".wse")
@@ -68,37 +68,44 @@ void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& 
 
 	bool fWeb = false;
 	{
-//		int i = fn.Find(_T("://"));
+		//		int i = fn.Find(_T("://"));
 		int i = fn.Find(_T("http://"));
-		if(i > 0) {fn = _T("http") + fn.Mid(i); fWeb = true;}
+		if(i > 0) {
+			fn = _T("http") + fn.Mid(i);
+			fWeb = true;
+		}
 	}
 
 	int	l = fn.GetLength(), l2 = l;
 	l2 = fn.ReverseFind('.');
 	l = fn.ReverseFind('/') + 1;
-	if(l2 < l) l2 = l;
+	if(l2 < l) {
+		l2 = l;
+	}
 
 	CString orgpath = fn.Left(l);
 	CString title = fn.Mid(l, l2-l);
 	CString filename = title + _T(".nooneexpectsthespanishinquisition");
 
-	if(!fWeb)
-	{
+	if(!fWeb) {
 		// struct _tfinddata_t file, file2;
 		// long hFile, hFile2 = 0;
 
 		WIN32_FIND_DATA wfd, wfd2;
 		HANDLE hFile, hFile2;
 
-		for(ptrdiff_t k = 0; k < paths.GetCount(); k++)
-		{
+		for(ptrdiff_t k = 0; k < paths.GetCount(); k++) {
 			CString path = paths[k];
 			path.Replace('\\', '/');
 
 			l = path.GetLength();
-			if(l > 0 && path[l-1] != '/') path += '/';
+			if(l > 0 && path[l-1] != '/') {
+				path += '/';
+			}
 
-			if(path.Find(':') == -1 && path.Find(_T("\\\\")) != 0) path = orgpath + path;
+			if(path.Find(':') == -1 && path.Find(_T("\\\\")) != 0) {
+				path = orgpath + path;
+			}
 
 			path.Replace(_T("/./"), _T("/"));
 			path.Replace('/', '\\');
@@ -107,64 +114,51 @@ void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& 
 
 			bool fEmpty = true;
 
-			if((hFile = FindFirstFile(path + title + _T("*"), &wfd)) != INVALID_HANDLE_VALUE)
-			{
-				do
-				{
-					if(filename.CompareNoCase(wfd.cFileName) != 0) 
-					{
+			if((hFile = FindFirstFile(path + title + _T("*"), &wfd)) != INVALID_HANDLE_VALUE) {
+				do {
+					if(filename.CompareNoCase(wfd.cFileName) != 0) {
 						fEmpty = false;
 						// sl.AddTail(path + file.name);
 					}
-				}
-				while(FindNextFile(hFile, &wfd));
+				} while(FindNextFile(hFile, &wfd));
 
 				FindClose(hFile);
 			}
 
 			// TODO: use 'sl' in the next step to find files (already a nice speedup as it is now...)
-			if(fEmpty) continue;
+			if(fEmpty) {
+				continue;
+			}
 
-			for(ptrdiff_t j = 0; j < extlistnum; j++)
-			{
-				for(ptrdiff_t i = 0; i < extsubnum; i++)
-				{
-					if((hFile = FindFirstFile(path + title + ext[j][i], &wfd)) != INVALID_HANDLE_VALUE)
-					{
-						do
-						{
+			for(ptrdiff_t j = 0; j < extlistnum; j++) {
+				for(ptrdiff_t i = 0; i < extsubnum; i++) {
+					if((hFile = FindFirstFile(path + title + ext[j][i], &wfd)) != INVALID_HANDLE_VALUE) {
+						do {
 							CString fn = path + wfd.cFileName;
 
 							hFile2 = INVALID_HANDLE_VALUE;
 
-							if(j == 0 || (hFile2 = FindFirstFile(fn.Left(fn.ReverseFind('.')) + _T(".avi"), &wfd2)) == INVALID_HANDLE_VALUE)
-							{
+							if(j == 0 || (hFile2 = FindFirstFile(fn.Left(fn.ReverseFind('.')) + _T(".avi"), &wfd2)) == INVALID_HANDLE_VALUE) {
 								SubFile f;
 								f.fn = fn;
 								ret.Add(f);
 							}
-							
-							if(hFile2 != INVALID_HANDLE_VALUE)
-							{
+
+							if(hFile2 != INVALID_HANDLE_VALUE) {
 								FindClose(hFile2);
 							}
-						}
-						while(FindNextFile(hFile, &wfd));
-						
+						} while(FindNextFile(hFile, &wfd));
+
 						FindClose(hFile);
 					}
 				}
 			}
 		}
-	}
-	else if(l > 7)
-	{
+	} else if(l > 7) {
 		CWebTextFile wtf; // :)
-		if(wtf.Open(orgpath + title + WEBSUBEXT))
-		{
+		if(wtf.Open(orgpath + title + WEBSUBEXT)) {
 			CString fn;
-			while(wtf.ReadString(fn) && fn.Find(_T("://")) >= 0)
-			{
+			while(wtf.ReadString(fn) && fn.Find(_T("://")) >= 0) {
 				SubFile f;
 				f.fn = fn;
 				ret.Add(f);

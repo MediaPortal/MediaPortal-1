@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@ using System;
 using System.Net;
 using TvLibrary;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Log;
 using TvControl;
@@ -228,7 +227,7 @@ namespace TvService
     {
       get
       {
-        User[] users = Users.GetUsers();
+        IUser[] users = Users.GetUsers();
         if (users == null)
           return true;
         if (users.Length == 0)
@@ -636,7 +635,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>channel</returns>
-    public IChannel CurrentChannel(ref User user)
+    public IChannel CurrentChannel(ref IUser user)
     {
       try
       {
@@ -655,7 +654,7 @@ namespace TvService
             return null;
           }
         }
-        TvCardContext context = _card.Context as TvCardContext;
+        ITvCardContext context = _card.Context as ITvCardContext;
         if (context == null)
           return null;
         context.GetUser(ref user);
@@ -676,7 +675,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>id of database channel</returns>
-    public int CurrentDbChannel(ref User user)
+    public int CurrentDbChannel(ref IUser user)
     {
       try
       {
@@ -695,7 +694,7 @@ namespace TvService
             return -1;
           }
         }
-        TvCardContext context = (TvCardContext)_card.Context;
+        ITvCardContext context = _card.Context as ITvCardContext;
         context.GetUser(ref user);
         return user.IdChannel;
       }
@@ -711,7 +710,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>channel</returns>
-    public string CurrentChannelName(ref User user)
+    public string CurrentChannelName(ref IUser user)
     {
       try
       {
@@ -731,7 +730,7 @@ namespace TvService
           }
         }
 
-        TvCardContext context = _card.Context as TvCardContext;
+        ITvCardContext context = _card.Context as ITvCardContext;
         if (context == null)
           return "";
         context.GetUser(ref user);
@@ -754,7 +753,7 @@ namespace TvService
     /// scrambled or not.
     /// </summary>
     /// <returns>yes if channel is scrambled and CI/CAM cannot decode it, otherwise false</returns>
-    public bool IsScrambled(ref User user)
+    public bool IsScrambled(ref IUser user)
     {
       try
       {
@@ -773,7 +772,7 @@ namespace TvService
             return false;
           }
         }
-        TvCardContext context = _card.Context as TvCardContext;
+        ITvCardContext context = _card.Context as ITvCardContext;
         if (context == null)
           return false;
         context.GetUser(ref user);
@@ -789,10 +788,64 @@ namespace TvService
       }
     }
 
+
+    /// <summary>
+    /// Pauses the card.
+    /// </summary>
+    public void PauseCard(IUser user)
+    {
+      try
+      {
+        if (_dbsCard.Enabled == false)
+          return;
+        if (IsLocal == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+            RemoteControl.Instance.PauseCard(user);
+            return;
+          }
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            return;
+          }
+        }
+        Log.Info("Pausecard");
+
+        //remove all subchannels, except for this user...
+        ITvSubChannel[] channels = _card.SubChannels;
+        for (int i = 0; i < channels.Length; ++i)
+        {
+          _card.FreeSubChannel(channels[i].SubChannelId);
+        }
+
+        ITvCardContext context = _card.Context as ITvCardContext;
+        if (context != null)
+        {
+          context.Clear();
+        }
+
+        if (_card.SupportsPauseGraph)
+        {
+          _card.PauseGraph();
+        }
+        else
+        {
+          _card.StopGraph();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
+
     /// <summary>
     /// Stops the card.
     /// </summary>
-    public void StopCard(User user)
+    public void StopCard(IUser user)
     {
       try
       {
@@ -821,7 +874,7 @@ namespace TvService
           _card.FreeSubChannel(channels[i].SubChannelId);
         }
 
-        TvCardContext context = _card.Context as TvCardContext;
+        ITvCardContext context = _card.Context as ITvCardContext;
         if (context != null)
         {
           context.Clear();
@@ -838,10 +891,10 @@ namespace TvService
     /// Gets the current video stream.
     /// </summary>
     /// <returns></returns>
-    public int GetCurrentVideoStream(User user)
+    public IVideoStream GetCurrentVideoStream(IUser user)
     {
       if (_dbsCard.Enabled == false)
-        return -1;
+        return null;
       if (IsLocal == false)
       {
         try
@@ -852,16 +905,16 @@ namespace TvService
         catch (Exception)
         {
           Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
-          return -1;
+          return null;
         }
       }
-      TvCardContext context = _card.Context as TvCardContext;
+      ITvCardContext context = _card.Context as ITvCardContext;
       if (context == null)
-        return -1;
+        return null;
       context.GetUser(ref user);
       ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
       if (subchannel == null)
-        return -1;
+        return null;
       return subchannel.GetCurrentVideoStream;
     }
 
@@ -870,7 +923,7 @@ namespace TvService
     /// returns a virtual card for this tvcard
     /// </summary>
     /// <returns></returns>
-    public VirtualCard GetVirtualCard(User user)
+    public VirtualCard GetVirtualCard(IUser user)
     {
       VirtualCard card = new VirtualCard(user);
       card.RecordingFormat = _dbsCard.RecordingFormat;

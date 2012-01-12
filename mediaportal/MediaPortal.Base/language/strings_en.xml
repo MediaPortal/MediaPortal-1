@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
-    <String id="0" prefix="My ">Programs</String>
+    <String id="0" prefix="My ">Programmes</String>
     <String id="1" prefix="My ">Pictures</String>
     <String id="2" prefix="My ">Music</String>
     <String id="3" prefix="My ">Videos</String>
@@ -47,8 +47,8 @@
     <String id="51">Play disc</String>
     <String id="60">Waiting for startup of TV service...</String>
     <String id="61">Waiting {0} second(s) before startup...</String>
-    <String id="62">Initializing DirectX...</String>
-    <String id="63">Initializing input devices...</String>
+    <String id="62">Initialising DirectX...</String>
+    <String id="63">Initialising input devices...</String>
     <String id="64">Starting plugins...</String>
     <String id="65">Loading keymap.xml...</String>
     <String id="66">Loading strings...</String>
@@ -56,7 +56,7 @@
     <String id="68">Loading fonts...</String>
     <String id="69">Loading skin ({0})...</String>
     <String id="70">Loading window plugins...</String>
-    <String id="71">Initializing window manager...</String>
+    <String id="71">Initialising window manager...</String>
     <String id="100">Layout: Icons</String>
     <String id="101">Layout: List</String>
     <String id="102">Scan</String>
@@ -230,7 +230,7 @@
     <String id="271">Top 100</String>
     <String id="272">Top Left Overscan Compensation</String>
     <String id="273">Bottom Right Overscan Compensation</String>
-    <String id="274">Subtitles Position</String>
+    <String id="274">Subtitles' position</String>
     <String id="275">Pixel Ratio Adjustment</String>
     <String id="276">-WARNING!- For best quality leave at 0.0 when shrinking video to fit.</String>
     <String id="277">Move the bar to change the subtitles position</String>
@@ -303,7 +303,7 @@
     <String id="344">Actors</String>
     <String id="345">Year</String>
     <String id="346">Stack</String>
-    <String id="347">Unstack</String>
+    <String id="347">Flatten</String>
     <String id="348">Flat directory hierarchy</String>
     <String id="349">Show only Default.xbe</String>
     <String id="350">Programmes</String>
@@ -341,7 +341,7 @@
     <String id="382">Scattered</String>
     <String id="383">Wind</String>
     <String id="384">Strong</String>
-    <String id="385">Fair</String>
+    <String id="385">Fine</String>
     <String id="386">Clear</String>
     <String id="387">Early</String>
     <String id="388">and</String>
@@ -367,8 +367,8 @@
     <String id="408">Enter a city name</String>
     <String id="409">Remove Location</String>
     <String id="410">Accessing Weather.com</String>
-    <String id="411">Getting Weather for:</String>
-    <String id="412">Unable to get weather data</String>
+    <String id="411">Retrieving weather for:</String>
+    <String id="412">Unable to retrieve weather data</String>
     <String id="413">Manual</String>
     <String id="414">No review for this album</String>
     <String id="415">Downloading thumbnail...</String>
@@ -396,7 +396,7 @@
     <String id="437">Duration:</String>
     <String id="438">Opening file</String>
     <String id="439">Cache</String>
-    <String id="440">Hard Disc</String>
+    <String id="440">Hard drive</String>
     <String id="441">UDF</String>
     <String id="442">LAN</String>
     <String id="443">Internet</String>
@@ -477,7 +477,7 @@
     <String id="519">Subtitles off</String>
     <String id="520">No locations found</String>
     <String id="521">Not a valid integer</String>
-    <String id="522">Postive values only!</String>
+    <String id="522">Positive values only!</String>
     <String id="523">Zero skip is not allowed!</String>
     <String id="524">3 hour skip is maximum!</String>
     <String id="525">Skip step already defined</String>    
@@ -586,8 +586,8 @@
     <String id="652">Recorded TV</String>
     <String id="653">Delete this recording?</String>
     <String id="654">Eject</String>
-    <String id="655">Play recorded tv</String>
-    <String id="656">Delete recorded tv</String>
+    <String id="655">Play recorded TV</String>
+    <String id="656">Delete recorded TV</String>
     <String id="657">Mon</String>
     <String id="658">Tue</String>
     <String id="659">Wed</String>
@@ -603,7 +603,7 @@
     <String id="669">Sort by: Genre</String>
     <String id="670">Sort by: Bit-rate</String>
     <String id="671">Sort by: Watched</String>
-    <String id="672">Record Mon-Fri</String>
+    <String id="672">Record Weekdays</String>
     <String id="673">Scroll speed</String>
     <String id="674">GUI Settings</String>
     <String id="675">Example:</String>
@@ -611,15 +611,15 @@
     <String id="677">times</String>
     <String id="678">Sort by: Genre</String>
     <String id="679">Weekly</String>
-    <String id="680">Mon-Fri</String>
+    <String id="680">Weekdays</String>
     <String id="681">Waiting</String>
     <String id="682">Recording</String>
     <String id="683">Finished</String>
     <String id="684">Cancelled</String>
     <String id="685">Sort by: Status</String>
-    <String id="686">Born</String>
-    <String id="687">Years Active</String>
-    <String id="688">Instruments</String>
+    <String id="686">Born:</String>
+    <String id="687">Years Active:</String>
+    <String id="688">Instruments:</String>
     <String id="689">Bio.</String>
     <String id="690">Discography (Albums)</String>
     <String id="691">Discography (compilations, boxes)</String>
@@ -630,13 +630,13 @@
     <String id="702">No artists found!</String>
     <String id="703">Not connected to the Internet!</String>
     <String id="704">Feed Retrieval</String>
-    <String id="705">Getting RSS Feed for</String>
+    <String id="705">Retrieving RSS feed for</String>
     <String id="706">Select Feed</String>
     <String id="707">TV On</String>
     <String id="708">Timeshifting</String>
     <String id="709">Auto-update</String>
     <String id="710">A new version is available</String>
-    <String id="711">Upgrade from v#old -&gt;v#new ?</String>
+    <String id="711">Upgrade from v#old -&gt; v#new ?</String>
     <String id="712">Back</String>
     <String id="713">Autoplay</String>
     <String id="714">Disc inserted - do you want to play it?</String>
@@ -679,7 +679,7 @@
     <String id="752">No recording specified</String>
     <String id="753">No tuner cards installed</String>
     <String id="754">No tuner is recording the specified show</String>
-    <String id="755">No tuner is viewing tv</String>
+    <String id="755">No tuner is viewing TV</String>
     <String id="756">No tuner can receive:{0}</String>
     <String id="757">All tuners are busy</String>
     <String id="758">Tuner is not recording</String>
@@ -707,11 +707,12 @@
     <String id="780">Select scheduling method</String>
     <String id="781">Quick record</String>
     <String id="782">Advanced record</String>
-	<String id="783">Rotate 180°</String>
-	<String id="784">Rotate 270°</String>
+    <String id="783">Rotate 180°</String>
+    <String id="784">Rotate 270°</String>
     <String id="789">Now: </String>
     <String id="790">Next: </String>
     <String id="791">Layout: Cover Flow</String>
+    <String id="792">Layouts Menu</String>
     <String id="798">low</String>
     <String id="799">high</String>
     <String id="800">Starts with</String>
@@ -725,6 +726,8 @@
     <String id="808">Ingredients</String>
     <String id="809">Directions</String>
     <String id="810">Card</String>
+    <String id="811">Recorded Radio</String>
+    <String id="812">Radio Stations</String>
     <String id="820">Delete unwatched recording?</String>
     <String id="830">Reset watched status</String>
     <String id="831">Eject removable drive</String>
@@ -883,7 +886,7 @@
     <String id="1004">About to start recording</String>
     <String id="1005">on channel</String>
     <String id="1006">Allow recording to begin</String>
-    <String id="1007">Cancel recording and maintain watching tv</String>
+    <String id="1007">Cancel recording and maintain watching TV</String>
     <String id="1008">Queue</String>
     <String id="1009">Downloading cover art</String>
     <String id="1010">Watched</String>
@@ -916,8 +919,8 @@
     <String id="1037" prefix="My ">TV - Program information</String>
     <String id="1038">Advanced record</String>
     <String id="1039">Don't record</String>
-    <String id="1040">Alert me</String>
-    <String id="1041">Upcoming episodes (active:{0})</String>
+    <String id="1040">Set reminder</String>
+    <String id="1041">Upcoming episodes</String>
     <String id="1042">Keep until</String>
     <String id="1043">Until watched</String>
     <String id="1044">Until space needed</String>
@@ -926,17 +929,13 @@
     <String id="1047">Start in fullscreen mode</String>
     <String id="1048">Settings</String>
     <String id="1049">Hibernate</String>
-    <String id="1050">Sat-Sun</String>
-    <String id="1051">Record Sat-Sun</String>
+    <String id="1050">Weekends</String>
+    <String id="1051">Record Weekends</String>
     <String id="1052">Songs</String>
     <String id="1053">Unknown caller</String>
     <String id="1054">(recording)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(unavailable)</String>
-    <String id="1057">Record Sun-Thu</String>
-    <String id="1058">Record Fri-Sat</String>
-    <String id="1059">Sun-Thu</String>
-    <String id="1060">Fri-Sat</String>
     <String id="1061">Removable</String>
     <String id="1062">Object</String>
     <String id="1064">Bookmarks</String>
@@ -990,7 +989,33 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Set-up Wizard</String>
     <String id="1201">Play video from beginning</String>
+    <String id="1202">Sort by: Auto</String>
+    <String id="1203">Upcoming episodes (active:{0})</String>
+    <String id="1204">Play all videos in selected folder</String>
+    <String id="1205">Sort by: Disc#</String>
+    <String id="1206">Programme is now running for {0} minutes</String>
+    <String id="1207">Switch to {0} now?</String>
+    <String id="1208">Sort by: Composer</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
+    <String id="1212">Cancel reminder</String>
+    <String id="1213">Listen to this Station</String>
+    <String id="1214">Composers</String>
+    <String id="1215">Conductors</String>
+    <String id="1216">Discs</String>
+    <String id="1217">Artist Tracks</String>
+    <String id="1218">Albums By Age</String>
+    <String id="1219">Album Artists (Index)</String>
+    <String id="1220">Sort by: Date Created</String>
+    <String id="1221">Sort by: Date Modified</String>
+    <String id="1222">Groups</String>
+    <String id="1223">Existing Playlist Detected</String>
+    <String id="1224">Do you want to clear the current playlist?</String>
+    <String id="1225">Queue item</String>
+    <String id="1226">Queue all items</String>
+    <String id="1230">Date added:</String>
+    <String id="1231">Last played:</String>
+		<String id="1240">Lock content</String>
+		<String id="1241">Unlock content</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
@@ -1004,6 +1029,7 @@
     <String id="1449">Stop recording</String>
     <String id="1450">Are you sure you want to stop recording?</String>
     <String id="1451">Unable to play</String>
+    <String id="1498">Program/Channel not found</String>
     <String id="1499">No signal</String>
     <String id="1500">Unable to start timeshifting</String>
     <String id="1501">Card is disabled</String>
@@ -1026,14 +1052,22 @@
     <String id="1518">Unable to create graph</String>
     <String id="1519">No supported software encoder installed</String>
     <String id="1520">Not enough free disk space</String>
-	<String id="1521">View by Title</String>
-	<String id="1522">View by Genre</String>
-	<String id="1523">Search in Description</String>
+    <String id="1521">View by Title</String>
+    <String id="1522">View by Genre</String>
+    <String id="1523">Search in Description</String>
     <String id="1600">Do you want to power off?</String>
     <String id="1601">Do you want to suspend?</String>
     <String id="1602">Do you want to hibernate?</String>
+    <String id="1900">Outdated Skin</String>
+    <String id="1901">Your currently selected skin ({0}) is outdated. This could cause problems while using MediaPortal. For this reason MediaPortal has temporarily switched to the default skin. If however you would like to try using the outdated skin, press the 'Ignore and try' button, but remember: Do NOT file a bug report using this skin!
+(to dismiss this warning either wait until it closes automatically or press Back/ESC on you remote)</String>
+    <String id="1902">Do not show this message again</String>
+    <String id="1903">Ignore and try ({0})...</String>
+    <String id="1910">Incompatible plugins</String>
+    <String id="1911">The following plugins are incompatible with this version of MediaPortal and were automatically disabled:</String>
+    <String id="1912">Continue|Continue ({0})...|Continue ({0})...</String>
     <String id="1950" prefix="My ">Status</String>
-    <String id="1951">Harddisk</String>
+    <String id="1951">Hard drive</String>
     <String id="1952">Fan</String>
     <String id="1953">Free</String>
     <String id="1954">Temperature</String>
@@ -1265,7 +1299,8 @@
     <String id="2611">Czech</String>
     <String id="2612">Hungarian</String>
     <String id="2613">Russian</String>
-		<String id="2614">Ukrainian</String>
+    <String id="2614">Ukrainian</String>
+    <String id="2615">German</String>
     <String id="2650">Reloading fonts - please wait...</String>
     <String id="2700">Open CI menu</String>
     <String id="2997">h</String>
@@ -1306,7 +1341,7 @@
     <String id="4505">Searching {0}...</String>
     <String id="4506">[Blank]</String>
     <String id="4507">Cover art grab aborted by user</String>
-    <String id="4508">Cover art grab completed successfuly</String>
+    <String id="4508">Cover art grab completed successfully</String>
     <String id="4509">Cover art grab completed with errors</String>
     <String id="4510">{0} cover art images updated</String>
     <String id="4511">Cover art grab done</String>
@@ -1332,7 +1367,7 @@
     <String id="4554">Lookup CD info</String>
     <String id="4555">Current Playlist</String>
     <String id="4557">Add all to playlist</String>
-	<String id="4558">Recently added</String>
+    <String id="4558">Recently Added</String>
     <String id="5900" prefix="My ">Trailers</String>
     <String id="5901">Show Movies</String>
     <String id="5902">Show which movies?</String>
@@ -1491,7 +1526,7 @@
     <String id="9140">NO KEYPAD OPTIONS</String>
     <String id="9141">Enable Keypad</String>
     <String id="9142">Custom Mapping</String>
-    <String id="9143">KeyPad Mapping</String>
+    <String id="9143">Keypad Mapping</String>
     <String id="9144">NO REMOTE OPTIONS</String>
     <String id="9145">Disable Remote</String>
     <String id="9146">Disable Repeat</String>
@@ -1545,16 +1580,16 @@
     <String id="14003">Installed extensions</String>
     <String id="14004">Online extensions</String>
     <String id="14005">Install extension</String>
-    <String id="14006">UnInstall extension</String>	
+    <String id="14006">UnInstall extension</String>
     <String id="14007">ReInstall extension</String>
     <String id="14008">Revoke last action</String>
     <String id="14009">On next restart this action will be executed</String>
     <String id="14010">Download extension</String>
     <String id="14011">Select an option</String>
-    <String id="14012">Not supported Mediaportal version !(Needed version {0})</String>	
-    <String id="14013">Do you want continue ?</String>		
-    <String id="14014">Updating online info</String>			
-    <String id="14015">Updates</String>	
+    <String id="14012">Not supported MediaPortal version !(Needed version {0})</String>
+    <String id="14013">Do you want continue ?</String>
+    <String id="14014">Updating online info</String>
+    <String id="14015">Updates</String>
     <String id="14016">Sort by: Download</String>
     <String id="14017">Sort by: Rating</String>
     <String id="14018">Install Update</String>
@@ -1748,13 +1783,14 @@
     <String id="100509">Music/Lookup/Progress</String>
     <String id="100510">Music/Now playing</String>
     <String id="100511">Music/Fullscreen</String>
+    <String id="100512">LastFM Love/Ban</String>
     <String id="100600">TV/Guide</String>
     <String id="100601">TV/Scheduler</String>
     <String id="100602">TV/fullscreen</String>
     <String id="100603">TV/Recorded TV</String>
     <String id="100604">TV/Search</String>
-    <String id="100605">TV/Recorded Tv/Genre</String>
-    <String id="100606">TV/Recorded Tv/channels</String>
+    <String id="100605">TV/Recorded TV/Genre</String>
+    <String id="100606">TV/Recorded TV/channels</String>
     <String id="100607">TV/Scheduler/Priorities</String>
     <String id="100608">TV/Scheduler/Conflicts</String>
     <String id="100609">TV/Compress/Main</String>
@@ -1795,7 +1831,7 @@
     <String id="100706">EPG settings</String>
     <String id="100707">EPG -&gt; Channel mapping</String>
     <String id="100708">Skip step settings</String>
-    <String id="100709">TV server settings</String>
+    <String id="100709">TV-Server settings</String>
     <String id="100746">TV search type</String>
     <String id="100747">TV search</String>
     <String id="100748">Program info</String>
@@ -1804,10 +1840,11 @@
     <String id="100756">Status details</String>
     <String id="100757">Status preferences</String>
     <String id="100758">File dialog</String>
-    <String id="100759">Recorded Tv Info.</String>
+    <String id="100759">Recorded TV Info.</String>
     <String id="100760">Burner</String>
     <String id="100761">TV guide</String>
     <String id="100762">Radio guide</String>
+    <String id="100763">Recorded Radio</String>
     <String id="100800" prefix="My ">Extensions</String>
     <String id="101000">keyboard</String>
     <String id="101002">Virtual Standard Keyboard</String>
@@ -1830,6 +1867,7 @@
     <String id="102014">Picture info.</String>
     <String id="102015">Mini menu</String>
     <String id="102016">Notification</String>
+    <String id="102017">Recording Conflict</String>
     <String id="102018">CI menu</String>
     <String id="102600" prefix="My ">Weather</String>
     <String id="102700" prefix="My ">News</String>
@@ -1847,16 +1885,19 @@
     <String id="106666">Power Scheduler Waiting</String>
     <String id="107700" prefix="My ">TV/Teletext</String>
     <String id="107701" prefix="My ">TV/Teletext</String>
+    <String id="107776" prefix="My ">Tetris</String>
     <String id="107777" prefix="My ">Sudoku</String>
     <String id="107890" prefix="My ">Last.fm radio</String>
-    <String id="108888">Music menu</String>	
+    <String id="107900">Dialog Text</String>
+    <String id="108888">Music menu</String>
     <String id="109000">MiniDisplay - Setup</String>
     <String id="109001">MiniDisplay - Setup - Backlight</String>
     <String id="109002">MiniDisplay - Setup - Display Control</String>
     <String id="109003">MiniDisplay - Setup - Display Options</String>
     <String id="109004">MiniDisplay - Setup - Equalizer</String>
-    <String id="109005">MiniDisplay - Setup - KeyPad</String>
+    <String id="109005">MiniDisplay - Setup - Keypad</String>
     <String id="109006">MiniDisplay - Setup - Remote Control</String>
+    <String id="102019">TV notification</String>
     <String id="200000">Please select your EPG grabber. Note if your country is</String>
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>
@@ -1870,15 +1911,17 @@
     <String id="200010">MediaPortal turns your PC into a very advanced Multi-Media Centre / HTPC.</String>
     <String id="200011">With MediaPortal you can enjoy listening to your favourite music and radio, view your digital photos,</String>
     <String id="200012">watch Videos, DVDs, and live TV, and much more.</String>
-    <String id="200013">This wizard will help you to set up Mediaportal quickly and easily. Please follow all the steps,</String>
+    <String id="200013">This wizard will help you to set up MediaPortal quickly and easily. Please follow all the steps,</String>
     <String id="200014">and start by setting your language and location below:</String>
     <String id="200015">Now press the Next button to begin</String>
     <String id="200017">Welcome to MediaPortal.</String>
-    <String id="200018">Congratulations. Mediaportal is now set up and ready to use</String>
+    <String id="200018">Congratulations. MediaPortal is now set up and ready to use</String>
     <String id="200019">Press the Finish button to close this wizard</String>
     <String id="200020">Finish</String>
     <String id="200021">TV Set-up - EPG</String>
-    <String id="200022">MediaPortal has found the following tv-cards:</String>
+    <String id="990000">Weekly on this channel</String>
+    <String id="990001">{0} on channel {1}</String>
+    <String id="200022">MediaPortal has found the following TV cards:</String>
     <String id="200023">Press the Next button to configure these cards</String>
     <String id="200024">TV Set-up</String>
     <String id="200025">Language</String>
@@ -1906,7 +1949,7 @@
     <String id="200047">Create thumbnails (incl. subfolders)</String>
     <String id="200048">Re-create all thumbnails</String>
     <String id="200049">Only watched recording for this show</String>
-    <String id="200050">This will delete your recordings from harddisc</String>
+    <String id="200050">This will delete your recordings from hard drive</String>
     <String id="200051">Delete this episode?</String>
     <String id="200052">Active recordings</String>
     <String id="200053">No active recordings</String>
@@ -1917,14 +1960,34 @@
     <String id="200061">Left channel to the left and right speakers</String>
     <String id="200062">Right channel to the left and right speakers</String>
     <String id="200063">Mix both</String>
-    <String id="200064">Connected to TvServer</String>
+    <String id="200064">Connected to TV-Server</String>
     <String id="200065">Some ports seem to be blocked</String>
-    <String id="200066">Unable to connect to the tvserver</String>
+    <String id="200066">Unable to connect to the TV-Server</String>
     <String id="200067">Connected to database</String>
     <String id="200068">Unable to connect to database</String>
-    <String id="200069">All ip ports seem to be fine</String>
+    <String id="200069">All IP ports seem to be fine</String>
     <String id="200070">Please check firewall</String>
     <String id="200071">Delete this folder and all subfolders?</String>
     <String id="200072">Upcoming episodes</String>
+    <String id="200073">Postprocessing</String>
+    <String id="200074">Postprocess picture</String>
+    <String id="200075">Resize</String>
+    <String id="200076">Subtitle files</String>
+    <String id="200077">Deinterlace</String>
+    <String id="200078">Crop</String>
+    <String id="200079">Vertical crop</String>
+    <String id="200080">Horizontal crop</String>
+    <String id="200081">VIDEO MENU</String>
+    <String id="200082">AUDIO MENU</String>
+    <String id="200083">SUBTITLES MENU</String>
+    <String id="200084">Video Menu</String>
+    <String id="200085">Audio Menu</String>
+    <String id="200086">MAIN MENU</String>
+    <String id="200087">Mute</String>
+    <String id="200090">Edition</String>
+    <String id="200091">Chapter</String>
+    <String id="200092">Forced Only</String>
+    <String id="200093">Disc mount time out reached!</String>
+    <String id="200094">Keep trying for further 60 seconds?</String>
   </Section>
 </Language>

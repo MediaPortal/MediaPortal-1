@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ namespace TvService
     /// Gets the available audio streams.
     /// </summary>
     /// <value>The available audio streams.</value>
-    public IAudioStream[] Streams(User user)
+    public IAudioStream[] Streams(IUser user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false)
         return new List<IAudioStream>().ToArray();
@@ -68,7 +68,7 @@ namespace TvService
         return null;
       }
 
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return new List<IAudioStream>().ToArray();
       context.GetUser(ref user);
@@ -82,7 +82,7 @@ namespace TvService
     /// Gets the current audio stream.
     /// </summary>
     /// <returns></returns>
-    public IAudioStream GetCurrent(User user)
+    public IAudioStream GetCurrent(IUser user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false)
         return null;
@@ -104,7 +104,7 @@ namespace TvService
         return null;
       }
 
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return null;
       context.GetUser(ref user);
@@ -119,7 +119,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="stream">The stream.</param>
-    public void Set(User user, IAudioStream stream)
+    public void Set(IUser user, IAudioStream stream)
     {
       if (_cardHandler.DataBaseCard.Enabled == false)
       {
@@ -145,7 +145,7 @@ namespace TvService
         return;
       }
 
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
       {
         Log.WriteFile("card: SetCurrentAudioStream: TvCardContext == null");

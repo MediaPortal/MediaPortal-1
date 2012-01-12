@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -29,7 +24,7 @@ namespace MediaPortal.DeployTool.Sections
 {
   public partial class BaseInstallationTypeWithoutTvEngineDlg : DeployDialog
   {
-    bool rbOneClickChecked;
+    private bool rbOneClickChecked;
 
     public BaseInstallationTypeWithoutTvEngineDlg()
     {
@@ -42,6 +37,7 @@ namespace MediaPortal.DeployTool.Sections
     }
 
     #region IDeployDialog interface
+
     public override void UpdateUI()
     {
       labelOneClickCaption.Text = Localizer.GetBestTranslation("BaseInstallation_labelOneClickCaption");
@@ -51,6 +47,7 @@ namespace MediaPortal.DeployTool.Sections
       labelAdvancedDesc.Text = Localizer.GetBestTranslation("BaseInstallationNoTvEngine_labelAdvancedDesc");
       rbAdvanced.Text = Localizer.GetBestTranslation("BaseInstallation_rbAdvanced");
     }
+
     public override DeployDialog GetNextDialog()
     {
       InstallationProperties.Instance.Set("InstallType", "mp_only");
@@ -60,6 +57,7 @@ namespace MediaPortal.DeployTool.Sections
       }
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MPSettings);
     }
+
     public override bool SettingsValid()
     {
       return true;
@@ -72,7 +70,7 @@ namespace MediaPortal.DeployTool.Sections
       bOneClick_Click(sender, e);
     }
 
-    
+
     private void rbAdvanced_Click(object sender, EventArgs e)
     {
       bAdvanced_Click(sender, e);

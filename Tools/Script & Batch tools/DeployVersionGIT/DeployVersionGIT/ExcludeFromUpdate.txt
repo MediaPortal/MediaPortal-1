@@ -1,0 +1,3 @@
+﻿mediaportal\DirectShowLib\AssemblyInfo.cs
+TvEngine3\TVLibrary\DirectShowLib\AssemblyInfo.cs
+TvEngine3\TVLibrary\DirectShowLib\Properties\AssemblyInfo.cs

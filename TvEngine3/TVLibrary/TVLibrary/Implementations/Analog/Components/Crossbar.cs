@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -278,7 +278,7 @@ namespace TvLibrary.Implementations.Analog.Components
         //connect tv tuner->crossbar
         IPin tunerOut = DsFindPin.ByDirection(tuner.Filter, PinDirection.Output,
                                               graph.Tuner.VideoPin);
-        if (tunerOut != null &&
+        if (tunerOut != null && _videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner) &&
             FilterGraphTools.ConnectPin(graphBuilder, tunerOut, tmp, _videoPinMap[AnalogChannel.VideoInputType.Tuner]))
         {
           // Got it, we're done
@@ -379,7 +379,13 @@ namespace TvLibrary.Implementations.Analog.Components
           Release.ComObject("CrossBarFilter", tmp);
           continue;
         }
-        IPin pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
+
+        // Check that the crossbar has a tuner video input pin.
+        IPin pinIn = null;
+        if (_videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner))
+        {
+          pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
+        }
         if (pinIn == null)
         {
           // no pin found, continue with next crossbar
@@ -464,6 +470,7 @@ namespace TvLibrary.Implementations.Analog.Components
       int videoSvhsNr = 0;
       int videoYrYbYNr = 0;
       int videoRgbNr = 0;
+      int videoHdmiNr = 0;
       for (int i = 0; i < inputs; ++i)
       {
         _crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
@@ -591,6 +598,24 @@ namespace TvLibrary.Implementations.Analog.Components
               case 3:
                 _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, i);
                 _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, relatedPinIndex);
+                break;
+            }
+            break;
+          case PhysicalConnectorType.Video_SerialDigital:
+            videoHdmiNr++;
+            switch (videoHdmiNr)
+            {
+              case 1:
+                _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput1, i);
+                _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput1, relatedPinIndex);
+                break;
+              case 2:
+                _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput2, i);
+                _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput2, relatedPinIndex);
+                break;
+              case 3:
+                _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput3, i);
+                _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput3, relatedPinIndex);
                 break;
             }
             break;

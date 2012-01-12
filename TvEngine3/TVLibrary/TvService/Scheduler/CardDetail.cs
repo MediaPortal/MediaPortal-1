@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,7 +33,8 @@ namespace TvService
     private readonly Card _card;
     private readonly IChannel _detail;
     private int _priority;
-    private bool _canDecrypt;
+    private bool _sameTransponder;
+    private int _numberOfOtherUsers;
 
     /// <summary>
     /// ctor
@@ -41,13 +42,15 @@ namespace TvService
     /// <param name="id">card id</param>
     /// <param name="card">card dataaccess object</param>
     /// <param name="detail">tuning detail</param>
-    public CardDetail(int id, Card card, IChannel detail)
+    /// <param name="sameTransponder">indicates whether it is the same transponder</param>
+    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers)
     {
-      _canDecrypt = true;
+      _sameTransponder = sameTransponder;
       _cardId = id;
       _card = card;
       _detail = detail;
       _priority = _card.Priority;
+      _numberOfOtherUsers = numberOfOtherUsers;
     }
 
     /// <summary>
@@ -65,7 +68,6 @@ namespace TvService
     public int Priority
     {
       get { return _priority; }
-      set { _priority = value; }
     }
 
     /// <summary>
@@ -84,10 +86,20 @@ namespace TvService
       get { return _detail; }
     }
 
-    public bool CanDecrypt
+    /// <summary>
+    /// returns if it is the same transponder
+    /// </summary>
+    public bool SameTransponder
     {
-      get { return _canDecrypt; }
-      set { _canDecrypt = value; }
+      get { return _sameTransponder; }
+    }
+
+    /// <summary>
+    /// gets the number of other users
+    /// </summary>
+    public int NumberOfOtherUsers
+    {
+      get { return _numberOfOtherUsers; }
     }
 
     #region IComparable<CardInfo> Members
@@ -95,11 +107,27 @@ namespace TvService
     // higher priority means that this one should be more to the front of the list
     public int CompareTo(CardDetail other)
     {
-      if (Priority > other.Priority)
+      if (SameTransponder == other.SameTransponder)
+      {
+        if (!SameTransponder && (NumberOfOtherUsers != other.NumberOfOtherUsers))
+        {
+          if (NumberOfOtherUsers > other.NumberOfOtherUsers)
+            return 1;
+          if (NumberOfOtherUsers < other.NumberOfOtherUsers)
+            return -1;
+          return 0;
+        }
+
+        if (Priority > other.Priority)
+          return -1;
+        if (Priority < other.Priority)
+          return 1;
+        return 0;
+      }
+
+      if (SameTransponder)
         return -1;
-      if (Priority < other.Priority)
-        return 1;
-      return 0;
+      return 1;
     }
 
     #endregion

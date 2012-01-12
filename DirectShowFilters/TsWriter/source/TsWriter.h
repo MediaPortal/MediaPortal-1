@@ -62,13 +62,13 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 	STDMETHOD(PmtGetPMTData) (THIS_ int handle,   BYTE *pmtData);
 
 	
-  STDMETHOD(RecordSetRecordingFileName)(THIS_ int handle,char* pszFileName)PURE;
+  STDMETHOD(RecordSetRecordingFileNameW)(THIS_ int handle,wchar_t* pwszFileName)PURE;
   STDMETHOD(RecordStartRecord)(THIS_ int handle)PURE;
   STDMETHOD(RecordStopRecord)(THIS_ int handle)PURE;
 	STDMETHOD(RecordSetPmtPid)(THIS_ int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength)PURE;
 	STDMETHOD(RecordSetVideoAudioObserver)(THIS_ int handle, IVideoAudioObserver* callback)PURE;
 
-	STDMETHOD(TimeShiftSetTimeShiftingFileName)(THIS_ int handle, char* pszFileName)PURE;
+	STDMETHOD(TimeShiftSetTimeShiftingFileNameW)(THIS_ int handle, wchar_t* pwszFileName)PURE;
 	STDMETHOD(TimeShiftStart)(THIS_ int handle )PURE;
 	STDMETHOD(TimeShiftStop)(THIS_ int handle )PURE;
 	STDMETHOD(TimeShiftReset)(THIS_ int handle )PURE;
@@ -182,21 +182,21 @@ public:
 		STDMETHODIMP PmtSetCallBack(int handle,IPMTCallback* callback);
 		STDMETHODIMP PmtGetPMTData (int handle,BYTE *pmtData);
 
-		
-		STDMETHODIMP RecordSetRecordingFileName( int handle,char* pszFileName);
+
+		STDMETHODIMP RecordSetRecordingFileNameW( int handle,wchar_t* pszFileName);
 		STDMETHODIMP RecordStartRecord( int handle);
 		STDMETHODIMP RecordStopRecord( int handle);
 		STDMETHODIMP RecordSetPmtPid(int handle,int mtPid,int serviceId,byte* pmtData,int pmtLength );
 		STDMETHODIMP RecordSetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
 
-		STDMETHODIMP TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName);
+		STDMETHODIMP TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwszFileName);
 		STDMETHODIMP TimeShiftStart( int handle );
 		STDMETHODIMP TimeShiftStop( int handle );
 		STDMETHODIMP TimeShiftReset( int handle );
 		STDMETHODIMP TimeShiftGetBufferSize( int handle, long * size) ;
 		STDMETHODIMP TimeShiftSetPmtPid( int handle, int pmtPid, int serviceId,byte* pmtData,int pmtLength) ;
 		STDMETHODIMP TimeShiftPause( int handle, BYTE onOff) ;
-	  STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
+		STDMETHODIMP TimeShiftSetParams(int handle, int minFiles, int maxFiles, ULONG chunkSize) ;
 		STDMETHODIMP TimeShiftGetCurrentFilePosition(int handle,__int64 * position,long * bufferId);
 		STDMETHODIMP SetVideoAudioObserver(int handle, IVideoAudioObserver* callback);
 

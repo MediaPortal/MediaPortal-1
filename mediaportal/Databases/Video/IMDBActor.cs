@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,24 +32,44 @@ namespace MediaPortal.Video.Database
       public string MovieTitle;
       public string Role;
       public int Year;
+      //Added
+      public string imdbID;
     }
 
-    private string _Name = string.Empty;
-    private string _thumbnailUrl = string.Empty;
+    //Changed - _thumbnailURL added - IMDBActorID added
+    private int _id;
+    private string _name = string.Empty;
+    private string _imdbActorID = string.Empty; // New
+    private string _thumbnailUrl = string.Empty; // New
     private string _placeOfBirth = string.Empty;
     private string _dateOfBirth = string.Empty;
     private string _miniBiography = string.Empty;
     private string _biography = string.Empty;
-    private ArrayList movies = new ArrayList();
+    private ArrayList _movies = new ArrayList();
 
     public IMDBActor() {}
 
-    public string Name
+    //Added
+    public int id
     {
-      get { return _Name; }
-      set { _Name = value; }
+      get { return _id; }
+      set { _id = value; }
     }
 
+    public string Name
+    {
+      get { return _name; }
+      set { _name = value; }
+    }
+
+    //Added
+    public string IMDBActorID
+    {
+      get { return _imdbActorID; }
+      set { _imdbActorID = value; }
+    }
+
+    //Added
     public string ThumbnailUrl
     {
       get { return _thumbnailUrl; }
@@ -82,18 +102,18 @@ namespace MediaPortal.Video.Database
 
     public int Count
     {
-      get { return movies.Count; }
+      get { return _movies.Count; }
     }
 
     public IMDBActorMovie this[int index]
     {
-      get { return (IMDBActorMovie)movies[index]; }
-      set { movies[index] = value; }
+      get { return (IMDBActorMovie)_movies[index]; }
+      set { _movies[index] = value; }
     }
 
     public void Add(IMDBActorMovie movie)
     {
-      movies.Add(movie);
+      _movies.Add(movie);
     }
   }
 }

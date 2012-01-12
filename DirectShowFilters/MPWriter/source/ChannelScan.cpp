@@ -22,7 +22,8 @@
 #include "TeletextGrabber.h"
 #include "Hamming.h"
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...);
+extern void LogDebug(const wchar_t *fmt, ...);
 
 CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr ) 
 :CUnknown( NAME ("MPFileWriterChannelScan"), pUnk)

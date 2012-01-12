@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using System.Collections.Specialized;
@@ -107,6 +108,46 @@ namespace SetupTv
         System.Environment.Exit(0);
       }
 
+      string DeploySql = string.Empty;
+      string DeployPwd = string.Empty;
+
+      foreach (string param in arguments)
+      {
+        switch (param.ToLowerInvariant())
+        {
+          case "/delete-db":
+            startupMode = StartupMode.DbCleanup;
+            break;
+
+          case "/configure-db":
+            startupMode = StartupMode.DbConfig;
+            break;
+
+          case "/debugoptions":
+            debugOptions = true;
+            break;
+        }
+
+        if (param.StartsWith("--Deploy"))
+        {
+          switch (param.Substring(0, 12))
+          {
+            case "--DeployMode":
+              Log.Debug("---- started in Deploy mode ----");
+              startupMode = StartupMode.DeployMode;
+              break;
+
+            case "--DeploySql:":
+              DeploySql = param.Split(':')[1].ToLower();
+              break;
+
+            case "--DeployPwd:":
+              DeployPwd = param.Split(':')[1];
+              break;
+          }
+        }
+      }
+
       Application.SetCompatibleTextRenderingDefault(false);
 
       // set working dir from application.exe
@@ -115,49 +156,22 @@ namespace SetupTv
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
 
-      string DeploySql = string.Empty;
-      string DeployPwd = string.Empty;
-
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
       Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+#if DEBUG
+      Log.Info("Debug build: " + Application.ProductVersion);
+#else
+      Log.Info("Build: " + Application.ProductVersion);
+#endif
 
       //Check for unsupported operating systems
-      OSPrerequisites.OsCheck(true);
+      OSPrerequisites.OSPrerequisites.OsCheck(true);
 
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
-      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
+      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
 
       Application.ThreadException += Application_ThreadException;
-
-      foreach (string param in arguments)
-      {
-        if (param == "--delete-db" || param == "-d" || param == @"/d")
-        {
-          startupMode = StartupMode.DbCleanup;
-        }
-        if (param == "--configure-db" || param == "-c" || param == @"/c")
-        {
-          startupMode = StartupMode.DbConfig;
-        }
-        if (param == "--DebugOptions")
-        {
-          debugOptions = true;
-        }
-        if (param == "--DeployMode")
-        {
-          Log.Debug("---- started in Deploy mode ----");
-          startupMode = StartupMode.DeployMode;
-        }
-        if (param.StartsWith("--DeploySql"))
-        {
-          DeploySql = param.Split(':')[1].ToLower();
-        }
-        if (param.StartsWith("--DeployPwd"))
-        {
-          DeployPwd = param.Split(':')[1];
-        }
-      }
 
       //test connection with database
       Log.Info("---- check connection with database ----");
@@ -192,6 +206,14 @@ namespace SetupTv
           dlg.schemaName = dlg.schemaNameDefault;
         }
       }
+
+      if (dlg.tbServerHostName.Text.Trim().ToLower() == "localhost" | dlg.tbServerHostName.Text.Trim() == "127.0.0.1")
+      {
+        Log.Info("*****************************************************************");
+        Log.Info("* WARNING, connection host ({0}) not officially supported *", dlg.tbServerHostName.Text);
+        Log.Info("*****************************************************************"); 
+      }
+
       if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) ||
           (!dlg.TestConnection(startupMode)))
       {
@@ -249,6 +271,7 @@ namespace SetupTv
         ServiceHelper.Start();
       }
 
+      ServiceHelper.WaitInitialized();
       int cards = 0;
       try
       {
@@ -258,6 +281,7 @@ namespace SetupTv
       {
         Log.Info("---- restart tvservice----");
         ServiceHelper.Restart();
+        ServiceHelper.WaitInitialized();
         try
         {
           RemoteControl.Clear();

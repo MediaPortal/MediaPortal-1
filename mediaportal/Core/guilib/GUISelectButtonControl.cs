@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -640,7 +640,7 @@ namespace MediaPortal.GUI.Library
       Clear();
     }
 
-   /* private void UnsubscribeEventHandlers()
+    /* private void UnsubscribeEventHandlers()
     {
       if (CaptionChanged != null)
       {
@@ -707,23 +707,7 @@ namespace MediaPortal.GUI.Library
 
       _font = GUIFontManager.GetFont(_fontName);
 
-      //	Position right arrow
-      int x1 = 8;
-      int x2 = 16;
-      GUIGraphicsContext.ScaleHorizontal(ref x1);
-      GUIGraphicsContext.ScaleHorizontal(ref x2);
-      int dwPosX = (_positionX + _width - x1) - x2;
-
-      int y1 = 16;
-      GUIGraphicsContext.ScaleVertical(ref y1);
-      int dwPosY = _positionY + (_height - y1) / 2;
-      _imageRight.SetPosition(dwPosX, dwPosY);
-      _imageRightFocus.SetPosition(dwPosX, dwPosY);
-
-      //	Position left arrow
-      dwPosX = _positionX + x1;
-      _imageLeft.SetPosition(dwPosX, dwPosY);
-      _imageLeftFocus.SetPosition(dwPosX, dwPosY);
+      PositionLeftAndRightImages();
 
       _labelControl.AllocResources();
     }
@@ -883,6 +867,28 @@ namespace MediaPortal.GUI.Library
       _imageFocused.SetPosition(_positionX, _positionY);
       _imageNonFocused.SetPosition(_positionX, _positionY);
       _imageBackground.SetPosition(_positionX, _positionY);
+
+      PositionLeftAndRightImages();
+    }
+
+    private void PositionLeftAndRightImages() {
+      //	Position right arrow
+      int x1 = 8;
+      int x2 = 16;
+      GUIGraphicsContext.ScaleHorizontal(ref x1);
+      GUIGraphicsContext.ScaleHorizontal(ref x2);
+      int dwPosX = (_positionX + _width - x1) - x2;
+
+      int y1 = 16;
+      GUIGraphicsContext.ScaleVertical(ref y1);
+      int dwPosY = _positionY + (_height - y1) / 2;
+      _imageRight.SetPosition(dwPosX, dwPosY);
+      _imageRightFocus.SetPosition(dwPosX, dwPosY);
+
+      //	Position left arrow
+      dwPosX = _positionX + x1;
+      _imageLeft.SetPosition(dwPosX, dwPosY);
+      _imageLeftFocus.SetPosition(dwPosX, dwPosY);
     }
 
     /// <summary>
@@ -1092,7 +1098,6 @@ namespace MediaPortal.GUI.Library
 
     public void Clear()
     {
-      
       _subItemList.DisposeAndClearList();
       SelectedItem = -1;
       _defaultItem = -1;

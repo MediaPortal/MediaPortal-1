@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,53 +22,64 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
 using System.Net;
-using MediaPortal.GUI.Library;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Util
 {
   /// <summary>
-  /// Search IMPaward.com for movie-posters
+  /// Search IMPAwards.com for movie covers
   /// </summary>
-  public class IMPawardsSearch
+  public class IMPAwardsSearch
   {
-    private ArrayList imageList = new ArrayList();
-
-    public IMPawardsSearch() {}
+    private ArrayList _imageList = new ArrayList();
 
     public int Count
     {
-      get { return imageList.Count; }
+      get { return _imageList.Count; }
     }
 
     public string this[int index]
     {
       get
       {
-        if (index < 0 || index >= imageList.Count) return string.Empty;
-        return (string)imageList[index];
+        if (index < 0 || index >= _imageList.Count) return string.Empty;
+        return (string)_imageList[index];
       }
     }
 
-    public void Search(string searchtag)
-    {
-      if (searchtag == null) return;
-      if (searchtag == string.Empty) return;
-      imageList.DisposeAndClearList();
-      searchtag = searchtag.Replace(" ", "+");
-      string result = string.Empty;
+    /// <summary>
+    /// Cover search in IMPAwards.com through google domain search with
+    /// movieName parameter as the search term.
+    /// IMPAward page result is compared by IMDBid number for 100% accuracy.
+    /// Parameter imdbMovieID must be in IMDB format (ie. tt0123456 including leading zeros).
+    /// </summary>
+    /// <param name="movieName"></param>
+    /// <param name="imdbMovieID"></param>
+    public void SearchCovers(string movieName, string imdbMovieID)
 
-      string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + searchtag +
-                   "&sa=Google+Search&sitesearch=www.impawards.com";
+    {
+      if (!Win32API.IsConnectedToInternet())
+      {
+        return;
+      }
+      if (movieName == null) return;
+      if (movieName == string.Empty) return;
+
+      _imageList.Clear();
+      movieName = movieName.Replace(" ", "+");
+      string resultGoogle = string.Empty;
+      string resultImpAw = string.Empty;
+
+      string url = "http://www.google.com/search?as_q=" + movieName + "+poster&as_sitesearch=www.impawards.com";
+
+      IMPAwardsSearch x = new IMPAwardsSearch();
+
       WebClient wc = new WebClient();
       try
       {
-        byte[] buffer;
         wc.Proxy.Credentials = CredentialCache.DefaultCredentials;
-        buffer = wc.DownloadData(url);
-        result = Encoding.UTF8.GetString(buffer);
+        byte[] buffer = wc.DownloadData(url);
+        resultGoogle = Encoding.UTF8.GetString(buffer);
       }
       catch (Exception)
       {
@@ -76,47 +87,87 @@ namespace MediaPortal.Util
       }
       finally
       {
-        wc.SafeDispose();
+        wc.Dispose();
       }
+      Match mGoogle = Regex.Match(resultGoogle, @"www.impawards.com[^""& <].*?(?<year>\d{4}/).*?html");
 
-      Match m = Regex.Match(result, @"http://www.impawards.com/(?<year>\d{4})/.*?.html");
-      if (m.Success)
+      while (mGoogle.Success)
       {
-        string year = m.Groups["year"].Value;
-        string url2 = m.Value;
-        try
+        // We need all links on Google page not only first because it can be wrong movie
+        // All links is checked against ttnumber so no wrong cover anymore
+        Match mImpAw = mGoogle;
+        // Check if /year/ is in link, if no that is no cover
+        string year = mImpAw.Groups["year"].Value.Replace("/", "");
+        if (year != "")
         {
-          byte[] buffer;
-          buffer = wc.DownloadData(url2);
-          result = Encoding.UTF8.GetString(buffer);
-        }
-        catch (Exception)
-        {
-          return;
-        }
-        finally
-        {
-          wc.SafeDispose();
-        }
-
-        //get main poster displayed on html-page
-        m = Regex.Match(result, @"posters/.*?.jpg");
-        if (m.Success)
-        {
-          imageList.Add("http://www.impawards.com/" + year + "/" + m.Value);
-
-          //get other posters displayed on this html-page as thumbs
-          MatchCollection mc = Regex.Matches(result, @"thumbs/imp_(?<poster>.*?.jpg)");
-          foreach (Match m1 in mc)
+          string url2 = mImpAw.Value;
+          url2 = "http://" + url2;
+          try
           {
-            imageList.Add("http://www.impawards.com/" + year + "/posters/" + m1.Groups["poster"].Value);
+            byte[] buffer = wc.DownloadData(url2);
+            resultImpAw = Encoding.UTF8.GetString(buffer);
+          }
+          catch (Exception)
+          {
+            return;
+          }
+          finally
+          {
+            wc.Dispose();
+          }
+          // Check if IMDB number on poster page is equal to  IMDB ttnumber, if not-> next link
+          Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7}");
+          if (ttcheck.Value != imdbMovieID)
+          {
+            break;
+          }
+
+          Match urlImpAw = Regex.Match(url2, @".*?\d{4}./*?");
+          // get main poster displayed on html-page
+          mImpAw = Regex.Match(resultImpAw, @"posters/.*?.jpg");
+          if (mImpAw.Success)
+          {
+            // Check duplicate entries because Google page links can point to
+            // same cover more than once so we don't need them
+            int check = 0;
+            foreach (string text in _imageList)
+            {
+              if (text == urlImpAw + mImpAw.Value)
+              {
+                check = 1;
+                break;
+              }
+            }
+            // No duplicates (check=0)
+            if (check == 0)
+            {
+              _imageList.Add(urlImpAw + mImpAw.Value);
+            }
+            // get other posters displayed on this html-page as thumbs
+            MatchCollection mcImpAw = Regex.Matches(resultImpAw, @"thumbs/imp_(?<poster>.*?.jpg)");
+            foreach (Match m1 in mcImpAw)
+            {
+              // Check duplicate entries because Google page links can point to
+              // same cover more than once so we don't need them
+              check = 0;
+              foreach (string text in _imageList)
+              {
+                if (text == urlImpAw + "posters/" + m1.Groups["poster"])
+                {
+                  check = 1;
+                  break;
+                }
+              }
+              if (check == 0)
+              {
+                _imageList.Add(urlImpAw + "posters/" + m1.Groups["poster"].Value);
+              }
+            }
           }
         }
-        else
-          return;
+        mGoogle = mGoogle.NextMatch();
       }
-      else
-        return;
+      return;
     }
   }
 }

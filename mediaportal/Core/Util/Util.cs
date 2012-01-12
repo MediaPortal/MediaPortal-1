@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Globalization;
 using System.Collections.Generic;
@@ -36,7 +37,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Profile;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
@@ -57,7 +60,6 @@ namespace MediaPortal.Util
   /// </summary>
   public class Utils
   {
-
     [DllImport("User32")]
     public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
 
@@ -120,6 +122,10 @@ namespace MediaPortal.Util
     private const int CONNECT_UPDATE_PROFILE = 0x00000001;
     private const int RESOURCETYPE_DISK = 0x1;
 
+    private const int FileLookUpCacheThreadScanningIntervalMSecs = 5000;
+
+    private static CRCTool crc = null;
+
     [StructLayout(LayoutKind.Sequential)]
     private struct NetResource
     {
@@ -134,28 +140,34 @@ namespace MediaPortal.Util
     }
 
     public delegate bool IECallBack(int hwnd, int lParam);
+
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
 
     public static event UtilEventHandler OnStartExternal = null; // Event: Start external process / waeberd & mPod
     public static event UtilEventHandler OnStopExternal = null; // Event: Stop external process	/ waeberd & mPod
-    private static ArrayList m_AudioExtensions = new ArrayList();
-    private static ArrayList m_VideoExtensions = new ArrayList();
-    private static ArrayList m_PictureExtensions = new ArrayList();
-    private static ArrayList m_ImageExtensions = new ArrayList();
+    private static HashSet<string> m_AudioExtensions = new HashSet<string>();
+    private static HashSet<string> m_VideoExtensions = new HashSet<string>();
+    private static HashSet<string> m_PictureExtensions = new HashSet<string>();
+    private static HashSet<string> m_ImageExtensions = new HashSet<string>();
 
     private static string[] _artistNamePrefixes;
+    private static string[] _movieNamePrefixes;
 
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
-    private static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
+    private static char[] crypt = new char[10] {'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q'};
 
 
     // singleton. Dont allow any instance of this class
-    private Utils() { }
+    private Utils() {}
 
-    public static string AudioExtensionsDefault = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
-    public static string VideoExtensionsDefault = ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+    public static string AudioExtensionsDefault =
+      ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
+
+    public static string VideoExtensionsDefault =
+      ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+
     public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
     public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";
 
@@ -163,26 +175,30 @@ namespace MediaPortal.Util
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
+        m_bHideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
 
+        // Movie title prefix strip
+        string movieNamePrefixes = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die");
+        _movieNamePrefixes = movieNamePrefixes.Split(',');
+
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
-        Tokens tok = new Tokens(strTmp, new[] { ',' });
+        Tokens tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_AudioExtensions.Add(extension.ToLower().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions", VideoExtensionsDefault);
-        tok = new Tokens(strTmp, new[] { ',' });
+        tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_VideoExtensions.Add(extension.ToLower().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", PictureExtensionsDefault);
-        tok = new Tokens(strTmp, new[] { ',' });
+        tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_PictureExtensions.Add(extension.ToLower().Trim());
@@ -191,14 +207,14 @@ namespace MediaPortal.Util
         if (xmlreader.GetValueAsBool("daemon", "enabled", false))
         {
           strTmp = xmlreader.GetValueAsString("daemon", "extensions", ImageExtensionsDefault);
-          tok = new Tokens(strTmp, new[] { ',' });
+          tok = new Tokens(strTmp, new[] {','});
           foreach (string extension in tok)
           {
             m_ImageExtensions.Add(extension.ToLower().Trim());
           }
         }
 
-        enableGuiSounds = xmlreader.GetValueAsBool("general", "enableguisounds", true);
+        enableGuiSounds = xmlreader.GetValueAsBool("gui", "enableguisounds", true);
       }
     }
 
@@ -207,14 +223,14 @@ namespace MediaPortal.Util
       get
       {
         ArrayList t = new ArrayList();
-        t.AddRange(m_VideoExtensions);
+        t.AddRange(m_VideoExtensions.ToArray());
         //
         // Added images extensions in order to trigger autoplay as video
         // no more need to add them manually to Videos extensions (mantis #2749)
         //
         if (m_ImageExtensions.Count != 0)
         {
-          t.AddRange(m_ImageExtensions);
+          t.AddRange(m_ImageExtensions.ToArray());
         }
         return t;
       }
@@ -222,17 +238,17 @@ namespace MediaPortal.Util
 
     public static ArrayList AudioExtensions
     {
-      get { return m_AudioExtensions; }
+      get { return new ArrayList(m_AudioExtensions.ToArray()); }
     }
 
     public static ArrayList PictureExtensions
     {
-      get { return m_PictureExtensions; }
+      get { return new ArrayList(m_PictureExtensions.ToArray()); }
     }
 
     public static ArrayList ImageExtensions
     {
-      get { return m_ImageExtensions; }
+      get { return new ArrayList(m_ImageExtensions.ToArray()); }
     }
 
     public static string GetDriveSerial(string drive)
@@ -303,7 +319,7 @@ namespace MediaPortal.Util
         if (Convert.ToUInt32(mo["DriveType"]) == 4)
           return Convert.ToString(mo["ProviderName"]);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return sFilePath;
     }
 
@@ -326,52 +342,32 @@ namespace MediaPortal.Util
       return diskSize;
     }
 
+    private static char[] sizes = new char[] {'K', 'M', 'G', 'T'};
+    // converts bytes to bytes / 1024^n
+    private static Func<long, int, double> sizeConverter = (size, expo) => size / Math.Pow(1024, expo);
+
     public static string GetSize(long dwFileSize)
     {
-      if (dwFileSize < 0) return "0";
-      string szTemp;
-      // file < 1 kbyte?
-      if (dwFileSize < 1024)
-      {
-        //  substract the integer part of the float value
-        float fRemainder = (((float)dwFileSize) / 1024.0f) - (((float)dwFileSize) / 1024.0f);
-        float fToAdd = 0.0f;
-        if (fRemainder < 0.01f)
-          fToAdd = 0.1f;
-        szTemp = String.Format("{0:f} KB", (((float)dwFileSize) / 1024.0f) + fToAdd);
-        return szTemp;
-      }
-      long iOneMeg = 1024 * 1024;
+      int i = sizes.Length;
+      double beautySize = 0.0D;
 
-      // file < 1 megabyte?
-      if (dwFileSize < iOneMeg)
-      {
-        szTemp = String.Format("{0:f} KB", ((float)dwFileSize) / 1024.0f);
-        return szTemp;
-      }
+      // get the highest power of 1024 that yields a value above 1
+      while ((beautySize = sizeConverter(dwFileSize, i)) < 1 && i > 1)
+        i--;
 
-      // file < 1 GByte?
-      long iOneGigabyte = iOneMeg;
-      iOneGigabyte *= (long)1000;
-      if (dwFileSize < iOneGigabyte)
-      {
-        szTemp = String.Format("{0:f} MB", ((float)dwFileSize) / ((float)iOneMeg));
-        return szTemp;
-      }
-      //file > 1 GByte
-      int iGigs = 0;
-      while (dwFileSize >= iOneGigabyte)
-      {
-        dwFileSize -= iOneGigabyte;
-        iGigs++;
-      }
-      float fMegs = ((float)dwFileSize) / ((float)iOneMeg);
-      fMegs /= 1000.0f;
-      fMegs += iGigs;
-      szTemp = String.Format("{0:f} GB", fMegs);
-      return szTemp;
+      // we force close enough values to the next higher, so we get 0.99 GB instead of 1010 MB for instance
+      if (beautySize >= 1000 && i < sizes.Length)
+        beautySize = sizeConverter(dwFileSize, ++i);
+
+      return string.Format("{0:f} {1}B", beautySize, sizes[i - 1]);
     }
 
+    /// <summary>
+    /// Returns whether a file is TV
+    /// Will also return true is file is Radio as both share same format
+    /// </summary>
+    /// <param name="strPath">path to file</param>
+    /// <returns>Whether file is TV</returns>
     public static bool IsLiveTv(string strPath)
     {
       if (strPath == null) return false;
@@ -387,6 +383,12 @@ namespace MediaPortal.Util
       return strPath.Contains("rtsp:");
     }
 
+    /// <summary>
+    /// Should return whether a file is radio but is bugged
+    /// because file format for radio is the same as TV
+    /// </summary>
+    /// <param name="strPath">path to file</param>
+    /// <returns>Whether file is radio</returns>
     public static bool IsLiveRadio(string strPath)
     {
       if (strPath == null) return false;
@@ -396,6 +398,14 @@ namespace MediaPortal.Util
       return strPath.Contains("live-radio.ts");
     }
 
+    /// <summary>
+    /// This returns whether a file is video or not
+    /// There is an issue in the logic for multi-seat radio 
+    /// => if (strPath.ToLower().StartsWith("rtsp:")) return true;
+    /// means this will incorrectly return true for multi-seat radio
+    /// </summary>
+    /// <param name="strPath">path to file</param>
+    /// <returns>Whether file is a video file</returns>
     public static bool IsVideo(string strPath)
     {
       if (strPath == null) return false;
@@ -407,9 +417,9 @@ namespace MediaPortal.Util
       {
         if (!Path.HasExtension(strPath))
           return false;
-        if (IsPlayList(strPath))
-          return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
+        if (IsPlayListExtension(extensionFile))
+          return false;
 
         if (extensionFile == ".ts")
         {
@@ -418,13 +428,9 @@ namespace MediaPortal.Util
         }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
           return true;
-        foreach (string extension in m_VideoExtensions)
-        {
-          if (extension == extensionFile)
-            return true;
-        }
+        return m_VideoExtensions.Contains(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -463,14 +469,11 @@ namespace MediaPortal.Util
       try
       {
         if (!Path.HasExtension(strPath)) return false;
-        if (IsPlayList(strPath)) return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        foreach (string extension in m_AudioExtensions)
-        {
-          if (extension == extensionFile) return true;
-        }
+        if (IsPlayListExtension(extensionFile)) return false;
+        return m_AudioExtensions.Contains(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -482,12 +485,18 @@ namespace MediaPortal.Util
         if (!Path.HasExtension(strPath)) return false;
         if (IsPlayList(strPath)) return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        foreach (string extension in m_PictureExtensions)
-        {
-          if (extension == extensionFile) return true;
-        }
+        return m_PictureExtensions.Contains(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
+      return false;
+    }
+
+    private static bool IsPlayListExtension(string extensionFile)
+    {
+      if (extensionFile == ".m3u") return true;
+      if (extensionFile == ".pls") return true;
+      if (extensionFile == ".b4s") return true;
+      if (extensionFile == ".wpl") return true;
       return false;
     }
 
@@ -498,12 +507,9 @@ namespace MediaPortal.Util
       {
         if (!Path.HasExtension(strPath)) return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        if (extensionFile == ".m3u") return true;
-        if (extensionFile == ".pls") return true;
-        if (extensionFile == ".b4s") return true;
-        if (extensionFile == ".wpl") return true;
+        return IsPlayListExtension(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -516,7 +522,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".exe") return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -529,7 +535,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".lnk") return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -632,95 +638,72 @@ namespace MediaPortal.Util
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower())))
       {
-        if (IsPicture(item.Path))
+        if (!IsVideo(item.Path))
         {
           Log.Debug("SetThumbnails: nothing to do.");
           return;
         }
 
-        string[] thumbs = { Path.ChangeExtension(item.Path, ".jpg"), 
-                            Path.ChangeExtension(item.Path, ".tbn"), 
+        string[] thumbs = {
+                            Path.ChangeExtension(item.Path, ".jpg"),
+                            Path.ChangeExtension(item.Path, ".tbn"),
                             Path.ChangeExtension(item.Path, ".png"),
-                            String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path))};
+                            String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path))
+                          };
 
         bool foundVideoThumb = false;
         foreach (string s in thumbs)
         {
-          if (File.Exists(s))
+          string thumbStr = s;
+          if (FileExistsInCache(thumbStr))
           {
-            strThumb = s;
+            strThumb = thumbStr;
             foundVideoThumb = true;
             break;
           }
         }
-
-        if (!foundVideoThumb)
+        bool createVideoThumbs;
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
-          Log.Debug("SetThumbnails: Video thumb NOT found!");
-          bool createVideoThumbs;
-          using (Profile.Settings xmlreader = new Profile.MPSettings())
-          {
-            createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-          }
+          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        }
 
-          if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
+        if (createVideoThumbs && !foundVideoThumb)
+        {
+          if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
+              !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
           {
-            Log.Debug("SetThumbnails: Creating a Video thumb...");
-            strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
-            if (File.Exists(strThumb))
-            {
-              try
-              {
-                File.SetLastAccessTime(strThumb, DateTime.Now);
-                //useful for later creating a process plugin that deletes old thumbnails
-                if (!File.Exists(ConvertToLargeCoverArt(strThumb)))
-                {
-                  File.Copy(strThumb, ConvertToLargeCoverArt(strThumb));
-                  File.SetLastAccessTime(ConvertToLargeCoverArt(strThumb), DateTime.Now);
-                }
-              }
-              catch (Exception ex)
-              {
-                Log.Error(ex);
-              }
-              item.IconImage = strThumb;
-              string strLargeThumb = ConvertToLargeCoverArt(strThumb);
-              if (File.Exists(strLargeThumb))
-              {
-                item.ThumbnailImage = strLargeThumb;
-                item.IconImageBig = strLargeThumb;
-              }
-              else
-              {
-                item.ThumbnailImage = strThumb;
-                item.IconImageBig = strThumb;
-              }
-            }
-            else if (createVideoThumbs)
-            {
-              Thread extractVideoThumbThread = new Thread(GetVideoThumb)
-                                                 {
-                                                   Name = "ExtractVideoThumb",
-                                                   IsBackground = true,
-                                                   Priority = ThreadPriority.Lowest
-                                                 };
-              extractVideoThumbThread.Start(item);
-            }
+            Log.Debug("SetThumbnails: Thumbs for video (" + GetFilename(item.Path) +
+                      ") not found. Creating a new video thumb...");
+            // creating and starting a thread for potentially every file in a list is very expensive, we should use the threadpool
+            //Thread extractVideoThumbThread = new Thread(GetVideoThumb)
+            //{
+            //  Name = "ExtractVideoThumb",
+            //  IsBackground = true,
+            //  Priority = ThreadPriority.Lowest
+            //};
+            //extractVideoThumbThread.Start(item);
+            ThreadPool.QueueUserWorkItem(GetVideoThumb, item);
           }
           return;
         }
-
-        // now strThumb exists
-        item.ThumbnailImage = strThumb;
-        item.IconImage = strThumb;
-        item.IconImageBig = strThumb;
+        if (item.ThumbnailImage == string.Empty)
+        {
+          item.ThumbnailImage = strThumb;
+          item.IconImage = strThumb;
+          item.IconImageBig = strThumb;
+        }
+        else
+        {
+          strThumb = item.ThumbnailImage;
+        }
       }
       else
       {
         if (item.Label != "..")
         {
           strThumb = item.Path + @"\folder.jpg";
-          if (File.Exists(strThumb))
+          if (FileExistsInCache(strThumb))
           {
             item.ThumbnailImage = strThumb;
             item.IconImage = strThumb;
@@ -731,8 +714,10 @@ namespace MediaPortal.Util
       if (!string.IsNullOrEmpty(strThumb))
       {
         strThumb = ConvertToLargeCoverArt(strThumb);
-        if (File.Exists(strThumb))
+        if (FileExistsInCache(strThumb))
+        {
           item.ThumbnailImage = strThumb;
+        }
       }
     }
 
@@ -741,7 +726,7 @@ namespace MediaPortal.Util
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
       string strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(path));
-      if (File.Exists(strThumb))
+      if (FileExistsInCache(strThumb))
       {
         return;
       }
@@ -807,7 +792,7 @@ namespace MediaPortal.Util
       {
         if (thumb != null)
           thumb.SafeDispose();
-        if (!File.Exists(strThumb) && blacklist != null)
+        if (!FileExistsInCache(strThumb) && blacklist != null)
         {
           blacklist.Add(path);
         }
@@ -928,22 +913,33 @@ namespace MediaPortal.Util
       DateTime now = DateTime.Now;
       if (aDateTime.Date == now.Date) // Today
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030), aDateTime.ToString("HH:mm"));
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030),
+                             aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       }
       else if (aDateTime.Date == now.Date.AddDays(1)) // Tomorrow
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), aDateTime.ToString("HH:mm"));
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), aDateTime.ToString("t"),
+                             CultureInfo.CurrentCulture.DateTimeFormat);
       }
       else if (aDateTime.Date.AddDays(1) == now.Date) // Yesterday
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), aDateTime.ToString("HH:mm"));
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), aDateTime.ToString("t"),
+                             CultureInfo.CurrentCulture.DateTimeFormat);
       }
       else if (aDateTime.Date.AddDays(2) == now.Date) // Two days ago
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), aDateTime.ToString("HH:mm"));
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), aDateTime.ToString("t"),
+                             CultureInfo.CurrentCulture.DateTimeFormat);
       }
+      return String.Format("{0} {1}",
+                           Utils.GetShortDayString(aDateTime),
+                           aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+    }
 
-      return String.Format("{0} {1}", aDateTime.ToShortDateString(), aDateTime.ToString("HH:mm"));
+    public static string GetNamedDateStartEnd(DateTime startDateTime, DateTime endDateTime)
+    {
+      return String.Format("{0}-{1}", GetNamedDate(startDateTime), endDateTime.ToString("t"),
+                           CultureInfo.CurrentCulture.DateTimeFormat);
     }
 
     public static string GetShortDayString(DateTime dt)
@@ -977,7 +973,7 @@ namespace MediaPortal.Util
         }
         return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return string.Empty;
     }
 
@@ -1057,7 +1053,7 @@ namespace MediaPortal.Util
         RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
         return (regKey != null);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1253,23 +1249,25 @@ namespace MediaPortal.Util
       if (strFile2 == null) return false;
       try
       {
-        string[] pattern = StackExpression();
+        var stackReg = StackExpression();
 
         // Strip the extensions and make everything lowercase
         string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLower();
         string strFileName2 = Path.GetFileNameWithoutExtension(strFile2).ToLower();
 
         // Check all the patterns
-        for (int i = 0; i < pattern.Length; i++)
+        for (int i = 0; i < stackReg.Length; i++)
         {
           // See if we can find the special patterns in both filenames
-          if (Regex.IsMatch(strFileName1, pattern[i], RegexOptions.IgnoreCase) &&
-              Regex.IsMatch(strFileName2, pattern[i], RegexOptions.IgnoreCase))
+          //if (Regex.IsMatch(strFileName1, pattern[i], RegexOptions.IgnoreCase) &&
+          //    Regex.IsMatch(strFileName2, pattern[i], RegexOptions.IgnoreCase))
+          if (stackReg[i].IsMatch(strFileName1) && stackReg[i].IsMatch(strFileName2))
           {
             // Both strings had the special pattern. Now see if the filenames are the same.
             // Do this by removing the special pattern and compare the remains.
-            if (Regex.Replace(strFileName1, pattern[i], "", RegexOptions.IgnoreCase)
-                == Regex.Replace(strFileName2, pattern[i], "", RegexOptions.IgnoreCase))
+            //if (Regex.Replace(strFileName1, pattern[i], "", RegexOptions.IgnoreCase)
+            //    == Regex.Replace(strFileName2, pattern[i], "", RegexOptions.IgnoreCase))
+            if (stackReg[i].Replace(strFileName1, "") == stackReg[i].Replace(strFileName2, ""))
             {
               // It was a match so stack it
               return true;
@@ -1277,7 +1275,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // No matches were found, so no stacking
       return false;
@@ -1286,18 +1284,22 @@ namespace MediaPortal.Util
     public static void RemoveStackEndings(ref string strFileName)
     {
       if (strFileName == null) return;
-      string[] pattern = StackExpression();
-      for (int i = 0; i < pattern.Length; i++)
+      var stackReg = StackExpression();
+      for (int i = 0; i < stackReg.Length; i++)
       {
         // See if we can find the special patterns in both filenames
-        if (Regex.IsMatch(strFileName, pattern[i], RegexOptions.IgnoreCase))
+        //if (Regex.IsMatch(strFileName, pattern[i], RegexOptions.IgnoreCase))
+        if (stackReg[i].IsMatch(strFileName))
         {
-          strFileName = Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
+          strFileName = stackReg[i].Replace(strFileName, "");
+          //Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
         }
       }
     }
 
-    public static string[] StackExpression()
+    private static Regex[] StackRegExpressions = null;
+
+    public static Regex[] StackExpression()
     {
       // Patterns that are used for matching
       // 1st pattern matches [x-y] for example [1-2] which is disc 1 of 2 total
@@ -1306,11 +1308,18 @@ namespace MediaPortal.Util
       //
       // Chemelli: added "+" as separator to allow IMDB scripts usage of this function
       //
+      if (StackRegExpressions != null) return StackRegExpressions;
       string[] pattern = {
-                           "\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-                           "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}[0-9]{1,2}\\){0,1}"
+                           "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
+                           "\\s*[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
-      return pattern;
+
+      StackRegExpressions = new Regex[]
+                              {
+                                new Regex(pattern[0], RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                                new Regex(pattern[1], RegexOptions.Compiled | RegexOptions.IgnoreCase)
+                              };
+      return StackRegExpressions;
     }
 
     public static string GetThumb(string strLine)
@@ -1326,7 +1335,7 @@ namespace MediaPortal.Util
         string strRet = Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return "000";
     }
 
@@ -1391,7 +1400,7 @@ namespace MediaPortal.Util
           CloseHandle(fHandle);
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       return result;
     }
@@ -1440,7 +1449,7 @@ namespace MediaPortal.Util
       return proc;
     }
 
-    public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bMinimized)
+    public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bHidden)
     {
       if (strProgram == null) return null;
       if (strProgram.Length == 0) return null;
@@ -1453,10 +1462,15 @@ namespace MediaPortal.Util
       procInfo.FileName = strFileName;
       procInfo.WorkingDirectory = strWorkingDir;
       procInfo.Arguments = strParams;
-      if (bMinimized)
+
+      if (bHidden)
       {
-        procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+        // A hidden window can process messages from the system or from other windows, but it cannot process input from the user or display output.
+        // Set to hidden to avoid losing focus.
+        procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
         procInfo.CreateNoWindow = true;
+        procInfo.FileName = strProgram;
+        procInfo.UseShellExecute = false;
       }
       return StartProcess(procInfo, bWaitForExit);
     }
@@ -1620,7 +1634,7 @@ namespace MediaPortal.Util
               {
                 process.Kill();
               }
-              catch (Exception) { }
+              catch (Exception) {}
             }
 
             mpRunning = CheckForRunningProcess(aProcessName, false);
@@ -1796,7 +1810,7 @@ namespace MediaPortal.Util
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -1819,7 +1833,7 @@ namespace MediaPortal.Util
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return 0;
     }
 
@@ -1891,7 +1905,7 @@ namespace MediaPortal.Util
         File.Delete(strFile);
         return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1908,7 +1922,7 @@ namespace MediaPortal.Util
         Directory.Delete(aDirectory, aRecursive);
         return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1962,7 +1976,7 @@ namespace MediaPortal.Util
         {
           File.Copy(file, strFile, true);
         }
-        catch (Exception) { }
+        catch (Exception) {}
         return;
       }
       DownLoadImage(strURL, file);
@@ -1998,11 +2012,10 @@ namespace MediaPortal.Util
           // wr.Proxy = WebProxy.GetDefaultProxy();
           wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
         try
         {
-
           using (Stream str = ws.GetResponseStream())
           {
             byte[] inBuf = new byte[900000];
@@ -2100,7 +2113,7 @@ namespace MediaPortal.Util
         else
           return Path.GetFileName(strPath);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return strPath;
     }
 
@@ -2180,14 +2193,14 @@ namespace MediaPortal.Util
 
       if (sSoundFile == null) return 0;
       if (sSoundFile.Length == 0) return 0;
-      if (!File.Exists(sSoundFile))
+      if (!Util.Utils.FileExistsInCache(sSoundFile))
       {
         string strSkin = GUIGraphicsContext.Skin;
-        if (File.Exists(strSkin + "\\sounds\\" + sSoundFile))
+        if (Util.Utils.FileExistsInCache(strSkin + "\\sounds\\" + sSoundFile))
         {
           sSoundFile = strSkin + "\\sounds\\" + sSoundFile;
         }
-        else if (File.Exists(strSkin + "\\" + sSoundFile + ".wav"))
+        else if (Util.Utils.FileExistsInCache(strSkin + "\\" + sSoundFile + ".wav"))
         {
           sSoundFile = strSkin + "\\" + sSoundFile + ".wav";
         }
@@ -2337,11 +2350,15 @@ namespace MediaPortal.Util
       if (strLine == null) return string.Empty;
       if (strLine.Length == 0) return string.Empty;
       if (String.Compare(Strings.Unknown, strLine, true) == 0) return string.Empty;
-      CRCTool crc = new CRCTool();
-      crc.Init(CRCTool.CRCCode.CRC32);
+      if (crc == null)
+      {
+        crc = new CRCTool();
+        crc.Init(CRCTool.CRCCode.CRC32);
+      }
       ulong dwcrc = crc.calc(strLine);
-      string strRet = String.Format("{0}", dwcrc);
-      return strRet;
+      return dwcrc.ToString();
+      //string strRet = String.Format("{0}", dwcrc);
+      //return strRet;
     }
 
     public static string TryEverythingToGetFolderThumbByFilename(string aSongPath, bool aPreferOriginalShareFile)
@@ -2349,7 +2366,7 @@ namespace MediaPortal.Util
       string strThumb = string.Empty;
 
       strThumb = GetLocalFolderThumb(aSongPath);
-      if (File.Exists(strThumb) && !aPreferOriginalShareFile)
+      if (FileExistsInCache(strThumb) && !aPreferOriginalShareFile)
       {
         return strThumb;
       }
@@ -2359,7 +2376,7 @@ namespace MediaPortal.Util
         string strRemoteFolderThumb = string.Empty;
         strRemoteFolderThumb = GetFolderThumb(aSongPath);
 
-        if (File.Exists(strRemoteFolderThumb))
+        if (FileExistsInCache(strRemoteFolderThumb))
           return strRemoteFolderThumb;
         else
         {
@@ -2395,13 +2412,17 @@ namespace MediaPortal.Util
                 break;
               }
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
-          if (File.Exists(strRemoteFolderThumb))
+          if (FileExistsInCache(strRemoteFolderThumb))
+          {
             return strRemoteFolderThumb;
+          }
           // we came through here without finding anything so fallback to the cache finally
-          if (aPreferOriginalShareFile && File.Exists(strThumb))
+          if (aPreferOriginalShareFile && FileExistsInCache(strThumb))
+          {
             return strThumb;
+          }
         }
       }
       return string.Empty;
@@ -2411,8 +2432,6 @@ namespace MediaPortal.Util
     {
       if (string.IsNullOrEmpty(ArtistName) || string.IsNullOrEmpty(AlbumName))
         return string.Empty;
-
-      RemoveStackEndings(ref AlbumName);
 
       string name = string.Format("{0}-{1}", ArtistName, AlbumName);
       return GetCoverArtName(Thumbs.MusicAlbum, name);
@@ -2463,22 +2482,778 @@ namespace MediaPortal.Util
       return strFolderJpg;
     }
 
+    public struct FileLookUpItem
+    {
+      private string _filename;
+      private bool _exists;
+
+      public string Filename
+      {
+        get { return _filename; }
+        set { _filename = value; }
+      }
+
+      public bool Exists
+      {
+        get { return _exists; }
+        set { _exists = value; }
+      }
+    }
+
+    private static bool? _fileLookUpCacheEnabled = null;
+
+    private static Dictionary<string, FileLookUpItem> _fileLookUpCache = new Dictionary<string, FileLookUpItem>();
+    private static Dictionary<string, FileSystemWatcher> _watchers = new Dictionary<string, FileSystemWatcher>();
+
+    private static HashSet<string> _foldersLookedUp = new HashSet<string>();
+    private static HashSet<string> _fileExistsCacheQueue = new HashSet<string>();
+
+    private static Thread _fileSystemManagerThread = null;
+    private static Thread _fileExistsCacheThread = null;
+
+    private static DateTime _lastTimeFolderWasAdded = DateTime.MinValue;
+
+    private static ManualResetEvent _fileExistsCacheThreadEvt = new ManualResetEvent(false);
+
+    private static object _fileLookUpCacheLock = new object();
+    private static object _foldersLookedUpLock = new object();
+    private static object _watchersLock = new object();
+    private static object _fileExistsCacheLock = new object();
+
+    private static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
+    {
+      lock (_fileLookUpCacheLock)
+      {
+        //Log.Debug("UpdateLookUpCacheItem : {0}", key);
+        _fileLookUpCache[key] = fileLookUpItem; // we never remove anything, so this is safe
+      }
+    }
+
+    private static void UpdateFileNameForCache(ref string filename)
+    {
+      if (string.IsNullOrEmpty(filename)) return;
+      filename = filename.ToLower();
+    }
+
+    private static IEnumerable<string> DirSearch(string sDir)
+    {
+      var files = new List<string>();
+      try
+      {
+        // Let network drives get looked up lazily
+        // It makes for much better performance
+        if (!IsNetwork(sDir))
+        {
+          files.AddRange(NativeFileSystemOperations.GetFiles(sDir));
+        }
+        AddFoldersLookedUp(sDir);
+      }
+      catch (Exception)
+      {
+        AddFoldersLookedUp(sDir); //lets tag the invalid folder as have looked-up
+        //Log.Error("DirSearch failed in dir={0}, with err={1}", sDir, e.Message);        
+        //ignore
+      }
+      return files;
+    }
+
+    private static string GetParentDirectory(string path)
+    {
+      if (string.IsNullOrEmpty(path))
+      {
+        return string.Empty;
+      }
+      return Path.GetDirectoryName(path[path.Length - 1] == '\\' ? path.Substring(0, path.Length - 1) : path);
+    }
+
+    private static bool HasFolderBeenScanned(string dir)
+    {
+      // eg. takes care of this sequence
+      // 1:         \\thumbs\tv\recorded
+      // 2:					\\thumbs\tv         
+
+      //or 
+      // eg. takes care of this sequence
+      // 1:         \\thumbs\tv
+      // 2:         \\thumbs\tv          
+      string dirCopy = dir;
+
+      HashSet<string> foldersLookedUpCopy = null;
+
+      lock (_foldersLookedUpLock)
+      {
+        foldersLookedUpCopy = new HashSet<string>(_foldersLookedUp);
+      }
+
+      bool hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == dirCopy);
+      return hasFolderBeenScanned;
+    }
+
+    /// <summary>
+    /// Determines if a folder already has a watcher on it
+    /// </summary>
+    /// <param name="dir">directory to test for watcher</param>
+    /// <returns></returns>
+    private static bool IsFolderAlreadyWatched(string dir)
+    {
+      bool isFolderAlreadyWatched = false;
+
+      HashSet<string> _watcherKeyCopy;
+
+      _watcherKeyCopy = new HashSet<string>(_watchers.Keys);
+      if (!_watcherKeyCopy.Contains(dir))
+      {
+        foreach (string path in _watcherKeyCopy)
+        {
+          if (dir.Length >= path.Length)
+          {
+            if (dir.StartsWith(path))
+            {
+              isFolderAlreadyWatched = true;
+              break;
+            }
+          }
+        }
+      }
+      else
+      {
+        isFolderAlreadyWatched = true;
+      }
+      return isFolderAlreadyWatched;
+    }
+
+
+    private static void AddFoldersLookedUp(string dir)
+    {
+      if (!string.IsNullOrEmpty(dir))
+      {
+        lock (_foldersLookedUpLock)
+        {
+          //Log.Debug("AddFoldersLookedUp {0}", dir);
+          //make sure we don't add the same one again
+          if (!_foldersLookedUp.Contains(dir))
+          {
+            _foldersLookedUp.Add(dir);
+            _lastTimeFolderWasAdded = DateTime.Now;
+          }
+        }
+      }
+    }
+
+    private static void fileSystemWatcher_Error(object sender, ErrorEventArgs e)
+    {
+      Exception watchException = e.GetException();
+      FileSystemWatcher watcher = sender as FileSystemWatcher;
+
+      if (watcher != null)
+      {
+        Log.Debug("fileSystemWatcher_Error path {0} exception={1}", watcher.Path, watchException);
+
+        string path = watcher.Path;
+        if (watchException is InternalBufferOverflowException)
+        {
+          // buffer overflow ex.
+          // remove watcher, and re-add with 4k bigger buffer.
+          int buffersize = watcher.InternalBufferSize;
+          RemoveWatcher(path);
+          AddWatcher(path, (buffersize + 4096));
+        }
+        else
+        {
+          RemoveWatcher(path);
+          RemoveFoldersFromCache(path);
+        }
+      }
+    }
+
+    private static void fileSystemWatcher_Created(object sender, FileSystemEventArgs e)
+    {
+      FileSystemWatcher watcher = sender as FileSystemWatcher;
+      if (!e.FullPath.ToLower().Contains("db3-journal"))
+      {
+        if (watcher != null)
+        {
+          Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
+          DoInsertExistingFileIntoCache(e.FullPath);
+        }
+      }
+    }
+
+    private static void fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
+    {
+      FileSystemWatcher watcher = sender as FileSystemWatcher;
+
+      if (!e.FullPath.ToLower().Contains("db3-journal"))
+      {
+        if (watcher != null)
+        {
+          Log.Debug("fileSystemWatcher_Deleted file {0}", e.FullPath);
+          DoInsertNonExistingFileIntoCache(e.FullPath);
+        }
+      }
+    }
+
+    private static string GetDirectoryName(string f)
+    {
+      try
+      {
+        int posOfDirSep = f.LastIndexOf(Path.DirectorySeparatorChar);
+        if (posOfDirSep >= 0)
+          return f.Substring(0, posOfDirSep);
+        else return string.Empty;
+      }
+      catch (Exception)
+      {
+        return string.Empty;
+      }
+    }
+
+    public static bool FileExistsInCache(string filename)
+    {
+      bool found = false;
+
+      if (IsFileExistsCacheEnabled())
+      {
+        SetupFileSystemManagerThread();
+        SetupFileExistsCacheThread();
+        try
+        {
+          string path = GetDirectoryName(filename);
+          if (path.Length > 0)
+          {
+            path = path.ToLower();
+            if (!HasFolderBeenScanned(path))
+            {
+              lock (_fileExistsCacheLock)
+              {
+                _fileExistsCacheQueue.Add(path);
+                _fileExistsCacheThreadEvt.Set();
+              }
+            }
+            /*else
+            {
+              Log.Debug("FileExistsInCache: already pre-scanned dir : {0} .. skipping", path);
+            }*/
+          }
+        }
+        catch (ArgumentException)
+        {
+          //ignore  
+        }
+        found = DoFileExistsInCache(filename);
+      }
+      else
+      {
+        found = File.Exists(filename);
+      }
+      return found;
+    }
+
+    public static bool IsFileExistsCacheEnabled()
+    {
+      if (!_fileLookUpCacheEnabled.HasValue)
+      {
+        using (Settings xmlreader = new MPSettings())
+        {
+          _fileLookUpCacheEnabled = xmlreader.GetValueAsBool("gui", "fileexistscache", false);
+        }
+      }
+      return (_fileLookUpCacheEnabled.HasValue && _fileLookUpCacheEnabled.Value);
+    }
+
+    private static void FileExistsCacheThread()
+    {
+      while (true)
+      {
+        HashSet<string> fileExistsCacheQueueCopy = null;
+        lock (_fileExistsCacheLock)
+        {
+          fileExistsCacheQueueCopy = new HashSet<string>(_fileExistsCacheQueue);
+        }
+
+        int items = fileExistsCacheQueueCopy.Count;
+        if (items > 0)
+        {
+          Log.Debug("FileExistsCacheThread: new items found waiting for caching: {0}", items);
+
+          foreach (string path in fileExistsCacheQueueCopy)
+          {
+            InsertFilesIntoCacheAsynch(path);
+            lock (_fileExistsCacheLock)
+            {
+              _fileExistsCacheQueue.Remove(path);
+            }
+          }
+        }
+
+        bool isQueueEmpty = false;
+        lock (_fileExistsCacheLock)
+        {
+          isQueueEmpty = (_fileExistsCacheQueue.Count == 0);
+        }
+
+        if (isQueueEmpty)
+        {
+          Log.Debug("FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
+          _fileExistsCacheThreadEvt.Reset();
+        }
+
+        _fileExistsCacheThreadEvt.WaitOne();
+      }
+    }
+
+    private static void FileSystemWatchManagerThread()
+    {
+      while (true)
+      {
+        lock (_watchersLock)
+        {
+          if (_lastTimeFolderWasAdded != DateTime.MinValue)
+          {
+            DateTime now = DateTime.Now;
+            TimeSpan ts = now - _lastTimeFolderWasAdded;
+
+            //Log.Debug("_lastTimeFolderWasAdded: {0}", _lastTimeFolderWasAdded);
+            //Log.Debug("ts.TotalSeconds: {0}", ts.TotalSeconds);
+
+            if (ts.TotalSeconds > 5)
+            {
+              Log.Debug("FileSystemWatchManagerThread : updating watchers");
+              HashSet<string> folders = GetUniqueTopLevelFolders();
+
+              foreach (string dir in folders)
+              {
+                if (!string.IsNullOrEmpty(dir))
+                {
+                  if (!IsFolderAlreadyWatched(dir))
+                  {
+                    UpdateWatchers(dir);
+                  }
+                }
+              }
+              _lastTimeFolderWasAdded = DateTime.MinValue;
+              Log.Debug("FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);
+            }
+
+
+            /*string[] keyCopy = _watchers.Keys.ToArray();
+            foreach (string key in keyCopy)
+            {
+              FileSystemWatcher fsw = null;
+              if (_watchers.TryGetValue(key, out fsw))
+              {
+                Log.Debug("FileSystemWatcher : {0}", fsw.Path);
+              }
+            }*/
+          }
+        }
+        Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs);
+      }
+    }
+
+    private static HashSet<string> GetUniqueTopLevelFolders()
+    {
+      HashSet<string> uniqueTopLevelFolders = new HashSet<string>();
+
+      HashSet<string> foldersLookedUpCopy = null;
+      lock (_foldersLookedUpLock)
+      {
+        foldersLookedUpCopy = new HashSet<string>(_foldersLookedUp);
+      }
+
+      foreach (string dir in foldersLookedUpCopy)
+      {
+        if (string.IsNullOrEmpty(dir))
+        {
+          continue;
+        }
+        if (Path.IsPathRooted(dir))
+        {
+          string parentDir2Use = dir;
+          string parentDir = dir;
+          int nrOfFoldersOnParentDirOld = 0;
+          while (true)
+          {
+            parentDir = GetParentDirectory(parentDir);
+
+            if (string.IsNullOrEmpty(parentDir))
+            {
+              break;
+            }
+
+            bool isPathRoot = IsPathRoot(parentDir);
+
+            if (isPathRoot)
+            {
+              break;
+            }
+
+            if (!uniqueTopLevelFolders.Contains(parentDir))
+            {
+              int nrOfFoldersOnParentDir = foldersLookedUpCopy.Count(fli => fli.StartsWith(parentDir));
+
+              if (nrOfFoldersOnParentDir == 1)
+              {
+                break;
+              }
+
+              if (nrOfFoldersOnParentDirOld == nrOfFoldersOnParentDir)
+              {
+                break;
+              }
+              if (nrOfFoldersOnParentDir > 0)
+              {
+                parentDir2Use = parentDir;
+              }
+              nrOfFoldersOnParentDirOld = nrOfFoldersOnParentDir;
+            }
+            else
+            {
+              parentDir2Use = null;
+              break;
+            }
+          }
+
+          if (parentDir2Use != null && !uniqueTopLevelFolders.Contains(parentDir2Use))
+          {
+            string folderCompare = parentDir2Use;
+            bool addFolder = true;
+            if (uniqueTopLevelFolders.Count > 0)
+            {
+              while (true)
+              {
+                int itemsCount =
+                  uniqueTopLevelFolders.Count(fli => fli.StartsWith(folderCompare));
+                if (itemsCount > 0)
+                {
+                  addFolder = false;
+                  break;
+                }
+
+                folderCompare = GetParentDirectory(folderCompare);
+
+                if (string.IsNullOrEmpty(folderCompare))
+                {
+                  break;
+                }
+
+                bool isPathRoot = IsPathRoot(folderCompare);
+                if (isPathRoot)
+                {
+                  break;
+                }
+              }
+            }
+            if (addFolder)
+            {
+              uniqueTopLevelFolders.Add(parentDir2Use);
+            }
+          }
+        }
+      }
+
+      return uniqueTopLevelFolders;
+    }
+
+    private static bool IsPathRoot(string dir)
+    {
+      bool isPathRoot = false;
+      string root = Path.GetPathRoot(dir);
+      if (!string.IsNullOrEmpty(root))
+      {
+        isPathRoot = (dir.Length == root.Length);
+      }
+      return isPathRoot;
+    }
+
+    private static void UpdateWatchers(string dir4Watcher)
+    {
+      int dir4WatcherLen = dir4Watcher.Length;
+
+      string[] keyCopy = _watchers.Keys.ToArray();
+      foreach (string key in keyCopy)
+      {
+        FileSystemWatcher fsw = null;
+        if (_watchers.TryGetValue(key, out fsw))
+        {
+          string path = fsw.Path;
+          int pathLen = path.Length;
+          if ((pathLen > dir4WatcherLen) && path.StartsWith(dir4Watcher))
+          {
+            RemoveWatcher(path);
+          }
+        }
+      }
+
+      if (!_watchers.ContainsKey(dir4Watcher))
+      {
+        AddWatcher(dir4Watcher);
+      }
+    }
+
+    private static void AddWatcher(string dir, int buffersize)
+    {
+      AddWatcher(dir);
+      FileSystemWatcher fsw = null;
+
+      lock (_watchersLock)
+      {
+        if (_watchers.TryGetValue(dir, out fsw))
+        {
+          fsw.InternalBufferSize = buffersize;
+        }
+      }
+    }
+
+    private static void AddWatcher(string dir)
+    {
+      bool bAlreadyWatched = false;
+      lock (_watchersLock)
+      {
+        bAlreadyWatched = IsFolderAlreadyWatched(dir);
+      }
+      // if this folders parent is already watched then that watcher already covers it.
+      if (!bAlreadyWatched)
+      {
+        if (!Directory.Exists(dir))
+        {
+          return;
+        }
+        try
+        {
+          FileSystemWatcher fsw = new FileSystemWatcher(dir);
+          // if this is changed then IsFolderAlreadyWatched needs to be modified.
+          fsw.IncludeSubdirectories = true;
+          fsw.EnableRaisingEvents = true;
+          fsw.Created += new FileSystemEventHandler(fileSystemWatcher_Created);
+          fsw.Deleted += new FileSystemEventHandler(fileSystemWatcher_Deleted);
+          fsw.Error += new ErrorEventHandler(fileSystemWatcher_Error);
+
+          fsw.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+          lock (_watchersLock)
+          {
+            if (!_watchers.ContainsKey(dir))
+            {
+              _watchers.Add(dir, fsw);
+            }
+          }
+          Log.Debug("AddWatcher {0}", dir);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("AddWatcher exception on dir={0}, ex={1}", dir, ex);
+        }
+      }
+    }
+
+    private static void RemoveWatcher(string dir)
+    {
+      try
+      {
+        Log.Debug("RemoveWatcher {0}", dir);
+        FileSystemWatcher fsw = null;
+        if (_watchers.TryGetValue(dir, out fsw))
+        {
+          fsw.EnableRaisingEvents = false;
+          fsw.Created -= new FileSystemEventHandler(fileSystemWatcher_Created);
+          fsw.Deleted -= new FileSystemEventHandler(fileSystemWatcher_Deleted);
+          fsw.Error -= new ErrorEventHandler(fileSystemWatcher_Error);
+          fsw.SafeDispose();
+          lock (_watchersLock)
+          {
+            _watchers.Remove(dir);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("RemoveWatcher exception on dir={0}, ex={1}", dir, ex);
+      }
+    }
+
+    private static void RemoveFoldersFromCache(string dir)
+    {
+      Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;
+      lock (_fileLookUpCacheLock)
+      {
+        fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);
+      }
+
+      IEnumerable<KeyValuePair<string, FileLookUpItem>> filesWithinDir =
+        fileLookUpCacheCopy.Where(fli => fli.Value.Filename.StartsWith(dir));
+
+      foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
+      {
+        lock (_fileLookUpCacheLock)
+        {
+          _fileLookUpCache.Remove(fli.Key);
+        }
+      }
+
+      lock (_foldersLookedUpLock)
+      {
+        Log.Debug("RemoveWatcher removing folders from cache={0}", dir);
+        _foldersLookedUp.RemoveWhere(s => s.StartsWith(dir));
+      }
+    }
+
+    private static void SetupFileSystemManagerThread()
+    {
+      if (_fileSystemManagerThread == null)
+      {
+        _fileSystemManagerThread = new Thread(FileSystemWatchManagerThread);
+        _fileSystemManagerThread.Name = "FileSystemManager Thread";
+        _fileSystemManagerThread.IsBackground = true;
+        _fileSystemManagerThread.Priority = ThreadPriority.Lowest;
+        _fileSystemManagerThread.Start();
+      }
+    }
+
+    private static void SetupFileExistsCacheThread()
+    {
+      if (_fileExistsCacheThread == null)
+      {
+        _fileExistsCacheThread = new Thread(FileExistsCacheThread);
+        _fileExistsCacheThread.Name = "FileExistsCache Thread";
+        _fileExistsCacheThread.IsBackground = true;
+        _fileExistsCacheThread.Priority = ThreadPriority.Lowest;
+        _fileExistsCacheThread.Start();
+      }
+    }
+
+    private static void InsertFilesIntoCacheAsynch(object oPath)
+    {
+      string path = oPath as string;
+      if (!String.IsNullOrEmpty(path))
+      {
+        string dir2Lower = path.ToLower();
+        if (Path.IsPathRooted(dir2Lower))
+        {
+          if (!HasFolderBeenScanned(dir2Lower))
+          {
+            Log.Debug("InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);
+            IEnumerable<string> files = DirSearch(dir2Lower);
+            foreach (string file in files)
+            {
+              DoInsertExistingFileIntoCache(file);
+            }
+            lock (_watchersLock)
+            {
+              UpdateWatchers(dir2Lower);
+            }
+          }
+        }
+        /*else
+        {
+          Log.Debug("InsertFilesIntoCacheAsynch: dir already pre-scanned : {0}", path);      
+        }*/
+      }
+    }
+
+    public static void DoInsertExistingFileIntoCache(string file)
+    {
+      UpdateFileNameForCache(ref file);
+
+      FileLookUpItem fileLookUpItem = new FileLookUpItem();
+      fileLookUpItem.Exists = true;
+      fileLookUpItem.Filename = file;
+      UpdateLookUpCacheItem(fileLookUpItem, file);
+    }
+
+    public static void DoInsertNonExistingFileIntoCache(string file)
+    {
+      UpdateFileNameForCache(ref file);
+
+      FileLookUpItem fileLookUpItem = new FileLookUpItem();
+      fileLookUpItem.Exists = false;
+      fileLookUpItem.Filename = file;
+      UpdateLookUpCacheItem(fileLookUpItem, file);
+    }
+
+    private static bool DoFileExistsInCache(string filename)
+    {
+      bool found = false;
+
+      if (!string.IsNullOrEmpty(filename))
+      {
+        UpdateFileNameForCache(ref filename);
+        FileLookUpItem fileLookUpItem = new FileLookUpItem();
+        if (!_fileLookUpCache.TryGetValue(filename, out fileLookUpItem))
+        {
+          found = File.Exists(filename);
+          if (found)
+            DoInsertExistingFileIntoCache(filename);
+          else
+            DoInsertNonExistingFileIntoCache(filename);
+        }
+        else
+        {
+          found = fileLookUpItem.Exists;
+        }
+      }
+      return found;
+    }
+
+
+    public static string GetCoverArtByThumbExtension(string strFolder, string strFileName)
+    {
+      if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
+      {
+        return string.Empty;
+      }
+
+      string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.MakeFileName(strFileName));
+      bool found = false;
+
+      string lookForThumb = strThumb + Utils.GetThumbExtension();
+      found = FileExistsInCache(lookForThumb);
+
+      if (!found)
+      {
+        lookForThumb = string.Empty;
+      }
+
+      return lookForThumb;
+    }
+
     public static string GetCoverArt(string strFolder, string strFileName)
     {
       if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
+      {
         return string.Empty;
+      }
 
       string strThumb = String.Format(@"{0}\{1}", strFolder, Utils.MakeFileName(strFileName));
+      bool found = false;
 
-      if (File.Exists(strThumb + ".png"))
-        return strThumb + ".png";
-      else if (File.Exists(strThumb + ".jpg"))
-        return strThumb + ".jpg";
-      else if (File.Exists(strThumb + ".gif"))
-        return strThumb + ".gif";
-      else if (File.Exists(strThumb + ".tbn"))
-        return strThumb + ".tbn";
-      return string.Empty;
+      string lookForThumb = strThumb + ".png";
+      found = FileExistsInCache(lookForThumb);
+
+      if (!found)
+      {
+        lookForThumb = strThumb + ".jpg";
+        found = FileExistsInCache(lookForThumb);
+      }
+
+      if (!found)
+      {
+        lookForThumb = strThumb + ".gif";
+        found = FileExistsInCache(lookForThumb);
+      }
+
+      if (!found)
+      {
+        lookForThumb = strThumb + ".tbn";
+        found = FileExistsInCache(lookForThumb);
+      }
+
+      if (!found)
+      {
+        lookForThumb = string.Empty;
+      }
+
+      return lookForThumb;
     }
 
     public static string ConvertToLargeCoverArt(string smallArt)
@@ -2489,8 +3264,8 @@ namespace MediaPortal.Util
 
       string smallExt = GetThumbExtension();
       string LargeExt = String.Format(@"L{0}", GetThumbExtension());
-
-      return smallArt.Replace(smallExt, LargeExt);
+      string largeCoverArt = smallArt.Replace(smallExt, LargeExt);
+      return largeCoverArt;
     }
 
     public static string GetCoverArtName(string strFolder, string strFileName)
@@ -2528,7 +3303,21 @@ namespace MediaPortal.Util
         try
         {
           img = Image.FromFile(strFileName);
-
+          int iRotation = Util.Picture.GetRotateByExif(img);
+          switch (iRotation)
+          {
+            case 1:
+              img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+              break;
+            case 2:
+              img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+              break;
+            case 3:
+              img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+              break;
+            default:
+              break;
+          }
           if (img != null)
             g.DrawImage(img, x, y, w, h);
         }
@@ -2570,122 +3359,118 @@ namespace MediaPortal.Util
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
             {
-              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Blue3");
+              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
             }
           }
 
           string defaultBackground = currentSkin + @"\media\previewbackground.png";
 
-          if (File.Exists(defaultBackground))
+          using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
           {
-            using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.ReadWrite))
+            using (Image imgFolder = Image.FromStream(fs, true, false))
             {
-              using (Image imgFolder = Image.FromStream(fs, true, false))
+              int width = imgFolder.Width;
+              int height = imgFolder.Height;
+
+              int thumbnailWidth = 256;
+              int thumbnailHeight = 256;
+              // draw a fullsize thumb if only 1 pic is available
+              if (aPictureList.Count == 1)
               {
-                int width = imgFolder.Width;
-                int height = imgFolder.Height;
+                thumbnailWidth = (width - 20);
+                thumbnailHeight = (height - 20);
+              }
+              else
+              {
+                thumbnailWidth = (width - 30) / 2;
+                thumbnailHeight = (height - 30) / 2;
+              }
 
-                int thumbnailWidth = 256;
-                int thumbnailHeight = 256;
-                // draw a fullsize thumb if only 1 pic is available
-                if (aPictureList.Count == 1)
+              using (Bitmap bmp = new Bitmap(width, height))
+              {
+                using (Graphics g = Graphics.FromImage(bmp))
                 {
-                  thumbnailWidth = (width - 20);
-                  thumbnailHeight = (height - 20);
-                }
-                else
-                {
-                  thumbnailWidth = (width - 30) / 2;
-                  thumbnailHeight = (height - 30) / 2;
-                }
+                  g.CompositingQuality = Thumbs.Compositing;
+                  g.InterpolationMode = Thumbs.Interpolation;
+                  g.SmoothingMode = Thumbs.Smoothing;
 
-                using (Bitmap bmp = new Bitmap(width, height))
-                {
-                  using (Graphics g = Graphics.FromImage(bmp))
-                  {
-                    g.CompositingQuality = Thumbs.Compositing;
-                    g.InterpolationMode = Thumbs.Interpolation;
-                    g.SmoothingMode = Thumbs.Smoothing;
-
-                    g.DrawImage(imgFolder, 0, 0, width, height);
-                    int x, y, w, h;
-                    x = 0;
-                    y = 0;
-                    w = thumbnailWidth;
-                    h = thumbnailHeight;
-                    //Load first of 4 images for the folder thumb.                  
-                    try
-                    {
-                      AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
-
-                      //If exists load second of 4 images for the folder thumb.
-                      if (aPictureList.Count > 1)
-                      {
-                        AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
-                      }
-
-                      //If exists load third of 4 images for the folder thumb.
-                      if (aPictureList.Count > 2)
-                      {
-                        AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
-                      }
-
-                      //If exists load fourth of 4 images for the folder thumb.
-                      if (aPictureList.Count > 3)
-                      {
-                        AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
-                      }
-                    }
-                    catch (Exception ex)
-                    {
-                      Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
-                    }
-                  } //using (Graphics g = Graphics.FromImage(bmp) )
-
+                  g.DrawImage(imgFolder, 0, 0, width, height);
+                  int x, y, w, h;
+                  x = 0;
+                  y = 0;
+                  w = thumbnailWidth;
+                  h = thumbnailHeight;
+                  //Load first of 4 images for the folder thumb.                  
                   try
                   {
-                    if (File.Exists(aThumbPath))
-                      FileDelete(aThumbPath);
+                    AddPicture(g, (string)aPictureList[0], x + 10, y + 10, w, h);
 
-                    string tmpFile = Path.Combine(Path.GetTempPath(), "folderpreview.jpg");
-                    if (File.Exists(tmpFile))
-                      FileDelete(tmpFile);
-
-                    bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
-
-                    // we do not want a folderL.jpg
-                    if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
+                    //If exists load second of 4 images for the folder thumb.
+                    if (aPictureList.Count > 1)
                     {
-                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                              (int)Thumbs.ThumbLargeResolution, 0, false);
-                    }
-                    else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution,
-                                                     (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                    {
-                      aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                              (int)Thumbs.ThumbLargeResolution, 0, false);
+                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth + 20, y + 10, w, h);
                     }
 
-                    if (MediaPortal.Player.g_Player.Playing)
-                      Thread.Sleep(100);
-                    else
-                      Thread.Sleep(10);
+                    //If exists load third of 4 images for the folder thumb.
+                    if (aPictureList.Count > 2)
+                    {
+                      AddPicture(g, (string)aPictureList[2], x + 10, y + thumbnailHeight + 20, w, h);
+                    }
 
-                    if (File.Exists(aThumbPath))
-                      result = true;
+                    //If exists load fourth of 4 images for the folder thumb.
+                    if (aPictureList.Count > 3)
+                    {
+                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                    }
                   }
-                  catch (Exception ex2)
+                  catch (Exception ex)
                   {
-                    Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath,
-                              ex2.Message);
+                    Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
                   }
-                } //using (Bitmap bmp = new Bitmap(210,210))
-              }
+                } //using (Graphics g = Graphics.FromImage(bmp) )
+
+                try
+                {
+                  string tmpFile = Path.GetTempFileName();
+                  Log.Debug("Saving thumb!");
+                  bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+
+                  // we do not want a folderL.jpg
+                  if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
+                  {
+                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                            (int)Thumbs.ThumbLargeResolution, 0, false);
+                    FileDelete(tmpFile);
+                  }
+                  else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution,
+                                                   (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                  {
+                    aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+                    Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                            (int)Thumbs.ThumbLargeResolution, 0, false);
+                    FileDelete(tmpFile);
+                  }
+
+                  if (MediaPortal.Player.g_Player.Playing)
+                    Thread.Sleep(100);
+                  else
+                    Thread.Sleep(10);
+
+                  if (FileExistsInCache(aThumbPath))
+                    result = true;
+                }
+                catch (Exception ex2)
+                {
+                  Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath,
+                            ex2.Message);
+                }
+              } //using (Bitmap bmp = new Bitmap(210,210))
             }
           }
-          else
-            Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs!");
+        }
+        catch (FileNotFoundException)
+        {
+          Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs!");
         }
         catch (Exception exm)
         {
@@ -2696,8 +3481,9 @@ namespace MediaPortal.Util
         Log.Debug("Utils: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
       } //if (pictureList.Count>0)
       else
+      {
         result = false;
-
+      }
       return result;
     }
 
@@ -2752,6 +3538,35 @@ namespace MediaPortal.Util
       return false;
     }
 
+    // Move the prefix of movie to the end of the string for better sorting
+    public static bool StripMovieNamePrefix(ref string movieName, bool appendPrefix)
+    {
+      string temp = movieName.ToLower();
+
+      foreach (string s in _movieNamePrefixes)
+      {
+        if (s.Length == 0)
+          continue;
+
+        string prefix = s;
+        prefix = prefix.Trim().ToLower();
+        int pos = temp.IndexOf(prefix + " ");
+        if (pos == 0)
+        {
+          string tempName = movieName.Substring(prefix.Length).Trim();
+
+          if (appendPrefix)
+            movieName = string.Format("{0}, {1}", tempName, movieName.Substring(0, prefix.Length));
+          else
+            movieName = tempName;
+
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     public static void DeleteFiles(string strDir, string strPattern)
     {
       if (strDir == null) return;
@@ -2772,10 +3587,10 @@ namespace MediaPortal.Util
           {
             File.Delete(strFile);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     public static bool UsingTvServer
@@ -2784,7 +3599,7 @@ namespace MediaPortal.Util
       {
         try
         {
-          return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll");
+          return (Util.Utils.FileExistsInCache(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"));
         }
         catch (Exception)
         {
@@ -2813,7 +3628,7 @@ namespace MediaPortal.Util
         sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -2922,11 +3737,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // clean the TempSBE\ folder
       try
@@ -2941,11 +3756,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // delete *.tv
       try
@@ -2960,11 +3775,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     //void DeleteOldTimeShiftFiles(string path)
@@ -3012,10 +3827,10 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary>
@@ -3048,7 +3863,7 @@ namespace MediaPortal.Util
         {
           result += crypt[(int)c - 48];
         }
-        catch { }
+        catch {}
       return result;
     }
 
@@ -3063,7 +3878,7 @@ namespace MediaPortal.Util
             if (crypt[i] == c)
               result += (i).ToString();
         }
-        catch { }
+        catch {}
       }
       return result;
     }
@@ -3241,6 +4056,9 @@ namespace MediaPortal.Util
         case "ukrainian":
           languageTranslated = GUILocalizeStrings.Get(2614);
           break;
+        case "deutsch":
+          languageTranslated = GUILocalizeStrings.Get(2615);
+          break;
         default:
           break;
       }
@@ -3278,6 +4096,137 @@ namespace MediaPortal.Util
           comboBox.Text = cultureInformation.EnglishName;
         }
       }
+    }
+
+    /// <summary>
+    /// Will load all files in path with specified extensions.
+    /// </summary>
+    /// <param name="path">Path where to get files from</param>
+    /// <param name="extensions">Extension ("dll" for example). Multiple extensions should be in format "ext1|ext2|ext3"</param>
+    /// <returns>String list of file names</returns>
+    public static string[] GetFiles(string path, string extensions)
+    {
+      string[] allExtensions = extensions.Split('|');
+      List<string> files = new List<string>();
+      foreach (string sp in allExtensions)
+      {
+        string[] strFiles = System.IO.Directory.GetFiles(path, "*." + sp);
+        foreach (string strFile in strFiles)
+        {
+          //this check is needed because GetFiles truncates extension to 3 letters, 
+          //therefore "*.htm" would find both htm and html files, together with any other variant (htmshit for example)
+          if (!strFile.ToLower().EndsWith("." + sp))
+          {
+            continue;
+          }
+          files.Add(strFile);
+        }
+      }
+      files.Sort();
+      return files.ToArray();
+    }
+
+    /// <summary>
+    /// Tags such as artist allow multiple values.  We expect these to be separated
+    /// by ; but for formatting and easier searching we show this as |
+    /// trim off start and end separators
+    /// </summary>
+    /// <param name="tagValue">The value stored in the tag</param>
+    /// <param name="stripArtistPrefixes">Whether to strip prefixes, eg The Beatles => Beatles, The</param>
+    /// <returns></returns>
+    public static string FormatMultiItemMusicStringTrim(string tagValue, bool stripArtistPrefixes)
+    {
+      String formattedString = FormatMultiItemMusicString(tagValue, stripArtistPrefixes);
+      char[] charsToTrim = { '|', ' ' };
+      return formattedString.Trim(charsToTrim);
+    }
+
+    /// <summary>
+    /// Tags such as artist allow multiple values.  We expect these to be separated
+    /// by ; but for formatting and easier searching we show this as |
+    /// </summary>
+    /// <param name="tagValue">The value stored in the tag</param>
+    /// <param name="stripArtistPrefixes">Whether to strip prefixes, eg The Beatles => Beatles, The</param>
+    /// <returns></returns>
+    public static string FormatMultiItemMusicString(string tagValue, bool stripArtistPrefixes)
+    {
+      string[] strSplit = tagValue.Split(new char[] { ';', '|' });
+      // Can't use a simple String.Join as i need to trim all the elements 
+      string strFormattedString = "| ";
+      foreach (string strTmp in strSplit)
+      {
+        string s = strTmp.Trim();
+        // Strip Artist / AlbumArtist but NOT Genres
+        if (stripArtistPrefixes)
+        {
+          Utils.StripArtistNamePrefix(ref s, true);
+        }
+        strFormattedString += String.Format("{0} | ", s.Trim());
+      }
+      return strFormattedString;
+    }
+  }
+
+  public static class GenericExtensions
+  {
+    public static XmlNode SelectSingleNodeFast(this XmlNode node, string xpath)
+    {
+      // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
+      XmlNodeList nodes = node.SelectNodes(xpath);
+
+      if (nodes == null)
+        return null;
+
+      IEnumerator enumerator = nodes.GetEnumerator();
+      if (enumerator != null && enumerator.MoveNext())
+      {
+        return (XmlNode)enumerator.Current;
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// In simple cases this is much much faster than a Full XPATH query
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static XmlNode SelectByNameFromChildren(this XmlNode node, string name)
+    {
+      if (node == null || string.IsNullOrEmpty(name) || !node.HasChildNodes)
+        return null;
+      foreach (XmlNode child in node.ChildNodes)
+        if (name.Equals(child.Name, StringComparison.OrdinalIgnoreCase))
+          return child;
+      return null;
+    }
+
+    public static TResult TryGetOrAdd<TIn, TResult>(this Dictionary<TIn, TResult> cache, TIn arg,
+                                                    Func<TIn, TResult> evaluator)
+    {
+      TResult res;
+      if (cache.TryGetValue(arg, out res))
+        return res;
+      res = evaluator(arg);
+      cache.Add(arg, res);
+      return res;
+    }
+
+    public static IAsyncResult DoAsync<T>(this Action<T> action, T arg)
+    {
+      return action.BeginInvoke(arg, null, null);
+    }
+
+    public static void WaitForAll(this IEnumerable<IAsyncResult> operations)
+    {
+      while (operations.Any(o => !o.IsCompleted))
+        System.Threading.Thread.Sleep(10);
+    }
+
+    public static IEnumerable<IAsyncResult> DoActionAsync<T>(this IEnumerable<T> source, Action<T> actionOnItem)
+    {
+      return source.Select(i => actionOnItem.DoAsync(i))
+        .ToArray();
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ namespace MediaPortal.Util
           theImage = ImageFast.FromFile(strPic);
           Log.Debug("Picture: Fast loaded texture {0}", strPic);
         }
-        catch (ArgumentException)
+        catch (Exception)
         {
           theImage = Image.FromFile(strPic);
           Log.Warn("Picture: Fallback loaded texture {0}", strPic);
@@ -769,9 +769,9 @@ namespace MediaPortal.Util
     public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight,
                                        int iRotate, bool aFastMode)
     {
+      bool result = false;
       if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 ||
           iMaxHeight <= 0) return false;
-      if (!File.Exists(aInputFilename)) return false;
 
       Image myImage = null;
 
@@ -787,30 +787,39 @@ namespace MediaPortal.Util
         //  }
         //  catch (Exception) { }
         //}
+        try
+        {
+          myImage = ImageFast.FromFile(aInputFilename);
+        }
+        catch (FileNotFoundException)
+        {
+          result = false;
+        }
 
-        myImage = ImageFast.FromFile(aInputFilename);
-
-        return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+        result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
-      catch (ArgumentException)
+      catch (Exception)
       {
         Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", aInputFilename);
 
         try
         {
           myImage = Image.FromFile(aInputFilename, true);
-
-          return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+          result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+        }
+        catch (FileNotFoundException)
+        {
+          result = false;
         }
         catch (OutOfMemoryException)
         {
           Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", aInputFilename);
-          return false;
+          result = false;
         }
         catch (Exception ex)
         {
           Log.Error("Picture: CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          return false;
+          result = false;
         }
       }
       finally
@@ -818,6 +827,8 @@ namespace MediaPortal.Util
         if (myImage != null)
           myImage.SafeDispose();
       }
+
+      return result;
     }
 
     public static bool ThumbnailCallback()
@@ -843,6 +854,7 @@ namespace MediaPortal.Util
     public static bool CreateThumbnail(Image aDrawingImage, string aThumbTargetPath, int aThumbWidth, int aThumbHeight,
                                        int aRotation, bool aFastMode)
     {
+      bool result = false;
       if (string.IsNullOrEmpty(aThumbTargetPath) || aThumbHeight <= 0 || aThumbHeight <= 0) return false;
 
       Bitmap myBitmap = null;
@@ -891,7 +903,19 @@ namespace MediaPortal.Util
         }
         else
         {
-          myBitmap = new Bitmap(iWidth, iHeight, aDrawingImage.PixelFormat);
+          PixelFormat format = aDrawingImage.PixelFormat;
+          switch (format)
+          {
+            case PixelFormat.Format1bppIndexed:
+            case PixelFormat.Format4bppIndexed:
+            case PixelFormat.Format8bppIndexed:
+            case PixelFormat.Undefined:
+            case PixelFormat.Format16bppArgb1555:
+            case PixelFormat.Format16bppGrayScale:
+              format = PixelFormat.Format32bppRgb;
+              break;
+          }
+          myBitmap = new Bitmap(iWidth, iHeight, format);
           //myBitmap.SetResolution(aDrawingImage.HorizontalResolution, aDrawingImage.VerticalResolution);
           using (Graphics g = Graphics.FromImage(myBitmap))
           {
@@ -906,11 +930,11 @@ namespace MediaPortal.Util
         if (MediaPortal.Player.g_Player.Playing)
           Thread.Sleep(30);
 
-        return SaveThumbnail(aThumbTargetPath, myTargetThumb);
+        result = SaveThumbnail(aThumbTargetPath, myTargetThumb);
       }
       catch (Exception)
       {
-        return false;
+        result = false;
       }
       finally
       {
@@ -919,6 +943,13 @@ namespace MediaPortal.Util
         if (myBitmap != null)
           myBitmap.SafeDispose();
       }
+
+      if (result && Utils.IsFileExistsCacheEnabled())
+      {
+        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", aThumbTargetPath);
+        Utils.DoInsertExistingFileIntoCache(aThumbTargetPath);
+      }
+      return result;
     }
 
     public static bool SaveThumbnail(string aThumbTargetPath, Image myImage)
@@ -929,8 +960,8 @@ namespace MediaPortal.Util
         {
           using (Bitmap bmp = new Bitmap(myImage))
           {
-            bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);  
-          }          
+            bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+          }
           fs.Flush();
         }
 
@@ -1005,6 +1036,36 @@ namespace MediaPortal.Util
           line.End();
         }
       }
+    }
+
+
+    public static int GetRotateByExif(string imageFile)
+    {
+      Image image = Image.FromFile(imageFile);
+      return GetRotateByExif(image);
+    }
+
+    public static int GetRotateByExif(Image image)
+    {
+      PropertyItem[] propItems = image.PropertyItems;
+      foreach (PropertyItem propItem in propItems)
+      {
+        if (propItem.Id == 0x112)
+        {
+          int iType = Convert.ToInt16(propItem.Value[0]);
+          switch (iType)
+          {
+            case 06:
+              return 1; // 90 degree:  112/03/06 00
+            case 03:
+              return 2; // 180 degree: 112/03/03 00
+            case 08:
+              return 3; // 270 degree: 112/03/08 00
+          }
+          break;
+        }
+      }
+      return 0; // not rotated
     }
   }
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ namespace MpeCore.Classes
     public WizardNavigator(PackageClass pak)
     {
       Package = pak;
+      Package.UnInstallInfo.SetInfo(Package);
       Response = SectionResponseEnum.Error;
     }
 
@@ -67,8 +68,7 @@ namespace MpeCore.Classes
           case SectionResponseEnum.Cancel:
             if (
               MessageBox.Show(
-                "Are you want to quit " + Package.GeneralInfo.Name + " - " + Package.GeneralInfo.Version +
-                " setup ? ", "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) !=
+                "Are you sure you want to abort setup of " + Package.GeneralInfo.Name + " - " + Package.GeneralInfo.Version + " ? ", "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) !=
               DialogResult.Yes)
               continue;
             bool sil = Package.Silent;

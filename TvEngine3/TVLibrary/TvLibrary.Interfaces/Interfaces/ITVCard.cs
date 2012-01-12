@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -53,6 +53,12 @@ namespace TvLibrary.Interfaces
     bool SupportsSubChannels { get; }
 
     /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    bool SupportsPauseGraph { get; }
+
+
+    /// <summary>
     /// Gets or sets the timeout parameters.
     /// </summary>
     /// <value>The parameters.</value>
@@ -84,6 +90,12 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <returns></returns>
     void StopGraph();
+
+    /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    /// <returns></returns>
+    void PauseGraph();
 
     /// <summary>
     /// returns the min. channel number for analog cards
@@ -186,6 +198,14 @@ namespace TvLibrary.Interfaces
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
     ITvSubChannel Tune(int subChannelId, IChannel channel);
+
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
+    ITvSubChannel Scan(int subChannelId, IChannel channel);
 
     #endregion
 

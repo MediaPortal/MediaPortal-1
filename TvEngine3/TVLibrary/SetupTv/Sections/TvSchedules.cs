@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,18 +25,24 @@ using System.Windows.Forms;
 using System.Globalization;
 using TvControl;
 using TvDatabase;
+using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
 {
   public partial class TvSchedules : SectionSettings
   {
+    private readonly MPListViewStringColumnSorter lvwColumnSorter;
+
     public TvSchedules()
-      : this("Schedules") {}
+      : this("Schedules") { }
 
     public TvSchedules(string name)
       : base(name)
     {
       InitializeComponent();
+      lvwColumnSorter = new MPListViewStringColumnSorter();
+      lvwColumnSorter.Order = SortOrder.None;
+      listView1.ListViewItemSorter = lvwColumnSorter;
     }
 
     public override void OnSectionActivated()
@@ -83,6 +89,11 @@ namespace SetupTv.Sections
             item.SubItems.Add("Once");
             item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("dd-MM-yyyy HH:mm:ss", mmddFormat)));
             break;
+          case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            item.ImageIndex = 0;
+            item.SubItems.Add("Weekly Always");
+            item.SubItems.Add(schedule.StartTime.DayOfWeek.ToString());
+            break;
           case ScheduleRecordingType.EveryTimeOnThisChannel:
             item.ImageIndex = 0;
             item.SubItems.Add("Always");
@@ -109,8 +120,26 @@ namespace SetupTv.Sections
         }
         listView1.Items.Add(item);
       }
-
       listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+    }
+
+    private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
+                                  ? SortOrder.Descending
+                                  : SortOrder.Ascending;
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter.SortColumn = e.Column;
+        lvwColumnSorter.Order = SortOrder.Ascending;
+      }
+      // Perform the sort with these new sort options.
+      listView1.Sort();
     }
 
     private void deleteToolStripMenuItem_Click(object sender, EventArgs e)

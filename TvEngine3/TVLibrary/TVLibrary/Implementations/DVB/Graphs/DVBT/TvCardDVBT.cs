@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,13 +24,15 @@ using DirectShowLib.BDA;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
+using TvDatabase;
+using TvLibrary.Epg;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-T BDA cards
   /// </summary>
-  public class TvCardDVBT : TvCardDvbBase, IDisposable, ITVCard
+  public class TvCardDVBT : TvCardDvbBase
   {
     #region variables
 
@@ -71,10 +73,13 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
         AddNetworkProviderFilter(typeof (DVBTNetworkProvider).GUID);
-        CreateTuningSpace();
-        AddMpeg2DemuxerToGraph();
+        AddTsWriterFilterToGraph();
+        if (!useInternalNetworkProvider)
+        {
+          CreateTuningSpace();
+          AddMpeg2DemuxerToGraph();
+        }
         AddAndConnectBDABoardFilters(_device);
-        AddBdaTransportFiltersToGraph();
         string graphName = _device.Name + " - DVBT Graph.grf";
         FilterGraphTools.SaveGraphFile(_graphBuilder, graphName);
         GetTunerSignalStatistics();
@@ -129,12 +134,12 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("IEnumTuningSpaces", enumTuning);
       Log.Log.WriteFile("dvbt:Create new tuningspace");
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
-      IDVBTuningSpace tuningSpace = (IDVBTuningSpace)_tuningSpace;      
+      IDVBTuningSpace tuningSpace = (IDVBTuningSpace)_tuningSpace;
       tuningSpace.put_UniqueName("MediaPortal DVBT TuningSpace");
       tuningSpace.put_FriendlyName("MediaPortal DVBT TuningSpace");
       tuningSpace.put__NetworkType(typeof (DVBTNetworkProvider).GUID);
       tuningSpace.put_SystemType(DVBSystemType.Terrestrial);
-      
+
       IDVBTLocator locator = (IDVBTLocator)new DVBTLocator();
       locator.put_CarrierFrequency(-1);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
@@ -149,7 +154,7 @@ namespace TvLibrary.Implementations.DVB
       tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("ITuningSpaceContainer", container);
       _tuningSpace.CreateTuneRequest(out request);
-      _tuneRequest = (IDVBTuneRequest)request;
+      _tuneRequest = request;
     }
 
     /// <summary>
@@ -171,47 +176,26 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("dvbt: Tune:{0}", channel);
+      Log.Log.WriteFile("dvbt: Scan:{0}", channel);
       try
       {
-        DVBTChannel dvbtChannel = channel as DVBTChannel;
-        if (dvbtChannel == null)
+        if (!BeforeTune(channel, ref subChannelId))
         {
-          Log.Log.WriteFile("dvbt:Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
           return null;
-        }      
-        if (_graphState == GraphState.Idle)
-        {
-          BuildGraph();
-          if (_mapSubChannels.ContainsKey(subChannelId) == false)
-          {
-            subChannelId = GetNewSubChannel(channel);
-          }
-        }
-        
-        if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbtChannel))
-        {
-          //_pmtPid = -1;
-          ILocator locator;
-          _tuningSpace.get_DefaultLocator(out locator);
-          IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
-          dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
-          IDVBTuneRequest tuneRequest = (IDVBTuneRequest) _tuneRequest;
-          tuneRequest.put_ONID(dvbtChannel.NetworkId);
-          tuneRequest.put_SID(dvbtChannel.ServiceId);
-          tuneRequest.put_TSID(dvbtChannel.TransportId);          
-          locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
-          _tuneRequest.put_Locator(locator);                             
         }
 
-        ITvSubChannel ch = base.Tune(subChannelId, channel);
-                
+        ITvSubChannel ch = base.Scan(subChannelId, channel);
+
         Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
       catch (TvExceptionNoSignal)
+      {
+        throw;
+      }
+      catch (TvExceptionNoPMT)
       {
         throw;
       }
@@ -222,15 +206,120 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    {
+      Log.Log.WriteFile("dvbt: Tune:{0}", channel);
+      try
+      {
+        if (!BeforeTune(channel, ref subChannelId))
+        {
+          return null;
+        }
+
+        ITvSubChannel ch = base.Tune(subChannelId, channel);
+
+        Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
+        return ch;
+      }
+      catch (TvExceptionNoSignal)
+      {
+        throw;
+      }
+      catch (TvExceptionNoPMT)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw;
+      }
+    }
+
+    private bool BeforeTune(IChannel channel, ref int subChannelId)
+    {
+      DVBTChannel dvbtChannel = channel as DVBTChannel;
+      if (dvbtChannel == null)
+      {
+        Log.Log.WriteFile("dvbt:Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
+        return false;
+      }
+      if (_graphState == GraphState.Idle)
+      {
+        BuildGraph();
+        if (_mapSubChannels.ContainsKey(subChannelId) == false)
+        {
+          subChannelId = GetNewSubChannel(channel);
+        }
+      }
+      if (useInternalNetworkProvider)
+      {
+        return true;
+      }
+
+      if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbtChannel))
+      {
+        //_pmtPid = -1;
+        ILocator locator;
+        _tuningSpace.get_DefaultLocator(out locator);
+        IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
+        dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
+        IDVBTuneRequest tuneRequest = (IDVBTuneRequest)_tuneRequest;
+        tuneRequest.put_ONID(dvbtChannel.NetworkId);
+        tuneRequest.put_SID(dvbtChannel.ServiceId);
+        tuneRequest.put_TSID(dvbtChannel.TransportId);
+        locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
+        _tuneRequest.put_Locator(locator);
+      }
+      return true;
+    }
+
     #endregion
 
     #region epg & scanning
 
     /// <summary>
+    /// checks if a received EPGChannel should be filtered from the resultlist
+    /// </summary>
+    /// <value></value>
+    protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
+      {
+        DVBBaseChannel chan = epgChannel.Channel as DVBBaseChannel;
+        Channel dbchannel = layer.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
+        DVBTChannel dvbtchannel = new DVBTChannel();
+        if (dbchannel == null)
+        {
+          return false;
+        }
+        foreach (TuningDetail detail in dbchannel.ReferringTuningDetail())
+        {
+          if (detail.ChannelType == 4)
+          {
+            dvbtchannel.Frequency = detail.Frequency;
+            dvbtchannel.BandWidth = detail.Bandwidth;
+          }
+        }
+        return this.CurrentChannel.IsDifferentTransponder(dvbtchannel);
+      }
+      else
+        return false;
+
+    }
+
+    /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
     /// <value></value>
-    public ITVScanning ScanningInterface
+    public override ITVScanning ScanningInterface
     {
       get
       {
@@ -260,12 +349,21 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>
     /// true if card can tune to the channel otherwise false
     /// </returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if ((channel as DVBTChannel) == null)
         return false;
       return true;
     }
 
-   }
+    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
+    {
+      DVBTChannel channel = new DVBTChannel();
+      channel.NetworkId = networkid;
+      channel.TransportId = transportid;
+      channel.ServiceId = serviceid;
+      channel.Name = name;
+      return channel;
+    }
+  }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,5 +27,6 @@ namespace MediaPortal.Profile
     void RemoveEntry(string section, string entry);
     void Save();
     void SetValue(string section, string entry, object value);
+    void MoveEntry(string fromSection, string toSection, string entry);
   }
 }

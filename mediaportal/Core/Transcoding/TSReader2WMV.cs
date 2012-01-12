@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -620,8 +620,8 @@ namespace MediaPortal.Core.Transcoding
         profileManager2 = profileManager as IWMProfileManager2;
         hr = profileManager2.LoadProfileByData(profileContents, out profile);
       }
-      
-      
+
+
       if (hr != 0)
       {
         Log.Info("TSReader2WMV: get WMV profile - FAILED! {0}", hr);
@@ -702,9 +702,9 @@ namespace MediaPortal.Core.Transcoding
       String profileContents = "";
       using (StreamReader prx = new StreamReader(strprofileType))
       {
-        profileContents = prx.ReadToEnd();  
+        profileContents = prx.ReadToEnd();
       }
-      
+
       profileManager2 = profileManager as IWMProfileManager2;
       profileManagerLanguage = profileManager as IWMProfileManagerLanguage;
       hr = profileManager2.GetSystemProfileVersion(out wmversion);

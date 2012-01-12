@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ namespace MediaPortal.Music.Database
     private static bool _stripArtistPrefixes;
     private static DateTime _lastImport;
     private static DateTime _currentDate = DateTime.Now;
+    private static int _dateAddedValue;
 
     #endregion
 
@@ -80,12 +81,13 @@ namespace MediaPortal.Music.Database
       _supportedExtensions = Util.Utils.AudioExtensionsDefault;
       _stripArtistPrefixes = false;
       _currentDate = DateTime.Now;
+      _dateAddedValue = 0;
 
       LoadDBSettings();
       Open();
     }
 
-    ~MusicDatabase() { }
+    ~MusicDatabase() {}
 
     public static void ReOpen()
     {
@@ -112,7 +114,7 @@ namespace MediaPortal.Music.Database
       {
         if (MusicDbClient == null)
         {
-          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"));
+          MusicDbClient = new SQLiteClient(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3"));
         }
 
         return MusicDbClient;
@@ -147,6 +149,8 @@ namespace MediaPortal.Music.Database
         _createGenrePreviews = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
         _supportedExtensions = xmlreader.GetValueAsString("music", "extensions", Util.Utils.AudioExtensionsDefault);
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        _dateAddedValue = xmlreader.GetValueAsInt("musicfiles", "dateadded", 0);
+        _updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
 
         try
         {
@@ -172,20 +176,20 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) { }
+        catch (Exception) {}
 
-        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
+        if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3")))
         {
-          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3")))
+          if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
           {
             Log.Info("MusicDatabase: Found older version of database. Upgrade to new layout.");
-            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3"),
-                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"));
+            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"),
+                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3"));
 
             // Get the DB handle or create it if necessary
             MusicDbClient = DbConnection;
 
-            UpgradeDBV10_V11();
+            UpgradeDBV11_V12();
             return;
           }
 
@@ -213,12 +217,12 @@ namespace MediaPortal.Music.Database
       Log.Info("MusicDatabase: Database opened");
     }
 
-    private void UpgradeDBV10_V11()
+    private void UpgradeDBV11_V12()
     {
       try
       {
         // First rename the tracks table
-        string strSQL = "alter table tracks rename to tracksV10";
+        string strSQL = "alter table tracks rename to tracksV11";
         MusicDbClient.Execute(strSQL);
 
         // Now call the Create Datbase function to create the new table
@@ -228,15 +232,15 @@ namespace MediaPortal.Music.Database
           return;
         }
 
-        // Now copy the content of the old V10 tracks table to the new V11 tracks table
+        // Now copy the content of the old V11 tracks table to the new V12 tracks table
         strSQL =
-          "insert into tracks select idTrack, strPath, strArtist, strAlbumArtist, strAlbum, strGenre, '|  |', '', " +
+          "insert into tracks select idTrack, strPath, strArtist, strAlbumArtist, strAlbum, strGenre, strComposer, strConductor, " +
           "strTitle, iTRack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, iResumeAt, iDisc, iNumDisc, " +
-          "strLyrics, dateLastPlayed, dateAdded from tracksV10";
+          "strLyrics, '', '', '', '', 0, 0, 0, 0, dateLastPlayed, dateAdded from tracksV11";
 
         MusicDbClient.Execute(strSQL);
 
-        strSQL = "drop table tracksV10";
+        strSQL = "drop table tracksV11";
         MusicDbClient.Execute(strSQL);
 
         Log.Info("MusicDatabase: Finished upgrading database.");
@@ -253,37 +257,43 @@ namespace MediaPortal.Music.Database
       {
         DatabaseUtility.SetPragmas(MusicDbClient);
 
-        // Tracks table containing information for songs 
+        // Tracks table containing information for songs
         DatabaseUtility.AddTable(
           MusicDbClient, "tracks",
           @"CREATE TABLE tracks ( " +
-          // Unique id Autoincremented
-          "idTrack integer primary key autoincrement, " +
-          // Full Path of the file. 
-          "strPath text, " +
-          // Artist
-          "strArtist text, strAlbumArtist text, " +
-          // Album 
-          "strAlbum text, " +
-          // Genre (multiple genres)
-          "strGenre text, " +
-          // Composer (multiple composers)
-          "strComposer text, " +
-          "strConductor text, " +
-          // Song
-          "strTitle text, iTrack integer, iNumTracks integer, iDuration integer, iYear integer, " +
-          "iTimesPlayed integer, iRating integer, iFavorite integer, iResumeAt integer, iDisc integer, iNumDisc integer, " +
-          "strLyrics text, " +
-          "dateLastPlayed timestamp, dateAdded timestamp" +
+          "idTrack integer primary key autoincrement, " + // Unique id Autoincremented
+          "strPath text, " + // Full  path of the file.
+          "strArtist text, " + // Artist
+          "strAlbumArtist text, " + // Album Artist
+          "strAlbum text, " + // Album
+          "strGenre text, " + // Genre  (multiple genres)
+          "strComposer text, " + // Composer (multiple composers)
+          "strConductor text, " + // Conductor
+          "strTitle text, " + // Song Title
+          "iTrack integer, " + // Track Number
+          "iNumTracks integer, " + // Total  Number of Tracks on Album
+          "iDuration integer, " + // Duration in seconds
+          "iYear integer, " + // Year
+          "iTimesPlayed integer, " + // # Times Played
+          "iRating integer, " + // Rating
+          "iFavorite integer, " + // Favorite Indicator
+          "iResumeAt integer, " + // Resume  song from position
+          "iDisc integer, " + // Disc Number
+          "iNumDisc integer, " + // Total  Number of Discs
+          "strLyrics text, " + // Lyric Text
+          "strComment text, " + // Comment
+          "strFileType text, " + // File Format (mp3, flac, etc.)           
+          "strFullCodec text, " + // Full Codec Description      
+          "strBitRateMode text, " + // Bitrate mode (CBR / VBR)           
+          "iBPM integer, " + // Beats per Minute
+          "iBitRate integer, " + // Bitrate
+          "iChannels integer, " + // Channels
+          "iSampleRate integer, " + // Sample Rate    
+          "dateLastPlayed timestamp, " + // Date, Last Time Played
+          "dateAdded timestamp" + // Date added. Either Insertion date, Creation date, LastWrite
           ")"
           );
 
-        // Add a Trigger for inserting the Date into the song table, whenever we do an update
-        string strSQL = "CREATE TRIGGER IF NOT EXISTS insert_song_timeStamp AFTER INSERT ON tracks " +
-                        "BEGIN " +
-                        " UPDATE tracks SET dateAdded = DATETIME('NOW') " +
-                        " WHERE rowid = new.rowid; " +
-                        "END;";
         MusicDbClient.Execute(strSQL);
 
         // Indices for Tracks table

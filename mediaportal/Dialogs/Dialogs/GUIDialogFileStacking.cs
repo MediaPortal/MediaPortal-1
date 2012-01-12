@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 #endregion
 
 using MediaPortal.GUI.Library;
+using System.Collections;
+using System.IO;
 
 namespace MediaPortal.Dialogs
 {
@@ -30,8 +32,9 @@ namespace MediaPortal.Dialogs
     private int m_iSelectedFile = -1;
     private int m_iFrames = -1;
     private int m_iNumberOfFiles = 0;
-    private int m_MaxNumberOfCDs = 0;
+    private int m_MaxNumberOfFiles = 0;
     private const int m_indexStackItemOffset = 100;
+    private ArrayList lst_FilesNames;
 
     public GUIDialogFileStacking()
     {
@@ -41,6 +44,16 @@ namespace MediaPortal.Dialogs
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\dialogFileStacking.xml");
+    }
+
+    public override void OnAction(Action action)
+    {
+      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      {
+        // User canceled selection, deselect file
+        m_iSelectedFile = -1;
+      }
+      base.OnAction(action);
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -59,7 +72,7 @@ namespace MediaPortal.Dialogs
               GUIControl pControl = GetControl(i + m_indexStackItemOffset);
               if (pControl != null)
               {
-                m_MaxNumberOfCDs = i;
+                m_MaxNumberOfFiles = i;
                 EnableControl(GetID, i + m_indexStackItemOffset);
                 ShowControl(GetID, i + m_indexStackItemOffset);
                 if (i < m_iNumberOfFiles)
@@ -83,6 +96,7 @@ namespace MediaPortal.Dialogs
               HideControl(GetID, i + m_indexStackItemOffset);
               DisableControl(GetID, i + m_indexStackItemOffset);
             }
+            SetSkinProperties(0);
           }
           return true;
 
@@ -90,6 +104,13 @@ namespace MediaPortal.Dialogs
           {
             m_iSelectedFile = message.SenderControlId - m_indexStackItemOffset;
             PageDestroy();
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
+          {
+            m_iSelectedFile = message.TargetControlId - 100;
+            SetSkinProperties(m_iSelectedFile - 1);
           }
           break;
       }
@@ -104,35 +125,38 @@ namespace MediaPortal.Dialogs
       {
         // Dialog heading
         GUIControl pDialog = GetControl(1);
+        GUIControl pDialogLine3 = GetControl(3); // Get Y-Position
         int distance = 32; // some safe value if skinner has used incorrect control IDs
-        if (pDialog != null)
+        if (pDialog != null && pDialogLine3 != null)
         {
           GUIControl pControl = GetControl(m_indexStackItemOffset + 1);
-          distance = pDialog.Width / m_MaxNumberOfCDs;
+          distance = (pDialog.Width - pControl.Width) / (m_MaxNumberOfFiles);
 
           // do not allow "loose stacking", i.e. less than half overlayed items
           if (distance > pControl.Width / 2)
           {
             distance = pControl.Width / 2;
           }
-        }
 
-        // slide in...
-        int dwScreenWidth = GUIGraphicsContext.Width;
-        for (int i = 1; i <= m_MaxNumberOfCDs; ++i)
-        {
-          GUIControl pControl = GetControl(i + m_indexStackItemOffset);
-          if (null != pControl)
+          // slide in...
+          int dwStartPos = pDialog.XPosition + pDialog.Width - pControl.Width;
+          for (int i = 1; i <= m_MaxNumberOfFiles; ++i)
           {
-            int dwEndPos = dwScreenWidth / 2 - ((m_MaxNumberOfCDs - i) * distance) + pDialog.Width / 2 -
-                           (int)((float)pControl.Width / 1.5);
-            int dwStartPos = dwScreenWidth / 2 + pDialog.Width / 2 - pControl.Width;
-            float fStep = dwStartPos - dwEndPos;
-            fStep /= 25.0f;
-            fStep *= m_iFrames;
-            int dwPosX = (int)(dwStartPos - fStep);
-            pControl.SetPosition(dwPosX, GUIGraphicsContext.Height / 2);
+            pControl = GetControl(i + m_indexStackItemOffset);
+            if (null != pControl)
+            {
+              float fStep = (m_MaxNumberOfFiles - i) * distance;
+              fStep /= 25.0f;
+              fStep *= m_iFrames;
+              int dwPosX = (int)(dwStartPos - fStep);
+              pControl.SetPosition(dwPosX, pDialogLine3.YPosition);
+            }
           }
+        }
+        else
+        {
+          Log.Warn("GUIDialogFileStacking: Control(1) and control(3) is missing in common.dialog.xml");
+          m_iFrames = 25;
         }
         if (m_iFrames == 25)
         {
@@ -150,6 +174,12 @@ namespace MediaPortal.Dialogs
       get { return m_iSelectedFile; }
     }
 
+    public void SetFiles(ArrayList lstMovies)
+    {
+      SetNumberOfFiles(lstMovies.Count);
+      lst_FilesNames = lstMovies;
+    }
+
     public void SetNumberOfFiles(int iFiles)
     {
       //LoadSkin();
@@ -161,6 +191,22 @@ namespace MediaPortal.Dialogs
       SetControlLabel(GetID, 4, string.Empty);
       SetControlLabel(GetID, 5, string.Empty);
       m_iNumberOfFiles = iFiles;
+      lst_FilesNames = new ArrayList();
+    }
+
+    private void SetSkinProperties(int seletedID)
+    {
+      if (seletedID >= 0 && seletedID < m_iNumberOfFiles && seletedID < lst_FilesNames.Count)
+      {
+        GUIPropertyManager.SetProperty("#stackedMovie.Selected",
+                                       Path.GetFileNameWithoutExtension((string)lst_FilesNames[seletedID]));
+        GUIPropertyManager.SetProperty("#stackedMovie.SelectedId", (seletedID + 1).ToString());
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#stackedMovie.Selected", "");
+        GUIPropertyManager.SetProperty("#stackedMovie.SelectedId", (seletedID + 1).ToString());
+      }
     }
   }
 }

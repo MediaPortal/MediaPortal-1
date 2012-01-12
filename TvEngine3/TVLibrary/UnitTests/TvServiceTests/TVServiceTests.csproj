@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardAllocationTest.cs" />
+    <Compile Include="Mocks\Fakes.cs" />
     <Compile Include="Mocks\CardManager.cs" />
     <Compile Include="Mocks\CardMocks.cs" />
     <Compile Include="Mocks\Channel\ChannelMocks.cs" />
@@ -72,9 +73,19 @@
     <Compile Include="Mocks\DVBSCard\DVBSCardMocks.cs" />
     <Compile Include="Mocks\DVBTCard\DVBTCardMocks.cs" />
     <Compile Include="Mocks\IDVBCardMocks.cs" />
+    <Compile Include="Mocks\TVControllerMocks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TvCardContextTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Plugins\PluginBase\PluginBase.csproj">
+      <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
+      <Name>PluginBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>

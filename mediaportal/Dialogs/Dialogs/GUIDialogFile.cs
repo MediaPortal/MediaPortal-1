@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.Picture.Database;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {
@@ -606,7 +607,7 @@ namespace MediaPortal.Dialogs
       }
       if (m_preselectDelete)
       {
-        OnDeleteItem(item);        
+        OnDeleteItem(item);
         return;
       }
 
@@ -657,7 +658,7 @@ namespace MediaPortal.Dialogs
       switch (dlg.SelectedId)
       {
         case 117: // delete
-          OnDeleteItem(item);          
+          OnDeleteItem(item);
           break;
 
         case 118: // rename

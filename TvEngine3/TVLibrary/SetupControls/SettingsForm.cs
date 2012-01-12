@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -136,8 +136,6 @@ namespace SetupControls
     }
 
     public virtual void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
-
-    public virtual void updateHelpToolStripMenuItem_Click(object sender, EventArgs e) {}
 
     public virtual void configToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
   }

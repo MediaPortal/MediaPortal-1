@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -94,6 +94,14 @@ namespace TvLibrary.Implementations.Hybrid
     public void StopGraph()
     {
       _cards[_currentCardIndex].StopGraph();
+    }
+
+    /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    public void PauseGraph()
+    {
+      _cards[_currentCardIndex].PauseGraph();
     }
 
     /// <summary>
@@ -195,6 +203,32 @@ namespace TvLibrary.Implementations.Hybrid
             }
           }
           return _cards[_currentCardIndex].Tune(subChannelId, channel);
+        }
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The subchannel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
+    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      for (int i = 0; i < _cards.Count; ++i)
+      {
+        if (_cards[i].CanTune(channel))
+        {
+          _currentCardIndex = i;
+          for (int x = 0; x < _cards.Count; x++)
+          {
+            if (x != i)
+            {
+              _cards[x].Dispose();
+            }
+          }
+          return _cards[_currentCardIndex].Scan(subChannelId, channel);
         }
       }
       return null;

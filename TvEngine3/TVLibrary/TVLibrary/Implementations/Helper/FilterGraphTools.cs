@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
@@ -26,6 +27,7 @@ using Mediaportal.Util;
 using DirectShowLib;
 #if !USING_NET11
 using System.Runtime.InteropServices.ComTypes;
+using TvLibrary.Interfaces;
 
 #endif
 
@@ -272,7 +274,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (filter != null)
         {
-          Marshal.ReleaseComObject(filter);
+          Release.ComObject(filter);
           filter = null;
         }
       }
@@ -367,9 +369,9 @@ namespace TvLibrary.Implementations.DVB
       finally
       {
         if (bindCtx != null)
-          Marshal.ReleaseComObject(bindCtx);
+          Release.ComObject(bindCtx);
         if (moniker != null)
-          Marshal.ReleaseComObject(moniker);
+          Release.ComObject(moniker);
       }
 
       return filter;
@@ -406,7 +408,7 @@ namespace TvLibrary.Implementations.DVB
             break;
           }
         }
-        Marshal.ReleaseComObject(enumFilters);
+        Release.ComObject(enumFilters);
       }
 
       return filter;
@@ -447,9 +449,9 @@ namespace TvLibrary.Implementations.DVB
             break;
           }
 
-          Marshal.ReleaseComObject(filters[0]);
+          Release.ComObject(filters[0]);
         }
-        Marshal.ReleaseComObject(enumFilters);
+        Release.ComObject(enumFilters);
       }
 
       return filter;
@@ -489,7 +491,7 @@ namespace TvLibrary.Implementations.DVB
       if (pin != null)
       {
         int hr = graphBuilder.Render(pin);
-        Marshal.ReleaseComObject(pin);
+        Release.ComObject(pin);
 
         return (hr >= 0);
       }
@@ -603,16 +605,83 @@ namespace TvLibrary.Implementations.DVB
               break;
             }
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          Release.ComObject(pPins[0]);
           DsUtils.FreePinInfo(ppinfo);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        Release.ComObject(ppEnum);
       }
 
       return pRet;
+    }
+
+    ///<summary>
+    /// Enumerates and DirectShow graph starting with vSource into specific direction. It takes only Pins into account,
+    /// that match a given PinCategory.
+    ///</summary>
+    ///<param name="vSource">Starting IBaseFilter</param>
+    ///<param name="pinCategory">PinCategory</param>
+    ///<param name="vDir">Direction</param>
+    ///<returns>List of next IBaseFilters</returns>
+    public static IList<IBaseFilter> GetAllNextFilters(IBaseFilter vSource, Guid pinCategory, PinDirection vDir)
+    {
+      IList<IBaseFilter> nextFilters = new List<IBaseFilter>();
+      IEnumPins ppEnum;
+      PinInfo ppinfo;
+      IPin[] pPins = new IPin[1];
+      if (vSource == null)
+        return null;
+
+      // Get the pin enumerator
+      int hr = vSource.EnumPins(out ppEnum);
+      DsError.ThrowExceptionForHR(hr);
+
+      try
+      {
+        int lFetched;
+        // Walk the pins looking for a match
+        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
+        {
+          PinDirection ppindir;
+
+          hr = pPins[0].QueryDirection(out ppindir);
+          DsError.ThrowExceptionForHR(hr);
+
+          // Is it the right direction?
+          if (ppindir == vDir)
+          {
+            // Is it the right category?
+            if (DsUtils.GetPinCategory(pPins[0]) == pinCategory)
+            {
+              // Read the info
+              IPin connectedPin;
+              hr = pPins[0].ConnectedTo(out connectedPin);
+              DsError.ThrowExceptionForHR(hr);
+
+              connectedPin.QueryPinInfo(out ppinfo);
+              DsError.ThrowExceptionForHR(hr);
+
+              // This is a filter we're looking for.
+              nextFilters.Add(ppinfo.filter);
+
+              // recursive return all other filter of this type
+              foreach (IBaseFilter subfilter in GetAllNextFilters(ppinfo.filter, pinCategory, vDir))
+                nextFilters.Add(subfilter);
+
+              DsUtils.FreePinInfo(ppinfo);
+              Release.ComObject(connectedPin);
+            }
+          }
+          Release.ComObject(pPins[0]);
+        }
+      }
+      finally
+      {
+        Release.ComObject(ppEnum);
+      }
+      return nextFilters;
     }
 
     /// <summary>
@@ -666,12 +735,12 @@ namespace TvLibrary.Implementations.DVB
               iIndex--;
             }
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          Release.ComObject(pPins[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        Release.ComObject(ppEnum);
       }
 
       return pRet;
@@ -707,13 +776,13 @@ namespace TvLibrary.Implementations.DVB
           }
           finally
           {
-            Marshal.ReleaseComObject(pins[0]);
+            Release.ComObject(pins[0]);
           }
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(enumPins);
+        Release.ComObject(enumPins);
       }
     }
 
@@ -750,12 +819,12 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Error while disconnecting all pins: ", ex);
           }
-          Marshal.ReleaseComObject(filters[0]);
+          Release.ComObject(filters[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(enumFilters);
+        Release.ComObject(enumFilters);
       }
     }
 
@@ -792,7 +861,7 @@ namespace TvLibrary.Implementations.DVB
           filter.QueryFilterInfo(out info);
           Log.Log.Write("Remove filter from graph: {0}", info.achName);
           graphBuilder.RemoveFilter(filter);
-          while (Marshal.ReleaseComObject(filter) > 0) ;
+          while (Release.ComObject(filter) > 0) ;
         }
       }
       catch (Exception)
@@ -804,7 +873,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (enumFilters != null)
         {
-          Marshal.ReleaseComObject(enumFilters);
+          Release.ComObject(enumFilters);
         }
       }
     }
@@ -834,7 +903,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         int hr = NativeMethods.StgCreateDocfile(
-          Path.Combine(Log.Log.GetPathName(), FileUtils.MakeFileName(fileName)),
+          Path.Combine(PathManager.GetDataPath, FileUtils.MakeFileName(fileName)),
           STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
           0,
           out storage
@@ -861,9 +930,9 @@ namespace TvLibrary.Implementations.DVB
       finally
       {
         if (stream != null)
-          Marshal.ReleaseComObject(stream);
+          Release.ComObject(stream);
         if (storage != null)
-          Marshal.ReleaseComObject(storage);
+          Release.ComObject(storage);
       }
     }
 
@@ -921,9 +990,9 @@ namespace TvLibrary.Implementations.DVB
       finally
       {
         if (stream != null)
-          Marshal.ReleaseComObject(stream);
+          Release.ComObject(stream);
         if (storage != null)
-          Marshal.ReleaseComObject(storage);
+          Release.ComObject(storage);
       }
     }
 
@@ -980,7 +1049,7 @@ namespace TvLibrary.Implementations.DVB
         DsError.ThrowExceptionForHR(hr);
 
         if (filterInfo.pGraph != null)
-          Marshal.ReleaseComObject(filterInfo.pGraph);
+          Release.ComObject(filterInfo.pGraph);
 
         hr = ((ISpecifyPropertyPages)filter).GetPages(out caGuid);
         DsError.ThrowExceptionForHR(hr);
@@ -1029,7 +1098,7 @@ namespace TvLibrary.Implementations.DVB
         Type type = Type.GetTypeFromCLSID(clsid);
         object o = Activator.CreateInstance(type);
         retval = true;
-        Marshal.ReleaseComObject(o);
+        Release.ComObject(o);
       }
       catch {}
       return retval;
@@ -1105,8 +1174,8 @@ namespace TvLibrary.Implementations.DVB
       }
       finally
       {
-        Marshal.ReleaseComObject(sourcePin);
-        Marshal.ReleaseComObject(destPin);
+        Release.ComObject(sourcePin);
+        Release.ComObject(destPin);
       }
     }
 
@@ -1455,7 +1524,7 @@ namespace TvLibrary.Implementations.DVB
       if (filter == null)
         return -1;
       object o = incRefCountCOM(filter);
-      int refcount = Marshal.ReleaseComObject(o);
+      int refcount = Release.ComObject(o);
       return refcount;
     }
 
@@ -1475,13 +1544,13 @@ namespace TvLibrary.Implementations.DVB
 
       bool connected = connectedToPin != null;
       if (connected)
-        Marshal.ReleaseComObject(connectedToPin);
+        Release.ComObject(connectedToPin);
 
       int hr = pin.QueryPinInfo(out pinInfo);
       if (hr == 0)
       {
         if (pinInfo.filter != null)
-          Marshal.ReleaseComObject(pinInfo.filter);
+          Release.ComObject(pinInfo.filter);
       }
       return String.Format("name:{0} [{3}/{4}] Direction:{1} Connected:{2}", pinInfo.name, pinInfo.dir, connected,
                            getRefCount(pin), getRefCountCOM(pin));
@@ -1511,7 +1580,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr == 0)
       {
         if (filterInfo.pGraph != null)
-          Marshal.ReleaseComObject(filterInfo.pGraph);
+          Release.ComObject(filterInfo.pGraph);
       }
       return String.Format(filterInfo.achName);
     }
@@ -1530,7 +1599,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr == 0)
       {
         if (pinInfo.filter != null)
-          Marshal.ReleaseComObject(pinInfo.filter);
+          Release.ComObject(pinInfo.filter);
       }
       return String.Format(pinInfo.name);
     }

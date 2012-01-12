@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,8 +22,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -31,6 +33,7 @@ using System.Windows.Serialization;
 using System.Xml;
 using MediaPortal.Player;
 using MediaPortal.ExtensionMethods;
+using System.Linq;
 
 namespace MediaPortal.GUI.Library
 {
@@ -45,7 +48,7 @@ namespace MediaPortal.GUI.Library
   /// Each window plugin should derive from this base class
   /// Pluginwindows should be copied in the plugins/windows folder
   /// </summary>
-  public class GUIWindow : Page, IDisposable
+  public class GUIWindow : ISupportInitialize, IDisposable
   {
     #region window ids
 
@@ -53,8 +56,9 @@ namespace MediaPortal.GUI.Library
     /// Enum of all standard windows in MP
     /// 
     /// IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
-    /// ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
-    /// (Windows that may not be jumped to directly via InputMapper)
+    /// if window may not be jumped to directly via InputMapper,
+    /// add it to blacklist in InputMappingForm!!!
+    /// (windows with DIALOG in the enum name are blacklisted automatically)
     /// </summary>
     public enum Window
     {
@@ -67,31 +71,16 @@ namespace MediaPortal.GUI.Library
       WINDOW_MUSIC = 5,
       WINDOW_VIDEOS = 6,
       WINDOW_SYSTEM_INFORMATION = 7,
-      WINDOW_SETTINGS_GENERAL = 8,
       WINDOW_SETTINGS_SCREEN = 9,
       WINDOW_UI_CALIBRATION = 10,
       WINDOW_MOVIE_CALIBRATION = 11,
       WINDOW_SETTINGS_SLIDESHOW = 12,
-      WINDOW_SETTINGS_FILTER = 13,
       WINDOW_SETTINGS_MUSIC = 14,
-      WINDOW_SETTINGS_SUBTITLES = 15,
-      WINDOW_SETTINGS_SCREENSAVER = 16,
-      WINDOW_WEATHER_SETTINGS = 17,
-      WINDOW_SETTINGS_OSD = 18,
       WINDOW_SCRIPTS = 20,
-      WINDOW_VIDEO_GENRE = 21,
-      WINDOW_VIDEO_ACTOR = 22,
-      WINDOW_VIDEO_YEAR = 23,
-      WINDOW_SETTINGS_PROGRAMS = 24,
       WINDOW_VIDEO_TITLE = 25,
-      WINDOW_SETTINGS_CACHE = 26,
-      WINDOW_SETTINGS_AUTORUN = 27,
       WINDOW_VIDEO_PLAYLIST = 28,
-      WINDOW_SETTINGS_LCD = 29,
       WINDOW_RADIO = 30,
       WINDOW_SETTINGS_GUI = 31,
-      WINDOW_MSN = 32,
-      WINDOW_MSN_CHAT = 33,
       WINDOW_MYPLUGINS = 34,
       WINDOW_SECOND_HOME = 35,
       WINDOW_DIALOG_YES_NO = 100,
@@ -99,58 +88,20 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_PLAY_STOP = 102,
       WINDOW_MUSIC_PLAYLIST = 500,
       WINDOW_MUSIC_FILES = 501,
-      WINDOW_MUSIC_ALBUM = 502,
-      WINDOW_MUSIC_ARTIST = 503,
       WINDOW_MUSIC_GENRE = 504,
-      WINDOW_MUSIC_TOP100 = 505,
-      WINDOW_MUSIC_FAVORITES = 506,
-      WINDOW_MUSIC_YEARS = 507,
       WINDOW_MUSIC_COVERART_GRABBER_RESULTS = 508,
       WINDOW_MUSIC_COVERART_GRABBER_PROGRESS = 509,
       WINDOW_MUSIC_PLAYING_NOW = 510,
       WINDOW_FULLSCREEN_MUSIC = 511, //SV Added by SteveV 2006-09-07
+      WINDOW_DIALOG_LASTFM = 512,
       WINDOW_TVGUIDE = 600,
       WINDOW_SCHEDULER = 601,
       WINDOW_TVFULLSCREEN = 602,
       WINDOW_RECORDEDTV = 603,
       WINDOW_SEARCHTV = 604,
-      WINDOW_RECORDEDTVGENRE = 605,
-      WINDOW_RECORDEDTVCHANNEL = 606,
       WINDOW_TV_SCHEDULER_PRIORITIES = 607,
       WINDOW_TV_CONFLICTS = 608,
-      WINDOW_TV_COMPRESS_MAIN = 609,
-      WINDOW_TV_COMPRESS_SETTINGS = 610,
-      WINDOW_TV_COMPRESS_AUTO = 611,
-      WINDOW_TV_COMPRESS_COMPRESS = 612,
-      WINDOW_TV_COMPRESS_COMPRESS_STATUS = 613,
       WINDOW_VIDEO_ARTIST_INFO = 614,
-      WINDOW_WIZARD_WELCOME = 615,
-      WINDOW_WIZARD_WELCOME_TVE2 = 711,
-      WINDOW_WIZARD_CARDS_DETECTED = 616,
-      WINDOW_WIZARD_DVBT_COUNTRY = 617,
-      WINDOW_WIZARD_DVBT_SCAN = 618,
-      WINDOW_WIZARD_DVBC_COUNTRY = 619,
-      WINDOW_WIZARD_DVBC_SCAN = 620,
-      WINDOW_WIZARD_DVBS_SELECT_LNB = 621,
-      WINDOW_WIZARD_DVBS_SELECT_DETAILS = 622,
-      WINDOW_WIZARD_DVBS_SELECT_TRANSPONDER = 623,
-      WINDOW_WIZARD_DVBS_SCAN = 624,
-      WINDOW_WIZARD_ATSC_SCAN = 625,
-      WINDOW_WIZARD_ANALOG_COUNTRY = 626,
-      WINDOW_WIZARD_ANALOG_CITY = 627,
-      WINDOW_WIZARD_ANALOG_IMPORTED = 628,
-      WINDOW_WIZARD_ANALOG_MANUAL_TUNE = 629,
-      WINDOW_WIZARD_ANALOG_TUNE = 630,
-      WINDOW_WIZARD_ANALOG_RENAME = 631,
-      WINDOW_WIZARD_ANALOG_SCAN_RADIO = 632,
-      WINDOW_WIZARD_ANALOG_RENAME_RADIO = 633,
-      WINDOW_WIZARD_REMOTE = 634,
-      WINDOW_WIZARD_EPG_SELECT = 635,
-      WINDOW_WIZARD_GENERAL = 636,
-      WINDOW_WIZARD_FINISHED = 699,
-      WINDOW_WIZARD_FINISHED_TVE2 = 710,
-      WINDOW_SETTINGS_TVE2 = 712,
-      WINDOW_SETTINGS_TV_TVE2 = 713,
       WINDOW_SETTINGS_TV = 700,
       WINDOW_SETTINGS_RECORDINGS = 701,
       WINDOW_SETTINGS_SORT_CHANNELS = 702,
@@ -158,26 +109,18 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_DVD = 704,
       WINDOW_SETTINGS_SKIN = 705,
       WINDOW_SETTINGS_TV_EPG = 706,
-      WINDOW_SETTINGS_TV_EPG_MAPPING = 707,
       WINDOW_SETTINGS_SKIPSTEPS = 708, // by rtv
       WINDOW_SETTINGS_TVENGINE = 709,
       WINDOW_TV_SEARCH = 747,
       WINDOW_TV_SEARCHTYPE = 746,
       WINDOW_TV_PROGRAM_INFO = 748,
       WINDOW_TV_NO_SIGNAL = 749,
-      WINDOW_MY_RECIPIES = 750,
-      WINDOW_STATUS = 755,
-      WINDOW_STATUS_DETAILS = 756,
-      WINDOW_STATUS_PREFS = 757,
       WINDOW_DIALOG_FILE = 758,
       WINDOW_TV_RECORDED_INFO = 759,
-      WINDOW_MY_BURNER = 760,
       WINDOW_DIALOG_TVGUIDE = 761,
       WINDOW_RADIO_GUIDE = 762,
-      WINDOW_EXTENSIONS = 800,
+      WINDOW_RECORDEDRADIO = 763,
       WINDOW_VIRTUAL_KEYBOARD = 1002,
-      WINDOW_VIRTUAL_WEB_KEYBOARD = 1003, // by Devo
-      WINDOW_VIRTUAL_SMS_KEYBOARD = 1004,
       WINDOW_DIALOG_SELECT = 2000,
       WINDOW_MUSIC_INFO = 2001,
       WINDOW_DIALOG_OK = 2002,
@@ -197,45 +140,40 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_NOTIFY = 2016,
       WINDOW_DIALOG_TVCONFLICT = 2017,
       WINDOW_DIALOG_CIMENU = 2018,
+      WINDOW_DIALOG_TVNOTIFYYESNO = 2019,
+      WINDOW_DIALOG_OLD_SKIN = 2020,
+      WINDOW_DIALOG_INCOMPATIBLE_PLUGINS = 2021,
       WINDOW_WEATHER = 2600,
       WINDOW_SCREENSAVER = 2900,
       WINDOW_OSD = 2901,
-      WINDOW_MSNOSD = 2902,
-      WINDOW_VIDEO_EDITOR = 2959,
-      WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS = 2960,
       WINDOW_VIDEO_OVERLAY = 3000,
       WINDOW_DVD = 3001, // for keymapping
       WINDOW_TV_OVERLAY = 3002,
       WINDOW_TVOSD = 3003,
-      //WINDOW_TOPBARHOME = 3004,
       WINDOW_TOPBAR = 3005,
-      WINDOW_TVMSNOSD = 3006,
       WINDOW_TVZAPOSD = 3007,
       WINDOW_VIDEO_OVERLAY_TOP = 3008,
       WINDOW_MINI_GUIDE = 3009,
-      WINDOW_ACTIONMENU = 3010,
       WINDOW_TV_CROP_SETTINGS = 3011,
       WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
-      WINDOW_WEBBROWSER = 5500,
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
       WINDOW_TELETEXT = 7700,
       WINDOW_FULLSCREEN_TELETEXT = 7701,
-      WINDOW_CARTOONS = 7800,
       WINDOW_DIALOG_TEXT = 7900,
-      WINDOW_SUNCLOCK = 8000,
-      WINDOW_TRAILERS = 5900,
       WINDOW_TETRIS = 7776,
       WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
+      WINDOW_SEARCH_RADIO = 8900 // gemx
 
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
 
-      // IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
-      // ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
-      // (Windows that may not be jumped to directly via InputMapper)
+      /// IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
+      /// if window may not be jumped to directly via InputMapper,
+      /// add it to blacklist in InputMappingForm!!!
+      /// (windows with DIALOG in the enum name are blacklisted automatically)
     }
 
     #endregion
@@ -263,7 +201,9 @@ namespace MediaPortal.GUI.Library
     protected string _windowXmlFileName = "";
     protected bool _isOverlayAllowed = true;
     protected int _isOverlayAllowedCondition = 0;
+    protected int _isOverlayAllowedOriginalCondition = GUIInfoManager.SYSTEM_ALWAYS_TRUE;
     private Object instance;
+    protected string _loadParameter = null;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -277,10 +217,11 @@ namespace MediaPortal.GUI.Library
     private bool _windowAllocated;
     private bool _hasRendered = false;
     private bool _windowLoaded = false;
+    private static bool _hasWindowVisibilityUpdated;
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
-    
+
     #endregion
 
     #region ctor
@@ -288,7 +229,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (emtpy) constructur of the GUIWindow
     /// </summary>
-    public GUIWindow() { }
+    public GUIWindow() {}
 
     /// <summary>
     /// Constructor
@@ -315,6 +256,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Clear()
     {
+      GUIExpressionManager.ClearExpressionCache();
       GUIControlFactory.ClearReferences();
     }
 
@@ -398,7 +340,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         foreach (GUIControl control in Children)
-        {          
+        {
           control.OnDeInit();
         }
       }
@@ -422,7 +364,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public void ClearAll()
     {
-      Dispose();      
+      Dispose();
       Children.Clear();
     }
 
@@ -437,6 +379,31 @@ namespace MediaPortal.GUI.Library
       {
         control.ReStorePosition();
       }
+    }
+
+    /// <summary>
+    /// Restores window overlay status to default value from skin condition
+    /// </summary>
+    public void UpdateOverlay()
+    {
+      UpdateOverlayAllowed(true);
+    }
+
+    public bool InWindow(int x, int y)
+    {
+      for (int i = 0; i < controlList.Count; ++i)
+      {
+        GUIControl control = (GUIControl)controlList[i];
+        int controlID;
+        if (control.IsVisible)
+        {
+          if (control.InControl(x, y, out controlID))
+          {
+            return true;
+          }
+        }
+      }
+      return false;
     }
 
     #endregion
@@ -469,7 +436,6 @@ namespace MediaPortal.GUI.Library
       return LoadSkin();
     }
 
-
     /// <summary>
     /// Loads the xml file for the window.
     /// </summary>
@@ -487,6 +453,7 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
+
       _showAnimation.Reset();
       _closeAnimation.Reset();
 
@@ -498,11 +465,6 @@ namespace MediaPortal.GUI.Library
       string strReferenceFile = GUIGraphicsContext.Skin + @"\references.xml";
       GUIControlFactory.LoadReferences(strReferenceFile);
 
-      if (!File.Exists(_windowXmlFileName))
-      {
-        Log.Error("SKIN: Missing {0}", _windowXmlFileName);
-        return false;
-      }
       try
       {
         // Load the XML file
@@ -602,10 +564,14 @@ namespace MediaPortal.GUI.Library
             {
               _isOverlayAllowedCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
             }
+            if (!string.IsNullOrEmpty(allowed.Trim()))
+            {
+              _isOverlayAllowedOriginalCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
+            }
           }
         }
 
-        IDictionary defines = LoadDefines(doc);
+        IDictionary<string, string> defines = LoadDefines(doc);
 
         // Configure the autohide setting
         XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
@@ -658,11 +624,6 @@ namespace MediaPortal.GUI.Library
 
         foreach (XmlNode node in nodeList)
         {
-          if (node.Name == null)
-          {
-            continue;
-          }
-
           switch (node.Name)
           {
             case "control":
@@ -685,6 +646,11 @@ namespace MediaPortal.GUI.Library
         _isSkinLoaded = true;
         return true;
       }
+      catch (FileNotFoundException e)
+      {
+        Log.Error("SKIN: Missing {0}", e.FileName);
+        return false;
+      }
       catch (Exception ex)
       {
         Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
@@ -698,7 +664,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="node">XmlNode describing the control</param>
     /// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
-    protected void LoadControl(XmlNode node, IDictionary defines)
+    protected void LoadControl(XmlNode node, IDictionary<string, string> defines)
     {
       if (node == null || Children == null)
       {
@@ -729,16 +695,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private bool LoadInclude(XmlNode node, IDictionary defines)
+    private bool LoadInclude(XmlNode node, IDictionary<string, string> defines)
     {
       if (node == null || Children == null)
       {
-        return false;
-      }
-
-      if (File.Exists(_windowXmlFileName) == false)
-      {
-        Log.Error("SKIN: Missing {0}", _windowXmlFileName);
         return false;
       }
 
@@ -765,6 +725,11 @@ namespace MediaPortal.GUI.Library
 
         return true;
       }
+      catch (FileNotFoundException e)
+      {
+        Log.Error("SKIN: Missing {0}", e.FileName);
+        return false;
+      }
       catch (Exception e)
       {
         Log.Error("GUIWIndow.LoadInclude: {0}", e.Message);
@@ -773,9 +738,9 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    private IDictionary LoadDefines(XmlDocument document)
+    private IDictionary<string, string> LoadDefines(XmlDocument document)
     {
-      Hashtable table = new Hashtable();
+      IDictionary<string, string> table = new Dictionary<string, string>();
 
       try
       {
@@ -809,7 +774,7 @@ namespace MediaPortal.GUI.Library
     /// It gives the window the oppertunity to allocate any (directx) resources
     /// it may need
     /// </summary>
-    public virtual void PreInit() { }
+    public virtual void PreInit() {}
 
     /// <summary>
     /// Restores all the (x,y) positions of the XML file to their original values
@@ -834,12 +799,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     ///  Gets called when DirectX device has been restored. 
     /// </summary>
-    public virtual void OnDeviceRestored() { }
+    public virtual void OnDeviceRestored() {}
 
     /// <summary>
     /// Gets called when DirectX device has been lost. Any texture/font is now invalid
     /// </summary>
-    public virtual void OnDeviceLost() { }
+    public virtual void OnDeviceLost() {}
 
     /// <summary>
     /// Returns whether the music/video/tv overlay is allowed on this screen
@@ -870,7 +835,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public virtual void Process() { }
+    public virtual void Process() {}
 
     public virtual void SetObject(object obj)
     {
@@ -879,12 +844,21 @@ namespace MediaPortal.GUI.Library
 
     private void UpdateOverlayAllowed()
     {
-      if (_isOverlayAllowedCondition == 0)
+      UpdateOverlayAllowed(false);
+    }
+
+    private void UpdateOverlayAllowed(bool useOriginal)
+    {
+      int overlayCondition = useOriginal ? _isOverlayAllowedOriginalCondition : _isOverlayAllowedCondition;
+
+      if (overlayCondition == 0)
       {
         return;
       }
+
       bool bWasAllowed = GUIGraphicsContext.Overlay;
-      _isOverlayAllowed = GUIInfoManager.GetBool(_isOverlayAllowedCondition, GetID);
+      _isOverlayAllowed = GUIInfoManager.GetBool(overlayCondition, GetID);
+
       if (bWasAllowed != _isOverlayAllowed)
       {
         GUIGraphicsContext.Overlay = _isOverlayAllowed;
@@ -907,7 +881,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     private void SetControlVisibility()
     {
       // reset our info manager caches
@@ -921,7 +894,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void PreLoadPage() { }
+    protected virtual void PreLoadPage() {}
 
     protected virtual void OnPageLoad()
     {
@@ -1003,18 +976,18 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void OnShowContextMenu() { }
+    protected virtual void OnShowContextMenu() {}
 
     protected virtual void OnPreviousWindow()
     {
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    protected virtual void OnClicked(int controlId, GUIControl control, Action.ActionType actionType) { }
+    protected virtual void OnClicked(int controlId, GUIControl control, Action.ActionType actionType) {}
 
-    protected virtual void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType) { }
+    protected virtual void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType) {}
 
-    protected virtual void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType) { }
+    protected virtual void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType) {}
 
     /// <summary>
     /// Returns whether the user can goto full screen video,tv,visualisation from this window
@@ -1041,7 +1014,7 @@ namespace MediaPortal.GUI.Library
     /// Every window window should override this method and cleanup any resources
     /// </summary>
     /// <returns></returns>
-    public virtual void DeInit() { }
+    public virtual void DeInit() {}
 
     /// <summary>
     /// Gets called by the runtime just before the window gets shown. It
@@ -1059,13 +1032,13 @@ namespace MediaPortal.GUI.Library
 
         Dispose();
         LoadSkin();
-        List<int> faultyControl = new List<int>();
+        HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
         for (int i = 0; i < Children.Count; i++)
         {
           try
           {
-            ((GUIControl)(Children[i])).PreAllocResources();
+            Children[i].PreAllocResources();
           }
           catch (Exception ex1)
           {
@@ -1081,7 +1054,7 @@ namespace MediaPortal.GUI.Library
           {
             if (!faultyControl.Contains(i))
             {
-              ((GUIControl)(Children[i])).AllocResources();
+              Children[i].AllocResources();
             }
             else
             {
@@ -1111,7 +1084,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         // tell every control to free its resources
-        Children.DisposeAndClearList();        
+        Children.DisposeAndClearCollection();
         _listPositions.DisposeAndClear();
       }
       catch (Exception ex)
@@ -1168,10 +1141,10 @@ namespace MediaPortal.GUI.Library
                                                        | BindingFlags.Public);
       foreach (FieldInfo field in allFields)
       {
-        if (field.IsDefined(typeof(SkinControlAttribute), false))
+        if (field.IsDefined(typeof (SkinControlAttribute), false))
         {
           SkinControlAttribute atrb =
-            (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
+            (SkinControlAttribute)field.GetCustomAttributes(typeof (SkinControlAttribute), false)[0];
 
           GUIControl control = GetControl(atrb.ID);
           if (control != null)
@@ -1182,9 +1155,18 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.Error("GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID, ex.Message, ex.StackTrace,
+              Log.Error("GUIWindow:OnWindowLoaded '{0}' control id:{1} ex:{2} {3} {4}",
+                        _windowXmlFileName,
+                        atrb.ID,
+                        ex.Message,
+                        ex.StackTrace,
                         this.ToString());
             }
+          }
+          else
+          {
+            Log.Warn("GUIWindow:OnWindowLoaded: '{0}' is missing control id {1} (window property: {2})",
+                     _windowXmlFileName, atrb.ID, field.Name);
           }
         }
       }
@@ -1198,16 +1180,18 @@ namespace MediaPortal.GUI.Library
     /// <returns>GUIControl or null if control is not found</returns>
     public virtual GUIControl GetControl(int iControlId)
     {
-      for (int x = 0; x < Children.Count; x++)
-      {
-        GUIControl cntl = (GUIControl)Children[x];
-        GUIControl cntlFound = cntl.GetControlById(iControlId);
-        if (cntlFound != null)
-        {
-          return cntlFound;
-        }
-      }
-      return null;
+      // this is a very hot method, called millions of times and all the virtual property calls costs
+      return Children.GetControlById(iControlId);
+      //for (int x = 0; x < Children.Count; x++)
+      //{
+      //    GUIControl cntl = Children[x];
+      //    GUIControl cntlFound = cntl.GetControlById(iControlId);
+      //    if (cntlFound != null)
+      //    {
+      //        return cntlFound;
+      //    }
+      //}
+      //return null;
     }
 
     /// <summary>
@@ -1230,7 +1214,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          ((GUIControl)Children[x]).UpdateVisibility();
+          Children[x].UpdateVisibility();
         }
       }
     }
@@ -1255,9 +1239,10 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (((GUIControl)Children[x]).Focus)
+          var guicontrol = Children[x];
+          if (guicontrol.Focus)
           {
-            return ((GUIControl)Children[x]).GetID;
+            return guicontrol.GetID;
           }
         }
       }
@@ -1293,7 +1278,7 @@ namespace MediaPortal.GUI.Library
       }
       _shouldRestore = false;
 
-      Dispose();            
+      Dispose();
       Load(_windowXmlFileName);
       //LoadSkin();
       AllocResources();
@@ -1315,21 +1300,12 @@ namespace MediaPortal.GUI.Library
         {
           if (!_isSkinLoaded)
           {
-            if (GUIGraphicsContext.IsFullScreenVideo)
+            if (GUIGraphicsContext.IsFullScreenVideo ||
+                GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO ||
+                GetID == (int)Window.WINDOW_TVFULLSCREEN ||
+                GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
             {
               return;
-            }
-            if (GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO)
-            {
-              return;
-            }
-            if (GetID == (int)Window.WINDOW_TVFULLSCREEN)
-            {
-              return;
-            }
-            if (GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
-            {
-              return; //SV Added by SteveV 2006-09-07
             }
 
             // Print an error message
@@ -1357,6 +1333,7 @@ namespace MediaPortal.GUI.Library
           }
 
           UpdateOverlayAllowed();
+          _hasWindowVisibilityUpdated = true;
           foreach (GUIControl control in Children)
           {
             control.UpdateVisibility();
@@ -1537,7 +1514,7 @@ namespace MediaPortal.GUI.Library
               }
               break;
 
-            // Initialize the window.
+              // Initialize the window.
 
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 
@@ -1555,6 +1532,7 @@ namespace MediaPortal.GUI.Library
               GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
               GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
               GUIPropertyManager.SetProperty("#selectedindex", string.Empty);
+              GUIPropertyManager.SetProperty("#facadeview.layout", string.Empty);
               if (_shouldRestore)
               {
                 DoRestoreSkin();
@@ -1566,7 +1544,6 @@ namespace MediaPortal.GUI.Library
               }
 
               InitControls();
-
               UpdateOverlayAllowed();
               GUIGraphicsContext.Overlay = _isOverlayAllowed;
 
@@ -1603,6 +1580,16 @@ namespace MediaPortal.GUI.Library
               Log.Debug("Window: {0} init", this.ToString());
 
               _hasRendered = false;
+
+              if (message.Object != null && message.Object.GetType() == typeof (string))
+              {
+                _loadParameter = (string)message.Object;
+              }
+              else
+              {
+                _loadParameter = null;
+              }
+
               OnPageLoad();
 
               TemporaryAnimationTrigger();
@@ -1613,9 +1600,9 @@ namespace MediaPortal.GUI.Library
                 _previousFocusedControlId = id;
               }
               return true;
-            // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
+              // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
-            // Cleanup and free resources
+              // Cleanup and free resources
             case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
               {
                 OnPageDestroy(message.Param1);
@@ -1624,16 +1611,13 @@ namespace MediaPortal.GUI.Library
                 DeInitControls();
                 Dispose();
                 GUITextureManager.CleanupThumbs();
-                //GC.Collect();
-                //GC.Collect();
-                //GC.Collect();
                 //long lTotalMemory = GC.GetTotalMemory(true);
                 //Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
                 _shouldRestore = true;
                 return true;
               }
 
-            // Set the focus on the correct control
+              // Set the focus on the correct control
             case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
               {
                 if (GetFocusControlId() == message.TargetControlId)
@@ -1759,7 +1743,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      foreach (UIElement element in _children)
+      foreach (var element in _children)
       {
         if (element is GUIAnimation)
         {
@@ -1770,7 +1754,7 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
-    public UIElementCollection controlList
+    public GUIControlCollection controlList
     {
       get { return this.Children; }
     }
@@ -1790,7 +1774,7 @@ namespace MediaPortal.GUI.Library
       get { return false; }
     }
 
-    public virtual void OnAdded() { }
+    public virtual void OnAdded() {}
 
     public virtual string GetModuleName()
     {
@@ -1814,7 +1798,7 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
-    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState) { }
+    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState) {}
 
     private bool HasAnimation(AnimationType animType)
     {
@@ -1937,13 +1921,13 @@ namespace MediaPortal.GUI.Library
 
     #region Properties
 
-    public UIElementCollection Children
+    public GUIControlCollection Children
     {
       get
       {
         if (_children == null)
         {
-          _children = new UIElementCollection();
+          _children = new GUIControlCollection();
         }
         return _children;
       }
@@ -1966,13 +1950,23 @@ namespace MediaPortal.GUI.Library
       get { return _windowLoaded; }
     }
 
+    public static bool HasWindowVisibilityUpdated
+    {
+      get { return _hasWindowVisibilityUpdated; }
+      set { _hasWindowVisibilityUpdated = value; }
+    }
+
     #endregion Properties
 
     #region Fields
 
-    private UIElementCollection _children;
+    private GUIControlCollection _children;
     private StoryboardCollection _storyboards;
 
     #endregion Fields
+
+    public void BeginInit() {}
+
+    public void EndInit() {}
   }
 }

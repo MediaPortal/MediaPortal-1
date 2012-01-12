@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Rss;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.RSS
 {
@@ -309,7 +310,7 @@ namespace MediaPortal.GUI.RSS
           msg.Param3 = 0;
           msg.Label3 = m_strSiteURL;
           GUIWindowManager.SendMessage(msg);
-        Log.Error(e);
+          Log.Error(e);
         }
       }
     }
@@ -469,7 +470,7 @@ namespace MediaPortal.GUI.RSS
           {
             //m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
             m_strSiteIcon = Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
-            if (!File.Exists(m_strSiteIcon))
+            if (!Util.Utils.FileExistsInCache(m_strSiteIcon))
             {
               string strExtension;
               strExtension = Path.GetExtension(strImage);
@@ -483,7 +484,7 @@ namespace MediaPortal.GUI.RSS
                 Util.Utils.DownLoadImage(strImage, strTemp);
                 //MediaPortal.Util.Utils.DownLoadAndCacheImage(strImage, strTemp);
 
-                if (File.Exists(strTemp))
+                if (Util.Utils.FileExistsInCache(strTemp))
                 {
                   Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, (int)Thumbs.ThumbResolution,
                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
@@ -645,31 +646,31 @@ namespace MediaPortal.GUI.RSS
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}        
+        catch (Exception) {}
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         try
-        {                  
-        using (Stream stream = response.GetResponseStream())
         {
-          Encoding enc;
-          try
+          using (Stream stream = response.GetResponseStream())
           {
-            enc = Encoding.GetEncoding(response.ContentEncoding);
+            Encoding enc;
+            try
+            {
+              enc = Encoding.GetEncoding(response.ContentEncoding);
+            }
+            catch
+            {
+              // Using Default Encoding
+              enc = Encoding.GetEncoding(m_strSiteEncoding);
+            }
+            using (StreamReader r = new StreamReader(stream, enc))
+            {
+              data = r.ReadToEnd();
+            }
           }
-          catch
-          {
-            // Using Default Encoding
-            enc = Encoding.GetEncoding(m_strSiteEncoding);
-          }
-          using (StreamReader r = new StreamReader(stream, enc))
-          {
-            data = r.ReadToEnd();
-          }
-        }
-        // Convert html to text
-        HtmlToText html = new HtmlToText(data);
-        text = html.ToString().Trim();
+          // Convert html to text
+          HtmlToText html = new HtmlToText(data);
+          text = html.ToString().Trim();
         }
         finally
         {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -82,10 +82,23 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
 
-        AddMpeg2DemuxerToGraph();
-        AddStreamSourceFilter(_defaultUrl);
-        ConnectMpeg2DemuxToInfTee();
+        _infTeeMain = (IBaseFilter)new InfTee();
+        int hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
+        if (hr != 0)
+        {
+          Log.Log.Error("dvbip:Add main InfTee returns:0x{0:X}", hr);
+          throw new TvException("Unable to add  mainInfTee");
+        }
+
         AddTsWriterFilterToGraph();
+        AddStreamSourceFilter(_defaultUrl);
+        IBaseFilter lastFilter = _filterStreamSource;
+        AddMdPlugs(ref lastFilter);
+        if (!ConnectTsWriter(lastFilter))
+        {
+          throw new TvExceptionGraphBuildingFailed("Graph building failed");
+        }
+
         _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, null, this);
         _graphState = GraphState.Created;
       }
@@ -125,7 +138,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="channel">channel</param>
     /// <returns>true if DVBIPChannel</returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if ((channel as DVBIPChannel) == null) return false;
       return true;
@@ -134,7 +147,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// ScanningInterface
     /// </summary>
-    public ITVScanning ScanningInterface
+    public override ITVScanning ScanningInterface
     {
       get
       {
@@ -144,12 +157,34 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      return DoTune(subChannelId, channel, true);
+    }
+
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    {
+      return DoTune(subChannelId, channel, false);
+    }
+
+    /// <summary>
     /// Tune to channel
     /// </summary>
     /// <param name="subChannelId"></param>
     /// <param name="channel"></param>
     /// <returns></returns>
-    public ITvSubChannel Tune(int subChannelId, IChannel channel)
+    private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
     {
       Log.Log.WriteFile("dvbip:  Tune:{0}", channel);
       ITvSubChannel ch = null;
@@ -214,7 +249,19 @@ namespace TvLibrary.Implementations.DVB
         ch = _mapSubChannels[subChannelId];
         Log.Log.Info("dvbip: tune: Running graph for channel {0}", ch.ToString());
         Log.Log.Info("dvbip: tune: SubChannel {0}", ch.SubChannelId);
-        RunGraph(ch.SubChannelId, dvbipChannel.Url);
+
+        try
+        {
+          RunGraph(ch.SubChannelId, dvbipChannel.Url);
+        }
+        catch (TvExceptionNoPMT)
+        {
+          if (!ignorePMT)
+          {
+            throw;
+          }
+        }
+
         Log.Log.Info("dvbip: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
@@ -222,8 +269,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (ch != null)
         {
-          FreeSubChannel(ch.SubChannelId);  
-        }        
+          FreeSubChannel(ch.SubChannelId);
+        }
         Log.Log.Write(ex);
         throw;
       }
@@ -243,6 +290,14 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("_filterStreamSource filter", _filterStreamSource);
         _filterStreamSource = null;
       }
+    }
+
+    /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    public override bool SupportsPauseGraph
+    {
+      get { return false; }
     }
 
     /// <summary>
@@ -324,6 +379,16 @@ namespace TvLibrary.Implementations.DVB
         }
         return base.DevicePath + "(" + _sequence + ")";
       }
+    }
+
+    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
+    {
+      DVBIPChannel channel = new DVBIPChannel();
+      channel.NetworkId = networkid;
+      channel.TransportId = transportid;
+      channel.ServiceId = serviceid;
+      channel.Name = name;
+      return channel;
     }
   }
 }

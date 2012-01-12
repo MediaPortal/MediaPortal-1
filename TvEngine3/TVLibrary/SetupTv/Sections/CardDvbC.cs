@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -180,7 +180,7 @@ namespace SetupTv.Sections
     {
       if (_dvbcChannels.Count != 0)
       {
-        String filePath = String.Format(@"{0}\TuningParameters\dvbc\Manual_Scans.{1}.xml", Log.GetPathName(),
+        String filePath = String.Format(@"{0}\TuningParameters\dvbc\Manual_Scans.{1}.xml", PathManager.GetDataPath,
                                         DateTime.Now.ToString("yyyy-MM-dd"));
         SaveList(filePath);
         PersistState();
@@ -331,20 +331,20 @@ namespace SetupTv.Sections
           Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
           if (card.Enabled == false)
           {
-            MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+            MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
             return;
           }
           if (!RemoteControl.Instance.CardPresent(card.IdCard))
           {
-            MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+            MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
             return;
           }
           // Check if the card is locked for scanning.
-          User user;
+          IUser user;
           if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
           {
             MessageBox.Show(this,
-                            "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+                            "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
             return;
           }
           SetButtonState();
@@ -451,7 +451,7 @@ namespace SetupTv.Sections
     {
       suminfo tv = new suminfo();
       suminfo radio = new suminfo();
-      User user = new User();
+      IUser user = new User();
       user.CardId = _cardNumber;
       try
       {
@@ -485,7 +485,7 @@ namespace SetupTv.Sections
 
           if (index == 0)
           {
-            RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
+            RemoteControl.Instance.Scan(ref user, tuneChannel, -1);
           }
 
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
@@ -516,30 +516,45 @@ namespace SetupTv.Sections
           {
             Channel dbChannel;
             DVBCChannel channel = (DVBCChannel)channels[i];
-            //TuningDetail currentDetail = layer.GetChannel(channel);
-            TuningDetail currentDetail = layer.GetChannel(channel.Provider, channel.Name, channel.ServiceId);
             bool exists;
+            TuningDetail currentDetail;
+            //Check if we already have this tuningdetail. The user has the option to enable channel move detection...
+            if (checkBoxEnableChannelMoveDetection.Checked)
+            {
+              //According to the DVB specs ONID + SID is unique, therefore we do not need to use the TSID to identify a service.
+              //The DVB spec recommends that the SID should not change if a service moves. This theoretically allows us to
+              //track channel movements.
+              currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
+                                                                 TvBusinessLayer.GetChannelType(channel));
+            }
+            else
+            {
+              //There are certain providers that do not maintain unique ONID + SID combinations.
+              //In those cases, ONID + TSID + SID is generally unique. The consequence of using the TSID to identify
+              //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).
+              currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId,
+                                                                 TvBusinessLayer.GetChannelType(channel));
+            }
+
             if (currentDetail == null)
             {
               //add new channel
               exists = false;
-              dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+              dbChannel = layer.AddNewChannel(channel.Name);
               dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
                 dbChannel.SortOrder = channel.LogicalChannelNumber;
               }
+              dbChannel.IsTv = channel.IsTv;
+              dbChannel.IsRadio = channel.IsRadio;
+              dbChannel.Persist();
             }
             else
             {
               exists = true;
               dbChannel = currentDetail.ReferencedChannel();
             }
-
-            dbChannel.IsTv = channel.IsTv;
-            dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.FreeToAir = channel.FreeToAir;
-            dbChannel.Persist();
 
             if (dbChannel.IsTv)
             {
@@ -695,12 +710,18 @@ namespace SetupTv.Sections
       {
         mpGrpAdvancedTuning.Visible = false;
         mpGrpScanProgress.Visible = true;
+        checkBoxCreateGroups.Enabled = false;
+        checkBoxCreateSignalGroup.Enabled = false;
+        checkBoxEnableChannelMoveDetection.Enabled = false;
         checkBoxAdvancedTuning.Enabled = false;
       }
       else
       {
         mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked && !_isScanning;
         mpGrpScanProgress.Visible = _isScanning;
+        checkBoxCreateGroups.Enabled = !_isScanning;
+        checkBoxCreateSignalGroup.Enabled = !_isScanning;
+        checkBoxEnableChannelMoveDetection.Enabled = !_isScanning;
         checkBoxAdvancedTuning.Enabled = !_isScanning;
       }
 

@@ -35,7 +35,7 @@ namespace SetupTv.Sections
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewStatus = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.checkBoxQAM = new System.Windows.Forms.CheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxFrequencies = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -45,54 +45,53 @@ namespace SetupTv.Sections
       // 
       this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarQuality.Location = new System.Drawing.Point(111, 127);
+      this.progressBarQuality.Location = new System.Drawing.Point(111, 138);
       this.progressBarQuality.Name = "progressBarQuality";
-      this.progressBarQuality.Size = new System.Drawing.Size(328, 10);
-      this.progressBarQuality.TabIndex = 59;
+      this.progressBarQuality.Size = new System.Drawing.Size(332, 10);
+      this.progressBarQuality.TabIndex = 7;
       // 
       // progressBarLevel
       // 
       this.progressBarLevel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBarLevel.Location = new System.Drawing.Point(111, 104);
+      this.progressBarLevel.Location = new System.Drawing.Point(111, 115);
       this.progressBarLevel.Name = "progressBarLevel";
-      this.progressBarLevel.Size = new System.Drawing.Size(328, 10);
-      this.progressBarLevel.TabIndex = 58;
+      this.progressBarLevel.Size = new System.Drawing.Size(332, 10);
+      this.progressBarLevel.TabIndex = 5;
       // 
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(21, 124);
+      this.label2.Location = new System.Drawing.Point(21, 135);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 13);
-      this.label2.TabIndex = 57;
+      this.label2.TabIndex = 6;
       this.label2.Text = "Signal quality:";
       // 
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(21, 101);
+      this.label1.Location = new System.Drawing.Point(21, 112);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 13);
-      this.label1.TabIndex = 56;
+      this.label1.TabIndex = 4;
       this.label1.Text = "Signal level:";
       // 
       // progressBar1
       // 
       this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(24, 177);
+      this.progressBar1.Location = new System.Drawing.Point(24, 188);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(417, 10);
-      this.progressBar1.TabIndex = 55;
+      this.progressBar1.Size = new System.Drawing.Size(419, 10);
+      this.progressBar1.TabIndex = 8;
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonScanTv.Location = new System.Drawing.Point(319, 354);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(312, 72);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonScanTv.TabIndex = 50;
+      this.mpButtonScanTv.TabIndex = 3;
       this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click);
@@ -104,10 +103,10 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
-      this.listViewStatus.Location = new System.Drawing.Point(16, 226);
+      this.listViewStatus.Location = new System.Drawing.Point(16, 237);
       this.listViewStatus.Name = "listViewStatus";
       this.listViewStatus.Size = new System.Drawing.Size(427, 122);
-      this.listViewStatus.TabIndex = 69;
+      this.listViewStatus.TabIndex = 9;
       this.listViewStatus.UseCompatibleStateImageBehavior = false;
       this.listViewStatus.View = System.Windows.Forms.View.Details;
       // 
@@ -121,9 +120,9 @@ namespace SetupTv.Sections
       this.checkBoxQAM.AutoSize = true;
       this.checkBoxQAM.Location = new System.Drawing.Point(24, 18);
       this.checkBoxQAM.Name = "checkBoxQAM";
-      this.checkBoxQAM.Size = new System.Drawing.Size(320, 17);
-      this.checkBoxQAM.TabIndex = 70;
-      this.checkBoxQAM.Text = "Tune QAM instead of ATSC (Requires a cable TV connection)";
+      this.checkBoxQAM.Size = new System.Drawing.Size(315, 17);
+      this.checkBoxQAM.TabIndex = 0;
+      this.checkBoxQAM.Text = "Tune QAM instead of ATSC (requires a cable TV connection)";
       this.checkBoxQAM.UseVisualStyleBackColor = true;
       this.checkBoxQAM.CheckedChanged += new System.EventHandler(this.checkBoxQAM_CheckedChanged);
       // 
@@ -133,7 +132,7 @@ namespace SetupTv.Sections
       this.mpLabel1.Location = new System.Drawing.Point(21, 48);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(124, 13);
-      this.mpLabel1.TabIndex = 72;
+      this.mpLabel1.TabIndex = 1;
       this.mpLabel1.Text = "QAM tuning frequencies:";
       // 
       // mpComboBoxFrequencies
@@ -142,8 +141,8 @@ namespace SetupTv.Sections
       this.mpComboBoxFrequencies.FormattingEnabled = true;
       this.mpComboBoxFrequencies.Location = new System.Drawing.Point(166, 45);
       this.mpComboBoxFrequencies.Name = "mpComboBoxFrequencies";
-      this.mpComboBoxFrequencies.Size = new System.Drawing.Size(273, 21);
-      this.mpComboBoxFrequencies.TabIndex = 71;
+      this.mpComboBoxFrequencies.Size = new System.Drawing.Size(277, 21);
+      this.mpComboBoxFrequencies.TabIndex = 2;
       // 
       // CardAtsc
       // 

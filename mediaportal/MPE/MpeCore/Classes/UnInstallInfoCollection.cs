@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,8 +21,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using MediaPortal.Configuration;
-
 
 namespace MpeCore.Classes
 {
@@ -36,8 +34,7 @@ namespace MpeCore.Classes
     public UnInstallInfoCollection(PackageClass pak)
     {
       Items = new List<UnInstallItem>();
-      Version = pak.GeneralInfo.Version;
-      ExtensionId = pak.GeneralInfo.Id;
+      SetInfo(pak);
     }
 
 
@@ -46,12 +43,22 @@ namespace MpeCore.Classes
     public VersionInfo Version { get; set; }
 
     /// <summary>
+    /// Sets version and Id information from the package specified. Used to determine where to save uninstall data
+    /// </summary>
+    /// <param name="pak">Package from which to gather the information</param>
+    public void SetInfo(PackageClass pak)
+    {
+      Version = pak.GeneralInfo.Version;
+      ExtensionId = pak.GeneralInfo.Id;
+    }
+
+    /// <summary>
     /// Gets the location folder were stored the backup and the uninstall informations
     /// </summary>
     /// <value>The location folder.</value>
     public string LocationFolder
     {
-      get { return string.Format("{0}\\V2\\{1}\\{2}\\", Config.GetFolder(Config.Dir.Installer), ExtensionId, Version); }
+      get { return string.Format("{0}\\V2\\{1}\\{2}\\", Util.InstallerConfigDir, ExtensionId, Version); }
     }
 
 
@@ -103,6 +110,8 @@ namespace MpeCore.Classes
     {
       foreach (UnInstallItem item in Items)
       {
+        if (item.OriginalFile == null || item.BackUpFile == null)
+          continue;
         if (item.OriginalFile.CompareTo(fileName) == 0 && File.Exists(item.BackUpFile))
           return true;
       }
@@ -122,8 +131,8 @@ namespace MpeCore.Classes
       using (TextWriter writer = new StreamWriter(fileName))
       {
         serializer.Serialize(writer, this);
-        writer.Close(); 
-      }      
+        writer.Close();
+      }
     }
 
     public UnInstallInfoCollection Load()

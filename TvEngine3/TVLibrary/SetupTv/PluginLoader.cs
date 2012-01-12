@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,12 +23,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using TvEngine;
 using TvLibrary.Log;
+using MediaPortal.Common.Utils;
 
 namespace SetupTv
 {
   public class PluginLoader
   {
     private readonly List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
+    private readonly List<Type> _incompatiblePlugins = new List<Type>();
 
     /// <summary>
     /// returns a list of all plugins loaded.
@@ -40,11 +42,22 @@ namespace SetupTv
     }
 
     /// <summary>
+    /// returns a list of plugins not loaded as incompatible.
+    /// </summary>
+    /// <value>The plugins.</value>
+    public List<Type> IncompatiblePlugins
+    {
+      get { return _incompatiblePlugins; }
+    }
+
+    /// <summary>
     /// Loads all plugins.
     /// </summary>
     public void Load()
     {
       _plugins.Clear();
+      _incompatiblePlugins.Clear();
+
       try
       {
         if (System.IO.Directory.Exists("plugins"))
@@ -91,6 +104,14 @@ namespace SetupTv
                   foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
+                    if (!CompatibilityManager.IsPluginCompatible(t))
+                    {
+                      Log.WriteFile(
+                        "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
+                        t.FullName);
+                      _incompatiblePlugins.Add(t);
+                      continue;
+                    }
                     object newObj = Activator.CreateInstance(t);
                     ITvServerPlugin plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);
@@ -101,6 +122,7 @@ namespace SetupTv
                   Log.WriteFile(
                     "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                     t.FullName);
+                  _incompatiblePlugins.Add(t);
                   continue;
                 }
                 catch (Exception iPluginException)

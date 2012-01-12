@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -130,10 +130,6 @@ namespace MediaPortal.Utils.Web
         }
       }
 
-      // Delay before getting page
-      if (page.Delay > 0)
-        Thread.Sleep(page.Delay);
-
       bool success;
 
       if (page.External)
@@ -177,6 +173,12 @@ namespace MediaPortal.Utils.Web
     /// <returns>true if successful</returns>
     private bool GetExternal(HTTPRequest page)
     {
+      // Delay before getting page
+      // Bugfix: Moved over from LoadPage because it affected GetInternal as well.
+      // GetInternal already get's delayed when calling HTTPTransaction.HTTPGet/Transaction
+      if (page.Delay > 0)
+        Thread.Sleep(page.Delay);
+
       // Use External Browser (IE) to get HTML page
       // IE downloads all linked graphics ads, etc
       // IE will run Javascript source if required to renderthe page

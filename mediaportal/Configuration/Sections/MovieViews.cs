@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,9 +25,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MovieViews : BaseViews
   {
-    private string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
-    private string customVideoViews = Config.GetFile(Config.Dir.Config, "Views.xml");
-
     private string[] selections = new string[]
                                     {
                                       "watched",

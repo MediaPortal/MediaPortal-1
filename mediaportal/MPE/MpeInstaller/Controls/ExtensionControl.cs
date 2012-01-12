@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,7 +41,6 @@ namespace MpeInstaller.Controls
 
     public ExtensionControl(PackageClass packageClass)
     {
-
       _client.DownloadFileCompleted += _client_DownloadFileCompleted;
 
       InitializeComponent();
@@ -75,7 +74,8 @@ namespace MpeInstaller.Controls
         catch (Exception) {}
       }
 
-      btn_screenshot.Enabled = !string.IsNullOrEmpty(packageClass.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value);
+      btn_screenshot.Enabled =
+        !string.IsNullOrEmpty(packageClass.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value);
 
       Package = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass);
       if (Package == null)
@@ -107,7 +107,7 @@ namespace MpeInstaller.Controls
       SetButtonState();
     }
 
-    void _client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+    private void _client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
       try
       {
@@ -117,10 +117,7 @@ namespace MpeInstaller.Controls
           img_logo.LoadAsync(_downloadItem.Destination);
         }
       }
-      catch (Exception)
-      {
-
-      }
+      catch (Exception) {}
     }
 
     private void PopulateInstallBtn()
@@ -138,6 +135,8 @@ namespace MpeInstaller.Controls
           testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
                                                 GraphicsUnit.Point, ((byte)(0)));
         }
+        if (!item.CheckDependency(true))
+          testToolStripMenuItem.ForeColor = Color.Red;
         if (item.GeneralInfo.VersionDescription != null)
           testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription.Length > 1024
                                                 ? item.GeneralInfo.VersionDescription.Substring(0, 1024) + "..."
@@ -181,7 +180,8 @@ namespace MpeInstaller.Controls
         img_update.Visible = true;
         img_update1.Visible = true;
         toolTip1.SetToolTip(img_update, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
-        toolTip1.SetToolTip(img_update1, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
+        toolTip1.SetToolTip(img_update1,
+                            "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
       }
       else
       {
@@ -189,7 +189,6 @@ namespace MpeInstaller.Controls
         img_update.Visible = false;
         img_update1.Visible = false;
       }
-     
     }
 
     private void SelectControl()
@@ -205,7 +204,7 @@ namespace MpeInstaller.Controls
       //Height = _selected ? 123 : 90;
       Height = 23;
       timer1.Enabled = _selected;
-      
+
       if (Parent == null)
         return;
       var parent = Parent.Parent as ExtensionListControl;
@@ -275,6 +274,8 @@ namespace MpeInstaller.Controls
     private void img_dep_Click(object sender, EventArgs e)
     {
       ExtensionControl_Click(null, null);
+      DependencyForm depForm = new DependencyForm(this.Package);
+      depForm.ShowDialog();
     }
 
     private void btn_conf_Click(object sender, EventArgs e)
@@ -325,7 +326,7 @@ namespace MpeInstaller.Controls
         if (Package.GeneralInfo.TagList.Tags.Contains(str.ToLower()))
           strResult = true;
       }
-      if(!string.IsNullOrEmpty(tag))
+      if (!string.IsNullOrEmpty(tag))
       {
         if (Package.GeneralInfo.TagList.Tags.Contains(tag.ToLower()))
           tagResult = true;
@@ -355,6 +356,8 @@ namespace MpeInstaller.Controls
     private void img_dep1_Click(object sender, EventArgs e)
     {
       ExtensionControl_Click(null, null);
+      DependencyForm depForm = new DependencyForm(this.Package);
+      depForm.ShowDialog();
     }
 
     private void img_update1_Click(object sender, EventArgs e)
@@ -362,10 +365,7 @@ namespace MpeInstaller.Controls
       ExtensionControl_Click(null, null);
     }
 
-    private void ExtensionControl_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void ExtensionControl_Load(object sender, EventArgs e) {}
 
     private void chk_ignore_CheckedChanged(object sender, EventArgs e)
     {
@@ -384,7 +384,5 @@ namespace MpeInstaller.Controls
         SetButtonState();
       }
     }
-
-
   }
 }

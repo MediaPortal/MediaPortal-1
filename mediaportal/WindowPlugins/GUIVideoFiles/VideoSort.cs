@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -40,7 +40,9 @@ namespace MediaPortal.GUI.Video
       Year = 3,
       Rating = 4,
       Label = 5,
-      Unwatched = 6
+      Unwatched = 6,
+      Modified = 7,
+      Created = 8
     }
 
     protected SortMethod currentSortMethod;
@@ -175,11 +177,13 @@ namespace MediaPortal.GUI.Video
           {
             if (sortAscending)
             {
-              return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+               long compare = (item1.FileInfo.Length - item2.FileInfo.Length);
+               return compare == 0 ? 0 : compare < 0 ? -1 : 1;
             }
             else
             {
-              return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+              long compare = (item2.FileInfo.Length - item1.FileInfo.Length);
+              return compare == 0 ? 0 : compare < 0 ? -1 : 1;
             }
           }
 
@@ -214,6 +218,71 @@ namespace MediaPortal.GUI.Video
           {
             return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
           }
+
+        case SortMethod.Created:
+
+          if (item1.FileInfo == null)
+          {
+            if (!this.TryGetFileInfo(ref item1))
+            {
+              return -1;
+            }
+          }
+
+          if (item2.FileInfo == null)
+          {
+            if (!this.TryGetFileInfo(ref item2))
+            {
+              return -1;
+            }
+          }
+
+          item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
+                         item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
+                         item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+
+          if (sortAscending)
+          {
+            return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
+          }
+          else
+          {
+            return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
+          }
+
+        case SortMethod.Modified:
+        
+          if (item1.FileInfo == null)
+          {
+            if (!this.TryGetFileInfo(ref item1))
+            {
+              return -1;
+            }
+          }
+
+          if (item2.FileInfo == null)
+          {
+            if (!this.TryGetFileInfo(ref item2))
+            {
+              return -1;
+            }
+          }
+
+          item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
+                           item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
+                           item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          
+          if (sortAscending)
+          {
+            return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+          }
+          else
+          {
+            return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+          }
+        
         case SortMethod.Unwatched:
           {
             int ret = 0;

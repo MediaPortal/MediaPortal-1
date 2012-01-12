@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,45 +19,15 @@
 #endregion
 
 using MediaPortal.GUI.Library;
+using WindowPlugins;
 
 namespace MediaPortal.GUI.Video
 {
-  public class VideoState
+  public class VideoState : StateBase
   {
-    private static int m_iTempPlaylistWindow = 0;
-    private static string m_strTempPlaylistDirectory = "";
-    private static int m_iStartWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
-    private static string view;
-
-    public VideoState()
+    static VideoState()
     {
-      // 
-      // TODO: Add constructor logic here
-      //
-    }
-
-    public static string View
-    {
-      get { return view; }
-      set { view = value; }
-    }
-
-    public static string TempPlaylistDirectory
-    {
-      get { return m_strTempPlaylistDirectory; }
-      set { m_strTempPlaylistDirectory = value; }
-    }
-
-    public static int TempPlaylistWindow
-    {
-      get { return m_iTempPlaylistWindow; }
-      set { m_iTempPlaylistWindow = value; }
-    }
-
-    public static int StartWindow
-    {
-      get { return m_iStartWindow; }
-      set { m_iStartWindow = value; }
+      m_iStartWindow = (int)GUIWindow.Window.WINDOW_VIDEOS;
     }
   }
 }

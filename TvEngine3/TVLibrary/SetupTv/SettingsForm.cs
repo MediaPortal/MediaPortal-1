@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,6 +52,7 @@ namespace SetupTv
     public SetupTvSettingsForm(bool ShowAdvancedSettings)
     {
       showAdvancedSettings = ShowAdvancedSettings;
+      InitializeComponent();
       try
       {
         Init();
@@ -77,7 +78,7 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
@@ -89,7 +90,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         Log.Write(ex);
       }
 
@@ -137,8 +138,8 @@ namespace SetupTv
                   if (localHostname != server.HostName)
                   {
                     DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
-                                                       "Do you want to try the current comupter name ({1}) instead?",
-                                                       server.HostName, localHostname),
+                                                                     "Do you want to try the current comupter name ({1}) instead?",
+                                                                     server.HostName, localHostname),
                                                        "Wrong config detected",
                                                        MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
                     if (dlg == DialogResult.Yes)
@@ -148,6 +149,7 @@ namespace SetupTv
                       server.Persist();
                       RemoteControl.Clear();
                       ServiceHelper.Restart();
+                      ServiceHelper.WaitInitialized();
                     }
                     else
                     {
@@ -160,7 +162,7 @@ namespace SetupTv
                     Log.Error("Cannot connect to server {0}", server.HostName);
                     Log.Write(ex);
                     DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
-                                                       "Please check the TV Server logs for details.\n\n" + 
+                                                       "Please check the TV Server logs for details.\n\n" +
                                                        "Setup will now close.");
                     Environment.Exit(-1);
                   }
@@ -195,6 +197,7 @@ namespace SetupTv
         AddSection(new StreamingServer());
 
         AddSection(new TestService("Manual Control"));
+        AddSection(new TestChannels("Test Channels"));
 
         _pluginLoader.Load();
         pluginsRoot = new Plugins("Plugins", _pluginLoader);
@@ -232,7 +235,6 @@ namespace SetupTv
     {
       foreach (Server server in dbsServers)
       {
-        int cardNo = 1;
         bool isLocal = (server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
                         server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
                         +
@@ -246,47 +248,47 @@ namespace SetupTv
           if (dbsCard.Enabled == true && RemoteControl.Instance.CardPresent(dbsCard.IdCard))
           {
             CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
+            int cardId = dbsCard.IdCard;
             string cardName = dbsCard.Name;
             switch (type)
             {
               case CardType.Analog:
-                cardName = String.Format("{0} Analog {1}", cardNo, cardName);
+                cardName = String.Format("{0} Analog {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbT:
-                cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-T {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbC:
-                cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-C {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbS:
-                cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-S {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.Atsc:
-                cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
+                cardName = String.Format("{0} ATSC {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbIP:
-                cardName = String.Format("{0} DVB-IP {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-IP {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.RadioWebStream:
-                cardName = String.Format("{0} {1}", cardNo, cardName);
+                cardName = String.Format("{0} {1}", cardId, cardName);
                 InfoPage RadioWebStreamInfo = new InfoPage(cardName);
                 RadioWebStreamInfo.InfoText =
                   "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
                 AddChildSection(cardPage, RadioWebStreamInfo, 1);
                 break;
               case CardType.Unknown:
-                cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
+                cardName = String.Format("{0} Unknown {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
                 break;
             }
           }
-          cardNo++;
         }
         if (isLocal)
         {
@@ -719,16 +721,11 @@ namespace SetupTv
       HelpSystem.ShowHelp(_previousSection.ToString());
     }
 
-    public override void updateHelpToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      HelpSystem.UpdateHelpReferences();
-    }
-
     public override void configToolStripSplitButton_ButtonClick(object sender, EventArgs e)
     {
       Process process = new Process();
       process.StartInfo.FileName = "explorer.exe";
-      process.StartInfo.Arguments = String.Format(@"{0}\log\", Log.GetPathName());
+      process.StartInfo.Arguments = String.Format(@"{0}\log\", PathManager.GetDataPath);
       process.StartInfo.UseShellExecute = true;
       process.Start();
     }
@@ -747,6 +744,7 @@ namespace SetupTv
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(716, 537);
+      this.MinimumSize = new System.Drawing.Size(724, 571);
       this.Name = "SetupTvSettingsForm";
       this.ResumeLayout(false);
       this.PerformLayout();

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,6 +27,8 @@ using DirectShowLib;
 using MediaPortal.GUI.Library;
 using DShowNET.Helper;
 using MediaPortal.Profile;
+using FFDShow;
+using FFDShow.Interfaces;
 
 namespace MediaPortal.Player.Subtitles
 {
@@ -97,11 +99,18 @@ namespace MediaPortal.Player.Subtitles
     {
       LoadSettings();
       MpcSubtitles.SetDefaultStyle(ref this.defStyle, this.overrideASSStyle);
-
+      if (selectionOff)
+      {
+        MpcSubtitles.SetShowForcedOnly(false);
+      }
+      else
+      {
+        MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      }
       //remove DirectVobSub
       DirectVobSubUtil.RemoveFromGraph(graphBuilder);
       {
-//remove InternalScriptRenderer as it takes subtitle pin
+        //remove InternalScriptRenderer as it takes subtitle pin
         IBaseFilter isr = null;
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.InternalScriptRenderer, out isr);
         if (isr != null)
@@ -110,6 +119,8 @@ namespace MediaPortal.Player.Subtitles
           DirectShowUtil.ReleaseComObject(isr);
         }
       }
+
+      FFDShowEngine.DisableFFDShowSubtitles(graphBuilder);
 
       Size size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 
@@ -141,7 +152,8 @@ namespace MediaPortal.Player.Subtitles
     public void Render(Rectangle subsRect, Rectangle frameRect)
     {
       Rectangle r = posRelativeToFrame ? frameRect : subsRect;
-      MpcSubtitles.Render(r.X, r.Y, r.Width, r.Height);
+      int posY = adjustPosY * r.Height / GUIGraphicsContext.Height;
+      MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height);
     }
 
     public int GetCount()
@@ -152,6 +164,11 @@ namespace MediaPortal.Player.Subtitles
     public string GetLanguage(int i)
     {
       return MpcSubtitles.GetLanguage(i);
+    }
+
+    public string GetSubtitleName(int i)
+    {
+      return MpcSubtitles.GetTrackName(i);
     }
 
     public int Current
@@ -192,6 +209,16 @@ namespace MediaPortal.Player.Subtitles
       MpcSubtitles.SetTime(nsSampleTime);
     }
 
+    public bool AutoShow
+    {
+      get { return autoShow; }
+      set
+      {
+        autoShow = value;
+        MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      }
+    }
+
     #endregion
 
     private class MpcSubtitles
@@ -226,6 +253,10 @@ namespace MediaPortal.Player.Subtitles
       public static extern string GetLanguage(int i);
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [return: MarshalAs(UnmanagedType.BStr)]
+      public static extern string GetTrackName(int i);
+
+      [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern int GetCurrent();
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
@@ -248,14 +279,15 @@ namespace MediaPortal.Player.Subtitles
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern void SetDelay(int delay_ms);
 
-      //in milliseconds
-
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern void FreeSubtitles();
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern void SetAdvancedOptions(int subPicsBufferAhead, Size textureSize, bool pow2tex,
                                                    bool disableAnimation);
+
+      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      public static extern void SetShowForcedOnly(bool onlyShowForcedSubs);
     }
   }
 }

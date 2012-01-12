@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
@@ -34,6 +35,9 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
+using MediaPortal.Profile;
+using Action = MediaPortal.GUI.Library.Action;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 #pragma warning disable 108
 
@@ -121,9 +125,19 @@ namespace MediaPortal.GUI.Video
     private bool _eachFolderIsMovie = false;
     private ArrayList _conflictFiles = new ArrayList();
     private bool _switchRemovableDrives;
+    // Stacked files duration - for watched status/also used in GUIVideoTitle
+    public static int _totalMovieDuration = 0;
+    public static ArrayList _stackedMovieFiles = new ArrayList();
+    public static bool _isStacked = false;
 
     private List<GUIListItem> _cachedItems = new List<GUIListItem>();
     private string _cachedDir = null;
+
+    private bool _resetSMSsearch = false;
+    private bool _oldStateSMSsearch;
+    private DateTime _resetSMSsearchDelay;
+
+    private int _howToPlayAll = 3;
 
     #endregion
 
@@ -155,30 +169,30 @@ namespace MediaPortal.GUI.Video
       set { _mapSettings.SortBy = (int)value; }
     }
 
-    protected override View CurrentView
+    protected override Layout CurrentLayout
     {
-      get { return (View)_mapSettings.ViewAs; }
+      get { return (Layout)_mapSettings.ViewAs; }
       set { _mapSettings.ViewAs = (int)value; }
     }
 
     public override bool Init()
-    {      
+    {
       return Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
     }
 
     public override void OnAdded()
     {
       base.OnAdded();
-      _imdb = new IMDB(this);      
+      _imdb = new IMDB(this);
       // _currentFolder = null;
 
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
       g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayBackChanged);
-
-      LoadSettings();      
-    }    
+      GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
+      LoadSettings();
+    }
 
     #region Serialisation
 
@@ -187,8 +201,17 @@ namespace MediaPortal.GUI.Video
       base.LoadSettings();
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
         VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
+
+        // Prevent unaccesible My Videos from corrupted config
+        if (!IsVideoWindow(VideoState.StartWindow))
+        {
+          VideoState.StartWindow = GetID;
+          VideoState.View = "369";
+        }
 
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
@@ -197,6 +220,7 @@ namespace MediaPortal.GUI.Video
         _eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
         _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
 
         _virtualDirectory = VirtualDirectories.Instance.Movies;
 
@@ -261,18 +285,28 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    protected override void SaveSettings()
+    {
+      base.SaveSettings();
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+      {
+        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+      }
+    }
+
     #endregion
 
-    protected override bool AllowView(View view)
+    protected override string SerializeName
     {
-      return base.AllowView(view);
+      get { return "myvideo"; }
     }
 
     public override void OnAction(Action action)
     {
-      if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) && (facadeView.Focus))
+      if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) && (facadeLayout.Focus))
       {
-        GUIListItem item = facadeView[0];
+        GUIListItem item = facadeLayout[0];
         if ((item != null) && item.IsFolder && (item.Label == "..") && (_currentFolder != _virtualStartDirectory))
         {
           LoadDirectory(item.Path);
@@ -282,7 +316,7 @@ namespace MediaPortal.GUI.Video
 
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
-        GUIListItem item = facadeView[0];
+        GUIListItem item = facadeLayout[0];
         if ((item != null) && item.IsFolder && (item.Label == ".."))
         {
           LoadDirectory(item.Path);
@@ -304,7 +338,7 @@ namespace MediaPortal.GUI.Video
       if (_fileMenuPinCode != string.Empty)
       {
         string userCode = string.Empty;
-        if (GetUserInputString(ref userCode) && userCode == _fileMenuPinCode)
+        if (GetUserPasswordString(ref userCode) && userCode == _fileMenuPinCode)
         {
           OnShowFileMenu(preselectDelete);
         }
@@ -322,6 +356,14 @@ namespace MediaPortal.GUI.Video
       {
         Reset();
       }
+      if (!IsVideoWindow(PreviousWindowId) && IsFolderPinProtected(_cachedDir))
+      {
+        //when the user left MyVideos completely make sure that we don't use the cache
+        //if folder is pin protected and reload the dir completly including PIN request etc.
+        _cachedItems.Clear();
+        _cachedDir = null;
+      }
+
       if (VideoState.StartWindow != GetID)
       {
         GUIWindowManager.ReplaceWindow(VideoState.StartWindow);
@@ -337,7 +379,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      _currentSelectedItem = facadeView.SelectedListItemIndex;
+      _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       SaveFolderSettings(_currentFolder);
       base.OnPageDestroy(newWindowId);
     }
@@ -366,12 +408,12 @@ namespace MediaPortal.GUI.Video
           break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
-          facadeView.OnMessage(message);
+          facadeLayout.OnMessage(message);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED:
 
-          facadeView.OnMessage(message);
+          facadeLayout.OnMessage(message);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
@@ -397,6 +439,7 @@ namespace MediaPortal.GUI.Video
           }
           LoadDirectory(_currentFolder);
           break;
+
         case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
           if (!Util.Utils.IsRemovable(message.Label))
           {
@@ -417,7 +460,6 @@ namespace MediaPortal.GUI.Video
             LoadDirectory(_currentFolder);
           }
           break;
-
         case GUIMessage.MessageType.GUI_MSG_PLAY_DVD:
           OnPlayDVD(message.Label, GetID);
           break;
@@ -442,7 +484,7 @@ namespace MediaPortal.GUI.Video
         }
         CurrentSortAsc = _mapSettings.SortAscending;
         CurrentSortMethod = (VideoSort.SortMethod)_mapSettings.SortBy;
-        currentView = (View)_mapSettings.ViewAs;
+        currentLayout = (Layout)_mapSettings.ViewAs;
       }
       else
       {
@@ -455,8 +497,8 @@ namespace MediaPortal.GUI.Video
           }
           CurrentSortAsc = _mapSettings.SortAscending;
           CurrentSortMethod = (VideoSort.SortMethod)_mapSettings.SortBy;
-          currentView = (View)share.DefaultView;
-          CurrentView = (View)share.DefaultView;
+          currentLayout = (Layout)share.DefaultLayout;
+          CurrentLayout = (Layout)share.DefaultLayout;
         }
       }
 
@@ -468,7 +510,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      SwitchView();
+      SwitchLayout();
       UpdateButtonStates();
     }
 
@@ -491,7 +533,7 @@ namespace MediaPortal.GUI.Video
       this.LoadDirectory(newFolderName, useCache, null);
     }
 
-    private void LoadDirectory(string newFolderName, bool useCache, IList<string> watchedFiles)
+    private void LoadDirectory(string newFolderName, bool useCache, HashSet<string> watchedFiles)
     {
       if (newFolderName == null)
       {
@@ -499,17 +541,17 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      if (facadeView == null)
+      if (facadeLayout == null)
       {
         return;
       }
 
       GUIWaitCursor.Show();
       GUIListItem selectedListItem = null;
-      
-      if (facadeView != null)
+
+      if (facadeLayout != null)
       {
-        selectedListItem = facadeView.SelectedListItem;
+        selectedListItem = facadeLayout.SelectedListItem;
       }
       if (selectedListItem != null)
       {
@@ -532,7 +574,7 @@ namespace MediaPortal.GUI.Video
       // as a folder and enable browsing for it
       if (VirtualDirectory.IsImageFile(Path.GetExtension(newFolderName)))
       {
-        if (!MountImageFile(GetID, newFolderName))
+        if (!MountImageFile(GetID, newFolderName, true))
           return;
 
         _currentFolder = DaemonTools.GetVirtualDrive();
@@ -543,11 +585,11 @@ namespace MediaPortal.GUI.Video
       }
       string objectCount = string.Empty;
 
-      if (facadeView != null)
+      if (facadeLayout != null)
       {
-        GUIControl.ClearControl(GetID, facadeView.GetID);  
+        GUIControl.ClearControl(GetID, facadeLayout.GetID);
       }
-      
+
 
       List<GUIListItem> itemlist = null;
 
@@ -556,6 +598,7 @@ namespace MediaPortal.GUI.Video
       if (useCache && _cachedDir == _currentFolder)
       {
         itemlist = _cachedItems;
+        SelectDVDHandler selectDvdHandler = new SelectDVDHandler();
 
         foreach (GUIListItem item in itemlist)
         {
@@ -563,10 +606,17 @@ namespace MediaPortal.GUI.Video
           {
             item.IsPlayed = true;
           }
-
+          else if (_markWatchedFiles &&
+                   (item.IsFolder && selectDvdHandler.IsDvdDirectory(item.Path) || Util.Utils.IsVideo(item.Path)))
+          {
+            string file = item.Path;
+            if (item.IsFolder)
+              file = selectDvdHandler.GetFolderVideoFile(item.Path);
+            // Check db for watched status for played movie or changed status in movie info window
+            item.IsPlayed = VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file));
+          }
           //Do NOT add OnItemSelected event handler here, because its still there...
-
-          facadeView.Add(item);
+          facadeLayout.Add(item);
         }
       }
       else
@@ -575,43 +625,59 @@ namespace MediaPortal.GUI.Video
         itemlist = _virtualDirectory.GetDirectoryExt(_currentFolder);
         if (_mapSettings.Stack)
         {
-          List<GUIListItem> itemfiltered = new List<GUIListItem>(itemlist.Count);
-          for (int x = 0; x < itemlist.Count; ++x)
+          Dictionary<string, List<GUIListItem>> stackings = new Dictionary<string, List<GUIListItem>>(itemlist.Count);
+
+          for (int i = 0; i < itemlist.Count; ++i)
           {
-            bool addItem = true;
-            GUIListItem item1 = (GUIListItem)itemlist[x];
-            for (int y = 0; y < itemlist.Count; ++y)
+            GUIListItem item1 = itemlist[i];
+            string cleanFilename = item1.Label;
+            Util.Utils.RemoveStackEndings(ref cleanFilename);
+            List<GUIListItem> innerList;
+            if (stackings.TryGetValue(cleanFilename, out innerList))
             {
-              GUIListItem item2 = (GUIListItem)itemlist[y];
-              if (x != y)
+              for (int j = 0; j < innerList.Count; j++)
               {
-                if (!item1.IsFolder || !item2.IsFolder)
+                GUIListItem item2 = innerList[j];
+                if ((!item1.IsFolder || !item2.IsFolder)
+                    && (!item1.IsRemote && !item2.IsRemote)
+                    && Util.Utils.ShouldStack(item1.Path, item2.Path))
                 {
-                  if (!item1.IsRemote && !item2.IsRemote)
+                  if (String.Compare(item1.Path, item2.Path, true) > 0)
                   {
-                    if (Util.Utils.ShouldStack(item1.Path, item2.Path))
-                    {
-                      if (String.Compare(item1.Path, item2.Path, true) > 0)
-                      {
-                        addItem = false;
-                        // Update to reflect the stacked size
-                        item2.FileInfo.Length += item1.FileInfo.Length;
-                      }
-                    }
+                    item2.FileInfo.Length += item1.FileInfo.Length;
                   }
+                  else
+                  {
+                    // keep item1, it's path is lexicographically before item2 path
+                    item1.FileInfo.Length += item2.FileInfo.Length;
+                    innerList[j] = item1;
+                  }
+                  item1 = null;
+                  break;
                 }
               }
-            }
-
-            if (addItem)
-            {
-              string label = item1.Label;
-              if ((VirtualDirectory.IsValidExtension(item1.Path, Util.Utils.VideoExtensions, false)))
+              if (item1 != null) // not stackable
               {
-                Util.Utils.RemoveStackEndings(ref label);
+                innerList.Add(item1);
               }
-              item1.Label = label;
-              itemfiltered.Add(item1);
+            }
+            else
+            {
+              innerList = new List<GUIListItem> {item1};
+              stackings.Add(cleanFilename, innerList);
+            }
+          }
+
+          List<GUIListItem> itemfiltered = new List<GUIListItem>(itemlist.Count);
+          foreach (KeyValuePair<string, List<GUIListItem>> pair in stackings)
+          {
+            List<GUIListItem> innerList = pair.Value;
+            for (int i = 0; i < innerList.Count; i++)
+            {
+              GUIListItem item = innerList[i];
+              if ((VirtualDirectory.IsValidExtension(item.Path, Util.Utils.VideoExtensions, false)))
+                item.Label = pair.Key;
+              itemfiltered.Add(item);
             }
           }
           itemlist = itemfiltered;
@@ -627,14 +693,13 @@ namespace MediaPortal.GUI.Video
           selectDVDHandler = new SelectDVDHandler();
           GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
         }
-
         // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
         selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles, _eachFolderIsMovie);
 
         foreach (GUIListItem item in itemlist)
         {
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
+          facadeLayout.Add(item);
         }
 
         _cachedItems = itemlist;
@@ -650,12 +715,12 @@ namespace MediaPortal.GUI.Video
       if (selectedListItem != null && !useCache)
       {
         string selectedItemLabel = _history.Get(_currentFolder);
-        for (int i = 0; i < facadeView.Count; ++i)
+        for (int i = 0; i < facadeLayout.Count; ++i)
         {
-          GUIListItem item = facadeView[i];
+          GUIListItem item = facadeLayout[i];
           if (item.Label == selectedItemLabel)
           {
-            GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
             itemSelected = true;
             break;
           }
@@ -676,6 +741,7 @@ namespace MediaPortal.GUI.Video
 
       if (!itemSelected)
       {
+        UpdateButtonStates();
         SelectCurrentItem();
       }
 
@@ -689,7 +755,11 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnClick(int iItem)
     {
-      GUIListItem item = facadeView.SelectedListItem;
+      GUIListItem item = facadeLayout.SelectedListItem;
+      _totalMovieDuration = 0;
+      _isStacked = false;
+      _stackedMovieFiles.Clear();
+
       if (item == null)
       {
         return;
@@ -765,7 +835,7 @@ namespace MediaPortal.GUI.Video
         movieFileName = _virtualDirectory.GetLocalFilename(movieFileName);
 
         // Set selected item
-        _currentSelectedItem = facadeView.SelectedListItemIndex;
+        _currentSelectedItem = facadeLayout.SelectedListItemIndex;
         if (PlayListFactory.IsPlayList(movieFileName))
         {
           LoadPlayList(movieFileName);
@@ -784,6 +854,7 @@ namespace MediaPortal.GUI.Video
           ArrayList movies = new ArrayList();
 
           #region Is all this really neccessary?!
+
           //get all movies belonging to each other
           List<GUIListItem> items = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, true);
 
@@ -796,6 +867,8 @@ namespace MediaPortal.GUI.Video
             GUIListItem temporaryListItem = (GUIListItem)items[i];
             if (Util.Utils.ShouldStack(temporaryListItem.Path, path))
             {
+              _isStacked = true;
+              _stackedMovieFiles.Add(temporaryListItem.Path);
               if (!asked)
               {
                 selectedFileIndex++;
@@ -853,6 +926,7 @@ namespace MediaPortal.GUI.Video
 
                 // Total movie duration
                 movieDuration += VideoDatabase.GetMovieDuration(idFile);
+                _totalMovieDuration = movieDuration;
               }
               else //if (idMovie >=0)
               {
@@ -876,6 +950,7 @@ namespace MediaPortal.GUI.Video
           {
             movies.Add(movieFileName);
           }
+
           #endregion
 
           if (movies.Count <= 0)
@@ -886,9 +961,16 @@ namespace MediaPortal.GUI.Video
           {
             //TODO
             movies.Sort();
+
             for (int i = 0; i < movies.Count; ++i)
             {
               AddFileToDatabase((string)movies[i]);
+            }
+            // Stacked movies duration
+            if (_totalMovieDuration == 0)
+            {
+              MovieDuration(movies);
+              _stackedMovieFiles = movies;
             }
 
             if (askForResumeMovie)
@@ -897,7 +979,7 @@ namespace MediaPortal.GUI.Video
                 (GUIDialogFileStacking)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILESTACKING);
               if (null != dlg)
               {
-                dlg.SetNumberOfFiles(movies.Count);
+                dlg.SetFiles(movies);
                 dlg.DoModal(GetID);
                 selectedFileIndex = dlg.SelectedFile;
                 if (selectedFileIndex < 1)
@@ -910,6 +992,7 @@ namespace MediaPortal.GUI.Video
           else if (movies.Count == 1)
           {
             AddFileToDatabase((string)movies[0]);
+            MovieDuration(movies);
           }
           _playlistPlayer.Reset();
           _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
@@ -925,7 +1008,7 @@ namespace MediaPortal.GUI.Video
           }
 
           // play movie...
-          PlayMovieFromPlayList(askForResumeMovie, selectedFileIndex - 1);
+          PlayMovieFromPlayList(askForResumeMovie, selectedFileIndex - 1, true);
           return;
         }
 
@@ -940,7 +1023,7 @@ namespace MediaPortal.GUI.Video
         NewItem.FileName = movieFileName;
         NewItem.Type = PlayListItem.PlayListItemType.Video;
         newPlayList.Add(NewItem);
-        PlayMovieFromPlayList(true);
+        PlayMovieFromPlayList(true, true);
         /*
                 //TODO
                 if (g_Player.Play(movieFileName))
@@ -957,7 +1040,7 @@ namespace MediaPortal.GUI.Video
     protected override void OnQueueItem(int itemIndex)
     {
       // add item 2 playlist
-      GUIListItem listItem = facadeView[itemIndex];
+      GUIListItem listItem = facadeLayout[itemIndex];
 
       if (listItem == null)
       {
@@ -981,7 +1064,7 @@ namespace MediaPortal.GUI.Video
       AddItemToPlayList(listItem);
 
       //move to next item
-      GUIControl.SelectItemControl(GetID, facadeView.GetID, itemIndex + 1);
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, itemIndex + 1);
     }
 
     protected override void AddItemToPlayList(GUIListItem listItem)
@@ -1012,6 +1095,31 @@ namespace MediaPortal.GUI.Video
           _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
         }
       }
+    }
+
+    public static int MovieDuration(ArrayList files)
+    {
+      _totalMovieDuration = 0;
+
+      foreach (string file in files)
+      {
+        int fileID = VideoDatabase.GetFileId(file);
+        int tempDuration = VideoDatabase.GetMovieDuration(fileID);
+
+        if (tempDuration > 0)
+        {
+          _totalMovieDuration += tempDuration;
+        }
+        else
+        {
+          MediaInfoWrapper mInfo = new MediaInfoWrapper(file);
+
+          if (fileID > -1)
+            VideoDatabase.SetMovieDuration(fileID, mInfo.VideoDuration / 1000);
+          _totalMovieDuration += mInfo.VideoDuration / 1000;
+        }
+      }
+      return _totalMovieDuration;
     }
 
     private void AddFileToDatabase(string strFile)
@@ -1059,10 +1167,13 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    // CHANGED
+
+    // GUI Item file name handler - share view ->IMDB
     protected override void OnInfo(int iItem)
     {
-      _currentSelectedItem = facadeView.SelectedListItemIndex;
-      GUIListItem pItem = facadeView.SelectedListItem;
+      _currentSelectedItem = facadeLayout.SelectedListItemIndex;
+      GUIListItem pItem = facadeLayout.SelectedListItem;
       if (pItem == null)
       {
         return;
@@ -1078,6 +1189,7 @@ namespace MediaPortal.GUI.Video
       string strFile = pItem.Path;
       string strMovie = pItem.Label;
       bool bFoundFile = true;
+
       if ((pItem.IsFolder) && (!Util.Utils.IsDVD(pItem.Path)))
       {
         if (pItem.Label == "..")
@@ -1095,6 +1207,7 @@ namespace MediaPortal.GUI.Video
           GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
         }
         strFile = selectDVDHandler.GetFolderVideoFile(pItem.Path);
+
         if (strFile == string.Empty)
         {
           bFoundFile = false;
@@ -1125,12 +1238,36 @@ namespace MediaPortal.GUI.Video
       if ((VideoDatabase.GetMovieInfo(strFile, ref movieDetails) == -1) ||
           (movieDetails.IsEmpty))
       {
+        // Check Internet connection
+        if (!Win32API.IsConnectedToInternet())
+        {
+          GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          dlgOk.SetHeading(257);
+          dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
+          dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+          return;
+        }
+        // Movie is not in the database
         if (bFoundFile)
         {
           AddFileToDatabase(strFile);
         }
-        movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
-        movieDetails.File = Path.GetFileName(strFile);
+
+        // Changed - Movie folder title
+        using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
+        {
+          bool foldercheck = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+          if (foldercheck == true)
+          {
+            movieDetails.SearchString = Path.GetFileName(Path.GetDirectoryName(strMovie));
+          }
+          else
+          {
+            movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
+          }
+          movieDetails.File = Path.GetFileName(strFile);
+        }
+        // End change
         if (movieDetails.File == string.Empty)
         {
           movieDetails.Path = strFile;
@@ -1146,6 +1283,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
       }
+      // Movie is in the database
       GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
       videoInfo.Movie = movieDetails;
       if (pItem.IsFolder)
@@ -1160,15 +1298,22 @@ namespace MediaPortal.GUI.Video
 
       if (movieDetails != null)
       {
-        string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+        // Add file name beacuse in the movie.details it's empty -> FanArt on shares helper
+        movieDetails.File = Path.GetFileName(strFile);
 
-        if (string.IsNullOrEmpty(thumbPath) || !File.Exists(thumbPath))
+        // Title suffix for problem with covers and movie with the same name
+        //string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+        string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
+        string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
+
+        if (string.IsNullOrEmpty(thumbPath) || !Util.Utils.FileExistsInCache(thumbPath))
         {
           thumbPath = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-            Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path, ".jpg"))));
+                                    Util.Utils.MakeFileName(
+                                      Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path, ".jpg"))));
         }
 
-        if (File.Exists(thumbPath))
+        if (Util.Utils.FileExistsInCache(thumbPath))
         {
           pItem.RefreshCoverArt();
 
@@ -1176,7 +1321,7 @@ namespace MediaPortal.GUI.Video
           pItem.IconImageBig = thumbPath;
 
           string thumbLargePath = Util.Utils.ConvertToLargeCoverArt(thumbPath);
-          if (File.Exists(thumbLargePath))
+          if (Util.Utils.FileExistsInCache(thumbLargePath))
           {
             pItem.ThumbnailImage = thumbLargePath;
           }
@@ -1188,10 +1333,66 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    protected override void SelectCurrentItem()
+    {
+      if (_currentSelectedItem >= 0)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
+        //return true;
+      }
+      //else
+      //{
+      //  Log.Debug("GUIVideoFiles: SelectCurrentItem - nothing to do for item {0}", _currentSelectedItem.ToString());
+      //  return false;
+      //}
+    }
+
     #endregion
 
-    private void SetMovieUnwatched(string movieFileName)
+    private void GUIWindowManager_OnNewMessage(GUIMessage message)
     {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+          if (message.Param1 == (int)Ripper.AutoPlay.MediaType.VIDEO)
+          {
+            if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.DVD)
+              OnPlayDVD(message.Label, GetID);
+            else if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.VCD ||
+                     message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
+              OnPlayFiles((System.Collections.ArrayList)message.Object);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
+          if (g_Player.Playing && g_Player.IsVideo &&
+              message.Label.Equals(g_Player.CurrentFile.Substring(0, 2), StringComparison.InvariantCultureIgnoreCase))
+          {
+            Log.Info("GUIVideoFiles: Stop since media is ejected");
+            g_Player.Stop();
+            _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP).Clear();
+            _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
+          }
+
+          if (GUIWindowManager.ActiveWindow == GetID)
+          {
+            if (Util.Utils.IsDVD(_currentFolder))
+            {
+              _currentFolder = string.Empty;
+              LoadDirectory(_currentFolder);
+            }
+          }
+          break;
+      }
+    }
+
+    private void SetMovieUnwatched(string movieFileName, bool isFolder)
+    {
+      SelectDVDHandler isDvdFolder = new SelectDVDHandler();
+
+      if (isFolder && isDvdFolder.IsDvdDirectory(movieFileName))
+        movieFileName = isDvdFolder.GetFolderVideoFile(movieFileName);
+
       if (VideoDatabase.HasMovieInfo(movieFileName))
       {
         IMDBMovie movieDetails = new IMDBMovie();
@@ -1201,6 +1402,7 @@ namespace MediaPortal.GUI.Video
       }
       int idFile = VideoDatabase.GetFileId(movieFileName);
       VideoDatabase.DeleteMovieStopTime(idFile);
+      VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), false);
     }
 
     public bool CheckMovie(string movieFileName)
@@ -1235,7 +1437,7 @@ namespace MediaPortal.GUI.Video
         return true;
       }
 
-      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      GUIDialogYesNo dlg = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (dlg == null)
       {
         return true;
@@ -1246,6 +1448,9 @@ namespace MediaPortal.GUI.Video
         dlg.SetLine(1, 429);
         dlg.SetLine(2, movieDetails.DVDLabel);
         dlg.SetLine(3, movieDetails.Title);
+        dlg.SetYesLabel(GUILocalizeStrings.Get(186)); //OK
+        dlg.SetNoLabel(GUILocalizeStrings.Get(222)); //Cancel
+        dlg.SetDefaultToYes(true);
         dlg.DoModal(GUIWindowManager.ActiveWindow);
         if (dlg.IsConfirmed)
         {
@@ -1315,11 +1520,14 @@ namespace MediaPortal.GUI.Video
 
     private void SetMovieProperties(string path)
     {
+      bool isFile = false;
+      if (Util.Utils.IsVideo(path))
+        isFile = true;
       IMDBMovie info = new IMDBMovie();
       if (path == "..")
       {
         info.Reset();
-        info.SetProperties();
+        info.SetProperties(true);
         return;
       }
       bool isDirectory = false;
@@ -1361,6 +1569,7 @@ namespace MediaPortal.GUI.Video
         if (info.IsEmpty && File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO")) //still empty and is ripped DVD
         {
           VideoDatabase.GetMovieInfo(path + @"\VIDEO_TS\VIDEO_TS.IFO", ref info);
+          isFile = true;
         }
         if (info.IsEmpty)
         {
@@ -1373,11 +1582,13 @@ namespace MediaPortal.GUI.Video
               info.Watched = 1;
           }
         }
-        if (isMultiMovieFolder)
+        if (isMultiMovieFolder || !isFile)
         {
           info.Reset();
+          info.SetProperties(true);
+          return;
         }
-        info.SetProperties();
+        info.SetProperties(false);
       }
       catch (Exception) {}
     }
@@ -1392,12 +1603,18 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    [Obsolete("This method is obsolete; use method PlayMovieFromPlayList(bool askForResumeMovie, bool requestPin) instead.")]
     public static void PlayMovieFromPlayList(bool askForResumeMovie)
     {
-      PlayMovieFromPlayList(askForResumeMovie, -1);
+      PlayMovieFromPlayList(askForResumeMovie, -1, false);
     }
 
-    public static void PlayMovieFromPlayList(bool askForResumeMovie, int iMovieIndex)
+    public static void PlayMovieFromPlayList(bool askForResumeMovie, bool requestPin)
+    {
+      PlayMovieFromPlayList(askForResumeMovie, -1, requestPin);
+    }
+
+    public static void PlayMovieFromPlayList(bool askForResumeMovie, int iMovieIndex, bool requestPin)
     {
       string filename;
       if (iMovieIndex == -1)
@@ -1443,7 +1660,7 @@ namespace MediaPortal.GUI.Video
       // If the file is an image file, it should be mounted before playing
       if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(filename)))
       {
-        if (!MountImageFile(GUIWindowManager.ActiveWindow, filename))
+        if (!MountImageFile(GUIWindowManager.ActiveWindow, filename, requestPin))
           return;
       }
       if (iMovieIndex == -1)
@@ -1503,7 +1720,13 @@ namespace MediaPortal.GUI.Video
     }
     */
 
+    [Obsolete("This method is obsolete; use method MountImageFile(int WindowID, string file) instead.")]
     public static bool MountImageFile(int WindowID, string file)
+    {
+      return MountImageFile(WindowID, file, false);
+    }
+
+    public static bool MountImageFile(int WindowID, string file, bool requestPin)
     {
       Log.Debug("GUIVideoFiles: MountImageFile");
       if (!DaemonTools.IsMounted(file))
@@ -1522,7 +1745,18 @@ namespace MediaPortal.GUI.Video
             }
           }
         }
-        List<GUIListItem> items = _virtualDirectory.GetDirectoryExt(file);
+
+        List<GUIListItem> items = new List<GUIListItem>();
+
+        if (requestPin)
+        {
+          items = _virtualDirectory.GetDirectoryExt(file);
+        }
+        else
+        {
+          items = _virtualDirectory.GetDirectoryUnProtectedExt(file, true);
+        }
+
         if (items.Count == 1 && file != string.Empty)
         {
           return false; // protected share, with wrong pincode
@@ -1543,7 +1777,34 @@ namespace MediaPortal.GUI.Video
       ArrayList movies = new ArrayList();
       int iidMovie = VideoDatabase.GetMovieId(filename);
       VideoDatabase.GetFiles(iidMovie, ref movies);
-      List<string> watchedMovies = new List<string>();
+      HashSet<string> watchedMovies = new HashSet<string>();
+
+      int playTimePercentage = 0; // Set watched flag after 80% of total played time
+
+      // Stacked movies duration
+      if (_isStacked && _totalMovieDuration != 0)
+      {
+        int duration = 0;
+
+        for (int i = 0; i < _stackedMovieFiles.Count; i++)
+        {
+          int fileID = VideoDatabase.GetFileId((string)_stackedMovieFiles[i]);
+
+          if (g_Player.CurrentFile != (string)_stackedMovieFiles[i])
+          {
+            //(int)Math.Ceiling((timeMovieStopped / g_Player.Player.Duration) * 100);
+            duration += VideoDatabase.GetMovieDuration(fileID);
+            continue;
+          }
+          playTimePercentage = (100 * (duration + timeMovieStopped) / _totalMovieDuration);
+          break;
+        }
+      }
+      else
+      {
+        if (g_Player.Player.Duration >= 1)
+          playTimePercentage = (int)Math.Ceiling((timeMovieStopped / g_Player.Player.Duration) * 100);
+      }
 
       if (movies.Count <= 0)
       {
@@ -1560,7 +1821,14 @@ namespace MediaPortal.GUI.Video
           break;
         }
 
-        if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0))
+        if (g_Player.IsDVDMenu)
+        {
+          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, null);
+          watchedMovies.Add(strFilePath);
+          VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true);
+        }
+
+        else if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0))
         {
           byte[] resumeData = null;
           g_Player.Player.GetResumeState(out resumeData);
@@ -1569,7 +1837,12 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData);
           Log.Debug("GUIVideoFiles: {0} store resume time", caller);
 
-          watchedMovies.Add(strFilePath);
+          //Set file "watched" only if 80% or higher played time (share view)
+          if (playTimePercentage >= 80)
+          {
+            watchedMovies.Add(strFilePath);
+            VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true);
+          }
         }
         else
         {
@@ -1578,8 +1851,19 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        LoadDirectory(_currentFolder, true, watchedMovies);
-        UpdateButtonStates();
+        // Update db view watched status for played movie
+        IMDBMovie movie = new IMDBMovie();
+        VideoDatabase.GetMovieInfo(filename, ref movie);
+        if (!movie.IsEmpty && (playTimePercentage >= 80 || g_Player.IsDVDMenu)) //Flag movie "watched" status only if 80% or higher played time (database view)
+        {
+          movie.Watched = 1;
+          VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
+        }
+
+        if (VideoState.StartWindow != GetID) // Is play initiator dbview?
+        {
+          UpdateButtonStates();
+        }
       }
 
       if (SubEngine.GetInstance().IsModified())
@@ -1622,12 +1906,13 @@ namespace MediaPortal.GUI.Video
 
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
-      List<string> watchedMovies = new List<string>();
+      HashSet<string> watchedMovies = new HashSet<string>();
 
       int iidMovie = VideoDatabase.GetMovieId(filename);
       if (iidMovie >= 0)
       {
         VideoDatabase.GetFiles(iidMovie, ref movies);
+
         for (int i = 0; i < movies.Count; i++)
         {
           string strFilePath = (string)movies[i];
@@ -1640,19 +1925,41 @@ namespace MediaPortal.GUI.Video
           // Set resumedata to zero
           VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, resumeData);
-
           watchedMovies.Add(strFilePath);
         }
 
-        IMDBMovie details = new IMDBMovie();
-        VideoDatabase.GetMovieInfoById(iidMovie, ref details);
-        details.Watched++;
-        VideoDatabase.SetWatched(details);
-      }
-      if (_markWatchedFiles) // save a little performance
-      {
-        LoadDirectory(_currentFolder, true, watchedMovies);
-        UpdateButtonStates();
+        int playTimePercentage = 0;
+
+        if (_isStacked && _totalMovieDuration != 0)
+        {
+          int duration = 0;
+
+          for (int i = 0; i < _stackedMovieFiles.Count; i++)
+          {
+            int fileID = VideoDatabase.GetFileId((string)_stackedMovieFiles[i]);
+
+            if (filename != (string)_stackedMovieFiles[i])
+            {
+              duration += VideoDatabase.GetMovieDuration(fileID);
+              continue;
+            }
+            playTimePercentage = (int)(100 * (duration + g_Player.Player.CurrentPosition) / _totalMovieDuration);
+            break;
+          }
+        }
+        else
+        {
+          playTimePercentage = 100;
+        }
+
+        if (playTimePercentage >= 80)
+        {
+          IMDBMovie details = new IMDBMovie();
+          VideoDatabase.GetMovieInfoById(iidMovie, ref details);
+          details.Watched = 1;
+          VideoDatabase.SetWatched(details);
+          VideoDatabase.SetMovieWatchedStatus(iidMovie, true);
+        }
       }
     }
 
@@ -1672,10 +1979,128 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    //
+    // Play all files in selected directory
+    //
+    private void OnPlayAll(string path)
+    {
+      // Get all video files in selected folder and it's subfolders
+      ArrayList playFiles = new ArrayList();
+      AddVideoFiles(path, ref playFiles);
+      int selectedOption = 0;
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      // Check and play according to setting value
+      if (_howToPlayAll == 3) // Ask, select sort method from options in GUIDialogMenu
+      {
+        if (dlg == null)
+        {
+          return;
+        }
+        dlg.Reset();
+        dlg.SetHeading(498); // menu
+        dlg.AddLocalizedString(103); // By Name
+        dlg.AddLocalizedString(104); // By Date
+        dlg.AddLocalizedString(191); // Shuffle
+
+        // Show GUIDialogMenu
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+        selectedOption = dlg.SelectedId;
+      }
+      else // Don't ask, sort according to setting and play videos
+      {
+        selectedOption = _howToPlayAll;
+      }
+
+      // Reset playlist
+      _playlistPlayer.Reset();
+      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+      PlayList tmpPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+      tmpPlayList.Clear();
+
+      // Do sorting
+      switch (selectedOption)
+      {
+          //
+          // ****** Watch out for fallthrough of empty cases if reordering CASE *******
+          //
+        case 0: // By name == 103
+
+        case 103:
+          IOrderedEnumerable<object> sortedPlayList = GetSortedPlayListbyName(playFiles);
+          // Add all files in temporary playlist
+          AddToPlayList(tmpPlayList, sortedPlayList);
+          break;
+
+        case 1: // By date (date modified) == 104
+
+        case 104:
+          sortedPlayList = GetSortedPlayListbyDate(playFiles);
+          AddToPlayList(tmpPlayList, sortedPlayList);
+          break;
+
+        case 2: // Shuffle == 191
+
+        case 191:
+          sortedPlayList = GetSortedPlayListbyName(playFiles);
+          AddToPlayList(tmpPlayList, sortedPlayList);
+          tmpPlayList.Shuffle();
+          break;
+      }
+      // Play movies
+      PlayMovieFromPlayList(false, true);
+    }
+
+    private void AddToPlayList(PlayList tmpPlayList, IOrderedEnumerable<object> sortedPlayList)
+    {
+      foreach (string file in sortedPlayList)
+      {
+        // Remove stop data if exists
+        int idFile = VideoDatabase.GetFileId(file);
+        if (idFile >= 0)
+          VideoDatabase.DeleteMovieStopTime(idFile);
+
+        // Add file to tmp playlist
+        PlayListItem newItem = new PlayListItem();
+        newItem.FileName = file;
+        // Set file description (for sorting by name -> DVD IFO file problem)
+        string description = string.Empty;
+        if (file.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
+        {
+          string dvdFolder = file.Substring(0, file.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
+          description = Path.GetFileName(dvdFolder);
+        }
+        else
+        {
+          description = Path.GetFileName(file);
+        }
+        newItem.Description = description;
+        newItem.Type = PlayListItem.PlayListItemType.Video;
+        tmpPlayList.Add(newItem);
+      }
+    }
+
+    // Sort by item description (Filename or DVD folder)
+    private IOrderedEnumerable<object> GetSortedPlayListbyName(ArrayList playFiles)
+    {
+      return playFiles.ToArray().OrderBy(fn => new PlayListItem().Description);
+    }
+
+    // Sort by modified date without path
+    private IOrderedEnumerable<object> GetSortedPlayListbyDate(ArrayList playFiles)
+    {
+      return playFiles.ToArray().OrderBy(fn => new FileInfo((string)fn).LastWriteTime);
+    }
+
     protected override void OnShowContextMenu()
     {
-      GUIListItem item = facadeView.SelectedListItem;
-      int itemNo = facadeView.SelectedListItemIndex;
+      GUIListItem item = facadeLayout.SelectedListItem;
+      int itemNo = facadeLayout.SelectedListItemIndex;
       if (item == null)
       {
         return;
@@ -1688,7 +2113,7 @@ namespace MediaPortal.GUI.Video
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
-      if (!facadeView.Focus)
+      if (!facadeLayout.Focus)
       {
         // Menu button context menuu
         if (!_virtualDirectory.IsRemote(_currentFolder))
@@ -1732,6 +2157,22 @@ namespace MediaPortal.GUI.Video
             dlg.AddLocalizedString(926); //Queue
             if (!VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
             {
+              //
+              // Play all
+              //
+              SelectDVDHandler checkIfIsDvd = new SelectDVDHandler();
+              if (!checkIfIsDvd.IsDvdDirectory(item.Path))
+              {
+                dlg.AddLocalizedString(1204); // Play All in selected folder
+              }
+              else
+              {
+                if (item.IsPlayed)
+                {
+                  dlg.AddLocalizedString(830); //Reset watched status for DVD folder
+                }
+              }
+              //
               dlg.AddLocalizedString(102); //Scan            
             }
             dlg.AddLocalizedString(368); //IMDB
@@ -1759,6 +2200,10 @@ namespace MediaPortal.GUI.Video
               dlg.AddLocalizedString(500); // FileMenu
             }
           }
+        }
+        else if (Util.Utils.IsNetwork(item.Path)) // Process network root with drive letter
+        {
+          dlg.AddLocalizedString(1204); // Play All in selected folder
         }
       }
       if (!_mapSettings.Stack)
@@ -1826,7 +2271,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 102: //Scan
-          if (facadeView.Focus)
+          if (facadeLayout.Focus)
           {
             if (item.IsFolder)
             {
@@ -1846,12 +2291,12 @@ namespace MediaPortal.GUI.Video
           }
           ArrayList availablePaths = new ArrayList();
           availablePaths.Add(item.Path);
-          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors);
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
           LoadDirectory(_currentFolder);
           break;
 
         case 830: // Reset watched status
-          SetMovieUnwatched(item.Path);
+          SetMovieUnwatched(item.Path, item.IsFolder);
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
           break;
@@ -1881,7 +2326,29 @@ namespace MediaPortal.GUI.Video
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
           break;
+          // Play all
+        case 1204:
+          {
+            if (!_virtualDirectory.RequestPin(item.Path))
+            {
+              return;
+            }
+            OnPlayAll(item.Path);
+          }
+          break;
       }
+    }
+
+    public override void Process()
+    {
+      if ((_resetSMSsearch == true) && (_resetSMSsearchDelay.Subtract(DateTime.Now).Seconds < -2))
+      {
+        _resetSMSsearchDelay = DateTime.Now;
+        _resetSMSsearch = true;
+        facadeLayout.EnableSMSsearch = _oldStateSMSsearch;
+      }
+
+      base.Process();
     }
 
     private bool GetUserInputString(ref string sString)
@@ -1902,10 +2369,29 @@ namespace MediaPortal.GUI.Video
       return keyboard.IsConfirmed;
     }
 
+    private bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+      return keyboard.IsConfirmed;
+    }
+
     private void OnShowFileMenu(bool preselectDelete)
     {
-      GUIListItem item = facadeView.SelectedListItem;
-      
+      GUIListItem item = facadeLayout.SelectedListItem;
+
       if (item == null)
       {
         return;
@@ -1936,9 +2422,11 @@ namespace MediaPortal.GUI.Video
       _fileMenuDestinationDir = dlgFile.GetDestinationDir();
 
       //final
+      _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
+      facadeLayout.EnableSMSsearch = false;
       if (dlgFile.Reload())
       {
-        int selectedItem = facadeView.SelectedListItemIndex;
+        int selectedItem = facadeLayout.SelectedListItemIndex;
         if (_currentFolder != dlgFile.GetSourceDir())
         {
           selectedItem = -1;
@@ -1948,28 +2436,15 @@ namespace MediaPortal.GUI.Video
         LoadDirectory(_currentFolder);
         if (selectedItem >= 0)
         {
-          if (selectedItem >= facadeView.Count)
-            selectedItem = facadeView.Count - 1;
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItem);
+          if (selectedItem >= facadeLayout.Count)
+            selectedItem = facadeLayout.Count - 1;
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
         }
       }
-
       dlgFile.DeInit();
       dlgFile = null;
-    }
-
-    private bool SelectCurrentItem()
-    {
-      if (_currentSelectedItem >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, _currentSelectedItem);
-        return true;
-      }
-      else
-      {
-        Log.Debug("GUIVideoFiles: SelectCurrentItem - nothing to do for item {0}", _currentSelectedItem.ToString());
-        return false;
-      }
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
     }
 
     /// <summary>
@@ -1989,15 +2464,7 @@ namespace MediaPortal.GUI.Video
       {
         return true;
       }
-      if (windowId == (int)Window.WINDOW_VIDEO_ACTOR)
-      {
-        return true;
-      }
       if (windowId == (int)Window.WINDOW_VIDEO_ARTIST_INFO)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_GENRE)
       {
         return true;
       }
@@ -2010,10 +2477,6 @@ namespace MediaPortal.GUI.Video
         return true;
       }
       if (windowId == (int)Window.WINDOW_VIDEO_TITLE)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_YEAR)
       {
         return true;
       }
@@ -2041,15 +2504,7 @@ namespace MediaPortal.GUI.Video
       {
         return true;
       }
-      if (windowId == (int)Window.WINDOW_VIDEO_ACTOR)
-      {
-        return true;
-      }
       if (windowId == (int)Window.WINDOW_VIDEO_ARTIST_INFO)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_GENRE)
       {
         return true;
       }
@@ -2058,10 +2513,6 @@ namespace MediaPortal.GUI.Video
         return true;
       }
       if (windowId == (int)Window.WINDOW_VIDEO_PLAYLIST)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_YEAR)
       {
         return true;
       }
@@ -2090,7 +2541,7 @@ namespace MediaPortal.GUI.Video
       }
       string strThumb = Util.Utils.GetCoverArtName(folder, name);
       string LargeThumb = Util.Utils.GetLargeCoverArtName(folder, name);
-      if (!File.Exists(strThumb))
+      if (!Util.Utils.FileExistsInCache(strThumb))
       {
         string strExtension;
         strExtension = Path.GetExtension(url);
@@ -2103,7 +2554,7 @@ namespace MediaPortal.GUI.Video
           Util.Utils.FileDelete(strTemp);
 
           Util.Utils.DownLoadImage(url, strTemp);
-          if (File.Exists(strTemp))
+          if (Util.Utils.FileExistsInCache(strTemp))
           {
             if (Util.Picture.CreateThumbnail(strTemp, strThumb, (int)Thumbs.ThumbResolution,
                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
@@ -2131,7 +2582,7 @@ namespace MediaPortal.GUI.Video
         IMDBActor imdbActor = new IMDBActor();
         for (int x = 0; x < _imdb.Count; ++x)
         {
-          _imdb.GetActorDetails(_imdb[x], out imdbActor);
+          _imdb.GetActorDetails(_imdb[x], true, out imdbActor);
           if (imdbActor.ThumbnailUrl != null && imdbActor.ThumbnailUrl.Length > 0)
           {
             break;
@@ -2179,7 +2630,7 @@ namespace MediaPortal.GUI.Video
             IMDBActor imdbActor = new IMDBActor();
             for (int x = 0; x < _imdb.Count; ++x)
             {
-              _imdb.GetActorDetails(_imdb[x], out imdbActor);
+              _imdb.GetActorDetails(_imdb[x], false, out imdbActor);
               if (imdbActor.ThumbnailUrl != null && imdbActor.ThumbnailUrl.Length > 0)
               {
                 break;
@@ -2211,11 +2662,70 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    private static void AddVideoFiles(string path, ref ArrayList availableFiles)
+    {
+      //
+      // Count the files in the current directory
+      //
+      bool currentCreateVideoThumbs = false;
+      try
+      {
+        VirtualDirectory dir = new VirtualDirectory();
+        dir.SetExtensions(Util.Utils.VideoExtensions);
+        // Temporary disable thumbcreation
+        using (Profile.Settings xmlreader = new MPSettings())
+        {
+          currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        }
+        using (Profile.Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+        }
+
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+        foreach (GUIListItem item in items)
+        {
+          if (item.IsFolder)
+          {
+            if (item.Label != "..")
+            {
+              if (item.Path.ToLower().IndexOf("video_ts") >= 0)
+              {
+                string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
+                availableFiles.Add(strFile);
+              }
+              else
+              {
+                AddVideoFiles(item.Path, ref availableFiles);
+              }
+            }
+          }
+          else
+          {
+            availableFiles.Add(item.Path);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Info("Exception counting files:{0}", e);
+        // Ignore
+      }
+      finally
+      {
+        // Restore thumbcreation setting
+        using (Profile.Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", currentCreateVideoThumbs);
+        }
+      }
+    }
+
     private void _downloadSubtitles()
     {
       try
       {
-        GUIListItem item = facadeView.SelectedListItem;
+        GUIListItem item = facadeLayout.SelectedListItem;
         if (item == null)
         {
           return;
@@ -2274,15 +2784,28 @@ namespace MediaPortal.GUI.Video
       _virtualDirectory.Reset();
     }
 
+    [Obsolete("This method is obsolete; use method PlayMovie(int idMovie, bool requestPin) instead.")]
     public static void PlayMovie(int idMovie)
     {
+      PlayMovie(idMovie, false);
+    }
+
+    public static void PlayMovie(int idMovie, bool requestPin)
+    {
       int selectedFileIndex = 1;
+
+      if (_isStacked)
+      {
+        selectedFileIndex = 0;
+      }
+
       ArrayList movies = new ArrayList();
       VideoDatabase.GetFiles(idMovie, ref movies);
       if (movies.Count <= 0)
       {
         return;
       }
+      
       if (!CheckMovie(idMovie))
       {
         return;
@@ -2290,101 +2813,127 @@ namespace MediaPortal.GUI.Video
 
       bool askForResumeMovie = true;
       int movieDuration = 0;
+
+      //get all movies belonging to each other
+      List<GUIListItem> items = new List<GUIListItem>();
+      
+      // Pin protection
+      if (!requestPin)
       {
-        //get all movies belonging to each other
-        List<GUIListItem> items = _virtualDirectory.GetDirectoryExt(Path.GetDirectoryName((string)movies[0]));
-        if (items.Count <= 1)
+        items = _virtualDirectory.GetDirectoryUnProtectedExt(Path.GetDirectoryName((string)movies[0]), false);
+      }
+      else
+      {
+        items = _virtualDirectory.GetDirectoryExt(Path.GetDirectoryName((string)movies[0]));
+      }
+
+      if (items.Count <= 1)
+      {
+        return; // first item always ".." so 1 item means protected share
+      }
+
+      //check if we can resume 1 of those movies
+      int timeMovieStopped = 0;
+      bool asked = false;
+      ArrayList newItems = new ArrayList();
+      
+      for (int i = 0; i < items.Count; ++i)
+      {
+        GUIListItem temporaryListItem = (GUIListItem)items[i];
+        bool found = false;
+
+        // reduce number of items to movie files only
+        foreach (var movie in movies)
         {
-          return; // first item always ".." so 1 item means protected share
+          if (movie.ToString() == items[i].Path)
+          {
+            found = true;
+            break;
+          }
         }
 
-        //check if we can resume 1 of those movies
-        int timeMovieStopped = 0;
-        bool asked = false;
-        ArrayList newItems = new ArrayList();
-        for (int i = 0; i < items.Count; ++i)
+        if (!found)
+          continue;
+
+        if ((Util.Utils.ShouldStack(temporaryListItem.Path, (string)movies[0])) && (movies.Count > 1))
         {
-          GUIListItem temporaryListItem = (GUIListItem)items[i];
-          if ((Util.Utils.ShouldStack(temporaryListItem.Path, (string)movies[0])) && (movies.Count > 1))
+          if (!asked)
           {
-            if (!asked)
+            selectedFileIndex++;
+          }
+          IMDBMovie movieDetails = new IMDBMovie();
+          int idFile = VideoDatabase.GetFileId(temporaryListItem.Path);
+          if ((idMovie >= 0) && (idFile >= 0))
+          {
+            VideoDatabase.GetMovieInfo((string)movies[0], ref movieDetails);
+            string title = Path.GetFileName((string)movies[0]);
+            if ((VirtualDirectory.IsValidExtension((string)movies[0], Util.Utils.VideoExtensions, false)))
             {
-              selectedFileIndex++;
+              Util.Utils.RemoveStackEndings(ref title);
             }
-            IMDBMovie movieDetails = new IMDBMovie();
-            int idFile = VideoDatabase.GetFileId(temporaryListItem.Path);
-            if ((idMovie >= 0) && (idFile >= 0))
+            if (movieDetails.Title != string.Empty)
             {
-              VideoDatabase.GetMovieInfo((string)movies[0], ref movieDetails);
-              string title = Path.GetFileName((string)movies[0]);
-              if ((VirtualDirectory.IsValidExtension((string)movies[0], Util.Utils.VideoExtensions, false)))
-              {
-                Util.Utils.RemoveStackEndings(ref title);
-              }
-              if (movieDetails.Title != string.Empty)
-              {
-                title = movieDetails.Title;
-              }
+              title = movieDetails.Title;
+            }
 
-              timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
-              if (timeMovieStopped > 0)
+            timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
+            if (timeMovieStopped > 0)
+            {
+              if (!asked)
               {
-                if (!asked)
+                asked = true;
+
+                GUIResumeDialog.Result result =
+                  GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
+                                                   GUIResumeDialog.MediaType.Video);
+
+                if (result == GUIResumeDialog.Result.Abort)
+                  return;
+
+                if (result == GUIResumeDialog.Result.PlayFromBeginning)
                 {
-                  asked = true;
-
-                  GUIResumeDialog.Result result =
-                    GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
-                                                     GUIResumeDialog.MediaType.Video);
-
-                  if (result == GUIResumeDialog.Result.Abort)
-                    return;
-
-                  if (result == GUIResumeDialog.Result.PlayFromBeginning)
-                  {
-                    VideoDatabase.DeleteMovieStopTime(idFile);
-                    newItems.Add(temporaryListItem);
-                  }
-                  else
-                  {
-                    askForResumeMovie = false;
-                    newItems.Add(temporaryListItem);
-                  }
-                } //if (!asked)
-                else
-                {
+                  VideoDatabase.DeleteMovieStopTime(idFile);
                   newItems.Add(temporaryListItem);
                 }
-              } //if (timeMovieStopped>0)
+                else
+                {
+                  askForResumeMovie = false;
+                  newItems.Add(temporaryListItem);
+                }
+              } //if (!asked)
               else
               {
                 newItems.Add(temporaryListItem);
               }
-
-              // Total movie duration
-              movieDuration += VideoDatabase.GetMovieDuration(idFile);
-            }
-            else //if (idMovie >=0)
+            } //if (timeMovieStopped>0)
+            else
             {
               newItems.Add(temporaryListItem);
             }
-          } //if ( MediaPortal.Util.Utils.ShouldStack(temporaryListItem.Path, item.Path))
-        }
 
-        // If we have found stackable items, clear the movies array
-        // so, that we can repopulate it.
-        if (newItems.Count > 0)
-        {
-          movies.Clear();
-        }
-
-        for (int i = 0; i < newItems.Count; ++i)
-        {
-          GUIListItem temporaryListItem = (GUIListItem)newItems[i];
-          if (Util.Utils.IsVideo(temporaryListItem.Path) && !PlayListFactory.IsPlayList(temporaryListItem.Path))
-          {
-            movies.Add(temporaryListItem.Path);
+            // Total movie duration
+            movieDuration += VideoDatabase.GetMovieDuration(idFile);
           }
+          else //if (idMovie >=0)
+          {
+            newItems.Add(temporaryListItem);
+          }
+        } //if ( MediaPortal.Util.Utils.ShouldStack(temporaryListItem.Path, item.Path))
+      }
+
+      // If we have found stackable items, clear the movies array
+      // so, that we can repopulate it.
+      if (newItems.Count > 0)
+      {
+        movies.Clear();
+      }
+
+      for (int i = 0; i < newItems.Count; ++i)
+      {
+        GUIListItem temporaryListItem = (GUIListItem)newItems[i];
+        if (Util.Utils.IsVideo(temporaryListItem.Path) && !PlayListFactory.IsPlayList(temporaryListItem.Path))
+        {
+          movies.Add(temporaryListItem.Path);
         }
       }
 
@@ -2396,7 +2945,7 @@ namespace MediaPortal.GUI.Video
             (GUIDialogFileStacking)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILESTACKING);
           if (null != dlg)
           {
-            dlg.SetNumberOfFiles(movies.Count);
+            dlg.SetFiles(movies);
             dlg.DoModal(GUIWindowManager.ActiveWindow);
             selectedFileIndex = dlg.SelectedFile;
             if (selectedFileIndex < 1)
@@ -2421,7 +2970,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // play movie...
-      PlayMovieFromPlayList(askForResumeMovie);
+      PlayMovieFromPlayList(askForResumeMovie, requestPin);
     }
 
     #region IMDB.IProgress

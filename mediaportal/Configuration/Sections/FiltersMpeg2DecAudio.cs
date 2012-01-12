@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox groupBoxAacDecoderSettings;
     private MPLabel labelBoost;
     private MPCheckBox checkBoxAacDynamic;
-    private Label labelBoostValue;
+    private MPLabel labelBoostValue;
     private IContainer components = null;
 
 
@@ -145,9 +145,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAc3DecoderSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
                                                                      System.Drawing.FontStyle.Regular,
                                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.groupBoxAc3DecoderSettings.Location = new System.Drawing.Point(0, 0);
+      this.groupBoxAc3DecoderSettings.Location = new System.Drawing.Point(6, 0);
       this.groupBoxAc3DecoderSettings.Name = "groupBoxAc3DecoderSettings";
-      this.groupBoxAc3DecoderSettings.Size = new System.Drawing.Size(472, 104);
+      this.groupBoxAc3DecoderSettings.Size = new System.Drawing.Size(462, 104);
       this.groupBoxAc3DecoderSettings.TabIndex = 0;
       this.groupBoxAc3DecoderSettings.TabStop = false;
       this.groupBoxAc3DecoderSettings.Text = "AC3 Decoder Settings";
@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration.Sections
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxAc3Lfe.AutoSize = true;
       this.checkBoxAc3Lfe.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAc3Lfe.Location = new System.Drawing.Point(413, 24);
+      this.checkBoxAc3Lfe.Location = new System.Drawing.Point(403, 24);
       this.checkBoxAc3Lfe.Name = "checkBoxAc3Lfe";
       this.checkBoxAc3Lfe.Size = new System.Drawing.Size(43, 17);
       this.checkBoxAc3Lfe.TabIndex = 2;
@@ -197,6 +197,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAc3SpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAc3SpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAc3SpeakerConfig.Items.AddRange(new object[]
                                                      {
@@ -214,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
                                                      });
       this.comboBoxAc3SpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxAc3SpeakerConfig.Name = "comboBoxAc3SpeakerConfig";
-      this.comboBoxAc3SpeakerConfig.Size = new System.Drawing.Size(240, 21);
+      this.comboBoxAc3SpeakerConfig.Size = new System.Drawing.Size(230, 21);
       this.comboBoxAc3SpeakerConfig.TabIndex = 1;
       // 
       // checkBoxAc3DynamicRange
@@ -243,9 +244,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxFormat.Controls.Add(this.checkBoxNormalize);
       this.groupBoxFormat.Controls.Add(this.trackBarBoost);
       this.groupBoxFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxFormat.Location = new System.Drawing.Point(0, 224);
+      this.groupBoxFormat.Location = new System.Drawing.Point(7, 224);
       this.groupBoxFormat.Name = "groupBoxFormat";
-      this.groupBoxFormat.Size = new System.Drawing.Size(472, 121);
+      this.groupBoxFormat.Size = new System.Drawing.Size(461, 121);
       this.groupBoxFormat.TabIndex = 2;
       this.groupBoxFormat.TabStop = false;
       this.groupBoxFormat.Text = "AC3/AAC/DTS/LPCM Format";
@@ -255,7 +256,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelBoostValue.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelBoostValue.Location = new System.Drawing.Point(336, 51);
+      this.labelBoostValue.Location = new System.Drawing.Point(325, 51);
       this.labelBoostValue.Name = "labelBoostValue";
       this.labelBoostValue.Size = new System.Drawing.Size(26, 23);
       this.labelBoostValue.TabIndex = 7;
@@ -336,7 +337,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarBoost.Location = new System.Drawing.Point(48, 52);
       this.trackBarBoost.Maximum = 100;
       this.trackBarBoost.Name = "trackBarBoost";
-      this.trackBarBoost.Size = new System.Drawing.Size(292, 45);
+      this.trackBarBoost.Size = new System.Drawing.Size(281, 45);
       this.trackBarBoost.TabIndex = 5;
       this.trackBarBoost.TickStyle = System.Windows.Forms.TickStyle.None;
       this.trackBarBoost.Scroll += new System.EventHandler(this.trackBarBoost_Scroll);
@@ -353,9 +354,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxDtsDecoderSettings.Controls.Add(this.comboBoxDtsSpeakerConfig);
       this.groupBoxDtsDecoderSettings.Controls.Add(this.checkBoxDtsDynamicRange);
       this.groupBoxDtsDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxDtsDecoderSettings.Location = new System.Drawing.Point(0, 112);
+      this.groupBoxDtsDecoderSettings.Location = new System.Drawing.Point(6, 112);
       this.groupBoxDtsDecoderSettings.Name = "groupBoxDtsDecoderSettings";
-      this.groupBoxDtsDecoderSettings.Size = new System.Drawing.Size(472, 104);
+      this.groupBoxDtsDecoderSettings.Size = new System.Drawing.Size(462, 104);
       this.groupBoxDtsDecoderSettings.TabIndex = 1;
       this.groupBoxDtsDecoderSettings.TabStop = false;
       this.groupBoxDtsDecoderSettings.Text = "DTS Decoder Settings";
@@ -392,7 +393,7 @@ namespace MediaPortal.Configuration.Sections
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxDtsLfe.AutoSize = true;
       this.checkBoxDtsLfe.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxDtsLfe.Location = new System.Drawing.Point(413, 24);
+      this.checkBoxDtsLfe.Location = new System.Drawing.Point(403, 24);
       this.checkBoxDtsLfe.Name = "checkBoxDtsLfe";
       this.checkBoxDtsLfe.Size = new System.Drawing.Size(43, 17);
       this.checkBoxDtsLfe.TabIndex = 2;
@@ -405,6 +406,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDtsSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDtsSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDtsSpeakerConfig.Items.AddRange(new object[]
                                                      {
@@ -419,7 +421,7 @@ namespace MediaPortal.Configuration.Sections
                                                      });
       this.comboBoxDtsSpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxDtsSpeakerConfig.Name = "comboBoxDtsSpeakerConfig";
-      this.comboBoxDtsSpeakerConfig.Size = new System.Drawing.Size(240, 21);
+      this.comboBoxDtsSpeakerConfig.Size = new System.Drawing.Size(230, 21);
       this.comboBoxDtsSpeakerConfig.TabIndex = 1;
       // 
       // checkBoxDtsDynamicRange
@@ -442,9 +444,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAacDecoderSettings.Controls.Add(this.checkBoxAacDynamic);
       this.groupBoxAacDecoderSettings.Controls.Add(this.checkBoxAacDownmix);
       this.groupBoxAacDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAacDecoderSettings.Location = new System.Drawing.Point(0, 353);
+      this.groupBoxAacDecoderSettings.Location = new System.Drawing.Point(6, 353);
       this.groupBoxAacDecoderSettings.Name = "groupBoxAacDecoderSettings";
-      this.groupBoxAacDecoderSettings.Size = new System.Drawing.Size(472, 52);
+      this.groupBoxAacDecoderSettings.Size = new System.Drawing.Size(462, 52);
       this.groupBoxAacDecoderSettings.TabIndex = 3;
       this.groupBoxAacDecoderSettings.TabStop = false;
       this.groupBoxAacDecoderSettings.Text = "AAC Decoder Settings";
@@ -481,13 +483,13 @@ namespace MediaPortal.Configuration.Sections
       this.label2.TabIndex = 7;
       this.label2.Text = "Boost:";
       // 
-      // MPEG2DecAudioFilter
+      // FiltersMPEG2DecAudio
       // 
       this.Controls.Add(this.groupBoxDtsDecoderSettings);
       this.Controls.Add(this.groupBoxAc3DecoderSettings);
       this.Controls.Add(this.groupBoxFormat);
       this.Controls.Add(this.groupBoxAacDecoderSettings);
-      this.Name = "MPEG2DecAudioFilter";
+      this.Name = "FiltersMPEG2DecAudio";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxAc3DecoderSettings.ResumeLayout(false);
       this.groupBoxAc3DecoderSettings.PerformLayout();

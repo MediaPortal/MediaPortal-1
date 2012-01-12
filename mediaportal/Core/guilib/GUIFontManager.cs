@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
 using DShowNET.Helper;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
@@ -71,29 +72,14 @@ namespace MediaPortal.GUI.Library
       public int fontHeight;
     } ;
 
-    // This is used for caching font textures (non-latin char support)
-    private struct FontTexture
-    {
-      public int size;
-      public string text;
-      public Texture texture;
-    } ;
-
-    // This is used for caching system fonts (non-latin char support)
-    private struct FontObject
-    {
-      public int size;
-      public System.Drawing.Font font;
-    } ;
-
     #endregion
 
     private static object _renderlock = new object();
     protected static List<GUIFont> _listFonts = new List<GUIFont>();
-    protected static Dictionary<string,string> _dictFontAlias = new Dictionary<string, string>();
+    protected static Dictionary<string, string> _dictFontAlias = new Dictionary<string, string>();
     private static Sprite _d3dxSprite;
     private static bool _d3dxSpriteUsed;
-    private static int _maxCachedTextures = 500;
+    private static int _maxCachedTextures = 250;
     private static List<FontManagerDrawText> _listDrawText = new List<FontManagerDrawText>();
     private static List<FontTexture> _listFontTextures = new List<FontTexture>();
     private static List<FontObject> _listFontObjects = new List<FontObject>();
@@ -157,13 +143,13 @@ namespace MediaPortal.GUI.Library
           XmlNodeList list = doc.DocumentElement.SelectNodes("/fonts/font");
           foreach (XmlNode node in list)
           {
-            XmlNode nodeStart = node.SelectSingleNode("startchar");
-            XmlNode nodeEnd = node.SelectSingleNode("endchar");
-            XmlNode nodeName = node.SelectSingleNode("name");
-            XmlNode nodeFileName = node.SelectSingleNode("filename");
-            XmlNode nodeHeight = node.SelectSingleNode("height");
-            XmlNode nodeBold = node.SelectSingleNode("bold");
-            XmlNode nodeItalics = node.SelectSingleNode("italic");
+            XmlNode nodeStart = node.SelectSingleNodeFast("startchar");
+            XmlNode nodeEnd = node.SelectSingleNodeFast("endchar");
+            XmlNode nodeName = node.SelectSingleNodeFast("name");
+            XmlNode nodeFileName = node.SelectSingleNodeFast("filename");
+            XmlNode nodeHeight = node.SelectSingleNodeFast("height");
+            XmlNode nodeBold = node.SelectSingleNodeFast("bold");
+            XmlNode nodeItalics = node.SelectSingleNodeFast("italic");
             if (nodeHeight != null && nodeName != null && nodeFileName != null)
             {
               bool bold = false;
@@ -218,8 +204,8 @@ namespace MediaPortal.GUI.Library
           XmlNodeList listAlias = doc.DocumentElement.SelectNodes("/fonts/alias");
           foreach (XmlNode node in listAlias)
           {
-            XmlNode nodeName = node.SelectSingleNode("name");
-            XmlNode nodeFontName = node.SelectSingleNode("fontname");
+            XmlNode nodeName = node.SelectSingleNodeFast("name");
+            XmlNode nodeFontName = node.SelectSingleNodeFast("fontname");
             _dictFontAlias.Add(nodeName.InnerText, nodeFontName.InnerText);
           }
 
@@ -248,8 +234,8 @@ namespace MediaPortal.GUI.Library
         {
           return _listFonts[iFont];
         }
-        return GetFont("debug"); 
-      }      
+        return GetFont("debug");
+      }
     }
 
     /// <summary>
@@ -362,7 +348,7 @@ namespace MediaPortal.GUI.Library
       if (!fontCached)
       {
         System.Drawing.Font systemFont = new System.Drawing.Font("Arial", fontSize);
-        FontObject newFont;
+        FontObject newFont = new FontObject();
         newFont.size = fontSize;
         newFont.font = systemFont;
         _listFontObjects.Add(newFont);
@@ -395,19 +381,26 @@ namespace MediaPortal.GUI.Library
     {
       bool textureCached = false;
       int cacheSlot = 0;
+      FontTexture drawingTexture = new FontTexture();
       foreach (FontTexture cachedTexture in _listFontTextures)
       {
         if (cachedTexture.text == draw.text && cachedTexture.size == fontSize)
         {
           textureCached = true;
+          drawingTexture = cachedTexture;
           break;
         }
         cacheSlot++;
       }
 
       Size size = new Size(0, 0);
-
-      if (!textureCached)
+      if (textureCached)
+      {
+        //keep commonly used textures at the top of the pile
+        _listFontTextures.RemoveAt(cacheSlot);
+        _listFontTextures.Add(drawingTexture);
+      }
+      else // texture needs to be cached
       {
         Texture texture = null;
         float textwidth = 0, textheight = 0;
@@ -476,19 +469,23 @@ namespace MediaPortal.GUI.Library
         size.Width = (int)textwidth;
         size.Height = (int)textheight;
 
-        FontTexture newTexture;
+        FontTexture newTexture = new FontTexture();
         newTexture.text = draw.text;
         newTexture.texture = texture;
         newTexture.size = fontSize;
 
         if (_listFontTextures.Count >= _maxCachedTextures)
         {
+          //need to clear this and not rely on the finalizer
+          FontTexture disposableFont = _listFontTextures[0];
           _listFontTextures.RemoveAt(0);
+          disposableFont.Dispose();
         }
         _listFontTextures.Add(newTexture);
+        drawingTexture = newTexture;
       }
 
-      _d3dxSprite.Draw(_listFontTextures[cacheSlot].texture, new Rectangle(0, 0, size.Width, size.Height),
+      _d3dxSprite.Draw(drawingTexture.texture, new Rectangle(0, 0, size.Width, size.Height),
                        Vector3.Empty,
                        new Vector3((int)draw.xpos, (int)draw.ypos, 0), draw.color);
     }
@@ -571,7 +568,7 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
-    
+
     /// <summary>
     /// Disposes all GUIFonts.
     /// </summary>
@@ -593,8 +590,8 @@ namespace MediaPortal.GUI.Library
           _d3dxSpriteUsed = false;
         }
         _listFontTextures.DisposeAndClear();
-        _listFontObjects.DisposeAndClear(); 
-      }      
+        _listFontObjects.DisposeAndClear();
+      }
     }
 
     public static void ClearFontCache()
@@ -638,8 +635,8 @@ namespace MediaPortal.GUI.Library
         foreach (GUIFont font in _listFonts)
         {
           font.InitializeDeviceObjects();
-        } 
-      }      
+        }
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -502,9 +502,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         using (StreamWriter writer = File.AppendText(@"c:\xpllib-debug-log.txt"))
         {
           writer.WriteLine(DateTime.Now.ToString("dd-MMM-yy HH:mm:ss") + " " + this.Source + ": " + s);
-          writer.Close();  
+          writer.Close();
         }
-        
       }
       else if (this.DoDebug)
       {

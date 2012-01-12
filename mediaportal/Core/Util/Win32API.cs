@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -82,7 +82,8 @@ namespace MediaPortal.Util
     public static extern int UnhookWindowsHookEx(int hHook);
 
     [DllImport("User32", CharSet = CharSet.Auto)]
-    public static extern IntPtr FindWindow([MarshalAs(UnmanagedType.LPTStr)] string lpClassName, [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
+    public static extern IntPtr FindWindow([MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
+                                           [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
 
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern IntPtr GetWindow(IntPtr hwnd, ShowWindowFlags wCmd);
@@ -107,6 +108,9 @@ namespace MediaPortal.Util
 
     [DllImport("user32.dll", CharSet = CharSet.Ansi, ExactSpelling = true)]
     public static extern IntPtr DispatchMessageA([In] ref MSG msg);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+    public static extern bool IsWindowUnicode(HandleRef hWnd);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
     public static extern IntPtr GetParent(HandleRef hWnd);
@@ -198,6 +202,16 @@ namespace MediaPortal.Util
     [DllImport("kernel32.dll")]
     public static extern bool SetDllDirectory(string PathName);
 
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    public static extern int GetLocaleInfo(
+      // The locale identifier.
+      int Locale,
+      // The information type.
+      int LCType,
+      // The buffer size.
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpLCData, int cchData
+      );
+
     #endregion
 
     #region Structures
@@ -209,14 +223,12 @@ namespace MediaPortal.Util
       public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
       public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
       public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-      public int nFileSizeHigh;
-      public int nFileSizeLow;
+      public uint nFileSizeHigh;
+      public uint nFileSizeLow;
       public int dwReserved0;
       public int dwReserved1;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-      public string cFileName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-      public string cAlternate;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string cFileName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)] public string cAlternate;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -435,8 +447,12 @@ namespace MediaPortal.Util
       try
       {
         Show("Shell_TrayWnd", "", bVisible);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Show("Button", "Start", bVisible);
+        }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     public static void EnableStartBar(bool bEnable)
@@ -444,8 +460,12 @@ namespace MediaPortal.Util
       try
       {
         Enable("Shell_TrayWnd", "", bEnable);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Enable("Button", "Start", bEnable);
+        }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary> 
@@ -467,7 +487,9 @@ namespace MediaPortal.Util
           // if the window is minimized, then we need to restore it to its 
           // previous size. we also take into account whether it was 
           // previously maximized. 
-          ShowWindowFlags showCmd = (windowPlacement.flags == WPF_RESTORETOMAXIMIZED) ? ShowWindowFlags.ShowMaximized : ShowWindowFlags.ShowNormal;
+          ShowWindowFlags showCmd = (windowPlacement.flags == WPF_RESTORETOMAXIMIZED)
+                                      ? ShowWindowFlags.ShowMaximized
+                                      : ShowWindowFlags.ShowNormal;
           ShowWindow((IntPtr)_hWnd, showCmd);
           break;
         default:

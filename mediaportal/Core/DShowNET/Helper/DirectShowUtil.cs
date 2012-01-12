@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ namespace DShowNET.Helper
         IBaseFilter NewFilter = null;
         foreach (Filter filter in Filters.LegacyFilters)
         {
-          if (String.Compare(filter.Name, strFilterName, true) == 0 && (clsid == Guid.Empty || filter.CLSID == clsid) )
+          if (String.Compare(filter.Name, strFilterName, true) == 0 && (clsid == Guid.Empty || filter.CLSID == clsid))
           {
             NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
 
@@ -127,7 +127,10 @@ namespace DShowNET.Helper
               if (setAsReferenceClock)
               {
                 hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
-                Log.Debug("setAsReferenceClock sync source " + hr.ToDXString());
+                if (hr != 0)
+                {
+                  Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                }
               }
               return NewFilter;
             }
@@ -223,7 +226,10 @@ namespace DShowNET.Helper
                   if (setAsReferenceClock)
                   {
                     hr.Set((graphBuilder as IMediaFilter).SetSyncSource(pBasefilter[0] as IReferenceClock));
-                    Log.Info("setAsReferenceClock sync source " + hr.ToDXString());
+                    if (hr != 0)
+                    {
+                      Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                    }
                   }
                   ReleaseComObject(pBasefilter[0]);
                   pBasefilter[0] = null;
@@ -283,7 +289,10 @@ namespace DShowNET.Helper
               if (setAsReferenceClock)
               {
                 hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
-                Log.Debug("setAsReferenceClock sync source " + hr.ToDXString());
+                if (hr != 0)
+                {
+                  Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                }
               }
               return NewFilter;
             }
@@ -409,7 +418,7 @@ namespace DShowNET.Helper
           FilterInfo info;
           filters[0].QueryFilterInfo(out info);
           ReleaseComObject(info.pGraph);
-          
+
           string filtername = info.achName;
           ReleaseComObject(filters[0]);
           if (filtername.Equals(name))
@@ -448,10 +457,10 @@ namespace DShowNET.Helper
       int hr;
       FilterInfo info;
       PinInfo outputInfo;
-      
+
       to.QueryFilterInfo(out info);
       ReleaseComObject(info.pGraph);
-      
+
       outputPin.QueryPinInfo(out outputInfo);
       DsUtils.FreePinInfo(outputInfo);
 
@@ -700,7 +709,7 @@ namespace DShowNET.Helper
         ReleaseComObject(filter);
       }
     }
-    
+
     public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType, string targetFilter)
     {
       if (string.IsNullOrEmpty(targetFilter))
@@ -721,11 +730,13 @@ namespace DShowNET.Helper
       else
         connected = true;
 
-      ReleaseComObject(destination); destination = null;
+      ReleaseComObject(destination);
+      destination = null;
       return connected;
     }
 
-    public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType, IBaseFilter targetFilter)
+    public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType,
+                                  IBaseFilter targetFilter)
     {
       bool connected = false;
       IEnumPins enumPins;
@@ -752,7 +763,9 @@ namespace DShowNET.Helper
           {
             if (mediaTypes[i].majorType == mediaType)
             {
-              if (graphbuilder.ConnectDirect(pins[0], DsFindPin.ByDirection(targetFilter, PinDirection.Input, 0), null) >= 0)
+              if (
+                graphbuilder.ConnectDirect(pins[0], DsFindPin.ByDirection(targetFilter, PinDirection.Input, 0), null) >=
+                0)
               {
                 connected = true;
                 break;
@@ -800,7 +813,7 @@ namespace DShowNET.Helper
         ArrayList sub = new ArrayList();
 
         Log.Debug("Getting corresponding filters");
-        for (; ; )
+        for (;;)
         {
           AMMediaType[] mediaTypes = new AMMediaType[1];
           int typesFetched;
@@ -814,8 +827,8 @@ namespace DShowNET.Helper
         }
         ReleaseComObject(enumTypes);
         Log.Debug("Found {0} media types", major.Count);
-        Guid[] majorTypes = (Guid[])major.ToArray(typeof(Guid));
-        Guid[] subTypes = (Guid[])sub.ToArray(typeof(Guid));
+        Guid[] majorTypes = (Guid[])major.ToArray(typeof (Guid));
+        Guid[] subTypes = (Guid[])sub.ToArray(typeof (Guid));
         Log.Debug("Loading filters");
         ArrayList filters = FilterHelper.GetFilters(majorTypes, subTypes, (Merit)0x00400000);
         Log.Debug("Loaded {0} filters", filters.Count);
@@ -916,7 +929,7 @@ namespace DShowNET.Helper
               }
             }
 
-            ReleaseComObject(i.pGraph);            
+            ReleaseComObject(i.pGraph);
             hr = graphBuilder.Render(pins[0]);
             if (hr != 0)
               Log.Debug(" - failed");
@@ -942,7 +955,8 @@ namespace DShowNET.Helper
       return RenderOutputPins(graphBuilder, filter, maxPinsToRender, true);
     }
 
-    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender, bool tryAllFilters)
+    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender,
+                                        bool tryAllFilters)
     {
       int pinsRendered = 0;
       bool bAllConnected = true;
@@ -950,7 +964,7 @@ namespace DShowNET.Helper
       FilterInfo info;
       filter.QueryFilterInfo(out info);
       ReleaseComObject(info.pGraph);
-      
+
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -1147,7 +1161,7 @@ namespace DShowNET.Helper
           {
             bool filterUsed = false;
             bool hasOut = false;
-            bool hasIn = false;            
+            bool hasIn = false;
             pinEnum.Reset();
             IPin[] pins = new IPin[1];
             while (pinEnum.Next(1, pins, out fetched) == 0)
@@ -1174,12 +1188,12 @@ namespace DShowNET.Helper
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
               if (hr == 0)
-                Log.Debug(" - remove done");              
+                Log.Debug(" - remove done");
             }
           }
           ReleaseComObject(info.pGraph);
           ReleaseComObject(filter);
-        }        
+        }
       }
       catch (Exception error)
       {
@@ -1307,7 +1321,7 @@ namespace DShowNET.Helper
       FilterInfo info;
       filter.QueryFilterInfo(out info);
       ReleaseComObject(info.pGraph);
-      
+
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -1717,26 +1731,28 @@ namespace DShowNET.Helper
           FilterInfo info;
           filter.QueryFilterInfo(out info);
           ReleaseComObject(info.pGraph);
-       
+
           try
           {
             if (!String.IsNullOrEmpty(filterName))
             {
               if (String.Equals(info.achName, filterName))
               {
+                DisconnectAllPins(graphBuilder, filter);
                 hr = graphBuilder.RemoveFilter(filter);
                 DsError.ThrowExceptionForHR(hr);
                 ReleaseComObject(filter);
-                Log.Debug("Remove filter from graph: {0}", info.achName);          
+                Log.Debug("Remove filter from graph: {0}", info.achName);
               }
             }
             else
             {
+              DisconnectAllPins(graphBuilder, filter);
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
               int i = ReleaseComObject(filter);
-              Log.Debug("Remove filter from graph: {0} {1}", info.achName,i );          
-            }            
+              Log.Debug("Remove filter from graph: {0} {1}", info.achName, i);
+            }
           }
           catch (Exception error)
           {
@@ -1955,6 +1971,89 @@ namespace DShowNET.Helper
       return null;
     }
 
+    public static IPin FindFirstFreePinSub(IBaseFilter filter, PinDirection dir, string strPinName)
+    {
+      int hr = 0;
+
+      IEnumPins pinEnum;
+      hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
+      {
+        pinEnum.Reset();
+        IPin[] pins = new IPin[1];
+        int f;
+        IEnumMediaTypes enumMediaTypesAudioVideo;
+        while (pinEnum.Next(1, pins, out f) == 0)
+        {
+          if (pins[0] != null)
+          {
+            hr = pins[0].EnumMediaTypes(out enumMediaTypesAudioVideo);
+            AMMediaType[] mediaTypes = new AMMediaType[1];
+            int typesFetched;
+            hr = enumMediaTypesAudioVideo.Next(1, mediaTypes, out typesFetched);
+            if (mediaTypes[0].majorType != MediaType.Audio && mediaTypes[0].majorType != MediaType.Video)
+            {
+              PinDirection pinDir;
+              pins[0].QueryDirection(out pinDir);
+              if (pinDir == dir)
+              {
+                IPin other;
+                hr = pins[0].ConnectedTo(out other);
+                if (other != null)
+                {
+                  IPin pinToVideo;
+                  hr = pins[0].ConnectedTo(out pinToVideo);
+                  if (hr >= 0 && pinToVideo != null)
+                  {
+                    PinInfo pInfo;
+                    pinToVideo.QueryPinInfo(out pInfo);
+                    FilterInfo fInfo;
+                    pInfo.filter.QueryFilterInfo(out fInfo);
+                    if (!fInfo.achName.Contains("DirectVobSub") && !fInfo.achName.Contains("DirectVobSub (auto-loading version)"))
+                    {
+                      //Log.Debug("DirectShowUtil: Disconnect Pin from filter - {0}", fInfo.achName);
+                      pins[0].Disconnect();
+                    }
+                    DsUtils.FreePinInfo(pInfo);
+                    DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+                    DirectShowUtil.ReleaseComObject(pinToVideo); pinToVideo = null;
+                    DirectShowUtil.ReleaseComObject(other); other = null;
+                    hr = pins[0].ConnectedTo(out other);
+                  }
+                }
+                if (hr != 0 && other == null)
+                {
+                  PinInfo info;
+                  pins[0].QueryPinInfo(out info);
+                  DsUtils.FreePinInfo(info);
+                  if (!String.IsNullOrEmpty(strPinName))
+                  {
+                    if (String.Compare(info.name, strPinName) == 0)
+                    {
+                      //Log.Debug("*** pin {0}", info.name);
+                      DirectShowUtil.ReleaseComObject(pinEnum);
+                      return pins[0];
+                    }
+                  }
+                  else
+                  {
+                    //Log.Debug("*** pin {0}", info.name);
+                    DirectShowUtil.ReleaseComObject(pinEnum);
+                    return pins[0];
+                  }
+                }
+              }
+              DirectShowUtil.ReleaseComObject(pins[0]);
+            }
+            DirectShowUtil.ReleaseComObject(enumMediaTypesAudioVideo);
+            enumMediaTypesAudioVideo = null;
+          }
+        }
+        DirectShowUtil.ReleaseComObject(pinEnum);
+      }
+      return null;
+    }
+
     public static void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IBaseFilter fromFilter, bool remove)
     {
       IEnumPins enumPins;
@@ -2025,7 +2124,7 @@ namespace DShowNET.Helper
 
       if (obj != null)
       {
-        Stopwatch stopwatch = Stopwatch.StartNew();        
+        Stopwatch stopwatch = Stopwatch.StartNew();
         while (returnVal > 0 && stopwatch.ElapsedMilliseconds < timeOut)
         {
           returnVal = Marshal.ReleaseComObject(obj);
@@ -2038,7 +2137,7 @@ namespace DShowNET.Helper
             return returnVal;
           }
         }
-      }      
+      }
 
       StackTrace st = new StackTrace(true);
       Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);

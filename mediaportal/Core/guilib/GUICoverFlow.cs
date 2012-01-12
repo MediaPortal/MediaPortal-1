@@ -1,25 +1,20 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2010 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -31,7 +26,9 @@ using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -59,14 +56,14 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("backgroundX")] protected int _backgroundPositionX;
     [XMLSkinElement("backgroundY")] protected int _backgroundPositionY;
     [XMLSkinElement("backgroundDiffuse")] protected int _backgroundDiffuseColor;
-    [XMLSkinElement("background")] protected string _backgroundTextureName;
+    [XMLSkinElement("background")] protected string _backgroundTextureName = "-";
     [XMLSkinElement("showBackground")] protected bool _showBackground = false;
     [XMLSkinElement("foregroundHeight")] protected int _foregroundHeight;
     [XMLSkinElement("foregroundWidth")] protected int _foregroundWidth;
     [XMLSkinElement("foregroundX")] protected int _foregroundPositionX;
     [XMLSkinElement("foregroundY")] protected int _foregroundPositionY;
     [XMLSkinElement("foregroundDiffuse")] protected int _foregroundDiffuseColor;
-    [XMLSkinElement("foreground")] protected string _foregroundTextureName;
+    [XMLSkinElement("foreground")] protected string _foregroundTextureName = "-";
     [XMLSkinElement("showForeground")] protected bool _showForeground = false;
     [XMLSkinElement("showFrame")] protected bool _showFrame = true;
     [XMLSkinElement("frame")] protected string _frameName = "";
@@ -99,6 +96,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollbarWidth")] protected int _scrollbarWidth = 400;
     [XMLSkinElement("scrollbarHeight")] protected int _scrollbarHeight = 15;
     [XMLSkinElement("showScrollbar")] protected bool _showScrollbar = true;
+    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = true;
+    [XMLSkinElement("thumbZoom")] protected bool _zoom = false;
+    [XMLSkinElement("cardAlign")] protected Alignment _imageAlignment = Alignment.ALIGN_CENTER;
+    [XMLSkinElement("cardVAlign")] protected VAlignment _imageVAlignment = VAlignment.ALIGN_BOTTOM;
     [XMLSkin("cards", "flipY")] protected bool _flipY = false;
     [XMLSkin("cards", "diffuse")] protected string _diffuseFilename = "";
     [XMLSkin("cards", "mask")] protected string _maskFilename = "";
@@ -113,19 +114,19 @@ namespace MediaPortal.GUI.Library
       SEARCH_FIRST,
       SEARCH_PREV,
       SEARCH_NEXT
-    };
+    } ;
 
     // Defines the directions in which the cover flow can move.
     private enum FlowDirection
     {
       LEFT,
       RIGHT
-    };
+    } ;
 
     // Define the controls
     private List<GUIListItem> _listItems = new List<GUIListItem>();
     private List<GUIAnimation> _frame = new List<GUIAnimation>();
-    private List<GUIAnimation> _frameFocus = new List<GUIAnimation>();
+    private GUIAnimation _frameFocus = null;
     private GUILabelControl _label1 = null;
     private GUILabelControl _label2 = null;
     private GUIFont _font1 = null;
@@ -135,16 +136,30 @@ namespace MediaPortal.GUI.Library
     private GUIHorizontalScrollbar _horizontalScrollbar = null;
 
     // Create a collection to maintain the controls for the back of the card.
-    private System.Windows.UIElementCollection _cardBackControls = new System.Windows.UIElementCollection();
+    private List<GUIControl> _cardBackControls = new List<GUIControl>();
 
     // Cover flow status
     private float _position = 0.0f;
     private FlowDirection _direction = FlowDirection.RIGHT;
+    private int _nextFrameIndex = 0;
+    private bool _reAllocate = false;
 
     // Card spinning
-    float _selectedSpinAngle = 0.0f;
-    float _spinAnglePosition = 0.0f;
-    Action _queuedAction = null;
+    //private float _selectedSpinAngle = 0.0f;
+    //private float _spinAnglePosition = 0.0f;
+    private Dictionary<int, SpinningCardsHelper> _spinningCards = new Dictionary<int, SpinningCardsHelper>();
+    private Action _queuedAction = null;
+    private class SpinningCardsHelper
+    {
+        public float current = 0.0f;
+        public float expected = 0.0f;
+
+        public SpinningCardsHelper(float curr, float exp)
+        {
+            current = curr;
+            expected = exp;
+        }
+    }
 
     // Search            
     private DateTime _timerKey = DateTime.Now;
@@ -152,6 +167,7 @@ namespace MediaPortal.GUI.Library
     private char _previousKey = (char)0;
     protected string _searchString = "";
     protected int _lastSearchItem = 0;
+    protected bool _enableSMSsearch = true;
 
     #endregion
 
@@ -183,57 +199,71 @@ namespace MediaPortal.GUI.Library
       _imageForeground.ParentControl = this;
       _imageForeground.DimColor = DimColor;
 
+      // Create a single focus frame for the card that is in focus.
+      _frameFocus = LoadAnimationControl(0, 0,
+                                         0, 0,
+                                         _cardWidth, _cardHeight,
+                                         _frameFocusName);
+      _frameFocus.ParentControl = null;
+      _frameFocus.DimColor = DimColor;
+      _frameFocus.FlipY = _flipY;
+      _frameFocus.DiffuseFileName = _diffuseFilename;
+      _frameFocus.MaskFileName = _maskFilename;
+      _frameFocus.AllocResources();
+
       // Create the card labels.
       int y = _positionY + _label1OffsetY;
       _label1 = new GUILabelControl(_controlId, 0,
-                                        0, y,
-                                        Width, 0,
-                                        _fontName1, "", 0x0,
-                                        Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
-                                        false,
-                                        _shadowAngle, _shadowDistance, _shadowColor);
+                                    0, y,
+                                    Width, 0,
+                                    _fontName1, "", 0x0,
+                                    Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
+                                    false,
+                                    _shadowAngle, _shadowDistance, _shadowColor);
 
       y = _positionY + _label2OffsetY;
       _label2 = new GUILabelControl(_controlId, 0,
-                                       0, y,
-                                       Width, 0,
-                                       _fontName2, "", 0x0,
-                                       Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
-                                       false,
-                                       _shadowAngle, _shadowDistance, _shadowColor);
+                                    0, y,
+                                    Width, 0,
+                                    _fontName2, "", 0x0,
+                                    Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
+                                    false,
+                                    _shadowAngle, _shadowDistance, _shadowColor);
 
       // Create the horizontal scrollbar.
       int scrollbarWidth = _scrollbarWidth;
       int scrollbarHeight = _scrollbarHeight;
       GUIGraphicsContext.ScaleHorizontal(ref scrollbarWidth);
       GUIGraphicsContext.ScaleVertical(ref scrollbarHeight);
-      int scrollbarPosX = _positionX + (_width / 2) - (_scrollbarWidth / 2);
+      int scrollbarPosX = _positionX + (_width / 2) - (scrollbarWidth / 2);
 
       _horizontalScrollbar = new GUIHorizontalScrollbar(_controlId, 0,
                                                         scrollbarPosX, _positionY + _scrollbarOffsetY,
-                                                        _scrollbarWidth, _scrollbarHeight,
+                                                        scrollbarWidth, scrollbarHeight,
                                                         _scrollbarBackgroundTextureName, _scrollbarLeftTextureName,
                                                         _scrollbarRightTextureName);
       _horizontalScrollbar.ParentControl = this;
       _horizontalScrollbar.DimColor = DimColor;
 
-      // Create controls for the back of the selected card.  All of the controls are provided as a single subitem.
-      Hashtable defines = new Hashtable();  // An empty set of defines.
+      // Create controls for the back of the selected card.  All of the controls are provided as a single subitem.      
       XmlDocument doc = new XmlDocument();
 
-      doc.LoadXml((string)GetSubItem(0));
-      XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/controls/*");
-
-      foreach (XmlNode node in nodeList)
+      if (SubItemCount > 0) // avoid exception when no SubItems are available
       {
-        try
+        doc.LoadXml((string)GetSubItem(0));
+        XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/controls/*");
+        IDictionary<string, string> defines = new Dictionary<string, string>(); // An empty set of defines.
+        foreach (XmlNode node in nodeList)
         {
-          GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines, null);
-          _cardBackControls.Add(newControl);
-        }
-        catch (Exception ex)
-        {
-          Log.Error("GUICoverFlow: Unable to load control. exception:{0}", ex.ToString());
+          try
+          {
+            GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines, null);
+            _cardBackControls.Add(newControl);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUICoverFlow: Unable to load control. exception:{0}", ex.ToString());
+          }
         }
       }
     }
@@ -306,32 +336,32 @@ namespace MediaPortal.GUI.Library
 
       if (_imageBackground != null)
       {
-        _imageBackground.FreeResources();
+        _imageBackground.Dispose();
       }
 
       if (_imageForeground != null)
       {
-        _imageForeground.FreeResources();
+        _imageForeground.Dispose();
       }
 
       if (_label1 != null)
       {
-        _label1.FreeResources();
+        _label1.Dispose();
       }
 
       if (_label2 != null)
       {
-        _label2.FreeResources();
+        _label2.Dispose();
       }
 
       if (_horizontalScrollbar != null)
       {
-        _horizontalScrollbar.FreeResources();
+        _horizontalScrollbar.Dispose();
       }
 
       foreach (GUIControl control in _cardBackControls)
       {
-        control.FreeResources();
+        control.Dispose();
       }
 
       base.Dispose();
@@ -357,6 +387,9 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _scrollbarOffsetY);
       GUIGraphicsContext.ScaleVertical(ref _label1OffsetY);
       GUIGraphicsContext.ScaleVertical(ref _label2OffsetY);
+
+      // Reallocate the card images using the new sizes.
+      _reAllocate = true;
     }
 
     public override void Animate(float timePassed, Animator animator)
@@ -381,39 +414,37 @@ namespace MediaPortal.GUI.Library
 
     public override void OnAction(Action action)
     {
-      // If the selected card is spinning then throw away the action.
-      if (CardIsSpinning())
-      {
-        return;
-      }
+      bool isSpinningFront = CardIsSpinningFront();
+      bool isSpinningBack = CardIsSpinningBack();
+      bool isSpinning = isSpinningFront || isSpinningBack;
+      bool isSpun = CardIsSpun();
 
       // If the card is spun around then unspin the card before executing the action.  The action is queued to execute after
       // the card has been unspun.
-      if (CardIsSpun())
+      if (isSpun || isSpinningBack)
       {
-        // Don't queue invalid actions or actions that are designed to spin the card in the first place.
-        if (action.wID != Action.ActionType.ACTION_SHOW_INFO &&
-            action.wID != Action.ActionType.ACTION_INVALID)
+        //UnspinCard();
+        if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
         {
-          QueueAction(action);
+          OnDefaultAction(action);
+          UnspinCard();
+          return;
         }
-
         UnspinCard();
-        return;
       }
 
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PAGE_UP:
           {
-            int iItem = Math.Min(SelectedListItemIndex + _pageSize, _listItems.Count - 1);
+            int iItem = Math.Max(SelectedListItemIndex - _pageSize, 0);
             SelectCardIndex(iItem);
           }
           break;
 
         case Action.ActionType.ACTION_PAGE_DOWN:
           {
-            int iItem = Math.Max(SelectedListItemIndex - _pageSize, 0);
+            int iItem = Math.Min(SelectedListItemIndex + _pageSize, _listItems.Count - 1);
             SelectCardIndex(iItem);
           }
           break;
@@ -482,8 +513,8 @@ namespace MediaPortal.GUI.Library
                 if (_searchString.Length > 0)
                 {
                   _searchString = _searchString.Remove(_searchString.Length - 1, 1);
+                  SearchItem(_searchString, SearchType.SEARCH_FIRST);
                 }
-                SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }
 
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) ||
@@ -509,9 +540,16 @@ namespace MediaPortal.GUI.Library
             {
               if (_horizontalScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
               {
+                // We require mouse support for the scrollbar to respond properly.  Temporarily bypass the global setting to allow
+                // the action to work for us.
+                bool ms = GUIGraphicsContext.MouseSupport;
+                GUIGraphicsContext.MouseSupport = true;
+
                 _horizontalScrollbar.OnAction(action);
                 int index = (int)((_horizontalScrollbar.Percentage / 100.0f) * _listItems.Count);
                 SelectCardIndex(index);
+
+                GUIGraphicsContext.MouseSupport = ms;
               }
             }
           }
@@ -525,10 +563,7 @@ namespace MediaPortal.GUI.Library
 
         default:
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
-                                            (int)action.wID, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
-            ResetSearchString();
+            OnDefaultAction(action);
           }
           break;
       }
@@ -720,6 +755,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="Key"></param>
     private void Press(char Key)
     {
+      if (!_enableSMSsearch) return;
+
       // Check key timeout
       CheckTimer();
 
@@ -1011,17 +1048,21 @@ namespace MediaPortal.GUI.Library
     /// <param name="shouldFocus">True if the card should be in focus.</param>
     private void RenderCard(float timePassed, int index, bool shouldFocus)
     {
+      if (index < 0 || index >= _listItems.Count) return;
+
       // The selected card may have its front or back shown.
       if (index == SelectedListItemIndex)
       {
+        SpinningCardsHelper spinningCard;
+        _spinningCards.TryGetValue(index, out spinningCard);
         // If the card spin angle is not yet 90 degrees then render the front of the card.
-        if (Math.Abs(_spinAnglePosition) <= 90)
+        if (spinningCard != null && Math.Abs(spinningCard.current) > 90)
         {
-          RenderCardFront(timePassed, index, shouldFocus);
+          RenderCardBack(timePassed, index, shouldFocus);
         }
         else
         {
-          RenderCardBack(timePassed, index, shouldFocus);
+          RenderCardFront(timePassed, index, shouldFocus);
         }
       }
       else
@@ -1055,8 +1096,10 @@ namespace MediaPortal.GUI.Library
                                pItem.ThumbnailImage, 0x0);
 
           pCard.ParentControl = null; // We want to be able to treat each card as a control.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
@@ -1068,6 +1111,12 @@ namespace MediaPortal.GUI.Library
 
         if (null != pCard)
         {
+          if (pCard.TextureHeight == 0 && pCard.TextureWidth == 0)
+          {
+            pCard.SafeDispose();
+            pCard.AllocResources();
+          }
+
           if (itemFocused)
           {
             pCard.ColourDiffuse = 0xffffffff;
@@ -1080,15 +1129,16 @@ namespace MediaPortal.GUI.Library
           }
 
           // Ensure our card is setup as we expect because other views (filmstrip) may have changed these values.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
           pCard.DimColor = DimColor;
-
-          // Center the image horizontally in the card.
-          pCard.SetPosition((pCard.Width - pCard.RenderWidth) / 2, 0);
+          pCard.Width = _cardWidth;
+          pCard.Height = _cardHeight;
 
           pCard.UpdateVisibility();
           pCard.Render(timePassed);
@@ -1105,8 +1155,10 @@ namespace MediaPortal.GUI.Library
                                pItem.IconImageBig, 0x0);
 
           pCard.ParentControl = null; // We want to be able to treat each card as a control.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
@@ -1129,15 +1181,16 @@ namespace MediaPortal.GUI.Library
           }
 
           // Ensure our card is setup as we expect because other views (filmstrip) may have changed these values.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
           pCard.DimColor = DimColor;
-
-          // Center the image horizontally in the card.
-          pCard.SetPosition((pCard.Width - pCard.RenderWidth) / 2, 0);
+          pCard.Width = _cardWidth;
+          pCard.Height = _cardHeight;
 
           pCard.UpdateVisibility();
           pCard.Render(timePassed);
@@ -1147,7 +1200,8 @@ namespace MediaPortal.GUI.Library
       // Render the card frame.
       if (_showFrame)
       {
-        GUIAnimation frame = (itemFocused ? _frameFocus[index] : _frame[index]);
+        // Choose a frame for the card from the collection of frames for rendered cards.
+        GUIAnimation frame = (itemFocused ? _frameFocus : _frame[GetNextAvailableFrameIndex()]);
         frame.Focus = itemFocused;
         frame.Width = _frameWidth;
         frame.Height = _frameHeight;
@@ -1172,13 +1226,50 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Returns the next available frame index for rendering a card frame.
+    /// </summary>
+    private int GetNextAvailableFrameIndex()
+    {
+      // If there are not enough card frames then lazily add one.
+      // We only create enough frames for the cards that fit in the window.
+      if (_nextFrameIndex >= _frame.Count)
+      {
+        // Create a card frame (non-focus) to be reused across the card collection.
+        GUIAnimation anim = LoadAnimationControl(0, 0,
+                                                 0, 0,
+                                                 _frameWidth, _frameHeight,
+                                                 _frameName);
+        anim.ParentControl = null;
+        anim.DimColor = DimColor;
+        anim.FlipY = _flipY;
+        anim.DiffuseFileName = _diffuseFilename;
+        anim.MaskFileName = _maskFilename;
+        anim.AllocResources();
+        _frame.Add(anim);
+      }
+
+      int returnValue = _nextFrameIndex;
+      _nextFrameIndex++;
+
+      return returnValue;
+    }
+
+    /// <summary>
+    /// Resets next available frame index for the next render frame.
+    /// </summary>
+    private void ResetNextAvailableFrameIndex()
+    {
+      _nextFrameIndex = 0;
+    }
+
+    /// <summary>
     /// Draws the back of a single item of the cover flow.
     /// </summary>
     /// <param name="timePassed"></param>
     /// <param name="index">The index of the card in the entire set.</param>
     /// <param name="shouldFocus">True if the card should be in focus.</param>
     /// <param name="position">The index of the card from the edge of the control, 0 is the visible card farthest from the center card; position values increase toward the center card.</param>
-    private void RenderCardBack(float timePassed, int index, bool itemFocused)
+    private void RenderCardBack(float timePassed, int index, bool shouldFocus)
     {
       // The back of the card must be rendered 180 degrees from the front.
       GUIGraphicsContext.PushMatrix();
@@ -1194,7 +1285,9 @@ namespace MediaPortal.GUI.Library
       // Render the card frame.
       if (_showFrame)
       {
-        GUIAnimation frame = (itemFocused ? _frameFocus[index] : _frame[index]);
+        bool itemFocused = (shouldFocus == true);
+
+        GUIAnimation frame = (itemFocused ? _frameFocus : _frame[GetNextAvailableFrameIndex()]);
         frame.Focus = itemFocused;
         frame.Width = _frameWidth;
         frame.Height = _frameHeight;
@@ -1228,6 +1321,8 @@ namespace MediaPortal.GUI.Library
       }
 
       GUIListItem pItem = SelectedListItem;
+
+      if (null == pItem) return;
 
       if (_labelText1 == string.Empty)
       {
@@ -1280,6 +1375,8 @@ namespace MediaPortal.GUI.Library
 
       GUIListItem pItem = SelectedListItem;
 
+      if (null == pItem) return;
+
       if (pItem.IsFolder ||
           _labelText2 == string.Empty)
       {
@@ -1327,24 +1424,13 @@ namespace MediaPortal.GUI.Library
             _horizontalScrollbar.Percentage = fPercent;
           }
 
-          int w = _horizontalScrollbar.Width;
-          int h = _horizontalScrollbar.Height;
-          GUIGraphicsContext.ScaleHorizontal(ref w);
-          GUIGraphicsContext.ScaleVertical(ref h);
-          _horizontalScrollbar.Width = w;
-          _horizontalScrollbar.Height = h;
-
-          int x = _horizontalScrollbar.XPosition;
-          int y = _horizontalScrollbar.YPosition;
-          GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
-          _horizontalScrollbar.XPosition = x;
-          _horizontalScrollbar.YPosition = y;
-
           // The scrollbar is only rendered when the mouse support is enabled.  Temporarily bypass the global setting to allow
           // the skin to determine whether or not it should be displayed.
           bool ms = GUIGraphicsContext.MouseSupport;
           GUIGraphicsContext.MouseSupport = true;
 
+          _horizontalScrollbar.IsVisible = _showScrollbar;
+          // Guarantee that the scrollbar is visible based on skin setting.
           _horizontalScrollbar.Render(timePassed);
 
           GUIGraphicsContext.MouseSupport = ms;
@@ -1354,18 +1440,25 @@ namespace MediaPortal.GUI.Library
 
     private bool CardAllowedToSpin()
     {
+      // Make sure that we have a FileInfo object. In a Music DB View, it would be null
+      if (SelectedListItem != null && SelectedListItem.FileInfo == null)
+      {
+        SelectedListItem.FileInfo = new FileInformation();
+      }
+
       // Do not allow the card to spin if there is no back of the card defined.
-      return (_cardBackControls.Count > 0) &&
-             SelectedListItem.FileInfo != null;
+      return (_cardBackControls.Count > 0);
     }
 
     private void NotifyCardToSpin()
     {
       // Set the card spin angle to 180 degrees.
-      _selectedSpinAngle = 180.0f;
+      //_selectedSpinAngle = 180.0f;
+      SpinningCardsHelper spinningCard = _spinningCards.TryGetOrAdd(_selectedCard, i => new SpinningCardsHelper(0, 180.0f));
+      spinningCard.expected = 180.0f;
     }
 
-    private void TrySpinCard(float timePassed)
+    private void TrySpinCard(int card, float timePassed)
     {
       // Don't spin the card if not allowed.
       if (!CardAllowedToSpin())
@@ -1375,13 +1468,23 @@ namespace MediaPortal.GUI.Library
 
       // Calculate the distance between the current spin angle and the selected spin angle (desired angle).
       // The current angle is a continuous value, the selected angle is a discrete value.
-      float distance = _selectedSpinAngle - _spinAnglePosition;
+      //float distance = _selectedSpinAngle - _spinAnglePosition;
+      SpinningCardsHelper spinningCard;
+      float distance = 0.0f;
+      if (_spinningCards.TryGetValue(card, out spinningCard))
+        distance = spinningCard.expected - spinningCard.current;
 
       // When the distance between the current angle and the selected angle is small, lock (snap) the current
       // angle into the selected angle.
       if (Math.Abs(distance) < 1.0)
       {
-        _spinAnglePosition = _selectedSpinAngle;
+        //_spinAnglePosition = _selectedSpinAngle;
+        if (spinningCard != null)
+        {
+          spinningCard.current = spinningCard.expected;
+          if (spinningCard.current == 0.0f)
+            _spinningCards.Remove(card);
+        }
 
         // The card may have just stopped spinning.  If there is a queued user action then execute the action and clear
         // the queued action.
@@ -1396,30 +1499,54 @@ namespace MediaPortal.GUI.Library
       {
         // Compute the new spin angle.  The larger the distance the faster the spinning.  As the distance gets
         // smaller the card will spin more slowly as it settles onto the selected angle.
-        _spinAnglePosition += distance * timePassed * _spinSpeed;
+        // _spinAnglePosition += distance * timePassed * _spinSpeed;
+        //_spinAnglePosition += distance * 0.02f * _spinSpeed; // looks better, until thumb loading is optimized
+        if (spinningCard != null)
+          spinningCard.current += distance * 0.02f * _spinSpeed; // looks better, until thumb loading is optimized
       }
 
       // Set the card spin angle for this render cycle.
-      int angle = (int)Math.Floor(_spinAnglePosition);
+      int angle = (int)Math.Floor(spinningCard != null ? spinningCard.current : 0.0f);
       GUIGraphicsContext.RotateY(angle, 0, 0);
     }
 
-    private bool CardIsSpinning()
+    private bool CardIsSpinningFront()
     {
       // The card is spinning if its angle is not zero or 180 degrees.
-      return (_spinAnglePosition != 0.0f && _spinAnglePosition != 180.0f);
+      //return (_spinAnglePosition != 0.0f && _spinAnglePosition != 180.0f);
+      SpinningCardsHelper spinningCard;
+      if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+        return (spinningCard.current != 0.0f && spinningCard.current != 180.0f && spinningCard.expected == 0.0f);
+      return false;
+    }
+
+    private bool CardIsSpinningBack()
+    {
+        // The card is spinning if its angle is not zero or 180 degrees.
+        //return (_spinAnglePosition != 0.0f && _spinAnglePosition != 180.0f);
+        SpinningCardsHelper spinningCard;
+        if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+            return (spinningCard.current != 0.0f && spinningCard.current != 180.0f && spinningCard.expected == 180.0f);
+        return false;
     }
 
     private bool CardIsSpun()
     {
       // The card is spun around if its angle is 180 degrees.
-      return _spinAnglePosition == 180.0f;
+      //return _spinAnglePosition == 180.0f;
+      SpinningCardsHelper spinningCard;
+      if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+        return (spinningCard.current == 180.0f);
+      return false;
     }
 
     private void UnspinCard()
     {
       // Set the spin angle to unspin the card.
-      _selectedSpinAngle = 0.0f;
+      //_selectedSpinAngle = 0.0f;
+      SpinningCardsHelper spinningCard;
+      if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+        spinningCard.expected = 0.0f;
     }
 
     private void QueueAction(Action action)
@@ -1461,8 +1588,12 @@ namespace MediaPortal.GUI.Library
           // Set the cards local coordinates on the cover flow.
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
-          RenderCard(timePassed, l, false);
+
+          TrySpinCard(l, timePassed);
+
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
+          RenderCard(timePassed, l, l == _selectedCard);
         }
         GUIGraphicsContext.PopMatrix();
       }
@@ -1508,12 +1639,13 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
 
           // Set the card spin (front to back) angle.
-          if (l == card)
-          {
-            TrySpinCard(timePassed);
-          }
+          //if (l == card)
+          //{
+          TrySpinCard(l, timePassed);
+          //}
 
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, l, shouldFocus);
         }
         GUIGraphicsContext.PopMatrix();
@@ -1540,7 +1672,7 @@ namespace MediaPortal.GUI.Library
           // Cards are in motion if fractional and fract are changing.
           // Move all the cards to the left to make room for the new card.
           float shiftx = 0.0f;
-          float shifty = _offsetY;
+          float shifty = _offsetY * fractional + _selectedYOffset * fract;
           float shiftz = 0.0f;
           bool shouldFocus = true;
 
@@ -1548,9 +1680,10 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
 
           // Set the card spin (front to back) angle.
-          TrySpinCard(timePassed);
+          TrySpinCard(card, timePassed);
 
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, card, shouldFocus);
         }
         GUIGraphicsContext.PopMatrix();
@@ -1578,7 +1711,7 @@ namespace MediaPortal.GUI.Library
       int s = card - maxCount;
       //for (int l = s, c = 0; l <= card; l++, c++)
       for (int l = s, c = 0; l <= ca; l++, c++)
-        {
+      {
         GUIGraphicsContext.PushMatrix();
         {
           // Cards are in motion if fractional and fract are changing.
@@ -1597,13 +1730,17 @@ namespace MediaPortal.GUI.Library
             shiftx *= fractional;
             shifty = (_offsetY * fractional + _selectedYOffset * fract);
             shiftz *= fractional;
-            shouldFocus = true; // The card coming to the front should be focused.
+            //shouldFocus = true; // The card coming to the front should be focused.
           }
 
           // Set the cards local coordinates on the cover flow.
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
+
+          TrySpinCard(l, timePassed);
+
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, l, shouldFocus);
         }
         GUIGraphicsContext.PopMatrix();
@@ -1617,6 +1754,24 @@ namespace MediaPortal.GUI.Library
         base.Render(timePassed);
         return;
       }
+
+      // Reallocation of the card images occur (for example) when the window size changes.
+      // Force all of the card images to be recreated.
+      if (_reAllocate)
+      {
+        for (int i = 0; i < _listItems.Count; i++)
+        {
+          GUIListItem pItem = _listItems[i];
+          pItem.Thumbnail.SafeDispose();
+          pItem.Thumbnail = null;
+          pItem.IconBig.SafeDispose();
+          pItem.IconBig = null;
+        }
+        _reAllocate = false;
+      }
+
+      // Prepare for using the reusable card frames during this render pass.
+      ResetNextAvailableFrameIndex();
 
       // Render the background.
       if (_imageBackground != null && _showBackground)
@@ -1634,11 +1789,22 @@ namespace MediaPortal.GUI.Library
       {
         _position = _selectedCard;
       }
+      // When the distance between the current position and the selected card is bigger than twice the -pageSize, set distance to twice the _pageSize
+      // -> workaround for stuttering when "moving" through very long lists due to many thumb allec/deallocs
+      // solves problem when jumping in very long lists
+      else if (Math.Abs(distance) > (2 * _pageSize))
+        {
+        if (distance > 0)
+          _position = (float)_selectedCard - (2 * _pageSize);
+          else
+          _position = (float)_selectedCard + (2 * _pageSize);
+        }
       else
       {
         // Compute the new position on the flow.  The larger the distance the faster the flow will move.  As the distance gets
         // smaller the flow will move more slowly as it settles onto the selected card.
-        _position += distance * timePassed * _speed;
+        // _position += distance * timePassed * _speed;
+        _position += distance * 0.02f * _speed; // looks better, until thumb loading is optimized
       }
 
       // The value of _position is dependant on rendering intervals (timePassed).  Rendering intervals are not guaranteed to
@@ -1660,7 +1826,7 @@ namespace MediaPortal.GUI.Library
       {
         // Set the location for the origin of the cover flow to the horizontal center of the window.
         GUIGraphicsContext.LoadIdentity();
-        GUIGraphicsContext.Translate(Width / 2, YPosition, 0);
+        GUIGraphicsContext.Translate(XPosition + Width / 2, YPosition, 0);
 
         // Calculate the fractional position of the selected card as it animates from the left or right stack.
         // These fractional components are used to adjust the rendered position and angle of the card.
@@ -1707,6 +1873,8 @@ namespace MediaPortal.GUI.Library
 
       // Render the horizontal scrollbar.
       RenderScrollbar(timePassed);
+
+      GUIGraphicsContext.RemoveTransform();
 
       base.Render(timePassed);
     }
@@ -1858,6 +2026,9 @@ namespace MediaPortal.GUI.Library
     {
       if (index == _selectedCard)
       {
+        //we have to ensure OnSelectionChangedHappens
+        //case when filling coverflow with new data, position (selected card index) might stay the same but properties have to refresh
+        OnSelectionChanged();
         return;
       }
 
@@ -1871,7 +2042,7 @@ namespace MediaPortal.GUI.Library
         index = 0;
       }
 
-      // Set the direction in which te flow will move.
+      // Set the direction in which the flow will move.
       if (index > SelectedListItemIndex)
       {
         _direction = FlowDirection.LEFT;
@@ -1900,50 +2071,16 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Called when a new card is added to the flow.
     /// </summary>
-    private void OnCardAdded()
-    {
-      // Add a card frame for the new card.
-      // Focus frame.
-      GUIAnimation anim = null;
-      anim = LoadAnimationControl(0, 0,
-                                  0, 0,
-                                  _frameWidth, _frameHeight,
-                                  _frameName);
-      anim.ParentControl = null;
-      anim.DimColor = DimColor;
-      anim.FlipY = _flipY;
-      anim.DiffuseFileName = _diffuseFilename;
-      anim.MaskFileName = _maskFilename;
-      anim.AllocResources();
-      _frame.Add(anim);
-
-      // Add a card frame for the new card.
-      // Non-focus frame.
-      anim = LoadAnimationControl(0, 0,
-                                  0, 0,
-                                  _cardWidth, _cardHeight,
-                                  _frameFocusName);
-      anim.ParentControl = null;
-      anim.DimColor = DimColor;
-      anim.FlipY = _flipY;
-      anim.DiffuseFileName = _diffuseFilename;
-      anim.MaskFileName = _maskFilename;
-      anim.AllocResources();
-      _frameFocus.Add(anim);
-    }
+    private void OnCardAdded() {}
 
     /// <summary>
     /// Called when an existing card is deleted from the flow.
     /// </summary>
     private void OnCardDeleted()
     {
-      // Remove the card frame.
-      _frame[_frame.Count - 1].FreeResources();
+      // Free up some memory, remove the card frame (the focus frame never gets removed).
+      _frame[_frame.Count - 1].Dispose();
       _frame.RemoveAt(_frame.Count - 1);
-
-      // Remove the card focus frame.
-      _frameFocus[_frameFocus.Count - 1].FreeResources();
-      _frameFocus.RemoveAt(_frameFocus.Count - 1);
     }
 
     /// <summary>
@@ -1951,6 +2088,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected void OnSelectionChanged()
     {
+      if (!IsVisible)
+      {
+        return;
+      }
+
       GUIListItem listitem = SelectedListItem;
       if (listitem != null)
       {
@@ -1958,6 +2100,10 @@ namespace MediaPortal.GUI.Library
       }
 
       UpdateProperties();
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null);
+      msg.SendToTargetWindow = true;
+      GUIGraphicsContext.SendMessage(msg);
 
       if (_lastSearchItem != SelectedListItemIndex)
       {
@@ -1990,6 +2136,14 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    private void OnDefaultAction(Action action)
+    {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
+                                        (int)action.wID, 0, null);
+        GUIGraphicsContext.SendMessage(msg);
+        ResetSearchString();
+    }
+
     private void ResetSearchString()
     {
       _previousKey = (char)0;
@@ -2013,6 +2167,7 @@ namespace MediaPortal.GUI.Library
         {
           strLabel = pItem.Label;
           strLabel2 = pItem.Label2;
+
           int index = iItem;
 
           if (_listItems[0].Label != "..")
@@ -2039,7 +2194,7 @@ namespace MediaPortal.GUI.Library
 
     public GUIListItem GetCard(int index)
     {
-      if (index >= 0 && index < _listItems.Count - 1)
+      if (index >= 0 && index < _listItems.Count)
       {
         return _listItems[index];
       }
@@ -2065,73 +2220,49 @@ namespace MediaPortal.GUI.Library
     public bool ShowBackground
     {
       get { return _showBackground; }
-      set
-      {
-        _showBackground = value;
-      }
+      set { _showBackground = value; }
     }
 
     public bool ShowForeground
     {
       get { return _showForeground; }
-      set
-      {
-        _showForeground = value;
-      }
+      set { _showForeground = value; }
     }
 
     public float OffsetY
     {
       get { return _offsetY; }
-      set
-      {
-        _offsetY = value;
-      }
+      set { _offsetY = value; }
     }
 
     public float SelectedOffsetY
     {
       get { return _selectedYOffset; }
-      set
-      {
-        _selectedYOffset = value;
-      }
+      set { _selectedYOffset = value; }
     }
 
     public float Angle
     {
       get { return _angle; }
-      set
-      {
-        _angle = value;
-      }
+      set { _angle = value; }
     }
 
     public float SideShift
     {
       get { return _sideShift; }
-      set
-      {
-        _sideShift = value;
-      }
+      set { _sideShift = value; }
     }
 
     public float SideGap
     {
       get { return _sideGap; }
-      set
-      {
-        _sideGap = value;
-      }
+      set { _sideGap = value; }
     }
 
     public float SideDepth
     {
       get { return _sideDepth; }
-      set
-      {
-        _sideDepth = value;
-      }
+      set { _sideDepth = value; }
     }
 
     public int BackgroundX
@@ -2354,6 +2485,12 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public bool EnableSMSsearch
+    {
+      get { return _enableSMSsearch; }
+      set { _enableSMSsearch = value; }
+    }
+
     #endregion Implementation
 
     #region GUIFacadeView Interface
@@ -2379,7 +2516,10 @@ namespace MediaPortal.GUI.Library
 
     public void Clear()
     {
-      _listItems.Clear();
+      _listItems.DisposeAndClear();
+      //SelectCardIndexNow(0);
+      _selectedCard = 0;
+      //_position = 0;
       OnSelectionChanged();
     }
 
@@ -2397,18 +2537,12 @@ namespace MediaPortal.GUI.Library
 
     public int FirstCardIndex
     {
-      get
-      {
-        return 0;
-      }
+      get { return 0; }
     }
 
     public int LastCardIndex
     {
-      get
-      {
-        return _listItems.Count - 1;
-      }
+      get { return _listItems.Count - 1; }
     }
 
     public GUIListItem SelectedListItem
@@ -2440,6 +2574,10 @@ namespace MediaPortal.GUI.Library
           return iItem;
         }
         return -1;
+      }
+      set
+      {
+        SelectCardIndexNow(value);
       }
     }
 

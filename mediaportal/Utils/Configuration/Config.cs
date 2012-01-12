@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,20 +32,16 @@ namespace MediaPortal.Configuration
     public enum Dir
     {
       // Path holding Path Information
-      Base,
-      Log,
-      Skin,
-      Language,
-      Database,
-      Plugins,
-      Thumbs,
-      Cache,
-      Weather,
-      CustomInputDevice,
-      Config,
-      CustomInputDefault,
-      BurnerSupport,
-      Installer,
+      Base = 0,
+      Log = 1,
+      Skin = 2,
+      Language = 3,
+      Database = 4,
+      Plugins = 5,
+      Thumbs = 6,
+      Cache = 7,
+      Weather = 8,
+      Config = 10,
     }
 
     #endregion
@@ -53,20 +49,12 @@ namespace MediaPortal.Configuration
     #region Variables
 
     private static Dictionary<Dir, string> directories;
+    private static string skinName = string.Empty;
 
     #endregion
 
     #region Constructors/Destructors
 
-    /// <summary>
-    /// Private constructor. Singleton. Do not allow any instance of this class.
-    /// </summary>
-    ///
-    /*
-private Config()
-{
-}
-*/
     static Config()
     {
       directories = new Dictionary<Dir, string>();
@@ -217,6 +205,26 @@ private Config()
 
     #endregion
 
+    #region Properties
+
+    public static string SkinName
+    {
+      set
+      {
+        if (value != skinName)
+        {
+          skinName = value;
+          string commonAppData =
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+            + @"\Team MediaPortal\MediaPortal\";
+          string weatherDir = commonAppData + @"skin\" + skinName + @"\Media\Weather\";
+          Set(Dir.Weather, weatherDir);
+        }
+      }
+    }
+
+    #endregion
+
     #region Private Methods
 
     /// <summary>
@@ -299,14 +307,19 @@ private Config()
                   {
                     strPath += @"\";
                   }
+
+                  Dir dir = Dir.Base; // default - it's parsed below
                   try
                   {
-                    Set((Dir)Enum.Parse(typeof (Dir), dirId.InnerText), strPath);
+                    dir = (Dir)Enum.Parse(typeof (Dir), dirId.InnerText);
+                    // parse directory name from XML to enum - it might fail here
                   }
-                  catch (Exception)
+                  catch
                   {
-                    return false;
+                    continue; // why return on failure, skip the dir
                   }
+
+                  Set(dir, strPath);
                 }
               }
             }
@@ -330,17 +343,14 @@ private Config()
 
       Set(Dir.Cache, Path.Combine(commonAppData, @"cache\"));
       Set(Dir.Config, commonAppData);
-      Set(Dir.CustomInputDevice, Path.Combine(commonAppData, @"InputDeviceMappings\"));
-      Set(Dir.CustomInputDefault, Path.Combine(baseDir, @"InputDeviceMappings\defaults\"));
       Set(Dir.Database, Path.Combine(commonAppData, @"database\"));
       Set(Dir.Language, Path.Combine(commonAppData, @"language\"));
       Set(Dir.Log, Path.Combine(commonAppData, @"log\"));
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
-      Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
-      Set(Dir.BurnerSupport, Path.Combine(baseDir, @"Burner\"));
-      Set(Dir.Installer, Path.Combine(commonAppData, @"Installer\"));
+      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\DefaultWide\Media\Weather\"));
+      //will be 'fixed' and set to correct path as soon as available
     }
 
 

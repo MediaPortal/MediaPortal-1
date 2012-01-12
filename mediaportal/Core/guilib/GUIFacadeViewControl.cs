@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@ using MediaPortal.ExtensionMethods;
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
-  /// Control which acts as a facade to the list,thumbnail, filmstrip, and coverflow view controls
+  /// Control which acts as a facade to the list,thumbnail, filmstrip, and coverflow layout controls
   /// for the application it presents itself as 1 control but in reality it
-  /// will route all actions to the current selected control (list,view, filmstrip, or coverflow)
+  /// will route all actions to the current selected control (list, icons, filmstrip, or coverflow)
   /// </summary>
   public class GUIFacadeControl : GUIControl
   {
@@ -41,26 +41,26 @@ namespace MediaPortal.GUI.Library
       SEARCH_IS
     }
 
-    //enum of all possible views
-    public enum ViewMode
+    //enum of all possible layouts
+    public enum Layout
     {
-      List,
-      SmallIcons,
-      LargeIcons,
-      Filmstrip,
-      AlbumView,
-      Playlist,
-      CoverFlow
+      List = 0,
+      SmallIcons = 1,
+      LargeIcons = 2,
+      Filmstrip = 3,
+      AlbumView = 4,
+      Playlist = 5,
+      CoverFlow = 6
     }
 
-    private GUIPlayListItemListControl _viewPlayList = null; // instance of a re-orderable playlist list control
-    private GUIListControl _viewList = null; // instance of the list control
+    private GUIPlayListItemListControl _layoutPlayList = null; // instance of a re-orderable playlist list control
+    private GUIListControl _layoutList = null; // instance of the list control
 
-    private GUIListControl _viewAlbum = null; // instance of the album list control
-    private GUIThumbnailPanel _viewThumbnail = null; // instance of the thumbnail control
-    private GUIFilmstripControl _viewFilmStrip = null; // instance of the filmstrip control
-    private GUICoverFlow _viewCoverFlow = null; // instance of the coverflow control
-    private ViewMode _currentViewMode; // current view
+    private GUIListControl _layoutAlbum = null; // instance of the album list control
+    private GUIThumbnailPanel _layoutThumbnail = null; // instance of the thumbnail control
+    private GUIFilmstripControl _layoutFilmStrip = null; // instance of the filmstrip control
+    private GUICoverFlow _layoutCoverFlow = null; // instance of the coverflow control
+    private Layout _currentLayout; // current layout
     private List<GUIListItem> _itemList = new List<GUIListItem>(); // unfiltered itemlist
 
     public GUIFacadeControl(int dwParentID)
@@ -95,150 +95,200 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Property to get/set the list control
     /// </summary>
-    public GUIListControl ListView
+    public GUIListControl ListLayout
     {
-      get { return _viewList; }
+      get { return _layoutList; }
       set
       {
-        _viewList = value;
-        InitControl(_viewList);
+        _layoutList = value;
+        InitControl(_layoutList);
       }
     }
 
     /// <summary>
     /// Property to get/set the playlist list control
     /// </summary>
-    public GUIPlayListItemListControl PlayListView
+    public GUIPlayListItemListControl PlayListLayout
     {
-      get { return _viewPlayList; }
+      get { return _layoutPlayList; }
       set
       {
-        _viewPlayList = value;
-        InitControl(_viewPlayList);
+        _layoutPlayList = value;
+        InitControl(_layoutPlayList);
       }
     }
 
     /// <summary>
     /// Property to get/set the list control
     /// </summary>
-    public GUIListControl AlbumListView
+    public GUIListControl AlbumListLayout
     {
-      get { return _viewAlbum; }
+      get { return _layoutAlbum; }
       set
       {
-        _viewAlbum = value;
-        InitControl(_viewAlbum);
+        _layoutAlbum = value;
+        InitControl(_layoutAlbum);
       }
     }
 
     /// <summary>
     /// Property to get/set the filmstrip control
     /// </summary>
-    public GUIFilmstripControl FilmstripView
+    public GUIFilmstripControl FilmstripLayout
     {
-      get { return _viewFilmStrip; }
+      get { return _layoutFilmStrip; }
       set
       {
-        _viewFilmStrip = value;
-        InitControl(_viewFilmStrip);
+        _layoutFilmStrip = value;
+        InitControl(_layoutFilmStrip);
       }
     }
 
     /// <summary>
     /// Property to get/set the coverflow control
     /// </summary>
-    public GUICoverFlow CoverFlowView
+    public GUICoverFlow CoverFlowLayout
     {
-      get { return _viewCoverFlow; }
+      get { return _layoutCoverFlow; }
       set
       {
-        _viewCoverFlow = value;
-        InitControl(_viewCoverFlow);
+        _layoutCoverFlow = value;
+        InitControl(_layoutCoverFlow);
       }
     }
 
     /// <summary>
     /// Property to get/set the thumbnail control
     /// </summary>
-    public GUIThumbnailPanel ThumbnailView
+    public GUIThumbnailPanel ThumbnailLayout
     {
-      get { return _viewThumbnail; }
+      get { return _layoutThumbnail; }
       set
       {
-        _viewThumbnail = value;
-        InitControl(_viewThumbnail);
+        _layoutThumbnail = value;
+        InitControl(_layoutThumbnail);
       }
     }
 
     /// <summary>
-    /// Property to get/set the current view mode
+    /// Property to get/set the current layout mode
     /// </summary>
-    public ViewMode View
+    public Layout CurrentLayout
     {
-      get { return _currentViewMode; }
+      get { return _currentLayout; }
       set
       {
-        if (_currentViewMode != value)
+        if (_currentLayout != value)
         {
-          _currentViewMode = value;
-          GUIControl ctl = CurrentView;
+          _currentLayout = value;
+          GUIControl ctl = LayoutControl;
           if (ctl != null)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESH, 0, 0, ctl.GetID, 0, 0, null);
             ctl.OnMessage(msg);
           }
         }
-        // Set the View Property
-        SetViewProperty();
-        UpdateView();
+        // Set the layout Property
+        SetLayoutProperty();
+        UpdateLayout();
       }
     }
 
     /// <summary>
-    /// Property to get the current view 
+    /// Property to get the current layout 
     /// </summary>
-    public GUIControl CurrentView
+    public GUIControl LayoutControl
     {
       get
       {
-        switch (_currentViewMode)
+        switch (_currentLayout)
         {
-          case ViewMode.AlbumView:
-            return AlbumListView;
-          case ViewMode.List:
-            return _viewList;
-          case ViewMode.Filmstrip:
-            return _viewFilmStrip;
-          case ViewMode.CoverFlow:
-            return _viewCoverFlow;
-          case ViewMode.Playlist:
-            return _viewPlayList;
-          case ViewMode.LargeIcons:
-          case ViewMode.SmallIcons:
-            return _viewThumbnail;
+          case Layout.AlbumView:
+            return AlbumListLayout;
+          case Layout.List:
+            return _layoutList;
+          case Layout.Filmstrip:
+            return _layoutFilmStrip;
+          case Layout.CoverFlow:
+            return _layoutCoverFlow;
+          case Layout.Playlist:
+            return _layoutPlayList;
+          case Layout.LargeIcons:
+          case Layout.SmallIcons:
+            return _layoutThumbnail;
         }
         return null;
       }
     }
 
+    public bool EnableSMSsearch
+    {
+      get
+      {
+        if (_layoutList != null) return _layoutList.EnableSMSsearch;
+        if (_layoutAlbum != null) return _layoutAlbum.EnableSMSsearch;
+        if (_layoutFilmStrip != null) return _layoutFilmStrip.EnableSMSsearch;
+        if (_layoutPlayList != null) return _layoutPlayList.EnableSMSsearch;
+        if (_layoutThumbnail != null) return _layoutThumbnail.EnableSMSsearch;
+        if (_layoutCoverFlow != null) return _layoutCoverFlow.EnableSMSsearch;
+        return false;
+      }
+      set
+      {
+        if (_layoutList != null) _layoutList.EnableSMSsearch = value;
+        if (_layoutAlbum != null) _layoutAlbum.EnableSMSsearch = value;
+        if (_layoutFilmStrip != null) _layoutFilmStrip.EnableSMSsearch = value;
+        if (_layoutPlayList != null) _layoutPlayList.EnableSMSsearch = value;
+        if (_layoutThumbnail != null) _layoutThumbnail.EnableSMSsearch = value;
+        if (_layoutCoverFlow != null) _layoutCoverFlow.EnableSMSsearch = value;
+      }
+    }
+
+    public bool EnableScrollLabel
+    {
+      get
+      {
+        if (_layoutList != null) return _layoutList.EnableScrollLabel;
+        return false;
+      }
+      set { if (_layoutList != null) _layoutList.EnableScrollLabel = value; }
+    }
+
     public override void AddAnimations(List<VisualEffect> animations)
     {
       //base.AddAnimations(animations);
-      _viewList.AddAnimations(animations);
-      _viewAlbum.AddAnimations(animations);
-      _viewFilmStrip.AddAnimations(animations);
-      _viewPlayList.AddAnimations(animations);
-      _viewThumbnail.AddAnimations(animations);
-      _viewCoverFlow.AddAnimations(animations);
+      if (_layoutList != null)
+      {
+        _layoutList.AddAnimations(animations);
+      }
+      if (_layoutAlbum != null)
+      {
+        _layoutAlbum.AddAnimations(animations);
+      }
+      if (_layoutFilmStrip != null)
+      {
+        _layoutFilmStrip.AddAnimations(animations);
+      }
+      if (_layoutPlayList != null)
+      {
+        _layoutPlayList.AddAnimations(animations);
+      }
+      if (_layoutThumbnail != null)
+      {
+        _layoutThumbnail.AddAnimations(animations);
+      }
+      if (_layoutCoverFlow != null)
+      {
+        _layoutCoverFlow.AddAnimations(animations);
+      }
     }
 
-
     /// <summary>
-    /// Render. This will render the current selected view 
+    /// Render. This will render the current selected layout 
     /// </summary>
     public override void Render(float timePassed)
     {
-      GUIControl cntl = CurrentView;
+      GUIControl cntl = LayoutControl;
       if (cntl != null)
       {
         //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
@@ -261,51 +311,51 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-      if (AlbumListView != null)
+      if (AlbumListLayout != null)
       {
-        AlbumListView.AllocResources();
-        AlbumListView.GetID = GetID;
-        AlbumListView.WindowId = WindowId;
-        AlbumListView.ParentControl = this;
+        AlbumListLayout.AllocResources();
+        AlbumListLayout.GetID = GetID;
+        AlbumListLayout.WindowId = WindowId;
+        AlbumListLayout.ParentControl = this;
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.AllocResources();
-        _viewList.GetID = GetID;
-        _viewList.WindowId = WindowId;
-        _viewList.ParentControl = this;
-      }
-
-      if (_viewThumbnail != null)
-      {
-        _viewThumbnail.AllocResources();
-        _viewThumbnail.GetID = GetID;
-        _viewThumbnail.WindowId = WindowId;
-        _viewThumbnail.ParentControl = this;
+        _layoutList.AllocResources();
+        _layoutList.GetID = GetID;
+        _layoutList.WindowId = WindowId;
+        _layoutList.ParentControl = this;
       }
 
-      if (_viewFilmStrip != null)
+      if (_layoutThumbnail != null)
       {
-        _viewFilmStrip.AllocResources();
-        _viewFilmStrip.GetID = GetID;
-        _viewFilmStrip.WindowId = WindowId;
-        _viewFilmStrip.ParentControl = this;
+        _layoutThumbnail.AllocResources();
+        _layoutThumbnail.GetID = GetID;
+        _layoutThumbnail.WindowId = WindowId;
+        _layoutThumbnail.ParentControl = this;
       }
 
-      if (_viewPlayList != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewPlayList.AllocResources();
-        _viewPlayList.GetID = GetID;
-        _viewPlayList.WindowId = WindowId;
-        _viewPlayList.ParentControl = this;
+        _layoutFilmStrip.AllocResources();
+        _layoutFilmStrip.GetID = GetID;
+        _layoutFilmStrip.WindowId = WindowId;
+        _layoutFilmStrip.ParentControl = this;
       }
 
-      if (_viewCoverFlow != null)
+      if (_layoutPlayList != null)
       {
-        _viewCoverFlow.AllocResources();
-        _viewCoverFlow.GetID = GetID;
-        _viewCoverFlow.WindowId = WindowId;
-        _viewCoverFlow.ParentControl = this;
+        _layoutPlayList.AllocResources();
+        _layoutPlayList.GetID = GetID;
+        _layoutPlayList.WindowId = WindowId;
+        _layoutPlayList.ParentControl = this;
+      }
+
+      if (_layoutCoverFlow != null)
+      {
+        _layoutCoverFlow.AllocResources();
+        _layoutCoverFlow.GetID = GetID;
+        _layoutCoverFlow.WindowId = WindowId;
+        _layoutCoverFlow.ParentControl = this;
       }
     }
 
@@ -315,29 +365,29 @@ namespace MediaPortal.GUI.Library
       set
       {
         _windowId = value;
-        if (AlbumListView != null)
+        if (AlbumListLayout != null)
         {
-          AlbumListView.WindowId = value;
+          AlbumListLayout.WindowId = value;
         }
-        if (_viewList != null)
+        if (_layoutList != null)
         {
-          _viewList.WindowId = value;
+          _layoutList.WindowId = value;
         }
-        if (_viewThumbnail != null)
+        if (_layoutThumbnail != null)
         {
-          _viewThumbnail.WindowId = value;
+          _layoutThumbnail.WindowId = value;
         }
-        if (_viewFilmStrip != null)
+        if (_layoutFilmStrip != null)
         {
-          _viewFilmStrip.WindowId = value;
+          _layoutFilmStrip.WindowId = value;
         }
-        if (_viewPlayList != null)
+        if (_layoutPlayList != null)
         {
-          _viewPlayList.WindowId = value;
+          _layoutPlayList.WindowId = value;
         }
-        if (_viewCoverFlow != null)
+        if (_layoutCoverFlow != null)
         {
-          _viewCoverFlow.WindowId = value;
+          _layoutCoverFlow.WindowId = value;
         }
       }
     }
@@ -347,31 +397,31 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void PreAllocResources()
     {
-      if (AlbumListView != null)
+      if (AlbumListLayout != null)
       {
-        AlbumListView.PreAllocResources();
+        AlbumListLayout.PreAllocResources();
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.PreAllocResources();
+        _layoutList.PreAllocResources();
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.PreAllocResources();
+        _layoutThumbnail.PreAllocResources();
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.PreAllocResources();
+        _layoutFilmStrip.PreAllocResources();
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.PreAllocResources();
+        _layoutPlayList.PreAllocResources();
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.PreAllocResources();
+        _layoutCoverFlow.PreAllocResources();
       }
-      UpdateView();
+      UpdateLayout();
     }
 
     /// <summary>
@@ -381,12 +431,12 @@ namespace MediaPortal.GUI.Library
     {
       base.Dispose();
 
-      _viewAlbum.SafeDispose();
-      _viewList.SafeDispose();
-      _viewThumbnail.SafeDispose();
-      _viewFilmStrip.SafeDispose();
-      _viewCoverFlow.SafeDispose();
-      _viewPlayList.SafeDispose();
+      _layoutAlbum.SafeDispose();
+      _layoutList.SafeDispose();
+      _layoutThumbnail.SafeDispose();
+      _layoutFilmStrip.SafeDispose();
+      _layoutCoverFlow.SafeDispose();
+      _layoutPlayList.SafeDispose();
       _itemList.DisposeAndClear();
     }
 
@@ -394,7 +444,7 @@ namespace MediaPortal.GUI.Library
     {
       controlID = -1;
       focused = false;
-      GUIControl cntl = CurrentView;
+      GUIControl cntl = LayoutControl;
       if (cntl != null)
       {
         return cntl.HitTest(x, y, out controlID, out focused);
@@ -404,7 +454,7 @@ namespace MediaPortal.GUI.Library
 
     public override void OnAction(Action action)
     {
-      GUIControl cntl = CurrentView;
+      GUIControl cntl = LayoutControl;
       if (cntl != null)
       {
         cntl.OnAction(action);
@@ -445,7 +495,7 @@ namespace MediaPortal.GUI.Library
         return true;
       }
 
-      GUIControl cntl = CurrentView;
+      GUIControl cntl = LayoutControl;
       if (cntl != null)
       {
         return cntl.OnMessage(message);
@@ -456,35 +506,35 @@ namespace MediaPortal.GUI.Library
 
     private void RouteMessage(GUIMessage message)
     {
-      if (_viewAlbum != null)
+      if (_layoutAlbum != null)
       {
-        _viewAlbum.OnMessage(message);
+        _layoutAlbum.OnMessage(message);
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.OnMessage(message);
+        _layoutList.OnMessage(message);
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.OnMessage(message);
+        _layoutFilmStrip.OnMessage(message);
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.OnMessage(message);
+        _layoutThumbnail.OnMessage(message);
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.OnMessage(message);
+        _layoutPlayList.OnMessage(message);
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.OnMessage(message);
+        _layoutCoverFlow.OnMessage(message);
       }
     }
 
     public override bool CanFocus()
     {
-      GUIControl cntl = CurrentView;
+      GUIControl cntl = LayoutControl;
       if (cntl != null)
       {
         return cntl.CanFocus();
@@ -497,7 +547,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        GUIControl cntl = CurrentView;
+        GUIControl cntl = LayoutControl;
         if (cntl != null)
         {
           return cntl.Focus;
@@ -506,7 +556,7 @@ namespace MediaPortal.GUI.Library
       }
       set
       {
-        GUIControl cntl = CurrentView;
+        GUIControl cntl = LayoutControl;
         if (cntl != null)
         {
           cntl.Focus = value;
@@ -517,7 +567,7 @@ namespace MediaPortal.GUI.Library
     public override bool InControl(int x, int y, out int controlID)
     {
       controlID = -1;
-      GUIControl cntl = CurrentView;
+      GUIControl cntl = LayoutControl;
       if (cntl != null)
       {
         return cntl.InControl(x, y, out controlID);
@@ -527,35 +577,76 @@ namespace MediaPortal.GUI.Library
 
     public void Sort(IComparer<GUIListItem> comparer)
     {
-      if (_viewAlbum != null)
-      {
-        _viewAlbum.Sort(comparer);
-      }
-      if (_viewList != null)
-      {
-        _viewList.Sort(comparer);
-      }
-      if (_viewThumbnail != null)
-      {
-        _viewThumbnail.Sort(comparer);
-      }
-      if (_viewFilmStrip != null)
-      {
-        _viewFilmStrip.Sort(comparer);
-      }
-      if (_viewPlayList != null)
-      {
-        _viewPlayList.Sort(comparer);
-      }
-      if (_viewCoverFlow != null)
-      {
-        _viewCoverFlow.Sort(comparer);
-      }
+      var preSort = new List<GUIListItem>(_itemList);
       try
       {
         _itemList.Sort(comparer);
       }
       catch (Exception) {}
+      if (_layoutAlbum != null)
+      {
+        if (HasSameItems(_layoutAlbum.ListItems, preSort))
+        {
+          if (_layoutAlbum.ListItems != _itemList) //if same instance of list, nothing to do except refresh
+          {
+            _layoutAlbum.ListItems.Clear();
+            _layoutAlbum.ListItems.AddRange(_itemList);
+          }
+          _layoutAlbum.SetNeedRefresh();
+        }
+        else
+          _layoutAlbum.Sort(comparer);
+      }
+      if (_layoutList != null)
+      {
+        if (HasSameItems(_layoutList.ListItems, preSort))
+        {
+          if (_layoutList.ListItems != _itemList)
+          {
+            _layoutList.ListItems.Clear();
+            _layoutList.ListItems.AddRange(_itemList);
+          }
+          _layoutList.SetNeedRefresh();
+        }
+        else
+          _layoutList.Sort(comparer);
+      }
+      if (_layoutThumbnail != null)
+      {
+        if (HasSameItems(_layoutThumbnail.ListItems, preSort))
+        {
+          if (_layoutThumbnail.ListItems != _itemList)
+          {
+            _layoutThumbnail.ListItems.Clear();
+            _layoutThumbnail.ListItems.AddRange(_itemList);
+          }
+          _layoutThumbnail.SetNeedRefresh();
+        }
+        else
+          _layoutThumbnail.Sort(comparer);
+      }
+      if (_layoutFilmStrip != null)
+      {
+        if (HasSameItems(_layoutFilmStrip.ListItems, preSort))
+        {
+          if (_layoutFilmStrip.ListItems != _itemList)
+          {
+            _layoutFilmStrip.ListItems.Clear();
+            _layoutFilmStrip.ListItems.AddRange(_itemList);
+          }
+          _layoutFilmStrip.SetNeedRefresh();
+        }
+        else
+          _layoutFilmStrip.Sort(comparer);
+      }
+      if (_layoutPlayList != null)
+      {
+        _layoutPlayList.Sort(comparer);
+      }
+      if (_layoutCoverFlow != null)
+      {
+        _layoutCoverFlow.Sort(comparer);
+      }
     }
 
     public void Add(GUIListItem item)
@@ -564,29 +655,29 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      if (_viewAlbum != null)
+      if (_layoutAlbum != null)
       {
-        _viewAlbum.Add(item);
+        _layoutAlbum.Add(item);
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.Add(item);
+        _layoutList.Add(item);
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.Add(item);
+        _layoutThumbnail.Add(item);
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.Add(item);
+        _layoutFilmStrip.Add(item);
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.Add(item);
+        _layoutPlayList.Add(item);
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.Add(item);
+        _layoutCoverFlow.Add(item);
       }
       _itemList.Add(item);
     }
@@ -597,58 +688,58 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      if (_viewAlbum != null)
+      if (_layoutAlbum != null)
       {
-        _viewAlbum.Insert(index, item);
+        _layoutAlbum.Insert(index, item);
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.Insert(index, item);
+        _layoutList.Insert(index, item);
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.Insert(index, item);
+        _layoutThumbnail.Insert(index, item);
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.Insert(index, item);
+        _layoutFilmStrip.Insert(index, item);
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.Insert(index, item);
+        _layoutPlayList.Insert(index, item);
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.Insert(index, item);
+        _layoutCoverFlow.Insert(index, item);
       }
       _itemList.Insert(index, item);
     }
 
     public void Filter(int searchKind, string searchString)
     {
-      if (_viewAlbum != null)
+      if (_layoutAlbum != null)
       {
-        _viewAlbum.Clear();
+        _layoutAlbum.Clear();
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.Clear();
+        _layoutList.Clear();
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.Clear();
+        _layoutThumbnail.Clear();
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.Clear();
+        _layoutFilmStrip.Clear();
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.Clear();
+        _layoutPlayList.Clear();
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.Clear();
+        _layoutCoverFlow.Clear();
       }
       if (searchString != "")
       {
@@ -660,29 +751,29 @@ namespace MediaPortal.GUI.Library
         dirUp.ThumbnailImage = string.Empty;
         dirUp.IconImage = "defaultFolderBack.png";
         dirUp.IconImageBig = "defaultFolderBackBig.png";
-        if (_viewAlbum != null)
+        if (_layoutAlbum != null)
         {
-          _viewAlbum.Add(dirUp);
+          _layoutAlbum.Add(dirUp);
         }
-        if (_viewList != null)
+        if (_layoutList != null)
         {
-          _viewList.Add(dirUp);
+          _layoutList.Add(dirUp);
         }
-        if (_viewThumbnail != null)
+        if (_layoutThumbnail != null)
         {
-          _viewThumbnail.Add(dirUp);
+          _layoutThumbnail.Add(dirUp);
         }
-        if (_viewFilmStrip != null)
+        if (_layoutFilmStrip != null)
         {
-          _viewFilmStrip.Add(dirUp);
+          _layoutFilmStrip.Add(dirUp);
         }
-        if (_viewPlayList != null)
+        if (_layoutPlayList != null)
         {
-          _viewPlayList.Add(dirUp);
+          _layoutPlayList.Add(dirUp);
         }
-        if (_viewCoverFlow != null)
+        if (_layoutCoverFlow != null)
         {
-          _viewCoverFlow.Add(dirUp);
+          _layoutCoverFlow.Add(dirUp);
         }
       }
 
@@ -722,29 +813,29 @@ namespace MediaPortal.GUI.Library
 
         if (validItem || searchString == "")
         {
-          if (_viewAlbum != null)
+          if (_layoutAlbum != null)
           {
-            _viewAlbum.Add(item);
+            _layoutAlbum.Add(item);
           }
-          if (_viewList != null)
+          if (_layoutList != null)
           {
-            _viewList.Add(item);
+            _layoutList.Add(item);
           }
-          if (_viewThumbnail != null)
+          if (_layoutThumbnail != null)
           {
-            _viewThumbnail.Add(item);
+            _layoutThumbnail.Add(item);
           }
-          if (_viewFilmStrip != null)
+          if (_layoutFilmStrip != null)
           {
-            _viewFilmStrip.Add(item);
+            _layoutFilmStrip.Add(item);
           }
-          if (_viewPlayList != null)
+          if (_layoutPlayList != null)
           {
-            _viewPlayList.Add(item);
+            _layoutPlayList.Add(item);
           }
-          if (_viewCoverFlow != null)
+          if (_layoutCoverFlow != null)
           {
-            _viewCoverFlow.Add(item);
+            _layoutCoverFlow.Add(item);
           }
           iTotalItems++;
         }
@@ -752,214 +843,258 @@ namespace MediaPortal.GUI.Library
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(iTotalItems));
-
     }
 
-    private void UpdateView()
+    private new void UpdateLayout()
     {
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+      if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
       {
-        base.XPosition = _viewFilmStrip.XPosition;
-        base.YPosition = _viewFilmStrip.YPosition;
-        base.Width = _viewFilmStrip.Width;
-        base.Height = _viewFilmStrip.Height;
-        _viewFilmStrip.IsVisible = true;
-        if (_viewList != null)
+        base.XPosition = _layoutFilmStrip.XPosition;
+        base.YPosition = _layoutFilmStrip.YPosition;
+        base.Width = _layoutFilmStrip.Width;
+        base.Height = _layoutFilmStrip.Height;
+        _layoutFilmStrip.IsVisible = true;
+        if (_layoutList != null)
         {
-          _viewList.IsVisible = false;
+          _layoutList.IsVisible = false;
         }
-        if (_viewThumbnail != null)
+        if (_layoutThumbnail != null)
         {
-          _viewThumbnail.IsVisible = false;
+          _layoutThumbnail.IsVisible = false;
         }
-        if (_viewAlbum != null)
+        if (_layoutAlbum != null)
         {
-          _viewAlbum.IsVisible = false;
+          _layoutAlbum.IsVisible = false;
         }
-        if (_viewPlayList != null)
+        if (_layoutPlayList != null)
         {
-          _viewPlayList.IsVisible = false;
+          _layoutPlayList.IsVisible = false;
         }
-        if (_viewCoverFlow != null)
+        if (_layoutCoverFlow != null)
         {
-          _viewCoverFlow.IsVisible = false;
+          _layoutCoverFlow.IsVisible = false;
         }
       }
-      else if (_currentViewMode == ViewMode.List && _viewList != null)
+      else if (_currentLayout == Layout.List && _layoutList != null)
       {
-        base.XPosition = _viewList.XPosition;
-        base.YPosition = _viewList.YPosition;
-        base.Width = _viewList.Width;
-        base.Height = _viewList.Height;
-        _viewList.IsVisible = true;
-        if (_viewPlayList != null)
+        base.XPosition = _layoutList.XPosition;
+        base.YPosition = _layoutList.YPosition;
+        base.Width = _layoutList.Width;
+        base.Height = _layoutList.Height;
+        _layoutList.IsVisible = true;
+        if (_layoutPlayList != null)
         {
-          _viewPlayList.IsVisible = false;
+          _layoutPlayList.IsVisible = false;
         }
-        if (_viewThumbnail != null)
+        if (_layoutThumbnail != null)
         {
-          _viewThumbnail.IsVisible = false;
+          _layoutThumbnail.IsVisible = false;
         }
-        if (_viewFilmStrip != null)
+        if (_layoutFilmStrip != null)
         {
-          _viewFilmStrip.IsVisible = false;
+          _layoutFilmStrip.IsVisible = false;
         }
-        if (_viewAlbum != null)
+        if (_layoutAlbum != null)
         {
-          _viewAlbum.IsVisible = false;
+          _layoutAlbum.IsVisible = false;
         }
-        if (_viewCoverFlow != null)
+        if (_layoutCoverFlow != null)
         {
-          _viewCoverFlow.IsVisible = false;
+          _layoutCoverFlow.IsVisible = false;
         }
       }
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+      else if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
       {
-        base.XPosition = _viewPlayList.XPosition;
-        base.YPosition = _viewPlayList.YPosition;
-        base.Width = _viewPlayList.Width;
-        base.Height = _viewPlayList.Height;
-        if (_viewList != null)
+        base.XPosition = _layoutPlayList.XPosition;
+        base.YPosition = _layoutPlayList.YPosition;
+        base.Width = _layoutPlayList.Width;
+        base.Height = _layoutPlayList.Height;
+        if (_layoutList != null)
         {
-          _viewList.IsVisible = false;
+          _layoutList.IsVisible = false;
         }
-        _viewPlayList.IsVisible = true;
+        _layoutPlayList.IsVisible = true;
 
-        if (_viewThumbnail != null)
+        if (_layoutThumbnail != null)
         {
-          _viewThumbnail.IsVisible = false;
+          _layoutThumbnail.IsVisible = false;
         }
-        if (_viewFilmStrip != null)
+        if (_layoutFilmStrip != null)
         {
-          _viewFilmStrip.IsVisible = false;
+          _layoutFilmStrip.IsVisible = false;
         }
-        if (_viewAlbum != null)
+        if (_layoutAlbum != null)
         {
-          _viewAlbum.IsVisible = false;
+          _layoutAlbum.IsVisible = false;
         }
-        if (_viewCoverFlow != null)
+        if (_layoutCoverFlow != null)
         {
-          _viewCoverFlow.IsVisible = false;
-        }
-      }
-      else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
-      {
-        base.XPosition = _viewAlbum.XPosition;
-        base.YPosition = _viewAlbum.YPosition;
-        base.Width = _viewAlbum.Width;
-        base.Height = _viewAlbum.Height;
-        _viewAlbum.IsVisible = true;
-        if (_viewList != null)
-        {
-          _viewList.IsVisible = false;
-        }
-        if (_viewThumbnail != null)
-        {
-          _viewThumbnail.IsVisible = false;
-        }
-        if (_viewFilmStrip != null)
-        {
-          _viewFilmStrip.IsVisible = false;
-        }
-        if (_viewPlayList != null)
-        {
-          _viewPlayList.IsVisible = false;
-        }
-        if (_viewCoverFlow != null)
-        {
-          _viewCoverFlow.IsVisible = false;
+          _layoutCoverFlow.IsVisible = false;
         }
       }
-      else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+      else if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
       {
-        base.XPosition = _viewCoverFlow.XPosition;
-        base.YPosition = _viewCoverFlow.YPosition;
-        base.Width = _viewCoverFlow.Width;
-        base.Height = _viewCoverFlow.Height;
-        _viewCoverFlow.IsVisible = true;
-        if (_viewList != null)
+        base.XPosition = _layoutAlbum.XPosition;
+        base.YPosition = _layoutAlbum.YPosition;
+        base.Width = _layoutAlbum.Width;
+        base.Height = _layoutAlbum.Height;
+        _layoutAlbum.IsVisible = true;
+        if (_layoutList != null)
         {
-          _viewList.IsVisible = false;
+          _layoutList.IsVisible = false;
         }
-        if (_viewFilmStrip != null)
+        if (_layoutThumbnail != null)
         {
-          _viewFilmStrip.IsVisible = false;
+          _layoutThumbnail.IsVisible = false;
         }
-        if (_viewThumbnail != null)
+        if (_layoutFilmStrip != null)
         {
-          _viewThumbnail.IsVisible = false;
+          _layoutFilmStrip.IsVisible = false;
         }
-        if (_viewAlbum != null)
+        if (_layoutPlayList != null)
         {
-          _viewAlbum.IsVisible = false;
+          _layoutPlayList.IsVisible = false;
         }
-        if (_viewPlayList != null)
+        if (_layoutCoverFlow != null)
         {
-          _viewPlayList.IsVisible = false;
+          _layoutCoverFlow.IsVisible = false;
         }
       }
-      else if (_viewThumbnail != null)
+      else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
       {
-        base.XPosition = _viewThumbnail.XPosition;
-        base.YPosition = _viewThumbnail.YPosition;
-        base.Width = _viewThumbnail.Width;
-        base.Height = _viewThumbnail.Height;
-        _viewThumbnail.ShowBigIcons(_currentViewMode == ViewMode.LargeIcons);
-        _viewThumbnail.IsVisible = true;
-        if (_viewList != null)
+        base.XPosition = _layoutCoverFlow.XPosition;
+        base.YPosition = _layoutCoverFlow.YPosition;
+        base.Width = _layoutCoverFlow.Width;
+        base.Height = _layoutCoverFlow.Height;
+        _layoutCoverFlow.IsVisible = true;
+        if (_layoutList != null)
         {
-          _viewList.IsVisible = false;
+          _layoutList.IsVisible = false;
         }
-        if (_viewFilmStrip != null)
+        if (_layoutFilmStrip != null)
         {
-          _viewFilmStrip.IsVisible = false;
+          _layoutFilmStrip.IsVisible = false;
         }
-        if (_viewAlbum != null)
+        if (_layoutThumbnail != null)
         {
-          _viewAlbum.IsVisible = false;
+          _layoutThumbnail.IsVisible = false;
         }
-        if (_viewPlayList != null)
+        if (_layoutAlbum != null)
         {
-          _viewPlayList.IsVisible = false;
+          _layoutAlbum.IsVisible = false;
         }
-        if (_viewCoverFlow != null)
+        if (_layoutPlayList != null)
         {
-          _viewCoverFlow.IsVisible = false;
+          _layoutPlayList.IsVisible = false;
+        }
+      }
+      else if (_layoutThumbnail != null)
+      {
+        base.XPosition = _layoutThumbnail.XPosition;
+        base.YPosition = _layoutThumbnail.YPosition;
+        base.Width = _layoutThumbnail.Width;
+        base.Height = _layoutThumbnail.Height;
+        _layoutThumbnail.ShowBigIcons(_currentLayout == Layout.LargeIcons);
+        _layoutThumbnail.IsVisible = true;
+        if (_layoutList != null)
+        {
+          _layoutList.IsVisible = false;
+        }
+        if (_layoutFilmStrip != null)
+        {
+          _layoutFilmStrip.IsVisible = false;
+        }
+        if (_layoutAlbum != null)
+        {
+          _layoutAlbum.IsVisible = false;
+        }
+        if (_layoutPlayList != null)
+        {
+          _layoutPlayList.IsVisible = false;
+        }
+        if (_layoutCoverFlow != null)
+        {
+          _layoutCoverFlow.IsVisible = false;
         }
       }
     }
 
-    private void SetViewProperty()
+    private void SetLayoutProperty()
     {
-      switch (_currentViewMode)
+      switch (_currentLayout)
       {
-        case ViewMode.AlbumView:
-          GUIPropertyManager.SetProperty("#facadeview.viewmode", "album");
+        case Layout.AlbumView:
+          GUIPropertyManager.SetProperty("#facadeview.layout", "album");
           break;
-        case ViewMode.Filmstrip:
-          GUIPropertyManager.SetProperty("#facadeview.viewmode", "filmstrip");
+        case Layout.Filmstrip:
+          GUIPropertyManager.SetProperty("#facadeview.layout", "filmstrip");
           break;
-        case ViewMode.LargeIcons:
-          GUIPropertyManager.SetProperty("#facadeview.viewmode", "largeicons");
+        case Layout.LargeIcons:
+          GUIPropertyManager.SetProperty("#facadeview.layout", "largeicons");
           break;
-        case ViewMode.List:
-          GUIPropertyManager.SetProperty("#facadeview.viewmode", "list");
+        case Layout.List:
+          GUIPropertyManager.SetProperty("#facadeview.layout", "list");
           break;
-        case ViewMode.Playlist:
-          GUIPropertyManager.SetProperty("#facadeview.viewmode", "playlist");
+        case Layout.Playlist:
+          GUIPropertyManager.SetProperty("#facadeview.layout", "playlist");
           break;
-        case ViewMode.SmallIcons:
-          GUIPropertyManager.SetProperty("#facadeview.viewmode", "smallicons");
+        case Layout.SmallIcons:
+          GUIPropertyManager.SetProperty("#facadeview.layout", "smallicons");
           break;
-        case ViewMode.CoverFlow:
-          GUIPropertyManager.SetProperty("#facadeview.viewmode", "coverflow");
+        case Layout.CoverFlow:
+          GUIPropertyManager.SetProperty("#facadeview.layout", "coverflow");
           break;
+      }
+    }
+
+    public static string GetLayoutLocalizedName(Layout layout)
+    {
+      switch (layout)
+      {
+        case Layout.List:
+          return GUILocalizeStrings.Get(101);
+        case Layout.SmallIcons:
+          return GUILocalizeStrings.Get(100);
+        case Layout.LargeIcons:
+          return GUILocalizeStrings.Get(417);
+        case Layout.AlbumView:
+          return GUILocalizeStrings.Get(529);
+        case Layout.Filmstrip:
+          return GUILocalizeStrings.Get(733);
+        case Layout.Playlist:
+          return GUILocalizeStrings.Get(101);
+        case Layout.CoverFlow:
+          return GUILocalizeStrings.Get(791);
+        default:
+          return string.Empty;
+      }
+    }
+
+    public bool IsNullLayout(Layout layout)
+    {
+      switch (layout)
+      {
+        case Layout.List:
+          return (ListLayout == null);
+        case Layout.SmallIcons:
+        case Layout.LargeIcons:
+          return (ThumbnailLayout == null);
+        case Layout.AlbumView:
+          return (AlbumListLayout == null);
+        case Layout.CoverFlow:
+          return (CoverFlowLayout == null);
+        case Layout.Filmstrip:
+          return (FilmstripLayout == null);
+        case Layout.Playlist:
+          return (PlayListLayout == null);
+        default:
+          return true;
       }
     }
 
     public override void DoUpdate()
     {
-      GUIControl cntl = CurrentView;
+      GUIControl cntl = LayoutControl;
       if (cntl != null)
       {
         cntl.XPosition = XPosition;
@@ -972,87 +1107,87 @@ namespace MediaPortal.GUI.Library
 
     public override void StorePosition()
     {
-      if (_viewAlbum != null)
+      if (_layoutAlbum != null)
       {
-        _viewAlbum.StorePosition();
+        _layoutAlbum.StorePosition();
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.StorePosition();
+        _layoutList.StorePosition();
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.StorePosition();
+        _layoutThumbnail.StorePosition();
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.StorePosition();
+        _layoutFilmStrip.StorePosition();
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.StorePosition();
+        _layoutPlayList.StorePosition();
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.StorePosition();
+        _layoutCoverFlow.StorePosition();
       }
       base.StorePosition();
     }
 
     public override void ReStorePosition()
     {
-      if (_viewAlbum != null)
+      if (_layoutAlbum != null)
       {
-        _viewAlbum.ReStorePosition();
+        _layoutAlbum.ReStorePosition();
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.ReStorePosition();
+        _layoutList.ReStorePosition();
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.ReStorePosition();
+        _layoutThumbnail.ReStorePosition();
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.ReStorePosition();
+        _layoutFilmStrip.ReStorePosition();
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.ReStorePosition();
+        _layoutPlayList.ReStorePosition();
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.ReStorePosition();
+        _layoutCoverFlow.ReStorePosition();
       }
       base.ReStorePosition();
     }
 
     public override void Animate(float timePassed, Animator animator)
     {
-      if (_viewAlbum != null)
+      if (_layoutAlbum != null)
       {
-        _viewAlbum.Animate(timePassed, animator);
+        _layoutAlbum.Animate(timePassed, animator);
       }
-      if (_viewList != null)
+      if (_layoutList != null)
       {
-        _viewList.Animate(timePassed, animator);
+        _layoutList.Animate(timePassed, animator);
       }
-      if (_viewThumbnail != null)
+      if (_layoutThumbnail != null)
       {
-        _viewThumbnail.Animate(timePassed, animator);
+        _layoutThumbnail.Animate(timePassed, animator);
       }
-      if (_viewFilmStrip != null)
+      if (_layoutFilmStrip != null)
       {
-        _viewFilmStrip.Animate(timePassed, animator);
+        _layoutFilmStrip.Animate(timePassed, animator);
       }
-      if (_viewPlayList != null)
+      if (_layoutPlayList != null)
       {
-        _viewPlayList.Animate(timePassed, animator);
+        _layoutPlayList.Animate(timePassed, animator);
       }
-      if (_viewCoverFlow != null)
+      if (_layoutCoverFlow != null)
       {
-        _viewCoverFlow.Animate(timePassed, animator);
+        _layoutCoverFlow.Animate(timePassed, animator);
       }
       base.Animate(timePassed, animator);
     }
@@ -1061,30 +1196,30 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
         {
-          return _viewFilmStrip.SelectedListItem;
+          return _layoutFilmStrip.SelectedListItem;
         }
-        else if (_currentViewMode == ViewMode.List && _viewList != null)
+        else if (_currentLayout == Layout.List && _layoutList != null)
         {
-          return _viewList.SelectedListItem;
+          return _layoutList.SelectedListItem;
         }
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
-                 _viewThumbnail != null)
+        else if ((_currentLayout == Layout.SmallIcons || _currentLayout == Layout.LargeIcons) &&
+                 _layoutThumbnail != null)
         {
-          return _viewThumbnail.SelectedListItem;
+          return _layoutThumbnail.SelectedListItem;
         }
-        else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        else if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
         {
-          return _viewAlbum.SelectedListItem;
+          return _layoutAlbum.SelectedListItem;
         }
-        else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        else if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
         {
-          return _viewPlayList.SelectedListItem;
+          return _layoutPlayList.SelectedListItem;
         }
-        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
         {
-          return _viewCoverFlow.SelectedListItem;
+          return _layoutCoverFlow.SelectedListItem;
         }
         return null;
       }
@@ -1094,30 +1229,30 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
         {
-          return _viewFilmStrip.Count;
+          return _layoutFilmStrip.Count;
         }
-        else if (_currentViewMode == ViewMode.List && _viewList != null)
+        else if (_currentLayout == Layout.List && _layoutList != null)
         {
-          return _viewList.Count;
+          return _layoutList.Count;
         }
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
-                 _viewThumbnail != null)
+        else if ((_currentLayout == Layout.SmallIcons || _currentLayout == Layout.LargeIcons) &&
+                 _layoutThumbnail != null)
         {
-          return _viewThumbnail.Count;
+          return _layoutThumbnail.Count;
         }
-        else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        else if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
         {
-          return _viewAlbum.Count;
+          return _layoutAlbum.Count;
         }
-        else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        else if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
         {
-          return _viewPlayList.Count;
+          return _layoutPlayList.Count;
         }
-        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
         {
-          return _viewCoverFlow.Count;
+          return _layoutCoverFlow.Count;
         }
         return 0;
       }
@@ -1125,30 +1260,30 @@ namespace MediaPortal.GUI.Library
 
     public void Clear()
     {
-      if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+      if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
       {
-        _viewFilmStrip.Clear();
+        _layoutFilmStrip.Clear();
       }
-      else if (_currentViewMode == ViewMode.List && _viewList != null)
+      else if (_currentLayout == Layout.List && _layoutList != null)
       {
-        _viewList.Clear();
+        _layoutList.Clear();
       }
-      else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
-               _viewThumbnail != null)
+      else if ((_currentLayout == Layout.SmallIcons || _currentLayout == Layout.LargeIcons) &&
+               _layoutThumbnail != null)
       {
-        _viewThumbnail.Clear();
+        _layoutThumbnail.Clear();
       }
-      else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+      else if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
       {
-        _viewAlbum.Clear();
+        _layoutAlbum.Clear();
       }
-      else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+      else if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
       {
-        _viewPlayList.Clear();
+        _layoutPlayList.Clear();
       }
-      else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+      else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
       {
-        _viewCoverFlow.Clear();
+        _layoutCoverFlow.Clear();
       }
       _itemList.DisposeAndClear();
     }
@@ -1157,51 +1292,59 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
         {
-          return _viewFilmStrip.SelectedListItemIndex;
+          return _layoutFilmStrip.SelectedListItemIndex;
         }
-        else if (_currentViewMode == ViewMode.List && _viewList != null)
+        else if (_currentLayout == Layout.List && _layoutList != null)
         {
-          return _viewList.SelectedListItemIndex;
+          return _layoutList.SelectedListItemIndex;
         }
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
-                 _viewThumbnail != null)
+        else if ((_currentLayout == Layout.SmallIcons || _currentLayout == Layout.LargeIcons) &&
+                 _layoutThumbnail != null)
         {
-          return _viewThumbnail.SelectedListItemIndex;
+          return _layoutThumbnail.SelectedListItemIndex;
         }
-        else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        else if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
         {
-          return _viewAlbum.SelectedListItemIndex;
+          return _layoutAlbum.SelectedListItemIndex;
         }
-        else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        else if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
         {
-          return _viewPlayList.SelectedListItemIndex;
+          return _layoutPlayList.SelectedListItemIndex;
         }
-        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
         {
-          return _viewCoverFlow.SelectedListItemIndex;
+          return _layoutCoverFlow.SelectedListItemIndex;
         }
         return -1;
       }
       set
       {
-        if (_currentViewMode == ViewMode.List && _viewList != null)
+        if (_currentLayout == Layout.List && _layoutList != null)
         {
-          _viewList.SelectedListItemIndex = value;
+          _layoutList.SelectedListItemIndex = value;
         }
-        else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        else if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
         {
-          _viewAlbum.SelectedListItemIndex = value;
+          _layoutAlbum.SelectedListItemIndex = value;
         }
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
-                 _viewThumbnail != null)
+        else if ((_currentLayout == Layout.SmallIcons || _currentLayout == Layout.LargeIcons) &&
+                 _layoutThumbnail != null)
         {
-          _viewThumbnail.SelectedListItemIndex = value;
+          _layoutThumbnail.SelectedListItemIndex = value;
         }
-        else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        else if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
         {
-          _viewPlayList.SelectedListItemIndex = value;
+          _layoutPlayList.SelectedListItemIndex = value;
+        }
+        else if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
+        {
+          _layoutFilmStrip.SelectedListItemIndex = value;
+        }
+        else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
+        {
+          _layoutCoverFlow.SelectedListItemIndex = value;
         }
       }
     }
@@ -1210,30 +1353,30 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
         {
-          return _viewFilmStrip[index];
+          return _layoutFilmStrip[index];
         }
-        else if (_currentViewMode == ViewMode.List && _viewList != null)
+        else if (_currentLayout == Layout.List && _layoutList != null)
         {
-          return _viewList[index];
+          return _layoutList[index];
         }
-        else if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
-                 _viewThumbnail != null)
+        else if ((_currentLayout == Layout.SmallIcons || _currentLayout == Layout.LargeIcons) &&
+                 _layoutThumbnail != null)
         {
-          return _viewThumbnail[index];
+          return _layoutThumbnail[index];
         }
-        else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        else if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
         {
-          return _viewAlbum[index];
+          return _layoutAlbum[index];
         }
-        else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        else if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
         {
-          return _viewPlayList[index];
+          return _layoutPlayList[index];
         }
-        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
         {
-          return _viewCoverFlow[index];
+          return _layoutCoverFlow[index];
         }
         return null;
       }
@@ -1244,30 +1387,30 @@ namespace MediaPortal.GUI.Library
       //GUIListItem item;
       for (int i = 0; i < Count; ++i)
       {
-        if (_currentViewMode == ViewMode.Filmstrip && _viewFilmStrip != null)
+        if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
         {
-          _viewFilmStrip[i].RefreshCoverArt();
+          _layoutFilmStrip[i].RefreshCoverArt();
         }
-        if (_currentViewMode == ViewMode.List && _viewList != null)
+        if (_currentLayout == Layout.List && _layoutList != null)
         {
-          _viewList[i].RefreshCoverArt();
+          _layoutList[i].RefreshCoverArt();
         }
-        if ((_currentViewMode == ViewMode.SmallIcons || _currentViewMode == ViewMode.LargeIcons) &&
-            _viewThumbnail != null)
+        if ((_currentLayout == Layout.SmallIcons || _currentLayout == Layout.LargeIcons) &&
+            _layoutThumbnail != null)
         {
-          _viewThumbnail[i].RefreshCoverArt();
+          _layoutThumbnail[i].RefreshCoverArt();
         }
-        if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
+        if (_currentLayout == Layout.AlbumView && _layoutAlbum != null)
         {
-          _viewAlbum[i].RefreshCoverArt();
+          _layoutAlbum[i].RefreshCoverArt();
         }
-        if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
+        if (_currentLayout == Layout.Playlist && _layoutPlayList != null)
         {
-          _viewPlayList[i].RefreshCoverArt();
+          _layoutPlayList[i].RefreshCoverArt();
         }
-        if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
         {
-          _viewCoverFlow[i].RefreshCoverArt();
+          _layoutCoverFlow[i].RefreshCoverArt();
         }
       }
     }
@@ -1315,24 +1458,24 @@ namespace MediaPortal.GUI.Library
       {
         if (selectedItemIndex >= 0)
         {
-          if (_viewPlayList != null)
+          if (_layoutPlayList != null)
           {
-            _viewPlayList.SelectedListItemIndex = _viewPlayList.MoveItemDown(iItem);
+            _layoutPlayList.SelectedListItemIndex = _layoutPlayList.MoveItemDown(iItem);
           }
 
-          if (_viewList != null)
+          if (_layoutList != null)
           {
-            _viewList.SelectedListItemIndex = _viewList.MoveItemDown(iItem);
+            _layoutList.SelectedListItemIndex = _layoutList.MoveItemDown(iItem);
           }
 
-          if (_viewAlbum != null)
+          if (_layoutAlbum != null)
           {
-            _viewAlbum.SelectedListItemIndex = _viewAlbum.MoveItemDown(iItem);
+            _layoutAlbum.SelectedListItemIndex = _layoutAlbum.MoveItemDown(iItem);
           }
 
-          if (_viewThumbnail != null)
+          if (_layoutThumbnail != null)
           {
-            _viewThumbnail.MoveItemDown(iItem);
+            _layoutThumbnail.MoveItemDown(iItem);
           }
         }
 
@@ -1385,24 +1528,24 @@ namespace MediaPortal.GUI.Library
       {
         if (selectedItemIndex >= 0)
         {
-          if (_viewPlayList != null)
+          if (_layoutPlayList != null)
           {
-            _viewPlayList.SelectedListItemIndex = _viewPlayList.MoveItemUp(iItem);
+            _layoutPlayList.SelectedListItemIndex = _layoutPlayList.MoveItemUp(iItem);
           }
 
-          if (_viewList != null)
+          if (_layoutList != null)
           {
-            _viewList.SelectedListItemIndex = _viewList.MoveItemUp(iItem);
+            _layoutList.SelectedListItemIndex = _layoutList.MoveItemUp(iItem);
           }
 
-          if (_viewAlbum != null)
+          if (_layoutAlbum != null)
           {
-            _viewAlbum.SelectedListItemIndex = _viewAlbum.MoveItemUp(iItem);
+            _layoutAlbum.SelectedListItemIndex = _layoutAlbum.MoveItemUp(iItem);
           }
 
-          if (_viewThumbnail != null)
+          if (_layoutThumbnail != null)
           {
-            _viewThumbnail.MoveItemUp(iItem);
+            _layoutThumbnail.MoveItemUp(iItem);
           }
         }
 
@@ -1410,6 +1553,21 @@ namespace MediaPortal.GUI.Library
       }
 
       return selectedItemIndex;
+    }
+
+    private static bool HasSameItems(IList<GUIListItem> sequence1, IList<GUIListItem> sequence2)
+    {
+      if (sequence1 == null) return sequence2 == null;
+      if (sequence2 == null) return false;
+      if (sequence1.Count != sequence2.Count) return false;
+      int items = sequence1.Count;
+      for (int i = 0; i < items; i++)
+      {
+        if (sequence1[i] != sequence2[i])
+          // let's be strict and require them to be the same instance, and not just same label, etc.
+          return false;
+      }
+      return true;
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,7 +39,6 @@ using MediaPortal.Playlists;
 using MediaPortal.Profile;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
-
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Visualization
@@ -354,7 +353,7 @@ namespace MediaPortal.Visualization
     private bool _IsPreviewVisualization = false;
     private bool _KeepCoverArtAspectRatio = true;
 
-    private List<string> _ImagesPathsList = new List<string>();
+    private HashSet<string> _ImagesPathsList = new HashSet<string>();
     private List<Image> _CoverArtImages = new List<Image>();
     private bool UpdatingCoverArtImage = false;
     private bool UpdatingCoverArtImageList = false;
@@ -415,9 +414,9 @@ namespace MediaPortal.Visualization
         {
           IntPtr hDC = g.GetHdc();
           _CompatibleDC = CreateCompatibleDC(hDC);
-          g.ReleaseHdc(hDC);          
+          g.ReleaseHdc(hDC);
         }
-        
+
         return _CompatibleDC;
       }
     }
@@ -464,7 +463,7 @@ namespace MediaPortal.Visualization
       set { _KeepCoverArtAspectRatio = value; }
     }
 
-    public List<string> ImagesPathsList
+    public HashSet<string> ImagesPathsList
     {
       get { return _ImagesPathsList; }
     }
@@ -733,7 +732,7 @@ namespace MediaPortal.Visualization
           {
             string StationName = GetPropertyStringValue("#Play.Current.ArtistThumb", IsInternetStream);
             string thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
-            if (File.Exists(thumbnail))
+            if (Util.Utils.FileExistsInCache(thumbnail))
             {
               CurrentThumbPath = thumbnail.ToLower();
               CoverArtNeedsRefresh = true;
@@ -743,7 +742,7 @@ namespace MediaPortal.Visualization
               // try with the name returned inside the "icy-name" tag, which we stored in the Album property
               StationName = GetPropertyStringValue("#Play.Current.Album", IsInternetStream);
               thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
-              if (File.Exists(thumbnail))
+              if (Util.Utils.FileExistsInCache(thumbnail))
               {
                 CurrentThumbPath = thumbnail.ToLower();
                 CoverArtNeedsRefresh = true;
@@ -920,17 +919,17 @@ namespace MediaPortal.Visualization
         string imagePath = Path.Combine(Application.StartupPath,
                                         string.Format(@"{0}\Media\{1}", GUIGraphicsContext.Skin, TrackInfoImageName));
 
-        if (File.Exists(imagePath))
+        try
         {
-          try
-          {
-            TrackInfoImage = Image.FromFile(imagePath);
-          }
-
-          catch (Exception ex)
-          {
-            Console.WriteLine(ex.Message);
-          }
+          TrackInfoImage = Image.FromFile(imagePath);
+        }
+        catch (FileNotFoundException)
+        {
+          return;
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
         }
       }
     }
@@ -969,17 +968,18 @@ namespace MediaPortal.Visualization
                                         string.Format(@"{0}\Media\{1}", GUIGraphicsContext.Skin,
                                                       MissingCoverArtImageName));
 
-        if (File.Exists(imagePath))
-        {
-          try
-          {
-            MissingCoverArtImage = Image.FromFile(imagePath);
-          }
 
-          catch (Exception ex)
-          {
-            Console.WriteLine(ex.Message);
-          }
+        try
+        {
+          MissingCoverArtImage = Image.FromFile(imagePath);
+        }
+        catch (FileNotFoundException)
+        {
+          return;
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
         }
       }
     }
@@ -1069,16 +1069,14 @@ namespace MediaPortal.Visualization
       imgPath = Path.Combine(Application.StartupPath,
                              string.Format(@"{0}\Media\{1}", GUIGraphicsContext.Skin, imgName));
 
-      if (!File.Exists(imgPath))
-      {
-        return;
-      }
-
       try
       {
         img = Image.FromFile(imgPath);
       }
-
+      catch (FileNotFoundException)
+      {
+        return;
+      }
       catch (Exception ex)
       {
         Console.WriteLine(ex.Message);
@@ -1507,7 +1505,7 @@ namespace MediaPortal.Visualization
       }
 
       g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayBackStarted);
-      Bass.InternetStreamSongChanged -= new BassAudioEngine.InternetStreamSongChangedDelegate(InternetStreamSongChanged);      
+      Bass.InternetStreamSongChanged -= new BassAudioEngine.InternetStreamSongChangedDelegate(InternetStreamSongChanged);
       GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnNewAction);
     }
 
@@ -1945,6 +1943,10 @@ namespace MediaPortal.Visualization
                   sleepMS = 0;
                 }
 
+                if (Viz.IsWinampVis())
+                {
+                  continue;
+                }
 
                 // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
                 if (IsSoundSpectrumViz)
@@ -2025,7 +2027,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis())
+        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && Viz != null && !Viz.IsWinampVis())
         {
           if (DialogWindowIsActive)
           {
@@ -2056,10 +2058,10 @@ namespace MediaPortal.Visualization
                   using (Graphics gBmp = Graphics.FromImage(bmp))
                   {
                     gBmp.Clear(Color.Black);
-                    DrawThumbnailOverlay(gBmp, 1.0f);                    
+                    DrawThumbnailOverlay(gBmp, 1.0f);
                   }
-                  g.DrawImageUnscaled(bmp, 0, 0);                    
-                }                                
+                  g.DrawImageUnscaled(bmp, 0, 0);
+                }
               }
               else
               {
@@ -2116,7 +2118,6 @@ namespace MediaPortal.Visualization
                 gBackBuf.ReleaseHdc(hBackBufDC);
               }
 
-
               if (!FullScreen && CurrentThumbImage != null)
               {
                 DoThumbnailOverlayFading(gBackBuf);
@@ -2145,19 +2146,25 @@ namespace MediaPortal.Visualization
                 }
               }
 
-              catch (Exception) {}
+              catch (Exception ex)
+              {
+                Log.Error("RenderVisualization: {0}", ex);
+              }
             }
           }
 
           return sleepMS;
         }
-        else
+        else if (Viz != null)
         {
           sleepMS = Viz.RenderVisualization();
         }
       }
 
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("RenderVisualization: {0}", ex);
+      }
 
       return sleepMS;
     }
@@ -2171,10 +2178,10 @@ namespace MediaPortal.Visualization
 
       string thumbPath = Util.Utils.GetAlbumThumbName(ArtistName, AlbumName);
 
-      if (File.Exists(thumbPath))
+      if (Util.Utils.FileExistsInCache(thumbPath))
       {
         string largeThumb = Util.Utils.ConvertToLargeCoverArt(thumbPath);
-        if (File.Exists(largeThumb))
+        if (Util.Utils.FileExistsInCache(largeThumb))
         {
           return largeThumb;
         }
@@ -2187,10 +2194,10 @@ namespace MediaPortal.Visualization
       // Still no album art? Then look for the folder.jpg image
       string folderThumbPath = Util.Utils.GetLocalFolderThumb(filename);
 
-      if (File.Exists(folderThumbPath))
+      if (Util.Utils.FileExistsInCache(folderThumbPath))
       {
         string largeFolderThumb = Util.Utils.ConvertToLargeCoverArt(folderThumbPath);
-        if (File.Exists(largeFolderThumb))
+        if (Util.Utils.FileExistsInCache(largeFolderThumb))
         {
           return largeFolderThumb;
         }
@@ -2216,30 +2223,23 @@ namespace MediaPortal.Visualization
           CurrentThumbImage = null;
         }
 
-        if (thumbPath.Length > 0 && File.Exists(thumbPath))
+        try
         {
           CurrentThumbImage = Image.FromFile(thumbPath);
-
-          if (CurrentThumbImage != null)
-          {
-            // Needs to be refreshed only if we weren't able to load an image
-            CoverArtNeedsRefresh = CurrentThumbImage == null;
-            CurrentThumbPath = thumbPath;
-          }
-
-          else
-          {
-            CurrentThumbPath = string.Empty;
-          }
         }
-
-        else
+        catch (FileNotFoundException)
         {
           CurrentThumbPath = string.Empty;
           CoverArtNeedsRefresh = false;
+          return;
+        }
+        if (CurrentThumbImage != null)
+        {
+          // Needs to be refreshed only if we weren't able to load an image
+          CoverArtNeedsRefresh = CurrentThumbImage == null;
+          CurrentThumbPath = thumbPath;
         }
       }
-
       catch (Exception ex)
       {
         Console.WriteLine("LoadThumbnail caused an exception: {0}", ex.Message);
@@ -2310,7 +2310,7 @@ namespace MediaPortal.Visualization
           stringSize = g.MeasureString(Label4ValueString, Label4Font, textWidth, TextStringFormat);
           textHeight = (int)(stringSize.Height + 1f);
           textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
-          DrawFadingText(g, stringSize, Label4ValueString, textRect, Label4Font, Label4Color);          
+          DrawFadingText(g, stringSize, Label4ValueString, textRect, Label4Font, Label4Color);
         }
 
         return true;
@@ -2937,31 +2937,31 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      if (File.Exists(imagePath))
+      try
       {
-        try
+        UpdatingCoverArtImageList = true;
+        _ImagesPathsList.Add(imagePath);
+        Image img = Image.FromFile(imagePath);
+
+        if (img != null)
         {
-          UpdatingCoverArtImageList = true;
-          _ImagesPathsList.Add(imagePath);
-          Image img = Image.FromFile(imagePath);
-
-          if (img != null)
-          {
-            this._CoverArtImages.Add(img);
-          }
-
-          result = img != null;
+          this._CoverArtImages.Add(img);
         }
 
-        catch
-        {
-          result = false;
-        }
+        result = img != null;
+      }
+      catch (FileNotFoundException)
+      {
+        result = false;
+      }
+      catch (Exception)
+      {
+        result = false;
+      }
 
-        finally
-        {
-          UpdatingCoverArtImageList = false;
-        }
+      finally
+      {
+        UpdatingCoverArtImageList = false;
       }
 
       return result;

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ namespace MediaPortal.ServiceImplementations
     private static Level _minLevel;
     private static string logDir;
     private static bool bConfiguration;
+    private object logLock = new object();
 
     #endregion
 
@@ -63,7 +64,7 @@ namespace MediaPortal.ServiceImplementations
       using (Settings xmlreader = new MPSettings())
       {
         _minLevel =
-          (Level)Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "2"));
       }
       bConfiguration = false;
     }
@@ -319,30 +320,33 @@ namespace MediaPortal.ServiceImplementations
 
     public void WriteFile(LogType type, Level logLevel, string format, params object[] arg)
     {
-      lock (typeof(Log))
+      if (logLevel <= _minLevel)
       {
-        try
+        lock (logLock)
         {
-          if (_previousDate != DateTime.Now.Date)
+          try
           {
-            _previousDate = DateTime.Now.Date;
-            BackupLogFiles();
-          }
+            if (_previousDate != DateTime.Now.Date)
+            {
+              _previousDate = DateTime.Now.Date;
+              BackupLogFiles();
+            }
 
-          if (logLevel <= _minLevel)
-          {
             using (StreamWriter writer = new StreamWriter(GetFileName(type), true, Encoding.UTF8))
             {
               string threadName = Thread.CurrentThread.Name;
               int threadId = Thread.CurrentThread.ManagedThreadId;
               // Write message to log stream
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}({3})]: {4}", DateTime.Now, GetLevelName(logLevel),
-                               threadName, threadId, string.Format(format, arg));
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}({3})]: {4}", DateTime.Now,
+                               GetLevelName(logLevel),
+                               threadName, threadId,
+                               (arg == null || arg.Length < 1) ? format : string.Format(format, arg));
+              //avoid string.format if we don't have arguments
               writer.Close();
             }
           }
+          catch (Exception) {}
         }
-        catch (Exception) { }
       }
 
       //

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,10 +44,11 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox textBoxExtensions;
     private MPLabel mpLabel1;
     private MPLabel mpLabel2;
+    private MPButton resetButton;
     private IContainer components = null;
 
     public GeneralDaemonTools()
-      : this("Virtual Drive") { }
+      : this("Virtual Drive") {}
 
     public GeneralDaemonTools(string name)
       : base(name)
@@ -65,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
 
@@ -122,23 +123,27 @@ namespace MediaPortal.Configuration.Sections
 
       if (rk != null)
       {
-        foreach (string skName in rk.GetValueNames())
+        try
         {
-          try
+          foreach (string skName in rk.GetValueNames())
           {
             if (skName.ToLower().Contains(Search.ToLower()))
             {
               SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
+
               //Old versions of DaemonTools and VirtualCloneDrive
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
+              if (System.IO.File.Exists(SoftwarePath))
+                break;
               //New versions of DaemonTools
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\DTLite.exe";
               break;
             }
+
+            rk.Close();
           }
-          catch (Exception) { }
         }
-        rk.Close();
+        catch (Exception) {}
       }
       return SoftwarePath;
     }
@@ -177,6 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDaemonTools = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAskBeforePlaying = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.resetButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -186,6 +192,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.resetButton);
       this.groupBox2.Controls.Add(this.mpLabel2);
       this.groupBox2.Controls.Add(this.textBoxExtensions);
       this.groupBox2.Controls.Add(this.mpLabel1);
@@ -215,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxExtensions.BorderColor = System.Drawing.Color.Empty;
       this.textBoxExtensions.Location = new System.Drawing.Point(168, 118);
       this.textBoxExtensions.Name = "textBoxExtensions";
-      this.textBoxExtensions.Size = new System.Drawing.Size(288, 20);
+      this.textBoxExtensions.Size = new System.Drawing.Size(208, 20);
       this.textBoxExtensions.TabIndex = 10;
       // 
       // mpLabel1
@@ -345,6 +352,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2.TabIndex = 11;
       this.mpLabel2.Text = "Supported tools: Virtual CloneDrive and Daemon Tools";
       // 
+      // resetButton
+      // 
+      this.resetButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.resetButton.Location = new System.Drawing.Point(384, 119);
+      this.resetButton.Name = "resetButton";
+      this.resetButton.Size = new System.Drawing.Size(72, 22);
+      this.resetButton.TabIndex = 12;
+      this.resetButton.Text = "Default";
+      this.resetButton.UseVisualStyleBackColor = true;
+      this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
+      // 
       // GeneralDaemonTools
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
@@ -396,6 +416,16 @@ namespace MediaPortal.Configuration.Sections
         comboDriveNo.Enabled = false;
         checkBoxAskBeforePlaying.Enabled = false;
       }
+    }
+
+    private void resetButton_Click(object sender, EventArgs e)
+    {
+      if (MessageBox.Show(
+        "Do you really want to reset the extension list to the default?\r\nAny modification you did will be lost.",
+        "MediaPortal Configuration", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
+          == DialogResult.No) return;
+
+      textBoxExtensions.Text = Util.Utils.ImageExtensionsDefault;
     }
   }
 }

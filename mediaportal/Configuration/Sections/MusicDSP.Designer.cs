@@ -1,28 +1,3 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
 namespace MediaPortal.Configuration.Sections
 {
   partial class MusicDSP
@@ -86,7 +61,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // DSPTabPg
       // 
-      this.DSPTabPg.BackColor = System.Drawing.SystemColors.Control;
+      this.DSPTabPg.BackColor = System.Drawing.SystemColors.Window;
       this.DSPTabPg.Controls.Add(this.groupBoxGain);
       this.DSPTabPg.Controls.Add(this.groupBoxCompressor);
       this.DSPTabPg.Location = new System.Drawing.Point(4, 22);
@@ -153,7 +128,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxGainDBValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxGainDBValue.Location = new System.Drawing.Point(11, 236);
       this.textBoxGainDBValue.Name = "textBoxGainDBValue";
-      this.textBoxGainDBValue.Size = new System.Drawing.Size(40, 21);
+      this.textBoxGainDBValue.Size = new System.Drawing.Size(40, 20);
       this.textBoxGainDBValue.TabIndex = 66;
       this.textBoxGainDBValue.Text = "0";
       this.textBoxGainDBValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -187,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarGain.Minimum = -16000;
       this.trackBarGain.Name = "trackBarGain";
       this.trackBarGain.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarGain.Size = new System.Drawing.Size(42, 143);
+      this.trackBarGain.Size = new System.Drawing.Size(45, 143);
       this.trackBarGain.SmallChange = 10;
       this.trackBarGain.TabIndex = 65;
       this.trackBarGain.TickFrequency = 2000;
@@ -264,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCompressor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxCompressor.Location = new System.Drawing.Point(9, 23);
       this.checkBoxCompressor.Name = "checkBoxCompressor";
-      this.checkBoxCompressor.Size = new System.Drawing.Size(81, 17);
+      this.checkBoxCompressor.Size = new System.Drawing.Size(79, 17);
       this.checkBoxCompressor.TabIndex = 72;
       this.checkBoxCompressor.Text = "Compressor";
       this.checkBoxCompressor.UseVisualStyleBackColor = true;
@@ -277,7 +252,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarCompressor.Minimum = -250;
       this.trackBarCompressor.Name = "trackBarCompressor";
       this.trackBarCompressor.Orientation = System.Windows.Forms.Orientation.Vertical;
-      this.trackBarCompressor.Size = new System.Drawing.Size(42, 138);
+      this.trackBarCompressor.Size = new System.Drawing.Size(45, 138);
       this.trackBarCompressor.TabIndex = 73;
       this.trackBarCompressor.TickFrequency = 25;
       this.trackBarCompressor.Value = -60;
@@ -413,7 +388,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxMusicFile.BorderColor = System.Drawing.Color.Empty;
       this.textBoxMusicFile.Location = new System.Drawing.Point(65, 347);
       this.textBoxMusicFile.Name = "textBoxMusicFile";
-      this.textBoxMusicFile.Size = new System.Drawing.Size(369, 21);
+      this.textBoxMusicFile.Size = new System.Drawing.Size(369, 20);
       this.textBoxMusicFile.TabIndex = 9;
       // 
       // label1
@@ -422,7 +397,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(10, 350);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(49, 13);
+      this.label1.Size = new System.Drawing.Size(47, 13);
       this.label1.TabIndex = 8;
       this.label1.Text = "Test file:";
       // 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
+using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
 {
@@ -149,6 +150,7 @@ namespace MediaPortal.Player
     protected SubtitleSelector _subSelector = null;
     protected SubtitleRenderer _dvbSubRenderer = null;
     protected AudioSelector _audioSelector = null;
+    protected IAMLine21Decoder _line21Decoder = null;
 
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -165,7 +167,6 @@ namespace MediaPortal.Player
     /// <summary> audio interface used to control volume. </summary>
     protected IBasicAudio _basicAudio = null;
 
-    private VMR7Util _vmr7 = null;
     private DateTime _elapsedTimer = DateTime.Now;
     private DateTime _FFRWtimer = DateTime.Now;
     protected const int WM_GRAPHNOTIFY = 0x00008001; // message from graph
@@ -181,9 +182,10 @@ namespace MediaPortal.Player
     protected int iChangedMediaTypes;
     protected VideoStreamFormat _videoFormat;
     protected int _lastFrameCounter;
-    protected string videoFilter = "";    
-    protected string audioFilter = "";    
-    
+    protected string videoFilter = "";
+    protected string audioFilter = "";
+    protected bool VideoChange = false;
+
     #endregion
 
     #region ctor/dtor
@@ -307,7 +309,7 @@ namespace MediaPortal.Player
         }
         if (sType.subType == MEDIASUBTYPE_DDPLUS_AUDIO)
         {
-          return "DD+";
+          return "AC3plus";
         }
         if (sType.subType == MEDIASUBTYPE_MPEG1_PAYLOAD)
         {
@@ -329,12 +331,8 @@ namespace MediaPortal.Player
         {
           return "AAC";
         }
-        return Strings.Unknown;
       }
-      else
-      {
-        return Strings.Unknown;
-      }
+      return Strings.Unknown;
     }
 
     /// <summary>
@@ -376,13 +374,37 @@ namespace MediaPortal.Player
           pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
         }
         */
+        sName = sName.Trim();
+        if (sName.Length > 3) //dual language track
+        {
+          string lang = GetFullLanguageName(sName.Substring(0, 3));
+          sName = string.Format("{0}/{1} ({2})", lang, GetFullLanguageName(sName.Substring(3, 3)), sName);
+        }
+        else
+          sName = string.Format("{0} ({1})", GetFullLanguageName(sName), sName);
 
-        return sName.Trim();
+        return sName;
       }
       else
       {
         return Strings.Unknown;
       }
+    }
+
+    private string GetFullLanguageName(string language)
+    {
+      foreach (
+        System.Globalization.CultureInfo ci in
+          System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.NeutralCultures))
+      {
+        if (language.Equals(ci.ThreeLetterISOLanguageName) ||
+            ci.EnglishName.StartsWith(language, StringComparison.InvariantCultureIgnoreCase))
+        {
+          language = Util.Utils.TranslateLanguageString(ci.EnglishName);
+          break;
+        }
+      }
+      return language;
     }
 
     public override bool SupportsReplay
@@ -401,7 +423,7 @@ namespace MediaPortal.Player
           return false;
         }
       }
-      Speed = 1;      
+      Speed = 1;
       iSpeed = 1;
       _speedRate = 10000;
       _isLive = false;
@@ -663,6 +685,25 @@ namespace MediaPortal.Player
       }
       OnProcess();
       CheckVideoResolutionChanges();
+      if ((_currentPos > (_duration - 1.0)) && IsTimeShifting && (iSpeed != 1))
+      {
+        Log.Info("TSReaderPlayer : timeshifting FFWD/REW : currentPos > duration-1");
+        MovieEnded();
+      }
+      if (_endOfFileDetected && IsTimeShifting)
+      {
+        UpdateDuration();
+        UpdateCurrentPosition();
+        double pos = _duration - 1.0; //Continue playing from end of file -1 seconds
+        if (pos < 0)
+        {
+          pos = 0;
+        }
+        SeekAbsolute(pos);
+        Speed = 1;
+        _endOfFileDetected = false;
+        Log.Info("TSReaderPlayer : timeshift EOF - start play");
+      }
       if (_speedRate != 10000)
       {
         DoFFRW();
@@ -672,25 +713,17 @@ namespace MediaPortal.Player
         _lastFrameCounter = 0;
         _FFRWtimer = DateTime.Now;
       }
-      if (_endOfFileDetected && IsTimeShifting)
-      {
-        UpdateDuration();
-        UpdateCurrentPosition();
-        double pos = CurrentPosition;
-        if (pos < 0)
-        {
-          pos = 0;
-        }
-        SeekAbsolute(pos);
-      }
-
       // Workaround for Mantis issue: 0002698: Last frame can get stuck on the screen when TS file playback ends 
-	  if (_currentPos > _duration && !IsTimeShifting)
+      if (_currentPos > _duration && !IsTimeShifting)
       {
+        Log.Info("TSReaderPlayer : currentPos > duration");
         MovieEnded();
       }
 
-      if (_ireader != null)
+      // DS can be called only from the application thread.
+      // CI menu changes the thread where Process() gets run (nasty :))
+      // http://mantis.team-mediaportal.com/view.php?id=2590
+      if (_ireader != null && Thread.CurrentThread.Name == "MPMain")
       {
         _ireader.SetMediaPosition((long)(_streamPos * 10000000d));
       }
@@ -773,8 +806,9 @@ namespace MediaPortal.Player
           bool setRateFailed = false;
           if (_CodecSupportsFastSeeking)
           {
-            if (g_Player.IsVideo) // only for video
-              VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+            // Inform dshowhelper of playback rate changes
+            if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+
             if (iSpeed != value)
             {
               _usingFastSeeking = true;
@@ -810,7 +844,7 @@ namespace MediaPortal.Player
                 _mediaCtrl.Run();
                 _speedRate = 10000;
                 _usingFastSeeking = false;
-                
+
                 // unmute audio when speed returns to 1.0x
                 if (_volumeBeforeSeeking != 0)
                 {
@@ -977,7 +1011,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        UpdateCurrentPosition();  
+        UpdateCurrentPosition();
         // Ambass : calling Process() in another thread of "MPMain" can cause unexpected re-entrancy, deadlocks, out of sequence execution...
         /*
         if (_duration < 0)
@@ -1069,6 +1103,11 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
+      using (MPSettings xmlwriter = new MPSettings())
+      {
+        Log.Debug("TSReaderPlayer: Saving subtitle index: {0} ", CurrentSubtitleStream);
+        xmlwriter.SetValue("tvservice", "lastsubtitleindex", CurrentSubtitleStream);
+      }
       Stop(false);
     }
 
@@ -1320,6 +1359,7 @@ namespace MediaPortal.Player
       else
       {
         _endOfFileDetected = true;
+        Log.Info("TSReaderPlayer timeshift EOF");
       }
     }
 
@@ -1349,13 +1389,7 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void OnProcess()
-    {
-      if (_vmr7 != null)
-      {
-        _vmr7.Process();
-      }
-    }
+    protected virtual void OnProcess() {}
 
 #if DEBUG
     private static DateTime dtStart = DateTime.Now;
@@ -1407,6 +1441,7 @@ namespace MediaPortal.Player
     public int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY,
                                     int bitrate, int isInterlaced)
     {
+      _isRadio = false;
       _videoFormat.IsValid = true;
       _videoFormat.streamType = (VideoStreamType)streamType;
       _videoFormat.width = width;
@@ -1422,7 +1457,8 @@ namespace MediaPortal.Player
     public int OnRequestAudioChange()
     {
       if (Thread.CurrentThread.Name == "MPMain")
-      {   // probably called on TsReader startup, we can ( and should ! ) do it immediately.
+      {
+        // probably called on TsReader startup, we can ( and should ! ) do it immediately.
         Log.Info("TSReaderPlayer:OnRequestAudioChange()");
         g_Player.OnAudioTracksReady();
       }
@@ -1493,6 +1529,23 @@ namespace MediaPortal.Player
           {
             Log.Error("Error stopping graph: {0}", error.Message);
           }
+          
+          try
+          {
+            //Make sure the graph has really stopped
+            FilterState state;
+            hr = _mediaCtrl.GetState(1000, out state);
+            DsError.ThrowExceptionForHR(hr);
+            if (state != FilterState.Stopped)
+            {
+              Log.Error("TSReaderPlayer: graph still running");
+            }
+          }
+          catch (Exception error)
+          {
+            Log.Error("Error checking graph state: {0}", error.Message);
+          }
+
           if (needRebuild)
           {
             // this is a hack for MS Video Decoder and AC3 audio change
@@ -1502,7 +1555,8 @@ namespace MediaPortal.Player
             if (MSVideoCodec != null)
             {
               iChangedMediaTypes = 3;
-              DirectShowUtil.ReleaseComObject(MSVideoCodec); MSVideoCodec = null;
+              DirectShowUtil.ReleaseComObject(MSVideoCodec);
+              MSVideoCodec = null;
             }
             // hack end
             switch (iChangedMediaTypes)
@@ -1523,6 +1577,17 @@ namespace MediaPortal.Player
             }
             DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
             DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+          }
+
+          //Re-enable PostProcessing
+          if (iChangedMediaTypes != 1 && VideoChange)
+          { 
+            PostProcessingEngine.GetInstance().FreePostProcess();
+            IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+            if (!postengine.LoadPostProcessing(_graphBuilder))
+            {
+              PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            }
           }
           /*
           else
@@ -1571,8 +1636,6 @@ namespace MediaPortal.Player
       try
       {
         _graphBuilder = (IGraphBuilder)new FilterGraph();
-        _vmr7 = new VMR7Util();
-        _vmr7.AddVMR7(_graphBuilder);
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter)reader;
         ((ITSReader)reader).SetTsReaderCallback(this);
@@ -1728,11 +1791,6 @@ namespace MediaPortal.Player
           }
           _fileSource = null;
         }
-        if (_vmr7 != null)
-        {
-          _vmr7.RemoveVMR7();
-        }
-        _vmr7 = null;
 
         if (_graphBuilder != null)
         {
@@ -1813,14 +1871,14 @@ namespace MediaPortal.Player
       {
         return;
       }
-      if ((_speedRate == 10000) || (_mediaSeeking == null))
+      if ((_speedRate == 10000) || (_mediaSeeking == null) || (_mediaCtrl == null))
       {
         return;
       }
       TimeSpan ts = DateTime.Now - _elapsedTimer;
-      if ((ts.TotalMilliseconds < 100) || (ts.TotalMilliseconds < Math.Abs(1000.0f / Speed)) ||
-          (VMR9Util.g_vmr9 != null && _lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) &&
-          (ts.TotalMilliseconds < 2000))
+      if ((ts.TotalMilliseconds < 200) || (ts.TotalMilliseconds < Math.Abs(1000.0f / Speed)) ||
+          ((VMR9Util.g_vmr9 != null && _lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) &&
+           (ts.TotalMilliseconds < 2000)))
       {
         // Ambass : Normally, 100 mS are enough to present the new frame, but sometimes the PC is thinking...and we launch a new seek
         return;
@@ -1842,7 +1900,10 @@ namespace MediaPortal.Player
 
         // new time = current time + timerinterval * speed
         long lTimerInterval = (long)ts.TotalMilliseconds;
-
+        if (lTimerInterval > 1000)
+        {
+          lTimerInterval = 1000;
+        }
         rewind = (long)(current + ((long)(lTimerInterval) * Speed * 10000));
         int hr;
         pStop = 0;
@@ -1852,15 +1913,17 @@ namespace MediaPortal.Player
         {
           _speedRate = 10000;
           rewind = earliest;
-          //Log.Info(" seek back:{0}",rewind/10000000);
-          hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning,
+          Log.Info("TSReaderPlayer: timeshift SOF seek back:{0}", rewind / 10000000);
+          hr = _mediaSeeking.SetPositions(new DsLong(rewind),
+                                          AMSeekingSeekingFlags.AbsolutePositioning |
+                                          AMSeekingSeekingFlags.SeekToKeyFrame,
                                           new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          _mediaCtrl.Run();
+          Speed = 1;
           return;
         }
         // if we end up at the end of time then just
-        // start @ the end-100msec
-        long margin = (IsTimeShifting) ? 30000000 : 10000;
+        // start @ the end -1sec
+        long margin = (IsTimeShifting) ? 10000000 : 100000;
 
         if ((rewind > (latest - margin)) && (_speedRate > 0))
         {
@@ -1868,10 +1931,12 @@ namespace MediaPortal.Player
           {
             _speedRate = 10000;
             rewind = latest - margin;
-            //Log.Info(" seek ff:{0} {1}",rewind,latest);
-            hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning,
-                                          new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-            _mediaCtrl.Run();
+            Log.Info("TSReaderPlayer: timeshift EOF seek ff:{0} {1}", rewind, latest);
+            hr = _mediaSeeking.SetPositions(new DsLong(rewind),
+                                            AMSeekingSeekingFlags.AbsolutePositioning |
+                                            AMSeekingSeekingFlags.SeekToKeyFrame,
+                                            new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+            Speed = 1;
           }
           else
           {
@@ -1882,11 +1947,17 @@ namespace MediaPortal.Player
         }
         //seek to new moment in time
         //Log.Info(" seek :{0}",rewind/10000000);
-        if (VMR9Util.g_vmr9 != null) _lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
-        hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                        AMSeekingSeekingFlags.NoPositioning);
+        if (VMR9Util.g_vmr9 != null)
+        {
+          _lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
+          VMR9Util.g_vmr9.EVRProvidePlaybackRate(0.0);
+        }
+        hr = _mediaSeeking.SetPositions(new DsLong(rewind),
+                                        AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
+                                        new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+        _mediaCtrl.Run();
         //according to ms documentation, this is the prefered way to do seeking
-        _mediaCtrl.StopWhenReady();
+        // _mediaCtrl.StopWhenReady();
         _elapsedTimer = DateTime.Now;
       }
     }
@@ -1895,6 +1966,7 @@ namespace MediaPortal.Player
 
     private void ReAddFilters(string selection)
     {
+      VideoChange = false;
       // we have to find first filter connected to tsreader which will be removed
       IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, selection);
       IPin pinTo;
@@ -1906,17 +1978,21 @@ namespace MediaPortal.Player
         FilterInfo fInfo;
         pInfo.filter.QueryFilterInfo(out fInfo);
         Log.Debug("TSReaderPlayer: Remove filter - {0}", fInfo.achName);
+        DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
         _graphBuilder.RemoveFilter(pInfo.filter);
         DsUtils.FreePinInfo(pInfo);
         DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-        DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        DirectShowUtil.ReleaseComObject(pinTo);
+        pinTo = null;
       }
-      DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+      DirectShowUtil.ReleaseComObject(pinFrom);
+      pinFrom = null;
       MatchFilters(selection);
 
       if (selection == "Video")
       {
         DirectShowUtil.AddFilterToGraph(_graphBuilder, videoFilter);
+        VideoChange = true;
       }
       else
       {
@@ -1940,6 +2016,7 @@ namespace MediaPortal.Player
       }
     }
     */
+
     #endregion
 
     #region IDisposable Members

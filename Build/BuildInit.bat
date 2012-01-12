@@ -14,19 +14,21 @@ REM Select program path based on current machine environment
 set progpath=%ProgramFiles%
 if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
+REM Select Visual Studio version
+set vsver=10.0
 
 REM set other MP related paths
-set SVN_ROOT=..
-set DeployVersionSVN="%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe"
+set GIT_ROOT=..
+set DeployVersionGIT="%GIT_ROOT%\Tools\Script & Batch tools\DeployVersionGIT\DeployVersionGIT\bin\Release\DeployVersionGIT.exe"
 
-set CommonMPTV="%SVN_ROOT%\Common-MP-TVE3"
-set DirectShowFilters="%SVN_ROOT%\DirectShowFilters"
-set MediaPortal="%SVN_ROOT%\mediaportal"
-set TVLibrary="%SVN_ROOT%\TvEngine3\TVLibrary"
+set CommonMPTV="%GIT_ROOT%\Common-MP-TVE3"
+set DirectShowFilters="%GIT_ROOT%\DirectShowFilters"
+set MediaPortal="%GIT_ROOT%\mediaportal"
+set TVLibrary="%GIT_ROOT%\TvEngine3\TVLibrary"
 
 
 REM set log file
-set log=%project%.log
+set log=%project%_%BUILD_TYPE%.log
 
 
 REM init log file, write dev env...

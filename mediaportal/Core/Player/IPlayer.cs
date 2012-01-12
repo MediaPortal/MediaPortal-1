@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {
@@ -92,7 +92,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Default ctor
     /// </summary>
-    public IPlayer() { }
+    public IPlayer() {}
 
     /// <summary>
     /// Method to handle any windows message
@@ -100,7 +100,7 @@ namespace MediaPortal.Player
     /// by overriding this mehtod
     /// </summary>
     /// <param name="m">Message</param>
-    public virtual void WndProc(ref Message m) { }
+    public virtual void WndProc(ref Message m) {}
 
     /// <summary>
     /// This method is used to start playing a file
@@ -309,12 +309,12 @@ namespace MediaPortal.Player
     /// <summary>
     /// Method to pause or unpause
     /// </summary>
-    public virtual void Pause() { }
+    public virtual void Pause() {}
 
     /// <summary>
     /// Method to stop playing
     /// </summary>
-    public virtual void Stop() { }
+    public virtual void Stop() {}
 
     /// <summary>
     /// Method to stop playing
@@ -327,7 +327,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Method to stop playing but at the same time keep timeshifting on server
     /// </summary>
-    public virtual void StopAndKeepTimeShifting() { }
+    public virtual void StopAndKeepTimeShifting() {}
 
     /// <summary>
     /// Property which indicates if the playback is paused or not
@@ -392,25 +392,25 @@ namespace MediaPortal.Player
     /// Method to seek to a specific point relative from the current position
     /// </summary>
     /// <param name="dTime">relative time in secs</param>
-    public virtual void SeekRelative(double dTime) { }
+    public virtual void SeekRelative(double dTime) {}
 
     /// <summary>
     /// Method to seek to a specific point relative 
     /// </summary>
     /// <param name="dTime">absolute time in secs</param>
-    public virtual void SeekAbsolute(double dTime) { }
+    public virtual void SeekAbsolute(double dTime) {}
 
     /// <summary>
     /// Method to seek to a specific point relative to the current position
     /// </summary>
     /// <param name="iPercentage">percentage (-100% to +100%) relative to the current position</param>
-    public virtual void SeekRelativePercentage(int iPercentage) { }
+    public virtual void SeekRelativePercentage(int iPercentage) {}
 
     /// <summary>
     /// Method to seek to a specific point 
     /// </summary>
     /// <param name="iPercentage">percentage (0 to +100%) </param>
-    public virtual void SeekAsolutePercentage(int iPercentage) { }
+    public virtual void SeekAsolutePercentage(int iPercentage) {}
 
     /// <summary>
     /// 
@@ -451,7 +451,7 @@ namespace MediaPortal.Player
     /// This method will be called on a regular basis by MP
     /// it allows the external player to do some work
     /// </summary>
-    public virtual void Process() { }
+    public virtual void Process() {}
 
     /// <summary>
     /// Property which returns the total number of audio streams available
@@ -468,6 +468,36 @@ namespace MediaPortal.Player
     {
       get { return 0; }
       set { }
+    }
+
+    public virtual int EditionStreams
+    {
+      get { return 1; }
+    }
+
+    /// <summary>
+    /// Property to get/set the current edition stream
+    /// </summary>
+    public virtual int CurrentEditionStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    /// <summary>
+    /// Property to get the name for an edition stream
+    /// </summary>
+    public virtual string EditionLanguage(int iStream)
+    {
+      return Strings.Unknown;
+    }
+
+    /// <summary>
+    /// Property to get the type of an edition stream
+    /// </summary>
+    public virtual string EditionType(int iStream)
+    {
+      return Strings.Unknown;
     }
 
     /// <summary>
@@ -504,11 +534,19 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property to get/set the name for a subtitle stream
+    /// Property to get/set the language name for a subtitle stream
     /// </summary>
     public virtual string SubtitleLanguage(int iStream)
     {
       return Strings.Unknown;
+    }
+
+    /// <summary>
+    /// Property to get the name for a subtitle stream
+    /// </summary>
+    public virtual string SubtitleName(int iStream)
+    {
+      return null;
     }
 
     /// <summary>
@@ -520,10 +558,18 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property to get chapters name
+    /// </summary>
+    public virtual string[] ChaptersName
+    {
+      get { return null; }
+    }
+
+    /// <summary>
     /// Method which is called by MP if the player needs to update its video window
     /// because the coordinates have been changed
     /// </summary>
-    public virtual void SetVideoWindow() { }
+    public virtual void SetVideoWindow() {}
 
     /// <summary>
     /// Property to get/set the contrast
@@ -574,12 +620,18 @@ namespace MediaPortal.Player
       set { }
     }
 
+    public virtual bool EnableForcedSubtitle
+    {
+      get { return true; }
+      set { }
+    }
+
     public virtual int GetHDC()
     {
       return 0;
     }
 
-    public virtual void ReleaseHDC(int HDC) { }
+    public virtual void ReleaseHDC(int HDC) {}
 
     /// <summary>
     /// Property which indicates if we can seek in the file
@@ -605,9 +657,9 @@ namespace MediaPortal.Player
       get { return false; }
     }
 
-    public virtual void ContinueGraph() { }
+    public virtual void ContinueGraph() {}
 
-    public virtual void PauseGraph() { }
+    public virtual void PauseGraph() {}
 
     public virtual bool IsExternal
     {
@@ -629,11 +681,20 @@ namespace MediaPortal.Player
       return false;
     }
 
-    public virtual void OnZapping(int info) { }    
+    public virtual void OnZapping(int info) {}
+
+    #region Posprocessing features
+
+    public virtual bool HasPostprocessing
+    {
+      get { return false; }
+    }
+
+    #endregion
 
     #region IDisposable Members
 
-    public abstract void Dispose();   
+    public abstract void Dispose();
 
     #endregion
   }

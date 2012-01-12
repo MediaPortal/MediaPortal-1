@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -30,7 +25,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  class TvServerChecker : IInstallationPackage
+  internal class TvServerChecker : IInstallationPackage
   {
     public static string prg = "TvServer";
 
@@ -46,6 +41,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
+
     public bool Install()
     {
       if (!File.Exists(_fileName)) return false;
@@ -66,14 +62,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName, String.Format("/S /noClient /DeployMode {0} {1} {2} /D={3}", UpdateMode, sqlparam, pwdparam, targetDir));
+      Process setup = Process.Start(_fileName,
+                                    String.Format("/S /noClient /DeployMode {0} {1} {2} /D={3}", UpdateMode, sqlparam,
+                                                  pwdparam, targetDir));
 
-      if (setup == null)
+      if (setup != null)
       {
-        return false;
+        setup.WaitForExit();
+        if (setup.ExitCode == 0)
+        {
+          if (File.Exists(targetDir + "\\reboot"))
+          {
+            Utils.NotifyReboot(GetDisplayName());
+          }
+          return true;
+        }
       }
-      setup.WaitForExit();
-      return setup.ExitCode == 0;
+      return false;
     }
 
     public bool UnInstall()
@@ -97,15 +102,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.needsDownload = true;
       FileInfo tvServerFile = new FileInfo(_fileName);
 
+      result = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
+
       if (tvServerFile.Exists && tvServerFile.Length != 0)
+      {
         result.needsDownload = false;
+      }
+      else
+      {
+        result.needsDownload = true;
+      }
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      result = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
+
       return result;
     }
   }

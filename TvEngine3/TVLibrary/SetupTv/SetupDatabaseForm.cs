@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using MySql.Data.MySqlClient;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 #endregion
@@ -118,7 +119,7 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode serverName = nodeKey.Attributes.GetNamedItem("name");
         XmlNode attributeConnectionString = nodeKey.Attributes.GetNamedItem("connectionString");
@@ -298,7 +299,7 @@ namespace SetupTv
 
         // As the connection string sets the DB schema name we need to compose it after cleaning the statement.
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "",
-                                                          true, 300);
+                                                          true, 30);
         switch (provider)
         {
           case ProviderType.SqlServer:
@@ -590,11 +591,11 @@ namespace SetupTv
     public void SaveGentleConfig()
     {
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text,
-                                                        tbDatabaseName.Text, true, 300);
+                                                        tbDatabaseName.Text, true, 30);
       XmlDocument doc = new XmlDocument();
       try
       {
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
       }
       catch (Exception ex)
       {
@@ -613,7 +614,7 @@ namespace SetupTv
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
       Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
 
-      doc.Save(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+      doc.Save(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)

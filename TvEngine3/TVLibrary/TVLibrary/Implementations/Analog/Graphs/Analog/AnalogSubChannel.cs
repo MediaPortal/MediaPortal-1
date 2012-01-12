@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ using DirectShowLib;
 using TvLibrary.Implementations.Analog.Components;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
+using TvLibrary.Implementations;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -107,6 +108,7 @@ namespace TvLibrary.Implementations.Analog
       {
         _teletextDecoder.ClearBuffer();
       }
+      OnAfterTuneEvent();
     }
 
     /// <summary>
@@ -117,6 +119,7 @@ namespace TvLibrary.Implementations.Analog
     {
       Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);
       _dateTimeShiftStarted = DateTime.MinValue;
+      OnAfterTuneEvent();
     }
 
     /// <summary>
@@ -159,7 +162,18 @@ namespace TvLibrary.Implementations.Analog
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
       _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
                                    parameters.MaximumFileSize);
-      _mpRecord.SetTimeShiftFileName(_subChannelId, fileName);
+      _mpRecord.SetTimeShiftFileNameW(_subChannelId, fileName);
+
+      //  Set the channel type
+      if (CurrentChannel == null)
+      {
+        Log.Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
+        return false;
+      }
+
+      // Important: this call needs to be made *before* the call to StartTimeShifting().
+      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+
       _mpRecord.StartTimeShifting(_subChannelId);
       _dateTimeShiftStarted = DateTime.Now;
       return true;
@@ -188,9 +202,14 @@ namespace TvLibrary.Implementations.Analog
         _card.Quality.StartRecord();
       }
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
-      _mpRecord.SetRecordingFileName(_subChannelId, fileName);
+      _mpRecord.SetRecordingFileNameW(_subChannelId, fileName);
       _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);
+
+      // Important: this call needs to be made *before* the call to StartRecord().
+      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+
       _mpRecord.StartRecord(_subChannelId);
+      _dateRecordingStarted = DateTime.Now;
     }
 
     /// <summary>
@@ -256,9 +275,13 @@ namespace TvLibrary.Implementations.Analog
     /// Retursn the video format (always returns MPEG2). 
     /// </summary>
     /// <value>The number of channels decrypting.</value>
-    public override int GetCurrentVideoStream
+    public override IVideoStream GetCurrentVideoStream
     {
-      get { return 2; }
+      get
+      {
+        VideoStream stream = new VideoStream();
+        return stream;
+      }
     }
 
     #endregion

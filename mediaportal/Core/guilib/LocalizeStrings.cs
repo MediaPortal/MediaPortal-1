@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -59,6 +59,26 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
+    #region Properties
+
+    public static bool UseRTL
+    {
+      get
+      {
+        if (_stringProvider == null)
+        {
+          Load(null);
+        }
+
+        if (_stringProvider != null)
+          return _stringProvider.UseRTL;
+        else
+          return false;
+      }
+    }
+
+    #endregion
+
     #region Public Methods
 
     /// <summary>
@@ -75,7 +95,7 @@ namespace MediaPortal.GUI.Library
       bool isPrefixEnabled = true;
       using (Settings reader = new MPSettings())
       {
-        isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
+        isPrefixEnabled = reader.GetValueAsBool("gui", "myprefix", true);
       }
 
       string directory = Config.GetFolder(Config.Dir.Language);
@@ -282,10 +302,10 @@ namespace MediaPortal.GUI.Library
           _cultures.Add(cultureList[i].EnglishName, cultureList[i].Name);
         }
       }
-
-      if (_cultures.ContainsKey(language))
+      string cultures = null;
+      if (_cultures.TryGetValue(language, out cultures))
       {
-        return _cultures[language];
+        return cultures;
       }
 
       return null;

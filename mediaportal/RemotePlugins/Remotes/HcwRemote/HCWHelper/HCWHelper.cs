@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ namespace MediaPortal.InputDevices.HcwHelper
 {
   public partial class HcwHelper : Form
   {
+    private const int HCWPVR3 = 0x001D; // 35-Buttom Remote
     private const int HCWPVR2 = 0x001E; // 45-Button Remote
     private const int HCWPVR = 0x001F; // 34-Button Remote
     private const int HCWCLASSIC = 0x0000; // 21-Button Remote
@@ -287,6 +288,7 @@ namespace MediaPortal.InputDevices.HcwHelper
               remoteCommand = keyCode + 1000;
               break;
             case HCWPVR2:
+            case HCWPVR3:
               remoteCommand = keyCode + 2000;
               break;
           }

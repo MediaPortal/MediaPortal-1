@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ using System.Windows.Controls;
 using System.Windows.Serialization;
 using System.Xml;
 using MediaPortal.Drawing.Layouts;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -102,10 +103,9 @@ namespace MediaPortal.GUI.Library
           if (tokens.Length < 2)
           {
             continue;
-      }
+          }
           _cachedDefines[tokens[0]] = tokens[1];
         }
-
       }
       catch (Exception ex)
       {
@@ -128,8 +128,8 @@ namespace MediaPortal.GUI.Library
     private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
     {
       GUIGraphicsContext.SkinSize = new Size(720, 576);
-      XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNode("/controls/skin/width/text()");
-      XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNode("/controls/skin/height/text()");
+      XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/width/text()");
+      XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/height/text()");
       if (nodeSkinWidth != null && nodeSkinHeight != null)
       {
         try
@@ -148,17 +148,19 @@ namespace MediaPortal.GUI.Library
     /// 
     /// </summary>
     /// <param name="guiControlType">The type of control you wish to update.</param>
-    /// <returns>A hashtable which contains the MemberInfo objects for every
+    /// <returns>A IDictionary which contains the MemberInfo objects for every
     /// updatable field, indexed by their corresponding Xml Element name. </returns>
-    private static Hashtable GetMembersToUpdate(Type guiControlType)
+    private static IDictionary<string, MemberInfo> GetMembersToUpdate(Type guiControlType)
     {
-      // Lazy Initializiation...
-      if (m_reflectionCacheByControlType.ContainsKey(guiControlType))
+      // Lazy Initializiation...      
+
+      IDictionary<string, MemberInfo> getMembersToUpdate = null;
+      if (m_reflectionCacheByControlType.TryGetValue(guiControlType, out getMembersToUpdate))
       {
-        return (Hashtable)m_reflectionCacheByControlType[guiControlType];
+        return getMembersToUpdate;
       }
 
-      Hashtable membersTable = new Hashtable();
+      IDictionary<string, MemberInfo> membersTable = new Dictionary<string, MemberInfo>();
 
       MemberInfo[] allMembers = guiControlType.GetMembers(
         BindingFlags.Instance
@@ -184,17 +186,18 @@ namespace MediaPortal.GUI.Library
     /// 
     /// </summary>
     /// <param name="guiControlType">The type of control you wish to update.</param>
-    /// <returns>A hashtable which contains the MemberInfo objects for every
+    /// <returns>A IDictionary<XMLSkinAttribute, MemberInfo> which contains the MemberInfo objects for every
     /// updatable field, indexed by their corresponding Xml Element name. </returns>
-    private static Hashtable GetAttributesToUpdate(Type guiControlType)
+    private static IDictionary<XMLSkinAttribute, MemberInfo> GetAttributesToUpdate(Type guiControlType)
     {
       // Lazy Initializiation...
-      if (m_reflectionCacheByControlTypeAttr.ContainsKey(guiControlType))
+      IDictionary<XMLSkinAttribute, MemberInfo> getAttributesToUpdate = null;
+      if (m_reflectionCacheByControlTypeAttr.TryGetValue(guiControlType, out getAttributesToUpdate))
       {
-        return (Hashtable)m_reflectionCacheByControlTypeAttr[guiControlType];
+        return getAttributesToUpdate;
       }
 
-      Hashtable membersTable = new Hashtable();
+      IDictionary<XMLSkinAttribute, MemberInfo> membersTable = new Dictionary<XMLSkinAttribute, MemberInfo>();
 
       MemberInfo[] allMembers = guiControlType.GetMembers(
         BindingFlags.Instance
@@ -215,6 +218,12 @@ namespace MediaPortal.GUI.Library
       m_reflectionCacheByControlTypeAttr[guiControlType] = membersTable;
       return membersTable;
     }
+
+    private static Dictionary<string, Color> colCache = new Dictionary<string, Color>();
+    // colcon.fromhtml is weirdly slow, so we cache its result
+
+    private static Dictionary<Type, TypeConverter> convCache = new Dictionary<Type, TypeConverter>();
+    // colcon.fromhtml is weirdly slow, so we cache its result
 
     private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
     {
@@ -271,7 +280,9 @@ namespace MediaPortal.GUI.Library
 
                 if (index != -1)
                 {
-                  Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+                  // FromHTML is strangly and unnessesarily slow, simple cache
+                  //Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+                  Color color = colCache.TryGetOrAdd(valueText.Substring(0, index), col => ColorTranslator.FromHtml(col));
                   int alpha = 255;
 
                   if (index < valueText.Length)
@@ -288,13 +299,14 @@ namespace MediaPortal.GUI.Library
 
                   return Color.FromArgb(alpha, color).ToArgb();
                 }
-
-                return Color.FromName(valueText).ToArgb();
+                return colCache.TryGetOrAdd(valueText, col => Color.FromName(valueText)).ToArgb();
+                //return Color.FromName(valueText).ToArgb();
               }
 
               try
               {
-                Color color = ColorTranslator.FromHtml('#' + valueText);
+                Color color = colCache.TryGetOrAdd('#' + valueText, col => ColorTranslator.FromHtml(col));
+                //Color color = ColorTranslator.FromHtml('#' + valueText);
 
                 return color.ToArgb();
               }
@@ -352,23 +364,24 @@ namespace MediaPortal.GUI.Library
         return 0;
       }
 
-      if (type == typeof (ILayout) || type == typeof(ILayoutDetail))
+      if (type == typeof (ILayout) || type == typeof (ILayoutDetail))
       {
         return ParseLayout(valueText);
       }
 
       // much of the above could be changed to use the following, needs time for thorough testing though
-      TypeConverter converter = TypeDescriptor.GetConverter(type);
-
+      //TypeConverter converter = TypeDescriptor.GetConverter(type);
+      TypeConverter converter = convCache.TryGetOrAdd(type, t => TypeDescriptor.GetConverter(t));
       if (converter.CanConvertFrom(typeof (string)))
       {
-        return converter.ConvertFromString(valueText);
+        return converter.ConvertFromString(null, CultureInfo.InvariantCulture, valueText);
       }
 
       return null;
     }
 
-    public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines, string filename)
+    public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary<string, string> defines,
+                                    string filename)
     {
       Type typeOfControlToCreate = GetControlType(pControlNode);
       if (typeOfControlToCreate == null)
@@ -430,7 +443,7 @@ namespace MediaPortal.GUI.Library
             if (subControl is GUIPlayListItemListControl)
             {
               GUIPlayListItemListControl list = subControl as GUIPlayListItemListControl;
-              facade.PlayListView = list;
+              facade.PlayListLayout = list;
             }
 
             else if (subControl is GUIListControl)
@@ -438,24 +451,24 @@ namespace MediaPortal.GUI.Library
               GUIListControl list = subControl as GUIListControl;
               if (list.SubType == "album")
               {
-                facade.AlbumListView = list;
+                facade.AlbumListLayout = list;
               }
               else
               {
-                facade.ListView = list;
+                facade.ListLayout = list;
               }
             }
             if (subControl is GUIThumbnailPanel)
             {
-              facade.ThumbnailView = subControl as GUIThumbnailPanel;
+              facade.ThumbnailLayout = subControl as GUIThumbnailPanel;
             }
             if (subControl is GUIFilmstripControl)
             {
-              facade.FilmstripView = subControl as GUIFilmstripControl;
+              facade.FilmstripLayout = subControl as GUIFilmstripControl;
             }
             if (subControl is GUICoverFlow)
             {
-              facade.CoverFlowView = subControl as GUICoverFlow;
+              facade.CoverFlowLayout = subControl as GUICoverFlow;
             }
             //UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
           }
@@ -492,20 +505,34 @@ namespace MediaPortal.GUI.Library
       return (condition != 0);
     }
 
+    private static Dictionary<string, XmlNode> getNodes(XmlNode ControlNode)
+    {
+      var dic = new Dictionary<string, XmlNode>();
+      foreach (XmlNode child in ControlNode.ChildNodes)
+      {
+        if (!dic.ContainsKey(child.Name))
+          dic.Add(child.Name, child);
+      }
+      return dic;
+    }
+
     private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode,
-                                                 IDictionary defines, string filename)
+                                                 IDictionary<string, string> defines, string filename)
     {
       List<int> vecInfo = new List<int>();
-      Hashtable attributesThatCanBeUpdates = GetAttributesToUpdate(controlType);
+      IDictionary<XMLSkinAttribute, MemberInfo> attributesThatCanBeUpdates = GetAttributesToUpdate(controlType);
       if (attributesThatCanBeUpdates != null)
       {
-        IDictionaryEnumerator en = attributesThatCanBeUpdates.GetEnumerator();
-        while (en.MoveNext())
+        var nodeDic = getNodes(pControlNode);
+        foreach (KeyValuePair<XMLSkinAttribute, MemberInfo> en in attributesThatCanBeUpdates)
         {
           XMLSkinAttribute xmlAttr = (XMLSkinAttribute)en.Key;
           MemberInfo correspondingMemberAttr = en.Value as MemberInfo;
-          XmlNode elementNode = pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
-          if (elementNode != null)
+          //XmlNode elementNode = pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
+          //XmlNode elementNode = pControlNode.SelectSingleNodeFast(xmlAttr.XmlElementName);
+          XmlNode elementNode;
+          //if (elementNode != null)
+          if (nodeDic.TryGetValue(xmlAttr.XmlElementName, out elementNode))
           {
             XmlNode attribNode = elementNode.Attributes.GetNamedItem(xmlAttr.XmlAttributeName);
             if (attribNode != null)
@@ -517,14 +544,18 @@ namespace MediaPortal.GUI.Library
                 // Window defines (passed in) override references defines (cached).
                 if (text.Length > 0 && text[0] == '#')
                 {
-                  if (_cachedDefines.ContainsKey(text))
+                  string foundDefine = null;
+                  if (defines.TryGetValue(text, out foundDefine))
                   {
-                    text = (string)_cachedDefines[text];
+                    text = foundDefine;
                   }
-                  if (defines.Contains(text))
+                  else
                   {
-                  text = (string)defines[text];
-                }
+                    if (_cachedDefines.TryGetValue(text, out foundDefine))
+                    {
+                      text = foundDefine;
+                    }
+                  }
                 }
 
                 object newValue = null;
@@ -585,22 +616,33 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
+      IDictionary<string, MemberInfo> membersThatCanBeUpdated = GetMembersToUpdate(controlType);
       List<VisualEffect> animations = new List<VisualEffect>();
       List<VisualEffect> thumbAnimations = new List<VisualEffect>();
       XmlNodeList childNodes = pControlNode.ChildNodes;
+      bool hasVisiblecondition = false;
       foreach (XmlNode element in childNodes)
       {
         if (element.Name == "visible")
         {
           if (element.InnerText != null)
           {
+            hasVisiblecondition = true;
             if (element.InnerText != "yes" && element.InnerText != "no")
             {
               if (element.InnerText.Length != 0)
               {
                 int iVisibleCondition = 0;
                 bool allowHiddenFocus = false;
+                //Add parent's visible condition in addition to ours
+                XmlNode parentNode = pControlNode.ParentNode;
+                if (IsGroupControl(parentNode))
+                {
+                  string parentVisiblecondition = GetVisibleConditionXML(parentNode);
+                  if (!string.IsNullOrEmpty(parentVisiblecondition) && parentVisiblecondition != "yes" &&
+                      parentVisiblecondition != "no")
+                    element.InnerText += "+[" + parentVisiblecondition + "]";
+                }
                 GetConditionalVisibility(element, control, ref iVisibleCondition, ref allowHiddenFocus);
                 control.SetVisibleCondition(iVisibleCondition, allowHiddenFocus);
                 continue;
@@ -613,6 +655,18 @@ namespace MediaPortal.GUI.Library
           VisualEffect effect = new VisualEffect();
           if (effect.Create(element))
           {
+            if (effect.AnimationType == AnimationType.VisibleChange)
+            {
+              effect.AnimationType = AnimationType.Visible;
+              //if (effect.IsReversible)
+              {
+                VisualEffect effect2 = (VisualEffect)effect.CloneReverse();
+                effect2.AnimationType = AnimationType.Hidden;
+                //animations.Add(effect);
+                animations.Add(effect2);
+                //continue;
+              }
+            }
             animations.Add(effect);
             continue;
           }
@@ -643,7 +697,8 @@ namespace MediaPortal.GUI.Library
           }
           control.Info = vecInfo;
         }
-        MemberInfo correspondingMember = membersThatCanBeUpdated[element.Name] as MemberInfo;
+        MemberInfo correspondingMember = null;
+        membersThatCanBeUpdated.TryGetValue(element.Name, out correspondingMember);
 
         if (correspondingMember != null)
         {
@@ -652,14 +707,19 @@ namespace MediaPortal.GUI.Library
           // Window defines (passed in) override references defines (cached).
           if (text.Length > 0 && text[0] == '#')
           {
-            if (_cachedDefines.ContainsKey(text))
+            string foundDefine = null;
+
+            if (defines.TryGetValue(text, out foundDefine))
             {
-              text = (string)_cachedDefines[text];
+              text = foundDefine;
             }
-            if (defines.Contains(text))
+            else
             {
-            text = (string)defines[text];
-          }
+              if (_cachedDefines.TryGetValue(text, out foundDefine))
+              {
+                text = foundDefine;
+              }
+            }
           }
 
           object newValue = null;
@@ -727,6 +787,29 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+
+      //Set parent control's visible condition as ours wn if we're children of a group
+      if (!hasVisiblecondition)
+      {
+        XmlNode parentNode = pControlNode.ParentNode;
+        if (IsGroupControl(parentNode))
+        {
+          XmlDocument tempDoc = new XmlDocument();
+          XmlNode elem = tempDoc.CreateElement("visible");
+          int iVisibleCondition = 0;
+          bool allowHiddenFocus = true;
+          string parentVisiblecondition = GetVisibleConditionXML(parentNode);
+          if (!string.IsNullOrEmpty(parentVisiblecondition) && parentVisiblecondition != "yes" &&
+              parentVisiblecondition != "no")
+          {
+            elem.InnerText = parentVisiblecondition;
+            XmlNode visibleNode = pControlNode.OwnerDocument.ImportNode(elem, true);
+            pControlNode.AppendChild(visibleNode);
+            GetConditionalVisibility(visibleNode, control, ref iVisibleCondition, ref allowHiddenFocus);
+            control.SetVisibleCondition(iVisibleCondition, allowHiddenFocus);
+          }
+        }
+      }
       if (animations.Count > 0)
       {
         control.SetAnimations(animations);
@@ -735,6 +818,49 @@ namespace MediaPortal.GUI.Library
       {
         control.SetThumbAnimations(thumbAnimations);
       }
+    }
+
+    private static bool IsGroupControl(XmlNode node)
+    {
+      Type controlType = GetControlType(node);
+      return (controlType == typeof (GUIActionGroup) || controlType == typeof (GUIGroup));
+    }
+
+    private static string GetVisibleConditionXML(XmlNode pControlNode)
+    {
+      string result = string.Empty;
+      XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
+
+      if (styleAttribute != null)
+      {
+        XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+
+        if (styleNode != null)
+        {
+          result = GetVisibleConditionXML(styleNode);
+        }
+      }
+      XmlNodeList childNodes = pControlNode.ChildNodes;
+      foreach (XmlNode element in childNodes)
+      {
+        if (element.Name == "visible")
+        {
+          if (element.InnerText != null)
+          {
+            if (element.InnerText != "yes" && element.InnerText != "no")
+            {
+              if (element.InnerText.Length != 0)
+              {
+                if (result == string.Empty)
+                  result = element.InnerText;
+                else
+                  result += "[+" + element.InnerText + "]";
+              }
+            }
+          }
+        }
+      }
+      return result;
     }
 
     private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)
@@ -753,12 +879,14 @@ namespace MediaPortal.GUI.Library
 
     private static Type GetControlType(XmlNode controlNode)
     {
-      XmlNode typeText = controlNode.SelectSingleNode("type/text()");
-      if (typeText == null || typeText.Value == "")
+      //XmlNode typeText = controlNode.SelectSingleNodeFast("type/text()");
+      XmlNode typeText = controlNode.SelectByNameFromChildren("type");
+      // this does the same without requiring full XPATH and doc parsing
+      if (typeText == null || typeText.InnerText == "")
       {
         return null;
       }
-      string xmlTypeName = typeText.Value;
+      string xmlTypeName = typeText.InnerText;
       switch (xmlTypeName)
       {
         case ("image"):
@@ -819,8 +947,6 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIFacadeControl);
         case ("filmstrip"):
           return typeof (GUIFilmstripControl);
-        case ("smsinput"):
-          return typeof (GUISMSInputControl);
         case ("sortbutton"):
           return typeof (GUISortButtonControl);
         case ("volumebar"):
@@ -840,11 +966,9 @@ namespace MediaPortal.GUI.Library
         case ("menu"):
           return typeof (GUIMenuControl);
         case ("standardKeyboard"):
-          return typeof(GUIStandardKeyboard);
-        case ("smsStyledKeyboard"):
-          return typeof(GUISmsStyledKeyboard);
+          return typeof (GUIStandardKeyboard);
         case ("coverflow"):
-          return typeof(GUICoverFlow);
+          return typeof (GUICoverFlow);
         default:
           Type t = (Type)m_hashCustomControls[xmlTypeName];
 
@@ -913,6 +1037,11 @@ namespace MediaPortal.GUI.Library
 
       if (string.Compare(layoutClass, "StackLayout", true) == 0)
       {
+        if (valueParameters.Length >= 3)
+        {
+          return new StackLayout(valueParameters[0], (Orientation)valueParameters[1], (valueParameters[2] == 1));
+        }
+
         if (valueParameters.Length >= 2)
         {
           return new StackLayout(valueParameters[0], (Orientation)valueParameters[1]);
@@ -978,8 +1107,8 @@ namespace MediaPortal.GUI.Library
           return new TableLayout();
         }
 
-      return null;
-    }
+        return null;
+      }
 
       if (string.Compare(layoutClass, "TableCell", true) == 0)
       {
@@ -1037,6 +1166,14 @@ namespace MediaPortal.GUI.Library
           {
             valuesTemp.Add((int)Orientation.Vertical);
           }
+          else if (string.Compare(token, "true") == 0)
+          {
+            valuesTemp.Add(1);
+          }
+          else if (string.Compare(token, "false") == 0)
+          {
+            valuesTemp.Add(0);
+          }
           else
           {
             valuesTemp.Add(int.Parse(token));
@@ -1085,9 +1222,13 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// A hashtable which contains the reflection results for every control.
     /// </summary>
-    private static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+    //private static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+    //private static Hashtable m_reflectionCacheByControlTypeAttr = new Hashtable(20);    
+    private static IDictionary<Type, IDictionary<string, MemberInfo>> m_reflectionCacheByControlType =
+      new Dictionary<Type, IDictionary<string, MemberInfo>>(20);
 
-    private static Hashtable m_reflectionCacheByControlTypeAttr = new Hashtable(20);
+    private static IDictionary<Type, IDictionary<XMLSkinAttribute, MemberInfo>> m_reflectionCacheByControlTypeAttr =
+      new Dictionary<Type, IDictionary<XMLSkinAttribute, MemberInfo>>(20);
 
     // same as above but for caching style nodes
     private static Dictionary<string, XmlNode> _cachedStyleNodes;

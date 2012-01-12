@@ -1,2 +1,0 @@
-
-DON'T modify files in this folder, modify files in the "custom" folder ONLY!

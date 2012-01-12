@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -52,11 +53,17 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineSetClipEnable();
+
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineSetClipDisable();
+
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
-    
+
     // Rendering loop lock - use this when removing any D3D resources
-    private static object _renderLock = new object();
+    private static readonly object _renderLock = new object();
 
     private static bool _renderBlackImage = false;
     private static List<Point> _cameras = new List<Point>();
@@ -149,15 +156,15 @@ namespace MediaPortal.GUI.Library
     private static bool m_bEditMode = false; //boolean indicating if we are in skin edit mode
     private static bool m_bAnimations = true; //boolean indicating animiations are turned on or off
     private static IRender m_renderFrame = null;
-    private static bool vmr9Active = false;
+    private static volatile bool vmr9Active = false;
     private static bool m_bisvmr9Exclusive = false;
     private static bool m_bisevr = false;
     private static int m_iMaxFPS = 50;
     private static long m_iDesiredFrameTime = 100;
     private static float m_fCurrentFPS = 0;
     private static float m_fVMR9FPS = 0;
-    private static float lasttime = 0f;
-    private static bool vmr9RenderBusy = false;
+    private static long lasttime = 0;
+    private static volatile bool vmr9RenderBusy = false;
     private static bool blankScreen = false;
     private static bool idleTimePowerSaving = false;
     private static bool turnOffMonitor = false;
@@ -171,7 +178,6 @@ namespace MediaPortal.GUI.Library
     private const int WM_SYSCOMMAND = 0x0112;
     private const int MONITOR_ON = -1;
     private const int MONITOR_OFF = 2;
-    private static bool _useSeparateRenderThread = false;
     public static bool _useScreenSelector = false;
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
     private static int _currentScreenNumber = -1;
@@ -187,6 +193,9 @@ namespace MediaPortal.GUI.Library
     // Stacks for matrix transformations.
     private static Stack<Matrix> _projectionMatrixStack = new Stack<Matrix>();
     private static Stack<FinalTransformBucket> _finalTransformStack = new Stack<FinalTransformBucket>();
+
+    // Stack for managing clip rectangles.
+    private static Stack<Rectangle> _clipRectangleStack = new Stack<Rectangle>();
 
     /// <summary>
     /// This internal class contains the information needed to place the final transform on a stack.
@@ -257,21 +266,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static bool UseSeparateRenderThread
-    {
-      get { return _useSeparateRenderThread; }
-      set
-      {
-        _useSeparateRenderThread = value;
-        if (_useSeparateRenderThread)
-        {
-          Log.Warn("GraphicContext: Using separate thread for GUI rendering");
-        }
-        //else
-        //  Log.Info("GraphicContext: not using separate thread for GUI rendering");
-      }
-    }
-
     /// <summary>
     /// Enable/disable screen output
     /// </summary>
@@ -293,7 +287,7 @@ namespace MediaPortal.GUI.Library
               if (Form.ActiveForm.Handle != IntPtr.Zero)
               {
                 Win32API.SendMessageA(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER,
-                            value ? MONITOR_OFF : MONITOR_ON);
+                                      value ? MONITOR_OFF : MONITOR_ON);
               }
               else
               {
@@ -524,8 +518,8 @@ namespace MediaPortal.GUI.Library
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
         SyncFrameTime();
-        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "ScrollSpeedDown", 4);
-        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "ScrollSpeedRight", 3);
+        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("gui", "ScrollSpeedDown", 4);
+        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("gui", "ScrollSpeedRight", 3);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
 
@@ -951,14 +945,6 @@ namespace MediaPortal.GUI.Library
       {
         if (!m_RectVideo.Equals(value))
         {
-          if (m_RectVideo.Width == 0)
-          {
-            m_RectVideo.Width = 1;
-          }
-          if (m_RectVideo.Height == 0)
-          {
-            m_RectVideo.Height = 1;
-          }
           m_RectVideo = value;
           if (OnVideoWindowChanged != null)
           {
@@ -1003,19 +989,26 @@ namespace MediaPortal.GUI.Library
       get { return m_bOverlay; }
       set
       {
-        m_bOverlay = value;
-        if (!m_bOverlay)
+        //SE: Mantis 3474
+        //some windows have overlay = false, but still have videocontrol.
+        //switching to another window with overlay = false but without videocontrol will
+        //leave old videocontrol "hanging" on screen (since dimensions aren't updated)
+        //if (m_bOverlay != value)
         {
-          m_RectVideo.Width = 1;
-          m_RectVideo.Height = 1;
-        }
-        if (!ShowBackground)
-        {
-          m_bOverlay = false;
-        }
-        if (OnVideoWindowChanged != null)
-        {
-          OnVideoWindowChanged();
+          bool bOldOverlay = m_bOverlay;
+          m_bOverlay = value;
+          if (!ShowBackground)
+          {
+            m_bOverlay = false;
+          }
+          if (!m_bOverlay)
+          {
+            VideoWindow = new Rectangle(0, 0, 1, 1);
+          }
+          if (bOldOverlay != m_bOverlay && OnVideoWindowChanged != null)
+          {
+            OnVideoWindowChanged();
+          }
         }
       }
     }
@@ -1307,6 +1300,11 @@ namespace MediaPortal.GUI.Library
         {
           Overlay = false;
         }
+        GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        if (window != null)
+        {
+          window.UpdateOverlay();
+        }
       }
     }
 
@@ -1448,8 +1446,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-        float difftime = time - lasttime;
+        //Guzzi, SE: Mantis 3560
+        //float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+        //float difftime = time - lasttime;
+        long time = Stopwatch.GetTimestamp();
+        float difftime = (float)(time - lasttime) / Stopwatch.Frequency;
         lasttime = time;
         return (difftime);
       }
@@ -1457,7 +1458,6 @@ namespace MediaPortal.GUI.Library
 
     public static bool InVmr9Render
     {
-      [MethodImpl(MethodImplOptions.Synchronized)]
       get { return vmr9RenderBusy; }
       set { vmr9RenderBusy = value; }
     }
@@ -1492,6 +1492,18 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Returns true if the active window belongs to the my tv plugin
+    /// </summary>
+    /// <returns>
+    /// true: belongs to the my tv plugin
+    /// false: does not belong to the my tv plugin</returns>
+    public static bool IsTvWindow()
+    {
+      int windowId = GUIWindowManager.ActiveWindow;
+      return IsTvWindow(windowId);
+    }
+
+    /// <summary>
     /// Returns true if the specified window belongs to the my tv plugin
     /// </summary>
     /// <param name="windowId">id of window</param>
@@ -1500,83 +1512,27 @@ namespace MediaPortal.GUI.Library
     /// false: does not belong to the my tv plugin</returns>
     public static bool IsTvWindow(int windowId)
     {
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TELETEXT)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_CONFLICTS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
-      {
-        return true;
-      }
+      GUIWindow window = GUIWindowManager.GetWindow(windowId);
 
+      if (window != null && window.IsTv)
+      {
+        return true;
+      }
+      switch (windowId)
+      {
+        case (int)GUIWindow.Window.WINDOW_TV:
+        case (int)GUIWindow.Window.WINDOW_TVFULLSCREEN:
+        case (int)GUIWindow.Window.WINDOW_TVGUIDE:
+        case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
+        case (int)GUIWindow.Window.WINDOW_SCHEDULER:
+        case (int)GUIWindow.Window.WINDOW_SEARCHTV:
+        case (int)GUIWindow.Window.WINDOW_TELETEXT:
+        case (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT:
+        case (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES:
+        case (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL:
+        case (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO:
+          return true;
+      }
       return false;
     }
 
@@ -1952,5 +1908,82 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
+    /// <summary>
+    /// Returns the current clip rectangle.
+    /// </summary>
+    public static Rectangle GetClipRect()
+    {
+      return DX9Device.ScissorRectangle;
+    }
+
+    /// <summary>
+    /// Sets a clip region. Set the clip rectangle as specified and enables the FontEngine to use clipping.
+    /// </summary>
+    /// <param name="rect"></param>
+    public static void BeginClip(Rectangle rect)
+    {
+      BeginClip(rect, true);
+    }
+
+    /// <summary>
+    /// Sets a clip region. Set the clip rectangle as specified and enables the FontEngine to use clipping.  If constrain is true then
+    /// nested calls will clip the specified clip rectangle at the parents clip rectangle.
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <param name="constrain"></param>
+    public static void BeginClip(Rectangle rect, bool constrain)
+    {
+      Rectangle r3 = rect;
+
+      if (constrain && _clipRectangleStack.Count > 0)
+      {
+        // Default behavior for nested clipping is handled by not disturbing the outer clip rectangle.
+        // Nested clip rectangles are themselves clipped at the boundary of the outer clip rectangle.
+        Rectangle r1 = _clipRectangleStack.Peek();
+        Rectangle r2 = rect;
+        r3 = r1; // Default result is the clip rectangle on the top of the stack.
+
+        bool intersect = !(r2.Left > r1.Right ||
+                           r2.Right < r1.Left ||
+                           r2.Top > r1.Bottom ||
+                           r2.Bottom < r1.Top);
+
+        if (intersect)
+        {
+          int x = Math.Max(r1.Left, r2.Left);
+          int y = Math.Max(r1.Top, r2.Top);
+
+          r3 = new Rectangle(
+            x,
+            y,
+            Math.Min(r1.Right, r2.Right) - x,
+            Math.Min(r1.Bottom, r2.Bottom) - y);
+        }
+      }
+
+      // Place the clip rectangle on the top of the stack and set it as the current clip rectangle.
+      _clipRectangleStack.Push(r3);
+      DX9Device.ScissorRectangle = _clipRectangleStack.Peek();
+      FontEngineSetClipEnable();
+    }
+
+    /// <summary>
+    /// Removes a clip region. Disables the FontEngine from using current clipping context.
+    /// </summary>
+    public static void EndClip()
+    {
+      // Remove the current clip rectangle.
+      _clipRectangleStack.Pop();
+
+      // If the clip stack is empty then tell the font engine to stop clipping otherwise restore the current clip rectangle.
+      if (_clipRectangleStack.Count == 0)
+      {
+        FontEngineSetClipDisable();
+      }
+      else
+      {
+        DX9Device.ScissorRectangle = _clipRectangleStack.Peek();
+      }
+    }
   }
 }

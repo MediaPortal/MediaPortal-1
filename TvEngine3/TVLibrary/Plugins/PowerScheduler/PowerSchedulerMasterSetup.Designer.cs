@@ -62,6 +62,9 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void InitializeComponent()
     {
+      this.label10_as = new System.Windows.Forms.Label();
+      this.label9_as = new System.Windows.Forms.Label();
+      this.label8_as = new System.Windows.Forms.Label();
       this.components = new System.ComponentModel.Container();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -91,6 +94,8 @@ namespace TvEngine.PowerScheduler
       this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
       this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
       this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDown5_as = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDown6_as = new System.Windows.Forms.NumericUpDown();
       this.checkBox4 = new System.Windows.Forms.CheckBox();
       this.checkBox3 = new System.Windows.Forms.CheckBox();
       this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -111,8 +116,16 @@ namespace TvEngine.PowerScheduler
       this.checkBox6 = new System.Windows.Forms.CheckBox();
       this.tabPage4 = new System.Windows.Forms.TabPage();
       this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.groupBox5_as = new System.Windows.Forms.GroupBox();
       this.button1 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
+      this.tabPage5_as = new System.Windows.Forms.TabPage();
+      this.shareMonitoring = new System.Windows.Forms.CheckBox();
+      this.groupBox8_as = new System.Windows.Forms.GroupBox();
+      this.inhibitStandbyShares = new System.Windows.Forms.DataGridView();
+      this.Sharename = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Hostname = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Username = new System.Windows.Forms.DataGridViewTextBoxColumn();      
       this.tabPage5 = new System.Windows.Forms.TabPage();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
       this.label11 = new System.Windows.Forms.Label();
@@ -144,6 +157,12 @@ namespace TvEngine.PowerScheduler
       this.tabPage5.SuspendLayout();
       this.groupBox5.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
+      this.groupBox5_as.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5_as)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6_as)).BeginInit();
+      this.tabPage5_as.SuspendLayout();
+      this.groupBox8_as.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.inhibitStandbyShares)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -156,6 +175,7 @@ namespace TvEngine.PowerScheduler
       this.tabControl1.Controls.Add(this.tabPage3);
       this.tabControl1.Controls.Add(this.tabPage4);
       this.tabControl1.Controls.Add(this.tabPage5);
+      this.tabControl1.Controls.Add(this.tabPage5_as);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -167,6 +187,7 @@ namespace TvEngine.PowerScheduler
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.groupBoxStandbyHours);
+      this.tabPage1.Controls.Add(this.groupBox5_as);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -815,6 +836,140 @@ namespace TvEngine.PowerScheduler
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       this.openFileDialog1.Title = "Choose command";
+      //
+      // groupBox5_as
+      //
+      this.groupBox5_as.Controls.Add(this.label10_as);
+      this.groupBox5_as.Controls.Add(this.label9_as);
+      this.groupBox5_as.Controls.Add(this.label8_as);
+      this.groupBox5_as.Controls.Add(this.numericUpDown6_as);
+      this.groupBox5_as.Controls.Add(this.numericUpDown5_as);
+      this.groupBox5_as.Location = new System.Drawing.Point(6, 170);
+      this.groupBox5_as.Name = "groupBox5_as";
+      this.groupBox5_as.Size = new System.Drawing.Size(391, 152);
+      this.groupBox5_as.TabIndex = 1;
+      this.groupBox5_as.TabStop = false;
+      this.groupBox5_as.Text = "Allowed Standby Hours";
+      //
+      // numericUpDown5_as
+      //
+      this.numericUpDown5_as.Location = new System.Drawing.Point(160, 42);
+      this.numericUpDown5_as.Maximum = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+      this.numericUpDown5_as.Name = "numericUpDown5_as";
+      this.numericUpDown5_as.Size = new System.Drawing.Size(48, 20);
+      this.numericUpDown5_as.TabIndex = 0;
+      //
+      // numericUpDown6_as
+      //
+      this.numericUpDown6_as.Location = new System.Drawing.Point(248, 42);
+      this.numericUpDown6_as.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDown6_as.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDown6_as.Name = "numericUpDown6_as";      
+      this.numericUpDown6_as.Size = new System.Drawing.Size(44, 20);
+      this.numericUpDown6_as.TabIndex = 1;
+      this.numericUpDown6_as.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      //
+      // label8_as
+      //
+      this.label8_as.AutoSize = true;
+      this.label8_as.Location = new System.Drawing.Point(15, 49);
+      this.label8_as.Name = "label8_as";
+      this.label8_as.Size = new System.Drawing.Size(139, 13);
+      this.label8_as.TabIndex = 2;
+      this.label8_as.Text = "Only allow standby between";
+      //
+      // label9_as
+      //
+      this.label9_as.AutoSize = true;
+      this.label9_as.Location = new System.Drawing.Point(214, 49);
+      this.label9_as.Name = "label9_as";
+      this.label9_as.Size = new System.Drawing.Size(28, 13);
+      this.label9_as.TabIndex = 3;
+      this.label9_as.Text = "and ";
+      //
+      // label10_as
+      //
+      this.label10_as.AutoSize = true;
+      this.label10_as.Location = new System.Drawing.Point(298, 49);
+      this.label10_as.Name = "label10_as";
+      this.label10_as.Size = new System.Drawing.Size(39, 13);
+      this.label10_as.TabIndex = 4;
+      this.label10_as.Text = "hours. ";
+      //
+      // tabPage5_as
+      //
+      this.tabPage5_as.Controls.Add(this.shareMonitoring);
+      this.tabPage5_as.Controls.Add(this.groupBox8_as);
+      this.tabPage5_as.Location = new System.Drawing.Point(4, 22);
+      this.tabPage5_as.Name = "tabPage5_as";
+      this.tabPage5_as.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage5_as.Size = new System.Drawing.Size(459, 362);
+      this.tabPage5_as.TabIndex = 4;      
+      this.tabPage5_as.Text = "Shares";
+      this.tabPage5_as.UseVisualStyleBackColor = true;
+      //
+      // shareMonitoring
+      //
+      this.shareMonitoring.AutoSize = true;
+      this.shareMonitoring.Location = new System.Drawing.Point(12, 16);
+      this.shareMonitoring.Name = "shareMonitoring";
+      this.shareMonitoring.Size = new System.Drawing.Size(303, 17);
+      this.shareMonitoring.TabIndex = 6;
+      this.shareMonitoring.Text = "Enable share monitoring to inhibit standby (restart required)";
+      this.shareMonitoring.UseVisualStyleBackColor = true;
+      //
+      // groupBox8_as
+      //
+      this.groupBox8_as.Controls.Add(this.inhibitStandbyShares);
+      this.groupBox8_as.Location = new System.Drawing.Point(6, 39);
+      this.groupBox8_as.Name = "groupBox8_as";
+      this.groupBox8_as.Size = new System.Drawing.Size(447, 317);
+      this.groupBox8_as.TabIndex = 4;
+      this.groupBox8_as.TabStop = false;
+      this.groupBox8_as.Text = "Specific host-user combinations using a share that can prevent standby";
+      //
+      // inhibitStandbyShares
+      //
+      this.inhibitStandbyShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.inhibitStandbyShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Sharename,
+            this.Hostname,
+            this.Username});
+      this.inhibitStandbyShares.Location = new System.Drawing.Point(6, 19);
+      this.inhibitStandbyShares.Name = "inhibitStandbyShares";
+      this.inhibitStandbyShares.Size = new System.Drawing.Size(435, 292);
+      this.inhibitStandbyShares.TabIndex = 6;
+      //
+      // Sharename
+      //
+      this.Sharename.HeaderText = "Share";
+      this.Sharename.Name = "Sharename";
+      //
+      // Hostname
+      //
+      this.Hostname.HeaderText = "Host";
+      this.Hostname.Name = "Hostname";
+      //
+      // Username
+      //      
+      this.Username.HeaderText = "User";
+      this.Username.Name = "Username";      
       // 
       // lblStandbyHoursDesc
       // 
@@ -862,6 +1017,11 @@ namespace TvEngine.PowerScheduler
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
+      this.groupBox5_as.ResumeLayout(false);
+      this.groupBox5_as.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5_as)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6_as)).EndInit();
+      this.tabPage5_as.ResumeLayout(false);      
       this.ResumeLayout(false);
 
     }
@@ -888,5 +1048,18 @@ namespace TvEngine.PowerScheduler
     private System.Windows.Forms.CheckBox checkBox15;
     private System.Windows.Forms.NumericUpDown numericUpDown5;
     private System.Windows.Forms.Label label11;
+    private System.Windows.Forms.Label label9_as;
+    private System.Windows.Forms.Label label8_as;
+    private System.Windows.Forms.Label label10_as;
+    private System.Windows.Forms.GroupBox groupBox5_as;
+    private System.Windows.Forms.NumericUpDown numericUpDown6_as;
+    private System.Windows.Forms.NumericUpDown numericUpDown5_as;    
+    private System.Windows.Forms.TabPage tabPage5_as;
+    private System.Windows.Forms.GroupBox groupBox8_as;
+    private System.Windows.Forms.CheckBox shareMonitoring;
+    private System.Windows.Forms.DataGridView inhibitStandbyShares;
+    private System.Windows.Forms.DataGridViewTextBoxColumn Sharename;
+    private System.Windows.Forms.DataGridViewTextBoxColumn Hostname;
+    private System.Windows.Forms.DataGridViewTextBoxColumn Username;
   }
 }

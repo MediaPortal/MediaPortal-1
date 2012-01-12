@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,6 +38,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
+    //string parameter that will be passed to the plugin when plugin is opened
+    [XMLSkinElement("hyperlinkParameter")] protected string _hyperLinkParameter = "";
     [XMLSkin("hyperlink", "history")] protected bool _addToHistory = true;
     [XMLSkinElement("action")] protected int _actionId = -1;
     [XMLSkinElement("script")] protected string _scriptAction = "";
@@ -58,29 +60,41 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
     [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
-    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatTF = false;
     [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateTF = false;
     [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameTF = "image_border.png";
     [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyTF = 0xFFFFFFFF;
     [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersTF = false;
     [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTF = true;
+    [XMLSkin("textureFocus", "mask")] protected string _focusedTextureMask = "";
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
-    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
     [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
     [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersTNF = false;
     [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTNF = true;
+    [XMLSkin("textureNoFocus", "mask")] protected string _nonFocusedTextureMask = "";
     [XMLSkin("hover", "border")] protected string _strBorderH = "";
-    [XMLSkin("hover", "position")] protected GUIImage.BorderPosition _borderPositionH = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("hover", "position")] protected GUIImage.BorderPosition _borderPositionH =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("hover", "textureRepeat")] protected bool _borderTextureRepeatH = false;
     [XMLSkin("hover", "textureRotate")] protected bool _borderTextureRotateH = false;
     [XMLSkin("hover", "texture")] protected string _borderTextureFileNameH = "image_border.png";
     [XMLSkin("hover", "colorKey")] protected long _borderColorKeyH = 0xFFFFFFFF;
     [XMLSkin("hover", "corners")] protected bool _borderHasCornersH = false;
     [XMLSkin("hover", "cornerRotate")] protected bool _borderCornerTextureRotateH = true;
+    [XMLSkin("hover", "mask")] protected string _hoverMask = "";
     [XMLSkin("textureFocus", "tileFill")] protected bool _textureFocusTileFill = false;
     [XMLSkin("textureNoFocus", "tileFill")] protected bool _textureNoFocusTileFill = false;
     [XMLSkin("hover", "tileFill")] protected bool _hoverTileFill = false;
@@ -152,8 +166,10 @@ namespace MediaPortal.GUI.Library
       _imageFocused.DimColor = DimColor;
       _imageFocused.ColourDiffuse = ColourDiffuse;
       _imageFocused.SetBorder(_strBorderTF, _borderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
-        _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF, _borderCornerTextureRotateTF);
+                              _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF,
+                              _borderCornerTextureRotateTF);
       TileFillTF = _textureFocusTileFill;
+      _imageFocused.MaskFileName = _focusedTextureMask;
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
@@ -162,8 +178,10 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.DimColor = DimColor;
       _imageNonFocused.ColourDiffuse = ColourDiffuse;
       _imageNonFocused.SetBorder(_strBorderTNF, _borderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
-        _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
+                                 _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF,
+                                 _borderCornerTextureRotateTNF);
       TileFillTNF = _textureNoFocusTileFill;
+      _imageNonFocused.MaskFileName = _nonFocusedTextureMask;
 
       if (_hoverFilename != string.Empty)
       {
@@ -174,8 +192,9 @@ namespace MediaPortal.GUI.Library
         _hoverImage.DimColor = DimColor;
         _hoverImage.ColourDiffuse = ColourDiffuse;
         _hoverImage.SetBorder(_strBorderH, _borderPositionH, _borderTextureRepeatH, _borderTextureRotateH,
-          _borderTextureFileNameH, _borderColorKeyH, _borderHasCornersH, _borderCornerTextureRotateH);
+                              _borderTextureFileNameH, _borderColorKeyH, _borderHasCornersH, _borderCornerTextureRotateH);
         TileFillH = _hoverTileFill;
+        _hoverImage.MaskFileName = _hoverMask;
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
@@ -416,7 +435,16 @@ namespace MediaPortal.GUI.Library
           // If this links to another window go to the window.
           if (_hyperLinkWindowId >= 0)
           {
-            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId, !_addToHistory);
+            if (_hyperLinkParameter != null && !_hyperLinkParameter.Equals(""))
+            {
+//the link also contains a parameter that we want to pass to the plugin
+              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, GUIPropertyManager.Parse(_hyperLinkParameter),
+                                              !_addToHistory);
+            }
+            else
+            {
+              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, !_addToHistory);
+            }
             return;
           }
           // If this button corresponds to an action generate that action.
@@ -527,8 +555,8 @@ namespace MediaPortal.GUI.Library
       base.Dispose();
       _imageFocused.SafeDispose();
       _imageNonFocused.SafeDispose();
-      _labelControl.SafeDispose();      
-      _hoverImage.SafeDispose();          
+      _labelControl.SafeDispose();
+      _hoverImage.SafeDispose();
     }
 
     /// <summary>
@@ -938,13 +966,13 @@ namespace MediaPortal.GUI.Library
       dialog.Reset();
       dialog.SetHeading(924); // menu
 
-      foreach (object item in ContextMenu.Items)
-      {
-        if (item is MenuItem)
-        {
-          dialog.Add(((MenuItem)item).Header as string);
-        }
-      }
+      //foreach (object item in ContextMenu.Items)
+      //{
+      //  if (item is MenuItem)
+      //  {
+      //    dialog.Add(((MenuItem)item).Header as string);
+      //  }
+      //}
 
       dialog.DoModal(ParentID);
 
@@ -976,7 +1004,7 @@ namespace MediaPortal.GUI.Library
     }
 
     public void SetBorderTF(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
-      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+                            string texture, long colorKey, bool hasCorners, bool cornerRotate)
     {
       _strBorderTF = border;
       _borderPositionTF = position;
@@ -987,11 +1015,12 @@ namespace MediaPortal.GUI.Library
       _borderHasCornersTF = hasCorners;
       _borderCornerTextureRotateTF = cornerRotate;
       _imageFocused.SetBorder(_strBorderTF, _borderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
-        _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF, _borderCornerTextureRotateTF);
+                              _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF,
+                              _borderCornerTextureRotateTF);
     }
 
     public void SetBorderTNF(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
-      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+                             string texture, long colorKey, bool hasCorners, bool cornerRotate)
     {
       _strBorderTNF = border;
       _borderPositionTNF = position;
@@ -1002,11 +1031,12 @@ namespace MediaPortal.GUI.Library
       _borderHasCornersTNF = hasCorners;
       _borderCornerTextureRotateTNF = cornerRotate;
       _imageNonFocused.SetBorder(_strBorderTNF, _borderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
-        _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
+                                 _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF,
+                                 _borderCornerTextureRotateTNF);
     }
 
     public void SetBorderH(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
-      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+                           string texture, long colorKey, bool hasCorners, bool cornerRotate)
     {
       _strBorderH = border;
       _borderPositionH = position;
@@ -1017,7 +1047,7 @@ namespace MediaPortal.GUI.Library
       _borderHasCornersH = hasCorners;
       _borderCornerTextureRotateH = cornerRotate;
       _hoverImage.SetBorder(_strBorderH, _borderPositionH, _borderTextureRepeatH, _borderTextureRotateH,
-        _borderTextureFileNameH, _borderColorKeyH, _borderHasCornersH, _borderCornerTextureRotateH);
+                            _borderTextureFileNameH, _borderColorKeyH, _borderHasCornersH, _borderCornerTextureRotateH);
     }
 
     public bool TileFillTF
@@ -1036,6 +1066,33 @@ namespace MediaPortal.GUI.Library
     {
       get { return _hoverImage.TileFill; }
       set { _hoverImage.TileFill = value; }
+    }
+
+    public void SetFocusedTextureMask(string mask)
+    {
+      if (null != _imageFocused)
+      {
+        _focusedTextureMask = mask;
+        _imageFocused.MaskFileName = _focusedTextureMask;
+      }
+    }
+
+    public void SetNonFocusedTextureMask(string mask)
+    {
+      if (null != _imageNonFocused)
+      {
+        _nonFocusedTextureMask = mask;
+        _imageNonFocused.MaskFileName = _nonFocusedTextureMask;
+      }
+    }
+
+    public void SetHoverTextureMask(string mask)
+    {
+      if (null != _hoverImage)
+      {
+        _hoverMask = mask;
+        _hoverImage.MaskFileName = _hoverMask;
+      }
     }
   }
 }

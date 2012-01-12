@@ -35,6 +35,7 @@
 #include <windows.h>
 #include <stdio.h>
 
+extern void LogDebug(const wchar_t *fmt, ...);
 extern void LogDebug(const char *fmt, ...) ;
 
 MultiFileWriter::MultiFileWriter() :
@@ -293,7 +294,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	HRESULT hr;
 
 	LPWSTR pFilename = new wchar_t[MAX_PATH];
-	WIN32_FIND_DATA findData;
+	WIN32_FIND_DATAW findData;
 	HANDLE handleFound = INVALID_HANDLE_VALUE;
 
 	LogDebug("MultiFileWriter: CreateNewTSFile.");
@@ -304,7 +305,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 		swprintf(pFilename, L"%s%i.ts", m_pTSBufferFileName, m_currentFilenameId);
 
 		// Check if file already exists
-		handleFound = FindFirstFile(W2T(pFilename), &findData);
+		handleFound = FindFirstFileW(pFilename, &findData);
 		if (handleFound == INVALID_HANDLE_VALUE)
 			break;
 
@@ -335,8 +336,8 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	if (pos)
 		m_currentFileId = _wtoi(pos);
 	wchar_t msg[MAX_PATH];
-	swprintf((LPWSTR)&msg, L"New file created : %s\n", pFilename);
-	::OutputDebugString(W2T((LPWSTR)&msg));
+	swprintf(msg, L"New file created : %s\n", pFilename);
+	::OutputDebugStringW(msg);
 
 	LogDebug("MultiFileWriter: new file created");
 	return S_OK;
@@ -372,11 +373,11 @@ HRESULT MultiFileWriter::ReuseTSFile()
   if (Tmo)
   {
     if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-			LogDebug("MultiFileWriter: %d tries to succeed deleting and re-opening %ws.", 6-Tmo, pFilename);
+			LogDebug(L"MultiFileWriter: %d tries to succeed deleting and re-opening %s.", 6-Tmo, pFilename);
   }
   else
 	{
-    LogDebug("MultiFileWriter: failed to create file %ws",pFilename);
+    LogDebug(L"MultiFileWriter: failed to create file %s", pFilename);
 		return hr ;
 	}
 
@@ -391,8 +392,8 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	if (pos)
 		m_currentFileId = _wtoi(pos);
 	wchar_t msg[MAX_PATH];
-	swprintf((LPWSTR)&msg, L"Old file reused : %s\n", pFilename);
-	::OutputDebugString(W2T((LPWSTR)&msg));
+	swprintf(msg, L"Old file reused : %s\n", pFilename);
+	::OutputDebugStringW(msg);
 
 	LogDebug("MultiFileWriter: reuse old file");
 	return S_OK;

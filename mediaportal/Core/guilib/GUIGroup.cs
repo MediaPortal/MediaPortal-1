@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -116,7 +116,7 @@ namespace MediaPortal.GUI.Library
       }
 
       _children.SafeDispose();
-      
+
       base.Dispose();
     }
 
@@ -236,7 +236,9 @@ namespace MediaPortal.GUI.Library
     {
       foreach (GUIControl control in Children)
       {
-        control.DoUpdate();
+        if (!(control is GUIFacadeControl))
+          // a facadecontrol inside a group with layout, stay compatible with previous implementation
+          control.DoUpdate();
       }
     }
 
@@ -346,22 +348,23 @@ namespace MediaPortal.GUI.Library
       this.Size = _layout.Measure(this, this.Size);
 
       _layout.Arrange(this);
+      DoUpdate();
     }
 
-    protected override Size ArrangeOverride(Rect finalRect)
-    {
-      this.Location = finalRect.Location;
-      this.Size = finalRect.Size;
+    //protected override Size ArrangeOverride(Rect finalRect)
+    //{
+    //  this.Location = finalRect.Location;
+    //  this.Size = finalRect.Size;
 
-      if (_layout == null)
-      {
-        return this.Size;
-      }
+    //  if (_layout == null)
+    //  {
+    //    return this.Size;
+    //  }
 
-      _layout.Arrange(this);
+    //  _layout.Arrange(this);
 
-      return finalRect.Size;
-    }
+    //  return finalRect.Size;
+    //}
 
     void ISupportInitialize.BeginInit()
     {
@@ -376,17 +379,17 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected override Size MeasureOverride(Size availableSize)
-    {
-      if (_layout == null)
-      {
-        return Size.Empty;
-      }
+    //protected override Size MeasureOverride(Size availableSize)
+    //{
+    //  if (_layout == null)
+    //  {
+    //    return Size.Empty;
+    //  }
 
-      _layout.Measure(this, this.Size);
+    //  _layout.Measure(this, this.Size);
 
-      return this.Size = _layout.Size;
-    }
+    //  return this.Size = _layout.Size;
+    //}
 
     public override int DimColor
     {
@@ -414,13 +417,13 @@ namespace MediaPortal.GUI.Library
       set { _layout = value; }
     }
 
-    public UIElementCollection Children
+    public GUIControlCollection Children
     {
       get
       {
         if (_children == null)
         {
-          _children = new UIElementCollection();
+          _children = new GUIControlCollection();
         }
         return _children;
       }
@@ -432,7 +435,11 @@ namespace MediaPortal.GUI.Library
 
     private Animator _animator;
     private int _beginInitCount = 0;
-    private UIElementCollection _children;
+    private GUIControlCollection _children;
+    private Point[] _positions = null;
+    private Point[] _modPositions = null;
+    private bool[] _visibilityState = null;
+    private bool _first = true;
 
     [XMLSkinElement("layout")] private ILayout _layout;
 
@@ -493,6 +500,237 @@ namespace MediaPortal.GUI.Library
           {
             return true;
           }
+        }
+      }
+      return false;
+    }
+
+    public override void UpdateVisibility()
+    {
+      base.UpdateVisibility();
+      if (Children == null)
+      {
+        return;
+      }
+      if (_layout == null)
+      {
+        return;
+      }
+
+      if (_layout is StackLayout)
+      {
+        StackLayout layout = _layout as StackLayout;
+        if (!layout.CollapseHiddenButtons)
+        {
+          return;
+        }
+        if (_first)
+        {
+          StoreButtonsPosition();
+        }
+        bool isVisible = IsVisible;
+        int visCon = GetVisibleCondition();
+        if (isVisible && visCon != 0) isVisible = GUIInfoManager.GetBool(visCon, ParentID);
+
+        if (!isVisible)
+        {
+          RestoreButtonsPosition();
+          _first = true;
+          return;
+        }
+
+        if (!_first && CheckButtonsModifiedPosition())
+          _first = true;
+
+        if (_first)
+          StoreButtonsVisibilityState();
+
+        for (int i = 0; i < Children.Count; i++)
+        {
+          Children[i].UpdateVisibility();
+
+          bool bWasVisible = _visibilityState[i];
+
+          int bVisCon = Children[i].GetVisibleCondition();
+          bool bIsVisible = Children[i].IsVisible;
+          if (bVisCon != 0)
+            bIsVisible = GUIInfoManager.GetBool(bVisCon, Children[i].ParentID);
+
+          if (_first && !bIsVisible)
+          {
+            if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
+            {
+              ShiftControlsUp(i);
+            }
+            else
+            {
+              ShiftControlsLeft(i);
+            }
+          }
+          if (!bWasVisible && bIsVisible)
+          {
+            _visibilityState[i] = true;
+
+            if (!_first)
+            {
+              if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
+              {
+                ShiftControlsDown(i);
+              }
+              else
+              {
+                ShiftControlsRight(i);
+              }
+            }
+          }
+          else if (bWasVisible && !bIsVisible)
+          {
+            if (Children[i].IsEffectAnimating(AnimationType.Hidden))
+              continue;
+            _visibilityState[i] = false;
+
+            if (!_first)
+            {
+              if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
+              {
+                ShiftControlsUp(i);
+              }
+              else
+              {
+                ShiftControlsLeft(i);
+              }
+            }
+          }
+        }
+        _first = false;
+        StoreButtonsModifiedPosition();
+      }
+    }
+
+    private int Spacing(System.Windows.Controls.Orientation orientation)
+    {
+      StackLayout layout = _layout as StackLayout;
+      int spacing = 0;
+      if (null != layout)
+      {
+        if (orientation == System.Windows.Controls.Orientation.Vertical)
+          spacing = (int)System.Math.Truncate(layout.Spacing.Height);
+        else if (orientation == System.Windows.Controls.Orientation.Horizontal)
+          spacing = (int)System.Math.Truncate(layout.Spacing.Width);
+      }
+      return spacing;
+    }
+
+    private void ShiftControlsUp(int index)
+    {
+      int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
+
+      for (int i = index; i < Children.Count; i++)
+      {
+        if (i + 1 < Children.Count)
+        {
+          Children[i + 1].YPosition -= (Children[i].Height + spacing);
+        }
+      }
+    }
+
+    private void ShiftControlsDown(int index)
+    {
+      int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
+
+      for (int i = index; i < Children.Count; i++)
+      {
+        if (i + 1 < Children.Count)
+        {
+          Children[i + 1].YPosition += (Children[i].Height + spacing);
+        }
+      }
+    }
+
+    private void ShiftControlsRight(int index)
+    {
+      int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
+
+      for (int i = index; i < Children.Count; i++)
+      {
+        if (i + 1 < Children.Count)
+        {
+          Children[i + 1].XPosition += (Children[i].Width + spacing);
+        }
+      }
+    }
+
+    private void ShiftControlsLeft(int index)
+    {
+      int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
+
+      for (int i = index; i < Children.Count; i++)
+      {
+        if (i + 1 < Children.Count)
+        {
+          Children[i + 1].XPosition -= (Children[i].Width + spacing);
+        }
+      }
+    }
+
+    private void StoreButtonsPosition()
+    {
+      if (_positions == null)
+      {
+        _positions = new Point[Children.Count];
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        _positions[i].X = Children[i].XPosition;
+        _positions[i].Y = Children[i].YPosition;
+      }
+    }
+
+    private void RestoreButtonsPosition()
+    {
+      if (_positions == null)
+      {
+        return;
+      }
+      for (int i = 0; i < _positions.Length; i++)
+      {
+        Children[i].XPosition = (int)_positions[i].X;
+        Children[i].YPosition = (int)_positions[i].Y;
+      }
+    }
+
+    private void StoreButtonsModifiedPosition()
+    {
+      if (_modPositions == null)
+      {
+        _modPositions = new Point[Children.Count];
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        _modPositions[i].X = Children[i].XPosition;
+        _modPositions[i].Y = Children[i].YPosition;
+      }
+    }
+
+    private void StoreButtonsVisibilityState()
+    {
+      if (_visibilityState == null)
+      {
+        _visibilityState = new bool[Children.Count];
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        _visibilityState[i] = Children[i].IsVisible;
+      }
+    }
+
+    private bool CheckButtonsModifiedPosition()
+    {
+      for (int i = 0; i < Children.Count; i++)
+      {
+        if (_modPositions[i].X != Children[i].XPosition || _modPositions[i].Y != Children[i].YPosition)
+        {
+          return true;
         }
       }
       return false;

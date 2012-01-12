@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace TvLibrary.Interfaces.Analyzer
     ///<param name="fileName">Filename</param>
     ///<returns>Error code</returns>
     [PreserveSig]
-    int SetTimeShiftingFileName([In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int SetTimeShiftingFileNameW([In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts timeshifting.

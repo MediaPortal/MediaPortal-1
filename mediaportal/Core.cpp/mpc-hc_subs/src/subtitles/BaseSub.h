@@ -1,5 +1,5 @@
-/* 
- * $Id: BaseSub.h 1785 2010-04-09 14:12:59Z xhmikosr $
+/*
+ * $Id: BaseSub.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -25,8 +25,7 @@
 
 #include "CompositionObject.h"
 
-enum SUBTITLE_TYPE
-{
+enum SUBTITLE_TYPE {
 	ST_DVB,
 	ST_HDMV
 };
@@ -50,5 +49,5 @@ public:
 	virtual HRESULT			GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VideoSize, POINT& VideoTopLeft) = NULL;
 
 protected :
-	SUBTITLE_TYPE					m_nType;
+	SUBTITLE_TYPE			m_nType;
 };

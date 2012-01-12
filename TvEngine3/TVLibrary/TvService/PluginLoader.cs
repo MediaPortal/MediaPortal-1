@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using TvEngine;
 using TvLibrary.Log;
+using MediaPortal.Common.Utils;
+
 
 namespace TvService
 {
@@ -88,6 +90,13 @@ namespace TvService
                   foundInterfaces = t.FindInterfaces(myFilter2, "TvEngine.ITvServerPlugin");
                   if (foundInterfaces.Length > 0)
                   {
+                    if (!CompatibilityManager.IsPluginCompatible(t))
+                    {
+                      Log.WriteFile(
+                        "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
+                        t.FullName);
+                      continue;                      
+                    }
                     Object newObj = Activator.CreateInstance(t);
                     plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);

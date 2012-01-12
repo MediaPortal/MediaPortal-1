@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ namespace Wikipedia
       if (language == "Default")
       {
         Settings xmlreader = new MPSettings();
-        language = xmlreader.GetValueAsString("skin", "language", "English");
+        language = xmlreader.GetValueAsString("gui", "language", "English");
       }
 
       Settings detailxmlreader = new Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));
@@ -111,9 +111,9 @@ namespace Wikipedia
         using (StreamReader reader = new StreamReader(data))
         {
           imagepage = reader.ReadToEnd();
-          reader.Close();  
+          reader.Close();
         }
-        
+
         Log.Info("Wikipedia: Success! Downloaded all data from the image page.");
       }
       catch (Exception e)

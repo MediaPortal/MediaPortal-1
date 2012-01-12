@@ -1,29 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
-
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
-
-#endregion
-
-namespace MediaPortal.Configuration.Sections
+﻿namespace MediaPortal.Configuration.Sections
 {
   partial class General
   {
@@ -53,10 +28,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelPriority = new System.Windows.Forms.Label();
       this.cbDebug = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.lbScreen = new System.Windows.Forms.Label();
-      this.cbScreen = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
+      this.watchdogGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.numericUpDownDelay = new System.Windows.Forms.NumericUpDown();
+      this.checkBoxAutoRestart = new System.Windows.Forms.CheckBox();
+      this.checkBoxEnableWatchdog = new System.Windows.Forms.CheckBox();
+      this.label6 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
       this.groupBoxGeneralSettings.SuspendLayout();
+      this.watchdogGroupBox.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).BeginInit();
       this.SuspendLayout();
       // 
       // mpThreadPriority
@@ -71,7 +52,7 @@ namespace MediaPortal.Configuration.Sections
             "AboveNormal",
             "Normal",
             "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(329, 338);
+      this.mpThreadPriority.Location = new System.Drawing.Point(329, 19);
       this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
       this.mpThreadPriority.Name = "mpThreadPriority";
       this.mpThreadPriority.Size = new System.Drawing.Size(131, 21);
@@ -80,7 +61,7 @@ namespace MediaPortal.Configuration.Sections
       // lbDebug
       // 
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(6, 341);
+      this.lbDebug.Location = new System.Drawing.Point(6, 22);
       this.lbDebug.Name = "lbDebug";
       this.lbDebug.Size = new System.Drawing.Size(73, 13);
       this.lbDebug.TabIndex = 3;
@@ -94,13 +75,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.Controls.Add(this.mpThreadPriority);
       this.groupBoxGeneralSettings.Controls.Add(this.lbDebug);
       this.groupBoxGeneralSettings.Controls.Add(this.cbDebug);
-      this.groupBoxGeneralSettings.Controls.Add(this.lbScreen);
-      this.groupBoxGeneralSettings.Controls.Add(this.cbScreen);
-      this.groupBoxGeneralSettings.Controls.Add(this.settingsCheckedListBox);
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(3, 0);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 363);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 53);
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General settings";
@@ -108,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
       // labelPriority
       // 
       this.labelPriority.AutoSize = true;
-      this.labelPriority.Location = new System.Drawing.Point(242, 341);
+      this.labelPriority.Location = new System.Drawing.Point(242, 22);
       this.labelPriority.Name = "labelPriority";
       this.labelPriority.Size = new System.Drawing.Size(81, 13);
       this.labelPriority.TabIndex = 1;
@@ -124,74 +102,105 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(85, 338);
+      this.cbDebug.Location = new System.Drawing.Point(85, 19);
       this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbDebug.Name = "cbDebug";
       this.cbDebug.Size = new System.Drawing.Size(131, 21);
       this.cbDebug.TabIndex = 4;
       // 
-      // lbScreen
+      // watchdogGroupBox
       // 
-      this.lbScreen.AutoSize = true;
-      this.lbScreen.Location = new System.Drawing.Point(6, 315);
-      this.lbScreen.Name = "lbScreen";
-      this.lbScreen.Size = new System.Drawing.Size(67, 13);
-      this.lbScreen.TabIndex = 5;
-      this.lbScreen.Text = "Start screen:";
-      // 
-      // cbScreen
-      // 
-      this.cbScreen.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.watchdogGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbScreen.BorderColor = System.Drawing.Color.Empty;
-      this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbScreen.Enabled = false;
-      this.cbScreen.FormattingEnabled = true;
-      this.cbScreen.Location = new System.Drawing.Point(85, 312);
-      this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
-      this.cbScreen.Name = "cbScreen";
-      this.cbScreen.Size = new System.Drawing.Size(375, 21);
-      this.cbScreen.TabIndex = 6;
+      this.watchdogGroupBox.Controls.Add(this.label1);
+      this.watchdogGroupBox.Controls.Add(this.numericUpDownDelay);
+      this.watchdogGroupBox.Controls.Add(this.checkBoxAutoRestart);
+      this.watchdogGroupBox.Controls.Add(this.checkBoxEnableWatchdog);
+      this.watchdogGroupBox.Controls.Add(this.label6);
+      this.watchdogGroupBox.Controls.Add(this.label5);
+      this.watchdogGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.watchdogGroupBox.Location = new System.Drawing.Point(3, 59);
+      this.watchdogGroupBox.Name = "watchdogGroupBox";
+      this.watchdogGroupBox.Size = new System.Drawing.Size(466, 145);
+      this.watchdogGroupBox.TabIndex = 2;
+      this.watchdogGroupBox.TabStop = false;
+      this.watchdogGroupBox.Text = "Watchdog settings";
       // 
-      // settingsCheckedListBox
+      // label1
       // 
-      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.settingsCheckedListBox.CheckOnClick = true;
-      this.settingsCheckedListBox.Items.AddRange(new object[] {
-            "Start MediaPortal in fullscreen mode",
-            "Use alternative fullscreen Splashscreen (only if started in fullscreen mode)",
-            "Keep MediaPortal always on top",
-            "Hide taskbar in fullscreen mode",
-            "Autostart MediaPortal on Windows startup",
-            "Minimize to tray on start up",
-            "Minimize to tray on GUI exit",
-            "Show special mouse controls (scrollbars, etc)",
-            "Hide file extensions like .mp3, .avi, .mpg,...",
-            "Turn off monitor when blanking screen",
-            "Turn monitor / tv on when resuming from standby",
-            "Allow S3 standby although wake up devices are present",
-            "Apply workaround to fix MediaPortal freezing on resume on some systems",
-            "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",
-            "Show last active module when starting / resuming from standby",
-            "Automatically skip commercials for videos with ComSkip data available",
-            "Use screenselector to choose on which screen MP should start",
-            "Allow remember last focused item on supported window/skin"});
-      this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
-      this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 274);
-      this.settingsCheckedListBox.TabIndex = 0;
-      this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(75, 115);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(216, 13);
+      this.label1.TabIndex = 18;
+      this.label1.Text = "Delay in seconds after which MP is restarted";
+      // 
+      // numericUpDownDelay
+      // 
+      this.numericUpDownDelay.Location = new System.Drawing.Point(26, 111);
+      this.numericUpDownDelay.Name = "numericUpDownDelay";
+      this.numericUpDownDelay.Size = new System.Drawing.Size(42, 20);
+      this.numericUpDownDelay.TabIndex = 17;
+      this.numericUpDownDelay.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      // 
+      // checkBoxAutoRestart
+      // 
+      this.checkBoxAutoRestart.AutoSize = true;
+      this.checkBoxAutoRestart.Checked = true;
+      this.checkBoxAutoRestart.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxAutoRestart.Location = new System.Drawing.Point(10, 87);
+      this.checkBoxAutoRestart.Name = "checkBoxAutoRestart";
+      this.checkBoxAutoRestart.Size = new System.Drawing.Size(142, 17);
+      this.checkBoxAutoRestart.TabIndex = 16;
+      this.checkBoxAutoRestart.Text = "Automatically restart MP ";
+      this.checkBoxAutoRestart.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxEnableWatchdog
+      // 
+      this.checkBoxEnableWatchdog.AutoSize = true;
+      this.checkBoxEnableWatchdog.Location = new System.Drawing.Point(10, 64);
+      this.checkBoxEnableWatchdog.Name = "checkBoxEnableWatchdog";
+      this.checkBoxEnableWatchdog.Size = new System.Drawing.Size(200, 17);
+      this.checkBoxEnableWatchdog.TabIndex = 15;
+      this.checkBoxEnableWatchdog.Text = "Watchdog enabled - monitor crashes";
+      this.checkBoxEnableWatchdog.UseVisualStyleBackColor = true;
+      // 
+      // label6
+      // 
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(7, 39);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(216, 13);
+      this.label6.TabIndex = 14;
+      this.label6.Text = "desktop and restart MediaPortal if it crashes.";
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(7, 24);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(424, 13);
+      this.label5.TabIndex = 13;
+      this.label5.Text = "The watchdog monitors MP and can automatically gather the logfiles, make a zip on" +
+          " your";
       // 
       // General
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.watchdogGroupBox);
       this.Controls.Add(this.groupBoxGeneralSettings);
       this.Name = "General";
       this.Size = new System.Drawing.Size(472, 402);
       this.groupBoxGeneralSettings.ResumeLayout(false);
       this.groupBoxGeneralSettings.PerformLayout();
+      this.watchdogGroupBox.ResumeLayout(false);
+      this.watchdogGroupBox.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -203,8 +212,12 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGeneralSettings;
     private System.Windows.Forms.Label labelPriority;
     private MediaPortal.UserInterface.Controls.MPComboBox cbDebug;
-    private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbScreen;
-    private System.Windows.Forms.Label lbScreen;
+    private MediaPortal.UserInterface.Controls.MPGroupBox watchdogGroupBox;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.NumericUpDown numericUpDownDelay;
+    private System.Windows.Forms.CheckBox checkBoxAutoRestart;
+    private System.Windows.Forms.CheckBox checkBoxEnableWatchdog;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.Label label5;
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.InputDevices
 {
@@ -39,11 +40,33 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class InputHandler
   {
+    #region Private Fields
+
     private int _xmlVersion = 3;
     private ArrayList _remote;
     private int _currentLayer = 1;
     private bool _isLoaded = false;
     private bool _basicHome = false;
+
+    #endregion
+
+    #region Public Properties
+
+    /// <summary>
+    /// Returns the path to the directory, which contains all available default input device mappings.
+    /// </summary>
+    public static string DefaultsDirectory
+    {
+      get { return Config.GetSubFolder(Config.Dir.Base, @"Defaults\InputDeviceMappings"); }
+    }
+
+    /// <summary>
+    /// Returns the path to the directory, which contains the customized mappings directory.
+    /// </summary>
+    public static string CustomizedMappingsDirectory
+    {
+      get { return Config.GetSubFolder(Config.Dir.Config, @"InputDeviceMappings"); }
+    }
 
     /// <summary>
     /// Mapping successful loaded
@@ -61,6 +84,9 @@ namespace MediaPortal.InputDevices
       get { return _currentLayer; }
     }
 
+    #endregion
+
+    #region Nested Classes
 
     /// <summary>
     /// Condition/action class
@@ -137,7 +163,6 @@ namespace MediaPortal.InputDevices
       }
     }
 
-
     /// <summary>
     /// Button/mapping class
     /// </summary>
@@ -170,6 +195,9 @@ namespace MediaPortal.InputDevices
       }
     }
 
+    #endregion
+
+    #region Constructor
 
     /// <summary>
     /// Constructor: Initializes mappings from XML file
@@ -179,12 +207,15 @@ namespace MediaPortal.InputDevices
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        _basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
       }
       string xmlPath = GetXmlPath(deviceXmlName);
       LoadMapping(xmlPath);
     }
 
+    #endregion
+
+    #region Implementation
 
     /// <summary>
     /// Get version of XML mapping file 
@@ -227,8 +258,8 @@ namespace MediaPortal.InputDevices
     public string GetXmlPath(string deviceXmlName)
     {
       string path = string.Empty;
-      string pathCustom = Config.GetFile(Config.Dir.CustomInputDevice, deviceXmlName + ".xml");
-      string pathDefault = Config.GetFile(Config.Dir.CustomInputDefault, deviceXmlName + ".xml");
+      string pathDefault = Path.Combine(InputHandler.DefaultsDirectory, deviceXmlName + ".xml");
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, deviceXmlName + ".xml");
 
       if (File.Exists(pathCustom) && CheckXmlFile(pathCustom))
       {
@@ -336,7 +367,7 @@ namespace MediaPortal.InputDevices
     public bool MapAction(string btnCode, int processID)
     {
       return DoMapAction(btnCode, processID);
-    }    
+    }
 
     /// <summary>
     /// Evaluates the button number, gets its mapping and executes the action
@@ -444,11 +475,11 @@ namespace MediaPortal.InputDevices
               break;
             case "STANDBY":
               action = new Action(Action.ActionType.ACTION_SUSPEND, 1, 0); //1 = ignore prompt
-              GUIGraphicsContext.OnAction(action);              
+              GUIGraphicsContext.OnAction(action);
               break;
             case "HIBERNATE":
               action = new Action(Action.ActionType.ACTION_HIBERNATE, 1, 0); //1 = ignore prompt
-              GUIGraphicsContext.OnAction(action);                            
+              GUIGraphicsContext.OnAction(action);
               break;
           }
           break;
@@ -478,7 +509,6 @@ namespace MediaPortal.InputDevices
       }
       return true;
     }
-
 
     /// <summary>
     /// Get mappings for a given button code based on the current conditions
@@ -560,5 +590,7 @@ namespace MediaPortal.InputDevices
       }
       return null;
     }
+
+    #endregion
   }
 }

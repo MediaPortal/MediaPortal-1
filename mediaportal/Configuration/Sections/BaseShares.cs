@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 #pragma warning disable 108
 
@@ -35,15 +36,6 @@ namespace MediaPortal.Configuration.Sections
   {
     public class ShareData
     {
-      public enum Views
-      {
-        List,
-        Icons,
-        BigIcons,
-        Filmstrip,
-        CoverFlow
-      }
-
       public string Name;
       public string Folder;
       public string PinCode;
@@ -55,7 +47,7 @@ namespace MediaPortal.Configuration.Sections
       public string RemoteFolder = string.Empty;
       public int Port = 21;
       public bool ActiveConnection = true;
-      public Views DefaultView = Views.List;
+      public Layout DefaultLayout = MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
       public bool ScanShare = false;
 
       public bool HasPinCode
@@ -156,9 +148,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.addButton);
       this.groupBox1.Controls.Add(this.sharesListView);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.Size = new System.Drawing.Size(462, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
@@ -214,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
-      this.deleteButton.Location = new System.Drawing.Point(384, 331);
+      this.deleteButton.Location = new System.Drawing.Point(374, 331);
       this.deleteButton.Name = "deleteButton";
       this.deleteButton.Size = new System.Drawing.Size(72, 22);
       this.deleteButton.TabIndex = 4;
@@ -228,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
-      this.editButton.Location = new System.Drawing.Point(304, 331);
+      this.editButton.Location = new System.Drawing.Point(294, 331);
       this.editButton.Name = "editButton";
       this.editButton.Size = new System.Drawing.Size(72, 22);
       this.editButton.TabIndex = 3;
@@ -241,7 +233,7 @@ namespace MediaPortal.Configuration.Sections
       this.addButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.addButton.Location = new System.Drawing.Point(224, 331);
+      this.addButton.Location = new System.Drawing.Point(214, 331);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
       this.addButton.TabIndex = 2;
@@ -268,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListView.FullRowSelect = true;
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
-      this.sharesListView.Size = new System.Drawing.Size(440, 301);
+      this.sharesListView.Size = new System.Drawing.Size(430, 301);
       this.sharesListView.TabIndex = 0;
       this.sharesListView.UseCompatibleStateImageBehavior = false;
       this.sharesListView.View = System.Windows.Forms.View.Details;
@@ -320,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.Port = editShare.Port;
         shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
-        shareData.DefaultView = (ShareData.Views)editShare.View;
+        shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
 
         AddShare(shareData, currentlyCheckedItem == null);
       }
@@ -371,7 +363,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.LoginName = shareData.LoginName;
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
-          editShare.View = (int)shareData.DefaultView;
+          editShare.View = ProperDefaultFromLayout(shareData.DefaultLayout);
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -388,7 +380,7 @@ namespace MediaPortal.Configuration.Sections
             shareData.Port = editShare.Port;
             shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
-            shareData.DefaultView = (ShareData.Views)editShare.View;
+            shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
 
             selectedItem.Tag = shareData;
 
@@ -621,11 +613,12 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
-          int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int)ShareData.Views.List);
+          int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath,
+                                                    (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List);
 
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
-          if (section == "music")
+          if (section == "music" || section == "movies")
           {
             string shareScan = String.Format("sharescan{0}", index);
             shareScanData = xmlreader.GetValueAsBool(section, shareScan, true);
@@ -640,9 +633,9 @@ namespace MediaPortal.Configuration.Sections
             newShare.PassWord = sharePwdData;
             newShare.Port = sharePortData;
             newShare.RemoteFolder = shareRemotePathData;
-            newShare.DefaultView = (ShareData.Views)shareView;
+            newShare.DefaultLayout = (Layout)shareLayout;
 
-            if (section == "music")
+            if (section == "music" || section == "movies")
             {
               newShare.ScanShare = shareScanData;
             }
@@ -692,7 +685,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.RemoveEntry(section, shareRemotePath);
           xmlwriter.RemoveEntry(section, shareViewPath);
 
-          if (section == "music")
+          if (section == "music" || section == "movies")
           {
             string shareScan = String.Format("sharescan{0}", index);
             xmlwriter.RemoveEntry(section, shareScan);
@@ -707,7 +700,7 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = string.Empty;
           int sharePortData = 21;
           string shareRemotePathData = string.Empty;
-          int shareView = (int)ShareData.Views.List;
+          int shareLayout = (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
           bool shareScanData = false;
 
           if (CurrentShares != null && CurrentShares.Count > index)
@@ -725,7 +718,7 @@ namespace MediaPortal.Configuration.Sections
               sharePwdData = shareData.PassWord;
               sharePortData = shareData.Port;
               shareRemotePathData = shareData.RemoteFolder;
-              shareView = (int)shareData.DefaultView;
+              shareLayout = (int)shareData.DefaultLayout;
               shareScanData = shareData.ScanShare;
 
               if (CurrentShares[index] == DefaultShare)
@@ -742,9 +735,9 @@ namespace MediaPortal.Configuration.Sections
               xmlwriter.SetValue(section, sharePwd, sharePwdData);
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
-              xmlwriter.SetValue(section, shareViewPath, shareView);
+              xmlwriter.SetValue(section, shareViewPath, shareLayout);
 
-              if (section == "music")
+              if (section == "music" || section == "movies")
               {
                 string shareScan = String.Format("sharescan{0}", index);
                 xmlwriter.SetValueAsBool(section, shareScan, shareScanData);
@@ -756,6 +749,32 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool(section, "rememberlastfolder", RememberLastFolder);
         xmlwriter.SetValueAsBool(section, "AddOpticalDiskDrives", AddOpticalDiskDrives);
         xmlwriter.SetValueAsBool(section, "SwitchRemovableDrives", SwitchRemovableDrives);
+      }
+    }
+
+    public Layout ProperLayoutFromDefault(int defaultView)
+    {
+      switch (defaultView)
+      {
+        case 1: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.SmallIcons;
+        case 2: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.LargeIcons;
+        case 3: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.AlbumView;
+        case 4: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.Filmstrip;
+        case 5: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.CoverFlow;
+        default: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
+      }
+    }
+
+    public int ProperDefaultFromLayout(Layout layout)
+    {
+      switch (layout)
+      {
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.SmallIcons: return 1;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.LargeIcons: return 2;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.AlbumView: return 3;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.Filmstrip: return 4;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.CoverFlow: return 5;
+        default: return 0;
       }
     }
   }

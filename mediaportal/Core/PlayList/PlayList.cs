@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,6 +35,9 @@ namespace MediaPortal.Playlists
     protected string _playListName = "";
     protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
 
+    public delegate void OnChangedDelegate(PlayList playlist);
+    public event OnChangedDelegate OnChanged;
+
     public PlayList() {}
 
     public bool AllPlayed()
@@ -65,6 +68,8 @@ namespace MediaPortal.Playlists
       }
       //Log.Debug("Playlist: add {0}", item.FileName);
       _listPlayListItems.Add(item);
+
+      NotifyChange();
     }
 
     public bool Insert(PlayListItem item, int currentSong)
@@ -86,6 +91,10 @@ namespace MediaPortal.Playlists
         _listPlayListItems.Add(item);
         success = true;
       }
+      
+      if (success)
+        NotifyChange();
+
       return success;
     }
 
@@ -106,6 +115,10 @@ namespace MediaPortal.Playlists
           success = true;
         }
       }
+
+      if (success)
+        NotifyChange();
+
       return success;
     }
 
@@ -135,6 +148,7 @@ namespace MediaPortal.Playlists
         if (item.FileName == fileName)
         {
           _listPlayListItems.RemoveAt(i);
+          NotifyChange();
           return i;
         }
       }
@@ -143,7 +157,9 @@ namespace MediaPortal.Playlists
 
     public void Clear()
     {
+      if (_listPlayListItems == null || _listPlayListItems.Count < 1) return;
       _listPlayListItems.Clear();
+      NotifyChange();
     }
 
     public int Count
@@ -156,7 +172,6 @@ namespace MediaPortal.Playlists
       get { return _listPlayListItems[iItem]; }
       set { _listPlayListItems[iItem] = value; }
     }
-
 
     public int RemoveDVDItems()
     {
@@ -179,6 +194,7 @@ namespace MediaPortal.Playlists
           _listPlayListItems[nArbitrary] = _listPlayListItems[item];
           _listPlayListItems[item] = anItem;
         }
+        NotifyChange();
       }
     }
 
@@ -225,6 +241,7 @@ namespace MediaPortal.Playlists
         _listPlayListItems[iItem] = playListItem2;
         _listPlayListItems[iPreviousItem] = playListItem1;
         selectedItemIndex = iPreviousItem;
+        NotifyChange();
       }
 
       catch (Exception ex)
@@ -273,6 +290,7 @@ namespace MediaPortal.Playlists
         _listPlayListItems[iItem] = playListItem2;
         _listPlayListItems[iNextItem] = playListItem1;
         selectedItemIndex = iNextItem;
+        NotifyChange();
       }
 
       catch (Exception ex)
@@ -291,7 +309,15 @@ namespace MediaPortal.Playlists
 
     public void Sort()
     {
+      if (_listPlayListItems == null || _listPlayListItems.Count < 1) return;
       _listPlayListItems.Sort(new PlayListItemComparer());
+      NotifyChange();
+    }
+
+    protected void NotifyChange()
+    {
+      if (OnChanged != null)
+        OnChanged(this);
     }
   }
 

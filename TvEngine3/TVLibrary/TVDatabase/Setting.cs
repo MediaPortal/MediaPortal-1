@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -145,6 +145,20 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Retrieves a setting entity based on tag
+    /// </summary>
+    public static Setting RetrieveByTag(string tag)
+    {
+      // Return null if id is smaller than seed and/or increment for autokey
+      if (string.IsNullOrEmpty(tag))
+      {
+        return null;
+      }
+      var key = new Key(typeof(Setting), true, "tag", tag);
+      return Broker.RetrieveInstance<Setting>(key);
+    }
+
+    /// <summary>
     /// Persists the entity if it was never persisted or was changed.
     /// </summary>
     public override void Persist()
@@ -162,29 +176,6 @@ namespace TvDatabase
         }
         isChanged = false;
       }
-    }
-
-    public static WeekEndTool GetWeekEndTool()
-    {
-      SqlBuilder sb;
-      try
-      {
-        sb = new SqlBuilder(StatementType.Select, typeof (Setting));
-      }
-      catch (TypeInitializationException ex)
-      {
-        Log.Error("Exception in Setting.GetWeekendTool() with Message {0}", ex.Message);
-        return new WeekEndTool(false);
-      }
-
-      sb.AddConstraint(Operator.Equals, "tag", "FirstWorkingDay");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Setting> settingsFound = ObjectFactory.GetCollection<Setting>(stmt.Execute());
-      if (settingsFound.Count == 0)
-      {
-        return new WeekEndTool(false);
-      }
-      return new WeekEndTool(Convert.ToInt32(settingsFound[0].value) != 0);
     }
 
     #endregion

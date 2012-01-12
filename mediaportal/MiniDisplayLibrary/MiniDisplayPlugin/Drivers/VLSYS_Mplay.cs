@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -119,6 +120,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private object ThreadMutex = new object();
     private const int WM_CLOSE = 0x10;
     private const int WM_SYSCOMMAND = 0x112;
+
+    #endregion
+
+    #region Public Static Properties
+
+    public static string DefaultMappingPath = Path.Combine(InputHandler.DefaultsDirectory, "VLSYS_Mplay.xml");
+    public static string CustomMappingPath = Path.Combine(InputHandler.CustomizedMappingsDirectory, "VLSYS_Mplay.xml");
 
     #endregion
 
@@ -1759,13 +1767,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         try
         {
-          if (TestXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml")) < 3)
+          if (TestXmlVersion(DefaultMappingPath) < 3)
           {
             Log.Info("VLSYS_Mplay.Setup(): Deleting VLSYS_Mplay mapping file with the wrong version stamp.",
                      new object[0]);
-            File.Delete(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml"));
+            File.Delete(DefaultMappingPath);
           }
-          if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml")))
+          if (!File.Exists(DefaultMappingPath))
           {
             Log.Info("VLSYS_Mplay.Setup(): Creating default VLSYS_Mplay mapping file");
             if (!AdvancedSettings.CreateDefaultRemoteMapping())
@@ -2495,7 +2503,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info(
             "VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping(): remote mapping file does not exist - Creating default mapping file",
             new object[0]);
-          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"),
+          XmlTextWriter writer = new XmlTextWriter(Path.Combine(InputHandler.DefaultsDirectory, str + ".xml"),
                                                    Encoding.UTF8);
           writer.Formatting = Formatting.Indented;
           writer.Indentation = 1;

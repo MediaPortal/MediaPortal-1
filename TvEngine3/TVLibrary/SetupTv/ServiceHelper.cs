@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,8 +19,12 @@
 #endregion
 
 using System;
+using System.Security.AccessControl;
 using System.ServiceProcess;
+using System.Threading;
 using Microsoft.Win32;
+using TvDatabase;
+using TvControl;
 using TvLibrary.Log;
 
 namespace SetupTv
@@ -30,6 +34,16 @@ namespace SetupTv
   /// </summary>
   public class ServiceHelper
   {
+    /// <summary>
+    /// Read from DB card detection delay 
+    /// </summary>
+    /// <returns>number of seconds</returns>
+    public static int DefaultInitTimeOut()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      return Convert.ToInt16(layer.GetSetting("delayCardDetect", "0").Value) + 10;
+    }
+
     /// <summary>
     /// Does a given service exist
     /// </summary>
@@ -55,48 +69,93 @@ namespace SetupTv
     {
       get
       {
-        //Patch to be able to use the TvServer Configuration 
-        //when running in debug mode
         try
         {
-          //Try an call something to see if the server is alive.
-          //
-          int serverId = TvControl.RemoteControl.Instance.IdServer;
-          return true;
+          using (ServiceController sc = new ServiceController("TvService"))
+          {
+            return sc.Status == ServiceControllerStatus.Running;
+          }
         }
         catch (Exception ex)
         {
-          if (!(ex is System.Runtime.Remoting.RemotingException || ex is System.Net.Sockets.SocketException))
-          {
-            Log.Error(
-              "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
-              ex.ToString());
-          }
-
-          try
-          {
-            ServiceController[] services = ServiceController.GetServices();
-            foreach (ServiceController service in services)
-            {
-              if (String.Compare(service.ServiceName, "TvService", true) == 0)
-              {
-                if (service.Status == ServiceControllerStatus.Running)
-                {
-                  return true;
-                }
-                return false;
-              }
-            }
-          }
-          catch (Exception ex2)
-          {
-            Log.Error(
-              "ServiceHelper: Fallback to check whether the tvservice is running failed as well. Please check your installation. \nError: {0}",
-              ex2.ToString());
-          }
+          Log.Error(
+            "ServiceHelper: Check whether the tvservice is running failed. Please check your installation. \nError: {0}",
+            ex.ToString());
           return false;
         }
       }
+    }
+
+    /// <summary>
+    /// Is TvService fully initialized?
+    /// </summary>
+    public static bool IsInitialized
+    {
+      get { return WaitInitialized(0); }
+    }
+
+    /// <summary>
+    /// Wait until TvService is fully initialized, wait for the default timeout
+    /// </summary>
+    /// <returns>true if thTvService is initialized</returns>
+    public static bool WaitInitialized()
+    {
+      return WaitInitialized(DefaultInitTimeOut() * 1000);
+    }
+
+    /// <summary>
+    /// Wait until TvService is fully initialized
+    /// </summary>
+    /// <param name="millisecondsTimeout">the maximum time to wait in milliseconds</param>
+    /// <remarks>If <paramref name="millisecondsTimeout"/> is 0, the current status is immediately returned.
+    /// Use <paramref name="millisecondsTimeout"/>=-1 to wait indefinitely</remarks>
+    /// <returns>true if thTvService is initialized</returns>
+    public static bool WaitInitialized(int millisecondsTimeout)
+    {
+      try
+      {
+        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName,
+                                                                   EventWaitHandleRights.Synchronize);
+        return initialized.WaitOne(millisecondsTimeout);
+      }
+      catch (Exception ex) // either we have no right, or the event does not exist
+      {
+        Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
+        Log.Write(ex);
+      }
+      // Fall back: try to call a method on the server (for earlier versions of TvService)
+      DateTime expires = millisecondsTimeout == -1
+                           ? DateTime.MaxValue
+                           : DateTime.Now.AddMilliseconds(millisecondsTimeout);
+
+      // Note if millisecondsTimeout = 0, we never enter the loop and always return false
+      // There is no way to determine if TvService is initialized without waiting
+      while (DateTime.Now < expires)
+      {
+        try
+        {
+          RemoteControl.Clear();
+          int cards = RemoteControl.Instance.Cards;
+          return true;
+        }
+        catch (System.Runtime.Remoting.RemotingException)
+        {
+          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
+        }
+        catch (System.Net.Sockets.SocketException)
+        {
+          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
+        }
+        catch (Exception ex)
+        {
+          Log.Error(
+            "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
+            ex.ToString());
+          break;
+        }
+        Thread.Sleep(250);
+      }
+      return false;
     }
 
     /// <summary>
@@ -106,17 +165,20 @@ namespace SetupTv
     {
       get
       {
-        ServiceController[] services = ServiceController.GetServices();
-        foreach (ServiceController service in services)
+        try
         {
-          if (String.Compare(service.ServiceName, "TvService", true) == 0)
+          using (ServiceController sc = new ServiceController("TvService"))
           {
-            if (service.Status == ServiceControllerStatus.Stopped)
-              return true;
-            return false;
+            return sc.Status == ServiceControllerStatus.Stopped; // should we consider Stopping as stopped?
           }
         }
-        return false;
+        catch (Exception ex)
+        {
+          Log.Error(
+            "ServiceHelper: Check whether the tvservice is stopped failed. Please check your installation. \nError: {0}",
+            ex.ToString());
+          return false;
+        }
       }
     }
 
@@ -126,19 +188,33 @@ namespace SetupTv
     /// <returns></returns>
     public static bool Stop()
     {
-      ServiceController[] services = ServiceController.GetServices();
-      foreach (ServiceController service in services)
+      try
       {
-        if (String.Compare(service.ServiceName, "TvService", true) == 0)
+        using (ServiceController sc = new ServiceController("TvService"))
         {
-          if (service.Status == ServiceControllerStatus.Running)
+          switch (sc.Status)
           {
-            service.Stop();
-            return true;
+            case ServiceControllerStatus.Running:
+              sc.Stop();
+              break;
+            case ServiceControllerStatus.StopPending:
+              break;
+            case ServiceControllerStatus.Stopped:
+              return true;
+            default:
+              return false;
           }
+          sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(60));
+          return sc.Status == ServiceControllerStatus.Stopped;
         }
       }
-      return false;
+      catch (Exception ex)
+      {
+        Log.Error(
+          "ServiceHelper: Stopping tvservice failed. Please check your installation. \nError: {0}",
+          ex.ToString());
+        return false;
+      }
     }
 
     /// <summary>
@@ -152,31 +228,33 @@ namespace SetupTv
 
     public static bool Start(string aServiceName)
     {
-      ServiceController[] services = ServiceController.GetServices();
-      foreach (ServiceController service in services)
+      try
       {
-        if (String.Compare(service.ServiceName, aServiceName, true) == 0)
+        using (ServiceController sc = new ServiceController(aServiceName))
         {
-          if (service.Status == ServiceControllerStatus.Stopped)
+          switch (sc.Status)
           {
-            int hackCounter = 0;
-
-            service.Start();
-
-            while (!IsRunning && hackCounter < 60)
-            {
-              System.Threading.Thread.Sleep(250);
-              hackCounter++;
-            }
-            return (hackCounter == 60) ? false : true;
+            case ServiceControllerStatus.Stopped:
+              sc.Start();
+              break;
+            case ServiceControllerStatus.StartPending:
+              break;
+            case ServiceControllerStatus.Running:
+              return true;
+            default:
+              return false;
           }
-          if (service.Status == ServiceControllerStatus.Running)
-          {
-            return true;
-          }
+          sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(60));
+          return sc.Status == ServiceControllerStatus.Running;
         }
       }
-      return false;
+      catch (Exception ex)
+      {
+        Log.Error(
+          "ServiceHelper: Starting {0} failed. Please check your installation. \nError: {1}",
+          aServiceName, ex.ToString());
+        return false;
+      }
     }
 
     /// <summary>
@@ -185,30 +263,12 @@ namespace SetupTv
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      int hackCounter = 0;
       if (!IsInstalled(@"TvService"))
+      {
         return false;
-
+      }
       Stop();
-
-      while (!IsStopped && hackCounter < 120) // wait a maximum of 30 seconds
-      {
-        System.Threading.Thread.Sleep(250);
-        hackCounter++;
-      }
-      if (hackCounter == 120)
-        return false;
-
-      hackCounter = 0;
-      System.Threading.Thread.Sleep(1000);
-
-      Start();
-      while (!IsRunning && hackCounter < 60)
-      {
-        System.Threading.Thread.Sleep(250);
-        hackCounter++;
-      }
-      return (hackCounter == 60) ? false : true;
+      return Start();
     }
 
     /// <summary>
@@ -279,7 +339,7 @@ namespace SetupTv
         {
           if (rKey != null)
           {
-            rKey.SetValue("DependOnService", new string[] {dependsOnService, "Netman"}, RegistryValueKind.MultiString);
+            rKey.SetValue("DependOnService", new[] {dependsOnService, "Netman"}, RegistryValueKind.MultiString);
             rKey.SetValue("Start", 2, RegistryValueKind.DWord); // Set TVService to autostart
           }
         }

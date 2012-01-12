@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ namespace MpeMaker.Sections
         saveFileDialog.FileName = file;
         return;
       }
-      
+
       // set initial dir to the xmp2 package dir
       directory = Path.GetFileName(Package.ProjectSettings.ProjectFilename);
       if (Directory.Exists(directory))
@@ -168,21 +168,22 @@ namespace MpeMaker.Sections
 
       string url =
         string.Format("http://install.team-mediaportal.com/MPEI/submit.php?url={0}&name={1}&version={2}&id={3}",
-                      HttpUtility.UrlEncode(Package.GeneralInfo.UpdateUrl), Package.GeneralInfo.Name, Package.GeneralInfo.Version,
+                      HttpUtility.UrlEncode(Package.GeneralInfo.UpdateUrl), Package.GeneralInfo.Name,
+                      Package.GeneralInfo.Version,
                       Package.GeneralInfo.Id);
       webBrowser.ProgressChanged += webBrowser_ProgressChanged;
       webBrowser.StatusTextChanged += webBrowser_StatusTextChanged;
       webBrowser.Navigate(url);
     }
 
-    void webBrowser_StatusTextChanged(object sender, EventArgs e)
+    private void webBrowser_StatusTextChanged(object sender, EventArgs e)
     {
       toolStripStatusLabel1.Text = webBrowser.StatusText;
     }
 
-    void webBrowser_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e)
+    private void webBrowser_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e)
     {
-      toolStripProgressBar1.Maximum = (int) e.MaximumProgress;
+      toolStripProgressBar1.Maximum = (int)e.MaximumProgress;
       toolStripProgressBar1.Value = (int)e.CurrentProgress;
     }
   }

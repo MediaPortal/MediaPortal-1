@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -63,7 +63,6 @@ namespace SetupTv.Dialogs
         MessageBox.Show("Please enter a name for this channel");
         return;
       }
-      _channel.Name = textBoxName.Text;
       _channel.DisplayName = textBoxName.Text;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
       _channel.IsTv = _isTv;
@@ -88,7 +87,7 @@ namespace SetupTv.Dialogs
         detail.IsTv = _isTv;
         if (string.IsNullOrEmpty(detail.Name))
         {
-          detail.Name = _channel.Name;
+          detail.Name = _channel.DisplayName;
         }
         detail.Persist();
       }
@@ -109,8 +108,8 @@ namespace SetupTv.Dialogs
       if (_channel == null)
       {
         _newChannel = true;
-        _channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
-                               true, "");
+        _channel = new Channel(false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
+                               "");
       }
       textBoxName.Text = _channel.DisplayName;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;
@@ -242,7 +241,7 @@ namespace SetupTv.Dialogs
 
     private void menuButtonEdit_Click(object sender, EventArgs e)
     {
-      if (mpListView1.SelectedIndices.Count > 0)
+      if (mpListView1.SelectedIndices.Count == 1)
       {
         int index = mpListView1.SelectedIndices[0];
         TuningDetail tuningDetailToEdit = _tuningDetails[index];
@@ -279,35 +278,55 @@ namespace SetupTv.Dialogs
     {
       if (mpListView1.SelectedIndices.Count > 0)
       {
-        int index = mpListView1.SelectedIndices[0];
-        TuningDetail tuningDetailToDelete = _tuningDetails[index];
-        if (MessageBox.Show(this, "Are you sure you want to delete this tuningdetail?", "", MessageBoxButtons.YesNo) ==
-            DialogResult.Yes)
+        if (
+          MessageBox.Show(this, "Are you sure you want to delete the selected tuningdetails?", "",
+                          MessageBoxButtons.YesNo) ==
+          DialogResult.Yes)
         {
-          _tuningDetailsToDelete.Add(tuningDetailToDelete);
-          _tuningDetails.Remove(tuningDetailToDelete);
+          for (int i = 0; i < mpListView1.SelectedIndices.Count; i++)
+          {
+            int index = mpListView1.SelectedIndices[i];
+
+            TuningDetail tuningDetailToDelete = _tuningDetails[index];
+            _tuningDetailsToDelete.Add(tuningDetailToDelete);
+            _tuningDetails.Remove(tuningDetailToDelete);
+          }
           UpdateTuningDetailList();
         }
-      }
-    }
-
-    private void tuningDetailContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-      if (mpListView1.SelectedIndices.Count <= 0)
-      {
-        tuningDetailContextMenu.Items[1].Enabled = false;
-        tuningDetailContextMenu.Items[2].Enabled = false;
-      }
-      else
-      {
-        tuningDetailContextMenu.Items[1].Enabled = true;
-        tuningDetailContextMenu.Items[2].Enabled = true;
       }
     }
 
     private void mpListView1_MouseDoubleClick(object sender, MouseEventArgs e)
     {
       menuButtonEdit_Click(sender, new EventArgs());
+    }
+
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      int selectionCount = mpListView1.SelectedIndices.Count;
+      if (selectionCount <= 0)
+      {
+        btnEditTuningDetail.Enabled = false;
+        btnRemoveTuningDetail.Enabled = false;
+        menuButtonEdit.Enabled = false;
+        menuButtonRemove.Enabled = false;
+      }
+
+      if (selectionCount > 0)
+      {
+        btnRemoveTuningDetail.Enabled = true;
+        menuButtonRemove.Enabled = true;
+        if (selectionCount == 1)
+        {
+          btnEditTuningDetail.Enabled = true;
+          menuButtonEdit.Enabled = true;
+        }
+        else
+        {
+          btnEditTuningDetail.Enabled = false;
+          menuButtonEdit.Enabled = false;
+        }
+      }
     }
   }
 }

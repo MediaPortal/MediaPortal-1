@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ namespace MediaPortal.Localisation
     private int _characters;
     private bool _prefix;
     private bool _userLanguage;
+    private bool _useRTL = false;
 
     #endregion
 
@@ -64,9 +65,10 @@ namespace MediaPortal.Localisation
       GetAvailableLangauges();
 
       // If the language cannot be found default to Local language or English
-      if (cultureName != null && _availableLanguages.ContainsKey(cultureName))
+      CultureInfo cultureInfo = null;
+      if (cultureName != null && _availableLanguages.TryGetValue(cultureName, out cultureInfo))
       {
-        _currentLanguage = _availableLanguages[cultureName];
+        _currentLanguage = cultureInfo;
       }
       else
       {
@@ -109,6 +111,11 @@ namespace MediaPortal.Localisation
       get { return _characters; }
     }
 
+    public bool UseRTL
+    {
+      get { return _useRTL; }
+    }
+
     #endregion
 
     #region Public Methods
@@ -123,21 +130,27 @@ namespace MediaPortal.Localisation
 
     public void ChangeLanguage(string cultureName)
     {
-      if (!_availableLanguages.ContainsKey(cultureName))
+      CultureInfo currentLanguageFound = null;
+      if (!_availableLanguages.TryGetValue(cultureName, out currentLanguageFound))
       {
         throw new ArgumentException("Language not available");
       }
 
-      _currentLanguage = _availableLanguages[cultureName];
+      _currentLanguage = currentLanguageFound;
 
       ReloadAll();
     }
 
     public StringLocalised Get(string section, int id)
     {
-      if (_languageStrings.ContainsKey(section.ToLower()) && _languageStrings[section].ContainsKey(id))
+      Dictionary<int, StringLocalised> localList = null;
+      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
-        return _languageStrings[section.ToLower()][id];
+        StringLocalised stringLocalised = null;
+        if (localList.TryGetValue(id, out stringLocalised))
+        {
+          return stringLocalised;
+        }
       }
 
       return null;
@@ -145,15 +158,19 @@ namespace MediaPortal.Localisation
 
     public string GetString(string section, int id)
     {
-      if (_languageStrings.ContainsKey(section.ToLower()) && _languageStrings[section].ContainsKey(id))
+      Dictionary<int, StringLocalised> localList = null;
+      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
-        string prefix = string.Empty;
-        if (_prefix)
+        StringLocalised stringLocalised = null;
+        if (localList.TryGetValue(id, out stringLocalised))
         {
-          prefix = _languageStrings[section.ToLower()][id].prefix;
+          string prefix = string.Empty;
+          if (_prefix)
+          {
+            prefix = stringLocalised.prefix;
+          }
+          return prefix + stringLocalised.text;
         }
-
-        return prefix + _languageStrings[section.ToLower()][id].text;
       }
 
       return null;
@@ -224,9 +241,10 @@ namespace MediaPortal.Localisation
       }
 
       // default to English
-      if (_availableLanguages.ContainsKey("en"))
+      CultureInfo english = null;
+      if (_availableLanguages.TryGetValue("en", out english))
       {
-        return _availableLanguages["en"];
+        return english;
       }
 
       return null;
@@ -247,13 +265,18 @@ namespace MediaPortal.Localisation
 
     private void LoadStrings(string directory)
     {
+      LoadStrings(directory, false);
+    }
+
+    private void LoadStrings(string directory, bool loadRTL)
+    {
       // Local Language
-      LoadStrings(directory, _currentLanguage.Name, false);
+      LoadStrings(directory, _currentLanguage.Name, false, loadRTL);
 
       // Parent Language
       if (!_currentLanguage.IsNeutralCulture)
       {
-        LoadStrings(directory, _currentLanguage.Parent.Name, false);
+        LoadStrings(directory, _currentLanguage.Parent.Name, false, loadRTL);
       }
 
       // Default to English
@@ -269,9 +292,12 @@ namespace MediaPortal.Localisation
 
       LoadUserStrings();
 
-      foreach (string directoy in _languageDirectories)
+      if (_languageDirectories != null)
       {
-        LoadStrings(directoy);
+        for (int i = 0; i < _languageDirectories.Count; i++)
+        {
+          LoadStrings(_languageDirectories[i], i == 0); // we want to load RTL flag only from main directory, first in list (index 0)
+        }
       }
     }
 
@@ -283,6 +309,7 @@ namespace MediaPortal.Localisation
       }
 
       _characters = 255;
+      _useRTL = false;
     }
 
     private void CheckUserStrings()
@@ -321,6 +348,11 @@ namespace MediaPortal.Localisation
 
     private void LoadStrings(string directory, string language, bool log)
     {
+      LoadStrings(directory, language, log, false);
+    }
+
+    private void LoadStrings(string directory, string language, bool log, bool loadRTL)
+    {
       string filename = "strings_" + language + ".xml";
       GlobalServiceProvider.Get<ILog>().Info("    Loading strings file: {0}", filename);
 
@@ -333,8 +365,8 @@ namespace MediaPortal.Localisation
           XmlSerializer s = new XmlSerializer(typeof (StringFile));
           using (TextReader r = new StreamReader(path))
           {
-            strings = (StringFile)s.Deserialize(r);  
-          }          
+            strings = (StringFile)s.Deserialize(r);
+          }
         }
         catch (Exception)
         {
@@ -348,6 +380,7 @@ namespace MediaPortal.Localisation
 
         // Some chinese might prefer to use an english OS but still have all chars for media, etc
         bool useChineseHack = false;
+        int useChineseHackNum = 0;
         using (Settings reader = new MPSettings())
         {
           useChineseHack = reader.GetValueAsBool("debug", "useExtendedCharsWithStandardCulture", false);
@@ -355,9 +388,24 @@ namespace MediaPortal.Localisation
           {
             _characters = 1536;
           }
+
+          useChineseHackNum = reader.GetValueAsInt("debug", "useExtendedCharsWithStandardCulture", 0);
+          if (useChineseHackNum >= 128 && useChineseHackNum <= 1536)
+          {
+            useChineseHack = true;
+            _characters = useChineseHackNum;
+          }
+          else
+          {
+            if (useChineseHack)
+              useChineseHackNum = 1536;
+          }
         }
-        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}, StringChars = {1}", useChineseHack,
-                                                strings.characters);
+        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
+                                                useChineseHackNum, strings.characters);
+
+        if (loadRTL)
+          _useRTL = strings.rtl;
 
         foreach (StringSection section in strings.sections)
         {
@@ -365,9 +413,8 @@ namespace MediaPortal.Localisation
           section.name = section.name.ToLower();
 
           Dictionary<int, StringLocalised> newSection;
-          if (_languageStrings.ContainsKey(section.name))
+          if (_languageStrings.TryGetValue(section.name, out newSection))
           {
-            newSection = _languageStrings[section.name];
             _languageStrings.Remove(section.name);
           }
           else

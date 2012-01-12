@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,63 +30,23 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-S BDA cards
   /// </summary>
-  public class DVBSScanning : DvbBaseScanning, ITVScanning, IDisposable
+  public class DVBSScanning : DvbBaseScanning
   {
-    private readonly TvCardDVBS _card;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBSScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public DVBSScanning(TvCardDVBS card)
-      : base(card)
-    {
-      _card = card;
-    }
-
-    /// <summary>
-    /// returns the tv card used
-    /// </summary>
-    /// <value></value>
-    public ITVCard TvCard
-    {
-      get { return _card; }
-    }
-
-    /// <summary>
-    /// Gets the analyzer.
-    /// </summary>
-    /// <returns></returns>
-    protected override ITsChannelScan GetAnalyzer()
-    {
-      return _card.StreamAnalyzer;
-    }
-
-    /// <summary>
-    /// Sets the hw pids.
-    /// </summary>
-    /// <param name="pids">The pids.</param>
-    protected override void SetHwPids(List<ushort> pids)
-    {
-      _card.SendHwPids(pids);
-    }
-
-    /// <summary>
-    /// Resets the signal update.
-    /// </summary>
-    protected override void ResetSignalUpdate()
-    {
-      _card.ResetSignalUpdate();
-    }
+    public DVBSScanning(TvCardDvbBase card) : base(card) {}
 
     /// <summary>
     /// Creates the new channel.
     /// </summary>
-    /// <param name="info">The info.</param>
-    /// <returns></returns>
-    protected override IChannel CreateNewChannel(ChannelInfo info)
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
     {
-      DVBSChannel tuningChannel = (DVBSChannel)_card.CurrentChannel;
+      DVBSChannel tuningChannel = (DVBSChannel)channel;
       DVBSChannel dvbsChannel = new DVBSChannel();
       dvbsChannel.Name = info.service_name;
       dvbsChannel.LogicalChannelNumber = info.LCN;
@@ -95,17 +55,12 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.Polarisation = tuningChannel.Polarisation;
       dvbsChannel.SwitchingFrequency = tuningChannel.SwitchingFrequency;
       dvbsChannel.Frequency = tuningChannel.Frequency;
-      dvbsChannel.IsTv = (info.serviceType == (int)ServiceType.Video ||
-                          info.serviceType == (int)ServiceType.Mpeg2HDStream ||
-                          info.serviceType == (int)ServiceType.H264Stream ||
-                          info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
-                          info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
-      dvbsChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
+      dvbsChannel.IsTv = IsTvService(info.serviceType);
+      dvbsChannel.IsRadio = IsRadioService(info.serviceType);
       dvbsChannel.NetworkId = info.networkID;
       dvbsChannel.ServiceId = info.serviceID;
       dvbsChannel.TransportId = info.transportStreamID;
       dvbsChannel.PmtPid = info.network_pmt_PID;
-      dvbsChannel.PcrPid = info.pcr_pid;
       dvbsChannel.DisEqc = tuningChannel.DisEqc;
       dvbsChannel.BandType = tuningChannel.BandType;
       dvbsChannel.FreeToAir = !info.scrambled;
@@ -114,8 +69,6 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.InnerFecRate = tuningChannel.InnerFecRate;
       dvbsChannel.Pilot = tuningChannel.Pilot;
       dvbsChannel.Rolloff = tuningChannel.Rolloff;
-      dvbsChannel.VideoPid = info.videoPid;
-      dvbsChannel.AudioPid = info.audioPid;
       Log.Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }

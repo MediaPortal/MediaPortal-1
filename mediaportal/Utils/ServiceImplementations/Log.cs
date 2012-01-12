@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -83,16 +83,6 @@ namespace MediaPortal.ServiceImplementations
     public static void Debug(LogType type, string format, params object[] arg)
     {
       GlobalServiceProvider.Get<ILog>().Debug(type, format, arg);
-    }
-
-    public static void WriteFile(LogType type, bool isError, string format, params object[] arg)
-    {
-      GlobalServiceProvider.Get<ILog>().WriteFile(type, isError, format, arg);
-    }
-
-    public static void WriteFile(LogType type, string format, params object[] arg)
-    {
-      GlobalServiceProvider.Get<ILog>().WriteFile(type, format, arg);
     }
 
     public static void SetLogLevel(Level logLevel)

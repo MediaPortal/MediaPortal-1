@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 namespace TvEngine
@@ -324,17 +325,17 @@ namespace TvEngine
           {
             senderUrl = sender["Webseite"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           try
           {
             senderSort = sender["SortNrTVMovie"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           try
           {
             senderZeichen = sender["Zeichen"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
 
           TVMChannel current = new TVMChannel(senderId,
                                               senderKennung,
@@ -518,7 +519,7 @@ namespace TvEngine
       _actorCount = Convert.ToInt32(TvBLayer.GetSetting("TvMovieLimitActors", "5").Value);
       _showLive = TvBLayer.GetSetting("TvMovieShowLive", "true").Value == "true";
       _showRepeat = TvBLayer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
-      _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", Log.GetPathName());
+      _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", PathManager.GetDataPath);
     }
 
     private int ImportStation(string stationName, List<Mapping> channelNames, IList<Channel> allChannels)
@@ -586,7 +587,7 @@ namespace TvEngine
           {
             databaseTransaction.Rollback();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           Log.Info("TVMovie: Exception: {0}", ex1);
           return 0;
         }
@@ -844,7 +845,7 @@ namespace TvEngine
             string newStart = mapping.TimeSharingStart;
             string newEnd = mapping.TimeSharingEnd;
             string newStation = mapping.StationName;
-            string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
+            string newChannel = Channel.Retrieve(mapping.IdChannel).DisplayName;
             int newIdChannel = mapping.IdChannel;
 
             mappingList.Add(new Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));
@@ -1093,34 +1094,8 @@ namespace TvEngine
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return 0;
-    }
-
-    /// <summary>
-    /// Delete ALL programs for the given channel
-    /// </summary>
-    /// <param name="channel">The channel name</param>
-    private void ClearPrograms(string channel)
-    {
-      try
-      {
-        Channel progChannel = null;
-        IList<Channel> allChannels = Channel.ListAll();
-        foreach (Channel ch in allChannels)
-        {
-          if (ch.Name == channel)
-          {
-            progChannel = ch;
-            break;
-          }
-        }
-        TvBLayer.RemoveAllPrograms(progChannel.IdChannel);
-      }
-      catch (Exception ex)
-      {
-        Log.Info("TvMovieDatabase: ClearPrograms failed - {0}", ex.Message);
-      }
     }
 
     /// <summary>

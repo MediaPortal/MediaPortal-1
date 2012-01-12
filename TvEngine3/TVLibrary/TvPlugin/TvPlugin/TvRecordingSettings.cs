@@ -21,6 +21,7 @@
 using System;
 using MediaPortal.GUI.Library;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 //using MediaPortal.Utils.Services;
 

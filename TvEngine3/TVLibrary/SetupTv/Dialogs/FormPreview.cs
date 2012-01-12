@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using SetupControls;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
 
@@ -47,10 +48,10 @@ namespace SetupTv.Sections
 
     public new DialogResult ShowDialog(IWin32Window owner)
     {
-      Text = "Preview " + _channel.Name;
+      Text = "Preview " + _channel.DisplayName;
 
       TvServer server = new TvServer();
-      User user = new User("setuptv", false);
+      IUser user = new User("setuptv", false);
       TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
       if (result != TvResult.Succeeded)
       {
@@ -59,7 +60,7 @@ namespace SetupTv.Sections
         return DialogResult.None;
       }
 
-      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.Name, user.CardId, user.SubChannel, user.Name,
+      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, user.SubChannel, user.Name,
                _card.TimeShiftFileName);
       _player = new Player();
       _player.Play(_card.TimeShiftFileName, this);
@@ -83,7 +84,8 @@ namespace SetupTv.Sections
 
     private void FormPreview_Resize(object sender, EventArgs e)
     {
-      _player.ResizeToParent();
+      if (_player != null)
+        _player.ResizeToParent();
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using TvLibrary.Interfaces;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
+using System;
 
 namespace TvLibrary.Implementations.Hybrid
 {
@@ -78,6 +79,28 @@ namespace TvLibrary.Implementations.Hybrid
     #region properties
 
     /// <summary>
+    /// Sets the after tune event listener on the internal card.
+    /// </summary>
+    /// <value>the delegate</value>
+    public TvCardBase.OnAfterTuneDelegate AfterTuneEvent
+    {
+      set
+      {
+        (_internalCard as TvCardBase).AfterTuneEvent -= value;
+        (_internalCard as TvCardBase).AfterTuneEvent += value;
+      }
+    }
+
+    /// <summary>
+    /// Gets whether or not card supports pausing the graph.
+    /// </summary>
+    /// <value><c>true</c> if the card supports pausing the graph, otherwise <c>false</c></value>
+    public bool SupportsPauseGraph
+    {
+      get { return _internalCard.SupportsPauseGraph; }
+    }
+
+    /// <summary>
     /// returns true if card is currently present
     /// </summary>
     public bool CardPresent
@@ -89,7 +112,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Does the card have a CA module.
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
+    /// <value><c>true</c> if the card supports conditional access, otherwise <c>false</c></value>
     public bool HasCA
     {
       get { return _internalCard.HasCA; }
@@ -174,6 +197,14 @@ namespace TvLibrary.Implementations.Hybrid
     public void StopGraph()
     {
       _group.StopGraph();
+    }
+
+    /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    public void PauseGraph()
+    {
+      _group.PauseGraph();
     }
 
 
@@ -319,6 +350,18 @@ namespace TvLibrary.Implementations.Hybrid
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       return _group.Tune(subChannelId, channel);
+    }
+
+
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
+    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      return _group.Scan(subChannelId, channel);
     }
 
     /// <summary>

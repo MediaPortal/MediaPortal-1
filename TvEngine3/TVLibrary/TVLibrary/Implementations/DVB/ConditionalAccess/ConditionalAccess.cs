@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -62,10 +62,10 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
-    
+
     private readonly IHardwareProvider _HWProvider;
 
-    private readonly ICiMenuActions _ciMenu;    
+    private readonly ICiMenuActions _ciMenu;
 
 
     /// <summary>
@@ -84,6 +84,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return _HWProvider; }
     }
+
     //anysee _anysee = null;
 
     #endregion
@@ -175,7 +176,7 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           Release.DisposeToNull(ref _technoTrend);
-          
+
           Log.Log.WriteFile("Check for Hauppauge");
           _hauppauge = new Hauppauge(tunerFilter);
           if (_hauppauge.IsHauppauge)
@@ -244,7 +245,7 @@ namespace TvLibrary.Implementations.DVB
               _ciMenu = _DigitalDevices;
             }
             return; // detected
-          }        
+          }
           Release.DisposeToNull(ref _DigitalDevices);
 
           Log.Log.WriteFile("Check for Conexant based card");
@@ -387,6 +388,7 @@ namespace TvLibrary.Implementations.DVB
           if (_twinhan.IsCamPresent())
             return false;
         }
+
         return true;
       }
     }
@@ -693,7 +695,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
       }
       return true;
-    }    
+    }
 
     /// <summary>
     /// sends the diseqc command to the card
@@ -792,8 +794,6 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
-        if (!_useCam)
-          return;
         if (_digitalEveryWhere != null)
         {
           bool isDvbc = ((channel as DVBCChannel) != null);
@@ -801,7 +801,18 @@ namespace TvLibrary.Implementations.DVB
           bool isDvbs = ((channel as DVBSChannel) != null);
           bool isAtsc = ((channel as ATSCChannel) != null);
 
-          if ((pids.Count != 0) && (isDvbs) && (((DVBSChannel)channel).ModulationType == ModulationType.ModNbc8Psk))
+          // It is not ideal to have to enable hardware PID filtering because
+          // doing so can limit the number of channels that can be viewed/recorded
+          // simultaneously. However, it does seem that there is a need for filtering
+          // on transponders with high data rates. Problems have been observed with
+          // transponders on Thor 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
+          //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
+          //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
+          if (pids.Count != 0 && isDvbs &&
+              (((DVBSChannel)channel).ModulationType == ModulationType.Mod8Psk ||
+              ((DVBSChannel)channel).ModulationType == ModulationType.Mod16Apsk ||
+              ((DVBSChannel)channel).ModulationType == ModulationType.Mod32Apsk)
+          )
           {
             for (int i = 0; i < HwPids.Count; ++i)
             {
@@ -824,10 +835,11 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Sets the DVB s2 modulation.
+    /// Sets the DVB-S2 parameters such as modulation, roll-off, pilot etc.
     /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="channel">The channel.</param>
+    /// <param name="parameters">The LNB parameters.</param>
+    /// <param name="channel">The channel to tune.</param>
+    /// <returns>The channel with DVB-S2 parameters set.</returns>
     public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
     {
       //Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
@@ -982,7 +994,6 @@ namespace TvLibrary.Implementations.DVB
             //Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off are now not set");
           }
 
-          DVBSChannel tuneChannel = new DVBSChannel(channel);
           if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
           {
             //Set the DigitalEverywhere binary values for Pilot & Roll-off
@@ -999,13 +1010,14 @@ namespace TvLibrary.Implementations.DVB
             if (channel.Rolloff == RollOff.ThirtyFive)
               _rollOff = 48;
             //The binary values get added to the current InnerFECRate - done!
-            tuneChannel.InnerFecRate = channel.InnerFecRate + _pilot + _rollOff;
+            BinaryConvolutionCodeRate r = channel.InnerFecRate + _pilot + _rollOff;
+            channel.InnerFecRate = r;
           }
           Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
           Log.Log.WriteFile("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
           Log.Log.WriteFile("DigitalEverywhere RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)tuneChannel.InnerFecRate);
-          return tuneChannel;
+          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
+          return channel;
         }
       }
       catch (Exception ex)
@@ -1075,7 +1087,7 @@ namespace TvLibrary.Implementations.DVB
           _ciMenu.SetCiMenuHandler(value);
         }
       }
-    }    
+    }
 
     #region IDisposable Member
 
@@ -1098,6 +1110,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_profred);
       Release.Dispose(_TeVii);
     }
+
     #endregion
   }
 }

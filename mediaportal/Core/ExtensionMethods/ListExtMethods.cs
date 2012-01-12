@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,55 +34,54 @@ namespace MediaPortal.ExtensionMethods
         for (int i = 0; i < listInterface.Count; i++)
         {
           object o = listInterface[i];
-          DisposeHelper.DisposeItem(o);          
-        }        
+          DisposeHelper.DisposeItem(o);
+        }
       }
-    }   
+    }
 
     public static void DisposeAndClear(this IList listInterface)
     {
       if (listInterface != null)
-      {        
+      {
         //for (int i = listInterface.Count - 1; i >= 0; i--)
-        for (int i = 0; i < listInterface.Count; i++)        
+        for (int i = 0; i < listInterface.Count; i++)
         {
           object o = listInterface[i];
-          DisposeHelper.DisposeItem(o);          
+          DisposeHelper.DisposeItem(o);
         }
 
         listInterface.Clear();
       }
-    }   
+    }
 
-    
+
     public static void DisposeAndClearCollection<T>(this ICollection<T> listInterface)
     {
       if (listInterface != null)
-      {       
+      {
         foreach (object o in listInterface)
         {
-          DisposeHelper.DisposeItem(o);          
+          DisposeHelper.DisposeItem(o);
         }
-                
-        listInterface.Clear(); 
-      }      
+
+        listInterface.Clear();
+      }
     }
 
     public static void DisposeAndClearList(this IList listInterface)
     {
       if (listInterface != null)
-      {        
+      {
         //for (int i = listInterface.Count - 1; i >= 0; i--)
         //foreach (object o in listInterface)
         for (int i = 0; i < listInterface.Count; i++)
         {
           object o = listInterface[i];
-          DisposeHelper.DisposeItem(o);          
+          DisposeHelper.DisposeItem(o);
         }
 
         listInterface.Clear();
       }
-    }   
-    
+    }
   }
 }

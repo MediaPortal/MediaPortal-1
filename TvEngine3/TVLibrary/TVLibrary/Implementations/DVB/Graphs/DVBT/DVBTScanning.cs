@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,83 +30,36 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-T BDA cards
   /// </summary>
-  public class DVBTScanning : DvbBaseScanning, ITVScanning, IDisposable
+  public class DVBTScanning : DvbBaseScanning
   {
-    private readonly TvCardDVBT _card;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBTScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public DVBTScanning(TvCardDVBT card)
-      : base(card)
-    {
-      _card = card;
-    }
-
-    /// <summary>
-    /// returns the tv card used
-    /// </summary>
-    /// <value></value>
-    public ITVCard TvCard
-    {
-      get { return _card; }
-    }
-
-    /// <summary>
-    /// Gets the analyzer.
-    /// </summary>
-    /// <returns></returns>
-    protected override ITsChannelScan GetAnalyzer()
-    {
-      return _card.StreamAnalyzer;
-    }
-
-    /// <summary>
-    /// Sets the hw pids.
-    /// </summary>
-    /// <param name="pids">The pids.</param>
-    protected override void SetHwPids(List<ushort> pids)
-    {
-      _card.SendHwPids(pids);
-    }
-
-    /// <summary>
-    /// Resets the signal update.
-    /// </summary>
-    protected override void ResetSignalUpdate()
-    {
-      _card.ResetSignalUpdate();
-    }
+    public DVBTScanning(TvCardDvbBase card) : base(card) {}
 
     /// <summary>
     /// Creates the new channel.
     /// </summary>
-    /// <param name="info">The info.</param>
-    /// <returns></returns>
-    protected override IChannel CreateNewChannel(ChannelInfo info)
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
     {
-      DVBTChannel tuningChannel = (DVBTChannel)_card.CurrentChannel;
+      DVBTChannel tuningChannel = (DVBTChannel)channel;
       DVBTChannel dvbtChannel = new DVBTChannel();
       dvbtChannel.Name = info.service_name;
       dvbtChannel.LogicalChannelNumber = info.LCN;
       dvbtChannel.Provider = info.service_provider_name;
       dvbtChannel.BandWidth = tuningChannel.BandWidth;
       dvbtChannel.Frequency = tuningChannel.Frequency;
-      dvbtChannel.IsTv = (info.serviceType == (int)ServiceType.Video ||
-                          info.serviceType == (int)ServiceType.Mpeg2HDStream ||
-                          info.serviceType == (int)ServiceType.H264Stream ||
-                          info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
-                          info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
-      dvbtChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
+      dvbtChannel.IsTv = IsTvService(info.serviceType);
+      dvbtChannel.IsRadio = IsRadioService(info.serviceType);
       dvbtChannel.NetworkId = info.networkID;
       dvbtChannel.ServiceId = info.serviceID;
       dvbtChannel.TransportId = info.transportStreamID;
       dvbtChannel.PmtPid = info.network_pmt_PID;
-      dvbtChannel.PcrPid = info.pcr_pid;
       dvbtChannel.FreeToAir = !info.scrambled;
-      dvbtChannel.VideoPid = info.videoPid;
-      dvbtChannel.AudioPid = info.audioPid;
       Log.Log.Write("Found: {0}", dvbtChannel);
       return dvbtChannel;
     }

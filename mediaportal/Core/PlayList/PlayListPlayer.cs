@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -122,6 +122,10 @@ namespace MediaPortal.Playlists
     private bool _repeatPlayList = true;
     private string _currentPlaylistName = string.Empty;
 
+    public delegate void PlaylistChangedEventHandler(PlayListType nPlayList, PlayList playlist);
+
+    public event PlaylistChangedEventHandler PlaylistChanged;
+
     public PlayListPlayer() {}
 
     private static PlayListPlayer singletonPlayer = new PlayListPlayer();
@@ -139,6 +143,37 @@ namespace MediaPortal.Playlists
     public void Init()
     {
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);
+
+      _musicPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _tempMusicPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _videoPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _tempVideoPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _musicVideoPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _radioStreamPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _emptyPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+    }
+
+    private void NotifyChange(PlayList playlist)
+    {
+        PlayListType nPlaylist = PlayListType.PLAYLIST_NONE;
+
+        if (_musicPlayList == playlist)
+          nPlaylist = PlayListType.PLAYLIST_MUSIC;
+        else if (_tempMusicPlayList == playlist)
+          nPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
+        else if (_videoPlayList == playlist)
+          nPlaylist = PlayListType.PLAYLIST_VIDEO;
+        else if (_tempVideoPlayList == playlist)
+          nPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
+        else if (_musicVideoPlayList == playlist)
+          nPlaylist = PlayListType.PLAYLIST_MUSIC_VIDEO;
+        else if (_radioStreamPlayList == playlist)
+          nPlaylist = PlayListType.PLAYLIST_RADIO_STREAMS;
+        else
+          nPlaylist = PlayListType.PLAYLIST_NONE;
+
+        if (nPlaylist != PlayListType.PLAYLIST_NONE && PlaylistChanged != null)
+          PlaylistChanged(nPlaylist, playlist);
     }
 
     public void OnMessage(GUIMessage message)
@@ -150,8 +185,7 @@ namespace MediaPortal.Playlists
             PlayListItem item = GetCurrentItem();
             if (item != null)
             {
-              if (item.Type != PlayListItem.PlayListItemType.Radio ||
-                  item.Type != PlayListItem.PlayListItemType.AudioStream)
+              if (item.Type != PlayListItem.PlayListItemType.AudioStream)
               {
                 Reset();
                 _currentPlayList = PlayListType.PLAYLIST_NONE;
@@ -174,7 +208,7 @@ namespace MediaPortal.Playlists
           {
             // This message is sent by both the internal and BASS player
             // In case of gapless/crossfading it is only sent after the last song
-            PlayNext();
+            PlayNext(false);
             if (!g_Player.Playing)
             {
               g_Player.Release();
@@ -338,6 +372,11 @@ namespace MediaPortal.Playlists
 
     public void PlayNext()
     {
+      PlayNext(true);
+    }
+
+    public void PlayNext(bool setFullScreenVideo)
+    {
       if (_currentPlayList == PlayListType.PLAYLIST_NONE)
       {
         return;
@@ -363,13 +402,19 @@ namespace MediaPortal.Playlists
 
         if (!_repeatPlayList)
         {
+          // Switch back to standard playback mode
+          if (Player.BassMusicPlayer.IsDefaultMusicPlayer)
+          {
+            Player.BassMusicPlayer._Player.SwitchToDefaultPlaybackMode();
+          }
+
           _currentPlayList = PlayListType.PLAYLIST_NONE;
           return;
         }
         iSong = 0;
       }
 
-      if (!Play(iSong))
+      if (!Play(iSong, setFullScreenVideo))
       {
         if (!g_Player.Playing)
         {
@@ -379,6 +424,11 @@ namespace MediaPortal.Playlists
     }
 
     public void PlayPrevious()
+    {
+      PlayPrevious(true);
+    }
+
+    public void PlayPrevious(bool setFullScreenVideo)
     {
       if (_currentPlayList == PlayListType.PLAYLIST_NONE)
       {
@@ -397,7 +447,7 @@ namespace MediaPortal.Playlists
         iSong = playlist.Count - 1;
       }
 
-      if (!Play(iSong))
+      if (!Play(iSong, setFullScreenVideo))
       {
         if (!g_Player.Playing)
         {
@@ -426,6 +476,11 @@ namespace MediaPortal.Playlists
     }
 
     public bool Play(int iSong)
+    {
+      return Play(iSong, true);
+    }
+
+    public bool Play(int iSong, bool setFullScreenVideo)
     {
       // if play returns false PlayNext is called but this does not help against selecting an invalid track
       bool skipmissing = false;
@@ -479,15 +534,6 @@ namespace MediaPortal.Playlists
         }
 
         //Log.Debug("PlaylistPlayer: Play - {0}", item.FileName);
-        if (item.Type == PlayListItem.PlayListItemType.Radio)
-        {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
-          msg.Label = item.Description;
-          GUIGraphicsContext.SendMessage(msg);
-          item.Played = true;
-          return true;
-        }
-
         bool playResult = false;
         if (_currentPlayList == PlayListType.PLAYLIST_MUSIC_VIDEO)
         {
@@ -524,7 +570,7 @@ namespace MediaPortal.Playlists
         {
           item.Played = true;
           skipmissing = false;
-          if (Util.Utils.IsVideo(item.FileName))
+          if (Util.Utils.IsVideo(item.FileName) && setFullScreenVideo)
           {
             if (g_Player.HasVideo)
             {
@@ -581,13 +627,48 @@ namespace MediaPortal.Playlists
       }
     }
 
+    public void ReplacePlaylist(PlayListType nPlayList, PlayList playlist)
+    {
+      if (playlist == null)
+        playlist = new PlayList();
+
+      playlist.OnChanged -= NotifyChange;
+      playlist.OnChanged +=new PlayList.OnChangedDelegate(NotifyChange);
+
+      switch (nPlayList)
+      {
+        case PlayListType.PLAYLIST_MUSIC:
+          _musicPlayList = playlist;
+          break;
+        case PlayListType.PLAYLIST_MUSIC_TEMP:
+          _tempMusicPlayList = playlist;
+          break;
+        case PlayListType.PLAYLIST_VIDEO:
+          _videoPlayList = playlist;
+          break;
+        case PlayListType.PLAYLIST_VIDEO_TEMP:
+          _tempVideoPlayList = playlist;
+          break;
+        case PlayListType.PLAYLIST_MUSIC_VIDEO:
+          _musicVideoPlayList = playlist;
+          break;
+        case PlayListType.PLAYLIST_RADIO_STREAMS:
+          _radioStreamPlayList = playlist;
+          break;
+        default:
+          _emptyPlayList = playlist;
+          break;
+      }
+
+      NotifyChange(playlist);
+    }
+
     public PlayList GetPlaylist(PlayListType nPlayList)
     {
       switch (nPlayList)
       {
         case PlayListType.PLAYLIST_MUSIC:
           return _musicPlayList;
-
         case PlayListType.PLAYLIST_MUSIC_TEMP:
           return _tempMusicPlayList;
         case PlayListType.PLAYLIST_VIDEO:
@@ -608,6 +689,7 @@ namespace MediaPortal.Playlists
     {
       int removedDvdItems = _musicPlayList.RemoveDVDItems();
       _tempMusicPlayList.RemoveDVDItems();
+         
       int removedVideoItems = _videoPlayList.RemoveDVDItems();
       _tempVideoPlayList.RemoveDVDItems();
 

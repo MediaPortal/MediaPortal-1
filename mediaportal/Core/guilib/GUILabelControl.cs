@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -45,7 +45,6 @@ namespace MediaPortal.GUI.Library
     private bool _registeredForEvent = false;
 
     private GUIFont _font = null;
-    private bool _useViewPort = true;
     private bool _propertyHasChanged = false;
     private bool _reCalculate = false;
     private FontRenderContext _context;
@@ -150,16 +149,8 @@ namespace MediaPortal.GUI.Library
         ClearFontCache();
       }
 
-
-      long color = _textColor;
-      if (Dimmed)
-      {
-        color &= (DimColor);
-      }
-
       if (null != _font)
       {
-
         if (_textwidth == 0 || _textheight == 0)
         {
           float width = _textwidth;
@@ -183,10 +174,10 @@ namespace MediaPortal.GUI.Library
 
         if (_textAlignment == Alignment.ALIGN_CENTER)
         {
-          int xoff = (int) ((_width - _textwidth)/2);
-          int yoff = (int) ((_height - _textheight)/2);
+          int xoff = (int)((_width - _textwidth) / 2);
+          int yoff = (int)((_height - _textheight) / 2);
 
-          this.DrawText((float)_positionX + xoff, (float)_positionY + yoff, color, _cachedTextLabel, _width);
+          this.DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, _width);
         }
         else
         {
@@ -194,7 +185,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_width == 0 || _textwidth < _width)
             {
-              this.DrawText((float)_positionX - _textwidth, vpos, color, _cachedTextLabel, -1);
+              this.DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, -1);
             }
             else
             {
@@ -204,8 +195,7 @@ namespace MediaPortal.GUI.Library
                 return;
               }
 
-              this.DrawText((float)_positionX - _textwidth, vpos, color, _cachedTextLabel, (int)_width - 5);
-
+              this.DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, (int)_width - 5);
             }
             base.Render(timePassed);
             return;
@@ -213,7 +203,7 @@ namespace MediaPortal.GUI.Library
 
           if (_width == 0 || _textwidth < _width)
           {
-            this.DrawText((float)_positionX, vpos, color, _cachedTextLabel,(int)_width);
+            this.DrawText((float)_positionX, vpos, _cachedTextLabel, (int)_width);
           }
           else
           {
@@ -221,7 +211,7 @@ namespace MediaPortal.GUI.Library
             {
               return;
             }
-            this.DrawText((float)_positionX, vpos, color, _cachedTextLabel, (int)_width - 5);
+            this.DrawText((float)_positionX, vpos, _cachedTextLabel, (int)_width - 5);
           }
         }
       }
@@ -229,47 +219,58 @@ namespace MediaPortal.GUI.Library
     }
 
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
-    public void DrawTextWidth(float xpos, float ypos, long color, string label, float fMaxWidth)
+    public void DrawTextWidth(float xpos, float ypos, string label, float fMaxWidth)
     {
-      uint c = (uint)color;
-      c = GUIGraphicsContext.MergeAlpha(c);
+      long c = (uint)_textColor;
+      if (Dimmed)
+      {
+        c &= (DimColor);
+      }
+      c = GUIGraphicsContext.MergeAlpha((uint)c);
 
       if (Shadow)
+      {
+        long sc = (uint)_shadowColor;
+        if (Dimmed)
         {
-          uint sc = (uint)_shadowColor;
-          sc = GUIGraphicsContext.MergeAlpha(sc);
+          sc &= (DimColor);
+        }
+        sc = GUIGraphicsContext.MergeAlpha((uint)sc);
 
-          _font.DrawShadowTextWidth(xpos, ypos, color, label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
-        }
-        else
-        {
-          _font.DrawTextWidth(xpos, ypos, c, label, fMaxWidth, Alignment.ALIGN_LEFT);
-        }
+        _font.DrawShadowTextWidth(xpos, ypos, c, label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc,
+                                  fMaxWidth);
+      }
+      else
+      {
+        _font.DrawTextWidth(xpos, ypos, c, label, fMaxWidth, Alignment.ALIGN_LEFT);
+      }
     }
 
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
-    public void DrawText(float xpos, float ypos, long color, string label, int width)
+    public void DrawText(float xpos, float ypos, string label, int width)
     {
-      uint c = (uint)color;
-      c = GUIGraphicsContext.MergeAlpha(c);
+      long c = (uint)_textColor;
+      if (Dimmed)
+      {
+        c &= (DimColor);
+      }
+      c = GUIGraphicsContext.MergeAlpha((uint)c);
 
       if (Shadow)
+      {
+        long sc = (uint)_shadowColor;
+        if (Dimmed)
         {
-          uint sc = (uint)_shadowColor;
-          sc = GUIGraphicsContext.MergeAlpha(sc);
-
-            _font.DrawShadowText(xpos, ypos, c, label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
+          sc &= (DimColor);
         }
-        else
-        {
-          _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
-        }
-    }
+        sc = GUIGraphicsContext.MergeAlpha((uint)sc);
 
-    public bool UseViewPort
-    {
-      get { return _useViewPort; }
-      set { _useViewPort = value; }
+        _font.DrawShadowText(xpos, ypos, c, label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
+      }
+      else
+      {
+        _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
+      }
     }
 
     /// <summary>
@@ -464,26 +465,25 @@ namespace MediaPortal.GUI.Library
         }
 
         CachedLabel();
-
       }
     }
 
     private void CachedLabel()
     {
       string v;
- 
+
 
       if (_containsProperty)
       {
         v = GUIPropertyManager.Parse(_labelText);
-        if(v == null)
+        if (v == null)
           v = String.Empty;
       }
       else
       {
         v = _labelText;
       }
-      if( v != _cachedTextLabel)
+      if (v != _cachedTextLabel)
       {
         _textwidth = 0;
         _textheight = 0;
@@ -523,10 +523,7 @@ namespace MediaPortal.GUI.Library
 
     private bool Shadow
     {
-      get
-      {
-        return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0);
-      }
+      get { return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0); }
     }
 
     /// <summary>
@@ -547,12 +544,12 @@ namespace MediaPortal.GUI.Library
 
       if (_registeredForEvent == false)
       {
-      	GUIPropertyManager.OnPropertyChanged -=
-        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        GUIPropertyManager.OnPropertyChanged -=
+          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
         GUIPropertyManager.OnPropertyChanged +=
-        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
         _registeredForEvent = true;
-      }            
+      }
       _font = GUIFontManager.GetFont(_fontName);
       Update();
       base.AllocResources();

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -117,7 +117,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// pid of the PCR
     /// </summary>
-    public int pcr_pid;
+    public int pcrPid;
 
     /// <summary>
     /// ArrayList of PidInfo containing all pids
@@ -174,7 +174,6 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     public int audioPid;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ChannelInfo"/> class.
     /// </summary>
@@ -207,7 +206,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       int programNumber = (buf[3] << 8) + buf[4];
       int version_number = ((buf[5] >> 1) & 0x1F);
       int current_next_indicator = buf[5] & 1;
-      pcr_pid = ((buf[8] & 0x1F) << 8) + buf[9]; // ! really set pcr_pid ! ( ambass )
+      pcrPid = ((buf[8] & 0x1F) << 8) + buf[9]; // ! really set pcr pid ! ( ambass )
       int program_info_length = ((buf[10] & 0xF) << 8) + buf[11];
 
 

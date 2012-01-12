@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -203,9 +203,8 @@ namespace TvService
         RecordingFileInfo fi = recordings[0];
         if (fi.record.KeepUntil == (int)KeepMethodType.UntilSpaceNeeded)
         {
-          // Delete the file from disk and the recording entry from the database.
-          RecordingFileHandler handler = new RecordingFileHandler();
-          bool result = handler.DeleteRecordingOnDisk(fi.record);
+          // Delete the file from disk and the recording entry from the database.          
+          bool result = RecordingFileHandler.DeleteRecordingOnDisk(fi.record.FileName);
           if (result)
           {
             fi.record.Delete();

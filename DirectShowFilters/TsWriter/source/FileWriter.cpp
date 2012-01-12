@@ -31,6 +31,7 @@
 #include <atlbase.h>
 
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 
 FileWriter::FileWriter() :
 	m_hFile(INVALID_HANDLE_VALUE),
@@ -86,10 +87,6 @@ HRESULT FileWriter::SetFileName(LPCWSTR pszFileName)
 //
 HRESULT FileWriter::OpenFile()
 {
-	USES_CONVERSION;
-
-	TCHAR *pFileName = NULL;
-
 	// Is the file already opened
 	if (m_hFile != INVALID_HANDLE_VALUE)
 	{
@@ -102,14 +99,14 @@ HRESULT FileWriter::OpenFile()
 		return ERROR_INVALID_NAME;
 	}
 
-	// See the the file is being read.
-	m_hFile = CreateFile(W2T(m_pFileName),      // The filename
+	// See the file is being read.
+	m_hFile = CreateFileW(m_pFileName,                  // The filename
 						 (DWORD) GENERIC_WRITE,         // File access
 						 (DWORD) NULL,                  // Share access
-						 NULL,                  // Security
+						 NULL,                          // Security
 						 (DWORD) OPEN_ALWAYS,           // Open flags
-						 (DWORD) 0,             // More flags
-						 NULL);                 // Template
+						 (DWORD) 0,                     // More flags
+						 NULL);                         // Template
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
 		DWORD dwErr = GetLastError();
@@ -122,15 +119,15 @@ HRESULT FileWriter::OpenFile()
 	CloseHandle(m_hFile);
 
 	// Try to open the file
-	m_hFile = CreateFile(W2T(m_pFileName),      // The filename
+	m_hFile = CreateFileW(m_pFileName,                  // The filename
 						 (DWORD) GENERIC_WRITE,         // File access
 						 (DWORD) FILE_SHARE_READ,       // Share access
-						 NULL,                  // Security
+						 NULL,                          // Security
 						 (DWORD) OPEN_ALWAYS,           // Open flags
 //						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
 //						 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
-						 (DWORD) 0,             // More flags
-						 NULL);                 // Template
+						 (DWORD) 0,                     // More flags
+						 NULL);                         // Template
 
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
@@ -222,8 +219,7 @@ HRESULT FileWriter::Write(PBYTE pbData, ULONG lDataLength)
 		return hr;
 	if (written < (ULONG)lDataLength)
   {
-    USES_CONVERSION; // for logging WCHAR 
-    LogDebug("!!!!!    Error writing to file %s: written %d of expected %d bytes",W2A(m_pFileName), written, lDataLength);
+     LogDebug(L"!!!!!    Error writing to file %s: written %d of expected %d bytes", m_pFileName, written, lDataLength);
 		return S_FALSE;
   }
 

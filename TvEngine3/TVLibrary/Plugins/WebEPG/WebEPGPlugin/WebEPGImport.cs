@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -193,7 +193,7 @@ namespace TvEngine
 
         TvBusinessLayer layer = new TvBusinessLayer();
         string destination = layer.GetSetting("webepgDestination", "db").Value;
-        string webepgDirectory = Log.GetPathName();
+        string webepgDirectory = PathManager.GetDataPath;
         string configFile = webepgDirectory + @"\WebEPG\WebEPG.xml";
 
         //int numChannels = 0, numPrograms = 0;
@@ -232,7 +232,7 @@ namespace TvEngine
             if (xmltvDirectory == string.Empty)
             {
               // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
-              xmltvDirectory = layer.GetSetting("xmlTv", Log.GetPathName() + @"\xmltv").Value;
+              xmltvDirectory = layer.GetSetting("xmlTv", PathManager.GetDataPath + @"\xmltv").Value;
             }
             Log.Info("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file

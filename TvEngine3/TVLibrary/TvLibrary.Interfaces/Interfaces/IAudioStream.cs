@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -69,5 +69,10 @@ namespace TvLibrary.Interfaces
     /// gets/sets the audio stream type
     /// </summary>
     AudioStreamType StreamType { get; set; }
+
+    /// <summary>
+    /// gets/sets the audio stream PID
+    /// </summary>
+    int Pid { get; set; }
   }
 }

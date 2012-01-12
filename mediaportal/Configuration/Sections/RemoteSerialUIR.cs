@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.SerialIR;
 using MediaPortal.UserInterface.Controls;
+using Action = MediaPortal.GUI.Library.Action;
 
 #pragma warning disable 108
 
@@ -230,9 +231,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.internalCommandsButton);
       this.groupBox1.Controls.Add(this.inputCheckBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 336);
+      this.groupBox1.Size = new System.Drawing.Size(462, 336);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
@@ -273,6 +274,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ParityCombo
       // 
+      this.ParityCombo.BorderColor = System.Drawing.Color.Empty;
       this.ParityCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ParityCombo.Items.AddRange(new object[]
                                         {
@@ -293,9 +295,9 @@ namespace MediaPortal.Configuration.Sections
       this.buttonNoneCodes.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonNoneCodes.Location = new System.Drawing.Point(280, 22);
+      this.buttonNoneCodes.Location = new System.Drawing.Point(269, 14);
       this.buttonNoneCodes.Name = "buttonNoneCodes";
-      this.buttonNoneCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonNoneCodes.Size = new System.Drawing.Size(56, 23);
       this.buttonNoneCodes.TabIndex = 20;
       this.buttonNoneCodes.Text = "Mini";
       this.buttonNoneCodes.UseVisualStyleBackColor = true;
@@ -306,9 +308,9 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefaultCodes.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDefaultCodes.Location = new System.Drawing.Point(344, 22);
+      this.buttonDefaultCodes.Location = new System.Drawing.Point(329, 14);
       this.buttonDefaultCodes.Name = "buttonDefaultCodes";
-      this.buttonDefaultCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonDefaultCodes.Size = new System.Drawing.Size(65, 23);
       this.buttonDefaultCodes.TabIndex = 21;
       this.buttonDefaultCodes.Text = "Extended";
       this.buttonDefaultCodes.UseVisualStyleBackColor = true;
@@ -319,9 +321,9 @@ namespace MediaPortal.Configuration.Sections
       this.buttonAllCodes.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAllCodes.Location = new System.Drawing.Point(408, 22);
+      this.buttonAllCodes.Location = new System.Drawing.Point(398, 14);
       this.buttonAllCodes.Name = "buttonAllCodes";
-      this.buttonAllCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonAllCodes.Size = new System.Drawing.Size(56, 23);
       this.buttonAllCodes.TabIndex = 22;
       this.buttonAllCodes.Text = "All";
       this.buttonAllCodes.UseVisualStyleBackColor = true;
@@ -332,9 +334,9 @@ namespace MediaPortal.Configuration.Sections
       this.label7.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label7.Location = new System.Drawing.Point(224, 24);
+      this.label7.Location = new System.Drawing.Point(214, 19);
       this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(32, 16);
+      this.label7.Size = new System.Drawing.Size(50, 21);
       this.label7.TabIndex = 19;
       this.label7.Text = "Learn:";
       // 
@@ -348,19 +350,20 @@ namespace MediaPortal.Configuration.Sections
       this.ActionsCheckList.CheckOnClick = true;
       this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
       this.ActionsCheckList.Name = "ActionsCheckList";
-      this.ActionsCheckList.Size = new System.Drawing.Size(240, 289);
+      this.ActionsCheckList.Size = new System.Drawing.Size(230, 289);
       this.ActionsCheckList.TabIndex = 23;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 222);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(88, 32);
+      this.label6.Size = new System.Drawing.Size(98, 32);
       this.label6.TabIndex = 14;
       this.label6.Text = "Delay between commands (msec):";
       // 
       // CommandDelayCombo
       // 
+      this.CommandDelayCombo.BorderColor = System.Drawing.Color.Empty;
       this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.CommandDelayCombo.Items.AddRange(new object[]
                                               {
@@ -389,6 +392,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // LearningTimeoutCombo
       // 
+      this.LearningTimeoutCombo.BorderColor = System.Drawing.Color.Empty;
       this.LearningTimeoutCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.LearningTimeoutCombo.Items.AddRange(new object[]
                                                  {
@@ -420,6 +424,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // IRLengthCombo
       // 
+      this.IRLengthCombo.BorderColor = System.Drawing.Color.Empty;
       this.IRLengthCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.IRLengthCombo.Items.AddRange(new object[]
                                           {
@@ -468,10 +473,11 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(64, 16);
       this.label3.TabIndex = 6;
-      this.label3.Text = "HandShake";
+      this.label3.Text = "Handshake";
       // 
       // HandShakeCombo
       // 
+      this.HandShakeCombo.BorderColor = System.Drawing.Color.Empty;
       this.HandShakeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.HandShakeCombo.Items.AddRange(new object[]
                                            {
@@ -490,12 +496,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label2.Location = new System.Drawing.Point(120, 72);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(56, 16);
+      this.label2.Size = new System.Drawing.Size(64, 16);
       this.label2.TabIndex = 3;
       this.label2.Text = "Baud Rate";
       // 
       // BaudRateCombo
       // 
+      this.BaudRateCombo.BorderColor = System.Drawing.Color.Empty;
       this.BaudRateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.BaudRateCombo.Items.AddRange(new object[]
                                           {
@@ -544,6 +551,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CommPortCombo
       // 
+      this.CommPortCombo.BorderColor = System.Drawing.Color.Empty;
       this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.CommPortCombo.Items.AddRange(new object[]
                                           {
@@ -592,9 +600,9 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox2.Location = new System.Drawing.Point(0, 344);
+      this.groupBox2.Location = new System.Drawing.Point(6, 344);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 64);
+      this.groupBox2.Size = new System.Drawing.Size(462, 64);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Device Status";
@@ -608,14 +616,14 @@ namespace MediaPortal.Configuration.Sections
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";
-      this.statusLabel.Size = new System.Drawing.Size(448, 32);
+      this.statusLabel.Size = new System.Drawing.Size(438, 32);
       this.statusLabel.TabIndex = 0;
       // 
-      // SerialUIR
+      // RemoteSerialUIR
       // 
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
-      this.Name = "SerialUIR";
+      this.Name = "RemoteSerialUIR";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
@@ -713,6 +721,7 @@ namespace MediaPortal.Configuration.Sections
                                      , "OSD_SHOW_VALUE_PLUS"
                                      , "OSD_SHOW_VALUE_MIN"
                                      , "SMALL_STEP_BACK"
+                                     , "SMALL_STEP_FORWARD"
                                      , "MUSIC_FORWARD"
                                      , "MUSIC_REWIND"
                                      , "MUSIC_PLAY"
@@ -823,6 +832,7 @@ namespace MediaPortal.Configuration.Sections
                             , Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS
                             , Action.ActionType.ACTION_OSD_SHOW_VALUE_MIN
                             , Action.ActionType.ACTION_SMALL_STEP_BACK
+                            , Action.ActionType.ACTION_SMALL_STEP_FORWARD
                             , Action.ActionType.ACTION_MUSIC_FORWARD
                             , Action.ActionType.ACTION_MUSIC_REWIND
                             , Action.ActionType.ACTION_MUSIC_PLAY

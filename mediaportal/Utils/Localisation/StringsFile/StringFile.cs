@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ namespace MediaPortal.Localisation.LanguageStrings
 
     [XmlAttribute("name")] public string languageName;
     [XmlAttribute("characters")] public int characters;
+    [XmlAttribute("rtl")] public bool rtl;
     [XmlElement("Section")] public List<StringSection> sections;
 
     #endregion

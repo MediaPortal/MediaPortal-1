@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.TagReader;
 using TagLib;
 
@@ -252,8 +253,7 @@ namespace MediaPortal.TagReader
           musicTagCache.Duration = cueIndexToIntTime(nextTrack.Indices[0]) - cueIndexToIntTime(track.Indices[0]);
         }
 
-        string fname = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) + System.IO.Path.DirectorySeparatorChar +
-                       track.DataFile.Filename;
+        string fname = Path.Combine(Path.GetDirectoryName(cueFakeTrack.CueFileName), track.DataFile.Filename);
 
         try
         {
@@ -281,26 +281,77 @@ namespace MediaPortal.TagReader
           Log.Warn("CueFakeTrackFile2MusicTag: Exception reading file {0}. {1}", fname, ex.Message);
         }
 
-        if (track.Performer != null && !String.Empty.Equals(track.Performer))
+        // In case of having a multi file Cue sheet, we're not able to get the duration
+        // from the index entries. use MediaInfo then
+        if (musicTagCache.Duration == 0)
         {
-          musicTagCache.Artist = track.Performer;
-        }
-        else
-        {
-          musicTagCache.Artist = cueSheetCache.Performer;
+          try
+          {
+            MediaInfo mi = new MediaInfo();
+            mi.Open(fname);
+            int durationms = 0;
+            int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);
+            musicTagCache.Duration = durationms / 1000;
+            mi.Close();
+          }
+          catch (Exception ex1)
+          {
+            Log.Warn("CueFakeTrackFile2MusicTag: Exception retrieving duration for file {0}. {1}", fname, ex1.Message);
+          }
         }
 
-        musicTagCache.Album = cueSheetCache.Title;
+        if (string.IsNullOrEmpty(musicTagCache.Artist))
+        {
+          // if track has a performer set use this value for artist tag
+          // else use global performer defined for cue sheet
+          if (!string.IsNullOrEmpty(track.Performer))
+          {
+            musicTagCache.Artist = track.Performer;
+          }
+          else
+          {
+            musicTagCache.Artist = cueSheetCache.Performer;
+          }
+        }
 
-        if (cueSheetCache.Performer != null)
+        if (string.IsNullOrEmpty(musicTagCache.Album))
         {
-          musicTagCache.AlbumArtist = cueSheetCache.Performer;
-          musicTagCache.HasAlbumArtist = true;
+          musicTagCache.Album = cueSheetCache.Title;
         }
-        else
+
+        if (string.IsNullOrEmpty(musicTagCache.AlbumArtist))
         {
-          musicTagCache.HasAlbumArtist = false;
+          if (!string.IsNullOrEmpty(cueSheetCache.Performer))
+          {
+            musicTagCache.AlbumArtist = cueSheetCache.Performer;
+            musicTagCache.HasAlbumArtist = true;
+          }
+          else
+          {
+            musicTagCache.HasAlbumArtist = false;
+          }
         }
+
+        // let tagged genre override cuesheet genre
+        if (string.IsNullOrEmpty(musicTagCache.Genre) &&
+            !string.IsNullOrEmpty(cueSheetCache.Genre))
+        {
+          musicTagCache.Genre = cueSheetCache.Genre;
+        }
+
+        // let tagged year override cuesheet year
+        if (musicTagCache.Year == 0 && cueSheetCache.Year != 0)
+        {
+          musicTagCache.Year = cueSheetCache.Year;
+        }
+
+        // let tagged composer override cuesheet songwriter
+        if (string.IsNullOrEmpty(musicTagCache.Composer) &&
+            !string.IsNullOrEmpty(cueSheetCache.Songwriter))
+        {
+          musicTagCache.Composer = cueSheetCache.Songwriter;
+        }
+
 
         //musicTagCache.CoverArtImageBytes = pics[0].Data.Data;
         musicTagCache.FileName = cueFakeTrackFileName;

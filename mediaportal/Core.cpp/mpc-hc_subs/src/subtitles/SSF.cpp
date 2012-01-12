@@ -1,23 +1,25 @@
-/* 
- *	Copyright (C) 2003-2006 Gabest
- *	http://www.gabest.org
+/*
+ *  $Id: SSF.cpp 2786 2010-12-17 16:42:55Z XhmikosR $
+ *
+ *  (C) 2003-2006 Gabest
+ *  (C) 2006-2010 see AUTHORS
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
- *  TODO: 
+ *  TODO:
  *  - fill effect
  *  - outline bkg still very slow
  *
@@ -47,8 +49,7 @@ namespace ssf
 		m_file.Free();
 		m_renderer.Free();
 
-		if(name.IsEmpty())
-		{
+		if(name.IsEmpty()) {
 			CString str = fn;
 			str.Replace('\\', '/');
 			name = str.Left(str.ReverseFind('.'));
@@ -56,21 +57,17 @@ namespace ssf
 			name = name.Mid(name.ReverseFind('.')+1);
 		}
 
-		try
-		{
-			if(Open(FileInputStream(fn), name)) 
-			{
+		try {
+			if(Open(FileInputStream(fn), name)) {
 				m_fn = fn;
 				return true;
 			}
-		}
-		catch(Exception& e)
-		{
+		} catch(Exception& e) {
 			UNREFERENCED_PARAMETER(e);
 			TRACE(_T("%s\n"), e.ToString());
 		}
 
-		return false;	
+		return false;
 	}
 
 	bool CRenderer::Open(InputStream& s, CString name)
@@ -80,16 +77,13 @@ namespace ssf
 		m_file.Free();
 		m_renderer.Free();
 
-		try
-		{
+		try {
 			m_file.Attach(DNew SubtitleFile());
 			m_file->Parse(s);
 			m_renderer.Attach(DNew Renderer());
 			m_name = name;
 			return true;
-		}
-		catch(Exception& e)
-		{
+		} catch(Exception& e) {
 			UNREFERENCED_PARAMETER(e);
 			TRACE(_T("%s\n"), e.ToString());
 		}
@@ -99,14 +93,13 @@ namespace ssf
 
 	void CRenderer::Append(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, LPCWSTR str)
 	{
-		if(!m_file) return;
-
-		try
-		{
-			m_file->Append(ssf::WCharInputStream(str), (float)rtStart / 10000000, (float)rtStop / 10000000);
+		if(!m_file) {
+			return;
 		}
-		catch(Exception& e)
-		{
+
+		try {
+			m_file->Append(ssf::WCharInputStream(str), (float)rtStart / 10000000, (float)rtStop / 10000000);
+		} catch(Exception& e) {
 			UNREFERENCED_PARAMETER(e);
 			TRACE(_T("%s\n"), e.ToString());
 		}
@@ -117,7 +110,7 @@ namespace ssf
 		CheckPointer(ppv, E_POINTER);
 		*ppv = NULL;
 
-		return 
+		return
 			QI(IPersist)
 			QI(ISubStream)
 			QI(ISubPicProvider)
@@ -162,9 +155,11 @@ namespace ssf
 	STDMETHODIMP CRenderer::Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox)
 	{
 		CheckPointer(m_file, E_UNEXPECTED);
-		CheckPointer(m_renderer, E_UNEXPECTED);	
+		CheckPointer(m_renderer, E_UNEXPECTED);
 
-		if(spd.type != MSP_RGB32) return E_INVALIDARG;
+		if(spd.type != MSP_RGB32) {
+			return E_INVALIDARG;
+		}
 
 		CAutoLock csAutoLock(m_pLock);
 
@@ -177,11 +172,12 @@ namespace ssf
 		m_renderer->NextSegment(subs);
 
 		POSITION pos = subs.GetHeadPosition();
-		while(pos)
-		{
+		while(pos) {
 			const Subtitle* s = subs.GetNext(pos);
 			const RenderedSubtitle* rs = m_renderer->Lookup(s, CSize(spd.w, spd.h), spd.vidrect);
-			if(rs) bbox2 |= rs->Draw(spd);
+			if(rs) {
+				bbox2 |= rs->Draw(spd);
+			}
 		}
 
 		bbox = bbox2 & CRect(0, 0, spd.w, spd.h);
@@ -205,19 +201,20 @@ namespace ssf
 
 	STDMETHODIMP CRenderer::GetStreamInfo(int iStream, WCHAR** ppName, LCID* pLCID)
 	{
-		if(iStream != 0) return E_INVALIDARG;
+		if(iStream != 0) {
+			return E_INVALIDARG;
+		}
 
-		if(ppName)
-		{
+		if(ppName) {
 			*ppName = (WCHAR*)CoTaskMemAlloc((m_name.GetLength()+1)*sizeof(WCHAR));
-			if(!(*ppName))
+			if(!(*ppName)) {
 				return E_OUTOFMEMORY;
+			}
 
 			wcscpy(*ppName, CStringW(m_name));
 		}
 
-		if(pLCID)
-		{
+		if(pLCID) {
 			*pLCID = 0; // TODO
 		}
 

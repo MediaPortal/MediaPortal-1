@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -13,6 +14,11 @@
     </Win32Resource>
     <ApplicationIcon>images\icon.mpConfig.ico</ApplicationIcon>
     <ApplicationManifest>SetupTv.exe.manifest</ApplicationManifest>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +76,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -85,6 +94,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Dialogs\FormAnalogTuningDetail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -175,6 +187,7 @@
     <Compile Include="Dialogs\GroupSelectionForm.designer.cs">
       <DependentUpon>GroupSelectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\DebugOptions.cs">
       <SubType>UserControl</SubType>
@@ -200,6 +213,13 @@
     </Compile>
     <Compile Include="Sections\Epg.Designer.cs">
       <DependentUpon>Epg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\Helpers\ChannelListViewHandler.cs" />
+    <Compile Include="Sections\TestChannels.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TestChannels.Designer.cs">
+      <DependentUpon>TestChannels.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvTimeshifting.cs">
       <SubType>UserControl</SubType>
@@ -488,6 +508,10 @@
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
@@ -639,6 +663,8 @@
     <EmbeddedResource Include="40_upgrade_sqlserver_database.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="60_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="60_upgrade_sqlserver_database.sql" />
     <Content Include="images\animation.SatDish.gif" />
     <Content Include="images\icon.card.gif" />
     <Content Include="images\icon.computer.gif" />
@@ -684,6 +710,9 @@
       <DependentUpon>Epg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TestChannels.resx">
+      <DependentUpon>TestChannels.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -696,6 +725,20 @@
     <EmbeddedResource Include="51_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="52_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="52_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="53_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="53_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="54_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="54_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="55_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="55_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="56_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="56_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="57_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="57_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="58_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="58_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="59_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="59_upgrade_sqlserver_database.sql" />
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />

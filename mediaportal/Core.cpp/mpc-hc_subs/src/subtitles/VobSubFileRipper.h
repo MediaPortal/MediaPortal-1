@@ -1,20 +1,22 @@
-/* 
- *	Copyright (C) 2003-2006 Gabest
- *	http://www.gabest.org
+/*
+ *  $Id: VobSubFileRipper.h 2786 2010-12-17 16:42:55Z XhmikosR $
+ *
+ *  (C) 2003-2006 Gabest
+ *  (C) 2006-2010 see AUTHORS
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -22,14 +24,13 @@
 #pragma once
 
 #include <atlcoll.h>
-#include "../decss/VobFile.h"
+#include "../DeCSS/VobFile.h"
 #include "VobSubFile.h"
 
 #pragma pack(push)
 #pragma pack(1)
 
-typedef struct
-{
+typedef struct {
 	WORD perm_displ       : 2;
 	WORD ratio            : 2;
 	WORD system           : 2;
@@ -42,17 +43,15 @@ typedef struct
 	WORD line21_1         : 1;
 } vidinfo;
 
-typedef struct 
-{
-	BYTE vob, cell; 
-	DWORD tTime, tOffset, tTotal; 
+typedef struct {
+	BYTE vob, cell;
+	DWORD tTime, tOffset, tTotal;
 	DWORD start, end;
-	int iAngle; 
+	int iAngle;
 	bool fDiscontinuity;
 } vc_t;
 
-typedef struct 
-{
+typedef struct {
 	int nAngles;
 	CAtlArray<vc_t> angles[10];
 	int iSelAngle;
@@ -60,8 +59,7 @@ typedef struct
 	WORD ids[32];
 } PGC;
 
-typedef struct VSFRipperData_t
-{
+typedef struct VSFRipperData_t {
 	CSize vidsize;
 	vidinfo vidinfo;
 	CAtlArray<PGC> pgcs;
@@ -79,10 +77,9 @@ typedef struct VSFRipperData_t
 
 } VSFRipperData;
 
-typedef struct
-{
-    __int64 start, end;
-    DWORD vc;
+typedef struct {
+	__int64 start, end;
+	DWORD vc;
 } vcchunk;
 
 #pragma pack(pop)
@@ -94,8 +91,8 @@ typedef struct
 //
 
 interface __declspec(uuid("9E2EBB5C-AD7C-452f-A48B-38685716AC46"))
-IVSFRipperCallback : public IUnknown
-{
+IVSFRipperCallback :
+public IUnknown {
 	STDMETHOD (OnMessage) (LPCTSTR msg) PURE;
 	STDMETHOD (OnProgress) (double progress /*0->1*/) PURE;
 	STDMETHOD (OnFinished) (bool fSucceeded) PURE;
@@ -111,17 +108,22 @@ class IVSFRipperCallbackImpl : public CUnknown, public IVSFRipperCallback
 {
 protected:
 	DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv)
-	{
-		return 
+	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv) {
+		return
 			QI(IVSFRipperCallback)
 			__super::NonDelegatingQueryInterface(riid, ppv);
 	}
 
 	// IVSFRipperCallback
-	STDMETHODIMP OnMessage(LPCTSTR msg) {return S_FALSE;}
-	STDMETHODIMP OnProgress(double progress /*0->1*/) {return S_FALSE;}
-	STDMETHODIMP OnFinished(bool fSucceeded) {return S_FALSE;}
+	STDMETHODIMP OnMessage(LPCTSTR msg) {
+		return S_FALSE;
+	}
+	STDMETHODIMP OnProgress(double progress /*0->1*/) {
+		return S_FALSE;
+	}
+	STDMETHODIMP OnFinished(bool fSucceeded) {
+		return S_FALSE;
+	}
 
 public:
 	IVSFRipperCallbackImpl() : CUnknown(NAME("IVSFRipperCallbackImpl"), NULL) {}
@@ -132,8 +134,8 @@ public:
 //
 
 interface __declspec(uuid("69F935BB-B8D0-43f5-AA2E-BBD0851CC9A6"))
-IVSFRipper : public IUnknown
-{
+IVSFRipper :
+public IUnknown {
 	STDMETHOD (SetCallBack) (IVSFRipperCallback* pCallback) PURE;
 	STDMETHOD (LoadParamFile) (CString fn) PURE;
 	STDMETHOD (SetInput) (CString infn) PURE;
@@ -178,11 +180,11 @@ private:
 	CComPtr<IVSFRipperCallback> m_pCallback;
 
 public:
-    CVobSubFileRipper();
-    virtual ~CVobSubFileRipper();
+	CVobSubFileRipper();
+	virtual ~CVobSubFileRipper();
 
 	DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
+	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
 
 	// IVSFRipper
 	STDMETHODIMP SetCallBack(IVSFRipperCallback* pCallback);

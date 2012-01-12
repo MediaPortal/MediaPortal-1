@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ namespace TvService
     private Recording _recording;
     private readonly bool _isSerie;
     private User _user;
+
     #endregion
 
     #region ctor
@@ -63,7 +64,7 @@ namespace TvService
       User.Name = string.Format("scheduler{0}", schedule.IdSchedule);
       User.CardId = -1;
       User.SubChannel = -1;
-      User.IsAdmin = true;      
+      User.IsAdmin = true;
 
       _schedule = schedule;
       _channel = channel;
@@ -177,7 +178,7 @@ namespace TvService
 
         try
         {
-          Schedule _sched = Schedule.Retrieve((int)_schedule.IdSchedule);// Refresh();
+          Schedule _sched = Schedule.Retrieve((int)_schedule.IdSchedule); // Refresh();
           if (_sched != null)
           {
             isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.PostRecordInterval));
@@ -185,9 +186,9 @@ namespace TvService
         }
         catch (Exception e)
         {
-          Log.Error("RecordingDetail: exception occured {0}", e);            
+          Log.Error("RecordingDetail: exception occured {0}", e);
         }
-        
+
         return isRecording;
       }
     }
@@ -200,7 +201,7 @@ namespace TvService
       get { return _isSerie; }
     }
 
-    public User User
+    public IUser User
     {
       get { return _user; }
     }
@@ -218,7 +219,7 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
 
       Setting setting;
-      if (!this.IsSerie)
+      if (!IsSerie)
       {
         Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
         setting = layer.GetSetting("moviesformat", "%title%");
@@ -265,16 +266,16 @@ namespace TvService
                             "%endmm%"
                           };
       string[] TagValues = {
-                             _schedule.ReferencedChannel().DisplayName,
-                             Program.Title,
-                             Program.EpisodeName,
-                             Program.SeriesNum,
-                             Program.EpisodeNum,
-                             Program.EpisodePart,
+                             _schedule.ReferencedChannel().DisplayName.Trim(),
+                             Program.Title.Trim(),
+                             Program.EpisodeName.Trim(),
+                             Program.SeriesNum.Trim(),
+                             Program.EpisodeNum.Trim(),
+                             Program.EpisodePart.Trim(),
                              Program.StartTime.ToString("yyyy-MM-dd"),
                              Program.StartTime.ToShortTimeString(),
                              Program.EndTime.ToShortTimeString(),
-                             Program.Genre,
+                             Program.Genre.Trim(),
                              Program.StartTime.ToString("dd"),
                              Program.StartTime.ToString("MM"),
                              Program.StartTime.ToString("yyyy"),

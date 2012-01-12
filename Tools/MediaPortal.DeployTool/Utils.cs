@@ -1,24 +1,21 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
 #endregion
 
 using System;
@@ -37,11 +34,13 @@ namespace MediaPortal.DeployTool
   {
     public string nativeName;
     public string name;
+
     public SimpleCultureInfo(string name, string nativeName)
     {
       this.name = name;
       this.nativeName = nativeName;
     }
+
     public override string ToString()
     {
       return nativeName;
@@ -51,24 +50,26 @@ namespace MediaPortal.DeployTool
   public sealed class Localizer
   {
     #region Singleton implementation
-    static readonly Localizer _instance = new Localizer();
 
-    Localizer()
+    private static readonly Localizer _instance = new Localizer();
+
+    private Localizer()
     {
-      _rscMan = new ResourceManager("MediaPortal.DeployTool.MediaPortal.DeployTool", System.Reflection.Assembly.GetExecutingAssembly());
+      _rscMan = new ResourceManager("MediaPortal.DeployTool.MediaPortal.DeployTool",
+                                    System.Reflection.Assembly.GetExecutingAssembly());
     }
 
     public static Localizer Instance
     {
-      get
-      {
-        return _instance;
-      }
+      get { return _instance; }
     }
+
     #endregion
 
     #region Variables
+
     private readonly ResourceManager _rscMan;
+
     #endregion
 
     public string GetString(string id)
@@ -91,10 +92,9 @@ namespace MediaPortal.DeployTool
       string _translation = Instance.GetString(ID);
       return _translation.Length > 0 ? _translation : Instance.GetDefaultString(ID);
     }
-
   }
 
-  class Utils
+  internal class Utils
   {
     #region DialogHelper
 
@@ -128,7 +128,8 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        MessageBox.Show(Localizer.GetBestTranslation("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        MessageBox.Show(Localizer.GetBestTranslation("DownloadSettings_failed"), XmlUrl, MessageBoxButtons.OK,
+                        MessageBoxIcon.Stop);
         File.Delete(XmlFile);
         Environment.Exit(-2);
       }
@@ -142,7 +143,8 @@ namespace MediaPortal.DeployTool
       if (GetDownloadString(prg, "TYPE") == "Manual")
       {
         ManualDownload dlg = new ManualDownload();
-        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName), Application.StartupPath + "\\deploy");
+        result = dlg.ShowDialog(GetDownloadString(prg, "URL"), Path.GetFileName(FileName),
+                                Application.StartupPath + "\\deploy");
       }
       else
       {
@@ -267,20 +269,26 @@ namespace MediaPortal.DeployTool
       CheckResult result = new CheckResult();
       result.state = CheckState.NOT_INSTALLED;
 
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      RegistryKey key =
+        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
-        string version = (string)key.GetValue("DisplayVersion", null);
+        int major = (int)key.GetValue("VersionMajor", 0);
+        int minor = (int)key.GetValue("VersionMinor", 0);
+        int revision = (int)key.GetValue("VersionRevision", 0);
         key.Close();
 
+        Version ver = new Version(major, minor, revision);
+
 #if DEBUG
-        MessageBox.Show("Registry version = <" + version + ">, DeployTool display version = <" + GetDisplayVersion() + ">, IsInstalled=" + _IsInstalled);
+        MessageBox.Show("Registry version = <" + ver + ">, IsUpdatable= " + IsPackageUpdatabled(ver) + ", IsInstalled=" + _IsInstalled,
+          "Debug information: " +  MementoSection, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
 
         if (_IsInstalled == 1)
         {
-          result.state = version == GetDisplayVersion() ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+          result.state = IsPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
         }
         else
         {
@@ -336,10 +344,10 @@ namespace MediaPortal.DeployTool
     {
       try
       {
-
         if (Directory.GetCurrentDirectory().StartsWith("\\"))
         {
-          MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+          MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK,
+                          MessageBoxIcon.Stop);
           return false;
         }
         FileInfo file = new FileInfo(Application.ExecutablePath);
@@ -348,7 +356,8 @@ namespace MediaPortal.DeployTool
         {
           if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
           {
-            MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK,
+                            MessageBoxIcon.Stop);
             return false;
           }
         }
@@ -356,14 +365,15 @@ namespace MediaPortal.DeployTool
       }
       catch
       {
-        MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.",
+                        Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
         return false;
       }
     }
 
     #endregion
 
-    #region Autorun
+    #region NotifyReboot
 
     public static bool AutoRunApplication(string action)
     {
@@ -391,9 +401,24 @@ namespace MediaPortal.DeployTool
       return true;
     }
 
+    public static void NotifyReboot(string DisplayName)
+    {
+      // Write Run registry key
+      Utils.AutoRunApplication("set");
+
+      // Notify about the needed reboot
+      MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), DisplayName, MessageBoxButtons.OK,
+                      MessageBoxIcon.Exclamation);
+
+      //Close DeployTool
+      Environment.Exit(-3);
+
+    }
+
     #endregion
 
     #region Operation System Version Check
+
     public static void CheckPrerequisites()
     {
       DialogResult res;
@@ -401,29 +426,34 @@ namespace MediaPortal.DeployTool
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case OSInfo.OSInfo.OsSupport.Blocked:
-          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), OSInfo.OSInfo.GetOSDisplayVersion(),
+                          MessageBoxButtons.OK, MessageBoxIcon.Error);
           Application.Exit();
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
-          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), OSInfo.OSInfo.GetOSDisplayVersion(),
+                                MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
       }
       if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), OSInfo.OSInfo.GetOSDisplayVersion(),
+                              MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
+
     #endregion
 
     #region IsWow64 check
+
     [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool IsWow64Process(
-         [In] IntPtr hProcess,
-         [Out] out bool lpSystemInfo
-         );
+      [In] IntPtr hProcess,
+      [Out] out bool lpSystemInfo
+      );
 
     public static bool Check64bit()
     {
@@ -443,9 +473,11 @@ namespace MediaPortal.DeployTool
       }
       return isWow64;
     }
+
     #endregion
 
     #region Aero check
+
     [DllImport("dwmapi.dll")]
     public static extern int DwmIsCompositionEnabled(ref int pfEnabled);
 
@@ -462,11 +494,13 @@ namespace MediaPortal.DeployTool
       }
       return (enabled == 1);
     }
+
     #endregion
 
     #region Logging
 
-    private static readonly string _filePath = Application.StartupPath + "\\deploy\\DeployTool-" + DateTime.Now.ToString("dd-MM-yyyy HH_mm") + ".log";
+    private static readonly string _filePath = Application.StartupPath + "\\deploy\\DeployTool-" +
+                                               DateTime.Now.ToString("dd-MM-yyyy HH_mm") + ".log";
 
     public void Log(string message)
     {
@@ -491,11 +525,7 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    #region Version checks
-    public static int CalculateVersion(int major, int minor, int revision)
-    {
-      return major * 100 + minor * 10 + revision;
-    }
+    #region Version & Registry checks
 
     public static bool IsOfficialBuild(string build)
     {
@@ -506,7 +536,7 @@ namespace MediaPortal.DeployTool
       return (build == "0" || build == "25546");
     }
 
-    public static int GetPackageVersion(string type)
+    public static Version GetPackageVersion(string type)
     {
       int major = 0;
       int minor = 0;
@@ -517,21 +547,64 @@ namespace MediaPortal.DeployTool
         case "min":
           major = 1;
           minor = 0;
-          revision = 5;         // 1.0.5 = RC1
+          revision = 5; // 1.0.5 = 1.1.0 RC1
           break;
         case "max":
           major = 1;
           minor = 1;
-          revision = 0;         // 1.1.0 = final
+          revision = 8; // 1.1.8 = 1.2.0 RC1
           break;
       }
-      return CalculateVersion(major, minor, revision);
+      Version ver = new Version(major, minor, revision);
+      return ver;
+    }
+
+    public static bool IsPackageUpdatabled(Version pkgVer)
+    {
+      if (pkgVer.CompareTo(GetPackageVersion("min")) >= 0 &&
+          pkgVer.CompareTo(GetPackageVersion("max")) <= 0)
+      {
+        return true;
+      }
+      return false;
+    }
+
+    public static string PathFromRegistry(string regkey)
+    {
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      string Tv3Path = null;
+
+      if (key != null)
+      {
+        Tv3Path = (string)key.GetValue("UninstallString");
+        key.Close();
+
+      }
+      return Tv3Path;
+    }
+
+    public static Version VersionFromRegistry(string regkey)
+    {
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      int major = 0;
+      int minor = 0;
+      int revision = 0;
+
+      if (key != null)
+      {
+        major = (int)key.GetValue("VersionMajor", 0);
+        minor = (int)key.GetValue("VersionMinor", 0);
+        revision = (int)key.GetValue("VersionRevision", 0);
+        key.Close();
+      }
+      return new Version(major, minor, revision);
     }
 
     public static string GetDisplayVersion()
     {
       return "1.2.0";
     }
+
     #endregion
   }
 }

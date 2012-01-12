@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Profile;
 
 // used for Keys definition
 // used for loopDelay
@@ -51,37 +52,122 @@ namespace MediaPortal.GUI.Library
       SEARCH_NEXT
     } ;
 
-    [XMLSkinElement("spaceBetweenItems")]
-    protected int _spaceBetweenItems = 2;
-    protected int _offset = 0;
-    protected int _itemsPerPage = 10;
-    protected int _lastItemPageValue = 0;
+    #region Events
 
-    [XMLSkinElement("textureHeight")]
-    protected int _itemHeight = 10;
-    protected ListType _listType = ListType.CONTROL_LIST;
-    protected int _cursorX = 0;
-    [XMLSkinElement("textXOff")]
-    protected int _textOffsetX;
-    [XMLSkinElement("textYOff")]
-    protected int _textOffsetY;
-    [XMLSkinElement("textXOff2")]
-    protected int _textOffsetX2;
-    [XMLSkinElement("textYOff2")]
-    protected int _textOffsetY2;
-    [XMLSkinElement("textXOff3")]
-    protected int _textOffsetX3;
-    [XMLSkinElement("textYOff3")]
-    protected int _textOffsetY3;
+    public delegate string GetScrollLabelDelegate(GUIListItem item);
 
-    [XMLSkinElement("itemWidth")]
-    protected int _imageWidth = 16;
-    [XMLSkinElement("itemHeight")]
-    protected int _imageHeight = 16;
+    public event GetScrollLabelDelegate GetScrollLabel;
 
-    protected bool _upDownControlVisible = true;
-    [XMLSkinElement("textalign")]
-    protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    #endregion
+
+    [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
+
+    [XMLSkinElement("textureHeight")] protected int _itemHeight = 10;
+
+    [XMLSkinElement("textXOff")] protected int _textOffsetX;
+    [XMLSkinElement("textYOff")] protected int _textOffsetY;
+    [XMLSkinElement("textXOff2")] protected int _textOffsetX2;
+    [XMLSkinElement("textYOff2")] protected int _textOffsetY2;
+    [XMLSkinElement("textXOff3")] protected int _textOffsetX3;
+    [XMLSkinElement("textYOff3")] protected int _textOffsetY3;
+
+    [XMLSkinElement("itemWidth")] protected int _imageWidth = 16;
+    [XMLSkinElement("itemHeight")] protected int _imageHeight = 16;
+
+    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textalign3")] protected Alignment _text3Alignment = Alignment.ALIGN_LEFT;
+
+    [XMLSkinElement("textcontent3")] protected string _text3Content = string.Empty;
+
+    [XMLSkinElement("remoteColor")] protected long _remoteColor = 0xffff0000;
+    [XMLSkinElement("playedColor")] protected long _playedColor = 0xffa0d0ff;
+    [XMLSkinElement("downloadColor")] protected long _downloadColor = 0xff00ff00;
+    [XMLSkinElement("shadedColor")] protected long _shadedColor = 0x20ffffff;
+    [XMLSkinElement("textvisible1")] protected bool _text1Visible = true;
+    [XMLSkinElement("textvisible2")] protected bool _text2Visible = true;
+    [XMLSkinElement("textvisible3")] protected bool _text3Visible = true;
+    [XMLSkinElement("PinIconXOff")] protected int _xOffsetPinIcon = 100;
+    [XMLSkinElement("PinIconYOff")] protected int _yOffsetPinIcon = 10;
+    [XMLSkinElement("PinIconWidth")] protected int _widthPinIcon = 0;
+    [XMLSkinElement("PinIconHeight")] protected int _heightPinIcon = 0;
+
+    [XMLSkinElement("IconXOff")] protected int _iconOffsetX = 8;
+    [XMLSkinElement("IconYOff")] protected int _iconOffsetY = 5;
+
+    // this is the offset from the first or last element on screen when scrolling should start
+    [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
+
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
+
+    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
+
+    [XMLSkinElement("suffix")] protected string _suffix = "|";
+    [XMLSkinElement("font")] protected string _fontName = "";
+    [XMLSkinElement("font2")] protected string _fontName2Name = "";
+    [XMLSkinElement("font3")] protected string _fontName3Name = "";
+    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor3")] protected long _textColor3 = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor2")] protected long _selectedColor2 = 0xFFFFFFFF;
+    [XMLSkinElement("selectedColor3")] protected long _selectedColor3 = 0xFFFFFFFF;
+
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+
+    [XMLSkinElement("folderPrefix")] protected string _folderPrefix = "[";
+    [XMLSkinElement("folderSuffix")] protected string _folderSuffix = "]";
+
+    [XMLSkinElement("textureUp")] protected string _upTextureName = "";
+    [XMLSkinElement("textureDown")] protected string _downTextureName = "";
+    [XMLSkinElement("textureUpFocus")] protected string _upTextureNameFocus = "";
+    [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = "";
+    [XMLSkinElement("textureNoFocus")] protected string _buttonNonFocusName = "";
+    [XMLSkinElement("textureFocus")] protected string _buttonFocusName = "";
+    [XMLSkinElement("scrollbarwidth")] protected int _scrollbarWidth = 15;
+    [XMLSkinElement("scrollbarXOff")] protected int _scrollbarXOff = 0;
+
+    [XMLSkin("textureNoFocus", "border")] protected string _strBorderBNF = "";
+
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionBNF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatBNF = false;
+    [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateBNF = false;
+    [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameBNF = "image_border.png";
+    [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyBNF = 0xFFFFFFFF;
+    [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersBNF = false;
+    [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBNF = true;
+
+    [XMLSkin("textureFocus", "border")] protected string _strBorderBF = "";
+
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionBF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatBF = false;
+    [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateBF = false;
+    [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameBF = "image_border.png";
+    [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyBF = 0xFFFFFFFF;
+    [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersBF = false;
+    [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBF = true;
+
+    [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = "";
+    [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = "";
+    [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = "";
+
+    [XMLSkinElement("spinColor")] protected long _spinControlColor;
+    [XMLSkinElement("spinAlign")] protected Alignment _spinControlAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("spinHeight")] protected int _spinControlHeight;
+    [XMLSkinElement("spinWidth")] protected int _spinControlWidth;
+    [XMLSkinElement("spinPosX")] protected int _spinControlPositionX;
+    [XMLSkinElement("spinPosY")] protected int _spinControlPositionY;
+
+    [XMLSkinElement("unfocusedAlpha")] protected int _unfocusedAlpha = 0xFF;
+
+    [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
+
+    [XMLSkinElement("explicitlyEnableScrollLabel")] protected bool _explicitlyEnableScrollLabel = false;
 
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
@@ -95,37 +181,19 @@ namespace MediaPortal.GUI.Library
     protected List<GUILabelControl> _labelControls2 = new List<GUILabelControl>();
     protected List<GUILabelControl> _labelControls3 = new List<GUILabelControl>();
 
-    [XMLSkinElement("remoteColor")]
-    protected long _remoteColor = 0xffff0000;
-    [XMLSkinElement("playedColor")]
-    protected long _playedColor = 0xffa0d0ff;
-    [XMLSkinElement("downloadColor")]
-    protected long _downloadColor = 0xff00ff00;
-    [XMLSkinElement("shadedColor")]
-    protected long _shadedColor = 0x20ffffff;
-    [XMLSkinElement("textvisible1")]
-    protected bool _text1Visible = true;
-    [XMLSkinElement("textvisible2")]
-    protected bool _text2Visible = true;
-    [XMLSkinElement("textvisible3")]
-    protected bool _text3Visible = true;
-    [XMLSkinElement("PinIconXOff")]
-    protected int _xOffsetPinIcon = 100;
-    [XMLSkinElement("PinIconYOff")]
-    protected int _yOffsetPinIcon = 10;
-    [XMLSkinElement("PinIconWidth")]
-    protected int _widthPinIcon = 0;
-    [XMLSkinElement("PinIconHeight")]
-    protected int _heightPinIcon = 0;
+    protected int _offset = 0;
+    protected int _itemsPerPage = 10;
+    protected int _lastItemPageValue = 0;
+
+    protected ListType _listType = ListType.CONTROL_LIST;
+    protected int _cursorX = 0;
+
+    protected bool _upDownControlVisible = true;
 
     protected bool _refresh = false;
     protected string _textLine;
     protected string _textLine2;
     protected string _brackedText;
-    [XMLSkinElement("IconXOff")]
-    protected int _iconOffsetX = 8;
-    [XMLSkinElement("IconYOff")]
-    protected int _iconOffsetY = 5;
 
     protected int _scrollPosition = 0;
     protected int _scrollPosititionX = 0;
@@ -133,108 +201,11 @@ namespace MediaPortal.GUI.Library
 
     protected double _scrollOffsetX = 0.0f;
     protected double _timeElapsed = 0.0f;
-    protected bool _scrollContinuosly = false;
+    protected bool _scrollContinuously = false;
 
-    [XMLSkinElement("scrollOffset")]
-    protected int _scrollStartOffset = 0;
-    // this is the offset from the first or last element on screen when scrolling should start
-
-    [XMLSkinElement("scrollStartDelaySec")]
-    protected int _scrollStartDelay = 1;
-    protected int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
-    protected double _lastCommandTime = 0;
-
-    [XMLSkinElement("keepaspectratio")]
-    protected bool _keepAspectRatio = false;
     protected bool _drawFocus = true;
-    [XMLSkinElement("suffix")]
-    protected string _suffix = "|";
-    [XMLSkinElement("font")]
-    protected string _fontName = "";
-    [XMLSkinElement("font2")]
-    protected string _fontName2Name = "";
-    [XMLSkinElement("font3")]
-    protected string _fontName3Name = "";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")]
-    protected long _textColor2 = 0xFFFFFFFF;
-    [XMLSkinElement("textcolor3")]
-    protected long _textColor3 = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor")]
-    protected long _selectedColor = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor2")]
-    protected long _selectedColor2 = 0xFFFFFFFF;
-    [XMLSkinElement("selectedColor3")]
-    protected long _selectedColor3 = 0xFFFFFFFF;
-
-    [XMLSkinElement("shadowAngle")]
-    protected int _shadowAngle = 0;
-    [XMLSkinElement("shadowDistance")]
-    protected int _shadowDistance = 0;
-    [XMLSkinElement("shadowColor")]
-    protected long _shadowColor = 0xFF000000;
-
-    [XMLSkinElement("folderPrefix")]
-    protected string _folderPrefix = "[";
-    [XMLSkinElement("folderSuffix")]
-    protected string _folderSuffix = "]";
-
-    [XMLSkinElement("textureUp")]
-    protected string _upTextureName = "";
-    [XMLSkinElement("textureDown")]
-    protected string _downTextureName = "";
-    [XMLSkinElement("textureUpFocus")]
-    protected string _upTextureNameFocus = "";
-    [XMLSkinElement("textureDownFocus")]
-    protected string _downTextureNameFocus = "";
-    [XMLSkinElement("textureNoFocus")]
-    protected string _buttonNonFocusName = "";
-    [XMLSkinElement("textureFocus")]
-    protected string _buttonFocusName = "";
-
-    [XMLSkin("textureNoFocus", "border")] protected string _strBorderBNF = "";
-    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionBNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-    [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatBNF = false;
-    [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateBNF = false;
-    [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameBNF = "image_border.png";
-    [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyBNF = 0xFFFFFFFF;
-    [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersBNF = false;
-    [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBNF = true;
-
-    [XMLSkin("textureFocus", "border")] protected string _strBorderBF = "";
-    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionBF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-    [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatBF = false;
-    [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateBF = false;
-    [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameBF = "image_border.png";
-    [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyBF = 0xFFFFFFFF;
-    [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersBF = false;
-    [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBF = true;
-
-
-
-    [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = "";
-
-    [XMLSkinElement("spinColor")]
-    protected long _spinControlColor;
-    [XMLSkinElement("spinAlign")]
-    protected Alignment _spinControlAlignment = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("spinHeight")]
-    protected int _spinControlHeight;
-    [XMLSkinElement("spinWidth")]
-    protected int _spinControlWidth;
-    [XMLSkinElement("spinPosX")]
-    protected int _spinControlPositionX;
-    [XMLSkinElement("spinPosY")]
-    protected int _spinControlPositionY;
-
-    [XMLSkinElement("unfocusedAlpha")]
-    protected int _unfocusedAlpha = 0xFF;
-
-    [XMLSkinElement("spinCanFocus")]
-    protected bool _spinCanFocus = true;
+    protected double _lastCommandTime = 0;
+    protected int _loopDelay = 0;
 
     private bool _wordWrapping = false;
     private int _frameLimiter = 1;
@@ -244,9 +215,16 @@ namespace MediaPortal.GUI.Library
     private char _previousKey = (char)0;
     protected string _searchString = "";
     protected int _lastSearchItem = 0;
+    protected bool _enableSMSsearch = true;
+    protected bool _enableScrollLabel = false;
+
+    private DateTime _scrollTimer = DateTime.Now;
+    private int _scrollCounter = 0;
+    private const int _scrollCounterLimit = 3;
+    protected string _scrollDirection = "";
 
     public GUIListControl(int dwParentID)
-      : base(dwParentID) { }
+      : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUIListControl.
@@ -339,12 +317,18 @@ namespace MediaPortal.GUI.Library
       _upDownControl.ParentControl = this;
       _upDownControl.DimColor = DimColor;
 
-      _verticalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height,
+      _verticalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width + _scrollbarXOff, _positionY,
+                                                    _scrollbarWidth, _height,
                                                     _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _verticalScrollbar.ParentControl = this;
       _verticalScrollbar.SendNotifies = false;
       _verticalScrollbar.DimColor = DimColor;
       _upDownControl.WindowId = WindowId;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 100);
+      }
     }
 
     public override void ScaleToScreenResolution()
@@ -603,6 +587,23 @@ namespace MediaPortal.GUI.Library
 
     protected virtual void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
     {
+      GUIListItem scrollItem = SelectedListItem;
+      if ((_explicitlyEnableScrollLabel || _enableScrollLabel) && ScrollLabelIsScrolling && scrollItem != null)
+      {
+        string scrollLabel = string.Empty;
+        if (GetScrollLabel != null)
+          scrollLabel = GetScrollLabel(scrollItem);
+        else if (scrollItem.Label != null && scrollItem.Label.Length > 0)
+          scrollLabel = scrollItem.Label.Substring(0, 1).ToUpper();
+        if (string.IsNullOrEmpty(scrollLabel))
+          scrollLabel = " ";
+        GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", scrollLabel);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", " ");
+      }
+
       GUIListItem pItem = _listItems[buttonNr + _offset];
       long dwColor = _textColor;
       if (pItem.Shaded)
@@ -796,7 +797,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      if (pItem.Label3.Length > 0)
+      if (pItem.Label3.Length > 0 || !string.IsNullOrEmpty(_text3Content))
       {
         dwColor = _textColor3;
 
@@ -861,7 +862,9 @@ namespace MediaPortal.GUI.Library
               label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
             }
             label3.Label = pItem.Label3;
-            label3.TextAlignment = Alignment.ALIGN_LEFT;
+            if (!string.IsNullOrEmpty(_text3Content))
+              label3.Label = SetLabel(_text3Content, pItem);
+            label3.TextAlignment = _text3Alignment;
             label3.FontName = _fontName3Name;
             label3.Width = (_width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34));
 
@@ -871,6 +874,62 @@ namespace MediaPortal.GUI.Library
         }
       }
       pItem = null;
+    }
+
+    private string SetLabel(string textContent, GUIListItem item)
+    {
+      string label = string.Empty;
+      switch (textContent.ToLowerInvariant())
+      {
+        case "#selectedindex":
+          if (item.Label == "..")
+            label = string.Empty;
+          else
+          {
+            int index = _listItems.IndexOf(item);
+            if (_listItems[0].Label != "..")
+              index++;
+            label = index.ToString();
+          }
+          break;
+
+        case "#selecteditem":
+          label = item.Label;
+          break;
+
+        case "#selecteditem2":
+          label = item.Label2;
+          break;
+
+          /*case "#itemcount":
+          label = GUIPropertyManager.GetProperty("#itemcount");
+          break;
+
+        case "#selectedthumb":
+          label = item.ThumbnailImage;
+          break;*/
+
+        case "#rating":
+          label = item.Rating.ToString();
+          break;
+
+        case "#duration":
+          label = MediaPortal.Util.Utils.SecondsToHMSString(item.Duration);
+          break;
+
+        case "#shortduration":
+          label = MediaPortal.Util.Utils.SecondsToShortHMSString(item.Duration);
+          break;
+
+        case "#dvdlabel":
+          label = item.DVDLabel;
+          break;
+
+        case "#year":
+          label = item.Year.ToString();
+          break;
+      }
+      return label;
     }
 
     /// <summary>
@@ -969,7 +1028,17 @@ namespace MediaPortal.GUI.Library
         } //if (i + _offset < _listItems.Count)
       } //for (int i = 0; i < _itemsPerPage; i++)
 
-      RenderScrollbar(timePassed, dwPosY);
+      RenderScrollbar(timePassed);
+
+      if ((_explicitlyEnableScrollLabel || _enableScrollLabel) && ScrollLabelIsScrolling)
+      {
+        GUIPropertyManager.SetProperty("#scrolling." + _scrollDirection, "yes");
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#scrolling.up", "no");
+        GUIPropertyManager.SetProperty("#scrolling.down", "no");
+      }
 
       if (Focus)
       {
@@ -980,26 +1049,24 @@ namespace MediaPortal.GUI.Library
 
     //public override void Render()
 
-    protected void RenderScrollbar(float timePassed, int y)
+    protected void RenderScrollbar(float timePassed)
     {
       if (_listItems.Count > _itemsPerPage)
       {
         // Render the spin control
         if (_upDownControlVisible)
         {
-          y = y + _itemsPerPage * (_itemHeight + _spaceBetweenItems) - _spaceBetweenItems - 5;
-          //_upDownControl.SetPosition(_upDownControl.XPosition,dwPosY+10);
           _upDownControl.Render(timePassed);
         }
 
         // Render the vertical scrollbar
         if (_verticalScrollbar != null)
         {
-          float fPercent = (float)_cursorX + _offset;
-          fPercent /= (float)(_listItems.Count);
-          fPercent *= 100.0f;
+          float fPercent = (float)SelectedListItemIndex / (float)(_listItems.Count - 1) * 100.0f;
+
           _verticalScrollbar.Height = _itemsPerPage * (_itemHeight + _spaceBetweenItems);
           _verticalScrollbar.Height -= _spaceBetweenItems;
+
           if ((int)fPercent != (int)_verticalScrollbar.Percentage)
           {
             _verticalScrollbar.Percentage = fPercent;
@@ -1141,16 +1208,13 @@ namespace MediaPortal.GUI.Library
         fPosCY = 0;
       }
 
-      Viewport newviewport, oldviewport;
-      newviewport = new Viewport();
-      oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-      newviewport.X = (int)fPosCX;
-      newviewport.Y = (int)fPosCY;
-      newviewport.Width = (int)(fwidth);
-      newviewport.Height = (int)(fHeight);
-      newviewport.MinZ = 0.0f;
-      newviewport.MaxZ = 1.0f;
-      GUIGraphicsContext.DX9Device.Viewport = newviewport;
+      Rectangle clipRect = new Rectangle();
+      clipRect.X = (int)fPosCX;
+      clipRect.Y = (int)fPosCY;
+      clipRect.Width = (int)(fwidth);
+      clipRect.Height = (int)(fHeight);
+      GUIGraphicsContext.BeginClip(clipRect);
+
       // scroll
       int iItem = _cursorX + _offset;
       _brackedText = strTextToRender;
@@ -1169,9 +1233,9 @@ namespace MediaPortal.GUI.Library
           _scrollPosititionX = 0;
           _scrollOffsetX = 0.0f;
           _timeElapsed = 0.0f;
-          _scrollContinuosly = false;
+          _scrollContinuously = false;
         }
-        if ((int)_timeElapsed > _scrollStartDelay || _scrollContinuosly)
+        if ((int)_timeElapsed > _scrollStartDelay || _scrollContinuously)
         {
           // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
           if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
@@ -1208,7 +1272,7 @@ namespace MediaPortal.GUI.Library
               _scrollPosititionX = 0;
               _scrollOffsetX = 0.0f;
               _timeElapsed = 0.0f;
-              _scrollContinuosly = true;
+              _scrollContinuously = true;
             }
             else
             {
@@ -1238,17 +1302,38 @@ namespace MediaPortal.GUI.Library
 
           if (fPosY >= 0.0)
           {
-            font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffsetX),
-                          fPosY, dwTextColor, _textLine2, Alignment.ALIGN_LEFT,
-                          (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffsetX));
+            long tc = GUIGraphicsContext.MergeAlpha((uint)dwTextColor);
+            long sc = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
+            if ((_shadowDistance > 0) && ((_shadowColor >> 24) > 0))
+            {
+              font.DrawShadowTextWidth((int)(fPosX - _scrollPosititionX + _scrollOffsetX),
+                            fPosY, tc, _textLine2, Alignment.ALIGN_LEFT,
+                            _shadowAngle, _shadowDistance, sc,
+                            (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffsetX));
+            }
+            else
+            {
+              font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffsetX),
+                            fPosY, tc, _textLine2, Alignment.ALIGN_LEFT,
+                            (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffsetX));
+            }
           }
         }
         else if (fPosY >= 0.0)
         {
-          font.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
+          long tc = GUIGraphicsContext.MergeAlpha((uint)dwTextColor);
+          long sc = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
+          if ((_shadowDistance > 0) && ((_shadowColor >> 24) > 0))
+          {
+            font.DrawShadowTextWidth(fPosX, fPosY, tc, strTextToRender, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, (int)(fMaxWidth - 50f));
+          }
+          else
+          {
+            font.DrawText(fPosX, fPosY, tc, strTextToRender, Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
+          }
         }
       }
-      GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+      GUIGraphicsContext.EndClip();
     }
 
     /// <summary>
@@ -1604,14 +1689,14 @@ namespace MediaPortal.GUI.Library
         {
           lock (GUIGraphicsContext.RenderLock)
           {
-          GUITextureManager.CleanupThumbs();
-          foreach (GUIListItem item in _listItems)
-          {
-            item.FreeMemory();
+            GUITextureManager.CleanupThumbs();
+            foreach (GUIListItem item in _listItems)
+            {
+              item.FreeMemory();
+            }
+            _refresh = true;
+            return true;
           }
-          _refresh = true;
-          return true;
-        }
         }
 
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
@@ -1627,8 +1712,8 @@ namespace MediaPortal.GUI.Library
         {
           lock (GUIGraphicsContext.RenderLock)
           {
-          Clear();
-        }
+            Clear();
+          }
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEMS)
         {
@@ -1825,6 +1910,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="Key"></param>
     private void Press(char Key)
     {
+      if (!_enableSMSsearch) return;
+
       // Check key timeout
       CheckTimer();
 
@@ -2149,8 +2236,8 @@ namespace MediaPortal.GUI.Library
     }
 
     protected virtual void ReleaseButtons()
-    {      
-      _listButtons.DisposeAndClear();      
+    {
+      _listButtons.DisposeAndClear();
     }
 
     /// <summary>
@@ -2221,19 +2308,19 @@ namespace MediaPortal.GUI.Library
     public override void Dispose()
     {
       base.Dispose();
-     
-    _font = null;
-    _font2 = null;
-    _font3 = null;
 
-    _upDownControl.SafeDispose();
-    _listButtons.DisposeAndClear();
-    _verticalScrollbar.SafeDispose();
+      _font = null;
+      _font2 = null;
+      _font3 = null;
 
-    _listItems.DisposeAndClear();
-    _labelControls1.DisposeAndClear();
-    _labelControls2.DisposeAndClear();
-    _labelControls3.DisposeAndClear();      
+      _upDownControl.SafeDispose();
+      _listButtons.DisposeAndClear();
+      _verticalScrollbar.SafeDispose();
+
+      _listItems.DisposeAndClear();
+      _labelControls1.DisposeAndClear();
+      _labelControls2.DisposeAndClear();
+      _labelControls3.DisposeAndClear();
     }
 
     /// <summary>
@@ -2326,11 +2413,15 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_UP;
       if (_listType == ListType.CONTROL_LIST)
       {
+        _scrollDirection = "up";
+        _scrollTimer = DateTime.Now;
+        _scrollCounter++;
         if ((_cursorX > _scrollStartOffset) || ((_cursorX > 0) && (_offset == 0)))
         {
           _cursorX--;
           _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
           OnSelectionChanged();
+          _lastCommandTime = AnimationTimer.TickCount;
         }
         else if (_cursorX <= _scrollStartOffset && _offset > 0)
         {
@@ -2345,6 +2436,7 @@ namespace MediaPortal.GUI.Library
           }
           _upDownControl.Value = iPage;
           OnSelectionChanged();
+          _lastCommandTime = AnimationTimer.TickCount;
         }
         else
         {
@@ -2381,8 +2473,8 @@ namespace MediaPortal.GUI.Library
         {
           _listType = ListType.CONTROL_LIST;
         }
+        _lastCommandTime = AnimationTimer.TickCount;
       }
-      _lastCommandTime = AnimationTimer.TickCount;
     }
 
     /// <summary>
@@ -2394,6 +2486,9 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_DOWN;
       if (_listType == ListType.CONTROL_LIST)
       {
+        _scrollDirection = "down";
+        _scrollTimer = DateTime.Now;
+        _scrollCounter++;
         if ((_cursorX + 1 + _scrollStartOffset < _itemsPerPage) ||
             (_offset + 1 + _cursorX + _scrollStartOffset >= _listItems.Count))
         {
@@ -2410,6 +2505,7 @@ namespace MediaPortal.GUI.Library
             }
             _upDownControl.Value = ((_offset + _cursorX) / _itemsPerPage) + 1;
             OnSelectionChanged();
+            _lastCommandTime = AnimationTimer.TickCount;
           }
           else
           {
@@ -2447,6 +2543,7 @@ namespace MediaPortal.GUI.Library
             }
             _upDownControl.Value = iPage;
             OnSelectionChanged();
+            _lastCommandTime = AnimationTimer.TickCount;
           }
           else
           {
@@ -2477,8 +2574,8 @@ namespace MediaPortal.GUI.Library
         {
           base.OnAction(action);
         }
+        _lastCommandTime = AnimationTimer.TickCount;
       }
-      _lastCommandTime = AnimationTimer.TickCount;
     }
 
     /// <summary>
@@ -2743,11 +2840,6 @@ namespace MediaPortal.GUI.Library
       _selectedColor3 = dwSelectedColor;
     }
 
-    /// <summary>
-    /// Get the selected item
-    /// </summary>
-    /// <param name="strLabel"></param>
-    /// <returns></returns>
     public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumb, ref string strIndex)
     {
       strLabel = "";
@@ -3178,8 +3270,9 @@ namespace MediaPortal.GUI.Library
       try
       {
         _listItems.Sort(comparer);
+        _enableScrollLabel = false;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       _refresh = true;
     }
 
@@ -3627,7 +3720,6 @@ namespace MediaPortal.GUI.Library
       return selectedItemIndex;
     }
 
-
     public override int DimColor
     {
       get { return base.DimColor; }
@@ -3666,6 +3758,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _textAlignment; }
       set { _textAlignment = value; }
+    }
+
+    public Alignment Text3Alignment
+    {
+      get { return _text3Alignment; }
+      set { _text3Alignment = value; }
     }
 
     public ListType TypeOfList
@@ -3720,6 +3818,43 @@ namespace MediaPortal.GUI.Library
     {
       get { return _downloadColor; }
       set { _downloadColor = value; }
+    }
+
+    public string Text3Content
+    {
+      get { return _text3Content; }
+      set { _text3Content = value; }
+    }
+
+    public bool EnableSMSsearch
+    {
+      get { return _enableSMSsearch; }
+      set { _enableSMSsearch = value; }
+    }
+
+    public bool EnableScrollLabel
+    {
+      get { return _enableScrollLabel; }
+      set { _enableScrollLabel = value; }
+    }
+
+    private bool ScrollLabelIsScrolling
+    {
+      get
+      {
+        TimeSpan ts = DateTime.Now - _scrollTimer;
+        bool result = (ts.TotalMilliseconds < 100);
+        //how close keypresses should be, before they trigger the label showing
+        if (!result)
+          _scrollCounter = 0;
+        return result && (_scrollCounter >= _scrollCounterLimit);
+        //we also take in account how many scrolls passed so far
+      }
+    }
+
+    public void SetNeedRefresh()
+    {
+      _refresh = true;
     }
   }
 }

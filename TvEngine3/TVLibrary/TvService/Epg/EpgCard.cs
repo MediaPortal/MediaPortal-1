@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ namespace TvService
     private readonly TvServerEventHandler _eventHandler;
     private bool _disposed;
     private readonly Card _card;
-    private User _user;
+    private IUser _user;
     private readonly EpgDBUpdater _dbUpdater;
 
     #endregion
@@ -197,7 +197,7 @@ namespace TvService
 
           _state = EpgState.Idle;
           _tvController.StopGrabbingEpg(_user);
-          _tvController.StopCard(_user);
+          _tvController.PauseCard(_user);
           _user.CardId = -1;
           _currentTransponder.InUse = false;
           return 0;
@@ -239,7 +239,7 @@ namespace TvService
       Channel channel = _currentTransponder.CurrentChannel;
 
       Log.Epg("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.IdCard,
-              TransponderList.Instance.CurrentIndex, channel.Name);
+              TransponderList.Instance.CurrentIndex, channel.DisplayName);
 
       _state = EpgState.Idle;
       _isRunning = true;
@@ -255,7 +255,7 @@ namespace TvService
         return;
       }
       Log.Epg("EpgCard: unable to grab epg transponder: {0} ch: {1} started on {2}",
-              TransponderList.Instance.CurrentIndex, channel.Name, _user.CardId);
+              TransponderList.Instance.CurrentIndex, channel.DisplayName, _user.CardId);
       Log.Epg("{0}", _currentTransponder.Tuning.ToString());
     }
 
@@ -405,7 +405,7 @@ namespace TvService
           }
           try
           {
-            User cardUser;
+            IUser cardUser;
             if (_tvController.IsCardInUse(card.IdCard, out cardUser) == false)
             {
               _user.CardId = card.IdCard;
@@ -678,7 +678,7 @@ namespace TvService
         if (_state != EpgState.Idle && _user.CardId >= 0)
         {
           _tvController.StopGrabbingEpg(_user);
-          _tvController.StopCard(_user);
+          _tvController.PauseCard(_user);
         }
         _currentTransponder.InUse = false;
         _state = EpgState.Idle;
@@ -702,7 +702,7 @@ namespace TvService
         return false;
       if (cardId < 0)
         return false;
-      User user = new User();
+      IUser user = new User();
       user.CardId = cardId;
       if (RemoteControl.Instance.IsRecording(ref user))
         return false;
@@ -710,7 +710,7 @@ namespace TvService
         return false;
       if (RemoteControl.Instance.IsScanning(user.CardId))
         return false;
-      User cardUser;
+      IUser cardUser;
       if (_tvController.IsCardInUse(cardId, out cardUser))
         return false;
       if (_tvController.IsCardInUse(user.CardId, out cardUser))
@@ -729,7 +729,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>true if card is idle, otherwise false</returns>
-    private bool IsCardIdle(User user)
+    private bool IsCardIdle(IUser user)
     {
       if (_isRunning == false)
         return false;
@@ -741,7 +741,7 @@ namespace TvService
         return false;
       if (RemoteControl.Instance.IsScanning(user.CardId))
         return false;
-      User cardUser;
+      IUser cardUser;
       if (_tvController.IsCardInUse(user.CardId, out cardUser))
       {
         if (cardUser != null)

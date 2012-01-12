@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
+using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
 {
@@ -58,7 +59,7 @@ namespace MediaPortal.Player
         SetVideoWindow();
       }
     }
-    
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces()
     {
@@ -101,7 +102,7 @@ namespace MediaPortal.Player
             intCount++;
           }
         }
-        
+
         if (bAutoDecoderSettings)
         {
           return AutoRendering(wmvAudio);
@@ -124,14 +125,14 @@ namespace MediaPortal.Player
         string extension = Path.GetExtension(m_strCurrentFile).ToLower();
 
         switch (extension)
-        { 
+        {
           case ".wmv":
           case ".asf":
             {
               //strVideoCodec = "WMVideo Decoder DMO"; //allow e.g. ffdshow usage
               strH264VideoCodec = "";
               strAudioCodec = "WMAudio Decoder DMO"; // multichannel audio needs this filter
-              strAACAudioCodec = "";              
+              strAACAudioCodec = "";
               break;
             }
           case ".mkv":
@@ -153,7 +154,7 @@ namespace MediaPortal.Player
           DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
         if (!string.IsNullOrEmpty(strAudioCodec))
           DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-        if (!string.IsNullOrEmpty(strAACAudioCodec) && strAudioCodec != strAACAudioCodec) 
+        if (!string.IsNullOrEmpty(strAACAudioCodec) && strAudioCodec != strAACAudioCodec)
           DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
 
         if (strAudiorenderer.Length > 0)
@@ -170,6 +171,7 @@ namespace MediaPortal.Player
 
         //Set High Resolution Output > 2 channels
         IBaseFilter baseFilter = null;
+        bool FFDShowLoaded = false;
         graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
         if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
         {
@@ -186,18 +188,154 @@ namespace MediaPortal.Player
           {
             Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
           }
-          DirectShowUtil.ReleaseComObject(baseFilter); baseFilter = null;
+          if (!FFDShowLoaded)
+          {
+            IBaseFilter FFDShowAudio = DirectShowUtil.GetFilterByName(graphBuilder, FFDSHOW_AUDIO_DECODER_FILTER);
+            if (FFDShowAudio != null)
+            {
+              DirectShowUtil.ReleaseComObject(FFDShowAudio);
+              FFDShowAudio = null;
+            }
+            else
+            {
+              _FFDShowAudio = DirectShowUtil.AddFilterToGraph(graphBuilder, FFDSHOW_AUDIO_DECODER_FILTER);
+            }
+            FFDShowLoaded = true;
+          }
+          DirectShowUtil.ReleaseComObject(baseFilter);
+          baseFilter = null;
         }
 
+        #region load external audio streams
+
+        // check if current "File" is a file... it could also be a URL
+        // Directory.Getfiles, ... will other give us an exception
+        if (File.Exists(m_strCurrentFile))
+        {
+          //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
+          string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile),
+                                                   Path.GetFileNameWithoutExtension(m_strCurrentFile) + "*.*");
+          bool audioSwitcherLoaded = false;
+          foreach (string file in audioFiles)
+          {
+            switch (Path.GetExtension(file))
+            {
+              case ".mp3":
+              case ".dts":
+              case ".mka":
+              case ".ac3":
+                if (!audioSwitcherLoaded)
+                {
+                  IBaseFilter switcher = DirectShowUtil.GetFilterByName(graphBuilder, MEDIAPORTAL_AUDIOSWITCHER_FILTER);
+                  if (switcher != null)
+                  {
+                    DirectShowUtil.ReleaseComObject(switcher);
+                    switcher = null;
+                  }
+                  else
+                  {
+                    _audioSwitcher = DirectShowUtil.AddFilterToGraph(graphBuilder, MEDIAPORTAL_AUDIOSWITCHER_FILTER);
+                  }
+                  audioSwitcherLoaded = true;
+                }
+               
+                _AudioSourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, FILE_SYNC_FILTER);
+                int result = ((IFileSourceFilter)_AudioSourceFilter).Load(file, null);                
+
+                //Force using LAVFilter
+                _AudioExtSplitterFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, LAV_SPLITTER_FILTER);
+
+                if (result != 0 || _AudioExtSplitterFilter == null)
+                {
+                  if (_AudioSourceFilter != null)
+                  {
+                    graphBuilder.RemoveFilter(_AudioSourceFilter);
+                    DirectShowUtil.ReleaseComObject(_AudioSourceFilter);
+                    _AudioSourceFilter = null;
+                  }
+                  if (_AudioExtSplitterFilter != null)
+                  {
+                    graphBuilder.RemoveFilter(_AudioExtSplitterFilter);
+                    DirectShowUtil.ReleaseComObject(_AudioExtSplitterFilter);
+                    _AudioExtSplitterFilter = null;
+                  }
+                  //Trying Add Audio decoder in graph
+                  AddFilterToGraphAndRelease(strAudioCodec);
+                  graphBuilder.RenderFile(file, string.Empty);
+                  Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
+                  AudioExternal = true;
+                  break;
+                }
+
+                //Add Audio decoder in graph
+                _AudioExtFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+
+                //Connect Filesource with the splitter
+                IPin pinOutAudioExt1 = DsFindPin.ByDirection((IBaseFilter)_AudioSourceFilter, PinDirection.Output, 0);
+                IPin pinInAudioExt2 = DsFindPin.ByDirection((IBaseFilter)_AudioExtSplitterFilter, PinDirection.Input, 0);
+                hr = graphBuilder.Connect(pinOutAudioExt1, pinInAudioExt2);
+
+                //Connect Splitter with the Audio Decoder
+                IPin pinOutAudioExt3 = DsFindPin.ByDirection((IBaseFilter)_AudioExtSplitterFilter, PinDirection.Output, 0);
+                IPin pinInAudioExt4 = DsFindPin.ByDirection((IBaseFilter)_AudioExtFilter, PinDirection.Input, 0);
+                hr = graphBuilder.Connect(pinOutAudioExt3, pinInAudioExt4);
+
+                //Render outpin from Audio Decoder
+                DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, _AudioExtFilter);
+
+                //Cleanup External Audio (Release)
+                if (_AudioSourceFilter != null)
+                {
+                  DirectShowUtil.ReleaseComObject(_AudioSourceFilter);
+                  _AudioSourceFilter = null;
+                }
+                if (_AudioExtSplitterFilter != null)
+                {
+                  DirectShowUtil.ReleaseComObject(_AudioExtSplitterFilter);
+                  _AudioExtSplitterFilter = null;
+                }
+                if (_AudioExtFilter != null)
+                {
+                  DirectShowUtil.ReleaseComObject(_AudioExtFilter);
+                  _AudioExtFilter = null;
+                }
+                if (pinOutAudioExt1 != null)
+                {
+                  DirectShowUtil.ReleaseComObject(pinOutAudioExt1);
+                  pinOutAudioExt1 = null;
+                }
+                if (pinInAudioExt2 != null)
+                {
+                  DirectShowUtil.ReleaseComObject(pinInAudioExt2);
+                  pinInAudioExt2 = null;
+                }
+                if (pinOutAudioExt3 != null)
+                {
+                  DirectShowUtil.ReleaseComObject(pinOutAudioExt3);
+                  pinOutAudioExt3 = null;
+                }
+                if (pinInAudioExt4 != null)
+                {
+                  DirectShowUtil.ReleaseComObject(pinInAudioExt4);
+                  pinInAudioExt4 = null;
+                }
+
+                Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
+                AudioExternal = true;
+                break;
+            }
+          }
+        }
+
+          #endregion
+
         DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, source);
-        DirectShowUtil.ReleaseComObject(source); source = null;
+        if (source != null)
+        {
+          DirectShowUtil.ReleaseComObject(source);
+          source = null;
+        }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
-
-        #region Subtitles
-
-        SubEngine.GetInstance().LoadSubtitles(graphBuilder, m_strCurrentFile);
-
-        #endregion //Subtitles
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
         {
@@ -225,6 +363,12 @@ namespace MediaPortal.Player
         Cleanup();
         return false;
       }
+    }
+
+    private void AddFilterToGraphAndRelease(string filter) 
+    {
+      var dsFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, filter);
+      DirectShowUtil.ReleaseComObject(dsFilter);
     }
 
     private bool AutoRendering(bool wmvAudio)
@@ -265,11 +409,6 @@ namespace MediaPortal.Player
 
         // render
         DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, null);
-        #region Subtitles
-
-        SubEngine.GetInstance().LoadSubtitles(graphBuilder, m_strCurrentFile);
-
-        #endregion //Subtitles
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
         {
@@ -367,6 +506,19 @@ namespace MediaPortal.Player
         basicAudio = null;
         basicVideo = null;
         SubEngine.GetInstance().FreeSubtitles();
+        PostProcessingEngine.GetInstance().FreePostProcess();
+
+        if (_FFDShowAudio != null)
+        {
+          DirectShowUtil.ReleaseComObject(_FFDShowAudio);
+          _FFDShowAudio = null;
+        }
+
+        if (_audioSwitcher != null)
+        {
+          DirectShowUtil.ReleaseComObject(_audioSwitcher);
+          _audioSwitcher = null;
+        }
 
         if (Vmr9 != null)
         {

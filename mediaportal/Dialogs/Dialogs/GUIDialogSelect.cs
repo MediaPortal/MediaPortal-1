@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.ExtensionMethods;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {
@@ -67,7 +68,7 @@ namespace MediaPortal.Dialogs
             SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, string.Empty);
             base.OnMessage(message);
             DeInitControls();
-            Dispose();            
+            Dispose();
             return true;
           }
 

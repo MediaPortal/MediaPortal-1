@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ namespace MpeCore.Classes
       {
         if (!string.IsNullOrEmpty(_message)
           ) return _message;
-        return string.Format("Need version of {0} with version betwen {1} - {2}", Name, MinVersion, MaxVersion);
+        return string.Format("requires {0} version {1} to {2}.", Name, MinVersion, MaxVersion);
       }
       set { _message = value; }
     }

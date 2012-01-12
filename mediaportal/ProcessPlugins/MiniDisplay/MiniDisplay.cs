@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
+using Action = MediaPortal.GUI.Library.Action;
 using Message = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
@@ -512,6 +513,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       switch (dialogWindow)
       {
         case GUIWindow.Window.WINDOW_DIALOG_YES_NO:
+        case GUIWindow.Window.WINDOW_DIALOG_TVNOTIFYYESNO:
           {
             GUIDialogYesNo window = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)dialogWindow);
             DialogTitle = string.Empty;

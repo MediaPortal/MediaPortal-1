@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
@@ -28,6 +29,7 @@ using MediaPortal.Configuration;
 using MediaPortal.TagReader;
 using EnterpriseDT.Net.Ftp;
 using System.Threading;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.Util
 {
@@ -45,7 +47,7 @@ namespace MediaPortal.Util
     private const int MaximumShares = 128;
 
     private List<Share> m_shares = new List<Share>();
-    private List<string> m_extensions;
+    private HashSet<string> m_extensions;
     private string m_strPreviousDir = string.Empty;
     private string currentShare = string.Empty;
     private string previousShare = string.Empty;
@@ -91,7 +93,7 @@ namespace MediaPortal.Util
           share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
-          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt(section, shareViewPath, (int)Share.Views.List);
+          share.DefaultLayout = (Layout)xmlreader.GetValueAsInt(section, shareViewPath, (int)Layout.List);
 
           if (share.Name.Length > 0)
           {
@@ -197,17 +199,13 @@ namespace MediaPortal.Util
     {
       if (extensions == null) return;
       if (m_extensions == null)
-        m_extensions = new List<string>();
+        m_extensions = new HashSet<string>();
       else
         m_extensions.Clear();
 
       foreach (string ext in extensions)
       {
-        m_extensions.Add(ext);
-      }
-      for (int i = 0; i < m_extensions.Count; ++i)
-      {
-        m_extensions[i] = m_extensions[i].ToLower();
+        m_extensions.Add(ext.ToLower());
       }
     }
 
@@ -218,7 +216,7 @@ namespace MediaPortal.Util
     public void AddExtension(string extension)
     {
       if (m_extensions == null)
-        m_extensions = new List<string>();
+        m_extensions = new HashSet<string>();
       m_extensions.Add(extension.ToLower());
     }
 
@@ -230,6 +228,11 @@ namespace MediaPortal.Util
     {
       if (share == null) return;
       m_shares.Add(share);
+      //See if the share contains a folder.jpg (we'll be looking for it soon)
+      if (Path.IsPathRooted(share.Path))
+      {
+        Util.Utils.FileExistsInCache(Path.Combine(share.Path, "folder.jpg"));
+      }
     }
 
     public void AddRemovableDrive(String path, String name)
@@ -325,12 +328,12 @@ namespace MediaPortal.Util
     //        string coverArt = Utils.GetCoverArtName(item.Path, "folder");
     //        string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
     //        bool coverArtExists = false;
-    //        if (File.Exists(coverArt))
+    //        if (Util.Utils.FileExistsInCache(coverArt))
     //        {
     //          item.IconImage = coverArt;
     //          coverArtExists = true;
     //        }
-    //        if (File.Exists(largeCoverArt))
+    //        if (Util.Utils.FileExistsInCache(largeCoverArt))
     //        {
     //          item.IconImageBig = largeCoverArt;
     //        }
@@ -712,7 +715,7 @@ namespace MediaPortal.Util
     //        {
     //          // If it looks like a DVD directory structure then return so
     //          // that the playing of the DVD is handled by the caller.
-    //          if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+    //          if (Util.Utils.FileExistsInCache(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
     //          {
     //            return items;
     //          }
@@ -1409,25 +1412,26 @@ namespace MediaPortal.Util
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
-
-        if (share.Pincode < 0 && !Utils.IsNetwork(share.Path))
+        if (share.Pincode < 0)// && !Utils.IsNetwork(share.Path))
         {
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
           bool coverArtExists = false;
-          if (File.Exists(coverArt))
+          if (Util.Utils.FileExistsInCache(coverArt))
           {
             item.IconImage = coverArt;
             coverArtExists = true;
           }
-          if (File.Exists(largeCoverArt))
+          if (Util.Utils.FileExistsInCache(largeCoverArt))
           {
             item.IconImageBig = largeCoverArt;
           }
+
             // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
           else if (coverArtExists)
           {
             item.IconImageBig = coverArt;
+            item.ThumbnailImage = coverArt;
           }
         }
         items.Add(item);
@@ -1483,7 +1487,8 @@ namespace MediaPortal.Util
       this.HandleLocalFilesInDir(aDirectory, ref aItemsList, aHasRedbookDetails, false);
     }
 
-    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails, bool useCache)
+    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails,
+                                       bool useCache)
     {
       //This function is only used inside GetDirectoryUnProtectedExt. GetDirectoryUnProtectedExt is 
       //mainly used for internal loading. That means it isn't called when the user explicitly enters a 
@@ -1580,15 +1585,19 @@ namespace MediaPortal.Util
                   continue;
                 }
               }
+
               if (IsValidExtension(FileName))
               {
                 // Skip hidden files
                 if (!aHasRedbookDetails &&
-                    (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden)
+                    (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                   continue;
 
                 if (!aHasRedbookDetails)
-                  fi = new FileInformation(FileName, false);
+                {
+                  //fi = new FileInformation(FileName, false);
+                  fi.Name = fd.cFileName;
+                }
                 else
                 {
                   fi = new FileInformation();
@@ -1600,7 +1609,7 @@ namespace MediaPortal.Util
 
                 Utils.SetDefaultIcons(item);
                 Utils.SetThumbnails(ref item);
-                
+
                 aItemsList.Add(item);
                 _cachedItems.Add(item);
               }
@@ -1624,6 +1633,7 @@ namespace MediaPortal.Util
         _cachedDir = null;
       }
     }
+
 
     ///// <summary>
     ///// This method returns an arraylist of GUIListItems for the specified folder
@@ -1734,11 +1744,8 @@ namespace MediaPortal.Util
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return showFilesWithoutExtension;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        if ((m_extensions[0] as string) == "*") return true; // added for explorer modul by gucky
-        for (int i = 0; i < m_extensions.Count; ++i)
-        {
-          if ((m_extensions[i] as string) == extensionFile) return true;
-        }
+
+        return m_extensions.Contains(extensionFile) || m_extensions.Contains("*"); // added for explorer modul by gucky
       }
       catch (Exception) {}
 
@@ -1879,7 +1886,7 @@ namespace MediaPortal.Util
       //nop then check if local file exists
       string localFile = GetLocalFilename(file);
       if (localFile == string.Empty) return false;
-      if (File.Exists(localFile))
+      if (Util.Utils.FileExistsInCache(localFile))
       {
         FileInfo info = new FileInfo(localFile);
         if (info.Length == size)

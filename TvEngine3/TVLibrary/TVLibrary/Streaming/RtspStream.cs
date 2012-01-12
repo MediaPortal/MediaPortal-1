@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ namespace TvLibrary.Streaming
     private readonly string _streamName;
     private readonly ITVCard _card;
     private readonly string _recording;
+    private readonly bool _isTv;
 
     #endregion
 
@@ -44,12 +45,14 @@ namespace TvLibrary.Streaming
     /// <param name="streamName">Name of the stream.</param>
     /// <param name="fileName">Name of the file.</param>
     /// <param name="card">The card.</param>
-    public RtspStream(string streamName, string fileName, ITVCard card)
+    /// <param name="bool">True if the stream originates from a tv channel, false for a radio channel</param>
+    public RtspStream(string streamName, string fileName, ITVCard card, bool isTv)
     {
       _streamName = streamName;
       _fileName = fileName;
       _recording = "";
       _card = card;
+      _isTv = isTv;
     }
 
     /// <summary>
@@ -104,6 +107,14 @@ namespace TvLibrary.Streaming
     public ITVCard Card
     {
       get { return _card; }
+    }
+
+    /// <summary>
+    /// Gets if the stream originates from a tv channel (false for radio)
+    /// </summary>
+    public bool IsTv
+    {
+      get { return _isTv; }
     }
 
     #endregion

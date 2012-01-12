@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -138,9 +138,9 @@ namespace MediaPortal.Configuration.Sections
       this.VideoDecoderSettings.Controls.Add(this.DeinterlaceControl);
       this.VideoDecoderSettings.Controls.Add(this.checkBoxDxVA);
       this.VideoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.VideoDecoderSettings.Location = new System.Drawing.Point(0, 5);
+      this.VideoDecoderSettings.Location = new System.Drawing.Point(6, 0);
       this.VideoDecoderSettings.Name = "VideoDecoderSettings";
-      this.VideoDecoderSettings.Size = new System.Drawing.Size(472, 181);
+      this.VideoDecoderSettings.Size = new System.Drawing.Size(462, 181);
       this.VideoDecoderSettings.TabIndex = 3;
       this.VideoDecoderSettings.TabStop = false;
       this.VideoDecoderSettings.Text = "Video Decoder Settings";
@@ -156,6 +156,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxColourScheme
       // 
+      this.comboBoxColourScheme.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxColourScheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxColourScheme.FormattingEnabled = true;
       this.comboBoxColourScheme.Items.AddRange(new object[]
@@ -244,6 +245,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDeInterlaceMode
       // 
+      this.comboBoxDeInterlaceMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlaceMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlaceMode.FormattingEnabled = true;
       this.comboBoxDeInterlaceMode.Items.AddRange(new object[]
@@ -260,6 +262,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDeInterlaceControl
       // 
+      this.comboBoxDeInterlaceControl.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlaceControl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlaceControl.FormattingEnabled = true;
       this.comboBoxDeInterlaceControl.Items.AddRange(new object[]
@@ -305,15 +308,16 @@ namespace MediaPortal.Configuration.Sections
       this.AudioDecoderSettings.Controls.Add(this.comboBoxHeadphones);
       this.AudioDecoderSettings.Controls.Add(this.SpeakerSetup);
       this.AudioDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.AudioDecoderSettings.Location = new System.Drawing.Point(0, 192);
+      this.AudioDecoderSettings.Location = new System.Drawing.Point(6, 187);
       this.AudioDecoderSettings.Name = "AudioDecoderSettings";
-      this.AudioDecoderSettings.Size = new System.Drawing.Size(472, 207);
+      this.AudioDecoderSettings.Size = new System.Drawing.Size(462, 207);
       this.AudioDecoderSettings.TabIndex = 2;
       this.AudioDecoderSettings.TabStop = false;
       this.AudioDecoderSettings.Text = "Audio Decoder Settings";
       // 
       // comboBoxOutPutMode
       // 
+      this.comboBoxOutPutMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxOutPutMode.FormattingEnabled = true;
       this.comboBoxOutPutMode.Items.AddRange(new object[]
@@ -348,6 +352,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxProLogicII
       // 
+      this.comboBoxProLogicII.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxProLogicII.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProLogicII.FormattingEnabled = true;
       this.comboBoxProLogicII.Items.AddRange(new object[]
@@ -365,6 +370,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDRC
       // 
+      this.comboBoxDRC.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDRC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDRC.FormattingEnabled = true;
       this.comboBoxDRC.Items.AddRange(new object[]
@@ -384,6 +390,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerSetup.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerSetup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSpeakerSetup.Items.AddRange(new object[]
                                                  {
@@ -396,7 +403,7 @@ namespace MediaPortal.Configuration.Sections
                                                  });
       this.comboBoxSpeakerSetup.Location = new System.Drawing.Point(214, 46);
       this.comboBoxSpeakerSetup.Name = "comboBoxSpeakerSetup";
-      this.comboBoxSpeakerSetup.Size = new System.Drawing.Size(183, 21);
+      this.comboBoxSpeakerSetup.Size = new System.Drawing.Size(173, 21);
       this.comboBoxSpeakerSetup.TabIndex = 1;
       this.comboBoxSpeakerSetup.SelectedIndexChanged +=
         new System.EventHandler(this.comboBoxSpeakerSetup_SelectedIndexChanged);
@@ -407,6 +414,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxHeadphones.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxHeadphones.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxHeadphones.DropDownWidth = 183;
       this.comboBoxHeadphones.Items.AddRange(new object[]
@@ -418,7 +426,7 @@ namespace MediaPortal.Configuration.Sections
                                                });
       this.comboBoxHeadphones.Location = new System.Drawing.Point(214, 76);
       this.comboBoxHeadphones.Name = "comboBoxHeadphones";
-      this.comboBoxHeadphones.Size = new System.Drawing.Size(183, 21);
+      this.comboBoxHeadphones.Size = new System.Drawing.Size(173, 21);
       this.comboBoxHeadphones.TabIndex = 0;
       // 
       // SpeakerSetup
@@ -473,11 +481,11 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonSpeakers.UseVisualStyleBackColor = true;
       this.radioButtonSpeakers.CheckedChanged += new System.EventHandler(this.radioButtonSpeakers_CheckedChanged);
       // 
-      // PureVideoDecoderFilters
+      // FiltersPureVideoDecoder
       // 
       this.Controls.Add(this.VideoDecoderSettings);
       this.Controls.Add(this.AudioDecoderSettings);
-      this.Name = "PureVideoDecoderFilters";
+      this.Name = "FiltersPureVideoDecoder";
       this.Size = new System.Drawing.Size(472, 408);
       this.VideoDecoderSettings.ResumeLayout(false);
       this.VideoDecoderSettings.PerformLayout();

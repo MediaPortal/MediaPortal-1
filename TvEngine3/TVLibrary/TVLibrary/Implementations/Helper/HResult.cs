@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -286,10 +286,7 @@ namespace TvLibrary
     /// <value>The DX error description.</value>
     private string DXErrorDescription
     {
-      get 
-      {
-        return DsError.GetErrorText((int)_hresult);        
-      }
+      get { return DsError.GetErrorText((int)_hresult); }
     }
 
     #endregion
@@ -326,7 +323,7 @@ namespace TvLibrary
     [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false,
       CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public static extern string GetDXErrorString(int hresult);
-    
+
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>

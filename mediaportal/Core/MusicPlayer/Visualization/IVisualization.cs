@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ namespace MediaPortal.Visualization
 {
   public interface IVisualization
   {
-    Un4seen.Bass.AddOn.Vis.BASS_VIS_PARAM VizParam { get; }
+    BassVis_Api.BASSVIS_PARAM VizParam { get; }
     bool Initialized { get; }
     bool PreRenderRequired { get; }
     bool IsEngineInstalled();

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System.Runtime.InteropServices;
 using DirectShowLib;
 //using DShowNET.TsFileSink;
+using TvLibrary;
 using TvLibrary.Log;
 using System.Windows.Forms;
 
@@ -85,13 +86,13 @@ namespace SetupTv.Sections
         pins[0].QueryDirection(out direction);
         if (direction == PinDirection.Input)
         {
-          Marshal.ReleaseComObject(pins[0]);
+          Release.ComObject(pins[0]);
           continue;
         }
         _graphBuilder.Render(pins[0]);
-        Marshal.ReleaseComObject(pins[0]);
+        Release.ComObject(pins[0]);
       }
-      Marshal.ReleaseComObject(enumPins);
+      Release.ComObject(enumPins);
 
       #endregion
 
@@ -128,17 +129,17 @@ namespace SetupTv.Sections
       }
       if (_pinAudio != null)
       {
-        Marshal.ReleaseComObject(_pinAudio);
+        Release.ComObject(_pinAudio);
         _pinAudio = null;
       }
       if (_pinVideo != null)
       {
-        Marshal.ReleaseComObject(_pinVideo);
+        Release.ComObject(_pinVideo);
         _pinVideo = null;
       }
       if (_tsReader != null)
       {
-        Marshal.ReleaseComObject(_tsReader);
+        Release.ComObject(_tsReader);
         _tsReader = null;
       }
       if (_rotEntry != null)
@@ -149,7 +150,7 @@ namespace SetupTv.Sections
 
       if (_graphBuilder != null)
       {
-        Marshal.ReleaseComObject(_graphBuilder);
+        Release.ComObject(_graphBuilder);
         _graphBuilder = null;
       }
     }

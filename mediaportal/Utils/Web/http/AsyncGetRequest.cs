@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -111,6 +111,8 @@ namespace MediaPortal.Utils.Web
         StreamReader reader = null;
         HttpStatusCode responseCode = new HttpStatusCode();
 
+        List<String> responseStrings = new List<string>();
+
         // get the response
         try
         {
@@ -123,11 +125,13 @@ namespace MediaPortal.Utils.Web
 
           using (reader = new StreamReader(response.GetResponseStream()))
           {
-            responseCode = response.StatusCode;  
+            responseCode = response.StatusCode;
+            String tmp = string.Empty;
+            while ((tmp = reader.ReadLine()) != null)
+            {
+              responseStrings.Add(tmp);
+            }
           }
-          
-
-          //request = null;
         }
         catch (Exception ex2)
         {
@@ -143,13 +147,6 @@ namespace MediaPortal.Utils.Web
           {
             response.Close();
           }
-        }
-
-        List<String> responseStrings = new List<string>();
-        String tmp = string.Empty;
-        while ((tmp = reader.ReadLine()) != null)
-        {
-          responseStrings.Add(tmp);
         }
 
         if (workerFinished != null)

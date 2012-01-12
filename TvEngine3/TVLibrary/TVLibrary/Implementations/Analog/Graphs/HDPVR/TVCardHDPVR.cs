@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using DirectShowLib;
 using TvLibrary.ChannelLinkage;
+using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.Analog.QualityControl;
 using TvLibrary.Interfaces;
@@ -32,14 +34,17 @@ using TvLibrary.Implementations.Helper;
 namespace TvLibrary.Implementations.Analog
 {
   /// <summary>
-  /// Class for handling HDPVR
+  /// Class for handling supported capture cards, including the Hauppauge HD PVR and Colossus.
   /// </summary>
   public class TvCardHDPVR : TvCardBase, ITVCard
   {
-    #region const
+    #region constants
 
-    private const string _captureDeviceName = "Hauppauge HD PVR Capture Device";
-    private const string _encoderDeviceName = "Hauppauge HD PVR Encoder";
+    // Assume the capture card is a Hauppauge HD PVR by default.
+    private readonly string _deviceType = "HDPVR";
+    private readonly string _crossbarDeviceName = "Hauppauge HD PVR Crossbar";
+    private readonly string _captureDeviceName = "Hauppauge HD PVR Capture Device";
+    private readonly string _encoderDeviceName = "Hauppauge HD PVR Encoder";
 
     #endregion
 
@@ -88,12 +93,27 @@ namespace TvLibrary.Implementations.Analog
     #region ctor
 
     ///<summary>
-    /// Constrcutor for the HD PVR device
+    /// Constructor for a capture card device.
     ///</summary>
-    ///<param name="device">HDPVR encoder device</param>
+    ///<param name="device">A crossbar device for a supported capture card.</param>
     public TvCardHDPVR(DsDevice device)
       : base(device)
     {
+      // Determine what type of card this is.
+      if (device.Name.Contains("Colossus"))
+      {
+        Match match = Regex.Match(device.Name, @".*?(\d+)$");
+        int deviceNumber = 0;
+        if (match.Success)
+        {
+          deviceNumber = Convert.ToInt32(match.Groups[1].Value);
+        }
+        _deviceType = "Colossus";
+        _crossbarDeviceName = device.Name;
+        _captureDeviceName = "Hauppauge Colossus Capture " + deviceNumber;
+        _encoderDeviceName = "Hauppauge Colossus TS Encoder " + deviceNumber;
+      }
+
       _mapSubChannels = new Dictionary<Int32, BaseSubChannel>();
       _supportsSubChannels = true;
       _minChannel = 0;
@@ -121,6 +141,38 @@ namespace TvLibrary.Implementations.Analog
         return false;
       }
       return true;
+    }
+
+    /// <summary>
+    /// Stops the current graph
+    /// </summary>
+    /// <returns></returns>
+    public override void PauseGraph()
+    {
+      FreeAllSubChannels();
+      FilterState state;
+      if (_graphBuilder == null)
+        return;
+      IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
+      if (mediaCtl == null)
+      {
+        throw new TvException("Can not convert graphBuilder to IMediaControl");
+      }
+      mediaCtl.GetState(10, out state);
+      Log.Log.WriteFile("HDPVR: PauseGraph state:{0}", state);
+      _isScanning = false;
+      if (state != FilterState.Running)
+      {
+        _graphState = GraphState.Created;
+        return;
+      }
+      int hr = mediaCtl.Pause();
+      if (hr < 0 || hr > 1)
+      {
+        Log.Log.WriteFile("HDPVR: PauseGraph returns:0x{0:X}", hr);
+        throw new TvException("Unable to pause graph");
+      }
+      Log.Log.WriteFile("HDPVR: Graph paused");
     }
 
     /// <summary>
@@ -219,6 +271,17 @@ namespace TvLibrary.Implementations.Analog
     #region tuning & recording
 
     /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
+    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      return Tune(subChannelId, channel);
+    }
+
+    /// <summary>
     /// Tunes the specified channel.
     /// </summary>
     /// <param name="subChannelId">The sub channel id.</param>
@@ -251,10 +314,10 @@ namespace TvLibrary.Implementations.Analog
       }
       catch (Exception)
       {
-        FreeSubChannel(subChannelId);        
+        FreeSubChannel(subChannelId);
         throw;
       }
-      
+
       return subChannel;
     }
 
@@ -269,8 +332,10 @@ namespace TvLibrary.Implementations.Analog
     private Int32 GetNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      Log.Log.Info("HDPVR:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
-      HDPVRChannel subChannel = new HDPVRChannel(this, id, channel, _filterTsWriter);
+      Log.Log.Info("HDPVR: GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+      HDPVRChannel subChannel = new HDPVRChannel(this, _deviceType, id, _filterTsWriter, _graphBuilder);
+      subChannel.Parameters = Parameters;
+      subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
       return id;
     }
@@ -399,22 +464,22 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("HDPVR:  All filters removed");
       if (_filterCrossBar != null)
       {
-        while (Marshal.ReleaseComObject(_filterCrossBar) > 0) {}
+        while (Release.ComObject(_filterCrossBar) > 0) {}
         _filterCrossBar = null;
       }
       if (_filterCapture != null)
       {
-        while (Marshal.ReleaseComObject(_filterCapture) > 0) {}
+        while (Release.ComObject(_filterCapture) > 0) {}
         _filterCapture = null;
       }
       if (_filterEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterEncoder) > 0) {}
+        while (Release.ComObject(_filterEncoder) > 0) {}
         _filterEncoder = null;
       }
       if (_filterTsWriter != null)
       {
-        while (Marshal.ReleaseComObject(_filterTsWriter) > 0) {}
+        while (Release.ComObject(_filterTsWriter) > 0) {}
         _filterTsWriter = null;
       }
       _rotEntry.Dispose();
@@ -483,13 +548,13 @@ namespace TvLibrary.Implementations.Analog
         }
 
         _graphState = GraphState.Created;
-        _configuration.Graph.Crossbar.Name = "Hauppauge HD PVR Crossbar";
+        _configuration.Graph.Crossbar.Name = _crossBarDevice.Name;
         _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
         _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
         _configuration.Graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
         _configuration.Graph.Crossbar.VideoOut = _videoOutPinIndex;
         _configuration.Graph.Crossbar.AudioOut = _audioOutPinIndex;
-        _configuration.Graph.Capture.Name = _captureDeviceName;
+        _configuration.Graph.Capture.Name = _captureDevice.Name;
         _configuration.Graph.Capture.FrameRate = -1d;
         _configuration.Graph.Capture.ImageHeight = -1;
         _configuration.Graph.Capture.ImageWidth = -1;
@@ -720,7 +785,7 @@ namespace TvLibrary.Implementations.Analog
         IPin pinOut = DsFindPin.ByDirection(_filterEncoder, PinDirection.Output, 0);
         if (pinOut == null)
         {
-          Log.Log.Error("HDPVR: Unable to find output pin on the encoder filter");
+          Log.Log.Error("HDPVR:  Unable to find output pin on the encoder filter");
           throw new TvException("unable to find output pin on the encoder filter");
         }
         IPin pinIn = DsFindPin.ByDirection(_filterTsWriter, PinDirection.Input, 0);
@@ -743,41 +808,22 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// Sets up the cross bar.
-    /// </summary>
-    /// <param name="vmode">The crossbar video mode.</param>
-    /// <param name="amode">The crossbar audio mode.</param>
-    private void SetupCrossBar(AnalogChannel.VideoInputType vmode, AnalogChannel.AudioInputType amode)
-    {
-      Log.Log.WriteFile("HDPVR: SetupCrossBar:{0} / {1}", vmode, amode);
-      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
-      if (crossBarFilter != null)
-      {
-        if (_videoPinMap.ContainsKey(vmode))
-        {
-          crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[vmode]);
-        }
-        if (_audioPinMap.ContainsKey(amode))
-        {
-          crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[amode]);
-        }
-      }
-    }
-
-    /// <summary>
     /// Method which starts the graph
     /// </summary>
-    private void RunGraph(int subChannel)
+    public override void RunGraph(int subChannel)
     {
       bool graphRunning = GraphRunning();
 
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
+        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStart();
       }
 
       if (graphRunning)
       {
+        Log.Log.Write("HDPVR: Graph already running");
         return;
       }
 
@@ -801,6 +847,8 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
+        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStarted();
       }
     }
@@ -811,22 +859,40 @@ namespace TvLibrary.Implementations.Analog
 
     private void PerformTuning(IChannel channel)
     {
+      Log.Log.WriteFile("HDPVR: Tune");
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel == null)
       {
         throw new NullReferenceException();
       }
-      if (_previousChannel != null)
+
+      // Set up the crossbar.
+      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
+
+      // Video
+      if ((_previousChannel == null || _previousChannel.VideoSource != analogChannel.VideoSource) &&
+        _videoPinMap.ContainsKey(analogChannel.VideoSource))
       {
-        if (_previousChannel.VideoSource != analogChannel.VideoSource)
+        Log.Log.WriteFile("HDPVR:   video input -> {0}", analogChannel.VideoSource);
+        crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[analogChannel.VideoSource]);
+      }
+
+      // Audio
+      if (analogChannel.AudioSource == AnalogChannel.AudioInputType.Automatic)
+      {
+        if (_videoPinRelatedAudioMap.ContainsKey(analogChannel.VideoSource))
         {
-          SetupCrossBar(analogChannel.VideoSource, analogChannel.AudioSource);
+          Log.Log.WriteFile("HDPVR:   audio input -> (auto)");
+          crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[analogChannel.VideoSource]);
         }
       }
-      else
+      else if ((_previousChannel == null || _previousChannel.AudioSource != analogChannel.AudioSource) &&
+        _audioPinMap.ContainsKey(analogChannel.AudioSource))
       {
-        SetupCrossBar(analogChannel.VideoSource, analogChannel.AudioSource);
+        Log.Log.WriteFile("HDPVR:   audio input -> {0}", analogChannel.AudioSource);
+        crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[analogChannel.AudioSource]);
       }
+
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
       _previousChannel = analogChannel;
@@ -875,6 +941,7 @@ namespace TvLibrary.Implementations.Analog
         int videoSvhsNr = 0;
         int videoYrYbYNr = 0;
         int videoRgbNr = 0;
+        int videoHdmiNr = 0;
         for (int i = 0; i < inputs; ++i)
         {
           crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
@@ -1002,6 +1069,24 @@ namespace TvLibrary.Implementations.Analog
                 case 3:
                   _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, i);
                   _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, relatedPinIndex);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Video_SerialDigital:
+              videoHdmiNr++;
+              switch (videoHdmiNr)
+              {
+                case 1:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput1, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput1, relatedPinIndex);
+                  break;
+                case 2:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput2, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput2, relatedPinIndex);
+                  break;
+                case 3:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput3, relatedPinIndex);
                   break;
               }
               break;

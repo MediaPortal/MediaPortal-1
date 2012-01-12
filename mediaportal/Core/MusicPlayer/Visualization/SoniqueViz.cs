@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using Un4seen.Bass;
-using Un4seen.Bass.AddOn.Vis;
+using BassVis_Api;
 
 namespace MediaPortal.Visualization
 {
@@ -36,7 +36,7 @@ namespace MediaPortal.Visualization
     private IntPtr dataPtr = IntPtr.Zero;
     private IntPtr fftPtr = IntPtr.Zero;
     private bool firstRun = true;
-    private BASS_VIS_EXEC visExec;
+    private BASSVIS_EXEC visExec;
 
     #endregion
 
@@ -64,7 +64,7 @@ namespace MediaPortal.Visualization
         }
 
         firstRun = true;
-        BassVis.BASS_VIS_SetOption(_visParam, BASSVISConfig.BASS_SONIQUEVIS_CONFIG_SLOWFADE, 25);
+        BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_SLOWFADE, 25);
         bool result = SetOutputContext(VisualizationWindow.OutputContextType);
         _Initialized = result && _visParam.VisHandle != 0;
       }
@@ -109,7 +109,7 @@ namespace MediaPortal.Visualization
           stream = (int)Bass.GetCurrentVizStream();
         }
 
-        BassVis.BASS_VIS_SONIQUERenderToDC(BASSVISPlugin.BASSVISKIND_SONIQUE, (IntPtr)_visParam.VisHandle, stream, hdc);
+        BassVis.BASSVIS_SONIQUEVIS_RenderToDC(BASSVISKind.BASSVISKIND_SONIQUE, (IntPtr)_visParam.VisHandle, stream, hdc);
       }
 
       catch (Exception) {}
@@ -141,14 +141,14 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      BassVis.BASS_VIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
+      BassVis.BASSVIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
 
       return true;
     }
 
     public override bool WindowSizeChanged(Size newSize)
     {
-      BassVis.BASS_VIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
+      BassVis.BASSVIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
       return true;
     }
 
@@ -183,7 +183,7 @@ namespace MediaPortal.Visualization
       {
         try
         {
-          BassVis.BASS_VIS_Free(_visParam);
+          BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
         }
         catch (AccessViolationException) {}
 
@@ -192,15 +192,15 @@ namespace MediaPortal.Visualization
 
       try
       {
-        visExec = new BASS_VIS_EXEC(vizPath);
+        visExec = new BASSVIS_EXEC(vizPath);
         visExec.SON_ConfigFile = configFile;
-        visExec.SON_Flags = BASSVISFlags.BASS_VIS_DEFAULT;
+        visExec.SON_Flags = BASSVISFlags.BASSVIS_DEFAULT;
         visExec.SON_PaintHandle = VisualizationWindow.CompatibleDC;
         visExec.Width = VisualizationWindow.Width;
         visExec.Height = VisualizationWindow.Height;
         visExec.Left = VisualizationWindow.Left;
         visExec.Top = VisualizationWindow.Top;
-        BassVis.BASS_VIS_ExecutePlugin(visExec, _visParam);
+        BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
       }
       catch (Exception) {}
       firstRun = false;

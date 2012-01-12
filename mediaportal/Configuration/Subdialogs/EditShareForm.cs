@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -199,7 +199,7 @@ namespace MediaPortal.Configuration
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(69, 13);
       this.label9.TabIndex = 24;
-      this.label9.Text = "Default view:";
+      this.label9.Text = "Default layout:";
       // 
       // textBoxRemoteFolder
       // 

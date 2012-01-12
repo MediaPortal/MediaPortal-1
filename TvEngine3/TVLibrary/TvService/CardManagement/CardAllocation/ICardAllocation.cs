@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,10 +28,24 @@ namespace TvService
   {
     /// <summary>
     /// Gets a list of all free cards which can receive the channel specified
-    /// List is sorted by priority
+    /// List is sorted by "same transponder" and priority
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user,
-                                                 bool checkTransponders, out TvResult result, int recommendedCardId);
+    List<CardDetail> GetFreeCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user,
+                                            out TvResult result);
+
+    /// <summary>
+    /// Gets a list of all available cards which can receive the channel specified
+    /// List is sorted by "same transponder" and priority
+    /// </summary>
+    /// <returns>list containg all free cards which can receive the channel</returns>
+    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user, out Dictionary<int, TvResult> cardsUnAvailable);
+
+    /// <summary>
+    /// Gets a list of all available cards which can receive the channel specified
+    /// List is sorted by "same transponder" and priority
+    /// </summary>
+    /// <returns>list containg all free cards which can receive the channel</returns>
+    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user);
   }
 }

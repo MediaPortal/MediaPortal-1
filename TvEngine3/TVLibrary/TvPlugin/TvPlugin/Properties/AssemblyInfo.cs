@@ -20,6 +20,7 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -27,12 +28,6 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("TvPlugin")]
 [assembly: AssemblyDescription("Adds TV client functionality to your MediaPortal installation")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Team MediaPortal")]
-[assembly: AssemblyProduct("TvPlugin")]
-[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -44,15 +39,7 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("ca7889df-9f63-46d5-9f38-bf796f18de3f")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.2.0.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: CompatibleVersion("Own")]
+[assembly: UsesSubsystem("MP")]
+[assembly: UsesSubsystem("TVE.Controller")]
+[assembly: UsesSubsystem("TVE.DB")]

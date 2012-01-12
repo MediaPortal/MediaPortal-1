@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ namespace SetupTv.Sections
     {
       mpComboBoxService.Items.Clear();
       mpComboBoxService.Items.Add("SAP Announcements");
-      String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", Log.GetPathName());
+      String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", PathManager.GetDataPath);
       if (Directory.Exists(tuningFolder))
       {
         string[] files = Directory.GetFiles(tuningFolder, "*.m3u");
@@ -116,20 +116,20 @@ namespace SetupTv.Sections
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         if (card.Enabled == false)
         {
-          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+          MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
         else if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
-          MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+          MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
         }
         // Check if the card is locked for scanning.
-        User user;
+        IUser user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
-                          "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning another part of a hybrid card.");
+                          "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
           return;
         }
         Thread scanThread = new Thread(new ThreadStart(DoScan));
@@ -150,7 +150,7 @@ namespace SetupTv.Sections
       int radioChannelsUpdated = 0;
 
       string buttonText = mpButtonScanTv.Text;
-      User user = new User();
+      IUser user = new User();
       user.CardId = _cardNumber;
       try
       {
@@ -169,15 +169,17 @@ namespace SetupTv.Sections
         else
         {
           IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(),
+            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
                                                    mpComboBoxService.SelectedItem));
           playlistIO.Load(playlist,
-                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(),
+                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", PathManager.GetDataPath,
                                         mpComboBoxService.SelectedItem));
         }
         if (playlist.Count == 0) return;
 
         mpComboBoxService.Enabled = false;
+        checkBoxCreateGroups.Enabled = false;
+        checkBoxEnableChannelMoveDetection.Enabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
@@ -227,14 +229,10 @@ namespace SetupTv.Sections
           int newChannels = 0;
           int updatedChannels = 0;
 
-          bool exists;
           for (int i = 0; i < channels.Length; ++i)
           {
             Channel dbChannel;
             DVBIPChannel channel = (DVBIPChannel)channels[i];
-            //TuningDetail currentDetail = layer.GetChannel(channel);
-//            if (channel.Name.IndexOf("Unknown") == 0)
-//            {
             if (channels.Length > 1)
             {
               if (channel.Name.IndexOf("Unknown") == 0)
@@ -246,29 +244,41 @@ namespace SetupTv.Sections
             {
               channel.Name = name;
             }
-//            }
-            TuningDetail currentDetail = layer.GetChannel(channel.Provider, channel.Name, channel.ServiceId);
+            bool exists;
+            TuningDetail currentDetail;
+            //Check if we already have this tuningdetail. According to DVB-IP specifications there are two ways to identify DVB-IP
+            //services: one ONID + SID based, the other domain/URL based. At this time we don't fully and properly implement the DVB-IP
+            //specifications, so the safest method for service identification is the URL. The user has the option to enable the use of
+            //ONID + SID identification and channel move detection...
+            if (checkBoxEnableChannelMoveDetection.Checked)
+            {
+              currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
+                                                                 TvBusinessLayer.GetChannelType(channel));
+            }
+            else
+            {
+              currentDetail = layer.GetTuningDetail(channel.Url, TvBusinessLayer.GetChannelType(channel));
+            }
+
             if (currentDetail == null)
             {
               //add new channel
               exists = false;
-              dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+              dbChannel = layer.AddNewChannel(channel.Name);
               dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
                 dbChannel.SortOrder = channel.LogicalChannelNumber;
               }
+              dbChannel.IsTv = channel.IsTv;
+              dbChannel.IsRadio = channel.IsRadio;
+              dbChannel.Persist();
             }
             else
             {
               exists = true;
               dbChannel = currentDetail.ReferencedChannel();
             }
-
-            dbChannel.IsTv = channel.IsTv;
-            dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.FreeToAir = channel.FreeToAir;
-            dbChannel.Persist();
 
             layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
 
@@ -331,6 +341,8 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         mpComboBoxService.Enabled = true;
+        checkBoxCreateGroups.Enabled = true;
+        checkBoxEnableChannelMoveDetection.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }

@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("ClientPlugin")]
-[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2011 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

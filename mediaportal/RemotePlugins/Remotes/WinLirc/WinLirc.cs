@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -189,7 +189,7 @@ namespace MediaPortal.InputDevices
           //channelparts[0] will be name of remote
           //channelparts[1] will be repeat count
           //channelparts[2] will be code(s)
-          string[] channelparts = { m_remote, m_repeat, command }; //default to using m_remote:m_repeat:command
+          string[] channelparts = {m_remote, m_repeat, command}; //default to using m_remote:m_repeat:command
 
           //now if channel_data has a ':', split that & use it instead!
           //NOTE: channel_data should be Remote:Repeat:Codes

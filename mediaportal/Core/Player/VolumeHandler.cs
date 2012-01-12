@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.Win32;
-
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
@@ -196,7 +195,7 @@ namespace MediaPortal.Player
         msg.Label3 = Instance.IsMuted.ToString();
         GUIGraphicsContext.SendMessage(msg);
 
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
         {
           Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
@@ -223,7 +222,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.SendMessage(msg);
 
 
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
         {
           Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);

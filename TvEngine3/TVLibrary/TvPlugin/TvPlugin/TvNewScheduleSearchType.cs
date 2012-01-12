@@ -26,6 +26,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -34,9 +35,7 @@ namespace TvPlugin
     [SkinControl(2)] protected GUIButtonControl btnQuickRecord = null;
     [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;
     [SkinControl(6)] protected GUIButtonControl btnTvGuide = null;
-    [SkinControl(7)] protected GUIButtonControl btnSearchTitle = null;
-    [SkinControl(8)] protected GUIButtonControl btnSearchKeyword = null;
-    [SkinControl(9)] protected GUIButtonControl btnSearchGenre = null;
+    [SkinControl(7)] protected GUIButtonControl btnSearch = null;
 
     public TvNewScheduleSearchType()
     {
@@ -71,21 +70,9 @@ namespace TvPlugin
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (control == btnSearchTitle)
+      if (control == btnSearch)
       {
         TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.Title;
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_SEARCH);
-        return;
-      }
-      if (control == btnSearchGenre)
-      {
-        TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.Genres;
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_SEARCH);
-        return;
-      }
-      if (control == btnSearchKeyword)
-      {
-        TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.KeyWord;
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_SEARCH);
         return;
       }
@@ -110,7 +97,6 @@ namespace TvPlugin
 
     private void OnQuickRecord()
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
@@ -123,7 +109,7 @@ namespace TvPlugin
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
-        if (!File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -145,8 +131,8 @@ namespace TvPlugin
       {
         dlg.Add(GUILocalizeStrings.Get(i));
       }
-      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
-      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+      dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
+      dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
       Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
@@ -240,7 +226,6 @@ namespace TvPlugin
 
     private void OnAdvancedRecord()
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
@@ -254,7 +239,7 @@ namespace TvPlugin
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
-        if (!File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -276,8 +261,8 @@ namespace TvPlugin
       {
         dlg.Add(GUILocalizeStrings.Get(i));
       }
-      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
-      dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+      dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
+      dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
 
       Schedule rec = new Schedule(selectedChannel.IdChannel, "", Schedule.MinSchedule, Schedule.MinSchedule);
 
@@ -313,6 +298,9 @@ namespace TvPlugin
           break;
         case 6: //Weekend
           rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+          break;
+        case 7://everytime weekly, this channel
+          rec.ScheduleType = (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
           break;
       }
 

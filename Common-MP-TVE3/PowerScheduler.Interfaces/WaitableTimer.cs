@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -159,7 +159,6 @@ namespace TvEngine.PowerScheduler
       {
         // Done with thread
         AbortWaiter();
-
         // Check mode
         if (value > 0)
         {
@@ -167,11 +166,17 @@ namespace TvEngine.PowerScheduler
           m_Interval = DateTime.UtcNow.AddSeconds(value).ToFileTimeUtc();
 
           // Create thread
-          m_Waiting = new Thread(new ThreadStart(WaitThread));
+          m_Waiting = new Thread(new ParameterizedThreadStart(WaitThread));
+          m_Waiting.Priority = ThreadPriority.AboveNormal;
           m_Waiting.Name = "PowerScheduler Waiter";
 
-          // Run it
-          m_Waiting.Start();
+          using (ManualResetEvent handshake = new ManualResetEvent(false))
+          {
+            // Run it
+            m_Waiting.Start(handshake);
+            // wait until wakeup timer is set
+            handshake.WaitOne();
+          }
         }
         else
         {
@@ -189,20 +194,23 @@ namespace TvEngine.PowerScheduler
     /// The <see cref="Thread"/> may be terminated with a call to <see cref="AbortWaiter"/>
     /// before the time expires.
     /// </remarks>
-    private void WaitThread()
+    private void WaitThread(object arg)
     {
+      ManualResetEvent handshake = (ManualResetEvent)arg;
       // Ignore aborts
       try
       {
         // Interval to use
         long lInterval = m_Interval;
 
+
         // Start timer
         if (!SetWaitableTimer(SafeWaitHandle, &lInterval, 0, IntPtr.Zero, IntPtr.Zero, true))
         {
           throw new TimerException("Could not start Timer", new Win32Exception(Marshal.GetLastWin32Error()));
         }
-
+        handshake.Set();
+        handshake = null;
         // Wait for the timer to expire
         WaitOne();
 
@@ -214,6 +222,12 @@ namespace TvEngine.PowerScheduler
       }
       catch (TimerException e)
       {
+        if (handshake != null)
+        {
+          handshake.Set();
+          handshake = null;
+        }
+
         if (OnTimerException != null)
         {
           OnTimerException(this, e);
@@ -222,6 +236,17 @@ namespace TvEngine.PowerScheduler
       catch (ThreadAbortException)
       {
         // Ignore
+      }
+      catch (Exception)
+      {
+        // Ignore. We should log this but we do not yet have a common logging infrastructure between MP and TVServer
+      }
+      finally
+      {
+        if (handshake != null)
+        {
+          handshake.Set();
+        }
       }
     }
 

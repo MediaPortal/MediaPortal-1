@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -78,6 +78,8 @@ namespace TvEngine.PowerScheduler
       standbyHandler = new ProcessActiveHandler();
       _standbyHandlers.Add(standbyHandler);
       standbyHandler = new NetworkMonitorHandler();
+      _standbyHandlers.Add(standbyHandler);
+      standbyHandler = new ActiveSharesHandler();
       _standbyHandlers.Add(standbyHandler);
 
       ScheduledRecordingsHandler recHandler = new ScheduledRecordingsHandler();

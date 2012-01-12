@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -70,48 +70,27 @@ namespace SetupTv.Sections
         UpdateMenuAndTabs();
 
         listView1.Items.Clear();
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (GroupMap));
 
-        if (Group != null)
+        sb.AddConstraint(Operator.Equals, "idGroup", _channelGroup.IdGroup);
+        sb.AddOrderByField(true, "sortOrder");
+
+        SqlStatement stmt = sb.GetStatement(true);
+
+        IList<GroupMap> maps = ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
+
+        foreach (GroupMap map in maps)
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (GroupMap));
-
-          sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
-          sb.AddOrderByField(true, "sortOrder");
-
-          SqlStatement stmt = sb.GetStatement(true);
-
-          IList<GroupMap> maps = ObjectFactory.GetCollection<GroupMap>(stmt.Execute());
-
-          foreach (GroupMap map in maps)
+          Channel channel = map.ReferencedChannel();
+          if (!channel.IsTv)
           {
-            Channel channel = map.ReferencedChannel();
-            if (channel.IsTv == false)
-            {
-              continue;
-            }
-
-            int imageIndex = 1;
-
-            if (channel.FreeToAir == false)
-            {
-              imageIndex = 2;
-            }
-
-            ListViewItem item = listView1.Items.Add(channel.DisplayName, imageIndex);
-
-            item.Checked = channel.VisibleInGuide;
-            item.Tag = map;
-
-            IList<TuningDetail> details = channel.ReferringTuningDetail();
-            if (details.Count > 0)
-            {
-              item.SubItems.Add(details[0].ChannelNumber.ToString().PadLeft(3, '0'));
-            }
+            continue;
           }
-          bool isAllChannelsGroup = (Group.GroupName == TvConstants.TvGroupNames.AllChannels);
-          removeChannelFromGroup.Enabled = !isAllChannelsGroup;
-          mpButtonDel.Enabled = !isAllChannelsGroup;
+          listView1.Items.Add(CreateItemForChannel(channel, map));
         }
+        bool isAllChannelsGroup = (_channelGroup.GroupName == TvConstants.TvGroupNames.AllChannels);
+        removeChannelFromGroup.Enabled = !isAllChannelsGroup;
+        mpButtonDel.Enabled = !isAllChannelsGroup;
       }
       catch (Exception exp)
       {
@@ -123,20 +102,54 @@ namespace SetupTv.Sections
       }
     }
 
+    private ListViewItem CreateItemForChannel(Channel channel, object map)
+    {
+      bool hasFta = false;
+      bool hasScrambled = false;
+      IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
+      foreach (TuningDetail detail in tuningDetails)
+      {
+        if (detail.FreeToAir)
+        {
+          hasFta = true;
+        }
+        if (!detail.FreeToAir)
+        {
+          hasScrambled = true;
+        }
+      }
+
+      int imageIndex;
+      if (hasFta && hasScrambled)
+      {
+        imageIndex = 5;
+      }
+      else if (hasScrambled)
+      {
+        imageIndex = 4;
+      }
+      else
+      {
+        imageIndex = 3;
+      }
+
+      ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+
+      item.Checked = channel.VisibleInGuide;
+      item.Tag = map;
+
+      IList<TuningDetail> details = channel.ReferringTuningDetail();
+      if (details.Count > 0)
+      {
+        item.SubItems.Add(details[0].ChannelNumber.ToString());
+      }
+      return item;
+    }
+
     private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
     {
       if (e.Item is ListViewItem)
       {
-        ReOrder();
-      }
-      else if (e.Item is MPListView)
-      {
-        MPListView lv = e.Item as MPListView;
-        if (lv != listView1)
-        {
-          AddSelectedItemsToGroup(e.Item as MPListView);
-        }
-
         ReOrder();
       }
     }
@@ -328,9 +341,18 @@ namespace SetupTv.Sections
       if (e.Label != null)
       {
         Channel channel = ((GroupMap)listView1.Items[e.Item].Tag).ReferencedChannel();
-        channel.Name = e.Label;
         channel.DisplayName = e.Label;
         channel.Persist();
+      }
+    }
+
+    private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      Channel ch = ((GroupMap)e.Item.Tag).ReferencedChannel();
+      if (ch.VisibleInGuide != e.Item.Checked)
+      {
+        ch.VisibleInGuide = e.Item.Checked;
+        ch.Persist();
       }
     }
 
@@ -339,8 +361,9 @@ namespace SetupTv.Sections
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
         return;
-      GroupMap map = (GroupMap)listView1.Items[indexes[0]].Tag;
       FormPreview previewWindow = new FormPreview();
+
+      GroupMap map = (GroupMap)listView1.Items[indexes[0]].Tag;
       previewWindow.Channel = map.ReferencedChannel();
       previewWindow.ShowDialog(this);
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -73,10 +73,10 @@ namespace System.Windows
     public static DependencyProperty FromName(string name, Type ownerType)
     {
       // MPSPECIFIC
-      if (ownerType == typeof (GUIControl))
-      {
-        return (DependencyProperty)_properties[name + typeof (FrameworkElement)];
-      }
+      //if (ownerType == typeof(GUIControl))
+      //{
+      //    return (DependencyProperty)_properties[name + typeof(FrameworkElement)];
+      //}
 
       return (DependencyProperty)_properties[name + ownerType];
     }

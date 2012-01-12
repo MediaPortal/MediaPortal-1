@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -69,6 +69,11 @@ namespace MediaPortal.GUI.Library
 
       try
       {
+        double widthRatio = _width > 0 ? (double)((_maximum - 1) * _imageVolumeBar.TextureWidth) / _width : 1.0f;
+        int width = (int)Math.Round(((_maximum - 1) * _imageVolumeBar.TextureWidth) / widthRatio);
+        int rectWidth = (int)Math.Round(_imageVolumeBar.TextureWidth / widthRatio);
+        int correctedWidth = rectWidth * (_maximum - 1);
+
         _sourceRectangle.Y = _image1 * (_imageVolumeBar.TextureHeight / _imageHeight);
         _sourceRectangle.Width = _imageVolumeBar.TextureWidth;
         _sourceRectangle.Height = _imageVolumeBar.TextureHeight / _imageHeight;
@@ -80,23 +85,23 @@ namespace MediaPortal.GUI.Library
             break;
           case Alignment.ALIGN_CENTER:
             _destinationRectangle.X = _positionX -
-                                      (((_maximum * _imageVolumeBar.TextureWidth) - _imageVolumeBar.TextureWidth) / 2);
+                                      (((correctedWidth)) / 2);
             break;
           case Alignment.ALIGN_RIGHT:
-            _destinationRectangle.X = _imageVolumeBar.TextureWidth + _positionX -
-                                      (_maximum * _imageVolumeBar.TextureWidth);
+            _destinationRectangle.X = rectWidth + _positionX -
+                                      (correctedWidth);
             break;
         }
 
         _destinationRectangle.Y = _positionY;
-        _destinationRectangle.Width = _imageVolumeBar.TextureWidth;
+        _destinationRectangle.Width = rectWidth; 
         _destinationRectangle.Height = _height;
 
         for (int index = 0; index < _current; ++index)
         {
           _imageVolumeBar.RenderRect(timePassed, _sourceRectangle, _destinationRectangle);
 
-          _destinationRectangle.X += _imageVolumeBar.TextureWidth;
+          _destinationRectangle.X += _destinationRectangle.Width;
         }
 
         if (_image2 != _image1)
@@ -108,7 +113,7 @@ namespace MediaPortal.GUI.Library
         {
           _imageVolumeBar.RenderRect(timePassed, _sourceRectangle, _destinationRectangle);
 
-          _destinationRectangle.X += _imageVolumeBar.TextureWidth;
+          _destinationRectangle.X += _destinationRectangle.Width;
         }
       }
       catch (Exception e)

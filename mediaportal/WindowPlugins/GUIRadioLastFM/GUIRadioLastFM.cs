@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 using Point = MediaPortal.Drawing.Point;
 
 namespace MediaPortal.GUI.RADIOLASTFM
@@ -95,7 +96,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool _configDirectSkip = false;
     private int _configListEntryCount = 24;
     private bool _configOneClickStart = false;
-    private bool _configUseSMSInput = true;
     private List<string> _scrobbleUsers = null;
     private List<string> _usersTopArtists = null;
     private List<string> _usersOwnTags = null;
@@ -212,7 +212,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _configDirectSkip = xmlreader.GetValueAsBool("audioscrobbler", "directskip", false);
         _configListEntryCount = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 24);
         _configOneClickStart = xmlreader.GetValueAsBool("audioscrobbler", "oneclickstart", false);
-        _configUseSMSInput = xmlreader.GetValueAsBool("audioscrobbler", "usesmskeyboard", true);
       }
 
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
@@ -399,17 +398,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       try
       {
         VirtualKeyboard keyboard;
-        if (_configUseSMSInput)
-        {
-          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD);
-        }
-        else
-        {
-          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-        }
+        keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
         keyboard.Reset();
         keyboard.IsSearchKeyboard = false;
-        keyboard.Location = new Point(50, 50);
+        //keyboard.Location = new Point(50, 50);
         keyboard.Text = searchterm;
         keyboard.DoModal(GetID); // show it...
         if (keyboard.IsConfirmed)
@@ -1159,7 +1151,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         string ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists,
                                                           AudioscrobblerBase.CurrentPlayingSong.Artist);
         // If the download was unsuccessful or disabled in config then do not remove a possibly present placeholder by specifing a not existing file
-        if (File.Exists(ThumbFileName))
+        if (Util.Utils.FileExistsInCache(ThumbFileName))
         {
           GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {ThumbFileName});
         }
@@ -1978,7 +1970,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
           thumb = strLarge;
         }
@@ -1986,10 +1978,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
 
       string albumthumb = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, AudioscrobblerBase.CurrentPlayingSong.Album);
-      if (File.Exists(albumthumb))
+      if (Util.Utils.FileExistsInCache(albumthumb))
       {
         string strLarge = Util.Utils.ConvertToLargeCoverArt(albumthumb);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
           albumthumb = strLarge;
         }

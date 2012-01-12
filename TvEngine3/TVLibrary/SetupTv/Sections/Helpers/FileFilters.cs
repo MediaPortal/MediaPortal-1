@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using MediaPortal.UserInterface.Controls;
 using System.Xml.Serialization;
@@ -148,7 +149,7 @@ namespace SetupTv.Sections
       m_cbxCountries = cbxCountries;
       m_cbxRegions = cbxRegions;
 
-      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", Log.GetPathName(), TuningType),
+      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", PathManager.GetDataPath, TuningType),
                                            "*.xml");
       List<String> countries = CountryList(files);
       for (int i = 0; i < countries.Count; ++i)
@@ -166,7 +167,7 @@ namespace SetupTv.Sections
     /// <param name="TuningType">Tuning type (subfolder name)</param>
     public FileFilters(String TuningType)
     {
-      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", Log.GetPathName(), TuningType),
+      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", PathManager.GetDataPath, TuningType),
                                            "*.xml");
     }
 

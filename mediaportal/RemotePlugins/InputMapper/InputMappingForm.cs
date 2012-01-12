@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.InputDevices
 {
@@ -202,39 +203,19 @@ namespace MediaPortal.InputDevices
           switch ((int)Enum.Parse(typeof (GUIWindow.Window), wnd.ToString()))
           {
             case (int)GUIWindow.Window.WINDOW_ARTIST_INFO:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_DATETIME:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_EXIF:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_FILE:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_MENU:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_OK:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_RATING:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_SELECT:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_SELECT2:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_TEXT:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_YES_NO:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_PLAY_STOP:
             case (int)GUIWindow.Window.WINDOW_INVALID:
             case (int)GUIWindow.Window.WINDOW_MINI_GUIDE:
             case (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS:
-            case (int)GUIWindow.Window.WINDOW_MSNOSD:
             case (int)GUIWindow.Window.WINDOW_MUSIC:
             case (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS:
             case (int)GUIWindow.Window.WINDOW_MUSIC_INFO:
             case (int)GUIWindow.Window.WINDOW_OSD:
             case (int)GUIWindow.Window.WINDOW_TOPBAR:
-              //case (int)GUIWindow.Window.WINDOW_TOPBARHOME:
-            case (int)GUIWindow.Window.WINDOW_TVMSNOSD:
             case (int)GUIWindow.Window.WINDOW_TVOSD:
             case (int)GUIWindow.Window.WINDOW_TVZAPOSD:
             case (int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO:
             case (int)GUIWindow.Window.WINDOW_VIDEO_INFO:
             case (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD:
-            case (int)GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD:
               break;
             default:
               windowsListFiltered.Add(GetFriendlyName(wnd.ToString()));
@@ -809,6 +790,9 @@ namespace MediaPortal.InputDevices
 
     private void LoadMapping(string xmlFile, bool defaults)
     {
+      string pathDefault = Path.Combine(InputHandler.DefaultsDirectory, xmlFile);
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile);
+
       try
       {
         groupBoxLayer.Enabled = false;
@@ -816,10 +800,10 @@ namespace MediaPortal.InputDevices
         groupBoxAction.Enabled = false;
         treeMapping.Nodes.Clear();
         XmlDocument doc = new XmlDocument();
-        string path = Config.GetFolder(Config.Dir.Base) + "\\InputDeviceMappings\\defaults\\" + xmlFile;
-        if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
+        string path = pathDefault;
+        if (!defaults && File.Exists(pathCustom))
         {
-          path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
+          path = pathCustom;
         }
         if (!File.Exists(path))
         {
@@ -892,6 +876,10 @@ namespace MediaPortal.InputDevices
                 case "WINDOW":
                   conditionString =
                     GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(conProperty)));
+                  if (string.IsNullOrEmpty(conditionString))
+                  {
+                    continue;
+                  }
                   break;
                 case "FULLSCREEN":
                   if (conProperty == "TRUE")
@@ -1013,18 +1001,21 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         Log.Error(ex);
-        File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile));
+        File.Delete(pathCustom);
         LoadMapping(xmlFile, true);
       }
     }
 
     private bool SaveMapping(string xmlFile)
     {
+      string pathDefault = Path.Combine(InputHandler.DefaultsDirectory, xmlFile);
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile);
+
 #if !DEBUG
       try
 #endif
       {
-        DirectoryInfo dir = Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
+        DirectoryInfo dir = Directory.CreateDirectory(InputHandler.CustomizedMappingsDirectory);
       }
 #if !DEBUG
       catch
@@ -1035,7 +1026,7 @@ namespace MediaPortal.InputDevices
       //try
 #endif
       {
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(pathCustom, Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;
@@ -1465,6 +1456,11 @@ namespace MediaPortal.InputDevices
 
     private string GetFriendlyName(string name)
     {
+      if (string.IsNullOrEmpty(name))
+      {
+        return string.Empty;
+      }
+
       if ((name.IndexOf("ACTION") != -1) || (name.IndexOf("WINDOW") != -1))
       {
         name = name.Substring(7);
@@ -1841,9 +1837,10 @@ namespace MediaPortal.InputDevices
 
     private void buttonDefault_Click(object sender, EventArgs e)
     {
-      if (File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, inputClassName + ".xml")))
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, inputClassName + ".xml");
+      if (File.Exists(pathCustom))
       {
-        File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, inputClassName + ".xml"));
+        File.Delete(pathCustom);
       }
       LoadMapping(inputClassName + ".xml", true);
     }

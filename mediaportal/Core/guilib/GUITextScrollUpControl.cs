@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -40,14 +40,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")] protected string _property = "";
     [XMLSkinElement("seperator")] protected string _seperator = "";
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("lineSpacing")]
-    protected float _lineSpacing = 1.0f;
-    [XMLSkinElement("shadowAngle")]
-    protected int _shadowAngle = 0;
-    [XMLSkinElement("shadowDistance")]
-    protected int _shadowDistance = 0;
-    [XMLSkinElement("shadowColor")]
-    protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("lineSpacing")] protected float _lineSpacing = 1.0f;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     #endregion
 
@@ -201,7 +197,6 @@ namespace MediaPortal.GUI.Library
           _offset = 0;
         }
 
-        Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
         if (GUIGraphicsContext.graphics != null)
         {
           GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY,
@@ -220,14 +215,12 @@ namespace MediaPortal.GUI.Library
             return;
           }
 
-          Viewport newviewport = new Viewport();
-          newviewport.X = _positionX;
-          newviewport.Y = _positionY;
-          newviewport.Width = _width;
-          newviewport.Height = (int)(_height * _lineSpacing);
-          newviewport.MinZ = 0.0f;
-          newviewport.MaxZ = 1.0f;
-          GUIGraphicsContext.DX9Device.Viewport = newviewport;
+          Rectangle clipRect = new Rectangle();
+          clipRect.X = _positionX;
+          clipRect.Y = _positionY;
+          clipRect.Width = _width;
+          clipRect.Height = (int)(_height * _lineSpacing);
+          GUIGraphicsContext.BeginClip(clipRect);
         }
         long color = _textColor;
         if (Dimmed)
@@ -298,14 +291,20 @@ namespace MediaPortal.GUI.Library
                   x = dwPosX + dMaxWidth + _width;
                   break;
               }
+
+              uint aColor = GUIGraphicsContext.MergeAlpha((uint)color);
               if (Shadow)
               {
-                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), _textAlignment,
-                  _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+                uint sColor = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
+                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy,
+                                          (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(),
+                                          _textAlignment,
+                                          _shadowAngle, _shadowDistance, sColor, (float)dMaxWidth);
               }
               else
               {
-                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), fTextWidth, _textAlignment);
+                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                    wszText2.Trim(), fTextWidth, _textAlignment);
               }
             }
 
@@ -320,21 +319,26 @@ namespace MediaPortal.GUI.Library
                 x = dwPosX + _width;
                 break;
             }
-
-            if (Shadow)
             {
-              _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), _textAlignment,
-                _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
-            }
-            else
-            {
-              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), (float)dMaxWidth, _textAlignment);
-            }
+              uint aColor = GUIGraphicsContext.MergeAlpha((uint)color);
+              if (Shadow)
+              {
+                uint sColor = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
+                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                          wszText1.Trim(), _textAlignment,
+                                          _shadowAngle, _shadowDistance, sColor, (float)dMaxWidth);
+              }
+              else
+              {
+                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                    wszText1.Trim(), (float)dMaxWidth, _textAlignment);
+              }
 
-            //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
-            //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
+              //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
+              //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
 
-            dwPosY += (int)(_itemHeight * _lineSpacing);
+              dwPosY += (int)(_itemHeight * _lineSpacing);
+            }
           }
         }
 
@@ -344,7 +348,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+          GUIGraphicsContext.EndClip();
         }
         base.Render(timePassed);
       }
@@ -742,10 +746,7 @@ namespace MediaPortal.GUI.Library
 
     private bool Shadow
     {
-      get
-      {
-        return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0);
-      }
+      get { return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0); }
     }
   }
 }

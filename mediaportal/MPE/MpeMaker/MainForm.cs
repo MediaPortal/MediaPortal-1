@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,13 +32,14 @@ using MpeMaker.Classes;
 using MpeMaker.Dialogs;
 using MpeMaker.Sections;
 using MpeMaker.Wizards;
+using System.Xml;
 
 namespace MpeMaker
 {
   public partial class MainForm : Form
   {
     protected MruStripMenu mruMenu;
-    
+
     private const string mruRegKey = "SOFTWARE\\Team MediaPortal\\MpeMaker";
     private const string mpeFileDialogFilter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
 
@@ -103,7 +104,6 @@ namespace MpeMaker
             Console.WriteLine("Writing UpdateXML to \"{0}\"", Package.ProjectSettings.UpdatePath1);
             Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
           }
-
         }
 
         // close form/app
@@ -139,6 +139,7 @@ namespace MpeMaker
     #region Properties
 
     private PackageClass _package;
+
     public PackageClass Package
     {
       get { return _package; }
@@ -187,7 +188,7 @@ namespace MpeMaker
 
       splitContainer1.Panel2.Controls.Clear();
       _panels[key].Anchor = (AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top |
-                                     AnchorStyles.Left);
+                             AnchorStyles.Left);
       _panels[key].Dock = DockStyle.Fill;
       splitContainer1.Panel2.Controls.Add(_panels[key]);
       ((ISectionControl)_panels[key]).Set(Package);
@@ -259,9 +260,10 @@ namespace MpeMaker
     {
       if (!File.Exists(filename))
       {
-        string message = String.Format("Project file {0} was not found.{1}{1}Entry will be removed from 'Most Recently Used'-list.",
-                                       Path.GetFileName(filename),
-                                       Environment.NewLine);
+        string message =
+          String.Format("Project file {0} was not found.{1}{1}Entry will be removed from 'Most Recently Used'-list.",
+                        Path.GetFileName(filename),
+                        Environment.NewLine);
         MessageBox.Show(message, "File not found", MessageBoxButtons.OK, MessageBoxIcon.Information);
         mruMenu.RemoveFile(number);
         return;
@@ -292,18 +294,22 @@ namespace MpeMaker
       packageClass.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
       packageClass.Sections.Add("Install Section");
       var item = new ActionItem("InstallFiles")
-      {
-        Params =
-          new SectionParamCollection(
-          MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
-      };
+                   {
+                     Params =
+                       new SectionParamCollection(
+                       MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
+                   };
       packageClass.Sections.Items[1].Actions.Add(item);
       packageClass.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
       packageClass.Sections.Add("Setup Complete");
       packageClass.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
 
+      packageClass.CreateMPDependency();
+
       return packageClass;
     }
+
+    
 
     private void OpenFileDialog()
     {
@@ -350,9 +356,30 @@ namespace MpeMaker
     {
       Package.ProjectSettings.ProjectFilename = filename;
       Package.GenerateRelativePath(Path.GetDirectoryName(filename));
+      Package.GenerateUniqueFileList();
+      Package.SetPluginsDependencies();
+      DependencyItem MPDep;
+      if (Package.CheckMPDependency(out MPDep))
+      {
+        if (MPDep.MinVersion.CompareTo(MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired) < 0)
+        {
+          MPDep.MinVersion = MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired;
+        }
+      }
+      else
+      {
+        Package.CreateMPDependency();
+      }
+      FileItem skinFile;
+      DependencyItem dep;
+      if (Package.ProvidesSkin(out skinFile) && !Package.CheckSkinDependency(out dep))
+      {
+        Package.CreateSkinDependency(skinFile);
+      }
+      Package.ProjectSettings.ProjectFilename = Util.RelativePathTo(Path.GetDirectoryName(filename), filename);
       Package.Save(filename);
+      Package.ProjectSettings.ProjectFilename = filename;
       Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
-
       SetTitle();
     }
 
@@ -400,8 +427,8 @@ namespace MpeMaker
     private static bool LoosingChangesConfirmed(string caption)
     {
       StringBuilder stringBuilder = new StringBuilder();
-      stringBuilder.AppendLine("All not saved changes will be lost,");
-      stringBuilder.AppendLine("Do you want to continue?");
+      stringBuilder.AppendLine("Unsaved changes will be lost,");
+      stringBuilder.AppendLine("Do you want to proceed?");
 
       return MessageBox.Show(stringBuilder.ToString(), caption, MessageBoxButtons.YesNo) == DialogResult.Yes;
     }

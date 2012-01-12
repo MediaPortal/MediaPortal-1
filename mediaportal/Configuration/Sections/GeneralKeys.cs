@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
+using Action = MediaPortal.GUI.Library.Action;
 
 #pragma warning disable 108
 
@@ -374,9 +375,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.idTextBox);
       this.groupBox1.Controls.Add(this.idComboBox);
       this.groupBox1.Controls.Add(this.addButton);
@@ -400,8 +403,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // idTextBox
       // 
-      this.idTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.idTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.idTextBox.BorderColor = System.Drawing.Color.Empty;
       this.idTextBox.Enabled = false;
       this.idTextBox.Location = new System.Drawing.Point(168, 324);
@@ -415,8 +420,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // idComboBox
       // 
-      this.idComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.idComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.idComboBox.BorderColor = System.Drawing.Color.Empty;
       this.idComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.idComboBox.Enabled = false;
@@ -428,7 +435,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // addButton
       // 
-      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.addButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Enabled = false;
       this.addButton.Location = new System.Drawing.Point(304, 272);
       this.addButton.Name = "addButton";
@@ -440,7 +449,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // deleteButton
       // 
-      this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.deleteButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
       this.deleteButton.Location = new System.Drawing.Point(384, 272);
       this.deleteButton.Name = "deleteButton";
@@ -452,7 +463,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Enabled = false;
       this.fileNameButton.Location = new System.Drawing.Point(384, 371);
       this.fileNameButton.Name = "fileNameButton";
@@ -464,8 +477,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundTextBox
       // 
-      this.soundTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.soundTextBox.BorderColor = System.Drawing.Color.Empty;
       this.soundTextBox.Enabled = false;
       this.soundTextBox.Location = new System.Drawing.Point(168, 372);
@@ -476,7 +491,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label4
       // 
-      this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label4.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label4.Location = new System.Drawing.Point(16, 376);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(40, 16);
@@ -486,8 +503,10 @@ namespace MediaPortal.Configuration.Sections
       // keyTextBox
       // 
       this.keyTextBox.AcceptsReturn = true;
-      this.keyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.keyTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.keyTextBox.BorderColor = System.Drawing.Color.Empty;
       this.keyTextBox.Enabled = false;
       this.keyTextBox.Location = new System.Drawing.Point(168, 348);
@@ -500,7 +519,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label3.Location = new System.Drawing.Point(16, 352);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(32, 16);
@@ -509,7 +530,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label2.Location = new System.Drawing.Point(16, 328);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(40, 16);
@@ -518,8 +541,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // descriptionTextBox
       // 
-      this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.descriptionTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.descriptionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.descriptionTextBox.Enabled = false;
       this.descriptionTextBox.Location = new System.Drawing.Point(168, 300);
@@ -530,7 +555,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.label1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.label1.Location = new System.Drawing.Point(16, 304);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 16);
@@ -539,9 +566,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // keyTreeView
       // 
-      this.keyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.keyTreeView.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.keyTreeView.FullRowSelect = true;
       this.keyTreeView.HideSelection = false;
       this.keyTreeView.Location = new System.Drawing.Point(16, 24);

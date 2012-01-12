@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
+
 #endregion
 
 namespace MediaPortal.GUI.Home
@@ -52,9 +53,6 @@ namespace MediaPortal.GUI.Home
     protected bool _fixedScroll = true; // fix scrollbar in the middle of menu
     protected bool _enableAnimation = true;
     protected DateTime _updateTimer = DateTime.MinValue;
-    protected int _notifyTVTimeout = 15;
-    protected bool _playNotifyBeep = true;
-    protected int _preNotifyConfig = 60;
     protected GUIOverlayWindow _overlayWin = null;
     private static bool _addedGlobalMessageHandler = false;
 
@@ -84,9 +82,6 @@ namespace MediaPortal.GUI.Home
         _fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", true); // fix scrollbar in the middle of menu
         _useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true); // use previous menu handling
         _enableAnimation = xmlreader.GetValueAsBool("home", "enableanimation", true);
-        _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
-        _playNotifyBeep = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
-        _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
       }
     }
 
@@ -260,41 +255,13 @@ namespace MediaPortal.GUI.Home
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
-          //if (GUIGraphicsContext.IsFullScreenVideo) return;
-          GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-          TVProgramDescription notify = message.Object as TVProgramDescription;
-          if (notify == null)
-          {
-            return;
-          }
-          int minUntilStart = _preNotifyConfig / 60;
-          if (minUntilStart > 1)
-          {
-            dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
-          }
-          else
-          {
-            dialogNotify.SetHeading(1019); // Program is about to begin
-          }
-          dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-          string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
-          dialogNotify.SetImage(strLogo);
-          dialogNotify.TimeOut = _notifyTVTimeout;
-          if (_playNotifyBeep)
-          {
-            Util.Utils.PlaySound("notify.wav", false, true);
-          }
-          dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
-          break;
-
         case GUIMessage.MessageType.GUI_MSG_NOTIFY:
           ShowNotify(message.Label, message.Label2, message.Label3);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          string Head = "", Line1 = "", Line2 = "", Line3 = "";
-          ;
+          string Head = "", Line1 = "", Line2 = "", Line3 = "", Line4 = "";
+          bool DefaultYes = false;
           if (message.Param1 != 0)
           {
             Head = GUILocalizeStrings.Get(message.Param1);
@@ -327,7 +294,19 @@ namespace MediaPortal.GUI.Home
           {
             Line3 = message.Label4;
           }
-          if (AskYesNo(Head, Line1, Line2, Line3))
+          if (message.Object != null && message.Object is int && (int)message.Object != 0)
+          {
+            Line4 = GUILocalizeStrings.Get((int)message.Object);
+          }
+          else if (message.Object != null && message.Object is string && (string)message.Object != string.Empty)
+          {
+            Line4 = (string)message.Object;
+          }
+          if (message.Object2 != null && message.Object2 is bool)
+          {
+            DefaultYes = (bool)message.Object2;
+          }
+          if (AskYesNo(Head, Line1, Line2, Line3, Line4, DefaultYes))
           {
             message.Param1 = 1;
           }
@@ -452,13 +431,15 @@ namespace MediaPortal.GUI.Home
       dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
     }
 
-    private bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3)
+    private bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3, string strLine4, bool defaultYes)
     {
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetLine(1, strLine1);
       dlgYesNo.SetLine(2, strLine2);
       dlgYesNo.SetLine(3, strLine3);
+      dlgYesNo.SetLine(4, strLine4);
+      dlgYesNo.SetDefaultToYes(defaultYes);
       dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
       return dlgYesNo.IsConfirmed;
     }

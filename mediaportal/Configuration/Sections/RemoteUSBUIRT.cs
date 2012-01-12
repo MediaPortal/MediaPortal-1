@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -231,9 +231,9 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.SettingsPnl);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 209);
+      this.groupBox1.Size = new System.Drawing.Size(462, 209);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
@@ -253,12 +253,12 @@ namespace MediaPortal.Configuration.Sections
       this.SettingsPnl.Controls.Add(this.inputCheckBox);
       this.SettingsPnl.Location = new System.Drawing.Point(8, 8);
       this.SettingsPnl.Name = "SettingsPnl";
-      this.SettingsPnl.Size = new System.Drawing.Size(456, 198);
+      this.SettingsPnl.Size = new System.Drawing.Size(448, 198);
       this.SettingsPnl.TabIndex = 9;
       // 
       // testSendIrBtn
       // 
-      this.testSendIrBtn.Location = new System.Drawing.Point(288, 133);
+      this.testSendIrBtn.Location = new System.Drawing.Point(280, 133);
       this.testSendIrBtn.Name = "testSendIrBtn";
       this.testSendIrBtn.Size = new System.Drawing.Size(160, 23);
       this.testSendIrBtn.TabIndex = 14;
@@ -270,7 +270,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.testSendIrTxtBox.AcceptsReturn = true;
       this.testSendIrTxtBox.BorderColor = System.Drawing.Color.Empty;
-      this.testSendIrTxtBox.Location = new System.Drawing.Point(288, 156);
+      this.testSendIrTxtBox.Location = new System.Drawing.Point(280, 156);
       this.testSendIrTxtBox.Name = "testSendIrTxtBox";
       this.testSendIrTxtBox.Size = new System.Drawing.Size(160, 20);
       this.testSendIrTxtBox.TabIndex = 13;
@@ -357,7 +357,7 @@ namespace MediaPortal.Configuration.Sections
       this.tunerCommandsButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.tunerCommandsButton.Location = new System.Drawing.Point(288, 53);
+      this.tunerCommandsButton.Location = new System.Drawing.Point(280, 53);
       this.tunerCommandsButton.Name = "tunerCommandsButton";
       this.tunerCommandsButton.Size = new System.Drawing.Size(160, 23);
       this.tunerCommandsButton.TabIndex = 8;
@@ -370,7 +370,7 @@ namespace MediaPortal.Configuration.Sections
       this.internalCommandsButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.internalCommandsButton.Location = new System.Drawing.Point(288, 16);
+      this.internalCommandsButton.Location = new System.Drawing.Point(280, 16);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
       this.internalCommandsButton.TabIndex = 7;
@@ -436,7 +436,7 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 15);
       this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
-      this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 16);
+      this.lblUSBUIRTVersion.Size = new System.Drawing.Size(246, 16);
       this.lblUSBUIRTVersion.TabIndex = 6;
       this.lblUSBUIRTVersion.Text = "Version";
       // 
@@ -465,9 +465,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox2.Location = new System.Drawing.Point(0, 300);
+      this.groupBox2.Location = new System.Drawing.Point(6, 300);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 104);
+      this.groupBox2.Size = new System.Drawing.Size(462, 104);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "General Information";
@@ -499,7 +499,7 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(448, 40);
+      this.label2.Size = new System.Drawing.Size(438, 40);
       this.label2.TabIndex = 0;
       this.label2.Text = resources.GetString("label2.Text");
       // 
@@ -518,9 +518,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.lblUSBUIRTVersion);
       this.groupBox3.Controls.Add(this.label1);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(0, 213);
+      this.groupBox3.Location = new System.Drawing.Point(6, 213);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(472, 83);
+      this.groupBox3.Size = new System.Drawing.Size(462, 83);
       this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Status";
@@ -533,7 +533,7 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.varDLLVersion.Location = new System.Drawing.Point(200, 47);
       this.varDLLVersion.Name = "varDLLVersion";
-      this.varDLLVersion.Size = new System.Drawing.Size(256, 16);
+      this.varDLLVersion.Size = new System.Drawing.Size(246, 16);
       this.varDLLVersion.TabIndex = 12;
       this.varDLLVersion.Text = "Version";
       // 
@@ -545,7 +545,7 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.varAPIVersion.Location = new System.Drawing.Point(200, 31);
       this.varAPIVersion.Name = "varAPIVersion";
-      this.varAPIVersion.Size = new System.Drawing.Size(256, 16);
+      this.varAPIVersion.Size = new System.Drawing.Size(246, 16);
       this.varAPIVersion.TabIndex = 11;
       this.varAPIVersion.Text = "Version";
       // 
@@ -575,7 +575,7 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.lblUSBUIRTConfigVersion.Location = new System.Drawing.Point(200, 63);
       this.lblUSBUIRTConfigVersion.Name = "lblUSBUIRTConfigVersion";
-      this.lblUSBUIRTConfigVersion.Size = new System.Drawing.Size(256, 13);
+      this.lblUSBUIRTConfigVersion.Size = new System.Drawing.Size(246, 13);
       this.lblUSBUIRTConfigVersion.TabIndex = 8;
       this.lblUSBUIRTConfigVersion.Text = "Version";
       // 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -233,7 +233,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (ddplusaudioCodec == string.Empty)
         {
-          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);
           if (availableDDPLUSAudioFilters.Count > 0)
           {
             bool ffdshowFound = false;
@@ -283,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-    /*
+      /*
       h264videoCodecComboBox.SelectedIndexChanged -= h264videoCodecComboBox_SelectedIndexChanged;
       if (videoCodecComboBox.Text.Contains(Windows7Codec))
       {
@@ -308,7 +308,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void h264videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-    /*
+      /*
       videoCodecComboBox.SelectedIndexChanged -= videoCodecComboBox_SelectedIndexChanged;
       if (h264videoCodecComboBox.Text.Contains(Windows7Codec))
       {

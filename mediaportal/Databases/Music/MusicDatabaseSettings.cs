@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ namespace MediaPortal.Music.Database
     private bool _stripArtistPrefixes;
     private bool _useLastImportDate;
     private bool _excludeHiddenFiles;
+    private int _dateAddedValue;
 
 
     public MusicDatabaseSettings() {}
@@ -97,6 +98,12 @@ namespace MediaPortal.Music.Database
     {
       get { return _excludeHiddenFiles; }
       set { _excludeHiddenFiles = value; }
+    }
+
+    public int DateAddedValue
+    {
+      get { return _dateAddedValue; }
+      set { _dateAddedValue = value; }
     }
   }
 }

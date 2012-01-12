@@ -18,9 +18,12 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using TvDatabase;
+using TvLibrary.Interfaces;
+using TvControl;
 
 namespace TvPlugin
 {
@@ -121,29 +124,61 @@ namespace TvPlugin
               GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-T");
               break;
           }
+
+          IUser user = TVHome.Card.User;
+          IVideoStream videoStream = TVHome.Card.GetCurrentVideoStream((User)user);
+          IAudioStream[] audioStreams = TVHome.Card.AvailableAudioStreams;
+
+          String audioPids = String.Empty;
+          String videoPid = String.Empty;		  
+
+          foreach (IAudioStream stream in audioStreams)
+          {
+            audioPids += stream.Pid + " (" + stream.StreamType + ") ";
+          }
+		  
+          videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
+
           GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.Frequency.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.InnerFecRate", detail.InnerFecRate.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Modulation", detail.Modulation.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.NetworkId", detail.NetworkId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", detail.PcrPid.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.PmtPid", detail.PmtPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", detail.AudioPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", detail.VideoPid.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Polarisation", detail.Polarisation.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Provider", detail.Provider);
           GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.ServiceId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.SymbolRate", detail.Symbolrate.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.TransportId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", videoStream.PcrPid.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", videoPid);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", audioPids);
         }
       }
     }
 
+    private DateTime _updateTimer = DateTime.Now;
     public override void Process()
     {
+
+      TimeSpan ts = DateTime.Now - _updateTimer;
+      if (ts.TotalMilliseconds < 500)
+      {
+        return;
+      }
+
       GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
       GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
+
+      int totalTSpackets = 0;
+      int discontinuityCounter = 0;
+      TVHome.Card.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
+
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.TSPacketsTransferred", Convert.ToString(totalTSpackets));
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.Discontinuities", Convert.ToString(discontinuityCounter));
+
+      _updateTimer = DateTime.Now;
     }
 
     #endregion

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -45,10 +45,15 @@ namespace TvLibrary.Streaming
     private static extern void StreamRun();
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern void StreamAddTimeShiftFile(string streamName, string fileName, bool isProgramStream);
+    private static extern void StreamAddTimeShiftFile(string streamName, 
+                                                      [In, MarshalAs(UnmanagedType.LPWStr)] string fileName, 
+                                                      bool isProgramStream,
+                                                      int channelType);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern void StreamAddMpegFile(string streamName, string fileName);
+    private static extern void StreamAddMpegFile(string streamName,
+                                                 [In, MarshalAs(UnmanagedType.LPWStr)] string fileName, 
+                                                 int channelType);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     private static extern void StreamRemove(string streamName);
@@ -173,7 +178,7 @@ namespace TvLibrary.Streaming
           {
             ipadress = Marshal.PtrToStringAnsi(ptrIpAdress);
           }
-          if (ptrStream != null)
+          if (ptrStream != IntPtr.Zero)
           {
             streamName = Marshal.PtrToStringAnsi(ptrStream);
           }
@@ -276,11 +281,11 @@ namespace TvLibrary.Streaming
         Log.Log.WriteFile("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
         if (stream.Card != null)
         {
-          StreamAddTimeShiftFile(stream.Name, stream.FileName, false);
+          StreamAddTimeShiftFile(stream.Name, stream.FileName, false, (stream.IsTv ? 0 : 1));
         }
         else
         {
-          StreamAddMpegFile(stream.Name, stream.FileName);
+          StreamAddMpegFile(stream.Name, stream.FileName, 0);
         }
         _streams[stream.Name] = stream;
       }

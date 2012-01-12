@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -88,7 +88,8 @@ namespace MPTray
           Log.Write("MPTray: More than one window named \"MediaPortal\" has been found!");
           foreach (Process procName in processes)
           {
-            Log.Write("MPTray: {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
+            Log.Write("MPTray: {0} (Started: {1}, ID: {2})", procName.ProcessName,
+                      procName.StartTime.ToShortTimeString(), procName.Id);
           }
         }
         Log.Write("MPTray: MediaPortal is already running - switching focus.");
@@ -236,7 +237,7 @@ namespace MPTray
         {
           Thread.CurrentThread.Name = "MPTray";
         }
-        catch (InvalidOperationException) { }
+        catch (InvalidOperationException) {}
 
         Log.Open("MPTray.log");
         Log.Write("MPTray: Starting...");
@@ -381,7 +382,7 @@ namespace MPTray
           MenuItem menuItem1 = new MenuItem();
 
           // Initialize contextMenuTray
-          contextMenuTray.MenuItems.AddRange(new[] { menuItem1 });
+          contextMenuTray.MenuItems.AddRange(new[] {menuItem1});
 
           // Initialize menuItem1
           menuItem1.Index = 0;
@@ -421,6 +422,7 @@ namespace MPTray
     #endregion Fields
 
     #region Log
+
     public class Log
     {
       private static StreamWriter _streamWriter;
@@ -432,7 +434,8 @@ namespace MPTray
           return;
         }
 
-        string filePath = Path.Combine(MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), fileName);
+        string filePath =
+          Path.Combine(MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), fileName);
         if (File.Exists(filePath))
         {
           try
@@ -445,22 +448,24 @@ namespace MPTray
             }
             File.Move(filePath, backup);
           }
-          catch { }
+          catch {}
         }
 
         try
         {
           _streamWriter = new StreamWriter(filePath, false)
-          {
-            AutoFlush = true
-          };
-          string message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: Log Opened", DateTime.Now, Thread.CurrentThread.Name);
+                            {
+                              AutoFlush = true
+                            };
+          string message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: Log Opened", DateTime.Now,
+                                         Thread.CurrentThread.Name);
           _streamWriter.WriteLine(message);
 
-          message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: {2}", DateTime.Now, Thread.CurrentThread.Name, FileVersionInfo.GetVersionInfo(Application.ExecutablePath).FileVersion);
+          message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: {2}", DateTime.Now, Thread.CurrentThread.Name,
+                                  FileVersionInfo.GetVersionInfo(Application.ExecutablePath).FileVersion);
           _streamWriter.WriteLine(message);
         }
-        catch { }
+        catch {}
       }
 
       public static void ReOpen(string fileName)
@@ -470,17 +475,18 @@ namespace MPTray
           return;
         }
 
-        string filePath = Path.Combine(MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), fileName);
-        
+        string filePath =
+          Path.Combine(MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), fileName);
+
 
         try
         {
           _streamWriter = new StreamWriter(filePath, true)
-          {
-            AutoFlush = true
-          };
+                            {
+                              AutoFlush = true
+                            };
         }
-        catch { }
+        catch {}
       }
 
       public static void Close()
@@ -491,7 +497,6 @@ namespace MPTray
         }
         _streamWriter.Dispose();
         _streamWriter = null;
-        
       }
 
       public static void Write(string format, params object[] args)
@@ -507,6 +512,7 @@ namespace MPTray
         Log.Close();
       }
     }
+
     #endregion
   }
 }

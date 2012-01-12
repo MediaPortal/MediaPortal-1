@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {
@@ -56,14 +57,7 @@ namespace MediaPortal.Dialogs
 
     public virtual void PageLoad(int ParentID)
     {
-      if (GUIWindowManager.IsRouted)
-      {
-        GUIDialogWindow win = (GUIDialogWindow)GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
-        if (win != null)
-        {
-          win.PageDestroy();
-        }
-      }
+      CloseRoutedWindow();
 
       _parentWindowID = ParentID;
       _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
@@ -83,7 +77,8 @@ namespace MediaPortal.Dialogs
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
 
-      while (IsAnimating(AnimationType.WindowOpen) && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      while (IsAnimating(AnimationType.WindowOpen) &&
+             GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
       }
@@ -256,6 +251,7 @@ namespace MediaPortal.Dialogs
             //base.OnMessage(message);
             // TODO: Establishes a circular loop
             // OnPageDestroy(_parentWindowID);
+            OnPageDestroy(GetID); // mantis 2996: Dialog windows do not animate when closed
 
             _running = false;
             _parentWindowID = 0;
@@ -295,6 +291,25 @@ namespace MediaPortal.Dialogs
 
     #endregion
 
+    #endregion
+
+    #region public static methods
+    public static void CloseRoutedWindow()
+    {
+        if (GUIWindowManager.IsRouted)
+        {
+            GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
+            if (win != null)
+            {
+                if (win is GUIDialogFile)
+                    ((GUIDialogFile)win).Close();
+                else if (win is VirtualKeyboard)
+                    ((VirtualKeyboard)win).PageDestroy();
+                else
+                    ((GUIDialogWindow)win).PageDestroy();
+            }
+        }
+    }
     #endregion
   }
 }

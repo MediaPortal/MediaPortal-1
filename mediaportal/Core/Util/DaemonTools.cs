@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace MediaPortal.Util
     private static bool _Enabled;
     private static int _DriveNo;
     private static string _MountedIsoFile = string.Empty;
-    private static List<string> _supportedExtensions;
+    private static HashSet<string> _supportedExtensions;
 
     static DaemonTools()
     {
@@ -60,7 +60,7 @@ namespace MediaPortal.Util
          */
         string[] extensions =
           xmlreader.GetValueAsString("daemon", "extensions", Utils.ImageExtensionsDefault).Split(',');
-        _supportedExtensions = new List<string>();
+        _supportedExtensions = new HashSet<string>();
         // Can't use an AddRange, as we need to trim the blanks  
         foreach (string ext in extensions)
           _supportedExtensions.Add(ext.Trim());
@@ -113,8 +113,33 @@ namespace MediaPortal.Util
       }
       if (timeout >= 10000)
       {
-        Log.Error("Mounting failed (timed out). Recheck your settings.");
-        return false;
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
+        msg.Param1 = 200093;
+        msg.Param2 = 200094;
+        msg.Param3 = 0;
+        msg.Param4 = 0;
+        msg.Object2 = true;
+        GUIWindowManager.SendMessage(msg);
+        if (msg.Param1 == 1)
+        {
+          while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 60000))
+          {
+            System.Threading.Thread.Sleep(100);
+            timeout += 100;
+          }
+          if (timeout >= 60000)
+          {
+            Log.Error("Mounting failed after {0}s (second timeout). Check your settings.", (int)(timeout / 1000));
+            UnMount();
+            return false;
+          }
+        }
+        else
+        {
+          Log.Error("Mounting failed after {0}s (first timeout). Check your settings.", (int)(timeout / 1000));
+          UnMount();
+          return false;
+        }
       }
       VirtualDrive = _Drive;
       _MountedIsoFile = IsoFile;
@@ -157,11 +182,12 @@ namespace MediaPortal.Util
     {
       if (extension == null) return false;
       if (extension == string.Empty) return false;
-      extension = extension.ToLower();
-      foreach (string ext in _supportedExtensions)
-        if (ext.Equals(extension))
-          return true;
-      return false;
+      return _supportedExtensions.Contains(extension.ToLower());
+      //extension = extension.ToLower();
+      //foreach (string ext in _supportedExtensions)
+      //  if (ext.Equals(extension))
+      //    return true;
+      //return false;
     }
   }
 }

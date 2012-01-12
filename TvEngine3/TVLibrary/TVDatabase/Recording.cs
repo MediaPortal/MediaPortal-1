@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -449,10 +449,10 @@ namespace TvDatabase
 
     public static Recording ActiveRecording(string title, int idChannel)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Recording));
       sb.AddConstraint(Operator.Equals, "isRecording", true);
       sb.AddConstraint(Operator.Equals, "title", title);
-      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);      
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
 
       SqlStatement stmt = sb.GetStatement(true);
 
@@ -620,7 +620,5 @@ namespace TvDatabase
     {
       Remove();
     }
-
-   
   }
 }

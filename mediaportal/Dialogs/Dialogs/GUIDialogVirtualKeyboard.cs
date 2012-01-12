@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {
@@ -28,7 +29,7 @@ namespace MediaPortal.Dialogs
   {
     [SkinControl(1)] protected GUIKeyboard _keyboard = null;
     [SkinControl(2)] protected GUIImage _background = null;
- 
+
     #region Base Dialog Variables
 
     private int _parentWindowId;
@@ -75,6 +76,7 @@ namespace MediaPortal.Dialogs
       // and the subsequent call to DoModal() will AllocResources() and clobber the callers overrides (AllocResources() is reentrant).
       AllocResources();
       _keyboard.Reset();
+      _keyboard.InitializeInstance();
     }
 
     public string Text
@@ -96,12 +98,12 @@ namespace MediaPortal.Dialogs
 
     public int MAX_CHARS
     {
-        get { return _keyboard.MAX_CHARS; }
+      get { return _keyboard.MAX_CHARS; }
     }
 
     public void SetMaxLength(int maxLen)
     {
-        _keyboard.SetMaxLength(maxLen);
+      _keyboard.SetMaxLength(maxLen);
     }
 
     public bool Password
@@ -117,6 +119,12 @@ namespace MediaPortal.Dialogs
     public bool IsSearchKeyboard
     {
       set { _keyboard.IsSearchKeyboard = value; }
+    }
+
+    public bool ShiftTurnedOn
+    {
+      get { return _keyboard._shiftTurnedOn; }
+      set { _keyboard._shiftTurnedOn = value; }
     }
 
     public void InitializeBackground()
@@ -136,10 +144,10 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    protected void PageLoad()
+    public void PageLoad()
     {
       AllocResources();
-      _keyboard.InitializeInstance();
+      //_keyboard.InitializeInstance();
       _previousOverlayVisible = GUIGraphicsContext.Overlay;
       _keyboard.PressedEnter = false;
       GUIGraphicsContext.Overlay = false;
@@ -147,16 +155,42 @@ namespace MediaPortal.Dialogs
       InitializeBackground();
       _keyboard.ResetLabelAsInitialText();
 
+      if (!_keyboard._useSearchLayout && !_keyboard._password)
+      {
+        using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
+        {
+          _keyboard.SmsStyleText = xmlreader.GetValueAsBool("general", "smsstyleinput", true);
+        }
+      }
+
+      GUIPropertyManager.SetProperty("#VirtualKeyboard.SMSStyleInput", _keyboard.SmsStyleText.ToString().ToLowerInvariant());
+
       base.OnPageLoad();
 
       Log.Debug("Window: {0} init", ToString());
     }
 
-    protected void PageDestroy(int new_windowId)
+    public void PageDestroy()
     {
-      base.OnPageDestroy(new_windowId);
-      GUIGraphicsContext.Overlay = _previousOverlayVisible;
-      FreeResources();
+      if (!_keyboard._useSearchLayout && !_keyboard._password)
+      {
+        using (MediaPortal.Profile.MPSettings xmlwriter = new Profile.MPSettings())
+        {
+          xmlwriter.SetValueAsBool("general", "smsstyleinput", _keyboard.SmsStyleText);
+        }
+      }
+      GUIWindowManager.IsSwitchingToNewWindow = true;
+      lock (this)
+      {
+        base.OnPageDestroy(_parentWindowId);
+        GUIGraphicsContext.Overlay = _previousOverlayVisible;
+        Dispose();
+
+        GUIWindowManager.UnRoute();
+        _parentWindow = null;
+      }
+      GUIWindowManager.IsSwitchingToNewWindow = false;
+      GUILayerManager.UnRegisterLayer(this);
 
       Log.Debug("Window: {0} deinit", ToString());
     }
@@ -191,17 +225,7 @@ namespace MediaPortal.Dialogs
         GUIWindowManager.Process();
       }
 
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        // deactive this window... (with its own OnPageDestroy)
-        PageDestroy(_parentWindowId);
-
-        GUIWindowManager.UnRoute();
-        _parentWindow = null;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      GUILayerManager.UnRegisterLayer(this);
+      PageDestroy();
     }
 
     #region IRenderLayer
@@ -217,7 +241,6 @@ namespace MediaPortal.Dialogs
     }
 
     #endregion
-
   }
 
   public class StandardKeyboard : VirtualKeyboard
@@ -227,18 +250,6 @@ namespace MediaPortal.Dialogs
       if (Load(GUIGraphicsContext.Skin + @"\stdKeyboard.xml"))
       {
         GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
-        _keyboard.InitializeInstance();
-      }
-    }
-  }
-
-  public class SmsStyledKeyboard : VirtualKeyboard
-  {
-    public SmsStyledKeyboard() : base()
-    {
-      if (Load(GUIGraphicsContext.Skin + @"\smsKeyboard.xml"))
-      {
-        GetID = (int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD;
         _keyboard.InitializeInstance();
       }
     }

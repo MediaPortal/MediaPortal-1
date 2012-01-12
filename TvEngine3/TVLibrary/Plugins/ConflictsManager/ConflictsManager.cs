@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -154,6 +154,7 @@ namespace TvEngine
       getWeeklySchedules(scheduleList, scheduleListToParse);
       getWeekendsSchedules(scheduleList, scheduleListToParse);
       getWorkingDaysSchedules(scheduleList, scheduleListToParse);
+      getWeeklyEveryTimeOnThisChannelSchedules(scheduleList, scheduleListToParse);
       getEveryTimeOnEveryChannelSchedules(scheduleList, scheduleListToParse);
       getEveryTimeOnThisChannelSchedules(scheduleList, scheduleListToParse);
       removeCanceledSchedules(scheduleListToParse);
@@ -521,7 +522,6 @@ namespace TvEngine
     /// <returns>a collection containing the Weekends schedules</returns>
     private void getWeekendsSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -532,7 +532,7 @@ namespace TvEngine
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if (weekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
+          if (WeekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
           {
             Schedule tempSchedule = schedule.Clone();
 
@@ -574,7 +574,6 @@ namespace TvEngine
     /// <returns>a collection containing the WorkingDays schedules</returns>
     private void getWorkingDaysSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -585,7 +584,7 @@ namespace TvEngine
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if ((weekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.StartTime.Date))
+          if ((WeekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.StartTime.Date))
           {
             Schedule tempSchedule = schedule.Clone();
 
@@ -683,6 +682,45 @@ namespace TvEngine
             incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
             incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
             refFillList.Add(incomingSchedule);
+          }
+        } //foreach (Program _program in _programsList)
+      } //foreach (Schedule _Schedule in schedulesList)
+      layer = null;
+      foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
+    }
+
+    /// <summary>
+    /// Gets the Weekly every time on this channel schedules.
+    /// </summary>
+    /// <param name="schedulesList">The schedules list.</param>
+    /// <returns></returns>
+    private void getWeeklyEveryTimeOnThisChannelSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      foreach (Schedule schedule in schedulesList)
+      {
+        ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+        if (schedule.Canceled != Schedule.MinSchedule) continue;
+        if (scheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel) continue;
+        Channel channel = Channel.Retrieve(schedule.IdChannel);
+        IList<Program> programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddMonths(1),
+                                                                  schedule.ProgramName, channel);
+        if (programsList != null)
+        {
+          foreach (Program program in programsList)
+          {
+            if (program.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek)
+            {
+              Schedule incomingSchedule = schedule.Clone();
+              incomingSchedule.IdChannel = program.IdChannel;
+              incomingSchedule.ProgramName = program.Title;
+              incomingSchedule.StartTime = program.StartTime;
+              incomingSchedule.EndTime = program.EndTime;
+
+              incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
+              incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
+              refFillList.Add(incomingSchedule);
+            }
           }
         } //foreach (Program _program in _programsList)
       } //foreach (Schedule _Schedule in schedulesList)

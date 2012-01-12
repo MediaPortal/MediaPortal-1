@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2146,9 +2146,11 @@ namespace MediaPortal.Configuration.Sections
         {
           X10mapping = "Other X10";
         }
-        if (File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, X10mapping + ".xml")))
+
+        string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, X10mapping + ".xml");
+        if (File.Exists(pathCustom))
         {
-          File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, X10mapping + ".xml"));
+          File.Delete(pathCustom);
         }
         checkBoxX10ExtendedLogging.Checked = false;
 
@@ -2169,7 +2171,7 @@ namespace MediaPortal.Configuration.Sections
     private void linkLabelDownloadX10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       Settings xmlreader = new MPSettings();
-      string language = xmlreader.GetValueAsString("skin", "language", "");
+      string language = xmlreader.GetValueAsString("gui", "language", "");
       if (language == "English")
       {
         Process.Start("http://www.snapstream.net/download/Firefly_Drivers.aspx");

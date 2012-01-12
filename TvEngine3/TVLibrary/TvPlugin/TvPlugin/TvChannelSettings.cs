@@ -78,7 +78,7 @@ namespace TvPlugin
         item.Label = chan.DisplayName;
         item.MusicTag = chan;
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.DisplayName);
-        if (!File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))              
         {
           strLogo = "defaultVideoBig.png";
         }

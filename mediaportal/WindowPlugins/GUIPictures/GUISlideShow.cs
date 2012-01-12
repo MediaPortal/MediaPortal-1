@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,14 +25,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
-using MediaPortal.Picture.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using Microsoft.DirectX.Direct3D;
+using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 
@@ -66,14 +65,66 @@ namespace MediaPortal.GUI.Pictures
         tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
       if (Util.Utils.IsVideo(slideFilePath))
       {
-        _returnedFromVideoPlayback = true;
+        if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
+        {
+          pauseMusic();
+        }
+
+        if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
+        {
+          //we skip the video in the picture slide show
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[++_currentSlideIndex]);
+          _slideDirection = 0;
+          return _currentSlide;
+        }
+
+        _loadVideoPlayback = true;
+
         g_Player.Play(slideFilePath, g_Player.MediaType.Video);
         g_Player.ShowFullScreenWindow();
+
+        _loadVideoPlayback = false;
         _returnedFromVideoPlayback = true;
       }
       else
         _slideDirection = 0;
       return _currentSlide;
+    }
+
+    private void pauseMusic()
+    {
+      pausedMusic = true;
+      pausedMusicPlaylist = playlistPlayer;
+      pausedPlayListType = playlistPlayer.CurrentPlaylistType;
+      isPausedMusicCDA = g_Player.IsCDA;
+      pausedMusicFileName = g_Player.CurrentFile;
+      pausedMusicLastPosition = g_Player.CurrentPosition;
+      g_Player.Stop();
+    }
+
+    private void resumePausedMusic()
+    {
+      pausedMusic = false;
+      if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
+      {
+        playlistPlayer = pausedMusicPlaylist;
+        playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+        playlistPlayer.Play(pausedMusicFileName);
+        g_Player.SeekAbsolute(pausedMusicLastPosition);
+      }
+      else
+      {
+        playlistPlayer = pausedMusicPlaylist;
+        playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+        playlistPlayer.Play(pausedMusicFileName);
+
+        //we need a little pause, cause the cd player is to slow
+        while (!(g_Player.CurrentPosition > 0))
+        {
+          Thread.Sleep(1);
+        }
+        g_Player.SeekAbsolute(pausedMusicLastPosition);
+      }
     }
 
     private void PrefetchNextSlide()
@@ -174,7 +225,7 @@ namespace MediaPortal.GUI.Pictures
     public int _currentSlideIndex = 0;
     private int _lastSlideShown = -1;
     private int _transitionMethod = 0;
-    private bool _isSlideShow = false;
+    internal bool _isSlideShow = false;
     private bool _infoVisible = false;
     private bool _zoomInfoVisible = false;
     private bool _autoHideOsd = true;
@@ -185,8 +236,15 @@ namespace MediaPortal.GUI.Pictures
     private bool _update = false;
     private bool _useRandomTransitions = true;
     private float _defaultZoomFactor = 1.0f;
-    private static bool _returnedFromVideoPlayback = false;
+    internal bool _returnedFromVideoPlayback = false;
+    internal bool _loadVideoPlayback = false;
     private static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
+    private String pausedMusicFileName;
+    private double pausedMusicLastPosition;
+    private bool pausedMusic;
+    private PlayListPlayer pausedMusicPlaylist;
+    private PlayListType pausedPlayListType;
+    private bool isPausedMusicCDA;
 
 
     private bool _isPictureZoomed
@@ -242,14 +300,8 @@ namespace MediaPortal.GUI.Pictures
 
     public static int SlideDirection
     {
-      get
-      {
-        return _slideDirection;
-      }
-      set
-      {
-        _slideDirection = value;
-      }
+      get { return _slideDirection; }
+      set { _slideDirection = value; }
     }
 
     #region GUIWindow overrides
@@ -275,7 +327,9 @@ namespace MediaPortal.GUI.Pictures
           base.OnMessage(message);
 
           if (_returnedFromVideoPlayback)
+          {
             GUIWindowManager.ShowPreviousWindow();
+          }
           else
           {
             _update = false;
@@ -286,12 +340,9 @@ namespace MediaPortal.GUI.Pictures
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          if (!_returnedFromVideoPlayback)
-            Reset();
-          if (_returnedFromVideoPlayback && !_isSlideShow)
+          if (!_returnedFromVideoPlayback && !_loadVideoPlayback)
             Reset();
           GUIGraphicsContext.Overlay = _showOverlayFlag;
-          _returnedFromVideoPlayback = false;
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
@@ -637,10 +688,16 @@ namespace MediaPortal.GUI.Pictures
 
     public override void Render(float timePassed)
     {
-      if (g_Player.Playing)
+      if (_loadVideoPlayback)
       {
         base.Render(timePassed);
+        _loadVideoPlayback = false;
         return;
+      }
+
+      if (pausedMusic)
+      {
+        resumePausedMusic();
       }
       //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
       if (!_isPaused && !_isPictureZoomed)
@@ -672,7 +729,7 @@ namespace MediaPortal.GUI.Pictures
         {
           if (_currentSlide == null)
           {
-            int totalFrames = (_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames;
+            int totalFrames = unchecked((_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames);
             if (_useKenBurns)
             {
               totalFrames = _kenBurnTransistionSpeed * 30;
@@ -1031,7 +1088,7 @@ namespace MediaPortal.GUI.Pictures
       _zoomInfoVisible = false;
       _isSlideShow = false;
       _isPaused = false;
-
+      _loadVideoPlayback = false;
       _zoomFactorBackground = _defaultZoomFactor;
       _currentZoomFactor = _defaultZoomFactor;
       _kenBurnsEffect = 0;
@@ -2216,7 +2273,8 @@ namespace MediaPortal.GUI.Pictures
         float fh = 0f;
         string szText = GUILocalizeStrings.Get(112);
         pFont.GetTextExtent(szText, ref fw, ref fh);
-        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2, 0xff000000);
+        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2,
+                             0xff000000);
       }
       return true;
     }
@@ -2613,13 +2671,8 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void ShowPreviousWindow()
+    private static void ShowPreviousWindow()
     {
-      if (_isBackgroundMusicPlaying)
-      {
-        g_Player.Stop();
-      }
-
       GUIWindowManager.ShowPreviousWindow();
     }
 
@@ -2641,8 +2694,8 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        albumart = albumart + "folder.jpg";
-        if (!File.Exists(albumart))
+        albumart = Util.Utils.GetFolderThumbForDir(albumart);
+        if (!Util.Utils.FileExistsInCache(albumart))
         {
           albumart = string.Empty;
         }

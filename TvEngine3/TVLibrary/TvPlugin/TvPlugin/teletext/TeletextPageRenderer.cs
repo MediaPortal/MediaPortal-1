@@ -57,6 +57,7 @@ namespace TvLibrary.Teletext
     private bool _fullscreenMode;
 
     private string _selectedPageText = "";
+    private string _selectedSubPageText = "";
 
     private int _pageRenderWidth = 720;
     private int _pageRenderHeight = 540;
@@ -254,6 +255,15 @@ namespace TvLibrary.Teletext
         {
           _selectedPageText = value + (new string('-', 3 - value.Length));
         }
+      }
+    }
+
+    public string SubPageSelectText
+    {
+      get { return _selectedSubPageText; }
+      set
+      {
+        _selectedSubPageText = value;
       }
     }
 
@@ -622,6 +632,21 @@ namespace TvLibrary.Teletext
     /// <param name="mPage">Pagenumber</param>
     /// <param name="sPage">Subpagenumber</param>
     public void RenderPage(ref Bitmap pageBitmap, byte[] byPage, int mPage, int sPage)
+    {
+      RenderPage(ref pageBitmap, byPage, mPage, sPage, false);
+    }
+
+    /// <summary>
+    /// Renders a teletext page to a bitmap using the designated 
+    /// default charset and second G0 charset designation.
+    /// If either designation is -1 use the corresponding 
+    /// preselected designation.
+    /// </summary>
+    /// <param name="byPage">Teletext page data</param>
+    /// <param name="mPage">Pagenumber</param>
+    /// <param name="sPage">Subpagenumber</param>
+    /// <returns>Rendered teletext page as bitmap</returns>
+    public void RenderPage(ref Bitmap pageBitmap, byte[] byPage, int mPage, int sPage, bool waiting)
     {
       int col;
       int hold;
@@ -1069,15 +1094,15 @@ namespace TvLibrary.Teletext
         // Green=Page is displayed
         if (_selectedPageText.IndexOf("-") == -1)
         {
-          if (_selectedPageText.Equals(Convert.ToString(mPage, 16)))
+          if (waiting)
           {
-            lineColor = (int)TextColors.Green;
-            pageNumber = Convert.ToString(mPage, 16) + "/" + Convert.ToString(sPage, 16);
+            lineColor = (int)TextColors.Yellow;
+            pageNumber = _selectedPageText + (_selectedSubPageText == string.Empty ? "" : ("/" + _selectedSubPageText));
           }
           else
           {
-            lineColor = (int)TextColors.Yellow;
-            pageNumber = _selectedPageText;
+            lineColor = (int)TextColors.Green;
+            pageNumber = Convert.ToString(mPage, 16) + "/" + Convert.ToString(sPage + 1, 16);
           }
         }
         else

@@ -29,6 +29,10 @@ namespace TvPluginTests.IPlayerStubs
 
     #endregion
 
+    public override void Dispose()
+    {
+    }
+
     public override int AudioStreams
     {
       get { return 1; }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ namespace DShowNET.Helper
   public class ClassId
   {
     /// <summary>Prevent instantiation.</summary>
-    private ClassId() {}
+    private ClassId() { }
 
     public static readonly Guid SystemDeviceEnum = new Guid(0x62BE5D10, 0x60EB, 0x11d0, 0xBD, 0x3B, 0x00, 0xA0, 0xC9,
                                                             0x11, 0xCE, 0x86);
@@ -64,6 +64,17 @@ namespace DShowNET.Helper
 
     public static readonly Guid HaaliGuid = new Guid("55DA30FC-F16B-49FC-BAA5-AE59FC65F82D");
     public static readonly Guid MPCMatroska = new Guid("149D2E01-C32E-4939-80F6-C07B81015A7A");
+    public static readonly Guid MPCMatroskaSource = new Guid("0A68C3B5-9164-4A54-AFAF-995B2FF0E0D4");
+
+    public static readonly Guid LAVFilterSource = new Guid("B98D13E7-55DB-4385-A33D-09FD1BA26338");
+    public static readonly Guid LAVFilter = new Guid("171252A0-8820-4AFE-9DF8-5C92B2D66B04");
+
+    public static readonly Guid FFDShowVideo = new Guid("04FE9017-F873-410e-871E-AB91661A4EF7");
+    public static readonly Guid FFDShowVideoRaw = new Guid("0B390488-D80F-4a68-8408-48DC199F0E97");
+    public static readonly Guid FFDShowVideoDXVA = new Guid("0B0EFF97-C750-462c-9488-B10E7D87F1A6");
+
+    public static readonly Guid Line21_1 = new Guid("6E8D4A20-310C-11D0-B79A-00AA003767A7");
+    public static readonly Guid Line21_2 = new Guid("E4206432-01A1-4BEE-B3E1-3702C8EDC574");
 
     /// <summary>Creates an instance of a COM object by class ID.</summary>
     /// <param name="id">The class ID of the component to instantiate.</param>

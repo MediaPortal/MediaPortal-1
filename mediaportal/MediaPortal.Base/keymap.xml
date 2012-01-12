@@ -200,7 +200,7 @@
       <sound>click.wav</sound>
       <description>volume up</description>
     </action>
-	<action>
+    <action>
       <id>103</id>
       <key>+</key>
       <sound>click.wav</sound>
@@ -259,6 +259,12 @@
       <key>G</key>
       <sound />
       <description>Toggle Gap / Crossfade (BASS Player only)</description>
+    </action>
+    <action>
+      <id>125</id>
+      <key>Z</key>
+      <sound />
+      <description>Jump to Music Now Playing</description>
     </action>
   </global>
   <window>
@@ -356,88 +362,8 @@
     </action>
   </window>
   <window>
-    <id>502</id>
-    <description>My Music album specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>503</id>
-    <description>My Music artist specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
     <id>504</id>
     <description>My Music genre specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>505</id>
-    <description>My Music top 100 specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>506</id>
-    <description>My Music favorites specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>507</id>
-    <description>My Music years specific actions</description>
     <action>
       <id>33</id>
       <key>F1</key>
@@ -521,12 +447,7 @@
       <description>Toggle the OSD</description>
     </action>
     <action>
-      <id>108</id>
-      <key>C</key>
-      <sound />
-      <description>Toggle the MSN OSD</description>
-    </action>
-    <action>
+
       <id>58</id>
       <key>0</key>
       <sound />
@@ -1063,12 +984,6 @@
       <description>Toggle the OSD</description>
     </action>
     <action>
-      <id>108</id>
-      <key>C</key>
-      <sound />
-      <description>Toggle the MSN OSD</description>
-    </action>
-    <action>
       <id>95</id>
       <key>F8</key>
       <sound />
@@ -1173,32 +1088,6 @@
       <key>F5</key>
       <sound />
       <description>Rewind</description>
-    </action>
-  </window>
-  <window>
-    <id>750</id>
-    <description>MyRecipes</description>
-    <action>
-      <id>80</id>
-      <key>0</key>
-      <sound />
-      <description>delete item</description>
-    </action>
-  </window>
-  <window>
-    <id>4734</id>
-    <description>MyMusicVideo</description>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add item to Playlist</description>
-    </action>
-    <action>
-      <id>14</id>
-      <key>F8</key>
-      <sound />
-      <description>Skip Next</description>
     </action>
   </window>
   <window>
@@ -1333,6 +1222,22 @@
       <key>P</key>
       <sound />
       <description>BlueButton</description>
+    </action>
+  </window>
+  <window>
+    <id>510</id>
+    <description>My Music Now Playing</description>
+    <action>
+      <id>800</id>
+      <key>L</key>
+      <sound />
+      <description>LastFM Love</description>
+    </action>
+    <action>
+      <id>801</id>
+      <key>K</key>
+      <sound />
+      <description>LastFM Ban</description>
     </action>
   </window>
 </keymap>

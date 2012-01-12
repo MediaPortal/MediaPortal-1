@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -48,10 +48,11 @@ namespace MediaPortal.UserInterface.Controls
       }
     }
 
+    // Enable sorting in MPlistview
     public new SortOrder Sorting
     {
-      get { return SortOrder.None; }
-      set { base.Sorting = SortOrder.None; }
+      get { return base.Sorting; } // SortOrder.None; }
+      set { base.Sorting = value; } // SortOrder.None; }
     }
 
     public MPListView()

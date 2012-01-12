@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 using System;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Settings
 {
@@ -158,8 +159,8 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        m_iSpeedHorizontal = xmlreader.GetValueAsInt("general", "ScrollSpeedRight", 1);
-        m_iSpeedVertical = xmlreader.GetValueAsInt("general", "ScrollSpeedDown", 4);
+        m_iSpeedHorizontal = xmlreader.GetValueAsInt("gui", "ScrollSpeedRight", 1);
+        m_iSpeedVertical = xmlreader.GetValueAsInt("gui", "ScrollSpeedDown", 4);
       }
     }
 
@@ -167,8 +168,8 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValue("general", "ScrollSpeedRight", m_iSpeedHorizontal.ToString());
-        xmlwriter.SetValue("general", "ScrollSpeedDown", m_iSpeedVertical.ToString());
+        xmlwriter.SetValue("gui", "ScrollSpeedRight", m_iSpeedHorizontal.ToString());
+        xmlwriter.SetValue("gui", "ScrollSpeedDown", m_iSpeedVertical.ToString());
         xmlwriter.SetValue("screen", "GuiRenderFps", GUIGraphicsContext.MaxFPS);
       }
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -121,6 +121,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDeInterlace
       // 
+      this.comboBoxDeInterlace.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlace.FormattingEnabled = true;
       this.comboBoxDeInterlace.Items.AddRange(new object[]
@@ -143,9 +144,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.comboBoxDeInterlace);
       this.mpGroupBox1.Controls.Add(this.checkBoxDxVA);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 143);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 143);
       this.mpGroupBox1.TabIndex = 5;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video Decoder Settings";
@@ -182,9 +183,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.Controls.Add(this.comboBoxOutPutMode);
       this.mpGroupBox2.Controls.Add(this.comboBoxSpeakerConfig);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(0, 152);
+      this.mpGroupBox2.Location = new System.Drawing.Point(6, 152);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(472, 166);
+      this.mpGroupBox2.Size = new System.Drawing.Size(462, 166);
       this.mpGroupBox2.TabIndex = 0;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Audio Decoder Settings";
@@ -213,11 +214,12 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxOutPutMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxOutPutMode.DropDownWidth = 372;
       this.comboBoxOutPutMode.Location = new System.Drawing.Point(62, 123);
       this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
-      this.comboBoxOutPutMode.Size = new System.Drawing.Size(372, 21);
+      this.comboBoxOutPutMode.Size = new System.Drawing.Size(362, 21);
       this.comboBoxOutPutMode.TabIndex = 0;
       // 
       // comboBoxSpeakerConfig
@@ -226,6 +228,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSpeakerConfig.Items.AddRange(new object[]
                                                   {
@@ -238,16 +241,16 @@ namespace MediaPortal.Configuration.Sections
                                                   });
       this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(62, 57);
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
-      this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(372, 21);
+      this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(362, 21);
       this.comboBoxSpeakerConfig.TabIndex = 1;
       this.comboBoxSpeakerConfig.SelectedIndexChanged +=
         new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
       // 
-      // WinDVD7DecoderFilters
+      // FiltersWinDVD7Decoder
       // 
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
-      this.Name = "WinDVD7DecoderFilters";
+      this.Name = "FiltersWinDVD7Decoder";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();

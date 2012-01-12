@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -145,13 +145,13 @@ namespace TvLibrary.Interfaces.Analyzer
     int PmtGetPMTData(int handle, IntPtr pmtData);
 
     /// <summary>
-    /// Sets the recorder filename for the given sub channel
+    /// Sets the recorder unicode filename for the given subchannel
     /// </summary>
     /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="fileName">Filename for the reocrding</param>
+    /// <param name="fileName">Filename for the recording</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecordSetRecordingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int RecordSetRecordingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts recording on the given sub channel
@@ -198,7 +198,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="fileName">Filename</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetTimeShiftingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int TimeShiftSetTimeShiftingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts timeshifting on the given sub channel
@@ -343,5 +343,27 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int CaReset(int handle);
+
+    /// <summary>
+    /// Fetches the stream quality information
+    /// </summary>
+    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="totalTsBytes">Amount of packets processed - timeshifting</param>
+    /// <param name="totalRecordingBytes">Amount of packets processed - recording</param>
+    /// <param name="TsDiscontinuity">Number of stream discontinuities - timeshifting</param>
+    /// <param name="recordingDiscontinuity">Number of stream discontinuities - recording</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int GetStreamQualityCounters(int handle, out int totalTsBytes, out int totalRecordingBytes,
+                                 out int TsDiscontinuity, out int recordingDiscontinuity);
+
+    /// <summary>
+    /// Sets the channel type of the sub channel
+    /// </summary>
+    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="channelType">Type of the channel (tv=0, radio=1)</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int TimeShiftSetChannelType(int handle, int channelType);
   }
 }

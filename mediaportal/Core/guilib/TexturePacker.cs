@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -80,24 +80,18 @@ namespace MediaPortal.GUI.Library
 
       public PackedTextureNode Get(string fileName)
       {
-        if (fileName == null)
+        return string.IsNullOrEmpty(fileName) ? null : GetInternal(fileName);
+      }
+
+      private PackedTextureNode GetInternal(string fileName)
+      {
+        if (FileName == fileName)
         {
-          return null;
-        }
-        if (fileName.Length == 0)
-        {
-          return null;
-        }
-        if (FileName != null)
-        {
-          if (FileName == fileName)
-          {
-            return this;
-          }
+          return this;
         }
         if (ChildLeft != null)
         {
-          PackedTextureNode node = ChildLeft.Get(fileName);
+          PackedTextureNode node = ChildLeft.GetInternal(fileName);
           if (node != null)
           {
             return node;
@@ -105,7 +99,7 @@ namespace MediaPortal.GUI.Library
         }
         if (ChildRight != null)
         {
-          return ChildRight.Get(fileName);
+          return ChildRight.GetInternal(fileName);
         }
         return null;
       }
@@ -291,7 +285,8 @@ namespace MediaPortal.GUI.Library
 
       using (Settings xmlreader = new MPSettings())
       {
-        if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
+        if (xmlreader.GetValueAsBool("debug", "skincaching", true) &&
+            MediaPortal.Util.Utils.FileExistsInCache(packedXml))
         {
           using (FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
@@ -343,15 +338,16 @@ namespace MediaPortal.GUI.Library
         }
         if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
         {
-          string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
-          string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
+          string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png",
+                                                SearchOption.AllDirectories);
+          string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png",
+                                                   SearchOption.AllDirectories);
           files.AddRange(tvLogos);
           files.AddRange(radioLogos);
         }
         if (xmlreader.GetValueAsBool("debug", "packPluginGfx", true))
         {
-          string[] weatherFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Weather), "*.png",
-                                                     SearchOption.AllDirectories);
+          string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
           string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
           files.AddRange(weatherFiles);
           files.AddRange(tetrisFiles);
@@ -457,8 +453,8 @@ namespace MediaPortal.GUI.Library
       Format useFormat = Format.A8R8G8B8;
       //if (IsCompressedTextureFormatOk(Format.Dxt5))
       //{
-      //  Log.Debug("TexturePacker: Using DXT5 texture format");
-      //  useFormat = Format.Dxt5;
+      //    Log.Debug("TexturePacker: Using DXT5 texture format");
+      //    useFormat = Format.Dxt5;
       //}
       if (bigOne.texture == null)
       {
@@ -524,7 +520,7 @@ namespace MediaPortal.GUI.Library
       {
         bmp = ImageFast.FromFile(file);
       }
-      catch (ArgumentException)
+      catch (Exception)
       {
         Log.Warn("TexturePacker: Fast loading of texture {0} failed - trying safe fallback now", file);
         bmp = Image.FromFile(file);

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,39 +34,136 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// base class for scanning DVB tv/radio channels
   /// </summary>
-  public class DvbBaseScanning : IHardwarePidFiltering, IChannelScanCallback
+  public abstract class DvbBaseScanning : IHardwarePidFiltering, IChannelScanCallback, ITVScanning
   {
     #region enums
 
     /// <summary>
-    /// Different stream service type
+    /// DVB service types - see ETSI EN 300 468
     /// </summary>
-    public enum ServiceType
+    protected enum DvbServiceType
     {
+      // (0x00 reserved)
+
       /// <summary>
-      /// Service contains video
+      /// digital television service
       /// </summary>
-      Video = 1,
+      DigitalTelevision = 0x01,
+
       /// <summary>
-      /// Service contains audio
+      /// digital radio sound service
       /// </summary>
-      Audio = 2,
+      DigitalRadio = 0x02,
+
       /// <summary>
-      /// Service contains video in MPEG-4
+      /// teletext service
       /// </summary>
-      Mpeg2HDStream = 0x11,
+      Teletext = 0x03,
+
       /// <summary>
-      /// Service contains HD video in Mpeg2
+      /// Near Video On Demand reference service
       /// </summary>
-      H264Stream = 0x1b,
+      NvodReference = 0x04,
+
       /// <summary>
-      /// Service contains HD video
+      /// Near Video On Demand time-shifted service
       /// </summary>
-      AdvancedCodecHDVideoStream = 0x19,
+      NvodTimeShifted = 0x05,
+
       /// <summary>
-      /// Service contains video in H.264
+      /// mosaic service
       /// </summary>
-      Mpeg4OrH264Stream = 134
+      Mosaic = 0x06,
+
+      /// <summary>
+      /// FM radio service
+      /// </summary>
+      FmRadio = 0x07,
+
+      /// <summary>
+      /// DVB System Renewability Messages service
+      /// </summary>
+      DvbSrm = 0x08,
+
+      // (0x09 reserved)
+
+      /// <summary>
+      /// advanced codec digital radio sound service
+      /// </summary>
+      AdvancedCodecDigitalRadio = 0x0A,
+
+      /// <summary>
+      /// advanced codec mosaic service
+      /// </summary>
+      AdvancedCodecMosaic = 0x0B,
+
+      /// <summary>
+      /// data broadcast service
+      /// </summary>
+      DataBroadcast = 0x0C,
+
+      // (0x0d reserved for common interface use)
+
+      /// <summary>
+      /// Return Channel via Satellite map
+      /// </summary>
+      RcsMap = 0x0E,
+
+      /// <summary>
+      /// Return Channel via Satellite Forward Link Signalling
+      /// </summary>
+      RcsFls = 0x0F,
+
+      /// <summary>
+      /// DVB Multimedia Home Platform service
+      /// </summary>
+      DvbMhp = 0x10,
+
+      /// <summary>
+      /// MPEG 2 HD digital television service
+      /// </summary>
+      Mpeg2HdDigitalTelevision = 0x11,
+
+      // (0x12 to 0x15 reserved)
+
+      /// <summary>
+      /// advanced codec SD digital television service
+      /// </summary>
+      AdvancedCodecSdDigitalTelevision = 0x16,
+
+      /// <summary>
+      /// advanced codec SD Near Video On Demand time-shifted service
+      /// </summary>
+      AdvancedCodecSdNvodTimeShifted = 0x17,
+
+      /// <summary>
+      /// advanced codec SD Near Video On Demand reference service
+      /// </summary>
+      AdvancedCodecSdNvodReference = 0x18,
+
+      /// <summary>
+      /// advanced codec HD digital television
+      /// </summary>
+      AdvancedCodecHdDigitalTelevision = 0x19,
+
+      /// <summary>
+      /// advanced codec HD Near Video On Demand time-shifted service
+      /// </summary>
+      AdvancedCodecHdNvodTimeShifted = 0x1A,
+
+      /// <summary>
+      /// advanced codec HD Near Video On Demand reference service
+      /// </summary>
+      AdvancedCodecHdNvodReference = 0x1B,
+
+      /// <summary>
+      /// sky germany linked channels (option channels)
+      /// </summary>
+      SkyGermanyOptionChannel = 0xd3
+
+      // (0x1C to 0x7F reserved)
+      // (0x80 to 0xFE user defined)
+      // (0xFF reserved)
     }
 
     #endregion
@@ -74,7 +171,7 @@ namespace TvLibrary.Implementations.DVB
     #region variables
 
     private ITsChannelScan _analyzer;
-    private readonly ITVCard _card;
+    protected readonly TvCardDvbBase _card;
     private ManualResetEvent _event;
 
     /// <summary>
@@ -90,29 +187,23 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="DvbBaseScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public DvbBaseScanning(ITVCard card)
+    public DvbBaseScanning(TvCardDvbBase card)
     {
       _card = card;
     }
 
     #endregion
 
-    #region virtual members
-
     /// <summary>
-    /// Sets the hw pids.
+    /// returns the tv card used
     /// </summary>
-    /// <param name="pids">The pids.</param>
-    protected virtual void SetHwPids(List<ushort> pids) {}
-
-    /// <summary>
-    /// Gets the analyzer.
-    /// </summary>
-    /// <returns></returns>
-    protected virtual ITsChannelScan GetAnalyzer()
+    /// <value></value>
+    public ITVCard TvCard
     {
-      return null;
+      get { return _card; }
     }
+
+    #region virtual members
 
     /// <summary>
     /// Gets the pin analyzer SI.
@@ -126,17 +217,36 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates the new channel.
     /// </summary>
-    /// <param name="info">The info.</param>
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected abstract IChannel CreateNewChannel(IChannel channel, ChannelInfo info);
+
+    /// <summary>
+    /// Gets the analyzer.
+    /// </summary>
     /// <returns></returns>
-    protected virtual IChannel CreateNewChannel(ChannelInfo info)
+    protected virtual ITsChannelScan GetAnalyzer()
     {
-      return null;
+      return _card.StreamAnalyzer;
+    }
+
+    /// <summary>
+    /// Sets the hw pids.
+    /// </summary>
+    /// <param name="pids">The pids.</param>
+    protected virtual void SetHwPids(List<ushort> pids)
+    {
+      _card.SendHwPids(pids);
     }
 
     /// <summary>
     /// Resets the signal update.
     /// </summary>
-    protected virtual void ResetSignalUpdate() {}
+    protected virtual void ResetSignalUpdate()
+    {
+      _card.ResetSignalUpdate();
+    }
 
     /// <summary>
     /// Resets this instance.
@@ -172,7 +282,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         _card.IsScanning = true;
-        _card.Tune(0, channel);
+        _card.Scan(0, channel);
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
@@ -217,96 +327,56 @@ namespace TvLibrary.Implementations.DVB
               short pmtPid;
               short hasVideo;
               short hasAudio;
+              short hasCaDescriptor;
               short lcn;
               _analyzer.GetChannel((short)i,
                                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                                    out frequency, out lcn, out freeCAMode, out serviceType, out modulation,
                                    out providerName, out serviceName,
-                                   out pmtPid, out hasVideo, out hasAudio);
-              bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid > -1);
+                                   out pmtPid, out hasVideo, out hasAudio, out hasCaDescriptor);
+
               string name = DvbTextConverter.Convert(serviceName, "");
-              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{9:X}", i, networkId, transportId, serviceId,
+              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i, networkId, transportId, serviceId,
                             pmtPid, name, serviceType);
-              ServiceType eServiceType = (ServiceType)serviceType;
-              if (eServiceType == ServiceType.Mpeg2HDStream || eServiceType == ServiceType.H264Stream ||
-                  eServiceType == ServiceType.AdvancedCodecHDVideoStream)
-                Log.Log.WriteFile("HD Video ({0})!", eServiceType.ToString());
 
-              if ((channel as ATSCChannel) != null)
+              found++;
+              ChannelInfo info = new ChannelInfo();
+              info.networkID = networkId;
+              info.transportStreamID = transportId;
+              info.serviceID = serviceId;
+              info.majorChannel = majorChannel;
+              info.minorChannel = minorChannel;
+              info.freq = frequency;
+              info.LCN = lcn;
+              info.serviceType = serviceType;
+              info.modulation = modulation;
+              info.service_provider_name = DvbTextConverter.Convert(providerName, "");
+              info.service_name = DvbTextConverter.Convert(serviceName, "");
+              info.scrambled = (freeCAMode != 0 || hasCaDescriptor != 0);
+              info.network_pmt_PID = pmtPid;
+
+              if (IsValidChannel(info, hasAudio, hasVideo))
               {
-                //It seems with ATSC QAM the major & minor channel is not found or is not necessary (TBD)
-                //isValid = (majorChannel != 0 && minorChannel != 0);
-                //So we currently determine if a valid channel is found if the pmt pid is not null.
-                isValid = (pmtPid > -1);
-                //This is not ideal we need to look into raw ATSC transport streams
+                if (info.service_name.Length == 0)
+                {
+                  SetNameForUnknownChannel(channel, info);
+                }
+                IChannel result = CreateNewChannel(channel, info);
+                if (result != null)
+                {
+                  channelsFound.Add(result);
+                }
               }
-              if (isValid)
+              else
               {
-                found++;
-                ChannelInfo info = new ChannelInfo();
-                info.networkID = networkId;
-                info.transportStreamID = transportId;
-                info.serviceID = serviceId;
-                info.majorChannel = majorChannel;
-                info.minorChannel = minorChannel;
-                info.freq = frequency;
-                info.LCN = lcn;
-                info.serviceType = serviceType;
-                info.modulation = modulation;
-                info.service_provider_name = DvbTextConverter.Convert(providerName, "");
-                info.service_name = DvbTextConverter.Convert(serviceName, "");
-                info.scrambled = (freeCAMode != 0);
-                info.network_pmt_PID = pmtPid;
-
-                if (!IsKnownServiceType(info.serviceType))
-                {
-                  if (hasVideo == 1)
-                    info.serviceType = (int)ServiceType.Video;
-                  else if (hasAudio == 1)
-                    info.serviceType = (int)ServiceType.Audio;
-                }
-
-                if (IsKnownServiceType(info.serviceType))
-                {
-                  if (info.service_name.Length == 0)
-                  {
-                    if ((channel as ATSCChannel) != null)
-                    {
-                      if (((ATSCChannel)channel).Frequency > 0)
-                      {
-                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
-                                     ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
-                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency,
-                                                          info.network_pmt_PID);
-                      }
-                      else
-                      {
-                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
-                                     ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID.ToString());
-                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel,
-                                                          info.network_pmt_PID);
-                      }
-                    }
-                    else
-                      info.service_name = String.Format("Unknown {0:X}", info.serviceID);
-                  }
-                  IChannel dvbChannel = CreateNewChannel(info);
-                  if (dvbChannel != null)
-                  {
-                    channelsFound.Add(dvbChannel);
-                  }
-                }
-                else
-                  Log.Log.Write(
-                    "Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}",
-                    info.service_provider_name, info.service_name, info.serviceType, info.networkID,
-                    info.transportStreamID, info.serviceID, info.network_pmt_PID, hasVideo, hasAudio);
+                Log.Log.Write(
+                  "Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}",
+                  info.service_provider_name, info.service_name, info.serviceType, info.networkID,
+                  info.transportStreamID, info.serviceID, info.network_pmt_PID, hasVideo, hasAudio);
               }
             }
-            if (found != channelCount)
-              Log.Log.Write("Scan! Got {0} from {1} channels", found, channelCount);
-            else
-              Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
+
+            Log.Log.Write("Scan Got {0} from {1} channels", found, channelCount);
             return channelsFound;
           }
           finally
@@ -371,7 +441,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         _card.IsScanning = true;
-        _card.Tune(0, channel);
+        _card.Scan(0, channel);
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
@@ -465,17 +535,79 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region Helper
+    #region Helpers
 
-    private static bool IsKnownServiceType(int serviceType)
+    protected virtual bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
     {
-      return (serviceType == (int)ServiceType.Video || serviceType == (int)ServiceType.Mpeg2HDStream ||
-              serviceType == (int)ServiceType.Audio || serviceType == (int)ServiceType.H264Stream ||
-              serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
-              // =advanced codec HD digital television service
-              serviceType == 0x8D ||
-              // = User private. his is needed to have the transponder for the 9 day dish epg guide discovered by the scan and to add the channel as TV Channel so that we can grab EPG from it
-              serviceType == (int)ServiceType.Mpeg4OrH264Stream);
+      // DVB/ATSC compliant services will be picked up here.
+      if (IsKnownServiceType(info.serviceType))
+      {
+        return true;
+      }
+
+      // The SDT service type is unfortunately not sufficient for service type
+      // identification. DVB-IP and some ATSC broadcasters in particular
+      // do not comply with specifications. Well, either that, or we do not
+      // fully/properly implement the specifications! In any case we need
+      // to err on the side of caution and pick up any channels that TsWriter
+      // says have video and/or audio streams until we can find a better
+      // way to properly identify TV and radio services.
+      if (hasVideo != 0)
+      {
+        info.serviceType = (int)DvbServiceType.DigitalTelevision;
+      }
+      else if (hasAudio != 0)
+      {
+        info.serviceType = (int)DvbServiceType.DigitalRadio;
+      }
+      return IsKnownServiceType(info.serviceType);
+    }
+
+    protected virtual bool IsKnownServiceType(int serviceType)
+    {
+      return IsRadioService(serviceType) || IsTvService(serviceType);
+    }
+
+    /// <summary>
+    /// Determines whether a DVB service type is a radio service.
+    /// </summary>
+    /// <param name="serviceType">the service</param>
+    /// <returns><c>true</c> if the service type is a radio service type, otherwise <c>false</c></returns>
+    protected virtual bool IsRadioService(int serviceType)
+    {
+      if (
+        serviceType == (int)DvbServiceType.DigitalRadio ||
+        serviceType == (int)DvbServiceType.FmRadio ||
+        serviceType == (int)DvbServiceType.AdvancedCodecDigitalRadio)
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Determines whether a DVB service type is a television service.
+    /// </summary>
+    /// <param name="serviceType">the service</param>
+    /// <returns><c>true</c> if the service type is a television service type, otherwise <c>false</c></returns>
+    protected virtual bool IsTvService(int serviceType)
+    {
+      if (
+        serviceType == (int)DvbServiceType.DigitalTelevision ||
+        serviceType == (int)DvbServiceType.Mpeg2HdDigitalTelevision ||
+        serviceType == (int)DvbServiceType.AdvancedCodecSdDigitalTelevision ||
+        serviceType == (int)DvbServiceType.AdvancedCodecHdDigitalTelevision ||
+        serviceType == (int)DvbServiceType.SkyGermanyOptionChannel)
+      {
+        return true;
+      }
+      return false;
+    }
+
+
+    protected virtual void SetNameForUnknownChannel(IChannel channel, ChannelInfo info)
+    {
+      info.service_name = String.Format("Unknown {0:X}", info.serviceID);
     }
 
     #endregion

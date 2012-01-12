@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,9 +66,10 @@ namespace MpeMaker.Dialogs
       ListViewGroup wizardGroup = new ListViewGroup("Wizards", HorizontalAlignment.Left);
       listView.Groups.Add(wizardGroup);
 
-      listView.Items.Add(new ListViewItem("New Project", ImageKeyNew) { Tag = MpeStartupResult.NewFile });
-      listView.Items.Add(new ListViewItem("Open project", ImageKeyOpen) { Tag = MpeStartupResult.OpenFile });
-      listView.Items.Add(new ListViewItem("New Skin Project Wizard", ImageKeySkinWizard, wizardGroup) { Tag = MpeStartupResult.SkinWizard });
+      listView.Items.Add(new ListViewItem("New Project", ImageKeyNew) {Tag = MpeStartupResult.NewFile});
+      listView.Items.Add(new ListViewItem("Open project", ImageKeyOpen) {Tag = MpeStartupResult.OpenFile});
+      listView.Items.Add(new ListViewItem("New Skin Project Wizard", ImageKeySkinWizard, wizardGroup)
+                           {Tag = MpeStartupResult.SkinWizard});
 
       listView.Items[0].Selected = true;
     }
@@ -102,7 +103,7 @@ namespace MpeMaker.Dialogs
     {
       Hide();
 
-      MpeStartupResult = (MpeStartupResult) listView.SelectedItems[0].Tag;
+      MpeStartupResult = (MpeStartupResult)listView.SelectedItems[0].Tag;
       if (MpeStartupResult == MpeStartupResult.MruFile)
       {
         MpeStartupResultParam = listView.SelectedItems[0].ToolTipText;

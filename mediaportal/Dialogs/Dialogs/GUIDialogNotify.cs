@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,9 @@ using System;
 using System.Drawing;
 using System.IO;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
+using Alignment = MediaPortal.GUI.Library.GUIControl.Alignment;
+using VAlignment = MediaPortal.GUI.Library.GUIControl.VAlignment;
 
 namespace MediaPortal.Dialogs
 {
@@ -141,7 +144,7 @@ namespace MediaPortal.Dialogs
     public void SetImage(string filename)
     {
       logoUrl = filename;
-      if (File.Exists(filename))
+      if (Util.Utils.FileExistsInCache(filename))
       {
         if (imgLogo != null)
         {
@@ -169,7 +172,8 @@ namespace MediaPortal.Dialogs
       imgLogo.Width = size.Width;
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
-      imgLogo.Centered = centered;
+      imgLogo.ImageAlignment = Alignment.ALIGN_CENTER;
+      imgLogo.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
     }
 
     public int TimeOut

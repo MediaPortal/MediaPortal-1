@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -74,10 +74,6 @@ namespace SetupTv.Dialogs
         if (checkBoxGuideChannels.Checked)
         {
           sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
-        }
-        if (checkBoxFTA.Checked)
-        {
-          sb.AddConstraint(Operator.Equals, "freetoair", 1);
         }
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ namespace MediaPortal.Utils.Web
   /// - IHttpAuth for NetworkCredentials (site authenication)
   /// - IHttpStats for Site statistics.
   /// </remarks>
-  public class HTTPTransaction: IDisposable
+  public class HTTPTransaction : IDisposable
   {
     #region Variables
 
@@ -212,8 +212,8 @@ namespace MediaPortal.Utils.Web
             using (StreamWriter WriteStream = new StreamWriter(OutputStream))
             {
               WriteStream.Write(pageRequest.PostQuery);
-              WriteStream.Flush(); 
-            }            
+              WriteStream.Flush();
+            }
           }
           catch (WebException ex)
           {

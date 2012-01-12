@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,11 +44,18 @@ namespace MediaPortal.Player.Subtitles
     ////
     //subs management functions
     ///
+
+    #region Embedded subtitles
+
     int GetCount();
 
     string GetLanguage(int i);
 
+    string GetSubtitleName(int i);
+
     int Current { get; set; }
+
+    #endregion
 
     bool Enable { get; set; }
 
@@ -58,21 +65,30 @@ namespace MediaPortal.Player.Subtitles
 
     void DelayPlus();
     void DelayMinus();
+
+    bool AutoShow { get; set; }
   }
 
   public class SubEngine
   {
-    private static ISubEngine engine;
+    public static ISubEngine engine;
 
     public static ISubEngine GetInstance()
     {
-      if (engine == null)
+      return GetInstance(false);
+    }
+
+    public static ISubEngine GetInstance(bool forceinitialize)
+    {
+      if (engine == null || forceinitialize)
       {
         using (Settings xmlreader = new MPSettings())
         {
           string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
           if (engineType.Equals("MPC-HC"))
             engine = new MpcEngine();
+          else if (engineType.Equals("FFDShow"))
+            engine = new FFDShowEngine();
           else if (engineType.Equals("DirectVobSub"))
             engine = new DirectVobSubEngine();
           else
@@ -82,7 +98,7 @@ namespace MediaPortal.Player.Subtitles
       return engine;
     }
 
-    private class DummyEngine : ISubEngine
+    public class DummyEngine : ISubEngine
     {
       #region ISubEngine Members
 
@@ -120,6 +136,11 @@ namespace MediaPortal.Player.Subtitles
         return null;
       }
 
+      public string GetSubtitleName(int i)
+      {
+        return "";
+      }
+
       public int Current
       {
         get { return -1; }
@@ -146,6 +167,12 @@ namespace MediaPortal.Player.Subtitles
       public void DelayPlus() {}
 
       public void DelayMinus() {}
+
+      public bool AutoShow
+      {
+        get { return false; }
+        set { }
+      }
 
       #endregion
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,8 +19,13 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Configuration.Install;
 using System.Diagnostics;
+using System.Security.Principal;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
@@ -34,15 +39,257 @@ using TvEngine;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 
 namespace TvService
 {
-  public partial class Service1 : ServiceBase, IPowerEventHandler
+  public partial class Service1 : ServiceBase
   {
-    #region variables
-
-    private bool _started;
     private bool _priorityApplied;
+    private Thread _tvServiceThread = null;
+    private static Thread _unhandledExceptionInThread = null;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Service1"/> class.
+    /// </summary>
+    public Service1()
+    {
+      AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+      InitializeComponent();
+    }
+
+    public static bool HasThreadCausedAnUnhandledException(Thread thread)
+    {
+      bool hasCurrentThreadCausedAnUnhandledException = false;
+
+      if (_unhandledExceptionInThread != null)
+      {
+        hasCurrentThreadCausedAnUnhandledException = (_unhandledExceptionInThread.ManagedThreadId ==
+                                                      thread.ManagedThreadId);
+      }
+
+      return hasCurrentThreadCausedAnUnhandledException;
+    }
+
+    /// <summary>
+    /// Handles the UnhandledException event of the CurrentDomain control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
+    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+      Log.WriteFile("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
+      _unhandledExceptionInThread = Thread.CurrentThread;
+      ExitCode = -1; //tell windows that the service failed.      
+      OnStop(); //cleanup
+      Environment.Exit(-1);
+    }
+
+
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    private static void Main(string[] args)
+    {
+      NameValueCollection appSettings = ConfigurationManager.AppSettings;
+      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
+
+      string opt = null;
+      if (args.Length >= 1)
+      {
+        opt = args[0];
+      }
+
+      if (opt != null && opt.ToUpperInvariant() == "/INSTALL")
+      {
+        TransactedInstaller ti = new TransactedInstaller();
+        ProjectInstaller mi = new ProjectInstaller();
+        ti.Installers.Add(mi);
+        String path = String.Format("/assemblypath={0}",
+                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
+        String[] cmdline = {path};
+        InstallContext ctx = new InstallContext("", cmdline);
+        ti.Context = ctx;
+        ti.Install(new Hashtable());
+        return;
+      }
+      if (opt != null && opt.ToUpperInvariant() == "/UNINSTALL")
+      {
+        TransactedInstaller ti = new TransactedInstaller();
+        ProjectInstaller mi = new ProjectInstaller();
+        ti.Installers.Add(mi);
+        String path = String.Format("/assemblypath={0}",
+                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
+        String[] cmdline = {path};
+        InstallContext ctx = new InstallContext("", cmdline);
+        ti.Context = ctx;
+        ti.Uninstall(null);
+        return;
+      }
+      // When using /DEBUG switch (in visual studio) the TvService is not run as a service
+      // Make sure the real TvService is disabled before debugging with /DEBUG
+      if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
+      {
+        Service1 s = new Service1();
+        s.DoStart(new string[] {"/DEBUG"});
+        do
+        {
+          Thread.Sleep(100);
+        } while (true);
+      }
+
+      // More than one user Service may run within the same process. To add
+      // another service to this process, change the following line to
+      // create a second service object. For example,
+      //
+      //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
+      //
+      ServiceBase[] ServicesToRun = new ServiceBase[] {new Service1()};
+      ServiceBase.Run(ServicesToRun);
+    }
+
+    public void DoStart(string[] args)
+    {
+      OnStart(args);
+    }
+
+    public void DoStop()
+    {
+      OnStop();
+    }
+
+    /// <summary>
+    /// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
+    /// </summary>
+    /// <param name="args">Data passed by the start command.</param>
+    protected override void OnStart(string[] args)
+    {
+      if (_tvServiceThread == null)
+      {
+        if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
+        {
+          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
+        }
+        TvServiceThread tvServiceThread = new TvServiceThread();
+        ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
+        _tvServiceThread = new Thread(tvServiceThreadStart);
+
+        _tvServiceThread.IsBackground = false;
+
+        // apply process priority on initial service start.
+        if (!_priorityApplied)
+        {
+          try
+          {
+            applyProcessPriority();
+            _priorityApplied = true;
+          }
+          catch (Exception ex)
+          {
+            // applyProcessPriority can generate an exception when we cannot connect to the database
+            Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
+          }
+        }
+
+        _tvServiceThread.Start();
+
+        while (!TvServiceThread.Started)
+        {
+          Thread.Sleep(20);
+        }
+      }
+    }
+
+    private void applyProcessPriority()
+    {
+      try
+      {
+        string connectionString, provider;
+        GetDatabaseConnectionString(out connectionString, out provider);
+        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
+
+        switch (processPriority)
+        {
+          case 0:
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
+            _tvServiceThread.Priority = ThreadPriority.AboveNormal;
+            break;
+          case 1:
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+            _tvServiceThread.Priority = ThreadPriority.AboveNormal;
+            break;
+          case 2:
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
+            _tvServiceThread.Priority = ThreadPriority.AboveNormal;
+            break;
+          case 3:
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+            _tvServiceThread.Priority = ThreadPriority.Normal;
+            break;
+          case 4:
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
+            _tvServiceThread.Priority = ThreadPriority.BelowNormal;
+            break;
+          case 5:
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Idle;
+            _tvServiceThread.Priority = ThreadPriority.Lowest;
+            break;
+          default:
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
+            _tvServiceThread.Priority = ThreadPriority.Normal;
+            break;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
+      }
+    }
+
+    private static void GetDatabaseConnectionString(out string connectionString, out string provider)
+    {
+      connectionString = "";
+      provider = "";
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+        connectionString = nodeConnection.InnerText;
+        provider = nodeProvider.InnerText;
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
+
+
+    /// <summary>
+    /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
+    /// </summary>
+    protected override void OnStop()
+    {
+      if (_tvServiceThread != null && _tvServiceThread.IsAlive)
+      {
+        _tvServiceThread.Abort();
+        _tvServiceThread.Join();
+        _tvServiceThread = null;
+      }
+    }
+  }
+
+  public class TvServiceThread : IPowerEventHandler
+  {
+    #region variables    
+
+    private EventWaitHandle _InitializedEvent;
+    private static bool _started;
     private TVController _controller;
     private readonly List<PowerEventHandler> _powerEventHandlers;
     private PluginLoader _plugins;
@@ -50,10 +297,7 @@ namespace TvService
 
     #endregion
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Service1"/> class.
-    /// </summary>
-    public Service1()
+    public TvServiceThread()
     {
       // set working dir from application.exe
       string applicationPath = Application.ExecutablePath;
@@ -64,6 +308,27 @@ namespace TvService
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
       AddPowerEventHandler(OnPowerEventHandler);
+      try
+      {
+        Log.Debug("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
+
+        EventWaitHandleAccessRule rule =
+          new EventWaitHandleAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                                        EventWaitHandleRights.FullControl, AccessControlType.Allow);
+        EventWaitHandleSecurity sec = new EventWaitHandleSecurity();
+        sec.AddAccessRule(rule);
+        bool eventCreated;
+        _InitializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, RemoteControl.InitializedEventName,
+                                                out eventCreated, sec);
+        if (!eventCreated)
+        {
+          Log.Info("{0} was not created", RemoteControl.InitializedEventName);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
       // setup the remoting channels
       try
       {
@@ -75,172 +340,26 @@ namespace TvService
       {
         Log.Write(ex);
       }
-
-      InitializeComponent();
     }
 
-    public void DoStart(string[] args)
+    public static bool Started
     {
-      OnStart(args);
+      get { return _started; }
     }
 
-    /// <summary>
-    /// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
-    /// </summary>
-    /// <param name="args">Data passed by the start command.</param>
-    protected override void OnStart(string[] args)
+    #region IPowerEventHandler implementation
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void AddPowerEventHandler(PowerEventHandler handler)
     {
-      if (_started)
-        return;
-
-      Log.Info("TV service: Starting");
-      // apply process priority on initial service start.
-      if (!_priorityApplied)
-      {
-        try
-        {
-          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout
-          applyProcessPriority();
-          _priorityApplied = true;
-        }
-        catch (Exception ex)
-        {
-          // applyProcessPriority can generate an exception when we cannot connect to the database
-          Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
-        }
-      }
-      Thread.CurrentThread.Name = "TVService";
-
-      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-
-      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
-
-      //Check for unsupported operating systems
-      OSPrerequisites.OsCheck(false);
-
-      Application.ThreadException += Application_ThreadException;
-      AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-      _powerEventThread = new Thread(PowerEventThread);
-      _powerEventThread.Name = "PowerEventThread";
-      _powerEventThread.IsBackground = true;
-      _powerEventThread.Start();
-      //currentProcess.PriorityClass = ProcessPriorityClass.High;
-      _controller = new TVController();
-      _controller.Init();
-      StartPlugins();
-
-      StartRemoting();
-      _started = true;
-      Log.Info("TV service: Started");
+      _powerEventHandlers.Add(handler);
     }
 
-    private void StartPlugins()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void RemovePowerEventHandler(PowerEventHandler handler)
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Log.Info("TV Service: Load plugins");
-
-      _plugins = new PluginLoader();
-      _plugins.Load();
-
-      Log.Info("TV Service: Plugins loaded");
-      // start plugins
-      foreach (ITvServerPlugin plugin in _plugins.Plugins)
-      {
-        if (plugin.MasterOnly == false || _controller.IsMaster)
-        {
-          Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-          if (setting.Value == "true")
-          {
-            Log.Info("TV Service: Plugin: {0} started", plugin.Name);
-            try
-            {
-              plugin.Start(_controller);
-              _pluginsStarted.Add(plugin);
-            }
-            catch (Exception ex)
-            {
-              Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
-              Log.Write(ex);
-            }
-          }
-          else
-          {
-            Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
-          }
-        }
-      }
-
-      Log.Info("TV Service: Plugins started");
-
-      // fire off startedAll on plugins
-      foreach (ITvServerPlugin plugin in _pluginsStarted)
-      {
-        if (plugin is ITvServerPluginStartedAll)
-        {
-          Log.Info("TV Service: Plugin: {0} started all", plugin.Name);
-          try
-          {
-            (plugin as ITvServerPluginStartedAll).StartedAll();
-          }
-          catch (Exception ex)
-          {
-            Log.Info("TV Service: Plugin: {0} failed to startedAll", plugin.Name);
-            Log.Write(ex);
-          }
-        }
-      }
-    }
-
-    private void StopPlugins()
-    {
-      Log.Info("TV Service: Stop plugins");
-      if (_pluginsStarted != null)
-      {
-        foreach (ITvServerPlugin plugin in _pluginsStarted)
-        {
-          try
-          {
-            plugin.Stop();
-          }
-          catch (Exception ex)
-          {
-            Log.Info("TV Service: plugin: {0} failed to stop", plugin.Name);
-            Log.Write(ex);
-          }
-        }
-        _pluginsStarted = new List<ITvServerPlugin>();
-      }
-      Log.Info("TV Service: Plugins stopped");
-    }
-
-    /// <summary>
-    /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
-    /// </summary>
-    protected override void OnStop()
-    {
-      if (!_started)
-        return;
-      Log.WriteFile("TV Service: stopping");
-
-      StopRemoting();
-      RemoteControl.Clear();
-      if (_controller != null)
-      {
-        _controller.DeInit();
-        _controller = null;
-      }
-
-      StopPlugins();
-      if (_powerEventThreadId != 0)
-      {
-        Log.Debug("TV Service: OnStop asking PowerEventThread to exit");
-        PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-        _powerEventThread.Join();
-      }
-      _powerEventThreadId = 0;
-      _powerEventThread = null;
-      _started = false;
-      Log.WriteFile("TV Service: stopped");
+      lock (_powerEventHandlers)
+        _powerEventHandlers.Remove(handler);
     }
 
     #region PowerEvent window handling
@@ -484,70 +603,18 @@ namespace TvService
                     : PowerEventType.QueryStandByFailed);
         }
       }
+      else if (powerStatus == PowerEventType.ResumeAutomatic ||
+               powerStatus == PowerEventType.ResumeCritical ||
+               powerStatus == PowerEventType.ResumeStandBy ||
+               powerStatus == PowerEventType.ResumeSuspend
+        )
+      {
+        _controller.ExecutePendingDeletions();
+        // call Recording-folder cleanup, just in case we have empty folders.
+      }
+
 
       return false;
-    }
-
-    private static void GetDatabaseConnectionString(out string connectionString, out string provider)
-    {
-      connectionString = "";
-      provider = "";
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-        connectionString = nodeConnection.InnerText;
-        provider = nodeProvider.InnerText;
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-    }
-
-    private static void applyProcessPriority()
-    {
-      try
-      {
-        string connectionString, provider;
-        GetDatabaseConnectionString(out connectionString, out provider);
-        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
-
-        TvBusinessLayer layer = new TvBusinessLayer();
-        int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
-
-        switch (processPriority)
-        {
-          case 0:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-            break;
-          case 1:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
-            break;
-          case 2:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
-            break;
-          case 3:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-            break;
-          case 4:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
-            break;
-          case 5:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Idle;
-            break;
-          default:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-            break;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
-      }
     }
 
     private bool OnPowerEventHandler(PowerEventType powerStatus)
@@ -558,11 +625,7 @@ namespace TvService
       {
         case PowerEventType.StandBy:
         case PowerEventType.Suspend:
-          User tmpUser = new User();
-          foreach (ITvCardHandler cardhandler in _controller.CardCollection.Values)
-          {
-            cardhandler.StopCard(tmpUser);
-          }
+          _controller.OnSuspend();
           return true;
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
@@ -584,6 +647,7 @@ namespace TvService
         case PowerEventType.ResumeAutomatic:
         case PowerEventType.ResumeCritical:
         case PowerEventType.ResumeSuspend:
+          _controller.OnResume();
           return true;
       }
       return true;
@@ -626,37 +690,170 @@ namespace TvService
       Log.WriteFile("Remoting stopped");
     }
 
-    public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-    {
-      Log.WriteFile("Tvservice stopped due to a thread exception");
-      Log.Write(e.Exception);
-    }
-
-    /// <summary>
-    /// Handles the UnhandledException event of the CurrentDomain control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
-    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-      Log.WriteFile("Tvservice stopped due to a app domain exception {0}", e.ExceptionObject);
-    }
-
-    #region IPowerEventHandler implementation
-
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    public void AddPowerEventHandler(PowerEventHandler handler)
-    {
-      _powerEventHandlers.Add(handler);
-    }
-
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    public void RemovePowerEventHandler(PowerEventHandler handler)
-    {
-      lock (_powerEventHandlers)
-        _powerEventHandlers.Remove(handler);
-    }
-
     #endregion
+
+    private void StartPlugins()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Log.Info("TV Service: Load plugins");
+
+      _plugins = new PluginLoader();
+      _plugins.Load();
+
+      Log.Info("TV Service: Plugins loaded");
+      // start plugins
+      foreach (ITvServerPlugin plugin in _plugins.Plugins)
+      {
+        if (plugin.MasterOnly == false || _controller.IsMaster)
+        {
+          Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+          if (setting.Value == "true")
+          {
+            Log.Info("TV Service: Plugin: {0} started", plugin.Name);
+            try
+            {
+              plugin.Start(_controller);
+              _pluginsStarted.Add(plugin);
+            }
+            catch (Exception ex)
+            {
+              Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
+              Log.Write(ex);
+            }
+          }
+          else
+          {
+            Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
+          }
+        }
+      }
+
+      Log.Info("TV Service: Plugins started");
+
+      // fire off startedAll on plugins
+      foreach (ITvServerPlugin plugin in _pluginsStarted)
+      {
+        if (plugin is ITvServerPluginStartedAll)
+        {
+          Log.Info("TV Service: Plugin: {0} started all", plugin.Name);
+          try
+          {
+            (plugin as ITvServerPluginStartedAll).StartedAll();
+          }
+          catch (Exception ex)
+          {
+            Log.Info("TV Service: Plugin: {0} failed to startedAll", plugin.Name);
+            Log.Write(ex);
+          }
+        }
+      }
+    }
+
+    private void StopPlugins()
+    {
+      Log.Info("TV Service: Stop plugins");
+      if (_pluginsStarted != null)
+      {
+        foreach (ITvServerPlugin plugin in _pluginsStarted)
+        {
+          try
+          {
+            plugin.Stop();
+          }
+          catch (Exception ex)
+          {
+            Log.Info("TV Service: plugin: {0} failed to stop", plugin.Name);
+            Log.Write(ex);
+          }
+        }
+        _pluginsStarted = new List<ITvServerPlugin>();
+      }
+      Log.Info("TV Service: Plugins stopped");
+    }
+
+    public void OnStop()
+    {
+      if (!Started)
+        return;
+      Log.WriteFile("TV Service: stopping");
+
+      if (_InitializedEvent != null)
+      {
+        _InitializedEvent.Reset();
+      }
+      StopRemoting();
+      RemoteControl.Clear();
+      if (_controller != null)
+      {
+        _controller.DeInit();
+        _controller = null;
+      }
+
+      StopPlugins();
+      if (_powerEventThreadId != 0)
+      {
+        Log.Debug("TV Service: OnStop asking PowerEventThread to exit");
+        PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+        _powerEventThread.Join();
+      }
+      _powerEventThreadId = 0;
+      _powerEventThread = null;
+      _started = false;
+      Log.WriteFile("TV Service: stopped");
+    }
+
+    public void OnStart()
+    {
+      //System.Diagnostics.Debugger.Launch();
+      try
+      {
+        if (!Started)
+        {
+          Log.Info("TV service: Starting");
+
+          Thread.CurrentThread.Name = "TVService";
+
+          FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+
+          Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
+                        OSInfo.OSInfo.GetOSDisplayVersion());
+#if DEBUG
+          Log.Info("Debug build: " + Application.ProductVersion);
+#else
+          Log.Info("Build: " + Application.ProductVersion);
+#endif
+
+          //Check for unsupported operating systems
+          OSPrerequisites.OSPrerequisites.OsCheck(false);
+
+          _powerEventThread = new Thread(PowerEventThread);
+          _powerEventThread.Name = "PowerEventThread";
+          _powerEventThread.IsBackground = true;
+          _powerEventThread.Start();
+          _controller = new TVController();
+          _controller.Init();
+          StartPlugins();
+
+          StartRemoting();
+          _started = true;
+          if (_InitializedEvent != null)
+          {
+            _InitializedEvent.Set();
+          }
+          Log.Info("TV service: Started");
+          while (true)
+          {
+            Thread.Sleep(1000);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        //wait for thread to exit. eg. when stopping tvservice       
+        Log.Error("TvService OnStart failed : {0}", ex.ToString());
+        _started = true; // otherwise the onstop code will not complete.
+        OnStop();
+      }
+    }
   }
 }

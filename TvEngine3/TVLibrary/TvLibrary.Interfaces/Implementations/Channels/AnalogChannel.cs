@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -88,7 +88,19 @@ namespace TvLibrary.Implementations
       /// <summary>
       /// RGB input #3
       /// </summary>
-      YRYBYInput3
+      YRYBYInput3,
+      /// <summary>
+      /// HDMI input #1
+      /// </summary>
+      HdmiInput1,
+      /// <summary>
+      /// HDMI input #2
+      /// </summary>
+      HdmiInput2,
+      /// <summary>
+      /// HDMI input #3
+      /// </summary>
+      HdmiInput3
     }
 
     /// <summary>
@@ -385,6 +397,10 @@ namespace TvLibrary.Implementations
              analogChannel.Frequency != Frequency;
     }
 
+    /// <summary>
+    /// Checks if the given channel is FTA. (Not scrambled)
+    /// </summary>
+    /// <returns>true, if the channel is FTA</returns>
     public bool FreeToAir
     {
       get { return true; }

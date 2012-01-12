@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ namespace MediaPortal.Utils.Web
   {
     #region Variables
 
-    private string _agent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
+    private string _agent = "Mozilla/4.0 (compatible; MSIE 7.0; WindowsNT 5.0; .NET CLR 1 .1.4322)";
     private string _postType = "application/x-www-form-urlencoded";
     private CookieCollection _cookies;
     private HttpWebResponse _response;
@@ -151,6 +151,8 @@ namespace MediaPortal.Utils.Web
         Thread.Sleep(pageRequest.Delay);
       }
 
+      string agent = string.IsNullOrEmpty(pageRequest.UserAgent)? _agent : pageRequest.UserAgent;
+
       Uri pageUri = pageRequest.Uri;
       try
       {
@@ -164,7 +166,7 @@ namespace MediaPortal.Utils.Web
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
         catch (Exception) {}
-        request.UserAgent = _agent;
+        request.UserAgent = agent;
         request.AllowAutoRedirect = false;
         if (pageRequest.Cookies != string.Empty)
         {
@@ -237,7 +239,7 @@ namespace MediaPortal.Utils.Web
             redirect.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
           catch (Exception) {}
-          redirect.UserAgent = _agent;
+          redirect.UserAgent = agent;
           redirect.AllowAutoRedirect = false;
           redirect.Referer = _response.ResponseUri.ToString();
 

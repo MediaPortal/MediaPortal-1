@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -26,7 +27,8 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -164,6 +166,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
@@ -183,11 +189,6 @@
       <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
       <Name>MiniDisplayLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
-      <Name>RemotePlugins</Name>
-      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
@@ -196,48 +197,23 @@
       <Project>{C6564AA7-976B-43EF-9E35-7E607EE1DD12}</Project>
       <Name>MusicShareWatcherHelper</Name>
     </ProjectReference>
-    <Reference Include="Bass.Net, Version=2.3.1.2, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.GIRDERLib, Version=1.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Interop.GIRDERLib.dll</HintPath>
-    </Reference>
-    <Reference Include="LibDriverCoreClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Outlook, Version=10.0.4504.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Microsoft.Office.Interop.Outlook.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
-      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
-    </Reference>
     <Reference Include="System.Web">
       <Name>System.Web</Name>
-    </Reference>
-    <Reference Include="System.Web.Services">
-      <Name>System.Web.Services</Name>
     </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -247,34 +223,6 @@
     </Compile>
     <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AutoCropper\AutoCropper.cs" />
-    <Compile Include="AutoCropper\AutoCropperSetup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AutoCropper\FrameAnalyzer.cs" />
-    <Compile Include="AutoCropper\MovingAverage.cs" />
-    <Compile Include="AutoCropper\PlugInBase.cs" />
-    <Compile Include="CallerId\ISDN\CallerIdISDN.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CallerId\ISDN\ISDNSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CallerId\ISDN\ISDNWatch.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CallerId\ISDN\OutlookHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MameDevice\MameDevice.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MameDevice\MappingForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="MiniDisplay\MiniDisplay.cs" />
     <Compile Include="MiniDisplay\SetupForm.cs">
@@ -293,15 +241,26 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcher.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherConfig.designer.cs">
+      <DependentUpon>ViewModeSwitcherConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherFrameAnalyzer.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherPlugInBase.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherRuleDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherRuleDetail.designer.cs">
+      <DependentUpon>ViewModeSwitcherRuleDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherRules.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherSettings.cs" />
     <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
-      <DependentUpon>ISDNSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MameDevice\MappingForm.resx">
-      <DependentUpon>MappingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -322,19 +281,27 @@
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher_deactivated.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AutoCropper\AutoCropperSetup.resx">
-      <DependentUpon>AutoCropperSetup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="MusicDBReorg\MusicDBReorgSettings.resx">
       <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AutoCropper\Readme.txt" />
     <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd.gif" />
     <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd_deactivated.gif" />
+    <EmbeddedResource Include="MiniDisplay\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherConfig.resx">
+      <DependentUpon>ViewModeSwitcherConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherRuleDetail.resx">
+      <DependentUpon>ViewModeSwitcherRuleDetail.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherIconDisabled.png" />
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherIconEnabled.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

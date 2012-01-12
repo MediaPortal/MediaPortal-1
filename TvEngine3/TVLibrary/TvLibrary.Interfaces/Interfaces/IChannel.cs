@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -47,6 +47,10 @@ namespace TvLibrary.Interfaces
     /// <returns>true, if the channels are on the same transponder</returns>
     bool IsDifferentTransponder(IChannel channel);
 
+    /// <summary>
+    /// Checks if the given channel is FTA. (Not scrambled)
+    /// </summary>
+    /// <returns>true, if the channel is FTA</returns>
     bool FreeToAir { get; }
   }
 }

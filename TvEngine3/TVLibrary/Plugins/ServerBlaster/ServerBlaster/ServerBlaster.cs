@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -161,7 +161,7 @@ namespace TvEngine
       try
       {
         using (
-          FileStream fs = new FileStream(String.Format(@"{0}\ServerBlaster.dat", Log.GetPathName()), FileMode.Open,
+          FileStream fs = new FileStream(String.Format(@"{0}\ServerBlaster.dat", PathManager.GetDataPath), FileMode.Open,
                                          FileAccess.Read))
         {
           BinaryFormatter bf = new BinaryFormatter();

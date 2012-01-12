@@ -39,10 +39,6 @@
   <Dir id = "Log">
     <Path>log\</Path>
   </Dir>
-      <!-- The Path were the Custom Inputdevice Mappings are located. -->
-  <Dir id = "CustomInputDevice">
-    <Path>InputDeviceMappings\custom</Path>
-  </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">
     <Path>skin\</Path>

@@ -23,8 +23,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
-using Gentle.Framework;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -40,7 +38,6 @@ namespace TvPlugin
     private Timer _timer;
     // flag indicating that notifies have been added/changed/removed
     private static bool _notifiesListChanged;
-    private static bool _enableTVNotification;
     private static bool _enableRecNotification;
     private static bool _busy;
     private int _preNotifyConfig;
@@ -57,10 +54,8 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _enableTVNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
-        //_enableNotifyOnRecFailed = xmlreader.GetValueAsBool("mytv", "enableTvOnRecFailed", true);
       }
 
       _busy = false;
@@ -187,77 +182,52 @@ namespace TvPlugin
       }
     }
 
-    private bool Notify(string heading, string mainMsg, string channelName)
+    private bool Notify(string heading, string mainMsg, Channel channel)
     {
-      GUIDialogNotify pDlgNotify =
-        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-      if (pDlgNotify != null)
-      {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TV, 0, 0, 0, 0, 0, null);
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
-        GUIGraphicsContext.SendMessage(msg); //Send the message so the miniguide 
-
-        pDlgNotify.Reset();
-        pDlgNotify.ClearAll();
-        pDlgNotify.SetImage(logo);
-        pDlgNotify.SetHeading(heading);
-        if (mainMsg.Length > 0)
-        {
-          pDlgNotify.SetText(mainMsg);
-        }
-        pDlgNotify.TimeOut = 5;
-
-
-        try
-        {
-          pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-        }
-        catch
-        {
-          //ignore
-          // ex- the notify dialogue will cause an error if rendered while mini TV epg is active.
-          return false;
-        }
-      }
+      Log.Info("send rec notify");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_REC, 0, 0, 0, 0, 0, null);
+      msg.Label = heading;
+      msg.Label2 = mainMsg;
+      msg.Object = channel;
+      GUIGraphicsContext.SendMessage(msg);
+      msg = null;
+      Log.Info("send rec notify done");
       return true;
     }
 
     private void ProcessNotifies(DateTime preNotifySecs)
     {
-      if (_enableTVNotification)
+      if (_notifiesListChanged)
       {
-        if (_notifiesListChanged)
+        LoadNotifies();
+        _notifiesListChanged = false;
+      }
+      if (_notifiesList != null && _notifiesList.Count > 0)
+      {
+        foreach (Program program in _notifiesList)
         {
-          LoadNotifies();
-          _notifiesListChanged = false;
-        }
-        if (_notifiesList != null && _notifiesList.Count > 0)
-        {
-          foreach (Program program in _notifiesList)
+          if (preNotifySecs > program.StartTime)
           {
-            if (preNotifySecs > program.StartTime)
-            {
-              Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName,
-                       program.StartTime);
-              program.Notify = false;
-              program.Persist();
-              TVProgramDescription tvProg = new TVProgramDescription();
-              tvProg.Channel = program.ReferencedChannel().DisplayName;
-              tvProg.Title = program.Title;
-              tvProg.Description = program.Description;
-              tvProg.Genre = program.Genre;
-              tvProg.StartTime = program.StartTime;
-              tvProg.EndTime = program.EndTime;
+            Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName,
+                     program.StartTime);
+            program.Notify = false;
+            program.Persist();
+            TVProgramDescription tvProg = new TVProgramDescription();
+            tvProg.Channel = program.ReferencedChannel();
+            tvProg.Title = program.Title;
+            tvProg.Description = program.Description;
+            tvProg.Genre = program.Genre;
+            tvProg.StartTime = program.StartTime;
+            tvProg.EndTime = program.EndTime;
 
-              _notifiesList.Remove(program);
-              Log.Info("send notify");
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
-              msg.Object = tvProg;
-              GUIGraphicsContext.SendMessage(msg);
-              msg = null;
-              Log.Info("send notify done");
-              return;
-            }
+            _notifiesList.Remove(program);
+            Log.Info("send notify");
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
+            msg.Object = tvProg;
+            GUIGraphicsContext.SendMessage(msg);
+            msg = null;
+            Log.Info("send notify done");
+            return;
           }
         }
       }
@@ -268,7 +238,8 @@ namespace TvPlugin
       //Log.Debug("TVPlugIn: Notifier checking for recording to start at {0}", preNotifySecs);
       //if (g_Player.IsTV && TVHome.Card.IsTimeShifting && g_Player.Playing)
       IList<Schedule> schedulesList = null;
-      if (_enableRecNotification && g_Player.Playing)
+      //if (_enableRecNotification && g_Player.Playing)
+      if (_enableRecNotification)
       {
         if (TVHome.TvServer.IsTimeToRecord(preNotifySecs))
         {
@@ -277,14 +248,19 @@ namespace TvPlugin
             schedulesList = Schedule.ListAll();
             foreach (Schedule rec in schedulesList)
             {
+              bool bContinue = false;
               //Check if alerady notified user
               foreach (Schedule notifiedRec in _notifiedRecordings)
               {
                 if (rec == notifiedRec)
                 {
-                  return;
+                  bContinue = true;
+                  break;
                 }
               }
+              if (bContinue)
+                continue;
+
               //Check if timing it's time 
               Log.Debug("TVPlugIn: Notifier checking program {0}", rec.ProgramName);
               if (TVHome.TvServer.IsTimeToRecord(preNotifySecs, rec.IdSchedule))
@@ -298,7 +274,7 @@ namespace TvPlugin
 
                   Notify(GUILocalizeStrings.Get(1004),
                          String.Format("{0}. {1}", rec.ProgramName, GUILocalizeStrings.Get(200055)),
-                         TVHome.Navigator.CurrentChannel);
+                         TVHome.Navigator.Channel);
 
                   _notifiedRecordings.Add(rec);
                   return;
@@ -344,7 +320,7 @@ namespace TvPlugin
             // do not show rec. that have been started a while ago.
             if (tsStart.TotalSeconds < 60)
             {
-              Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName);
+              Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel());
             }
             return;
           }
@@ -387,7 +363,7 @@ namespace TvPlugin
                                   DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
         //Recording stopped:                            
-        Notify(GUILocalizeStrings.Get(1447), textPrg, TvRecorded.GetRecordingDisplayName(stoppedRec));
+        Notify(GUILocalizeStrings.Get(1447), textPrg, stoppedRec.ReferencedChannel());
         _actualRecordings.Remove(stoppedRec);
 
         return; //we do not want to show any more notifications.        
@@ -398,16 +374,16 @@ namespace TvPlugin
     {
       try
       {
-        if (!TVHome.Connected || (!_enableTVNotification && !_enableRecNotification))
+        if (!TVHome.Connected)
         {
           return;
         }
-        ;
+        
         if (_busy)
         {
           return;
         }
-        ;
+
         _busy = true;
 
         if (_actualRecordings == null)
@@ -419,7 +395,7 @@ namespace TvPlugin
         {
           return;
         }
-        ;
+
       
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
         ProcessNotifies(preNotifySecs);

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -136,6 +136,18 @@ namespace MediaPortal.Video.Database
       _database.GetActors(actors);
     }
 
+    // Get actor by name
+    public static void GetActorByName(string actorName, ArrayList actors)
+    {
+      _database.GetActorByName(actorName, actors);
+    }
+
+    // Changed Added actors by movie ID
+    public static void GetActorsByMovieID(int idMovie, ref ArrayList actorsByMovieID)
+    {
+      _database.GetActorsByMovieID(idMovie, ref actorsByMovieID);
+    }
+
     public static void AddActorToMovie(int lMovieId, int lActorId)
     {
       _database.AddActorToMovie(lMovieId, lActorId);
@@ -241,6 +253,16 @@ namespace MediaPortal.Video.Database
       _database.SetMovieDuration(iFileId, duration);
     }
 
+    public static void SetMovieWatchedStatus(int iMovieId, bool watched)
+    {
+      _database.SetMovieWatchedStatus(iMovieId, watched);
+    }
+
+    public static bool GetmovieWatchedStatus(int iMovieId)
+    {
+      return _database.GetMovieWatchedStatus(iMovieId);
+    }
+
     public static void DeleteMovie(string strFilenameAndPath)
     {
       _database.DeleteMovie(strFilenameAndPath);
@@ -269,6 +291,12 @@ namespace MediaPortal.Video.Database
     public static void SetThumbURL(int lMovieId, string thumbURL)
     {
       _database.SetThumbURL(lMovieId, thumbURL);
+    }
+
+    // Fanart
+    public static void SetFanartURL(int lMovieId, string fanartURL)
+    {
+      _database.SetFanartURL(lMovieId, fanartURL);
     }
 
     public static void SetDVDLabel(int lMovieId, string strDVDLabel1)

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -146,7 +146,6 @@ namespace TvEngine.PowerScheduler.Handlers
                                     schedule.StartTime.Second);
       DateTime stop = new DateTime(now.Year, now.Month, now.Day, schedule.EndTime.Hour, schedule.EndTime.Minute,
                                    schedule.EndTime.Second);
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       switch (type)
       {
         case ScheduleRecordingType.Once:
@@ -158,27 +157,27 @@ namespace TvEngine.PowerScheduler.Handlers
           return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.Weekends:
           // check if it's a weekend currently
-          if (weekEndTool.IsWeekend(now.DayOfWeek))
+          if (WeekEndTool.IsWeekend(now.DayOfWeek))
           {
             // check if schedule has been due already today
             if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // if so, add appropriate days to wakeup time
-              start = weekEndTool.IsFirstWeekendDay(now.DayOfWeek) ? start.AddDays(1) : start.AddDays(6);
+              start = WeekEndTool.IsFirstWeekendDay(now.DayOfWeek) ? start.AddDays(1) : start.AddDays(6);
             }
           }
           else
           {
             // it's not a weekend so calculate number of days to add to current time
-            int days = (int)weekEndTool.FirstWeekendDay - (int)now.DayOfWeek;
+            int days = (int)WeekEndTool.FirstWeekendDay - (int)now.DayOfWeek;
             start = start.AddDays(days);
           }
           return start.AddMinutes(-schedule.PreRecordInterval);
         case ScheduleRecordingType.WorkingDays:
           // check if current time is in weekend; if so add appropriate number of days
-          if (now.DayOfWeek == weekEndTool.FirstWeekendDay)
+          if (now.DayOfWeek == WeekEndTool.FirstWeekendDay)
             start = start.AddDays(2);
-          else if (now.DayOfWeek == weekEndTool.SecondWeekendDay)
+          else if (now.DayOfWeek == WeekEndTool.SecondWeekendDay)
             start = start.AddDays(1);
           else
           {
@@ -186,7 +185,7 @@ namespace TvEngine.PowerScheduler.Handlers
             if (now > stop.AddMinutes(schedule.PostRecordInterval))
             {
               // schedule has been due, so add appropriate number of days
-              start = now.DayOfWeek < (weekEndTool.FirstWeekendDay - 1) ? start.AddDays(1) : start.AddDays(3);
+              start = now.DayOfWeek < (WeekEndTool.FirstWeekendDay - 1) ? start.AddDays(1) : start.AddDays(3);
             }
           }
           return start.AddMinutes(-schedule.PreRecordInterval);

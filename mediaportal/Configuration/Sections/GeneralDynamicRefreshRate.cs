@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -213,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
     {
       System.ComponentModel.ComponentResourceManager resources =
         new System.ComponentModel.ComponentResourceManager(typeof (GeneralDynamicRefreshRate));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 =
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 =
         new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBoxRR = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.defaultHz = new System.Windows.Forms.ComboBox();
@@ -256,9 +256,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxRR.Controls.Add(this.chkEnableDynamicRR);
       this.groupBoxRR.Controls.Add(this.linkLabelWiki);
       this.groupBoxRR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxRR.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxRR.Location = new System.Drawing.Point(6, 0);
       this.groupBoxRR.Name = "groupBoxRR";
-      this.groupBoxRR.Size = new System.Drawing.Size(460, 402);
+      this.groupBoxRR.Size = new System.Drawing.Size(462, 402);
       this.groupBoxRR.TabIndex = 7;
       this.groupBoxRR.TabStop = false;
       this.groupBoxRR.Text = "Dynamic Refresh Rate Setup";
@@ -325,16 +325,16 @@ namespace MediaPortal.Configuration.Sections
                                                this.gridColRR,
                                                this.gridColAction
                                              });
-      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
                                                             System.Drawing.FontStyle.Regular,
                                                             System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridViewRR.DefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridViewRR.DefaultCellStyle = dataGridViewCellStyle1;
       this.dataGridViewRR.Location = new System.Drawing.Point(19, 214);
       this.dataGridViewRR.Name = "dataGridViewRR";
       this.dataGridViewRR.RowHeadersVisible = false;

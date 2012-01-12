@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Handles the DiSEqC interface for ProfRed DVB-S/S2 devices
   /// </summary>
-  public class ProfRed : IDisposable,IDiSEqCController
+  public class ProfRed : IDisposable, IDiSEqCController
   {
     #region constants
 
@@ -233,6 +233,6 @@ namespace TvLibrary.Implementations.DVB
     public void Dispose()
     {
       Marshal.FreeCoTaskMem(_ptrDiseqc);
-    }  
+    }
   }
 }

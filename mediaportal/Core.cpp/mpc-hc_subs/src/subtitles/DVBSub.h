@@ -1,5 +1,5 @@
-/* 
- * $Id: DVBSub.h 1785 2010-04-09 14:12:59Z xhmikosr $
+/*
+ * $Id: DVBSub.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -41,13 +41,12 @@ public:
 	virtual HRESULT			GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VideoSize, POINT& VideoTopLeft);
 	virtual POSITION		GetStartPosition(REFERENCE_TIME rt, double fps);
 	virtual POSITION		GetNext(POSITION pos);
-	virtual REFERENCE_TIME	GetStart(POSITION nPos);	
+	virtual REFERENCE_TIME	GetStart(POSITION nPos);
 	virtual REFERENCE_TIME	GetStop(POSITION nPos);
 	virtual void			Reset();
 
 	// EN 300-743, table 2
-	enum DVB_SEGMENT_TYPE
-	{
+	enum DVB_SEGMENT_TYPE {
 		NO_SEGMENT			= 0xFFFF,
 		PAGE				= 0x10,
 		REGION				= 0x11,
@@ -58,37 +57,32 @@ public:
 	};
 
 	// EN 300-743, table 6
-	enum DVB_OBJECT_TYPE
-	{
+	enum DVB_OBJECT_TYPE {
 		OT_BASIC_BITMAP       = 0x00,
 		OT_BASIC_CHAR         = 0x01,
 		OT_COMPOSITE_STRING   = 0x02
 	};
 
-	enum DVB_PAGE_STATE
-	{
+	enum DVB_PAGE_STATE {
 		DPS_NORMAL			  = 0x00,
 		DPS_ACQUISITION		  = 0x01,
 		DPS_MODE			  = 0x02,
 		DPS_RESERVED		  = 0x03
 	};
 
-	struct DVB_CLUT
-	{
+	struct DVB_CLUT {
 		BYTE			id;
 		BYTE			version_number;
 		BYTE			Size;
 
 		HDMV_PALETTE	Palette[256];
 
-		DVB_CLUT()
-		{
+		DVB_CLUT() {
 			memset (Palette, 0, sizeof(Palette));
 		}
 	};
 
-	struct DVB_DISPLAY
-	{
+	struct DVB_DISPLAY {
 		BYTE			version_number;
 		BYTE			display_window_flag;
 		SHORT			width;
@@ -97,9 +91,8 @@ public:
 		SHORT			horizontal_position_maximum;
 		SHORT			vertical_position_minimun;
 		SHORT			vertical_position_maximum;
-		
-		DVB_DISPLAY()
-		{
+
+		DVB_DISPLAY() {
 			// Default value (§5.1.3)
 			version_number	= 0;
 			width			= 720;
@@ -107,8 +100,7 @@ public:
 		}
 	};
 
-	struct DVB_OBJECT
-	{
+	struct DVB_OBJECT {
 		SHORT				object_id;
 		BYTE				object_type;
 		BYTE				object_provider_flag;
@@ -117,8 +109,7 @@ public:
 		BYTE				foreground_pixel_code;
 		BYTE				background_pixel_code;
 
-		DVB_OBJECT()
-		{
+		DVB_OBJECT() {
 			object_id					= 0xFF;
 			object_type					= 0;
 			object_provider_flag		= 0;
@@ -129,8 +120,7 @@ public:
 		}
 	};
 
-	struct DVB_REGION
-	{
+	struct DVB_REGION {
 		BYTE		Id;
 		WORD		HorizAddr;
 		WORD		VertAddr;
@@ -149,8 +139,7 @@ public:
 
 		DVB_CLUT	Clut;
 
-		DVB_REGION()
-		{
+		DVB_REGION() {
 			Id						= 0;
 			HorizAddr				= 0;
 			VertAddr				= 0;
@@ -180,8 +169,7 @@ public:
 		CAtlList<CompositionObject*>	Objects;
 		bool							Rendered;
 
-		DVB_PAGE()
-		{
+		DVB_PAGE() {
 			PageTimeOut			= 0;
 			PageVersionNumber	= 0;
 			PageState			= 0;
@@ -189,11 +177,9 @@ public:
 			Rendered			= false;
 		}
 
-		~DVB_PAGE()
-		{
+		~DVB_PAGE() {
 			CompositionObject*	pPage;
-			while (Objects.GetCount() > 0)
-			{
+			while (Objects.GetCount() > 0) {
 				pPage = Objects.RemoveHead();
 				delete pPage;
 			}

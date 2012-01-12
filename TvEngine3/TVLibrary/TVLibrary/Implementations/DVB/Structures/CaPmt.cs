@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -315,30 +315,25 @@ namespace TvLibrary.Implementations.DVB.Structures
             }
           }
           offset = off + 6;
-          if (offset + 2 < descriptor.Length)
+          while (offset + 2 < descriptor.Length)
           {
-            while (true)
+            byte tagInd = descriptor[offset];
+            byte tagLen = descriptor[offset + 1];
+            if (tagLen + offset < descriptor.Length)
             {
-              byte tagInd = descriptor[offset];
-              byte tagLen = descriptor[offset + 1];
-              if (tagLen + off < descriptor.Length)
+              if (tagInd == 0x14)
               {
-                if (tagInd == 0x14)
+                ecm.ProviderId = (descriptor[offset + 2] << 16) + (descriptor[offset + 3] << 8) +
+                                 descriptor[offset + 4];
+                // Some providers sends wrong information in provider id (Boxer),
+                // so reset lower 4 bits for Via Access
+                if (ecm.CaId == 0x500)
                 {
-                  ecm.ProviderId = (descriptor[offset + 2] << 16) + (descriptor[offset + 3] << 8) +
-                                   descriptor[offset + 4];
-                  // Some providers sends wrong information in provider id (Boxer),
-                  // so reset lower 4 bits for Via Access
-                  if (ecm.CaId == 0x500)
-                  {
-                    ecm.ProviderId = ecm.ProviderId & 0xFFFFF0;
-                  }
+                  ecm.ProviderId = ecm.ProviderId & 0xFFFFF0;
                 }
               }
-              offset += (tagLen + 2);
-              if (offset >= descriptor.Length)
-                break;
             }
+            offset += (tagLen + 2);
           }
         }
         off += (len + 2);

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -134,6 +134,24 @@ namespace MediaPortal.Profile
       cache.Remove(key);
       cache.Add(key, value);
       provider.SetValue(section, entry, value);
+    }
+
+    /// <summary>
+    /// Moves an entry from the 'from' section to the 'to' section
+    /// </summary>
+    /// <param name="fromSection"></param>
+    /// <param name="toSection"></param>
+    /// <param name="entry"></param>
+    public void MoveEntry(string fromSection, string toSection, string entry)
+    {
+      object value = GetValue(fromSection, entry);
+
+      if (value == null)
+        return;
+
+      SetValue(toSection, entry, value);
+
+      RemoveEntry(fromSection, entry);
     }
 
 #if DEBUG

@@ -20,8 +20,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Text;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Util;
 using TvDatabase;
 using MediaPortal.Profile;
 using System.IO;
@@ -71,47 +77,27 @@ namespace TvPlugin
 
     #endregion
 
+    public static void SetGentleConfigFile()
+    {
+      try
+      {
+        NameValueCollection appSettings = ConfigurationManager.AppSettings;
+        appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
+        throw;
+      }
+    }
+
     public IList<Schedule> GetRecordingTimes(Schedule rec)
     {
       DateTime startTime = DateTime.Now;
       DateTime endTime = startTime.AddDays(_days);
 
-      IList<Schedule> recordings = new List<Schedule>();
-      IList<Program> programs = new List<Program>();
-
-      switch (rec.ScheduleType)
-      {
-        case (int)ScheduleRecordingType.Once:
-          recordings.Add(rec);
-          return recordings;
-          break;
-
-        case (int)ScheduleRecordingType.Daily:
-          programs = Program.RetrieveDaily(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.WorkingDays:
-          programs = Program.RetrieveWorkingDays(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.Weekends:
-          programs = Program.RetrieveWeekends(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.Weekly:
-          programs = Program.RetrieveWeekly(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-          programs = Program.RetrieveEveryTimeOnThisChannel(rec.ProgramName, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
-          programs = Program.RetrieveEveryTimeOnEveryChannel(rec.ProgramName, _days);
-          break;
-
-      }
-      recordings = AddProgramsToSchedulesList(rec, programs);
+      IList<Program> programs = Schedule.GetProgramsForSchedule(rec);
+      IList<Schedule> recordings = recordings = AddProgramsToSchedulesList(rec, programs);
       return recordings;
     }
 
@@ -128,9 +114,10 @@ namespace TvPlugin
           recNew.EndTime = prg.EndTime;
           recNew.IdChannel = prg.IdChannel;
           recNew.Series = true;
+          recNew.IdParentSchedule = rec.IdSchedule;
           recNew.ProgramName = prg.Title;
 
-          if (rec.IsSerieIsCanceled(recNew.StartTime))
+          if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prg)))
           {
             recNew.Canceled = recNew.StartTime;
           }
@@ -151,14 +138,37 @@ namespace TvPlugin
       }
     }
 
+    public static string GetDisplayTitle(Schedule schedule)
+    {
+      string displayname = "";
+      Program program = Program.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
+                                                       schedule.EndTime, schedule.IdChannel);
+
+      //if we have found program details then use nicely formatted name
+      if (program != null)
+      {
+        displayname = TVUtil.GetDisplayTitle(program);
+      }
+      else
+      {
+        displayname = schedule.ProgramName;
+      }
+      return displayname;
+    }
+
     public static string GetDisplayTitle(Recording rec)
     {
-      return TitleDisplay(rec.Title, rec.EpisodeName, rec.SeriesNum, rec.EpisodeNum, rec.EpisodePart);
+      StringBuilder strBuilder = new StringBuilder();
+      TitleDisplay(strBuilder, rec.Title, rec.EpisodeName, rec.SeriesNum, rec.EpisodeNum, rec.EpisodePart);
+
+      return strBuilder.ToString();
     }
 
     public static string GetDisplayTitle(Program prog)
     {
-      return TitleDisplay(prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
+      StringBuilder strBuilder = new StringBuilder();
+      TitleDisplay(strBuilder, prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
+      return strBuilder.ToString();
     }
 
     ///
@@ -168,53 +178,62 @@ namespace TvPlugin
     /// 1: seriesNum.episodeNum.episodePart
     /// 2: episodeName
     /// 3: seriesNum.episodeNum.episodePart episodeName
-    public static string GetEpisodeInfo(string episodeName, string seriesNum, string episodeNum, string episodePart)
+    public static void GetEpisodeInfo(StringBuilder strBuilder, string episodeName, string seriesNum, string episodeNum, string episodePart)
     {
-      string episodeInfo = "";
+      bool episodeInfoWritten = false;
+
+      bool hasSeriesNum = !(String.IsNullOrEmpty(seriesNum)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);      
+      bool hasEpisodeNum = !(String.IsNullOrEmpty(episodeNum)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
+      bool hasEpisodePart = !(String.IsNullOrEmpty(episodePart)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
+      bool hasEpisodeName = !(String.IsNullOrEmpty(episodeName)) && (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3);
+
+      bool hasEpisodeInfo = (hasSeriesNum || hasEpisodeNum || hasEpisodePart || hasEpisodeName);
+
+      if (hasEpisodeInfo && ShowEpisodeInfo != 0)
+      {
+        strBuilder.Append(" (");                
+      }         
+
       if (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3)
       {
-        if (!String.IsNullOrEmpty(seriesNum))
+        if (hasSeriesNum)
         {
-          episodeInfo = seriesNum.Trim();
+          strBuilder.Append(seriesNum.Trim());
+          episodeInfoWritten = true;
         }
-        if (!String.IsNullOrEmpty(episodeNum))
+        if (hasEpisodeNum)
         {
-          if (episodeInfo.Length != 0)
+          if (episodeInfoWritten)
           {
-            episodeInfo = episodeInfo + "." + episodeNum.Trim();
+            strBuilder.Append(".");                        
           }
-          else
-          {
-            episodeInfo = episodeNum.Trim();
-          }
+          strBuilder.Append(episodeNum.Trim());
+          episodeInfoWritten = true;
         }
-        if (!String.IsNullOrEmpty(episodePart))
+        if (hasEpisodePart)
         {
-          if (!String.IsNullOrEmpty(episodeInfo))
+          if (episodeInfoWritten)
           {
-            episodeInfo = episodeInfo + "." + episodePart.Trim();
+            strBuilder.Append(".");            
           }
-          else
-          {
-            episodeInfo = episodePart.Trim();
-          }
+          strBuilder.Append(episodePart.Trim());
+          episodeInfoWritten = true;
         }
       }
-      if (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3)
+      
+      if (hasEpisodeName)
       {
-        if (!String.IsNullOrEmpty(episodeName))
+        if (episodeInfoWritten)
         {
-          if (!String.IsNullOrEmpty(episodeInfo))
-          {
-            episodeInfo = episodeInfo + " " + episodeName;
-          }
-          else
-          {
-            episodeInfo = episodeName;
-          }
+          strBuilder.Append(" ");
         }
+        strBuilder.Append(episodeName);        
       }
-      return episodeInfo;
+
+      if (hasEpisodeInfo && ShowEpisodeInfo !=0)
+      {
+        strBuilder.Append(")"); 
+      }      
     }
 
     /// <summary>
@@ -226,19 +245,11 @@ namespace TvPlugin
     /// <param name="episodeNum"></param>
     /// <param name="episodePart"></param>
     /// <returns></returns>
-    public static string TitleDisplay(string title, string episodeName, string seriesNum, string episodeNum,
+    public static void TitleDisplay(StringBuilder strBuilder, string title, string episodeName, string seriesNum, string episodeNum,
                                       string episodePart)
     {
-      string titleDisplay = GetEpisodeInfo(episodeName, seriesNum, episodeNum, episodePart);
-      if (!String.IsNullOrEmpty(titleDisplay))
-      {
-        titleDisplay = title + " (" + titleDisplay + ")";
-      }
-      else
-      {
-        titleDisplay = title;
-      }
-      return titleDisplay;
+      strBuilder.Append(title);
+      GetEpisodeInfo(strBuilder, episodeName, seriesNum, episodeNum, episodePart);      
     }
 
 
@@ -340,6 +351,71 @@ namespace TvPlugin
       }
 
       return fileName;
+    }
+
+    
+    public static bool PlayRecording(Recording rec)
+    {
+      return PlayRecording(rec, 0);
+    }
+
+    public static bool PlayRecording(Recording rec, double startOffset)
+    {
+      return PlayRecording(rec, startOffset, g_Player.MediaType.Recording);
+    }
+    
+    public static bool PlayRecording(Recording rec, double startOffset, g_Player.MediaType mediaType)
+    {
+      string fileName = GetFileNameForRecording(rec);
+
+      bool useRTSP = TVHome.UseRTSP();
+      string chapters = useRTSP ? TVHome.TvServer.GetChaptersForFileName(rec.IdRecording) : null;
+
+      Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
+      if (g_Player.Play(fileName, mediaType, chapters))
+      {
+        if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
+        {
+          g_Player.ShowFullScreenWindow();
+        }
+        if (startOffset > 0)
+        {
+          g_Player.SeekAbsolute(startOffset);
+        }
+        else if (startOffset == -1)
+        {
+          // 5 second margin is used that the TsReader wont stop playback right after it has been started
+          double dTime = g_Player.Duration - 5;
+          g_Player.SeekAbsolute(dTime);
+        }
+        
+        TvRecorded.SetActiveRecording(rec);
+
+        //populates recording metadata to g_player;
+        g_Player.currentFileName = rec.FileName;
+        g_Player.currentTitle = GetDisplayTitle(rec);
+        g_Player.currentDescription = rec.Description;
+
+        rec.TimesWatched++;
+        rec.Persist();
+
+        return true;
+      }
+      return false;
+    }
+
+    public static string GetChannelLogo (Channel channel)
+    {
+      string logo = string.Empty;
+      if (null != channel && channel.IsTv)
+      {
+        logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
+      }
+      else if (null != channel && channel.IsRadio)
+      {
+        logo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+      }
+      return logo;
     }
 
 
@@ -461,6 +537,41 @@ namespace TvPlugin
         }
       }
       return wasDeleted;
+    }
+
+    /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, Program prg)
+    {      
+      bool wasDeleted = false;
+      if (IsValidSchedule(schedule))
+      {                
+        Schedule parentSchedule = null;
+        bool confirmed = true;
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
+        confirmed = PromptDeleteRecording(schedule.IdSchedule, prg);
+
+        if (confirmed)
+        {
+          if (prg != null)
+          {
+            DateTime canceledStartTime = schedule.GetSchedStartTimeForProg(prg);
+            int idChannel = prg.IdChannel;
+            wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);             
+          }
+          else
+          {
+            wasDeleted = StopRecording(schedule);
+          }
+        }
+      }
+      return wasDeleted;
     }   
 
     /// <summary>
@@ -475,18 +586,12 @@ namespace TvPlugin
     {
       bool wasDeleted = false;
       if (IsValidSchedule(schedule))
-      {        
-        Schedule parentSchedule = null;
-        bool confirmed = true;
-        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
-        confirmed = PromptDeleteRecording(schedule.IdSchedule);
-
-        if (confirmed)
-        {
-          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);          
-        }        
+      {
+        Program prg = Program.RetrieveByTitleAndTimes(schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        wasDeleted = DeleteRecAndSchedWithPrompt(schedule, prg);
       }
-      return wasDeleted;
+      
+      return wasDeleted;     
     }   
 
         /// <summary>
@@ -519,9 +624,9 @@ namespace TvPlugin
       {        
         Schedule parentSchedule = null;        
         bool confirmed = true;
-        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);        
-        confirmed = PromptDeleteRecording(schedule.IdSchedule);
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
         
+        confirmed = PromptDeleteRecording(schedule.IdSchedule);        
         if (confirmed)
         {
           wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule, canceledStartTime);
@@ -532,29 +637,34 @@ namespace TvPlugin
 
     private static bool StopRecAndDeleteSchedule(Schedule schedule, Schedule parentSchedule, int idChannel, DateTime canceledStartTime)
     {
-      bool wasDeleted = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
-
-      if (!wasDeleted)
+      bool wasCanceled = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
+      bool wasDeleted = false;
+      if (canceledStartTime == schedule.StartTime)
       {
-        wasDeleted = DeleteSchedule(schedule.IdSchedule);
+        bool isScheduleTypeOnce = IsScheduleTypeOnce(schedule.IdSchedule);
+
+        wasDeleted = StopRecording(schedule);
+        if (isScheduleTypeOnce && !wasDeleted)
+        {
+          wasDeleted = DeleteSchedule(schedule.IdSchedule);
+        }        
       }
-      
-      StopRecording(schedule);
+            
       TvServer server = new TvServer();
-      server.OnNewSchedule();      
-      return wasDeleted;
+      server.OnNewSchedule();
+      return wasDeleted || wasCanceled;
     }
 
     private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule, DateTime canceledStartTime)
     {
-      int idChannel = schedule.IdChannel;
-      bool wasDeleted = false;
-      bool episodeCanceled = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
+      int idChannel = schedule.IdChannel;      
+      CancelEpisode(canceledStartTime, parentSchedule, idChannel);
       TvServer server = new TvServer();
-      StopRecording(schedule);      
-      wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);            
+      bool wasRecStopped = StopRecording(schedule);            
+      bool wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);              
+                        
       server.OnNewSchedule();
-      return wasDeleted;
+      return wasRecStopped || wasDeleted;
     }
 
     private static bool IsScheduleTypeOnce (int IdSchedule)
@@ -673,11 +783,11 @@ namespace TvPlugin
         Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(IdSchedule, schedule.StartTime);
         if (spawnedSchedule != null)
         {
-          recordingTitle = Recording.ActiveRecording(spawnedSchedule.IdSchedule).Title;
+          recordingTitle = TVUtil.GetDisplayTitle(Recording.ActiveRecording(spawnedSchedule.IdSchedule));
         }
         else
         {
-          recordingTitle = Recording.ActiveRecording(IdSchedule).Title;
+          recordingTitle = TVUtil.GetDisplayTitle(Recording.ActiveRecording(IdSchedule));
         }
       }
       return recordingTitle;
@@ -686,24 +796,58 @@ namespace TvPlugin
     private static bool PromptDeleteRecording(int IdSchedule)
     {
       bool confirmed = false;
+
       bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule);
 
       if (isRec)
       {
-        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-        if (null == dlgYesNo)
-        {
-          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
-        }
-        else
-        {
-          dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
-          dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
-          dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
-          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-          confirmed = dlgYesNo.IsConfirmed;
-        }
+        confirmed = SetupConfirmDelRecDialogue();
+      }
+      else
+      {
+        confirmed = true;
+      }
+      return confirmed;
+    }
+
+    private static bool SetupConfirmDelRecDialogue()
+    {
+      bool confirmed = false;
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo)
+      {
+        Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+      }
+      else
+      {
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
+        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
+        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
+        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
+        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+        confirmed = dlgYesNo.IsConfirmed;
+      }
+      return confirmed;
+    }
+
+    private static bool PromptDeleteRecording(int idSchedule, Program prg)
+    {
+      bool confirmed = false;
+      bool isRec = false;
+      if (prg != null)
+      {
+        isRec = TvDatabase.Schedule.IsScheduleRecording(idSchedule, prg);  
+      }
+      else
+      {
+        var tvServer = new TvServer();
+        VirtualCard vCard;
+        isRec = tvServer.IsRecordingSchedule(idSchedule, out vCard);
+      }      
+
+      if (isRec)
+      {
+        confirmed = SetupConfirmDelRecDialogue();        
       }
       else
       {
@@ -741,14 +885,17 @@ namespace TvPlugin
       return true;
     }
 
-    private static void StopRecording(Schedule schedule)
+    private static bool StopRecording(Schedule schedule)
     {
+      bool stoppedRec = false;
       bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
       if (isRec)
       {
         TvServer server = new TvServer();
         server.StopRecordingSchedule(schedule.IdSchedule);
+        stoppedRec = true;
       }
+      return stoppedRec;
     }
 
     #endregion

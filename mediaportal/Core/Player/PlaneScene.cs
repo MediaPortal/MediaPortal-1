@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -54,6 +54,7 @@ namespace MediaPortal.Player
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineSetTexture(void* texture);
+
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
 
@@ -171,41 +172,6 @@ namespace MediaPortal.Player
       {
         _drawVideoAllowed = value;
         //Log.Info("PlaneScene: video draw allowed:{0}", _drawVideoAllowed);
-      }
-    }
-
-    public bool InTv
-    {
-      get
-      {
-        int windowId = GUIWindowManager.ActiveWindow;
-        GUIWindow window = GUIWindowManager.GetWindow(windowId);
-        if (window.IsTv)
-        {
-          return true;
-        }
-        if (windowId == (int)GUIWindow.Window.WINDOW_TV ||
-            windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE ||
-            windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV ||
-            windowId == (int)GUIWindow.Window.WINDOW_TELETEXT ||
-            windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT ||
-            windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES ||
-            windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV ||
-            windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL ||
-            windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_CONFLICTS ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL ||
-            windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
-        {
-          return true;
-        }
-        return false;
       }
     }
 
@@ -347,6 +313,11 @@ namespace MediaPortal.Player
     {
       try
       {
+        if (!GUIGraphicsContext.IsPlayingVideo)
+        {
+          return false;
+        }
+
         GUIGraphicsContext.VideoSize = videoSize;
         // get the window where the video/tv should be shown
         float x = GUIGraphicsContext.VideoWindow.X;
@@ -373,30 +344,9 @@ namespace MediaPortal.Player
           nw = GUIGraphicsContext.OverScanWidth;
           nh = GUIGraphicsContext.OverScanHeight;
         }
-        else
-        {
-          // we're in preview mode. Check if we are in the tv module
-
-          if (!InTv)
-          {
-            //we are not in the my tv module
-            //then check if a VideoWindow is defined or video/tv preview window is enable
-            Rectangle rect = GUIGraphicsContext.VideoWindow;
-            //BAV: todo -> remove Overlay check -> should no longer be needed
-            //if (((rect.Height < 1) && (rect.Width < 1)) || (!GUIGraphicsContext.Overlay)) return false; //not enabled, dont show tv
-            if ((rect.Height < 1) && (rect.Width < 1))
-            {
-              return false;
-            }
-          }
-        }
 
         //sanity check
-        if (nw <= 10 || nh <= 10)
-        {
-          return false;
-        }
-        if (x < 0 || y < 0)
+        if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
         {
           return false;
         }
@@ -666,10 +616,10 @@ namespace MediaPortal.Player
         {
           _shouldRenderTexture = false;
         }
-        
+
         //clear screen
         GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-        
+
         _debugStep = 5;
         GUIGraphicsContext.DX9Device.BeginScene();
         try

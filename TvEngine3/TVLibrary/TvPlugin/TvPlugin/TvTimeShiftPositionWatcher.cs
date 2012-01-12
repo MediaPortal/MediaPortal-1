@@ -92,7 +92,7 @@ namespace TvPlugin
     private static void SnapshotTimeShiftBuffer()
     {
       Log.Debug("TvTimeShiftPositionWatcher: Snapshotting timeshift buffer");
-      User u = TVHome.Card.User;
+      IUser u = TVHome.Card.User;
       if (u == null)
       {
         Log.Error("TvTimeShiftPositionWatcher: Snapshot buffer failed. TvHome.Card.User==null");
@@ -162,7 +162,7 @@ namespace TvPlugin
         return;
       if (snapshotBuferPosition != -1)
       {
-        User u = TVHome.Card.User;
+        IUser u = TVHome.Card.User;
         long bufferId = 0;
         Int64 currentPosition = -1;
         if (RemoteControl.Instance.TimeShiftGetCurrentFilePosition(ref u, ref currentPosition, ref bufferId))

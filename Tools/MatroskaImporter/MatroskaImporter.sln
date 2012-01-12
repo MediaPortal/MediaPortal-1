@@ -1,26 +1,14 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatroskaImporter", "MatroskaImporter\MatroskaImporter.csproj", "{2CFADF92-722E-456C-927D-8A560BE7673E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{58C35C9D-F18D-40F2-8024-24E50D01E9C5} = {58C35C9D-F18D-40F2-8024-24E50D01E9C5}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvBusinessLayer", "..\..\TvEngine3\TVLibrary\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj", "{58C35C9D-F18D-40F2-8024-24E50D01E9C5}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVDatabase", "..\..\TvEngine3\TVLibrary\TVDatabase\TVDatabase.csproj", "{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

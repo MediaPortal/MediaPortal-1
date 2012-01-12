@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.Configuration;
 using MediaPortal.Player;
-using MediaPortal.Profile;
+using MediaPortal.Time;
+using MediaPortal.Utils.Time;
 
 namespace MediaPortal.GUI.Library
 {
@@ -147,7 +147,9 @@ namespace MediaPortal.GUI.Library
     public const int WEATHER_IS_FETCHED = 103;
 
     public const int SYSTEM_TIME = 110;
+    public const int SYSTEM_TIME_IS_BETWEEN = 1100;
     public const int SYSTEM_DATE = 111;
+    public const int SYSTEM_DATE_IS_BETWEEN = 1110;
     public const int SYSTEM_CPU_TEMPERATURE = 112;
     public const int SYSTEM_GPU_TEMPERATURE = 113;
     public const int SYSTEM_FAN_SPEED = 114;
@@ -340,6 +342,7 @@ namespace MediaPortal.GUI.Library
     public const int FACADEVIEW_SMALLICONS = 805;
     public const int FACADEVIEW_COVERFLOW = 806;
 
+    public const int WINDOW_IS_PAUSE_OSD_VISIBLE = 9993;
     public const int WINDOW_IS_TOPMOST = 9994;
     public const int WINDOW_IS_VISIBLE = 9995;
     public const int WINDOW_NEXT = 9996;
@@ -361,12 +364,17 @@ namespace MediaPortal.GUI.Library
     public const int CONTROL_HAS_FOCUS = 30000;
     public const int BUTTON_SCROLLER_HAS_ICON = 30001;
 
+    public const int TOPBAR_HAS_FOCUS = 30002;
+    public const int TOPBAR_IS_VISIBLE = 30003;
+
     // static string VERSION_STRING = "2.0.0";
 
     // the multiple information vector
     private static int MULTI_INFO_START = 40000;
     private static int MULTI_INFO_END = 50000; // 10000 references is all we have for now
     private static int COMBINED_VALUES_START = 100000;
+
+    private const int FramesPerCheck = 500;
 
     #endregion
 
@@ -384,6 +392,11 @@ namespace MediaPortal.GUI.Library
 
     private static int m_nextWindowID;
     private static int m_prevWindowID;
+
+    //60 seconds check
+    private static readonly Dictionary<GUIInfo, bool> LastReturnValues = new Dictionary<GUIInfo, bool>();
+    private static int _renderFrameCount;
+    private static DateTime _lastSixtySecondsStart = DateTime.Now.AddMinutes(-1);
 
     #endregion
 
@@ -467,7 +480,19 @@ namespace MediaPortal.GUI.Library
         strCategory = strTest.Substring(0, strTest.IndexOf("."));
       }
 
-      if (strCategory == "player")
+      
+      if (strCategory == "topbar")
+      {
+        if (strTest == "topbar.focused")
+        {
+          ret = TOPBAR_HAS_FOCUS;
+        }
+        else if (strTest == "topbar.visible")
+        {
+          ret = TOPBAR_IS_VISIBLE;
+        }
+      }
+      else if (strCategory == "player")
       {
         if (strTest == "player.hasmedia")
         {
@@ -631,9 +656,28 @@ namespace MediaPortal.GUI.Library
         {
           ret = SYSTEM_DATE;
         }
+        else if (strTest.Substring(0, 21) == "system.date.isbetween")
+        {
+          String withoutBlanks = strTest.Replace(" ", String.Empty);
+          int param1 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(22, 5));
+          int param2 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(28, 5));
+          return AddMultiInfo(new GUIInfo(bNegate ? -SYSTEM_DATE_IS_BETWEEN : SYSTEM_DATE_IS_BETWEEN, param1, param2));
+        }
         else if (strTest == "system.time")
         {
           ret = SYSTEM_TIME;
+        }
+        else if (strTest.Substring(0, 21) == "system.time.isbetween")
+        {
+          String withoutBlanks = strTest.Replace(" ", String.Empty);
+          int param1 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(22, 5));
+          int param2 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(28, 5));
+
+          var guiInfo = new GUIInfo(bNegate ? -SYSTEM_TIME_IS_BETWEEN : SYSTEM_TIME_IS_BETWEEN, param1, param2);
+          int index = AddMultiInfo(guiInfo);
+          if (!LastReturnValues.ContainsKey(m_multiInfo[index - MULTI_INFO_START]))
+            LastReturnValues.Add(m_multiInfo[index - MULTI_INFO_START], false);
+          return index;
         }
         else if (strTest == "system.cputemperature")
         {
@@ -1304,6 +1348,10 @@ namespace MediaPortal.GUI.Library
         {
           ret = WINDOW_IS_OSD_VISIBLE;
         }
+        else if (strTest == "window.ispauseosdvisible")
+        {
+          ret = WINDOW_IS_PAUSE_OSD_VISIBLE;
+        }
         else if (strTest.Substring(0, 16) == "window.isactive(")
         {
           int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
@@ -1434,7 +1482,7 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "facadeview.coverflow")
         {
           ret = FACADEVIEW_COVERFLOW;
-      }
+        }
       }
       else if (strTest.Length >= 13 && strTest.Substring(0, 13) == "controlgroup(")
       {
@@ -1747,18 +1795,6 @@ namespace MediaPortal.GUI.Library
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_VIDEOS;
       }
-      else if (strWindow.Equals("myvideogenres"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_GENRE;
-      }
-      else if (strWindow.Equals("myvideoactors"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_ACTOR;
-      }
-      else if (strWindow.Equals("myvideoyears"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_YEAR;
-      }
       else if (strWindow.Equals("myvideotitles"))
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;
@@ -1930,6 +1966,10 @@ namespace MediaPortal.GUI.Library
       {
         bReturn = GUIWindowManager.IsOsdVisible;
       }
+      else if (condition == WINDOW_IS_PAUSE_OSD_VISIBLE)
+      {
+        bReturn = GUIWindowManager.IsPauseOsdVisible;
+      }
       else if (condition == PLAYER_MUTED)
       {
         bReturn = (g_Player.Volume == 0); //g_stSettings.m_bMute;
@@ -2000,35 +2040,49 @@ namespace MediaPortal.GUI.Library
       else if (condition >= 800 && condition <= 806)
       {
         bReturn = false;
-        string viewmode = GUIPropertyManager.GetProperty("#facadeview.viewmode");
-        if (viewmode == "album" && condition == FACADEVIEW_ALBUM)
+        string layout = GUIPropertyManager.GetProperty("#facadeview.layout");
+        if (layout == "album" && condition == FACADEVIEW_ALBUM)
         {
           bReturn = true;
         }
-        else if (viewmode == "filmstrip" && condition == FACADEVIEW_FILMSTRIP)
+        else if (layout == "filmstrip" && condition == FACADEVIEW_FILMSTRIP)
         {
           bReturn = true;
         }
-        else if (viewmode == "largeicons" && condition == FACADEVIEW_LARGEICONS)
+        else if (layout == "largeicons" && condition == FACADEVIEW_LARGEICONS)
         {
           bReturn = true;
         }
-        else if (viewmode == "list" && condition == FACADEVIEW_LIST)
+        else if (layout == "list" && condition == FACADEVIEW_LIST)
         {
           bReturn = true;
         }
-        else if (viewmode == "playlist" && condition == FACADEVIEW_PLAYLIST)
+        else if (layout == "playlist" && condition == FACADEVIEW_PLAYLIST)
         {
           bReturn = true;
         }
-        else if (viewmode == "smallicons" && condition == FACADEVIEW_SMALLICONS)
+        else if (layout == "smallicons" && condition == FACADEVIEW_SMALLICONS)
         {
           bReturn = true;
         }
-        else if (viewmode == "coverflow" && condition == FACADEVIEW_COVERFLOW)
+        else if (layout == "coverflow" && condition == FACADEVIEW_COVERFLOW)
         {
           bReturn = true;
+        }
       }
+      else if (condition == TOPBAR_HAS_FOCUS)
+      {
+        GUIWindow wnd = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBAR);
+        if (wnd != null)
+        {
+          if (!GUIGraphicsContext.TopBarHidden && wnd.GetFocusControlId() > 0)
+            return true;
+        }
+        return false;
+      }
+      else if (condition == TOPBAR_IS_VISIBLE)
+      {
+        return !GUIGraphicsContext.TopBarHidden;
       }
       else if (g_Player.Playing)
       {
@@ -2178,6 +2232,35 @@ namespace MediaPortal.GUI.Library
       return bReturn;
     }
 
+    private static bool IsTimeForRefresh()
+    {
+      if (GUIWindow.HasWindowVisibilityUpdated)
+      {
+        _renderFrameCount++;
+      }
+
+      if (_renderFrameCount == FramesPerCheck)
+      {
+        return true;
+      }
+
+      //init visibility
+      if (_renderFrameCount == 1)
+      {
+        _renderFrameCount = FramesPerCheck - 1;
+        return true;
+      }
+
+      if (_renderFrameCount < FramesPerCheck)
+      {
+        return false;
+      }
+
+      _renderFrameCount = 2;
+      _lastSixtySecondsStart = DateTime.Now;
+      return false;
+    }
+
     /// \brief Examines the multi information sent and returns true or false accordingly.
     private static bool GetMultiInfoBool(GUIInfo info, int dwContextWindow)
     {
@@ -2240,10 +2323,7 @@ namespace MediaPortal.GUI.Library
 
           break;
         case PLUGIN_IS_ENABLED:
-          using (Settings xmlreader = new MPSettings())
-          {
-            bReturn = xmlreader.GetValueAsBool("plugins", info.m_stringData, false);
-          }
+          bReturn = PluginManager.IsPluginNameEnabled2(info.m_stringData);
           break;
         case CONTROL_HAS_TEXT:
           GUIWindow pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
@@ -2274,7 +2354,9 @@ namespace MediaPortal.GUI.Library
                   GUITextScrollUpControl control4 = pWindow.GetControl(info.m_data1) as GUITextScrollUpControl;
                   if (control4 != null)
                   {
-                    bReturn = control4.SubItemCount > 0;
+                    // SE - does not work
+                    //bReturn = control4.SubItemCount > 0;
+                    bReturn = control4.HasText;
                   }
                 }
               }
@@ -2324,6 +2406,34 @@ namespace MediaPortal.GUI.Library
           }
            */
           return false;
+        case SYSTEM_DATE_IS_BETWEEN:
+          {
+            if (IsTimeForRefresh())
+            {
+              string startDate = SkinSettings.GetSkinString(info.m_data1);
+              string endDate = SkinSettings.GetSkinString(info.m_data2);
+              var dateRange = new DateRange(startDate, endDate);
+              bReturn = dateRange.IsInRange(DateTime.Now);
+              LastReturnValues[info] = bReturn;
+              break;
+            }
+            LastReturnValues.TryGetValue(info, out bReturn);
+            break;
+          }
+        case SYSTEM_TIME_IS_BETWEEN:
+          {
+            if (IsTimeForRefresh())
+            {
+              string startDate = SkinSettings.GetSkinString(info.m_data1);
+              string endDate = SkinSettings.GetSkinString(info.m_data2);
+              var timeRange = new TimeRange(startDate, endDate);
+              bReturn = timeRange.IsInRange(DateTime.Now);
+              LastReturnValues[info] = bReturn;
+              break;
+            }
+            LastReturnValues.TryGetValue(info, out bReturn);
+            break;
+          }
         case WINDOW_NEXT:
           bReturn = (info.m_data1 == m_nextWindowID);
           break;
@@ -2347,8 +2457,8 @@ namespace MediaPortal.GUI.Library
 
     private static readonly object lockCache = new object();
 
-    private static Dictionary<string, List<GUIInfo>> m_cacheMultiInfoBoolProperties =
-      new Dictionary<string, List<GUIInfo>>();
+    private static Dictionary<string, HashSet<GUIInfo>> m_cacheMultiInfoBoolProperties =
+      new Dictionary<string, HashSet<GUIInfo>>();
 
     private static Dictionary<GUIInfo, bool> m_cacheMultiInfoBoolResults = new Dictionary<GUIInfo, bool>();
 
@@ -2364,15 +2474,15 @@ namespace MediaPortal.GUI.Library
 
       lock (lockCache)
       {
-        if (!m_cacheMultiInfoBoolProperties.ContainsKey(property))
+        HashSet<GUIInfo> set = null;
+        if (!m_cacheMultiInfoBoolProperties.TryGetValue(property, out set))
         {
-          List<GUIInfo> set = new List<GUIInfo>();
+          set = new HashSet<GUIInfo>();
           set.Add(info);
           m_cacheMultiInfoBoolProperties[property] = set;
         }
         else
         {
-          List<GUIInfo> set = m_cacheMultiInfoBoolProperties[property];
           if (!set.Contains(info))
           {
             set.Add(info);
@@ -2402,9 +2512,9 @@ namespace MediaPortal.GUI.Library
     /// <returns>True if output was cached</returns>
     private static bool IsCachedMultiInfoBoolResult(GUIInfo info, out bool result)
     {
-      result = false;    
+      result = false;
       lock (lockCache)
-      {        
+      {
         bool isCachedMultiInfoBoolResult = (m_cacheMultiInfoBoolResults.TryGetValue(info, out result));
         return isCachedMultiInfoBoolResult;
       }
@@ -2419,12 +2529,13 @@ namespace MediaPortal.GUI.Library
     {
       lock (lockCache)
       {
-        if (!m_cacheMultiInfoBoolProperties.ContainsKey(tag))
+        HashSet<GUIInfo> GUIInfos = null;
+        if (!m_cacheMultiInfoBoolProperties.TryGetValue(tag, out GUIInfos))
         {
           return;
         }
 
-        foreach (GUIInfo info in m_cacheMultiInfoBoolProperties[tag])
+        foreach (GUIInfo info in GUIInfos)
         {
           if (m_cacheMultiInfoBoolResults.ContainsKey(info))
           {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -154,8 +154,6 @@ namespace MediaPortal.GUI.Library
       ACTION_TOGGLE_WINDOWED_FULLSCREEN = 104,
       ACTION_PAUSE_PICTURE = 105,
       ACTION_CONTEXT_MENU = 106,
-      ACTION_SHOW_MSN_WINDOW = 107,
-      ACTION_SHOW_MSN_OSD = 108,
       ACTION_HOME = 109, // home
       ACTION_END = 110, // end
       ACTION_LAST_VIEWED_CHANNEL = 111, // switches TV to the last viewed channel / mPod
@@ -171,6 +169,10 @@ namespace MediaPortal.GUI.Library
       ACTION_TOGGLE_SMS_INPUT = 121, // Toggle SMS / alpha keyboard
       ACTION_AUTOZAP = 122, // Start autozapping in TV mode
       ACTION_MPRESTORE = 123,
+      ACTION_SMALL_STEP_FORWARD = 124,
+      // jumps a few seconds forward during playback of movie. Can be used in VideoFullScreen.xml window id=2005
+      ACTION_JUMP_MUSIC_NOW_PLAYING = 125, // jump directly to now playing screen
+      ACTION_ADD_TO_PLAYLIST = 126, // add item to playlist (rather than ACTION_QUEUE_ITEM which will queue item regardless of whether a playlist is being used)
       ACTION_POWER_OFF = 991, // direct action rather than through ACTION_SHUTDOWN dialog menu
       ACTION_SUSPEND = 992, // direct action rather than through ACTION_SHUTDOWN dialog menu
       ACTION_HIBERNATE = 993, // direct action rather than through ACTION_SHUTDOWN dialog menu
@@ -179,6 +181,8 @@ namespace MediaPortal.GUI.Library
       ACTION_MOUSE_DOUBLECLICK = 2002,
       ACTION_PREV_BOOKMARK = 140,
       ACTION_NEXT_BOOKMARK = 141,
+      ACTION_LASTFM_LOVE = 800,
+      ACTION_LASTFM_BAN = 801,
       ACTION_REMOTE_RED_BUTTON = 9975,
       ACTION_REMOTE_GREEN_BUTTON = 9976,
       ACTION_REMOTE_YELLOW_BUTTON = 9977,
@@ -204,6 +208,7 @@ namespace MediaPortal.GUI.Library
       ACTION_TVGUIDE_PREV_GROUP = 9996, // switch to the previous tv group in guide
       ACTION_ROTATE_PICTURE_180 = 9997, // rotate current picture 180 during slideshow.
       ACTION_ROTATE_PICTURE_270 = 9998, // rotate current picture 270 during slideshow.
+      ACTION_NEXT_EDITION = 134 // Switch to next edition
     } ;
 
     #endregion

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 #endregion
 
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
 using TvControl;
 using TvDatabase;
 
@@ -59,13 +58,14 @@ namespace TvService
     int MinChannel { get; }
     int MaxChannel { get; }
 
-    IChannel CurrentChannel(ref User user);
-    int CurrentDbChannel(ref User user);
-    string CurrentChannelName(ref User user);
-    int GetCurrentVideoStream(User user);
-    bool IsScrambled(ref User user);
+    IChannel CurrentChannel(ref IUser user);
+    int CurrentDbChannel(ref IUser user);
+    string CurrentChannelName(ref IUser user);
+    IVideoStream GetCurrentVideoStream(IUser user);
+    bool IsScrambled(ref IUser user);
 
-    void StopCard(User user);
+    void StopCard(IUser user);
+    void PauseCard(IUser user);
     void SetParameters();
     void Dispose();
   }

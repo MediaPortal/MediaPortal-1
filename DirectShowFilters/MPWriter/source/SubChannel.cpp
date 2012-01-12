@@ -32,7 +32,7 @@
 #include "SubChannel.h"
 
 extern void LogDebug(const char *fmt, ...) ;
-
+extern void LogDebug(const wchar_t *fmt, ...);
 
 CSubChannel::CSubChannel(LPUNKNOWN pUnk, HRESULT *phr, int id)
 :CUnknown( NAME ("MPFileWriterSubChannel"), pUnk)
@@ -45,8 +45,8 @@ CSubChannel::CSubChannel(LPUNKNOWN pUnk, HRESULT *phr, int id)
 
 	m_pTeletextGrabber = new CTeletextGrabber();
 
-	strcpy(m_strRecordingFileName,"");
-	strcpy(m_strTimeShiftFileName,"");
+	wcscpy(m_wstrRecordingFileName, L"");
+	wcscpy(m_wstrTimeShiftFileName, L"");
 	m_bIsTimeShifting=false;
 	m_bIsRecording=false;
 }
@@ -88,16 +88,17 @@ CSubChannel::~CSubChannel()
 
 }
 
-STDMETHODIMP CSubChannel::SetTimeShiftFileName(char* pszFileName)
+STDMETHODIMP CSubChannel::SetTimeShiftFileNameW(wchar_t* pwszFileName)
 {
-	strcpy(m_strTimeShiftFileName,pszFileName);
-	strcat(m_strTimeShiftFileName,".tsbuffer");
+	wcscpy(m_wstrTimeShiftFileName, pwszFileName);
+	wcscat(m_wstrTimeShiftFileName, L".tsbuffer");
 	return S_OK;
 }
 
 STDMETHODIMP CSubChannel::SetChannelType(int channelType)
 {
-	m_pTsWriter->SetChannelType(channelType);
+	m_pTsWriter->SetProgramType(channelType);
+	m_pTsRecorder->SetProgramType(channelType);
 	return S_OK;
 }
 
@@ -112,21 +113,19 @@ STDMETHODIMP CSubChannel::StartTimeShifting()
 
 	if (m_bIsTimeShifting)
 	{
-		LogDebug("CSubChannel::StartTimeShifting - (%d) - Stopping first - Filename:'%s'",m_id,m_strTimeShiftFileName);
+		LogDebug(L"CSubChannel::StartTimeShifting - (%d) - Stopping first - Filename:'%s'", m_id, m_wstrTimeShiftFileName);
 		m_pTsWriter->Close();
 		m_bIsTimeShifting=false;
 	}
 
-	if (strlen(m_strTimeShiftFileName)==0) return E_FAIL;
+	if (wcslen(m_wstrTimeShiftFileName)==0) return E_FAIL;
 
-	::DeleteFile((LPCTSTR) m_strTimeShiftFileName);
-	LogDebug("CSubChannel::StartTimeShifting() - (%d) - Filename:'%s'",m_id,m_strTimeShiftFileName);
+	::DeleteFileW((LPCWSTR) m_wstrTimeShiftFileName);
+	LogDebug(L"CSubChannel::StartTimeShifting() - (%d) - Filename:'%s'",m_id,m_wstrTimeShiftFileName);
 
-	m_pTsWriter->Initialize(m_strTimeShiftFileName);
+	m_pTsWriter->Initialize(m_wstrTimeShiftFileName);
 	m_bIsTimeShifting=true;
 	m_bPaused=false;
-	WCHAR wstrFileName[2048];
-	MultiByteToWideChar(CP_ACP,0,m_strTimeShiftFileName,-1,wstrFileName,1+strlen(m_strTimeShiftFileName));
 	m_pTeletextGrabber->Start();
 	return S_OK;
 
@@ -137,12 +136,12 @@ STDMETHODIMP CSubChannel::StopTimeShifting()
 
 	if (m_bIsTimeShifting)
 	{
-		LogDebug("CSubChannel::StopTimeShifting() - (%d) - Filename:'%s'",m_id,m_strTimeShiftFileName);
+		LogDebug(L"CSubChannel::StopTimeShifting() - (%d) - Filename:'%s'",m_id,m_wstrTimeShiftFileName);
 		m_pTeletextGrabber->Stop();
 		m_pTsWriter->Close();
-		strcpy(m_strTimeShiftFileName,"");
+		wcscpy(m_wstrTimeShiftFileName,L"");
 		m_bIsTimeShifting=false;
-		::DeleteFile((LPCTSTR) m_strTimeShiftFileName);
+		::DeleteFileW((LPCWSTR) m_wstrTimeShiftFileName);
 	}
 	return S_OK;
 }
@@ -166,12 +165,12 @@ STDMETHODIMP CSubChannel::PauseTimeShifting(int onOff)
 	return S_OK;
 }
 
-STDMETHODIMP CSubChannel::SetRecordingFileName(char* pszFileName)
+STDMETHODIMP CSubChannel::SetRecordingFileNameW(wchar_t* pwszFileName)
 {
 	if(m_bIsRecording){
 		return S_OK;
 	}
-	strcpy(m_strRecordingFileName,pszFileName);
+	wcscpy(m_wstrRecordingFileName, pwszFileName);
 	return S_OK;
 }
 
@@ -180,11 +179,11 @@ STDMETHODIMP CSubChannel::StartRecord()
 {
 	CAutoLock lock(&m_Lock);
 	StopRecord();
-	if (strlen(m_strRecordingFileName)==0) return E_FAIL;
+	if (wcslen(m_wstrRecordingFileName)==0) return E_FAIL;
 
-	::DeleteFile((LPCTSTR) m_strRecordingFileName);
-	LogDebug("CSubChannel::StartRecord() - (%d) - Filename:'%s'",m_id,m_strRecordingFileName);
-	m_pTsRecorder->Initialize(m_strRecordingFileName);
+	::DeleteFileW((LPCWSTR) m_wstrRecordingFileName);
+	LogDebug(L"CSubChannel::StartRecord() - (%d) - Filename:'%s'",m_id,m_wstrRecordingFileName);
+	m_pTsRecorder->Initialize(m_wstrRecordingFileName);
 	m_bIsRecording = true;
 	return S_OK;
 
@@ -196,9 +195,9 @@ STDMETHODIMP CSubChannel::StopRecord()
 		return S_OK;
 	}
 
-	LogDebug("CSubChannel::StopRecord() - (%d) - Filename:'%s'",m_id,m_strRecordingFileName);
+	LogDebug(L"CSubChannel::StopRecord() - (%d) - Filename:'%s'",m_id,m_wstrRecordingFileName);
 	m_pTsRecorder->Close();
-	strcpy(m_strRecordingFileName,"");
+	wcscpy(m_wstrRecordingFileName, L"");
 	m_bIsRecording = false;
 	return S_OK;
 }

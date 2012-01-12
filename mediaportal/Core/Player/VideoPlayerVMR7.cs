@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,13 +31,18 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
-
+using System.Collections.Generic;
+using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
 {
   public abstract class VideoPlayerVMR7 : IPlayer
   {
     protected const int MAX_STREAMS = 100;
+    protected const string FFDSHOW_AUDIO_DECODER_FILTER = "ffdshow Audio Decoder";
+    protected const string MEDIAPORTAL_AUDIOSWITCHER_FILTER = "MediaPortal AudioSwitcher";
+    protected const string LAV_SPLITTER_FILTER = "LAV Splitter";
+    protected const string FILE_SYNC_FILTER = "File Source (Async.)";
 
     protected struct FilterStreamInfos
     {
@@ -46,6 +51,7 @@ namespace MediaPortal.Player
       public bool Current;
       public string Filter;
       public StreamType Type;
+      public int LCID;
     } ;
 
     protected class FilterStreams
@@ -54,20 +60,32 @@ namespace MediaPortal.Player
       {
         cStreams = 0;
         Streams = new FilterStreamInfos[MAX_STREAMS];
+        cStreamsExternal = 0;
+        StreamsExternal = new FilterStreamInfos[MAX_STREAMS];
       }
 
-      public FilterStreamInfos GetStreamInfos(StreamType Type, int Id)
+      public FilterStreamInfos GetStreamInfos(StreamType type, int id)
       {
-        FilterStreamInfos empty = new FilterStreamInfos();
-        for (int i = 0; i < cStreams; i++)
+        return GetStreamInfos(type, id, cStreams, Streams);
+      }
+
+      public FilterStreamInfos GetStreamInfosExternal(StreamType type, int id)
+      {
+        return GetStreamInfos(type, id, cStreamsExternal, StreamsExternal);
+      }
+
+      private static FilterStreamInfos GetStreamInfos(StreamType type, int id, int streamsCount, FilterStreamInfos[] streams)
+      {
+        var empty = new FilterStreamInfos();
+        for (int i = 0; i < streamsCount; i++)
         {
-          if (Type == Streams[i].Type)
+          if (type == streams[i].Type)
           {
-            if (Id == 0)
+            if (id == 0)
             {
-              return Streams[i];
+              return streams[i];
             }
-            Id--;
+            id--;
           }
         }
         return empty;
@@ -86,14 +104,24 @@ namespace MediaPortal.Player
         return ret;
       }
 
-      public bool AddStreamInfos(FilterStreamInfos StreamInfos)
+      public bool AddStreamInfos(FilterStreamInfos streamInfos)
       {
-        if (cStreams == MAX_STREAMS)
+        return AddStreamInfos(streamInfos, ref cStreams, Streams);
+      }      
+
+      public bool AddStreamInfosEx(FilterStreamInfos streamInfos)
+      {
+        return AddStreamInfos(streamInfos, ref cStreamsExternal, StreamsExternal);
+      }
+
+      private static bool AddStreamInfos(FilterStreamInfos streamInfos, ref int streamsCount, FilterStreamInfos[] streams)
+      {
+        if (streamsCount == MAX_STREAMS)
         {
           return false;
         }
-        Streams[cStreams] = StreamInfos;
-        cStreams++;
+        streams[streamsCount] = streamInfos;
+        streamsCount++;
         return true;
       }
 
@@ -117,10 +145,13 @@ namespace MediaPortal.Player
       public void DeleteAllStreams()
       {
         cStreams = 0;
+        cStreamsExternal = 0;
       }
 
       private FilterStreamInfos[] Streams;
       private int cStreams;
+      private FilterStreamInfos[] StreamsExternal;
+      private int cStreamsExternal;
     } ;
 
     public enum PlayState
@@ -138,6 +169,9 @@ namespace MediaPortal.Player
       Subtitle,
       Subtitle_hidden,
       Subtitle_shown,
+      Edition,
+      Subtitle_file,
+      PostProcessing,
       Unknown,
     }
 
@@ -153,6 +187,7 @@ namespace MediaPortal.Player
     protected bool m_bFullScreen = true;
     protected PlayState m_state = PlayState.Init;
     protected int m_iVolume = 100;
+    protected int m_volumeBeforeSeeking = 0;
     protected IGraphBuilder graphBuilder;
     protected long m_speedRate = 10000;
     protected double m_dCurrentPos;
@@ -193,16 +228,30 @@ namespace MediaPortal.Player
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
     protected double[] chapters = null;
+    protected string[] chaptersname = null;
     private DateTime elapsedTimer = DateTime.Now;
+    protected int m_lastFrameCounter = 0;
 
     protected const string defaultLanguageCulture = "EN";
+
+    protected bool AudioExternal = false;
+
+    protected IBaseFilter _audioSwitcher = null;
+    protected IBaseFilter _FFDShowAudio = null;
+    protected IBaseFilter _AudioSourceFilter = null;
+    protected IBaseFilter _AudioExtFilter = null;
+    protected IBaseFilter _AudioExtSplitterFilter = null;
 
     public override double[] Chapters
     {
       get { return chapters; }
     }
 
-    private VMR7Util vmr7 = null;
+    public override string[] ChaptersName
+    {
+      get { return chaptersname; }
+    }
+
     protected g_Player.MediaType _mediaType;
 
     public VideoPlayerVMR7()
@@ -238,6 +287,28 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
+
+        #region FFDShowEngine and PostProcessingEngine Detection
+
+        ISubEngine engine = SubEngine.GetInstance(true);
+        if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+        {
+          SubEngine.engine = new SubEngine.DummyEngine();
+        }
+
+        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+        if (!postengine.LoadPostProcessing(graphBuilder))
+        {
+          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
+
+        #endregion
+
+        AnalyseStreams();
+        SelectSubtitles();
+        SelectAudioLanguage();
+        OnInitialized();
+
         int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
         if (hr < 0)
         {
@@ -274,7 +345,7 @@ namespace MediaPortal.Player
         catch(DeviceLostException)
         {
         }*/
-        DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);        
+        DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
         // DsUtils.DumpFilters(graphBuilder);
         try
         {
@@ -306,25 +377,22 @@ namespace MediaPortal.Player
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
         Log.Info("VideoPlayer:Duration:{0}", m_dDuration);
-        AnalyseStreams();
-        SelectSubtitles();
-        SelectAudioLanguage();
-        OnInitialized();
       }
       return true;
     }
 
-    private void SelectSubtitles()
+    protected void SelectSubtitles()
     {
+      if (SubtitleStreams == 0) return;
+      if (!SubEngine.GetInstance().AutoShow) return;
       CultureInfo ci = null;
-      bool showSubtitles = true;
 
       using (Settings xmlreader = new MPSettings())
       {
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
-          showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+          Log.Info("VideoPlayerVMR7: Subtitle CultureInfo {0}", ci);
         }
         catch (Exception ex)
         {
@@ -334,22 +402,27 @@ namespace MediaPortal.Player
             ex);
         }
       }
-      for (int i = 0; i < SubtitleStreams; i++)
+      int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+      for (int i = 0; i < subsCount; i++)
       {
         string subtitleLanguage = SubtitleLanguage(i);
-        if (ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+        //Add localized stream names for FFDshow when OS language = Skin language
+        string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
+        if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase))
         {
           CurrentSubtitleStream = i;
+          Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
           break;
         }
       }
-      EnableSubtitle = showSubtitles;
+      EnableSubtitle = true;
     }
 
-    private void SelectAudioLanguage()
+    protected void SelectAudioLanguage()
     {
       CultureInfo ci = null;
       using (Settings xmlreader = new MPSettings())
@@ -357,6 +430,7 @@ namespace MediaPortal.Player
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", defaultLanguageCulture));
+          Log.Info("VideoPlayerVMR7: AudioLanguage CultureInfo {0}", ci);
         }
         catch (Exception ex)
         {
@@ -370,11 +444,13 @@ namespace MediaPortal.Player
         // Unfortunately we use localized stream names...
         string localizedCIName = Util.Utils.TranslateLanguageString(ci.EnglishName);
         if (localizedCIName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.EnglishName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
             ci.TwoLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterWindowsLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
         {
           CurrentAudioStream = i;
+          Log.Info("VideoPlayerVMR7: CultureInfo Selected active audio track language: {0} ({1})", ci.EnglishName, i);
           break;
         }
       }
@@ -538,11 +614,11 @@ namespace MediaPortal.Player
         return;
       }
       TimeSpan ts = DateTime.Now - updateTimer;
-      if (ts.TotalMilliseconds >= 800 || m_speedRate != 1)
+      if (ts.TotalMilliseconds >= 800 || m_speedRate != 10000)
       {
         if (mediaPos != null)
         {
-          //mediaPos.get_Duration(out m_dDuration);
+          mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
         if (GUIGraphicsContext.BlankScreen ||
@@ -568,9 +644,13 @@ namespace MediaPortal.Player
         CheckVideoResolutionChanges();
         updateTimer = DateTime.Now;
       }
-      if (m_speedRate != 1)
+      if (m_speedRate != 10000)
       {
         DoFFRW();
+      }
+      else
+      {
+        m_lastFrameCounter = 0;
       }
       OnProcess();
     }
@@ -601,13 +681,7 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void OnProcess()
-    {
-      if (vmr7 != null)
-      {
-        vmr7.Process();
-      }
-    }
+    protected virtual void OnProcess() {}
 
     public override int PositionX
     {
@@ -713,13 +787,13 @@ namespace MediaPortal.Player
       if (m_state == PlayState.Paused)
       {
         m_speedRate = 10000;
-        mediaCtrl.Run();
+        if (mediaCtrl != null) mediaCtrl.Run();
         m_state = PlayState.Playing;
       }
       else if (m_state == PlayState.Playing)
       {
         m_state = PlayState.Paused;
-        mediaCtrl.Pause();
+        if (mediaCtrl != null) mediaCtrl.Pause();
       }
     }
 
@@ -752,6 +826,7 @@ namespace MediaPortal.Player
     {
       if (m_state != PlayState.Init)
       {
+        m_state = PlayState.Init;
         Log.Info("VideoPlayer:ended {0}", m_strCurrentFile);
         m_strCurrentFile = "";
         CloseInterfaces();
@@ -765,16 +840,28 @@ namespace MediaPortal.Player
       m_speedRate = speed;
       if (mediaSeek != null)
       {
-        int hr = mediaSeek.SetRate(rate);
-        if (hr == 0)
+        if (rate > 0)
         {
-          Log.Debug("Successfully set rate to {0}", rate);
-          m_bRateSupport = true;
-          return;
+          int hr = mediaSeek.SetRate(rate);
+          if (hr == 0)
+          {
+            Log.Info("VideoPlayer:Successfully set rate to {0}", rate);
+            m_bRateSupport = true;
+            if (mediaCtrl != null) mediaCtrl.Run();
+            return;
+          }
+          else
+          {
+            Log.Info("VideoPlayer:Could not set rate to {0}, error: 0x{1:x}", rate, hr);
+          }
         }
-        Log.Debug("Could not set rate to {0}, error: 0x{1:x}", rate, hr);
+        else
+        {
+          int hr = mediaSeek.SetRate(1.0);
+        }
       }
       //fallback to skip steps
+      Log.Info("VideoPlayer:Using skip-step fast-forward/rewind, rate {0}", rate);
       m_bRateSupport = false;
     }
 
@@ -794,28 +881,28 @@ namespace MediaPortal.Player
         {
           case -10000:
             return -1;
-          case -15000:
+          case -20000:
             return -2;
-          case -30000:
+          case -40000:
             return -4;
-          case -45000:
+          case -80000:
             return -8;
-          case -60000:
+          case -160000:
             return -16;
-          case -75000:
+          case -320000:
             return -32;
-          case 10000:
-            return 1;
-          case 15000:
+          case 20000:
             return 2;
-          case 30000:
+          case 40000:
             return 4;
-          case 45000:
+          case 80000:
             return 8;
-          case 60000:
+          case 160000:
             return 16;
-          default:
+          case 320000:
             return 32;
+          default:
+            return 1;
         }
       }
       set
@@ -830,44 +917,64 @@ namespace MediaPortal.Player
                 TrySpeed(-1, -10000);
                 break;
               case -2:
-                TrySpeed(-2, -15000);
+                TrySpeed(-2, -20000);
                 break;
               case -4:
-                TrySpeed(-4, -30000);
+                TrySpeed(-4, -40000);
                 break;
               case -8:
-                TrySpeed(-8, -45000);
+                TrySpeed(-8, -80000);
                 break;
               case -16:
-                TrySpeed(-16, -60000);
+                TrySpeed(-16, -160000);
                 break;
               case -32:
-                TrySpeed(-32, -75000);
-                break;
-              case 1:
-                TrySpeed(1, 10000);
-                mediaCtrl.Run();
+                TrySpeed(-32, -320000);
                 break;
               case 2:
-                TrySpeed(2, 15000);
+                TrySpeed(2, 20000);
                 break;
               case 4:
-                TrySpeed(4, 30000);
+                TrySpeed(4, 40000);
                 break;
               case 8:
-                TrySpeed(8, 45000);
+                TrySpeed(8, 80000);
                 break;
               case 16:
-                TrySpeed(16, 60000);
+                TrySpeed(16, 160000);
+                break;
+              case 32:
+                TrySpeed(32, 320000);
                 break;
               default:
-                TrySpeed(32, 75000);
+                TrySpeed(1, 10000);
+                // mediaCtrl.Run();
                 break;
+            }
+
+            if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+            Log.Info("VideoPlayer:SetRate to:{0}", value);
+
+            if (value == 1.0)
+            {
+              // unmute audio when speed returns to 1.0x
+              if (m_volumeBeforeSeeking != 0)
+              {
+                Volume = m_volumeBeforeSeeking;
+              }
+              m_volumeBeforeSeeking = 0;
+            }
+            else
+            {
+              // mute audio during > 1.0x playback
+              if (m_volumeBeforeSeeking == 0)
+              {
+                m_volumeBeforeSeeking = Volume;
+              }
+              Volume = 0;
             }
           }
         }
-        VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
-        Log.Info("VideoPlayer:SetRate to:{0}", m_speedRate);
       }
     }
 
@@ -883,7 +990,7 @@ namespace MediaPortal.Player
           {
             if (basicAudio != null)
             {
-              // Divide by 100 to get equivalent decibel value. For example, �10,000 is �100 dB. 
+              // Divide by 100 to get equivalent decibel value. For example, 10,000 is 100 dB. 
               float fPercent = (float)m_iVolume / 100.0f;
               int iVolume = (int)(5000.0f * fPercent);
               basicAudio.put_Volume((iVolume - 5000));
@@ -1061,69 +1168,84 @@ namespace MediaPortal.Player
       } while (hr == 0);
     }
 
+
     protected void DoFFRW()
     {
-      if (!Playing)
+      if (!Playing || m_bRateSupport == true)
       {
         return;
       }
-      if ((m_speedRate == 10000) || (mediaSeek == null) || m_bRateSupport == true)
+      if ((m_speedRate == 10000) || (mediaSeek == null) || (mediaCtrl == null))
       {
         return;
       }
       TimeSpan ts = DateTime.Now - elapsedTimer;
-      //max out at 10 seeks per second
-      if (ts.TotalMilliseconds < 100)
+      //max out at 5 seeks per second
+      //if (ts.TotalMilliseconds < 200)
+      if ((ts.TotalMilliseconds < 200) || (ts.TotalMilliseconds < Math.Abs(10000000.0f / m_speedRate)) ||
+          ((VMR9Util.g_vmr9 != null && m_lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) &&
+           (ts.TotalMilliseconds < 2000))) // It's good to verify a new frame has been presented.
       {
         return;
       }
-      elapsedTimer = DateTime.Now;
       long earliest, latest, current, stop, rewind, pStop;
-      mediaSeek.GetAvailable(out earliest, out latest);
-      mediaSeek.GetPositions(out current, out stop);
-      // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
-      //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
-      //earliest += + 30 * 10000000;
-      // new time = current time + 2*timerinterval* (speed)
-      long lTimerInterval = (long)ts.TotalMilliseconds;
-      if (lTimerInterval > 300)
+      lock (mediaCtrl)
       {
-        lTimerInterval = 300;
-      }
-      lTimerInterval = 300;
-      rewind = (long)(current + (2 * (long)(lTimerInterval) * m_speedRate));
-      int hr;
-      pStop = 0;
-      // if we end up before the first moment of time then just
-      // start @ the beginning
-      if ((rewind < earliest) && (m_speedRate < 0))
-      {
-        m_speedRate = 10000;
-        rewind = earliest;
-        //Log.Info(" seek back:{0}",rewind/10000000);
-        hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                    AMSeekingSeekingFlags.NoPositioning);
+        elapsedTimer = DateTime.Now;
+        mediaSeek.GetAvailable(out earliest, out latest);
+        mediaSeek.GetPositions(out current, out stop);
+        // Log.Info("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
+        //         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
+        //earliest += + 30 * 10000000;
+        // new time = current time + 2*timerinterval* (speed)
+        long lTimerInterval = (long)ts.TotalMilliseconds;
+        if (lTimerInterval > 1000)
+        {
+          lTimerInterval = 1000;
+        }
+        //rewind = (long)(current + (2 * (long)(lTimerInterval) * m_speedRate));
+        rewind = (current + (lTimerInterval * m_speedRate));
+        int hr;
+        pStop = 0;
+        // if we end up before the first moment of time then just
+        // start @ the beginning
+        if ((rewind < earliest) && (m_speedRate < 0))
+        {
+          m_speedRate = 10000;
+          rewind = earliest;
+          Log.Info("VideoPlayer: timeshift SOF seek rew:{0} {1}", rewind, earliest);
+          hr = mediaSeek.SetPositions(new DsLong(rewind),
+                                      AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
+                                      new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+          Speed = 1;
+          return;
+        }
+        // if we end up at the end of time then just
+        // start @ the end-100msec
+        if ((rewind > (latest - 1000000)) && (m_speedRate > 0))
+        {
+          m_speedRate = 10000;
+          rewind = latest - 1000000;
+          Log.Info("VideoPlayer: timeshift EOF seek ff:{0} {1}", rewind, latest);
+          hr = mediaSeek.SetPositions(new DsLong(rewind),
+                                      AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
+                                      new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+          Speed = 1;
+          return;
+        }
+        //seek to new moment in time
+        //Log.Info(" seek :{0}",rewind/10000);
+        if (VMR9Util.g_vmr9 != null)
+        {
+          m_lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
+          VMR9Util.g_vmr9.EVRProvidePlaybackRate(0.0);
+        }
+        hr = mediaSeek.SetPositions(new DsLong(rewind),
+                                    AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
+                                    new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
         mediaCtrl.Run();
-        return;
+        //mediaCtrl.StopWhenReady();
       }
-      // if we end up at the end of time then just
-      // start @ the end-100msec
-      if ((rewind > (latest - 100000)) && (m_speedRate > 0))
-      {
-        m_speedRate = 10000;
-        rewind = latest - 100000;
-        //Log.Info(" seek ff:{0}",rewind/10000000);
-        hr = mediaSeek.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                    AMSeekingSeekingFlags.NoPositioning);
-        mediaCtrl.Run();
-        return;
-      }
-      //seek to new moment in time
-      //Log.Info(" seek :{0}",rewind/10000);
-      hr = mediaSeek.SetPositions(new DsLong(rewind),
-                                  AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
-                                  new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-      mediaCtrl.StopWhenReady();
     }
 
     protected virtual void OnInitialized() {}
@@ -1145,7 +1267,8 @@ namespace MediaPortal.Player
     {
       get
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Audio); i++)
+        int audioStreams = AudioStreams;
+        for (int i = 0; i < audioStreams; i++)
         {
           if (FStreams.GetStreamInfos(StreamType.Audio, i).Current)
           {
@@ -1156,7 +1279,8 @@ namespace MediaPortal.Player
       }
       set
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Audio); i++)
+        int audioStreams = AudioStreams;
+        for (int i = 0; i < audioStreams; i++)
         {
           if (FStreams.GetStreamInfos(StreamType.Audio, i).Current)
           {
@@ -1168,23 +1292,94 @@ namespace MediaPortal.Player
                      FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
         EnableStream(FStreams.GetStreamInfos(StreamType.Audio, value).Id, AMStreamSelectEnableFlags.Enable,
                      FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
+
+        if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Name == "Audio " && AudioExternal)
+        {
+          EnableStream(FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Id, 0,
+                       FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
+          EnableStream(FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Id, AMStreamSelectEnableFlags.Enable,
+                       FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
+        }
+
         return;
       }
     }
 
     /// <summary>
-    /// Property to get the language for an audio stream
+    /// Property to get the language from stream name
     /// </summary>
     public override string AudioLanguage(int iStream)
     {
+      #region return splitter IAMStreamSelect LCID
+
+      int LCIDCheck = FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID;
+
+      if (LCIDCheck != 0)
+      {
+        int size = Util.Win32API.GetLocaleInfo(LCIDCheck, 2, null, 0);
+        if (size > 0)
+        {
+          string languageName = new string(' ', size);
+          Util.Win32API.GetLocaleInfo(LCIDCheck, 2, languageName, size);
+
+          if (!string.IsNullOrEmpty(languageName))
+          {
+            if (languageName.Contains("\0"))
+              languageName = languageName.Substring(0, languageName.IndexOf("\0"));
+
+            if (languageName.Contains("("))
+              languageName = languageName.Substring(0, languageName.IndexOf("("));
+
+            return Util.Utils.TranslateLanguageString(languageName.Trim());
+          }
+        }
+      }
+
+      #endregion
+
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+
+      #region External Audio File
+
+      if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") ||
+          streamName.EndsWith(".dts"))
+      {
+        streamName =
+          Path.GetFileNameWithoutExtension(streamName).Replace(Path.GetFileNameWithoutExtension(m_strCurrentFile), "").
+            Trim('.');
+
+        if (string.IsNullOrEmpty(streamName))
+          streamName = GUILocalizeStrings.Get(2599);
+        else
+          streamName = Util.Utils.TranslateLanguageString(streamName);
+
+        return streamName;
+      }
+
+      #endregion
+
+      // No stream info from splitter
+      if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
+        return GUILocalizeStrings.Get(2599);
+
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
       // Check if returned string contains both language and trackname info
       // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
       // where "trackname" is stream's "trackname" property muxed in the mkv.
       Regex regex = new Regex(@"\[.+\]");
+      //Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      Regex regexMPS = new Regex(@"Audio\s*-\s*(?<1>.+?),\s*.+?,\s*.+?,\s*.+?,\s*.+", RegexOptions.IgnoreCase);
+      Regex regexMPAUDIONoType = new Regex(@"^(.+?)(?<!]*,\s.+?)\s\((Audio\s.+?)$");
+      Regex regexMPAUDIO = new Regex(@"^(.+?)]*,\s(.+?)\s\((Audio\s.+?)$");
+      Regex regexMPC = new Regex("([^, ]+)");
       Match result = regex.Match(streamName);
+      Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPAUDIONoType = regexMPAUDIONoType.Match(streamName);
+      Match resultMPAUDIO = regexMPAUDIO.Match(streamName);
+      Match resultMPC = regexMPC.Match(streamName);
+
       if (result.Success)
       {
         //Cut off and translate the language part
@@ -1198,27 +1393,175 @@ namespace MediaPortal.Player
           streamName = language;
         }
       }
+      else if (resultMPS.Success)
+        // check for mpegsplitter response format, e.g.:  
+        // Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPAUDIO.Success)
+        // check for mpc-hc audio switcher response format, e.g.: 
+        // Language, Trackname (Audio 2)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPAUDIO.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPAUDIONoType.Success)
+        // check for mpc-hc audio switcher response format, e.g.: 
+        // Language (Audio 2)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPAUDIONoType.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPC.Success)
+        // check for mpc-hc audio response format, e.g.: 
+        // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPC.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+
+      // Remove extraneous info from splitter in parenthesis at end of line, e.g.:
+      // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
+
       return streamName;
     }
 
     /// <summary>
-    /// Property to get the name for an audio stream
+    /// Property to get the type of an audio stream
     /// </summary>
     public override string AudioType(int iStream)
     {
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      string streamNameFalse = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") ||
+          streamName.EndsWith(".dts"))
+      {
+        return Path.GetExtension(streamName).ToUpper().Replace(".", "EXTERNAL ");
+      }
+
+      // No stream info from splitter
+      if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
+        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
+
       // Check if returned string contains both language and trackname info
       // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
       // where "trackname" is stream's "trackname" property muxed in the mkv.
       Regex regex = new Regex(@"\[.+\]");
+      //Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      Regex regexMPS = new Regex(@"Audio\s*-\s*.+?,\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexMPSNoLang = new Regex(@"Audio\s*-\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexLAVF =
+        new Regex(
+          @"(?:A:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?(?:\s*\[(?<Default>[^\]]*?)\])?$");
+      Regex regexMPAUDIONoType = new Regex(@"^(.+?)(?<!]*,\s.+?)\s\((Audio\s.+?)$");
+      Regex regexMPAUDIO = new Regex(@"^(.+?)]*,\s(.+?)\s\((Audio\s.+?)$");
+      Regex regexMPC = new Regex(@"\S+,\s+(?<1>.+)");
       Match result = regex.Match(streamName);
-      if (result.Success)
+      Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPSNoLang = regexMPSNoLang.Match(streamName);
+      Match resultMPAUDIO = regexMPAUDIO.Match(streamName);
+      Match resultMPAUDIONoType = regexMPAUDIONoType.Match(streamName);
+      Match resultMPC = regexMPC.Match(streamName);
+      Match resultLAVF = regexLAVF.Match(streamNameFalse);
+
+      if (resultLAVF.Success)
+        // check for LAVF response format, e.g.: 
+        // S: Title [Lang] (Info) when only Language in stream -> answer is S: Lang -> start to detect if [lang] is present if not replace Lang by "" 
+      {
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string lang = resultLAVF.Groups[2].Value;
+        string info = resultLAVF.Groups[3].Value;
+        if (!string.IsNullOrEmpty(info))
+        {
+          if (!string.IsNullOrEmpty(lang))
+          {
+            streamName = "" + lang_or_title + "]" + " [" + info + "";
+          }
+          else
+          {
+            streamName = info;
+          }
+        }
+        else if (string.IsNullOrEmpty(info))
+        {
+          streamName = regex.Replace(streamName, "").Trim();
+        }
+      }
+      else if (result.Success)
       {
         //Get the trackname part by removing the language part from the string.
         streamName = regex.Replace(streamName, "").Trim();
       }
+      else if (resultMPS.Success)
+        // check for mpegsplitter response format, e.g.:  
+        // Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+        }
+      }
+      else if (resultMPSNoLang.Success)
+        // check for mpegsplitter response format, e.g.:  
+        // Audio - Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPSNoLang.Groups[1].Value);
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+        }
+      }
+      else if (resultMPAUDIO.Success)
+        // check for mpc-hc audio switcher response format, e.g.: 
+        // Language, Trackname (Audio 2)
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPAUDIO.Groups[2].Value).TrimStart();
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+        }
+      }
+      else if (resultMPAUDIONoType.Success)
+        // check for mpc-hc audio switcher response format, e.g.: 
+        // Language (Audio 2)
+      {
+        streamName = "";
+      }
+      else if (resultMPC.Success)
+        // check for mpc-hc audio response format, e.g.: 
+        // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPC.Groups[1].Value);
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+        }
+      }
+      // Remove extraneous info from splitter in parenthesis at end of line, e.g.:
+      // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
       return streamName;
     }
 
@@ -1227,7 +1570,20 @@ namespace MediaPortal.Player
     /// </summary>
     public override int SubtitleStreams
     {
-      get { return SubEngine.GetInstance().GetCount(); }
+      get
+      {
+        int ss = 0;
+        ISubEngine t = SubEngine.GetInstance();
+        try
+        {
+          ss = t.GetCount();
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("get_SubtitleStreams: {0}", ex.Message);
+        }
+        return ss;
+      }
     }
 
     /// <summary>
@@ -1245,17 +1601,157 @@ namespace MediaPortal.Player
     public override string SubtitleLanguage(int iStream)
     {
       string streamName = SubEngine.GetInstance().GetLanguage(iStream);
+      string langName = SubEngine.GetInstance().GetLanguage(iStream);
+      string streamNameUND = SubEngine.GetInstance().GetSubtitleName(iStream);
+
       if (streamName == null)
       {
         return Strings.Unknown;
       }
-      // Sometimes underline engine returns Haali mkv streams as: "S: trackname [language]"
+
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^S: ", "");
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
       Regex regex = new Regex(@"\[([^\]]+)\]");
+      Regex regexFFD = new Regex(@"\[.+\]");
+      Regex regexLAVF =
+        new Regex(
+          @"(?:S:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?(?:\s*\[(?<Default>[^\]]*?)\])?$");
+      // For example MPC Splitter and MPC Engine returns mkv streams as: "language (trackname)",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regexMPCEngine = new Regex(@"(\w.+)\((\D+[^\]]+)\)"); //(@"(\w.+)\(([^\]]+)\)");
       Match result = regex.Match(streamName);
+      Match resultFFD = regexFFD.Match(streamName);
+      Match resultMPCEngine = regexMPCEngine.Match(streamName);
+      Match resultLAVF = regexLAVF.Match(streamNameUND);
       if (result.Success)
       {
-        streamName = result.Groups[1].Value;
+        string language = Util.Utils.TranslateLanguageString(result.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
       }
+      else if (resultFFD.Success)
+      {
+        string subtitleLanguage = Util.Utils.TranslateLanguageString(resultFFD.Groups[0].Value);
+        if (subtitleLanguage.Length > 0)
+        {
+          streamName = subtitleLanguage;
+        }
+      }
+      else if (resultMPCEngine.Success)
+        // check for mpc-hc engine response format, e.g.: 
+        // Language (Trackname)
+      {
+        streamName = resultMPCEngine.Groups[1].Value.TrimEnd();
+      }
+      else if (resultLAVF.Success)
+        // check for LAVF response format, e.g.: 
+        // S: Title [Lang] (Info) here is to detect if langID = 0 so the language is set as Undetermined
+      {
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string lang = resultLAVF.Groups[2].Value;
+        string info = resultLAVF.Groups[3].Value;
+        streamNameUND = Regex.Replace(streamNameUND, @"^S: ", "");
+        if (lang_or_title == streamNameUND && lang_or_title == streamName && lang_or_title != langName &&
+            string.IsNullOrEmpty(lang) && string.IsNullOrEmpty(info))
+          //|| lang_or_title.Contains("Stream #") && string.IsNullOrEmpty(info)) //string.IsNullOrEmpty(lang_or_title) && string.IsNullOrEmpty(lang))
+        {
+          streamName = "Undetermined";
+        }
+      }
+      // mpeg splitter subtitle format
+      Match m = Regex.Match(streamName, @"Subtitle\s+-\s+(?<1>.+?),", RegexOptions.IgnoreCase);
+      if (m.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(m.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      return streamName;
+    }
+
+    public override string SubtitleName(int iStream)
+    {
+      string streamName = SubEngine.GetInstance().GetSubtitleName(iStream);
+      string streamNameFalse = SubEngine.GetInstance().GetSubtitleName(iStream);
+      string langName = SubEngine.GetInstance().GetLanguage(iStream);
+      if (streamName == null)
+      {
+        return Strings.Unknown;
+      }
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^S: ", "");
+
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regex = new Regex(@"\[([^\]]+)\]");
+      Regex regexFFDShow = new Regex(@"\s\[.+\]");
+      Regex regexMPCEngine = new Regex(@"\((\D+[^\]]+)\)");
+      Regex regexLAVF =
+        new Regex(@"(?:S:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?$");
+      Match result = regex.Match(streamName);
+      Match resultFFDShow = regexFFDShow.Match(streamName);
+      Match resultMPCEngine = regexMPCEngine.Match(streamName);
+      Match resultLAVF = regexLAVF.Match(streamNameFalse);
+      if (resultFFDShow.Success)
+      {
+        //Get the trackname part by removing the language part from the string.
+        streamName = regex.Replace(streamName, "").Trim();
+
+        //Put things back together
+        streamName = (streamName == string.Empty ? "" : "" + streamName + "");
+      }
+      else if (result.Success)
+      {
+        //if language only is detected -> set to ""
+        streamName = "";
+      }
+      else if (resultMPCEngine.Success)
+        // check for mpc-hc engine response format, e.g.: 
+        // Language (Trackname)
+      {
+        //Get the trackname.
+        streamName = resultMPCEngine.Groups[1].Value;
+      }
+      else if (resultLAVF.Success)
+        // check for LAVF response format, e.g.: 
+        // S: Title [Lang] (Info) when only Language in stream -> answer is S: Lang -> start to detect if [lang] is present if not replace Lang by "" 
+      {
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string lang = resultLAVF.Groups[2].Value;
+        string info = resultLAVF.Groups[3].Value;
+        if (lang_or_title == langName || lang_or_title.Contains("Stream #") && string.IsNullOrEmpty(info))
+        {
+          streamName = "";
+        }
+      }
+      // mpeg splitter subtitle format
+      Match m = Regex.Match(streamName, @"Subtitle\s+-\s+(?<1>.+?),", RegexOptions.IgnoreCase);
+      if (m.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(m.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = "";
+        }
+      }
+
+      #region Remove the false detection of Language Name when is detected as Stream Name
+
+      //Look if Language Name is equal Stream Name, if it's equal, remove it.
+      if (streamName == langName)
+      {
+        streamName = "";
+      }
+
+      #endregion
 
       return streamName;
     }
@@ -1264,6 +1760,12 @@ namespace MediaPortal.Player
     {
       get { return SubEngine.GetInstance().Enable; }
       set { SubEngine.GetInstance().Enable = value; }
+    }
+
+    public override bool EnableForcedSubtitle
+    {
+      get { return SubEngine.GetInstance().AutoShow; }
+      set { SubEngine.GetInstance().AutoShow = value; }
     }
 
     public bool AnalyseStreams()
@@ -1297,14 +1799,16 @@ namespace MediaPortal.Player
                   if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
                   {
                     chapters = new double[markerCount];
+                    chaptersname = new string[markerCount];
                     for (int i = 1; i <= markerCount; i++)
                     {
                       double markerTime = 0;
                       pEs.GetMarkerTime(i, out markerTime);
                       chapters[i - 1] = markerTime;
-                      //there is no usage to chapter's names right now
-                      //string name = null;
-                      //pEs.GetMarkerName(i, out name);
+                      //fill up chapter names
+                      string name = null;
+                      pEs.GetMarkerName(i, out name);
+                      chaptersname[i - 1] = name;
                     }
                   }
                 }
@@ -1317,6 +1821,10 @@ namespace MediaPortal.Player
                 filter = foundfilterinfos.achName;
                 int cStreams = 0;
                 pStrm.Count(out cStreams);
+                if (cStreams < 2)
+                {
+                  continue;
+                }
                 //GET STREAMS
                 for (int istream = 0; istream < cStreams; istream++)
                 {
@@ -1332,52 +1840,75 @@ namespace MediaPortal.Player
                   FSInfos.Current = false;
                   FSInfos.Filter = filter;
                   FSInfos.Name = sName;
+                  FSInfos.LCID = sPLCid;
                   FSInfos.Id = istream;
                   FSInfos.Type = StreamType.Unknown;
-                  //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams.
-                  if ((FSInfos.Filter == "ffdshow Video Decoder" || FSInfos.Filter == "ffdshow raw video filter") &&
-                      ((sPDWGroup == 1) || (sPDWGroup == 2)))
+                  //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams and editions.
+                  if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" ||
+                       FSInfos.Filter == "ffdshow raw video filter") &&
+                      ((sPDWGroup == 1) || (sPDWGroup == 2) || (sPDWGroup == 18) || (sPDWGroup == 4)))
                   {
                     FSInfos.Type = StreamType.Unknown;
                   }
-                    //VIDEO
+                  //VIDEO
                   else if (sPDWGroup == 0)
                   {
                     FSInfos.Type = StreamType.Video;
                   }
-                    //AUDIO
+                  //AUDIO
                   else if (sPDWGroup == 1)
                   {
                     FSInfos.Type = StreamType.Audio;
                   }
-                    //SUBTITLE
+                  //SUBTITLE
                   else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 &&
                            sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
                   {
                     FSInfos.Type = StreamType.Subtitle;
                   }
-                    //NO SUBTITILE TAG
+                  //NO SUBTITILE TAG
                   else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) ||
                            (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
                   {
                     FSInfos.Type = StreamType.Subtitle_hidden;
                   }
-                    //DirectVobSub SHOW SUBTITLE TAG
+                  //DirectVobSub SHOW SUBTITLE TAG
                   else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;
                   }
-                  Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}",
+                  //EDITION
+                  else if (sPDWGroup == 18)
+                  {
+                    FSInfos.Type = StreamType.Edition;
+                  }
+                  else if (sPDWGroup == 4) //Subtitle file
+                  {
+                    FSInfos.Type = StreamType.Subtitle_file;
+                  }
+                  else if (sPDWGroup == 10) //Postprocessing filter
+                  {
+                    FSInfos.Type = StreamType.PostProcessing;
+                  }
+                  Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
                             FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
-                            sPDWGroup.ToString());
+                            sPDWGroup.ToString(), sPLCid.ToString());
 
                   switch (FSInfos.Type)
                   {
                     case StreamType.Unknown:
-                      break;
-                    case StreamType.Video:
-                    case StreamType.Audio:
                     case StreamType.Subtitle:
+                    case StreamType.Subtitle_file:
+                    case StreamType.Video:
+                      break;
+                    case StreamType.Audio:
+                    case StreamType.Edition:
+                    case StreamType.PostProcessing:
+                      if (FSInfos.Type == StreamType.Audio && FSInfos.Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FSInfos.Name == "Audio ")
+                      {
+                        FStreams.AddStreamInfosEx(FSInfos);
+                        break;
+                      }
                       if (FStreams.GetStreamCount(FSInfos.Type) == 0)
                       {
                         FSInfos.Current = true;
@@ -1397,7 +1928,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(enumFilters);
         }
       }
-      catch {}
+      catch { }
       return true;
     }
 
@@ -1419,6 +1950,70 @@ namespace MediaPortal.Player
       }
       catch {}
       return true;
+    }
+
+    public override bool HasPostprocessing
+    {
+      get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    #endregion
+
+    #region edition selection
+
+    /// <summary>
+    /// Property to get the language for an edition stream
+    /// </summary>
+    public override string EditionLanguage(int iStream)
+    {
+      string streamName = FStreams.GetStreamInfos(StreamType.Edition, iStream).Name;
+      return streamName;
+    }
+
+    public override string EditionType(int iStream)
+    {
+      string streamName = FStreams.GetStreamInfos(StreamType.Edition, iStream).Name;
+      return streamName;
+    }
+
+    public override int EditionStreams
+    {
+      get { return FStreams.GetStreamCount(StreamType.Edition); }
+    }
+
+    /// <summary>
+    /// Property to get/set the current edition stream
+    /// </summary>
+    public override int CurrentEditionStream
+    {
+      get
+      {
+        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Edition); i++)
+        {
+          if (FStreams.GetStreamInfos(StreamType.Edition, i).Current)
+          {
+            return i;
+          }
+        }
+        return 0;
+      }
+      set
+      {
+        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Edition); i++)
+        {
+          if (FStreams.GetStreamInfos(StreamType.Edition, i).Current)
+          {
+            FStreams.SetCurrentValue(StreamType.Edition, i, false);
+          }
+        }
+        FStreams.SetCurrentValue(StreamType.Edition, value, true);
+        EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, 0,
+                     FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
+        EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, AMStreamSelectEnableFlags.Enable,
+                     FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
+        Log.Info("VideoPlayer:Edition Duration Change:{0}", m_dDuration);
+        return;
+      }
     }
 
     #endregion

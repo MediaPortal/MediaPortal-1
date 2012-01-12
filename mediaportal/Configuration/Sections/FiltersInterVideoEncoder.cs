@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -140,9 +140,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.Controls.Add(this.comboBoxAudioBitrate);
       this.mpGroupBox2.Controls.Add(this.AudioMode);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(0, 183);
+      this.mpGroupBox2.Location = new System.Drawing.Point(6, 146);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(472, 202);
+      this.mpGroupBox2.Size = new System.Drawing.Size(462, 202);
       this.mpGroupBox2.TabIndex = 0;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Audio Encoder Settings";
@@ -348,9 +348,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.FrameRate);
       this.mpGroupBox1.Controls.Add(this.comboBoxFrameRate);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 18);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 143);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 143);
       this.mpGroupBox1.TabIndex = 5;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Video Encoder Settings";

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -117,7 +117,7 @@ namespace MediaPortal.Player
     protected IBasicAudio _basicAudio = null;
 
     protected int _minBackingFiles, _maxBackingFiles, _backingFileDuration;
-    private VMR7Util _vmr7 = null;
+
     private DateTime _elapsedTimer = DateTime.Now;
 
     protected const int WM_GRAPHNOTIFY = 0x00008001; // message from graph
@@ -1135,13 +1135,7 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void OnProcess()
-    {
-      if (_vmr7 != null)
-      {
-        _vmr7.Process();
-      }
-    }
+    protected virtual void OnProcess() {}
 
 #if DEBUG
     private static DateTime dtStart = DateTime.Now;
@@ -1217,9 +1211,6 @@ namespace MediaPortal.Player
       try
       {
         _graphBuilder = (IGraphBuilder)new FilterGraph();
-
-        _vmr7 = new VMR7Util();
-        _vmr7.AddVMR7(_graphBuilder);
 
         _bufferSource = (IStreamBufferSource)new StreamBufferSource();
 
@@ -1430,13 +1421,6 @@ namespace MediaPortal.Player
           streamConfig2 = null;
         }
         m_StreamBufferConfig = null;
-
-        if (_vmr7 != null)
-        {
-          _vmr7.RemoveVMR7();
-        }
-        _vmr7 = null;
-
 
         if (_graphBuilder != null)
         {

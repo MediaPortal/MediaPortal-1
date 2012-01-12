@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -30,7 +25,7 @@ namespace MediaPortal.DeployTool.Sections
 {
   public partial class UpgradeDlg : DeployDialog
   {
-    bool rbFreshChecked;
+    private bool rbFreshChecked;
 
     public UpgradeDlg()
     {
@@ -43,6 +38,7 @@ namespace MediaPortal.DeployTool.Sections
     }
 
     #region IDeployDialog interface
+
     public override void UpdateUI()
     {
       //
@@ -52,48 +48,101 @@ namespace MediaPortal.DeployTool.Sections
       //
 
       // MediaPortal
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-      int MpVer = 0;
+      int major = 0;
+      int minor = 0;
+      int revision = 0;
+      RegistryKey key =
+        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       string MpBuild = "0";
       string MpDisplayVer = string.Empty;
       if (key != null)
       {
-        MpVer = Utils.CalculateVersion((int)key.GetValue("VersionMajor"), (int)key.GetValue("VersionMinor"), (int)key.GetValue("VersionRevision"));
         MpBuild = key.GetValue("VersionBuild").ToString();
+        major = (int)key.GetValue("VersionMajor", 0);
+        minor = (int)key.GetValue("VersionMinor", 0);
+        revision = (int)key.GetValue("VersionRevision", 0);
         MpDisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
         key.Close();
       }
+      Version MpVer = new Version(major, minor, revision);
 
       // TV-Server
-      key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-      int Tv3Ver = 0;
+      major = 0;
+      minor = 0;
+      revision = 0;
+      key =
+        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
       if (key != null)
       {
-        Tv3Ver = Utils.CalculateVersion((int)key.GetValue("VersionMajor"), (int)key.GetValue("VersionMinor"), (int)key.GetValue("VersionRevision"));
         Tv3Build = key.GetValue("VersionBuild").ToString();
+        major = (int)key.GetValue("VersionMajor", 0);
+        minor = (int)key.GetValue("VersionMinor", 0);
+        revision = (int)key.GetValue("VersionRevision", 0);
         Tv3DisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
         key.Close();
       }
+      Version Tv3Ver = new Version(major, minor, revision);
 
       rbUpdate.Enabled = false;
       bUpdate.Enabled = false;
-      if ((MpVer >= Utils.GetPackageVersion("min") && MpVer <= Utils.GetPackageVersion("max")) ||
-          (Tv3Ver >= Utils.GetPackageVersion("min") && Tv3Ver <= Utils.GetPackageVersion("max")) &&
+      if ((Utils.IsPackageUpdatabled(MpVer) || Utils.IsPackageUpdatabled(Tv3Ver)) &&
           (Utils.IsOfficialBuild(MpBuild) && Utils.IsOfficialBuild(Tv3Build)))
       {
         rbUpdate.Enabled = true;
         bUpdate.Enabled = true;
       }
 
+      var strMPDisplayVer = MpDisplayVer;
+      if (MpVer.Major == 1 && MpVer.Minor == 1)
+      {
+        switch (MpVer.Build)
+        {
+          case 6:
+            strMPDisplayVer = "1.2.0 Alpha";
+            break;
+          case 7:
+            strMPDisplayVer = "1.2.0 Beta";
+            break;
+          case 8:
+            strMPDisplayVer = "1.2.0 RC";
+            break;
+        }
+      }
+
+      var strTVDisplayVer = Tv3DisplayVer;
+      if (Tv3Ver.Major == 1 && Tv3Ver.Minor == 1)
+      {
+        switch (Tv3Ver.Build)
+        {
+          case 6:
+            strTVDisplayVer = "1.2.0 Alpha";
+            break;
+          case 7:
+            strTVDisplayVer = "1.2.0 Beta";
+            break;
+          case 8:
+            strTVDisplayVer = "1.2.0 RC";
+            break;
+        }
+      }
+
       if (!String.IsNullOrEmpty(MpBuild))
       {
-        labelSectionHeader.Text = !Utils.IsOfficialBuild(MpBuild) ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), MpDisplayVer, MpBuild) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), MpDisplayVer);
+        labelSectionHeader.Text = !Utils.IsOfficialBuild(MpBuild)
+                                    ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"),
+                                                    strMPDisplayVer, MpBuild)
+                                    : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"),
+                                                    strMPDisplayVer);
       }
       else
       {
-        labelSectionHeader.Text = !Utils.IsOfficialBuild(Tv3Build) ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), Tv3DisplayVer, Tv3Build) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), Tv3DisplayVer);
+        labelSectionHeader.Text = !Utils.IsOfficialBuild(Tv3Build)
+                                    ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"),
+                                                    strTVDisplayVer, Tv3Build)
+                                    : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"),
+                                                    strTVDisplayVer);
       }
 
       rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetDisplayVersion());
@@ -136,7 +185,6 @@ namespace MediaPortal.DeployTool.Sections
       if (!TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "client");
       if (TvServer && !TvClient) InstallationProperties.Instance.Set("InstallType", "tvserver_master");
       if (TvServer && TvClient) InstallationProperties.Instance.Set("InstallType", "singleseat");
-
     }
 
     private void bFresh_Click(object sender, EventArgs e)
@@ -146,6 +194,5 @@ namespace MediaPortal.DeployTool.Sections
       rbFreshChecked = true;
       InstallationProperties.Instance.Set("UpdateMode", "no");
     }
-
   }
 }

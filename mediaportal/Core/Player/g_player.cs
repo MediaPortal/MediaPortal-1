@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,8 +35,8 @@ using MediaPortal.Subtitle;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
-
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {
@@ -49,6 +49,7 @@ namespace MediaPortal.Player
       Video,
       TV,
       Radio,
+      RadioRecording,
       Music,
       Recording,
       Unknown
@@ -95,6 +96,7 @@ namespace MediaPortal.Player
 
     private static string _currentFileName = ""; //holds the actual file being played. Usefull for rtsp streams. 
     private static double[] _chapters = null;
+    private static string[] _chaptersname = null;
     private static double[] _jumpPoints = null;
     private static bool _autoComSkip = false;
     private static bool _loadAutoComSkipSetting = true;
@@ -104,11 +106,15 @@ namespace MediaPortal.Player
     #region events
 
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
+
     public delegate void EndedHandler(MediaType type, string filename);
-    public delegate void StartedHandler(MediaType type, string filename);        
+
+    public delegate void StartedHandler(MediaType type, string filename);
+
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
-    
+
     public delegate void AudioTracksReadyHandler();
+
     public delegate void TVChannelChangeHandler();
 
     // when a user is already playing a file without stopping the user selects another file for playback.
@@ -136,7 +142,7 @@ namespace MediaPortal.Player
       _factory = new PlayerFactory();
     }
 
-    static g_Player() { }
+    static g_Player() {}
 
     public static IPlayer Player
     {
@@ -262,7 +268,7 @@ namespace MediaPortal.Player
         {
           strFromXml = ConvertToNewStyle(strFromXml);
         }
-        foreach (string token in strFromXml.Split(new char[] { ',', ';', ' ' }))
+        foreach (string token in strFromXml.Split(new char[] {',', ';', ' '}))
         {
           if (token == string.Empty)
           {
@@ -292,7 +298,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       bool foundOtherThanZeroOrOne = false;
-      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
       {
         if (token == string.Empty)
         {
@@ -312,7 +318,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       string newStyle = string.Empty;
-      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
       {
         if (token == string.Empty)
         {
@@ -426,7 +432,7 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     #endregion
@@ -436,7 +442,7 @@ namespace MediaPortal.Player
     //called when TV channel is changed
     private static void OnTVChannelChanged()
     {
-      if (TVChannelChanged != null) 
+      if (TVChannelChanged != null)
       {
         TVChannelChanged();
       }
@@ -622,6 +628,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsPlayingVideo = false;
         CachePlayer();
         _chapters = null;
+        _chaptersname = null;
         _jumpPoints = null;
 
         if (!keepExclusiveModeOn && !keepTimeShifting)
@@ -1181,6 +1188,19 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type)
     {
+      return Play(strFile, type, (TextReader)null);
+    }
+
+    public static bool Play(string strFile, MediaType type, string chapters)
+    {
+      using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
+      {
+        return Play(strFile, type, stream);
+      }
+    }
+
+    public static bool Play(string strFile, MediaType type, TextReader chapters)
+    {
       try
       {
         if (string.IsNullOrEmpty(strFile))
@@ -1209,48 +1229,29 @@ namespace MediaPortal.Player
         _mediaInfo = new MediaInfoWrapper(strFile);
         Starting = true;
 
-
-        // Partial fix for mantis 0002825 and 0002919:
-        //      - only take care of singleseat and UNC path ( where TS file is used )
-        //      - missing checks for rtsp. Will be done after 1.1.0 using the stream name
-        //                    as distinguo:  stream-tv-* and stream-radio-*
-        //                    we will also use *.radio.ts and *.tv.ts
-
-        // Exception for ts files with no video stream = radio
-        bool checkTSisRadio = Path.GetExtension(strFile).ToLower() == ".ts" && !_mediaInfo.hasVideo;
-
-        if (checkTSisRadio)
+        if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
         {
-          Log.Debug("g_Player.Play - TS file detected as radio...");
-          type = MediaType.Radio;
-        }
-        // End of fix
-        else
-        {
-          if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
+          if (type == MediaType.Unknown)
           {
-            if (type == MediaType.Unknown)
-            {
-              Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
-              type = MediaType.Video;
-            }
-            // refreshrate change done here.
-            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+            Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
+            type = MediaType.Video;
+          }
+          // refreshrate change done here.
+          RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
 
-            if (RefreshRateChanger.RefreshRateChangePending)
+          if (RefreshRateChanger.RefreshRateChangePending)
+          {
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
             {
-              TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-              if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
-              {
-                Log.Info(
-                  "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-                  RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
-                RefreshRateChanger.ResetRefreshRateState();
-              }
-              else
-              {
-                return true;
-              }
+              Log.Info(
+                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
             }
           }
         }
@@ -1267,7 +1268,7 @@ namespace MediaPortal.Player
           OnChanged(strFile);
           OnStopped();
           bool doStop = true;
-          if (Util.Utils.IsAudio(strFile))
+          if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
           {
             if (type == MediaType.Unknown)
             {
@@ -1324,7 +1325,14 @@ namespace MediaPortal.Player
 
         if (_player != null)
         {
-          LoadChapters(strFile);
+          if (chapters != null)
+          {
+            LoadChapters(chapters);
+          }
+          else
+          {
+            LoadChapters(strFile);
+          }
           _player = CachePreviousPlayer(_player);
           bool bResult = _player.Play(strFile);
           if (!bResult)
@@ -1342,6 +1350,10 @@ namespace MediaPortal.Player
             if (_chapters == null)
             {
               _chapters = _player.Chapters;
+            }
+            if (_chaptersname == null)
+            {
+              _chaptersname = _player.ChaptersName;
             }
             OnStarted();
           }
@@ -1678,6 +1690,30 @@ namespace MediaPortal.Player
       }
     }
 
+    public static double[] Chapters
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return null;
+        }
+        return _chapters;
+      }
+    }
+
+    public static string[] ChaptersName
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return null;
+        }
+        return _chaptersname;
+      }
+    }
+
     public static int Width
     {
       get
@@ -1965,7 +2001,6 @@ namespace MediaPortal.Player
       }
     }
 
-
     public static bool HasViz
     {
       get
@@ -2148,6 +2183,91 @@ namespace MediaPortal.Player
       }
     }
 
+    #region Edition selection
+
+    /// <summary>
+    /// Property which returns the total number of edition streams available
+    /// </summary>
+    public static int EditionStreams
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return 0;
+        }
+        return _player.EditionStreams;
+      }
+    }
+
+    /// <summary>
+    /// Property to get/set the current edition stream
+    /// </summary>
+    public static int CurrentEditionStream
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return 0;
+        }
+        return _player.CurrentEditionStream;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.CurrentEditionStream = value;
+        }
+      }
+    }
+
+    public static string EditionLanguage(int iStream)
+    {
+      if (_player == null)
+      {
+        return Strings.Unknown;
+      }
+
+      string stream = _player.EditionLanguage(iStream);
+      return Util.Utils.TranslateLanguageString(stream);
+    }
+
+    /// <summary>
+    /// Property to get the type of an edition stream
+    /// </summary>
+    public static string EditionType(int iStream)
+    {
+      if (_player == null)
+      {
+        return Strings.Unknown;
+      }
+
+      string stream = _player.EditionType(iStream);
+      return stream;
+    }
+
+    #endregion
+
+    #region Postprocessing selection
+
+    /// <summary>
+    /// Property which returns true if the player is able to perform postprocessing features
+    /// </summary>
+    public static bool HasPostprocessing
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return false;
+        }
+        return _player.HasPostprocessing;
+      }
+    }
+
+    #endregion
+
     #region subtitle/audio stream selection
 
     /// <summary>
@@ -2266,6 +2386,22 @@ namespace MediaPortal.Player
       return Util.Utils.TranslateLanguageString(stream);
     }
 
+    /// <summary>
+    /// Retrieves the name of the subtitle stream
+    /// </summary>
+    /// <param name="iStream">Index of the stream</param>
+    /// <returns>Name of the track</returns>
+    public static string SubtitleName(int iStream)
+    {
+      if (_player == null)
+      {
+        return null;
+      }
+
+      string stream = _player.SubtitleName(iStream);
+      return Util.Utils.TranslateLanguageString(stream);
+    }
+
     #endregion
 
     public static bool EnableSubtitle
@@ -2285,6 +2421,45 @@ namespace MediaPortal.Player
           return;
         }
         _player.EnableSubtitle = value;
+      }
+    }
+
+    public static bool EnableForcedSubtitle
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return false;
+        }
+        return _player.EnableForcedSubtitle;
+      }
+      set
+      {
+        if (_player == null)
+        {
+          return;
+        }
+        _player.EnableForcedSubtitle = value;
+      }
+    }
+
+    public static bool SupportsCC
+    {
+      get
+      {
+        if (IsDVD || IsTV)
+        {
+          if (_player is DVDPlayer)
+          {
+            return ((DVDPlayer)_player).SupportsCC;
+          }
+          if (_player is TSReaderPlayer)
+          {
+            return ((TSReaderPlayer)_player).SupportsCC;
+          }
+        }
+        return false;
       }
     }
 
@@ -2462,18 +2637,51 @@ namespace MediaPortal.Player
       }
     }
 
+    //}
+
+    /// <summary>
+    /// Switches to the next subtitle stream
+    /// </summary>
     public static void SwitchToNextSubtitle()
     {
-      if (EnableSubtitle)
+      if (!SupportsCC)
       {
-        if (CurrentSubtitleStream < SubtitleStreams - 1)
+        if (EnableSubtitle)
         {
-          CurrentSubtitleStream++;
+          if (CurrentSubtitleStream < SubtitleStreams - 1)
+          {
+            CurrentSubtitleStream++;
+          }
+          else
+          {
+            EnableSubtitle = false;
+          }
         }
         else
         {
+          CurrentSubtitleStream = 0;
+          EnableSubtitle = true;
+        }
+      }
+      else if (EnableSubtitle && SupportsCC)
+      {
+        if (CurrentSubtitleStream == -1)
+        {
           EnableSubtitle = false;
         }
+        else if (CurrentSubtitleStream < SubtitleStreams - 1)
+        {
+          CurrentSubtitleStream++;
+        }
+        else if (SupportsCC)
+        {
+          EnableSubtitle = false;
+          CurrentSubtitleStream = -1;
+        }
+      }
+      else if (!EnableSubtitle && CurrentSubtitleStream == SubtitleStreams && SupportsCC)
+      {
+        CurrentSubtitleStream = -1;
       }
       else
       {
@@ -2482,11 +2690,51 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Switches to the next edition stream.
+    /// 
+    /// Calls are directly pushed to the embedded player. And care 
+    /// is taken not to do multiple calls to the player.
+    /// </summary>
+    public static void SwitchToNextEdition()
+    {
+      if (_player != null)
+      {
+        // take current stream and number of
+        int streams = _player.EditionStreams;
+        int current = _player.CurrentEditionStream;
+        int next = current;
+        bool success = false;
+        // Loop over the stream, so we skip the disabled streams
+        // stops if the loop is over the current stream again.
+        do
+        {
+          // if next stream is greater then the amount of stream
+          // take first
+          if (++next >= streams)
+          {
+            next = 0;
+          }
+          // set the next stream
+          _player.CurrentEditionStream = next;
+          // if the stream is set in, stop the loop
+          if (next == _player.CurrentEditionStream)
+          {
+            success = true;
+          }
+        } while ((next != current) && (success == false));
+        if (success == false)
+        {
+          Log.Info("g_Player: Failed to switch to next editionstream.");
+        }
+      }
+    }
+
     private static bool IsFileUsedbyAnotherProcess(string file)
     {
       try
       {
-        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) { }
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) {}
       }
       catch (System.IO.IOException exp)
       {
@@ -2496,21 +2744,45 @@ namespace MediaPortal.Player
       return false;
     }
 
+    public static bool LoadChaptersFromString(string chapters)
+    {
+      if (String.IsNullOrEmpty(chapters))
+      {
+        return false;
+      }
+      Log.Debug("g_Player.LoadChaptersFromString() - Chapters provided externally");
+      using (TextReader stream = new StringReader(chapters))
+      {
+        return LoadChapters(stream);
+      }
+    }
+
     private static bool LoadChapters(string videoFile)
+    {
+      _chapters = null;
+      _jumpPoints = null;
+
+      string chapterFile = Path.ChangeExtension(videoFile, ".txt");
+      if (!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
+      {
+        return false;
+      }
+
+      Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
+
+      using (TextReader chapters = new StreamReader(chapterFile))
+      {
+        return LoadChapters(chapters);
+      }
+    }
+
+    private static bool LoadChapters(TextReader chaptersReader)
     {
       _chapters = null;
       _jumpPoints = null;
 
       try
       {
-        string chapterFile = Path.ChangeExtension(videoFile, ".txt");
-        if (!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
-        {
-          return false;
-        }
-
-        Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
-
         if (_loadAutoComSkipSetting)
         {
           using (Settings xmlreader = new MPSettings())
@@ -2526,49 +2798,45 @@ namespace MediaPortal.Player
         ArrayList chapters = new ArrayList();
         ArrayList jumps = new ArrayList();
 
-        using (StreamReader file = new StreamReader(chapterFile))
-        {
-          string line = file.ReadLine();
+        string line = chaptersReader.ReadLine();
 
-          int fps;
-          if (!int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
+        int fps;
+        if (String.IsNullOrEmpty(line) || !int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
+        {
+          Log.Warn("g_Player.LoadChapters() - Invalid chapter file");
+          return false;
+        }
+
+        double framesPerSecond = fps / 100.0;
+        int time;
+
+        while ((line = chaptersReader.ReadLine()) != null)
+        {
+          if (String.IsNullOrEmpty(line))
           {
-            Log.Warn("g_Player.LoadChapters() - Invalid chapter file \"{0}\"", chapterFile);
-            return false;
+            continue;
           }
 
-          double framesPerSecond = fps / 100.0;
-          int time;
-
-          while (!file.EndOfStream)
+          string[] tokens = line.Split(new char[] {'\t'});
+          if (tokens.Length != 2)
           {
-            line = file.ReadLine();
-            if (String.IsNullOrEmpty(line))
-            {
-              continue;
-            }
+            continue;
+          }
 
-            string[] tokens = line.Split(new char[] { '\t' });
-            if (tokens.Length != 2)
-            {
-              continue;
-            }
+          if (int.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
+          {
+            jumps.Add(time / framesPerSecond);
+          }
 
-            if (int.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
-            {
-              jumps.Add(time / framesPerSecond);
-            }
-
-            if (int.TryParse(tokens[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
-            {
-              chapters.Add(time / framesPerSecond);
-            }
+          if (int.TryParse(tokens[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
+          {
+            chapters.Add(time / framesPerSecond);
           }
         }
 
         if (chapters.Count == 0)
         {
-          Log.Warn("g_Player.LoadChapters() - No chapters found in file \"{0}\"", chapterFile);
+          Log.Warn("g_Player.LoadChapters() - No chapters found in file");
           return false;
         }
         _chapters = new double[chapters.Count];
@@ -2768,8 +3036,7 @@ namespace MediaPortal.Player
 
     public static bool ShowFullScreenWindowVideoDefault()
     {
-      // If current player has no video, then fail
-      if (!HasVideo && !HasViz)
+      if (!HasVideo && !IsMusic)
       {
         return false;
       }

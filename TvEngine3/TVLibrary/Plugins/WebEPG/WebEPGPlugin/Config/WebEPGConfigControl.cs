@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ using MediaPortal.WebEPG.Profile;
 using SetupTv.Sections.WebEPGConfig;
 using TvDatabase;
 using TvEngine.PowerScheduler;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
 
@@ -79,7 +80,7 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
 
-      _webepgFilesDir = Log.GetPathName() + @"\WebEPG\";
+      _webepgFilesDir = PathManager.GetDataPath + @"\WebEPG\";
 
       if (!Directory.Exists(_webepgFilesDir))
       {

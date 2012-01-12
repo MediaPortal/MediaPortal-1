@@ -109,10 +109,10 @@
     <String id="149">MAC</String>
     <String id="150">IP:</String>
     <String id="151">Collegamento:</String>
-    <String id="152">Bidirezionale</String>
-    <String id="153">Monodirezionale</String>
+    <String id="152">Monodirezionale</String>
+    <String id="153">Bidirezionale</String>
     <String id="154">Capacità</String>
-    <String id="155">Drive</String>
+    <String id="155">Disco</String>
     <String id="156">Liberi</String>
     <String id="157">Filmati</String>
     <String id="158">Memoria libera</String>
@@ -364,7 +364,7 @@
     <String id="405">P.to di rugiada</String>
     <String id="406">Umidità</String>
     <String id="407">Pesante</String>
-    <String id="408">Inserire nome località</String>
+    <String id="408">Inserire in nome di una città</String>
     <String id="409">Rimuovere località</String>
     <String id="410">Accesso a Weather.com</String>
     <String id="411">Acquisizione tempo atmosferico per:</String>
@@ -475,12 +475,12 @@
     <String id="517">Errore critico, operazione non completata</String>
     <String id="518">Eliminare questa canzone?</String>
     <String id="519">Sottotitoli disattivati</String>
-    <String id="520">Nessuna località trovata</String>
-    <String id="521">Numero non valido</String>
-    <String id="522">Solo numeri positivi!</String>
-    <String id="523">Skip a zero non è permesso!</String>
-    <String id="524">3 ore di skip è il massimo!</String>
-    <String id="525">Skip step già definita</String>
+    <String id="520">Posizione non trovata</String>
+    <String id="521">Solo valori interi</String>
+    <String id="522">Solo valori positivi!</String>
+    <String id="523">Uno skip di zero non è permesso!</String>
+    <String id="524">Skip massimo di 3 ore!</String>
+    <String id="525">Skip già definito</String>
     <String id="527">Ordina per: Visto</String>
     <String id="528">Artisti dell'Album</String>
     <String id="529">Vista: Elenco icone grandi</String>
@@ -520,9 +520,9 @@
     <String id="563">kn</String>
     <String id="564">m/s</String>
     <String id="565">bft</String>
-    <String id="566">Info veloci sul tempo</String>
-    <String id="567">Aggiungere città</String>
-    <String id="568">Rimuovere città</String>
+    <String id="566">Informazioni veloci sul tempo</String>
+    <String id="567">Aggiungi città</String>
+    <String id="568">Rimuovi città</String>
     <String id="590">P. 100</String>
     <String id="591">P. 200</String>
     <String id="592">P. 300</String>
@@ -535,7 +535,7 @@
     <String id="601">Registra ora</String>
     <String id="602">Canale</String>
     <String id="603">Programmazione</String>
-    <String id="604">TV Registrata</String>
+    <String id="604">TV registrata</String>
     <String id="605" prefix="La mia ">TV</String>
     <String id="606">Caricamento nuova Guida TV</String>
     <String id="607">Carica</String>
@@ -603,7 +603,7 @@
     <String id="669">Ordina per: Genere</String>
     <String id="670">Ordina per: Bitrate</String>
     <String id="671">Ordina per: Visto</String>
-    <String id="672">Registra Lun-Ven</String>
+    <String id="672">Registra giorni feriali</String>
     <String id="673">Velocità scorrimento</String>
     <String id="674">Impostazioni I.U.</String>
     <String id="675">Esempio:</String>
@@ -611,7 +611,7 @@
     <String id="677">volte</String>
     <String id="678">Ordina per: Genere</String>
     <String id="679">Settimanale</String>
-    <String id="680">Lun-Ven</String>
+    <String id="680">Giorni feriali</String>
     <String id="681">In attesa</String>
     <String id="682">Registrazione in corso</String>
     <String id="683">Finito</String>
@@ -711,7 +711,8 @@
     <String id="784">Ruota di 270°</String>
     <String id="789">Adesso: </String>
     <String id="790">Dopo: </String>
-    <String id="791">Vista: Movimento cover</String>
+    <String id="791">Vista: flusso copertine</String>
+    <String id="792">Menu viste</String>
     <String id="798">Basso</String>
     <String id="799">Alto</String>
     <String id="800">Comincia con</String>
@@ -725,6 +726,8 @@
     <String id="808">Ingredienti</String>
     <String id="809">Direzioni</String>
     <String id="810">Sintonizzatore</String>
+    <String id="811">Radio registrata</String>
+    <String id="812">Stazioni radio</String>
     <String id="820">Cancellare registrazioni non viste?</String>
     <String id="830">Azzera stato "già visto"</String>
     <String id="831">Espelli disco removibile</String>
@@ -916,7 +919,7 @@
     <String id="1037" prefix="La mia ">TV - Informazioni programma</String>
     <String id="1038">Registrazione avanzata</String>
     <String id="1039">Non registrare</String>
-    <String id="1040">Avvisami</String>
+    <String id="1040">Imposta notifica</String>
     <String id="1041">Prossimi episodi</String>
     <String id="1042">Mantieni fino a</String>
     <String id="1043">Quando visto</String>
@@ -926,17 +929,13 @@
     <String id="1047">Inizia a schermo intero</String>
     <String id="1048">Impostazioni</String>
     <String id="1049">Sospendi</String>
-    <String id="1050">Sab-Dom</String>
-    <String id="1051">Registra Sab-Dom</String>
+    <String id="1050">Fine settimana</String>
+    <String id="1051">Registra fine settimana</String>
     <String id="1052">Brani</String>
     <String id="1053">Chiamante sconosciuto</String>
     <String id="1054">(rec)</String>
     <String id="1055">(in onda)</String>
     <String id="1056">(non disponibile)</String>
-    <String id="1057">Registra Dom-Gio</String>
-    <String id="1058">Registra Ven-Sab</String>
-    <String id="1059">Dom-Gio</String>
-    <String id="1060">Ven-Sab</String>
     <String id="1061">Rimovibile</String>
     <String id="1062">Oggetto</String>
     <String id="1064">Segnalibri</String>
@@ -990,7 +989,33 @@
     <String id="1198">Navigatore del DVD</String>
     <String id="1200">Wizard delle impostazioni</String>
     <String id="1201">Riproduci il video dall'inizio</String>
+    <String id="1202">Ordina per: Automatico</String>
+    <String id="1203">Episodio imminente (attivi:{0})</String>
+    <String id="1204">Riproduci tutti i video nella cartella</String>
+    <String id="1205">Ordina per: # disco</String>
+    <String id="1206">Il programma sta andando da {0} minuti</String>
+    <String id="1207">Cambiare su {0} adesso ?</String>
+    <String id="1208">Ordina per: Compositore</String>
     <String id="1211">Riproduci il video da {0}</String>
+    <String id="1212">Cancellare la notifica</String>
+    <String id="1213">Ascolta questa stazione</String>
+    <String id="1214">Compositori</String>
+    <String id="1215">Direttori</String>
+    <String id="1216">Dischi</String>
+    <String id="1217">Traccie per Artista</String>
+    <String id="1218">Album per data</String>
+    <String id="1219">Album per indice Artista</String>
+    <String id="1220">Ordina per: Data creazione</String>
+    <String id="1221">Ordina per: Data modifica</String>
+    <String id="1222">Gruppi</String>
+    <String id="1223">Playlist già esistente</String>
+    <String id="1224">Si vuole rimuovere la playlist attuale ?</String>
+    <String id="1225">Accoda oggetto</String>
+    <String id="1226">Accoda tutti gli oggetti</String>
+    <String id="1230">Aggiunto in data:</String>
+    <String id="1231">Ultima riproduzione:</String>
+    <String id="1240">Blocca contenuto</String>
+    <String id="1241">Sblocca contenuto</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
     <String id="1440" prefix="Il mio ">Televideo</String>
     <String id="1441">Televideo</String>
@@ -1004,6 +1029,7 @@
     <String id="1449">Ferma la registrazione</String>
     <String id="1450">Sei sicuro di voler fermare la registrazione?</String>
     <String id="1451">Impossibile riprodurre</String>
+    <String id="1498">Programma/Canale non trovato</String>
     <String id="1499">Nessun segnale</String>
     <String id="1500">Impossibile attivare il Buffer TV</String>
     <String id="1501">Scheda disabilitata</String>
@@ -1032,6 +1058,14 @@
     <String id="1600">Si vuole spegnere il sistema ?</String>
     <String id="1601">Si vuole sospendere il sistema ?</String>
     <String id="1602">Si vuole ibernare il sistema ?</String>
+    <String id="1900">Skin obsoleta</String>
+    <String id="1901">La skin ({0}) selezionata è obsoleta. Questo può causare dei problemi durante l'uso di MediaPortal. Per questa ragione MediaPortal si è temporaneamente configurato con la skin di default. Se si vuole comunque provare ad usarla selezionare 'Premi e ignora', ma NON riportare bugs con questa configurazione.
+(per eliminare questa finestra attendere che si chiuda automaticamente o premere Indietro/Esc sul telecomando)</String>
+    <String id="1902">Non mostrare più questo messaggio</String>
+    <String id="1903">Premi e ignora ({0})...</String>
+    <String id="1910">Plugins incompatibili</String>
+    <String id="1911">I seguenti plugins sono incompatibili con questa versione di MediaPortal e sono stati disabilitati automaticamente:</String>
+    <String id="1912">Continua|Continua ({0})...|Continua ({0})...</String>
     <String id="1950" prefix="Il mio ">Stato</String>
     <String id="1951">Hard Disk</String>
     <String id="1952">Ventola</String>
@@ -1266,6 +1300,7 @@
     <String id="2612">Ungherese</String>
     <String id="2613">Russo</String>
     <String id="2614">Ucraino</String>
+    <String id="2615">Tedesco</String>
     <String id="2650">Ricarica font, prego attendere...</String>
     <String id="2700">Apertura menu CI</String>
     <String id="2997">ore</String>
@@ -1401,7 +1436,7 @@
     <String id="6039">Codec Audio LATM AAC</String>
     <String id="6040">Ieri</String>
     <String id="6041">Due giorni fa</String>
-    <String id="6042">Aggiungi un numero di secondi per lo skip</String>
+    <String id="6042">Entra uno skip step in secondi</String>
     <String id="6050">Settimana corrente</String>
     <String id="6060">Mese corrente</String>
     <String id="6070">Anno corrente</String>
@@ -1748,6 +1783,7 @@
     <String id="100509">Musica/Ricerca/Progresso</String>
     <String id="100510">Musica/In ascolto ora</String>
     <String id="100511">Musica/Schermo intero</String>
+    <String id="100512">LastFM Preferiti/Banditi</String>
     <String id="100600">TV/Guida</String>
     <String id="100601">TV/Programmazione</String>
     <String id="100602">TV/Schermo intero</String>
@@ -1808,6 +1844,7 @@
     <String id="100760">Masterizzatore</String>
     <String id="100761">Guida TV</String>
     <String id="100762">Guida Radio</String>
+    <String id="100763">Registrazioni Radio</String>
     <String id="100800" prefix="Le mie ">Estensioni</String>
     <String id="101000">Tastiera</String>
     <String id="101002">Tastiera virtuale normale</String>
@@ -1830,6 +1867,7 @@
     <String id="102014">Informazioni sull'Immagine</String>
     <String id="102015">Mini Menu</String>
     <String id="102016">Notifica</String>
+    <String id="102017">Conflitto registrazione</String>
     <String id="102018">Menu CI</String>
     <String id="102600" prefix="Il mio ">Meteo</String>
     <String id="102700" prefix="Le mie ">Notizie</String>
@@ -1847,8 +1885,10 @@
     <String id="106666">Power Scheduler in attesa</String>
     <String id="107700" prefix="La mia ">TV/Televideo</String>
     <String id="107701" prefix="La mia ">TV/Televideo</String>
+    <String id="107776" prefix="Il mio ">Tetris</String>
     <String id="107777" prefix="Il mio ">Sudoku</String>
     <String id="107890" prefix="La mia ">Radio Last.fm</String>
+    <String id="107900">Dialogo di testo</String>
     <String id="108888">Menù Musica</String>
     <String id="109000">MiniDisplay - Configurazione</String>
     <String id="109001">MiniDisplay - Configurazione - Retroilluminazione</String>
@@ -1857,6 +1897,7 @@
     <String id="109004">MiniDisplay - Configurazione - Equalizzatore</String>
     <String id="109005">MiniDisplay - Configurazione - Tastiera</String>
     <String id="109006">MiniDisplay - Configurazione - Telecomando</String>
+    <String id="102019">Avviso TV</String>
     <String id="200000">Per favore seleziona il tuo Grabber EPG (Guida Elettronica Programmi). Nota che se la tua nazione non</String>
     <String id="200001">è in elenco dovrai inserire l'EPG manualmente</String>
     <String id="200002">Ora puoi far corrispondere i canali EPG ai tuoi canali TV</String>
@@ -1878,6 +1919,8 @@
     <String id="200019">Premi il pulsante Fine per chiudere questo wizard</String>
     <String id="200020">Fine</String>
     <String id="200021">Impostazioni TV - EPG</String>
+    <String id="990000">Tutte le settimane su questo canale</String>
+    <String id="990001">{0} sul canale {1}</String>
     <String id="200022">MediaPortal ha rilevato le seguenti schede TV:</String>
     <String id="200023">Premi il pulsante Avanti per configurare queste schede</String>
     <String id="200024">Impostazioni TV</String>
@@ -1926,5 +1969,24 @@
     <String id="200070">Controllare il firewall</String>
     <String id="200071">Cancellare questa cartella e tutte le sottocartelle?</String>
     <String id="200072">Prossimi episodi</String>
+    <String id="200073">Elaborazione successiva</String>
+    <String id="200074">Elaborazione foto successiva</String>
+    <String id="200075">Ridimensiona</String>
+    <String id="200076">Files sottotitoli</String>
+    <String id="200077">Deinterlaccia</String>
+    <String id="200078">Rifila</String>
+    <String id="200079">Rifila verticalmente</String>
+    <String id="200080">Rifila orizzontalmente</String>
+    <String id="200081">Menu VIDEO</String>
+    <String id="200082">Menu AUDIO</String>
+    <String id="200083">Menu SOTTOTITOLI</String>
+    <String id="200084">Menu video</String>
+    <String id="200085">Menu audio</String>
+    <String id="200086">Menu principale</String>
+    <String id="200087">Muto</String>
+    <String id="200090">Edizione</String>
+    <String id="200091">Capitolo</String>
+    <String id="200092">Solo forzato</String>
+    <String id="200093">Riprovando per altri 60 secondi</String>
   </Section>
 </Language>

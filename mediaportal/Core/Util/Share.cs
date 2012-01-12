@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.Util
 {
@@ -33,15 +34,15 @@ namespace MediaPortal.Util
   /// </summary>
   public class Share
   {
-    public enum Views
+    /*public enum Views
     {
       List = 0,
       Icons = 1,
       BigIcons = 2,
       Albums = 3,
       FilmStrip = 4,
-      CoverFlow = 5
-    }
+      CoverFlow = 6
+    }*/
 
     private string m_strPath = string.Empty;
     private string m_strName = string.Empty;
@@ -54,7 +55,7 @@ namespace MediaPortal.Util
     private string remoteFolder = string.Empty;
     private int remotePort = 21;
     private bool runtimeAdded;
-    public Views DefaultView = Views.List;
+    public Layout DefaultLayout = Layout.List;
 
     /// <summary>
     /// empty constructor

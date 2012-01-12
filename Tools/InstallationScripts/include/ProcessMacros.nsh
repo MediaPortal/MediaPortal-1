@@ -22,10 +22,10 @@
 !define ProcessMacros_INCLUDED
 
 !include LogicLib.nsh
-!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+!include "${git_InstallScripts}\include\LoggingMacros.nsh"
 
-!AddPluginDir "${svn_InstallScripts}\nsSCM-plugin\Plugin"
-!AddPluginDir "${svn_InstallScripts}\KillProc-plugin\Plugin"
+!AddPluginDir "${git_InstallScripts}\nsSCM-plugin\Plugin"
+!AddPluginDir "${git_InstallScripts}\KillProc-plugin\Plugin"
 
 #***************************
 #***************************
@@ -39,15 +39,15 @@
 
   ${LOG_TEXT} "INFO" "KillProcess: ${Process}"
 
-	KillProcDLL::KillProc "${Process}"
+  KillProcDLL::KillProc "${Process}"
 
-	${If} $R0 == "0"
-    		${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
+  ${If} $R0 == "0"
+    ${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
   ${ElseIf} $R0 == "603"
-    		${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
+    ${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
   ${Else}
-        ${LOG_TEXT} "INFO" "KillProcess: Unable to kill ${Process} (error $R0)."
-        Abort "Unable to kill ${Process} (error $R0). Installation aborted."
+    ${LOG_TEXT} "INFO" "KillProcess: Unable to kill ${Process} (error $R0)."
+    Abort "Unable to kill ${Process} (error $R0). Installation aborted."
   ${EndIF}
 
   !verbose pop
@@ -64,23 +64,37 @@
   nsSCM::QueryStatus /NOUNLOAD "${Service}"
   Pop $0
   Pop $1
- 
+
   ${IfNot} $1 = 1
-  
-		${LOG_TEXT} "INFO" "StopService: Trying to stop ${Service}..."
-  
-  	nsSCM::Stop /NOUNLOAD "${Service}"
+
+    ${LOG_TEXT} "INFO" "StopService: Trying to stop ${Service}..."
+
+    nsSCM::Stop /NOUNLOAD "${Service}"
     Pop $0
-    Pop $1
 
     ${If} $0 == "error"
-        ${LOG_TEXT} "INFO" "StopService: Unable to stop ${Service} (error $1)."
-        Abort "Unable to stop ${Service} (error $1). Installation aborted."
+      ${LOG_TEXT} "INFO" "StopService: Unable to stop ${Service} (error $1)."
+      Abort "Unable to stop ${Service} (error $1). Installation aborted."
     ${Else}
-    		${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
+
+      StrCpy $R0 0
+      ${Do}
+        ${If} $R0 > 0
+          ${LOG_TEXT} "INFO" "StopService: sleeping 20ms and recheking service status..."
+          Sleep 20
+        ${EndIF}
+
+        IntOp $R0 $R0 + 1
+        nsSCM::QueryStatus /NOUNLOAD "${Service}"
+        Pop $0
+        Pop $1
+      ${LoopUntil} $1 = 1
+
+      ${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
     ${EndIF}
+
   ${Else}
-      ${LOG_TEXT} "INFO" "StopService: ${Service} is already stopped."
+    ${LOG_TEXT} "INFO" "StopService: ${Service} is already stopped."
   ${EndIf}
 
   !verbose pop
@@ -129,7 +143,7 @@ ${If} ${FileExists} "${DirPath}\*.*"
   
 ${Else}
 
-    ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
+  ${LOG_TEXT} "INFO" "RenameDirectory: Directory does not exist. No need to rename: ${DirPath}"
 
 ${EndIf}
 

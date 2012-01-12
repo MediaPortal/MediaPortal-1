@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -149,8 +149,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     /// <summary>
     /// Type of most recent playlist
     /// </summary>
-    private StreamType _currentPlaylistType = StreamType.Unknown;
-
+    //private StreamType _currentPlaylistType = StreamType.Unknown;
     /// <summary>
     /// The time of the last http access
     /// </summary>

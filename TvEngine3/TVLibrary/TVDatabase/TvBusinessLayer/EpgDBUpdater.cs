@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -71,6 +71,7 @@ namespace TvDatabase
     private string _epgLanguages;
     private readonly string _grabberName;
     private bool _storeOnlySelectedChannels;
+    private bool _storeOnlySelectedChannelsRadio;
     private readonly bool _checkForLastUpdate;
     private int _epgReGrabAfter = 240; //4 hours
     private bool _alwaysFillHoles;
@@ -105,6 +106,8 @@ namespace TvDatabase
       _epgLanguages = _layer.GetSetting("epgLanguages").Value;
       Setting setting = _layer.GetSetting("epgStoreOnlySelected");
       _storeOnlySelectedChannels = (setting.Value == "yes");
+      Setting settingRadio = _layer.GetSetting("epgRadioStoreOnlySelected");
+      _storeOnlySelectedChannelsRadio = (settingRadio.Value == "yes");
       Setting s = _layer.GetSetting("timeoutEPGRefresh", "240");
       if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
       {
@@ -233,7 +236,6 @@ namespace TvDatabase
 
       //_layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
 
-      
 
       Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
     }
@@ -253,8 +255,11 @@ namespace TvDatabase
         return null;
       }
       //do we know a channel with these tuning details?
-      Channel dbChannel = _layer.GetChannelByTuningDetail(dvbChannel.NetworkId, dvbChannel.TransportId,
-                                                          dvbChannel.ServiceId);
+      Channel dbChannel = null;
+      TuningDetail tuningDetail = _layer.GetTuningDetail(dvbChannel);
+      if (tuningDetail != null)
+        dbChannel = tuningDetail.ReferencedChannel();
+
       if (dbChannel == null)
       {
         Log.Epg("{0}: no channel found for networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}", _grabberName,
@@ -271,7 +276,7 @@ namespace TvDatabase
         return null;
       }
       //should we store epg for this channel?
-      if (_storeOnlySelectedChannels)
+      if ((dbChannel.IsRadio && _storeOnlySelectedChannelsRadio) || (!dbChannel.IsRadio && _storeOnlySelectedChannels))
       {
         if (!dbChannel.GrabEpg)
         {

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("FullScreenMsg")]
-[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2011 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

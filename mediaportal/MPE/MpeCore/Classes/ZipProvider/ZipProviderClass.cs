@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -53,8 +53,8 @@ namespace MpeCore.Classes.ZipProvider
           if (fileItem.SystemFile)
           {
             string tempfil = Path.GetTempFileName();
-            tempfil = Path.GetDirectoryName(tempfil) + Path.GetFileNameWithoutExtension(tempfil) +
-                      Path.GetExtension(fileItem.LocalFileName);
+            tempfil = Path.Combine(Path.GetDirectoryName(tempfil), Path.GetFileNameWithoutExtension(tempfil) +
+                      Path.GetExtension(fileItem.LocalFileName));
             Extract(fileItem, tempfil);
             fileItem.TempFileLocation = tempfil;
             //fileItem.LocalFileName = tempfil;

@@ -1,5 +1,5 @@
-/* 
- * $Id: RenderedHdmvSubtitle.cpp 1985 2010-05-29 16:45:20Z kinddragon $
+/*
+ * $Id: RenderedHdmvSubtitle.cpp 2804 2010-12-28 13:48:24Z aleksoid $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -26,18 +26,17 @@
 #include "DVBSub.h"
 #include "RenderedHdmvSubtitle.h"
 
-CRenderedHdmvSubtitle::CRenderedHdmvSubtitle(CCritSec* pLock, SUBTITLE_TYPE nType)
-					 : CSubPicProviderImpl(pLock)
+CRenderedHdmvSubtitle::CRenderedHdmvSubtitle(CCritSec* pLock, SUBTITLE_TYPE nType, const CString& name, LCID lcid)
+	: CSubPicProviderImpl(pLock), m_name(name), m_lcid(lcid)
 {
-	switch (nType)
-	{
+	switch (nType) {
 	case ST_DVB :
 		m_pSub = DNew CDVBSub();
-		m_name = "DVB Embedded Subtitle";
+			if (name.IsEmpty()) m_name = "DVB Embedded Subtitle";
 		break;
 	case ST_HDMV :
 		m_pSub = DNew CHdmvSub();
-		m_name = "HDMV Embedded Subtitle";
+			if (name.IsEmpty()) m_name = "HDMV Embedded Subtitle";
 		break;
 	default :
 		ASSERT (FALSE);
@@ -54,10 +53,10 @@ CRenderedHdmvSubtitle::~CRenderedHdmvSubtitle(void)
 
 STDMETHODIMP CRenderedHdmvSubtitle::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
-    CheckPointer(ppv, E_POINTER);
-    *ppv = NULL;
+	CheckPointer(ppv, E_POINTER);
+	*ppv = NULL;
 
-    return 
+	return
 		QI(IPersist)
 		QI(ISubStream)
 		QI(ISubPicProvider)
@@ -104,9 +103,9 @@ STDMETHODIMP CRenderedHdmvSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
 }
 
 STDMETHODIMP CRenderedHdmvSubtitle::GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VideoSize, POINT& VideoTopLeft)
-{ 
+{
 	CAutoLock cAutoLock(&m_csCritSec);
-	HRESULT hr = m_pSub->GetTextureSize(pos, MaxTextureSize, VideoSize, VideoTopLeft); 
+	HRESULT hr = m_pSub->GetTextureSize(pos, MaxTextureSize, VideoSize, VideoTopLeft);
 	return hr;
 };
 
@@ -126,19 +125,20 @@ STDMETHODIMP_(int) CRenderedHdmvSubtitle::GetStreamCount()
 
 STDMETHODIMP CRenderedHdmvSubtitle::GetStreamInfo(int iStream, WCHAR** ppName, LCID* pLCID)
 {
-	if(iStream != 0) return E_INVALIDARG;
+	if(iStream != 0) {
+		return E_INVALIDARG;
+	}
 
-	if(ppName)
-	{
+	if(ppName) {
 		*ppName = (WCHAR*)CoTaskMemAlloc((m_name.GetLength()+1)*sizeof(WCHAR));
-		if(!(*ppName))
+		if(!(*ppName)) {
 			return E_OUTOFMEMORY;
+		}
 
 		wcscpy_s (*ppName, m_name.GetLength()+1, CStringW(m_name));
 	}
 
-	if(pLCID)
-	{
+	if(pLCID) {
 		*pLCID = m_lcid;
 	}
 

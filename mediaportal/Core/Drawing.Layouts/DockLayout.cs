@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ using System;
 using System.Windows;
 using MediaPortal.GUI.Library;
 
+/*
 namespace MediaPortal.Drawing.Layouts
 {
   public class DockLayout : ILayout
@@ -221,3 +222,4 @@ namespace MediaPortal.Drawing.Layouts
     #endregion Fields
   }
 }
+*/

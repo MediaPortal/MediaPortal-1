@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -60,9 +60,10 @@ namespace MediaPortal.GUI.Library
 
     public static string GetSkinString(int key)
     {
-      if (_skinStringSettings.ContainsKey(key))
+      SkinString skin = null;
+      if (_skinStringSettings.TryGetValue(key, out skin))
       {
-        return _skinStringSettings[key].Value;
+        return skin.Value;
       }
       return "";
     }
@@ -89,9 +90,10 @@ namespace MediaPortal.GUI.Library
 
     public static bool GetSkinBool(int key)
     {
-      if (_skinBoolSettings.ContainsKey(key))
+      SkinBool skinBool = null;
+      if (_skinBoolSettings.TryGetValue(key, out skinBool))
       {
-        return _skinBoolSettings[key].Value;
+        return skinBool.Value;
       }
       return false;
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using MediaPortal.Configuration;
 using MpeCore.Classes.ProviderHelpers;
 using MpeCore.Interfaces;
 using MpeCore.Classes;
@@ -44,7 +43,6 @@ namespace MpeCore
     public static ExtensionCollection InstalledExtensions { get; set; }
     public static ExtensionCollection KnownExtensions { get; set; }
 
-    
 
     private static List<string> extensionUrlList = new List<string>();
 
@@ -133,7 +131,7 @@ namespace MpeCore
     /// <value>The base folder.</value>
     public static string BaseFolder
     {
-      get { return string.Format("{0}\\V2", Config.GetFolder(Config.Dir.Installer)); }
+      get { return string.Format("{0}\\V2", Util.InstallerConfigDir); }
     }
 
     /// <summary>

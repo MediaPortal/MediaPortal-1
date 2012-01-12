@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using CSScriptLibrary;
 using MediaPortal.Configuration;
@@ -112,41 +113,38 @@ namespace MediaPortal.Video.Database
 
     public class IMDBEnumerator : IEnumerator
     {
-      private int position = -1;
-      private IMDB t;
+      private int _position = -1;
+      private IMDB _t;
 
       public IMDBEnumerator(IMDB t)
       {
-        this.t = t;
+        _t = t;
       }
 
       public bool MoveNext()
       {
-        if (position < t.elements.Count - 1)
+        if (_position < _t._elements.Count - 1)
         {
-          position++;
+          _position++;
           return true;
         }
-        else
-        {
-          return false;
-        }
+        return false;
       }
 
       public void Reset()
       {
-        position = -1;
+        _position = -1;
       }
 
       public IMDBUrl Current // non-IEnumerator version: type-safe
       {
         get
         {
-          if (t.elements.Count == 0)
+          if (_t._elements.Count == 0)
           {
             return null;
           }
-          return (IMDBUrl)t.elements[position];
+          return (IMDBUrl)_t._elements[_position];
         }
       }
 
@@ -154,11 +152,11 @@ namespace MediaPortal.Video.Database
       {
         get
         {
-          if (t.elements.Count == 0)
+          if (_t._elements.Count == 0)
           {
             return null;
           }
-          return t.elements[position];
+          return _t._elements[_position];
         }
       }
     }
@@ -168,6 +166,7 @@ namespace MediaPortal.Video.Database
       private string _id;
       private int _limit = DEFAULT_SEARCH_LIMIT;
       private IIMDBScriptGrabber _grabber;
+      private bool _grabberLoaded;
 
       public string ID
       {
@@ -183,25 +182,28 @@ namespace MediaPortal.Video.Database
 
       public IIMDBScriptGrabber Grabber
       {
-        get { return _grabber; }
+        get
+        {
+          if (!_grabberLoaded)
+          {
+            if (!LoadScript())
+              Grabber = null;
+            _grabberLoaded = true; // only try to load it once
+          }
+          return _grabber;
+        }
         set { _grabber = value; }
       }
 
-      public MovieInfoDatabase(string _id, int _limit)
+      public MovieInfoDatabase(string id, int limit)
       {
-        ID = _id;
-        Limit = _limit;
-
-        if (!LoadScript())
-        {
-          Grabber = null;
-        }
+        ID = id;
+        Limit = limit;
       }
 
       public bool LoadScript()
       {
-        string scriptFileName = ScriptDirectory + @"\" + this.ID + ".csscript";
-        string compiledScriptFileName = ScriptDirectory + @"\" + this.ID + ".dll"; // Save the compiled script as dll
+        string scriptFileName = ScriptDirectory + @"\" + ID + ".csscript";
 
         // Script support script.csscript
         if (!File.Exists(scriptFileName))
@@ -213,9 +215,8 @@ namespace MediaPortal.Video.Database
         try
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-          //AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, compiledScriptFileName, false)); => causing Error: Access to the path is denied
-          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false)); 
-          this.Grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+          Grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
         }
         catch (Exception ex)
         {
@@ -232,9 +233,9 @@ namespace MediaPortal.Video.Database
     #region internal vars
 
     // list of the search results, containts objects of IMDBUrl
-    private ArrayList elements = new ArrayList();
+    private ArrayList _elements = new ArrayList();
 
-    private List<MovieInfoDatabase> databaseList = new List<MovieInfoDatabase>();
+    private List<MovieInfoDatabase> _databaseList = new List<MovieInfoDatabase>();
 
     private IProgress m_progress;
 
@@ -264,11 +265,11 @@ namespace MediaPortal.Video.Database
       {
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
 
-        databaseList.Clear();
+        _databaseList.Clear();
         if (iNumber <= 0)
         {
           // no given databases in XML - setting to IMDB
-          databaseList.Add(new MovieInfoDatabase(DEFAULT_DATABASE, DEFAULT_SEARCH_LIMIT));
+          _databaseList.Add(new MovieInfoDatabase(DEFAULT_DATABASE, DEFAULT_SEARCH_LIMIT));
         }
         else
         {
@@ -278,10 +279,10 @@ namespace MediaPortal.Video.Database
           // get the databases
           for (int i = 0; i < iNumber; i++)
           {
-            strDatabase = xmlreader.GetValueAsString("moviedatabase", "database" + i.ToString(), "IMDB");
-            iLimit = xmlreader.GetValueAsInt("moviedatabase", "limit" + i.ToString(), DEFAULT_SEARCH_LIMIT);
+            strDatabase = xmlreader.GetValueAsString("moviedatabase", "database" + i, "IMDB");
+            iLimit = xmlreader.GetValueAsInt("moviedatabase", "limit" + i, DEFAULT_SEARCH_LIMIT);
 
-            foreach (MovieInfoDatabase db in databaseList)
+            foreach (MovieInfoDatabase db in _databaseList)
             {
               if (db.ID == strDatabase)
               {
@@ -289,7 +290,7 @@ namespace MediaPortal.Video.Database
               }
             }
 
-            databaseList.Add(new MovieInfoDatabase(strDatabase, iLimit));
+            _databaseList.Add(new MovieInfoDatabase(strDatabase, iLimit));
 
             DoubleEntry:
             continue;
@@ -303,12 +304,12 @@ namespace MediaPortal.Video.Database
     /// </summary>
     public int Count
     {
-      get { return elements.Count; }
+      get { return _elements.Count; }
     }
 
     public IMDBUrl this[int index]
     {
-      get { return (IMDBUrl)elements[index]; }
+      get { return (IMDBUrl)_elements[index]; }
     }
 
     public IMDBEnumerator GetEnumerator() // non-IEnumerable version
@@ -320,7 +321,7 @@ namespace MediaPortal.Video.Database
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator)new IMDBEnumerator(this);
+      return new IMDBEnumerator(this);
     }
 
     #endregion
@@ -334,7 +335,7 @@ namespace MediaPortal.Video.Database
     {
       string strBody = "";
       absoluteUri = string.Empty;
-      Stream ReceiveStream = null;
+      Stream receiveStream = null;
       StreamReader sr = null;
       WebResponse result = null;
       try
@@ -350,15 +351,15 @@ namespace MediaPortal.Video.Database
         }
         catch (Exception) {}
         result = req.GetResponse();
-        ReceiveStream = result.GetResponseStream();
+        receiveStream = result.GetResponseStream();
 
         // Encoding: depends on selected page
         Encoding encode = Encoding.GetEncoding(strEncode);
-        using (sr = new StreamReader(ReceiveStream, encode))
+        using (sr = new StreamReader(receiveStream, encode))
         {
-          strBody = sr.ReadToEnd();  
+          strBody = sr.ReadToEnd();
         }
-        
+
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }
@@ -376,11 +377,11 @@ namespace MediaPortal.Video.Database
           }
           catch (Exception) {}
         }
-        if (ReceiveStream != null)
+        if (receiveStream != null)
         {
           try
           {
-            ReceiveStream.Close();
+            receiveStream.Close();
           }
           catch (Exception) {}
         }
@@ -411,122 +412,15 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// make a searchstring out of the filename
     /// </summary>
-    private string GetSearchString(string strMovie)
+    public string GetSearchString(string strMovie)
     {
-      string strURL = strMovie;
-      strURL = strURL.ToLower();
-      strURL = strURL.Trim();
-
-      // @ 23.09.2004 by FlipGer
-      if (strURL.Length <= 7)
-      {
-        return strURL;
-      }
-      // END @ | i think it does not make much sense to parse such a short string
-      // and i have no problems with x-men on OFDB ;-) and a better result on IMDB with x-men (try out "x men" :-)
-
-      string strTmp = "";
-      int ipos = 0;
-      int iBracket = 0;
-      //bool	bSkip = false;
-      for (int i = 0; i < strURL.Length; ++i)
-      {
-        /* Why are numbers bigger than 999 skipped?
-        for (int c=0;i+c < strURL.Length&&Char.IsDigit(strURL[i+c]);c++)
-        {
-          Log.Info("c: {0}",c);
-          if (c==3)
-          {
-            i+=4;
-            break;
-          }
-        }*/
-        //if (i >=strURL.Length) break;
-        char kar = strURL[i];
-        if (kar == '[' || kar == '(')
-        {
-          iBracket++; //skip everthing between () and []
-        }
-        else if (kar == ']' || kar == ')')
-        {
-          iBracket--;
-        }
-        else if (iBracket <= 0)
-        {
-          // change all non cahrs or digits into ' '
-          if (!Char.IsLetterOrDigit(kar))
-          {
-            kar = ' ';
-          }
-          // skip whitespace at the beginning, only necessary if the "number skipping" is used
-          //if ((kar==' ') && (ipos==0)) continue;
-
-          // Mars Warrior @ 03-sep-2004.
-          // Check for ' ' and '+' to avoid double or more ' ' and '+' which
-          // mess up the search to the IMDB...
-          if (strTmp.Length == 0)
-          {
-            strTmp += kar;
-            ipos++;
-          }
-          else
-          {
-            if (
-              Char.IsLetterOrDigit(kar) ||
-              (kar == ' ' && strTmp[strTmp.Length - 1] != ' ')
-              //|| (kar == '+' && strTmp[strTmp.Length -1] != '+')
-              )
-            {
-              strTmp += kar;
-              ipos++;
-            }
-          }
-        }
-      }
-
-      strTmp = strTmp.Trim();
-
-      // Mars Warrior @ 03-sep-2004.
-      // The simple line "strTmp.ToLower()" does NOT work. As a result the wrong string
-      // (still includes the " dvd" etc. strings) is send to the IMDB causing wrong lookups
-      // By changing the line, everything is working MUCH better now ;-)
-
-      RemoveAllAfter(ref strTmp, "divx");
-      RemoveAllAfter(ref strTmp, "xvid");
-      RemoveAllAfter(ref strTmp, "dvd");
-      RemoveAllAfter(ref strTmp, " dvdrip");
-      RemoveAllAfter(ref strTmp, "svcd");
-      RemoveAllAfter(ref strTmp, "mvcd");
-      RemoveAllAfter(ref strTmp, "vcd");
-      RemoveAllAfter(ref strTmp, "cd");
-      RemoveAllAfter(ref strTmp, "ac3");
-      RemoveAllAfter(ref strTmp, "ogg");
-      RemoveAllAfter(ref strTmp, "ogm");
-      RemoveAllAfter(ref strTmp, "internal");
-      RemoveAllAfter(ref strTmp, "fragment");
-      RemoveAllAfter(ref strTmp, "proper");
-      RemoveAllAfter(ref strTmp, "limited");
-      RemoveAllAfter(ref strTmp, "rerip");
-
-      RemoveAllAfter(ref strTmp, "+divx");
-      RemoveAllAfter(ref strTmp, "+xvid");
-      RemoveAllAfter(ref strTmp, "+dvd");
-      RemoveAllAfter(ref strTmp, "+dvdrip");
-      RemoveAllAfter(ref strTmp, "+svcd");
-      RemoveAllAfter(ref strTmp, "+mvcd");
-      RemoveAllAfter(ref strTmp, "+vcd");
-      RemoveAllAfter(ref strTmp, "+cd");
-      RemoveAllAfter(ref strTmp, "+ac3");
-      RemoveAllAfter(ref strTmp, "+ogg");
-      RemoveAllAfter(ref strTmp, "+ogm");
-      RemoveAllAfter(ref strTmp, "+internal");
-      RemoveAllAfter(ref strTmp, "+fragment");
-      RemoveAllAfter(ref strTmp, "+proper");
-      RemoveAllAfter(ref strTmp, "+limited");
-      RemoveAllAfter(ref strTmp, "+rerip");
-
-      // return the new formatted string
-      return strTmp;
+      string strUrl = strMovie;
+      strUrl = strUrl.Trim();
+      Regex rx = new Regex(@"(([\(\{\[]|\b)((576|720|1080)[pi]|dir(ectors )?cut|dvd([r59]|rip|scr(eener)?)|(avc)?hd|wmv|ntsc|pal|mpeg|dsr|r[1-5]|bd[59]|dts|ac3|blu(-)?ray|[hp]dtv|stv|hddvd|xvid|divx|x264|dxva|(?-i)FEST[Ii]VAL|L[iI]M[iI]TED|[WF]S|PROPER|REPACK|RER[Ii]P|REAL|RETA[Ii]L|EXTENDED|REMASTERED|UNRATED|CHRONO|THEATR[Ii]CAL|DC|SE|UNCUT|[Ii]NTERNAL|V\d{1}|BR[Rr]ip|[DS]UBBED)([\]\)\}]|\b)(-[^\s]+$)?)", RegexOptions.IgnoreCase);
+      strUrl = rx.Replace(strUrl, "")
+                 .Replace(".", " ")
+                 .Replace("_", " ").Trim();
+      return strUrl;
     }
 
     #endregion
@@ -536,6 +430,8 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// this method switches between the different databases to get the search results
     /// </summary>
+    /// 
+    // Changed
     public void Find(string strMovie)
     {
       try
@@ -543,12 +439,12 @@ namespace MediaPortal.Video.Database
         // getting searchstring
         string strSearch = HttpUtility.UrlEncode(GetSearchString(strMovie));
 
-        // be aware of german special chars ���� äöüß %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
+        // be aware of german special chars äöüß Ă¤Ă¶ĂĽĂź %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
         strSearch = strSearch.Replace("%c3%a4", "%E4");
         strSearch = strSearch.Replace("%c3%b6", "%F6");
         strSearch = strSearch.Replace("%c3%bc", "%FC");
         strSearch = strSearch.Replace("%c3%9f", "%DF");
-        // be aware of spanish special chars ����������� %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
+        // be aware of spanish special chars ńáéíóúÁÉÍÓÚ %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
         strSearch = strSearch.Replace("%c3%b1", "%F1");
         strSearch = strSearch.Replace("%c3%a0", "%E0");
         strSearch = strSearch.Replace("%c3%a1", "%E1");
@@ -560,12 +456,29 @@ namespace MediaPortal.Video.Database
         strSearch = strSearch.Replace("%c3%b3", "%F3");
         strSearch = strSearch.Replace("%c3%b9", "%F9");
         strSearch = strSearch.Replace("%c3%ba", "%FA");
-        elements.Clear();
+        // Extra Codes
+        strSearch = strSearch.Replace("%c3%b8", "%F8"); //ø
+        strSearch = strSearch.Replace("%c3%98", "%D8"); //ø
+        strSearch = strSearch.Replace("%c3%86", "%C6"); //Æ
+        strSearch = strSearch.Replace("%c3%a6", "%E6"); //æ
+        strSearch = strSearch.Replace("%c2%bd", "%BD"); //½
+        // CRO
+        strSearch = strSearch.Replace("%c4%86", "%0106"); //Č
+        strSearch = strSearch.Replace("%c4%87", "%0107"); //č
+        strSearch = strSearch.Replace("%c4%8c", "%010C"); //Ć
+        strSearch = strSearch.Replace("%c4%8d", "%010D"); //ć
+        strSearch = strSearch.Replace("%c4%90", "%0110"); //Đ
+        strSearch = strSearch.Replace("%c4%91", "%0111"); //đ
+        strSearch = strSearch.Replace("%c5%a0", "%0160"); //Š
+        strSearch = strSearch.Replace("%c5%a1", "%0161"); //š
+        strSearch = strSearch.Replace("%c5%bc", "%017c"); //Ž
+        strSearch = strSearch.Replace("%c5%bd", "%017d"); //ž
 
-        string line1, line2, line3;
-        line1 = GUILocalizeStrings.Get(984);
-        line2 = GetSearchString(strMovie).Replace("+", " ");
-        line3 = "";
+        _elements.Clear();
+
+        string line1 = GUILocalizeStrings.Get(984);
+        string line2 = GetSearchString(strMovie).Replace("+", " ");
+        string line3 = "";
         int percent = 0;
 
         if (m_progress != null)
@@ -573,7 +486,7 @@ namespace MediaPortal.Video.Database
           m_progress.OnProgress(line1, line2, line3, percent);
         }
         // search the desired databases
-        foreach (MovieInfoDatabase db in databaseList)
+        foreach (MovieInfoDatabase db in _databaseList)
         {
           // only do a search if requested
           if (db.Limit <= 0)
@@ -597,8 +510,8 @@ namespace MediaPortal.Video.Database
 
           try
           {
-            db.Grabber.FindFilm(strSearch, db.Limit, elements);
-            percent += 100 / databaseList.Count;
+            db.Grabber.FindFilm(strSearch, db.Limit, _elements);
+            percent += 100 / _databaseList.Count;
             if (m_progress != null)
             {
               m_progress.OnProgress(line1, line2, line3, percent);
@@ -636,7 +549,7 @@ namespace MediaPortal.Video.Database
         string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
 
         MovieInfoDatabase currentDB = null;
-        foreach (MovieInfoDatabase db in databaseList)
+        foreach (MovieInfoDatabase db in _databaseList)
         {
           if (db.ID == url.Database)
           {
@@ -669,16 +582,15 @@ namespace MediaPortal.Video.Database
 
     public void FindActor(string strActor)
     {
-      string strURL;
       // getting searchstring
       string strSearch = HttpUtility.UrlEncode(GetSearchString(strActor));
 
-      // be aware of german special chars ���� äöüß %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
+      // be aware of german special chars äöüß Ă¤Ă¶ĂĽĂź %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
       strSearch = strSearch.Replace("%c3%a4", "%E4");
       strSearch = strSearch.Replace("%c3%b6", "%F6");
       strSearch = strSearch.Replace("%c3%bc", "%FC");
       strSearch = strSearch.Replace("%c3%9f", "%DF");
-      // be aware of spanish special chars ����������� %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
+      // be aware of spanish special chars ńáéíóúÁÉÍÓÚ %E4%F6%FC%DF %c3%a4%c3%b6%c3%bc%c3%9f
       strSearch = strSearch.Replace("%c3%b1", "%F1");
       strSearch = strSearch.Replace("%c3%a0", "%E0");
       strSearch = strSearch.Replace("%c3%a1", "%E1");
@@ -690,42 +602,39 @@ namespace MediaPortal.Video.Database
       strSearch = strSearch.Replace("%c3%b3", "%F3");
       strSearch = strSearch.Replace("%c3%b9", "%F9");
       strSearch = strSearch.Replace("%c3%ba", "%FA");
+      strSearch = strSearch.Replace("%c3%b8", "%F8"); //ø
+      strSearch = strSearch.Replace("%c3%98", "%D8"); //ø
+      strSearch = strSearch.Replace("%c3%86", "%C6"); //Æ
+      strSearch = strSearch.Replace("%c3%a6", "%E6"); //æ
 
-      elements.Clear();
+      _elements.Clear();
 
-      string line1, line2, line3;
-      line1 = GUILocalizeStrings.Get(986);
-      line2 = strActor;
-      line3 = "";
-      int percent = -1;
-      if (m_progress != null)
-      {
-        m_progress.OnProgress(line1, line2, line3, percent);
-      }
-      strURL = String.Format("http://us.imdb.com/find?q={0};nm=on;mx=20", strSearch);
-      FindIMDBActor(strURL, strActor);
+      string strURL = String.Format("http://akas.imdb.com/find?s=nm&q=" + strSearch, strSearch);
+      FindIMDBActor(strURL);
     }
 
-    private void FindIMDBActor(string strURL, string strActor)
+    // Changed - IMDB changed HTML code
+    private void FindIMDBActor(string strURL)
     {
       try
       {
-        HTMLUtil htmlUtil = new HTMLUtil();
         string absoluteUri;
+        // UTF-8 have problem with special country chars, default IMDB enc is used
         string strBody = GetPage(strURL, "utf-8", out absoluteUri);
         string value = string.Empty;
         HTMLParser parser = new HTMLParser(strBody);
         if ((parser.skipToEndOf("<title>")) &&
-            (parser.extractTo("</title>", ref value)) && !value.Equals("IMDb Name  Search"))
+            (parser.extractTo("</title>", ref value)) && !value.ToLower().Equals("imdb name search"))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = Util.Utils.RemoveParenthesis(value).Trim();
           IMDBUrl oneUrl = new IMDBUrl(absoluteUri, value, "IMDB");
-          elements.Add(oneUrl);
+          _elements.Add(oneUrl);
           return;
         }
         parser.resetPosition();
-        while (parser.skipToEndOfNoCase("found the following results"))
+        
+        while (parser.skipToEndOfNoCase("Exact Matches"))
         {
           string url = string.Empty;
           string name = string.Empty;
@@ -734,12 +643,38 @@ namespace MediaPortal.Video.Database
           {
             parser.skipToEndOf("href=\"");
             parser.extractTo("\"", ref url);
+            parser.skipToEndOf("<br><a");
             parser.skipToEndOf(">");
             parser.extractTo("</a>", ref name);
             name = new HTMLUtil().ConvertHTMLToAnsi(name);
             name = Util.Utils.RemoveParenthesis(name).Trim();
-            IMDBUrl newUrl = new IMDBUrl("http://us.imdb.com" + url, name, "IMDB");
-            elements.Add(newUrl);
+            IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
+            _elements.Add(newUrl);
+          }
+          else
+          {
+            parser.skipToEndOfNoCase("</a>");
+          }
+        }
+        // Maybe more actors with the similar name
+        parser.resetPosition();
+        
+        while (parser.skipToEndOfNoCase("Popular Names"))
+        {
+          string url = string.Empty;
+          string name = string.Empty;
+          //<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
+          if (parser.skipToStartOf("href=\"/name/"))
+          {
+            parser.skipToEndOf("href=\"");
+            parser.extractTo("\"", ref url);
+            parser.skipToEndOf("<br><a");
+            parser.skipToEndOf(">");
+            parser.extractTo("</a>", ref name);
+            name = new HTMLUtil().ConvertHTMLToAnsi(name);
+            name = Util.Utils.RemoveParenthesis(name).Trim();
+            IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
+            _elements.Add(newUrl);
           }
           else
           {
@@ -753,12 +688,12 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public bool GetActorDetails(IMDBUrl url, out IMDBActor actor)
+    // Changed - parsing all actor DB fields through HTML (IMDB changed HTML code)
+    public bool GetActorDetails(IMDBUrl url, bool director, out IMDBActor actor)
     {
       actor = new IMDBActor();
       try
       {
-        //<a name="headshot" href="photogallery"><img border="0" src="http://ia.imdb.com/media/imdb/01/I/84/36/12m.jpg" width="100" height="140" alt="Bruce Willis (I)"></a>
         string absoluteUri;
         string strBody = GetPage(url.URL, "utf-8", out absoluteUri);
         if (strBody == null)
@@ -769,210 +704,221 @@ namespace MediaPortal.Video.Database
         {
           return false;
         }
+        // IMDBActorID
+        try
+        {
+          int pos = url.URL.LastIndexOf("nm");
+          string id = url.URL.Substring(pos, 9).Replace("/", string.Empty);
+          actor.IMDBActorID = id;
+        }
+        catch (Exception) {}
+
         HTMLParser parser = new HTMLParser(strBody);
         string strThumb = string.Empty;
         string value = string.Empty;
         string value2 = string.Empty;
+        // Actor name
         if ((parser.skipToEndOf("<title>")) &&
-            (parser.extractTo("</title>", ref value)))
+            (parser.extractTo("- IMDb</title>", ref value)))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = Util.Utils.RemoveParenthesis(value).Trim();
-          //Log.Info("Actor Name:{0}", value);
-          actor.Name = value;
+          actor.Name = HttpUtility.HtmlDecode(value.Trim());
         }
         if (actor.Name == string.Empty)
         {
           actor.Name = url.Title;
         }
-        //get picture
-        if ((parser.skipToEndOf("<a name=\"headshot")) &&
-            (parser.skipToEndOf("<img")) &&
-            (parser.skipToEndOf("src=\"")) &&
-            (parser.extractTo("\"", ref strThumb)))
+        // Photo
+        string parserTxt = parser.Content;
+        string photoBlock = string.Empty;
+        if (parser.skipToStartOf("<td id=\"img_primary\"") &&
+            (parser.extractTo("</td>", ref photoBlock)))
         {
-          //Log.Info("Actor Thumb:{0}", strThumb);
-          actor.ThumbnailUrl = strThumb;
+          parser.Content = photoBlock;
+          if ((parser.skipToEndOf("<img src=\"")) &&
+              (parser.extractTo("\"", ref strThumb)))
+          {
+            actor.ThumbnailUrl = strThumb;
+          }
+          parser.Content = parserTxt;
         }
-        if ((parser.skipToEndOf("/OnThisDay?")) &&
+        // Birth date
+        if ((parser.skipToEndOf("Born:")) &&
+            (parser.skipToEndOf("birth_monthday=")) &&
             (parser.skipToEndOf(">")) &&
             (parser.extractTo("<", ref value)) &&
-            (parser.skipToEndOf("/BornInYear?")) &&
+            (parser.skipToEndOf("year=")) &&
             (parser.extractTo("\"", ref value2)))
+          
         {
-          //Log.Info("Actor Birth:{0} {1}", value, value2);
           actor.DateOfBirth = value + " " + value2;
         }
+        // Death date
+        if ((parser.skipToEndOf(">Died:</h4>")) &&
+            (parser.skipToEndOf("deaths\">")) &&
+            (parser.extractTo("<", ref value)) &&
+            (parser.skipToEndOf("death_date=")) &&
+            (parser.extractTo("\"", ref value2)))
+        {
+          if (actor.DateOfBirth == string.Empty)
+            actor.DateOfBirth = "?";
+          actor.DateOfBirth += " ~ " + value + " " + value2;
+        }
 
-        if ((parser.skipToEndOf("/BornWhere?")) &&
+        parser.resetPosition();
+        // Birth place
+        if ((parser.skipToEndOf("birth_place=")) &&
             (parser.skipToEndOf(">")) &&
             (parser.extractTo("<", ref value)))
         {
-          //Log.Info("Actor Place:{0}", value);
-          actor.PlaceOfBirth = value;
+          actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
         }
-        //find Mini Biography
-        //<dt><div class="ch">Mini biography</div></dt>
-        //<dd><a href="/name/nm0000193/">Demi Moore</a> was born 1962 in Roswell, New Mexico. Her father left her mother... <a href="bio">(show more)</a></dd>
-        //</dl>
-        if ((parser.skipToEndOf("Mini biography")) &&
-            (parser.skipToEndOf("</h5>")) &&
-            (parser.extractTo("<a", ref value)) &&
-            (parser.skipToEndOf("href=\"")) &&
-            (parser.extractTo("\"", ref value2)))
+        //Mini Biography
+        parser.resetPosition();
+        if ((parser.skipToEndOf("<td id=\"overview-top\">")) &&
+            (parser.skipToEndOf("<p>")) &&
+            (parser.extractTo("See full bio</a>", ref value)))
         {
-          //Log.Info("Actor Mini:{0}", value);
-          //Log.Info("Actor BIO URL:{0}", value2);
-          actor.MiniBiography = Util.Utils.stripHTMLtags(value).Trim();
+          value = new HTMLUtil().ConvertHTMLToAnsi(value);
+          actor.MiniBiography = Util.Utils.stripHTMLtags(value);
+          actor.MiniBiography = actor.MiniBiography.Replace("See full bio »", string.Empty).Trim();
           actor.MiniBiography = HttpUtility.HtmlDecode(actor.MiniBiography); // Remove HTML entities like &#189;
-
-          //get complete biography
-          string bioURL = absoluteUri;
-          int pos = bioURL.IndexOf("?");
-          if (pos > 0)
+          if (actor.MiniBiography != string.Empty)
           {
-            bioURL = bioURL.Substring(0, pos);
-          }
-          if (!bioURL.EndsWith("/"))
-          {
-            bioURL += "/";
-          }
-          bioURL += value2;
-          //Log.Info("Bio Url:{0}", bioURL);
-          string strBioBody = GetPage(bioURL, "utf-8", out absoluteUri);
-          if (strBioBody != null && strBioBody.Length > 0)
-          {
-            HTMLParser parser1 = new HTMLParser(strBioBody);
-            if (parser1.skipToEndOf("<h5>Mini biography</h5>") &&
-                parser1.extractTo("</p>", ref value))
+            // get complete biography
+            string bioURL = absoluteUri;
+            if (!bioURL.EndsWith("/"))
             {
-              //Log.Info("Actor Bio:{0}", value);
-              actor.Biography = Util.Utils.stripHTMLtags(value).Trim();
-              actor.Biography = HttpUtility.HtmlDecode(actor.Biography); // Remove HTML entities like &#189;
+              bioURL += "/bio";
+            }
+            else
+              bioURL += "bio";
+            string strBioBody = GetPage(bioURL, "utf-8", out absoluteUri);
+            if (!string.IsNullOrEmpty(strBioBody))
+            {
+              HTMLParser parser1 = new HTMLParser(strBioBody);
+              if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
+                  parser1.extractTo("</p>", ref value))
+              {
+                value = new HTMLUtil().ConvertHTMLToAnsi(value);
+                actor.Biography = Util.Utils.stripHTMLtags(value).Trim();
+                actor.Biography = HttpUtility.HtmlDecode(actor.Biography); // Remove HTML entities like &#189;
+              }
             }
           }
         }
-        if (parser.skipToEndOf("<ol>"))
+        // Person is movie director or an actor/actress
+        bool isActorPass = false;
+        bool isDirectorPass = false;
+        parser.resetPosition();
+
+        if (director)
+        {
+          if ((parser.skipToEndOf("name=\"Director\">Director</a>")) &&
+              (parser.skipToEndOf("</div>")))
+          {
+            isDirectorPass = true;
+          }
+        }
+        else
+        {
+          if (parser.skipToEndOf("name=\"Actress\">Actress</a>") || parser.skipToEndOf("name=\"Actor\">Actor</a>"))
+          {
+            isActorPass = true;
+          }
+        }
+        // Get filmography
+        if (isDirectorPass | isActorPass)
         {
           string movies = string.Empty;
-          if (parser.extractTo("</ol>", ref movies))
+          // Get films and roles block
+          if (parser.extractTo("<div id", ref movies))
           {
-            //Log.Info("Actor Movies:{0}", movies);
             parser.Content = movies;
           }
-          while (parser.skipToStartOf("<li>"))
+          // Parse block for evey film and get year, title and it's imdbID and role
+          while (parser.skipToStartOf("<span class=\"year_column\""))
           {
             string movie = string.Empty;
-            if (parser.extractTo("</li>", ref movie))
+            if (parser.extractTo("<div class", ref movie))
             {
               movie += "</li>";
-              int start = movie.IndexOf("<i>");
-              int end = movie.IndexOf("</i>");
-              if ((start >= 0) && (end >= 0))
-              {
-                movie = movie.Substring(0, start) + movie.Substring(end + 4);
-              }
-              //Log.Info("Actor Movie:{0}", movie);
               HTMLParser movieParser = new HTMLParser(movie);
               string title = string.Empty;
-              string episode = string.Empty;
               string strYear = string.Empty;
               string role = string.Empty;
+              string imdbID = string.Empty;
+              // IMDBid
+              movieParser.skipToEndOf("title/");
+              movieParser.extractTo("/", ref imdbID);
+              // Title
+              movieParser.resetPosition();
               movieParser.skipToEndOf("<a");
               movieParser.skipToEndOf(">");
-              movieParser.extractTo("</a>", ref title);
-              title = HttpUtility.HtmlDecode(title); // Remove HTML entities like &#189;
-              //Log.Info("Actor Movie title:{0}", title);
-              bool isTvSeries = false;
-              while (movieParser.skipToEndOf("- <a"))
+              movieParser.extractTo("<br/>", ref title);
+              title = Util.Utils.stripHTMLtags(title);
+              title = title.Replace("\n", " ").Replace("\r", string.Empty);
+              title = HttpUtility.HtmlDecode(title.Trim()); // Remove HTML entities like &#189;
+              // Year
+              movieParser.resetPosition();
+              if (movieParser.skipToStartOf(">20") &&
+                  movieParser.skipToEndOf(">"))
               {
-                isTvSeries = true;
-                if (movieParser.skipToEndOf(">"))
-                {
-                  movieParser.extractTo("</a>", ref episode);
-                  episode = HttpUtility.HtmlDecode(episode); // Remove HTML entities like &#189;
-                  //Log.Info("Actor Movie episode:{0}", episode);
-                }
-                if (movieParser.skipToStartOf("(20") &&
-                    movieParser.skipToEndOf("("))
-                {
-                  movieParser.extractTo(")", ref strYear);
-                  //Log.Info("Actor Episode year:{0}", strYear);
-                }
-                else if (movieParser.skipToStartOf("(19") &&
-                         movieParser.skipToEndOf("("))
-                {
-                  movieParser.extractTo(")", ref strYear);
-                  //Log.Info("Actor Episode year:{0}", strYear);
-                }
-                if (movieParser.skipToEndOf(".... "))
-                {
-                  movieParser.extractTo("<", ref role);
-                  //Log.Info("Actor Episode role:{0}", role);
-                  role = role.Trim();
-                  role = HttpUtility.HtmlDecode(role); // Remove HTML entities like &#189;
-                }
-
-                int year = 0;
-                try
-                {
-                  year = Int32.Parse(strYear);
-                }
-                catch (Exception)
-                {
-                  year = 1900;
-                }
-                IMDBActor.IMDBActorMovie actorMovie = new IMDBActor.IMDBActorMovie();
-                actorMovie.MovieTitle = title + "-" + episode;
-                actorMovie.Role = role;
-                actorMovie.Year = year;
-                actor.Add(actorMovie);
-                //Log.Info("Actor Movie {0} as {1},{2}", actorMovie.MovieTitle, actorMovie.Role, actorMovie.Year);
+                movieParser.extractTo("<", ref strYear);
               }
-              if (!isTvSeries)
+              else if (movieParser.skipToStartOf(">19") &&
+                       movieParser.skipToEndOf(">"))
               {
-                if (movieParser.skipToStartOf("(20") &&
-                    movieParser.skipToEndOf("("))
-                {
-                  movieParser.extractTo(")", ref strYear);
-                  //Log.Info("Actor Movie year:{0}", strYear);
-                }
-                else if (movieParser.skipToStartOf("(19") &&
-                         movieParser.skipToEndOf("("))
-                {
-                  movieParser.extractTo(")", ref strYear);
-                  //Log.Info("Actor Movie year:{0}", strYear);
-                }
-                if (movieParser.skipToEndOf(".... "))
-                {
-                  movieParser.extractTo("<", ref role);
-                  //Log.Info("Actor Movie role:{0}", role);
-                  role = role.Trim();
-                }
-
-                int year = 0;
-                try
-                {
-                  year = Int32.Parse(strYear);
-                }
-                catch (Exception)
-                {
-                  year = 1900;
-                }
-                IMDBActor.IMDBActorMovie actorMovie = new IMDBActor.IMDBActorMovie();
-                actorMovie.MovieTitle = title;
-                actorMovie.Role = role;
-                actorMovie.Year = year;
-                actor.Add(actorMovie);
+                movieParser.extractTo("<", ref strYear);
               }
+              // Roles
+              if ((director == false) && (movieParser.skipToEndOf("<br/>"))) // Role case 1, no character link
+              {
+                movieParser.extractTo("<", ref role);
+                role = Util.Utils.stripHTMLtags(role).Trim();
+                role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
+                                                .Replace("\r", string.Empty).Trim());
+                if (role == string.Empty) // Role case 2, with character link
+                {
+                  movieParser.resetPosition();
+                  movieParser.skipToEndOf("<br/>");
+                  movieParser.extractTo("</a>", ref role);
+                  role = Util.Utils.stripHTMLtags(role).Trim();
+                  role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
+                                                  .Replace("\r", string.Empty).Trim());
+                }
+              }
+              else
+              {
+                // Just director
+                if (director)
+                  role = "Director";
+              }
+
+              int year = 0;
+              try
+              {
+                year = Int32.Parse(strYear.Substring(0, 4));
+              }
+              catch (Exception)
+              {
+                year = 1900;
+              }
+              IMDBActor.IMDBActorMovie actorMovie = new IMDBActor.IMDBActorMovie();
+              actorMovie.MovieTitle = title;
+              actorMovie.Role = role;
+              actorMovie.Year = year;
+              actorMovie.imdbID = imdbID;
+              actor.Add(actorMovie);
             }
           }
         }
         return true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        //Log.Info("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL,ex.Message,ex.Source,ex.StackTrace);
+        Log.Error("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL, ex.Message, ex.Source, ex.StackTrace);
       }
       return false;
     }

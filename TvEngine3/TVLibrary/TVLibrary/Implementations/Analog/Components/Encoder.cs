@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,9 +19,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.Implementations.DVB;
+using TvDatabase;
 
 namespace TvLibrary.Implementations.Analog.Components
 {
@@ -42,12 +44,12 @@ namespace TvLibrary.Implementations.Analog.Components
     private IPin _pinCapture;
 
     /// <summary>
-    /// The video encoder device
+    /// The hw video encoder device
     /// </summary>
     private DsDevice _videoEncoderDevice;
 
     /// <summary>
-    /// The audio encoder device
+    /// The hw audio encoder device
     /// </summary>
     private DsDevice _audioEncoderDevice;
 
@@ -80,6 +82,16 @@ namespace TvLibrary.Implementations.Analog.Components
     /// The analog mpeg muxer filter
     /// </summary>
     private IBaseFilter _filterAnalogMpegMuxer;
+
+    /// <summary>
+    /// The sw video encoder device
+    /// </summary>
+    private DsDevice _videoCompressorDevice;
+
+    /// <summary>
+    /// The sw audio encoder device
+    /// </summary>
+    private DsDevice _audioCompressorDevice;
 
     /// <summary>
     /// The sw audio encoder filter
@@ -131,6 +143,8 @@ namespace TvLibrary.Implementations.Analog.Components
     /// </summary>
     private bool _pinVideoConnected;
 
+    private TvBusinessLayer _layer;
+
     #endregion
 
     #region properties
@@ -167,12 +181,12 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_filterVideoEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterVideoEncoder) > 0) {}
+        while (Release.ComObject(_filterVideoEncoder) > 0) {}
         _filterVideoEncoder = null;
       }
       if (_filterAudioEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterAudioEncoder) > 0) {}
+        while (Release.ComObject(_filterAudioEncoder) > 0) {}
         _filterAudioEncoder = null;
       }
       if (_filterMpeg2Demux != null)
@@ -250,6 +264,16 @@ namespace TvLibrary.Implementations.Analog.Components
         DevicesInUse.Instance.Remove(_multiplexerDevice);
         _multiplexerDevice = null;
       }
+      if (_videoCompressorDevice != null)
+      {
+        EncodersInUse.Instance.Remove(_videoCompressorDevice);
+        _videoCompressorDevice = null;
+      }
+      if (_audioCompressorDevice != null)
+      {
+        EncodersInUse.Instance.Remove(_audioCompressorDevice);
+        _audioCompressorDevice = null;
+      }
     }
 
     #endregion
@@ -268,6 +292,7 @@ namespace TvLibrary.Implementations.Analog.Components
     public bool CreateFilterInstance(IFilterGraph2 _graphBuilder, Tuner _tuner, TvAudio _tvAudio, Crossbar _crossbar,
                                      Capture _capture)
     {
+      _layer = new TvBusinessLayer();
       // now things get difficult.
       // Here we can have the following situations:
       // 1. we're done, the video capture filter has a mpeg-2 audio output pin
@@ -1486,24 +1511,17 @@ namespace TvLibrary.Implementations.Analog.Components
       Log.Log.WriteFile("analog: AddAudioCompressor {0}", FilterGraphTools.LogPinInfo(_pinAnalogAudio));
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.AudioCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
-      string[] audioEncoders = new[]
-                                 {
-                                   "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder",
-                                   "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder",
-                                   "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)",
-                                   "Pinnacle MPEG Layer-2 Audio Encoder", "MainConcept (Hauppauge) MPEG Audio Encoder",
-                                   "NVIDIA Audio Encoder", "MainConcept (HCW) Layer II Audio Encoder"
-                                 };
-      DsDevice[] audioDevices = new DsDevice[audioEncoders.Length];
-      for (int x = 0; x < audioEncoders.Length; ++x)
+      IList<SoftwareEncoder> audioEncoders = _layer.GetSofwareEncodersAudio();
+      DsDevice[] audioDevices = new DsDevice[audioEncoders.Count];
+      for (int x = 0; x < audioEncoders.Count; ++x)
       {
         audioDevices[x] = null;
       }
       for (int i = 0; i < devices1.Length; i++)
       {
-        for (int x = 0; x < audioEncoders.Length; ++x)
+        for (int x = 0; x < audioEncoders.Count; ++x)
         {
-          if (audioEncoders[x] == devices1[i].Name)
+          if (audioEncoders[x].Name == devices1[i].Name)
           {
             audioDevices[x] = devices1[i];
             break;
@@ -1512,9 +1530,9 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       for (int i = 0; i < devices2.Length; i++)
       {
-        for (int x = 0; x < audioEncoders.Length; ++x)
+        for (int x = 0; x < audioEncoders.Count; ++x)
         {
-          if (audioEncoders[x] == devices2[i].Name)
+          if (audioEncoders[x].Name == devices2[i].Name)
           {
             audioDevices[x] = devices2[i];
             break;
@@ -1526,8 +1544,11 @@ namespace TvLibrary.Implementations.Analog.Components
       for (int i = 0; i < audioDevices.Length; ++i)
       {
         IBaseFilter tmp;
-        if (audioDevices[i] == null)
+        if (audioDevices[i] == null || !EncodersInUse.Instance.Add(audioDevices[i], audioEncoders[i]))
+        {
           continue;
+        }
+
         Log.Log.WriteFile("analog:  try compressor:{0}", audioDevices[i].Name);
         int hr;
         try
@@ -1537,7 +1558,8 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          Log.Log.WriteFile("analog: cannot add filter {0} to graph", audioDevices[i].Name);
+          Log.Log.WriteFile("analog: cannot add compressor to graph");
+          EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
         }
         if (hr != 0)
@@ -1548,12 +1570,16 @@ namespace TvLibrary.Implementations.Analog.Components
             _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("audiocompressor", tmp);
           }
+          EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
         }
         if (tmp == null)
+        {
+          EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
+        }
 
-        Log.Log.WriteFile("analog: connect audio pin->audio compressor");
+        Log.Log.WriteFile("analog:  connect audio pin->audio compressor");
         // check if this compressor filter has an mpeg audio output pin
         IPin pinAudio = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
         if (pinAudio == null)
@@ -1561,6 +1587,7 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: cannot find audio pin on compressor");
           _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("audiocompressor", tmp);
+          EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
         }
         // we found a nice compressor, lets try to connect the analog audio pin to the compressor
@@ -1571,10 +1598,12 @@ namespace TvLibrary.Implementations.Analog.Components
           //unable to connec the pin, remove it and continue with next compressor
           _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("audiocompressor", tmp);
+          EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
         }
-        Log.Log.WriteFile("analog: connected audio pin->audio compressor");
+
         //succeeded.
+        _audioCompressorDevice = audioDevices[i];
         _filterAudioCompressor = tmp;
         return true;
       }
@@ -1591,25 +1620,17 @@ namespace TvLibrary.Implementations.Analog.Components
       Log.Log.WriteFile("analog: AddVideoCompressor");
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.VideoCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
-      string[] videoEncoders = new[]
-                                 {
-                                   "InterVideo Video Encoder", "Ulead MPEG Encoder", "MainConcept MPEG Video Encoder",
-                                   "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder",
-                                   "CyberLink MPEG Video Encoder(Twinhan)", "MainConcept (Hauppauge) MPEG Video Encoder"
-                                   ,
-                                   "nanocosmos MPEG Video Encoder", "Pinnacle MPEG 2 Encoder",
-                                   "MainConcept (HCW) MPEG-2 Video Encoder"
-                                 };
-      DsDevice[] videoDevices = new DsDevice[videoEncoders.Length];
-      for (int x = 0; x < videoEncoders.Length; ++x)
+      IList<SoftwareEncoder> videoEncoders = _layer.GetSofwareEncodersVideo();
+      DsDevice[] videoDevices = new DsDevice[videoEncoders.Count];
+      for (int x = 0; x < videoEncoders.Count; ++x)
       {
         videoDevices[x] = null;
       }
       for (int i = 0; i < devices1.Length; i++)
       {
-        for (int x = 0; x < videoEncoders.Length; ++x)
+        for (int x = 0; x < videoEncoders.Count; ++x)
         {
-          if (videoEncoders[x] == devices1[i].Name)
+          if (videoEncoders[x].Name == devices1[i].Name)
           {
             videoDevices[x] = devices1[i];
             break;
@@ -1618,9 +1639,9 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       for (int i = 0; i < devices2.Length; i++)
       {
-        for (int x = 0; x < videoEncoders.Length; ++x)
+        for (int x = 0; x < videoEncoders.Count; ++x)
         {
-          if (videoEncoders[x] == devices2[i].Name)
+          if (videoEncoders[x].Name == devices2[i].Name)
           {
             videoDevices[x] = devices2[i];
             break;
@@ -1632,8 +1653,11 @@ namespace TvLibrary.Implementations.Analog.Components
       for (int i = 0; i < videoDevices.Length; i++)
       {
         IBaseFilter tmp;
-        if (videoDevices[i] == null)
+        if (videoDevices[i] == null || !EncodersInUse.Instance.Add(videoDevices[i], videoEncoders[i]))
+        {
           continue;
+        }
+
         Log.Log.WriteFile("analog:  try compressor:{0}", videoDevices[i].Name);
         int hr;
         try
@@ -1643,7 +1667,8 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          Log.Log.WriteFile("analog: cannot add filter {0} to graph", videoDevices[i].Name);
+          Log.Log.WriteFile("analog: cannot add compressor to graph");
+          EncodersInUse.Instance.Remove(videoDevices[i]);
           continue;
         }
         if (hr != 0)
@@ -1654,10 +1679,15 @@ namespace TvLibrary.Implementations.Analog.Components
             _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("videocompressor", tmp);
           }
+          EncodersInUse.Instance.Remove(videoDevices[i]);
           continue;
         }
         if (tmp == null)
+        {
+          EncodersInUse.Instance.Remove(videoDevices[i]);
           continue;
+        }
+
         // check if this compressor filter has an mpeg audio output pin
         Log.Log.WriteFile("analog:  connect video pin->video compressor");
         IPin pinVideo = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
@@ -1669,9 +1699,12 @@ namespace TvLibrary.Implementations.Analog.Components
           //unable to connec the pin, remove it and continue with next compressor
           _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("videocompressor", tmp);
+          EncodersInUse.Instance.Remove(videoDevices[i]);
           continue;
         }
+
         //succeeded.
+        _videoCompressorDevice = videoDevices[i];
         _filterVideoCompressor = tmp;
         return true;
       }
@@ -1909,12 +1942,18 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         _pinVideoConnected = true;
         Log.Log.WriteFile("analog: connected pinvideo->mpeg muxer");
-        //Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
+        // Some Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
+        // Note that this does *not* apply to the Adaptec AVC-3610.
         bool isAdaptec = false;
-        if (_capture.VideoCaptureName.Contains("Adaptec USB Capture Device") ||
-            _capture.VideoCaptureName.Contains("Adaptec PCI Capture Device")
-            || _capture.AudioCaptureName.Contains("Adaptec USB Capture Device") ||
-            _capture.AudioCaptureName.Contains("Adaptec PCI Capture Device"))
+        if (!_capture.VideoCaptureDevicePath.ToLower().StartsWith(@"@device:pnp:\\?\usb#vid_03f3&pid_0091#") && // Adaptec AVC-3610 tuner 1
+            !_capture.VideoCaptureDevicePath.ToLower().StartsWith(@"@device:pnp:\\?\usb#vid_03f3&pid_0093#") && // Adaptec AVC-3610 tuner 2
+            (
+              _capture.VideoCaptureName.Contains("Adaptec USB Capture Device") ||
+              _capture.VideoCaptureName.Contains("Adaptec PCI Capture Device") ||
+              _capture.AudioCaptureName.Contains("Adaptec USB Capture Device") ||
+              _capture.AudioCaptureName.Contains("Adaptec PCI Capture Device")
+            )
+        )
         {
           Log.Log.WriteFile("analog: AddMpegMuxer, Adaptec device found using LPCM");
           isAdaptec = true;

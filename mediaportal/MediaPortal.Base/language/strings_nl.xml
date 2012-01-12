@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Dutch" characters="255">
   <Section name="unmapped">
-    <String id="0">Programma's</String>
-    <String id="1">Afbeeldingen</String>
-    <String id="2">Muziek</String>
-    <String id="3">Video's</String>
+    <String id="0" prefix="Mijn ">Programma's</String>
+    <String id="1" prefix="Mijn ">Afbeeldingen</String>
+    <String id="2" prefix="Mijn ">Muziek</String>
+    <String id="3" prefix="Mijn ">Video's</String>
     <String id="4">TV-gids</String>
     <String id="5">Instellingen</String>
     <String id="6">Label ontbreekt!</String>
-    <String id="7">Bestanden</String>
-    <String id="8">Weer</String>
-    <String id="9">Nieuws</String>
-    <String id="10">Recepten</String>
+    <String id="7" prefix="Mijn ">Bestanden</String>
+    <String id="8" prefix="Mijn ">Weer</String>
+    <String id="9" prefix="Mijn ">Nieuws</String>
+    <String id="10" prefix="Mijn ">Recepten</String>
     <String id="11">maandag</String>
     <String id="12">dinsdag</String>
     <String id="13">woensdag</String>
@@ -31,7 +31,19 @@
     <String id="30">oktober</String>
     <String id="31">november</String>
     <String id="32">december</String>
-    <String id="50">DVD's</String>
+    <String id="33">Jan</String>
+    <String id="34">Feb</String>
+    <String id="35">Mar</String>
+    <String id="36">Apr</String>
+    <String id="37">Mei</String>
+    <String id="38">Jun</String>
+    <String id="39">Jul</String>
+    <String id="40">Aug</String>
+    <String id="41">Sep</String>
+    <String id="42">Okt</String>
+    <String id="43">Nov</String>
+    <String id="44">Dec</String>
+    <String id="50" prefix="Mijn ">DVD's</String>
     <String id="51">Schijf afspelen</String>
     <String id="60">Wachten op starten van TV service...</String>
     <String id="61">Wacht {0} seconde(n) tot opstarten...</String>
@@ -58,8 +70,8 @@
     <String id="110">Miniatuurweergaven maken</String>
     <String id="111">Snelkoppelingen</String>
     <String id="112">PAUZE</String>
-    <String id="113">Bestanden: Bron</String>
-    <String id="114">Bestanden: Bestemming</String>
+    <String id="113" prefix="Mijn ">Bestanden: Bron</String>
+    <String id="114" prefix="Mijn ">Bestanden: Bestemming</String>
     <String id="115">Kopiëren</String>
     <String id="116">Verplaatsen</String>
     <String id="117">Verwijderen</String>
@@ -122,7 +134,7 @@
     <String id="174">Genre:</String>
     <String id="175">Stemmingen:</String>
     <String id="176">Stijlen:</String>
-    <String id="177">Bekijk:</String>
+    <String id="177">Recensie:</String>
     <String id="178">Nummers:</String>
     <String id="179">Lied</String>
     <String id="180">Tijdsduur</String>
@@ -173,7 +185,7 @@
     <String id="225">Overgangstijd</String>
     <String id="226">Inschakelen PAL60</String>
     <String id="227">Inschakelen CDDB</String>
-    <String id="228">Willekeurige volgorde van afspeellijst bij laden</String>
+    <String id="228">Willekeurige volgorde van afspeellijst</String>
     <String id="229">Hardeschijf uitschakeltijd (min)</String>
     <String id="230">Filters</String>
     <String id="231">Geen</String>
@@ -257,28 +269,28 @@
     <String id="310">Automatische helderheid/contrast</String>
     <String id="311">Dering</String>
     <String id="312">(0=auto)</String>
-    <String id="313">Muziekdatabase reorganiseren?</String>
+    <String id="313">Muziekdatabase bijwerken?</String>
     <String id="314">Voorbereiden...</String>
     <String id="315">Databasefout</String>
     <String id="316">Liedjes doorzoeken...</String>
-    <String id="317">Reorganisatie geslaagd</String>
+    <String id="317">Bijwerken geslaagd</String>
     <String id="318">Markeren verwijderde liedjes</String>
-    <String id="319">Fout tijdens reorganiseren liedjes</String>
+    <String id="319">Fout tijdens bijwerken liedjes</String>
     <String id="320">Doorzoeken van artiesten...</String>
-    <String id="321">Fout tijdens reorganiseren van artiesten</String>
+    <String id="321">Fout tijdens bijwerken van artiesten</String>
     <String id="322">Doorzoeken van genres...</String>
-    <String id="323">Fout tijdens reorganiseren van genres</String>
+    <String id="323">Fout tijdens bijwerken van genres</String>
     <String id="324">Doorzoeken van mappen...</String>
-    <String id="325">Fout tijdens reorganiseren van mappen</String>
+    <String id="325">Fout tijdens bijwerken van mappen</String>
     <String id="326">Doorzoeken van albums...</String>
-    <String id="327">Fout tijdens reorganiseren van albums</String>
+    <String id="327">Fout tijdens bijwerken van albums</String>
     <String id="328">Wijzigingen wegschrijven...</String>
     <String id="329">Fout tijdens wegschrijven van veranderingen</String>
     <String id="330">Dit kan enige tijd duren...</String>
     <String id="331">Comprimeren database...</String>
     <String id="332">Fout tijdens comprimeren van database</String>
-    <String id="333">Wilt u de muziekdatabase reorganiseren?</String>
-    <String id="334">Reorganiseer muziekdatabase</String>
+    <String id="333">Wilt u de muziekdatabase bijwerken?</String>
+    <String id="334">Bijwerken muziekdatabase</String>
     <String id="335">Begin</String>
     <String id="336">Aanpassen beeldsnelheid</String>
     <String id="337">Audio-uitvoer:</String>
@@ -352,6 +364,8 @@
     <String id="405">Dauwpunt</String>
     <String id="406">Luchtvocht.</String>
     <String id="407">Zware</String>
+    <String id="408">Voer de naam van een stad in</String>
+    <String id="409">Verwijder lokatie</String>
     <String id="410">Gegevens ophalen van Weather.com</String>
     <String id="411">Weerinformatie ophalen</String>
     <String id="412">Ophalen van weerinformatie mislukt</String>
@@ -360,10 +374,10 @@
     <String id="415">Ophalen van miniweergave...</String>
     <String id="416">Niet beschikbaar</String>
     <String id="417">Weergave: Grote pictogrammen</String>
-    <String id="418">Video's/Genres</String>
-    <String id="419">Video's/Acteurs</String>
-    <String id="420">Video's/Jaar</String>
-    <String id="421">Video's/Titel</String>
+    <String id="418" prefix="Mijn ">Video's/Genres</String>
+    <String id="419" prefix="Mijn ">Video's/Acteurs</String>
+    <String id="420" prefix="Mijn ">Video's/Jaar</String>
+    <String id="421" prefix="Mijn ">Video's/Titel</String>
     <String id="422">Verwijder albumgegevens</String>
     <String id="423">Verwijder CDDB-gegevens</String>
     <String id="424">Kies</String>
@@ -461,11 +475,17 @@
     <String id="517">Fatale fout opgetreden, actie is afgebroken</String>
     <String id="518">Dit liedje verwijderen?</String>
     <String id="519">Ondertitels uit</String>
+    <String id="520">Geen lokaties gevonden</String>
+    <String id="521">Geen geldige waarde</String>
+    <String id="522">Alleen positieve waarden!</String>
+    <String id="523">Nul waarde is niet toegestaan!</String>
+    <String id="524">3 uur overslaan is het maximum!</String>
+    <String id="525">Tijd om over te slaan is al bepaald</String>
     <String id="527">Sorteer op: Bekeken</String>
     <String id="528">Albumartiesten</String>
     <String id="529">Weergave: Grote pictogrammenlijst</String>
-    <String id="530">CD met afbeeldingen gevonden, wilt U de CD bekijken?</String>
-    <String id="531">CD met films gevonden, wilt U de CD bekijken?</String>
+    <String id="530">Schijf met afbeeldingen gevonden, wilt U deze bekijken?</String>
+    <String id="531">Schijf met films gevonden, wilt U deze bekijken?</String>
     <String id="532">Audio-CD gevonden, wilt U de CD beluisteren?</String>
     <String id="533">Radiogids</String>
     <String id="534">Gematigd</String>
@@ -489,8 +509,8 @@
     <String id="552">NNW</String>
     <String id="553">Laat</String>
     <String id="554">erg</String>
-    <String id="555">uit {0} met {1} {2}</String>
-    <String id="556">verschillende</String>
+    <String id="555">{0}met {1} {2}</String>
+    <String id="556">verschillende richtingen</String>
     <String id="557">rustig</String>
     <String id="558">Geen wind</String>
     <String id="559">in de buurt</String>
@@ -500,6 +520,9 @@
     <String id="563">kn</String>
     <String id="564">m/s</String>
     <String id="565">bft</String>
+    <String id="566">Vluchtige weersinformatie</String>
+    <String id="567">Stad toevoegen</String>
+    <String id="568">Stad verwijderen</String>
     <String id="590">P. 100</String>
     <String id="591">P. 200</String>
     <String id="592">P. 300</String>
@@ -513,7 +536,7 @@
     <String id="602">Kanaal:</String>
     <String id="603">Planner</String>
     <String id="604">Opnames</String>
-    <String id="605">TV</String>
+    <String id="605" prefix="Mijn ">TV</String>
     <String id="606">Inlezen nieuwe TV-gids</String>
     <String id="607">Laden</String>
     <String id="608">TV-gids importeren mislukt</String>
@@ -573,14 +596,14 @@
     <String id="662">Za</String>
     <String id="663">Zo</String>
     <String id="664">Deze afbeelding verwijderen?</String>
-    <String id="665">Radio</String>
+    <String id="665" prefix="Mijn ">Radio</String>
     <String id="666">Stations</String>
     <String id="667">Automatisch afstemmen</String>
     <String id="668">Sorteer op: Type</String>
     <String id="669">Sorteer op: Genre</String>
-    <String id="670">Sorteer op: Bitrate</String>
+    <String id="670">Sorteer op: Bitwaarde</String>
     <String id="671">Sorteer op: Gekeken</String>
-    <String id="672">Opnemen van maandag t/m vrijdag</String>
+    <String id="672">Opnemen op weekdagen</String>
     <String id="673">Rolsnelheid</String>
     <String id="674">Beeldschermopties</String>
     <String id="675">Voorbeeld:</String>
@@ -588,7 +611,7 @@
     <String id="677">keer</String>
     <String id="678">Sorteer op: Genre</String>
     <String id="679">Wekelijks</String>
-    <String id="680">Ma-Vr</String>
+    <String id="680">Weekdagen</String>
     <String id="681">Wachten</String>
     <String id="682">Opnemen</String>
     <String id="683">Afgelopen</String>
@@ -626,9 +649,9 @@
     <String id="721">Toon: Keer gespeeld</String>
     <String id="722">Kan CD/DVD niet afspelen.</String>
     <String id="723">Zit er een CD/DVD in de speler?</String>
-    <String id="724">Titel</String>
+    <String id="724">Doorzoek gids</String>
     <String id="725">Genres</String>
-    <String id="726">Doorzoek gids</String>
+    <String id="726">Titel</String>
     <String id="727">Live tv op de achtergrond</String>
     <String id="728">Kan niet gestart worden</String>
     <String id="729">VMR9 moet aan staan en TV moet spelen</String>
@@ -688,6 +711,8 @@
     <String id="784">Roteer 270°</String>
     <String id="789">Nu: </String>
     <String id="790">Volgende: </String>
+    <String id="791">Weergave: Cover Flow</String>
+    <String id="792">Weergave Menu</String>
     <String id="798">laag</String>
     <String id="799">hoog</String>
     <String id="800">Start met</String>
@@ -701,12 +726,14 @@
     <String id="808">Ingrediënten</String>
     <String id="809">Bereiding</String>
     <String id="810">Kaart</String>
+    <String id="811">Opgenomen Radio</String>
+    <String id="812">Radio Stations</String>
     <String id="820">Verwijder niet bekeken opnames?</String>
     <String id="830">Bekeken status vernieuwen</String>
     <String id="831">Verwijderen van schijf</String>
     <String id="832">Kan schijf niet verwijderen: </String>
     <String id="833">Schijf kan veilig worden verwijderd</String>
-    <String id="850">Wekker</String>
+    <String id="850" prefix="Mijn ">Wekker</String>
     <String id="851">Afspeellijst</String>
     <String id="852">Wekker Aan/Uit</String>
     <String id="853">Naam:</String>
@@ -714,7 +741,7 @@
     <String id="855">Alarmtijd</String>
     <String id="856">Sleep timer Aan/Uit</String>
     <String id="857">Dutten</String>
-    <String id="858">Duttijd</String>
+    <String id="858">Sluimertijd</String>
     <String id="859">Slaaptijd</String>
     <String id="860">Volume langzaam verhogen</String>
     <String id="861">Alarm details</String>
@@ -842,7 +869,7 @@
     <String id="987">Jaren</String>
     <String id="988">Kwaliteit</String>
     <String id="989">FPS</String>
-    <String id="990">Bitrate</String>
+    <String id="990">Bitwaarde</String>
     <String id="991">Prioriteit</String>
     <String id="992">Originele opname verwijderen</String>
     <String id="993">Aangepast</String>
@@ -879,7 +906,7 @@
     <String id="1024">van</String>
     <String id="1025">Er is een fout opgetreden.</String>
     <String id="1026">Zie log voor details.</String>
-    <String id="1027">DVD</String>
+    <String id="1027" prefix="Mijn ">DVD</String>
     <String id="1028">Stad</String>
     <String id="1029">Taal voor ondertiteling</String>
     <String id="1030">Uitschakelen</String>
@@ -889,10 +916,10 @@
     <String id="1034">Geen signaal gedetecteerd!</String>
     <String id="1035">Kanaal is gecodeerd</String>
     <String id="1036">Geen video gevonden</String>
-    <String id="1037">TV-programma informatie</String>
+    <String id="1037" prefix="Mijn ">TV-programma informatie</String>
     <String id="1038">Geavanceerde opname</String>
     <String id="1039">Niet opnemen</String>
-    <String id="1040">Waarschuw me</String>
+    <String id="1040">Herinnering instellen</String>
     <String id="1041">Komende afleveringen</String>
     <String id="1042">Bewaar tot</String>
     <String id="1043">tot bekeken</String>
@@ -902,17 +929,13 @@
     <String id="1047">Start beeldvullend</String>
     <String id="1048">Instellingen</String>
     <String id="1049">Sluimerstand</String>
-    <String id="1050">Za-Zo</String>
-    <String id="1051">Opnemen op zaterdag en zondag</String>
+    <String id="1050">Weekends</String>
+    <String id="1051">Weekends opnemen</String>
     <String id="1052">Nummers</String>
     <String id="1053">Onbekende oproep</String>
     <String id="1054">(opnemen)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(onbeschikbaar)</String>
-    <String id="1057">Opnemen Zo-Do</String>
-    <String id="1058">Opnemen Vr-Za</String>
-    <String id="1059">Zo-Do</String>
-    <String id="1060">Vr-Za</String>
     <String id="1061">Verwijderbaar</String>
     <String id="1062">Item</String>
     <String id="1064">Leeswijzers</String>
@@ -966,9 +989,35 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Installatiewizard</String>
     <String id="1201">Video vanaf begin afspelen</String>
+    <String id="1202">Sorteer op: Auto</String>
+    <String id="1203">Komende afleveringen (actief:{0})</String>
+    <String id="1204">Speel alle video's in de geselecteerde map</String>
+    <String id="1205">Sorteer op: Schijf#</String>
+    <String id="1206">Programma speelt nu voor {0} minuten</String>
+    <String id="1207">Nu overschakelen naar {0} ?</String>
+    <String id="1208">Sorteer op: Componist</String>
     <String id="1211">Afspelen hervatten vanaf {0}</String>
-    <String id="1300">TV-Programma's</String>
-    <String id="1440">Teletekst</String>
+    <String id="1212">Herinnering annuleren</String>
+    <String id="1213">Naar dit station luisteren</String>
+    <String id="1214">Componisten</String>
+    <String id="1215">Dirigenten</String>
+    <String id="1216">Schijven</String>
+    <String id="1217">Artiestnummers</String>
+    <String id="1218">Albums op leeftijd</String>
+    <String id="1219">Albumartiesten (Index)</String>
+    <String id="1220">Sorteer op: Datum gecreëerd</String>
+    <String id="1221">Sorteer op: Datum aangepast</String>
+    <String id="1222">Groepen</String>
+    <String id="1223">Bestaande afspeellijst gevonden</String>
+    <String id="1224">Wilt u de huidige afspeellijst leegmaken?</String>
+    <String id="1225">Voeg item toe aan afspeellijst</String>
+    <String id="1226">Voeg alle items toe aan afspeellijst</String>
+    <String id="1230">Datum toegevoegd</String>
+    <String id="1231">Laatst afgespeeld:</String>
+    <String id="1240">Inhoud vergrendelen</String>
+    <String id="1241">Inhoud ontgrendelen</String>
+    <String id="1300" prefix="Mijn ">TV-Programma's</String>
+    <String id="1440" prefix="Mijn ">Teletekst</String>
     <String id="1441">Teletekst</String>
     <String id="1442">Rolsnelheid (hor.)</String>
     <String id="1443">Rolsnelheid (ver.)</String>
@@ -980,6 +1029,7 @@
     <String id="1449">Opname stoppen</String>
     <String id="1450">Wilt u de opname beëindigen?</String>
     <String id="1451">Afspelen niet mogelijk</String>
+    <String id="1498">Programma/Zender niet gevonden</String>
     <String id="1499">Geen signaal</String>
     <String id="1500">Start timeshifting niet mogelijk</String>
     <String id="1501">Kaart is uitgeschakeld</String>
@@ -1008,7 +1058,15 @@
     <String id="1600">Uitschakelen?</String>
     <String id="1601">In slaapstand gaan?</String>
     <String id="1602">In sluimerstand gaan?</String>
-    <String id="1950">Status</String>
+    <String id="1900">Skin verouderd</String>
+    <String id="1901">De huidig geselecteerde skin ({0}) is verouderd. Dit kan problemen veroorzaken tijdens het gebruik van MediaPortal. Om deze reden is MediaPortal tijdelijk overgeschakeld naar de standaard skin. Als u echter de verouderde skin wilt proberen, druk dan op de 'Negeer en probeer' knop, maar herinner: Rapporteer GEEN fouten tijdens het gebruik van deze skin!
+(om deze waarschuwing af te wijzen wacht totdat deze automatisch sluit of druk Terug/ESC op de afstandsbediening.</String>
+    <String id="1902">Deze waarschuwing niet meer weergeven</String>
+    <String id="1903">Negeer en probeer ({0})...</String>
+    <String id="1910">Niet compatibele plugins</String>
+    <String id="1911">De volgende plugins zijn niet compatibel met deze versie van MediaPortal en zijn automatisch uitgeschakeld:</String>
+    <String id="1912">Doorgaan|Doorgaan ({0})...|Doorgaan ({0})...</String>
+    <String id="1950" prefix="Mijn ">Status</String>
     <String id="1951">Harde schijf</String>
     <String id="1952">Ventilator</String>
     <String id="1953">Vrij</String>
@@ -1122,7 +1180,7 @@
     <String id="2087">terug</String>
     <String id="2088">Kniplijst:</String>
     <String id="2089">kwaliteit instellen</String>
-    <String id="2090">Video-editor</String>
+    <String id="2090" prefix="Mijn ">Video-editor</String>
     <String id="2091">Bewerking is afgebroken</String>
     <String id="2092">Kies het bestand om te bewerken a.u.b.:</String>
     <String id="2093">toevoegen</String>
@@ -1179,7 +1237,7 @@
     <String id="2145">Huidige afspeellijst importeren</String>
     <String id="2146">Niet genoeg ruimte op de CD</String>
     <String id="2147">Niet genoeg ruimte op de DVD</String>
-    <String id="2200">Verkenner</String>
+    <String id="2200" prefix="Mijn ">Verkenner</String>
     <String id="2201">Selecteer bron</String>
     <String id="2202">Selecteer doel</String>
     <String id="2203">Kopiëren</String>
@@ -1221,7 +1279,7 @@
     <String id="2513">Bekijk het logbestand a.u.b.</String>
     <String id="2514">Terug naar de tekst</String>
     <String id="2515">Afbeeldingen</String>
-    <String id="2516">Wikipedia</String>
+    <String id="2516" prefix="Mijn ">Wikipedia</String>
     <String id="2550">Wilt u daadwerkelijk 'live TV' stoppen?</String>
     <String id="2551">(timeshift buffer gaat verloren)</String>
     <String id="2552">Stop</String>
@@ -1242,6 +1300,7 @@
     <String id="2612">Hongaars</String>
     <String id="2613">Russisch</String>
     <String id="2614">Oekraïns</String>
+    <String id="2615">Duits</String>
     <String id="2650">Herladen van lettertypes - Even geduld a.u.b.</String>
     <String id="2700">CI-menu openen</String>
     <String id="2997">uur</String>
@@ -1295,7 +1354,7 @@
     <String id="4518">Albumtitel niet gevonden\r\nProberen: {0}</String>
     <String id="4519">Huidige cover-art</String>
     <String id="4520">Overslaan</String>
-    <String id="4521">Toon albuminfo</String>
+    <String id="4521">Toon album/artiestinfo</String>
     <String id="4522">Vastleggen: {0}..</String>
     <String id="4540">Nu speelt</String>
     <String id="4541">Hierna speelt</String>
@@ -1309,7 +1368,7 @@
     <String id="4555">Huidige afspeellijst</String>
     <String id="4557">Alles toevoegen aan afspeellijst</String>
     <String id="4558">Recent toegevoegd</String>
-    <String id="5900">Trailers</String>
+    <String id="5900" prefix="Mijn ">Trailers</String>
     <String id="5901">Laat films zien</String>
     <String id="5902">Welke films laten zien?</String>
     <String id="5903">Nieuw toegevoegde films</String>
@@ -1351,7 +1410,7 @@
     <String id="6013">Handmatige xmltv</String>
     <String id="6014">TV instellen</String>
     <String id="6015">DVD instellen</String>
-    <String id="6016">Automatisch verwijderen van opnames na bekijken</String>
+    <String id="6016">Verwijderen van opnames na bekijken</String>
     <String id="6017">Opnames aan filmdatabank toevoegen</String>
     <String id="6018">minuten voor het programma start</String>
     <String id="6019">minuten na het programma is afgelopen</String>
@@ -1377,12 +1436,13 @@
     <String id="6039">AAC audiocodec</String>
     <String id="6040">Gisteren</String>
     <String id="6041">Twee dagen geleden</String>
+    <String id="6042">Voer de tijd om over te slaan in seconden in</String>
     <String id="6050">Deze week</String>
     <String id="6060">Deze maand</String>
     <String id="6070">Dit jaar</String>
     <String id="6080">Vorig jaar</String>
     <String id="6090">Ouder</String>
-    <String id="8000">Post</String>
+    <String id="8000" prefix="Mijn ">Post</String>
     <String id="8001">Post ophalen</String>
     <String id="8002">Automatisch controleren uit</String>
     <String id="8003">Automatisch controleren aan</String>
@@ -1423,7 +1483,7 @@
     <String id="9009">Cameratype:</String>
     <String id="9010">Fabrikant:</String>
     <String id="9011">Opmerkingen:</String>
-    <String id="9100">MiniDisplay</String>
+    <String id="9100" prefix="Mijn ">MiniDisplay</String>
     <String id="9101">Plugin is niet geconfigureerd.</String>
     <String id="9102">Voer eerst MediaPortalconfiguratie uit a.u.b.</String>
     <String id="9103">Keypadopties</String>
@@ -1482,7 +1542,7 @@
     <String id="10100">Verborgen mijnen</String>
     <String id="10101">Speeltijd</String>
     <String id="10102">Snelste tijd</String>
-    <String id="10103">Mijnenveger</String>
+    <String id="10103" prefix="Mijn ">Mijnenveger</String>
     <String id="10104">Mini TvGids</String>
     <String id="10105">Huidig</String>
     <String id="11000">Schermbereik instellen</String>
@@ -1515,13 +1575,13 @@
     <String id="13033">Meest recent gestart</String>
     <String id="13034">Titel</String>
     <String id="13041">Bestandsinformatie</String>
-    <String id="14001">Uitbreidingen</String>
+    <String id="14001" prefix="Mijn ">Extensies</String>
     <String id="14002">Weergeven</String>
-    <String id="14003">Geïnstalleerde uitbreidingen</String>
-    <String id="14004">Online uitbreidingen</String>
-    <String id="14005">Installeer uitbreiding</String>
-    <String id="14006">Deïnstalleer uitbreiding</String>
-    <String id="14007">Herinstalleer uitbreiding</String>
+    <String id="14003">Geïnstalleerde extensies</String>
+    <String id="14004">Online extensies</String>
+    <String id="14005">Installeer extensies</String>
+    <String id="14006">Deïnstalleer extensies</String>
+    <String id="14007">Herinstalleer extensies</String>
     <String id="14008">Herroepen van laatste actie</String>
     <String id="14009">Tijdens de volgende herstart wordt deze actie uitgevoerd</String>
     <String id="14010">Download uitbreiding</String>
@@ -1534,7 +1594,7 @@
     <String id="14017">Sorteer op: Waardering</String>
     <String id="14018">Installatie bijwerken</String>
     <String id="16001">Feestmix</String>
-    <String id="19001">Mijn Tetris</String>
+    <String id="19001" prefix="Mijn ">Tetris</String>
     <String id="19002">Nieuw spel</String>
     <String id="19003">Muziek</String>
     <String id="19004">Geluid</String>
@@ -1547,7 +1607,7 @@
     <String id="19011">Pauze</String>
     <String id="19012">Spel voorbij</String>
     <String id="19100">GEO-Klok</String>
-    <String id="19101">Mijn Sudoku</String>
+    <String id="19101" prefix="Mijn ">Sudoku</String>
     <String id="19102">Nieuw Spel</String>
     <String id="19103">Los Op</String>
     <String id="19104">Wis</String>
@@ -1599,7 +1659,7 @@
     <String id="19150">Kandidaten</String>
     <String id="19151">Kandidaten toevoegen/verwijderen</String>
     <String id="25001">Wachten op pagina {0:X}...!</String>
-    <String id="30000">Muziekvideo's</String>
+    <String id="30000" prefix="Mijn ">Muziekvideo's</String>
     <String id="30001">Meest gewild</String>
     <String id="30002">Nieuw</String>
     <String id="30003">Speel alles</String>
@@ -1635,7 +1695,7 @@
     <String id="33033">gevonden worden in je collectie!</String>
     <String id="33040">Kopieer nu spelend naar klembord</String>
     <String id="33041">Album aan afspeellijst toevoegen</String>
-    <String id="34000">Mijn Last.fm</String>
+    <String id="34000" prefix="Mijn ">Last.fm</String>
     <String id="34001">Start stream</String>
     <String id="34002">Vriend: </String>
     <String id="34003">Buren: </String>
@@ -1655,7 +1715,7 @@
     <String id="34032">Geen artiesten</String>
     <String id="34039">Vergelijkbaar met artiest: </String>
     <String id="34040">Aanbevolen radio</String>
-    <String id="34041">Stem af met gekozen tag</String>
+    <String id="34041">Stem af met gekozen tag: </String>
     <String id="34042">Er is nog geen tag gekozen</String>
     <String id="34043">Persoonlijke radio van: </String>
     <String id="34044">Favoriete nummers van: </String>
@@ -1678,12 +1738,12 @@
     <String id="40002">MediaPortal heeft geen taken meer, maar is nog steeds bezig.</String>
     <String id="40003">Wanneer alle huidige taken gereed zijn zal MediaPortal naar de slaapstand gaan.</String>
     <String id="100000">Startscherm</String>
-    <String id="100001">TV</String>
-    <String id="100002">Afbeeldingen</String>
-    <String id="100003">Bestanden</String>
+    <String id="100001" prefix="Mijn ">TV</String>
+    <String id="100002" prefix="Mijn ">Afbeeldingen</String>
+    <String id="100003" prefix="Mijn ">Bestanden</String>
     <String id="100004">Instellingen</String>
-    <String id="100005">Muziek</String>
-    <String id="100006">Video's</String>
+    <String id="100005" prefix="Mijn ">Muziek</String>
+    <String id="100006" prefix="Mijn ">Video's</String>
     <String id="100008">Instellingen-&gt;Algemeen</String>
     <String id="100009">Instellingen-&gt;Scherm</String>
     <String id="100010">Instellingen-&gt;Scherm-&gt;Gebruikersomgeving kalibreren</String>
@@ -1695,18 +1755,18 @@
     <String id="100016">Instellingen-&gt;Scherm-&gt;Schermbeveiliging</String>
     <String id="100017">Instellingen-&gt;Weer</String>
     <String id="100020">Instellingen-&gt;Scripts</String>
-    <String id="100021">Video\'-&gt;Genre</String>
-    <String id="100022">Video\'-&gt;Acteur</String>
-    <String id="100023">Video\'-&gt;Jaar</String>
+    <String id="100021" prefix="Mijn ">Video's\-&gt;Genre</String>
+    <String id="100022" prefix="Mijn ">Video's\-&gt;Acteur</String>
+    <String id="100023" prefix="Mijn ">Video's\-&gt;Jaar</String>
     <String id="100024">Instellingen-&gt;Programma's</String>
-    <String id="100025">Video'-&gt;Titel</String>
+    <String id="100025" prefix="Mijn ">Video's\-&gt;Titel</String>
     <String id="100026">Instellingen-&gt;Algemeen-&gt;Buffer</String>
     <String id="100027">Instellingen-&gt;Algemeen-&gt;Autostart</String>
-    <String id="100028">Video\'-&gt;Afspeellijst</String>
+    <String id="100028" prefix="Mijn ">Video's\-&gt;Afspeellijst</String>
     <String id="100029">Instellingen-&gt;Algemeen-&gt;LCD</String>
-    <String id="100030">Radio</String>
+    <String id="100030" prefix="Mijn ">Radio</String>
     <String id="100031">Instellingen-&gt;Scherm-&gt;Rolsnelheid</String>
-    <String id="100034">Plugins</String>
+    <String id="100034" prefix="Mijn ">Plugins</String>
     <String id="100035">Thuisbasis</String>
     <String id="100100">Ja/nee dialoog</String>
     <String id="100101">Voortgang dialoog</String>
@@ -1723,6 +1783,7 @@
     <String id="100509">Muziek/Zoeken/Voortgang</String>
     <String id="100510">Muziek/Speelt nu</String>
     <String id="100511">Muziek/Beeldvullend</String>
+    <String id="100512">LastFM Voorkeur/Afkeur</String>
     <String id="100600">TV/TV-gids</String>
     <String id="100601">TV/Planner</String>
     <String id="100602">TV/Beeldvullend</String>
@@ -1783,19 +1844,20 @@
     <String id="100760">CD/DVD branden</String>
     <String id="100761">TV-gids</String>
     <String id="100762">Radiogids</String>
-    <String id="100800">Uitbreidingen</String>
+    <String id="100763">Radio opnames</String>
+    <String id="100800" prefix="Mijn ">Extensies</String>
     <String id="101000">Toetsenbord</String>
     <String id="101002">Virtueel standaard toetsenbord</String>
     <String id="101003">Virtueel Web-toetsenbord</String>
     <String id="101004">Virtueel SMS-toetsenbord</String>
     <String id="102000">Kies dialoog</String>
-    <String id="102001">Muziek/info</String>
+    <String id="102001" prefix="Mijn ">Muziek/info</String>
     <String id="102002">Dialoog OK</String>
-    <String id="102003">Video/Info</String>
-    <String id="102004">Scripts/Info</String>
+    <String id="102003" prefix="Mijn ">Video/Info</String>
+    <String id="102004" prefix="Mijn ">Scripts/Info</String>
     <String id="102005">Beeldvullend video</String>
     <String id="102006">Audiovisualisaties</String>
-    <String id="102007">Afbeeldingen/Diavoorstelling</String>
+    <String id="102007" prefix="Mijn ">Afbeeldingen/Diavoorstelling</String>
     <String id="102008">Bestandstapelingsdialoog</String>
     <String id="102009">Selectiedialoog</String>
     <String id="102010">Datum/Tijd</String>
@@ -1805,25 +1867,28 @@
     <String id="102014">Afbeeldingsinformatie</String>
     <String id="102015">Mini-menu</String>
     <String id="102016">Notificatie</String>
+    <String id="102017">Opname conflict</String>
     <String id="102018">CI-menu</String>
-    <String id="102600">Weer</String>
-    <String id="102700">Nieuws</String>
+    <String id="102600" prefix="Mijn ">Weer</String>
+    <String id="102700" prefix="Mijn ">Nieuws</String>
     <String id="102900">Schermbeveiliging</String>
     <String id="102901">Beeldvullend OSD</String>
-    <String id="102959">Video bewerken</String>
-    <String id="103001">DVD</String>
-    <String id="103003">TV/OSD</String>
-    <String id="103006">TV/MSN-OSD</String>
-    <String id="103007">TV/Zap-OSD</String>
-    <String id="103009">TV/Mini-EPG</String>
-    <String id="103011">TV/Schermbereik instellen</String>
+    <String id="102959" prefix="Mijn ">Video bewerken</String>
+    <String id="103001" prefix="Mijn ">DVD</String>
+    <String id="103003" prefix="Mijn ">TV/OSD</String>
+    <String id="103006" prefix="Mijn ">TV/MSN-OSD</String>
+    <String id="103007" prefix="Mijn ">TV/Zap-OSD</String>
+    <String id="103009" prefix="Mijn ">TV/Mini-EPG</String>
+    <String id="103011" prefix="Mijn ">TV/Schermbereik instellen</String>
     <String id="103012">TV/Ontvangstdetails</String>
-    <String id="104711">Wikipedia</String>
+    <String id="104711" prefix="Mijn ">Wikipedia</String>
     <String id="106666">Energiebeheer wacht</String>
-    <String id="107700">TV/Teletekst</String>
-    <String id="107701">TV/Teletekst</String>
-    <String id="107777">Sudoku</String>
-    <String id="107890">Last.fm radio</String>
+    <String id="107700" prefix="Mijn ">TV/Teletekst</String>
+    <String id="107701" prefix="Mijn ">TV/Teletekst</String>
+    <String id="107776" prefix="Mijn ">Tetris</String>
+    <String id="107777" prefix="Mijn ">Sudoku</String>
+    <String id="107890" prefix="Mijn ">Last.fm radio</String>
+    <String id="107900">Tekst Dialoog</String>
     <String id="108888">Muziek menu</String>
     <String id="109000">MiniDisplay - Instellen</String>
     <String id="109001">MiniDisplay - Instellen - Achtergrondverlichting</String>
@@ -1832,6 +1897,7 @@
     <String id="109004">MiniDisplay - Instellen - Equalizer</String>
     <String id="109005">MiniDisplay - Instellen - KeyPad</String>
     <String id="109006">MiniDisplay - Instellen - Afstandsbediening</String>
+    <String id="102019">TV notificatie</String>
     <String id="200000">Selecteer uw EPG-grabber. Als uw land er</String>
     <String id="200001">niet tussen staat, zult u dit handmatig moeten invoeren.</String>
     <String id="200002">U kunt nu de EPG-kanalen koppelen aan de TV-kanalen</String>
@@ -1853,6 +1919,8 @@
     <String id="200019">Druk op KLAAR om deze wizard af te sluiten</String>
     <String id="200020">Klaar</String>
     <String id="200021">TV-instellingen - ProgrammaGids</String>
+    <String id="990000">Wekelijks op deze zender</String>
+    <String id="990001">{0} op zender {1}</String>
     <String id="200022">MediaPortal heeft de volgende TV-kaarten gevonden:</String>
     <String id="200023">Druk op VOLGENDE om deze TV-kaarten in te stellen</String>
     <String id="200024">TV-instellingen</String>
@@ -1901,5 +1969,25 @@
     <String id="200070">Controlleer a.u.b. de firewall</String>
     <String id="200071">Verwijderen van deze map en alle onderliggende mappen?</String>
     <String id="200072">Komende afleveringen</String>
+    <String id="200073">Voorbewerking</String>
+    <String id="200074">Afbeelding voorbewerken</String>
+    <String id="200075">Schalen</String>
+    <String id="200076">Ondertitel bestanden</String>
+    <String id="200077">Deïnterlace</String>
+    <String id="200078">Schermbereik</String>
+    <String id="200079">Verticaal schermberiek</String>
+    <String id="200080">Horizontaal scherbereik</String>
+    <String id="200081">VIDEO MENU</String>
+    <String id="200082">AUDIO MENU</String>
+    <String id="200083">ONDERTITELS MENU</String>
+    <String id="200084">Video Menu</String>
+    <String id="200085">Audio Menu</String>
+    <String id="200086">HOOFDMENU</String>
+    <String id="200087">Dempen</String>
+    <String id="200090">Editie</String>
+    <String id="200091">Hoofdstuk</String>
+    <String id="200092">Alleen geforceerd</String>
+    <String id="200093">Verbindingstijd naar schijf is bereikt!</String>
+    <String id="200094">Blijven proberen voor 60 extra seconden?</String>
   </Section>
 </Language>

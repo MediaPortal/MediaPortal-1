@@ -45,6 +45,8 @@ void FontEnginePresent3D(int fontNumber);
 void FontEngineSetTexture(void* texture);
 void FontEngineDrawSurface( int fx, int fy, int nw, int nh, 
                             int dstX, int dstY, int dstWidth, int dstHeight,void* surface);
+void FontEngineSetClipEnable();
+void FontEngineSetClipDisable();
 
 void PrintStatistics();
 void Cleanup();

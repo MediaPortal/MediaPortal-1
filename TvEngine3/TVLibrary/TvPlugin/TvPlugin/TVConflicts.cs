@@ -27,6 +27,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -152,7 +153,7 @@ namespace TvPlugin
 
       item.TVTag = schedule;
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
-      if (!File.Exists(strLogo))
+      if (string.IsNullOrEmpty(strLogo))                    
       {
         strLogo = "defaultVideoBig.png";
       }
@@ -218,7 +219,6 @@ namespace TvPlugin
 
     private void SetLabels()
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       for (int i = 0; i < GetItemCount(); ++i)
       {
         GUIListItem item = GetItem(i);
@@ -254,8 +254,8 @@ namespace TvPlugin
 
           case (int)ScheduleRecordingType.WorkingDays:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWorkingDay)),
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWorkingDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.FirstWorkingDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.LastWorkingDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(648);
@@ -264,8 +264,8 @@ namespace TvPlugin
 
           case (int)ScheduleRecordingType.Weekends:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWeekendDay)),
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWeekendDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.FirstWeekendDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.LastWeekendDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);
@@ -304,6 +304,21 @@ namespace TvPlugin
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);
             item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
+            break;
+          case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            switch (rec.StartTime.DayOfWeek)
+            {
+                case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
+                case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
+                case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
+                case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
+                case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
+                case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
+                default: day = GUILocalizeStrings.Get(17); break;
+            }
+
+            item.Label = rec.ProgramName;
+            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.ReferencedChannel().DisplayName });
             break;
           case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
             item.Label = rec.ProgramName;

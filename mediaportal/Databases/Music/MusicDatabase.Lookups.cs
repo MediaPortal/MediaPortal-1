@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -63,6 +63,14 @@ namespace MediaPortal.Music.Database
       aSong.Lyrics = DatabaseUtility.Get(aResult, aRow, "tracks.strLyrics");
       aSong.Composer = DatabaseUtility.Get(aResult, aRow, "tracks.strComposer").Trim(trimChars);
       aSong.Conductor = DatabaseUtility.Get(aResult, aRow, "tracks.strConductor").Trim(trimChars);
+      aSong.Comment = DatabaseUtility.Get(aResult, aRow, "tracks.strComment").Trim(trimChars);
+      aSong.FileType = DatabaseUtility.Get(aResult, aRow, "tracks.strFileType").Trim(trimChars);
+      aSong.Codec = DatabaseUtility.Get(aResult, aRow, "tracks.strFullCodec").Trim(trimChars);
+      aSong.BitRateMode = DatabaseUtility.Get(aResult, aRow, "tracks.strBitRateMode").Trim(trimChars);
+      aSong.BPM = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBPM");
+      aSong.BitRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBitRate");
+      aSong.Channels = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iChannels");
+      aSong.SampleRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iSampleRate");
       try
       {
         aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
@@ -290,6 +298,7 @@ namespace MediaPortal.Music.Database
                   song.Album = "#";
                   song.AlbumArtist = "#";
                   song.Genre = "#";
+                  song.Composer = "#";
                 }
                 song.Title = "#";
                 song.Duration = specialCharCount;
@@ -797,7 +806,7 @@ namespace MediaPortal.Music.Database
 
         string sql =
           string.Format(
-            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' order by iTrack asc",
+            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' order by iDisc asc, iTrack asc",
             strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
@@ -918,6 +927,34 @@ namespace MediaPortal.Music.Database
         {
           return true;
         }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return false;
+    }
+
+    public bool GetSongsByAlbumArtistAlbumDisc(string aAlbumArtist, string aAlbum, int discNo, ref List<Song> aSongList)
+    {
+      try
+      {
+        aSongList.Clear();
+
+        string strAlbumArtist = aAlbumArtist;
+        string strAlbum = aAlbum;
+        DatabaseUtility.RemoveInvalidChars(ref strAlbumArtist);
+        DatabaseUtility.RemoveInvalidChars(ref strAlbum);
+
+        string sql =
+          string.Format(
+            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' AND iDisc = {2} order by iDisc asc, iTrack asc",
+            strAlbumArtist, strAlbum, discNo);
+        GetSongsByFilter(sql, out aSongList, "tracks");
+
+        return true;
       }
       catch (Exception ex)
       {
@@ -1244,7 +1281,7 @@ namespace MediaPortal.Music.Database
         string strArtist = aArtist;
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
         string strSQL;
-        strSQL = String.Format("select * from artistinfo where strArtist like '{0}%'", strArtist);
+        strSQL = String.Format("select * from artistinfo where strArtist like '{0}'", strArtist);
         SQLiteResultSet results;
         results = MusicDbClient.Execute(strSQL);
         if (results.Rows.Count != 0)

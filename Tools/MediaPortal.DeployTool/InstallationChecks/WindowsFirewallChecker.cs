@@ -1,40 +1,38 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
 using System;
 using System.IO;
 using NetFwTypeLib;
-#if DEBUG // we need it for the msg box
+#if DEBUG
+  // we need it for the msg box
 using System.Windows.Forms;
+
 #endif
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  class WindowsFirewallChecker : IInstallationPackage
+  internal class WindowsFirewallChecker : IInstallationPackage
   {
     #region Firewall API functions
+
     private const string PROGID_FIREWALL_MANAGER = "HNetCfg.FwMgr";
     private const string PROGID_AUTHORIZED_APPLICATION = "HNetCfg.FwAuthorizedApplication";
     private const string PROGID_OPEN_PORT = "HNetCfg.FWOpenPort";
@@ -51,7 +49,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return null;
       }
     }
-    private static void AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope, NET_FW_IP_VERSION_ ipVersion)
+
+    private static void AuthorizeApplication(string title, string applicationPath, NET_FW_SCOPE_ scope,
+                                             NET_FW_IP_VERSION_ ipVersion)
     {
       Type type = Type.GetTypeFromProgID(PROGID_AUTHORIZED_APPLICATION);
       INetFwAuthorizedApplication auth = Activator.CreateInstance(type) as INetFwAuthorizedApplication;
@@ -78,7 +78,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return;
       }
     }
-    private static void GloballyOpenPort(string title, int portNo, NET_FW_SCOPE_ scope, NET_FW_IP_PROTOCOL_ protocol, NET_FW_IP_VERSION_ ipVersion)
+
+    private static void GloballyOpenPort(string title, int portNo, NET_FW_SCOPE_ scope, NET_FW_IP_PROTOCOL_ protocol,
+                                         NET_FW_IP_VERSION_ ipVersion)
     {
       Type type = Type.GetTypeFromProgID(PROGID_OPEN_PORT);
       INetFwOpenPort port = Activator.CreateInstance(type) as INetFwOpenPort;
@@ -102,7 +104,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
     }
 
     #endregion
+
     #region Helper functions
+
     private static void ConfigureFirewallProfile()
     {
       string app;
@@ -111,16 +115,19 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         //TVService
         app = InstallationProperties.Instance["TVServerDir"] + "\\TvService.exe";
-        AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        AuthorizeApplication("MediaPortal TV Server", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
+                             NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         //SetupTV
         app = InstallationProperties.Instance["TVServerDir"] + "\\SetupTv.exe";
-        AuthorizeApplication("MediaPortal TV Setup", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        AuthorizeApplication("MediaPortal TV Setup", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
+                             NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }
       if (InstallationProperties.Instance["ConfigureMediaPortalFirewall"] == "1")
       {
         //MediaPortal
         app = InstallationProperties.Instance["MPDir"] + "\\MediaPortal.exe";
-        AuthorizeApplication("MediaPortal", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+        AuthorizeApplication("MediaPortal", app, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
+                             NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
       }
       if (InstallationProperties.Instance["ConfigureDBMSFirewall"] == "1")
       {
@@ -129,39 +136,48 @@ namespace MediaPortal.DeployTool.InstallationChecks
         {
           //SQL2005 TCP Port
           port = 1433;
-          GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+          GloballyOpenPort("Microsoft SQL (TCP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
+                           NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
 
           //SQL2005 UDP Port
           port = 1434;
-          GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+          GloballyOpenPort("Microsoft SQL (UDP)", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL,
+                           NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_UDP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         }
         else
         {
           //MySQL TCP Port
           port = 3306;
-          GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP, NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
+          GloballyOpenPort("MySQL", port, NET_FW_SCOPE_.NET_FW_SCOPE_ALL, NET_FW_IP_PROTOCOL_.NET_FW_IP_PROTOCOL_TCP,
+                           NET_FW_IP_VERSION_.NET_FW_IP_VERSION_ANY);
         }
       }
     }
+
     #endregion
+
     public string GetDisplayName()
     {
       return "Windows Firewall Config";
     }
+
     public bool Download()
     {
       return true;
     }
+
     public bool Install()
     {
       ConfigureFirewallProfile();
       return true;
     }
+
     public bool UnInstall()
     {
       //Uninstall not handled: ports/app are left in the auth part of the firewall
       return true;
     }
+
     public CheckResult CheckStatus()
     {
       CheckResult result;

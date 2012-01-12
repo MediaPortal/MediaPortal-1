@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Common.Utils;
 
 namespace MediaPortal.Player
 {
@@ -45,6 +46,11 @@ namespace MediaPortal.Player
       WMP9 = 1,
       VMR7 = 2,
       RTSP = 3,
+    }
+
+    public static ArrayList ExternalPlayerList
+    {
+      get { return _externalPlayerList; }
     }
 
     private bool CheckMpgFile(string fileName)
@@ -109,7 +115,7 @@ namespace MediaPortal.Player
     private void LoadExternalPlayers()
     {
       Log.Info("Loading external players plugins");
-      string[] fileList = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "ExternalPlayers"), "*.dll");
+      string[] fileList = Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "ExternalPlayers"), "dll");
       foreach (string fileName in fileList)
       {
         try
@@ -126,6 +132,14 @@ namespace MediaPortal.Player
                 {
                   if (t.IsSubclassOf(typeof (IExternalPlayer)))
                   {
+                    if (!CompatibilityManager.IsPluginCompatible(t))
+                    {
+                      Log.Error(
+                        "  external player: {0} is tagged as incompatible with the current MediaPortal version and won't be loaded!",
+                        t.FullName);
+                      continue;
+                    }
+
                     object newObj = (object)Activator.CreateInstance(t);
                     Log.Info("  found plugin:{0} in {1}", t.ToString(), fileName);
 

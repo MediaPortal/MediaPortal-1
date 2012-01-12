@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -97,6 +97,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="pmtPid">The PMT pid.</param>
     /// <param name="hasVideo">Whether the channel has Video.</param>
     /// <param name="hasAudio">Whether the channel has Audio.</param>
+    /// <param name="hasCaDescriptor">Whether the channel has a conditional access descriptor.</param>
     /// <returns></returns>
     [PreserveSig]
     int GetChannel(short index,
@@ -114,7 +115,8 @@ namespace TvLibrary.Interfaces.Analyzer
                    out IntPtr serviceName,
                    out short pmtPid,
                    out short hasVideo,
-                   out short hasAudio);
+                   out short hasAudio,
+                   out short hasCaDescriptor);
 
     /// <summary>
     /// Sets the channel scan callback

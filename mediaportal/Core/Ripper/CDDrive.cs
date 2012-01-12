@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -515,7 +515,7 @@ namespace MediaPortal.Ripper
         int tracks = 0;
         for (int i = Toc.FirstTrack - 1; i < Toc.LastTrack; i++)
         {
-          if (Toc.TrackData[i].Control == 0)
+          if ((Toc.TrackData[i].Control & 4) == 0)
           {
             tracks++;
           }

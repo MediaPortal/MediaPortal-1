@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,9 +20,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using Gentle.Framework;
 using SetupControls;
@@ -114,10 +116,6 @@ namespace SetupTv.Sections
       else
       {
         string timeShiftingFilename = string.Empty;
-        User user = new User();
-        user.Name = "setuptv";
-        user.IsAdmin = true; //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
-        //user.Name = "setuptv" + id.ToString();
         int cardId = -1;
         foreach (ListViewItem listViewItem in mpListView1.SelectedItems)
         {
@@ -127,12 +125,19 @@ namespace SetupTv.Sections
             break; // Keep the first card enabled selected only
           }
         }
+        IUser user = new User();
+        user.Name = "setuptv-" + id + "-" + cardId;
+        user.IsAdmin = true;
         user.CardId = cardId;
+
         TvResult result = server.StartTimeShifting(ref user, id, out card, cardId != -1);
         if (result != TvResult.Succeeded)
         {
           switch (result)
           {
+            case TvResult.NoPmtFound:
+              MessageBox.Show(this, "No PMT found");
+              break;
             case TvResult.NoSignalDetected:
               MessageBox.Show(this, "No signal");
               break;
@@ -229,6 +234,20 @@ namespace SetupTv.Sections
         return;
       }
       buttonRestart.Text = "Stop Service";
+      if (!ServiceHelper.IsInitialized)
+      {
+        mpButtonReGrabEpg.Enabled = false;
+        mpButtonTimeShift.Text = "Start TimeShift";
+        mpButtonTimeShift.Enabled = false;
+        mpButtonRec.Text = "Record";
+        mpButtonRec.Enabled = false;
+        mpGroupBox1.Visible = false;
+        comboBoxGroups.Enabled = false;
+        mpComboBoxChannels.Enabled = false;
+        mpListView1.Items.Clear();
+        return;
+      }
+
       if (!buttonRestart.Visible)
         buttonRestart.Visible = true;
       mpButtonReGrabEpg.Enabled = true;
@@ -244,7 +263,7 @@ namespace SetupTv.Sections
         {
           mpGroupBox1.Visible = true;
           mpGroupBox1.Text = String.Format("Status of card {0}", card.Name);
-          mpLabelTunerLocked.Text = card.IsTunerLocked ? "yes" : "no";
+          mpLabelTunerLocked.Text = card.IsTunerLocked ? "Yes" : "No";
           progressBarLevel.Value = Math.Min(100, card.SignalLevel);
           mpLabelSignalLevel.Text = card.SignalLevel.ToString();
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);
@@ -253,6 +272,12 @@ namespace SetupTv.Sections
           mpLabelChannel.Text = card.Channel.ToString();
           mpLabelRecording.Text = card.RecordingFileName;
           mpLabelTimeShift.Text = card.TimeShiftFileName;
+
+          int bytes = 0;
+          int disc = 0;
+          RemoteControl.Instance.GetStreamQualityCounters(card.User, out bytes, out disc);
+          txtBytes.Value = bytes;
+          txtDisc.Value = disc;
 
           mpButtonTimeShift.Text = card.IsTimeShifting ? "Stop TimeShift" : "Start TimeShift";
           mpButtonRec.Text = card.IsRecording ? "Stop Rec/TimeShift" : "Record";
@@ -282,16 +307,15 @@ namespace SetupTv.Sections
       try
       {
         ListViewItem item;
-        int cardNo = 0;
         int off = 0;
         foreach (Card card in _cards)
         {
-          cardNo++;
-          User user = new User();
+          IUser user = new User();
           user.CardId = card.IdCard;
           if (off >= mpListView1.Items.Count)
           {
             item = mpListView1.Items.Add("");
+            item.SubItems.Add("");
             item.SubItems.Add("");
             item.SubItems.Add("");
             item.SubItems.Add("");
@@ -303,41 +327,43 @@ namespace SetupTv.Sections
           {
             item = mpListView1.Items[off];
           }
-
           bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
           if (!cardPresent)
           {
-            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[0].Text = card.IdCard.ToString();
             item.SubItems[1].Text = "n/a";
             item.SubItems[2].Text = "n/a";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = "0";
             off++;
             continue;
           }
 
+          ColorLine(card, item);
           VirtualCard vcard = new VirtualCard(user);
-          item.SubItems[0].Text = cardNo.ToString();
+          item.SubItems[0].Text = card.IdCard.ToString();
           item.SubItems[0].Tag = card.IdCard;
           item.SubItems[1].Text = vcard.Type.ToString();
 
           if (card.Enabled == false)
           {
-            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[0].Text = card.IdCard.ToString();
             item.SubItems[1].Text = vcard.Type.ToString();
             item.SubItems[2].Text = "disabled";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = "0";
             off++;
             continue;
           }
 
-          User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
-          if (usersForCard == null)
+          IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          if (usersForCard == null || usersForCard.Length == 0)
           {
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
@@ -347,23 +373,10 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
             continue;
           }
-          if (usersForCard.Length == 0)
-          {
-            string tmp = "idle";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            item.SubItems[2].Text = tmp;
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            off++;
-            continue;
-          }
-
 
           bool userFound = false;
           for (int i = 0; i < usersForCard.Length; ++i)
@@ -377,7 +390,7 @@ namespace SetupTv.Sections
             }
             userFound = true;
             vcard = new VirtualCard(usersForCard[i]);
-            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[0].Text = card.IdCard.ToString();
             item.SubItems[0].Tag = card.IdCard;
             item.SubItems[1].Text = vcard.Type.ToString();
             if (vcard.IsTimeShifting) tmp = "Timeshifting";
@@ -400,11 +413,13 @@ namespace SetupTv.Sections
             }
             item.SubItems[5].Text = usersForCard[i].Name;
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
 
             if (off >= mpListView1.Items.Count)
             {
               item = mpListView1.Items.Add("");
+              item.SubItems.Add("");
               item.SubItems.Add("");
               item.SubItems.Add("");
               item.SubItems.Add("");
@@ -426,6 +441,8 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
+
             off++;
           }
         }
@@ -439,12 +456,44 @@ namespace SetupTv.Sections
           item.SubItems[4].Text = "";
           item.SubItems[5].Text = "";
           item.SubItems[6].Text = "";
+          item.SubItems[7].Text = "";
         }
       }
       catch (Exception ex)
       {
         Log.Write(ex);
       }
+    }
+
+    private void ColorLine(Card card, ListViewItem item)
+    {
+      Color lineColor = Color.White;
+      int subchannels = 0;
+      IUser user;
+      bool cardInUse = RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
+
+      if (!cardInUse)
+      {
+        subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);
+        if (subchannels > 0)
+        {
+          lineColor = Color.Red;
+        }
+      }
+
+      item.UseItemStyleForSubItems = false;
+      item.BackColor = lineColor;
+
+      foreach (ListViewItem.ListViewSubItem lvi in item.SubItems)
+      {
+        lvi.BackColor = lineColor;
+      }
+
+      item.SubItems[3].Text = "";
+      item.SubItems[4].Text = "";
+      item.SubItems[5].Text = "";
+      item.SubItems[6].Text = card.Name;
+      item.SubItems[7].Text = Convert.ToString(subchannels);
     }
 
     private void buttonRestart_Click(object sender, EventArgs e)
@@ -457,7 +506,10 @@ namespace SetupTv.Sections
         RemoteControl.Clear();
         if (ServiceHelper.IsStopped)
         {
-          if (ServiceHelper.Start()) {}
+          if (ServiceHelper.Start())
+          {
+            ServiceHelper.WaitInitialized();
+          }
         }
         else if (ServiceHelper.IsRunning)
         {
@@ -500,7 +552,7 @@ namespace SetupTv.Sections
       {
         if (card.Enabled == false) continue;
         if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
-        User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;
         for (int i = 0; i < usersForCard.Length; ++i)
@@ -531,7 +583,7 @@ namespace SetupTv.Sections
       {
         if (card.Enabled == false) continue;
         if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
-        User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;
         for (int i = 0; i < usersForCard.Length; ++i)
@@ -563,9 +615,34 @@ namespace SetupTv.Sections
         foreach (Channel ch in channels)
         {
           if (ch.IsTv == false) continue;
-          int imageIndex = 1;
-          if (ch.FreeToAir == false)
-            imageIndex = 2;
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
           ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
 
           mpComboBoxChannels.Items.Add(item);
@@ -579,9 +656,34 @@ namespace SetupTv.Sections
         {
           Channel ch = map.ReferencedChannel();
           if (ch.IsTv == false) continue;
-          int imageIndex = 1;
-          if (ch.FreeToAir == false)
-            imageIndex = 2;
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
           ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
           mpComboBoxChannels.Items.Add(item);
         }

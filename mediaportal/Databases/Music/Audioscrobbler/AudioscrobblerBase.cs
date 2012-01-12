@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -136,6 +136,7 @@ namespace MediaPortal.Music.Database
     // Utils
     private static bool _artistsStripped = false;
     private static bool _getLastfmCover = true;
+    private static bool _switchArtist = false;
     private static string _artistPrefixes = string.Empty;
 
     // Other internal properties.    
@@ -206,6 +207,7 @@ namespace MediaPortal.Music.Database
         _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistsStripped = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         _getLastfmCover = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true);
+        _switchArtist = xmlreader.GetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit", false);
 
         string tmpPass;
 
@@ -214,7 +216,7 @@ namespace MediaPortal.Music.Database
             Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), String.Empty);
         _useDebugLog =
           (MusicDatabase.Instance.AddScrobbleUserSettings(
-             Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1)
+            Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1)
             ? true
             : false;
 
@@ -940,7 +942,7 @@ namespace MediaPortal.Music.Database
         }
 
         return success;
-      }    
+      }
     }
 
     #endregion
@@ -984,8 +986,15 @@ namespace MediaPortal.Music.Database
     /// </summary>
     private static void SubmitQueue()
     {
-      // Make sure that a connection is possible.
-      DoHandshake(false, HandshakeType.Submit);
+      try
+      {
+        // Make sure that a connection is possible.
+        DoHandshake(false, HandshakeType.Submit);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerBase: exception in SubmitQueue - {0}", ex.Message);
+      }
     }
 
     /// <summary>
@@ -1137,166 +1146,186 @@ namespace MediaPortal.Music.Database
       // n=<tracknumber>     The position of the track on the album, or empty if not known.
       // m=<mb-trackid>      The MusicBrainz Track ID, or empty if not known.
 
-      string announceData = string.Empty;
-      StringBuilder sb = new StringBuilder();
-
-      sb.Append("s=");
-      sb.Append(sessionID);
-      sb.Append("&a=");
-      sb.Append(getValidURLLastFMString(UndoArtistPrefix(_currentSong.Artist)));
-      sb.Append("&t=");
-      sb.Append(HttpUtility.UrlEncode(_currentSong.Title));
-      sb.Append("&b=");
-      sb.Append(getValidURLLastFMString(_currentSong.Album));
-      sb.Append("&l=");
-      sb.Append(_currentSong.Duration);
-      sb.Append("&n=");
-      sb.Append(_currentSong.Track > 0 ? Convert.ToString(_currentSong.Track) : String.Empty);
-      sb.Append("&m=");
-      sb.Append(String.Empty);
-
-      announceData = sb.ToString();
-
-      // Don't hammer last.fm with all web requests at once
-      Thread.Sleep(2000);
-
-      // Submit or die.
-      if (!GetResponse(nowPlayingUrl, announceData, false))
+      try
       {
-        Log.Warn("AudioscrobblerBase: Now playing announcement failed.");
-        return;
+        string announceData = string.Empty;
+        StringBuilder sb = new StringBuilder();
+
+        sb.Append("s=");
+        sb.Append(sessionID);
+        sb.Append("&a=");
+        sb.Append(getValidURLLastFMString(UndoArtistPrefix(_currentSong.Artist)));
+        sb.Append("&t=");
+        sb.Append(HttpUtility.UrlEncode(_currentSong.Title));
+        sb.Append("&b=");
+        sb.Append(getValidURLLastFMString(_currentSong.Album));
+        sb.Append("&l=");
+        sb.Append(_currentSong.Duration);
+        sb.Append("&n=");
+        sb.Append(_currentSong.Track > 0 ? Convert.ToString(_currentSong.Track) : String.Empty);
+        sb.Append("&m=");
+        sb.Append(String.Empty);
+
+        announceData = sb.ToString();
+
+        // Don't hammer last.fm with all web requests at once
+        Thread.Sleep(2000);
+
+        // Submit or die.
+        if (!GetResponse(nowPlayingUrl, announceData, false))
+        {
+          Log.Warn("AudioscrobblerBase: Now playing announcement failed.");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerBase: exception in Worker_TryAnnounceTracks {0}", ex.Message);
       }
     }
 
     private static void Worker_TrySubmitTracks()
     {
-      // Only one thread should attempt to run through the queue at a time.
-      lock (submitLock)
+      try
       {
-        // Thread.CurrentThread.Name = "Scrobbler submit";
-        int _submittedSongs = 0;
-
-        // Save the queue now since connecting to AS may time out, which
-        // takes time, and the user could quit, losing one valuable song...
-        queue.Save();
-
-        /*
-           s=<sessionID>            The Session ID string as returned by the handshake. Required.
-           a[0]=<artist>            The artist name. Required.
-           t[0]=<track>             The track title. Required.
-           i[0]=<time>              The time the track started playing, in UNIX timestamp format (integer number of seconds since 00:00:00, January 1st 1970 UTC). This must be in the UTC time zone, and is required.
-           o[0]=<source>            The source of the track. Required, must be one of the following codes:
-
-               P = Chosen by the user, no shuffle
-               S = Chosen by the user, shuffle enabled
-               T = Chosen by the user, unknown shuffle status (e.g. iPod)
-               R = Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1)
-               E = Personalised recommendation except Last.fm (e.g. Pandora, Launchcast)
-               L = Last.fm (any mode)
-               U = Source unknown
-
-           r[0]=<rating>
-
-               L = Love
-               B = Ban
-               S = Skip (only if source=L)
-
-           b[0]=<album>             The album title, or empty if not known.
-           n[0]=<tracknumber>       The position of the track on the album, or empty if not known.
-           m[0]=<mb-trackid>        The MusicBrainz Track ID, or empty if not known.
-           l[0]=<secs>              The length of the track in seconds, or empty if not known. 
-        */
-
-        string postData = "s=" + sessionID;
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.Append(postData);
-        sb.Append(queue.GetTransmitInfo(out _submittedSongs));
-
-        postData = sb.ToString();
-
-        if (!postData.Contains("&a[0]"))
+        // Only one thread should attempt to run through the queue at a time.
+        lock (submitLock)
         {
+          // Thread.CurrentThread.Name = "Scrobbler submit";
+          int _submittedSongs = 0;
+
+          // Save the queue now since connecting to AS may time out, which
+          // takes time, and the user could quit, losing one valuable song...
+          queue.Save();
+
+          /*
+             s=<sessionID>            The Session ID string as returned by the handshake. Required.
+             a[0]=<artist>            The artist name. Required.
+             t[0]=<track>             The track title. Required.
+             i[0]=<time>              The time the track started playing, in UNIX timestamp format (integer number of seconds since 00:00:00, January 1st 1970 UTC). This must be in the UTC time zone, and is required.
+             o[0]=<source>            The source of the track. Required, must be one of the following codes:
+
+                 P = Chosen by the user, no shuffle
+                 S = Chosen by the user, shuffle enabled
+                 T = Chosen by the user, unknown shuffle status (e.g. iPod)
+                 R = Non-personalised broadcast (e.g. Shoutcast, BBC Radio 1)
+                 E = Personalised recommendation except Last.fm (e.g. Pandora, Launchcast)
+                 L = Last.fm (any mode)
+                 U = Source unknown
+
+             r[0]=<rating>
+
+                 L = Love
+                 B = Ban
+                 S = Skip (only if source=L)
+
+             b[0]=<album>             The album title, or empty if not known.
+             n[0]=<tracknumber>       The position of the track on the album, or empty if not known.
+             m[0]=<mb-trackid>        The MusicBrainz Track ID, or empty if not known.
+             l[0]=<secs>              The length of the track in seconds, or empty if not known. 
+          */
+
+          string postData = "s=" + sessionID;
+
+          StringBuilder sb = new StringBuilder();
+
+          sb.Append(postData);
+          sb.Append(queue.GetTransmitInfo(out _submittedSongs));
+
+          postData = sb.ToString();
+
+          if (!postData.Contains("&a[0]"))
+          {
+            if (_useDebugLog)
+            {
+              Log.Debug("AudioscrobblerBase: postData did not contain all track parameter");
+            }
+            return;
+          }
+
+          // Submit or die.
+          if (!GetResponse(submitUrl, postData, false))
+          {
+            Log.Error("AudioscrobblerBase: {0}", "Submit failed.");
+            return;
+          }
+
+          // Remove the submitted songs from the queue.
           if (_useDebugLog)
           {
-            Log.Debug("AudioscrobblerBase: postData did not contain all track parameter");
+            Log.Debug("AudioscrobblerBase: remove submitted songs from queue - set lock");
           }
-          return;
-        }
-
-        // Submit or die.
-        if (!GetResponse(submitUrl, postData, false))
-        {
-          Log.Error("AudioscrobblerBase: {0}", "Submit failed.");
-          return;
-        }
-
-        // Remove the submitted songs from the queue.
-        if (_useDebugLog)
-        {
-          Log.Debug("AudioscrobblerBase: remove submitted songs from queue - set lock");
-        }
-        lock (queueLock)
-        {
-          try
+          lock (queueLock)
           {
-            queue.RemoveRange(0, _submittedSongs);
-            queue.Save();
+            try
+            {
+              queue.RemoveRange(0, _submittedSongs);
+              queue.Save();
+            }
+            catch (Exception ex)
+            {
+              Log.Error("AudioscrobblerBase: submit thread clearing cache - {0}", ex.Message);
+            }
           }
-          catch (Exception ex)
-          {
-            Log.Error("AudioscrobblerBase: submit thread clearing cache - {0}", ex.Message);
-          }
+          Log.Debug("AudioscrobblerBase: submitted songs successfully removed from queue. Idle...");
         }
-        Log.Debug("AudioscrobblerBase: submitted songs successfully removed from queue. Idle...");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("AudioscrobblerBase: exception in Worker_TrySubmitTracks {0}", ex.Message);
       }
     }
 
     private static void Worker_TryXmlRpcRequest(object aXmlRpcParams)
     {
-      XmlRpcParams Params = aXmlRpcParams as XmlRpcParams;
-      if (Params == null)
+      try
       {
-        return;
+        XmlRpcParams Params = aXmlRpcParams as XmlRpcParams;
+        if (Params == null)
+        {
+          return;
+        }
+        XmlRpcType aMethodType = Params.MethodType;
+        string aArtist = Params.Artist;
+        string aTitle = Params.Title;
+        string aFriendsUserName = Params.FriendsUserName;
+
+        string Challenge = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
+        string AuthToken = HashSingleString(HashSingleString(password) + Challenge);
+
+        string url = RADIO_SCROBBLER_URL + "1.0/rw/xmlrpc.php";
+        string xml = String.Empty;
+
+        switch (aMethodType)
+        {
+          case XmlRpcType.loveTrack:
+            xml = AudioscrobblerUtils.Instance.GetRadioLoveRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+            break;
+          case XmlRpcType.unLoveTrack:
+            xml = AudioscrobblerUtils.Instance.GetRadioUnLoveRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+            break;
+          case XmlRpcType.banTrack:
+            xml = AudioscrobblerUtils.Instance.GetRadioBanRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+            break;
+          case XmlRpcType.unBanTrack:
+            xml = AudioscrobblerUtils.Instance.GetRadioUnBanRequest(Username, Challenge, AuthToken, aArtist, aTitle);
+            break;
+          case XmlRpcType.addTrackToUserPlaylist:
+            xml = AudioscrobblerUtils.Instance.GetRadioAddTrackToPlaylistRequest(Username, Challenge, AuthToken, aArtist,
+                                                                                 aTitle);
+            break;
+            //case XmlRpcType.removeRecentlyListenedTrack:
+            //  break;
+            //case XmlRpcType.removeFriend:
+            //  break;
+        }
+
+        // Parse handshake response
+        GetResponse(url, xml, false);
       }
-      XmlRpcType aMethodType = Params.MethodType;
-      string aArtist = Params.Artist;
-      string aTitle = Params.Title;
-      string aFriendsUserName = Params.FriendsUserName;
-
-      string Challenge = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
-      string AuthToken = HashSingleString(HashSingleString(password) + Challenge);
-
-      string url = RADIO_SCROBBLER_URL + "1.0/rw/xmlrpc.php";
-      string xml = String.Empty;
-
-      switch (aMethodType)
+      catch (Exception ex)
       {
-        case XmlRpcType.loveTrack:
-          xml = AudioscrobblerUtils.Instance.GetRadioLoveRequest(Username, Challenge, AuthToken, aArtist, aTitle);
-          break;
-        case XmlRpcType.unLoveTrack:
-          xml = AudioscrobblerUtils.Instance.GetRadioUnLoveRequest(Username, Challenge, AuthToken, aArtist, aTitle);
-          break;
-        case XmlRpcType.banTrack:
-          xml = AudioscrobblerUtils.Instance.GetRadioBanRequest(Username, Challenge, AuthToken, aArtist, aTitle);
-          break;
-        case XmlRpcType.unBanTrack:
-          xml = AudioscrobblerUtils.Instance.GetRadioUnBanRequest(Username, Challenge, AuthToken, aArtist, aTitle);
-          break;
-        case XmlRpcType.addTrackToUserPlaylist:
-          xml = AudioscrobblerUtils.Instance.GetRadioAddTrackToPlaylistRequest(Username, Challenge, AuthToken, aArtist,
-                                                                               aTitle);
-          break;
-          //case XmlRpcType.removeRecentlyListenedTrack:
-          //  break;
-          //case XmlRpcType.removeFriend:
-          //  break;
+        Log.Error("AudioscrobblerBase: exception in Worker_TryXmlRpcRequest {0}", ex.Message);
       }
-
-      // Parse handshake response
-      bool success = GetResponse(url, xml, false);
     }
 
     #endregion
@@ -1673,6 +1702,20 @@ namespace MediaPortal.Music.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public static string UndoArtistPrefix(string aStrippedArtist)
     {
+      // Some tag may contain the artist in form of "LastName, FirstName"
+      // This causes the last.fm "Keep your stats clean" Cover to be retrieved
+      // When this option is set, we change the artist back to "FirstNAme LAstNAme". 
+      // e.g. "Collins, Phil" becomes "Phil Collins" on last.fm submit
+      if (_switchArtist)
+      {
+        int iPos = aStrippedArtist.IndexOf(',');
+        if (iPos > 0)
+        {
+          aStrippedArtist = String.Format("{0} {1}", aStrippedArtist.Substring(iPos + 2),
+                                          aStrippedArtist.Substring(0, iPos));
+        }
+      }
+
       //"The, Les, Die"
       if (_artistsStripped)
       {

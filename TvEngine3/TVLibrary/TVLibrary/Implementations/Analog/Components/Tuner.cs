@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -233,7 +233,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterTvTuner != null)
       {
-        while (Marshal.ReleaseComObject(_filterTvTuner) > 0) {}
+        while (Release.ComObject(_filterTvTuner) > 0) {}
         _filterTvTuner = null;
       }
       DevicesInUse.Instance.Remove(_tunerDevice);
@@ -274,7 +274,7 @@ namespace TvLibrary.Implementations.Analog.Components
       DevicesInUse.Instance.Add(_tunerDevice);
       _tuner = _filterTvTuner as IAMTVTuner;
       if (string.IsNullOrEmpty(graph.Tuner.Name) || !_tunerDevice.Name.Equals(
-                                                       graph.Tuner.Name))
+        graph.Tuner.Name))
       {
         Log.Log.WriteFile("analog: Detecting capabilities of the tuner");
         graph.Tuner.Name = _tunerDevice.Name;
@@ -428,8 +428,13 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         AMTunerSignalStrength signalStrength;
         _tuner.SignalPresent(out signalStrength);
-        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent ||
-                        signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+        // Some tuners (in particular, cards based on the Philips/NXP
+        // SAA713x and SAA716x PCI-e bridge chipsets such as the Hauppauge
+        // HVR2200) report values outside the range specified by the DirectShow
+        // interface when they are locked. This means it is best to assume the
+        // tuner is locked unless the tuner reports no signal.
+        // See Mantis #0002445.
+        _tunerLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
       }
       catch (TvExceptionSWEncoderMissing)
       {

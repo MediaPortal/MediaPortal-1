@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-
+using MediaPortal.Player.PostProcessing;
 using Action = MediaPortal.GUI.Library.Action;
 
 //using DirectX.Capture;
@@ -118,7 +118,7 @@ namespace MediaPortal.Player
     protected DvdDomain _currDomain;
     protected IBasicAudio _basicAudio = null;
     protected IMediaPosition _mediaPos = null;
-    private VMR7Util _vmr7 = null;
+
     protected int _speed = 1;
     protected double _currentTime = 0;
     protected bool _visible = true;
@@ -136,6 +136,7 @@ namespace MediaPortal.Player
     private string _defaultAudioLanguage = "";
     private string _defaultSubtitleLanguage = "";
     protected bool _forceSubtitles = true;
+    protected bool _showClosedCaptions = false;
     protected bool _freeNavigator = false;
     protected int _UOPs;
     protected int buttonCount = 0;
@@ -286,6 +287,7 @@ namespace MediaPortal.Player
           _defaultAudioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
           _defaultSubtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
           _forceSubtitles = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
+          _showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
         }
 
         SetDefaultLanguages();
@@ -433,12 +435,6 @@ namespace MediaPortal.Player
         _basicAudio = null;
         _mediaPos = null;
 
-        if (_vmr7 != null)
-        {
-          _vmr7.RemoveVMR7();
-        }
-        _vmr7 = null;
-
         if (_dvdbasefilter != null)
         {
           while ((hr = DirectShowUtil.ReleaseComObject(_dvdbasefilter)) > 0)
@@ -563,8 +559,6 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR(hr);
         }
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-        _vmr7 = new VMR7Util();
-        _vmr7.AddVMR7(_graphBuilder);
 
         try
         {
@@ -1467,10 +1461,6 @@ namespace MediaPortal.Player
 
     protected virtual void OnProcess()
     {
-      if (_vmr7 != null)
-      {
-        _vmr7.Process();
-      }
       if (_videoWin != null)
       {
         if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
@@ -1869,7 +1859,7 @@ namespace MediaPortal.Player
       {
         try
         {
-          int hr = _dvdCtrl.SelectAudioStream(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          int hr = _dvdCtrl.SelectAudioStream(value, DvdCmdFlags.None, out _cmdOption);
           if (hr != 0)
           {
             Log.Error("DVDPlayer:Failed to set audiostream to {0} with error code:{1}", value, hr);
@@ -1904,10 +1894,10 @@ namespace MediaPortal.Player
             channelInfo = noc + "." + "0";
           }
 
-          details = " (" + attr.AudioFormat
+          details = " [" + attr.AudioFormat
                     + " " + channelInfo
                     + " - " + attr.dwFrequency + " Hz " +
-                    + +attr.bQuantization + " bits)";
+                    + +attr.bQuantization + " bits]";
         }
 
         foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
@@ -1950,6 +1940,15 @@ namespace MediaPortal.Player
       {
         int pulStreamsAvailable, pulCurrentStream;
         bool pbIsDisabled;
+        if (_line21Decoder != null)
+        {
+          AMLine21CCState state = AMLine21CCState.Off;
+          _line21Decoder.GetServiceState(out state);
+          if (state == AMLine21CCState.On)
+          {
+            return -1;
+          }
+        }
         int hr = _dvdInfo.GetCurrentSubpicture(out pulStreamsAvailable, out pulCurrentStream, out pbIsDisabled);
         if (hr != 0)
         {
@@ -1963,7 +1962,22 @@ namespace MediaPortal.Player
       {
         try
         {
-          int hr = _dvdCtrl.SelectSubpictureStream(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          int hr = 0;
+          if (_line21Decoder != null)
+          {
+            if (value == -1)
+            {
+              hr = _line21Decoder.SetServiceState(AMLine21CCState.On);
+            }
+            else
+            {
+              hr = _line21Decoder.SetServiceState(AMLine21CCState.Off);
+            }
+          }
+          if (value != -1)
+          {
+            hr = _dvdCtrl.SelectSubpictureStream(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          }
           if (hr != 0)
           {
             Log.Error("DVDPlayer:CurrentSubtitleStream:Unable to set current subpicture with code {0}", hr);
@@ -1997,6 +2011,11 @@ namespace MediaPortal.Player
       }
       Log.Error("DVDPlayer:Failed translating subpicture ID to string with error code {0}", hr);
       return Strings.Unknown;
+    }
+
+    public override string SubtitleName(int iStream)
+    {
+      return "";
     }
 
     public void AddPreferedCodecs(IGraphBuilder _graphBuilder)
@@ -2053,6 +2072,15 @@ namespace MediaPortal.Player
       {
         int pulStreamsAvailable, pulCurrentStream;
         bool pbIsDisabled;
+        if (_line21Decoder != null)
+        {
+          AMLine21CCState state;
+          _line21Decoder.GetServiceState(out state);
+          if (state == AMLine21CCState.On)
+          {
+            return true;
+          }
+        }
         int hr = _dvdInfo.GetCurrentSubpicture(out pulStreamsAvailable, out pulCurrentStream, out pbIsDisabled);
         if (hr != 0)
         {
@@ -2066,7 +2094,21 @@ namespace MediaPortal.Player
       {
         try
         {
-          int hr = _dvdCtrl.SetSubpictureState(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          int hr;
+          AMLine21CCState state = AMLine21CCState.Off;
+          if (CurrentSubtitleStream == -1)
+          {
+            state = value ? AMLine21CCState.On : AMLine21CCState.Off;
+            hr = _dvdCtrl.SetSubpictureState(false, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          }
+          else
+          {
+            hr = _dvdCtrl.SetSubpictureState(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          }
+          if (_line21Decoder != null)
+          {
+            hr = _line21Decoder.SetServiceState(state);
+          }
           if (hr != 0)
           {
             Log.Error("DVDPlayer:EnableSubtitle:Unable to set subpicture state (enabled/disabled) with code {0}", hr);
@@ -2074,6 +2116,29 @@ namespace MediaPortal.Player
           //_log.Debug("DVDPlayer:EnableSubtitle:Setting subpicture state to enabled {0}", value);
         }
         catch {}
+      }
+    }
+
+    // <summary>
+    /// Property to Get Postprocessing
+    /// </summary>
+    public override bool HasPostprocessing
+    {
+      get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
+    }
+
+    public bool SupportsCC
+    {
+      get
+      {
+        if (_showClosedCaptions)
+        {
+          return (_line21Decoder != null);
+        }
+        else
+        {
+          return false;
+        }
       }
     }
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,33 +26,35 @@ using System.Threading;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Profile;
+using System.Diagnostics;
 
 namespace MediaPortal.Video.Database
 {
   public class IMDBFetcher : IMDB.IProgress
   {
-    private string movieName;
-    private IMDB.IMDBUrl url;
+    private string _movieName;
+    private IMDB.IMDBUrl _url;
     private IMDB _imdb;
-    private IMDBMovie movieDetails;
-    private Thread movieThread;
-    private Thread detailsThread;
-    private Thread actorsThread;
-    private IMDB.IProgress progress;
-    private bool disableCancel = false;
-    private bool getActors;
-
-    static IMDBFetcher() {}
+    private IMDBMovie _movieDetails;
+    private Thread _movieThread;
+    private Thread _detailsThread;
+    private Thread _actorsThread;
+    private IMDB.IProgress _progress;
+    private bool _disableCancel;
+    private bool _getActors;
+    private bool _isFanArt;
+    private static bool _currentCreateVideoThumbs; // Original setting for thumbnail creation
 
     public IMDBFetcher(IMDB.IProgress progress)
     {
       _imdb = new IMDB(this);
-      this.progress = progress;
+      _progress = progress;
     }
 
     public bool Fetch(string movieName)
     {
-      this.movieName = movieName;
+      _movieName = movieName;
       if (movieName == string.Empty)
       {
         return true;
@@ -61,136 +63,369 @@ namespace MediaPortal.Video.Database
       {
         return false;
       }
-      movieThread = new Thread(new ThreadStart(this._fetch));
-      movieThread.Name = "IMDBFetcher";
-      movieThread.IsBackground = true;
-      movieThread.Start();
+      _movieThread = new Thread(FetchThread);
+      _movieThread.Name = "IMDBFetcher";
+      _movieThread.IsBackground = true;
+      _movieThread.Start();
+
       if (!OnSearchStarted(this))
       {
-        this.CancelFetch();
+        CancelFetch();
         return false;
       }
       return true;
     }
 
-    private void _fetch()
+    private void FetchThread()
     {
       try
       {
-        disableCancel = false;
-        if (movieName == null)
+        _disableCancel = false;
+        if (_movieName == null)
         {
           return;
         }
-        _imdb.Find(this.movieName);
+        _imdb.Find(_movieName);
       }
       catch (ThreadAbortException) {}
       finally
       {
         OnSearchEnd(this);
-        disableCancel = false;
+        _disableCancel = false;
         //Log.Info("Ending Thread for Fetching movie list:{0}", movieThread.ManagedThreadId);
-        movieThread = null;
+        _movieThread = null;
       }
     }
 
     public bool FetchDetails(int selectedMovie, ref IMDBMovie currentMovie)
     {
-      movieDetails = currentMovie;
-      if ((selectedMovie < 0) || (selectedMovie >= this.Count))
+      try
       {
-        return true;
+        _movieDetails = currentMovie;
+        if ((selectedMovie < 0) || (selectedMovie >= Count))
+        {
+          return true;
+        }
+        _url = this[selectedMovie];
+        _movieName = _url.Title;
+        if (!OnDetailsStarting(this))
+        {
+          return false;
+        }
+        _detailsThread = new Thread(FetchDetailsThread);
+        _detailsThread.IsBackground = true;
+        _detailsThread.Name = "IMDBDetails";
+        _detailsThread.Start();
       }
-      this.url = this[selectedMovie];
-      this.movieName = this.url.Title;
-      if (!OnDetailsStarting(this))
+      catch (Exception ex)
       {
+        Log.Error("Fetch movie details err:{0} src:{2}, stack:{1}", ex.Message, ex.Source, ex.StackTrace);
+        CancelFetchDetails();
         return false;
       }
-      detailsThread = new Thread(new ThreadStart(this._fetchDetails));
-      detailsThread.IsBackground = true;
-      detailsThread.Name = "IMDBDetails";
-      detailsThread.Start();
       if (!OnDetailsStarted(this))
       {
-        this.CancelFetchDetails();
+        CancelFetchDetails();
         return false;
       }
       return true;
     }
 
-    private void _fetchDetails()
+    // Changed Cover and fanart grabbing
+    private void FetchDetailsThread()
     {
       try
       {
-        disableCancel = false;
-        if (movieDetails == null)
+        _disableCancel = false;
+        if (_movieDetails == null)
         {
-          movieDetails = new IMDBMovie();
+          _movieDetails = new IMDBMovie();
         }
-        if (url == null)
+        if (_url == null)
         {
           return;
         }
-        if (_imdb.GetDetails(this.url, ref movieDetails))
+        // Progress bar visualization (GUI and Config), not neccessary as we see text but it looks better then text only
+        // Action steps in code for which we want to see progress increase
+        // Action 0-1 - Movie details fetch (25%)
+        // Action 1-2 - IMPAw or TMDB search (50%)
+        // Action 2-3 - FanArt download (75%)
+        // Action 3-4 - End (100%)
+        int stepsInCode = 4; // Total actions (no need for more as some of them are too fast to see)
+        int step = 100 / stepsInCode; // step value for increment
+        int percent = 0; // actual pbar value
+
+        string line1 = GUILocalizeStrings.Get(198);
+        OnProgress(line1, _url.Title, string.Empty, percent);
+        
+        if (_imdb.GetDetails(_url, ref _movieDetails))
         {
-          string line1;
-          if (movieDetails.ThumbURL == string.Empty)
+          percent = percent + step; // **Progress bar downloading details end
+          // Get special settings for grabbing
+          Settings xmlreader = new MPSettings();
+          // Folder name for title (Change scraped title with folder name)
+          bool folderTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+          // Number of downloaded fanart per movie
+          int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+          // Also add fanart for share view
+          bool faShare = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
+          
+          OnProgress(line1, _url.Title, string.Empty, percent);
+          
+          bool stripPrefix = xmlreader.GetValueAsBool("moviedatabase", "striptitleprefixes", false);
+          
+          if (stripPrefix)
           {
-            line1 = GUILocalizeStrings.Get(928) + ":IMP Awards";
-            OnProgress(line1, movieDetails.Title, string.Empty, -1);
-            IMPawardsSearch impSearch = new IMPawardsSearch();
-            impSearch.Search(movieDetails.Title);
+            string tmpTitle = _movieDetails.Title;
+            Util.Utils.StripMovieNamePrefix(ref tmpTitle, true);
+            _movieDetails.Title = tmpTitle;
+          }
+          
+          //
+          // Covers - If cover is not empty don't change it, else download new
+          //
+          // Local cover check (every movie is in it's own folder), lookin' for folder.jpg
+          // or look for local cover named as movie file
+          string localCover = string.Empty; // local cover named as movie filename
+          string movieFile = string.Empty;
+          string moviePath = _movieDetails.Path;
+          // Find movie file(s)
+          ArrayList files = new ArrayList();
+          VideoDatabase.GetFiles(_movieDetails.ID, ref files);
+          
+          // Remove stack endings for video file(CD, Part...)
+          if (files.Count > 0)
+          {
+            movieFile = (string)files[0];
+            Util.Utils.RemoveStackEndings(ref movieFile);
+          }
+          
+          localCover = moviePath + @"\" + Util.Utils.GetFilename(movieFile, true) + ".jpg";
+          
+          // Every movie in it's own folder?
+          if (folderTitle)
+          {
+            localCover = moviePath + @"\folder.jpg";
+            if (File.Exists(localCover))
+            {
+              _movieDetails.ThumbURL = "file://" + localCover;
+            }
+          }
+          // Try local movefilename.jpg
+          else if (File.Exists(localCover))
+          {
+            _movieDetails.ThumbURL = "file://" + localCover;
+          }
+          //
+          // No local or scraper thumb
+          //
+          if (_movieDetails.ThumbURL == string.Empty)
+          {
+            line1 = GUILocalizeStrings.Get(928) + ": IMP Awards"; // **Progress bar message cover search IMPAw start
+            OnProgress(line1, _url.Title, string.Empty, percent);
+
+            // Added IMDBNumber parameter for movie cover check
+            // This number is checked on HTML cover source page, if it's equal then this is the cover for our movie
+
+            // IMPAwards
+            IMPAwardsSearch impSearch = new IMPAwardsSearch();
+            impSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
+
             if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
             {
-              movieDetails.ThumbURL = impSearch[0];
+              _movieDetails.ThumbURL = impSearch[0];
+
+              percent = percent + step; // **Progress bar message for IMPAw end
+              OnProgress(line1, _url.Title, string.Empty, percent);
             }
-            else
+            // If no IMPAwards lets try TMDB 
+            TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
+            if (impSearch.Count == 0)
             {
-              line1 = GUILocalizeStrings.Get(928) + ":Amazon";
-              OnProgress(line1, movieDetails.Title, string.Empty, -1);
-              AmazonImageSearch search = new AmazonImageSearch();
-              search.Search(movieDetails.Title);
-              if (search.Count > 0)
+              line1 = GUILocalizeStrings.Get(928) + ": TMDB"; // **Progress bar message for TMDB start
+              OnProgress(line1, _url.Title, string.Empty, percent);
+              tmdbSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
+
+              if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
               {
-                movieDetails.ThumbURL = search[0];
+                _movieDetails.ThumbURL = tmdbSearch[0];
+                percent = percent + step; // **Progress bar message for TMDB end
+                OnProgress(line1, _url.Title, string.Empty, percent);
+              }
+            }
+            // All fail, last try IMDB
+            if (impSearch.Count == 0 && tmdbSearch.Count == 0)
+            {
+              IMDBSearch imdbSearch = new IMDBSearch();
+              line1 = GUILocalizeStrings.Get(928) + ": IMDB"; // **Progress bar message for IMDB start
+              OnProgress(line1, _url.Title, string.Empty, percent);
+              imdbSearch.SearchCovers(_movieDetails.IMDBNumber, true);
+
+              if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+              {
+                _movieDetails.ThumbURL = imdbSearch[0];
+                percent = percent + step; // **Progress bar message for IMDB end
+                OnProgress(line1, _url.Title, string.Empty, percent);
               }
             }
           }
-          string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
-          string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
+          // Title suffix for problem with cover and movies with the same name
+          string titleExt = _movieDetails.Title + "{" + _movieDetails.ID + "}";
+          string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+          string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
 
-          if (movieDetails.ID >= 0)
+          if (_movieDetails.ID >= 0)
           {
             Util.Utils.FileDelete(largeCoverArt);
             Util.Utils.FileDelete(coverArt);
             line1 = GUILocalizeStrings.Get(1009);
-            OnProgress(line1, movieDetails.Title, string.Empty, -1);
+            OnProgress(line1, _url.Title, string.Empty, percent); // **Too fast so leave percent
           }
-          //Only get actors if we really want to.
-          if (getActors)
+          //
+          // FanArt grab
+          //
+          _isFanArt = xmlreader.GetValueAsBool("moviedatabase", "usefanart", false);
+
+          if (_isFanArt)
           {
-            _fetchActorsInMovie();
+            FanArt fanartSearch = new FanArt();
+            string strFile = _movieDetails.File;
+            // Check local fanart (only if every movie is in it's own folder), lookin for fanart.jpg
+            if (folderTitle)
+            {
+              string localFanart = moviePath + @"\fanart.jpg";
+              if (File.Exists(localFanart))
+              {
+                _movieDetails.FanartURL = "file://" + localFanart;
+              }
+            }
+            line1 = GUILocalizeStrings.Get(921) + ": Fanart"; // **Progress bar message fanart start
+            OnProgress(line1, _url.Title, string.Empty, percent);
+
+            if (_movieDetails.FanartURL == string.Empty || _movieDetails.FanartURL == Strings.Unknown)
+            {
+              fanartSearch.GetTmdbFanartByApi
+                (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare, string.Empty);
+              // Set fanart url to db
+              _movieDetails.FanartURL = fanartSearch.DefaultFanartUrl;
+            }
+            else // Local file or user url
+            {
+              fanartSearch.GetLocalFanart
+                (_movieDetails.Path, strFile, _movieDetails.Title, _movieDetails.FanartURL, 0, faShare);
+            }
+            percent = percent + step; // **Progress bar message fanart End
+            OnProgress(line1, _url.Title, string.Empty, percent);
+          }
+          //
+          // Actors - Only get actors if we really want to.
+          //
+          if (_getActors)
+          {
+            line1 = GUILocalizeStrings.Get(344); // **Progress bar actors start sets actual value to 0
+            OnProgress(line1, _url.Title, string.Empty, 0);
+            FetchActorsInMovie();
           }
           OnDisableCancel(this);
-          if (movieDetails.ID >= 0)
+          if (_movieDetails.ID >= 0)
           {
-            DownloadCoverArt(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
-            VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
+            line1 = GUILocalizeStrings.Get(1009); // **Progress bar downloading cover art, final step
+            OnProgress(line1, _url.Title, string.Empty, percent);
+            //
+            // Save cover thumbs
+            //
+            DownloadCoverArt(Thumbs.MovieTitle, _movieDetails.ThumbURL, titleExt);
+            //
+            // Set folder.jpg for ripped DVDs
+            //
+            try
+            {
+              string path = _movieDetails.Path;
+              string filename = _movieDetails.File;
+
+              if (filename.ToUpper() == "VIDEO_TS.IFO")
+              {
+                // Remove \VIDEO_TS from directory structure
+                string directoryDVD = path.Substring(0, path.LastIndexOf("\\"));
+                if (Directory.Exists(directoryDVD))
+                {
+                  // Copy large cover file as folder.jpg
+                  File.Copy(largeCoverArt, directoryDVD + "\\folder.jpg", true);
+                }
+              }
+            }
+            catch (Exception) {}
+            //
+            // Save details to database
+            //
+            // Check movie table if there is an entry that new movie is already played as share
+            if (VideoDatabase.GetmovieWatchedStatus(_movieDetails.ID))
+            {
+              _movieDetails.Watched = 1;
+            }
+
+            VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
+            OnProgress(line1, _url.Title, string.Empty, 100); // **Progress bar end details
           }
         }
         else
         {
-          movieDetails = null;
+          line1 = GUILocalizeStrings.Get(416);
+          OnProgress(line1, _url.Title, string.Empty, 100); // **Progress bar end (no details)
+          _movieDetails = null;
         }
       }
       catch (ThreadAbortException) {}
       finally
       {
         OnDetailsEnd(this);
-        disableCancel = false;
+        _disableCancel = false;
         //Log.Info("Ending Thread for Fetching movie details:{0}", detailsThread.ManagedThreadId);
-        detailsThread = null;
+        _detailsThread = null;
+      }
+    }
+
+    // Added only actors refresh
+    public static bool FetchMovieActors(IMDB.IProgress progress, IMDBMovie details)
+    {
+      IMDBFetcher fetcher = new IMDBFetcher(progress);
+      fetcher._movieDetails = details;
+      return fetcher.FetchOnlyActors();
+    }
+
+    // Added only actors refresh
+    public bool FetchOnlyActors()
+    {
+      if (!OnActorsStarting(this))
+      {
+        return false;
+      }
+      _actorsThread = new Thread(FetchOnlyActorsThread);
+      _actorsThread.IsBackground = true;
+      _actorsThread.Name = "IMDBActors";
+      _actorsThread.Start();
+      if (!OnActorsStarted(this))
+      {
+        CancelFetchActors();
+        return false;
+      }
+      return true;
+    }
+
+    // Added only actors refresh
+    private void FetchOnlyActorsThread()
+    {
+      try
+      {
+        FetchActorsInMovie();
+      }
+      catch (ThreadAbortException) {}
+      finally
+      {
+        OnDetailsEnd(this);
+        //Log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
+        _actorsThread = null;
+        _disableCancel = false;
       }
     }
 
@@ -200,73 +435,127 @@ namespace MediaPortal.Video.Database
       {
         return false;
       }
-      actorsThread = new Thread(new ThreadStart(this._fetchActors));
-      actorsThread.IsBackground = true;
-      actorsThread.Name = "IMDBActors";
-      actorsThread.Start();
+      _actorsThread = new Thread(FetchActorsThread);
+      _actorsThread.IsBackground = true;
+      _actorsThread.Name = "IMDBActors";
+      _actorsThread.Start();
       if (!OnActorsStarted(this))
       {
-        this.CancelFetchActors();
+        CancelFetchActors();
         return false;
       }
       return true;
     }
 
-    private void _fetchActors()
+    private void FetchActorsThread()
     {
       try
       {
-        _fetchActorsInMovie();
+        FetchActorsInMovie();
       }
       catch (ThreadAbortException) {}
       finally
       {
         OnActorsEnd(this);
         //Log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
-        actorsThread = null;
-        disableCancel = false;
+        _actorsThread = null;
+        _disableCancel = false;
       }
     }
 
-    private void _fetchActorsInMovie()
+    // Changed actors find & count display on progress bar window
+    private void FetchActorsInMovie()
     {
-      if (movieDetails == null)
+      bool director = false; // Actor is director
+      bool byImdbId = true;
+      // Lookup by movie IMDBid number from which will get actorIMDBid, lookup by name is not so db friendly
+
+      if (_movieDetails == null)
       {
         return;
       }
-      string cast = movieDetails.Cast + "," + movieDetails.Director;
-      char[] splitter = {'\n', ','};
-      string[] temp = cast.Split(splitter);
       ArrayList actors = new ArrayList();
-      foreach (string element in temp)
+      // Try first by IMDBMovieId to find IMDBactorID (100% accuracy)
+      IMDBSearch actorlist = new IMDBSearch();
+      // New actor search method
+      actorlist.SearchActors(_movieDetails.IMDBNumber, ref actors);
+
+      // If search by IMDBid fails try old fetch method (by name, less accurate)
+      if (actors.Count == 0)
       {
-        string el = element.Trim();
-        if (el != string.Empty)
+        byImdbId = false;
+        string cast = _movieDetails.Cast + "," + _movieDetails.Director;
+        char[] splitter = {'\n', ','};
+        string[] temp = cast.Split(splitter);
+
+        foreach (string element in temp)
         {
-          actors.Add(el);
+          string el = element.Trim();
+          if (el != string.Empty)
+          {
+            actors.Add(el);
+          }
         }
       }
+
       if (actors.Count > 0)
       {
         int percent = 0;
         for (int i = 0; i < actors.Count; ++i)
         {
+          // Is actor movie director??
+          switch (byImdbId) // True-new method, false-old method
+          {
+            case true:
+              {
+                // Director
+                if (actors[i].ToString().Length > 1 && actors[i].ToString().Substring(0, 2) == "*d")
+                {
+                  director = true;
+                  // Remove director prefix (came from IMDBmovieID actor search)
+                  actors[i] = actors[0].ToString().Replace("*d", string.Empty);
+                }
+                else
+                {
+                  director = false;
+                }
+                break;
+              }
+            case false:
+              {
+                // from old method (just comparing name with dbmoviedetail director name)
+                if (actors[i].ToString().Contains(_movieDetails.Director))
+                {
+                  director = true;
+                }
+                else
+                {
+                  director = false;
+                }
+                break;
+              }
+          }
           string actor = (string)actors[i];
           string role = string.Empty;
-          int pos = actor.IndexOf(" as ");
-          if (pos >= 0)
+
+          if (byImdbId == false)
           {
-            role = actor.Substring(pos + 4);
-            actor = actor.Substring(0, pos);
+            int pos = actor.IndexOf(" as ");
+            if (pos >= 0)
+            {
+              role = actor.Substring(pos + 4);
+              actor = actor.Substring(0, pos);
+            }
           }
+
           actor = actor.Trim();
-          string line1, line2, line3;
-          line1 = GUILocalizeStrings.Get(986);
-          line2 = actor;
-          line3 = "";
+          string line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
+          string line2 = actor;
+          string line3 = string.Empty;
           OnProgress(line1, line2, line3, percent);
           _imdb.FindActor(actor);
           IMDBActor imdbActor = new IMDBActor();
+
           if (_imdb.Count > 0)
           {
             int index = FuzzyMatch(actor);
@@ -274,25 +563,28 @@ namespace MediaPortal.Video.Database
             {
               index = 0;
             }
-            ////Log.Info("Getting actor:{0}", _imdb[index].Title);
-            _imdb.GetActorDetails(_imdb[index], out imdbActor);
-            ////Log.Info("Adding actor:{0}({1}),{2}", imdbActor.Name, actor, percent);
+
+            //Log.Info("Getting actor:{0}", _imdb[index].Title);
+            _imdb.GetActorDetails(_imdb[index], director, out imdbActor);
+            //Log.Info("Adding actor:{0}({1}),{2}", imdbActor.Name, actor, percent);
             int actorId = VideoDatabase.AddActor(imdbActor.Name);
             if (actorId > 0)
             {
-              line1 = GUILocalizeStrings.Get(986);
+              line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
               line2 = imdbActor.Name;
-              line3 = "";
+              line3 = string.Empty;
               OnProgress(line1, line2, line3, -1);
               VideoDatabase.SetActorInfo(actorId, imdbActor);
-              VideoDatabase.AddActorToMovie(movieDetails.ID, actorId);
+              VideoDatabase.AddActorToMovie(_movieDetails.ID, actorId);
+
               if (imdbActor.ThumbnailUrl != string.Empty)
               {
                 string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.Name);
                 string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.Name);
                 Util.Utils.FileDelete(largeCoverArt);
                 Util.Utils.FileDelete(coverArt);
-                line1 = GUILocalizeStrings.Get(1009);
+                line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
+                line2 = GUILocalizeStrings.Get(1009);
                 OnProgress(line1, line2, line3, percent);
                 DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.Name);
               }
@@ -300,19 +592,19 @@ namespace MediaPortal.Video.Database
           }
           else
           {
-            line1 = GUILocalizeStrings.Get(986);
+            line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
             line2 = actor;
-            line3 = "";
+            line3 = string.Empty;
             OnProgress(line1, line2, line3, -1);
             int actorId = VideoDatabase.AddActor(actor);
             imdbActor.Name = actor;
             IMDBActor.IMDBActorMovie imdbActorMovie = new IMDBActor.IMDBActorMovie();
-            imdbActorMovie.MovieTitle = movieDetails.Title;
-            imdbActorMovie.Year = movieDetails.Year;
+            imdbActorMovie.MovieTitle = _movieDetails.Title;
+            imdbActorMovie.Year = _movieDetails.Year;
             imdbActorMovie.Role = role;
             imdbActor.Add(imdbActorMovie);
             VideoDatabase.SetActorInfo(actorId, imdbActor);
-            VideoDatabase.AddActorToMovie(movieDetails.ID, actorId);
+            VideoDatabase.AddActorToMovie(_movieDetails.ID, actorId);
           }
           percent += 100 / actors.Count;
         }
@@ -321,81 +613,74 @@ namespace MediaPortal.Video.Database
 
     public void CancelFetchActors()
     {
-      if (actorsThread == null)
+      if (_actorsThread == null)
       {
         return;
       }
-      if ((actorsThread.IsAlive) && (!disableCancel))
+      if ((_actorsThread.IsAlive) && (!_disableCancel))
       {
         //Log.Info("Aborting Thread for Fetching:{0}", actorsThread.ManagedThreadId);
-        actorsThread.Abort();
+        _actorsThread.Abort();
       }
     }
 
     public void CancelFetch()
     {
-      if (movieThread == null)
+      if (_movieThread == null)
       {
         return;
       }
-      if ((movieThread.IsAlive) && (!disableCancel))
+      if ((_movieThread.IsAlive) && (!_disableCancel))
       {
         //Log.Info("Aborting Thread for Fetching:{0}", movieThread.ManagedThreadId);
-        movieThread.Abort();
+        _movieThread.Abort();
       }
     }
 
     public void CancelFetchDetails()
     {
-      if (detailsThread == null)
+      if (_detailsThread == null)
       {
         return;
       }
-      if ((detailsThread.IsAlive) && (!disableCancel))
+      if ((_detailsThread.IsAlive) && (!_disableCancel))
       {
         //Log.Info("Aborting Thread for Fetching:{0}", detailsThread.ManagedThreadId);
-        detailsThread.Abort();
+        _detailsThread.Abort();
       }
     }
 
     // MovieName for the search
     public string MovieName
     {
-      get { return this.movieName; }
-      set { this.movieName = value; }
+      get { return _movieName; }
+      set { _movieName = value; }
     }
 
-    // END MovieName
     // count the elements
     public int Count
     {
       get { return _imdb.Count; }
     }
 
-    // END Count
     // URL for the details
     public IMDB.IMDBUrl URL
     {
-      get { return url; }
-      set { this.url = value; }
+      get { return _url; }
+      set { _url = value; }
     }
 
-    // END URL
     // Movie the elements
     public IMDBMovie Movie
     {
-      get { return movieDetails; }
-      set { this.movieDetails = value; }
+      get { return _movieDetails; }
+      set { _movieDetails = value; }
     }
-
-    // END Count
 
     public IMDB.IMDBUrl this[int index]
     {
       get { return _imdb[index]; }
     }
-
-    // END IMDB.IMDBUrl this[int index]
 
     public int FuzzyMatch(string name)
     {
@@ -405,7 +690,8 @@ namespace MediaPortal.Video.Database
 
       for (int index = 0; index < _imdb.Count; ++index)
       {
-        int distance = Levenshtein.Match(name, _imdb[index].Title);
+        name = _imdb.GetSearchString(name);
+        int distance = Levenshtein.Match(name, _imdb[index].Title.ToLower());
 
         if (distance == matchingDistance && matchingDistance != int.MaxValue)
         {
@@ -432,179 +718,173 @@ namespace MediaPortal.Video.Database
 
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
-      disableCancel = true;
-      if (progress != null)
+      _disableCancel = true;
+      if (_progress != null)
       {
-        return progress.OnDisableCancel(fetcher);
+        return _progress.OnDisableCancel(fetcher);
       }
       return false;
     }
 
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        progress.OnProgress(line1, line2, line3, percent);
+        _progress.OnProgress(line1, line2, line3, percent);
       }
     }
 
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnSearchStarted(fetcher);
+        return _progress.OnSearchStarted(fetcher);
       }
       return false;
     }
 
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnSearchStarting(fetcher);
+        return _progress.OnSearchStarting(fetcher);
       }
       return false;
     }
 
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnSearchEnd(fetcher);
+        return _progress.OnSearchEnd(fetcher);
       }
       return false;
     }
 
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnMovieNotFound(fetcher);
+        return _progress.OnMovieNotFound(fetcher);
       }
       return false;
     }
 
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnDetailsStarted(fetcher);
+        return _progress.OnDetailsStarted(fetcher);
       }
       return false;
     }
 
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnDetailsStarting(fetcher);
+        return _progress.OnDetailsStarting(fetcher);
       }
       return false;
     }
 
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnDetailsEnd(fetcher);
+        return _progress.OnDetailsEnd(fetcher);
       }
       return false;
     }
 
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnActorsStarted(fetcher);
+        return _progress.OnActorsStarted(fetcher);
       }
       return false;
     }
 
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnActorsStarting(fetcher);
+        return _progress.OnActorsStarting(fetcher);
       }
       return false;
     }
 
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnActorsEnd(fetcher);
+        return _progress.OnActorsEnd(fetcher);
       }
       return false;
     }
 
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnDetailsNotFound(fetcher);
+        return _progress.OnDetailsNotFound(fetcher);
       }
       return false;
     }
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnRequestMovieTitle(fetcher, out movieName);
+        return _progress.OnRequestMovieTitle(fetcher, out movieName);
       }
-      else
-      {
-        movieName = string.Empty;
-        return false;
-      }
+      movieName = string.Empty;
+      return false;
     }
 
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selected)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnSelectMovie(fetcher, out selected);
+        return _progress.OnSelectMovie(fetcher, out selected);
       }
-      else
-      {
-        selected = -1;
-        return false;
-      }
+      selected = -1;
+      return false;
     }
 
     public bool OnScanStart(int total)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnScanStart(total);
+        return _progress.OnScanStart(total);
       }
       return true;
     }
 
     public bool OnScanEnd()
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnScanEnd();
+        return _progress.OnScanEnd();
       }
       return true;
     }
 
     public bool OnScanIterating(int count)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnScanIterating(count);
+        return _progress.OnScanIterating(count);
       }
       return true;
     }
 
     public bool OnScanIterated(int count)
     {
-      if (progress != null)
+      if (_progress != null)
       {
-        return progress.OnScanIterated(count);
+        return _progress.OnScanIterated(count);
       }
       return true;
     }
@@ -612,12 +892,16 @@ namespace MediaPortal.Video.Database
     #endregion
 
     /// <summary>
-    /// Download IMDB info for a movie
+    /// Download IMDB info for a movie. For existing movie using IMDBid from database.
     /// </summary>
     public static bool RefreshIMDB(IMDB.IProgress progress, ref IMDBMovie currentMovie, bool fuzzyMatching,
                                    bool getActors, bool addToDatabase)
     {
-      Log.Info("RefreshIMDB() - Refreshing MovieInfo for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
+      if (currentMovie.Title != string.Empty || currentMovie.SearchString != string.Empty)
+      {
+        Log.Info("RefreshIMDB() - Refreshing MovieInfo for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
+      }
+
       string strMovieName = currentMovie.SearchString;
       string strFileName = string.Empty;
       string path = currentMovie.Path;
@@ -651,22 +935,43 @@ namespace MediaPortal.Video.Database
           }
           if (Util.Utils.IsDVD(strFileName))
           {
-            //DVD
+            // DVD
             string strDrive = strFileName.Substring(0, 2);
             currentMovie.DVDLabel = Util.Utils.GetDriveName(strDrive);
             strMovieName = currentMovie.DVDLabel;
           }
           else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
           {
-            //DVD folder
+            // DVD folder
             string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
             currentMovie.DVDLabel = Path.GetFileName(dvdFolder);
             strMovieName = currentMovie.DVDLabel;
           }
           else
           {
-            //Movie 
-            strMovieName = Path.GetFileNameWithoutExtension(strFileName);
+            // Movie - Folder title and new ->remove CDx from name
+            using (Settings xmlreader = new MPSettings())
+            {
+              bool foldercheck = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+              bool preferFileName = xmlreader.GetValueAsBool("moviedatabase", "preferfilenameforsearch", false);
+              if (foldercheck && !preferFileName)
+              {
+                strMovieName = Path.GetFileName(Path.GetDirectoryName(strFileName));
+              }
+              else
+              {
+                strMovieName = Path.GetFileNameWithoutExtension(strFileName);
+              }
+              // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
+              var pattern = Util.Utils.StackExpression();
+              for (int i = 0; i < pattern.Length; i++)
+              {
+                if (foldercheck == false && pattern[i].IsMatch(strMovieName))
+                {
+                  strMovieName = pattern[i].Replace(strMovieName, "");
+                }
+              }
+            }
           }
         }
         if ((strMovieName == string.Empty) || (strMovieName == Strings.Unknown))
@@ -678,7 +983,9 @@ namespace MediaPortal.Video.Database
       {
         currentMovie.ID = VideoDatabase.AddMovieFile(strFileName);
       }
+      
       currentMovie.SearchString = strMovieName;
+      
       if (currentMovie.ID >= 0 || !addToDatabase)
       {
         if (!Win32API.IsConnectedToInternet())
@@ -687,7 +994,7 @@ namespace MediaPortal.Video.Database
         }
         IMDBFetcher fetcher = new IMDBFetcher(progress);
         fetcher.Movie = currentMovie;
-        fetcher.getActors = getActors;
+        fetcher._getActors = getActors;
         int selectedMovie = -1;
         do
         {
@@ -697,7 +1004,8 @@ namespace MediaPortal.Video.Database
           }
           if (fuzzyMatching)
           {
-            selectedMovie = fetcher.FuzzyMatch(fetcher.MovieName);
+            IMDB tmpImdb = new IMDB();
+            selectedMovie = fetcher.FuzzyMatch(tmpImdb.GetSearchString(fetcher.MovieName));
             if (selectedMovie == -1)
             {
               if (!fetcher.OnMovieNotFound(fetcher))
@@ -769,14 +1077,14 @@ namespace MediaPortal.Video.Database
 
         if (movieDetails != null)
         {
+          Log.Info("RefreshIMDB() - Found movie and added info for: {0} (Year: {1})",
+                   movieDetails.Title, movieDetails.Year);
+
           movieDetails.SearchString = strMovieName;
           currentMovie = movieDetails;
           return true;
         }
-        else
-        {
-          return fetcher.OnDetailsNotFound(fetcher);
-        }
+        return fetcher.OnDetailsNotFound(fetcher);
       }
       return false;
     }
@@ -791,8 +1099,7 @@ namespace MediaPortal.Video.Database
           string coverArtImage = Util.Utils.GetCoverArtName(type, title);
           if (!File.Exists(coverArtImage))
           {
-            string imageExtension;
-            imageExtension = Path.GetExtension(imageUrl);
+            string imageExtension = Path.GetExtension(imageUrl);
             if (imageExtension == string.Empty)
             {
               imageExtension = ".jpg";
@@ -801,7 +1108,17 @@ namespace MediaPortal.Video.Database
             temporaryFilename += imageExtension;
             Util.Utils.FileDelete(temporaryFilename);
 
-            Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+            // Check if image is file
+            if (imageUrl.Length > 7 && imageUrl.Substring(0, 7).Equals("file://"))
+            {
+              // Local image, don't download, just copy
+              File.Copy(imageUrl.Substring(7), temporaryFilename);
+            }
+            else
+            {
+              Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+            }
+            //Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
             if (File.Exists(temporaryFilename))
             {
               if (Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution,
@@ -819,15 +1136,17 @@ namespace MediaPortal.Video.Database
       catch (Exception) {}
     }
 
+    // Changed - referesh DB only - CDx method for multiple movie files
     /// <summary>
     /// Download IMDB info for all movies in a collection of paths
     /// </summary>
     public static bool ScanIMDB(IMDB.IProgress progress, ArrayList paths, bool fuzzyMatching, bool skipExisting,
-                                bool getActors)
+                                bool getActors, bool refreshDBonly)
     {
       bool success = true;
       ArrayList availableFiles = new ArrayList();
       foreach (string path in paths)
+        // Caution - Thumb creation spam no1 starts in CountFiles
       {
         CountFiles(path, ref availableFiles);
       }
@@ -839,22 +1158,56 @@ namespace MediaPortal.Video.Database
       int count = 1;
       foreach (string file in availableFiles)
       {
-        Log.Info("Scanning file: {0}", file);
+        //Log.Info("Scanning file: {0}", file);
         if ((progress != null) && (!progress.OnScanIterating(count)))
         {
           success = false;
           break;
         }
+        // Test pattern (CD, DISK, Part, X-Y...) and extrude last digit as set number check
+        // Lets kill double check for the same movie if it consists from more than one file
+        int digit = 0; // Only first file in set will proceed (cd1, part1, dvd1...)
 
-        IMDBMovie movieDetails = new IMDBMovie();
-        int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
-        if (!skipExisting || id == -1)
+        var pattern = Util.Utils.StackExpression();
+        for (int i = 0; i < pattern.Length; i++)
         {
-          string path, filename;
-          Util.Utils.Split(file, out path, out filename);
-          movieDetails.Path = path;
-          movieDetails.File = filename;
-          GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+          if (pattern[i].IsMatch(file))
+          {
+            digit = Convert.ToInt16(pattern[i].Match(file).Groups["digit"].Value);
+          }
+        }
+        try
+        {
+          IMDBMovie movieDetails = new IMDBMovie();
+          int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
+
+          if (refreshDBonly && id != -1 && digit < 2)
+          {
+            string path, filename;
+            Util.Utils.Split(file, out path, out filename);
+            movieDetails.Path = path;
+            movieDetails.File = filename;
+            // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
+            GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+          }
+          else
+          {
+            if ((!skipExisting || id == -1) && refreshDBonly == false && digit < 2)
+            {
+              string path, filename;
+              Util.Utils.Split(file, out path, out filename);
+              movieDetails.Path = path;
+              movieDetails.File = filename;
+              // Caution - Thumb creation spam no2 starts in GetInfoFromIMDB
+              GetInfoFromIMDB(progress, ref movieDetails, fuzzyMatching, getActors);
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Scan IMDB err:{0} src:{1}, stack:{2}, ", ex.Message, ex.Source, ex.StackTrace);
+          success = false;
+          break;
         }
         if ((progress != null) && (!progress.OnScanIterated(count++)))
         {
@@ -874,7 +1227,7 @@ namespace MediaPortal.Video.Database
     /// 
     /// </summary>
     /// <param name="path"></param>
-    /// <param name="totalFiles"></param>
+    /// <param name="availableFiles"></param>
     private static void CountFiles(string path, ref ArrayList availableFiles)
     {
       //
@@ -884,6 +1237,19 @@ namespace MediaPortal.Video.Database
       {
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Util.Utils.VideoExtensions);
+        // Thumbs creation spam no1 causing this call
+        //
+        // Temporary disable thumbcreation
+        //
+        using (Settings xmlreader = new MPSettings())
+        {
+          _currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        }
+        using (Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+        }
+
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
         foreach (GUIListItem item in items)
         {
@@ -913,14 +1279,22 @@ namespace MediaPortal.Video.Database
         Log.Info("Exception counting files:{0}", e);
         // Ignore
       }
+      finally
+      {
+        // Restore thumbcreation setting
+        using (Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
+        }
+      }
     }
 
     public static bool GetInfoFromIMDB(IMDB.IProgress progress, ref IMDBMovie movieDetails, bool isFuzzyMatching,
                                        bool getActors)
     {
-      string file, path, filename;
-      path = movieDetails.Path;
-      filename = movieDetails.File;
+      string file;
+      string path = movieDetails.Path;
+      string filename = movieDetails.File;
       if (path != string.Empty)
       {
         if (path.EndsWith(@"\"))
@@ -946,11 +1320,22 @@ namespace MediaPortal.Video.Database
       {
         if (File.Exists(file))
         {
-          Log.Info("Adding file:{0}", file);
           id = VideoDatabase.AddMovieFile(file);
 
           VirtualDirectory dir = new VirtualDirectory();
           dir.SetExtensions(Util.Utils.VideoExtensions);
+          // Thumb creation spam no2 causing this call
+          //
+          // Temporary disable thumbcreation
+          //
+          using (Settings xmlreader = new MPSettings())
+          {
+            _currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          }
+          using (Settings xmlwriter = new MPSettings())
+          {
+            xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+          }
           List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
           foreach (GUIListItem item in items)
           {
@@ -969,6 +1354,12 @@ namespace MediaPortal.Video.Database
               VideoDatabase.AddFile(id, pathId, strFileName);
             }
           }
+          // Restore thumbcreation setting
+          using (Settings xmlwriter = new MPSettings())
+          {
+            xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
+          }
+
           movieDetails.ID = id;
         }
         else

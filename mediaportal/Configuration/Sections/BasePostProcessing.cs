@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -98,9 +98,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxActivatedFilters.Controls.Add(this.bSetup);
       this.groupBoxActivatedFilters.Controls.Add(this.cLBDSFilter);
       this.groupBoxActivatedFilters.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxActivatedFilters.Location = new System.Drawing.Point(0, 25);
+      this.groupBoxActivatedFilters.Location = new System.Drawing.Point(6, 25);
       this.groupBoxActivatedFilters.Name = "groupBoxActivatedFilters";
-      this.groupBoxActivatedFilters.Size = new System.Drawing.Size(472, 166);
+      this.groupBoxActivatedFilters.Size = new System.Drawing.Size(462, 166);
       this.groupBoxActivatedFilters.TabIndex = 0;
       this.groupBoxActivatedFilters.TabStop = false;
       this.groupBoxActivatedFilters.Text = "Activated filters";
@@ -113,7 +113,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelPropertiesHint.AutoSize = true;
       this.labelPropertiesHint.Location = new System.Drawing.Point(134, 140);
       this.labelPropertiesHint.Name = "labelPropertiesHint";
-      this.labelPropertiesHint.Size = new System.Drawing.Size(278, 13);
+      this.labelPropertiesHint.Size = new System.Drawing.Size(265, 13);
       this.labelPropertiesHint.TabIndex = 3;
       this.labelPropertiesHint.Text = "Use this button to edit the settings of the selected filter.";
       // 
@@ -140,7 +140,7 @@ namespace MediaPortal.Configuration.Sections
       this.cLBDSFilter.FormattingEnabled = true;
       this.cLBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.cLBDSFilter.Name = "cLBDSFilter";
-      this.cLBDSFilter.Size = new System.Drawing.Size(440, 100);
+      this.cLBDSFilter.Size = new System.Drawing.Size(430, 94);
       this.cLBDSFilter.TabIndex = 1;
       this.cLBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.cLBDSFilter_MouseDoubleClick);
       // 
@@ -153,9 +153,9 @@ namespace MediaPortal.Configuration.Sections
            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAvailableFilters.Controls.Add(this.lBDSFilter);
       this.groupBoxAvailableFilters.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAvailableFilters.Location = new System.Drawing.Point(0, 197);
+      this.groupBoxAvailableFilters.Location = new System.Drawing.Point(6, 197);
       this.groupBoxAvailableFilters.Name = "groupBoxAvailableFilters";
-      this.groupBoxAvailableFilters.Size = new System.Drawing.Size(472, 211);
+      this.groupBoxAvailableFilters.Size = new System.Drawing.Size(462, 211);
       this.groupBoxAvailableFilters.TabIndex = 1;
       this.groupBoxAvailableFilters.TabStop = false;
       this.groupBoxAvailableFilters.Text = "Available filters";
@@ -170,7 +170,7 @@ namespace MediaPortal.Configuration.Sections
       this.lBDSFilter.FormattingEnabled = true;
       this.lBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.lBDSFilter.Name = "lBDSFilter";
-      this.lBDSFilter.Size = new System.Drawing.Size(440, 173);
+      this.lBDSFilter.Size = new System.Drawing.Size(430, 173);
       this.lBDSFilter.TabIndex = 4;
       this.lBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lBDSFilter_MouseDoubleClick);
       // 
@@ -190,12 +190,12 @@ namespace MediaPortal.Configuration.Sections
       this.labelWarning.Text = "USE THIS AT YOUR OWN RISK!";
       this.labelWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
-      // PostProcessing
+      // BasePostProcessing
       // 
       this.Controls.Add(this.groupBoxAvailableFilters);
       this.Controls.Add(this.groupBoxActivatedFilters);
       this.Controls.Add(this.labelWarning);
-      this.Name = "PostProcessing";
+      this.Name = "BasePostProcessing";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxActivatedFilters.ResumeLayout(false);
       this.groupBoxActivatedFilters.PerformLayout();

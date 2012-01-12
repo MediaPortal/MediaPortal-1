@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -189,7 +189,7 @@ namespace TvEngine
         DateTime lastProgram = DateTime.MinValue;
         if (programsInDbs.Count > 0)
         {
-          TvDatabase.Program p = (TvDatabase.Program)programsInDbs[0];
+          TvDatabase.IProgram p = (TvDatabase.Program)programsInDbs[0];
           lastProgram = p.EndTime;
         }
         lastProgramForChannel[ch.IdChannel] = lastProgram;
@@ -687,6 +687,24 @@ namespace TvEngine
                           continue;
                         }
 
+                        title = title.Replace("\r\n", " ");
+                        title = title.Replace("\n\r", " ");
+                        title = title.Replace("\r", " ");
+                        title = title.Replace("\n", " ");
+                        title = title.Replace("  ", " ");
+
+                        description = description.Replace("\r\n", " ");
+                        description = description.Replace("\n\r", " ");
+                        description = description.Replace("\r", " ");
+                        description = description.Replace("\n", " ");
+                        description = description.Replace("  ", " ");
+
+                        episodeName = episodeName.Replace("\r\n", " ");
+                        episodeName = episodeName.Replace("\n\r", " ");
+                        episodeName = episodeName.Replace("\r", " ");
+                        episodeName = episodeName.Replace("\n", " ");
+                        episodeName = episodeName.Replace("  ", " ");
+
                         Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title,
                                                    description, category, Program.ProgramState.None,
                                                    System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum,
@@ -735,7 +753,7 @@ namespace TvEngine
 
                 progChan.programs.Sort();
                 progChan.programs.AlreadySorted = true;
-                progChan.programs.FixEndTimes(); 
+                progChan.programs.FixEndTimes();
                 progChan.programs.RemoveOverlappingPrograms(); // be sure that we do not have any overlapping
 
                 // get the id of the channel, just get the IdChannel of the first program

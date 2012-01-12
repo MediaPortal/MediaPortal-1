@@ -1,20 +1,22 @@
-/* 
- *	Copyright (C) 2003-2006 Gabest
- *	http://www.gabest.org
+/*
+ *  $Id: RTS.h 2786 2010-12-17 16:42:55Z XhmikosR $
+ *
+ *  (C) 2003-2006 Gabest
+ *  (C) 2006-2010 see AUTHORS
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *   
+ *
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *   
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
@@ -110,7 +112,7 @@ class CClipper : public CPolygon
 {
 private:
 	CWord* Copy();
-    virtual bool Append(CWord* w);
+	virtual bool Append(CWord* w);
 
 public:
 	CClipper(CStringW str, CSize size, double scalex, double scaley, bool inverse);
@@ -141,8 +143,7 @@ public:
 #endif
 };
 
-enum eftype
-{
+enum eftype {
 	EF_MOVE = 0,	// {\move(x1=param[0], y1=param[1], x2=param[2], y2=param[3], t1=t[0], t2=t[1])} or {\pos(x=param[0], y=param[1])}
 	EF_ORG,			// {\org(x=param[0], y=param[1])}
 	EF_FADE,		// {\fade(a1=param[0], a2=param[1], a3=param[2], t1=t[0], t2=t[1], t3=t[2], t4=t[3])} or {\fad(t1=t[1], t2=t[2])
@@ -154,16 +155,16 @@ enum eftype
 };
 
 #ifdef _VSMOD // patch m006. moveable vector clip
-	#define EF_NUMBEROFEFFECTS 6
+#define EF_NUMBEROFEFFECTS 6
 #else
-	#define EF_NUMBEROFEFFECTS 5
+#define EF_NUMBEROFEFFECTS 5
 #endif
 
 class Effect
 {
 public:
 	enum eftype type;
-    int param[9];
+	int param[9];
 	int t[4];
 };
 
@@ -204,8 +205,7 @@ public:
 
 class CScreenLayoutAllocator
 {
-	typedef struct
-	{
+	typedef struct {
 		CRect r;
 		int segment, entry, layer;
 	} SubRect;
@@ -213,14 +213,15 @@ class CScreenLayoutAllocator
 	CAtlList<SubRect> m_subrects;
 
 public:
-	virtual void Empty();
+	/*virtual*/
+	void Empty();
 
 	void AdvanceToSegment(int segment, const CAtlArray<int>& sa);
 	CRect AllocRect(CSubtitle* s, int segment, int entry, int layer, int collisions);
 };
 
 class __declspec(uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0"))
-CRenderedTextSubtitle : public CSimpleTextSubtitle, public CSubPicProviderImpl, public ISubStream
+	CRenderedTextSubtitle : public CSimpleTextSubtitle, public CSubPicProviderImpl, public ISubStream
 {
 	CAtlMap<int, CSubtitle*> m_subtitleCache;
 
@@ -260,18 +261,19 @@ public:
 	virtual void Empty();
 
 	// call to signal this RTS to ignore any of the styles and apply the given override style
-    void SetOverride(bool doOverride = true, STSStyle *styleOverride = NULL)
-    {
-        m_doOverrideStyle = doOverride;
-        if(styleOverride != NULL) m_pStyleOverride = styleOverride;
-    }
+	void SetOverride(bool doOverride = true, STSStyle *styleOverride = NULL) {
+		m_doOverrideStyle = doOverride;
+		if(styleOverride != NULL) {
+			m_pStyleOverride = styleOverride;
+		}
+	}
 
 public:
 	bool Init(CSize size, CRect vidrect); // will call Deinit()
 	void Deinit();
 
 	DECLARE_IUNKNOWN
-    STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
+	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
 
 	// ISubPicProvider
 	STDMETHODIMP_(POSITION) GetStartPosition(REFERENCE_TIME rt, double fps);

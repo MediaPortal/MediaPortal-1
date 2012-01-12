@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,10 +22,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.GUI.View;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 
@@ -35,8 +38,8 @@ namespace MediaPortal.Configuration.Sections
   {
     #region Variables
 
-    private DataGridView dataGrid;
     private DataTable datasetFilters;
+    private DataTable datasetViews;
     private ViewDefinition currentView;
     public ArrayList views;
     private bool updating = false;
@@ -46,6 +49,13 @@ namespace MediaPortal.Configuration.Sections
     private List<string> _sqloperators = new List<string>();
     private List<string> _viewsAs = new List<string>();
     private List<string> _sortBy = new List<string>();
+
+    // Drag & Drop
+    private int _dragDropCurrentIndex = -1;
+    private Rectangle _dragDropRectangle;
+    private int _dragDropSourceIndex;
+    private int _dragDropTargetIndex;
+    private string _dragDropInitiatingGrid = "";
 
     #endregion
 
@@ -167,12 +177,18 @@ namespace MediaPortal.Configuration.Sections
         datasetFilters.Columns.Add(dtCol);
       }
 
-      // Add a Column with checkbox at last in the Grid     
+      // Add 2 columns with checkbox at the end of the Datarow     
       DataColumn dtcCheck = new DataColumn("SortAsc"); //create the data column object
       dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its data Type
-      dtcCheck.DefaultValue = false; //Set the default value
+      dtcCheck.DefaultValue = true; //Set the default value
       dtcCheck.AllowDBNull = false;
       datasetFilters.Columns.Add(dtcCheck); //Add the above column to the Data Table
+
+      DataColumn skipCheck = new DataColumn("Skip"); //create the data column object
+      skipCheck.DataType = Type.GetType("System.Boolean"); //Set its data Type
+      skipCheck.DefaultValue = false; //Set the default value
+      skipCheck.AllowDBNull = false;
+      datasetFilters.Columns.Add(skipCheck); //Add the above column to the Data Table
 
       // Set the Data Properties for the field to map to the data table
       dgSelection.DataPropertyName = "Selection";
@@ -181,34 +197,64 @@ namespace MediaPortal.Configuration.Sections
       dgLimit.DataPropertyName = "Limit";
       dgViewAs.DataPropertyName = "ViewAs";
       dgSortBy.DataPropertyName = "SortBy";
-      dgAsc.DataPropertyName = "SortAsc"; // Set the data property for the grif
+      dgAsc.DataPropertyName = "SortAsc";
+      dgSkip.DataPropertyName = "Skip";
 
       //Set the Data Grid Source as the Data Table created above
       dataGrid.AutoGenerateColumns = false;
       dataGrid.DataSource = datasetFilters;
+
+      // Setup the Views Grid
+      datasetViews = new DataTable("Views");
+
+      dtCol = new DataColumn("ViewName");
+      dtCol.DataType = Type.GetType("System.String");
+      dtCol.DefaultValue = "";
+      datasetViews.Columns.Add(dtCol);
+
+      dtCol = new DataColumn("LocalisedName");
+      dtCol.DataType = Type.GetType("System.String");
+      dtCol.DefaultValue = "";
+      datasetViews.Columns.Add(dtCol);
+
+      dtCol = new DataColumn("View");
+      dtCol.DataType = typeof (ViewDefinition);
+      dtCol.DefaultValue = null;
+      datasetViews.Columns.Add(dtCol);
+
+      dgViewName.DataPropertyName = "ViewName";
+      dgLocalisedName.DataPropertyName = "LocalisedName";
+
+      dataGridViews.AutoGenerateColumns = false;
+      dataGridViews.DataSource = datasetViews;
     }
 
-    public void LoadViews()
+    private void LoadViews()
     {
       updating = true;
-      cbViews.Items.Clear();
+      datasetViews.Rows.Clear();
       foreach (ViewDefinition view in views)
       {
         if (view.Name != string.Empty)
         {
-          cbViews.Items.Add(view);
+          datasetViews.Rows.Add(
+            new object[]
+              {
+                view.LocalizedName,
+                view.Name,
+                view,
+              }
+            );
         }
       }
-      ViewDefinition newDef = new ViewDefinition();
-      newDef.Name = "new...";
-      cbViews.Items.Add(newDef);
-      if (cbViews.Items.Count > 0)
-      {
-        cbViews.SelectedIndex = 0;
-      }
 
-      UpdateView();
       updating = false;
+
+      if (dataGridViews.Rows.Count > 0)
+      {
+        dataGridViews.Rows[0].Selected = true;
+        UpdateView();
+      }
     }
 
     #endregion
@@ -217,15 +263,17 @@ namespace MediaPortal.Configuration.Sections
 
     private void UpdateView()
     {
-      updating = true;
       datasetFilters.Clear();
-      currentView = (ViewDefinition)cbViews.SelectedItem;
+      int selectedRow = 0;
+      if (dataGridViews.SelectedRows.Count > 0)
+      {
+        selectedRow = dataGridViews.SelectedRows[0].Index;
+      }
+      currentView = (ViewDefinition)datasetViews.Rows[selectedRow][2];
       if (currentView == null)
       {
         return;
       }
-      tbViewName.Text = currentView.Name;
-
 
       //fill in all rows...
       for (int i = 0; i < currentView.Filters.Count; ++i)
@@ -246,11 +294,10 @@ namespace MediaPortal.Configuration.Sections
               def.DefaultView,
               def.DefaultSort,
               def.SortAscending,
+              def.SkipLevel,
             }
           );
       }
-
-      updating = false;
     }
 
     #endregion
@@ -263,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void cbViews_SelectedIndexChanged(object sender, EventArgs e)
+    private void dataGridViews_SelectionChanged(object sender, EventArgs e)
     {
       if (updating)
       {
@@ -271,16 +318,6 @@ namespace MediaPortal.Configuration.Sections
       }
       StoreGridInView();
       UpdateView();
-    }
-
-    /// <summary>
-    /// The Save button has been pressed
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void btnSave_Click(object sender, EventArgs e)
-    {
-      StoreGridInView();
     }
 
     /// <summary>
@@ -303,34 +340,6 @@ namespace MediaPortal.Configuration.Sections
       settingsChanged = true;
       ViewDefinition view = currentView;
       DataTable dt = dataGrid.DataSource as DataTable;
-      if (view.Name == "new...")
-      {
-        if (dt.Rows.Count == 0)
-        {
-          return;
-        }
-        view = new ViewDefinition();
-        view.Name = tbViewName.Text;
-        views.Add(view);
-        currentView = view;
-        cbViews.Items.Insert(cbViews.Items.Count - 1, view);
-        updating = true;
-        cbViews.SelectedItem = view;
-        updating = false;
-      }
-      else
-      {
-        updating = true;
-        view.Name = tbViewName.Text;
-        int index = cbViews.Items.IndexOf(view);
-        if (index >= 0)
-        {
-          cbViews.Items[index] = view;
-        }
-        cbViews.Update();
-        updating = false;
-      }
-      view.Name = tbViewName.Text;
       view.Filters.Clear();
 
       foreach (DataRow row in dt.Rows)
@@ -354,8 +363,45 @@ namespace MediaPortal.Configuration.Sections
         def.DefaultView = row[4].ToString();
         def.DefaultSort = row[5].ToString();
         def.SortAscending = (bool)row[6];
+        def.SkipLevel = (bool)row[7];
         view.Filters.Add(def);
       }
+    }
+
+    /// <summary>
+    /// Add a new View entry 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btnAdd_Click(object sender, EventArgs e)
+    {
+      updating = true;
+      ViewDefinition view = new ViewDefinition();
+      view.Name = "..new";
+
+      datasetViews.Rows.Add(
+        new object[]
+          {
+            view.LocalizedName,
+            view.Name,
+            view,
+          }
+        );
+
+      dataGridViews.Rows[dataGridViews.Rows.Count - 1].Selected = true;
+      dataGridViews.FirstDisplayedScrollingRowIndex = dataGridViews.Rows.Count - 1;
+      dataGridViews.CurrentCell = dataGridViews.Rows[dataGridViews.Rows.Count - 1].Cells[1];
+      dataGridViews.BeginEdit(false);
+      currentView = view;
+
+      datasetFilters.Rows.Clear();
+      DataRow row = datasetFilters.NewRow();
+      row[0] = row[1] = row[2] = row[3] = row[5] = "";
+      row[4] = ViewsAs[0]; // Set default Value
+      row[6] = true;
+      row[7] = false;
+      datasetFilters.Rows.Add(row);
+      updating = false;
     }
 
     /// <summary>
@@ -365,21 +411,21 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void btnDelete_Click(object sender, EventArgs e)
     {
-      ViewDefinition viewSelected = cbViews.SelectedItem as ViewDefinition;
-      if (viewSelected == null)
+      updating = true;
+      if (dataGridViews.CurrentRow != null)
       {
-        return;
+        dataGridViews.Rows.Remove(dataGridViews.CurrentRow);
       }
-      for (int i = 0; i < views.Count; ++i)
+      updating = false;
+
+      if (dataGridViews.CurrentRow != null)
       {
-        ViewDefinition view = views[i] as ViewDefinition;
-        if (view == viewSelected)
+        int newSelection = dataGridViews.CurrentRow.Index - 1;
+        if (newSelection > -1)
         {
-          views.RemoveAt(i);
-          break;
+          dataGridViews.Rows[newSelection].Selected = true;
         }
       }
-      LoadViews();
     }
 
     /// <summary>
@@ -421,58 +467,195 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// Handle the Keypress for the action column
+    /// Handles Edit in the Datacolumns of the View Grid
+    /// So that the View Name is updated with the choosen Name
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void dataGrid_KeyPress(object sender, KeyPressEventArgs e)
+    private void dataGridViews_CellEndEdit(object sender, DataGridViewCellEventArgs e)
     {
-      if (dataGrid.CurrentCell != null && dataGrid.CurrentCell.OwningColumn.Name == "dgAct")
+      if (currentView != null)
       {
-        dgAct_KeyPress(sender, e);
+        currentView.Name = dataGridViews.Rows[e.RowIndex].Cells[1].Value.ToString();
+        dataGridViews.Rows[e.RowIndex].Cells[0].Value = currentView.LocalizedName;
       }
     }
 
     /// <summary>
-    /// Handle the Keypress in the Action Column
+    /// Handle the Keypress for the Filter Datagrid
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void dgAct_KeyPress(object sender, KeyPressEventArgs e)
+    private void dataGrid_KeyDown(object sender, KeyEventArgs e)
     {
-      DataRow row = datasetFilters.NewRow();
-      row[0] = row[1] = row[2] = row[3] = row[4] = row[5] = "";
-      row[6] = false;
-
-      e.Handled = true;
-
       int rowSelected = -1;
       if (dataGrid.CurrentRow != null)
       {
         rowSelected = dataGrid.CurrentRow.Index;
-        if (rowSelected == -1)
-        {
-          return;
-        }
-        if (rowSelected == datasetFilters.Rows.Count)
-        {
-          return;
-        }
       }
 
-      switch (e.KeyChar)
+      switch (e.KeyCode)
       {
-        case 'a':
+        case System.Windows.Forms.Keys.Insert:
+          DataRow row = datasetFilters.NewRow();
+          row[0] = row[1] = row[2] = row[3] = row[5] = "";
+          row[4] = ViewsAs[0]; // Set default Value
+          row[6] = true;
+          row[7] = false;
+          if (rowSelected == -1)
+          {
+            rowSelected = 0;
+          }
           datasetFilters.Rows.InsertAt(row, rowSelected + 1);
+          e.Handled = true;
           break;
-        case 'b':
-          datasetFilters.Rows.InsertAt(row, rowSelected);
-          break;
-        case 'd':
-          datasetFilters.Rows.RemoveAt(rowSelected);
+        case System.Windows.Forms.Keys.Delete:
+          if (rowSelected > -1)
+          {
+            datasetFilters.Rows.RemoveAt(rowSelected);
+          }
+          e.Handled = true;
           break;
       }
     }
+
+    #region Drag & Drop
+
+    private void OnMouseDown(object sender, MouseEventArgs e)
+    {
+      DataGridView dgV = (DataGridView)sender;
+      //stores values for drag/drop operations if necessary
+      if (dgV.AllowDrop)
+      {
+        int selectedRow = dgV.HitTest(e.X, e.Y).RowIndex;
+        if (selectedRow > -1)
+        {
+          Size DragSize = SystemInformation.DragSize;
+          _dragDropRectangle = new Rectangle(new Point(e.X - (DragSize.Width / 2), e.Y - (DragSize.Height / 2)),
+                                             DragSize);
+          _dragDropSourceIndex = selectedRow;
+          _dragDropInitiatingGrid = dgV.Name;
+        }
+      }
+      else
+      {
+        _dragDropRectangle = Rectangle.Empty;
+        _dragDropInitiatingGrid = "";
+      }
+
+      base.OnMouseDown(e);
+    }
+
+    private void OnMouseMove(object sender, MouseEventArgs e)
+    {
+      DataGridView dgV = (DataGridView)sender;
+      if (dgV.AllowDrop)
+      {
+        if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+        {
+          if (dgV.Name == _dragDropInitiatingGrid)
+          {
+            if (_dragDropRectangle != Rectangle.Empty && !_dragDropRectangle.Contains(e.X, e.Y))
+            {
+              DragDropEffects DropEffect = dgV.DoDragDrop(dgV.Rows[_dragDropSourceIndex],
+                                                          DragDropEffects.Move);
+            }
+          }
+        }
+      }
+      base.OnMouseMove(e);
+    }
+
+    private void OnDragOver(object sender, DragEventArgs e)
+    {
+      DataGridView dgV = (DataGridView)sender;
+      //runs while the drag/drop is in progress
+      if (dgV.AllowDrop)
+      {
+        e.Effect = DragDropEffects.Move;
+        int CurRow =
+          dgV.HitTest(dgV.PointToClient(new Point(e.X, e.Y)).X,
+                      dgV.PointToClient(new Point(e.X, e.Y)).Y).RowIndex;
+        if (_dragDropCurrentIndex != CurRow)
+        {
+          _dragDropCurrentIndex = CurRow;
+          dgV.Invalidate(); //repaint
+        }
+      }
+      base.OnDragOver(e);
+    }
+
+    private void OnDragDrop(object sender, DragEventArgs drgevent)
+    {
+      updating = true;
+      DataGridView dgV = (DataGridView)sender;
+      //runs after a drag/drop operation for column/row has completed
+      if (dgV.AllowDrop)
+      {
+        if (drgevent.Effect == DragDropEffects.Move)
+        {
+          Point ClientPoint = dgV.PointToClient(new Point(drgevent.X, drgevent.Y));
+
+          _dragDropTargetIndex = dgV.HitTest(ClientPoint.X, ClientPoint.Y).RowIndex;
+          if (_dragDropTargetIndex > -1 && _dragDropCurrentIndex < dgV.RowCount - 1)
+          {
+            _dragDropCurrentIndex = -1;
+
+            if (dgV.Name == "dataGrid")
+            {
+              DataRow row = datasetFilters.NewRow();
+              // Copy the existing row elements, before removing it from table
+              for (int i = 0; i < datasetFilters.Columns.Count; i++)
+              {
+                row[i] = datasetFilters.Rows[_dragDropSourceIndex][i];
+              }
+              datasetFilters.Rows.RemoveAt(_dragDropSourceIndex);
+
+              if (_dragDropTargetIndex > _dragDropSourceIndex)
+                _dragDropTargetIndex--;
+
+              datasetFilters.Rows.InsertAt(row, _dragDropTargetIndex);
+            }
+            else if (dgV.Name == "dataGridViews")
+            {
+              DataRow row = datasetViews.NewRow();
+              // Copy the existing row elements
+              for (int i = 0; i < datasetViews.Columns.Count; i++)
+              {
+                row[i] = datasetViews.Rows[_dragDropSourceIndex][i];
+              }
+              datasetViews.Rows.RemoveAt(_dragDropSourceIndex);
+
+              if (_dragDropTargetIndex > _dragDropSourceIndex)
+                _dragDropTargetIndex--;
+
+              datasetViews.Rows.InsertAt(row, _dragDropTargetIndex);
+            }
+
+            dgV.ClearSelection();
+            dgV.Rows[_dragDropTargetIndex].Selected = true;
+          }
+        }
+      }
+      base.OnDragDrop(drgevent);
+      updating = false;
+    }
+
+    private void OnCellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+    {
+      DataGridView dgV = (DataGridView)sender;
+      if (_dragDropCurrentIndex > -1)
+      {
+        if (e.RowIndex == _dragDropCurrentIndex && _dragDropCurrentIndex < dgV.RowCount - 1)
+        {
+          //if this cell is in the same row as the mouse cursor
+          Pen p = new Pen(Color.Red, 3);
+          e.Graphics.DrawLine(p, e.CellBounds.Left, e.CellBounds.Top - 1, e.CellBounds.Right, e.CellBounds.Top - 1);
+        }
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -494,8 +677,8 @@ namespace MediaPortal.Configuration.Sections
       string[] sortBy
       )
     {
+      string defaultViews = Path.Combine(ViewHandler.DefaultsDirectory, mediaType + "Views.xml");
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
-      string defaultViews = Config.GetFile(Config.Dir.Base, "default" + mediaType + "Views.xml");
       Selections = selections;
       Sqloperators = sqloperators;
       ViewsAs = viewsAs;
@@ -504,6 +687,43 @@ namespace MediaPortal.Configuration.Sections
       if (!File.Exists(customViews))
       {
         File.Copy(defaultViews, customViews);
+      }
+      else
+      {
+        // Let's see, if we got a pre 1.2 file
+        try
+        {
+          // Can't use XPath here, as the XML Namespace is dependend on the version of MP Core
+          // And this might change.
+          // So we iterate through the file, until we found a filterdef.
+          XmlDocument xmlDoc = new XmlDocument();
+          xmlDoc.Load(customViews);
+          XmlElement rootElement = xmlDoc.DocumentElement;
+          if (rootElement != null)
+          {
+            XmlNode body = rootElement.ChildNodes[0];
+            foreach (XmlNode node in body.ChildNodes)
+            {
+              if (node.Name == "a3:FilterDefinition")
+              {
+                XmlNode skipLevel = node.SelectSingleNode("skipLevel");
+                if (skipLevel == null)
+                {
+                  MediaPortal.GUI.Library.Log.Info("Views: Found old view format: {0} Copying default views.",
+                                                   customViews);
+                  File.Copy(defaultViews, customViews, true);
+                  break;
+                }
+                break;
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+          MediaPortal.GUI.Library.Log.Error("Views: Exception reading view {0}. Copying default views.", customViews);
+          File.Copy(defaultViews, customViews, true);
+        }
       }
 
       views = new ArrayList();
@@ -523,18 +743,34 @@ namespace MediaPortal.Configuration.Sections
       LoadViews();
     }
 
+
     /// <summary>
     /// Save the Views
     /// </summary>
     /// <param name="mediaType"></param>
     protected void SaveSettings(string mediaType)
     {
+      StoreGridInView(); // Save pending changes
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
       if (settingsChanged)
       {
+        // Rebuild the Arraylist with the views out of the Datagrid
+        views.Clear();
+        foreach (DataGridViewRow row in dataGridViews.Rows)
+        {
+          ViewDefinition view = (ViewDefinition)datasetViews.Rows[row.Index][2];
+          if (view.Filters.Count > 0)
+          {
+            views.Add(view);
+          }
+        }
+
         try
         {
-          using (FileStream fileStream = new FileInfo(customViews).OpenWrite())
+          // Don't use FileInfo.OpenWrite
+          // From msdn:
+          //  If you overwrite a longer string (such as "This is a test of the OpenWrite method") with a shorter string (like "Second run"), the file will contain a mix of the strings ("Second runtest of the OpenWrite method").
+          using (FileStream fileStream = new FileStream(customViews, FileMode.Truncate))
           {
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fileStream, views);

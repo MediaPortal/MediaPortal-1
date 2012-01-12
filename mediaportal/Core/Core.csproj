@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -26,7 +27,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -210,6 +211,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassRegistration.dll</HintPath>
     </Reference>
+    <Reference Include="BassVisAPI.Net, Version=2.4.1.9, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
+    </Reference>
     <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\edtftpnet-1.2.2.dll</HintPath>
@@ -269,6 +274,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="App.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -325,14 +333,29 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="guilib\ExpressionManager.cs" />
+    <Compile Include="guilib\Functions.cs" />
+    <Compile Include="guilib\FontObject.cs" />
+    <Compile Include="guilib\FontTexture.cs" />
     <Compile Include="guilib\GUICoverFlow.cs" />
     <Compile Include="guilib\GUIInternalOverlayWindow.cs" />
     <Compile Include="guilib\GUIInternalWindow.cs" />
     <Compile Include="guilib\GUIKeyboard.cs" />
-    <Compile Include="guilib\GUISmsStyledKeyboard.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
+    <Compile Include="guilib\ViewHandler.cs" />
+    <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
+    <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Player\FFDShow\Interfaces\DirectShow.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffDecoder.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffdshowBase.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffdshowDec.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffdshowDecVideo.cs" />
     <Compile Include="Player\MediaInfoWrapper.cs" />
+    <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
@@ -384,6 +407,8 @@
     <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="Player\MediaInfo.cs" />
     <Compile Include="Player\Subtitles\DirectVobSubEngine.cs" />
+    <Compile Include="Player\FFDShow\FFDShowAPI.cs" />
+    <Compile Include="Player\FFDShow\FFDShowConstants.cs" />
     <Compile Include="Player\Subtitles\SubEngine.cs" />
     <Compile Include="Player\Subtitles\MpcEngine.cs" />
     <Compile Include="Player\Subtitles\SubSettings.cs" />
@@ -404,6 +429,18 @@
     <Compile Include="Player\TSReaderPlayer.cs" />
     <Compile Include="Player\Windows7Helper.cs" />
     <Compile Include="RedEye\RedEye.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\CDDrive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\CDDriveEvents.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\DeviceVolumeMonitor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\Win32Functions.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TagReader\CUE\CueFakeTrack.cs" />
@@ -435,17 +472,24 @@
     <Compile Include="UserInterfaceControls\MPNumericUpDown.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserInterfaceControls\MPProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Util\EncryptDecrypt.cs" />
+    <Compile Include="Util\FanArt.cs" />
     <Compile Include="Util\FastImage.cs" />
     <Compile Include="Util\FilterChecker.cs" />
     <Compile Include="Util\FolderThumbCacher.cs" />
     <Compile Include="Util\FolderThumbCreator.cs" />
     <Compile Include="Util\HResult.cs" />
     <Compile Include="Util\HTMLParser.cs" />
+    <Compile Include="Util\IMDBSearch.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />
+    <Compile Include="Util\NativeFileSystemOperations.cs" />
+    <Compile Include="Util\Network.cs" />
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />
@@ -453,7 +497,7 @@
     <Compile Include="Util\RemovableDriveHelper.cs" />
     <Compile Include="Util\StopWatch.cs" />
     <Compile Include="Util\ThumbExtractor.cs" />
-    <Compile Include="Util\TVProgramDescription.cs" />
+    <Compile Include="Util\TMDBCoversSearch.cs" />
     <Compile Include="Util\UnhandledExceptionLogger.cs" />
     <Compile Include="UserInterfaceControls\MPTabPage.cs">
       <SubType>Component</SubType>
@@ -568,9 +612,6 @@
     <Compile Include="Drawing\DashStyles.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawing\DoubleCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing\DrawingContext.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -581,9 +622,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\Geometry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\GeometryCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\GeometryCombineMode.cs">
@@ -840,9 +878,6 @@
     <Compile Include="guilib\GUISliderControl.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="guilib\GUISMSInputControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="guilib\GUISortButtonControl.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1094,9 +1129,6 @@
     <Compile Include="Player\VideoPlayerVMR9.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Player\VMR7.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Player\VMR9.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1128,19 +1160,6 @@
     <Compile Include="Ripper\AutoPlay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Ripper\CDDrive.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ripper\CDDriveEvents.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ripper\DeviceVolumeMonitor.cs" />
-    <Compile Include="Ripper\RemovableDrive.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ripper\Win32Functions.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SerialUIR\CommBase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1165,16 +1184,10 @@
     <Compile Include="System.Collections\NullEnumerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Collections\PriorityQueue.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Threading\TimeoutLock.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Automation.Provider\ExpandCollapseState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Automation.Provider\IAutomationPatternProvider.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Automation.Provider\IExpandCollapseProvider.cs">
@@ -1192,15 +1205,6 @@
     <Compile Include="System.Windows.Automation\ToggleState.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\Button.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ButtonBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Canvas.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\ClickMode.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1216,28 +1220,10 @@
     <Compile Include="System.Windows.Controls\ContextMenuService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\Control.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ControlTemplate.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\DataTemplate.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\DataTemplateSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\DefinitionBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\Dock.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\DockPanel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Grid.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\GridLength.cs">
@@ -1249,28 +1235,10 @@
     <Compile Include="System.Windows.Controls\GridUnitType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\HeaderedItemsControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Image.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\IScrollInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\ItemCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ItemsControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Menu.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\MenuBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\MenuItem.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\MenuItemMode.cs">
@@ -1282,12 +1250,6 @@
     <Compile Include="System.Windows.Controls\Orientation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\Page.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Panel.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\PlacementMode.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1295,9 +1257,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\RowDefinitionCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\StackPanel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Data\Binding.cs">
@@ -1583,9 +1542,6 @@
     <Compile Include="System.Windows\ComponentResourceKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\ContentControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\ContentElement.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1640,9 +1596,6 @@
     <Compile Include="System.Windows\FrameworkContentElement.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\FrameworkElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\FrameworkElementFactory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1650,9 +1603,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\FrameworkPropertyMetadataOptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\FrameworkTemplate.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\Freezable.cs">
@@ -1674,9 +1624,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\LocalValueEnumerator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\LogicalTreeHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\PropertyInvalidatedCallback.cs">
@@ -1751,9 +1698,6 @@
     <Compile Include="System.Windows\SizeChangedEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\SizeChangedInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\StaticResourceExtension.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1790,12 +1734,6 @@
     <Compile Include="System.Windows\TriggerInvalidatedEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\UIElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\UIElementCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\UIPropertyMetadata.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1809,12 +1747,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\VisualCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\VisualOperations.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\VisualUtility.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\WindowState.cs">
@@ -2025,6 +1957,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>

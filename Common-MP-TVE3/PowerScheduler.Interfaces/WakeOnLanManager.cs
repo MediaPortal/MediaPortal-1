@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -103,8 +103,8 @@ namespace TvEngine.PowerScheduler
         for (int i = 0; i < entries; i++)
         {
           table[i] = (MIB_IPNETROW)Marshal.PtrToStructure(
-                                     new IntPtr(currentBuffer.ToInt64() + (i * Marshal.SizeOf(typeof (MIB_IPNETROW)))),
-                                     typeof (MIB_IPNETROW)
+            new IntPtr(currentBuffer.ToInt64() + (i * Marshal.SizeOf(typeof (MIB_IPNETROW)))),
+            typeof (MIB_IPNETROW)
                                      );
         }
       }

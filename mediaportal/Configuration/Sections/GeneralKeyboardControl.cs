@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public GeneralKeyboardControl()
-      : base("Keyboard shortcuts")
+      : base("Keyboard Default Shortcuts")
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -328,12 +328,6 @@ namespace MediaPortal.Configuration.Sections
                                                                                                    "Y",
                                                                                                    "Show/hide OSD"
                                                                                                  }, -1);
-      System.Windows.Forms.ListViewItem listViewItem43 = new System.Windows.Forms.ListViewItem(new string[]
-                                                                                                 {
-                                                                                                   "Fullscreen Video",
-                                                                                                   "C",
-                                                                                                   "Show/hide MSN chat window"
-                                                                                                 }, -1);
       System.Windows.Forms.ListViewItem listViewItem44 = new System.Windows.Forms.ListViewItem(new string[]
                                                                                                  {
                                                                                                    "Fullscreen Video",
@@ -441,12 +435,6 @@ namespace MediaPortal.Configuration.Sections
                                                                                                    "Fullscreen TV",
                                                                                                    "Y",
                                                                                                    "Show/hide OSD"
-                                                                                                 }, -1);
-      System.Windows.Forms.ListViewItem listViewItem62 = new System.Windows.Forms.ListViewItem(new string[]
-                                                                                                 {
-                                                                                                   "Fullscreen TV",
-                                                                                                   "C",
-                                                                                                   "Show/hide MSN chat window"
                                                                                                  }, -1);
       System.Windows.Forms.ListViewItem listViewItem63 = new System.Windows.Forms.ListViewItem(new string[]
                                                                                                  {
@@ -598,7 +586,6 @@ namespace MediaPortal.Configuration.Sections
                                              listViewItem40,
                                              listViewItem41,
                                              listViewItem42,
-                                             listViewItem43,
                                              listViewItem44,
                                              listViewItem45,
                                              listViewItem46,
@@ -617,7 +604,6 @@ namespace MediaPortal.Configuration.Sections
                                              listViewItem59,
                                              listViewItem60,
                                              listViewItem61,
-                                             listViewItem62,
                                              listViewItem63,
                                              listViewItem64,
                                              listViewItem65,

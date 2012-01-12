@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -50,15 +50,27 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       base.OnSectionActivated();
       listView1.Items.Clear();
+      ListViewGroup listGroup = listView1.Groups["listViewGroupAvailable"];
       foreach (ITvServerPlugin plugin in _loader.Plugins)
       {
         ListViewItem item = listView1.Items.Add("");
+        item.Group = listGroup;
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
         item.SubItems.Add(plugin.Version);
         Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
         item.Checked = setting.Value == "true";
         item.Tag = setting;
+      }
+      listGroup = listView1.Groups["listViewGroupIncompatible"];
+      foreach (Type plugin in _loader.IncompatiblePlugins)
+      {
+        ListViewItem item = listView1.Items.Add("");
+        item.Group = listGroup;
+        item.SubItems.Add(plugin.Name);
+        item.SubItems.Add("Unknown");
+        item.SubItems.Add(plugin.Assembly.GetName().Version.ToString());
+        item.Checked = false;
       }
       listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       _ignoreEvents = false;
@@ -79,7 +91,11 @@ namespace SetupTv.Sections
         return;
       Setting setting = e.Item.Tag as Setting;
       if (setting == null)
+      {
+        e.Item.Checked = false;
         return;
+      }
+
       setting.Value = e.Item.Checked ? "true" : "false";
       setting.Persist();
       _needRestart = true;

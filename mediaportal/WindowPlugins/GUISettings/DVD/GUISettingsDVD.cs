@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.GUISettings.TV
 {
@@ -285,14 +286,13 @@ namespace WindowPlugins.GUISettings.TV
         return;
       }
       dlg.Reset();
-      dlg.SetHeading(941); // Change aspect ratio
-      dlg.AddLocalizedString(942); // Stretch
       dlg.AddLocalizedString(943); // Normal
       dlg.AddLocalizedString(944); // Original
-      dlg.AddLocalizedString(945); // Letterbox
-      dlg.AddLocalizedString(946); // Pan and scan
       dlg.AddLocalizedString(947); // Zoom
       dlg.AddLocalizedString(1190); // Zoom 14:9
+      dlg.AddLocalizedString(942); // Stretch
+      dlg.AddLocalizedString(945); // Letterbox
+      dlg.AddLocalizedString(946); // Non linear stretch
       // set the focus to currently used mode
       dlg.SelectedLabel = (int)aspectRatio;
       // show dialog and wait for result

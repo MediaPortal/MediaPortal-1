@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ namespace MpeCore.Classes
     }
 
     public List<PackageClass> Items { get; set; }
+
     [XmlIgnore]
     public List<string> IgnoredUpdates { get; set; }
 
@@ -117,6 +118,8 @@ namespace MpeCore.Classes
         pak.Groups.Items.Add(new GroupItem(groupItem.Name, groupItem.Checked));
       }
       pak.Dependencies = packageClass.Dependencies;
+      pak.PluginDependencies = packageClass.PluginDependencies;
+      pak.IsSkin = packageClass.IsSkin;
       pak.Version = packageClass.Version;
       pak.Parent = this;
       Items.Add(pak);
@@ -151,7 +154,7 @@ namespace MpeCore.Classes
       {
         if (item.IsHiden)
           continue;
-        
+
         if (item.GeneralInfo.Id == id && item.GeneralInfo.Version.CompareTo(version) == 0)
           return item;
       }
@@ -293,6 +296,54 @@ namespace MpeCore.Classes
           item.IsHiden = true;
         }
       }
+    }
+
+    /// <summary>
+    /// Hide extensions which isn't compatible
+    /// </summary>
+    public void HideByDependencies()
+    {
+      foreach (PackageClass item in Items)
+      {
+        item.IsHiden = false;
+        if (!item.CheckDependency(true))
+        {
+          item.IsHiden = true;
+        }
+      }
+    }
+
+    public void Hide(bool onlystable, bool onlycompatible)
+    {
+      foreach (PackageClass item in Items)
+      {
+        item.IsHiden = false;
+        if (onlycompatible)
+        {
+          if (!item.CheckDependency(true))
+          {
+            item.IsHiden = true;
+          }
+        }
+        if (onlystable)
+        {
+          if (item.GeneralInfo.DevelopmentStatus != ParamNamesConst.DEVELOPMENTSTATUS_STABE)
+          {
+            item.IsHiden = true;
+          }
+        }
+      }
+    }
+
+    public int GetHiddenExtensionCount()
+    {
+      int i = 0;
+      foreach (PackageClass item in Items)
+      {
+        if (item.IsHiden)
+          i++;
+      }
+      return i;
     }
 
     public void ShowAll()

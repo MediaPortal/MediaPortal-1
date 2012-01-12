@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ namespace MpeCore.Classes
       UpdateAll = false;
       DoUpdateInStartUp = true;
       ShowOnlyStable = true;
+      ShowOnlyCompatible = true;
       IgnoredUpdates = new List<string>();
     }
 
@@ -42,6 +43,7 @@ namespace MpeCore.Classes
     public bool UpdateAll { get; set; }
     public bool DoUpdateInStartUp { get; set; }
     public bool ShowOnlyStable { get; set; }
+    public bool ShowOnlyCompatible { get; set; }
     public List<string> IgnoredUpdates { get; set; }
 
     public void Save()
@@ -53,8 +55,8 @@ namespace MpeCore.Classes
       using (TextWriter writer = new StreamWriter(filename))
       {
         serializer.Serialize(writer, this);
-        writer.Close(); 
-      }      
+        writer.Close();
+      }
     }
 
     public static ApplicationSettings Load()

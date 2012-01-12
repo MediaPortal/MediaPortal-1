@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,12 +29,10 @@ namespace MediaPortal.Playlists
     {
       Unknown,
       Audio,
-      Radio,
       AudioStream,
       VideoStream,
       Video,
       DVD,
-      TV,
       Pictures
     }
 

@@ -31,9 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Core, Version=1.0.4.32491, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Core, Version=1.1.6.26747, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\MEDIAPORTAL\Core\bin\Release\Core.dll</HintPath>
+      <HintPath>..\..\..\..\MEDIAPORTAL\Core\bin\Debug\Core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.3.6162.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -51,10 +51,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TvPlugin, Version=1.0.4.19802, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\TvPlugin\TvPlugin\bin\Debug\TvPlugin.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPlayerStubs\PlayerTwoDualMonoAudioStreams.cs" />
@@ -67,6 +63,12 @@
     <Compile Include="IPlayerStubs\PlayerSingleAudioStreamMpeg1Dan.cs" />
     <Compile Include="TVHomeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\TvPlugin\TvPlugin\TvPlugin.csproj">
+      <Project>{1526A789-1DE2-4A8B-AA4B-5382A617C4F8}</Project>
+      <Name>TvPlugin</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

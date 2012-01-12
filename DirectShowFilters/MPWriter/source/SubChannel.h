@@ -34,11 +34,11 @@ public:
 	HRESULT WriteTeletext(PBYTE pbData, LONG lDataLength);
 	int Handle() { return m_id;}
 
-	STDMETHODIMP SetRecordingFileName(char* pszFileName);
+	STDMETHODIMP SetRecordingFileNameW(wchar_t* pwszFileName);
 	STDMETHODIMP StartRecord();
 	STDMETHODIMP StopRecord();
 
-	STDMETHODIMP SetTimeShiftFileName(char* pszFileName);
+	STDMETHODIMP SetTimeShiftFileNameW(wchar_t* pwszFileName);
 	STDMETHODIMP SetChannelType(int channelType);
 	STDMETHODIMP StartTimeShifting();
 	STDMETHODIMP StopTimeShifting();
@@ -50,10 +50,10 @@ public:
 
 
 	CProgramToTransportStreamRecorder* m_pTsRecorder;
-	char m_strRecordingFileName[1024];
+	wchar_t m_wstrRecordingFileName[1024];
 	bool m_bIsRecording;
 	CProgramToTransportStream* m_pTsWriter;
-	char m_strTimeShiftFileName[1024];
+	wchar_t m_wstrTimeShiftFileName[1024];
 	bool m_bIsTimeShifting;
 	bool m_bPaused;
 	CTeletextGrabber* m_pTeletextGrabber;

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -141,14 +141,8 @@ namespace MpeCore.Classes.SectionPanel
 
     #endregion
 
-    private void pictureBox1_Click(object sender, EventArgs e)
-    {
+    private void pictureBox1_Click(object sender, EventArgs e) {}
 
-    }
-
-    private void pictureBox3_Click(object sender, EventArgs e)
-    {
-
-    }
+    private void pictureBox3_Click(object sender, EventArgs e) {}
   }
 }

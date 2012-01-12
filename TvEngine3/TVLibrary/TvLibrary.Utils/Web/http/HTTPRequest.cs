@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ namespace MediaPortal.Utils.Web
     private bool _externalBrowser = false;
     private string _encoding = string.Empty;
     private int _delay = 0;
+    private string _agent = string.Empty;
 
     public HTTPRequest() {}
 
@@ -65,6 +66,7 @@ namespace MediaPortal.Utils.Web
       _externalBrowser = request._externalBrowser;
       _encoding = request._encoding;
       _delay = request._delay;
+      _agent = request._agent;
     }
 
     public HTTPRequest(Uri request)
@@ -132,6 +134,13 @@ namespace MediaPortal.Utils.Web
       set { _encoding = value; }
     }
 
+    [XmlAttribute("user-agent")]
+    public string UserAgent
+    {
+      get { return _agent; }
+      set { _agent = value; }
+    }
+
     [XmlAttribute("delay")]
     public int Delay
     {
@@ -157,6 +166,12 @@ namespace MediaPortal.Utils.Web
       Uri newUri = new Uri(Uri, relativeUri);
       HTTPRequest newHTTPRequest = new HTTPRequest(newUri);
       newHTTPRequest._encoding = this._encoding;
+      // Copy this also otherwise data is lost
+      // Caused sublink delay in WebEPG always to be 0
+      newHTTPRequest._externalBrowser = this._externalBrowser;
+      newHTTPRequest._cookies = this._cookies;
+      newHTTPRequest._delay = this._delay;
+      newHTTPRequest._agent = this._agent;
       return newHTTPRequest;
     }
 

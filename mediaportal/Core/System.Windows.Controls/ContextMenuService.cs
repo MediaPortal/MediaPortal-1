@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -51,9 +51,9 @@ namespace System.Windows.Controls
       PlacementRectangleProperty = DependencyProperty.RegisterAttached("PlacementRectangle", typeof (Rect),
                                                                        typeof (ContextMenuService),
                                                                        new FrameworkPropertyMetadata(Rect.Empty));
-      PlacementTargetProperty = DependencyProperty.RegisterAttached("PlacementTarget", typeof (UIElement),
-                                                                    typeof (ContextMenuService),
-                                                                    new FrameworkPropertyMetadata(false));
+      //PlacementTargetProperty = DependencyProperty.RegisterAttached("PlacementTarget", typeof (UIElement),
+      //                                                              typeof (ContextMenuService),
+      //                                                              new FrameworkPropertyMetadata(false));
 //			StaysOpenProperty = DependencyProperty.RegisterAttached("StaysOpen", typeof(bool), typeof(ContextMenuService), new FrameworkPropertyMetadata(false));
       VerticalOffsetProperty = DependencyProperty.RegisterAttached("VerticalOffset", typeof (double),
                                                                    typeof (ContextMenuService),

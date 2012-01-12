@@ -320,11 +320,14 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt)
 	h.width = (WORD)BitRead(12);
 	h.height = (WORD)BitRead(12);
 	h.ar = BitRead(4);
-    static int ifps[16] = {0, 1126125, 1125000, 1080000, 900900, 900000, 540000, 450450, 450000, 0, 0, 0, 0, 0, 0, 0};
+	static int ifps[16] = {0, 1126125, 1125000, 1080000, 900900, 900000, 540000, 450450, 450000, 0, 0, 0, 0, 0, 0, 0};
 	h.ifps = ifps[BitRead(4)];
 	h.bitrate = (DWORD)BitRead(18); MARKER;
 	h.vbv = (DWORD)BitRead(10);
 	h.constrained = BitRead(1);
+
+	if (h.ifps<=0)
+		return false;
 
 	if(h.fiqm = BitRead(1))
 		for(int i = 0; i < countof(h.iqm); i++)
@@ -380,10 +383,10 @@ bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt)
 	h.bitrate = h.bitrate == (1<<30)-1 ? 0 : h.bitrate * 400;
 
 	DWORD a = h.arx, b = h.ary;
-    while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
+	while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
 	if(b) h.arx /= b, h.ary /= b;
 
-	if (h.width<200 || h.height<200)
+	if (h.width<100 || h.height<100)
 		return false;
 
 	if(!pmt) return(true);
@@ -605,7 +608,7 @@ bool CFrameHeaderParser::Read(aachdr& h, int len, CMediaType* pmt)
 		return(false);
 
 	h.FrameSize = h.aac_frame_length - (h.fcrc == 0 ? 9 : 7);
-    static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000};
+	static int freq[] = {96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000};
 	h.nBytesPerSec = h.aac_frame_length * freq[h.freq] / 1024; // ok?
 	h.rtDuration = 10000000i64 * 1024 / freq[h.freq]; // ok?
 
@@ -711,16 +714,16 @@ bool CFrameHeaderParser::Read(dtshdr& h, int len, CMediaType* pmt)
 	h.sfreq = BitRead(4);
 	h.rate = BitRead(5);
 
-    h.downmix = BitRead(1);
-    h.dynrange = BitRead(1);
-    h.timestamp = BitRead(1);
-    h.aux_data = BitRead(1);
-    h.hdcd = BitRead(1);
-    h.ext_descr = BitRead(3);
-    h.ext_coding = BitRead(1);
-    h.aspf = BitRead(1);
-    h.lfe = BitRead(2);
-    h.predictor_history = BitRead(1);
+	h.downmix = BitRead(1);
+	h.dynrange = BitRead(1);
+	h.timestamp = BitRead(1);
+	h.aux_data = BitRead(1);
+	h.hdcd = BitRead(1);
+	h.ext_descr = BitRead(3);
+	h.ext_coding = BitRead(1);
+	h.aspf = BitRead(1);
+	h.lfe = BitRead(2);
+	h.predictor_history = BitRead(1);
 
 
 	if(!pmt) return(true);
@@ -770,7 +773,7 @@ bool CFrameHeaderParser::Read(hdmvlpcmhdr& h, CMediaType* pmt)
 	h.bitpersample	= BitRead(2);
 
 	if (h.channels==0 || h.channels==2 || 
-	    (h.samplerate != 1 && h.samplerate!= 4  && h.samplerate!= 5) || 
+		(h.samplerate != 1 && h.samplerate!= 4  && h.samplerate!= 5) || 
 		h.bitpersample<0 || h.bitpersample>3)
 		return(false);
 
@@ -1157,32 +1160,34 @@ bool CFrameHeaderParser::Read(pvahdr& h, bool fSync)
 
 
 void CFrameHeaderParser::RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length)
-{    
-    int		si=0;
+{
+	int		si=0;
 	int		di=0;
-    while(si+2<length){
-        //remove escapes (very rare 1:2^22)
-        if(src[si+2]>3){
-            dst[di++]= src[si++];
-            dst[di++]= src[si++];
-        }else if(src[si]==0 && src[si+1]==0){
-            if(src[si+2]==3){ //escape
-                dst[di++]= 0;
-                dst[di++]= 0;
-                si+=3;
-                continue;
-            }else //next start code
-                return;
-        }
+	while(si+2<length){
+		//remove escapes (very rare 1:2^22)
+		if(src[si+2]>3){
+			dst[di++]= src[si++];
+			dst[di++]= src[si++];
+		}
+		else if(src[si]==0 && src[si+1]==0){
+			if(src[si+2]==3){ //escape
+				dst[di++]= 0;
+				dst[di++]= 0;
+				si+=3;
+				continue;
+			}
+			else //next start code
+				return;
+		}
 
-        dst[di++]= src[si++];
-    }
+		dst[di++]= src[si++];
+	}
 }
 
 
 bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 {
-	while(GetRemaining()>4 && (h.spslen==0 || h.ppslen==0))
+	while(GetRemaining()>4 && (h.spslen==0 || h.ppslen==0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0))
 	{
 		//// check for NALU startcode
 		//DWORD dwStartCode=BitRead(24,true);
@@ -1194,8 +1199,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		//
 		//// skip the startcode
 		//BitRead(24);
-    int nal_len = BitRead(32);
-    INT64 next_nal = GetPos()+nal_len;
+		int nal_len = BitRead(32);
+		INT64 next_nal = GetPos()+nal_len;
 		int id=BitRead(8);
 		int nal_type=id & 0x9f;
 
@@ -1212,10 +1217,10 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 
 		// we only want pic param and sequence param sets
 		if (nal_type!=0x7 && nal_type!=0x8 || id & 0x60 == 0)
-    {
-      Seek(next_nal);
+		{
+			Seek(next_nal);
 			continue;
-    }
+		}
 
 		if(nal_type==0x7)
 		{
@@ -1229,7 +1234,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 			long			fixed_frame_rate_flag;
 
 			h.spspos = GetPos() - 5;
-      h.spslen = next_nal - h.spspos;
+			h.spslen = next_nal - h.spspos;
 
 			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
 			ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
@@ -1284,8 +1289,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 			UINT64 pic_width_in_mbs_minus1 = gb.UExpGolombRead();
 			UINT64 pic_height_in_map_units_minus1 = gb.UExpGolombRead();
 			BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
-      
-      h.progressive = (frame_mbs_only_flag != 0);
+
+			h.progressive = (frame_mbs_only_flag != 0);
 			h.width = (pic_width_in_mbs_minus1 + 1) * 16;
 			h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
 
@@ -1306,7 +1311,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 			{
 				if (gb.BitRead(1))						// aspect_ratio_info_present_flag
 				{
-          h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
+					h.ar = (BYTE)gb.BitRead(8); //aspect_ratio_idc
 					if (255 == h.ar)
 					{
 						h.arx = gb.BitRead(16);   //sar_width
@@ -1367,15 +1372,15 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		else if(nal_type==0x8)
 		{
 			h.ppspos = GetPos() - 5;
-      h.ppslen = next_nal - h.ppspos;
+			h.ppslen = next_nal - h.ppspos;
 		}
 
 		BitByteAlign();
-    
-    Seek(next_nal);
+
+		Seek(next_nal);
 	} // end while main
 
-	if(!h.spspos || !h.spslen || !h.ppspos || !h.ppslen || h.height<300 || h.width<300 || h.AvgTimePerFrame<1000) 
+	if(!h.spslen || !h.ppslen || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0) 
 		return(false);
 
 	if(!pmt) return(true);
@@ -1384,45 +1389,46 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		int extra = 2+h.spslen-4 + 2+h.ppslen-4;
 		pmt->SetType(&MEDIATYPE_Video);
 		//pmt->SetSubtype(&MEDIASUBTYPE_H264);
-    pmt->SetSubtype(&MPG4_SubType);
+		pmt->SetSubtype(&MPG4_SubType);
 		pmt->formattype = FORMAT_MPEG2_VIDEO;
-		
+
 		int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extra;
 		MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)pmt->AllocFormatBuffer(len);
 		memset(vi, 0, len);
 		vi->hdr.AvgTimePerFrame = h.AvgTimePerFrame;
 
 		/*
-    h.ar=h.width/h.height;
+		h.ar=h.width/h.height;
 		struct {DWORD x, y;} ar[] = {{h.width,h.height},{4,3},{16,9},{221,100},{h.width,h.height}};
 		int i = min(max(h.ar, 1), 5)-1;
-    */
-    struct {DWORD x, y;} ar[] = {{1,1},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{1,1},{1,1}};
-    if(h.ar == 255)
-    {
-      // make sure that both are 0 or none
-      if(h.arx == 0 || h.ary == 0)
-        h.arx = h.ary = 0; 
-      // h.arx and h.ary now contain sample aspect ratio
-    }
-    else if(h.ar < 1 || h.ar > 13)
-    {
-      // aspect ratio unspecified or reserved
-      h.ar = 0;
-      h.arx = h.ary = 0;
-    }
-    else 
-    {
-      // use preset aspect ratio
-      h.arx = ar[h.ar].x;
-		  h.ary = ar[h.ar].y;
-    }
+		*/
+		struct {DWORD x, y;} ar[] = {{1,1},{1,1},{12,11},{10,11},{16,11},{40,33},{24,11},{20,11},{32,11},{80,33},{18,11},{15,11},{64,33},{160,99},{1,1},{1,1}};
+		if(h.ar == 255)
+		{
+			// make sure that both are 0 or none
+			if(h.arx == 0 || h.ary == 0)
+				h.arx = h.ary = 0;
 
-    h.arx *= h.width;
-    h.ary *= h.height;
+			// h.arx and h.ary now contain sample aspect ratio
+		}
+		else if(h.ar < 1 || h.ar > 13)
+		{
+			// aspect ratio unspecified or reserved
+			h.ar = 0;
+			h.arx = h.ary = 0;
+		}
+		else
+		{
+			// use preset aspect ratio
+			h.arx = ar[h.ar].x;
+			h.ary = ar[h.ar].y;
+		}
+
+		h.arx *= h.width;
+		h.ary *= h.height;
 
 		DWORD a = h.arx, b = h.ary;
-    while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
+		while(a) {DWORD tmp = a; a = b % tmp; b = tmp;}
 		if(b) h.arx /= b, h.ary /= b;
 		vi->hdr.dwPictAspectRatioX = h.arx;
 		vi->hdr.dwPictAspectRatioY = h.ary;
@@ -1430,7 +1436,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		vi->hdr.bmiHeader.biWidth = h.width;
 		vi->hdr.bmiHeader.biHeight = h.height;
 		//vi->hdr.bmiHeader.biCompression = '462h';
-    vi->hdr.bmiHeader.biCompression = '1CVA';
+		vi->hdr.bmiHeader.biCompression = '1CVA';
 		vi->hdr.bmiHeader.biPlanes=1;
 		vi->hdr.bmiHeader.biBitCount=24;
 		vi->hdr.bmiHeader.biClrUsed=0;

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
@@ -77,10 +78,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       try
       {
         this.dllFile = dllFile;
-        string[] strArray = dllFile.Split(new char[] {'/', '.', '\\'});
+        string[] strArray = dllFile.Split(new char[] { '/', '.', '\\' });
         this.name = strArray[strArray.Length - 2];
         this.CreateLCDHypeWrapper();
         this.GetDllInfo();
+      }
+      catch (System.IO.FileNotFoundException)
+      {
+        Log.Debug("MiniDisplay:{1}", this.errorMessage);
       }
       catch (TargetInvocationException exception)
       {
@@ -94,7 +99,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           this.errorMessage = exception.Message;
         }
-        Log.Error("MiniDisplay:Error while loading driver {0}: {1}", new object[] {dllFile, this.errorMessage});
+        Log.Error("MiniDisplay:Error while loading driver {0}: {1}", dllFile, this.errorMessage);
       }
     }
 
@@ -986,12 +991,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SendText(string _text)
     {
-
       Byte[] encodedBytes = Encoding.Default.GetBytes(_text);
 
       foreach (Byte num in encodedBytes)
       {
-        byte num2=num;
+        byte num2 = num;
         if (num2 < 0x20)
         {
           num2 =

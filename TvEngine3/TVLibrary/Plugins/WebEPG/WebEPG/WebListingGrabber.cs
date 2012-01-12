@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -229,6 +229,10 @@ namespace MediaPortal.WebEPG
       Log.Info("WebEPG: ChannelId: {0}", strChannelID);
 
       //_GrabDay = 0;
+
+      // sets a minimum delay for the programlist Site page grabbing
+      // why? likely not needed. to be tested.
+      // possible reason: 'relaxing' webservers
       if (_grabber.Listing.Request.Delay < 500)
       {
         _grabber.Listing.Request.Delay = 500;
@@ -448,7 +452,9 @@ namespace MediaPortal.WebEPG
       {
         if (_parser is WebParser)
         {
-          Log.Info("WebEPG: SubLink Request {0}", guideData.SublinkRequest.ToString());
+          // added: delay info
+          Log.Info("WebEPG: SubLink Request {0} - Delay: {1}ms", guideData.SublinkRequest.ToString(),
+                   guideData.SublinkRequest.Delay);
 
           WebParser webParser = (WebParser)_parser;
 
@@ -485,7 +491,8 @@ namespace MediaPortal.WebEPG
 
       HTTPRequest request = _reqBuilder.GetRequest();
 
-      Log.Info("WebEPG: Reading {0}", request.ToString());
+      // added: delay info
+      Log.Info("WebEPG: Reading {0} - Delay: {1}ms", request.ToString(), request.Delay);
 
       listingCount = _parser.ParseUrl(request);
 

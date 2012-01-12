@@ -57,9 +57,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.videoCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.label5);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(466, 197);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 197);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Settings";
@@ -80,8 +80,9 @@ namespace MediaPortal.Configuration.Sections
       this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 96);
       this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
-      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(282, 21);
-      this.aacAudioCodecComboBox.TabIndex = 15;
+      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.aacAudioCodecComboBox.Sorted = true;
+      this.aacAudioCodecComboBox.TabIndex = 4;
       // 
       // autoDecoderSettings
       // 
@@ -90,8 +91,8 @@ namespace MediaPortal.Configuration.Sections
       this.autoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.autoDecoderSettings.Location = new System.Drawing.Point(19, 156);
       this.autoDecoderSettings.Name = "autoDecoderSettings";
-      this.autoDecoderSettings.Size = new System.Drawing.Size(309, 30);
-      this.autoDecoderSettings.TabIndex = 0;
+      this.autoDecoderSettings.Size = new System.Drawing.Size(341, 30);
+      this.autoDecoderSettings.TabIndex = 6;
       this.autoDecoderSettings.Text = "Automatic Decoder Settings \r\n(use with caution - knowledge of DirectShow merits r" +
           "equired)";
       this.autoDecoderSettings.UseVisualStyleBackColor = true;
@@ -113,8 +114,9 @@ namespace MediaPortal.Configuration.Sections
       this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 48);
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
-      this.h264videoCodecComboBox.Size = new System.Drawing.Size(282, 21);
-      this.h264videoCodecComboBox.TabIndex = 9;
+      this.h264videoCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.h264videoCodecComboBox.Sorted = true;
+      this.h264videoCodecComboBox.TabIndex = 2;
       this.h264videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.h264videoCodecComboBox_SelectedIndexChanged);
       // 
       // audioRendererComboBox
@@ -125,8 +127,9 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 120);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
-      this.audioRendererComboBox.Size = new System.Drawing.Size(282, 21);
-      this.audioRendererComboBox.TabIndex = 7;
+      this.audioRendererComboBox.Size = new System.Drawing.Size(278, 21);
+      this.audioRendererComboBox.Sorted = true;
+      this.audioRendererComboBox.TabIndex = 5;
       // 
       // label3
       // 
@@ -152,7 +155,8 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 72);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
-      this.audioCodecComboBox.Size = new System.Drawing.Size(282, 21);
+      this.audioCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.audioCodecComboBox.Sorted = true;
       this.audioCodecComboBox.TabIndex = 3;
       // 
       // videoCodecComboBox
@@ -163,7 +167,8 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 24);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
-      this.videoCodecComboBox.Size = new System.Drawing.Size(282, 21);
+      this.videoCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.videoCodecComboBox.Sorted = true;
       this.videoCodecComboBox.TabIndex = 1;
       this.videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.videoCodecComboBox_SelectedIndexChanged);
       // 
@@ -180,9 +185,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabelNote.AutoSize = true;
       this.mpLabelNote.Location = new System.Drawing.Point(106, 26);
       this.mpLabelNote.Name = "mpLabelNote";
-      this.mpLabelNote.Size = new System.Drawing.Size(247, 13);
+      this.mpLabelNote.Size = new System.Drawing.Size(265, 13);
       this.mpLabelNote.TabIndex = 2;
-      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings !";
+      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings!";
       // 
       // mpGroupBox2
       // 
@@ -190,9 +195,9 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.mpLabelNote);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(3, 248);
+      this.mpGroupBox2.Location = new System.Drawing.Point(6, 201);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(466, 61);
+      this.mpGroupBox2.Size = new System.Drawing.Size(462, 61);
       this.mpGroupBox2.TabIndex = 3;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Note";
@@ -201,6 +206,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "MovieCodec";

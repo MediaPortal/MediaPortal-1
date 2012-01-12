@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -84,13 +84,13 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.nudFontSize = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.FontSizeValueLbl = new MediaPortal.UserInterface.Controls.MPLabel();
       this.FontSizeLbl = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbHiddenMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbRememberValue = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbTransparentMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.nudFontSize = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).BeginInit();
       this.SuspendLayout();
@@ -108,12 +108,36 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.cbRememberValue);
       this.groupBox1.Controls.Add(this.cbTransparentMode);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 127);
+      this.groupBox1.Size = new System.Drawing.Size(462, 127);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // nudFontSize
+      // 
+      this.nudFontSize.Location = new System.Drawing.Point(72, 97);
+      this.nudFontSize.Minimum = new decimal(new int[]
+                                               {
+                                                 50,
+                                                 0,
+                                                 0,
+                                                 0
+                                               });
+      this.nudFontSize.Name = "nudFontSize";
+      this.nudFontSize.Size = new System.Drawing.Size(56, 20);
+      this.nudFontSize.TabIndex = 1;
+      this.nudFontSize.Value = new decimal(new int[]
+                                             {
+                                               80,
+                                               0,
+                                               0,
+                                               0
+                                             });
+      // 
+      // FontSizeValueLbl
+      // 
       this.FontSizeValueLbl.AutoSize = true;
       this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
                                                            System.Drawing.FontStyle.Regular,
@@ -177,24 +201,6 @@ namespace MediaPortal.Configuration.Sections
       this.radioButton1.TabIndex = 0;
       this.radioButton1.UseVisualStyleBackColor = true;
       // 
-      this.nudFontSize.Location = new System.Drawing.Point(72, 97);
-      this.nudFontSize.Minimum = new decimal(new int[]
-                                               {
-                                                 50,
-                                                 0,
-                                                 0,
-                                                 0
-                                               });
-      this.nudFontSize.Name = "nudFontSize";
-      this.nudFontSize.Size = new System.Drawing.Size(56, 20);
-      this.nudFontSize.TabIndex = 1;
-      this.nudFontSize.Value = new decimal(new int[]
-                                             {
-                                               80,
-                                               0,
-                                               0,
-                                               0
-                                             });
       // TVTeletext
       // 
       this.Controls.Add(this.groupBox1);

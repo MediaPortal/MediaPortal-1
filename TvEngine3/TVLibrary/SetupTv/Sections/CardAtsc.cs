@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -121,20 +121,20 @@ namespace SetupTv.Sections
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         if (card.Enabled == false)
         {
-          MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+          MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
         if (!RemoteControl.Instance.CardPresent(card.IdCard))
         {
-          MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+          MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
         }
         // Check if the card is locked for scanning.
-        User user;
+        IUser user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
-                          "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+                          "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
           return;
         }
         SimpleFileName tuningFile = (SimpleFileName)mpComboBoxFrequencies.SelectedItem;
@@ -173,7 +173,7 @@ namespace SetupTv.Sections
         listViewStatus.Items.Clear();
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         int minchan = 2;
         int maxchan = 69;
@@ -220,7 +220,7 @@ namespace SetupTv.Sections
           item.EnsureVisible();
           if (index == minchan)
           {
-            RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
+            RemoteControl.Instance.Scan(ref user, tuneChannel, -1);
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
@@ -260,7 +260,9 @@ namespace SetupTv.Sections
           {
             Channel dbChannel;
             ATSCChannel channel = (ATSCChannel)channels[i];
-            TuningDetail currentDetail = layer.GetChannel(channel);
+            //No support for channel moving, or merging with existing channels here.
+            //We do not know how ATSC works to correctly implement this.
+            TuningDetail currentDetail = layer.GetTuningDetail(channel);
             if (currentDetail != null)
               if (channel.Frequency != currentDetail.Frequency)
                 currentDetail = null;
@@ -269,7 +271,7 @@ namespace SetupTv.Sections
             {
               //add new channel
               exists = false;
-              dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+              dbChannel = layer.AddNewChannel(channel.Name);
               dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
@@ -283,8 +285,6 @@ namespace SetupTv.Sections
             }
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
-            //Over the air ATSC is never scrambled
-            dbChannel.FreeToAir = !checkBoxQAM.Checked || channel.FreeToAir;
             dbChannel.Persist();
             if (dbChannel.IsTv)
             {
@@ -345,7 +345,7 @@ namespace SetupTv.Sections
       }
       finally
       {
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;

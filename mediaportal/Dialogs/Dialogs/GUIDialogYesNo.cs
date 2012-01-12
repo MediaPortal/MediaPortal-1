@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {
@@ -36,7 +37,10 @@ namespace MediaPortal.Dialogs
     private int iYesKey = -1;
     private int iNoKey = -1;
     //bool needRefresh = false;
-    private DateTime vmr7UpdateTimer = DateTime.Now;
+    private int _timeOutInSeconds = 0;
+    private DateTime timeStart = DateTime.Now;
+    private string _btnNoLabel = GUILocalizeStrings.Get(106); //No
+    private string _btnYesLabel = GUILocalizeStrings.Get(107); //Yes
 
     public GUIDialogYesNo()
     {
@@ -45,9 +49,63 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogYesNo.xml");
+      bool result = Load(GUIGraphicsContext.Skin + @"\dialogYesNo.xml");
+
+      SaveDefaultBtnLabels();
+
+      return result;
     }
 
+    // since we save some values on init (after skin load), and LoadSkin method is not virtual,
+    // also, the status whether skin was loaded is private, so we cannot get that one either
+    // we need set this to false
+    // otherwise, skin is not loaded until first show
+    public override bool SupportsDelayedLoad
+    {
+      get { return false; }
+    }
+
+    public override void DoModal(int dwParentId)
+    {
+      timeStart = DateTime.Now;
+      base.DoModal(dwParentId);
+    }
+
+    public override bool ProcessDoModal()
+    {
+      bool result = base.ProcessDoModal();
+      TimeSpan timeElapsed = DateTime.Now - timeStart;
+      if (TimeOut > 0)
+      {
+        if (timeElapsed.TotalSeconds >= TimeOut)
+        {
+          GUIMessage msgConfirm = new GUIMessage();
+          msgConfirm.Message = GUIMessage.MessageType.GUI_MSG_CLICKED;
+          msgConfirm.SenderControlId = m_DefaultYes ? btnYes.GetID : btnNo.GetID;
+          OnMessage(msgConfirm);
+          return false;
+        }
+      }
+      return result;
+    }
+
+    public override void PageDestroy()
+    {
+      _timeOutInSeconds = 0;
+      base.PageDestroy();
+      RestoreDefaultBtnLabels();
+    }
+
+    public override void Reset()
+    {
+      base.Reset();
+      _timeOutInSeconds = 0;
+      RestoreDefaultBtnLabels();
+      m_bConfirmed = false;
+      m_DefaultYes = false;
+      iYesKey = -1;
+      iNoKey = -1;
+    }
 
     public override void OnAction(Action action)
     {
@@ -203,6 +261,34 @@ namespace MediaPortal.Dialogs
     public void SetDefaultToYes(bool bYesNo)
     {
       m_DefaultYes = bYesNo;
+    }
+
+    public void SetYesLabel(string label)
+    {
+      btnYes.Label = label;
+    }
+
+    public void SetNoLabel(string label)
+    {
+      btnNo.Label = label;
+    }
+
+    protected void SaveDefaultBtnLabels()
+    {
+      _btnNoLabel = btnNo.Label;
+      _btnYesLabel = btnYes.Label;
+    }
+
+    protected void RestoreDefaultBtnLabels()
+    {
+      btnNo.Label = _btnNoLabel;
+      btnYes.Label = _btnYesLabel;
+    }
+
+    public int TimeOut
+    {
+      get { return _timeOutInSeconds; }
+      set { _timeOutInSeconds = value; }
     }
   }
 }
