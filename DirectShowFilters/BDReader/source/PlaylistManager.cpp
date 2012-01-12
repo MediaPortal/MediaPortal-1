@@ -379,4 +379,3 @@ void CPlaylistManager::PopPlaylists(int difference)
   m_itCurrentAudioSubmissionPlaylist = m_vecPlaylists.begin() + (m_itCurrentAudioSubmissionPlaylistPos - difference);
   m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin() + (m_itCurrentVideoSubmissionPlaylistPos - difference);
 }
-

@@ -382,7 +382,7 @@ HRESULT CVideoPin::DoBufferProcessingLoop(void)
         
         // This is the only change for base class implementation of DoBufferProcessingLoop()
         // Cyberlink H.264 decoder seems to crash when we provide empty samples for it 
-        if (pSample->GetActualDataLength() > 0 || m_decoderType != Cyberlink)
+        if (pSample->GetActualDataLength() > 0 )
         {
           //static int iFrameNumber = 0;
           //LogMediaSample(pSample, iFrameNumber++);
@@ -576,7 +576,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             else
               m_rtStreamOffset = 0;
 
-            DeliverEndOfStream();
+            if (m_rtPrevSample!=0LL) DeliverEndOfStream();
           }
 
           if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt))

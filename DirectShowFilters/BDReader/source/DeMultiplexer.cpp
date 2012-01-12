@@ -377,11 +377,11 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSe
   CAutoLock lockAud(&m_sectionAudio);
   CAutoLock lockSub(&m_sectionSubtitle);
 
+  m_playlistManager->ClearAllButCurrentClip();
+
   FlushAudio();
   FlushVideo();
   FlushSubtitle();
-
-  m_playlistManager->ClearAllButCurrentClip();
 
   SetHoldAudio(false);
   SetHoldVideo(false);
