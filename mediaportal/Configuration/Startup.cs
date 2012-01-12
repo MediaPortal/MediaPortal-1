@@ -28,6 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Profile;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.Configuration
 {
