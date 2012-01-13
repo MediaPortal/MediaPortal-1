@@ -1155,6 +1155,10 @@ namespace DirectShowLib
     public static readonly Guid Audio = new Guid(0x73647561, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
                                                  0x71);
 
+    /// <summary> MEDIATYPE_Subtitle 'subs' </summary>
+    public static readonly Guid Subtitle = new Guid(0xE487EB08, 0x6B26, 0x4be9, 0x9D, 0xD3, 0x99, 0x34, 0x34, 0xD3, 0x13,
+                                                  0xFD);
+
       /// <summary> MEDIATYPE_FileSourceAsync </summary>
     public static readonly Guid FileSourceAsync = new Guid(0xE436EBB5, 0x524F, 0x11CE, 0x9F, 0x53, 0x00, 0x20, 0xAF, 0x0B, 0xA7,
                                                  0x70);
@@ -1784,6 +1788,10 @@ namespace DirectShowLib
     /// <summary> MEDIASUBTYPE_LATM_AAC </summary>
     public static readonly Guid LATMAAC = new Guid(0x00001FF, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
                                                    0x71);
+
+    /// <summary> MEDIASUBTYPE_LATM_AAC_LAF_SPLITTER </summary>
+    public static readonly Guid LATMAACLAF = new Guid(0x53544441, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B,
+                                                  0x71);
   }
 
   public sealed class FormatType

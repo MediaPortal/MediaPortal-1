@@ -42,7 +42,11 @@ namespace MediaPortal.Player
     protected const string FFDSHOW_AUDIO_DECODER_FILTER = "ffdshow Audio Decoder";
     protected const string MEDIAPORTAL_AUDIOSWITCHER_FILTER = "MediaPortal AudioSwitcher";
     protected const string LAV_SPLITTER_FILTER = "LAV Splitter";
+    protected const string LAV_SPLITTER_FILTER_SOURCE = "LAV Splitter Source";
+    protected const string LAV_AUDIO = "LAV Audio Decoder";
+    protected const string LAV_VIDEO = "LAV Video Decoder";
     protected const string FILE_SYNC_FILTER = "File Source (Async.)";
+    protected IGraphRebuildDelegate _IGraphRebuildDelegate = null;
 
     protected struct FilterStreamInfos
     {
@@ -251,6 +255,15 @@ namespace MediaPortal.Player
     protected bool AutoRenderingCheck = false;
     protected bool VideoChange = false;
     protected bool firstinit = false;
+    protected bool vc1ICodec = false;
+    protected bool vc1Codec = false;
+    protected bool h264Codec = false;
+    protected bool xvidCodec = false;
+    protected bool aacCodec = false;
+    protected bool aacCodecLav = false;
+    protected bool MediatypeVideo = false;
+    protected bool MediatypeAudio = false;
+    protected bool MediatypeSubtitle = false;
 
     public override double[] Chapters
     {
@@ -1313,11 +1326,11 @@ namespace MediaPortal.Player
                        FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
         }
 
-        if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && !AutoRenderingCheck && GetInterface)
+        /*if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && !AutoRenderingCheck && GetInterface)
         {
-          iChangedMediaTypes = 3;
+          //iChangedMediaTypes = 3;
           //DoGraphRebuild();
-        }
+        }*/
         return;
       }
     }

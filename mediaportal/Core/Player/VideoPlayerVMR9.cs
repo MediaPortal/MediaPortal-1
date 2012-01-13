@@ -36,7 +36,27 @@ using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
 {
-  public class VideoPlayerVMR9 : VideoPlayerVMR7
+  [ComImport, Guid("17989414-C927-4D73-AB6C-19DF37602AC4"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IGraphRebuildDelegate
+  {
+    [PreserveSig]
+    int RebuildPin(IFilterGraph pGraph, IPin pPin);
+  }
+
+  [ComVisible(true),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    Guid("FC4801A3-2BA9-11CF-A229-00AA003D7352")]
+  public interface IObjectWithSite
+  {
+    void SetSite([In, MarshalAs(UnmanagedType.IUnknown)] Object pUnkSite);
+    void GetSite(ref Guid riid, [MarshalAs(UnmanagedType.IUnknown)] out Object ppvSite);
+  }
+
+  [ComImport, Guid("B98D13E7-55DB-4385-A33D-09FD1BA26338")]
+  public class LAFSplitterSource { }
+
+  public class VideoPlayerVMR9 : VideoPlayerVMR7, IGraphRebuildDelegate
   {
     protected VMR9Util Vmr9 = null;
     private Guid LATMAAC = new Guid("000000ff-0000-0010-8000-00aa00389b71");
@@ -172,7 +192,6 @@ namespace MediaPortal.Player
 
     protected void disableISR()
     {
-      #region Remove isr
       //remove InternalScriptRenderer as it takes subtitle pin
       IBaseFilter isr = null;
       DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.InternalScriptRenderer, out isr);
@@ -181,7 +200,6 @@ namespace MediaPortal.Player
         graphBuilder.RemoveFilter(isr);
         DirectShowUtil.ReleaseComObject(isr);
       }
-      #endregion
     }
 
     protected void disableVobsub()
@@ -245,21 +263,192 @@ namespace MediaPortal.Player
       }
     }
 
+    public int RebuildPin(IFilterGraph pGraph, IPin pPin)
+    {
+      //Set codec bool to false
+      ResetCodecBool();
+
+      IPin pinTo;
+      if (pPin != null)
+      {
+        int hr = pPin.ConnectedTo(out pinTo);
+        if (hr >= 0 && pinTo != null)
+        {
+          PinInfo pInfo;
+          pinTo.QueryPinInfo(out pInfo);
+          FilterInfo fInfo;
+          pInfo.filter.QueryFilterInfo(out fInfo);
+          if (pPin != null)
+          {
+            RebuildMediaType(pPin);
+            Log.Debug("VideoPlayer9: Rebuild LAV Delegate Info filter Name - {0}", fInfo.achName);
+
+            if (MediatypeVideo)
+            {
+              //Video Part
+              if (h264Codec)
+              {
+                if (fInfo.achName == filterConfig.VideoH264)
+                {
+                  RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                  return 1;
+                }
+              }
+              else if (vc1Codec)
+              {
+                if (fInfo.achName == filterConfig.VideoVC1)
+                {
+                  RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                  return 1;
+                }
+              }
+              else if (vc1ICodec)
+              {
+                if (fInfo.achName == filterConfig.VideoVC1I)
+                {
+                  RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                  return 1;
+                }
+              }
+              else if (xvidCodec)
+              {
+                if (fInfo.achName == filterConfig.VideoXVID)
+                {
+                  RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                  return 1;
+                }
+              }
+              else if (fInfo.achName == filterConfig.Video)
+              {
+                RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                return 1;
+              }
+              iChangedMediaTypes = 2;
+              DoGraphRebuild();
+              Log.Debug("VideoPlayer9: Rebuild LAV Delegate filter Video");
+              RebuildRelease(pInfo, fInfo, pinTo, pPin);
+              return 1;
+            }
+            else if (MediatypeAudio)
+            {
+              //Audio Part 
+              if (aacCodec)
+              {
+                if (fInfo.achName == filterConfig.AudioAAC)
+                {
+                  RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                  return 1;
+                }
+              }
+              if (aacCodecLav && fInfo.achName == LAV_AUDIO)
+              {
+                if (fInfo.achName == filterConfig.AudioAAC)
+                {
+                  RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                  return 1;
+                }
+              }
+              else if ((!aacCodecLav || !aacCodec) && fInfo.achName == filterConfig.Audio)
+              {
+                RebuildRelease(pInfo, fInfo, pinTo, pPin);
+                return 1;
+              }
+              iChangedMediaTypes = 1;
+              DoGraphRebuild();
+              Log.Debug("VideoPlayer9: Rebuild LAV Delegate filter Audio");
+              RebuildRelease(pInfo, fInfo, pinTo, pPin);
+              return 1;
+            }
+            else if (MediatypeSubtitle)
+            {
+              RebuildRelease(pInfo, fInfo, pinTo, pPin);
+              return -1;
+            }
+          }
+          DsUtils.FreePinInfo(pInfo);
+          DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        }
+        DirectShowUtil.ReleaseComObject(pPin); pPin = null;
+      }
+      Log.Debug("VideoPlayer9: Rebuild LAV Delegate (No Rebuild from MP, LAV Will doing the job)");
+      return -1;
+    }
+
+    protected void RebuildRelease(PinInfo pInfo, FilterInfo fInfo, IPin pinTo, IPin pPin)
+    {
+      DsUtils.FreePinInfo(pInfo);
+      DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+      DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+      DirectShowUtil.ReleaseComObject(pPin); pPin = null;
+    }
+
+    protected void RebuildMediaType(IPin pPin)
+    {
+      //Detection if the Video Stream is VC-1 on output pin of the splitter
+      IEnumMediaTypes enumMediaTypesAudioVideo;
+      int hr = pPin.EnumMediaTypes(out enumMediaTypesAudioVideo);
+      while (true)
+      {
+        AMMediaType[] mediaTypes = new AMMediaType[1];
+        int typesFetched;
+        hr = enumMediaTypesAudioVideo.Next(1, mediaTypes, out typesFetched);
+        if (hr != 0 || typesFetched == 0) break;
+        if (mediaTypes[0].majorType == MediaType.Video)
+        {
+          if (mediaTypes[0].subType == MediaSubType.VC1)
+          {
+            Log.Info("VideoPlayer9: found VC-1 video out pin");
+            vc1Codec = true;
+          }
+          if (mediaTypes[0].subType == MediaSubType.H264 || mediaTypes[0].subType == MediaSubType.AVC1)
+          {
+            Log.Info("VideoPlayer9: found H264 video out pin");
+            h264Codec = true;
+          }
+          if (mediaTypes[0].subType == MediaSubType.XVID || mediaTypes[0].subType == MediaSubType.xvid || mediaTypes[0].subType == MediaSubType.dx50 || mediaTypes[0].subType == MediaSubType.DX50 ||
+            mediaTypes[0].subType == MediaSubType.divx || mediaTypes[0].subType == MediaSubType.DIVX)
+          {
+            Log.Info("VideoPlayer9: found XVID video out pin");
+            xvidCodec = true;
+          }
+          MediatypeVideo = true;
+        }
+        else if (mediaTypes[0].majorType == MediaType.Audio)
+        {
+          //Detection if the Audio Stream is AAC on output pin of the splitter
+          if (mediaTypes[0].subType == MediaSubType.LATMAAC || mediaTypes[0].subType == MediaSubType.AAC)
+          {
+            Log.Info("VideoPlayer9: found AAC Audio out pin");
+            aacCodec = true;
+          }
+          if (mediaTypes[0].subType == MediaSubType.LATMAACLAF)
+          {
+            Log.Info("VideoPlayer9: found AAC LAVF Audio out pin");
+            aacCodecLav = true;
+          }
+          MediatypeAudio = true;
+        }
+        else if (mediaTypes[0].majorType == MediaType.Subtitle)
+        {
+          MediatypeSubtitle = true;
+        }
+      }
+      DirectShowUtil.ReleaseComObject(enumMediaTypesAudioVideo);
+      enumMediaTypesAudioVideo = null;
+    }
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces()
     {
       GetInterface = true;
       try
       {
-        graphBuilder = (IGraphBuilder)new FilterGraph();
-        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
-        _mediaInfo = new MediaInfoWrapper(m_strCurrentFile);
+        graphBuilder = (IGraphBuilder) new FilterGraph();
+        _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
         // add preferred video & audio codecs
         int hr;
         filterConfig = GetFilterConfiguration();
-
-        string extension = Path.GetExtension(m_strCurrentFile).ToLowerInvariant();
-
         //Get filterCodecName
         filterCodec = GetFilterCodec();
 
@@ -268,6 +457,11 @@ namespace MediaPortal.Player
           AutoRenderingCheck = true;
           return AutoRendering(this.filterConfig.wmvAudio);
         }
+
+        string extension = Path.GetExtension(m_strCurrentFile).ToLowerInvariant();
+
+        //Get video/audio Info
+        //_mediaInfo = new MediaInfoWrapper(m_strCurrentFile);
 
         //Manually add codecs based on file extension if not in auto-settings
         // switch back to directx fullscreen mode
@@ -280,48 +474,76 @@ namespace MediaPortal.Player
         Vmr9 = new VMR9Util();
         Vmr9.AddVMR9(graphBuilder);
         Vmr9.Enable(false);
-               
+
         if (extension == ".mpls" || extension == ".bdmv")
           filterConfig.bForceSourceSplitter = false;
 
-        _interfaceSourceFilter = filterConfig.bForceSourceSplitter ? DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilter) : null;
-        if (_interfaceSourceFilter == null && !filterConfig.bForceSourceSplitter)
+        if (filterConfig.strsplitterfilter == LAV_SPLITTER_FILTER_SOURCE)
         {
-          graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
+          // Prepare delegate for rebuilddelegate with Lavsplitter
+          LAFSplitterSource reader = new LAFSplitterSource();
+          _interfaceSourceFilter = reader as IBaseFilter;
+          var objectWithSite = reader as IObjectWithSite;
+          if (objectWithSite != null)
+          {
+            objectWithSite.SetSite(this);
+          }
+          hr = graphBuilder.AddFilter(_interfaceSourceFilter, filterConfig.strsplitterfilter);
+          DsError.ThrowExceptionForHR(hr);
+
+          Log.Debug("VideoPlayer9: Add LafSplitter Source to graph");
+
+          IFileSourceFilter interfaceFile = (IFileSourceFilter) _interfaceSourceFilter;
+          hr = interfaceFile.Load(m_strCurrentFile, null);
         }
         else
         {
-          try
+          _interfaceSourceFilter = filterConfig.bForceSourceSplitter
+                                     ? DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilter)
+                                     : null;
+          if (_interfaceSourceFilter == null && !filterConfig.bForceSourceSplitter)
           {
-            int result = ((IFileSourceFilter)_interfaceSourceFilter).Load(m_strCurrentFile, null);
-            if (result != 0)
+            graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
+          }
+          else
+          {
+            try
             {
-              graphBuilder.RemoveFilter(_interfaceSourceFilter); DirectShowUtil.ReleaseComObject(_interfaceSourceFilter); _interfaceSourceFilter = null;
-              graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);              
+              int result = ((IFileSourceFilter) _interfaceSourceFilter).Load(m_strCurrentFile, null);
+              if (result != 0)
+              {
+                graphBuilder.RemoveFilter(_interfaceSourceFilter);
+                DirectShowUtil.ReleaseComObject(_interfaceSourceFilter);
+                _interfaceSourceFilter = null;
+                graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
+              }
+            }
+
+            catch (Exception ex)
+            {
+              Log.Error(
+                "VideoPlayer9: Exception loading Source Filter setup in setting in DShow graph , try to load by merit",
+                ex);
+              graphBuilder.RemoveFilter(_interfaceSourceFilter);
+              DirectShowUtil.ReleaseComObject(_interfaceSourceFilter);
+              _interfaceSourceFilter = null;
+              graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);
             }
           }
 
-          catch (Exception ex)
+          //Detection of File Source (Async.) as source filter, return true if found
+          IBaseFilter fileSyncbaseFilter = null;
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.FilesyncSource, out fileSyncbaseFilter);
+          if (fileSyncbaseFilter == null)
+            graphBuilder.FindFilterByName("File Source (Async.)", out fileSyncbaseFilter);
+          if (fileSyncbaseFilter != null)
           {
-            Log.Error("VideoPlayer9: Exception loading Source Filter setup in setting in DShow graph , try to load by merit", ex);
-            graphBuilder.RemoveFilter(_interfaceSourceFilter); DirectShowUtil.ReleaseComObject(_interfaceSourceFilter); _interfaceSourceFilter = null;
-            graphBuilder.AddSourceFilter(m_strCurrentFile, null, out _interfaceSourceFilter);            
+            FileSync = true;
+            DirectShowUtil.ReleaseComObject(fileSyncbaseFilter);
+            fileSyncbaseFilter = null;
+            Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
           }
         }
-
-        //Detection of File Source (Async.) as source filter, return true if found
-        IBaseFilter fileSyncbaseFilter = null;
-        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.FilesyncSource, out fileSyncbaseFilter);
-        if (fileSyncbaseFilter == null)
-          graphBuilder.FindFilterByName("File Source (Async.)", out fileSyncbaseFilter);
-        if (fileSyncbaseFilter != null)
-        {
-          FileSync = true;
-          DirectShowUtil.ReleaseComObject(fileSyncbaseFilter);
-          fileSyncbaseFilter = null;
-          Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
-        }
-
 
         // Add preferred video filters
         UpdateFilters("Video");
@@ -329,10 +551,12 @@ namespace MediaPortal.Player
         //Add Audio Renderer
         if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
         {
-         filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, filterConfig.AudioRenderer, false);
+          filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder,
+                                                                                    filterConfig.AudioRenderer, false);
         }
 
         #region load external audio streams
+
         // check if current "File" is a file... it could also be a URL
         // Directory.Getfiles, ... will other give us an exception
         if (File.Exists(m_strCurrentFile))
@@ -364,7 +588,7 @@ namespace MediaPortal.Player
                   audioSwitcherLoaded = true;
                 }
                 _AudioSourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, FILE_SYNC_FILTER);
-                int result = ((IFileSourceFilter)_AudioSourceFilter).Load(file, null);
+                int result = ((IFileSourceFilter) _AudioSourceFilter).Load(file, null);
 
                 //Force using LAVFilter
                 _AudioExtSplitterFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, LAV_SPLITTER_FILTER);
@@ -395,13 +619,14 @@ namespace MediaPortal.Player
                 _AudioExtFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.Audio);
 
                 //Connect Filesource with the splitter
-                IPin pinOutAudioExt1 = DsFindPin.ByDirection((IBaseFilter)_AudioSourceFilter, PinDirection.Output, 0);
-                IPin pinInAudioExt2 = DsFindPin.ByDirection((IBaseFilter)_AudioExtSplitterFilter, PinDirection.Input, 0);
+                IPin pinOutAudioExt1 = DsFindPin.ByDirection((IBaseFilter) _AudioSourceFilter, PinDirection.Output, 0);
+                IPin pinInAudioExt2 = DsFindPin.ByDirection((IBaseFilter) _AudioExtSplitterFilter, PinDirection.Input, 0);
                 hr = graphBuilder.Connect(pinOutAudioExt1, pinInAudioExt2);
 
                 //Connect Splitter with the Audio Decoder
-                IPin pinOutAudioExt3 = DsFindPin.ByDirection((IBaseFilter)_AudioExtSplitterFilter, PinDirection.Output, 0);
-                IPin pinInAudioExt4 = DsFindPin.ByDirection((IBaseFilter)_AudioExtFilter, PinDirection.Input, 0);
+                IPin pinOutAudioExt3 = DsFindPin.ByDirection((IBaseFilter) _AudioExtSplitterFilter, PinDirection.Output,
+                                                             0);
+                IPin pinInAudioExt4 = DsFindPin.ByDirection((IBaseFilter) _AudioExtFilter, PinDirection.Input, 0);
                 hr = graphBuilder.Connect(pinOutAudioExt3, pinInAudioExt4);
 
                 //Render outpin from Audio Decoder
@@ -457,6 +682,7 @@ namespace MediaPortal.Player
         UpdateFilters("Audio");
 
         #region Set High Audio
+
         //Set High Resolution Output > 2 channels
         IBaseFilter baseFilter = null;
         bool FFDShowLoaded = false;
@@ -466,7 +692,7 @@ namespace MediaPortal.Player
           //Set the filter setting to enable more than 2 audio channels
           const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
           object val = true;
-          IPropertyBag propBag = (IPropertyBag)baseFilter;
+          IPropertyBag propBag = (IPropertyBag) baseFilter;
           hr = propBag.Write(g_wszWMACHiResOutput, ref val);
           if (hr != 0)
           {
@@ -493,6 +719,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(baseFilter);
           baseFilter = null;
         }
+
         #endregion
 
         if (_interfaceSourceFilter != null)
@@ -521,12 +748,12 @@ namespace MediaPortal.Player
           return false;
         }
 
-        mediaCtrl = (IMediaControl)graphBuilder;
-        mediaEvt = (IMediaEventEx)graphBuilder;
-        mediaSeek = (IMediaSeeking)graphBuilder;
-        mediaPos = (IMediaPosition)graphBuilder;
-        basicAudio = (IBasicAudio)graphBuilder;
-        videoWin = (IVideoWindow)graphBuilder;
+        mediaCtrl = (IMediaControl) graphBuilder;
+        mediaEvt = (IMediaEventEx) graphBuilder;
+        mediaSeek = (IMediaSeeking) graphBuilder;
+        mediaPos = (IMediaPosition) graphBuilder;
+        basicAudio = (IBasicAudio) graphBuilder;
+        videoWin = (IVideoWindow) graphBuilder;
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
         Vmr9.SetDeinterlaceMode();
@@ -551,7 +778,7 @@ namespace MediaPortal.Player
     {
       if (mediaCtrl != null)
       {
-        firstinit = false;
+        /*firstinit = false;
         FilterState state;
         int hr = mediaCtrl.GetState(1000, out state);
         if (state == FilterState.Stopped)
@@ -559,7 +786,7 @@ namespace MediaPortal.Player
           firstinit = true;
         }
 
-        /*int hr;*/
+        //int hr;
         try
         {
           hr = mediaCtrl.Stop();
@@ -584,17 +811,17 @@ namespace MediaPortal.Player
         catch (Exception error)
         {
           Log.Error("VideoPlayer9: Error checking graph state: {0}", error.Message);
-        }
+        }*/
 
         // this is a hack for MS Video Decoder and AC3 audio change
         // would suggest to always do full audio and video rendering for all filters
-        IBaseFilter MSVideoCodec = null;
+        /*IBaseFilter MSVideoCodec = null;
         graphBuilder.FindFilterByName("Microsoft DTV-DVD Video Decoder", out MSVideoCodec);
         if (MSVideoCodec != null)
         {
           iChangedMediaTypes = 3;
           DirectShowUtil.ReleaseComObject(MSVideoCodec); MSVideoCodec = null;
-        }
+        }*/
         // hack end
         switch (iChangedMediaTypes)
         {
@@ -606,11 +833,11 @@ namespace MediaPortal.Player
             Log.Info("VideoPlayer9: Rerendering video pin of Splitter Source filter.");
             UpdateFilters("Video");
             break;
-          case 3: // both changed
+          /*case 3: // both changed
             Log.Info("VideoPlayer9: Rerendering audio and video pins of Splitter Source filter.");
             UpdateFilters("Audio");
             UpdateFilters("Video");
-            break;
+            break;*/
         }
         if (iChangedMediaTypes != 1 && VideoChange)
         {
@@ -666,7 +893,7 @@ namespace MediaPortal.Player
 
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
 
-        if (!firstinit && !g_Player.Paused)
+        /*if (!firstinit && !g_Player.Paused)
         {
           try
           {
@@ -680,7 +907,7 @@ namespace MediaPortal.Player
             return;
           }
           Log.Info("VideoPlayer9: Reconfigure graph done");
-        }
+        }*/
       }
     }
 
@@ -836,71 +1063,35 @@ namespace MediaPortal.Player
       }
     }
 
+    protected void ResetCodecBool()
+    {
+      vc1ICodec = false;
+      vc1Codec = false;
+      h264Codec = false;
+      xvidCodec = false;
+      aacCodec = false;
+      aacCodecLav = false;
+      MediatypeVideo = false;
+      MediatypeAudio = false;
+      MediatypeSubtitle = false;
+    }
+
     protected string MatchFilters(string format)
     {
-      string AACCodec = "AAC";
-      string VC1Codec = "VC-1";
-      bool vc1ICodec = false;
-      bool vc1Codec = false;
-      bool aacCodec = false;
-      bool h264Codec = false;
-      bool xvidCodec = false;
-
-      //video
-      /*if (pinOut0 != null && format == "Video")
+      //string AACCodec = "AAC";
+      //string VC1Codec = "VC-1";
+      
+      //Set codec bool to false
+      ResetCodecBool();
+      
+      IPin pPin = FileSync ? DirectShowUtil.FindPin(Splitter, PinDirection.Output, format) : DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, format);
+      RebuildMediaType(pPin);
+      if (pPin != null)
       {
-        //Detection if the Video Stream is VC-1 on output pin of the splitter
-        IEnumMediaTypes enumMediaTypesVideo;
-        int hr = pinOut0.EnumMediaTypes(out enumMediaTypesVideo);
-        while (true)
-        {
-          AMMediaType[] mediaTypes = new AMMediaType[1];
-          int typesFetched;
-          hr = enumMediaTypesVideo.Next(1, mediaTypes, out typesFetched);
-          if (hr != 0 || typesFetched == 0) break;
-          if (mediaTypes[0].majorType == MediaType.Video && mediaTypes[0].subType == MediaSubType.VC1)
-          {
-            Log.Info("VideoPlayer9: found VC-1 video out pin");
-            vc1Codec = true;
-          }
-          if (mediaTypes[0].majorType == MediaType.Video && (mediaTypes[0].subType == MediaSubType.H264 || mediaTypes[0].subType == MediaSubType.AVC1))
-          {
-            Log.Info("VideoPlayer9: found H264 video out pin");
-            h264Codec = true;
-          }
-          if (mediaTypes[0].majorType == MediaType.Video && (mediaTypes[0].subType == MediaSubType.XVID || mediaTypes[0].subType == MediaSubType.xvid))
-          {
-            Log.Info("VideoPlayer9: found XVID video out pin");
-            xvidCodec = true;
-          }
-        }
-        DirectShowUtil.ReleaseComObject(enumMediaTypesVideo);
-        enumMediaTypesVideo = null;
-      }      
+        DirectShowUtil.ReleaseComObject(pPin); pPin = null;
+      }
 
-      //audio
-      if (pinOut1 != null && format == "Audio")
-      {
-        //Detection if the Audio Stream is AAC on output pin of the splitter
-        IEnumMediaTypes enumMediaTypesAudio;
-        int hr = pinOut1.EnumMediaTypes(out enumMediaTypesAudio);
-        while (true)
-        {
-          AMMediaType[] mediaTypes = new AMMediaType[1];
-          int typesFetched;
-          hr = enumMediaTypesAudio.Next(1, mediaTypes, out typesFetched);
-          if (hr != 0 || typesFetched == 0) break;
-          if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MediaSubType.LATMAAC || mediaTypes[0].subType == LATMAAC)
-          {
-            Log.Info("VideoPlayer9: found AAC Audio out pin");
-            aacCodec = true;
-          }
-        }
-        DirectShowUtil.ReleaseComObject(enumMediaTypesAudio);
-        enumMediaTypesAudio = null;
-      }*/
-
-      //Detection of Interlaced Video, true for all type except .bdmv .mpls
+      /*//Detection of Interlaced Video, true for all type except .bdmv .mpls
       if (_mediaInfo.IsInterlaced && (string.Equals(_mediaInfo.VideoCodec, VC1Codec)))
         vc1ICodec = true;
       //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
@@ -912,7 +1103,7 @@ namespace MediaPortal.Player
       if (_mediaInfo.VideoCodec.Equals("AVC"))
         h264Codec = true;
       if (_mediaInfo.VideoCodec.Equals("XVID") || _mediaInfo.VideoCodec.Equals("DIVX") || _mediaInfo.VideoCodec.Equals("DX50"))
-        xvidCodec = true;
+        xvidCodec = true;*/
 
       //Video Part
       if (format == "Video")
@@ -938,21 +1129,21 @@ namespace MediaPortal.Player
           return filterConfig.Video;
         }
       }
-      else if (aacCodec)
-        {
-          return filterConfig.AudioAAC;
-        }
-        else
-        {
-          return filterConfig.Audio;
-        }
+      else if (aacCodec || aacCodecLav)
+      {
+        return filterConfig.AudioAAC;
+      }
+      else
+      {
+        return filterConfig.Audio;
+      }
     }
 
     private bool AutoRendering(bool wmvAudio)
     {
       try
       {
-        // step 1: figure out the renderer of the graph to be removed
+        /*// step 1: figure out the renderer of the graph to be removed
         int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
         IEnumFilters enumFilters;
         hr = graphBuilder.EnumFilters(out enumFilters);
@@ -971,7 +1162,7 @@ namespace MediaPortal.Player
             DirectShowUtil.ReleaseComObject(filters[0]);
           }
         } while (hr == 0);
-        DirectShowUtil.ReleaseComObject(enumFilters);
+        DirectShowUtil.ReleaseComObject(enumFilters);*/
 
         // switch back to directx fullscreen mode
         Log.Info("VideoPlayer9: Enabling DX9 exclusive mode");
@@ -983,6 +1174,9 @@ namespace MediaPortal.Player
         Vmr9 = new VMR9Util();
         Vmr9.AddVMR9(graphBuilder);
         Vmr9.Enable(false);
+
+        // Render file in graph
+        int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
 
         // render
         DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, null);
