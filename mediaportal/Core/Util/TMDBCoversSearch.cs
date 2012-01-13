@@ -72,9 +72,9 @@ namespace MediaPortal.Util
         string defaultPosterPageLinkUrl =
           "http://api.themoviedb.org/2.1/Movie.getImages/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + imdbMovieID;
         string strBodyTMDB = GetPage(defaultPosterPageLinkUrl, "utf-8");
-
+        string posterBlock = Regex.Match(strBodyTMDB, "<poster.*</poster>", RegexOptions.Singleline).Value;
         // Get all cover links and put it in the "cover" group
-        MatchCollection covers = Regex.Matches(strBodyTMDB, "<image\\surl=\"(?<cover>.*?)\"");
+        MatchCollection covers = Regex.Matches(posterBlock, @"<image\surl=""(?<cover>http://cf2.imgobject.com/t/p/w500/.*?)""");
         if (covers.Count == 0)
         {
           return;
@@ -83,10 +83,10 @@ namespace MediaPortal.Util
         foreach (Match cover in covers)
         {
           // Get cover - using mid quality cover
-          if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("mid.jpg"))
-          {
-            _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
-          }
+          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("mid.jpg"))
+          //{
+          _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
+          //}
         }
         return;
       }
@@ -98,12 +98,12 @@ namespace MediaPortal.Util
 
         // Get all cover links and put it in the "cover" group
         MatchCollection covers = Regex.Matches(strBodyTMDB,
-                                               @"<image\stype=""poster""\surl=""(?<cover>http://cf1.imgobject.com/posters/.*?jpg)""");
+                                               @"<image\stype=""poster""\surl=""(?<cover>http://cf2.imgobject.com/t/p/w500/.*?jpg)""");
 
         foreach (Match cover in covers)
         {
           // Get cover - using mid quality cover
-          if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("mid.jpg"))
+          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("mid.jpg"))
           {
             _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
           }
@@ -127,18 +127,18 @@ namespace MediaPortal.Util
         string strXML = GetPage(defaultPosterPageLinkUrl, "utf-8");
 
         // Get all cover links and put it in the "cover" group
-        MatchCollection covers = Regex.Matches(strXML, @"<image\stype=""profile""\surl=""(?<cover>.*?)""");
-        if (covers.Count == 0)
+        MatchCollection actorImages = Regex.Matches(strXML, @"<image\stype=""profile""\surl=""(?<cover>.*?)""");
+        if (actorImages.Count == 0)
         {
           return; 
         }
 
-        foreach (Match cover in covers)
+        foreach (Match actorImage in actorImages)
         {
           // Get cover - using mid quality cover
-          if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("original.jpg"))
+          if (HttpUtility.HtmlDecode(actorImage.Groups["cover"].Value).ToLower().Contains("original"))
           {
-            actorThumbs.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
+            actorThumbs.Add(HttpUtility.HtmlDecode(actorImage.Groups["cover"].Value));
           }
         }
         return;
