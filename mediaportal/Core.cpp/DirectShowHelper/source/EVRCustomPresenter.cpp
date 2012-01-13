@@ -77,8 +77,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_avPhaseDiff(0.0),
   m_sumPhaseDiff(0.0),
   m_pOuterEVR(NULL),
-  m_bStopping(false),
-  m_bEndBuffering(false)
+  m_bEndBuffering(false),
+  m_state(MP_RENDER_STATE_SHUTDOWN)
 {
   ZeroMemory((void*)&m_dPhaseDeviations, sizeof(double) * NUM_PHASE_DEVIATIONS);
 
@@ -390,6 +390,16 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetSlowestRate(MFRATE_DIRECTION 
   Log("GetSlowestRate");
   // There is no minimum playback rate, so the minimum is zero.
   *pflRate = 0;
+
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("GetSlowestRate - shutdown in progress!");  
+    return hr;
+  }
+
   return S_OK;
 }
 
@@ -401,6 +411,15 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetFastestRate(MFRATE_DIRECTION 
 
   // Get the maximum *forward* rate.
   fMaxRate = FLT_MAX;
+
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("GetFastestRate - shutdown in progress!");  
+    return hr;
+  }
 
   // For reverse playback, it's the negative of fMaxRate.
   if (eDirection == MFRATE_REVERSE)
@@ -417,10 +436,21 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetFastestRate(MFRATE_DIRECTION 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::IsRateSupported(BOOL fThin, float flRate, __RPC__inout_opt float *pflNearestSupportedRate)
 {
   Log("IsRateSupported");
+
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("IsRateSupported - shutdown in progress!");  
+    return hr;
+  }
+
   if (pflNearestSupportedRate != NULL)
   {
     *pflNearestSupportedRate = flRate;
   }
+
   return S_OK;
 }
 
@@ -440,11 +470,22 @@ HRESULT MPEVRCustomPresenter::GetDeviceID(IID* pDeviceID)
 HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLookup)
 {
   Log("InitServicePointers");
+
+  CheckPointer(pLookup, E_POINTER);
+  CAutoLock lock(this);
+
+  // Do not allow initializing when playing or paused.
+  if (IsActive())
+  {
+    Log("InitServicePointers - IsActive() == true!");
+    return MF_E_INVALIDREQUEST;
+  }
+
   HRESULT hr = S_OK;
   DWORD cCount = 0;
 
   // just to make sure....
-  ReleaseServicePointers();
+  //ReleaseServicePointers();
 
   // Ask for the mixer
   cCount = 1;
@@ -495,6 +536,8 @@ HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLoo
     ASSERT(cCount == 0 || cCount == 1);
   }
 
+  m_state = MP_RENDER_STATE_STOPPED;
+
   return S_OK;
 }
 
@@ -503,12 +546,18 @@ HRESULT MPEVRCustomPresenter::ReleaseServicePointers()
 {
   Log("ReleaseServicePointers");
 
-  // on some channel changes it may happen that ReleaseServicePointers is called only after InitServicePointers 
-  // is called to avoid this rare condition, we only release when not in state begin_streaming
+  {
+    CAutoLock lock(this);
+    m_state = MP_RENDER_STATE_SHUTDOWN;
+  }
+
+  DoFlush(TRUE);
+
   m_pMediaType.Release();
+  m_pEventSink.Release();
   m_pMixer.Release();
   m_pClock.Release();
-  m_pEventSink.Release();
+
   return S_OK;
 }
 
@@ -516,16 +565,25 @@ HRESULT MPEVRCustomPresenter::ReleaseServicePointers()
 HRESULT MPEVRCustomPresenter::GetCurrentMediaType(IMFVideoMediaType** ppMediaType)
 {
   Log("GetCurrentMediaType");
-  HRESULT hr = S_OK;
 
-  if (ppMediaType == NULL)
+  CAutoLock lock(this);
+  HRESULT hr = CheckShutdown();
+
+  if (FAILED(hr))
+  {
+    Log("ProcessMessage - shutdown in progress!");  
+    return hr;
+  }
+
+  if (!ppMediaType)
   {
     return E_POINTER;
   }
 
-  if (m_pMediaType == NULL)
+  if (!m_pMediaType)
   {
     CHECK_HR(hr = MF_E_NOT_INITIALIZED, "MediaType is NULL");
+    return hr;
   }
 
   CHECK_HR(hr = m_pMediaType->QueryInterface(__uuidof(IMFVideoMediaType), (void**)ppMediaType), "Query interface failed in GetCurrentMediaType");
@@ -665,14 +723,19 @@ HRESULT MPEVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* p
 
 HRESULT MPEVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged)
 {
-  if (pType == NULL)
+  if (!pType)
   {
     m_pMediaType.Release();
     return S_OK;
   }
 
-  HRESULT hr = S_OK;
   LARGE_INTEGER u64;
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("SetMediaType - shutdown in progress!");  
+    return hr;
+  }
 
   CHECK_HR(pType->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&u64), "Getting Framesize failed!");
 
@@ -725,6 +788,7 @@ void MPEVRCustomPresenter::ReAllocSurfaces()
   CAutoLock tLock(&m_timerParams.csLock);
   CAutoLock wLock(&m_workerParams.csLock);
   CAutoLock sLock(&m_schedulerParams.csLock);
+
   ReleaseSurfaces();
 
   // set the presentation parameters
@@ -1053,6 +1117,13 @@ HRESULT MPEVRCustomPresenter::GetFreeSample(IMFSample** ppSample)
 
 void MPEVRCustomPresenter::Flush(BOOL forced)
 {
+  m_bFlushDone.Reset();
+  m_bFlush = TRUE;
+  m_bFlushDone.Wait();
+}
+
+void MPEVRCustomPresenter::DoFlush(BOOL forced)
+{
   CAutoLock sLock(&m_lockSamples);
   CAutoLock ssLock(&m_lockScheduledSamples);
   if ((m_qScheduledSamples.Count() > 0 && !m_bDVDMenu) ||
@@ -1074,6 +1145,7 @@ void MPEVRCustomPresenter::Flush(BOOL forced)
     Log("Not flushing: size=%d", m_qScheduledSamples.Count());
   }
   
+  m_bFlushDone.Set();
   m_bFlush = FALSE;
 }
 
@@ -1194,7 +1266,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
     if (!m_bDVDMenu)
     {
       PauseThread(m_hWorker, &m_workerParams);
-      Flush(FALSE);
+      DoFlush(FALSE);
       WakeThread(m_hWorker, &m_workerParams);
       m_iLateFrames = 0;
       *pTargetTime = 0;
@@ -1203,6 +1275,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
     }
     else
     {
+      m_bFlushDone.Set();
       m_bFlush = FALSE;
     }
   }
@@ -1516,9 +1589,7 @@ void MPEVRCustomPresenter::DwmEnableMMCSSOnOff(bool enable)
 void MPEVRCustomPresenter::StopWorkers()
 {
   Log("Stopping workers...");
-  CAutoLock lock(this);
-  m_bStopping = true;
-  Log("Threads running : %s", m_bSchedulerRunning?"TRUE":"FALSE");
+  Log("Threads running : %s", m_bSchedulerRunning ? "TRUE" : "FALSE");
   if (!m_bSchedulerRunning)
   {
     return;
@@ -1526,6 +1597,7 @@ void MPEVRCustomPresenter::StopWorkers()
   EndThread(m_hScheduler, &m_schedulerParams);
   EndThread(m_hWorker, &m_workerParams);
   EndThread(m_hTimer, &m_timerParams);
+
   m_bSchedulerRunning = FALSE;
 }
 
@@ -1736,7 +1808,7 @@ void MPEVRCustomPresenter::ScheduleSample(IMFSample* pSample)
   if (SUCCEEDED(hr))
   {
     // consider 5 ms "just-in-time" for log-length's sake
-    if (nextSampleTime < -50000 && !m_bDVDMenu && !m_bScrubbing)
+    if (nextSampleTime < -50000 && !m_bDVDMenu && !m_bScrubbing && m_state != MP_RENDER_STATE_PAUSED)
     {
       Log("Scheduling sample from the past (%.2f ms, last call to NotifyWorker: %.2f ms, Queue: %d)", 
         (double)-nextSampleTime/10000, (GetCurrentTimestamp()-(double)m_llLastWorkerNotification)/10000, m_qScheduledSamples.Count());
@@ -1775,18 +1847,22 @@ BOOL MPEVRCustomPresenter::CheckForEndOfStream()
 
 HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool setInAvail)
 {
-  if (m_bStopping)
+  CAutoLock lock(this);
+  HRESULT hr = CheckShutdown();
+
+  if (FAILED(hr))
   {
-    return S_OK;  
+    LOG_TRACE("ProcessInputNotify - shutdown in progress!");  
+    return hr;
   }
 
   LOG_TRACE("ProcessInputNotify");
-  HRESULT hr = S_OK;
+  hr = S_OK;
   *samplesProcessed = 0;
   
   if (!m_bFirstInputNotify)
   {
-    return S_OK;
+    return hr;
   }
   
   if (setInAvail) 
@@ -1816,7 +1892,6 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
       }
     }
 
-
     LONGLONG timeBeforeMixer;
     LONGLONG systemTime;
     m_pClock->GetCorrelatedTime(0, &timeBeforeMixer, &systemTime);
@@ -1826,6 +1901,7 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
       m_bInputAvailable = FALSE;
       return E_POINTER;
     }
+
     DWORD dwStatus;
     MFT_OUTPUT_DATA_BUFFER outputSamples[1];
     outputSamples[0].dwStreamID = 0;
@@ -1834,6 +1910,7 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
     outputSamples[0].pEvents = NULL;
     hr = m_pMixer->ProcessOutput(0, 1, outputSamples, &dwStatus);
     SAFE_RELEASE(outputSamples[0].pEvents);
+
     if (SUCCEEDED(hr))
     {
       LONGLONG sampleTime;
@@ -1900,21 +1977,22 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulParam)
 {
-  HRESULT hr = S_OK;
   LOG_TRACE("Processmessage: %d, %p", eMessage, ulParam);
 
+  CAutoLock lock(this);
+  HRESULT hr = CheckShutdown();
+
+  if (FAILED(hr))
+  {
+    Log("ProcessMessage - shutdown in progress!");  
+    return hr;
+  }
   switch (eMessage)
   {
     case MFVP_MESSAGE_FLUSH:
       // The presenter should discard any pending samples.
       Log("ProcessMessage MFVP_MESSAGE_FLUSH");
-      PauseThread(m_hTimer, &m_timerParams);
-      PauseThread(m_hWorker, &m_workerParams);
-      PauseThread(m_hScheduler, &m_schedulerParams);
       Flush(FALSE);
-      WakeThread(m_hScheduler, &m_schedulerParams);
-      WakeThread(m_hWorker, &m_workerParams);
-      WakeThread(m_hTimer, &m_timerParams);
     break;
 
     case MFVP_MESSAGE_INVALIDATEMEDIATYPE:
@@ -2005,7 +2083,31 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset)
 {
-  Log("OnClockStart");
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("OnClockStart - shutdown in progress!");  
+    return hr;
+  }
+
+  Log("OnClockStart SystemTime: %6.3f ClockStartOffset: %f6.3f", hnsSystemTime / 10000000.0, llClockStartOffset / 10000000.0);
+
+  if (IsActive())
+  {
+    // If the clock position changes while the clock is active, it 
+    // is a seek request. We need to flush all pending samples.
+    if (llClockStartOffset != PRESENTATION_CURRENT_POSITION)
+    {
+      // TODO - can we enable this? Looks like clip changes or startups in BD playback
+      // could cause lost samples from beginning of the clip if this is enabled
+
+      //Log("OnClockStart - already active, flush!");
+      //DoFlush(TRUE);
+    }
+  }
+
   m_state = MP_RENDER_STATE_STARTED;
   
   PauseThread(m_hWorker, &m_workerParams);
@@ -2021,50 +2123,94 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
   NotifyScheduler(true);
   GetAVSyncClockInterface();
   m_bEndBuffering = false;
+
   return S_OK;
 }
 
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStop(MFTIME hnsSystemTime)
 {
-  Log("OnClockStop");
-  m_state = MP_RENDER_STATE_STOPPED;
-  PauseThread(m_hWorker, &m_workerParams);
-  PauseThread(m_hScheduler, &m_schedulerParams);
-  Flush(FALSE);
-  WakeThread(m_hScheduler, &m_schedulerParams);
-  WakeThread(m_hWorker, &m_workerParams);
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("OnClockStop - shutdown in progress!");  
+    return hr;
+  }
+
+  Log("OnClockStop: %6.3f", hnsSystemTime / 10000000.0);
+  if (m_state != MP_RENDER_STATE_STOPPED)
+  {
+    m_state = MP_RENDER_STATE_STOPPED;
+    DoFlush(FALSE);
+  }
+
   return S_OK;
 }
 
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockPause(MFTIME hnsSystemTime)
 {
-  Log("OnClockPause");
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("OnClockPause - shutdown in progress!");  
+    return hr;
+  }
+
+  Log("OnClockPause: %6.3f", hnsSystemTime / 10000000.0);
   m_state = MP_RENDER_STATE_PAUSED;
   m_bEndBuffering = false;
+
   return S_OK;
 }
 
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockRestart(MFTIME hnsSystemTime)
 {
-  Log("OnClockRestart");
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("OnClockRestart - shutdown in progress!");  
+    return hr;
+  }
+
+  Log("OnClockRestart: %6.3f", hnsSystemTime / 10000000.0);
+  ASSERT(m_state == MP_RENDER_STATE_PAUSED);
   m_state = MP_RENDER_STATE_STARTED;
+  
   ResetFrameStats();
   NotifyWorker(true);
   NotifyScheduler(true);
+  
   GetAVSyncClockInterface();
   SetupAudioRenderer();
+  
   m_bEndBuffering = false;
+
   return S_OK;
 }
 
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockSetRate(MFTIME hnsSystemTime, float flRate)
 {
-  Log("OnClockSetRate: %f", flRate);
+  CAutoLock lock(this);
+
+  HRESULT hr = CheckShutdown();
+  if (FAILED(hr))
+  {
+    Log("OnClockSetRate - shutdown in progress!");  
+    return hr;
+  }
+
+  Log("OnClockSetRate: %6.3f", flRate);
   m_fRate = flRate;
+
   return S_OK;
 }
 
@@ -2165,7 +2311,7 @@ void MPEVRCustomPresenter::ReleaseSurfaces()
   {
     m_pCallback->PresentImage(0, 0, 0, 0, 0, 0);
   }
-  Flush(TRUE);
+  DoFlush(TRUE);
   m_iFreeSamples = 0;
   for (int i = 0; i < NUM_SURFACES; i++)
   {
@@ -3664,6 +3810,8 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
 // IBaseFilter delegate
 bool MPEVRCustomPresenter::GetState(DWORD dwMilliSecsTimeout, FILTER_STATE* State, HRESULT& pReturnValue)
 {
+  return false;
+
   bool moreSamplesNeeded = BufferMoreSamples();
   bool stopWaiting = false;
 

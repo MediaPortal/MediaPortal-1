@@ -19,6 +19,7 @@
 #include <queue>
 #include <dxva2api.h>
 #include <evr.h>
+#include <Mferror.h>
 #include "OuterEVR.h"
 #include "IAVSyncClock.h"
 #include "callback.h"
@@ -240,6 +241,7 @@ protected:
   void           NotifyWorker(bool setInAvail);
   HRESULT        GetTimeToSchedule(IMFSample* pSample, LONGLONG* pDelta, LONGLONG *hnsSystemTime);
   void           Flush(BOOL forced);
+  void           DoFlush(BOOL forced);
   void           ScheduleSample(IMFSample* pSample);
   IMFSample*     PeekSample();
   BOOL           PopSample();
@@ -447,8 +449,26 @@ protected:
   double        m_avPhaseDiff;
 
   COuterEVR*    m_pOuterEVR;
-  bool          m_bStopping;
 
   CAMEvent      m_SampleAddedEvent;
   CAMEvent      m_EndOfStreamingEvent;
+
+  CAMEvent      m_bFlushDone;
+
+  // CheckShutdown: 
+  //     Returns MF_E_SHUTDOWN if the presenter is shutdown.
+  //     Call this at the start of any methods that should fail after shutdown.
+  inline HRESULT CheckShutdown() const 
+  {
+    if (m_state == MP_RENDER_STATE_SHUTDOWN)
+      return MF_E_SHUTDOWN;
+    else
+      return S_OK;
+  }
+
+  // IsActive: The "active" state is started or paused.
+  inline BOOL IsActive() const
+  {
+    return ((m_state == MP_RENDER_STATE_STARTED) || (m_state == MP_RENDER_STATE_PAUSED));
+  }
 };
