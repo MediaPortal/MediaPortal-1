@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Entity.Infrastructure;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
@@ -88,6 +89,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         throw new ApplicationException("A transaction is running. Call BeginTransaction instead.");
       }
+
+      string traceString = _objectContext.ToTraceString();
+      Log.Debug("EF SaveChanges SQL = {0}", traceString);
+
       _objectContext.SaveChanges();
     }
 

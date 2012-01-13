@@ -341,12 +341,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static TuningDetail SaveTuningDetail(TuningDetail tuningDetail)
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
-      {
-        EntitySqlDebug.ToTraceString(channelRepository.ObjectContext);
+      {        
         channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.TuningDetails, tuningDetail);
-        channelRepository.ApplyChanges(channelRepository.ObjectContext.TuningDetails, tuningDetail);
+        channelRepository.ApplyChanges(channelRepository.ObjectContext.TuningDetails, tuningDetail);        
         channelRepository.UnitOfWork.SaveChanges();
-        tuningDetail.AcceptChanges();
+        tuningDetail.AcceptChanges();        
         return tuningDetail;
       }
     }
@@ -629,11 +628,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         channelRepository.AttachEntityIfChangeTrackingDisabled(channelRepository.ObjectContext.GroupMaps, groupMaps);
-        channelRepository.ApplyChanges(channelRepository.ObjectContext.GroupMaps, groupMaps);
+        channelRepository.ApplyChanges(channelRepository.ObjectContext.GroupMaps, groupMaps);        
         channelRepository.UnitOfWork.SaveChanges();
-        channelRepository.ObjectContext.AcceptAllChanges();
-        return groupMaps.ToList();
-        EntitySqlDebug.ToTraceString(channelRepository.ObjectContext);
+        channelRepository.ObjectContext.AcceptAllChanges();        
+        return groupMaps.ToList();        
       }
     }
 
@@ -672,8 +670,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IOrderedQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.mediaType == (int)mediaType).OrderBy(c => c.sortOrder);
-        return channelRepository.IncludeAllRelations(query, includeRelations).ToList();
+        IQueryable<Channel> query = channelRepository.GetQuery<Channel>(c => c.mediaType == (int)mediaType).OrderBy(c => c.sortOrder);
+        query = channelRepository.IncludeAllRelations(query, includeRelations);
+        Log.Debug("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
+        return query.ToList();        
       }
     }
 

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Data.Objects;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -17,28 +19,28 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel
 {
   public static class EntitySqlDebug
   {
-    static Assembly efAssembly = typeof(EntityCommand).Assembly;
+    private static readonly Assembly EfAssembly = typeof(EntityCommand).Assembly;
 
     public static string ToTraceString(this IQueryable query)
     {
-      MethodInfo method = query.GetType().
-      GetMethod("ToTraceString");
-
+      MethodInfo method = query.GetType().GetMethod("ToTraceString");
       if (method != null)
+      {
         return method.Invoke(query, null).ToString();
-      else return "";
+      }
+      return "";
     }
 
     public static string ToTraceString(this ObjectContext context)
     {
-      string intern = "System.Data.Mapping.Update.Internal";
+      const string intern = "System.Data.Mapping.Update.Internal";
 
-      Type dynUpdate = efAssembly.GetType(intern + ".DynamicUpdateCommand");
-      Type updTranslate = efAssembly.GetType(intern + ".UpdateTranslator");
-      Type funcUpdate = efAssembly.GetType(intern + ".FunctionUpdateCommand");
+      Type dynUpdate = EfAssembly.GetType(intern + ".DynamicUpdateCommand");
+      Type updTranslate = EfAssembly.GetType(intern + ".UpdateTranslator");
+      Type funcUpdate = EfAssembly.GetType(intern + ".FunctionUpdateCommand");
 
-      EntityConnection conn = context.Connection as EntityConnection;
-      object[] parameter = new object[]
+      var conn = context.Connection as EntityConnection;
+      var parameter = new object[]
                 {
                 context.ObjectStateManager,
                 conn.GetMetadataWorkspace(),
@@ -63,25 +65,52 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel
         {
           MethodInfo createCommand = dynUpdate.
           GetMethod("CreateCommand", flags);
-          object[] mParams = new object[] { updTranslator, new Dictionary<long, object>() };
+          object[] mParams = new object[] { updTranslator, new Dictionary<int, object>() };
           dbCommands.Add((DbCommand)createCommand.Invoke(obj, mParams));
         }
         else
+        {
           throw new NotImplementedException("Unknown update command type");
+        }
       }
 
-      StringBuilder ts = new StringBuilder();
-      foreach (DbCommand cmd in dbCommands)
+      var traceString = new StringBuilder();
+      foreach (DbCommand command in dbCommands)
       {
-        ts.AppendLine("\r\n****** Command Begin ******");
-        ts.AppendLine(cmd.CommandText);
-        ts.AppendLine("*** Parameterwerte ***:");
-        foreach (DbParameter p in cmd.Parameters)
-          ts.AppendFormat("{0} = {1}\r\n", p.ParameterName, p.Value);
-        ts.AppendLine("****** Command End *********\r\n");
+        traceString.AppendLine("--=============== BEGIN COMMAND ===============");
+        traceString.AppendLine();
+
+        foreach (DbParameter param in command.Parameters)
+        {
+          traceString.AppendFormat("declare {0} {1} set {0} = '{2}'", param.ParameterName, GetSqlDbType(param), param.Value);
+          traceString.AppendLine();
+        }
+        traceString.AppendLine();
+        traceString.AppendLine(command.CommandText);
+
+        traceString.AppendLine();
+        traceString.AppendLine("go");
+        traceString.AppendLine();
+        traceString.AppendLine("--=============== END COMMAND ===============");
       }
-      
-      return ts.ToString();
+
+      return traceString.ToString();
+    }
+
+    private static string GetSqlDbType(IDataParameter param)
+    {
+      string result;
+      var parm = new SqlParameter();
+      try
+      {
+        parm.DbType = param.DbType;
+        result = parm.SqlDbType.ToString();
+      }
+      catch (Exception)
+      {
+        result = param.DbType.ToString();
+      }
+      return result;
     }
   }
 }
