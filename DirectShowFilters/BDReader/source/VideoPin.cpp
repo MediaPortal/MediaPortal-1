@@ -85,7 +85,6 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_pFilter(pFilter),
   m_section(pSection),
   m_demux(pDemux),
-  m_decoderType(general),
   CSourceSeeking(NAME("pinVideo"), pUnk, phr, pSection),
   m_pReceiver(NULL),
   m_pCachedBuffer(NULL),
@@ -127,45 +126,6 @@ CVideoPin::~CVideoPin()
 
   delete m_eFlushStart;
   delete m_pCachedBuffer;
-}
-
-void CVideoPin::DetectVideoDecoder()
-{
-  HRESULT hr = S_FALSE;
-  ULONG fetched = 0;
-  bool decoderFound = false;
-
-  FILTER_INFO filterInfo;
-  m_decoderType = general;
-  
-  IEnumFilters* piEnumFilters = NULL;
-  if (m_pFilter->GetFilterGraph() && SUCCEEDED(m_pFilter->GetFilterGraph()->EnumFilters(&piEnumFilters)))
-  {
-    IBaseFilter* pFilter;
-    while (piEnumFilters->Next(1, &pFilter, &fetched) == NOERROR && !decoderFound)
-    {
-      if (pFilter->QueryFilterInfo(&filterInfo) == S_OK)
-      {
-        if (wcscmp(filterInfo.achName, L"ArcSoft Video Decoder") == 0)
-        {
-          m_decoderType = Arcsoft;
-          decoderFound = true;
-        }
-        else if (wcsncmp(filterInfo.achName, L"CyberLink Video Decoder", 23) == 0 ||
-                 wcsncmp(filterInfo.achName, L"CyberLink H.264/AVC Decoder", 27) == 0 ||
-                 wcsncmp(filterInfo.achName, L"CyberLink VC-1 Decoder", 22) == 0)
-        {
-          m_decoderType = Cyberlink;
-          decoderFound = true;
-        }
-
-        filterInfo.pGraph->Release();
-      }
-      pFilter->Release();
-      pFilter = NULL;
-    }
-    piEnumFilters->Release();
-  }
 }
 
 bool CVideoPin::IsConnected()
@@ -321,8 +281,6 @@ HRESULT CVideoPin::CompleteConnect(IPin* pReceivePin)
     return hr;
   }
 
-  DetectVideoDecoder();
-
   REFERENCE_TIME refTime;
   m_pFilter->GetDuration(&refTime);
   m_rtDuration = CRefTime(refTime);
@@ -352,86 +310,6 @@ void CVideoPin::StopWait()
     m_eFlushStart->Set();
 }
 
-HRESULT CVideoPin::DoBufferProcessingLoop(void)
-{
-  Command com;
-  OnThreadStartPlay();
-
-  do 
-  {
-    while (!CheckRequest(&com)) 
-    {
-      IMediaSample* pSample;
-
-      HRESULT hr = GetDeliveryBuffer(&pSample, NULL, NULL, 0);
-      if (FAILED(hr)) 
-      {
-        Sleep(1);
-        continue;	// go round again. Perhaps the error will go away
-        // or the allocator is decommited & we will be asked to
-        // exit soon.
-      }
-
-      // Virtual function user will override.
-      hr = FillBuffer(pSample);
-
-      if (hr == S_OK) 
-      {
-        //LogDebug("Vid::DoBufferProcessingLoop() - sample len %d size %d", 
-        //  pSample->GetActualDataLength(), pSample->GetSize());
-        
-        // This is the only change for base class implementation of DoBufferProcessingLoop()
-        // Cyberlink H.264 decoder seems to crash when we provide empty samples for it 
-        if (pSample->GetActualDataLength() > 0 )
-        {
-          //static int iFrameNumber = 0;
-          //LogMediaSample(pSample, iFrameNumber++);
-          hr = Deliver(pSample);     
-        }
-		
-        pSample->Release();
-
-        // downstream filter returns S_FALSE if it wants us to
-        // stop or an error if it's reporting an error.
-        if (hr != S_OK)
-        {
-          DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
-          return S_OK;
-        }
-      } 
-      else if (hr == S_FALSE) 
-      {
-        // derived class wants us to stop pushing data
-        pSample->Release();
-        DeliverEndOfStream();
-        return S_OK;
-      } 
-      else 
-      {
-        // derived class encountered an error
-        pSample->Release();
-        DbgLog((LOG_ERROR, 1, TEXT("Error %08lX from FillBuffer!!!"), hr));
-        DeliverEndOfStream();
-        m_pFilter->NotifyEvent(EC_ERRORABORT, hr, 0);
-        return hr;
-      }
-     // all paths release the sample
-    }
-    // For all commands sent to us there must be a Reply call!
-	  if (com == CMD_RUN || com == CMD_PAUSE) 
-    {
-      Reply(NOERROR);
-	  } 
-    else if (com != CMD_STOP) 
-    {
-      Reply((DWORD) E_UNEXPECTED);
-      DbgLog((LOG_ERROR, 1, TEXT("Unexpected command!!!")));
-	  }
-  } while (com != CMD_STOP);
-
-  return S_FALSE;
-}
-
 void CVideoPin::CreateEmptySample(IMediaSample *pSample)
 {
   if (pSample)
@@ -439,7 +317,6 @@ void CVideoPin::CreateEmptySample(IMediaSample *pSample)
     pSample->SetTime(NULL, NULL);
     pSample->SetActualDataLength(0);
     pSample->SetSyncPoint(false);
-    pSample->SetDiscontinuity(true);
   }
   else
     LogDebug("aud:CreateEmptySample() invalid sample!");
@@ -689,6 +566,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
         m_bFirstSample = false;
+
+        //static int iFrameNumber = 0;
+        //LogMediaSample(pSample, iFrameNumber++);
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
         LogDebug("vid: %6.3f corr %6.3f playlist time %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0, 

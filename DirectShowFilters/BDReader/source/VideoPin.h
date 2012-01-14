@@ -32,13 +32,6 @@ class CVideoPin : public CSourceStream, public CSourceSeeking
 {
 public:
 
-  enum VIDEO_DECODER
-  {
-    general = 0,
-    Arcsoft,
-    Cyberlink
-  };
-
   CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux);
   ~CVideoPin();
 
@@ -52,8 +45,6 @@ public:
   HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
 
-  HRESULT DoBufferProcessingLoop(void);
-
   // CSourceSeeking
   HRESULT ChangeStart();
   HRESULT ChangeStop();
@@ -63,7 +54,7 @@ public:
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
-  STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
+  STDMETHODIMP Notify(IBaseFilter* pSender, Quality q);
 
   HRESULT DeliverBeginFlush();
   HRESULT DeliverEndFlush();
@@ -79,7 +70,6 @@ public:
 protected:
   DWORD ThreadProc();
 
-  void DetectVideoDecoder();
   void CreateEmptySample(IMediaSample* pSample);
   void LogMediaType(AM_MEDIA_TYPE* pmt);
   bool CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt);
@@ -92,8 +82,6 @@ protected:
   CDeMultiplexer& m_demux;
   bool      m_bConnected;
   CCritSec* m_section;
-
-  VIDEO_DECODER m_decoderType;
 
   IPin* m_pReceiver;
 
