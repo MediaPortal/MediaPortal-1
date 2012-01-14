@@ -617,8 +617,8 @@ namespace MediaPortal.Player
               return true;
             Speed = 1;
             //Log.Debug("BDPlayer: Main menu");
-            menuState = MenuState.Root;
-            _ireader.Action((int)BDKeys.BD_VK_ROOT_MENU);
+            if(_ireader.Action((int)BDKeys.BD_VK_ROOT_MENU) == 0)
+              menuState = MenuState.Root;
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_BD_POPUP_MENU:
@@ -626,8 +626,8 @@ namespace MediaPortal.Player
               return true;
             Speed = 1;
             //Log.Debug("BDPlayer: Popup menu toggle");
-            menuState = MenuState.PopUp;
-            _ireader.Action((int)BDKeys.BD_VK_POPUP);
+            if(_ireader.Action((int)BDKeys.BD_VK_POPUP) == 0)
+              menuState = MenuState.PopUp;
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_PREVIOUS_MENU:
