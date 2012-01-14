@@ -427,8 +427,6 @@ STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
     // TODO get chapter position in playlist
     REFERENCE_TIME rtChapterStart = 0LL;
     m_demultiplexer.Flush(true, true, rtChapterStart);
-    m_eSeekDone.Wait();
-    m_eSeekDone.Reset();
   }
 
   return hr;
