@@ -1642,60 +1642,54 @@ namespace MediaPortal.GUI.Video
     // Restore selected item postion on current view (if user was been here and switched view)
     private void GetItemViewHistory(string view, ArrayList mList)
     {
-      if (!string.IsNullOrEmpty(facadeLayout.SelectedListItem.Label) && !string.IsNullOrEmpty(view))
+      if (facadeLayout.SelectedListItem != null)
       {
-        switch (view)
+        if (!string.IsNullOrEmpty(facadeLayout.SelectedListItem.Label) && !string.IsNullOrEmpty(view))
         {
-          case "genre":
-            m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            VideoDatabase.GetMoviesByGenre(facadeLayout.SelectedListItem.Label, ref mList);
-            GetRandomMovieId(mList);
-            break;
-
-          case "actor":
-            m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            VideoDatabase.GetMoviesByActor(facadeLayout.SelectedListItem.Label, ref mList);
-            GetRandomMovieId(mList);
-            break;
-
-          case "year":
-            m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            VideoDatabase.GetMoviesByYear(facadeLayout.SelectedListItem.Label, ref mList);
-            GetRandomMovieId(mList);
-            break;
-
-          case "recently added":
-            if (handler.CurrentLevel == 0)
+          switch (view)
+          {
+            case "genre":
               m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            break;
-
-          case "recently watched":
-            if (handler.CurrentLevel == 0)
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            break;
-
-          case "watched":
-            if (handler.CurrentLevel == 0)
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            break;
-
-          case "unwatched":
-            if (handler.CurrentLevel == 0)
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            break;
-
-          default:
-            if (handler.CurrentLevel == 0)
-            {
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-            }
-            else
-            {
-              m_history.Set(facadeLayout.SelectedListItem.Label, view);
-              VideoDatabase.GetMovies(ref mList);
+              VideoDatabase.GetMoviesByGenre(facadeLayout.SelectedListItem.Label, ref mList);
               GetRandomMovieId(mList);
-            }
-            break;
+              break;
+
+            case "actor":
+              m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              VideoDatabase.GetMoviesByActor(facadeLayout.SelectedListItem.Label, ref mList);
+              GetRandomMovieId(mList);
+              break;
+
+            case "year":
+              m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              VideoDatabase.GetMoviesByYear(facadeLayout.SelectedListItem.Label, ref mList);
+              GetRandomMovieId(mList);
+              break;
+
+            case "recently added":
+              if (handler.CurrentLevel == 0)
+                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              break;
+
+            case "recently watched":
+              if (handler.CurrentLevel == 0)
+                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              break;
+
+            case "watched":
+              if (handler.CurrentLevel == 0)
+                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              break;
+
+            case "unwatched":
+              if (handler.CurrentLevel == 0)
+                m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              break;
+
+            default:
+              m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              break;
+          }
         }
       }
     }

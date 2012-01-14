@@ -347,6 +347,15 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
 
+      if (ID == -1)
+      {
+        GUIPropertyManager.SetProperty("#hideinfo", "true");
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#hideinfo", "false");
+      }
+
       // Movie id property
       if (!string.IsNullOrEmpty(file))
       {
@@ -461,7 +470,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#VideoResolution", string.Empty);
       GUIPropertyManager.SetProperty("#AudioCodec", string.Empty);
       GUIPropertyManager.SetProperty("#AudioChannels", string.Empty);
-      GUIPropertyManager.SetProperty("#HasSubtitles", "False");
+      GUIPropertyManager.SetProperty("#HasSubtitles", "false");
       GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
     }
 
@@ -483,7 +492,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
       GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(mInfo.AudioCodec));
       GUIPropertyManager.SetProperty("#AudioChannels", mInfo.AudioChannels);
-      GUIPropertyManager.SetProperty("#HasSubtitles", mInfo.HasSubtitles.ToString());
+      GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
       GUIPropertyManager.SetProperty("#AspectRatio", mInfo.AspectRatio);
     }
 
