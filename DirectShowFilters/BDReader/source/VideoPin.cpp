@@ -442,14 +442,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           {
             LogDebug("vid: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
               buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
-
-            m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
-            m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
             
             m_demux.m_bVideoClipSeen = true;
  
-            m_bClipEndingNotified = false;
+            m_bInitDuration = true;
             checkPlaybackState = true;
+            m_bClipEndingNotified = false;
 
             if (buffer->bResuming)
             {
@@ -477,11 +475,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             {
               LogMediaType(buffer->pmt);
             
-              m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
-              m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
-
               HRESULT hrAccept = S_FALSE;
-            
               CLSID decoder = GetDecoderCLSID();
 
               if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &decoder))
@@ -546,7 +540,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           if (m_bZeroTimeStream)
           {
             m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
-            m_bZeroTimeStream=false;
+            m_bZeroTimeStream = false;
           }
           if (m_bDiscontinuity)
           {
@@ -571,14 +565,13 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bInitDuration = false;
           }
 
-          // TODO Check if we could use a bit bigger delta time when updating the playback position
           m_pFilter->OnPlaybackPositionChange();
         }
         else // Buffer has no timestamp
           pSample->SetTime(NULL, NULL);
 
         pSample->SetSyncPoint(buffer->bSyncPoint);
-        // Copy buffer into the sample
+
         BYTE* pSampleBuffer;
         pSample->SetActualDataLength(buffer->GetDataSize());
         pSample->GetPointer(&pSampleBuffer);
