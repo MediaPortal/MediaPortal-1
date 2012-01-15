@@ -116,7 +116,6 @@ protected:
 
   bool m_bUsePCM;
 
-  REFERENCE_TIME m_rtPrevSample;
   REFERENCE_TIME m_rtStreamTimeOffset;
 
   bool m_bZeroStreamOffset;

@@ -53,7 +53,6 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bUsePCM(false),
   m_bFirstSample(true),
   m_bZeroTimeStream(false),
-  m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0)
 {
   m_bConnected = false;
@@ -291,8 +290,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           if (buffer->bNewClip)
           {
-            LogDebug("aud: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
-              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+            LogDebug("aud: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
+              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             checkPlaybackState = true;
 
@@ -406,8 +405,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;//- m_rtStart;
             rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;// - m_rtStart;
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
-
-            m_rtPrevSample = rtCorrectedStopTime;
           }
           else
           {
@@ -647,7 +644,6 @@ HRESULT CAudioPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
 
   LogDebug("aud: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
-  m_rtPrevSample = 0;
 
   HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);
   if (FAILED(hr))
