@@ -617,7 +617,7 @@ namespace MediaPortal.Player
               return true;
             Speed = 1;
             //Log.Debug("BDPlayer: Main menu");
-            if (_ireader.Action((int)BDKeys.BD_VK_ROOT_MENU) == 1)
+            if (_ireader.Action((int)BDKeys.BD_VK_ROOT_MENU) == 0)
               menuState = MenuState.Root;
             return true;
 
@@ -626,7 +626,7 @@ namespace MediaPortal.Player
               return true;
             Speed = 1;
             //Log.Debug("BDPlayer: Popup menu toggle");
-            if (_ireader.Action((int)BDKeys.BD_VK_POPUP) == 1)
+            if (_ireader.Action((int)BDKeys.BD_VK_POPUP) == 0)
               menuState = MenuState.PopUp;
             return true;
 
@@ -2241,6 +2241,10 @@ namespace MediaPortal.Player
         _vmr9.AddVMR9(_graphBuilder);
         _vmr9.Enable(false);
 
+        // Set VideoDecoder and VC1Override before adding filter in graph
+        SetVideoDecoder();
+        SetVC1Override();
+
         // Add preferred video filters
         UpdateFilters("Video");
 
@@ -2274,8 +2278,6 @@ namespace MediaPortal.Player
         Log.Info("BDPlayer: Render BDReader outputs");
 
         DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _interfaceBDReader);
-        SetVideoDecoder();
-        SetVC1Override();
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
         #endregion
@@ -2362,6 +2364,7 @@ namespace MediaPortal.Player
         dsfilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
       dsfilter.GetClassID(out guid);
       _ireader.SetVideoDecoder((int)BDStream, ref guid);
+      _graphBuilder.RemoveFilter(dsfilter);
       DirectShowUtil.ReleaseComObject(dsfilter);
       dsfilter = null;
     }
