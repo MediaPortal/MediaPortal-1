@@ -94,15 +94,14 @@ namespace Mediaportal.TV.Server.SetupTV
       AddSection(project);
       
       servers = new Servers();
-      AddSection(servers);      
+      AddSection(servers);
 
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       
       bool connected = false;
       while (!connected)
       {
         RemoteControl.HostName = ServiceAgents.Instance.SettingServiceAgent.GetSetting("hostname").value;
-
-        IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
 
         if (cards.Count > 0)
         {

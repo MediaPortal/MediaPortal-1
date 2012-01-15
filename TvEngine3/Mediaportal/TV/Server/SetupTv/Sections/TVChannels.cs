@@ -121,9 +121,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       tabControl1.TabPages.Clear();
       tabControl1.TabPages.Add(tabPage1);
 
-      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+      /*ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
       include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;      
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);*/
+
+      IList<ChannelGroup> groups =
+        ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV);
 
       foreach (ChannelGroup group in groups)
       {
@@ -184,8 +187,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _cards[card.idCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);
       }
 
+      //ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.None;
       ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
       include |= ChannelIncludeRelationEnum.ChannelMaps;
+      include |= ChannelIncludeRelationEnum.GroupMaps;
 
       _allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV, include);
 

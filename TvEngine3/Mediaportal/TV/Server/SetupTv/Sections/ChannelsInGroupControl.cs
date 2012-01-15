@@ -231,13 +231,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       ChannelGroup group;
       ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
+
       if (menuItem.Tag == null)
       {
         GroupNameForm dlg = new GroupNameForm();
+
         if (dlg.ShowDialog(this) != DialogResult.OK)
         {
           return;
-        }        
+        }
+
         group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(dlg.GroupName);        
         UpdateMenuAndTabs();
       }

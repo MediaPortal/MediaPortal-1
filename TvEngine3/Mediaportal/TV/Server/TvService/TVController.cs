@@ -464,11 +464,12 @@ namespace Mediaportal.TV.Server.TVService
         //enumerate all tv cards in this pc...
         _maxFreeCardsToTry = Int32.Parse(SettingsManagement.GetSetting("timeshiftMaxFreeCardsToTry", "0").value);
 
+        IList<Card> allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
+
         foreach (ITVCard itvCard in _localCardCollection.Cards)
         {
           //for each card, check if its already mentioned in the database
-          IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
-          bool found = cards.Any(card => card.devicePath == itvCard.DevicePath);
+          bool found = allCards.Any(card => card.devicePath == itvCard.DevicePath);
           if (!found)
           {
             // card is not yet in the database, so add it
