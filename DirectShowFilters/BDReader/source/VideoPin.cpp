@@ -95,6 +95,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bFirstSample(true),
   m_bZeroTimeStream(false),
   m_bInitDuration(true),
+  m_bProvidePMT(false),
   m_bClipEndingNotified(false),
   m_bStopWait(false),
   m_rtStreamTimeOffset(0),
@@ -318,16 +319,77 @@ void CVideoPin::StopWait()
     m_eFlushStart->Set();
 }
 
-void CVideoPin::CreateEmptySample(IMediaSample *pSample)
+HRESULT CVideoPin::DoBufferProcessingLoop()
 {
-  if (pSample)
+  Command com;
+  OnThreadStartPlay();
+
+  do 
   {
-    pSample->SetTime(NULL, NULL);
-    pSample->SetActualDataLength(0);
-    pSample->SetSyncPoint(false);
-  }
-  else
-    LogDebug("aud:CreateEmptySample() invalid sample!");
+    while (!CheckRequest(&com)) 
+    {
+      IMediaSample* pSample;
+
+      HRESULT hr = GetDeliveryBuffer(&pSample, NULL, NULL, 0);
+      if (FAILED(hr)) 
+      {
+        Sleep(1);
+        continue;	// go round again. Perhaps the error will go away
+        // or the allocator is decommited & we will be asked to
+        // exit soon.
+      }
+
+      // Virtual function user will override.
+      hr = FillBuffer(pSample);
+
+      if (hr == S_OK) 
+      {
+        hr = Deliver(pSample);     
+        pSample->Release();
+
+        // downstream filter returns S_FALSE if it wants us to
+        // stop or an error if it's reporting an error.
+        if (hr != S_OK)
+        {
+          DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
+          return S_OK;
+        }
+      }
+      else if (hr == ERROR_NO_DATA)
+      {
+        pSample->Release(); 
+      }
+      else if (hr == S_FALSE) 
+      {
+        // derived class wants us to stop pushing data
+        pSample->Release();
+        DeliverEndOfStream();
+        return S_OK;
+      } 
+      else 
+      {
+        // derived class encountered an error
+        pSample->Release();
+        DbgLog((LOG_ERROR, 1, TEXT("Error %08lX from FillBuffer!!!"), hr));
+        DeliverEndOfStream();
+        m_pFilter->NotifyEvent(EC_ERRORABORT, hr, 0);
+        return hr;
+      }
+     // all paths release the sample
+    }
+    // For all commands sent to us there must be a Reply call!
+	  if (com == CMD_RUN || com == CMD_PAUSE) 
+    {
+      Reply(NOERROR);
+	  } 
+    else if (com != CMD_STOP) 
+    {
+      Reply((DWORD) E_UNEXPECTED);
+      DbgLog((LOG_ERROR, 1, TEXT("Unexpected command!!!")));
+	  }
+  } while (com != CMD_STOP);
+
+  return S_FALSE;
 }
 
 void CVideoPin::CheckPlaybackState()
@@ -384,23 +446,20 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
     {
       if (m_pFilter->IsStopping() || m_demux.IsMediaChanging() || m_bFlushing || !m_bSeekDone || m_demux.m_bRebuildOngoing)
       {
-        CreateEmptySample(pSample);
         Sleep(1);
-        return S_OK;
+        return ERROR_NO_DATA;
       }
 
       if (m_demux.EndOfFile())
       {
         LogDebug("vid: set EOF");
-        CreateEmptySample(pSample);
         return S_FALSE;
       }
 
       if (m_demux.m_bVideoClipSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_bVideoClipSeen && !m_demux.m_eAudioClipSeen->Check())
       {
-        CreateEmptySample(pSample);
         CheckPlaybackState();
-        return S_OK;
+        return ERROR_NO_DATA;
       }
 
       if (m_pCachedBuffer)
@@ -408,6 +467,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         LogDebug("vid: cached fetch %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
+        buffer->bDiscontinuity = true;
+        
+        if (m_bProvidePMT)
+        {
+          CMediaType mt(*buffer->pmt);
+          SetMediaType(&mt);
+          pSample->SetMediaType(&mt);
+          m_bProvidePMT = false;
+        }
       }
       else
         buffer = m_demux.GetVideo();
@@ -418,17 +486,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           Sleep(10);
         else 
         {
-          CreateEmptySample(pSample);
           if (!m_bClipEndingNotified)
           {
             DeliverEndOfStream();
-            pSample->SetMediaType(&m_mt);
             m_bClipEndingNotified = true;
           }
           else
             Sleep(10);
 		  
-          return S_OK;
+          return ERROR_NO_DATA;
         }
       }
       else
@@ -505,13 +571,13 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 SetMediaType(&mt);
                 pSample->SetMediaType(&mt);
 
-                CreateEmptySample(pSample);
                 buffer->bNewClip = false;
                 m_pCachedBuffer = buffer;
+                m_bProvidePMT = true;
 				
                 DeliverEndOfStream();
 
-                return S_OK;
+                return ERROR_NO_DATA;
               }
             } // comparemediatypes
           }
@@ -523,12 +589,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         {
           buffer->bNewClip = false;
           m_pCachedBuffer = buffer;
-          LogDebug("vid: cached push  %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
-         
-          CreateEmptySample(pSample);
+
           CheckPlaybackState();
 
-          return S_OK;
+          LogDebug("vid: cached push  %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
+
+          return ERROR_NO_DATA;
         }
 
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
@@ -596,7 +662,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
   {
     LogDebug("vid: FillBuffer exception");
   }
-  return NOERROR;
+
+  return S_OK;
 }
 
 HRESULT CVideoPin::OnThreadStartPlay()

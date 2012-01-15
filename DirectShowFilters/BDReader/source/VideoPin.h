@@ -44,6 +44,7 @@ public:
   HRESULT CheckConnect(IPin *pReceivePin);
   HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
+  HRESULT DoBufferProcessingLoop();
 
   // CSourceSeeking
   HRESULT ChangeStart();
@@ -70,7 +71,6 @@ public:
 protected:
   DWORD ThreadProc();
 
-  void CreateEmptySample(IMediaSample* pSample);
   void LogMediaType(AM_MEDIA_TYPE* pmt);
   bool CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt);
   HRESULT GetMediaTypeInternal(CMediaType* pmt);
@@ -97,6 +97,7 @@ protected:
   REFERENCE_TIME m_rtStreamOffset;
 
   Packet* m_pCachedBuffer;
+  bool m_bProvidePMT;
 
   CAMEvent* m_eFlushStart;
   bool m_bFlushing;
