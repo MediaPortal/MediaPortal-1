@@ -97,7 +97,6 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bInitDuration(true),
   m_bClipEndingNotified(false),
   m_bStopWait(false),
-  m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0),
   m_rtTitleDuration(0),
   m_bDoFakeSeek(false),
@@ -441,8 +440,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
           if (buffer->bNewClip)
           {
-            LogDebug("vid: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
-              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+            LogDebug("vid: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
+              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
             m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
@@ -574,8 +573,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
           // TODO Check if we could use a bit bigger delta time when updating the playback position
           m_pFilter->OnPlaybackPositionChange();
-
-          m_rtPrevSample = rtCorrectedStopTime;
         }
         else // Buffer has no timestamp
           pSample->SetTime(NULL, NULL);
@@ -653,8 +650,6 @@ HRESULT CVideoPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
 
   LogDebug("vid: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
-  m_rtPrevSample = 0;
-
   m_bInitDuration = true;
   
   HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);

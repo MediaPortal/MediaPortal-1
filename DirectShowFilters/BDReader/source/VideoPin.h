@@ -108,7 +108,6 @@ protected:
   bool m_bStopWait;
   bool m_bZeroTimeStream;
 
-  REFERENCE_TIME m_rtPrevSample;
   REFERENCE_TIME m_rtStreamTimeOffset;
   REFERENCE_TIME m_rtTitleDuration;
 
