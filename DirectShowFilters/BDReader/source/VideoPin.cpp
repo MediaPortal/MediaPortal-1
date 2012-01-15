@@ -456,50 +456,62 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             if (m_rtPrevSample!=0LL) DeliverEndOfStream();
           }
 
-          if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt))
+          if (buffer->pmt)
           {
-            LogMediaType(buffer->pmt);
-            
-            m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
-            m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
-
-            HRESULT hrAccept = S_FALSE;
-            
+            GUID subtype = subtype = buffer->pmt->subtype;
             CLSID decoder = GetDecoderCLSID();
-
-            if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &decoder))
+            
+            if (buffer->pmt->subtype == FOURCCMap('1CVW') && m_VC1Override != GUID_NULL)
             {
-              // Currently no other video decoders than LAV seems to be compatible with
-              // the dynamic format changes
-              if (decoder == CLSID_LAVVideo)
-                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+              buffer->pmt->subtype = m_VC1Override;
+              LogDebug("vid: FillBuffer - force VC-1 GUID");
             }
 
-            if (hrAccept != S_OK)
+            if (!CompareMediaTypes(buffer->pmt, &m_mt))
             {
-              CMediaType mt(*buffer->pmt);
-              SetMediaType(&mt);
+              LogMediaType(buffer->pmt);
+            
+              m_pFilter->SetTitleDuration(buffer->rtTitleDuration);
+              m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
 
-              LogDebug("vid: graph rebuilding required");
+              HRESULT hrAccept = S_FALSE;
+            
+              CLSID decoder = GetDecoderCLSID();
 
-              m_demux.m_bVideoRequiresRebuild = true;
-              checkPlaybackState = true;
+              if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &decoder))
+              {
+                // Currently no other video decoders than LAV seems to be compatible with
+                // the dynamic format changes
+                if (decoder == CLSID_LAVVideo)
+                  hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+              }
 
-              m_bZeroTimeStream = true;
-            }
-            else
-            {
-              LogDebug("vid: format change accepted");
-              CMediaType mt(*buffer->pmt);
-              SetMediaType(&mt);
-              pSample->SetMediaType(&mt);
+              if (hrAccept != S_OK)
+              {
+                CMediaType mt(*buffer->pmt);
+                SetMediaType(&mt);
 
-              CreateEmptySample(pSample);
-              buffer->bNewClip = false;
-              m_pCachedBuffer = buffer;
-              return S_OK;
-            }
-          } // comparemediatypes
+                LogDebug("vid: graph rebuilding required");
+
+                m_demux.m_bVideoRequiresRebuild = true;
+                checkPlaybackState = true;
+
+                m_bZeroTimeStream = true;
+              }
+              else
+              {
+                LogDebug("vid: format change accepted");
+                CMediaType mt(*buffer->pmt);
+                SetMediaType(&mt);
+                pSample->SetMediaType(&mt);
+
+                CreateEmptySample(pSample);
+                buffer->bNewClip = false;
+                m_pCachedBuffer = buffer;
+                return S_OK;
+              }
+            } // comparemediatypes
+          }
         } // lock ends
 
         m_rtTitleDuration = buffer->rtTitleDuration;
