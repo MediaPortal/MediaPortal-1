@@ -73,6 +73,7 @@ protected:
   void CreateEmptySample(IMediaSample* pSample);
   void LogMediaType(AM_MEDIA_TYPE* pmt);
   bool CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt);
+  HRESULT GetMediaTypeInternal(CMediaType* pmt);
   
   void CheckPlaybackState();
   bool CheckVideoFormat(GUID* pFormat, CLSID* pDecoder);

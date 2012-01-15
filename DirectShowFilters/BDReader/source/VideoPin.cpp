@@ -145,14 +145,23 @@ STDMETHODIMP CVideoPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 
 HRESULT CVideoPin::GetMediaType(CMediaType* pmt)
 {
-  CDeMultiplexer& demux = m_pFilter->GetDemultiplexer();
-  demux.GetVideoStreamPMT(*pmt);
+  GetMediaTypeInternal(pmt);
 
   if (pmt->subtype == FOURCCMap('1CVW') && m_VC1Override != GUID_NULL)
   {
     pmt->subtype = m_VC1Override;
     LogDebug("vid: GetMediaType - force VC-1 GUID");
   }
+
+  return S_OK;
+}
+
+HRESULT CVideoPin::GetMediaTypeInternal(CMediaType* pmt)
+{
+  if (m_mt.formattype == GUID_NULL)
+    *pmt = m_mtInitial;
+  else
+    *pmt = m_mt;
 
   return S_OK;
 }
@@ -508,6 +517,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 CreateEmptySample(pSample);
                 buffer->bNewClip = false;
                 m_pCachedBuffer = buffer;
+
                 return S_OK;
               }
             } // comparemediatypes
