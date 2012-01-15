@@ -461,8 +461,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             }
             else
               m_rtStreamOffset = 0;
-
-            if (m_rtPrevSample!=0LL) DeliverEndOfStream();
           }
 
           if (buffer->pmt)
@@ -517,6 +515,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 CreateEmptySample(pSample);
                 buffer->bNewClip = false;
                 m_pCachedBuffer = buffer;
+				
+                DeliverEndOfStream();
 
                 return S_OK;
               }
