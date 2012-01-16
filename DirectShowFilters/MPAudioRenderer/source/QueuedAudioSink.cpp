@@ -21,6 +21,7 @@
 
 CQueuedAudioSink::CQueuedAudioSink(void)
 : m_hThread(NULL)
+, m_ThreadId(NULL)
 {
   //memset(m_hEvents, 0, sizeof(m_hEvents));
   m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
@@ -48,7 +49,7 @@ HRESULT CQueuedAudioSink::Start()
   if (!m_hThread)
   {
     ResetEvent(m_hStopThreadEvent);
-    m_hThread = CreateThread(0, 0, CQueuedAudioSink::ThreadEntryPoint, (LPVOID)this, 0, NULL);
+    m_hThread = CreateThread(0, 0, CQueuedAudioSink::ThreadEntryPoint, (LPVOID)this, 0, &m_ThreadId);
   }
 
   if (!m_hThread)
@@ -88,6 +89,17 @@ HRESULT CQueuedAudioSink::PutSample(IMediaSample *pSample)
   return S_OK;
 }
 
+HRESULT CQueuedAudioSink::PutCommand(AudioSinkCommand nCommand)
+{
+  CAutoLock queueLock(&m_InputQueueLock);
+  m_InputQueue.push(nCommand);
+  SetEvent(m_hInputSamplesAvailableEvent);
+  //if(m_hInputQueueEmptyEvent)
+  //  ResetEvent(m_hInputQueueEmptyEvent);
+
+  return S_OK;
+}
+
 HRESULT CQueuedAudioSink::EndOfStream()
 {
   // Ensure all samples are processed:
@@ -118,7 +130,7 @@ HRESULT CQueuedAudioSink::BeginFlush()
 //}
 
 // Queue services
-HRESULT CQueuedAudioSink::WaitForSample(DWORD dwTimeout)
+HRESULT CQueuedAudioSink::WaitForSampleOrCommand(DWORD dwTimeout)
 {
   HANDLE hEvents[2] = {m_hStopThreadEvent, m_hInputSamplesAvailableEvent};
 
@@ -139,20 +151,27 @@ HRESULT CQueuedAudioSink::WaitForSample(DWORD dwTimeout)
 // Get the next sample in the queue. If there is none, wait for at most
 // dwTimeout milliseconds for one to become available before failing.
 // Returns: S_FALSE if no sample available
-// Threading: only one thread should be calling GetNextSample()
-// but it can be different from the one calling PutSample()
-HRESULT CQueuedAudioSink::GetNextSample(IMediaSample **pSample, DWORD dwTimeout)
+// Threading: only one thread should be calling GetNextSampleOrCommand()
+// but it can be different from the one calling PutSample()/PutCommand()
+HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand *pCommand, IMediaSample **pSample, DWORD dwTimeout)
 {
-  HRESULT hr = WaitForSample(dwTimeout);
+  HRESULT hr = WaitForSampleOrCommand(dwTimeout);
   if (hr != S_OK)
     return hr;
 
   CAutoLock queueLock(&m_InputQueueLock);
   
-  SAFE_RELEASE(*pSample);
-  *pSample = m_InputQueue.front();
-  if (*pSample)
-    (*pSample)->AddRef();
+  if(pSample)
+    SAFE_RELEASE(*pSample); // perhaps release should be out of the lock
+  TQueueEntry entry = m_InputQueue.front();
+  //*pSample = entry.Sample;
+  //if (*pSample)
+  //  (*pSample)->AddRef();
+  if(pSample)
+    *pSample = entry.Sample.Detach();
+  if(pCommand)
+    *pCommand = entry.Command;
+
   m_InputQueue.pop();
   if (m_InputQueue.empty())
     ResetEvent(m_hInputSamplesAvailableEvent);

@@ -156,10 +156,9 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
-    if (pmt)
-      DeleteMediaType(pmt);
     if (FAILED(hr))
     {
+      DeleteMediaType(pmt);
       Log("AC3Encoder: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }

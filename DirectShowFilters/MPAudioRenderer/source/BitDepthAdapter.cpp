@@ -117,7 +117,7 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyCh
   if (m_pNextSink == NULL)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  bool bApplyChanges = (nApplyChangesDepth !=0);
+  bool bApplyChanges = (nApplyChangesDepth != 0);
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
@@ -236,10 +236,9 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
-    if (pmt)
-      DeleteMediaType(pmt);
     if (FAILED(hr))
     {
+      DeleteMediaType(pmt);
       Log("BitDepthAdapter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
@@ -365,7 +364,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
     if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
     {
       if (pcbDataProcessed)
-        *pcbDataProcessed = bytesOutput + cbData; // we can't relly process the data, lie about it!
+        *pcbDataProcessed = bytesOutput + cbData; // we can't realy process the data, lie about it!
       return hr;
     }
 
@@ -380,7 +379,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
     }
     ASSERT(pOutData != NULL);
 
-    int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nInFrameSize);
+    int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
 
     hr = (this->*m_pfnConvert)(pOutData, pData, framesToConvert);
     pData += framesToConvert * m_nInFrameSize;
@@ -417,17 +416,17 @@ template<class Td, class Ts> __inline Td ConvertSample(const Ts src, long bitMas
   return (Td)src;
 }
 
-template<> __inline double ConvertSample<double, int16_t>(int16_t src, long bitMask, register long& error)    { return ((double)src)/SHRT_MAX; }
+template<> __inline float ConvertSample<float, int16_t>(int16_t src, long bitMask, register long& error)      { return ((float)src)/SHRT_MAX; }
 template<> __inline int32_t ConvertSample<int32_t, int16_t>(int16_t src, long bitMask, register long& error)  { return ((int32_t)src)<<16; }
 template<> __inline int24_t ConvertSample<int24_t, int16_t>(int16_t src, long bitMask, register long& error)  { return ((int32_t)src)<<16; }
 template<> __inline int16_t ConvertSample<int16_t, int16_t>(int16_t src, long bitMask, register long& error)  { return src; }
 
-template<> __inline double ConvertSample<double, int24_t>(int24_t src, long bitMask, register long& error)    { return ((double)(int32_t)src)/LONG_MAX; }
+template<> __inline float ConvertSample<float, int24_t>(int24_t src, long bitMask, register long& error)      { return ((float)(int32_t)src)/LONG_MAX; }
 template<> __inline int32_t ConvertSample<int32_t, int24_t>(int24_t src, long bitMask, register long& error)  { return (int32_t)src; }
 template<> __inline int24_t ConvertSample<int24_t, int24_t>(int24_t src, long bitMask, register long& error)  { return src; }
 //template<> __inline int16_t ConvertSample<int16_t, int24_t>(int24_t src, long bitMask, register long& error)  { return ConvertSample<int16_t, int32_t>(src, bitMask, error); }
 
-template<> __inline double ConvertSample<double, int32_t>(int32_t src, long bitMask, register long& error)    { return ((double)src)/LONG_MAX; }
+template<> __inline float ConvertSample<float, int32_t>(int32_t src, long bitMask, register long& error)      { return ((float)src)/LONG_MAX; }
 template<> __inline int32_t ConvertSample<int32_t, int32_t>(int32_t src, long bitMask, register long& error)  { return src; }
 template<> __inline int24_t ConvertSample<int24_t, int32_t>(int32_t src, long bitMask, register long& error)
 { 
@@ -447,8 +446,8 @@ template<> __inline int16_t ConvertSample<int16_t, int32_t>(int32_t src, long bi
   return (src & ~bitMask) >> 16;
 }
 
-template<> __inline double ConvertSample<double, double>(double src, long bitMask, register long& error)      { return src; }
-template<> __inline int32_t ConvertSample<int32_t, double>(double src, long bitMask, register long& error)
+template<> __inline float ConvertSample<float, float>(float src, long bitMask, register long& error)      { return src; }
+template<> __inline int32_t ConvertSample<int32_t, float>(float src, long bitMask, register long& error)
 {
   if (src > 1.0)
     return LONG_MAX;
@@ -459,8 +458,8 @@ template<> __inline int32_t ConvertSample<int32_t, double>(double src, long bitM
   return (((int32_t)src) & ~bitMask);
 }
 
-template<> __inline int24_t ConvertSample<int24_t, double>(double src, long bitMask, register long& error)  { return ConvertSample<int32_t, double>(src, bitMask, error); }
-template<> __inline int16_t ConvertSample<int16_t, double>(double src, long bitMask, register long& error)
+template<> __inline int24_t ConvertSample<int24_t, float>(float src, long bitMask, register long& error)  { return ConvertSample<int32_t, float>(src, bitMask, error); }
+template<> __inline int16_t ConvertSample<int16_t, float>(float src, long bitMask, register long& error)
 {
   if (src > 1.0)
     return SHRT_MAX;
@@ -515,25 +514,25 @@ CBitDepthAdapter::BitDepthConversionFunc CBitDepthAdapter::gConversions[4][4] = 
     &CBitDepthAdapter::ConvertBuffer<int16_t, int16_t>,
     &CBitDepthAdapter::ConvertBuffer<int24_t, int16_t>,
     &CBitDepthAdapter::ConvertBuffer<int32_t, int16_t>,
-    &CBitDepthAdapter::ConvertBuffer<double, int16_t>,
+    &CBitDepthAdapter::ConvertBuffer<float, int16_t>,
   },
   {
     &CBitDepthAdapter::ConvertBuffer<int16_t, int24_t>,
     &CBitDepthAdapter::ConvertBuffer<int24_t, int24_t>,
     &CBitDepthAdapter::ConvertBuffer<int32_t, int24_t>,
-    &CBitDepthAdapter::ConvertBuffer<double, int24_t>,
+    &CBitDepthAdapter::ConvertBuffer<float, int24_t>,
   },
   {
     &CBitDepthAdapter::ConvertBuffer<int16_t, int32_t>,
     &CBitDepthAdapter::ConvertBuffer<int24_t, int32_t>,
     &CBitDepthAdapter::ConvertBuffer<int32_t, int32_t>,
-    &CBitDepthAdapter::ConvertBuffer<double, int32_t>,
+    &CBitDepthAdapter::ConvertBuffer<float, int32_t>,
   },
   {
-    &CBitDepthAdapter::ConvertBuffer<int16_t, double>,
-    &CBitDepthAdapter::ConvertBuffer<int24_t, double>,
-    &CBitDepthAdapter::ConvertBuffer<int32_t, double>,
-    &CBitDepthAdapter::ConvertBuffer<double, double>,
+    &CBitDepthAdapter::ConvertBuffer<int16_t, float>,
+    &CBitDepthAdapter::ConvertBuffer<int24_t, float>,
+    &CBitDepthAdapter::ConvertBuffer<int32_t, float>,
+    &CBitDepthAdapter::ConvertBuffer<float, float>,
   }
 };
 

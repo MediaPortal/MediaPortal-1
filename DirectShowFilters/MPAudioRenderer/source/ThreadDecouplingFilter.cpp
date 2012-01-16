@@ -22,7 +22,7 @@ HRESULT CThreadDecouplingFilter::EndOfStream()
   // next filter does not know it runs on a separate thread
   // we should queue an EOS marker so that it gets processed in 
   // the same thread as the audio data.
-  PutSample(NULL); //
+  PutSample(NULL);
   // wait until input queue is empty
   //if(m_hInputQueueEmptyEvent)
   //  WaitForSingleObject(m_hInputQueueEmptyEvent, END_OF_STREAM_FLUSH_TIMEOUT); // TODO make this depend on the amount of data in the queue
@@ -36,7 +36,7 @@ DWORD CThreadDecouplingFilter::ThreadProc()
   HRESULT hr;
   while(true)
   {
-    hr = GetNextSample(&pSample, INFINITE);
+    hr = GetNextSampleOrCommand(NULL, &pSample, INFINITE);
     if (hr == MPAR_S_THREAD_STOPPING)
       return 0;
     if(m_pNextSink)

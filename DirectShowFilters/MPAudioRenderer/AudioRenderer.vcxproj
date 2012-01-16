@@ -564,6 +564,7 @@
     <ClCompile Include="source\ThreadDecouplingFilter.cpp" />
     <ClCompile Include="source\TimeSource.cpp" />
     <ClCompile Include="source\VolumeHandler.cpp" />
+    <ClCompile Include="source\WaitableState.cpp" />
     <ClCompile Include="source\WASAPIRenderer.cpp" />
     <ClCompile Include="SoundTouch\source\3dnow_win.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Multichannel|x64'">true</ExcludedFromBuild>
@@ -596,6 +597,7 @@
     <ClCompile Include="source\AudioClockTracker.cpp" />
     <ClCompile Include="source\ClockAdjuster.cpp" />
     <ClCompile Include="source\SynchCorrection.cpp" />
+    <ClCompile Include="source\WASAPIRenderFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source\MpAudioRenderer.def" />
@@ -622,6 +624,7 @@
     <ClInclude Include="source\ThreadDecouplingFilter.h" />
     <ClInclude Include="source\TimeSource.h" />
     <ClInclude Include="source\VolumeHandler.h" />
+    <ClInclude Include="source\WaitableState.h" />
     <ClInclude Include="source\WASAPIRenderer.h" />
     <ClInclude Include="SoundTouch\include\BPMDetect.h" />
     <ClInclude Include="SoundTouch\include\FIFOSampleBuffer.h" />
@@ -639,6 +642,7 @@
     <ClInclude Include="source\AudioClockTracker.h" />
     <ClInclude Include="source\ClockAdjuster.h" />
     <ClInclude Include="source\SynchCorrection.h" />
+    <ClInclude Include="source\WASAPIRenderFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\MpAudioRenderer.rc">

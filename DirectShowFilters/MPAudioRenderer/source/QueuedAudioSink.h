@@ -43,23 +43,46 @@ public:
 
 // Queue services
 protected:
-  virtual HRESULT WaitForSample(DWORD dwTimeout);
-  virtual HRESULT GetNextSample(IMediaSample **pSample, DWORD dwTimeout);
+  enum AudioSinkCommand;
+
+  virtual HRESULT PutCommand(AudioSinkCommand nCommand);
+
+  virtual HRESULT WaitForSampleOrCommand(DWORD dwTimeout);
+  virtual HRESULT GetNextSampleOrCommand(AudioSinkCommand *pCommand, IMediaSample **pSample, DWORD dwTimeout);
 
   //__inline HANDLE &StopThreadEvent() { return m_hEvents[0]; };
   //__inline HANDLE &InputSamplesAvailableEvent() { return m_hEvents[1]; };
 
 // Internal implementation
 protected:
+  enum AudioSinkCommand
+  {
+    ASC_Nop = 0,
+    ASC_PutSample,
+    ASC_Flush,
+    ASC_Stop,
+    ASC_Pause,
+    ASC_Resume,
+  };
+
+  struct TQueueEntry {
+    AudioSinkCommand Command;
+    CComPtr<IMediaSample> Sample;
+    TQueueEntry(AudioSinkCommand nCommand) : Command(nCommand), Sample(NULL) {};
+    TQueueEntry(IMediaSample *pSample) : Command(ASC_PutSample), Sample(pSample) {};
+  };
+
+protected:
   static DWORD WINAPI ThreadEntryPoint(LPVOID lpParameter);
   virtual DWORD ThreadProc() = 0;
 
 protected:
+  DWORD  m_ThreadId;
   HANDLE m_hThread;
   HANDLE m_hStopThreadEvent;
   HANDLE m_hInputSamplesAvailableEvent;
   //HANDLE m_hInputQueueEmptyEvent;
 
   CCritSec m_InputQueueLock;
-  std::queue<CComPtr<IMediaSample>> m_InputQueue;
+  std::queue<TQueueEntry> m_InputQueue;
 };
