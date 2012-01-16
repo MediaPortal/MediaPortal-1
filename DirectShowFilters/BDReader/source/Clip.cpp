@@ -342,8 +342,8 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
 
   superceeded=0;
 
-  //firstAudio=true;
-  //firstVideo=true;
+  firstAudio=true;
+  firstVideo=true;
   firstPacketAccepted = false;
   firstPacketReturned = false;
   clipReset = true;
