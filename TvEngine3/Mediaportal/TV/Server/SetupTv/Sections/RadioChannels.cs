@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void RefreshAllChannels()
     {
       Cursor.Current = Cursors.WaitCursor;
-      IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       _cards = new Dictionary<int, CardType>();
       foreach (Card card in dbsCards)
       {
@@ -213,7 +213,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           return;
         }
         group = new ChannelGroup {groupName = dlg.GroupName, sortOrder = 999};
-        ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+        group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+        group.AcceptChanges();
 
         this.RefreshContextMenu();
         this.RefreshTabs();
@@ -347,9 +348,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       for (int i = 1; i < tabControl1.TabPages.Count; i++)
       {
         ChannelGroup group = (ChannelGroup)tabControl1.TabPages[i].Tag;
-        group.sortOrder = i - 1;                
-        ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+        group.sortOrder = i - 1;
+        group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+        group.AcceptChanges();
       }
+      RefreshAll();
     }
 
     private void mpListView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
@@ -383,7 +386,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.MediaType = MediaTypeEnum.Radio;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         foreach (Card card in dbsCards)
         {
@@ -454,7 +457,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.MediaType = MediaTypeEnum.Radio;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         foreach (Card card in dbsCards)
         {
@@ -815,7 +818,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       group.groupName = dlgGrpName.GroupName;
-      ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+      group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+      group.AcceptChanges();
 
       if (group.GroupMaps.Count > 0)
       {
@@ -1052,7 +1056,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       group.groupName = dlg.GroupName;
-      ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+      group = ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
+      group.AcceptChanges();
 
       tab.Text = dlg.GroupName;
 

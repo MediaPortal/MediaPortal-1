@@ -116,7 +116,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgRadioStoreOnlySelected");
         mpCheckBoxStoreOnlySelected.Checked = (setting.value == "yes");
         Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card card in dbsCards)
         {
           cards[card.devicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.idCard);

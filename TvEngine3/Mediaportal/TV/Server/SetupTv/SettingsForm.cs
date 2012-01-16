@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.SetupTV
 
       try
       {
-        ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       }
       catch (Exception ex)
       {

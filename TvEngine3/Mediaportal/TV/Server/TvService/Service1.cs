@@ -96,9 +96,6 @@ namespace Mediaportal.TV.Server.TVService
     /// </summary>
     private static void Main(string[] args)
     {
-      NameValueCollection appSettings = ConfigurationManager.AppSettings;
-      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-
       string opt = null;
       if (args.Length >= 1)
       {
@@ -381,8 +378,8 @@ namespace Mediaportal.TV.Server.TVService
     /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
     /// </summary>
     protected override void OnStop()
-    {
-      RequestAdditionalTime(60000); // we want to make sure all services etc. are closed before tearing down the process.
+    { 
+      RequestAdditionalTime(300000); // we want to make sure all services etc. are closed before tearing down the process.
       Log.Write("service.OnStop");
       if (_tvServiceThread != null && _tvServiceThread.IsAlive)
       {

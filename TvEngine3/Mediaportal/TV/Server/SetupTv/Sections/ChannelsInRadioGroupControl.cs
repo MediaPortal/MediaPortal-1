@@ -177,7 +177,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         return;
       }
 
-      
       foreach (ListViewItem sourceItem in sourceListView.SelectedItems)
       {
         Channel channel = null;
@@ -187,19 +186,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         else if (sourceItem.Tag is GroupMap)
         {
-          channel = ChannelManagement.GetChannel(((GroupMap)sourceItem.Tag).idChannel);
+          channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel((((GroupMap)sourceItem.Tag).idChannel));
         }
         else
         {
           continue;
         }
 
-        GroupMap groupMap = MappingHelper.AddChannelToGroup(channel, _channelGroup, MediaTypeEnum.Radio);        
+        GroupMap groupMap = MappingHelper.AddChannelToGroup(channel, _channelGroup, MediaTypeEnum.Radio);
 
-        foreach (ListViewItem item in listView1.Items.Cast<ListViewItem>().Where(item => (item.Tag as Channel) == channel))
+        if (groupMap != null)
         {
-          item.Tag = groupMap;
-          break;
+          foreach (ListViewItem item in listView1.Items)
+          {
+            if ((item.Tag as Channel) == channel)
+            {
+              item.Tag = groupMap;
+              break;
+            }
+          }
         }
       }
     }
@@ -236,9 +241,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           return;
         }
 
-        group = new ChannelGroup {groupName = dlg.GroupName, sortOrder = 9999};
+        /*group = new ChannelGroup {groupName = dlg.GroupName, sortOrder = 9999};
         ServiceAgents.Instance.ChannelGroupServiceAgent.SaveGroup(group);
 
+        UpdateMenuAndTabs();*/
+        group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(dlg.GroupName);
         UpdateMenuAndTabs();
       }
       else

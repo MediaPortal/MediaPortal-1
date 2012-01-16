@@ -1103,7 +1103,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         try
         {
-          ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+          ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
           success = true;
         }
         catch (Exception)
@@ -2229,7 +2229,7 @@ namespace Mediaportal.TV.TvPlugin
       dlg.SetHeading(692); // Active Tv Streams
       int selected = 0;
 
-      IEnumerable<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IEnumerable<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       List<Channel> channels = new List<Channel>();
       int count = 0;
       List<IUser> _users = new List<IUser>();

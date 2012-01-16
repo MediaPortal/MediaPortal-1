@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -198,8 +199,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         IUser user = new User();
         user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;
-        
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
 
         foreach (Card card in dbsCards)
         {

@@ -43,6 +43,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     CardGroupMap SaveCardGroupMap(CardGroupMap map);
     [OperationContract(Name = "ListAllCardsWithSpecificRelations")]
     IList<Card> ListAllCards(CardIncludeRelationEnum includeRelations);
+    [OperationContract(Name = "GetCardsWithSpecificRelations")]
+    Card GetCard(int idCard, CardIncludeRelationEnum includeRelations);
+    [OperationContract(Name = "GetCardByDevicePathWithSpecificRelations")]
+    Card GetCardByDevicePath(string cardDevice, CardIncludeRelationEnum includeRelations);
     [OperationContract]
     IList<Card> SaveCards(IEnumerable<Card> cards);
   }

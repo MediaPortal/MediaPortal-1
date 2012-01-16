@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
 
@@ -130,7 +131,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       _needRestart = false;
       comboBoxCards.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
         comboBoxCards.Items.Add(new CardInfo(card));

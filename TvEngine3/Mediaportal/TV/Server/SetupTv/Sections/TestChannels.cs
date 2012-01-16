@@ -84,7 +84,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionActivated()
     {
-      _cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      _cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       base.OnSectionActivated();
       ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
 

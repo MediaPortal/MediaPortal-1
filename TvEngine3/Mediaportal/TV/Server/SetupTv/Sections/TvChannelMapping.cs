@@ -80,7 +80,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {                 
       mpComboBoxCard.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
         if (card.enabled == false)

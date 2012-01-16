@@ -399,7 +399,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       _needRestart = false;
       comboBoxCards.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
         comboBoxCards.Items.Add(new CardInfo(card));
@@ -582,7 +582,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void LoadComboBoxDrive()
     {
       comboBoxDrive.Items.Clear();
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
         if (card.recordingFolder.Length > 0)
@@ -658,7 +658,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       GetRecordingsFromDb();
       try
       {
-        IList<Card> allCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        IList<Card> allCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card tvCard in allCards)
         {
           if (!string.IsNullOrEmpty(tvCard.recordingFolder) && !cbRecPaths.Items.Contains(tvCard.recordingFolder))

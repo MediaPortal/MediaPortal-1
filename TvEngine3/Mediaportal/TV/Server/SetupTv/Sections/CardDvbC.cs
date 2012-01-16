@@ -112,7 +112,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _cardNumber = cardNumber;
       InitializeComponent();
       //insert complete ci menu dialog to tab
-      Card dbCard = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber);
+      Card dbCard = ServiceAgents.Instance.CardServiceAgent.GetCard(_cardNumber, CardIncludeRelationEnum.None);
       if (dbCard.CAM == true)
       {
         ciMenuDialog = new CI_Menu_Dialog(_cardNumber);

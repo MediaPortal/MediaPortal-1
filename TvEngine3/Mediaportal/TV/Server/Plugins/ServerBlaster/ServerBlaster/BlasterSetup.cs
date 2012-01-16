@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Setting = Mediaportal.TV.Server.TVDatabase.Entities.Setting;
@@ -57,7 +58,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
       comboBoxBlaster1.Items.Add("None");
       comboBoxBlaster2.Items.Add("None");
 
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
 
       foreach (Card card in cards)
       {

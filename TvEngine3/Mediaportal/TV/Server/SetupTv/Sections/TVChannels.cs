@@ -180,7 +180,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void RefreshAllChannels()
     {
       Cursor.Current = Cursors.WaitCursor;
-      IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       _cards = new Dictionary<int, CardType>();
       foreach (Card card in dbsCards)
       {
@@ -411,7 +411,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.Channel = channel;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         foreach (Card card in dbsCards)
         {
@@ -493,7 +493,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.Channel = null;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+        IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         foreach (Card card in dbsCards)
         {

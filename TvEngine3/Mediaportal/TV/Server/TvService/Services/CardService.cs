@@ -33,6 +33,12 @@ namespace Mediaportal.TV.Server.TVService.Services
       return cardByDevicePath;
     }
 
+    public Card GetCardByDevicePath(string cardDevice, CardIncludeRelationEnum includeRelations)
+    {
+      var cardByDevicePath = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(cardDevice, includeRelations);
+      return cardByDevicePath;
+    }
+
     public Card SaveCard(Card card)
     {
       return TVDatabase.TVBusinessLayer.CardManagement.SaveCard(card);
@@ -51,6 +57,11 @@ namespace Mediaportal.TV.Server.TVService.Services
     public Card GetCard(int idCard)
     {
       return TVDatabase.TVBusinessLayer.CardManagement.GetCard(idCard);
+    }
+
+    public Card GetCard(int idCard, CardIncludeRelationEnum includeRelations)
+    {
+      return TVDatabase.TVBusinessLayer.CardManagement.GetCard(idCard, includeRelations);
     }
 
     public CardGroup SaveCardGroup(CardGroup @group)

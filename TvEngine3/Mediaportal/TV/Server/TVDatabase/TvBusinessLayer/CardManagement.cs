@@ -59,6 +59,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }            
     }
 
+
+    public static Card GetCardByDevicePath(string devicePath, CardIncludeRelationEnum includeRelations)
+    {
+      using (ICardRepository cardRepository = new CardRepository())
+      {
+        var query = cardRepository.GetQuery<Card>(c => c.devicePath == devicePath);
+        query = cardRepository.IncludeAllRelations(query, includeRelations);
+        Card card = query.ToList().FirstOrDefault();
+        return card;
+      }
+    }
+
     public static Card SaveCard(Card card)
     {
       using (ICardRepository cardRepository = new CardRepository())
@@ -110,6 +122,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         Card card = query.ToList().FirstOrDefault();
         return card;
       }  
+    }
+
+    public static Card GetCard(int idCard, CardIncludeRelationEnum includeRelations)
+    {
+      using (ICardRepository cardRepository = new CardRepository())
+      {
+        IQueryable<Card> query = cardRepository.GetQuery<Card>(c => c.idCard == idCard);
+        query = cardRepository.IncludeAllRelations(query, includeRelations);
+        Card card = query.ToList().FirstOrDefault();
+        return card;
+      }
     }
 
     public static CardGroup SaveCardGroup(CardGroup @group)
