@@ -96,6 +96,8 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   if (noAudio)
   {
     ret=GenerateFakeAudio(audioPlaybackPosition);
+    if (earliestPacketAccepted == INT64_MAX)
+      earliestPacketAccepted = audioPlaybackPosition;
   }
   else
   {
@@ -215,6 +217,7 @@ bool CClip::AcceptAudioPacket(Packet* packet)
   if (nPlaylist != packet->nPlaylist) return false;
   if (packet->nClipNumber != nClip)
   {
+    LogDebug("Clip::Removing incorrect Audio Packet");
     // Oh dear, not for this clip so throw it away
     delete packet;
   }
@@ -242,6 +245,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
   CAutoLock vectorVLock(&m_sectionVectorVideo);
   if (packet->nClipNumber != nClip)
   {
+    LogDebug("Clip::Removing incorrect Video Packet");
     // Oh dear, not for this clip so throw it away
     delete packet;
   }
@@ -270,7 +274,7 @@ void CClip::Superceed(int superceedType)
 {
   superceeded|=superceedType;
 //  LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
-  if ((superceedType == SUPERCEEDED_AUDIO_FILL) && firstAudio) 
+  if ((superceedType == SUPERCEEDED_AUDIO_FILL) && firstAudio && !firstVideo) 
   {
     LogDebug("Setting Fake Audio for clip %d", nClip);
     noAudio = true;
@@ -423,4 +427,3 @@ void CClip::SetVideoPMT(AM_MEDIA_TYPE *pmt)
   if (m_videoPmt) DeleteMediaType(m_videoPmt);
   m_videoPmt = CreateMediaType(pmt);
 }
-
