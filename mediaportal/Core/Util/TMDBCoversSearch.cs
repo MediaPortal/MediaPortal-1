@@ -53,7 +53,7 @@ namespace MediaPortal.Util
     /// <summary>
     /// Cover search using TMDB API by IMDBmovieID for accuracy.
     /// Parameter imdbMovieID must be in IMDB format (ie. tt0123456 including leading zeros).
-    /// Or if no IMDBid movie title can be used with less accuracy .
+    /// Or if no IMDBid movie title can be used with lesser accuracy .
     /// </summary>
     /// <param name="imdbMovieID"></param>
     /// <param name="movieTitle"></param>
@@ -104,9 +104,9 @@ namespace MediaPortal.Util
         {
           // Get cover - using mid quality cover
           //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("mid.jpg"))
-          {
-            _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
-          }
+          //{
+          _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
+          //}
         }
       }
     }
@@ -124,10 +124,10 @@ namespace MediaPortal.Util
         // Use IDMB ID - no wild goose chase
         string defaultPosterPageLinkUrl =
           "http://api.themoviedb.org/2.1/Person.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + actorName;
-        string strXML = GetPage(defaultPosterPageLinkUrl, "utf-8");
+        string strXml = GetPage(defaultPosterPageLinkUrl, "utf-8");
 
         // Get all cover links and put it in the "cover" group
-        MatchCollection actorImages = Regex.Matches(strXML, @"<image\stype=""profile""\surl=""(?<cover>.*?)""");
+        MatchCollection actorImages = Regex.Matches(strXml, @"<image\stype=""profile""\surl=""(?<cover>.*?)""");
         if (actorImages.Count == 0)
         {
           return; 
@@ -146,7 +146,7 @@ namespace MediaPortal.Util
     }
 
     // Get HTML Page
-    private string GetPage(string strURL, string strEncode)
+    private string GetPage(string strUrl, string strEncode)
     {
       string strBody = "";
 
@@ -157,7 +157,7 @@ namespace MediaPortal.Util
       {
         // Make the Webrequest
         //Log.Info("IMDB: get page:{0}", strURL);
-        WebRequest req = WebRequest.Create(strURL);
+        WebRequest req = WebRequest.Create(strUrl);
         req.Timeout = 10000;
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
@@ -169,7 +169,7 @@ namespace MediaPortal.Util
       }
       catch (Exception)
       {
-        Log.Info("TMDBCoverSearch: {0} unavailable.", strURL);
+        Log.Info("TMDBCoverSearch: {0} unavailable.", strUrl);
       }
       finally
       {

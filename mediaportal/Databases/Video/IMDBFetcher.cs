@@ -1247,6 +1247,10 @@ namespace MediaPortal.Video.Database
           currentMovie = movieDetails;
           return true;
         }
+        if (fetcher.Movie == null)
+        {
+          fetcher.Movie = currentMovie;
+        }
         return fetcher.OnDetailsNotFound(fetcher);
       }
       return false;

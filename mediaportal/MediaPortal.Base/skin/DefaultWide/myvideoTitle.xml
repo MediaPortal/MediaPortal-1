@@ -278,7 +278,7 @@
       <align>left</align>
       <imagesToDraw>10</imagesToDraw>
       <percentage>#rating</percentage>
-      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <visible>facadeview.list+Control.HasFocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <id>1</id>
@@ -287,7 +287,7 @@
       <posY>193</posY>
       <width>180</width>
       <height>250</height>
-      <texture mask="video_poster_mask.png">missing_Coverart.png</texture>
+      <texture mask="videothumbmask.png">missing_Coverart.png</texture>
       <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
     </control>
     <control>
@@ -297,7 +297,7 @@
       <posY>193</posY>
       <width>180</width>
       <height>250</height>
-      <texture mask="video_poster_mask.png">#selectedthumb</texture>
+      <texture mask="videothumbmask.png">#selectedthumb</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
@@ -307,7 +307,7 @@
       <posY>193</posY>
       <width>180</width>
       <height>250</height>
-      <texture mask="video_poster_mask.png">Videothumbframe.png</texture>
+      <texture mask="videothumbmask.png">Videothumbframe.png</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
@@ -320,7 +320,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Genre value</description>
@@ -332,7 +332,7 @@
       <label>#genre</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Director txt</description>
@@ -344,7 +344,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Director value</description>
@@ -356,7 +356,7 @@
       <font>font13</font>
       <width>248</width>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Year txt</description>
@@ -368,7 +368,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Year value</description>
@@ -380,7 +380,7 @@
       <label>#year</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Runtime txt</description>
@@ -392,7 +392,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Runtime value</description>
@@ -404,7 +404,7 @@
       <label>#runtime</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>MPAA txt</description>
@@ -412,11 +412,11 @@
       <id>1</id>
       <posX>305</posX>
       <posY>393</posY>
-      <label>Rating</label>
+      <label>173</label>
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>MPAA Rating</description>
@@ -429,7 +429,7 @@
       <font>font13</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Seperator</description>
@@ -441,7 +441,7 @@
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Plot value</description>
@@ -454,7 +454,7 @@
       <label>#plot</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
 	  <!-- Media info list view-->
 		<control>
@@ -540,11 +540,10 @@
       <posY>450</posY>
       <width>85</width>
       <height>42</height>
-      <visible>string.equals(#HasSubtitles, True)</visible>
       <texture>logos\subtitles.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.list + control.hasfocus(50)</visible>
+			<visible>facadeview.list+control.hasfocus(50)+string.equals(#HasSubtitles, True)</visible>
     </control>
 		
 		<!-- info visible filmstrip-->
@@ -570,7 +569,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Genre value</description>
@@ -582,7 +581,7 @@
       <label>#genre</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Director txt</description>
@@ -594,7 +593,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Director value</description>
@@ -606,7 +605,7 @@
       <font>font13</font>
       <width>1180</width>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Year txt</description>
@@ -618,7 +617,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Year value</description>
@@ -630,7 +629,7 @@
       <label>#year</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Runtime txt</description>
@@ -642,7 +641,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Runtime value</description>
@@ -654,7 +653,7 @@
       <label>#runtime</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>MPAA txt</description>
@@ -666,7 +665,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>MPAA Rating</description>
@@ -679,7 +678,7 @@
       <font>font13</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
 		<control>
       <description>Plot</description>
@@ -692,7 +691,7 @@
 			<width>1160</width>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>[facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons|facadeview.coverflow]</visible>
+      <visible>[facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons|facadeview.coverflow] + string.equals(#hideinfo, False)</visible>
     </control>
 		<control>
       <type>image</type>
@@ -789,11 +788,10 @@
       <posY>530</posY>
       <width>85</width>
       <height>42</height>
-      <visible>string.equals(#HasSubtitles, True)</visible>
       <texture>logos\subtitles.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.filmstrip</visible>
+			<visible>facadeview.filmstrip+string.equals(#HasSubtitles, True)</visible>
     </control>
      
     <!--control>
