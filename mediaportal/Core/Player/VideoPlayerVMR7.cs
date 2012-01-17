@@ -2053,6 +2053,62 @@ namespace MediaPortal.Player
       #endregion
 
       string streamName = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^V: ", "");
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regex = new Regex(@"\[.+\]");
+      Regex regexMPS = new Regex(@"Video\s*-\s*(?<1>.+?),\s*.+?,\s*.+?,\s*.+?,\s*.+", RegexOptions.IgnoreCase);
+      Regex regexMPVIDEONoType = new Regex(@"^(.+?)(?<!]*,\s.+?)\s\((Video\s.+?)$");
+      Regex regexMPVIDEO = new Regex(@"^(.+?)]*,\s(.+?)\s\((Video\s.+?)$");
+      //Regex regexMPC = new Regex("([^, ]+)");
+      Match result = regex.Match(streamName);
+      Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPVIDEONoType = regexMPVIDEONoType.Match(streamName);
+      Match resultMPVIDEO = regexMPVIDEO.Match(streamName);
+      //Match resultMPC = regexMPC.Match(streamName);
+
+      if (result.Success)
+      {
+        //Cut off and translate the language part
+        string language = Util.Utils.TranslateLanguageString(streamName.Substring(result.Index + 1, result.Length - 2));
+        //Get the trackname part by removing the language part from the string.
+        streamName = regex.Replace(streamName, "").Trim();
+        //Put things back together
+        //streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
+        if (language.Length > 0) // && streamName.Length <= 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPS.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPVIDEO.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPVIDEO.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPVIDEONoType.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPVIDEONoType.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      // Remove extraneous info from splitter in parenthesis at end of line:
+      streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
       return streamName;
     }
 
@@ -2144,8 +2200,6 @@ namespace MediaPortal.Player
       // Remove extraneous info from splitter in parenthesis at end of line:      
       streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
       return streamName;
-      //string streamName = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
-      //return streamName;
     }
 
     public override int VideoStreams

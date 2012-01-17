@@ -776,15 +776,16 @@ namespace MediaPortal.GUI.Video
               g_Player.SwitchToNextVideo();
 
               String language = g_Player.VideoLanguage(g_Player.CurrentVideoStream);
-              if (String.Equals(language, "Video") || String.Equals(language, ""))
+              String languagetype = g_Player.VideoType(g_Player.CurrentVideoStream);
+              if (String.Equals(language, "Video") || String.Equals(language, "") || String.Equals(language, languagetype))
               {
-                msg.Label = string.Format("{0} ({1}/{2})", g_Player.VideoType(g_Player.CurrentVideoStream),
+                msg.Label = string.Format("{0} ({1}/{2})", languagetype,
                                           g_Player.CurrentVideoStream + 1, g_Player.VideoStreams);
               }
               else
               {
                 msg.Label = string.Format("{0} {1} ({2}/{3})", language,
-                                          g_Player.VideoType(g_Player.CurrentVideoStream),
+                                          languagetype,
                                           g_Player.CurrentVideoStream + 1, g_Player.VideoStreams);
               }
 
@@ -806,15 +807,15 @@ namespace MediaPortal.GUI.Video
               g_Player.SwitchToNextSubtitle();
               if (g_Player.EnableSubtitle)
               {
-                int streamId = g_Player.CurrentSubtitleStream;
-                string strName = g_Player.SubtitleName(streamId);
-                string langName = g_Player.SubtitleLanguage(streamId);
                 if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
                 {
                   msg.Label = "CC1";
                 }
                 else
                 {
+                  int streamId = g_Player.CurrentSubtitleStream;
+                  string strName = g_Player.SubtitleName(streamId);
+                  string langName = g_Player.SubtitleLanguage(streamId);
                   if (!string.IsNullOrEmpty(strName))
                     msg.Label = string.Format("{0} [{1}] ({2}/{3})", langName, strName.TrimStart(),
                                               streamId + 1, subStreamsCount);
@@ -1476,14 +1477,15 @@ namespace MediaPortal.GUI.Video
       for (int i = 0; i < count; i++)
       {
         string videoType = g_Player.VideoType(i);
+        string videoLang = g_Player.VideoLanguage(i);
         if (videoType == Strings.Unknown || String.Equals(videoType, "") ||
-            videoType.Equals(g_Player.VideoLanguage(i)))
+            videoType.Equals(videoLang))
         {
-          dlg.Add(g_Player.VideoLanguage(i));
+          dlg.Add(videoLang);
         }
         else
         {
-          dlg.Add(String.Format("{0} {1}", g_Player.VideoLanguage(i), videoType));
+          dlg.Add(String.Format("{0} {1}", videoLang, videoType));
         }
       }
 
@@ -1603,7 +1605,7 @@ namespace MediaPortal.GUI.Video
           strLang = strLang.Substring(0, ipos);
         }
         string strName = g_Player.SubtitleName(i);
-        if (!string.IsNullOrEmpty(strName))
+        if (!string.IsNullOrEmpty(strName) && !strLang.Equals(strName))
         {
           dlg.Add(String.Format("{0} [{1}]", strLang.TrimEnd(), strName.TrimStart()));
         }
