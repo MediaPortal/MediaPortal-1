@@ -104,7 +104,8 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_H264decoder(GUID_NULL),
   m_VC1decoder(GUID_NULL),
   m_MPEG2decoder(GUID_NULL),
-  m_VC1Override(GUID_NULL)
+  m_VC1Override(GUID_NULL),
+  m_currentDecoder(GUID_NULL)
 {
   m_rtStart = 0;
   m_bConnected = false;
@@ -283,10 +284,12 @@ HRESULT CVideoPin::CompleteConnect(IPin* pReceivePin)
   {
     LogDebug("vid:CompleteConnect() done");
     m_bConnected = true;
+    m_currentDecoder = GetDecoderCLSID(pReceivePin);
   }
   else
   {
     LogDebug("vid:CompleteConnect() failed:%x", hr);
+    m_currentDecoder = GUID_NULL;
     return hr;
   }
 
@@ -524,13 +527,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             }
             else
               m_rtStreamOffset = 0;
+
+            if (m_currentDecoder == CLSID_LAVVideo)
+              DeliverEndOfStream();
           }
 
           if (buffer->pmt)
           {
             GUID subtype = subtype = buffer->pmt->subtype;
-            CLSID decoder = GetDecoderCLSID();
-            
+
             if (buffer->pmt->subtype == FOURCCMap('1CVW') && m_VC1Override != GUID_NULL)
             {
               buffer->pmt->subtype = m_VC1Override;
@@ -542,13 +547,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               LogMediaType(buffer->pmt);
             
               HRESULT hrAccept = S_FALSE;
-              CLSID decoder = GetDecoderCLSID();
 
-              if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &decoder))
+              if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &m_currentDecoder))
               {
                 // Currently no other video decoders than LAV seems to be compatible with
                 // the dynamic format changes
-                if (decoder == CLSID_LAVVideo)
+                if (m_currentDecoder == CLSID_LAVVideo)
                   hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
               }
 
@@ -767,15 +771,15 @@ STDMETHODIMP CVideoPin::Notify(IBaseFilter* pSender, Quality q)
   return E_NOTIMPL;
 }
 
-CLSID CVideoPin::GetDecoderCLSID()
+CLSID CVideoPin::GetDecoderCLSID(IPin* pPin)
 {
-  if (!m_pReceiver) 
+  if (!pPin) 
     return GUID_NULL;
 
   CLSID clsid = GUID_NULL;
   PIN_INFO pi;
 
-  if (SUCCEEDED(m_pReceiver->QueryPinInfo(&pi))) 
+  if (SUCCEEDED(pPin->QueryPinInfo(&pi))) 
   {
     if (pi.pFilter)
     {

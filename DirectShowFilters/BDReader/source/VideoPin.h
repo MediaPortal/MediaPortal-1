@@ -77,7 +77,7 @@ protected:
   
   void CheckPlaybackState();
   bool CheckVideoFormat(GUID* pFormat, CLSID* pDecoder);
-  CLSID GetDecoderCLSID();
+  CLSID GetDecoderCLSID(IPin* pPin);
 
   CBDReaderFilter* const m_pFilter;
   CDeMultiplexer& m_demux;
@@ -91,6 +91,8 @@ protected:
   CLSID m_VC1decoder;
   CLSID m_H264decoder;
   CLSID m_MPEG2decoder;
+  
+  CLSID m_currentDecoder;
 
   GUID m_VC1Override;
 
