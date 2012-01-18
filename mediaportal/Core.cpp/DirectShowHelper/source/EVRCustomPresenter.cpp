@@ -1858,7 +1858,7 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
 
   LOG_TRACE("ProcessInputNotify");
   hr = S_OK;
-  *samplesProcessed = 0;
+  (*samplesProcessed) = 0;
   
   if (!m_bFirstInputNotify)
   {
@@ -1917,7 +1917,7 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
       LONGLONG timeAfterMixer;
       sample->GetSampleTime(&sampleTime);
 
-      *samplesProcessed++;
+      (*samplesProcessed)++;
 
       m_pClock->GetCorrelatedTime(0, &timeAfterMixer, &systemTime);
       CalculatePresClockDelta(timeAfterMixer, systemTime);
@@ -3810,8 +3810,6 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
 // IBaseFilter delegate
 bool MPEVRCustomPresenter::GetState(DWORD dwMilliSecsTimeout, FILTER_STATE* State, HRESULT& pReturnValue)
 {
-  return false;
-
   bool moreSamplesNeeded = BufferMoreSamples();
   bool stopWaiting = false;
 
