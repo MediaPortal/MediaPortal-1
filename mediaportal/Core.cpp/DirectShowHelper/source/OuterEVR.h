@@ -30,7 +30,7 @@
 
 class MPEVRCustomPresenter;
 
-class COuterEVR : public CUnknown, public IBaseFilter
+class COuterEVR : public CUnknown, public IBaseFilter//, public IMediaSeeking
 {
 public:
   COuterEVR(const TCHAR* pName, LPUNKNOWN pUnk, HRESULT& hr, MPEVRCustomPresenter *pAllocatorPresenter);
@@ -38,6 +38,7 @@ public:
 
   STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv); 
 
+  // IBaseFilter
   STDMETHODIMP EnumPins(__out  IEnumPins **ppEnum);
   STDMETHODIMP FindPin(LPCWSTR Id, __out  IPin **ppPin);
   STDMETHODIMP QueryFilterInfo(__out  FILTER_INFO *pInfo);
@@ -51,6 +52,25 @@ public:
   STDMETHODIMP GetSyncSource(__deref_out_opt  IReferenceClock **pClock);
   STDMETHODIMP GetClassID(__RPC__out CLSID *pClassID);
 
+  // IMediaSeeking
+/*  STDMETHODIMP IsFormatSupported(const GUID* pFormat);
+  STDMETHODIMP QueryPreferredFormat(GUID* pFormat);
+  STDMETHODIMP SetTimeFormat(const GUID* pFormat);
+  STDMETHODIMP IsUsingTimeFormat(const GUID* pFormat);
+  STDMETHODIMP GetTimeFormat(GUID* pFormat);
+  STDMETHODIMP GetDuration(LONGLONG* pDuration);
+  STDMETHODIMP GetStopPosition(LONGLONG* pStop);
+  STDMETHODIMP GetCurrentPosition(LONGLONG* pCurrent);
+  STDMETHODIMP CheckCapabilities(DWORD* pCapabilities);
+  STDMETHODIMP GetCapabilities(DWORD* pCapabilities);
+  STDMETHODIMP ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat);
+  STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG * pStop, DWORD StopFlags);
+  STDMETHODIMP GetPositions(LONGLONG* pCurrent, LONGLONG* pStop);
+  STDMETHODIMP GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest);
+  STDMETHODIMP SetRate(double dRate);
+  STDMETHODIMP GetRate(double* pdRate);
+  STDMETHODIMP GetPreroll(LONGLONG *pPreroll);
+*/
   // IUnknown
   HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
   ULONG STDMETHODCALLTYPE AddRef();

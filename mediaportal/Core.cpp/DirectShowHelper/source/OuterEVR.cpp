@@ -37,7 +37,7 @@ COuterEVR::COuterEVR(const TCHAR* pName, LPUNKNOWN pUnk, HRESULT& hr, MPEVRCusto
   ASSERT(m_pAllocatorPresenter);
 
   m_pAllocatorPresenter = pAllocatorPresenter;
-  hr = CoCreateInstance(CLSID_EnhancedVideoRenderer, this, CLSCTX_INPROC_SERVER, IID_IUnknown, (void **)&m_pEVR);
+  hr = CoCreateInstance(CLSID_EnhancedVideoRenderer, (LPUNKNOWN)(IBaseFilter*)this, CLSCTX_INPROC_SERVER, IID_IUnknown, (void **)&m_pEVR);
   m_refCount = 0;
 }
 
@@ -63,6 +63,10 @@ STDMETHODIMP COuterEVR::NonDelegatingQueryInterface(REFIID riid, void** ppv)
   {
     return GetInterface((IBaseFilter*)this, ppv);
   }
+  /*else if (riid == __uuidof(IMediaSeeking)) 
+  {
+    return GetInterface((IMediaSeeking*)this, ppv);
+  }*/
 
   HRESULT hr = m_pEVR ? m_pEVR->QueryInterface(riid, ppv) : E_NOINTERFACE;
   return SUCCEEDED(hr) ? hr : __super::NonDelegatingQueryInterface(riid, ppv);
@@ -240,6 +244,245 @@ STDMETHODIMP COuterEVR::GetClassID(__RPC__out CLSID *pClassID)
   }
   return E_NOTIMPL;
 }
+
+/*
+STDMETHODIMP COuterEVR::IsFormatSupported(const GUID* pFormat)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->IsFormatSupported(pFormat);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::QueryPreferredFormat(GUID* pFormat)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->QueryPreferredFormat(pFormat);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::SetTimeFormat(const GUID* pFormat)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->SetTimeFormat(pFormat);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::IsUsingTimeFormat(const GUID* pFormat)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->IsUsingTimeFormat(pFormat);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetTimeFormat(GUID* pFormat)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetTimeFormat(pFormat);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetDuration(LONGLONG* pDuration)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetDuration(pDuration);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetStopPosition(LONGLONG* pStop)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetStopPosition(pStop);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetCurrentPosition(LONGLONG* pCurrent)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetCurrentPosition(pCurrent);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::CheckCapabilities(DWORD* pCapabilities)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->CheckCapabilities(pCapabilities);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetCapabilities(DWORD* pCapabilities)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetCapabilities(pCapabilities);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG * pStop, DWORD StopFlags)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->SetPositions(pCurrent, CurrentFlags, pStop, StopFlags);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetPositions(pCurrent, pStop);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetAvailable(pEarliest, pLatest);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::SetRate(double dRate)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->SetRate(dRate);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetRate(double* pdRate)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetRate(pdRate);
+  }
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP COuterEVR::GetPreroll(LONGLONG *pPreroll)
+{
+  CComPtr<IMediaSeeking> pEVRBase;
+  if (m_pEVR) 
+  {
+    m_pEVR->QueryInterface(&pEVRBase);
+  }
+  if (pEVRBase) 
+  {
+    return pEVRBase->GetPreroll(pPreroll);
+  }
+  return E_NOTIMPL;
+}*/
 
 STDMETHODIMP COuterEVR::QueryInterface(REFIID riid, __deref_out void **ppv) 
 {
