@@ -994,7 +994,7 @@ namespace TvLibrary.Implementations.DVB
       data = (CaData)Marshal.PtrToStructure(_generalBuffer, typeof(CaData));
       Log.Log.Debug("  manufacturer = 0x{0:x}", BitConverter.ToInt16(data.Data, 0));
       Log.Log.Debug("  code         = 0x{0:x}", BitConverter.ToInt16(data.Data, 2));
-      Log.Log.Debug("  information  = {0}", DVB_MMI.BytesToString(data.Data, 5, data.Data[4]));
+      Log.Log.Debug("  menu title   = {0}", DVB_MMI.BytesToString(data.Data, 5, data.Data[4]));
     }
 
     /// <summary>
@@ -1370,7 +1370,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
@@ -1386,7 +1386,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
@@ -1405,7 +1405,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
@@ -1425,7 +1425,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SendMenuAnswer(bool cancel, String answer)
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
