@@ -125,7 +125,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       tabControl1.TabPages.Clear();
       tabControl1.TabPages.Add(tabPage1);
 
-
       IList<ChannelGroup> groups =
         ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
 

@@ -121,12 +121,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       tabControl1.TabPages.Clear();
       tabControl1.TabPages.Add(tabPage1);
 
-      /*ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
-      include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;      
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);*/
-
-      IList<ChannelGroup> groups =
-        ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.TV);
+      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+      include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
+      include |= ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails; 
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);
 
       foreach (ChannelGroup group in groups)
       {
