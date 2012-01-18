@@ -999,11 +999,11 @@ namespace TvLibrary.Implementations.DVB
       DVB_MMI.ApplicationType type = (DVB_MMI.ApplicationType)content[0];
       int manufacturer = (content[1] << 8) | content[2];
       int code = (content[3] << 8) | content[4];
-      String text = DVB_MMI.BytesToString(content, 5, length - 5);
+      String title = DVB_MMI.BytesToString(content, 5, length - 5);
       Log.Log.Debug("  type         = {0}", type);
       Log.Log.Debug("  manufacturer = 0x{0:x}", manufacturer);
       Log.Log.Debug("  code         = 0x{0:x}", code);
-      Log.Log.Debug("  information  = {0}", text);
+      Log.Log.Debug("  menu title   = {0}", title);
     }
 
     private void HandleCaInformation(byte[] content, int length)
@@ -1014,19 +1014,19 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("Turbosight: error, response too short");
         return;
       }
-      int numCaIds = content[0];
-      Log.Log.Debug("  # CASIDs = {0}", numCaIds);
+      int numCasIds = content[0];
+      Log.Log.Debug("  # CAS IDs = {0}", numCasIds);
       int i = 1;
       int l = 1;
       while (l + 2 <= length)
       {
-        Log.Log.Debug("  {0,-2}       = 0x{1:x2}{2:x2}", i, content[l + 1], content[l]);
+        Log.Log.Debug("  {0,-2}        = 0x{1:x2}{2:x2}", i, content[l + 1], content[l]);
         l += 2;
         i++;
       }
-      if (length != ((numCaIds * 2) + 1))
+      if (length != ((numCasIds * 2) + 1))
       {
-        Log.Log.Debug("Turbosight: error, unexpected numCaIds");
+        Log.Log.Debug("Turbosight: error, unexpected numCasIds");
         //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
       }
     }
@@ -1039,9 +1039,9 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("Turbosight: error, response too short");
         return;
       }
-      int numChoices = content[0];
+      int numEntries = content[0];
 
-      // Read all the entries into a list. Entries are null-separated.
+      // Read all the entries into a list. Entries are NULL terminated.
       List<String> entries = new List<String>();
       String entry = "";
       int entryCount = 0;
@@ -1077,23 +1077,23 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("  title     = {0}", entries[0]);
       Log.Log.Debug("  sub-title = {0}", entries[1]);
       Log.Log.Debug("  footer    = {0}", entries[2]);
-      Log.Log.Debug("  # choices = {0}", numChoices);
+      Log.Log.Debug("  # entries = {0}", numEntries);
       if (_ciMenuCallbacks != null)
       {
         _ciMenuCallbacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
       }
       for (int i = 0; i < entryCount; i++)
       {
-        Log.Log.Debug("  choice {0}  = {1}", i + 1, entries[i + 3]);
+        Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, entries[i + 3]);
         if (_ciMenuCallbacks != null)
         {
           _ciMenuCallbacks.OnCiMenuChoice(i, entries[i + 3]);
         }
       }
 
-      if (entryCount != numChoices)
+      if (entryCount != numEntries)
       {
-        Log.Log.Debug("Turbosight: error, numChoices != entryCount");
+        Log.Log.Debug("Turbosight: error, numEntries != entryCount");
         //DVB_MMI.DumpBinary(_mmiResponseBuffer, 0, length);
       }
     }
@@ -1145,7 +1145,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
@@ -1179,7 +1179,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
@@ -1199,7 +1199,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
@@ -1211,7 +1211,7 @@ namespace TvLibrary.Implementations.DVB
         _mmiMessageQueue.Add(0);
         _mmiMessageQueue.Add(0);
         _mmiMessageQueue.Add(choice);
-        // Don't explicitly request a response for a back request as that
+        // Don't explicitly request a response for a "back" request as that
         // could choke the message queue with a message that the CAM
         // never answers.
         if (choice != 0)
@@ -1231,7 +1231,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SendMenuAnswer(bool cancel, String answer)
     {
-      if (!_isCiSlotPresent || !_isCamPresent)
+      if (!_isCamPresent)
       {
         return false;
       }
