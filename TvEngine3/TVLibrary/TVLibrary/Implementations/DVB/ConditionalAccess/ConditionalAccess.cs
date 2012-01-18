@@ -167,11 +167,13 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _twinhan);
 
           Log.Log.WriteFile("Check for TechnoTrend");
-          _technoTrend = new TechnoTrendAPI(tunerFilter);
+          _technoTrend = new TechnoTrendAPI(tunerFilter, card.CardType);
           if (_technoTrend.IsTechnoTrend)
           {
             ////if (_technoTrend.IsCamPresent()) 
             _ciMenu = _technoTrend; // Register Technotrend CI Menu capabilities
+            _diSEqCMotor = new DiSEqCMotor(_technoTrend);
+            _HWProvider = _technoTrend;
             Log.Log.WriteFile("TechnoTrend card detected");
             return;
           }
@@ -421,12 +423,6 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(),
-                            _technoTrend.IsCamReady());
-          if (_technoTrend.IsCamPresent() == false)
-          {
-            return _technoTrend.IsCamPresent();
-          }
           return _technoTrend.IsCamReady();
         }
         /*if (_anysee != null)
@@ -464,7 +460,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          _technoTrend.ResetCI();
+          _technoTrend.ResetCi();
         }
         if (_knc != null)
         {
@@ -678,8 +674,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          return _technoTrend.DescrambleMultiple(_mapSubChannels);
-          // return _technoTrend.SendPMT(PMT, pmtLength);
+          return _technoTrend.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
         if (_twinhan != null)
         {
@@ -720,7 +715,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          _technoTrend.SendDiseqCommand(parameters, channel);
+          _technoTrend.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_twinhan != null)
@@ -929,28 +924,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          //Set TechnoTrend modulation tuning settings
-          if (channel.ModulationType == ModulationType.ModQpsk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod8Psk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod16Apsk)
-          {
-            channel.ModulationType = ModulationType.Mod16Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod32Apsk)
-          {
-            channel.ModulationType = ModulationType.ModOqpsk;
-          }
-          Log.Log.WriteFile("Technotrend DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("Technotrend DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("Technotrend DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("Technotrend DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          return channel;
+          return (DVBSChannel)_technoTrend.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_knc != null)
         {

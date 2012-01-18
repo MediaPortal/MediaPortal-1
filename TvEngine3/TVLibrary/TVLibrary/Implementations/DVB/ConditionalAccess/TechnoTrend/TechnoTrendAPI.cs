@@ -27,1510 +27,2256 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
+using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Hardware;
 
 namespace TvLibrary.Implementations.DVB
 {
-
-  #region API Enums
-
-  #region TTApiResult
-
   /// <summary>
-  /// Return values of TT API
+  /// A class for handling conditional access and DiSEqC for TechnoTrend budget
+  /// series tuners.
   /// </summary>
-  public enum TTApiResult
+  public class TechnoTrendAPI : ICustomTuning, IDiSEqCController, ICiMenuActions, IHardwareProvider, IDisposable
   {
-    /// <summary>
-    /// operation finished successful
-    /// </summary> 
-    Success,
-    /// <summary>
-    /// operation is not implemented for the opened handle
-    /// </summary> 
-    NotImplemented,
-    /// <summary>
-    /// operation is not supported for the opened handle
-    /// </summary> 
-    NotSupported,
-    /// <summary>
-    /// the given HANDLE seems not to be correct
-    /// </summary> 
-    ErrorHandle,
-    /// <summary>
-    /// the internal IOCTL subsystem has no device handle
-    /// </summary> 
-    NoDeviceHandle,
-    /// <summary>
-    /// the internal IOCTL failed
-    /// </summary> 
-    Failed,
-    /// <summary>
-    /// the infrared interface is already initialised
-    /// </summary> 
-    IRAlreadyOpen,
-    /// <summary>
-    /// the infrared interface is not initialised
-    /// </summary> 
-    IRNotOpened,
-    /// <summary>
-    /// length exceeds maximum in EEPROM-Userspace operation
-    /// </summary> 
-    TooManyBytes,
-    /// <summary>
-    /// common interface hardware error
-    /// </summary> 
-    CIHardwareError,
-    /// <summary>
-    /// common interface already opened
-    /// </summary> 
-    CIAlreadyOpen,
-    /// <summary>
-    /// operation finished with timeout
-    /// </summary> 
-    TimeOut,
-    /// <summary>
-    /// read psi failed
-    /// </summary> 
-    ReadPSIFailed,
-    /// <summary>
-    /// not set
-    /// </summary> 
-    NotSet,
-    /// <summary>
-    /// operation finished with general error
-    /// </summary> 
-    Error,
-    /// <summary>
-    /// operation finished with illegal pointer
-    /// </summary> 
-    BadPointer,
-    /// <summary>
-    /// the tunerequest structure did not have the expected size
-    /// </summary> 
-    IncorrectSize,
-    /// <summary>
-    /// the tuner interface was not available
-    /// </summary> 
-    TunerIFNotAvailable,
-    /// <summary>
-    /// an unknown DVB type has been specified for the tune request
-    /// </summary> 
-    UnknownDVBType,
-    /// <summary>
-    /// length of buffer is too small
-    /// </summary> 
-    BufferTooSmall
-  }
+    #region enums
 
-  #endregion
-
-  #region TTApiDeviceCat
-
-  /// <summary>
-  /// API Device Catagory
-  /// </summary>
-  public enum TTApiDeviceCat
-  {
-    /// <summary> 
-    /// not set
-    /// </summary> 
-    UNKNOWN = 0,
-    /// <summary> 
-    /// Budget 2
-    /// </summary> 
-    BUDGET_2,
-    /// <summary> 
-    /// Budget 3 aka TT-budget T-3000
-    /// </summary> 
-    BUDGET_3,
-    /// <summary> 
-    /// USB 2.0
-    /// </summary> 
-    USB_2,
-    /// <summary> 
-    /// USB 2.0 Pinnacle
-    /// </summary> 
-    USB_2_PINNACLE,
-    /// <summary> 
-    /// USB 2.0 DSS
-    /// </summary> 
-    USB_2_DSS,
-    /// <summary> 
-    /// Premium
-    /// </summary> 
-    PREMIUM
-  }
-
-  #endregion
-
-  #region TTCiSlotStatus
-
-  /// <summary>
-  /// Status for CI Slot
-  /// </summary>
-  public enum TTCiSlotStatus
-  {
-    /// Common interface slot is empty.
-    SlotEmpty = 0,
-    /// A CAM is inserted into the common interface.
-    SlotModuleInserted = 1,
-    /// CAM initialisation ready.
-    SlotModuleOk = 2,
-    /// CAM initialisation ready.
-    SlotCaOk = 3,
-    /// CAM initialisation ready.
-    SlotDbgMsg = 4,
-    /// Slot state could not be determined.
-    SlotUnknownState = 0xFF
-  }
-
-  #endregion
-
-  #endregion
-
-  /// <summary>
-  /// Technotrend BDA API wrapper and CI handler
-  /// </summary>
-  public unsafe class TechnoTrendAPI : IDisposable, IDiSEqCController, ICiMenuActions
-  {
-    #region Structs for callback and arguments
-
-    /// <summary>
-    /// Technotrend: Callback structures
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    private struct TTCallbackStruct
+    private enum TtDeviceType   // DVB_TYPE
     {
-      public OnSlotStatusCallback p01;
-
-      /// Context pointer for PCBFCN_CI_OnSlotStatus
-      public IntPtr p01Context;
-
-      /// PCBFCN_CI_OnCAStatus
-      public OnCaChangeCallback p02;
-
-      /// Context pointer for PCBFCN_CI_OnCAStatus
-      public IntPtr p02Context;
-
-      /// PCBFCN_CI_OnDisplayString
-      public OnDisplayString p03;
-
-      /// Context pointer for PCBFCN_CI_OnDisplayString
-      public IntPtr p03Context;
-
-      /// PCBFCN_CI_OnDisplayMenu
-      public OnDisplayMenuAndLists p04; // use same type of delegate
-
-      /// Context pointer for PCBFCN_CI_OnDisplayMenu
-      public IntPtr p04Context;
-
-      /// PCBFCN_CI_OnDisplayList
-      public OnDisplayMenuAndLists p05; // use same type of delegate
-
-      /// Context pointer for PCBFCN_CI_OnDisplayList
-      public IntPtr p05Context;
-
-      /// PCBFCN_CI_OnSwitchOsdOff
-      public OnSwitchOsdOff p06;
-
-      /// Context pointer for PCBFCN_CI_OnSwitchOsdOff
-      public IntPtr p06Context;
-
-      /// PCBFCN_CI_OnInputRequest
-      public OnInputRequest p07;
-
-      /// Context pointer for PCBFCN_CI_OnInputRequest
-      public IntPtr p07Context;
-
-      /// PCBFCN_CI_OnLscSetDescriptor
-      public OnLscSetDescriptor p08;
-
-      /// Context pointer for PCBFCN_CI_OnLscSetDescriptor
-      public IntPtr p08Context;
-
-      /// PCBFCN_CI_OnLscConnect
-      public OnLscConnect p09;
-
-      /// Context pointer for PCBFCN_CI_OnLscConnect
-      public IntPtr p09Context;
-
-      /// PCBFCN_CI_OnLscDisconnect
-      public OnLscDisconnect p10;
-
-      /// Context pointer for PCBFCN_CI_OnLscDisconnect
-      public IntPtr p10Context;
-
-      /// PCBFCN_CI_OnLscSetParams
-      public OnLscSetParams p11;
-
-      /// Context pointer for PCBFCN_CI_OnLscSetParams
-      public IntPtr p11Context;
-
-      /// PCBFCN_CI_OnLscEnquireStatus
-      public OnLscEnquireStatus p12;
-
-      /// Context pointer for PCBFCN_CI_OnLscEnquireStatus
-      public IntPtr p12Context;
-
-      /// PCBFCN_CI_OnLscGetNextBuffer
-      public OnLscGetNextBuffer p13;
-
-      /// Context pointer for PCBFCN_CI_OnLscGetNextBuffer
-      public IntPtr p13Context;
-
-      /// PCBFCN_CI_OnLscTransmitBuffer
-      public OnLscTransmitBuffer p14;
-
-      /// Context pointer for PCBFCN_CI_OnLscTransmitBuffer
-      public IntPtr p14Context;
-    } ;
-
-    /// <summary>
-    /// Technotrend: Callback structures
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private unsafe struct TTSlimCallbackStruct
-    {
-      public OnSlotStatusCallback OnSlotStatus;
-      public IntPtr OnSlotStatusContext;
-      public OnCaChangeCallback OnCAStatus;
-      public IntPtr OnCAStatusContext;
+      DvbC = 0,
+      DvbT,
+      DvbS
     }
 
-    /// <summary>
-    /// Technotrend: Slot info structure
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential), ComVisible(false)]
-    public unsafe struct SlotInfo
+    private enum TtCiMessageHandlerTag // typ_CiMsgHandlerTag
     {
-      /// CI status
-      public Byte nStatus;
+      DebugString = 0,
+      Message,
+      OutputMessage,
+      Psi                 // programme specific information
+    }
 
-      /// menu title string
-      public IntPtr pMenuTitleString;
+    private enum TtDeviceCategory //DEVICE_CAT
+    {
+      Unknown = 0,
+      Budget2,
+      Budget3,
+      Usb2,         // connect series
+      Usb2Pinnacle, // Pinnacle OEM models
+      Usb2Dss,
+      Premium       // premium series
+    }
 
-      /// cam system ID's
-      public UInt16* pCaSystemIDs;
+    private enum TtCiState : byte
+    {
+      /// The common interface slot is empty.
+      Empty = 0,
+      /// A CAM is present in the common interface slot.
+      CamInserted,
+      /// The CAM hardware is initialised.
+      CamOkay,
+      /// The CAM and host software/firmware are initialised.
+      ApplicationOk,
+      /// A debug message from the interface is available.
+      DebugMessage,
+      /// The common interface slot state could not be determined.
+      Unknown = 0xff
+    }
 
-      /// number of cam system ID's
-      public UInt16 wNoOfCaSystemIDs;
+    private enum TtMmiMessage : byte
+    {
+      None = 0,
+      CiInfo,
+      Menu,
+      List,
+      Text,
+      RequestInput,
+      InputComplete,
+      ListMore,
+      MenuMore,
+      CloseMmiImmediate,
+      SectionRequest,
+      CloseFilter,
+      PsiComplete,
+      CamReady,
+      SwitchProgrammeReply,
+      TextMore
+    }
+
+    private enum TtCiError : short
+    {
+      None = 0,
+      WrongFilterIndex,
+      SetFilter,
+      CloseFilter,
+      InvalidData,
+      NoCaResource        // Often indicates smartcard issue.
+    }
+
+    private enum TtFrontEndType // TYPE_FRONT_END
+    {
+      Unknown = 0,
+      DvbC,
+      DvbS,
+      DvbS2,
+      DvbT,
+      Atsc,
+      Dss,
+      DvbCT,        // DVB-C and DVB-T
+      DvbS2Premium
+    }
+
+    private enum TtApiResult  // TYPE_RET_VAL
+    {
+      /// <summary>
+      /// operation finished successful
+      /// </summary> 
+      Success,
+      /// <summary>
+      /// operation is not implemented for the opened handle
+      /// </summary> 
+      NotImplemented,
+      /// <summary>
+      /// operation is not supported for the opened handle
+      /// </summary> 
+      NotSupported,
+      /// <summary>
+      /// the given HANDLE seems not to be correct
+      /// </summary> 
+      ErrorHandle,
+      /// <summary>
+      /// the internal IOCTL subsystem has no device handle
+      /// </summary> 
+      NoDeviceHandle,
+      /// <summary>
+      /// the internal IOCTL failed
+      /// </summary> 
+      Failed,
+      /// <summary>
+      /// the infra-red interface is already initialised
+      /// </summary> 
+      IrAlreadyOpen,
+      /// <summary>
+      /// the infra-red interface is not initialised
+      /// </summary> 
+      IrNotOpened,
+      /// <summary>
+      /// length exceeds maximum in EEPROM-userspace operation
+      /// </summary> 
+      TooManyBytes,
+      /// <summary>
+      /// common interface hardware error
+      /// </summary> 
+      CiHardwareError,
+      /// <summary>
+      /// common interface already opened
+      /// </summary> 
+      CiAlreadyOpen,
+      /// <summary>
+      /// operation timed out
+      /// </summary> 
+      Timeout,
+      /// <summary>
+      /// read PSI failed
+      /// </summary> 
+      ReadPsiFailed,
+      /// <summary>
+      /// not set
+      /// </summary> 
+      NotSet,
+      /// <summary>
+      /// operation finished with general error
+      /// </summary> 
+      Error,
+      /// <summary>
+      /// operation finished with illegal pointer
+      /// </summary> 
+      BadPointer,
+      /// <summary>
+      /// the input structure did not have the expected size
+      /// </summary> 
+      IncorrectSize,
+      /// <summary>
+      /// the tuner interface was not available
+      /// </summary> 
+      TunerInterfaceNotAvailable,
+      /// <summary>
+      /// an unknown DVB type has been specified for the tune request
+      /// </summary> 
+      UnknownDvbType,
+      /// <summary>
+      /// buffer size is too small
+      /// </summary> 
+      BufferTooSmall
+    }
+
+    private enum TtProductSeller  // PRODUCT_SELLER
+    {
+      Unknown = 0,
+      TechnoTrend,
+      TechniSat
+    }
+
+    private enum TtLedColour  // TYPE_LED_COLOR
+    {
+      Red = 0,
+      Green
+    }
+
+    private enum TtConnectionType // TYPE_CONNECTION
+    {
+      Phone = 1,
+      Cable,
+      Internet,
+      Serial
+    }
+
+    private enum TtFilterType // TYPE_FILTER
+    {
+      NotPresent = 0,
+      Streaming,
+      Piping,
+      Pes,              // packetised elementary stream
+      Es,               // elementary stream
+      Section,
+      MpeSection,
+      Pid,              // packet ID
+      MultiPid,
+      Ts,               // transport stream
+      MultiMpe
+    }
+
+    private enum TtDiseqcPort : uint
+    {
+      Null = 0xffffffff,
+      ToneBurst = 0x00000000,
+      DataBurst = 0x00000001,
+      PortA = 0x00000000,
+      PortB = 0x00000001,
+      PortC = 0x00010000,
+      PortD = 0x00010001
+    }
+
+    private enum TtToneBurst
+    {
+      Off = 0,
+      ToneBurst,
+      DataBurst
     }
 
     #endregion
 
-    #region DLL Imports
+    #region DLL imports
+
+    #region open/close device access
 
     /// <summary>
-    /// Technotrend: Open hardware
+    /// Determine how many TechnoTrend devices in a particular category are available in the system.
     /// </summary>
-    /// <param name="deviceType"></param>
-    /// <param name="deviceIdentifier"></param>
-    /// <returns>handle to opened device</returns>
+    /// <param name="category">The category/type of devices to count.</param>
+    /// <returns>the number of devices that are available</returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern IntPtr bdaapiOpenHWIdx(TTApiDeviceCat deviceType, UInt32 deviceIdentifier);
+    private static extern IntPtr bdaapiEnumerate(TtDeviceCategory category);
 
     /// <summary>
-    /// Technotrend: Open CI
+    /// Initialise access/control for a specific device.
     /// </summary>
-    /// <param name="device"></param>
-    /// <returns></returns>
+    /// <param name="category">The category/type of device to initialise.</param>
+    /// <param name="index">The device's hardware index.</param>
+    /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TTApiResult bdaapiOpenCIWithoutPointer(IntPtr device);
+    private static extern IntPtr bdaapiOpenHWIdx(TtDeviceCategory category, UInt32 index);
 
     /// <summary>
-    /// Technotrend: Open CI
+    /// Close access to a specific device and relinquish control over it.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="callback"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]
-    private static extern TTApiResult bdaapiOpenCISlim(IntPtr device, TTSlimCallbackStruct callback);
-
-    /// <summary>
-    /// Technotrend: Open CI
-    /// </summary>
-    /// <param name="device"></param>
-    /// <param name="callback"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]
-    private static extern TTApiResult bdaapiOpenCI(IntPtr device, TTCallbackStruct callback);
-
-    /// <summary>
-    /// Technotrend: Close API
-    /// </summary>
-    /// <param name="device"></param>
+    /// <param name="device">The handle allocated to this device.</param>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern void bdaapiClose(IntPtr device);
 
+    #endregion
+
+    #region automatic offset scanning
+
     /// <summary>
-    /// Technotrend: Close CI
+    /// Turn automatic 125/166 kHz offset scanning on or off.
     /// </summary>
-    /// <param name="device"></param>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="autoOffsetModeOn"><c>True</c> to turn offset scanning on.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiSetDVBTAutoOffsetMode(IntPtr device, bool autoOffsetModeOn);
+
+    /// <summary>
+    /// Determine whether automatic 125/166 kHz offset scanning is on or off.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="autoOffsetModeOn"><c>True</c> if automatic offset scanning is on, otherwise <c>false</c>.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetDVBTAutoOffsetMode(IntPtr device, ref bool autoOffsetModeOn);
+
+    #endregion
+
+    /// <summary>
+    /// Send a DiSEqC command.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="command">The command.</param>
+    /// <param name="length">The length of the command.</param>
+    /// <param name="repeats">The number of times to repeat the command.</param>
+    /// <param name="toneBurst">An optional tone burst command that can be sent after the DiSEqC command has been sent.</param>
+    /// <param name="polarisation">The polarisation to use when sending the command. This is used as a way to specify the voltage (ie. either 13 or 18 volts).</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiSetDiSEqCMsg(IntPtr device, IntPtr command, byte length, byte repeats,
+                                                        TtToneBurst toneBurst, Polarisation polarisation);
+
+    /// <summary>
+    /// Switch the videoport between CI and FTA mode for devices that support a conditional access interface.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="useCiVideoPort"><c>True</c> to use the CI videoport.</param>
+    /// <param name="effectiveCiVideoPort"><c>True</c> if the CI videoport is *actually* being used.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiSetVideoport(IntPtr device, bool useCiVideoPort, ref bool effectiveCiVideoPort);
+
+    #region antenna power
+
+    /// <summary>
+    /// Turn the DVB-T antenna 5 volt power supply on or off for USB devices.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="antennaPowerOn"><c>True</c> to turn the antenna power supply on.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiSetDVBTAntPwr(IntPtr device, bool antennaPowerOn);
+
+    /// <summary>
+    /// Determine whether the DVB-T antenna 5 volt power supply is on or off.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="antennaPowerOn"><c>True</c> if the antenna power supply is on, otherwise <c>false</c>.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetDVBTAntPwr(IntPtr device, ref bool antennaPowerOn);
+
+    #endregion
+
+    #region device information
+
+    /// <summary>
+    /// Get the driver version details.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="v1">Part 1 of the driver version number.</param>
+    /// <param name="v2">Part 2 of the driver version number.</param>
+    /// <param name="v3">Part 3 of the driver version number.</param>
+    /// <param name="v4">Part 4 of the driver version number.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetDrvVersion(IntPtr device, ref byte v1, ref byte v2, ref byte v3, ref byte v4);
+
+    /// <summary>
+    /// Get the hardware MAC address.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="highPart">The high part of the address.</param>
+    /// <param name="lowPart">The low part of the address.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetMAC(IntPtr device, ref UInt32 highPart, ref UInt32 lowPart);
+
+    /// <summary>
+    /// Get the PCI/USB device IDs. The sub identifiers are only valid for PCI/PCIe devices.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="vendorId">The vendor identifier.</param>
+    /// <param name="subVendorId">The sub-vendor identifier.</param>
+    /// <param name="deviceId">The device identifier.</param>
+    /// <param name="subDeviceId">The sub-device identifier.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetDeviceIDs(IntPtr device, ref UInt16 vendorId, ref UInt16 subVendorId, ref UInt16 deviceId, ref UInt16 subDeviceId);
+
+    /// <summary>
+    /// Determine whether the device really supports USB 2 "high speed" mode.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="usbHighSpeedSupported"><c>True</c> if USB 2 speeds are supported, otherwise <c>false</c>.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr device, ref bool usbHighSpeedSupported);
+
+    /// <summary>
+    /// Retrieve details about the device filters and front end.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="filterNames">A pointer to a FilterNames struct.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetDevNameAndFEType(IntPtr device, IntPtr filterNames);
+
+    /// <summary>
+    /// Get the device's hardware index.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="index">The hardware index.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetHwIdx(IntPtr device, ref Int32 index);
+
+    /// <summary>
+    /// Get the Windows device path.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="devicePath">A buffer containing the device path string.</param>
+    /// <param name="devicePathLength">The length of the device path in bytes.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, IntPtr devicePath, ref Int32 devicePathLength);
+
+    /// <summary>
+    /// Get the product seller identifier.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="sellerId">The seller identifier.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiGetProductSellerID(IntPtr device, ref TtProductSeller sellerId);
+
+    #endregion
+
+    #region conditional access interface
+
+    #region open/close the conditional access interface
+
+    /// <summary>
+    /// Initialise the conditional access interface. In this case the full set of callback delegates are specified.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="callbacks">Full callback structure pointer.</param>
+    /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiOpenCI(IntPtr device, TtFullCiCallbacks callbacks);
+
+    /// <summary>
+    /// Initialise the conditional access interface. In this case the full set of callback delegates are specified.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="callbacks">Full callback structure pointer.</param>
+    /// <param name="ciMessageHandler">A delegate for handling raw messages from the interface.</param>
+    /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiOpenCIext(IntPtr device, TtFullCiCallbacks callbacks, OnTtCiMessage ciMessageHandler);
+
+    /// <summary>
+    /// Initialise the conditional access interface. In this case a minimal set of callback delegates are specified.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="callbacks">Minimal callback structure pointer.</param>
+    /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiOpenCISlim(IntPtr device, TtSlimCiCallbacks callbacks);
+
+    /// <summary>
+    /// Initialise the conditional access interface. In this case callback delegates are not specified.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiOpenCIWithoutPointer(IntPtr device);
+
+    /// <summary>
+    /// Close the conditional access interface.
+    /// </summary>
+    /// <param name="device">The handle allocated to this device.</param>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern void bdaapiCloseCI(IntPtr device);
 
+    #endregion
+
     /// <summary>
-    /// Technotrend: Query slot status
+    /// Send a message to the CAM to request that a service be descrambled.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="slot"></param>
-    /// <returns></returns>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="pmt">The PMT for the service that should be descrambled.</param>
+    /// <param name="pmtLength">The length of the PMT in bytes.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TTApiResult bdaapiCIGetSlotStatus(IntPtr device, byte slot);
+    private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr device, IntPtr pmt, UInt16 pmtLength);
 
     /// <summary>
-    /// Technotrend: get driver version
+    /// Send a message to the CAM to request that a service be descrambled.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="v1"></param>
-    /// <param name="v2"></param>
-    /// <param name="v3"></param>
-    /// <param name="v4"></param>
-    /// <returns></returns>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="serviceId">The service ID of the service that should be descrambled.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TTApiResult bdaapiGetDrvVersion(IntPtr device, ref byte v1, ref byte v2, ref byte v3,
-                                                          ref byte v4);
+    private static extern TtApiResult bdaapiCIReadPSIFastDrvDemux(IntPtr device, UInt16 serviceId);
 
     /// <summary>
-    /// Technotrend: decodes PMT
+    /// Send a message to the CAM to request that one or more services be descrambled.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="pNrs"></param>
-    /// <param name="count"></param>
-    /// <returns></returns>
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="sidList">A list of service IDs, one for each service that should be descrambled.</param>
+    /// <param name="serviceCount">The number of services for the CAM to descramble.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TTApiResult bdaapiCIMultiDecode(IntPtr device, IntPtr pNrs, Int32 count);
+    private static extern TtApiResult bdaapiCIMultiDecode(IntPtr device, IntPtr sidList, Int32 serviceCount);
 
     /// <summary>
-    /// Technotrend: Diseqc
+    /// Enter the CAM menu.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="data"></param>
-    /// <param name="length"></param>
-    /// <param name="repeat"></param>
-    /// <param name="toneburst"></param>
-    /// <param name="polarity"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDiSEqCMsg", CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiSetDiSEqCMsg(IntPtr device, IntPtr data, byte length, byte repeat,
-                                                        byte toneburst, int polarity);
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiCIEnterModuleMenu(IntPtr device, byte slotIndex);
 
     /// <summary>
-    /// Technotrend: set antenna power
+    /// Request a CI status update. This request will be answered via the OnCiStatus() callback.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="bAntPwrOnOff"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDVBTAntPwr", CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiSetDVBTAntPwr(IntPtr device, bool bAntPwrOnOff);
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiCIGetSlotStatus(IntPtr device, byte slotIndex);
 
     /// <summary>
-    /// Technotrend: get antenna power
+    /// Send a response from the user to the CAM.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="uiAntPwrOnOff"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiGetDVBTAntPwr", CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiGetDVBTAntPwr(IntPtr device, ref int uiAntPwrOnOff);
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="menuAnswer">The user's response.</param>
+    /// <param name="answerLength">The length of the user's response in bytes.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiCIAnswer(IntPtr device, byte slotIndex,
+                                                    [MarshalAs(UnmanagedType.LPStr)] String menuAnswer, byte answerLength);
 
     /// <summary>
-    /// Technotrend: Enter CI menu
+    /// Select an entry in the CAM menu.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="slot"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIEnterModuleMenu",
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiCIEnterModuleMenu(IntPtr device, byte slot);
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="choice">The index (0..n) of the menu choice selected by the user.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiCIMenuAnswer(IntPtr device, byte slotIndex, byte choice);
+
+    #endregion
 
     /// <summary>
-    /// Technotrend: Select CI menu choice
+    /// Tune to a transponder/multiplex.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="slot"></param>
-    /// <param name="selection"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIMenuAnswer", CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiCIMenuAnswer(IntPtr device, byte slot, byte selection);
+    /// <param name="device">The handle allocated to this device.</param>
+    /// <param name="tuneRequest">A buffer containing the tune request.</param>
+    /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
+    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TtApiResult bdaapiTune(IntPtr device, IntPtr tuneRequest);
+
+    #endregion
+
+    #region structs
+
+    [StructLayout(LayoutKind.Sequential)]
+    private unsafe struct CiSlotInfo   // TYP_SLOT_INFO
+    {
+      public TtCiState Status;
+      public IntPtr CamMenuTitle;
+      // conditional access system IDs
+      public UInt16* CaSystemIds;
+      public UInt16 NumberOfCaSystemIds;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    private struct ConnectionDescription  // TYPE_CONNECT_DESCR
+    {
+      public TtConnectionType ConnectionType;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String DialIn;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String ClientIpAddress;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String ServerIpAddress;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String TcpPort;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String ConnectionAuthenticationId;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String LoginUserName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String LoginPassword;
+      public byte RetryCount;
+      public byte Timeout;      // unit = 10 ms
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    private struct FilterNames // TS_FilterNames
+    {
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String TunerFilterName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String TunerFilter2Name;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String CaptureFilterName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String AnalogTunerFilterName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String AnalogCaptureFilterName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String StbCaptureFilterName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      public String ProductName;
+      public TtFrontEndType FrontEndType;
+    }
 
     /// <summary>
-    /// Technotrend: Send CI menu answer
+    /// A structure for holding the full set of callback function and context pointers.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="slot"></param>
-    /// <param name="pKeyBuffer"></param>
-    /// <param name="nLength"></param>
-    /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIAnswer", CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiCIAnswer(IntPtr device, byte slot,
-                                                    [MarshalAs(UnmanagedType.LPStr)] String pKeyBuffer, byte nLength);
+    [StructLayout(LayoutKind.Sequential)]
+    private unsafe struct TtFullCiCallbacks
+    {
+      public OnTtSlotStatus OnSlotStatus;
+      public IntPtr OnSlotStatusContext;
+
+      public OnTtCaStatus OnCaStatus;
+      public IntPtr OnCaStatusContext;
+
+      public OnTtDisplayString OnDisplayString;
+      public IntPtr OnDisplayStringContext;
+
+      public OnTtDisplayMenuOrList OnDisplayMenu;
+      public IntPtr OnDisplayMenuContext;
+
+      public OnTtDisplayMenuOrList OnDisplayList;
+      public IntPtr OnDisplayListContext;
+
+      public OnTtSwitchOsdOff OnSwitchOsdOff;
+      public IntPtr OnSwitchOsdOffContext;
+
+      public OnTtInputRequest OnInputRequest;
+      public IntPtr OnInputRequestContext;
+
+      public OnTtLscSetDescriptor OnLscSetDescriptor;
+      public IntPtr OnLscSetDescriptorContext;
+
+      public OnTtLscConnect OnLscConnect;
+      public IntPtr OnLscConnectContext;
+
+      public OnTtLscDisconnect OnLscDisconnect;
+      public IntPtr OnLscDisconnectContext;
+
+      public OnTtLscSetParams OnLscSetParams;
+      public IntPtr OnLscSetParamsContext;
+
+      public OnTtLscEnquireStatus OnLscEnquireStatus;
+      public IntPtr OnLscEnquireStatusContext;
+
+      public OnTtLscGetNextBuffer OnLscGetNextBuffer;
+      public IntPtr OnLscGetNextBufferContext;
+
+      public OnTtLscTransmitBuffer OnLscTransmitBuffer;
+      public IntPtr OnLscTransmitBufferContext;
+    }
+
+    /// <summary>
+    /// A structure for holding a minimal ("slim") set of callback function and context pointers.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    private unsafe struct TtSlimCiCallbacks
+    {
+      public OnTtSlotStatus OnSlotStatus;
+      public IntPtr OnSlotStatusContext;
+      public OnTtCaStatus OnCaStatus;
+      public IntPtr OnCAStatusContext;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct TtDvbcTuneRequest
+    {
+      public TtDeviceType DeviceType;
+      public UInt32 Frequency;                // unit = kHz
+      public ModulationType Modulation;       // expected to be QAM 16, 32, 64, 128, or 256
+      private FECMethod InnerFecMethod;
+      private BinaryConvolutionCodeRate InnerFecRate;
+      private FECMethod OuterFecMethod;
+      private BinaryConvolutionCodeRate OuterFecRate;
+      public UInt32 SymbolRate;               // unit = ksps
+      public SpectralInversion SpectralInversion;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+      private byte[] Padding;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct TtDvbsTuneRequest
+    {
+      public TtDeviceType DeviceType;
+      public UInt32 Frequency;                // unit = kHz
+      public UInt32 FrequencyMultiplier;
+      public Polarisation Polarisation;
+      private UInt32 Bandwidth;
+      public TtDiseqcPort Diseqc;
+      private UInt32 Transponder;
+      public ModulationType Modulation;       // expected to be QPSK for DVB-S, 8 VSB for DVB-S2
+      private FECMethod InnerFecMethod;
+      private BinaryConvolutionCodeRate InnerFecRate;
+      private FECMethod OuterFecMethod;
+      private BinaryConvolutionCodeRate OuterFecRate;
+      public UInt32 SymbolRate;               // unit = ksps
+      public SpectralInversion SpectralInversion;
+      public UInt32 LnbHighBandLof;           // unit = kHz
+      public UInt32 LnbLowBandLof;            // unit = kHz
+      public UInt32 LnbSwitchFrequency;       // unit = kHz
+      public bool UseToneBurst;               // This field turns tone burst on/off; use the Diseqc field to specify the tone state.
+      private UInt32 Command;
+      private UInt32 CommandCount;
+      private UInt32 LnbSource;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+      private byte[] RawDiseqc;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct TtDvbtTuneRequest
+    {
+      public TtDeviceType DeviceType;
+      public UInt32 Frequency;                // unit = kHz
+      public UInt32 FrequencyMultiplier;
+      public UInt32 Bandwidth;                // unit = kHz
+      public ModulationType Modulation;       // expected to be QAM 16, QAM 64, QAM 256, or QPSK
+      private FECMethod InnerFecMethod;
+      private BinaryConvolutionCodeRate InnerFecRate;
+      private FECMethod OuterFecMethod;
+      private BinaryConvolutionCodeRate OuterFecRate;
+      public SpectralInversion SpectralInversion;
+      private GuardInterval GuardInterval;
+      private TransmissionMode TransmissionMode;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 52)]
+      private byte[] Padding;
+    }
 
     #endregion
 
     #region callback delegate definitions
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// Called when a signal from the remote is detected by the IR receiver.
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="nStatus"></param>
-    /// <param name="csInfo"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnSlotStatusCallback(IntPtr Context, byte nSlot, byte nStatus, SlotInfo* csInfo);
+    private unsafe delegate void OnTtIrCode(IntPtr context, IntPtr code);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// Called by the tuner driver when the state of the CI slot changes.
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="nReplyTag"></param>
-    /// <param name="wStatus"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="state">The new state of the slot.</param>
+    /// <param name="slotInfo">Extended information about the interface state.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnCaChangeCallback(IntPtr Context, byte nSlot, byte nReplyTag, Int16 wStatus);
+    private unsafe delegate void OnTtSlotStatus(IntPtr context, byte slotIndex, TtCiState state, CiSlotInfo* slotInfo);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// Called by the tuner driver when the result of an interaction with the CAM is known.
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="pString"></param>
-    /// <param name="wLength"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="reply">A reply message from the CAM.</param>
+    /// <param name="error">An error message from the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnDisplayString(IntPtr Context, byte nSlot, IntPtr pString, Int16 wLength);
+    private unsafe delegate void OnTtCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// Called by the tuner driver when the CAM requests input from the user. This delegate is
+    /// called immediately before OnInputRequest().
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="wItems"></param>
-    /// <param name="pStringArray"></param>
-    /// <param name="wLength"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="text">The request context text from the CAM.</param>
+    /// <param name="textLength">The length of the context text in bytes.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnDisplayMenuAndLists(
-      IntPtr Context, byte nSlot, Int16 wItems, IntPtr pStringArray, Int16 wLength);
+    private unsafe delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// Called by the tuner driver when a menu or list from the CAM is available.
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="numEntries">The number of entries in the menu/list.</param>
+    /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
+    /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnSwitchOsdOff(IntPtr Context, byte nSlot);
+    private unsafe delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// Called by the tuner driver when the CAM wants to close the menu.
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="bBlindAnswer"></param>
-    /// <param name="nExpectedLength"></param>
-    /// <param name="dwKeyMask"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnInputRequest(
-      IntPtr Context, byte nSlot, bool bBlindAnswer, byte nExpectedLength, Int16 dwKeyMask);
+    private unsafe delegate void OnTtSwitchOsdOff(IntPtr context, byte slotIndex);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// Called by the tuner driver when the CAM requests input from the user.
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="pDescriptor"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
+    /// <param name="answerLength">The expected answer length.</param>
+    /// <param name="keyMask"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscSetDescriptor(IntPtr Context, byte nSlot, IntPtr pDescriptor);
+    private unsafe delegate void OnTtInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// ???
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="descriptor">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscConnect(IntPtr Context, byte nSlot);
+    private unsafe delegate void OnTtLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// ???
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscDisconnect(IntPtr Context, byte nSlot);
+    private unsafe delegate void OnTtLscConnect(IntPtr context, byte slotIndex);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// ???
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="BufferSize"></param>
-    /// <param name="Timeout10Ms"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscSetParams(IntPtr Context, byte nSlot, byte BufferSize, byte Timeout10Ms);
+    private unsafe delegate void OnTtLscDisconnect(IntPtr context, byte slotIndex);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// ???
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="bufferSize"></param>
+    /// <param name="timeout">A timeout in units of ten milliseconds.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscEnquireStatus(IntPtr Context, byte nSlot);
+    private unsafe delegate void OnTtLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// ???
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="PhaseID"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscGetNextBuffer(IntPtr Context, byte nSlot, byte PhaseID);
+    private unsafe delegate void OnTtLscEnquireStatus(IntPtr context, byte slotIndex);
 
     /// <summary>
-    /// Technotrend: Callbacks from CI
+    /// ???
     /// </summary>
-    /// <param name="Context"></param>
-    /// <param name="nSlot"></param>
-    /// <param name="PhaseID"></param>
-    /// <param name="pData"></param>
-    /// <param name="nLength"></param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="phaseId"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscTransmitBuffer(
-      IntPtr Context, byte nSlot, byte PhaseID, IntPtr pData, Int16 nLength);
+    private unsafe delegate void OnTtLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId);
+
+    /// <summary>
+    /// ???
+    /// </summary>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="phaseId"></param>
+    /// <param name="buffer"></param>
+    /// <param name="bufferSize"></param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnTtLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize);
+
+    /// <summary>
+    /// Called by the tuner driver when a message is received from the CAM. This delegate
+    /// receives the raw message/response data from the CAM.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="tag"></param>
+    /// <param name="buffer"></param>
+    /// <param name="bufferSize"></param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnTtCiMessage(byte slotIndex, TtCiMessageHandlerTag tag, IntPtr buffer, Int16 bufferSize);
 
     #endregion
 
-    #region Constants
+    #region constants
 
-    private const string LBDG2_NAME = "TechnoTrend BDA/DVB Capture";
-    private const string LBDG2_NAME_C_TUNER = "TechnoTrend BDA/DVB-C Tuner";
-    private const string LBDG2_NAME_S_TUNER = "TechnoTrend BDA/DVB-S Tuner";
-    private const string LBDG2_NAME_T_TUNER = "TechnoTrend BDA/DVB-T Tuner";
-    private const string LBDG2_NAME_NEW = "ttBudget2 BDA DVB Capture";
-    private const string LBDG2_NAME_C_TUNER_NEW = "ttBudget2 BDA DVB-C Tuner";
-    private const string LBDG2_NAME_S_TUNER_NEW = "ttBudget2 BDA DVB-S Tuner";
-    private const string LBDG2_NAME_T_TUNER_NEW = "ttBudget2 BDA DVB-T Tuner";
-    private const string LBUDGET3NAME = "TTHybridTV BDA Digital Capture";
-    private const string LBUDGET3NAME_TUNER = "TTHybridTV BDA DVBT Tuner";
-    private const string LBUDGET3NAME_ATSC_TUNER = "TTHybridTV BDA ATSC Tuner";
-    private const string LBUDGET3NAME_TUNER_ANLG = "TTHybridTV BDA Analog TV Tuner";
-    private const string LBUDGET3NAME_ANLG = "TTHybridTV BDA Analog Capture";
-    private const string LUSB2BDA_DVB_NAME = "USB 2.0 BDA DVB Capture";
-    private const string LUSB2BDA_DSS_NAME = "USB 2.0 BDA DSS Capture";
-    private const string LUSB2BDA_DSS_NAME_TUNER = "USB 2.0 BDA DSS Tuner";
-    private const string LUSB2BDA_DVB_NAME_C_TUNER = "USB 2.0 BDA DVB-C Tuner";
-    private const string LUSB2BDA_DVB_NAME_S_TUNER = "USB 2.0 BDA DVB-S Tuner";
-    private const string LUSB2BDA_DVB_NAME_S_TUNER_FAKE = "USB 2.0 BDA (DVB-T Fake) DVB-T Tuner";
-    private const string LUSB2BDA_DVB_NAME_T_TUNER = "USB 2.0 BDA DVB-T Tuner";
-    private const string LUSB2BDA_DVBS_NAME_PIN = "Pinnacle PCTV 4XXe Capture";
-    private const string LUSB2BDA_DVBS_NAME_PIN_TUNER = "Pinnacle PCTV 4XXe Tuner";
+    private const int MaxWindowsPathLength = 260;
+    private const int MaxDiseqcCommandLength = 64;    // This is arbitrary - the hardware/interface limit is not known.
+    private const int TuneRequestSize = 100;
 
-    #endregion
-
-    #region Member variables
-
-    private uint m_deviceID;
-    private IntPtr m_hBdaApi;
-    private byte m_slot;
-    private bool m_verboseLogging = false;
-    private bool m_ciSlotAvailable = false;
-    private int m_ciStatus; // set to -1 when no ca resource
-    private int m_caErrorCount; // number of failures to setProgramm
-    private int m_waitTimeout;
-    private String m_ciDisplayString;
-    private TTCiSlotStatus m_slotStatus;
-    private TTApiDeviceCat m_deviceType;
-    private IBaseFilter m_tunerFilter;
-    private DVBSChannel _previousChannel;
-    private ICiMenuCallbacks ciMenuCallbacks;
-    private readonly IntPtr ptrPmt;
-    private readonly IntPtr _ptrDataInstance;
-
-
-    //TTSlimCallbackStruct slimCallback;
-    private TTCallbackStruct fullCallback;
-
-    #endregion
-
-    /// <summary>
-    /// constructor for enabling technotrend ci 
-    /// </summary>
-    /// <param name="tunerFilter">tunerfilter</param>
-    public TechnoTrendAPI(IBaseFilter tunerFilter)
+    private static readonly string[] ValidBudget2TunerNames = new string[]
     {
-      m_deviceID = 0;
-      m_slot = 0;
-      m_ciStatus = 0;
-      m_caErrorCount = 0;
-      m_waitTimeout = 0;
-      m_ciSlotAvailable = false;
-      m_slotStatus = TTCiSlotStatus.SlotUnknownState;
-      m_tunerFilter = tunerFilter;
-      ptrPmt = Marshal.AllocCoTaskMem(1024); // buffer for handling pmt
-      _ptrDataInstance = Marshal.AllocCoTaskMem(1024); // buffer for diseqc messages
+      "TechnoTrend BDA/DVB-C Tuner",
+      "TechnoTrend BDA/DVB-S Tuner",
+      "TechnoTrend BDA/DVB-T Tuner",
+      "ttBudget2 BDA DVB-C Tuner",
+      "ttBudget2 BDA DVB-S Tuner",
+      "ttBudget2 BDA DVB-T Tuner"
+    };
 
-      // detect card type
-      DetectCardType();
-      // if unknown exit
-      if (m_deviceType == TTApiDeviceCat.UNKNOWN) return;
+    private static readonly string[] ValidBudget3TunerNames = new string[]
+    {
+      "TTHybridTV BDA DVBT Tuner",
+      "TTHybridTV BDA ATSC Tuner"
+    };
 
-      // enumerate device id for opening hw
-      GetDeviceID();
+    private static readonly string[] ValidUsb2TunerNames = new string[]
+    {
+      "USB 2.0 BDA DVB-C Tuner",
+      "USB 2.0 BDA DVB-S Tuner",
+      "USB 2.0 BDA (DVB-T Fake) DVB-T Tuner",
+      "USB 2.0 BDA DVB-T Tuner"
+    };
 
-      // OpenCI
-      OpenCI();
-    }
+    private static readonly string[] ValidPinnacleTunerNames = new string[]
+    {
+      "Pinnacle PCTV 4XXe Tuner"
+    };
+
+    private static readonly string[] ValidDssTunerNames = new string[]
+    {
+      "USB 2.0 BDA DSS Tuner"
+    };
+
+    #endregion
+
+    #region variables
+
+    private bool _isTechnoTrend = false;
+    private bool _isCiSlotPresent = false;
+    private bool _isCamPresent = false;
+    private bool _isCamReady = false;
+    private byte _slotIndex = 0;
+    private TtCiState _ciState = TtCiState.Unknown;
+
+    private CardType _tunerType = CardType.Unknown;
+    private TtDeviceCategory _deviceCategory = TtDeviceCategory.Unknown;
+
+    private IntPtr _deviceHandle = IntPtr.Zero;
+    private IntPtr _serviceBuffer = IntPtr.Zero;
+    private IntPtr _generalBuffer = IntPtr.Zero;
+
+    private IBaseFilter _tunerFilter = null;
+    private TtFullCiCallbacks _callbacks;
+    private ICiMenuCallbacks _ciMenuCallbacks = null;
+
+    private String _camInputRequestContext = String.Empty;
+
+    private List<ushort> _descrambledServices = new List<ushort>();
+
+    #endregion
 
     /// <summary>
-    /// Opens the CI API
+    /// Initialises a new instance of the <see cref="TechnoTrendAPI"/> class.
     /// </summary>
-    public void OpenCI()
+    /// <param name="tunerFilter">The tuner filter.</param>
+    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
+    public TechnoTrendAPI(IBaseFilter tunerFilter, CardType tunerType)
     {
-      m_hBdaApi = bdaapiOpenHWIdx(m_deviceType, m_deviceID);
-      if (m_hBdaApi.ToInt32() == -1)
+      if (tunerFilter == null)
       {
-        Log.Log.Debug("TechnoTrend: unable to open the device");
+        return;
+      }
+      _tunerFilter = tunerFilter;
+      _deviceCategory = GetDeviceCategory();
+      if (_deviceCategory == TtDeviceCategory.Unknown)
+      {
         return;
       }
 
-      if (m_verboseLogging) Log.Log.Debug("TechnoTrend: OpenHWIdx succeeded");
-      GetDrvVersion();
-
-      // assign callback functions
-      fullCallback.p01Context = fullCallback.p02Context = fullCallback.p03Context = fullCallback.p04Context =
-                                                                                    fullCallback.p05Context =
-                                                                                    fullCallback.p06Context =
-                                                                                    fullCallback.p07Context =
-                                                                                    fullCallback.p08Context =
-                                                                                    fullCallback.p09Context =
-                                                                                    fullCallback.p10Context =
-                                                                                    fullCallback.p11Context =
-                                                                                    fullCallback.p12Context =
-                                                                                    fullCallback.p13Context =
-                                                                                    fullCallback.p14Context = m_hBdaApi;
-      fullCallback.p01 = onSlotChange;
-      fullCallback.p02 = onCaChange;
-      fullCallback.p03 = onDisplayString;
-      fullCallback.p04 = onDisplayMenuOrList;
-      fullCallback.p05 = onDisplayMenuOrList; // same function for list/menu
-      fullCallback.p06 = onSwitchOsdOff;
-      fullCallback.p07 = onInputRequest;
-      fullCallback.p08 = onLscSetDescriptor;
-      fullCallback.p09 = onLscConnect;
-      fullCallback.p10 = onLscDisconnect;
-      fullCallback.p11 = onLscSetParams;
-      fullCallback.p12 = onLscEnquireStatus;
-      fullCallback.p13 = onLscGetNextBuffer;
-      fullCallback.p14 = onLscTransmitBuffer;
-
-      // open ci hardware 
-      TTApiResult result = bdaapiOpenCI(m_hBdaApi, fullCallback);
-      if (result == TTApiResult.Success)
+      int deviceId = GetDeviceId();
+      if (deviceId == -1)
       {
-        m_ciSlotAvailable = true;
-        m_caErrorCount = 0; // (re)set error counter
-        Log.Log.Debug("TechnoTrend: OpenCI succeeded");
+        return;
       }
-      else
+      _deviceHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
+      if (_deviceHandle == IntPtr.Zero || _deviceHandle.ToInt32() == -1)
       {
-        Log.Log.Debug("TechnoTrend: no CI detected: {0}", result);
+        return;
       }
-    }
 
-    /// <summary>
-    /// Closes the CI API
-    /// </summary>
-    public void CloseCI()
-    {
-      // if hw was opened before, close it now
-      if (m_hBdaApi.ToInt32() != -1)
+      Log.Log.Debug("TechnoTrend: supported tuner detected, category = {0}, id = {1}", _deviceCategory, deviceId);
+      _isTechnoTrend = true;
+      _tunerType = tunerType;
+      _generalBuffer = Marshal.AllocCoTaskMem(TuneRequestSize);
+      ReadDeviceInfo();
+      SetPowerState(true);
+      if (_tunerType == CardType.DvbT)
       {
-        if (m_ciSlotAvailable)
+        TtApiResult result = bdaapiSetDVBTAutoOffsetMode(_deviceHandle, false);
+        if (result != TtApiResult.Success)
         {
-          Log.Log.Debug("TechnoTrend: Closing CI");
-          bdaapiCloseCI(m_hBdaApi);
-        }
-        Log.Log.Debug("TechnoTrend: Closing hardware");
-        bdaapiClose(m_hBdaApi);
-      }
-    }
-
-    /// <summary>
-    /// Reset the CI
-    /// </summary>
-    public void ResetCI()
-    {
-      CloseCI();
-      OpenCI();
-    }
-
-    /// <summary>
-    /// Query slot status from card
-    /// </summary>
-    private void GetCISlotStatus()
-    {
-      TTApiResult result = bdaapiCIGetSlotStatus(m_hBdaApi, m_slot);
-      if (result != TTApiResult.Success)
-      {
-        Log.Log.Debug("TechnoTrend: bdaapiCIGetSlotStatus failed {0}", result);
-      }
-    }
-
-    /// <summary>
-    /// returns driver version number
-    /// </summary>
-    /// <returns></returns>
-    public TTApiResult GetDrvVersion()
-    {
-      TTApiResult hr;
-      byte v1 = 0, v2 = 0, v3 = 0, v4 = 0;
-
-      hr = bdaapiGetDrvVersion(m_hBdaApi, ref v1, ref v2, ref v3, ref v4);
-      if (hr != TTApiResult.Success)
-      {
-        Log.Log.Debug("TechnoTrend: bdaapiGetDrvVersion failed {0}", hr);
-      }
-      else
-      {
-        Log.Log.Debug("TechnoTrend: initalized id:{0}, driver version:{1}.{2}.{3}.{4}", m_deviceID, v1, v2, v3, v4);
-      }
-
-      return TTApiResult.Success;
-    }
-
-
-    /// <summary>
-    ///**************************************************************************************************
-    ///* GetDeviceID()
-    ///* Finds the technotrend device Id for the tuner filter
-    ///* returns true if device id is found otherwise false
-    ///**************************************************************************************************
-    /// </summary>
-    /// <returns></returns>
-    private bool GetDeviceID()
-    {
-      m_deviceID = 0;
-
-      IKsPin pKsPin = DsFindPin.ByDirection(m_tunerFilter, PinDirection.Output, 0) as IKsPin;
-      if (pKsPin != null)
-      {
-        IntPtr raw;
-
-        // Request the raw data
-        int hr = pKsPin.KsQueryMediums(out raw);
-        try
-        {
-          // Load the number of media
-          int countRecPin = Marshal.ReadInt32(raw, 4);
-          RegPinMedium rpm;
-
-          // Load it all
-          for (int i = 0, s = Marshal.SizeOf(typeof (RegPinMedium)); i < countRecPin; i++)
-          {
-            // Get the reference
-            IntPtr addr = new IntPtr(raw.ToInt32() + 8 + s * i);
-            // Reconstruct
-            rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof (RegPinMedium));
-            m_deviceID = (uint)rpm.dw1;
-          }
-          // Report
-          return true;
-        }
-        finally
-        {
-          // Cleanup native memory
-          if (IntPtr.Zero != raw) Marshal.FreeCoTaskMem(raw);
+          Log.Log.Debug("TechnoTrend: failed to turn off auto offset mode, result = {0}", result);
         }
       }
-      return true;
+
+      OpenCi();
     }
 
     /// <summary>
-    /// Gets a value indicating whether this instance is TechnoTrend.
+    /// Gets a value indicating whether this tuner is a TechnoTrend-compatible tuner.
     /// </summary>
-    /// <value>
-    /// 	<c>true</c> if this instance is TechnoTrend; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if this tuner is a TechnoTrend-compatible tuner, otherwise <c>false</c></value>
     public bool IsTechnoTrend
     {
-      get { return (m_deviceType != TTApiDeviceCat.UNKNOWN); }
-    }
-
-    /// <summary>
-    /// Determines whether cam is ready.
-    /// </summary>
-    /// <returns>
-    /// 	<c>true</c> if [is cam ready]; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsCamReady()
-    {
-      bool yesNo = false;
-      if (m_ciSlotAvailable && (m_slotStatus == TTCiSlotStatus.SlotCaOk || m_slotStatus == TTCiSlotStatus.SlotModuleOk))
+      get
       {
-        yesNo = true;
+        return _isTechnoTrend;
       }
-      if (m_verboseLogging) Log.Log.Debug("TechnoTrend: IsCamReady: {0}", yesNo);
-      return yesNo;
     }
 
     /// <summary>
-    /// Determines whether cam is ready.
+    /// Determine the device category based on the tuner filter name.
     /// </summary>
-    /// <returns>
-    /// 	<c>true</c> if [is cam ready]; otherwise, <c>false</c>.
-    /// </returns>
+    /// <returns>the device category</returns>
+    private TtDeviceCategory GetDeviceCategory()
+    {
+      String tunerName = FilterGraphTools.GetFilterName(_tunerFilter);
+      if (tunerName == null)
+      {
+        return TtDeviceCategory.Unknown;
+      }
+      for (int i = 0; i < ValidBudget2TunerNames.Length; i++)
+      {
+        if (tunerName.Equals(ValidBudget2TunerNames[i]))
+        {
+          return TtDeviceCategory.Budget2;
+        }
+      }
+      for (int i = 0; i < ValidBudget3TunerNames.Length; i++)
+      {
+        if (tunerName.Equals(ValidBudget3TunerNames[i]))
+        {
+          return TtDeviceCategory.Budget3;
+        }
+      }
+      for (int i = 0; i < ValidUsb2TunerNames.Length; i++)
+      {
+        if (tunerName.Equals(ValidUsb2TunerNames[i]))
+        {
+          return TtDeviceCategory.Usb2;
+        }
+      }
+      for (int i = 0; i < ValidPinnacleTunerNames.Length; i++)
+      {
+        if (tunerName.Equals(ValidPinnacleTunerNames[i]))
+        {
+          return TtDeviceCategory.Usb2Pinnacle;
+        }
+      }
+      for (int i = 0; i < ValidDssTunerNames.Length; i++)
+      {
+        if (tunerName.Equals(ValidDssTunerNames[i]))
+        {
+          return TtDeviceCategory.Usb2Dss;
+        }
+      }
+      return TtDeviceCategory.Unknown;
+    }
+
+    /// <summary>
+    /// Determine the TechnoTrend device identifier.
+    /// </summary>
+    /// <returns><c>-1</c> if it is not possible to determine the device identifier, otherwise the device identifier</returns>
+    private int GetDeviceId()
+    {
+      int deviceId = -1;
+
+      IKsPin pin = DsFindPin.ByDirection(_tunerFilter, PinDirection.Output, 0) as IKsPin;
+      if (pin == null)
+      {
+        return deviceId;
+      }
+
+      // Request the raw medium data.
+      IntPtr raw;
+      int hr = pin.KsQueryMediums(out raw);
+      if (hr != 0 || raw == IntPtr.Zero)
+      {
+        if (raw != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(raw);
+        }
+        Release.ComObject(pin);
+        return deviceId;
+      }
+
+      try
+      {
+        // Read the number of mediums.
+        int countMediums = Marshal.ReadInt32(raw, 4);
+        Log.Log.Debug("debug: number of mediums = {0}", countMediums);
+
+        // Calculate the address of the first medium.
+        IntPtr addr = new IntPtr(raw.ToInt32() + 8);
+        // Marshal the data into an RPM structure.
+        RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof(RegPinMedium));
+        return rpm.dw1;
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(raw);
+        Release.ComObject(pin);
+      }
+    }
+
+    /// <summary>
+    /// Attempt to read the device information from the tuner.
+    /// </summary>
+    private void ReadDeviceInfo()
+    {
+      Log.Log.Debug("TechnoTrend: read device information");
+
+      // General product details.
+      IntPtr info = Marshal.AllocCoTaskMem(1824);
+      for (int i = 0; i < 1824; i++)
+      {
+        Marshal.WriteByte(info, i, 0);
+      }
+      TtApiResult result = bdaapiGetDevNameAndFEType(_deviceHandle, info);
+      if (result == TtApiResult.Success)
+      {
+        FilterNames names = (FilterNames)Marshal.PtrToStructure(info, typeof(FilterNames));
+        Log.Log.Debug("  product name        = {0}", names.ProductName);
+        Log.Log.Debug("  tuner type          = {0}", names.FrontEndType);
+        Log.Log.Debug("  tuner filter name   = {0}", names.TunerFilterName);
+        Log.Log.Debug("  capture filter name = {0}", names.CaptureFilterName);
+        // These other filter names are not relevant for digital tuners (they will be blank).
+        /*Log.Log.Debug("TechnoTrend: {0}", names.AnalogTunerFilterName);
+        Log.Log.Debug("TechnoTrend: {0}", names.AnalogCaptureFilterName);
+        Log.Log.Debug("TechnoTrend: {0}", names.StbCaptureFilterName);*/
+      }
+      else
+      {
+        Log.Log.Debug("TechnoTrend: failed to read the device details, result = {0}", result);
+      }
+      Marshal.FreeCoTaskMem(info);
+
+      // Product seller.
+      TtProductSeller seller = TtProductSeller.Unknown;
+      result = bdaapiGetProductSellerID(_deviceHandle, ref seller);
+      if (result == TtApiResult.Success)
+      {
+        Log.Log.Debug("  product (re)seller  = {0}", seller);
+      }
+      else
+      {
+        Log.Log.Debug("TechnoTrend: failed to determine the product (re)seller, result = {0}", result);
+      }
+
+      // Driver version.
+      byte v1 = 0;
+      byte v2 = 0;
+      byte v3 = 0;
+      byte v4 = 0;
+      result = bdaapiGetDrvVersion(_deviceHandle, ref v1, ref v2, ref v3, ref v4);
+      if (result == TtApiResult.Success)
+      {
+        Log.Log.Debug("  driver version      = {0}.{1}.{2}.{3}", v1, v2, v3, v4);
+      }
+      else
+      {
+        Log.Log.Debug("TechnoTrend: failed to read the driver version, result = {0}", result);
+      }
+
+      // MAC address.
+      UInt32 lowPart = 0;
+      UInt32 highPart = 0;
+      result = bdaapiGetMAC(_deviceHandle, ref highPart, ref lowPart);
+      if (result == TtApiResult.Success)
+      {
+        Array lowBytes = BitConverter.GetBytes(lowPart);
+        Array highBytes = BitConverter.GetBytes(highPart);
+        Log.Log.Debug("  MAC address         = {0:X2}-{1:X2}-{2:X2}-{3:X2}-{4:X2}-{5:X2}",
+          highBytes.GetValue(2), highBytes.GetValue(1), highBytes.GetValue(0),
+          lowBytes.GetValue(2), lowBytes.GetValue(1), lowBytes.GetValue(0)
+        );
+      }
+      else
+      {
+        Log.Log.Debug("TechnoTrend: failed to read the MAC address, result = {0}", result);
+      }
+
+      // USB speed.
+      if (_deviceCategory == TtDeviceCategory.Usb2 || _deviceCategory == TtDeviceCategory.Usb2Pinnacle || _deviceCategory == TtDeviceCategory.Usb2Dss)
+      {
+        bool highSpeed = false;
+        result = bdaapiGetUSBHighspeedMode(_deviceHandle, ref highSpeed);
+        if (result == TtApiResult.Success)
+        {
+          Log.Log.Debug("  USB 2 speed support = {0}", highSpeed);
+        }
+        else
+        {
+          Log.Log.Debug("TechnoTrend: failed to determine whether USB high speed is supported, result = {0}", result);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Turn the LNB or aerial power supply on or off.
+    /// </summary>
+    /// <param name="powerOn"><c>True</c> to turn power supply on, otherwise <c>false</c>.</param>
+    /// <returns><c>true</c> if the power supply state is set successfully, otherwise <c>false</c></returns>
+    public bool SetPowerState(bool powerOn)
+    {
+      Log.Log.Debug("TechnoTrend: set power state, on = {0}", powerOn);
+      if (_tunerType != CardType.DvbT)
+      {
+        Log.Log.Debug("TechnoTrend: power control is not supported for this device");
+        return true;
+      }
+
+      TtApiResult result = bdaapiSetDVBTAntPwr(_deviceHandle, powerOn);
+      Log.Log.Debug("Turbosight: result = {0}", result);
+      return (result == TtApiResult.Success);
+    }
+
+    /// <summary>
+    /// Control whether tone/data burst and 22 kHz legacy tone are used.
+    /// </summary>
+    /// <param name="toneBurstState">The tone/data burst state.</param>
+    /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    {
+      // This function needs to be tested. I'm uncertain whether
+      // the driver will accept commands with no DiSEqC messages.
+      Log.Log.Debug("TechnoTrend: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      TtToneBurst tone = TtToneBurst.Off;
+      if (toneBurstState == ToneBurst.ToneBurst)
+      {
+        tone = TtToneBurst.ToneBurst;
+      }
+      else if (toneBurstState == ToneBurst.DataBurst)
+      {
+        tone = TtToneBurst.DataBurst;
+      }
+      TtApiResult result = bdaapiSetDiSEqCMsg(_deviceHandle, IntPtr.Zero, 0, 0, tone, Polarisation.LinearH);
+
+      // Note: 22 kHz control is not supported.
+
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
+      return (result == TtApiResult.Success);
+    }
+
+    /// <summary>
+    /// Set tuning parameters that can or could not previously be set through BDA interfaces.
+    /// </summary>
+    /// <param name="channel">The channel to tune.</param>
+    /// <returns>The channel with parameters adjusted as necessary.</returns>
+    public DVBBaseChannel SetTuningParameters(DVBBaseChannel channel)
+    {
+      Log.Log.Debug("Technotrend: set tuning parameters");
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
+      {
+        return channel;
+      }
+
+      if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
+      {
+        ch.ModulationType = ModulationType.Mod8Vsb;
+      }
+      // I don't think any TechnoTrend tuners support demodulating anything
+      // higher than 8 PSK. Nevertheless...
+      else if (ch.ModulationType == ModulationType.Mod16Apsk)
+      {
+        ch.ModulationType = ModulationType.Mod16Vsb;
+      }
+      else if (ch.ModulationType == ModulationType.Mod32Apsk)
+      {
+        ch.ModulationType = ModulationType.ModOqpsk;
+      }
+      Log.Log.Debug("  modulation = {0}", ch.ModulationType);
+      return ch as DVBBaseChannel;
+    }
+
+    #region conditional access
+
+    /// <summary>
+    /// Trigger the driver to send a conditional access interface status update (call OnCiStatus()).
+    /// </summary>
+    private void GetCiSlotStatus()
+    {
+      TtApiResult result = bdaapiCIGetSlotStatus(_deviceHandle, _slotIndex);
+      if (result != TtApiResult.Success)
+      {
+        Log.Log.Debug("TechnoTrend: bdaapiCIGetSlotStatus failed, result = {0}", result);
+      }
+    }
+
+    /// <summary>
+    /// Open the conditional access interface.
+    /// </summary>
+    private unsafe void OpenCi()
+    {
+      Log.Log.Debug("TechnoTrend: open conditional access interface");
+
+      // Callback contexts.
+      _callbacks.OnSlotStatusContext = _deviceHandle;
+      _callbacks.OnCaStatusContext = _deviceHandle;
+      _callbacks.OnDisplayStringContext = _deviceHandle;
+      _callbacks.OnDisplayMenuContext = _deviceHandle;
+      _callbacks.OnDisplayListContext = _deviceHandle;
+      _callbacks.OnSwitchOsdOffContext = _deviceHandle;
+      _callbacks.OnInputRequestContext = _deviceHandle;
+      _callbacks.OnLscSetDescriptorContext = _deviceHandle;
+      _callbacks.OnLscConnectContext = _deviceHandle;
+      _callbacks.OnLscDisconnectContext = _deviceHandle;
+      _callbacks.OnLscSetParamsContext = _deviceHandle;
+      _callbacks.OnLscEnquireStatusContext = _deviceHandle;
+      _callbacks.OnLscGetNextBufferContext = _deviceHandle;
+      _callbacks.OnLscTransmitBufferContext = _deviceHandle;
+
+      // Callback functions.
+      _callbacks.OnSlotStatus = OnSlotStatus;
+      _callbacks.OnCaStatus = OnCaStatus;
+      _callbacks.OnDisplayString = OnDisplayString;
+      _callbacks.OnDisplayMenu = OnDisplayMenuOrList;
+      _callbacks.OnDisplayList = OnDisplayMenuOrList;
+      _callbacks.OnSwitchOsdOff = OnSwitchOsdOff;
+      _callbacks.OnInputRequest = OnInputRequest;
+      _callbacks.OnLscSetDescriptor = OnLscSetDescriptor;
+      _callbacks.OnLscConnect = OnLscConnect;
+      _callbacks.OnLscDisconnect = OnLscDisconnect;
+      _callbacks.OnLscSetParams = OnLscSetParams;
+      _callbacks.OnLscEnquireStatus = OnLscEnquireStatus;
+      _callbacks.OnLscGetNextBuffer = OnLscGetNextBuffer;
+      _callbacks.OnLscTransmitBuffer = OnLscTransmitBuffer;
+
+      TtApiResult result = bdaapiOpenCI(_deviceHandle, _callbacks);
+      if (result == TtApiResult.Success)
+      {
+        Log.Log.Debug("TechnoTrend: result = {0}", result);
+        _isCiSlotPresent = true;
+        _serviceBuffer = Marshal.AllocCoTaskMem(200);
+        //GetCiSlotStatus();
+      }
+      else
+      {
+        // bdaapiOpenCI() returns "success" when a CI slot is present/connected, otherwise "error".
+        Log.Log.Debug("TechnoTrend: CI slot not present, result = {0}", result);
+        _isCiSlotPresent = false;
+      }
+    }
+
+    /// <summary>
+    /// Close the conditional access interface.
+    /// </summary>
+    private void CloseCi()
+    {
+      Log.Log.Debug("TechnoTrend: close conditional access interface");
+
+      if (_isCiSlotPresent)
+      {
+        bdaapiCloseCI(_deviceHandle);
+        Marshal.FreeCoTaskMem(_serviceBuffer);
+      }
+      _descrambledServices = new List<ushort>();
+      _camInputRequestContext = String.Empty;
+      _isCiSlotPresent = false;
+      _isCamPresent = false;
+      _isCamReady = false;
+    }
+
+    /// <summary>
+    /// Reset the conditional access interface.
+    /// </summary>
+    public void ResetCi()
+    {
+      CloseCi();
+      OpenCi();
+    }
+
+    /// <summary>
+    /// Determines whether a CI slot is present.
+    /// </summary>
+    /// <returns><c>true</c> if a CI slot is present, otherwise <c>false</c></returns>
+    public bool IsCiSlotPresent()
+    {
+      Log.Log.Debug("TechnoTrend: is CI slot present");
+      // A CI slot is present when bdaapiOpenCI() returns "success".
+      Log.Log.Debug("TechnoTrend: result = {0}", true);
+      return _isCiSlotPresent;
+    }
+
+    /// <summary>
+    /// Determines whether a CAM is present or not.
+    /// </summary>
+    /// <returns><c>true</c> if a CAM is present, otherwise <c>false</c></returns>
     public bool IsCamPresent()
     {
-      bool yesNo = true;
-      if (m_ciSlotAvailable == false || m_slotStatus == TTCiSlotStatus.SlotEmpty ||
-          m_slotStatus == TTCiSlotStatus.SlotUnknownState)
+      Log.Log.Debug("TechnoTrend: is CAM present");
+      if (!_isCiSlotPresent)
       {
-        yesNo = false;
+        Log.Log.Debug("TechnoTrend: CI slot not present");
+        return false;
       }
-      if (m_verboseLogging) Log.Log.Debug("TechnoTrend: IsCamPresent: {0}", yesNo);
-      return yesNo;
+
+      // The API accurately invokes the OnSlotStatus() delegate when the
+      // CAM state changes so there is no need to do anything other than
+      // report the current state.
+      //GetCiSlotStatus();
+      Log.Log.Debug("TechnoTrend: result = {0}", _isCamPresent);
+      return _isCamPresent;
     }
 
     /// <summary>
-    /// detects card type based on tunerfilter info
+    /// Determines whether a CAM is present and ready for interaction.
     /// </summary>
-    /// <returns></returns>
-    private void DetectCardType()
+    /// <returns><c>true</c> if a CAM is present and ready, otherwise <c>false</c></returns>
+    public bool IsCamReady()
     {
-      FilterInfo info;
-      if (m_tunerFilter.QueryFilterInfo(out info) == 0)
+      Log.Log.Debug("TechnoTrend: is CAM ready");
+      if (!_isCiSlotPresent)
       {
-        switch (info.achName)
-        {
-          case LBDG2_NAME_C_TUNER:
-          case LBDG2_NAME_S_TUNER:
-          case LBDG2_NAME_T_TUNER:
-          case LBDG2_NAME_C_TUNER_NEW:
-          case LBDG2_NAME_S_TUNER_NEW:
-          case LBDG2_NAME_T_TUNER_NEW:
-            m_deviceType = TTApiDeviceCat.BUDGET_2;
-            break;
-          case LBUDGET3NAME_TUNER:
-          case LBUDGET3NAME_ATSC_TUNER:
-            //case LBUDGET3NAME_TUNER_ANLG:
-            m_deviceType = TTApiDeviceCat.BUDGET_3;
-            break;
-          case LUSB2BDA_DVB_NAME_C_TUNER:
-          case LUSB2BDA_DVB_NAME_S_TUNER:
-          case LUSB2BDA_DVB_NAME_T_TUNER:
-            m_deviceType = TTApiDeviceCat.USB_2;
-            break;
-          case LUSB2BDA_DVBS_NAME_PIN_TUNER:
-            m_deviceType = TTApiDeviceCat.USB_2_PINNACLE;
-            break;
-          default:
-            m_deviceType = TTApiDeviceCat.UNKNOWN;
-            break;
-        }
+        Log.Log.Debug("TechnoTrend: CI slot not present");
+        return false;
       }
+
+      // The API accurately invokes the OnSlotStatus() delegate when the
+      // CAM state changes so there is no need to do anything other than
+      // report the current state.
+      //GetCiSlotStatus();
+      Log.Log.Debug("TechnoTrend: result = {0}", _isCamPresent);
+      return _isCamReady;
     }
 
     /// <summary>
-    /// decodes multiple programs
+    /// Send PMT to the CAM to request that a service be descrambled.
     /// </summary>
-    /// <param name="subChannels">list of subchannels</param>
-    /// <returns>true is successful</returns>
-    public bool DescrambleMultiple(Dictionary<int, ConditionalAccessContext> subChannels)
+    /// <param name="listAction">A list management action for communication with the CAM.</param>
+    /// <param name="command">A decryption command directed to the CAM.</param>
+    /// <param name="pmt">The PMT.</param>
+    /// <param name="length">The length of the PMT in bytes.</param>
+    /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
+    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
     {
-      bool succeeded = false;
-      TTApiResult result;
-
-      // if OpenCI failed, there's no CI ergo no CAM
-      if (m_ciSlotAvailable == false)
+      Log.Log.Debug("TechnoTrend: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
+      if (!_isCamPresent)
       {
-        if (m_verboseLogging) Log.Log.Debug("TechnoTrend: DescrambleMultiple: no CI present");
-        succeeded = true;
-        return succeeded;
+        Log.Log.Debug("TechnoTrend: CAM not available");
+        return true;
+      }
+      if (command == CommandIdType.MMI || command == CommandIdType.Query)
+      {
+        Log.Log.Debug("TechnoTrend: command type {0} is not supported", command);
+        return false;
+      }
+      if (pmt == null || pmt.Length == 0)
+      {
+        Log.Log.Debug("TechnoTrend: no PMT");
+        return true;
       }
 
-      m_ciStatus = -1;
-      GetCISlotStatus();
-
-      List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
-      Dictionary<int, ConditionalAccessContext>.Enumerator en = subChannels.GetEnumerator();
-
-      while (en.MoveNext())
+      ushort serviceId = (ushort)((pmt[3] << 8) + pmt[4]);
+      Log.Log.Debug("TechnoTrend: new service ID is {0} (0x{1:x})", serviceId, serviceId);
+      if (serviceId == 0)
       {
-        bool exists = false;
-        ConditionalAccessContext context = en.Current.Value;
-        foreach (ConditionalAccessContext c in filteredChannels)
-        {
-          if (c.Channel.Equals(context.Channel))
-            exists = true;
-        }
-        if (!exists && context.Channel.ServiceId != 0 && context.Channel.FreeToAir == false)
-          // also check for sid != 0, otherwise TT API fails
-        {
-          filteredChannels.Add(context);
-        }
+        Log.Log.Debug("TechnoTrend: service ID 0 cannot be descrambled");
       }
 
-      Log.Log.Debug("TechnoTrend: DescrambleMultiple:({0})", filteredChannels.Count);
-      for (int i = 0; i < filteredChannels.Count; ++i)
+      if (command == CommandIdType.NotSelected)
       {
-        ConditionalAccessContext context = filteredChannels[i];
-        Log.Log.Debug("TechnoTrend: DescrambleMultiple: serviceId:{0}", context.Channel.ServiceId);
-        Marshal.WriteInt16(ptrPmt, 2 * i, (short)context.Channel.ServiceId);
+        _descrambledServices.Remove(serviceId);
+        return true;
       }
 
-      if (m_slotStatus == TTCiSlotStatus.SlotCaOk || m_slotStatus == TTCiSlotStatus.SlotModuleOk)
-        // || m_slotStatus==CI_SLOT_DBG_MSG)
+      // We're dealing with a "descrambling" command. Search our list and ensure
+      // that the SID is present; add it if it is not present.
+      if (listAction == ListManagementType.Add ||
+        listAction == ListManagementType.Update ||
+        listAction == ListManagementType.More ||
+        listAction == ListManagementType.Last)
       {
-        result = bdaapiCIMultiDecode(m_hBdaApi, ptrPmt, (short)filteredChannels.Count);
-        if (result == TTApiResult.Success)
+        List<ushort>.Enumerator en = _descrambledServices.GetEnumerator();
+        bool found = false;
+        while (en.MoveNext())
         {
-          if (m_ciStatus == 1)
+          if (en.Current == serviceId)
           {
-            succeeded = true;
-            Log.Log.Debug("TechnoTrend: services decoded:{0} {1}", result, m_ciStatus);
-          }
-          else
-          {
-            succeeded = false;
-            Log.Log.Debug("TechnoTrend: services not decoded:{0} ciStatus: {1}", result, m_ciStatus);
+            found = true;
+            break;
           }
         }
-        else
+        if (!found)
         {
-          Log.Log.Debug("TechnoTrend: services not decoded:{0}", result);
+          _descrambledServices.Add(serviceId);
         }
       }
-      else if (m_slotStatus == TTCiSlotStatus.SlotUnknownState)
+      else if (listAction == ListManagementType.Only ||
+        listAction == ListManagementType.First)
       {
-        if (m_waitTimeout == 0)
-        {
-          //no CAM inserted
-          Log.Log.Debug("TechnoTrend: CI slot state unknown, allow one retry");
-          succeeded = false; // to allow retry from ConditionalAccess
-        }
-        else
-        {
-          //still no valid state? don't try next time!
-          Log.Log.Debug("TechnoTrend: CI slot state still unknown after one retry. Stop trying.");
-          succeeded = true; // to allow retry from ConditionalAccess
-        }
-        m_waitTimeout++;
+        _descrambledServices = new List<ushort>();
+        _descrambledServices.Add(serviceId);
       }
-      else if (m_slotStatus == TTCiSlotStatus.SlotModuleInserted)
+
+      // Wait until we have the full list before we send any commands to the CAM.
+      if (listAction == ListManagementType.First || listAction == ListManagementType.More)
       {
-        Log.Log.Debug("TechnoTrend: CI module inserted but not yet ready");
-        succeeded = false; // to allow retry from ConditionalAccess
+        return true;
       }
-      else if (m_slotStatus == TTCiSlotStatus.SlotEmpty)
+
+      // Send the updated list to the CAM.
+      Log.Log.Debug("TechnoTrend: service list");
+      int i = 0;
+      List<ushort>.Enumerator en2 = _descrambledServices.GetEnumerator();
+      while (en2.MoveNext())
       {
-        Log.Log.Debug("TechnoTrend: no cam detected, slot empty");
-        succeeded = true; //no CAM inserted, no retry
+        Log.Log.Debug("  {0}: {1} (0x{1:x4})", i + 1, en2.Current);
+        Marshal.WriteInt16(_serviceBuffer, 2 * i, (short)en2.Current);
+        i++;
       }
-      return succeeded;
+
+      TtApiResult result = bdaapiCIMultiDecode(_deviceHandle, _serviceBuffer, i);
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
+      return (result == TtApiResult.Success);
     }
 
-    /// <summary>
-    /// Sends the diseq command.
-    /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="parameters">The scanparameters.</param>
-    public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
-    {
-      if (_previousChannel != null)
-      {
-        if (_previousChannel.Frequency == channel.Frequency &&
-            _previousChannel.DisEqc == channel.DisEqc &&
-            _previousChannel.Polarisation == channel.Polarisation)
-        {
-          Log.Log.WriteFile("TechnoTrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc,
-                            channel.Frequency, channel.Polarisation);
-          return;
-        }
-      }
-      _previousChannel = channel;
-      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-      //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
-      Marshal.WriteByte(_ptrDataInstance, 0, 0xE0); //diseqc command 1. uFraming=0xe0
-      Marshal.WriteByte(_ptrDataInstance, 1, 0x10); //diseqc command 1. uAddress=0x10
-      Marshal.WriteByte(_ptrDataInstance, 2, 0x38); //diseqc command 1. uCommand=0x38
-      //bit 0	(1)	: 0=low band, 1 = hi band
-      //bit 1 (2) : 0=vertical, 1 = horizontal
-      //bit 3 (4) : 0=satellite position A, 1=satellite position B
-      //bit 4 (8) : 0=switch option A, 1=switch option  B
-      // LNB    option  position
-      // 1        A         A
-      // 2        A         B
-      // 3        B         A
-      // 4        B         B
-      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      Log.Log.WriteFile(
-        "TechnoTrend SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}",
-        channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
-                           (channel.Polarisation == Polarisation.CircularL));
-      byte cmd = 0xf0;
-      cmd |= (byte)(hiBand ? 1 : 0);
-      cmd |= (byte)((isHorizontal) ? 2 : 0);
-      cmd |= (byte)((antennaNr - 1) << 2);
-      Marshal.WriteByte(_ptrDataInstance, 3, cmd);
-      bdaapiSetDiSEqCMsg(m_hBdaApi, _ptrDataInstance, 4, 1, 0, (short)channel.Polarisation);
-      Log.Log.Info("TechnoTrend: Diseqc Command Send");
-    }
-
-    /// <summary>
-    /// Here we turn on the USB DVB-T antennae
-    /// </summary>
-    /// <param name="onOff">true for on</param>
-    public void EnableAntenna(bool onOff)
-    {
-      int uiAntPwrOnOff = 0;
-      string Get5vAntennae = "Disabled";
-      Log.Log.Info("Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
-      bdaapiSetDVBTAntPwr(m_hBdaApi, onOff);
-      bdaapiGetDVBTAntPwr(m_hBdaApi, ref uiAntPwrOnOff);
-      if (uiAntPwrOnOff == 0)
-      {
-        Get5vAntennae = "Disabled";
-      }
-      if (uiAntPwrOnOff == 1)
-      {
-        Get5vAntennae = "Enabled";
-      }
-      if (uiAntPwrOnOff == 2)
-      {
-        Get5vAntennae = "Not Connected";
-      }
-      Log.Log.Info("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
-    }
+    #endregion
 
     #region callback handlers
 
     /// <summary>
-    /// callback from driver for CI slot status
+    /// Called by the tuner driver when the state of the CI slot changes.
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="nStatus"></param>
-    /// <param name="csInfo"></param>
-    public unsafe void onSlotChange(
-      IntPtr Context,
-      byte nSlot,
-      byte nStatus,
-      SlotInfo* csInfo
-      )
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="state">The new state of the slot.</param>
+    /// <param name="slotInfo">Extended information about the interface state.</param>
+    private unsafe void OnSlotStatus(IntPtr context, byte slotIndex, TtCiState state, CiSlotInfo* slotInfo)
     {
       try
       {
-        m_slotStatus = (TTCiSlotStatus)nStatus;
-        Log.Log.Debug("TechnoTrend: slot {0} changed", nSlot);
-        if (csInfo != null)
+        Log.Log.Debug("TechnoTrend: CI slot status callback, slot = {0}", slotIndex);
+        if (state == _ciState)
         {
-          Log.Log.Debug("TechnoTrend:    CI status:{0} ", m_slotStatus);
-          if (csInfo->pMenuTitleString != null)
-          {
-            Log.Log.Debug("TechnoTrend:    CI text  :{0} ", Marshal.PtrToStringAnsi(csInfo->pMenuTitleString));
-          }
+          // Don't be too verbose - we don't need to print the CAS IDs all the time.
+          Log.Log.Debug("TechnoTrend: CI state = {0}", _ciState);
+          return;
+        }
 
-          for (int i = 0; i < csInfo->wNoOfCaSystemIDs; ++i)
+        Log.Log.Debug("TechnoTrend: CI state change, old state = {0}, new state = {1}", _ciState, state);
+        if (state == TtCiState.CamOkay || state == TtCiState.ApplicationOk)
+        {
+          _isCamPresent = true;
+          _isCamReady = true;
+        }
+        else if (state == TtCiState.CamInserted)
+        {
+          _isCamPresent = true;
+          _isCamReady = false;
+        }
+        else
+        {
+          _isCamPresent = false;
+          _isCamReady = false;
+        }
+        _ciState = state;
+
+        if (slotInfo == null)
+        {
+          if (state != TtCiState.Empty)
           {
-            Log.Log.Debug("TechnoTrend:      ca system id  :{0:X} ", csInfo->pCaSystemIDs[i]);
+            Log.Log.Debug("TechnoTrend: detailed slot info is not available [yet]");
           }
+          return;
+        }
+
+        Log.Log.Debug("TechnoTrend: slot info");
+        Log.Log.Debug("  status     = {0} ", slotInfo->Status);
+        if (slotInfo->CamMenuTitle == null)
+        {
+          Log.Log.Debug("  menu title = (not available)");
+        }
+        else
+        {
+          Log.Log.Debug("  menu title = {0} ", Marshal.PtrToStringAnsi(slotInfo->CamMenuTitle));
+        }
+        Log.Log.Debug("  # CAS IDs  = {0}", slotInfo->NumberOfCaSystemIds);
+        for (int i = 0; i < slotInfo->NumberOfCaSystemIds; i++)
+        {
+          Log.Log.Debug("  {0,-2}         = 0x{1:x4}", i + 1, slotInfo->CaSystemIds[i]);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnSlotChange() exception");
+        Log.Log.Debug("TechnoTrend: CI slot status callback exception: {0}", ex.ToString());
       }
     }
 
     /// <summary>
-    /// callback from driver for CA changes
+    /// Called by the tuner driver when the result of an interaction with the CAM is known.
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="nReplyTag"></param>
-    /// <param name="wStatus"></param>
-    public unsafe void onCaChange(IntPtr Context, byte nSlot, byte nReplyTag, Int16 wStatus)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="reply">A reply message from the CAM.</param>
+    /// <param name="error">An error message from the CAM.</param>
+    private unsafe void OnCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error)
     {
       try
       {
-        Log.Log.Debug("$ OnCaChange slot:{0} reply:{1:X} status:{2}", nSlot, nReplyTag, wStatus);
-        switch (nReplyTag)
+        Log.Log.Debug("TechnoTrend: CA status callback, slot = {0}, reply = {1}, error = {2}", slotIndex, reply, error);
+        // NoCaResource generally seems to indicate a smartcard or CAM error. The TechnoTrend
+        // API doesn't seem to support removal and reinsertion of the smartcard on the fly
+        // (no CAM state change reported). Closing and re-opening the conditional access
+        // seems to resolve the problem.
+        if (error == TtCiError.NoCaResource)
         {
-          case 0x0C: //CI_PSI_COMPLETE:
-            Log.Log.Debug("$ CI: ### Number of programs : {0}", wStatus);
-            break;
-
-          case 0x0D: //CI_MODULE_READY:
-            Log.Log.Debug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
-            break;
-          case 0x0E: //CI_SWITCH_PRG_REPLY:
-            {
-              switch (wStatus)
-              {
-                case 4: //ERR_INVALID_DATA:
-                  Log.Log.Debug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
-                  break;
-                case 5: //ERR_NO_CA_RESOURCE:
-                  Log.Log.Debug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
-                  m_ciStatus = -1; // not ready
-                  m_caErrorCount++; // count the errors to allow reset
-                  break;
-                case 0: //ERR_NONE:
-                  Log.Log.Debug("$ CI:    SetProgram OK");
-                  m_ciStatus = 1;
-                  m_caErrorCount = 0; // reset counter
-                  break;
-                default:
-                  break;
-              }
-            }
-            break;
-          default:
-            break;
+          ResetCi();
         }
-        // if setProgram failed twice, reset the CAM
-        // ATTEBNTION: DOESN'T WORK and crashes graph / BaseFilter
-        //if (m_ciStatus == -1 && m_caErrorCount >= 1)
-        //{
-        //  Log.Log.Info("SetProgram failed {0} times because of no CA resource. Resetting CI now.", m_caErrorCount);
-        //  ResetCI();
-        //}
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnCaChange() exception: {0}", e.ToString());
+        Log.Log.Debug("TechnoTrend: CA status callback exception: {0}", ex.ToString());
       }
     }
 
     /// <summary>
-    /// callback from driver
+    /// Called by the tuner driver when the CAM requests input from the user. This delegate is
+    /// called immediately before OnInputRequest().
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="pString"></param>
-    /// <param name="wLength"></param>
-    public unsafe void onDisplayString(IntPtr Context, byte nSlot, IntPtr pString, Int16 wLength)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="text">The request context text from the CAM.</param>
+    /// <param name="textLength">The length of the context text in bytes.</param>
+    private unsafe void OnDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength)
     {
       try
       {
-        m_ciDisplayString = Marshal.PtrToStringAnsi(pString, wLength);
-        Log.Log.Debug("TechnoTrend:OnDisplayString slot:{0} {1}", nSlot, m_ciDisplayString);
+        _camInputRequestContext = Marshal.PtrToStringAnsi(text, textLength);
+        Log.Log.Debug("TechnoTrend: display string callback, slot = {0}, string = {1}", slotIndex, _camInputRequestContext);
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayString() exception: {0}", e.ToString());
+        Log.Log.Debug("TechnoTrend: display string callback exception: {0}", ex.ToString());
       }
     }
 
-
     /// <summary>
-    /// callback from driver to display the CI menu
+    /// Called by the tuner driver when a menu or list from the CAM is available.
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="wItems">Number of Items in the List</param>
-    /// <param name="pStringArray">Contains all strings of the list.</param>
-    /// <param name="wLength">Length of the string array.</param>
-    public unsafe void onDisplayMenuOrList(IntPtr Context, byte nSlot, Int16 wItems, IntPtr pStringArray, Int16 wLength)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="numEntries">The number of entries in the menu/list.</param>
+    /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
+    /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
+    private unsafe void OnDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength)
     {
       try
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayMenu/List; {0} items; wLength: {1}; pStringArray: {2:x} ", wItems, wLength,
-                      pStringArray);
-        // construct all strings for callback
-        StringBuilder[] Entries = new StringBuilder[wItems];
+        Log.Log.Debug("TechnoTrend: display menu/list callback, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
+
+        // Construct menu/list strings for callback.
+        StringBuilder[] strings = new StringBuilder[numEntries];
         int idx = 0;
         byte charChode;
-        for (int i = 0; i < wLength - 1; ++i) // wLength-1 --> last char is a 0, avoid one additional loop and callback
+        for (int i = 0; i < totalMenuLength - 1; i++)   // There is an extra NULL character to indicate the end of the menu.
         {
-          charChode = Marshal.ReadByte((IntPtr)(pStringArray.ToInt32() + i));
-          if (Entries[idx] == null) Entries[idx] = new StringBuilder();
-          if (charChode != 0) // we don't need \0 at end of string
+          charChode = Marshal.ReadByte((IntPtr)(entries.ToInt32() + i));
+          // Start of a new entry?
+          if (strings[idx] == null)
           {
-            Entries[idx].Append((char)charChode);
+            strings[idx] = new StringBuilder();
           }
-          else // if string ends before maxlength
+
+          if (charChode != 0)
           {
-            Log.Log.Debug("TechnoTrend: {0}: {1} ", idx, Entries[idx].ToString());
-            // is title part finished?
-            if (ciMenuCallbacks != null)
+            strings[idx].Append((char)charChode);
+            continue;
+          }
+
+          // End of an entry. Is the meta-data complete?
+          if (idx == 2)
+          {
+            Log.Log.Debug("  title     = {0}", strings[0].ToString());
+            Log.Log.Debug("  sub-title = {0}", strings[1].ToString());
+            Log.Log.Debug("  footer    = {0}", strings[2].ToString());
+            Log.Log.Debug("  # entries = {0}", numEntries - 3);
+            if (_ciMenuCallbacks != null)
             {
-              if (idx == 2)
-              {
-                ciMenuCallbacks.OnCiMenu(Entries[0].ToString(), Entries[1].ToString(), Entries[2].ToString(), wItems - 3);
-                //-3 header lines
-              }
-              if (idx > 2)
-              {
-                ciMenuCallbacks.OnCiMenuChoice(idx - 3, Entries[idx].ToString()); // current line as option
-              }
+              _ciMenuCallbacks.OnCiMenu(strings[0].ToString(), strings[1].ToString(), strings[2].ToString(), numEntries - 3);
             }
-            idx++; // next line
           }
+          else if (idx > 2)
+          {
+            Log.Log.Debug("  entry {0,-2}  = {1}", idx - 2, strings[idx].ToString());
+            if (_ciMenuCallbacks != null)
+            {
+              _ciMenuCallbacks.OnCiMenuChoice(idx - 3, strings[idx].ToString());
+            }
+          }
+
+          // Start new entry.
+          idx++;
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayMenu() exception: {0}", ex.ToString());
+        Log.Log.Debug("TechnoTrend: display menu/list callback exception: {0}", ex.ToString());
       }
     }
 
-
     /// <summary>
-    /// callback from driver
+    /// Called by the tuner driver when the CAM wants to close the menu.
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    public unsafe void onSwitchOsdOff(IntPtr Context, byte nSlot)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    private unsafe void OnSwitchOsdOff(IntPtr context, byte slotIndex)
     {
-      Log.Log.Debug("TechnoTrend:CI_OnSwitchOsdOff slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: switch OSD off callback, slot = {0}", slotIndex);
       try
       {
-        if (ciMenuCallbacks != null)
+        if (_ciMenuCallbacks != null)
         {
-          ciMenuCallbacks.OnCiCloseDisplay(0);
+          _ciMenuCallbacks.OnCiCloseDisplay(0);
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: CI_OnSwitchOsdOff() exception: {0}", ex.ToString());
+        Log.Log.Debug("TechnoTrend: switch OSD off callback exception: {0}", ex.ToString());
       }
     }
 
     /// <summary>
-    /// callback from driver
+    /// Called by the tuner driver when the CAM requests input from the user.
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="bBlindAnswer">True if hidden input (*)</param>
-    /// <param name="nExpectedLength">Expected max. answer length</param>
-    /// <param name="dwKeyMask">Key mask</param>
-    public unsafe void onInputRequest(IntPtr Context, byte nSlot, bool bBlindAnswer, byte nExpectedLength,
-                                      Int16 dwKeyMask)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
+    /// <param name="answerLength">The expected answer length.</param>
+    /// <param name="keyMask"></param>
+    private unsafe void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask)
     {
-      Log.Log.Debug("TechnoTrend: OnInputRequest; bBlindAnswer {0}, nExpectedLength: {1}; dwKeyMask: {2} ", bBlindAnswer,
-                    nExpectedLength, dwKeyMask);
       try
       {
-        if (ciMenuCallbacks != null)
+        Log.Log.Debug("TechnoTrend: input request callback, slot = {0}", slotIndex);
+        Log.Log.Debug("  length   = {0}", answerLength);
+        Log.Log.Debug("  blind    = {0}", blind);
+        Log.Log.Debug("  key mask = {0:x4}", keyMask);
+        if (_ciMenuCallbacks != null)
         {
-          ciMenuCallbacks.OnCiRequest(bBlindAnswer, nExpectedLength, m_ciDisplayString);
-          // m_ciDisplayString from former callback!
+          _ciMenuCallbacks.OnCiRequest(blind, answerLength, _camInputRequestContext);
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnInputRequest() exception: {0}", ex.ToString());
+        Log.Log.Debug("TechnoTrend: input request callback exception: {0}", ex.ToString());
       }
     }
 
+    #region low speed communication callbacks
+
     /// <summary>
-    /// callback from driver
+    /// ???
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="pDescriptor">Descriptor</param>
-    public unsafe void onLscSetDescriptor(IntPtr Context, byte nSlot, IntPtr pDescriptor)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="descriptor">???</param>
+    private unsafe void OnLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor)
     {
-      Log.Log.Debug("TechnoTrend:OnLscSetDescriptor slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: OnLscSetDescriptor callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
-    /// callback from driver
+    /// ???
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    public unsafe void onLscConnect(IntPtr Context, byte nSlot)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    private unsafe void OnLscConnect(IntPtr context, byte slotIndex)
     {
-      Log.Log.Debug("TechnoTrend:OnLscConnect slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: OnLscConnect callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
-    /// callback from driver
+    /// ???
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    public unsafe void onLscDisconnect(IntPtr Context, byte nSlot)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    private unsafe void OnLscDisconnect(IntPtr context, byte slotIndex)
     {
-      Log.Log.Debug("TechnoTrend:OnLscDisconnect slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: OnLscDisconnect callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
-    /// callback from driver
+    /// ???
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="BufferSize">Buffer size</param>
-    /// <param name="Timeout10Ms">Timeout</param>
-    public unsafe void onLscSetParams(IntPtr Context, byte nSlot, byte BufferSize, byte Timeout10Ms)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="bufferSize"></param>
+    /// <param name="timeout">A timeout in units of ten milliseconds.</param>
+    private unsafe void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout)
     {
-      Log.Log.Debug("TechnoTrend:OnLscSetParams slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: OnLscSetParams callback, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
     }
 
     /// <summary>
-    /// callback from driver
+    /// ???
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    public unsafe void onLscEnquireStatus(IntPtr Context, byte nSlot)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    private unsafe void OnLscEnquireStatus(IntPtr context, byte slotIndex)
     {
-      Log.Log.Debug("TechnoTrend:OnLscEnquireStatus slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: OnLscEnquireStatus callback, slot = {0}", slotIndex);
     }
 
     /// <summary>
-    /// callback from driver
+    /// ???
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="PhaseID">Phase</param>
-    public unsafe void onLscGetNextBuffer(IntPtr Context, byte nSlot, byte PhaseID)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="phaseId"></param>
+    private unsafe void OnLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId)
     {
-      Log.Log.Debug("TechnoTrend:OnLscGetNextBuffer slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: OnLscGetNextBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
     }
 
     /// <summary>
-    /// callback from driver
+    /// ???
     /// </summary>
-    /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
-    /// <param name="nSlot">Is the Slot ID.</param>
-    /// <param name="PhaseID">Phase</param>
-    /// <param name="pData">Data</param>
-    /// <param name="nLength">Length</param>
-    public unsafe void onLscTransmitBuffer(IntPtr Context, byte nSlot, byte PhaseID, IntPtr pData, Int16 nLength)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="phaseId"></param>
+    /// <param name="buffer"></param>
+    /// <param name="bufferSize"></param>
+    private unsafe void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize)
     {
-      Log.Log.Debug("TechnoTrend:OnLscTransmitBuffer slot:{0}", nSlot);
+      Log.Log.Debug("TechnoTrend: OnLscTransmitBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
+      DVB_MMI.DumpBinary(buffer, 0, bufferSize);
     }
 
     #endregion
 
-    #region IDisposable Member
-
-    /// <summary>
-    /// Disposes TT API
-    /// </summary>
-    public void Dispose()
-    {
-      CloseCI();
-      Marshal.FreeCoTaskMem(ptrPmt);
-      Marshal.FreeCoTaskMem(_ptrDataInstance);
-    }
-
     #endregion
 
-    #region IDiSEqCController Members
+    #region ICiMenuActions members
 
     /// <summary>
-    /// Sends the DiSEqC command.
+    /// Sets the CAM callback handler functions.
     /// </summary>
-    /// <param name="diSEqC">The DiSEqC command.</param>
-    /// <returns>true if succeeded, otherwise false</returns>
-    public bool SendDiSEqCCommand(byte[] diSEqC)
+    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
+    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
+    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
     {
-      if (!IsTechnoTrend) return false;
+      if (ciMenuHandler != null)
+      {
+        _ciMenuCallbacks = ciMenuHandler;
+        return true;
+      }
+      return false;
+    }
 
-      for (int i = 0; i < diSEqC.Length; ++i)
-        Marshal.WriteByte(_ptrDataInstance, i, diSEqC[i]);
-      Polarisation pol = Polarisation.LinearV;
-      if (_previousChannel != null)
-        pol = _previousChannel.Polarisation;
-      bdaapiSetDiSEqCMsg(m_hBdaApi, _ptrDataInstance, (byte)diSEqC.Length, 1, 0, (short)pol);
+    /// <summary>
+    /// Sends a request from the user to the CAM to open the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool EnterCIMenu()
+    {
+      if (!_isCamPresent)
+      {
+        return false;
+      }
+      Log.Log.Debug("TechnoTrend: enter menu");
+      TtApiResult result = bdaapiCIEnterModuleMenu(_deviceHandle, _slotIndex);
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
+      return (result == TtApiResult.Success);
+    }
+
+    /// <summary>
+    /// Sends a request from the user to the CAM to close the menu.
+    /// </summary>
+    /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool CloseCIMenu()
+    {
+      Log.Log.Debug("TechnoTrend: close menu is not implemented");
       return true;
     }
 
     /// <summary>
-    /// gets the diseqc reply
+    /// Sends a menu entry selection from the user to the CAM.
     /// </summary>
-    /// <param name="reply">The reply.</param>
-    /// <returns>true if succeeded, otherwise false</returns>
+    /// <param name="choice">The index of the selection as an unsigned byte value.</param>
+    /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool SelectMenu(byte choice)
+    {
+      if (!_isCamPresent)
+      {
+        return false;
+      }
+      Log.Log.Debug("TechnoTrend: select menu entry, choice = {0}", choice);
+      TtApiResult result = bdaapiCIMenuAnswer(_deviceHandle, _slotIndex, choice);
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
+      return (result == TtApiResult.Success);
+    }
+
+    /// <summary>
+    /// Sends a response from the user to the CAM.
+    /// </summary>
+    /// <param name="cancel"><c>True</c> to cancel the request.</param>
+    /// <param name="answer">The user's response.</param>
+    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool SendMenuAnswer(bool cancel, String answer)
+    {
+      if (!_isCamPresent)
+      {
+        return false;
+      }
+      if (answer == null)
+      {
+        answer = "";
+      }
+      Log.Log.Debug("TechnoTrend: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+
+      if (answer.Length > 255)
+      {
+        Log.Log.Debug("TechnoTrend: answer too long, length = {0}", answer.Length);
+        return false;
+      }
+
+      TtApiResult result = bdaapiCIAnswer(_deviceHandle, _slotIndex, answer, (byte)answer.Length);
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
+      return (result == TtApiResult.Success);
+    }
+
+    #endregion
+
+    #region ICustomTuning members
+
+    /// <summary>
+    /// Check if the custom tune method supports tuning for a given channel.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the custom tune method supports tuning the channel, otherwise <c>false</c></returns>
+    public bool SupportsTuningForChannel(IChannel channel)
+    {
+      // Tuning os DVB-C, DVB-S and DVB-T channels is supported with an appropriate tuner.
+      if ((channel is DVBCChannel && _tunerType == CardType.DvbC) ||
+        (channel is DVBSChannel && _tunerType == CardType.DvbS) ||
+        (channel is DVBTChannel && _tunerType == CardType.DvbT))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Tune to a channel using the custom tune method. This interface has only been
+    /// tested for satellite tuning.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <param name="parameters">The scan parameters.</param>
+    /// <returns><c>true</c> if tuning is successful, otherwise <c>false</c></returns>
+    public bool CustomTune(IChannel channel, ScanParameters parameters)
+    {
+      Log.Log.Debug("TechnoTrend: tune to channel");
+
+      if (channel is DVBCChannel && _tunerType == CardType.DvbC)
+      {
+        DVBCChannel ch = channel as DVBCChannel;
+        TtDvbcTuneRequest tuneRequest = new TtDvbcTuneRequest();
+        tuneRequest.DeviceType = TtDeviceType.DvbC;
+        tuneRequest.Frequency = (uint)ch.Frequency;
+        tuneRequest.Modulation = ch.ModulationType;
+        tuneRequest.SymbolRate = (uint)ch.SymbolRate;
+        tuneRequest.SpectralInversion = SpectralInversion.Automatic;
+      }
+      else if (channel is DVBSChannel && _tunerType == CardType.DvbS)
+      {
+        DVBSChannel ch = channel as DVBSChannel;
+        TtDvbsTuneRequest tuneRequest = new TtDvbsTuneRequest();
+        tuneRequest.DeviceType = TtDeviceType.DvbS;
+        // Frequency is already specified in kHz (the base unit) so the
+        // multiplier is set to 1.
+        tuneRequest.Frequency = (uint)ch.Frequency;
+        tuneRequest.FrequencyMultiplier = 1;// 000;
+        tuneRequest.Polarisation = ch.Polarisation;
+        tuneRequest.Diseqc = TtDiseqcPort.Null;
+        if (ch.ModulationType == ModulationType.ModNotSet)
+        {
+          tuneRequest.Modulation = ModulationType.ModQpsk;
+        }
+        else if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
+        {
+          tuneRequest.Modulation = ModulationType.Mod8Vsb;
+        }
+        // Other modulations are not explictly known to be supported, however
+        // we allow them to pass through.
+        else
+        {
+          tuneRequest.Modulation = ch.ModulationType;
+        }
+        tuneRequest.SymbolRate = (uint)ch.SymbolRate;
+        tuneRequest.SpectralInversion = SpectralInversion.Automatic;
+
+        int low;
+        int high;
+        int switchFrequency;
+        BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out low, out high, out switchFrequency);
+        tuneRequest.LnbHighBandLof = (uint)(1000 * high);
+        tuneRequest.LnbLowBandLof = (uint)(1000 * low);
+        tuneRequest.LnbSwitchFrequency = (uint)(1000 * switchFrequency);
+        tuneRequest.UseToneBurst = false;
+
+        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+      }
+      else if (channel is DVBTChannel && _tunerType == CardType.DvbT)
+      {
+        DVBTChannel ch = channel as DVBTChannel;
+        TtDvbtTuneRequest tuneRequest = new TtDvbtTuneRequest();
+        tuneRequest.DeviceType = TtDeviceType.DvbT;
+        tuneRequest.Frequency = (uint)ch.Frequency;
+        // Frequency is already specified in kHz (the base unit) so the
+        // multiplier is set to 1.
+        tuneRequest.FrequencyMultiplier = 1;
+        tuneRequest.Bandwidth = (uint)(1000 * ch.BandWidth);
+        tuneRequest.Modulation = ModulationType.ModNotSet;
+        tuneRequest.SpectralInversion = SpectralInversion.Automatic;
+
+        Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
+      }
+      else
+      {
+        Log.Log.Debug("TechnoTrend: tuning not supported");
+        return false;
+      }
+
+      DVB_MMI.DumpBinary(_generalBuffer, 0, TuneRequestSize);
+      TtApiResult result = bdaapiTune(_deviceHandle, _generalBuffer);
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
+      return (result == TtApiResult.Success);
+    }
+
+    #endregion
+
+    #region IDiSEqCController members
+
+    /// <summary>
+    /// Send the appropriate DiSEqC 1.0 switch command to switch to a given channel.
+    /// </summary>
+    /// <param name="parameters">The scan parameters.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
+    {
+      bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
+      ToneBurst toneBurst = ToneBurst.Off;
+      bool successDiseqc = true;
+      if (channel.DisEqc == DisEqcType.SimpleA)
+      {
+        toneBurst = ToneBurst.ToneBurst;
+      }
+      else if (channel.DisEqc == DisEqcType.SimpleB)
+      {
+        toneBurst = ToneBurst.DataBurst;
+      }
+      else if (channel.DisEqc != DisEqcType.None)
+      {
+        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+        bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                              (channel.Polarisation == Polarisation.CircularL));
+        byte command = 0xf0;
+        command |= (byte)(isHighBand ? 1 : 0);
+        command |= (byte)((isHorizontal) ? 2 : 0);
+        command |= (byte)((antennaNr - 1) << 2);
+        successDiseqc = SendDiSEqCCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
+      }
+
+      Tone22k tone22k = Tone22k.Off;
+      if (isHighBand)
+      {
+        tone22k = Tone22k.On;
+      }
+      bool successTone = SetToneState(toneBurst, tone22k);
+
+      return (successDiseqc && successTone);
+    }
+
+    /// <summary>
+    /// Send a DiSEqC command.
+    /// </summary>
+    /// <param name="command">The DiSEqC command to send.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendDiSEqCCommand(byte[] command)
+    {
+      Log.Log.Debug("TechnoTrend: send DiSEqC command");
+
+      int length = command.Length;
+      if (length > MaxDiseqcCommandLength)
+      {
+        Log.Log.Debug("TechnoTrend: command too long, length = {0}", command.Length);
+        return false;
+      }
+      for (int i = 0; i < length; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, i, command[i]);
+      }
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, length);
+
+      // It is okay to use any polarisation. We chose one that will supply 18 V
+      // to the LNB because it moves dish motors faster.
+      TtApiResult result = bdaapiSetDiSEqCMsg(_deviceHandle, _generalBuffer, (byte)command.Length, 0, TtToneBurst.Off, Polarisation.LinearH);
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
+      return (result == TtApiResult.Success);
+    }
+
+    /// <summary>
+    /// Get a reply to a previously sent DiSEqC command.
+    /// </summary>
+    /// <param name="reply">The reply message.</param>
+    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
     public bool ReadDiSEqCCommand(out byte[] reply)
     {
+      // (Not implemented...)
       reply = null;
       return false;
     }
 
     #endregion
 
-    #region ICiMenuActions Member
+    #region IHardwareProvider members
 
     /// <summary>
-    /// Sets the callback handler
+    /// Initialise the hardware provider.
     /// </summary>
-    /// <param name="ciMenuHandler"></param>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    /// <param name="tunerFilter">The tuner filter.</param>
+    public void Init(IBaseFilter tunerFilter)
     {
-      if (ciMenuHandler != null)
-      {
-        ciMenuCallbacks = ciMenuHandler;
-        return true;
-      }
-      return false;
-    }
-
-
-    /// <summary>
-    /// Enters the CI menu
-    /// </summary>
-    /// <returns></returns>
-    public bool EnterCIMenu()
-    {
-      Log.Log.Debug("TechnoTrend: Enter CI Menu");
-      if (bdaapiCIEnterModuleMenu(m_hBdaApi, 0) != TTApiResult.Success)
-      {
-        Log.Log.Debug("TechnoTrend: bdaapiCIEnterModuleMenu failed.");
-        return false;
-      }
-      return true;
+      // Not implemented.
     }
 
     /// <summary>
-    /// Closes the CI menu
+    /// Get or set a custom device index. Not applicable for Turbosight tuners.
     /// </summary>
-    /// <returns></returns>
-    public bool CloseCIMenu()
+    public int DeviceIndex
     {
-      Log.Log.Debug("TechnoTrend: Close CI Menu not yet implemented");
-      return true;
+      get
+      {
+        return 0;
+      }
+      set
+      {
+      }
     }
 
     /// <summary>
-    /// Selects a CI menu entry
+    /// Get or set the tuner device path. Not applicable for Turbosight tuners.
     /// </summary>
-    /// <param name="choice"></param>
-    /// <returns></returns>
-    public bool SelectMenu(byte choice)
+    public String DevicePath
     {
-      Log.Log.Debug("TechnoTrend: Select CI Menu entry {0}", choice);
-      if (bdaapiCIMenuAnswer(m_hBdaApi, m_slot, choice) != TTApiResult.Success)
+      get
       {
-        Log.Log.Debug("TechnoTrend: bdaapiCIMenuAnswer  failed");
-        return false;
+        return "";
       }
-      return true;
+      set
+      {
+      }
     }
 
     /// <summary>
-    /// Sends an answer after CI request
+    /// Get the provider loading priority.
     /// </summary>
-    /// <param name="Cancel"></param>
-    /// <param name="Answer"></param>
-    /// <returns></returns>
-    public bool SendMenuAnswer(bool Cancel, string Answer)
+    public int Priority
     {
-      if (Answer == null) Answer = "";
-      Log.Log.Debug("TechnoTrend: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
-      if (bdaapiCIAnswer(m_hBdaApi, 0, Answer, (byte)Answer.Length) != TTApiResult.Success)
+      get
       {
-        Log.Log.Debug("TechnoTrend: SendMenuAnswer failed.");
-        return false;
+        return 10;
       }
-      return true;
+    }
+
+    /// <summary>
+    /// Checks if hardware is supported and open the device.
+    /// </summary>
+    public void CheckAndOpen()
+    {
+      // Not implemented.
+    }
+
+    /// <summary>
+    /// Returns the name of the provider.
+    /// </summary>
+    public String Provider
+    {
+      get
+      {
+        return "TechnoTrend";
+      }
+    }
+
+    /// <summary>
+    /// Returns the result of detection. If false the provider should be disposed.
+    /// </summary>
+    public bool IsSupported
+    {
+      get
+      {
+        return _isTechnoTrend;
+      }
+    }
+
+    /// <summary>
+    /// Returns the provider capabilities.
+    /// </summary>
+    public CapabilitiesType Capabilities
+    {
+      get
+      {
+        return CapabilitiesType.None;
+      }
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Close the conditional access interface and free unmanaged memory buffers.
+    /// </summary>
+    public void Dispose()
+    {
+      if (!_isTechnoTrend)
+      {
+        return;
+      }
+      CloseCi();
+      Marshal.FreeCoTaskMem(_generalBuffer);
     }
 
     #endregion
