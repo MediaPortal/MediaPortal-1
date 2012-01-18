@@ -41,7 +41,7 @@ namespace TvLibrary.Implementations.DVB
 
     private enum KncCiState
     {
-      Initializing = 0,       // Indicates that a CAM has been inserted.
+      Initialising = 0,       // Indicates that a CAM has been inserted.
 
       Transport = 1,
       Resource = 2,
@@ -50,7 +50,7 @@ namespace TvLibrary.Implementations.DVB
 
       Ready = 5,              // Indicates that the CAM is ready for interaction.
       OpenService = 6,
-      Releasing = 7,          // Indicates that a CAM has been removed.
+      Releasing = 7,          // Indicates that the CAM has been removed.
 
       CloseMmi = 8,
       Request = 9,
@@ -107,7 +107,7 @@ namespace TvLibrary.Implementations.DVB
     private static extern bool KNCBDA_CI_IsReady(int deviceIndex);
 
     /// <summary>
-    /// Enable the use of the KNCBDA_CI_* functions.
+    /// Enable the use of the KNCBDA_CI_* functions by initialising internal variables and interfaces.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="param"><c>True</c> to enable the CI slot; <c>false</c>to disable the CI slot.</param>
@@ -117,7 +117,8 @@ namespace TvLibrary.Implementations.DVB
     private static extern bool KNCBDA_CI_HW_Enable(int deviceIndex, bool param);
 
     /// <summary>
-    /// Get the name/brand/type of the CAM inserted in the CI slot.
+    /// Get the name/brand/type of the CAM inserted in the CI slot. This string is likely
+	/// to be the root menu entry from the CA information.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="name">A buffer to hold the CAM name.</param>
@@ -129,15 +130,15 @@ namespace TvLibrary.Implementations.DVB
                                                 uint bufferSize);
 
     /// <summary>
-    /// Send CA PMT to the CAM to request that one or more services are descrambled.
+    /// Send CA PMT to the CAM to request that one or more services be descrambled.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="caPmt">A pointer to a buffer containing the CA PMT.</param>
-    /// <param name="caPmtLen">The length of the CA PMT buffer in bytes.</param>
-    /// <returns><c>true</c> if the CAM successfully starts to descramble the service, otherwise <c>false</c></returns>
+    /// <param name="caPmtLength">The length of the CA PMT buffer in bytes.</param>
+    /// <returns><c>true</c> if the CA PMT is successfully passed to the CAM, otherwise <c>false</c></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendPMTCommand", CharSet = CharSet.Auto,
       CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_SendPMTCommand(int deviceIndex, IntPtr caPmt, uint caPmtLen);
+    private static extern bool KNCBDA_CI_SendPMTCommand(int deviceIndex, IntPtr caPmt, uint caPmtLength);
 
     /// <summary>
     /// Enter the CAM menu.
@@ -184,7 +185,7 @@ namespace TvLibrary.Implementations.DVB
                                                        [In, MarshalAs(UnmanagedType.LPStr)] String menuAnswer);
 
     /// <summary>
-    /// Enable the use of the KNCBDA_HW_* functions by initialising hardware interfaces.
+    /// Enable the use of the KNCBDA_HW_* functions by initialising internal variables and interfaces.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
@@ -198,12 +199,12 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="command">A pointer to a buffer containing the command.</param>
-    /// <param name="commandLen">The length of the command.</param>
+    /// <param name="commandLength">The length of the command.</param>
     /// <param name="repeatCount">The number of times to resend the command.</param>
     /// <returns><c>true</c> if the tuner successfully sent the command, otherwise <c>false</c></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_DiSEqCWrite", CharSet = CharSet.Auto,
       CallingConvention = CallingConvention.StdCall)]
-    private static extern bool KNCBDA_HW_DiSEqCWrite(int deviceIndex, IntPtr command, UInt32 commandLen, UInt32 repeatCount);
+    private static extern bool KNCBDA_HW_DiSEqCWrite(int deviceIndex, IntPtr command, UInt32 commandLength, UInt32 repeatCount);
 
     /// <summary>
     /// PCI-e products (Philips/NXP/Trident SAA7160 based) have a main device filter - one
@@ -249,11 +250,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="propertySet">The GUID of the property set.</param>
     /// <param name="propertyIndex">The index of the property within the property set.</param>
     /// <param name="data">A pointer to a buffer containing the property value.</param>
-    /// <param name="dataLen">The length of the property value in bytes.</param>
+    /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is set successfully, otherwise <c>false</c></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_SetProperty", CharSet = CharSet.Auto,
       CallingConvention = CallingConvention.StdCall)]
-    private static extern bool PCIE_SetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, UInt32 dataLen);
+    private static extern bool PCIE_SetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, UInt32 dataLength);
 
     /// <summary>
     /// Get the value of a tuner property.
@@ -261,21 +262,128 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="propertySet">The GUID of the property set.</param>
     /// <param name="propertyIndex">The index of the property within the property set.</param>
     /// <param name="data">A pointer to a buffer to hold the property value.</param>
-    /// <param name="dataLen">The length of the property value in bytes.</param>
+    /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is retrieved successfully, otherwise <c>false</c></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_GetProperty", CharSet = CharSet.Auto,
       CallingConvention = CallingConvention.StdCall)]
-    private static extern bool PCIE_GetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, out UInt32 dataLen);
+    private static extern bool PCIE_GetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, out UInt32 dataLength);
 
     /// <summary>
     /// Swap the CI slot/CAM associated with the tuners on a card. Tuners can only access a single
-    /// one CI slot/CAM at any given time.
+    /// CI slot/CAM at any given time.
     /// </summary>
     /// <param name="swap"><c>True</c> to swap CI slot/CAM inputs.</param>
     /// <returns><c>true</c> if the CI slot/CAM inputs on the device are successfully swapped, otherwise <c>false</c></returns>
     [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_SwapCAMInput", CharSet = CharSet.Auto,
       CallingConvention = CallingConvention.StdCall)]
     private static extern bool PCIE_SwapCAMInput(bool swap);
+
+    #endregion
+
+    #region structs
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    private unsafe struct KncCiCallbacks
+    {
+      /// Optional context that the interface will pass back
+      /// as a parameter when the delegates are executed.
+      public IntPtr Context;
+
+      /// Delegate for CI state changes.
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiState OnCiState;
+
+      /// Delegate for entering the CAM menu.
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiOpenDisplay OnOpenDisplay;
+
+      /// Delegate for CAM menu meta-data (header, footer etc.).
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiMenu OnCiMenu;
+
+      /// Delegate for CAM menu entries.
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiMenuEntry OnCiMenuEntry;
+
+      /// Delegate for CAM requests.
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiRequest OnRequest;
+
+      /// Delegate for closing the CAM menu.
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public OnKncCiCloseDisplay OnCloseDisplay;
+    }
+
+    #endregion
+
+    #region callback delegate definitions
+
+    /// <summary>
+    /// Called by the tuner driver when the state of a CI slot changes.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot that changed state.</param>
+    /// <param name="state">The new state of the slot.</param>
+    /// <param name="menuTitle">The CAM root menu title. This will be blank when the CAM has not been completely
+    ///   initialised. Typically this will be the same string as can be retrieved by KNCBDA_CI_GetName().</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnKncCiState(
+      byte slotIndex, KncCiState state, [MarshalAs(UnmanagedType.LPStr)] String menuTitle, IntPtr context);
+
+    /// <summary>
+    /// Called by the tuner driver when the CAM menu is successfully opened.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnKncCiOpenDisplay(byte slotIndex, IntPtr context);
+
+    /// <summary>
+    /// Called by the tuner driver to pass the menu meta-data when the user is browsing the CAM menu.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="title">The menu title.</param>
+    /// <param name="subTitle">The menu sub-title.</param>
+    /// <param name="footer">The menu footer.</param>
+    /// <param name="numEntries">The number of entries in the menu.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] String title,
+                                            [MarshalAs(UnmanagedType.LPStr)] String subTitle,
+                                            [MarshalAs(UnmanagedType.LPStr)] String footer,
+                                            uint numEntries, IntPtr context);
+
+    /// <summary>
+    /// Called by the tuner driver for each menu entry when the user is browsing the CAM menu.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="entryIndex">The index of the entry within the menu.</param>
+    /// <param name="text">The text associated with the entry.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnKncCiMenuEntry(
+      byte slotIndex, uint entryIndex, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
+
+    /// <summary>
+    /// Called by the tuner driver when the CAM requests input from the user.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
+    /// <param name="answerLength">The expected answer length.</param>
+    /// <param name="text">The request context text from the CAM.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnKncCiRequest(
+      byte slotIndex, bool blind, uint answerLength, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
+
+    /// <summary>
+    /// Called by the tuner driver when the CAM wants to close the menu.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    private unsafe delegate void OnKncCiCloseDisplay(byte slotIndex, uint delay, IntPtr context);
 
     #endregion
 
@@ -369,107 +477,6 @@ namespace TvLibrary.Implementations.DVB
 
     private const int CallbackStructSize = 28;
     private const int MaxDiseqcCommandLength = 64;
-
-    #endregion
-
-    #region callbacks
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private unsafe struct KncCiCallbacks
-    {
-      /// context 
-      public UInt32 Param;
-
-      /// delegate for CI state callback
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnKncCiState OnCiState;
-
-      /// delegate for opening display
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnKncCiOpenDisplay OnOpenDisplay;
-
-      /// delegate for CI menu
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnKncCiMenu OnCiMenu;
-
-      /// delegate for CI menu choices
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnKncCiMenuChoice OnCiMenuChoice;
-
-      /// delegate for CI requests
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnKncCiRequest OnRequest;
-
-      /// delegate for closing CI
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public OnKncCiCloseDisplay OnCloseDisplay;
-    };
-
-    /// <summary>
-    /// Called by the tuner driver when the state of a CI slot changes.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot that changed state.</param>
-    /// <param name="state">The new state of the slot.</param>
-    /// <param name="message">A message from the CAM or driver (typically the CAM name/type as retrieved by KNCBDA_CI_GetName()).</param>
-    /// <param name="param">???</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiState(
-      byte slotIndex, KncCiState state, [MarshalAs(UnmanagedType.LPStr)] String message, IntPtr param);
-
-    /// <summary>
-    /// Called by the tuner driver when the CAM menu is successfully opened.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="param">???</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiOpenDisplay(byte slotIndex, IntPtr param);
-
-    /// <summary>
-    /// Called by the tuner driver to pass the menu meta-data when the user is browsing the CAM menu.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="title">The menu title.</param>
-    /// <param name="subTitle">The menu sub-title.</param>
-    /// <param name="footer">The menu footer.</param>
-    /// <param name="numChoices">The number of choices in the menu.</param>
-    /// <param name="param">???</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] String title,
-                                            [MarshalAs(UnmanagedType.LPStr)] String subTitle,
-                                            [MarshalAs(UnmanagedType.LPStr)] String footer,
-                                            uint numChoices, IntPtr param);
-
-    /// <summary>
-    /// Called by the tuner driver for each menu entry when the user is browsing the CAM menu.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="choiceIndex">The index of the choice within the menu.</param>
-    /// <param name="text">The text associated with the choice.</param>
-    /// <param name="param">???</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiMenuChoice(
-      byte slotIndex, uint choiceIndex, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr param);
-
-    /// <summary>
-    /// Called by the tuner driver when the CAM requests input from the user.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
-    /// <param name="answerLength">The expected answer length.</param>
-    /// <param name="text">The request context text from the CAM.</param>
-    /// <param name="param">???</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiRequest(
-      byte slotIndex, bool blind, uint answerLength, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr param);
-
-    /// <summary>
-    /// Called by the tuner driver when the CAM wants to close the menu.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
-    /// <param name="param">???</param>
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiCloseDisplay(byte slotIndex, uint delay, IntPtr param);
 
     #endregion
 
@@ -702,12 +709,12 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("KNC: tuner {0} open conditional access interface", _deviceIndex);
       _callbacks = new KncCiCallbacks();
       _callbacks.OnCiMenu = OnCiMenu;
-      _callbacks.OnCiMenuChoice = OnCiMenuChoice;
+      _callbacks.OnCiMenuEntry = OnCiMenuEntry;
       _callbacks.OnCiState = OnCiState;
       _callbacks.OnCloseDisplay = OnCiCloseDisplay;
       _callbacks.OnOpenDisplay = OnCiOpenDisplay;
       _callbacks.OnRequest = OnCiRequest;
-      _callbacks.Param = 0;
+      _callbacks.Context = IntPtr.Zero;
 
       _ciState = KncCiState.Releasing;
 
@@ -806,7 +813,8 @@ namespace TvLibrary.Implementations.DVB
       // It is not possible to tell if a CI slot is present - KNCBDA_CI_IsAvailable()
       // only returns true when a CI slot is present *and* a CAM is inserted. Best to
       // assume there is always a CI slot...
-      //Log.Log.Info("KNC: is CI slot present, result = {0}", true);
+      Log.Log.Debug("KNC: is CI slot present");
+	  Log.Log.Debug("KNC: result = {0}", true);
       return true;
     }
 
@@ -836,7 +844,7 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Debug("KNC: is CAM ready");
       bool camReady = KNCBDA_CI_IsReady(_deviceIndex);
-      Log.Log.Info("KNC: result = {0}", camReady);
+      Log.Log.Debug("KNC: result = {0}", camReady);
       return camReady;
     }
 
@@ -879,9 +887,9 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         Marshal.Copy(caPmt, 0, pmtBuffer, caPmtLength);
-        DVB_MMI.DumpBinary(pmtBuffer, 0, caPmtLength);
+        //DVB_MMI.DumpBinary(pmtBuffer, 0, caPmtLength);
         bool succeeded = KNCBDA_CI_SendPMTCommand(_deviceIndex, pmtBuffer, (uint)caPmtLength);
-        Log.Log.Info("KNC: result = {0}", succeeded);
+        Log.Log.Debug("KNC: result = {0}", succeeded);
         return succeeded;
       }
       finally
@@ -899,9 +907,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot that changed state.</param>
     /// <param name="state">The new state of the slot.</param>
-    /// <param name="message">A message from the CAM or driver (typically the CAM name/type as retrieved by KNCBDA_CI_GetName()).</param>
-    /// <param name="param">???</param>
-    private void OnCiState(byte slotIndex, KncCiState state, String message, IntPtr param)
+    /// <param name="menuTitle">The CAM root menu title.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    private void OnCiState(byte slotIndex, KncCiState state, String menuTitle, IntPtr context)
     {
       lock (this)
       {
@@ -911,7 +919,7 @@ namespace TvLibrary.Implementations.DVB
           _isCamPresent = true;
           _isCamReady = true;
         }
-        else if (state == KncCiState.Initializing)
+        else if (state == KncCiState.Initialising)
         {
           _isCamPresent = true;
           _isCamReady = false;
@@ -921,10 +929,10 @@ namespace TvLibrary.Implementations.DVB
           _isCamPresent = false;
           _isCamReady = false;
         }
-        Log.Log.Debug("  old state = {0}", _ciState);
-        Log.Log.Debug("  new state = {0}", state);
-        Log.Log.Debug("  message   = {0}", message);
-        _ciState = state;        
+        Log.Log.Debug("  old state  = {0}", _ciState);
+        Log.Log.Debug("  new state  = {0}", state);
+        Log.Log.Debug("  menu title = {0}", menuTitle);
+        _ciState = state;
       }
     }
 
@@ -932,8 +940,8 @@ namespace TvLibrary.Implementations.DVB
     /// Called by the tuner driver when the CAM menu is successfully opened.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="param">???</param>
-    private void OnCiOpenDisplay(byte slotIndex, IntPtr param)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    private void OnCiOpenDisplay(byte slotIndex, IntPtr context)
     {
       lock (this)
       {
@@ -948,9 +956,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="title">The menu title.</param>
     /// <param name="subTitle">The menu sub-title.</param>
     /// <param name="footer">The menu footer.</param>
-    /// <param name="numChoices">The number of choices in the menu.</param>
-    /// <param name="param">???</param>
-    private void OnCiMenu(byte slotIndex, String title, String subTitle, String footer, uint numChoices, IntPtr param)
+    /// <param name="numEntries">The number of entries in the menu.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    private void OnCiMenu(byte slotIndex, String title, String subTitle, String footer, uint numEntries, IntPtr context)
     {
       try
       {
@@ -960,10 +968,10 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("  title     = {0}", title);
           Log.Log.Debug("  sub-title = {0}", subTitle);
           Log.Log.Debug("  footer    = {0}", footer);
-          Log.Log.Debug("  # choices = {0}", numChoices);
+          Log.Log.Debug("  # entries = {0}", numEntries);
           if (_ciMenuCallbacks != null)
           {
-            _ciMenuCallbacks.OnCiMenu(title, subTitle, footer, (int)numChoices);
+            _ciMenuCallbacks.OnCiMenu(title, subTitle, footer, (int)numEntries);
           }
         }
       }
@@ -977,26 +985,26 @@ namespace TvLibrary.Implementations.DVB
     /// Called by the tuner driver for each menu entry when the user is browsing the CAM menu.
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="choiceIndex">The index of the choice within the menu.</param>
-    /// <param name="text">The text associated with the choice.</param>
-    /// <param name="param">???</param>
-    private void OnCiMenuChoice(byte slotIndex, uint choiceIndex, String text, IntPtr param)
+    /// <param name="entryIndex">The index of the entry within the menu.</param>
+    /// <param name="text">The text associated with the entry.</param>
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    private void OnCiMenuEntry(byte slotIndex, uint entryIndex, String text, IntPtr context)
     {
       try
       {
         lock (this)
         {
-          Log.Log.Debug("KNC: tuner {0} menu choice callback, slot = {1}", _deviceIndex, slotIndex);
-          Log.Log.Debug("  choice {0} = {1}", choiceIndex, text);
+          Log.Log.Debug("KNC: tuner {0} menu entry callback, slot = {1}", _deviceIndex, slotIndex);
+          Log.Log.Debug("  entry {0:-2} = {1}", entryIndex, text);
           if (_ciMenuCallbacks != null)
           {
-            _ciMenuCallbacks.OnCiMenuChoice((int)choiceIndex, text);
+            _ciMenuCallbacks.OnCiMenuChoice((int)entryIndex, text);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("KNC: menu choice callback exception: {0}", ex.ToString());
+        Log.Log.Debug("KNC: menu entry callback exception: {0}", ex.ToString());
       }
     }
 
@@ -1007,8 +1015,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="text">The request context text from the CAM.</param>
-    /// <param name="param">???</param>
-    private void OnCiRequest(byte slotIndex, bool blind, uint answerLength, String text, IntPtr param)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    private void OnCiRequest(byte slotIndex, bool blind, uint answerLength, String text, IntPtr context)
     {
       try
       {
@@ -1035,8 +1043,8 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
-    /// <param name="param">???</param>
-    private void OnCiCloseDisplay(byte slotIndex, uint delay, IntPtr param)
+    /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
+    private void OnCiCloseDisplay(byte slotIndex, uint delay, IntPtr context)
     {
       try
       {
@@ -1178,22 +1186,19 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendDiSEqCCommand(byte[] command)
     {
-      Log.Log.Debug("KNC: tuner {0} send DiSEqC message", _deviceIndex);
+      Log.Log.Debug("KNC: tuner {0} send DiSEqC command", _deviceIndex);
 
       int length = command.Length;
       if (length > MaxDiseqcCommandLength)
       {
-        length = MaxDiseqcCommandLength;
+        Log.Log.Debug("KNC: command too long, length = {0}", command.Length);
+        return false;
       }
       for (int i = 0; i < length; i++)
       {
         Marshal.WriteByte(_diseqcBuffer, i, command[i]);
       }
-      for (int i = length; i < MaxDiseqcCommandLength; i++)
-      {
-        Marshal.WriteByte(_diseqcBuffer, i, 0);
-      }
-      DVB_MMI.DumpBinary(_diseqcBuffer, 0, length);
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, length);
 
       bool success = KNCBDA_HW_DiSEqCWrite(_deviceIndex, _diseqcBuffer, (uint)length, 0);
       Log.Log.Debug("KNC: result = {0}", success);
