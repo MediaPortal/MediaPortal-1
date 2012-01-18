@@ -266,6 +266,7 @@ protected:
   CComPtr<IMFClock>                 m_pClock;
   CComPtr<IMFTransform>             m_pMixer;
   CComPtr<IMFMediaType>             m_pMediaType;
+  CComPtr<IMediaSeeking>            m_pMediaSeeking;
   CComPtr<IDirect3DTexture9>        textures[NUM_SURFACES];
   CComPtr<IDirect3DSurface9>        surfaces[NUM_SURFACES];
   CComPtr<IMFSample>                samples[NUM_SURFACES];
@@ -297,7 +298,9 @@ protected:
   BOOL                              m_bFirstInputNotify;
   BOOL                              m_bEndStreaming;
   bool                              m_bEndBuffering;
-  BOOL                              m_bFlush;
+  bool                              m_bNewSegment;
+  bool                              m_bFlush;
+  bool                              m_bDoPreBuffering;
   int                               m_iFramesDrawn;
   int                               m_iFramesDropped;
   bool                              m_bFrameSkipping;
@@ -449,6 +452,8 @@ protected:
   double        m_avPhaseDiff;
 
   COuterEVR*    m_pOuterEVR;
+
+  LONGLONG      m_streamDuration;
 
   CAMEvent      m_SampleAddedEvent;
   CAMEvent      m_EndOfStreamingEvent;
