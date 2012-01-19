@@ -522,7 +522,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (tunerInfo.achName.Equals(validTunerName))
         {
-          Log.Log.Debug("KNC: supported tuner detected");
+          Log.Log.Debug("KNC: recognised tuner name \"{0}\"", tunerInfo.achName);
           _isKnc = true;
           break;
         }
@@ -535,7 +535,7 @@ namespace TvLibrary.Implementations.DVB
         String devicePath = "";
         if (tunerDevicePath != null)
         {
-            devicePath = tunerDevicePath.ToLowerInvariant();
+          devicePath = tunerDevicePath.ToLowerInvariant();
         }
         _deviceIndex = GetDeviceIndex(devicePath);
         if (_deviceIndex < 0)
@@ -546,7 +546,7 @@ namespace TvLibrary.Implementations.DVB
         {
           // Stage 3: ensure we can get a reference to the filter that implements the proprietary
           // interfaces.
-          Log.Log.Debug("KNC: tuner {0}, named {1}", _deviceIndex, tunerInfo.achName);
+          Log.Log.Debug("KNC: device index is {0}", _deviceIndex);
           if (devicePath.Contains("dev_7160"))
           {
             Log.Log.Debug("KNC: this is a PCIe tuner");
@@ -597,6 +597,7 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
 
+      Log.Log.Debug("KNC: supported tuner detected");
       // If we have references to the required filters then allocate buffers.
       _diseqcBuffer = Marshal.AllocCoTaskMem(MaxDiseqcCommandLength);
       _callbackBuffer = Marshal.AllocCoTaskMem(CallbackStructSize);
