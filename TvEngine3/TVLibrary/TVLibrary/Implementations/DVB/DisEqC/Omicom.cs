@@ -143,22 +143,27 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Set DVB-S2 tuning parameters that could not previously be set through BDA interfaces.
+    /// Set tuning parameters that can or could not previously be set through BDA interfaces.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
-    /// <returns>The channel with DVB-S2 parameters set.</returns>
-    public DVBSChannel SetTuningParameters(DVBSChannel channel)
+    /// <returns>The channel with parameters adjusted as necessary.</returns>
+    public DVBBaseChannel SetTuningParameters(DVBBaseChannel channel)
     {
       Log.Log.Debug("Omicom: set tuning parameters");
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
+      {
+        return channel;
+      }
 
-      if (channel.ModulationType == ModulationType.ModQpsk || channel.ModulationType == ModulationType.Mod8Psk)
+      if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
       {
         // Note: using 8 VSB forces the driver to auto-detect the correct
         // modulation. It may be better to use 8 PSK.
-        channel.ModulationType = ModulationType.Mod8Vsb;
+        ch.ModulationType = ModulationType.Mod8Vsb;
       }
-      Log.Log.Debug("  modulation = {0}", channel.ModulationType);
-      return channel;
+      Log.Log.Debug("  modulation = {0}", ch.ModulationType);
+      return ch as DVBBaseChannel;
     }
 
     #region IDiSEqCController members

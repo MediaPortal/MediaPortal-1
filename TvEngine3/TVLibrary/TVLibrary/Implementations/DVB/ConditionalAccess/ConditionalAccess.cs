@@ -1036,7 +1036,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_omicom != null)
         {
-          return _omicom.SetTuningParameters(channel);
+          return (DVBSChannel)_omicom.SetTuningParameters(channel as DVBBaseChannel);
         }
       }
       catch (Exception ex)
