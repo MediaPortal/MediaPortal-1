@@ -26,15 +26,15 @@ using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Hardware;
+using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for TechnoTrend budget
-  /// series tuners.
+  /// A class for handling conditional access and DiSEqC for TechnoTrend Budget
+  /// and Connect series tuners.
   /// </summary>
   public class TechnoTrendAPI : ICustomTuning, IDiSEqCController, ICiMenuActions, IHardwareProvider, IDisposable
   {
@@ -1018,17 +1018,20 @@ namespace TvLibrary.Implementations.DVB
       _deviceCategory = GetDeviceCategory();
       if (_deviceCategory == TtDeviceCategory.Unknown)
       {
+        Log.Log.Debug("TechnoTrend: device category is unknown");
         return;
       }
 
       int deviceId = GetDeviceId();
       if (deviceId == -1)
       {
+        Log.Log.Debug("TechnoTrend: device ID could not be determined");
         return;
       }
       _deviceHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
       if (_deviceHandle == IntPtr.Zero || _deviceHandle.ToInt32() == -1)
       {
+        Log.Log.Debug("TechnoTrend: hardware interface could not be opened");
         return;
       }
 
@@ -1987,7 +1990,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the custom tune method supports tuning the channel, otherwise <c>false</c></returns>
     public bool SupportsTuningForChannel(IChannel channel)
     {
-      // Tuning os DVB-C, DVB-S and DVB-T channels is supported with an appropriate tuner.
+      // Tuning of DVB-C, DVB-S and DVB-T channels is supported with an appropriate tuner.
       if ((channel is DVBCChannel && _tunerType == CardType.DvbC) ||
         (channel is DVBSChannel && _tunerType == CardType.DvbS) ||
         (channel is DVBTChannel && _tunerType == CardType.DvbT))
@@ -2046,12 +2049,12 @@ namespace TvLibrary.Implementations.DVB
         tuneRequest.SymbolRate = (uint)ch.SymbolRate;
         tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 
-        int low;
-        int high;
+        int lowLof;
+        int highLof;
         int switchFrequency;
-        BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out low, out high, out switchFrequency);
-        tuneRequest.LnbHighBandLof = (uint)(1000 * high);
-        tuneRequest.LnbLowBandLof = (uint)(1000 * low);
+        BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out lowLof, out highLof, out switchFrequency);
+        tuneRequest.LnbHighBandLof = (uint)(1000 * highLof);
+        tuneRequest.LnbLowBandLof = (uint)(1000 * lowLof);
         tuneRequest.LnbSwitchFrequency = (uint)(1000 * switchFrequency);
         tuneRequest.UseToneBurst = false;
 
@@ -2183,7 +2186,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Get or set a custom device index. Not applicable for Turbosight tuners.
+    /// Get or set a custom device index. Not applicable for TechnoTrend tuners.
     /// </summary>
     public int DeviceIndex
     {
@@ -2197,13 +2200,13 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Get or set the tuner device path. Not applicable for Turbosight tuners.
+    /// Get or set the tuner device path. Not applicable for TechnoTrend tuners.
     /// </summary>
     public String DevicePath
     {
       get
       {
-        return "";
+        return String.Empty;
       }
       set
       {
@@ -2241,7 +2244,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Returns the result of detection. If false the provider should be disposed.
+    /// Returns the result of detection. If <c>false</c> the provider should be disposed.
     /// </summary>
     public bool IsSupported
     {
