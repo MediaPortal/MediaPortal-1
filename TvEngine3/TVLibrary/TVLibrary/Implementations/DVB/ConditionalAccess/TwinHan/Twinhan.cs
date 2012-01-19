@@ -258,8 +258,8 @@ namespace TvLibrary.Implementations.DVB
       public String Title = String.Empty;
       public String SubTitle = String.Empty;
       public String Footer = String.Empty;
-      public List<String> Choices = new List<string>();
-      public Int32 ChoiceCount = 0;
+      public List<String> Entries = new List<string>();
+      public Int32 EntryCount = 0;
       public bool IsEnquiry = false;
       public bool IsBlindAnswer = false;
       public Int32 ExpectedAnswerLength = 0;
@@ -296,14 +296,14 @@ namespace TvLibrary.Implementations.DVB
           Title = mmiData.Title;
           SubTitle = mmiData.SubTitle;
           Footer = mmiData.Footer;
-          ChoiceCount = mmiData.ChoiceCount;
-          if (ChoiceCount > TerraTecMaxCamMenuChoices)
+          EntryCount = mmiData.EntryCount;
+          if (EntryCount > TerraTecMaxCamMenuEntries)
           {
-            ChoiceCount = TerraTecMaxCamMenuChoices;
+            EntryCount = TerraTecMaxCamMenuEntries;
           }
-          for (int i = 0; i < mmiData.ChoiceCount; i++)
+          for (int i = 0; i < mmiData.EntryCount; i++)
           {
-            Choices.Add(mmiData.Choices[i].Text);
+            Entries.Add(mmiData.Entries[i].Text);
           }
           IsEnquiry = mmiData.IsEnquiry;
           IsBlindAnswer = mmiData.IsBlindAnswer;
@@ -319,14 +319,14 @@ namespace TvLibrary.Implementations.DVB
           Title = mmiData.Title;
           SubTitle = mmiData.SubTitle;
           Footer = mmiData.Footer;
-          ChoiceCount = mmiData.ChoiceCount;
-          if (ChoiceCount > DefaultMaxCamMenuChoices)
+          EntryCount = mmiData.EntryCount;
+          if (EntryCount > DefaultMaxCamMenuEntries)
           {
-            ChoiceCount = DefaultMaxCamMenuChoices;
+            EntryCount = DefaultMaxCamMenuEntries;
           }
-          for (int i = 0; i < mmiData.ChoiceCount; i++)
+          for (int i = 0; i < mmiData.EntryCount; i++)
           {
-            Choices.Add(mmiData.Choices[i].Text);
+            Entries.Add(mmiData.Entries[i].Text);
           }
           IsEnquiry = mmiData.IsEnquiry;
           IsBlindAnswer = mmiData.IsBlindAnswer;
@@ -339,7 +339,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    private struct DefaultMmiMenuChoice
+    private struct DefaultMmiMenuEntry
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 42)]
@@ -356,12 +356,11 @@ namespace TvLibrary.Implementations.DVB
       public String SubTitle;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Footer;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = DefaultMaxCamMenuChoices)]
-      public DefaultMmiMenuChoice[] Choices;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = DefaultMaxCamMenuEntries)]
+      public DefaultMmiMenuEntry[] Entries;
       private UInt16 Padding1;
-      public Int32 ChoiceCount;
+      public Int32 EntryCount;
 
-      // Note: these 2 bools should take up 4 bytes each.
       public bool IsEnquiry;
 
       public bool IsBlindAnswer;
@@ -376,7 +375,7 @@ namespace TvLibrary.Implementations.DVB
       public Int32 Type;
     }
 
-    private struct TerraTecMmiMenuChoice
+    private struct TerraTecMmiMenuEntry
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
@@ -393,11 +392,10 @@ namespace TvLibrary.Implementations.DVB
       public String SubTitle;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Footer;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = TerraTecMaxCamMenuChoices)]
-      public TerraTecMmiMenuChoice[] Choices;
-      public Int32 ChoiceCount;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = TerraTecMaxCamMenuEntries)]
+      public TerraTecMmiMenuEntry[] Entries;
+      public Int32 EntryCount;
 
-      // Note: these 2 bools should take up 4 bytes each.
       public bool IsEnquiry;
 
       public bool IsBlindAnswer;
@@ -421,7 +419,7 @@ namespace TvLibrary.Implementations.DVB
       public UInt32 Manufacturer;
       public UInt32 ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-      public String Info;
+      public String RootMenuTitle;
     }
 
     [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Ansi), ComVisible(true)]
@@ -468,13 +466,13 @@ namespace TvLibrary.Implementations.DVB
     private const int TuningParamsSize = 16;
 
     // TerraTec have entended the length and number of
-    // possible CAM menu choices in the MMI data struct
+    // possible CAM menu entries in the MMI data struct
     // returned by their drivers.
     private const int DefaultMmiDataSize = 1684;
-    private const int DefaultMaxCamMenuChoices = 9;
+    private const int DefaultMaxCamMenuEntries = 9;
 
     private const int TerraTecMmiDataSize = 33944;
-    private const int TerraTecMaxCamMenuChoices = 255;
+    private const int TerraTecMaxCamMenuEntries = 255;
 
     #endregion
 
@@ -1124,50 +1122,52 @@ namespace TvLibrary.Implementations.DVB
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CHECK_INTERFACE, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr != 0)
       {
-        Log.Log.Debug("Twinhan: supported tuner detected");
-        _isTwinhan = true;
-        _tunerType = tunerType;
-
-        String tunerName = FilterGraphTools.GetFilterName(tunerFilter);
-        if (tunerName != null)
-        {
-          tunerName = tunerName.ToLowerInvariant();
-          if (tunerName.Contains("terratec") || tunerName.Contains("cinergy"))
-          {
-            Log.Log.Debug("Twinhan: this tuner has a TerraTec driver installed");
-            _isTerraTec = true;
-            _mmiDataSize = TerraTecMmiDataSize;
-          }
-        }
-        else
-        {
-          _mmiDataSize = DefaultMmiDataSize;
-        }
-        _mmiBuffer = Marshal.AllocCoTaskMem(_mmiDataSize);
-        _generalBuffer = Marshal.AllocCoTaskMem(DriverInfoSize);
-
-        ReadDeviceInfo();
-        if (_isPidFilterSupported)
-        {
-          ReadPidFilterInfo();
-        }
-        ReadDriverInfo();
-
-        _isCiSlotPresent = IsCiSlotPresent();
-        if (_isCiSlotPresent)
-        {
-          _isCamPresent = IsCamPresent();
-          if (_isCamPresent)
-          {
-            _isCamReady = IsCamReady();
-          }
-        }
-
-        SetPowerState(true);
-        StartMmiHandlerThread();
+        return;
       }
+
+      Log.Log.Debug("Twinhan: supported tuner detected");
+      _isTwinhan = true;
+      _tunerType = tunerType;
+
+      String tunerName = FilterGraphTools.GetFilterName(tunerFilter);
+      if (tunerName != null)
+      {
+        tunerName = tunerName.ToLowerInvariant();
+        if (tunerName.Contains("terratec") || tunerName.Contains("cinergy"))
+        {
+          Log.Log.Debug("Twinhan: this tuner has a TerraTec driver installed");
+          _isTerraTec = true;
+          _mmiDataSize = TerraTecMmiDataSize;
+        }
+      }
+      else
+      {
+        _mmiDataSize = DefaultMmiDataSize;
+      }
+      _mmiBuffer = Marshal.AllocCoTaskMem(_mmiDataSize);
+      _generalBuffer = Marshal.AllocCoTaskMem(DriverInfoSize);
+
+      ReadDeviceInfo();
+      if (_isPidFilterSupported)
+      {
+        ReadPidFilterInfo();
+      }
+      ReadDriverInfo();
+
+      _isCiSlotPresent = IsCiSlotPresent();
+      if (_isCiSlotPresent)
+      {
+        _isCamPresent = IsCamPresent();
+        if (_isCamPresent)
+        {
+          _isCamReady = IsCamReady();
+        }
+      }
+
+      SetPowerState(true);
+      StartMmiHandlerThread();
     }
 
     /// <summary>
@@ -1830,17 +1830,17 @@ namespace TvLibrary.Implementations.DVB
                 Log.Log.Debug("  title     = {0}", mmi.Title);
                 Log.Log.Debug("  sub-title = {0}", mmi.SubTitle);
                 Log.Log.Debug("  footer    = {0}", mmi.Footer);
-                Log.Log.Debug("  # choices = {0}", mmi.ChoiceCount);
+                Log.Log.Debug("  # entries = {0}", mmi.EntryCount);
                 if (_ciMenuCallbacks != null)
                 {
-                  _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, mmi.ChoiceCount);
+                  _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, mmi.EntryCount);
                 }
-                for (int i = 0; i < mmi.ChoiceCount; i++)
+                for (int i = 0; i < mmi.EntryCount; i++)
                 {
-                  Log.Log.Debug("  choice {0}  = {1}", i + 1, mmi.Choices[i]);
+                  Log.Log.Debug("  entry {0:-2}  = {1}", i + 1, mmi.Entries[i]);
                   if (_ciMenuCallbacks != null)
                   {
-                    _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Choices[i]);
+                    _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Entries[i]);
                   }
                 }
                 Log.Log.Debug("  type      = {0}", mmi.Type);
@@ -2009,7 +2009,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("  type         = {0}", (DVB_MMI.ApplicationType)info.ApplicationType);
         Log.Log.Debug("  manufacturer = 0x{0:x}", info.Manufacturer);
         Log.Log.Debug("  code         = 0x{0:x}", info.ManufacturerCode);
-        Log.Log.Debug("  information  = {0}", info.Info);
+        Log.Log.Debug("  menu title   = {0}", info.RootMenuTitle);
 
         command = new TwinhanCommand(THBDA_IOCTL_CI_INIT_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
         hr = command.Execute(_propertySet, out returnedByteCount);
@@ -2090,7 +2090,7 @@ namespace TvLibrary.Implementations.DVB
       MmiData mmi = new MmiData();
       if (cancel == true)
       {
-        SelectMenu(0); // 0 means back
+        SelectMenu(0); // 0 means "go back to the previous menu level"
       }
       else
       {
@@ -2383,7 +2383,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        return "";
+        return String.Empty;
       }
       set
       {
@@ -2421,7 +2421,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Returns the result of detection. If false the provider should be disposed.
+    /// Returns the result of detection. If <c>false</c> the provider should be disposed.
     /// </summary>
     public bool IsSupported
     {
