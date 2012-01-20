@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
 
@@ -50,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.
     public static int GetDeviceIndex(TvCardBase TvCard)
     {
       // temporary list to hold device paths
-      IList<Card> cards = CardManagement.ListAllCards();
+      IList<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       List<String> deviceids = (from card in cards where card.name.StartsWith("KNC BDA") || card.name.StartsWith("Mystique") select card.devicePath).ToList();            
 
       int idx = -1;

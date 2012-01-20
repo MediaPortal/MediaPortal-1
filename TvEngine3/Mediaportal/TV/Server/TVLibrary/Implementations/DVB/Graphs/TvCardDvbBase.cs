@@ -1023,7 +1023,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       _isATSC = false;
       _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
       Log.WriteFile("dvb:AddNetworkProviderFilter");      
-      Card c = CardManagement.GetCardByDevicePath(DevicePath);
+      Card c = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);
       // generic network provider Guid.
       Guid genProviderClsId = new Guid("{B2F3A67C-29DA-4C78-8831-091ED509A475}");
       // First test if the Generic Network Provider is available (only on MCE 2005 + Update Rollup 2)

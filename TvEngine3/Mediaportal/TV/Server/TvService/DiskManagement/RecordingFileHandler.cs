@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVService.DiskManagement
@@ -284,7 +285,7 @@ namespace Mediaportal.TV.Server.TVService.DiskManagement
     {
       
       var recordingPaths = new List<string>();
-      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
+      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       foreach (Card card in cards)
       {
         string currentCardPath = card.recordingFolder;

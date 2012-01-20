@@ -24,6 +24,7 @@ using DirectShowLib;
 using MediaPortal.Common.Utils.ExtensionMethods;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.HaupPauge;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess.KNC;
@@ -121,7 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess
         if (card != null && card.DevicePath != null)
         {
           //fetch decrypt limit from DB and apply it.
-          Card c = CardManagement.GetCardByDevicePath(card.DevicePath);
+          Card c = CardManagement.GetCardByDevicePath(card.DevicePath, CardIncludeRelationEnum.None);
           _decryptLimit = c.decryptLimit;
           _useCam = c.CAM;
           _CamType = (CamType)c.camType;

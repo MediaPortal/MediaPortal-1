@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.ConditionalAccess;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -540,7 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected void GetPreloadBitAndCardId()
     {
       //fetch preload value from db and apply it.
-      Card dbsCard = CardManagement.GetCardByDevicePath(_devicePath);
+      Card dbsCard = CardManagement.GetCardByDevicePath(_devicePath, CardIncludeRelationEnum.None);
 
       if (dbsCard != null)
       {
@@ -552,7 +553,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     private void GetSupportsPauseGraph()
     {
       //fetch stopgraph value from db and apply it.
-      Card dbsCard = CardManagement.GetCardByDevicePath(_devicePath);
+      Card dbsCard = CardManagement.GetCardByDevicePath(_devicePath, CardIncludeRelationEnum.None);
       if (dbsCard != null)
       {
         _stopGraph = dbsCard.stopgraph;

@@ -457,8 +457,6 @@ namespace Mediaportal.TV.Server.TVService
           }
         }
 
-
-
         _rtspStreamingPort = Int32.Parse(SettingsManagement.GetSetting("rtspPort", RtspStreaming.DefaultPort.ToString()).value);
 
         //enumerate all tv cards in this pc...
@@ -495,9 +493,8 @@ namespace Mediaportal.TV.Server.TVService
           }
         }
         //notify log about cards from the database which are removed from the pc
-        IList<Card> cardsInDbs = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
         int cardsInstalled = _localCardCollection.Cards.Count;
-        foreach (Card dbsCard in cardsInDbs)
+        foreach (Card dbsCard in allCards)
         {
           {
             bool found = false;
@@ -505,7 +502,7 @@ namespace Mediaportal.TV.Server.TVService
             {
               if (dbsCard.devicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
-                Card cardDB = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(_localCardCollection.Cards[cardNumber].DevicePath);
+                Card cardDB = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(_localCardCollection.Cards[cardNumber].DevicePath, CardIncludeRelationEnum.None);
 
                 bool cardEnabled = cardDB.enabled;
                 bool cardPresent = _localCardCollection.Cards[cardNumber].CardPresent;
@@ -570,8 +567,8 @@ namespace Mediaportal.TV.Server.TVService
         Dictionary<int, ITVCard> localcards = new Dictionary<int, ITVCard>();
 
 
-        cardsInDbs = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
-        foreach (Card card in cardsInDbs)
+        //allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
+        foreach (Card card in allCards)
         {
           {
             foreach (ITVCard t in _localCardCollection.Cards)
@@ -603,8 +600,8 @@ namespace Mediaportal.TV.Server.TVService
           }
         }
 
-        cardsInDbs = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
-        foreach (Card dbsCard in cardsInDbs)
+        allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
+        foreach (Card dbsCard in allCards)
         {
           if (localcards.ContainsKey(dbsCard.idCard))
           {
@@ -830,7 +827,7 @@ namespace Mediaportal.TV.Server.TVService
     /// <value>id of card</value>
     public int CardId(int cardIndex)
     {
-      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
+      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       return cards != null && cards.Count > cardIndex ? cards[cardIndex].idCard : -1;
     }
 

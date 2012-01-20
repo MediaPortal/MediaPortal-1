@@ -232,7 +232,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         IQueryable<Card> query = cardRepository.GetAll<Card>();
         query = cardRepository.IncludeAllRelations(query, includeRelations);
         return query.ToList();
-      }  
+      }
     }
 
     public static IList<Card> SaveCards(IEnumerable<Card> cards)

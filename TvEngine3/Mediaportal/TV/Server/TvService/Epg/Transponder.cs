@@ -256,7 +256,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
       ////Gentle.Common.CacheManager.Clear();
       Reset();
       //get all channels
-      IList<Channel> channels = ChannelManagement.ListAllChannels();
+      IList<Channel> channels = ChannelManagement.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
       foreach (Channel channel in channels)
       {
         //if epg grabbing is enabled and channel is a radio or tv channel

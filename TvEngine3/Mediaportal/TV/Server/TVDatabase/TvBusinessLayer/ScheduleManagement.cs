@@ -232,7 +232,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       var conflicts = new List<Schedule>();
       IEnumerable<Schedule> schedulesList = ListAllSchedules();
 
-      IList<Card> cards = CardManagement.ListAllCards().ToList();
+      IList<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None).ToList(); //SEB
       if (cards.Count == 0)
       {
         return conflicts;
@@ -293,7 +293,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       overlappingSchedules = new List<Schedule>();
       Log.Info("AssignSchedulesToCard: schedule = " + schedule);
-      IEnumerable<Card> cards = CardManagement.ListAllCards();
+      IEnumerable<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       bool assigned = false;
       int count = 0;
       foreach (Card card in cards)

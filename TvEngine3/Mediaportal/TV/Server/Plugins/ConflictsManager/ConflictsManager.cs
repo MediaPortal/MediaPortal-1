@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       Log.WriteFile("plugin: ConflictsManager started");
 
       _schedules = ScheduleManagement.ListAllSchedules();
-      _cards = CardManagement.ListAllCards();
+      _cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
 
       _conflictingPrograms = new List<Program>();
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
@@ -271,7 +271,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
     /// <returns>Array of List<Schedule> : one per card, index [0] contains unassigned schedules</returns>
     private List<Schedule>[] AssignSchedulesToCards(IList<Schedule> Schedules)
     {
-      IList<Card> cardsList = CardManagement.ListAllCards();
+      IList<Card> cardsList = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       // creates an array of Schedule Lists
       // element [0] will be filled with conflicting schedules
       // element [x] will be filled with the schedules assigned to card with idcard=x

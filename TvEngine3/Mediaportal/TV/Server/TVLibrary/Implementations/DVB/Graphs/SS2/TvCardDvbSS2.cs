@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.DisEqC;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC;
@@ -201,7 +202,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       : base(epgEvents, device)
     {
       _useDISEqCMotor = false;
-      Card card = CardManagement.GetCardByDevicePath(device.DevicePath);
+      Card card = CardManagement.GetCardByDevicePath(device.DevicePath, CardIncludeRelationEnum.None);
       if (card != null)
       {
         Setting setting = SettingsManagement.GetSetting("dvbs" + card.idCard + "motorEnabled", "no");

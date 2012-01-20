@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.TVService.DiskManagement
     private static IEnumerable<string> GetDisks()
     {
       var drives = new List<string>();
-      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards();
+      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       foreach (Card card in cards)
       {
         if (card.recordingFolder.Length > 0)
