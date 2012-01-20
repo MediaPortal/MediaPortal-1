@@ -1145,7 +1145,10 @@ namespace TvLibrary.Implementations.DVB
       {
         // Read the number of mediums.
         int countMediums = Marshal.ReadInt32(raw, 4);
-        Log.Log.Debug("debug: number of mediums = {0}", countMediums);
+        if (countMediums == 0)
+        {
+          return deviceId;
+        }
 
         // Calculate the address of the first medium.
         IntPtr addr = new IntPtr(raw.ToInt32() + 8);
@@ -1268,7 +1271,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       TtApiResult result = bdaapiSetDVBTAntPwr(_deviceHandle, powerOn);
-      Log.Log.Debug("Turbosight: result = {0}", result);
+      Log.Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
