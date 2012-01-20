@@ -75,36 +75,32 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
     /// <param name="callbacks">Callback structure pointer.</param>
     /// <returns><c>true</c> if the interface is successfully enabled, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_Enable(int deviceIndex, IGraphBuilder graphBuilder, IBaseFilter filter, IntPtr callbacks);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_Enable(Int32 deviceIndex, IGraphBuilder graphBuilder, IBaseFilter filter, IntPtr callbacks);
 
     /// <summary>
     /// Disable the conditional access interface.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if the interface is successfully disabled, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Disable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_Disable(int deviceIndex);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_Disable(Int32 deviceIndex);
 
     /// <summary>
     /// Check if this device currently has conditional access capabilities.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if a CI slot is connected with a CAM inserted, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsAvailable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_IsAvailable(int deviceIndex);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_IsAvailable(Int32 deviceIndex);
 
     /// <summary>
     /// Detect if the CAM is ready to interact.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if the CAM is ready, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsReady", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_IsReady(int deviceIndex);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_IsReady(Int32 deviceIndex);
 
     /// <summary>
     /// Enable the use of the KNCBDA_CI_* functions by initialising internal variables and interfaces.
@@ -112,9 +108,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="param"><c>True</c> to enable the CI slot; <c>false</c>to disable the CI slot.</param>
     /// <returns>???</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_HW_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_HW_Enable(int deviceIndex, bool param);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_HW_Enable(Int32 deviceIndex, bool param);
 
     /// <summary>
     /// Get the name/brand/type of the CAM inserted in the CI slot. This string is likely
@@ -124,10 +119,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="name">A buffer to hold the CAM name.</param>
     /// <param name="bufferSize">The size of the CAM name buffer in bytes.</param>
     /// <returns>the name/brand/type of the CAM</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_GetName", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_GetName(int deviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name,
-                                                uint bufferSize);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern bool KNCBDA_CI_GetName(Int32 deviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name,
+                                                UInt32 bufferSize);
 
     /// <summary>
     /// Send CA PMT to the CAM to request that one or more services be descrambled.
@@ -136,9 +130,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="caPmt">A pointer to a buffer containing the CA PMT.</param>
     /// <param name="caPmtLength">The length of the CA PMT buffer in bytes.</param>
     /// <returns><c>true</c> if the CA PMT is successfully passed to the CAM, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendPMTCommand", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_SendPMTCommand(int deviceIndex, IntPtr caPmt, uint caPmtLength);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_SendPMTCommand(Int32 deviceIndex, IntPtr caPmt, UInt32 caPmtLength);
 
     /// <summary>
     /// Enter the CAM menu.
@@ -146,9 +139,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <returns>???</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_EnterMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_EnterMenu(int deviceIndex, byte slotIndex);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_EnterMenu(Int32 deviceIndex, byte slotIndex);
 
     /// <summary>
     /// Select an entry in the CAM menu.
@@ -157,9 +149,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <param name="choice">The index (0..n) of the menu choice selected by the user.</param>
     /// <returns>???</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SelectMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_SelectMenu(int deviceIndex, byte slotIndex, byte choice);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_SelectMenu(Int32 deviceIndex, byte slotIndex, byte choice);
 
     /// <summary>
     /// Close the CAM menu.
@@ -167,9 +158,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <returns>???</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_CloseMenu", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_CloseMenu(int deviceIndex, byte slotIndex);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_CI_CloseMenu(Int32 deviceIndex, byte slotIndex);
 
     /// <summary>
     /// Send a response from the user to the CAM.
@@ -179,9 +169,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="menuAnswer">The user's response.</param>
     /// <returns>???</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendMenuAnswer", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool KNCBDA_CI_SendMenuAnswer(int deviceIndex, byte slotIndex, bool cancel,
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern bool KNCBDA_CI_SendMenuAnswer(Int32 deviceIndex, byte slotIndex, bool cancel,
                                                        [In, MarshalAs(UnmanagedType.LPStr)] String menuAnswer);
 
     /// <summary>
@@ -190,9 +179,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
     /// <returns><c>true</c> if the hardware interfaces are successfully initialised, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_Enable", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
-    private static extern bool KNCBDA_HW_Enable(int deviceIndex, IBaseFilter filter);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_HW_Enable(Int32 deviceIndex, IBaseFilter filter);
 
     /// <summary>
     /// Send a DiSEqC command.
@@ -202,9 +190,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="commandLength">The length of the command.</param>
     /// <param name="repeatCount">The number of times to resend the command.</param>
     /// <returns><c>true</c> if the tuner successfully sent the command, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_DiSEqCWrite", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
-    private static extern bool KNCBDA_HW_DiSEqCWrite(int deviceIndex, IntPtr command, UInt32 commandLength, UInt32 repeatCount);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool KNCBDA_HW_DiSEqCWrite(Int32 deviceIndex, IntPtr command, UInt32 commandLength, UInt32 repeatCount);
 
     /// <summary>
     /// PCI-e products (Philips/NXP/Trident SAA7160 based) have a main device filter - one
@@ -213,19 +200,17 @@ namespace TvLibrary.Implementations.DVB
     /// SAA716x based main devices.
     /// </summary>
     /// <returns>the number of SAA716x main device filters in the system</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_EnumerateMainDevices", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
-    private static extern int PCIE_EnumerateMainDevices();
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern Int32 PCIE_EnumerateMainDevices();
 
     /// <summary>
     /// Returns the filter name for a specific main device.
     /// </summary>
     /// <param name="mainDeviceIndex">Main device index 0..n.</param>
     /// <returns>the name for the main device corresponding with the index parameter</returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_GetDeviceItem", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [return: MarshalAs(UnmanagedType.LPStr)]
-    private static extern String PCIE_GetDeviceItem(int mainDeviceIndex);
+    private static extern String PCIE_GetDeviceItem(Int32 mainDeviceIndex);
 
     /// <summary>
     /// Open a main device. You need to do this if you want to swap the CI/CAM inputs on the corresponding
@@ -233,15 +218,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="mainDeviceIndex">Main device index 0..n.</param>
     /// <returns><c>true</c> if the device is successfully opened, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_OpenMainDevice", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
-    private static extern bool PCIE_OpenMainDevice(int mainDeviceIndex);
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool PCIE_OpenMainDevice(Int32 mainDeviceIndex);
 
     /// <summary>
     /// Close the currently open main device. You can only have one main device open at a time.
     /// </summary>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_CloseMainDevice", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern void PCIE_CloseMainDevice();
 
     /// <summary>
@@ -252,8 +235,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="data">A pointer to a buffer containing the property value.</param>
     /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is set successfully, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_SetProperty", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern bool PCIE_SetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, UInt32 dataLength);
 
     /// <summary>
@@ -264,8 +246,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="data">A pointer to a buffer to hold the property value.</param>
     /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is retrieved successfully, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_GetProperty", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern bool PCIE_GetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, out UInt32 dataLength);
 
     /// <summary>
@@ -274,8 +255,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="swap"><c>True</c> to swap CI slot/CAM inputs.</param>
     /// <returns><c>true</c> if the CI slot/CAM inputs on the device are successfully swapped, otherwise <c>false</c></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "PCIE_SwapCAMInput", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.StdCall)]
+    [DllImport("KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern bool PCIE_SwapCAMInput(bool swap);
 
     #endregion
@@ -283,7 +263,7 @@ namespace TvLibrary.Implementations.DVB
     #region structs
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private unsafe struct KncCiCallbacks
+    private struct KncCiCallbacks
     {
       /// Optional context that the interface will pass back
       /// as a parameter when the delegates are executed.
@@ -327,7 +307,7 @@ namespace TvLibrary.Implementations.DVB
     ///   initialised. Typically this will be the same string as can be retrieved by KNCBDA_CI_GetName().</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiState(
+    private delegate void OnKncCiState(
       byte slotIndex, KncCiState state, [MarshalAs(UnmanagedType.LPStr)] String menuTitle, IntPtr context);
 
     /// <summary>
@@ -336,7 +316,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiOpenDisplay(byte slotIndex, IntPtr context);
+    private delegate void OnKncCiOpenDisplay(byte slotIndex, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver to pass the menu meta-data when the user is browsing the CAM menu.
@@ -348,10 +328,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="numEntries">The number of entries in the menu.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] String title,
+    private delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] String title,
                                             [MarshalAs(UnmanagedType.LPStr)] String subTitle,
                                             [MarshalAs(UnmanagedType.LPStr)] String footer,
-                                            uint numEntries, IntPtr context);
+                                            UInt32 numEntries, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver for each menu entry when the user is browsing the CAM menu.
@@ -361,8 +341,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="text">The text associated with the entry.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiMenuEntry(
-      byte slotIndex, uint entryIndex, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
+    private delegate void OnKncCiMenuEntry(
+      byte slotIndex, UInt32 entryIndex, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver when the CAM requests input from the user.
@@ -373,8 +353,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiRequest(
-      byte slotIndex, bool blind, uint answerLength, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
+    private delegate void OnKncCiRequest(
+      byte slotIndex, bool blind, UInt32 answerLength, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver when the CAM wants to close the menu.
@@ -383,7 +363,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnKncCiCloseDisplay(byte slotIndex, uint delay, IntPtr context);
+    private delegate void OnKncCiCloseDisplay(byte slotIndex, UInt32 delay, IntPtr context);
 
     #endregion
 
@@ -532,7 +512,7 @@ namespace TvLibrary.Implementations.DVB
       {
         // Stage 2: attempt to get the KNC device index corresponding with this tuner.
         _isKnc = false;
-        String devicePath = "";
+        String devicePath = String.Empty;
         if (tunerDevicePath != null)
         {
           devicePath = tunerDevicePath.ToLowerInvariant();
@@ -708,74 +688,65 @@ namespace TvLibrary.Implementations.DVB
     private void OpenCi()
     {
       Log.Log.Debug("KNC: tuner {0} open conditional access interface", _deviceIndex);
+      _ciState = KncCiState.Releasing;
+
       _callbacks = new KncCiCallbacks();
+      _callbacks.Context = IntPtr.Zero;
       _callbacks.OnCiMenu = OnCiMenu;
       _callbacks.OnCiMenuEntry = OnCiMenuEntry;
       _callbacks.OnCiState = OnCiState;
       _callbacks.OnCloseDisplay = OnCiCloseDisplay;
       _callbacks.OnOpenDisplay = OnCiOpenDisplay;
       _callbacks.OnRequest = OnCiRequest;
-      _callbacks.Context = IntPtr.Zero;
+      Marshal.StructureToPtr(_callbacks, _callbackBuffer, true);
 
-      _ciState = KncCiState.Releasing;
-
-      unsafe
+      // Open the conditional access interface.
+      bool result = false;
+      if (_isPcie)
       {
-        Marshal.StructureToPtr(_callbacks, _callbackBuffer, true);
-        // Open the conditional access interface.
-        bool result = false;
-        if (_isPcie)
-        {
-          result = KNCBDA_CI_Enable(_deviceIndex, _graphBuilder, _captureFilter, _callbackBuffer);
-        }
-        else
-        {
-          result = KNCBDA_CI_Enable(_deviceIndex, null, _tunerFilter, _callbackBuffer);
-        }
-        if (!result)
-        {
-          Log.Log.Debug("KNC: CI enable failed");
-          return;
-        }
+        result = KNCBDA_CI_Enable(_deviceIndex, _graphBuilder, _captureFilter, _callbackBuffer);
+      }
+      else
+      {
+        result = KNCBDA_CI_Enable(_deviceIndex, null, _tunerFilter, _callbackBuffer);
+      }
+      if (!result)
+      {
+        Log.Log.Debug("KNC: CI enable failed");
+        return;
+      }
 
-        // Prepare the conditional access interface for use. This seems to always succeed...
-        if (!KNCBDA_CI_HW_Enable(_deviceIndex, true))
-        {
-          Log.Log.Debug("KNC: CI HW enable failed");
-          return;
-        }
+      // Prepare the conditional access interface for use. This seems to always succeed...
+      if (!KNCBDA_CI_HW_Enable(_deviceIndex, true))
+      {
+        Log.Log.Debug("KNC: CI HW enable failed");
+        return;
+      }
 
-        Log.Log.Debug("KNC: CI interface opened successfully");
+      Log.Log.Debug("KNC: CI interface opened successfully");
 
-        // Check if a CI slot is connected.
-        _isCiSlotPresent = IsCiSlotPresent();
-        if (!_isCiSlotPresent)
-        {
-          return;
-        }
-
-        // Check if a CAM is in the CI slot.
+      _isCiSlotPresent = IsCiSlotPresent();
+      if (_isCiSlotPresent)
+      {
         _isCamPresent = IsCamPresent();
-        if (!_isCiSlotPresent)
+        if (_isCiSlotPresent)
         {
-          return;
-        }
+          // Check if the CAM is currently ready. CI state change callbacks will tell us if state changes.
+          _isCamReady = IsCamReady();
+          if (!_isCamReady)
+          {
+            return;
+          }
 
-        // Check if the CAM is currently ready. CI state change callbacks will tell us if state changes.
-        _isCamReady = IsCamReady();
-        if (!_isCamReady)
-        {
-          return;
-        }
-
-        StringBuilder nameBuffer = new StringBuilder(100);
-        if (KNCBDA_CI_GetName(_deviceIndex, nameBuffer, (uint)nameBuffer.MaxCapacity))
-        {
-          Log.Log.Debug("KNC: CAM name/type is {0}", nameBuffer);
-        }
-        else
-        {
-          Log.Log.Debug("KNC: failed to get the CAM name/type");
+          StringBuilder nameBuffer = new StringBuilder(100);
+          if (KNCBDA_CI_GetName(_deviceIndex, nameBuffer, (uint)nameBuffer.MaxCapacity))
+          {
+            Log.Log.Debug("KNC: CAM name/type is {0}", nameBuffer);
+          }
+          else
+          {
+            Log.Log.Debug("KNC: failed to get the CAM name/type");
+          }
         }
       }
     }
@@ -815,7 +786,7 @@ namespace TvLibrary.Implementations.DVB
       // only returns true when a CI slot is present *and* a CAM is inserted. Best to
       // assume there is always a CI slot...
       Log.Log.Debug("KNC: is CI slot present");
-	  Log.Log.Debug("KNC: result = {0}", true);
+      Log.Log.Debug("KNC: result = {0}", true);
       return true;
     }
 
@@ -959,7 +930,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="footer">The menu footer.</param>
     /// <param name="numEntries">The number of entries in the menu.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiMenu(byte slotIndex, String title, String subTitle, String footer, uint numEntries, IntPtr context)
+    private void OnCiMenu(byte slotIndex, String title, String subTitle, String footer, UInt32 numEntries, IntPtr context)
     {
       try
       {
@@ -989,7 +960,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="entryIndex">The index of the entry within the menu.</param>
     /// <param name="text">The text associated with the entry.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiMenuEntry(byte slotIndex, uint entryIndex, String text, IntPtr context)
+    private void OnCiMenuEntry(byte slotIndex, UInt32 entryIndex, String text, IntPtr context)
     {
       try
       {
@@ -1017,7 +988,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiRequest(byte slotIndex, bool blind, uint answerLength, String text, IntPtr context)
+    private void OnCiRequest(byte slotIndex, bool blind, UInt32 answerLength, String text, IntPtr context)
     {
       try
       {
@@ -1045,7 +1016,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiCloseDisplay(byte slotIndex, uint delay, IntPtr context)
+    private void OnCiCloseDisplay(byte slotIndex, UInt32 delay, IntPtr context)
     {
       try
       {
@@ -1140,7 +1111,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (answer == null)
       {
-        answer = "";
+        answer = String.Empty;
       }
       Log.Log.Debug("KNC: tuner {0} slot {1} send menu answer, answer = {2}, cancel = {3}", _deviceIndex, _slotIndex, answer, cancel);
       return KNCBDA_CI_SendMenuAnswer(_deviceIndex, _slotIndex, cancel, answer);
