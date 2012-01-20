@@ -593,13 +593,21 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }    
 
-    public static IList<Channel> GetChannelsByNameContains(string channelName)
+    public static Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations)
     {
+      Channel channel;
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<Channel>(c => c.displayName.Contains(channelName));
-        return channelRepository.IncludeAllRelations(query).ToList();
+        var query = channelRepository.GetQuery<Channel>(c => c.displayName == channelName);
+        channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault();
+        
+        if (channel == null)
+        {
+          query = channelRepository.GetQuery<Channel>(c => c.displayName.Contains(channelName));
+          channel = channelRepository.IncludeAllRelations(query, includeRelations).FirstOrDefault(); 
+        }        
       }
+      return channel;
     }
 
     public static void DeleteTuningDetail(int idTuning)

@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     
 
     [OperationContract]
-    IList<Channel> GetChannelsByNameContains(string channelName);
+    Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations);
     [OperationContract]
     void DeleteTuningDetail(int idTuning);
     [OperationContract]

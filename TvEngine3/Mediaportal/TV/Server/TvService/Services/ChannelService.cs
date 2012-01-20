@@ -123,11 +123,11 @@ namespace Mediaportal.TV.Server.TVService.Services
     {
       ChannelManagement.UpdateTuningDetails(dbChannel, channel);
     }
-    
 
-    public IList<Channel> GetChannelsByNameContains(string channelName)
+
+    public Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations)
     {
-      return ChannelManagement.GetChannelsByNameContains(channelName);
+      return ChannelManagement.GetChannelByName(channelName, includeRelations);
     }
 
     public void DeleteTuningDetail(int idTuning)
