@@ -166,14 +166,14 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="deviceName">The corresponding DsDevice name.</param>
     /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
-    [DllImport("TbsCIapi.dll", EntryPoint = "On_Start_CI", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr On_Start_CI(IBaseFilter tunerFilter, String deviceName);
+    [DllImport("TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPStr)] String deviceName);
 
     /// <summary>
     /// Check whether a CAM is present in the CI slot.
     /// </summary>
     /// <param name="handle">The handle allocated to this device.</param>
-    [DllImport("TbsCIapi.dll", EntryPoint = "Camavailable", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern bool Camavailable(IntPtr handle);
 
     /// <summary>
@@ -182,7 +182,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="handle">The handle allocated to this device.</param>
     /// <param name="command">The MMI command.</param>
     /// <param name="response">The MMI response.</param>
-    [DllImport("TbsCIapi.dll", EntryPoint = "TBS_ci_MMI_Process", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern void TBS_ci_MMI_Process(IntPtr handle, IntPtr command, IntPtr response);
 
     /// <summary>
@@ -191,21 +191,21 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="handle">The handle allocated to this device.</param>
     /// <param name="pmt">The PMT command.</param>
     /// <param name="pmtLength">The length of the PMT.</param>
-    [DllImport("TbsCIapi.dll", EntryPoint = "TBS_ci_SendPmt", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void TBS_ci_SendPmt(IntPtr handle, IntPtr pmt, ushort pmtLength);
+    [DllImport("TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void TBS_ci_SendPmt(IntPtr handle, IntPtr pmt, UInt16 pmtLength);
 
     /// <summary>
     /// Close the CI interface.
     /// </summary>
     /// <param name="handle">The handle allocated to this device.</param>
-    [DllImport("TbsCIapi.dll", EntryPoint = "On_Exit_CI", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern void On_Exit_CI(IntPtr handle);
 
     #endregion
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
     private struct TbsAccessParams
     {
       public TbsAccessMode AccessMode;
@@ -225,7 +225,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     // PCIe/PCI only.
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
     private struct IrCommand
     {
       public UInt32 Address;
@@ -233,7 +233,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     // USB (QBOX) only.
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
     private struct UsbIrCommand
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
@@ -1421,18 +1421,20 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_isTurbosight)
       {
-        SetPowerState(false);
-        if (_mmiHandlerThread != null)
-        {
-          _stopMmiHandlerThread = true;
-          Thread.Sleep(3000);
-        }
-        CloseCi();
-        Marshal.FreeCoTaskMem(_generalBuffer);
-        if (_isUsb)
-        {
-          Release.ComObject(_propertySet);
-        }
+        return;
+      }
+
+      SetPowerState(false);
+      if (_mmiHandlerThread != null)
+      {
+        _stopMmiHandlerThread = true;
+        Thread.Sleep(3000);
+      }
+      CloseCi();
+      Marshal.FreeCoTaskMem(_generalBuffer);
+      if (_isUsb)
+      {
+        Release.ComObject(_propertySet);
       }
     }
 
