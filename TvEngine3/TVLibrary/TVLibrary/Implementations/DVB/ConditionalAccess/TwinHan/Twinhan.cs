@@ -158,7 +158,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct DeviceInfo   // DEVICE_INFO
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
@@ -179,7 +179,7 @@ namespace TvLibrary.Implementations.DVB
       private byte[] Reserved;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct DriverInfo   // DriverInfo
     {
       public byte DriverMajorVersion;                         // BCD encoding eg. 0x32 -> 3.2
@@ -197,7 +197,7 @@ namespace TvLibrary.Implementations.DVB
       private byte[] Reserved;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct PidFilterParams    // PID_FILTER_INFO
     {
       public TwinhanPidFilterMode FilterMode;
@@ -208,7 +208,7 @@ namespace TvLibrary.Implementations.DVB
       public UInt16[] FilterPids;                             // Filter PID list.
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct LnbParams  // LNB_DATA
     {
       public bool PowerOn;
@@ -221,7 +221,7 @@ namespace TvLibrary.Implementations.DVB
       public TwinhanDiseqcPort DiseqcPort;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct DiseqcMessage
     {
       public Int32 MessageLength;
@@ -230,7 +230,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     // New CI/MMI state info structure - CI API v2.
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct CiStateInfo    // THCIState
     {
       public TwinhanCiState CiState;
@@ -243,7 +243,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     // Old CI/MMI state info structure - CI API v1.
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct CiStateInfoOld   // THCIStateOld
     {
       public TwinhanCiState CiState;
@@ -339,6 +339,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct DefaultMmiMenuEntry
     {
       #pragma warning disable 0649
@@ -375,6 +376,7 @@ namespace TvLibrary.Implementations.DVB
       public Int32 Type;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct TerraTecMmiMenuEntry
     {
       #pragma warning disable 0649
@@ -422,7 +424,7 @@ namespace TvLibrary.Implementations.DVB
       public String RootMenuTitle;
     }
 
-    [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Explicit), ComVisible(true)]
     private struct TuningParams   // TURNER_VALUE
     {
       [FieldOffset(0)]
