@@ -366,6 +366,7 @@ HRESULT CVideoPin::DoBufferProcessingLoop()
       {
         // derived class wants us to stop pushing data
         pSample->Release();
+        LogDebug("vid: DeliverEndOfStream - downstream filter rejected the sample");
         DeliverEndOfStream();
         return S_OK;
       } 
@@ -375,6 +376,7 @@ HRESULT CVideoPin::DoBufferProcessingLoop()
         pSample->Release();
         DbgLog((LOG_ERROR, 1, TEXT("Error %08lX from FillBuffer!!!"), hr));
         DeliverEndOfStream();
+        LogDebug("vid: DeliverEndOfStream - unhandled error in ::FillBuffer");
         m_pFilter->NotifyEvent(EC_ERRORABORT, hr, 0);
         return hr;
       }
@@ -491,6 +493,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         {
           if (!m_bClipEndingNotified)
           {
+            // Deliver end of stream notification to flush the video decoder.
+            // This should only happen when the stream enters into paused state
+            LogDebug("vid: FillBuffer - DeliverEndOfStream");
             DeliverEndOfStream();
             m_bClipEndingNotified = true;
           }
@@ -528,6 +533,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             else
               m_rtStreamOffset = 0;
 
+            // LAV video decoder requires an end of stream notification to be able to provide complete video frames
+            // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as
+            // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
             if (m_currentDecoder == CLSID_LAVVideo)
               DeliverEndOfStream();
           }
@@ -564,9 +572,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 LogDebug("vid: graph rebuilding required");
 
                 m_demux.m_bVideoRequiresRebuild = true;
+                m_bZeroTimeStream = true;
                 checkPlaybackState = true;
 
-                m_bZeroTimeStream = true;
+                DeliverEndOfStream();
               }
               else
               {
@@ -579,7 +588,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_pCachedBuffer = buffer;
                 m_bProvidePMT = true;
 				
-                DeliverEndOfStream();
+                if (m_currentDecoder == CLSID_LAVVideo)
+                  DeliverEndOfStream();
 
                 return ERROR_NO_DATA;
               }
@@ -612,6 +622,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
             m_bZeroTimeStream = false;
           }
+
           if (m_bDiscontinuity)
           {
             LogDebug("vid: set discontinuity");
@@ -620,13 +631,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bDiscontinuity = false;
           }
 
-          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;// - m_rtStart;
-          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;// - m_rtStart;
+          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;
+          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;
 
-          if (abs(m_dRateSeeking - 1.0) > 0.5)
-            pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
-          else
-            pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
+          pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
 
           if (m_bInitDuration)
           {
