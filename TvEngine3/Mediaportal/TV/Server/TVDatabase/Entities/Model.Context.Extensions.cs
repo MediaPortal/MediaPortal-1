@@ -1003,30 +1003,28 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 _allEntities = new HashSet<IObjectWithChangeTracker>();
                 _temporaryKeyMap = new Dictionary<EntityKey, EntityKey>();
             }
-    
+
             public void Add(ObjectStateEntry entry, ObjectChangeTracker changeTracker)
             {
-                EntityKey temporaryKey = entry.EntityKey;
-                EntityKey finalKey;
-    
-                if (!_allEntities.Contains(entry.Entity))
-                {
-                    // Track that this Apply will be handling this entity
-                    _allEntities.Add(entry.Entity as IObjectWithChangeTracker);
-                }
-    
-                if (changeTracker.State == ObjectState.Added)
-                {
-                    finalKey = temporaryKey;
-                }
-                else
-                {
-                    finalKey = _context.CreateEntityKey(temporaryKey.EntityContainerName + "." + temporaryKey.EntitySetName, entry.Entity);
-                }
-                if (!_temporaryKeyMap.ContainsKey(finalKey))
-                {
-                    _temporaryKeyMap.Add(finalKey, temporaryKey);
-                }
+              EntityKey temporaryKey = entry.EntityKey;
+              EntityKey finalKey;
+              var objectWithChangeTracker = entry.Entity as IObjectWithChangeTracker;
+              if (!_allEntities.Contains(objectWithChangeTracker))
+              {
+                _allEntities.Add(objectWithChangeTracker);
+              }
+              if (changeTracker.State == ObjectState.Added)
+              {
+                finalKey = temporaryKey;
+              }
+              else
+              {
+                finalKey = _context.CreateEntityKey(temporaryKey.EntityContainerName + "." + temporaryKey.EntitySetName, entry.Entity);
+              }
+              if (!_temporaryKeyMap.ContainsKey(finalKey))
+              {
+                _temporaryKeyMap.Add(finalKey, temporaryKey);
+              }
             }
     
             public bool Contains(object entity)
