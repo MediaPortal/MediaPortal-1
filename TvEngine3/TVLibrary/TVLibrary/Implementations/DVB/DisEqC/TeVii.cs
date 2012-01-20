@@ -96,9 +96,8 @@ namespace TvLibrary.Hardware
     /// Get the SDK API version number.
     /// </summary>
     /// <returns>the API Version number</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetAPIVersion", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern int GetAPIVersion();
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern Int32 GetAPIVersion();
 
     /// <summary>
     /// Enumerate the TeVii-compatible devices in the system. This function should be
@@ -106,9 +105,8 @@ namespace TvLibrary.Hardware
     /// enumerate. Subsequent calls will just return the result from the first call.
     /// </summary>
     /// <returns>the number of TeVii-compatible devices connected to the system</returns>
-    [DllImport("TeVii.dll", EntryPoint = "FindDevices", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern int FindDevices();
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern Int32 FindDevices();
 
     /// <summary>
     /// Get the friendly name for a specific TeVii device. Note: do not modify or free
@@ -116,9 +114,9 @@ namespace TvLibrary.Hardware
     /// </summary>
     /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device name, otherwise <c>IntPtr.Zero</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetDeviceName", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr GetDeviceName(int idx);
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [return: MarshalAs(UnmanagedType.LPStr)]
+    private static extern String GetDeviceName(Int32 idx);
 
     /// <summary>
     /// Get the device path for a specific TeVii device. Note: do not modify or free
@@ -126,9 +124,9 @@ namespace TvLibrary.Hardware
     /// </summary>
     /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device path, otherwise <c>IntPtr.Zero</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetDevicePath", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr GetDevicePath(int idx);
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [return: MarshalAs(UnmanagedType.LPStr)]
+    private static extern String GetDevicePath(Int32 idx);
 
     //////////////////////////////////////////////////////////////////////////
     // Following functions work only after call OpenDevice()
@@ -142,18 +140,16 @@ namespace TvLibrary.Hardware
     /// <param name="captureCallback">An optional pointer to a function that will be executed when raw stream packets are received.</param>
     /// <param name="context">An optional pointer that will be passed as a paramter to the capture callback.</param>
     /// <returns><c>true</c> if the device access is successfully established, otherwise <c>false</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "OpenDevice", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool OpenDevice(int idx, IntPtr captureCallback, IntPtr context);
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool OpenDevice(Int32 idx, IntPtr captureCallback, IntPtr context);
 
     /// <summary>
     /// Close access to a specific TeVii device.
     /// </summary>
     /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
     /// <returns><c>true</c> if the device access is successfully closed, otherwise <c>false</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "CloseDevice", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool CloseDevice(int idx);
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool CloseDevice(Int32 idx);
 
     /// <summary>
     /// Tune a TeVii DVB-S/S2 tuner to a specific satellite transponder.
@@ -167,9 +163,8 @@ namespace TvLibrary.Hardware
     /// <param name="modulation">The transponder modulation. Note that it's better to avoid using <c>TeViiModulation.Auto</c> for DVB-S2 transponders to minimise lock time.</param>
     /// <param name="fecRate">The transponder FEC rate. Note that it's better to avoid using <c>TeViiFecRate.Auto</c> for DVB-S2 transponders to minimise lock time.</param>
     /// <returns><c>true</c> if the tuner successfully locks on the transponder, otherwise <c>false</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "TuneTransponder", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool TuneTransponder(int idx, Int32 frequency, Int32 symbolRate, Int32 lnbLof, TeViiPolarisation polarisation,
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool TuneTransponder(Int32 idx, Int32 frequency, Int32 symbolRate, Int32 lnbLof, TeViiPolarisation polarisation,
                                                bool toneOn, TeViiModulation modulation, TeViiFecRate fecRate);
 
     /// <summary>
@@ -180,9 +175,8 @@ namespace TvLibrary.Hardware
     /// <param name="strength">A signal strength rating ranging between 0 (low strength) and 100 (high strength).</param>
     /// <param name="quality">A signal quality rating ranging between 0 (low quality) and 100 (high quality).</param>
     /// <returns><c>true</c> if the signal status is successfully retrieved, otherwise <c>false</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetSignalStatus", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool GetSignalStatus(int idx, out bool isLocked, out Int32 strength, out Int32 quality);
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool GetSignalStatus(Int32 idx, out bool isLocked, out Int32 strength, out Int32 quality);
 
     /// <summary>
     /// Send an arbitrary DiSEqC message.
@@ -193,9 +187,8 @@ namespace TvLibrary.Hardware
     /// <param name="repeatCount">The number of times to resend the message. Zero means send the message once.</param>
     /// <param name="repeatFlag"><c>True</c> to set the first byte in the message to 0xe1 if/when the message is resent.</param>
     /// <returns><c>true</c> if the message is successfully sent, otherwise <c>false</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "SendDiSEqC", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool SendDiSEqC(int idx, byte[] message, Int32 length, Int32 repeatCount, bool repeatFlag);
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool SendDiSEqC(Int32 idx, byte[] message, Int32 length, Int32 repeatCount, bool repeatFlag);
 
     /// <summary>
     /// Set the remote control receiver callback function.
@@ -204,9 +197,8 @@ namespace TvLibrary.Hardware
     /// <param name="remoteKeyCallback">An optional pointer to a function that will be called when remote keypress events are detected.</param>
     /// <param name="context">An optional pointer that will be passed as a paramter to the remote key callback.</param>
     /// <returns><c>true</c> if the callback function is successfully set, otherwise <c>false</c></returns>
-    [DllImport("TeVii.dll", EntryPoint = "SetRemoteControl", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    private static extern Int32 SetRemoteControl(int idx, IntPtr remoteKeyCallback, IntPtr context);
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern Int32 SetRemoteControl(Int32 idx, IntPtr remoteKeyCallback, IntPtr context);
 
     #endregion
 
@@ -238,8 +230,8 @@ namespace TvLibrary.Hardware
       String devicePath = String.Empty;
       for (int deviceIdx = 0; deviceIdx < deviceCount; deviceIdx++)
       {
-        deviceName = Marshal.PtrToStringAnsi(GetDeviceName(deviceIdx));
-        devicePath = Marshal.PtrToStringAnsi(GetDevicePath(deviceIdx));
+        deviceName = GetDeviceName(deviceIdx);
+        devicePath = GetDevicePath(deviceIdx);
 
         //Log.Log.Debug("TeVii: compare to {0} {1}", deviceName, devicePath);
         if (devicePath.Equals(tunerDevicePath))
