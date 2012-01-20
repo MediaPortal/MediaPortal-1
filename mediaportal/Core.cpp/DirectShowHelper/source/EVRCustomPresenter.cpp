@@ -232,6 +232,8 @@ void MPEVRCustomPresenter::ReleaseCallback()
 
   if (m_pOuterEVR)
     m_pOuterEVR->Release();
+
+  StopWorkers();
 }
 
 MPEVRCustomPresenter::~MPEVRCustomPresenter()
