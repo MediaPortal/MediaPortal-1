@@ -1018,27 +1018,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       int channelId = -1;
       if (string.IsNullOrEmpty(aChannelName))
-        return channelId;
-      try
       {
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByName(aChannelName);
-
-        if (channels.Count > 0)
+        return channelId;
+      }
+      try
+      {       
+        Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannelByName(aChannelName, ChannelIncludeRelationEnum.None);
+        if (channel != null)
         {
-          channelId = (channels[0]).idChannel;
-        }
-        else
-        {
-          channels = ServiceAgents.Instance.ChannelServiceAgent.GetChannelsByNameContains(aChannelName);
-          /*sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-          sb.AddConstraint(Operator.Like, "displayName", "%" + aChannelName + "%");
-          sb.SetRowLimit(1);
-          stmt = sb.GetStatement(true);
-          channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());*/
-          if (channels.Count > 0)
-          {
-            channelId = (channels[0]).idChannel;
-          }
+          channelId = channel.idChannel;
         }
       }
       catch (Exception ex)
