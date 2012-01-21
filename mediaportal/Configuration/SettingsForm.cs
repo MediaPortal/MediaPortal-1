@@ -203,7 +203,9 @@ namespace MediaPortal.Configuration
       AddTabPictures();
       AddTabRemote();
       AddTabFilters();
-      AddTabWeather();
+      //Mantis 3772 - Weather.com API is not free any more
+      //temporarily disable plugin
+      //AddTabWeather();
       AddTabPlugins();
       AddTabThirdPartyChecks();
 
@@ -346,7 +348,7 @@ namespace MediaPortal.Configuration
             AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
           // if we do not have the audio codec installed we want to see the video config nevertheless
-          if (filter.Contains("CyberLink Video Decoder (PDVD10)"))
+          if (filter.Contains("CyberLink Video Decoder (PDVD10)") || filter.Contains("CyberLink Video Decoder (PDVD11)"))
           {
             FiltersPowerDVDDecoder10 pdvdConfig10 = new FiltersPowerDVDDecoder10();
             AddSection(new ConfigPage(filterSection, pdvdConfig10, true));

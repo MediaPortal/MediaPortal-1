@@ -35,13 +35,15 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox mpGroupBox3;
     private MPLabel mpLabel5;
     private MPCheckBox checkBoxUIUseH264HVA;
+    private MPCheckBox checkBoxUIUseHAM;
+    private MPCheckBox checkBoxUIUseSW;
     private IContainer components = null;
 
     /// <summary>
     /// 
     /// </summary>
     public FiltersPowerDVDDecoder10()
-      : this("PowerDVD Video PDVD10") {}
+      : this("PowerDVD Video 10/11") {}
 
     /// <summary>
     /// 
@@ -77,6 +79,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxUIUseSW = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxUIUseHAM = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxH264DeInterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -86,6 +90,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
+      this.mpGroupBox3.Controls.Add(this.checkBoxUIUseSW);
+      this.mpGroupBox3.Controls.Add(this.checkBoxUIUseHAM);
       this.mpGroupBox3.Controls.Add(this.comboBoxH264DeInterlace);
       this.mpGroupBox3.Controls.Add(this.mpLabel6);
       this.mpGroupBox3.Controls.Add(this.mpLabel5);
@@ -93,10 +99,34 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(462, 119);
+      this.mpGroupBox3.Size = new System.Drawing.Size(462, 221);
       this.mpGroupBox3.TabIndex = 4;
       this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "H.264/VC-1/MPEG Video Decoder Settings (PDVD10)";
+      this.mpGroupBox3.Text = "H.264/VC-1/MPEG Video Decoder Settings (PDVD10/11)";
+      // 
+      // checkBoxUIUseSW
+      // 
+      this.checkBoxUIUseSW.AutoSize = true;
+      this.checkBoxUIUseSW.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUIUseSW.Location = new System.Drawing.Point(22, 80);
+      this.checkBoxUIUseSW.Name = "checkBoxUIUseSW";
+      this.checkBoxUIUseSW.Size = new System.Drawing.Size(64, 17);
+      this.checkBoxUIUseSW.TabIndex = 7;
+      this.checkBoxUIUseSW.Text = "Use SW";
+      this.checkBoxUIUseSW.UseVisualStyleBackColor = true;
+      this.checkBoxUIUseSW.CheckedChanged += new System.EventHandler(this.checkBoxUIUseSW_CheckedChanged);
+      // 
+      // checkBoxUIUseHAM
+      // 
+      this.checkBoxUIUseHAM.AutoSize = true;
+      this.checkBoxUIUseHAM.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUIUseHAM.Location = new System.Drawing.Point(22, 56);
+      this.checkBoxUIUseHAM.Name = "checkBoxUIUseHAM";
+      this.checkBoxUIUseHAM.Size = new System.Drawing.Size(70, 17);
+      this.checkBoxUIUseHAM.TabIndex = 6;
+      this.checkBoxUIUseHAM.Text = "Use HAM";
+      this.checkBoxUIUseHAM.UseVisualStyleBackColor = true;
+      this.checkBoxUIUseHAM.CheckedChanged += new System.EventHandler(this.checkBoxUIUseHAM_CheckedChanged);
       // 
       // comboBoxH264DeInterlace
       // 
@@ -107,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
             "Auto-select",
             "Force bob",
             "Force weave"});
-      this.comboBoxH264DeInterlace.Location = new System.Drawing.Point(52, 87);
+      this.comboBoxH264DeInterlace.Location = new System.Drawing.Point(52, 143);
       this.comboBoxH264DeInterlace.Name = "comboBoxH264DeInterlace";
       this.comboBoxH264DeInterlace.Size = new System.Drawing.Size(198, 21);
       this.comboBoxH264DeInterlace.TabIndex = 5;
@@ -115,7 +145,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel6
       // 
       this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(22, 62);
+      this.mpLabel6.Location = new System.Drawing.Point(22, 118);
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(104, 13);
       this.mpLabel6.TabIndex = 4;
@@ -138,9 +168,9 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUIUseH264HVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxUIUseH264HVA.Location = new System.Drawing.Point(22, 30);
       this.checkBoxUIUseH264HVA.Name = "checkBoxUIUseH264HVA";
-      this.checkBoxUIUseH264HVA.Size = new System.Drawing.Size(149, 17);
+      this.checkBoxUIUseH264HVA.Size = new System.Drawing.Size(75, 17);
       this.checkBoxUIUseH264HVA.TabIndex = 4;
-      this.checkBoxUIUseH264HVA.Text = "Use Hardware Accelerator";
+      this.checkBoxUIUseH264HVA.Text = "Use DXVA";
       this.checkBoxUIUseH264HVA.UseVisualStyleBackColor = true;
       this.checkBoxUIUseH264HVA.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
       // 
@@ -169,10 +199,20 @@ namespace MediaPortal.Configuration.Sections
             if (regH264UIUseHVA == 1)
             {
               checkBoxUIUseH264HVA.Checked = true;
+              checkBoxUIUseHAM.Checked = false;
+              checkBoxUIUseSW.Checked = false;
             }
-            else
+            else if (regH264UIUseHVA == 2)
             {
               checkBoxUIUseH264HVA.Checked = false;
+              checkBoxUIUseHAM.Checked = true;
+              checkBoxUIUseSW.Checked = false;
+            }
+            else if (regH264UIUseHVA == 0)
+            {
+              checkBoxUIUseH264HVA.Checked = false;
+              checkBoxUIUseHAM.Checked = false;
+              checkBoxUIUseSW.Checked = true;
             }
             Int32 regH264UIVMode = (Int32)subkey.GetValue("UIVMode", 0);
             if (regH264UIVMode == 1)
@@ -204,15 +244,22 @@ namespace MediaPortal.Configuration.Sections
         if (subkey != null)
         {
           Int32 regH264UIUseHVA;
+
           if (checkBoxUIUseH264HVA.Checked)
           {
             regH264UIUseHVA = 1;
+            subkey.SetValue("UIUseHVA", regH264UIUseHVA);
           }
-          else
+          else if (checkBoxUIUseHAM.Checked)
+          {
+            regH264UIUseHVA = 2;
+            subkey.SetValue("UIUseHVA", regH264UIUseHVA);
+          }
+          else if (checkBoxUIUseSW.Checked)
           {
             regH264UIUseHVA = 0;
+            subkey.SetValue("UIUseHVA", regH264UIUseHVA);
           }
-          subkey.SetValue("UIUseHVA", regH264UIUseHVA);
           int H264DeInterlace;
           Int32 regH264DeInterlace;
           H264DeInterlace = comboBoxH264DeInterlace.SelectedIndex;
@@ -233,17 +280,42 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-    }    
+    }   
 
     private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
     {
       if (checkBoxUIUseH264HVA.Checked == true)
       {
         comboBoxH264DeInterlace.Enabled = false;
+        checkBoxUIUseHAM.Checked = false;
+        checkBoxUIUseSW.Checked = false;
       }
-      if (checkBoxUIUseH264HVA.Checked == false)
+      else if (checkBoxUIUseH264HVA.Checked == false && checkBoxUIUseHAM.Checked == false)
       {
         comboBoxH264DeInterlace.Enabled = true;
+      }  
+    }
+
+    private void checkBoxUIUseHAM_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxUIUseHAM.Checked == true)
+      {
+        comboBoxH264DeInterlace.Enabled = false;
+        checkBoxUIUseH264HVA.Checked = false;
+        checkBoxUIUseSW.Checked = false;
+      }
+      else if (checkBoxUIUseHAM.Checked == false && checkBoxUIUseH264HVA.Checked == false)
+      {
+        comboBoxH264DeInterlace.Enabled = true;
+      }
+    }
+
+    private void checkBoxUIUseSW_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxUIUseSW.Checked == true)
+      {
+        checkBoxUIUseHAM.Checked = false;
+        checkBoxUIUseH264HVA.Checked = false;
       }
     }
   }

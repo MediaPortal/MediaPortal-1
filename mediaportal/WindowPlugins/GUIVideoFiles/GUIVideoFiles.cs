@@ -206,6 +206,13 @@ namespace MediaPortal.GUI.Video
         VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
         VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
 
+        // Prevent unaccesible My Videos from corrupted config
+        if (!IsVideoWindow(VideoState.StartWindow))
+        {
+          VideoState.StartWindow = GetID;
+          VideoState.View = "369";
+        }
+
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
