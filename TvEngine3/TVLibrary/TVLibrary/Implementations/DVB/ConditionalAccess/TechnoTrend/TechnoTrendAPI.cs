@@ -274,7 +274,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="category">The category/type of devices to count.</param>
     /// <returns>the number of devices that are available</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern IntPtr bdaapiEnumerate(TtDeviceCategory category);
 
@@ -284,7 +284,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="category">The category/type of device to initialise.</param>
     /// <param name="index">The device's hardware index.</param>
     /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern IntPtr bdaapiOpenHWIdx(TtDeviceCategory category, UInt32 index);
 
@@ -292,7 +292,7 @@ namespace TvLibrary.Implementations.DVB
     /// Close access to a specific device and relinquish control over it.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern void bdaapiClose(IntPtr device);
 
@@ -306,7 +306,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="autoOffsetModeOn"><c>True</c> to turn offset scanning on.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiSetDVBTAutoOffsetMode(IntPtr device, bool autoOffsetModeOn);
 
@@ -316,7 +316,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="autoOffsetModeOn"><c>True</c> if automatic offset scanning is on, otherwise <c>false</c>.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetDVBTAutoOffsetMode(IntPtr device, ref bool autoOffsetModeOn);
 
@@ -332,7 +332,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="toneBurst">An optional tone burst command that can be sent after the DiSEqC command has been sent.</param>
     /// <param name="polarisation">The polarisation to use when sending the command. This is used as a way to specify the voltage (ie. either 13 or 18 volts).</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiSetDiSEqCMsg(IntPtr device, IntPtr command, byte length, byte repeats,
                                                         TtToneBurst toneBurst, Polarisation polarisation);
@@ -344,7 +344,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="useCiVideoPort"><c>True</c> to use the CI videoport.</param>
     /// <param name="effectiveCiVideoPort"><c>True</c> if the CI videoport is *actually* being used.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiSetVideoport(IntPtr device, bool useCiVideoPort, ref bool effectiveCiVideoPort);
 
@@ -356,7 +356,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="antennaPowerOn"><c>True</c> to turn the antenna power supply on.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiSetDVBTAntPwr(IntPtr device, bool antennaPowerOn);
 
@@ -366,7 +366,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="antennaPowerOn"><c>True</c> if the antenna power supply is on, otherwise <c>false</c>.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetDVBTAntPwr(IntPtr device, ref bool antennaPowerOn);
 
@@ -383,7 +383,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="v3">Part 3 of the driver version number.</param>
     /// <param name="v4">Part 4 of the driver version number.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetDrvVersion(IntPtr device, ref byte v1, ref byte v2, ref byte v3, ref byte v4);
 
@@ -394,7 +394,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="highPart">The high part of the address.</param>
     /// <param name="lowPart">The low part of the address.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetMAC(IntPtr device, ref UInt32 highPart, ref UInt32 lowPart);
 
@@ -407,7 +407,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="deviceId">The device identifier.</param>
     /// <param name="subDeviceId">The sub-device identifier.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetDeviceIDs(IntPtr device, ref UInt16 vendorId, ref UInt16 subVendorId, ref UInt16 deviceId, ref UInt16 subDeviceId);
 
@@ -417,7 +417,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="usbHighSpeedSupported"><c>True</c> if USB 2 speeds are supported, otherwise <c>false</c>.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetUSBHighspeedMode(IntPtr device, ref bool usbHighSpeedSupported);
 
@@ -427,7 +427,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="filterNames">A pointer to a FilterNames struct.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetDevNameAndFEType(IntPtr device, IntPtr filterNames);
 
@@ -437,7 +437,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="index">The hardware index.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetHwIdx(IntPtr device, ref Int32 index);
 
@@ -448,9 +448,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="devicePath">A buffer containing the device path string.</param>
     /// <param name="devicePathLength">The length of the device path in bytes.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, IntPtr devicePath, ref Int32 devicePathLength);
+    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] String devicePath, ref Int32 devicePathLength);
 
     /// <summary>
     /// Get the product seller identifier.
@@ -458,7 +458,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="sellerId">The seller identifier.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiGetProductSellerID(IntPtr device, ref TtProductSeller sellerId);
 
@@ -474,7 +474,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="callbacks">Full callback structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiOpenCI(IntPtr device, TtFullCiCallbacks callbacks);
 
@@ -485,7 +485,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="callbacks">Full callback structure pointer.</param>
     /// <param name="ciMessageHandler">A delegate for handling raw messages from the interface.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiOpenCIext(IntPtr device, TtFullCiCallbacks callbacks, OnTtCiMessage ciMessageHandler);
 
@@ -495,7 +495,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="callbacks">Minimal callback structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiOpenCISlim(IntPtr device, TtSlimCiCallbacks callbacks);
 
@@ -504,7 +504,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiOpenCIWithoutPointer(IntPtr device);
 
@@ -512,7 +512,7 @@ namespace TvLibrary.Implementations.DVB
     /// Close the conditional access interface.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern void bdaapiCloseCI(IntPtr device);
 
@@ -525,7 +525,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmt">The PMT for the service that should be descrambled.</param>
     /// <param name="pmtLength">The length of the PMT in bytes.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr device, IntPtr pmt, UInt16 pmtLength);
 
@@ -535,7 +535,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="serviceId">The service ID of the service that should be descrambled.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIReadPSIFastDrvDemux(IntPtr device, UInt16 serviceId);
 
@@ -546,7 +546,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="sidList">A list of service IDs, one for each service that should be descrambled.</param>
     /// <param name="serviceCount">The number of services for the CAM to descramble.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIMultiDecode(IntPtr device, IntPtr sidList, Int32 serviceCount);
 
@@ -556,7 +556,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIEnterModuleMenu(IntPtr device, byte slotIndex);
 
@@ -566,7 +566,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIGetSlotStatus(IntPtr device, byte slotIndex);
 
@@ -578,7 +578,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="menuAnswer">The user's response.</param>
     /// <param name="answerLength">The length of the user's response in bytes.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIAnswer(IntPtr device, byte slotIndex,
                                                     [MarshalAs(UnmanagedType.LPStr)] String menuAnswer, byte answerLength);
@@ -590,7 +590,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="choice">The index (0..n) of the menu choice selected by the user.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIMenuAnswer(IntPtr device, byte slotIndex, byte choice);
 
@@ -602,7 +602,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="tuneRequest">A buffer containing the tune request.</param>
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiTune(IntPtr device, IntPtr tuneRequest);
 
@@ -610,17 +610,17 @@ namespace TvLibrary.Implementations.DVB
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential)]
-    private unsafe struct CiSlotInfo   // TYP_SLOT_INFO
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    private struct CiSlotInfo   // TYP_SLOT_INFO
     {
       public TtCiState Status;
-      public IntPtr CamMenuTitle;
-      // conditional access system IDs
-      public UInt16* CaSystemIds;
+      [MarshalAs(UnmanagedType.LPStr)]
+      public String CamMenuTitle;
+      public IntPtr CaSystemIds;        // array of UInt16
       public UInt16 NumberOfCaSystemIds;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct ConnectionDescription  // TYPE_CONNECT_DESCR
     {
       public TtConnectionType ConnectionType;
@@ -642,7 +642,7 @@ namespace TvLibrary.Implementations.DVB
       public byte Timeout;      // unit = 10 ms
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct FilterNames // TS_FilterNames
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
@@ -665,8 +665,8 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// A structure for holding the full set of callback function and context pointers.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    private unsafe struct TtFullCiCallbacks
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    private struct TtFullCiCallbacks
     {
       public OnTtSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
@@ -714,8 +714,8 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// A structure for holding a minimal ("slim") set of callback function and context pointers.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    private unsafe struct TtSlimCiCallbacks
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    private struct TtSlimCiCallbacks
     {
       public OnTtSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
@@ -723,7 +723,7 @@ namespace TvLibrary.Implementations.DVB
       public IntPtr OnCAStatusContext;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct TtDvbcTuneRequest
     {
       public TtDeviceType DeviceType;
@@ -739,7 +739,7 @@ namespace TvLibrary.Implementations.DVB
       private byte[] Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct TtDvbsTuneRequest
     {
       public TtDeviceType DeviceType;
@@ -767,7 +767,7 @@ namespace TvLibrary.Implementations.DVB
       private byte[] RawDiseqc;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct TtDvbtTuneRequest
     {
       public TtDeviceType DeviceType;
@@ -796,7 +796,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="code">A buffer containing the remote code. If the code is an RC5 code then it can be found in the lower 2 bytes. RC6 codes use 4 bytes.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtIrCode(IntPtr context, IntPtr code);
+    private delegate void OnTtIrCode(IntPtr context, IntPtr code);
 
     /// <summary>
     /// Called by the tuner driver when the state of the CI slot changes.
@@ -804,9 +804,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="state">The new state of the slot.</param>
-    /// <param name="slotInfo">Extended information about the interface state.</param>
+    /// <param name="slotInfo">A pointer to a CiSlotInfo struct containing extended information about the interface state.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtSlotStatus(IntPtr context, byte slotIndex, TtCiState state, CiSlotInfo* slotInfo);
+    private delegate void OnTtSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo);
 
     /// <summary>
     /// Called by the tuner driver when the result of an interaction with the CAM is known.
@@ -816,7 +816,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="reply">A reply message from the CAM.</param>
     /// <param name="error">An error message from the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error);
+    private delegate void OnTtCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error);
 
     /// <summary>
     /// Called by the tuner driver when the CAM requests input from the user. This delegate is
@@ -827,7 +827,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="textLength">The length of the context text in bytes.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength);
+    private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength);
 
     /// <summary>
     /// Called by the tuner driver when a menu or list from the CAM is available.
@@ -838,7 +838,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength);
+    private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength);
 
     /// <summary>
     /// Called by the tuner driver when the CAM wants to close the menu.
@@ -846,7 +846,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtSwitchOsdOff(IntPtr context, byte slotIndex);
+    private delegate void OnTtSwitchOsdOff(IntPtr context, byte slotIndex);
 
     /// <summary>
     /// Called by the tuner driver when the CAM requests input from the user.
@@ -857,7 +857,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask);
+    private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask);
 
     /// <summary>
     /// ???
@@ -866,7 +866,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="descriptor">???</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor);
+    private delegate void OnTtLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor);
 
     /// <summary>
     /// ???
@@ -874,7 +874,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtLscConnect(IntPtr context, byte slotIndex);
+    private delegate void OnTtLscConnect(IntPtr context, byte slotIndex);
 
     /// <summary>
     /// ???
@@ -882,7 +882,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtLscDisconnect(IntPtr context, byte slotIndex);
+    private delegate void OnTtLscDisconnect(IntPtr context, byte slotIndex);
 
     /// <summary>
     /// ???
@@ -892,7 +892,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="bufferSize"></param>
     /// <param name="timeout">A timeout in units of ten milliseconds.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout);
+    private delegate void OnTtLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout);
 
     /// <summary>
     /// ???
@@ -900,7 +900,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtLscEnquireStatus(IntPtr context, byte slotIndex);
+    private delegate void OnTtLscEnquireStatus(IntPtr context, byte slotIndex);
 
     /// <summary>
     /// ???
@@ -909,7 +909,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="phaseId"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId);
+    private delegate void OnTtLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId);
 
     /// <summary>
     /// ???
@@ -920,7 +920,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="buffer"></param>
     /// <param name="bufferSize"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize);
+    private delegate void OnTtLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize);
 
     /// <summary>
     /// Called by the tuner driver when a message is received from the CAM. This delegate
@@ -931,7 +931,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="buffer"></param>
     /// <param name="bufferSize"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    private unsafe delegate void OnTtCiMessage(byte slotIndex, TtCiMessageHandlerTag tag, IntPtr buffer, Int16 bufferSize);
+    private delegate void OnTtCiMessage(byte slotIndex, TtCiMessageHandlerTag tag, IntPtr buffer, Int16 bufferSize);
 
     #endregion
 
@@ -1352,7 +1352,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Open the conditional access interface.
     /// </summary>
-    private unsafe void OpenCi()
+    private void OpenCi()
     {
       Log.Log.Debug("TechnoTrend: open conditional access interface");
 
@@ -1587,8 +1587,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="state">The new state of the slot.</param>
-    /// <param name="slotInfo">Extended information about the interface state.</param>
-    private unsafe void OnSlotStatus(IntPtr context, byte slotIndex, TtCiState state, CiSlotInfo* slotInfo)
+    /// <param name="slotInfo">A pointer to a CiSlotInfo struct containing extended information about the interface state.</param>
+    private void OnSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo)
     {
       try
       {
@@ -1618,7 +1618,7 @@ namespace TvLibrary.Implementations.DVB
         }
         _ciState = state;
 
-        if (slotInfo == null)
+        if (slotInfo == IntPtr.Zero)
         {
           if (state != TtCiState.Empty)
           {
@@ -1627,20 +1627,21 @@ namespace TvLibrary.Implementations.DVB
           return;
         }
 
+        CiSlotInfo info = (CiSlotInfo)Marshal.PtrToStructure(slotInfo, typeof(CiSlotInfo));
         Log.Log.Debug("TechnoTrend: slot info");
-        Log.Log.Debug("  status     = {0} ", slotInfo->Status);
-        if (slotInfo->CamMenuTitle == null)
+        Log.Log.Debug("  status     = {0} ", info.Status);
+        if (info.CamMenuTitle.Equals(String.Empty))
         {
           Log.Log.Debug("  menu title = (not available)");
         }
         else
         {
-          Log.Log.Debug("  menu title = {0} ", Marshal.PtrToStringAnsi(slotInfo->CamMenuTitle));
+          Log.Log.Debug("  menu title = {0} ", info.CamMenuTitle);
         }
-        Log.Log.Debug("  # CAS IDs  = {0}", slotInfo->NumberOfCaSystemIds);
-        for (int i = 0; i < slotInfo->NumberOfCaSystemIds; i++)
+        Log.Log.Debug("  # CAS IDs  = {0}", info.NumberOfCaSystemIds);
+        for (int i = 0; i < info.NumberOfCaSystemIds; i++)
         {
-          Log.Log.Debug("  {0,-2}         = 0x{1:x4}", i + 1, slotInfo->CaSystemIds[i]);
+          Log.Log.Debug("  {0,-2}         = 0x{1:x4}", i + 1, Marshal.ReadInt16(info.CaSystemIds, i * 2));
         }
       }
       catch (Exception ex)
@@ -1656,7 +1657,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="reply">A reply message from the CAM.</param>
     /// <param name="error">An error message from the CAM.</param>
-    private unsafe void OnCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error)
+    private void OnCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error)
     {
       try
       {
@@ -1684,7 +1685,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="textLength">The length of the context text in bytes.</param>
-    private unsafe void OnDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength)
+    private void OnDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength)
     {
       try
       {
@@ -1705,7 +1706,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="numEntries">The number of entries in the menu/list.</param>
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
-    private unsafe void OnDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength)
+    private void OnDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength)
     {
       try
       {
@@ -1766,7 +1767,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    private unsafe void OnSwitchOsdOff(IntPtr context, byte slotIndex)
+    private void OnSwitchOsdOff(IntPtr context, byte slotIndex)
     {
       Log.Log.Debug("TechnoTrend: switch OSD off callback, slot = {0}", slotIndex);
       try
@@ -1790,7 +1791,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
-    private unsafe void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask)
+    private void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask)
     {
       try
       {
@@ -1817,7 +1818,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="descriptor">???</param>
-    private unsafe void OnLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor)
+    private void OnLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor)
     {
       Log.Log.Debug("TechnoTrend: OnLscSetDescriptor callback, slot = {0}", slotIndex);
     }
@@ -1827,7 +1828,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    private unsafe void OnLscConnect(IntPtr context, byte slotIndex)
+    private void OnLscConnect(IntPtr context, byte slotIndex)
     {
       Log.Log.Debug("TechnoTrend: OnLscConnect callback, slot = {0}", slotIndex);
     }
@@ -1837,7 +1838,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    private unsafe void OnLscDisconnect(IntPtr context, byte slotIndex)
+    private void OnLscDisconnect(IntPtr context, byte slotIndex)
     {
       Log.Log.Debug("TechnoTrend: OnLscDisconnect callback, slot = {0}", slotIndex);
     }
@@ -1849,7 +1850,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="bufferSize"></param>
     /// <param name="timeout">A timeout in units of ten milliseconds.</param>
-    private unsafe void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout)
+    private void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout)
     {
       Log.Log.Debug("TechnoTrend: OnLscSetParams callback, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
     }
@@ -1859,7 +1860,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    private unsafe void OnLscEnquireStatus(IntPtr context, byte slotIndex)
+    private void OnLscEnquireStatus(IntPtr context, byte slotIndex)
     {
       Log.Log.Debug("TechnoTrend: OnLscEnquireStatus callback, slot = {0}", slotIndex);
     }
@@ -1870,7 +1871,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="phaseId"></param>
-    private unsafe void OnLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId)
+    private void OnLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId)
     {
       Log.Log.Debug("TechnoTrend: OnLscGetNextBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
     }
@@ -1883,7 +1884,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="phaseId"></param>
     /// <param name="buffer"></param>
     /// <param name="bufferSize"></param>
-    private unsafe void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize)
+    private void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize)
     {
       Log.Log.Debug("TechnoTrend: OnLscTransmitBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
       DVB_MMI.DumpBinary(buffer, 0, bufferSize);
