@@ -21,13 +21,13 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using System.Text;
 using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -259,7 +259,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct DvbsMultiplexParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
@@ -270,7 +270,7 @@ namespace TvLibrary.Implementations.DVB
       private byte Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct DvbsServiceParams
     {
       public bool CurrentTransponder;
@@ -291,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
       public UInt16 PmtPid;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct DvbsPidFilterParams
     {
       public bool CurrentTransponder;
@@ -311,7 +311,7 @@ namespace TvLibrary.Implementations.DVB
       private UInt16 Padding4;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct DvbtMultiplexParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 47000 - 860000
@@ -325,7 +325,7 @@ namespace TvLibrary.Implementations.DVB
       private byte Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct DvbtPidFilterParams
     {
       public bool CurrentTransponder;
@@ -338,7 +338,7 @@ namespace TvLibrary.Implementations.DVB
       private UInt16 Padding2;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct FirmwareVersionInfo
     {
       public byte HardwareMajor;
@@ -351,7 +351,7 @@ namespace TvLibrary.Implementations.DVB
       public byte BuildNumberLsb;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct FrontEndStatusInfo
     {
       public UInt32 Frequency;            // unit = kHz
@@ -375,7 +375,7 @@ namespace TvLibrary.Implementations.DVB
       private byte Padding3;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct SystemInfo
     {
       public byte NumberOfAntennas;       // range = 0 - 3
@@ -385,7 +385,7 @@ namespace TvLibrary.Implementations.DVB
       public bool Lists;                  // ???
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct DiseqcMessage
     {
       public byte MessageLength;
@@ -393,7 +393,7 @@ namespace TvLibrary.Implementations.DVB
       public byte[] Message;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct LnbCommand
     {
       public byte Voltage;
@@ -404,7 +404,7 @@ namespace TvLibrary.Implementations.DVB
       public DiseqcMessage[] DiseqcMessages;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct LnbParams
     {
       public byte AntennaNumber;
@@ -415,7 +415,7 @@ namespace TvLibrary.Implementations.DVB
       public UInt16 HighBandLof;          // unit = MHz
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct LnbParamInfo
     {
       public byte NumberOfAntennas;       // range = 0 - 3
@@ -423,7 +423,7 @@ namespace TvLibrary.Implementations.DVB
       public LnbParams[] LnbParams;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct QpskTuneParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 950000 - 2150000
@@ -433,7 +433,7 @@ namespace TvLibrary.Implementations.DVB
       public bool IsHighBand;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct CiErrorDebugMessage
     {
       public byte MessageType;
@@ -442,7 +442,7 @@ namespace TvLibrary.Implementations.DVB
       public String Message;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private struct CaData
     {
       public byte Slot;
