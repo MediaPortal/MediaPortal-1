@@ -262,7 +262,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
     private struct KncCiCallbacks
     {
       /// Optional context that the interface will pass back
