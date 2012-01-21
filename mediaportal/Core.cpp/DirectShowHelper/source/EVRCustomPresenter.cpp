@@ -91,11 +91,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.55f BD mod ----------- instance 0x%x", this);
+      Log("---------- v1.4.56 BD mod ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.55f BD mod ----------- instance 0x%x", this);
+      Log("---------- v0.0.56 BD mod ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -132,7 +132,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     memset(m_pllRasterSyncOffset, 0, sizeof(m_pllRasterSyncOffset));
 
     m_nNextSyncOffset       = 0;
-    m_fJitterStdDev          = 0.0;
+    m_fJitterStdDev         = 0.0;
     m_fSyncOffsetStdDev     = 0.0;
     m_fSyncOffsetAvr        = 0.0;
     m_dD3DRefreshRate       = 0.0;
@@ -155,8 +155,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_DetFrameTimeAve                     = -1.0;
     m_DetectedLock                        = false;
     m_DetectedFrameTimeStdDev             = 0;
-    m_LastEndOfPaintScanline       = 0;
-    m_LastStartOfPaintScanline     = 0;
+    m_LastEndOfPaintScanline      = 0;
+    m_LastStartOfPaintScanline    = 0;
     m_frameRateRatio              = 0;
     m_rawFRRatio                  = 0;
     m_maxScanLine                 = 0;

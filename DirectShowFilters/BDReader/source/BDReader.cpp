@@ -128,7 +128,7 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   GetLogFile(filename);
   ::DeleteFile(filename);
   LogDebug("--------- bluray ---------------------");
-  LogDebug("-------------- v0.56 -----------------");
+  LogDebug("-------------- v0.57 -----------------");
 
   LogDebug("CBDReaderFilter::ctor");
   m_pAudioPin = new CAudioPin(GetOwner(), this, phr, &m_section, m_demultiplexer);
@@ -222,15 +222,15 @@ STDMETHODIMP CBDReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** p
     return GetInterface((IAMStreamSelect*)this, ppv);
   if (riid == IID_ISubtitleStream)
     return GetInterface((ISubtitleStream*)this, ppv);
-  if ( riid == IID_IBDReader )
+  if (riid == IID_IBDReader)
     return GetInterface((IBDReader*)this, ppv);
-  if ( riid == IID_IAudioStream )
+  if (riid == IID_IAudioStream)
     return GetInterface((IAudioStream*)this, ppv);
 
   return CSource::NonDelegatingQueryInterface(riid, ppv);
 }
 
-CBasePin * CBDReaderFilter::GetPin(int n)
+CBasePin* CBDReaderFilter::GetPin(int n)
 {
   if (n == 0)
     return m_pAudioPin;
