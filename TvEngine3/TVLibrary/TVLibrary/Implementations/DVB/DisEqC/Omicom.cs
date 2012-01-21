@@ -46,7 +46,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
     private struct DiseqcMessage
     {
       public Int32 MessageLength;
