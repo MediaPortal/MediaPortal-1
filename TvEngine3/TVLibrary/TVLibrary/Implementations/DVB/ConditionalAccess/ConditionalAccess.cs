@@ -465,6 +465,10 @@ namespace TvLibrary.Implementations.DVB
         {
           _knc.ResetCI();
         }
+        if (_DigitalDevices != null)
+        {
+          _DigitalDevices.ResetCi();
+        }
       }
       catch (Exception ex)
       {
@@ -1096,6 +1100,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_technoTrend);
       Release.Dispose(_digitalEveryWhere);
       Release.Dispose(_hauppauge);
+      Release.Dispose(_DigitalDevices);
       Release.Dispose(_conexant);
       Release.Dispose(_genericbdas);
       Release.Dispose(_isgenericatsc);

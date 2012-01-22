@@ -32,7 +32,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// A class for handling conditional access for Digital Devices tuners.
   /// </summary>
-  public partial class DigitalDevices : ICiMenuActions
+  public partial class DigitalDevices : ICiMenuActions, IDisposable
   {
     #region enums
 
