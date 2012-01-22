@@ -20,11 +20,14 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using Microsoft.Win32;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -416,114 +419,122 @@ namespace MediaPortal.Configuration.Sections
       Startup._automaticMovieFilter = ForceSourceSplitter.Checked;
     }
 
-    private void videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void RegMPtoConfig(string subkeysource)
     {
-      /*
-      h264videoCodecComboBox.SelectedIndexChanged -= h264videoCodecComboBox_SelectedIndexChanged;
-      if (videoCodecComboBox.Text.Contains(Windows7Codec))
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
       {
-        h264videoCodecComboBox.SelectedItem = Windows7Codec;
-      }
-      else
-      {
-        if (h264videoCodecComboBox.Text.Contains(Windows7Codec))
+        if (subkey != null)
         {
-          for (int i = 0; i < h264videoCodecComboBox.Items.Count; i++)
-          {
-            string listedCodec = h264videoCodecComboBox.Items[i].ToString();
-            if (listedCodec == Windows7Codec) continue;
-            h264videoCodecComboBox.SelectedItem = listedCodec;
-            break;
-          }
+          RegistryUtilities.RenameSubKey(subkey, @"MediaPortal",
+                                         @"Configuration");
         }
       }
-      h264videoCodecComboBox.SelectedIndexChanged += h264videoCodecComboBox_SelectedIndexChanged;
-    */
     }
 
-    private void h264videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void RegConfigtoMP(string subkeysource)
     {
-      /*
-      videoCodecComboBox.SelectedIndexChanged -= videoCodecComboBox_SelectedIndexChanged;
-      if (h264videoCodecComboBox.Text.Contains(Windows7Codec))
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
       {
-        videoCodecComboBox.SelectedItem = Windows7Codec;
-      }
-      else
-      {
-        if (videoCodecComboBox.Text.Contains(Windows7Codec))
+        if (subkey != null)
         {
-          for (int i = 0; i < videoCodecComboBox.Items.Count; i++)
-          {
-            string listedCodec = videoCodecComboBox.Items[i].ToString();
-            if (listedCodec == Windows7Codec) continue;
-            videoCodecComboBox.SelectedItem = listedCodec;
-            break;
-          }
+          RegistryUtilities.RenameSubKey(subkey, @"Configuration",
+                                         @"MediaPortal");
         }
       }
-      videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
-    */
     }
 
-    private void vc1videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void ConfigCodecSection(object sender, EventArgs e, string selection)
     {
-      /*
-      videoCodecComboBox.SelectedIndexChanged -= videoCodecComboBox_SelectedIndexChanged;
-      if (vc1videoCodecComboBox.Text.Contains(Windows7Codec))
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
       {
-        videoCodecComboBox.SelectedItem = Windows7Codec;
-      }
-      else
-      {
-        if (videoCodecComboBox.Text.Contains(Windows7Codec))
+        try
         {
-          for (int i = 0; i < videoCodecComboBox.Items.Count; i++)
+          if (device.Name != null)
           {
-            string listedCodec = videoCodecComboBox.Items[i].ToString();
-            if (listedCodec == Windows7Codec) continue;
-            videoCodecComboBox.SelectedItem = listedCodec;
-            break;
+            {
+              if (selection.Equals(device.Name))
+              {
+                if (selection.Contains("CyberLink"))
+                {
+                  // Rename MediaPortal subkey to Configuration for Cyberlink take setting
+                  RegMPtoConfig(@"Software\Cyberlink\Common\clcvd");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\cl264dec");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\CLVSD");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\CLAud");
+
+                  // Show Codec page Setting
+                  DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice) device);
+                  page.Show(this);
+
+                  // Rename Configuration subkey to MediaPortal to apply Cyberlink setting
+                  RegConfigtoMP(@"Software\Cyberlink\Common\clcvd");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\cl264dec");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\CLVSD");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\CLAud");
+                }
+                else
+                {
+                  DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice) device);
+                  page.Show(this);
+                }
+              }
+            }
           }
         }
-      }
-      videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
-    */
-    }
-
-    private void vc1ivideoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      /*
-      videoCodecComboBox.SelectedIndexChanged -= videoCodecComboBox_SelectedIndexChanged;
-      if (vc1videoCodecComboBox.Text.Contains(Windows7Codec))
-      {
-        videoCodecComboBox.SelectedItem = Windows7Codec;
-      }
-      else
-      {
-        if (videoCodecComboBox.Text.Contains(Windows7Codec))
+        catch (Exception)
         {
-          for (int i = 0; i < videoCodecComboBox.Items.Count; i++)
-          {
-            string listedCodec = videoCodecComboBox.Items[i].ToString();
-            if (listedCodec == Windows7Codec) continue;
-            videoCodecComboBox.SelectedItem = listedCodec;
-            break;
-          }
         }
       }
-      videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
-    */
     }
 
-    private void SplitterComboBox_SelectedIndexChanged(object sender, EventArgs e)
+    private void configMPEG_Click(object sender, EventArgs e)
     {
-
+      ConfigCodecSection(sender, e, videoCodecComboBox.Text);
     }
 
-    private void mpLabel5_Click(object sender, EventArgs e)
+    private void configH264_Click(object sender, EventArgs e)
     {
+      ConfigCodecSection(sender, e, h264videoCodecComboBox.Text);
+    }
 
+    private void configVC1_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, vc1videoCodecComboBox.Text);
+    }
+
+    private void configVC1i_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, vc1ivideoCodecComboBox.Text);
+    }
+
+    private void configDivxXvid_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, xvidvideoCodecComboBox.Text);
+    }
+
+    private void configMPEGAudio_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, audioCodecComboBox.Text);
+    }
+
+    private void configAACAudio_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, aacAudioCodecComboBox.Text);
+    }
+
+    private void configAudioRendere_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, audioRendererComboBox.Text);
+    }
+
+    private void configSplitterSource_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, SplitterComboBox.Text);
+    }
+
+    private void configSplitterSync_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, SplitterFileComboBox.Text);
     }
   }
 }

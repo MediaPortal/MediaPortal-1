@@ -18,11 +18,14 @@
 
 #endregion
 
+using System;
 using System.Collections;
+using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
 using MediaPortal.Profile;
+using Microsoft.Win32;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -329,6 +332,104 @@ namespace MediaPortal.Configuration.Sections
       }
       videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
     */
+    }
+
+    private void RegMPtoConfig(string subkeysource)
+    {
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
+      {
+        if (subkey != null)
+        {
+          RegistryUtilities.RenameSubKey(subkey, @"MediaPortal",
+                                         @"Configuration");
+        }
+      }
+    }
+
+    private void RegConfigtoMP(string subkeysource)
+    {
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
+      {
+        if (subkey != null)
+        {
+          RegistryUtilities.RenameSubKey(subkey, @"Configuration",
+                                         @"MediaPortal");
+        }
+      }
+    }
+
+    private void ConfigCodecSection(object sender, EventArgs e, string selection)
+    {
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+      {
+        try
+        {
+          if (device.Name != null)
+          {
+            {
+              if (selection.Equals(device.Name))
+              {
+                if (selection.Contains("CyberLink"))
+                {
+                  // Rename MediaPortal subkey to Configuration for Cyberlink take setting
+                  RegMPtoConfig(@"Software\Cyberlink\Common\clcvd");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\cl264dec");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\CLVSD");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\CLAud");
+
+                  // Show Codec page Setting
+                  DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)device);
+                  page.Show(this);
+
+                  // Rename Configuration subkey to MediaPortal to apply Cyberlink setting
+                  RegConfigtoMP(@"Software\Cyberlink\Common\clcvd");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\cl264dec");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\CLVSD");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\CLAud");
+                }
+                else
+                {
+                  DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)device);
+                  page.Show(this);
+                }
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+
+    private void configMPEG_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, videoCodecComboBox.Text);
+    }
+
+    private void configH264_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, h264videoCodecComboBox.Text);
+    }
+
+    private void configMPEGAudio_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, audioCodecComboBox.Text);
+    }
+
+    private void configAACAudio_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, aacAudioCodecComboBox.Text);
+    }
+
+    private void configDDPlus_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, ddplusAudioCodecComboBox.Text);
+    }
+
+    private void configAudioRenderer_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, audioRendererComboBox.Text);
     }
   }
 }
