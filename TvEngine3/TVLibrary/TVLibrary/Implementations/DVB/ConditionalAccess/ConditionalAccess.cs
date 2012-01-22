@@ -98,7 +98,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
     /// <param name="card">Determines the type of TV card</param>    
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
-                             TvCardBase card)
+                             TvCardBase card, DigitalDevices digitalDevices)
     {
       try
       {
@@ -236,17 +236,12 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _TeVii);
 
           // DigitalDevices support
-          _DigitalDevices = new DigitalDevices(tunerFilter);
-          if (_DigitalDevices.IsGenericBDAS)
+          if (digitalDevices != null && digitalDevices.IsDigitalDevices)
           {
-            _genericbdas = _DigitalDevices;
-            if (_DigitalDevices.IsSupported)
-            {
-              _ciMenu = _DigitalDevices;
-            }
+            _DigitalDevices = digitalDevices;
+            _ciMenu = _DigitalDevices;
             return; // detected
           }
-          Release.DisposeToNull(ref _DigitalDevices);
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
@@ -670,7 +665,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_DigitalDevices != null)
         {
-          return _DigitalDevices.SendServiceIdToCam(channel.ServiceId);
+          return _DigitalDevices.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
         if (_digitalEveryWhere != null)
         {

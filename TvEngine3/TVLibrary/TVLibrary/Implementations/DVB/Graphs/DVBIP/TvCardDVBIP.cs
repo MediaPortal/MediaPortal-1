@@ -99,7 +99,7 @@ namespace TvLibrary.Implementations.DVB
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
 
-        _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, null, this);
+        _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, null, this, null);
         _graphState = GraphState.Created;
       }
       catch (Exception ex)

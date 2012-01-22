@@ -1210,6 +1210,8 @@ namespace TvLibrary.Implementations.DVB
       return;
     }
 
+    private DigitalDevices _digitalDevices;
+
     /// <summary>
     /// Checks if the DigitalDevices CI module is installed
     /// if so it adds it to the directshow graph
@@ -1224,6 +1226,14 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     protected bool AddDigitalDevicesCIModule(ref IBaseFilter lastFilter)
     {
+      _digitalDevices = new DigitalDevices(_filterTuner, _devicePath);
+      if (_digitalDevices.IsDigitalDevices)
+      {
+        return _digitalDevices.AddToGraph(ref _capBuilder, ref lastFilter);
+      }
+      _digitalDevices.Dispose();
+      return false;
+
       FilterInfo pInfo;
       IBaseFilter tmpCiFilter = null;
       String CiDeviceName = String.Empty;
@@ -1446,7 +1456,7 @@ namespace TvLibrary.Implementations.DVB
         throw new TvExceptionGraphBuildingFailed("Graph building of DVB card failed");
       }
       Log.Log.WriteFile("dvb: Checking for hardware specific extensions");
-      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
+      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this, _digitalDevices);
     }
 
     /// <summary>
