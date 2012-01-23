@@ -512,32 +512,39 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         {
           CAutoLock lock(m_section);
 
-          if (buffer->bNewClip)
+          if (buffer->nNewSegment>0)
           {
-            LogDebug("vid: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
-              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
-            
-            m_demux.m_bVideoClipSeen = true;
- 
-            m_bInitDuration = true;
-            checkPlaybackState = true;
-            m_bClipEndingNotified = false;
-
-            if (buffer->bResuming)
+            if ((buffer->nNewSegment & NS_NEW_CLIP) == NS_NEW_CLIP)
             {
-              m_bDoFakeSeek = true;
-              m_rtStreamOffset = buffer->rtPlaylistTime;
-              m_bZeroTimeStream = true;
-              m_demux.m_bAudioResetStreamPosition = true;
-            }
-            else
-              m_rtStreamOffset = 0;
+              LogDebug("vid: Playlist changed to %d - nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
+                buffer->nPlaylist, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+            
+              m_demux.m_bVideoClipSeen = true;
+ 
+              m_bInitDuration = true;
+              checkPlaybackState = true;
+              m_bClipEndingNotified = false;
 
-            // LAV video decoder requires an end of stream notification to be able to provide complete video frames
-            // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as
-            // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
-            if (m_currentDecoder == CLSID_LAVVideo)
-              DeliverEndOfStream();
+              if (buffer->bResuming)
+              {
+                m_bDoFakeSeek = true;
+                m_rtStreamOffset = buffer->rtPlaylistTime;
+                m_bZeroTimeStream = true;
+                m_demux.m_bAudioResetStreamPosition = true;
+              }
+              else
+                m_rtStreamOffset = 0;
+
+              // LAV video decoder requires an end of stream notification to be able to provide complete video frames
+              // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as
+              // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
+              if (m_currentDecoder == CLSID_LAVVideo)
+                DeliverEndOfStream();
+            }
+            if ((buffer->nNewSegment & NS_STREAM_RESET) == NS_STREAM_RESET)
+            {
+              m_bInitDuration = true;
+            }
           }
 
           if (buffer->pmt)
@@ -584,7 +591,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 SetMediaType(&mt);
                 pSample->SetMediaType(&mt);
 
-                buffer->bNewClip = false;
+                buffer->nNewSegment = 0;
                 m_pCachedBuffer = buffer;
                 m_bProvidePMT = true;
 				
@@ -601,7 +608,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
         if (checkPlaybackState)
         {
-          buffer->bNewClip = false;
+          buffer->nNewSegment = 0;
           m_pCachedBuffer = buffer;
 
           CheckPlaybackState();

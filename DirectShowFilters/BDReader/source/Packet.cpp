@@ -57,7 +57,7 @@ void Packet::CopyProperties(Packet& pSrc, bool pValidateStartTime)
   nPlaylist = pSrc.nPlaylist;
   bDiscontinuity = pSrc.bDiscontinuity;
   bSyncPoint = pSrc.bSyncPoint;
-  bNewClip = pSrc.bNewClip; 
+  nNewSegment = pSrc.nNewSegment; 
   bResuming = pSrc.bResuming;
   
   if (!pValidateStartTime || pSrc.rtStart != INVALID_TIME)
@@ -85,7 +85,7 @@ void Packet::ResetProperties(bool pResetClipInfo)
 
   bDiscontinuity = false;
   bSyncPoint = false;
-  bNewClip = false;
+  nNewSegment = 0;
   bResuming = false;
   rtStart = INVALID_TIME;
   rtStop = INVALID_TIME;

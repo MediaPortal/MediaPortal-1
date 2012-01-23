@@ -113,9 +113,10 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   {
     if (firstAudio)
     {
+      ret->nNewSegment = NS_STREAM_RESET;
       ret->bDiscontinuity=true;
       firstAudio=false;
-      ret->bNewClip = true;
+      if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
     }
   
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
@@ -151,7 +152,8 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
       if (firstVideo)
       {
         ret->bDiscontinuity=true;
-        ret->bNewClip = true;
+        ret->nNewSegment = NS_STREAM_RESET;
+        if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
         firstVideo=false;
         ret->pmt = CreateMediaType(m_videoPmt);
       }

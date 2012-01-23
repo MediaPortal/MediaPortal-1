@@ -201,7 +201,7 @@ Packet* CPlaylistManager::GetNextAudioPacket()
   if (firstAudio)
   {
     firstAudio = false;
-    ret->bNewClip = false;
+    ret->nNewSegment = 0;
   }
   return ret;
 }
@@ -237,7 +237,7 @@ Packet* CPlaylistManager::GetNextVideoPacket()
   if (firstVideo && ret->rtStart != Packet::INVALID_TIME)
   {
     firstVideo = false;
-    ret->bNewClip = false;
+    ret->nNewSegment = 0;
   }
   return ret;
 }

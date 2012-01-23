@@ -1079,7 +1079,7 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     rtStop = m_rtStop;
 
 
-  bool fakeSeek = dwCurrentFlags & AM_SEEKING_FakeSeek;
+  bool fakeSeek = (dwCurrentFlags & AM_SEEKING_FakeSeek) == AM_SEEKING_FakeSeek;
   bool resetStreamPosition = caller == m_pVideoPin && fakeSeek;
 
   if (pCurrent) 

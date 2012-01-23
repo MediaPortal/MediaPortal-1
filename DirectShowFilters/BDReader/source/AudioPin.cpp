@@ -288,10 +288,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             m_bZeroTimeStream = true;
           }
 
-          if (buffer->bNewClip)
+          if ((buffer->nNewSegment & NS_NEW_CLIP) == NS_NEW_CLIP)
           {
-            LogDebug("aud: Playlist changed to %d - bNewClip: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
-              buffer->nPlaylist, buffer->bNewClip, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+            LogDebug("aud: Playlist changed to %d - nNewSegment: %d offset: %6.3f rtStart: %6.3f rtPlaylistTime: %6.3f", 
+              buffer->nPlaylist, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             checkPlaybackState = true;
 
@@ -302,7 +302,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (!m_bUsePCM && buffer->pmt && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
             buffer->pmt->subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
 
-          if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bNewClip)
+          if (buffer->pmt && m_mt != *buffer->pmt && !((buffer->nNewSegment & NS_NEW_CLIP)==NS_NEW_CLIP))
           {
             HRESULT hrAccept = S_FALSE;
             LogMediaType(buffer->pmt);
@@ -364,13 +364,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           
           if (checkPlaybackState)
           {
-            if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bNewClip)
+            if (buffer->pmt && m_mt != *buffer->pmt && !((buffer->nNewSegment & NS_NEW_CLIP)==NS_NEW_CLIP))
             {
               CMediaType mt(*buffer->pmt);
               SetMediaType(&mt);
             }
           }
-          m_pCachedBuffer->bNewClip = false;
+          m_pCachedBuffer->nNewSegment = 0;
 
           return S_OK;
         }

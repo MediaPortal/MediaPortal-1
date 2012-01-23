@@ -24,6 +24,9 @@
 #include <atlcoll.h>
 #include <Dshow.h>
 
+#define NS_NEW_CLIP     1
+#define NS_STREAM_RESET 2
+
 class Packet : public CAtlArray<BYTE>
 {
 public:
@@ -38,7 +41,8 @@ public:
 
   INT32 nClipNumber;
   INT32 nPlaylist;
-  bool bDiscontinuity, bSyncPoint, bNewClip, bResuming;  
+  INT32 nNewSegment;
+  bool bDiscontinuity, bSyncPoint, bResuming;  
   static const REFERENCE_TIME INVALID_TIME = _I64_MIN;  
   REFERENCE_TIME rtStart, rtStop, rtOffset, rtPlaylistTime, rtClipStartTime, rtTitleDuration;
   AM_MEDIA_TYPE* pmt;
