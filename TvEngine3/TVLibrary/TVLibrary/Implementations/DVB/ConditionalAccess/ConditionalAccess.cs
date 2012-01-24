@@ -62,6 +62,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
+    private readonly Geniatech _geniatech;
+    private readonly DvbSky _dvbSky;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -195,6 +197,36 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           Release.DisposeToNull(ref _hauppauge);
+          Release.DisposeToNull(ref _winTvCiModule);
+
+          Log.Log.WriteFile("Check for Geniatech tuner");
+          _geniatech = new Geniatech(tunerFilter);
+          if (_geniatech.IsGeniatech)
+          {
+            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            if (winTvUsbCiFilter != null)
+            {
+              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            }
+            return;
+          }
+          Release.DisposeToNull(ref _geniatech);
+          Release.DisposeToNull(ref _winTvCiModule);
+
+          Log.Log.WriteFile("Check for DVBSky tuner");
+          _dvbSky = new DvbSky(tunerFilter);
+          if (_dvbSky.IsDvbSky)
+          {
+            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            if (winTvUsbCiFilter != null)
+            {
+              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            }
+            return;
+          }
+          Release.DisposeToNull(ref _dvbSky);
           Release.DisposeToNull(ref _winTvCiModule);
 
           /*Log.Log.Info("Check for anysee");
@@ -730,7 +762,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_hauppauge != null)
         {
-          succeeded = _hauppauge.SendDiseqCommand(parameters, channel);
+          succeeded = _hauppauge.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_genericbdas != null)
@@ -738,9 +770,19 @@ namespace TvLibrary.Implementations.DVB
           _genericbdas.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
+        if (_geniatech != null)
+        {
+          _geniatech.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_dvbSky != null)
+        {
+          _dvbSky.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
         if (_conexant != null)
         {
-          _conexant.SendDiseqCommand(parameters, channel);
+          _conexant.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_profred != null)
@@ -873,41 +915,11 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_hauppauge != null)
         {
-          //Set Hauppauge pilot, roll-off settings but only if DVB-S2
-          //We assume if the modulation is set then a DVB-S2 tuning request has been requested
-          if (channel.ModulationType != ModulationType.ModNotSet)
-          {
-            //Set the alternative Hauppauge Modulation type
-            if (channel.ModulationType == ModulationType.ModQpsk)
-            {
-              if (channel.InnerFecRate == BinaryConvolutionCodeRate.Rate9_10)
-              {
-                channel.ModulationType = ModulationType.Mod32Qam;
-              }
-              channel.ModulationType = channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9
-                                         ? ModulationType.Mod16Qam
-                                         : ModulationType.ModBpsk;
-            }
-            //Set the Hauppauge Modulation type
-            /*if (channel.ModulationType == ModulationType.ModQpsk)
-            {
-              channel.ModulationType = ModulationType.ModQpsk2;
-            }*/
-            if (channel.ModulationType == ModulationType.Mod8Psk)
-            {
-              channel.ModulationType = ModulationType.ModNbc8Psk;
-            }
-            if (channel.SymbolRate == 30000)
-            {
-              channel.Pilot = Pilot.Off;
-            }
-            Log.Log.WriteFile("Hauppauge DVB-S2 modulation set to:{0}", channel.ModulationType);
-            Log.Log.WriteFile("Hauppauge DVB-S2 Pilot set to:{0}", channel.Pilot);
-            Log.Log.WriteFile("Hauppauge DVB-S2 RollOff set to:{0}", channel.Rolloff);
-            Log.Log.WriteFile("Hauppauge DVB-S2 fec set to:{0}", channel.InnerFecRate);
-            _hauppauge.SetDVBS2PilotRolloff(channel);
-          }
-          return channel;
+          return (DVBSChannel)_hauppauge.SetTuningParameters(channel as DVBBaseChannel);
+        }
+        if (_geniatech != null)
+        {
+          return (DVBSChannel)_geniatech.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_profred != null)
         {
@@ -1101,6 +1113,8 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_technoTrend);
       Release.Dispose(_digitalEveryWhere);
       Release.Dispose(_hauppauge);
+      Release.Dispose(_geniatech);
+      Release.Dispose(_dvbSky);
       Release.Dispose(_conexant);
       Release.Dispose(_genericbdas);
       Release.Dispose(_isgenericatsc);
