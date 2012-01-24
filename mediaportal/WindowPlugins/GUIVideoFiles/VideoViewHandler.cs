@@ -224,7 +224,7 @@ namespace MediaPortal.GUI.Video
       {
         sql =
           String.Format(
-            "select movieinfo.fRating,movieinfo.strCredits,movieinfo.strDirector,movieinfo.strTagLine,movieinfo.strPlotOutline,movieinfo.strPlot,movieinfo.strVotes,movieinfo.strCast,movieinfo.iYear,movieinfo.strGenre,movieinfo.strPictureURL,movieinfo.strTitle,path.strPath,movie.discid,movieinfo.IMDBID,movieinfo.idMovie,path.cdlabel,movieinfo.mpaa,movieinfo.runtime,movieinfo.iswatched, movieinfo.strUserReview from {0} {1} {2}",
+            "select movieinfo.fRating,movieinfo.strCredits,movieinfo.strDirector,movieinfo.strTagLine,movieinfo.strPlotOutline,movieinfo.strPlot,movieinfo.strVotes,movieinfo.strCast,movieinfo.iYear,movieinfo.strGenre,movieinfo.strPictureURL,movieinfo.strTitle,path.strPath,movie.discid,movieinfo.IMDBID,movieinfo.idMovie,path.cdlabel,movieinfo.mpaa,movieinfo.runtime,movieinfo.iswatched, movieinfo.strUserReview, movieinfo.studios from {0} {1} {2}",
             fromClause, whereClause, orderClause);
         
         VideoDatabase.GetMoviesByFilter(sql, out movies, true, true, true);

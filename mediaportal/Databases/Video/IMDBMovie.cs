@@ -71,6 +71,8 @@ namespace MediaPortal.Video.Database
     private string _dateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
     // Date watched
     private string _dateWatched = string.Empty;
+    // Studios
+    private string _mstudios = string.Empty;
 
     public IMDBMovie() {}
 
@@ -288,9 +290,14 @@ namespace MediaPortal.Video.Database
       set { _dateWatched = value; }
     }
 
+    public string Studios
+    {
+      get { return _mstudios; }
+      set { _mstudios = value; }
+    }
+
     public void Reset()
     {
-      _mID = -1;
       _mStrDirector = string.Empty;
       _mStrWritingCredits = string.Empty;
       _mStrGenre = string.Empty;
@@ -317,6 +324,7 @@ namespace MediaPortal.Video.Database
       _mIWatched = 0;
       _dateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
       _dateWatched = string.Empty;
+      _mstudios = string.Empty;
     }
 
     [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
@@ -347,6 +355,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#year", Year.ToString());
       GUIPropertyManager.SetProperty("#runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
+      GUIPropertyManager.SetProperty("#studios", Studios);
 
       if (ID == -1)
       {
