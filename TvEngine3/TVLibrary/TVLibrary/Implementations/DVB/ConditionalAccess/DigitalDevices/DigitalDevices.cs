@@ -52,17 +52,6 @@ namespace TvLibrary.Implementations.DVB
       CamAnswer,    // Send an answer to a CAM enquiry.
     }
 
-    private enum CiState
-    {
-      Idle = 0,
-      WaitForOpen,
-      WaitForMenu,
-      MenuOpen,
-      ListOpen,
-      EnquiryOpen,
-      Error = 99
-    }
-
     private enum DecryptChainingRestriction : uint
     {
       None = 0,
@@ -229,7 +218,7 @@ namespace TvLibrary.Implementations.DVB
       // We need a demux filter to test whether we can add any further CI filters
       // to the graph.
       IBaseFilter tmpDemux = (IBaseFilter)new MPEG2Demultiplexer();
-      hr = _graph.AddFilter(tmpDemux, "MPEG2-Demultiplexer");
+      hr = _graph.AddFilter(tmpDemux, "Temp MPEG2-Demux");
       if (hr != 0)
       {
         Log.Log.Debug("Digital Devices: failed to add test demux to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
