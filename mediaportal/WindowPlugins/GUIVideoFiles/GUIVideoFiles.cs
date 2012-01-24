@@ -107,6 +107,7 @@ namespace MediaPortal.GUI.Video
     private static IMDB _imdb;
     private static bool _askBeforePlayingDVDImage = false;
     private static VirtualDirectory _virtualDirectory;
+    private static string _currentFolder = string.Empty;
     private static PlayListPlayer _playlistPlayer;
 
     private MapSettings _mapSettings = new MapSettings();
@@ -158,6 +159,8 @@ namespace MediaPortal.GUI.Video
     private static string _grabberIndexFile = Config.GetFile(Config.Dir.Config, "MovieInfoGrabber.xml");
     private static string _grabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber.xml";
     private static Dictionary<string, IIMDBScriptGrabber> _grabberList;
+
+    private int _resetCount = 0;
 
     #endregion
 
@@ -438,6 +441,8 @@ namespace MediaPortal.GUI.Video
         GUIWindowManager.ReplaceWindow(VideoState.StartWindow);
         return;
       }
+
+      _resetCount = 0;
 
       LoadFolderSettings(_currentFolder);
 
@@ -810,6 +815,16 @@ namespace MediaPortal.GUI.Video
         if (rootItem.Label == "..")
         {
           totalItems--;
+        }
+      }
+      else
+      {
+        if (_resetCount == 0)
+        {
+          _resetCount++;
+          ResetShares();
+          LoadDirectory(_virtualDirectory.DefaultShare.Path, false);
+          return;
         }
       }
 
@@ -2279,10 +2294,10 @@ namespace MediaPortal.GUI.Video
     {
       GUIListItem item = facadeLayout.SelectedListItem;
       int itemNo = facadeLayout.SelectedListItemIndex;
-      if (item == null)
-      {
-        return;
-      }
+      //if (item == null)
+      //{
+      //  return;
+      //}
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
@@ -2291,126 +2306,132 @@ namespace MediaPortal.GUI.Video
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
-      // Refresh files/folders
-      dlg.AddLocalizedString(1256); // Refresh current directory
-
-      if (!facadeLayout.Focus)
+      if (item == null)
       {
-        // Menu button context menuu
-        if (!_virtualDirectory.IsRemote(_currentFolder))
-        {
-          dlg.AddLocalizedString(102); //Scan
-          dlg.AddLocalizedString(368); //IMDB
-        }
+        dlg.AddLocalizedString(868); // Reset virtual directory
       }
       else
       {
-        if ((Path.GetFileName(item.Path) != string.Empty) || Util.Utils.IsDVD(item.Path))
+        // Refresh files/folders
+        dlg.AddLocalizedString(1256); // Refresh current directory
+
+        if (!facadeLayout.Focus)
         {
-          if (item.IsRemote)
+          // Menu button context menuu
+          if (!_virtualDirectory.IsRemote(_currentFolder))
           {
-            return;
-          }
-          if ((item.IsFolder) && (item.Label == ".."))
-          {
-            return;
-          }
-          if (Util.Utils.IsDVD(item.Path))
-          {
-            if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
-            {
-              dlg.AddLocalizedString(341); //play
-            }
-            else
-            {
-              dlg.AddLocalizedString(926); //Queue
-              dlg.AddLocalizedString(102); //Scan
-            }
+            dlg.AddLocalizedString(102); //Scan
             dlg.AddLocalizedString(368); //IMDB
-            dlg.AddLocalizedString(654); //Eject
           }
-          else if (item.IsFolder)
+        }
+        else
+        {
+          if ((Path.GetFileName(item.Path) != string.Empty) || Util.Utils.IsDVD(item.Path))
           {
-            if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+            if (item.IsRemote)
             {
-              dlg.AddLocalizedString(208); //play             
+              return;
             }
-            dlg.AddLocalizedString(926); //Queue
-            if (!VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+            if ((item.IsFolder) && (item.Label == ".."))
             {
-              //
-              // Play all
-              //
-              SelectDVDHandler checkIfIsDvd = new SelectDVDHandler();
-              if (!checkIfIsDvd.IsDvdDirectory(item.Path))
+              return;
+            }
+            if (Util.Utils.IsDVD(item.Path))
+            {
+              if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
               {
-                dlg.AddLocalizedString(1204); // Play All in selected folder
+                dlg.AddLocalizedString(341); //play
               }
               else
               {
-                if (item.IsPlayed)
+                dlg.AddLocalizedString(926); //Queue
+                dlg.AddLocalizedString(102); //Scan
+              }
+              dlg.AddLocalizedString(368); //IMDB
+              dlg.AddLocalizedString(654); //Eject
+            }
+            else if (item.IsFolder)
+            {
+              if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+              {
+                dlg.AddLocalizedString(208); //play             
+              }
+              dlg.AddLocalizedString(926); //Queue
+              if (!VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+              {
+                //
+                // Play all
+                //
+                SelectDVDHandler checkIfIsDvd = new SelectDVDHandler();
+                if (!checkIfIsDvd.IsDvdDirectory(item.Path))
                 {
-                  dlg.AddLocalizedString(830); //Reset watched status for DVD folder
+                  dlg.AddLocalizedString(1204); // Play All in selected folder
                 }
                 else
                 {
-                  dlg.AddLocalizedString(1260); // Set watched status
+                  if (item.IsPlayed)
+                  {
+                    dlg.AddLocalizedString(830); //Reset watched status for DVD folder
+                  }
+                  else
+                  {
+                    dlg.AddLocalizedString(1260); // Set watched status
+                  }
                 }
+                //
+                dlg.AddLocalizedString(102); //Scan            
               }
-              //
-              dlg.AddLocalizedString(102); //Scan            
-            }
-            dlg.AddLocalizedString(368); //IMDB
-            if (Util.Utils.getDriveType(item.Path) == 5)
-            {
-              dlg.AddLocalizedString(654); //Eject            
-            }
-            if (!IsFolderPinProtected(item.Path) && _fileMenuEnabled)
-            {
-              dlg.AddLocalizedString(500); // FileMenu            
-            }
-          }
-          else
-          {
-            dlg.AddLocalizedString(208); //Play
-            dlg.AddLocalizedString(926); //Queue
-            dlg.AddLocalizedString(368); //IMDB
-            if (item.IsPlayed)
-            {
-              dlg.AddLocalizedString(830); //Reset watched status
+              dlg.AddLocalizedString(368); //IMDB
+              if (Util.Utils.getDriveType(item.Path) == 5)
+              {
+                dlg.AddLocalizedString(654); //Eject            
+              }
+              if (!IsFolderPinProtected(item.Path) && _fileMenuEnabled)
+              {
+                dlg.AddLocalizedString(500); // FileMenu            
+              }
             }
             else
             {
-              dlg.AddLocalizedString(1260); // Set watched status
-            }
+              dlg.AddLocalizedString(208); //Play
+              dlg.AddLocalizedString(926); //Queue
+              dlg.AddLocalizedString(368); //IMDB
+              if (item.IsPlayed)
+              {
+                dlg.AddLocalizedString(830); //Reset watched status
+              }
+              else
+              {
+                dlg.AddLocalizedString(1260); // Set watched status
+              }
 
-            if (!IsFolderPinProtected(item.Path) && !item.IsRemote && _fileMenuEnabled)
-            {
-              dlg.AddLocalizedString(500); // FileMenu
+              if (!IsFolderPinProtected(item.Path) && !item.IsRemote && _fileMenuEnabled)
+              {
+                dlg.AddLocalizedString(500); // FileMenu
+              }
             }
           }
+          else if (Util.Utils.IsNetwork(item.Path)) // Process network root with drive letter
+          {
+            dlg.AddLocalizedString(1204); // Play All in selected folder
+          }
         }
-        else if (Util.Utils.IsNetwork(item.Path)) // Process network root with drive letter
+        if (!_mapSettings.Stack)
         {
-          dlg.AddLocalizedString(1204); // Play All in selected folder
+          dlg.AddLocalizedString(346); //Stack
         }
-      }
-      if (!_mapSettings.Stack)
-      {
-        dlg.AddLocalizedString(346); //Stack
-      }
-      else
-      {
-        dlg.AddLocalizedString(347); //Unstack
-      }
-      if (Util.Utils.IsRemovable(item.Path))
-      {
-        dlg.AddLocalizedString(831);
-      }
+        else
+        {
+          dlg.AddLocalizedString(347); //Unstack
+        }
+        if (Util.Utils.IsRemovable(item.Path))
+        {
+          dlg.AddLocalizedString(831);
+        }
 
-      dlg.AddLocalizedString(1263); // Set default grabber
-      dlg.AddLocalizedString(1262); // Update grabber scripts
-
+        dlg.AddLocalizedString(1263); // Set default grabber
+        dlg.AddLocalizedString(1262); // Update grabber scripts
+      }
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
       {
@@ -2546,6 +2567,13 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
+        case 868: // Reset V.directory
+          {
+            ResetShares();
+            LoadDirectory(_virtualDirectory.DefaultShare.Path, false);
+          }
+          break;
+
         case 1262: // Update grabber scripts
           UpdateGrabberScripts();
           break;
@@ -2661,6 +2689,7 @@ namespace MediaPortal.GUI.Video
       dlgFile = null;
       _resetSMSsearchDelay = DateTime.Now;
       _resetSMSsearch = true;
+
     }
 
     /// <summary>
@@ -3468,6 +3497,32 @@ namespace MediaPortal.GUI.Video
 
     #endregion
     
+		public static void ResetShares()
+    {
+      _virtualDirectory.Reset();
+      _virtualDirectory.DefaultShare = null;
+      _virtualDirectory.LoadSettings("movies");
+
+		  if (_virtualDirectory.DefaultShare != null)
+      {
+        int pincode;
+        bool folderPinProtected = _virtualDirectory.IsProtectedShare(_virtualDirectory.DefaultShare.Path, out pincode);
+        if (folderPinProtected)
+        {
+          _currentFolder = string.Empty;
+        }
+        else
+        {
+          _currentFolder = _virtualDirectory.DefaultShare.Path;
+        }
+      }
+    }
+
+    public static void ResetExtensions(ArrayList extensions)
+    {
+      _virtualDirectory.SetExtensions(extensions);
+    }
+		
     #region IMDB.IProgress
 
     public bool OnDisableCancel(IMDBFetcher fetcher)

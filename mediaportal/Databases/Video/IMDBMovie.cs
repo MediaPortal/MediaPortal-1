@@ -290,6 +290,7 @@ namespace MediaPortal.Video.Database
 
     public void Reset()
     {
+      _mID = -1;
       _mStrDirector = string.Empty;
       _mStrWritingCredits = string.Empty;
       _mStrGenre = string.Empty;
@@ -447,7 +448,17 @@ namespace MediaPortal.Video.Database
           Random rnd = new Random();
           int r = rnd.Next(mList.Count);
           IMDBMovie movieDetails = (IMDBMovie)mList[r];
-          GUIPropertyManager.SetProperty("#movieid", movieDetails.ID.ToString());
+          mList.Clear();
+          VideoDatabase.GetFiles(movieDetails.ID, ref mList);
+
+          if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
+          {
+            GUIPropertyManager.SetProperty("#movieid", movieDetails.ID.ToString());
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#movieid", "-1");
+          }
         }
         else
         {
