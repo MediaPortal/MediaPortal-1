@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Language name="English" characters="512">
+<Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programmes</String>
     <String id="1" prefix="My ">Pictures</String>
@@ -1014,39 +1014,22 @@
     <String id="1226">Queue all items</String>
     <String id="1230">Date added:</String>
     <String id="1231">Last played:</String>
-		<String id="1240">Lock content</String>
-		<String id="1241">Unlock content</String>
-		<String id="1250">Search movie</String>
-		<String id="1251">Reset search</String>
-		<String id="1252">Search actor</String>
-		<String id="1253">Refresh all actor movies</String>
-		<String id="1254">Refresh selected actor info</String>
-		<String id="1255">Refresh fanart</String>
-		<String id="1256">Refresh current directory</String>
-		<String id="1257">Downloading movie actors and roles</String>
-		<String id="1258">Downloading actor info</String>
-		<String id="1260">Set watched status</String>
-		<String id="1261">No GrabberIndexFile found.</String>
-		<String id="1262">Update Grabber scripts</String>
-		<String id="1263">Set default Grabber script</String>
-		<String id="1264">Grabber settings</String>
-		<String id="1265">Extensions</String>
-		<String id="1266">Add extension</String>
-		<String id="1267">Remove selected extension</String>
-		<String id="1268">Video</String>
-		<String id="1269">Audio</String>
-		<String id="1270">Add folder</String>
-		<String id="1271">Remove folder</String>
-		<String id="1272">Edit folder</String>
-		<String id="1273">Remember last used folder</String>
-		<String id="1274">Automatically add optical disk drives</String>
-		<String id="1275">Automatically switch to inserted removable drives</String>
-		<String id="1276">Set as Default folder</String>
-		<String id="1277">Folders</String>
-		<String id="1278">Folders browser</String>
-		<String id="1279">Folder info</String>
-		<String id="1280">No default folder</String>
-		<String id="1300" prefix="My ">TV Shows</String>
+    <String id="1240">Lock content</String>
+    <String id="1241">Unlock content</String>
+    <String id="1250">Search movie</String>
+    <String id="1251">Reset search</String>
+    <String id="1252">Search actor</String>
+    <String id="1253">Refresh all actor movies</String>
+    <String id="1254">Refresh selected actor info</String>
+    <String id="1255">Refresh fanart</String>
+    <String id="1256">Refresh current directory</String>
+    <String id="1257">Downloading movie actors and roles</String>
+    <String id="1258">Downloading actor info</String>
+    <String id="1260">Set watched status</String>
+    <String id="1261">No GrabberIndexFile found.</String>
+    <String id="1262">Update Grabber scripts</String>
+    <String id="1263">Set default Grabber script</String>
+    <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1398,7 +1381,7 @@
     <String id="4555">Current Playlist</String>
     <String id="4557">Add all to playlist</String>
     <String id="4558">Recently Added</String>
-	<String id="4559">Recently watched</String>
+    <String id="4559">Recently watched</String>
     <String id="5900" prefix="My ">Trailers</String>
     <String id="5901">Show Movies</String>
     <String id="5902">Show which movies?</String>
