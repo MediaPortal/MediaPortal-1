@@ -146,13 +146,13 @@ HRESULT CQueuedAudioSink::WaitForEvents(DWORD dwTimeout, vector<HANDLE>* pEvents
 
   if (useBaseEvents)
   {
-    events = pEvents;
-    waitObjects = pWaitObjects;
+    events = &m_hEvents;
+    waitObjects = &m_dwWaitObjects;
   }
   else
   {
-    events = &m_hEvents;
-    waitObjects = &m_dwWaitObjects;
+    events = pEvents;
+    waitObjects = pWaitObjects;
   }
 
   DWORD result = WaitForMultipleObjects(static_cast<DWORD>(events->size()), &(*events)[0], FALSE, dwTimeout);
