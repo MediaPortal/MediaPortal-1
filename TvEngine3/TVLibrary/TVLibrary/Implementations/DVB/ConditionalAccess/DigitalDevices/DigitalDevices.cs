@@ -177,6 +177,7 @@ namespace TvLibrary.Implementations.DVB
 
       Log.Log.Debug("Digital Devices: supported tuner detected");
       _isDigitalDevices = true;
+      _ciContexts = new List<CiContext>();
       _mmiBuffer = Marshal.AllocCoTaskMem(MenuDataSize);
     }
 
