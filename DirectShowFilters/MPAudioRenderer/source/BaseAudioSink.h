@@ -34,7 +34,7 @@ public:
 // Provide default implementations
 public:
   // Initialization
-  virtual HRESULT ConnectTo(IAudioSink *pSink);
+  virtual HRESULT ConnectTo(IAudioSink* pSink);
   virtual HRESULT Disconnect();
   virtual HRESULT DisconnectAll();
 
@@ -47,35 +47,35 @@ public:
   virtual HRESULT EndStop();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEX* pwfx, int nApplyChangesDepth);
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample *pSample);
+  virtual HRESULT PutSample(IMediaSample* pSample);
   virtual HRESULT EndOfStream();
   virtual HRESULT BeginFlush();
   virtual HRESULT EndFlush();
 
 protected:
   // Helpers
-  static bool FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX *pwfx2);
+  static bool FormatsEqual(const WAVEFORMATEX* pwfx1, const WAVEFORMATEX* pwfx2);
 
   // Initialization
   HRESULT InitAllocator();
   virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
 
-  HRESULT SetInputFormat(const WAVEFORMATEX *pwfx);
-  HRESULT SetInputFormat(WAVEFORMATEX *pwfx, bool bAssumeOwnerShip = FALSE);
-  HRESULT SetOutputFormat(const WAVEFORMATEX *pwfx);
-  HRESULT SetOutputFormat(WAVEFORMATEX *pwfx, bool bAssumeOwnerShip = FALSE);
+  HRESULT SetInputFormat(const WAVEFORMATEX* pwfx);
+  HRESULT SetInputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip = FALSE);
+  HRESULT SetOutputFormat(const WAVEFORMATEX* pwfx);
+  HRESULT SetOutputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip = FALSE);
 
   // Output handling
   HRESULT RequestNextOutBuffer(REFERENCE_TIME rtStart);
   HRESULT OutputNextSample();
 
 protected:
-  IAudioSink *m_pNextSink;
-  WAVEFORMATEX *m_pInputFormat;
-  WAVEFORMATEX *m_pOutputFormat;
+  IAudioSink* m_pNextSink;
+  WAVEFORMATEX* m_pInputFormat;
+  WAVEFORMATEX* m_pOutputFormat;
   bool m_bOutFormatChanged;
 
   // Output buffer support

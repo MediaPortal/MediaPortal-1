@@ -17,8 +17,8 @@
 #include "stdafx.h"
 #include "BaseAudioSink.h"
 
-extern void Log(const char *fmt, ...);
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
+extern void Log(const char* fmt, ...);
+extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
 
 CBaseAudioSink::CBaseAudioSink(void) 
 : m_pNextSink(NULL)
@@ -51,16 +51,17 @@ HRESULT CBaseAudioSink::Disconnect()
 
 HRESULT CBaseAudioSink::DisconnectAll()
 {
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->DisconnectAll();
+
   return S_OK;
 }
 
-
 HRESULT CBaseAudioSink::Init()
 {
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->Init();
+
   return S_OK;
 }
 
@@ -68,56 +69,63 @@ HRESULT CBaseAudioSink::Cleanup()
 {
   m_pMemAllocator.Release();
 
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->Cleanup();
+
   return S_OK;
 }
 
 // Control
 HRESULT CBaseAudioSink::Start()
 {
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->Start();
+
   return S_OK;
 }
 
 HRESULT CBaseAudioSink::BeginStop()
 {
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->BeginStop();
+
   return S_OK;
 }
 
 HRESULT CBaseAudioSink::EndStop()
 {
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->EndStop();
+
   return S_OK;
 }
 
 // Format negotiation
-HRESULT CBaseAudioSink::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
+HRESULT CBaseAudioSink::NegotiateFormat(const WAVEFORMATEX* pwfx, int nApplyChangesDepth)
 {
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+
   return VFW_E_TYPE_NOT_ACCEPTED;
 }
 
 // Processing
-HRESULT CBaseAudioSink::PutSample(IMediaSample *pSample)
+HRESULT CBaseAudioSink::PutSample(IMediaSample* pSample)
 {
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->PutSample(pSample);
+  
   return S_OK;
 }
 
 HRESULT CBaseAudioSink::EndOfStream()
 {
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->EndOfStream();
+
   return S_OK;
 }
 
@@ -128,8 +136,9 @@ HRESULT CBaseAudioSink::BeginFlush()
   
   m_pNextOutSample.Release();
 
-  if(m_pNextSink)
+  if (m_pNextSink)
     return m_pNextSink->BeginFlush();
+
   return S_OK;
 }
 
@@ -138,8 +147,9 @@ HRESULT CBaseAudioSink::EndFlush()
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
 
-  if(m_pNextSink)
-    return m_pNextSink->EndFlush();
+  if (m_pNextSink)
+   return m_pNextSink->EndFlush();
+
   return S_OK;
 }
 
@@ -147,10 +157,7 @@ HRESULT CBaseAudioSink::EndFlush()
 
 bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX *pwfx2)
 {
-  if (pwfx1 == NULL && pwfx2 != NULL)
-    return false;
-
-  if (pwfx1 != NULL && pwfx2 == NULL)
+  if ((!pwfx1 && pwfx2) || (pwfx1 && !pwfx2))
     return false;
 
   if (pwfx1->wFormatTag != pwfx2->wFormatTag ||
@@ -161,7 +168,6 @@ bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX 
   return true;
 }
 
-
 HRESULT CBaseAudioSink::InitAllocator()
 {
   ALLOCATOR_PROPERTIES propIn;
@@ -170,7 +176,7 @@ HRESULT CBaseAudioSink::InitAllocator()
   
   if (FAILED(hr))
   {
-    Log("Failed to get sample allocator properties (0x%08x)", hr);
+    Log("CBaseAudioSink: Failed to get sample allocator properties (0x%08x)", hr);
     return hr;
   }
   
@@ -178,7 +184,7 @@ HRESULT CBaseAudioSink::InitAllocator()
 
   if (FAILED(hr))
   {
-    Log("Failed to create sample allocator (0x%08x)", hr);
+    Log("CBaseAudioSink: Failed to create sample allocator (0x%08x)", hr);
     delete pAllocator;
     return hr;
   }
@@ -187,7 +193,7 @@ HRESULT CBaseAudioSink::InitAllocator()
 
   if (FAILED(hr))
   {
-    Log("Failed to get allocator interface (0x%08x)", hr);
+    Log("CBaseAudioSink: Failed to get allocator interface (0x%08x)", hr);
     delete pAllocator;
     return hr;
   }
@@ -196,9 +202,10 @@ HRESULT CBaseAudioSink::InitAllocator()
   hr = m_pMemAllocator->Commit();
   if (FAILED(hr))
   {
-    Log("Failed to commit allocator properties (0x%08x)", hr);
+    Log("CBaseAudioSink: Failed to commit allocator properties (0x%08x)", hr);
     m_pMemAllocator.Release();
   }
+
   return hr;
 }
 
@@ -212,7 +219,7 @@ HRESULT CBaseAudioSink::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properti
   return S_OK;
 }
 
-HRESULT CBaseAudioSink::SetInputFormat(WAVEFORMATEX *pwfx, bool bAssumeOwnerShip)
+HRESULT CBaseAudioSink::SetInputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip)
 {
   SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
   if (bAssumeOwnerShip)
@@ -223,13 +230,13 @@ HRESULT CBaseAudioSink::SetInputFormat(WAVEFORMATEX *pwfx, bool bAssumeOwnerShip
   return S_OK;
 }
 
-HRESULT CBaseAudioSink::SetInputFormat(const WAVEFORMATEX *pwfx)
+HRESULT CBaseAudioSink::SetInputFormat(const WAVEFORMATEX* pwfx)
 {
   SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
   return CopyWaveFormatEx(&m_pInputFormat, pwfx);
 }
 
-HRESULT CBaseAudioSink::SetOutputFormat(const WAVEFORMATEX *pwfx)
+HRESULT CBaseAudioSink::SetOutputFormat(const WAVEFORMATEX* pwfx)
 {
   SAFE_DELETE_WAVEFORMATEX(m_pOutputFormat);
   HRESULT hr = CopyWaveFormatEx(&m_pOutputFormat, pwfx);
@@ -238,7 +245,7 @@ HRESULT CBaseAudioSink::SetOutputFormat(const WAVEFORMATEX *pwfx)
   return hr;
 }
 
-HRESULT CBaseAudioSink::SetOutputFormat(WAVEFORMATEX *pwfx, bool bAssumeOwnerShip)
+HRESULT CBaseAudioSink::SetOutputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip)
 {
   HRESULT hr = S_OK;
 
@@ -263,19 +270,20 @@ HRESULT CBaseAudioSink::OutputNextSample()
       Log("CBaseAudioSink: Failed to output next sample: 0x%08x", hr);
   }
   m_pNextOutSample = NULL;
+  
   return hr;
 }
 
 HRESULT CBaseAudioSink::RequestNextOutBuffer(REFERENCE_TIME rtStart)
 {
-  if (m_pMemAllocator == NULL)
+  if (!m_pMemAllocator)
     return E_POINTER;
 
   HRESULT hr = m_pMemAllocator->GetBuffer(&m_pNextOutSample, NULL, NULL, 0);
   if(FAILED(hr))
     return hr;
 
-  ASSERT(m_pNextOutSample != NULL);
+  ASSERT(m_pNextOutSample);
 
   m_pNextOutSample->SetActualDataLength(0);
   m_pNextOutSample->SetTime(&rtStart, NULL);
@@ -290,6 +298,7 @@ HRESULT CBaseAudioSink::RequestNextOutBuffer(REFERENCE_TIME rtStart)
     }
     m_bOutFormatChanged = false;
   }
+
   return S_OK;
 }
 
