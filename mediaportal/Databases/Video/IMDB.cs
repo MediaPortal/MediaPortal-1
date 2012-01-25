@@ -843,10 +843,12 @@ namespace MediaPortal.Video.Database
         // Person is movie director or an actor/actress
         bool isActorPass = false;
         bool isDirectorPass = false;
+        bool isWriterPass = false;
         
         parser.resetPosition();
 
         HTMLParser dirParser = new HTMLParser(); // HTML body for Director
+        HTMLParser wriParser = new HTMLParser(); // HTML body for Writers
 
         if ((parser.skipToEndOf("name=\"Director\">Director</a>")) &&
             (parser.skipToEndOf("</div>")))
@@ -856,7 +858,16 @@ namespace MediaPortal.Video.Database
         }
         
         parser.resetPosition();
-        
+
+        if ((parser.skipToEndOf("name=\"Writer\">Writer</a>")) &&
+            (parser.skipToEndOf("</div>")))
+        {
+          isWriterPass = true;
+          wriParser.Content = parser.Content;
+        }
+
+        parser.resetPosition();
+
         if (parser.skipToEndOf("name=\"Actress\">Actress</a>") || 
             parser.skipToEndOf("name=\"Actor\">Actor</a>"))
         {
@@ -866,7 +877,7 @@ namespace MediaPortal.Video.Database
         // Get filmography Actor
         if (isActorPass)
         {
-          GetActorMovies(actor, parser, false);
+          GetActorMovies(actor, parser, false, false);
         }
         // Get filmography Director
         if (isDirectorPass)
@@ -876,9 +887,21 @@ namespace MediaPortal.Video.Database
           if (parser.skipToEndOf("name=\"Director\">Director</a>") &&
               parser.skipToEndOf("</div>"))
           {
-            GetActorMovies(actor, parser, true);
+            GetActorMovies(actor, parser, true, false);
           }
         }
+        // Get filmography for writers
+        if (isWriterPass)
+        {
+          parser = wriParser;
+          parser.resetPosition();
+          if ((parser.skipToEndOf("name=\"Writer\">Writer</a>")) &&
+            (parser.skipToEndOf("</div>")))
+          {
+            GetActorMovies(actor, parser, false, true);
+          }
+        }
+
         // Add filmography
         if (actor.Count > 0)
         {
@@ -894,7 +917,7 @@ namespace MediaPortal.Video.Database
       return false;
     }
 
-    private void GetActorMovies(IMDBActor actor, HTMLParser parser, bool director)
+    private void GetActorMovies(IMDBActor actor, HTMLParser parser, bool director, bool writer)
     {
       string movies = string.Empty;
       // Get films and roles block
@@ -938,7 +961,7 @@ namespace MediaPortal.Video.Database
             movieParser.extractTo("<", ref strYear);
           }
           // Roles
-          if (!director)
+          if (!director && !writer)
           {
             if (movieParser.skipToEndOf("<br/>")) // Role case 1, no character link
             {
@@ -957,11 +980,15 @@ namespace MediaPortal.Video.Database
               }
             }
           }
-          else
+          else if (director)
           {
-            role = "Director";
+            role = GUILocalizeStrings.Get(199).Replace(":", string.Empty);
           }
-
+          else // Writer
+          {
+            role = GUILocalizeStrings.Get(200).Replace(":", string.Empty);
+          }
+          
           int year = 0;
           try
           {
@@ -986,14 +1013,27 @@ namespace MediaPortal.Video.Database
             // Check if director movie exists in actors movies, concatenate role
             // to already fetched actor movie (no duplicate movie entries)
             bool skipAdd = false;
-            
+
+            if (writer)
+            {
+              for (int i = 0; i < actor.Count; i++)
+              {
+                if (actor[i].MovieImdbID == imdbID)
+                {
+                  actor[i].Role = GUILocalizeStrings.Get(200).Replace(":", string.Empty) + ", " + actor[i].Role;
+                  skipAdd = true;
+                  break;
+                }
+              }
+            }
+
             if (director)
             {
               for (int i = 0; i < actor.Count; i++)
               {
                 if (actor[i].MovieImdbID == imdbID)
                 {
-                  actor[i].Role = "Director, " + actor[i].Role;
+                  actor[i].Role = GUILocalizeStrings.Get(199).Replace(":", string.Empty) + ", " + actor[i].Role;
                   skipAdd = true;
                   break;
                 }
@@ -1001,7 +1041,9 @@ namespace MediaPortal.Video.Database
             }
 
             if (!skipAdd)
+            {
               actor.Add(actorMovie);
+            }
           }
         }
       }
