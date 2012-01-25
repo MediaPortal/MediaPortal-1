@@ -360,6 +360,39 @@ void CDeMultiplexer::FlushSubtitle()
     pDVBSubtitleFilter->NotifyChannelChange();*/
 }
 
+HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
+{
+  LogDebug("demux:ChangingChapter");
+
+  HRESULT hr = S_FALSE;
+
+  SetHoldAudio(true);
+  SetHoldVideo(true);
+  SetHoldSubtitle(true);
+
+  // Make sure data isn't being processed
+  CAutoLock lockRead(&m_sectionRead);
+
+  FlushPESBuffers(true);
+
+  CAutoLock lockVid(&m_sectionVideo);
+  CAutoLock lockAud(&m_sectionAudio);
+  CAutoLock lockSub(&m_sectionSubtitle);
+
+  m_playlistManager->ClearAllButCurrentClip();
+  hr = m_filter.lib.SetChapter(nChapter);
+
+  FlushAudio();
+  FlushVideo();
+  FlushSubtitle();
+
+  SetHoldAudio(false);
+  SetHoldVideo(false);
+  SetHoldSubtitle(false);
+  return hr;
+}
+
+
 void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSeekTime)
 {
   LogDebug("demux:flushing");

@@ -422,11 +422,7 @@ STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
   UINT32 current = 0;
   if (lib.GetChapter(&current) && current != chapter)
   {
-    CAutoLock(&(m_demultiplexer.m_sectionRead));
-    hr = lib.SetChapter(chapter) ? S_OK : S_FALSE;
-    // TODO get chapter position in playlist
-    REFERENCE_TIME rtChapterStart = 0LL;
-    m_demultiplexer.Flush(true, true, rtChapterStart);
+    hr = m_demultiplexer.FlushToChapter(chapter);
   }
 
   return hr;

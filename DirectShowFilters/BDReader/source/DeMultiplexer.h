@@ -54,6 +54,7 @@ public:
 
   HRESULT    Start();
   void       Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSeekTime);
+  HRESULT    FlushToChapter(UINT32 nChapter);
   Packet*    GetVideo();
   Packet*    GetAudio();
   Packet*    GetAudio(int playlist, int clip);
