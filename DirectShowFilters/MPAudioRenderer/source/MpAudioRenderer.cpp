@@ -84,7 +84,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 
   if (!m_pClock)
   {
-    if(phr)
+    if (phr)
     {
       *phr = E_OUTOFMEMORY;
       return;
@@ -139,7 +139,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   m_pPosition = new CRendererPosPassThru(NAME("Renderer CPosPassThru"), CBaseFilter::GetOwner(), (HRESULT *) &hr, pPin);
   if (!m_pPosition)
   {
-    if(phr)
+    if (phr)
     {
       *phr = E_OUTOFMEMORY;
       return;
@@ -428,31 +428,23 @@ HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
   
   //return m_pRenderDevice->DoRenderSample(pMediaSample, m_dSampleCounter);
   m_pPipeline->PutSample(pMediaSample);
+
   return S_OK;
 }
-
 
 STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **ppv)
 {
   if (riid == IID_IReferenceClock)
-  {
     return GetInterface(static_cast<IReferenceClock*>(m_pClock), ppv);
-  }
 
   if (riid == IID_IAVSyncClock) 
-  {
     return GetInterface(static_cast<IAVSyncClock*>(this), ppv);
-  }
 
   if (riid == IID_IMediaSeeking) 
-  {
     return GetInterface(static_cast<IMediaSeeking*>(this), ppv);
-  }
 
   if (riid == IID_IBasicAudio)
-  {
     return GetInterface(static_cast<IBasicAudio*>(m_pVolumeHandler), ppv);
-  }
 
 	return CBaseRenderer::NonDelegatingQueryInterface (riid, ppv);
 }
@@ -482,7 +474,6 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
   }*/
 
   m_pPipeline->NegotiateFormat(pwf, INFINITE);
-
 
   SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
   
@@ -516,10 +507,10 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
     }*/
   }
 
-  return CBaseRenderer::SetMediaType (pmt);
+  return CBaseRenderer::SetMediaType(pmt);
 }
 
-HRESULT CMPAudioRenderer::CompleteConnect(IPin *pReceivePin)
+HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
 {
   Log("CompleteConnect");
 
@@ -724,15 +715,12 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
     m_dAdjustment = pAdjustment;
     m_pClock->SetAdjustment(m_dAdjustment);
     if (m_pSoundTouch)
-    {
       m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
-    }
+
     return S_OK;
   }
   else
-  {
     return S_FALSE;
-  }
 }
 
 HRESULT CMPAudioRenderer::SetEVRPresentationDelay(DOUBLE pEVRDelay)
@@ -812,6 +800,7 @@ HRESULT CMPAudioRenderer::GetBias(DOUBLE* pBias)
 {
   CheckPointer(pBias, E_POINTER);
   *pBias = m_pClock->Bias();
+
   return S_OK;
 }
 
@@ -819,6 +808,7 @@ HRESULT CMPAudioRenderer::GetMaxBias(DOUBLE *pMaxBias)
 {
   CheckPointer(pMaxBias, E_POINTER);
   *pMaxBias = m_Settings.m_dMaxBias;
+
   return S_OK;
 }
 
@@ -826,6 +816,7 @@ HRESULT CMPAudioRenderer::GetMinBias(DOUBLE *pMinBias)
 {
   CheckPointer(pMinBias, E_POINTER);
   *pMinBias = m_Settings.m_dMinBias;
+
   return S_OK;
 }
 
@@ -833,6 +824,7 @@ HRESULT CMPAudioRenderer::GetClockData(CLOCKDATA *pClockData)
 {
   CheckPointer(pClockData, E_POINTER);
   m_pClock->GetClockData(pClockData);
+
   return S_OK;
 }
 
