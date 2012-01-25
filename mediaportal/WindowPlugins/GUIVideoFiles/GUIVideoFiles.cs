@@ -1685,7 +1685,7 @@ namespace MediaPortal.GUI.Video
       IMDBMovie info = new IMDBMovie();
       if (path == "..")
       {
-        info.Reset();
+        info.Reset(true);
         info.SetProperties(true, string.Empty);
         return;
       }
@@ -1743,7 +1743,7 @@ namespace MediaPortal.GUI.Video
         }
         if (isMultiMovieFolder || !isFile)
         {
-          info.Reset();
+          info.Reset(true);
           info.SetProperties(true, filename);
           return;
         }

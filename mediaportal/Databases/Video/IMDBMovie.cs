@@ -298,6 +298,15 @@ namespace MediaPortal.Video.Database
 
     public void Reset()
     {
+      Reset(false);
+    }
+
+    public void Reset(bool resetId)
+    {
+      if (resetId)
+      {
+        _mID = -1;
+      }
       _mStrDirector = string.Empty;
       _mStrWritingCredits = string.Empty;
       _mStrGenre = string.Empty;
