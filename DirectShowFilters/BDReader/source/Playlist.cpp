@@ -168,7 +168,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
   return ret;
 }
 
-bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset)
+bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, bool seekTarget)
 {
   CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
@@ -181,7 +181,7 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
 
 
   if (m_vecClips.size()) PushClips();
-  m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration));
+  m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, seekTarget));
   if (m_vecClips.size()==1)
   {
     // initialise

@@ -45,7 +45,7 @@ using namespace std;
 class CClip
 {
 public:
-  CClip(int clipNumber, int playlistNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration);
+  CClip(int clipNumber, int playlistNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, bool seekTarget);
   ~CClip(void);
   Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
   Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
@@ -56,6 +56,7 @@ public:
   int  nClip;
   int  nPlaylist;
   bool noAudio;
+  bool bSeekTarget;
   bool clipReset;
   void Superceed(int superceedType);
   bool IsSuperceeded(int superceedType);

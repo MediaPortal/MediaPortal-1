@@ -34,7 +34,7 @@ extern void LogDebug(const char *fmt, ...);
 #define ONE_SECOND  10000000LL
 #define TWO_SECONDS 20000000LL
 
-CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration)
+CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, bool seekTarget)
 {
   nClip=clipNumber;
   nPlaylist = playlistNumber;
@@ -55,6 +55,8 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   m_rtClipStartingOffset = 0LL;
 
   noAudio=!audioPresent;
+  
+  bSeekTarget = seekTarget;
 
   superceeded=0;
 
@@ -151,10 +153,12 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
     {
       if (firstVideo)
       {
-        ret->bDiscontinuity=true;
+        ret->bDiscontinuity = true;
         ret->nNewSegment = NS_STREAM_RESET;
+        if (bSeekTarget) ret->nNewSegment |= NS_SEEK_TARGET; 
         if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
-        firstVideo=false;
+        firstVideo = false;
+        bSeekTarget = false;
         ret->pmt = CreateMediaType(m_videoPmt);
       }
 
