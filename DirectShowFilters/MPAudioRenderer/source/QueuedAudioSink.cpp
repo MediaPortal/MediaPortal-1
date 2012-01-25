@@ -158,7 +158,9 @@ HRESULT CQueuedAudioSink::WaitForEvents(DWORD dwTimeout, vector<HANDLE>* pEvents
   DWORD result = WaitForMultipleObjects(static_cast<DWORD>(events->size()), &(*events)[0], FALSE, dwTimeout);
   HRESULT hr = S_FALSE;
 
-  if (result != WAIT_FAILED)
+  if (result == WAIT_TIMEOUT)
+    hr = WAIT_TIMEOUT;
+  else if (result != WAIT_FAILED)
     hr = (*waitObjects)[result];
 
   return hr;
