@@ -22,6 +22,8 @@
 
 #define MPAR_S_NEED_DATA ((HRESULT)0x00040201)
 
+using namespace std;
+
 class CWASAPIRenderFilter :
   public CQueuedAudioSink
 {
@@ -45,9 +47,6 @@ protected:
   // Processing
   virtual DWORD ThreadProc();
 
-  // Queue services
-  virtual HRESULT WaitForSample(DWORD dwTimeout);
-
 // Internal implementation
 private:
 
@@ -67,13 +66,13 @@ private:
   HRESULT InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioRenderClient **ppRenderClient);
   HRESULT StartAudioClient(IAudioClient** ppAudioClient);
   HRESULT StopAudioClient(IAudioClient** ppAudioClient);
+  void CancelDataEvent();
 
   HRESULT CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
   bool    CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
   HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
 
-  // members
-  AudioRendererSettings *m_pSettings;
+  AudioRendererSettings* m_pSettings;
   IMMDevice*          m_pMMDevice;
   IAudioClient*       m_pAudioClient;
   IAudioRenderClient* m_pRenderClient;
@@ -82,10 +81,9 @@ private:
   UINT32              m_nBufferSize;
   IAudioClock*        m_pAudioClock;
   UINT64              m_nHWfreq;
-  DWORD               m_StreamFlags;
+  DWORD               m_dwStreamFlags;
 
   BOOL                m_bIsAudioClientStarted;
 
-  HANDLE m_hDataEvent;
-
+  HANDLE              m_hDataEvent;
 };

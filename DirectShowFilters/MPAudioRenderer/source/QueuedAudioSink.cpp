@@ -26,6 +26,13 @@ CQueuedAudioSink::CQueuedAudioSink(void)
   //memset(m_hEvents, 0, sizeof(m_hEvents));
   m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
   m_hInputSamplesAvailableEvent = CreateEvent(0, TRUE, FALSE, 0);
+
+  m_hEvents.push_back(m_hInputSamplesAvailableEvent);
+  m_hEvents.push_back(m_hStopThreadEvent);
+
+  m_dwWaitObjects.push_back(S_OK);
+  m_dwWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+
   //m_hInputQueueEmptyEvent = CreateEvent(0, FALSE, FALSE, 0);
 }
 
@@ -130,22 +137,31 @@ HRESULT CQueuedAudioSink::BeginFlush()
 //}
 
 // Queue services
-HRESULT CQueuedAudioSink::WaitForSampleOrCommand(DWORD dwTimeout)
+HRESULT CQueuedAudioSink::WaitForEvents(DWORD dwTimeout, vector<HANDLE>* pEvents, vector<DWORD>* pWaitObjects)
 {
-  HANDLE hEvents[2] = {m_hStopThreadEvent, m_hInputSamplesAvailableEvent};
+  vector<HANDLE>* events = NULL;
+  vector<DWORD>* waitObjects = NULL;
 
-  DWORD result = WaitForMultipleObjects(sizeof(hEvents)/sizeof(HANDLE), hEvents, FALSE, dwTimeout);
-  switch(result)
+  bool useBaseEvents = !(pEvents && pWaitObjects);
+
+  if (useBaseEvents)
   {
-  case WAIT_OBJECT_0: // Stop Event
-    return MPAR_S_THREAD_STOPPING;
-  case WAIT_OBJECT_0 + 1:
-    return S_OK;
-  case WAIT_FAILED:
-    return HRESULT_FROM_WIN32(GetLastError());
-  default:
-    return S_FALSE;
+    events = pEvents;
+    waitObjects = pWaitObjects;
   }
+  else
+  {
+    events = &m_hEvents;
+    waitObjects = &m_dwWaitObjects;
+  }
+
+  DWORD result = WaitForMultipleObjects(static_cast<DWORD>(events->size()), &(*events)[0], FALSE, dwTimeout);
+  HRESULT hr = S_FALSE;
+
+  if (result != WAIT_FAILED)
+    hr = (*waitObjects)[result];
+
+  return hr;
 }
 
 // Get the next sample in the queue. If there is none, wait for at most
@@ -153,9 +169,10 @@ HRESULT CQueuedAudioSink::WaitForSampleOrCommand(DWORD dwTimeout)
 // Returns: S_FALSE if no sample available
 // Threading: only one thread should be calling GetNextSampleOrCommand()
 // but it can be different from the one calling PutSample()/PutCommand()
-HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand *pCommand, IMediaSample **pSample, DWORD dwTimeout)
+HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMediaSample** pSample, DWORD dwTimeout,
+                                                  vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects)
 {
-  HRESULT hr = WaitForSampleOrCommand(dwTimeout);
+  HRESULT hr = WaitForEvents(dwTimeout, pHandles, pWaitObjects);
   if (hr != S_OK)
     return hr;
 

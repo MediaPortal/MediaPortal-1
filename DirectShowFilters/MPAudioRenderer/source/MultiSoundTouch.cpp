@@ -220,6 +220,8 @@ DWORD CMultiSoundTouch::ResampleThread()
   Log("Resampler thread - starting up - thread ID: %d", m_threadId);
   
   HRESULT hr = S_OK;
+  
+  return 0;
 
   // These are wait handles for the thread stopping and new sample arrival
   HANDLE handles[2];

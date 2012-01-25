@@ -33,15 +33,16 @@ HRESULT CThreadDecouplingFilter::EndOfStream()
 DWORD CThreadDecouplingFilter::ThreadProc()
 {
   CComPtr<IMediaSample> pSample;
-  HRESULT hr;
+  HRESULT hr = S_FALSE;
+
   while(true)
   {
-    hr = GetNextSampleOrCommand(NULL, &pSample, INFINITE);
+    hr = GetNextSampleOrCommand(NULL, &pSample, INFINITE, NULL, NULL);
     if (hr == MPAR_S_THREAD_STOPPING)
       return 0;
-    if(m_pNextSink)
+    if (m_pNextSink)
     {
-      if(pSample)
+      if (pSample)
         m_pNextSink->PutSample(pSample);
       else
         m_pNextSink->EndOfStream();

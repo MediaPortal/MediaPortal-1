@@ -142,4 +142,7 @@ private:
   AudioRendererSettings m_Settings;
 
   IRenderDevice* m_pRenderDevice;
+
+  IAudioSink* m_pPipeline;
+  IAudioSink* m_pWASAPIRenderer;
 };

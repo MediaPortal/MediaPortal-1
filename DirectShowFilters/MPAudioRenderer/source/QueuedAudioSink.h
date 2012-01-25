@@ -17,9 +17,12 @@
 #pragma once
 #include "stdafx.h"
 #include <queue>
+#include <vector>
 #include "BaseAudioSink.h"
 
 #define MPAR_S_THREAD_STOPPING ((HRESULT)0x00040200)
+
+using namespace std;
 
 class CQueuedAudioSink :
   public CBaseAudioSink
@@ -47,8 +50,8 @@ protected:
 
   virtual HRESULT PutCommand(AudioSinkCommand nCommand);
 
-  virtual HRESULT WaitForSampleOrCommand(DWORD dwTimeout);
-  virtual HRESULT GetNextSampleOrCommand(AudioSinkCommand *pCommand, IMediaSample **pSample, DWORD dwTimeout);
+  virtual HRESULT WaitForEvents(DWORD dwTimeout, vector<HANDLE>* handles, vector<DWORD>* dwWaitObjects);
+  virtual HRESULT GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMediaSample** pSample, DWORD dwTimeout, vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects);
 
   //__inline HANDLE &StopThreadEvent() { return m_hEvents[0]; };
   //__inline HANDLE &InputSamplesAvailableEvent() { return m_hEvents[1]; };
@@ -83,6 +86,9 @@ protected:
   HANDLE m_hInputSamplesAvailableEvent;
   //HANDLE m_hInputQueueEmptyEvent;
 
+  vector<HANDLE> m_hEvents;
+  vector<DWORD> m_dwWaitObjects;
+
   CCritSec m_InputQueueLock;
-  std::queue<TQueueEntry> m_InputQueue;
+  queue<TQueueEntry> m_InputQueue;
 };

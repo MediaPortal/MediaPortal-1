@@ -29,6 +29,9 @@
 #include "WASAPIRenderer.h"
 #include "FilterApp.h"
 
+#include "BitDepthAdapter.h"
+#include "WASAPIRenderFilter.h"
+
 #include "alloctracing.h"
 
 CFilterApp theApp;
@@ -66,9 +69,16 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   m_rtNextSampleTime(0),
   m_rtPrevSampleTime(0),
   m_bFlushSamples(false),
-  m_pVolumeHandler(NULL)
+  m_pVolumeHandler(NULL),
+  m_pRenderDevice(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
+
+  // Start of the audio pipeline
+  //m_pPipeline = new CBitDepthAdapter();
+  m_pPipeline = m_pWASAPIRenderer = new CWASAPIRenderFilter(&m_Settings);
+  
+  //m_pPipeline->ConnectTo(m_pWASAPIRenderer);
 
   m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_Settings.m_bHWBasedRefClock);
 
@@ -83,6 +93,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 
   m_pClock->SetAudioDelay(m_Settings.m_lAudioDelay * 10000); // setting in registry is in ms
 
+  /*
   if (m_Settings.m_bUseWASAPI)
   {
     m_pRenderDevice = new WASAPIRenderer(this, phr);   
@@ -108,7 +119,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
       *phr = E_OUTOFMEMORY;
       return;
     }
-  }
+  }*/
 
   m_pVolumeHandler = new CVolumeHandler(punk);
 
@@ -207,6 +218,10 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   if (!pwfx) 
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+  return m_pPipeline->NegotiateFormat(pwfx, INFINITE);
+
+/*
+
   if ((pmt->majortype	!= MEDIATYPE_Audio) ||
       (pmt->formattype != FORMAT_WaveFormatEx))
   {
@@ -280,7 +295,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     }
   }
 
-  return hr;
+  return hr;*/
 }
 
 HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
@@ -302,6 +317,22 @@ void CMPAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)
 BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 {
   if (!pMediaSample) return false;
+
+  REFERENCE_TIME rtSampleTime = 0;
+  REFERENCE_TIME rtSampleEndTime = 0;
+
+  //WaitForSingleObject((HANDLE)m_RenderEvent, 0);
+  //HRESULT hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
+
+  HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
+  if (FAILED(hr)) return false;
+
+  m_pPipeline->PutSample(pMediaSample);
+
+  return false;
+
+  // END
+  /*
 
   REFERENCE_TIME rtSampleTime = 0;
   REFERENCE_TIME rtSampleEndTime = 0;
@@ -373,6 +404,8 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
     return true;
   else
     return false;
+
+  */
 }
 
 void CMPAudioRenderer::FlushSamples()
@@ -393,7 +426,9 @@ HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
-  return m_pRenderDevice->DoRenderSample(pMediaSample, m_dSampleCounter);
+  //return m_pRenderDevice->DoRenderSample(pMediaSample, m_dSampleCounter);
+  m_pPipeline->PutSample(pMediaSample);
+  return S_OK;
 }
 
 
@@ -431,6 +466,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
 
   WAVEFORMATEX* pwf = (WAVEFORMATEX*) pmt->Format();
   
+  /*
   if (m_pRenderDevice)
   {
     if (m_Settings.m_bEnableAC3Encoding && pwf->nChannels > 2)
@@ -443,7 +479,10 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
     {
       m_pRenderDevice->SetMediaType(pwf);
     }
-  }
+  }*/
+
+  m_pPipeline->NegotiateFormat(pwf, INFINITE);
+
 
   SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
   
@@ -453,6 +492,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
     if (FAILED(hr))
       return hr;
 
+    /*
     if (m_pSoundTouch)
     {
       //m_pSoundTouch->setChannels(pwf->nChannels);
@@ -473,7 +513,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
       m_pSoundTouch->setSetting(SETTING_SEQUENCE_MS, m_Settings.m_lQuality_SEQUENCE_MS); 
       m_pSoundTouch->setSetting(SETTING_SEEKWINDOW_MS, m_Settings.m_lQuality_SEEKWINDOW_MS);
       m_pSoundTouch->setSetting(SETTING_OVERLAP_MS, m_Settings.m_lQuality_SEQUENCE_MS);
-    }
+    }*/
   }
 
   return CBaseRenderer::SetMediaType (pmt);
@@ -499,10 +539,11 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin *pReceivePin)
   
   Log("CompleteConnect - audio decoder: %S", &filterInfo.achName);
 
-  if (!m_pRenderDevice) return E_FAIL;
+  //if (!m_pRenderDevice) return E_FAIL;
 
   if (SUCCEEDED(hr)) hr = CBaseRenderer::CompleteConnect(pReceivePin);
-  if (SUCCEEDED(hr)) hr = m_pRenderDevice->CompleteConnect(pReceivePin);
+  
+  //if (SUCCEEDED(hr)) hr = m_pRenderDevice->CompleteConnect(pReceivePin);
 
   if (SUCCEEDED(hr)) Log("CompleteConnect Success");
 
@@ -515,19 +556,24 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
-  FlushSamples();
+  //FlushSamples();
 
   HRESULT	hr;
 
   if (m_State == State_Running) return NOERROR;
 
+  /*
   m_pClock->Reset();
-  m_pRenderDevice->Run(tStart);
+  m_pRenderDevice->Run(tStart);*/
 
+  m_pPipeline->Start();
+
+
+  /*
   if (m_dRate >= 1.0 && m_pSoundTouch)
   {
     m_pSoundTouch->setRateChange((m_dRate-1.0)*100);
-  }
+  }*/
      
   return CBaseRenderer::Run(tStart);
 }
@@ -546,7 +592,9 @@ STDMETHODIMP CMPAudioRenderer::Stop()
     m_pSoundTouch->EndFlush();  
   }
   
-  m_pRenderDevice->Stop(GetRealState());
+  //m_pRenderDevice->Stop(GetRealState());
+  m_pPipeline->BeginStop();
+  m_pPipeline->EndStop();
 
   return CBaseRenderer::Stop(); 
 };
@@ -560,7 +608,7 @@ STDMETHODIMP CMPAudioRenderer::Pause()
 
   FILTER_STATE state = GetRealState();
 
-  m_pRenderDevice->Pause(state);
+  //m_pRenderDevice->Pause(state);
 
   m_dSampleCounter = 0;
   m_rtNextSampleTime = 0;
@@ -600,11 +648,7 @@ HRESULT CMPAudioRenderer::EndOfStream()
 {
   Log("EndOfStream");
 
-  // Do not stop the playback when end of stream is received. Source filter
-  // will send the EndOfStream as soon as the file end is reached, but we
-  // are still having samples in our queues that we still need to play. 
-  // In worst case it could cause almost 10 seconds of the audio to be "eaten"
-  // at the end the playback.
+  m_pPipeline->EndOfStream();
 
   return CBaseRenderer::EndOfStream();
 }
@@ -617,13 +661,15 @@ HRESULT CMPAudioRenderer::BeginFlush()
 
   HRESULT hrBase = CBaseRenderer::BeginFlush(); 
 
-  m_pRenderDevice->BeginFlush();
+  //m_pRenderDevice->BeginFlush();
+  m_pPipeline->BeginFlush();
 
+  /*
   if (m_pSoundTouch)
   {
     m_pSoundTouch->BeginFlush();
     m_pSoundTouch->clear();
-  }
+  }*/
 
   return hrBase;
 }
@@ -638,12 +684,15 @@ HRESULT CMPAudioRenderer::EndFlush()
   m_rtNextSampleTime = 0;
   m_rtPrevSampleTime = 0;
 
+  /*
   if (m_pSoundTouch)
   {
     m_pSoundTouch->EndFlush();
-  }
+  }*/
 
-  m_pRenderDevice->EndFlush();
+  //m_pRenderDevice->EndFlush();
+  m_pPipeline->EndFlush();
+
   m_pClock->Reset();
 
   return CBaseRenderer::EndFlush(); 

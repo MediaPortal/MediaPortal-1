@@ -21,13 +21,13 @@
 
 #include <FunctionDiscoveryKeys_devpkey.h>
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
+extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
 
-extern void Log(const char *fmt, ...);
+extern void Log(const char* fmt, ...);
 extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
 
 // ctor
-CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings *pSettings) :
+CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_pSettings(pSettings),
   m_pMMDevice(NULL),
   m_pAudioClient(NULL),
@@ -38,7 +38,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings *pSettings) :
   m_hDataEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
-  m_StreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
+  m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -63,6 +63,19 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings *pSettings) :
   {
     pSettings->m_bUseWASAPI = false;	// WASAPI not available below Vista
   }
+
+  if (pSettings->m_WASAPIUseEventMode)
+  {
+    // Using HW DMA buffer based event notification
+    m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    m_dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
+  }
+  else
+  {
+    // Using rendering thread polling
+    m_hDataEvent = CreateWaitableTimer(NULL, TRUE, NULL);
+    m_dwStreamFlags = 0;
+  }
 }
 
 CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
@@ -84,13 +97,13 @@ HRESULT CWASAPIRenderFilter::Init()
   {
     // Using HW DMA buffer based event notification
     m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    m_StreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
+    m_dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
   }
   else
   {
     // Using rendering thread polling
     m_hDataEvent = CreateWaitableTimer(NULL, TRUE, NULL);
-    m_StreamFlags = 0;
+    m_dwStreamFlags = 0;
   }
 
   //m_hPauseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -135,6 +148,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   if (pwfx == NULL)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+  // check always from the renderer device?
   if (FormatsEqual(pwfx, m_pInputFormat))
     return S_OK;
 
@@ -145,17 +159,28 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   Log("CWASAPIRenderFilter::NegotiateFormat");
   LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");
 
-  // Require m_pAudioClient
+  HRESULT hr = VFW_E_CANNOT_CONNECT;
+
   if (!m_pAudioClient) 
   {
-    Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not loaded");
-    return VFW_E_CANNOT_CONNECT;
+    if (!m_pMMDevice) 
+      hr = GetAudioDevice(&m_pMMDevice);
+
+    if (SUCCEEDED(hr))
+    {
+      hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
+      if (FAILED(hr))
+      {
+        Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not loaded");
+        return VFW_E_CANNOT_CONNECT;
+      }
+    }
   }
 
   WAVEFORMATEX *pwfxCM = NULL;
   const WAVEFORMATEX *pwfxAccepted = NULL;
   WAVEFORMATEX* tmpPwfx = NULL; 
-  HRESULT hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, pwfx, &pwfxCM);
+  hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, pwfx, &pwfxCM);
   if (hr != S_OK)
   {
     CopyWaveFormatEx(&tmpPwfx, pwfx);
@@ -217,83 +242,167 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   // Initialize thread
   Log("WASAPIRenderer::Render thread - starting up - thread ID: %d", m_ThreadId);
   
-  HRESULT hr = S_OK;
-
-  // polling delay
+  // Polling delay
   LARGE_INTEGER liDueTime; 
   liDueTime.QuadPart = -1LL;
 
   // These are wait handles for the thread stopping, new sample arrival and pausing redering
-  HANDLE handles[3];
-  handles[0] = m_hStopThreadEvent;
-  handles[1] = m_hPauseEvent;
-  handles[2] = m_hDataEvent;
+  vector<HANDLE> dataEvents;
+  vector<HANDLE> sampleEvents;
+  vector<DWORD> dataWaitObjects;
+  vector<DWORD> sampleWaitObjects;
 
-  // These are wait handles for resuming or exiting the thread
-  HANDLE resumeHandles[2];
-  resumeHandles[0] = m_hStopThreadEvent;
-  resumeHandles[1] = m_hResumeEvent;
+  dataEvents.push_back(m_hDataEvent);
+  dataEvents.push_back(m_hStopThreadEvent);
 
-  CComPtr<IMediaSample> sample;
+  dataWaitObjects.push_back(MPAR_S_NEED_DATA);
+  dataWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+
+  sampleEvents.push_back(m_hInputSamplesAvailableEvent);
+  sampleEvents.push_back(m_hStopThreadEvent);
+
+  sampleWaitObjects.push_back(S_OK);
+  sampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+
+  AudioSinkCommand command;
+
+  IMediaSample* sample = NULL;
   UINT32 sampleOffset = 0;
   bool writeSilence = false;
 
   EnableMMCSS();
 
+  HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &sampleEvents, &sampleWaitObjects);
+
   while(true)
   {
-    // 1) Waiting for the next WASAPI buffer to be available to be filled
-    // 2) Exit requested for the thread
-    // 3) For a pause request
+    StartAudioClient(&m_pAudioClient);
 
-    HRESULT hr = WaitForSample(INFINITE);
-      //WaitForMultipleObjects(3, handles, false, INFINITE);
+    hr = WaitForEvents(INFINITE, &dataEvents, &dataWaitObjects);
+
     if (hr == MPAR_S_THREAD_STOPPING) // exit event
     {
       Log("WASAPIRenderer::Render thread - closing down - thread ID: %d", m_ThreadId);
-      //m_pRenderer->SoundTouch()->GetNextSample(NULL, true);
       RevertMMCSS();
       return 0;
     }
-    else if (hr == WAIT_OBJECT_0 + 1) // pause event
+    /*else if (hr == WAIT_OBJECT_0 + 1) // pause event
     {
       Log("WASAPIRenderer::Render thread - pausing");
-      WaitForResume();
-    }
+      //WaitForResume();
+    }*/
     else if (hr == MPAR_S_NEED_DATA) // data event
     {
-      // pseudocode:
-      // while buffer not full
-      //   get a new sample if no previous sample with remaining data
-      //   
+      UINT32 bufferSize = 0;
+      UINT32 currentPadding = 0;
+      BYTE* data = NULL;
+        
+      m_pAudioClient->GetBufferSize(&bufferSize);
+    
+      // In exclusive mode with even based buffer filling we threat the padding as zero 
+      // -> it will make rest of the code a bit cleaner
+      if (m_pSettings->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED || !m_pSettings->m_WASAPIUseEventMode)
+        m_pAudioClient->GetCurrentPadding(&currentPadding);
 
+      UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pInputFormat->nBlockAlign;
+
+      hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
+      if (SUCCEEDED(hr))
+      {
+        DWORD bufferFlags = 0;
+
+        if (writeSilence || !sample)
+          bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+        else if (sample) // we have at least some data to be written
+        {
+          UINT32 bytesCopied = 0;
+          BYTE* sampleData = NULL;
+          UINT32 dataLeftInSample = 0;
+          UINT32 sampleLength = sample->GetActualDataLength();
+            
+          // Sanity check to make sure that the calculation won't underflow
+          if (sampleOffset <= sampleLength)
+              dataLeftInSample = sampleLength - sampleOffset;
+          else
+          {
+            dataLeftInSample = 0;
+            sampleOffset = 0;
+          }
+
+          sample->GetPointer(&sampleData);
+
+          do
+          {
+            // no data in current sample anymore
+            if (dataLeftInSample == 0)
+            {
+              HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &sampleEvents, &sampleWaitObjects);
+              if (hr == MPAR_S_THREAD_STOPPING) // exit event
+              {
+                Log("WASAPIRenderer::Render thread - closing down - thread ID: %d", m_ThreadId);
+                RevertMMCSS();
+                return 0;
+              }
+                
+              if (FAILED(hr))
+              {
+                Log("WASAPIRenderer::Render thread: Buffer underrun, fetching sample failed (0x%08x)", hr);
+                if (bytesCopied == 0)
+                  bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+                break;
+              }
+
+              // TODO: is this even possible? GetNextSampleOrCommand should fail with some code
+              /*else if (!sample)
+              {
+                Log("WASAPIRenderer::Render thread: Buffer underrun, no new samples available!");  
+                if (bytesCopied == 0)
+                  bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+                break;
+              }*/
+
+              sample->GetPointer(&sampleData);
+              sampleLength = sample->GetActualDataLength();
+              sampleOffset = 0;
+            }
+
+            dataLeftInSample = sampleLength - sampleOffset;
+
+            UINT32 bytesToCopy = min(dataLeftInSample, bufferSizeInBytes - bytesCopied);
+            memcpy(data + bytesCopied, sampleData + sampleOffset, bytesToCopy); 
+            bytesCopied += bytesToCopy;
+            sampleOffset += bytesToCopy;
+          } while (bytesCopied < bufferSizeInBytes);
+        }
+        hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, bufferFlags);
+        if (FAILED(hr))
+          Log("WASAPIRenderer::Render thread: ReleaseBuffer failed (0x%08x)", hr);
+      }
+
+      if (!m_pSettings->m_WASAPIUseEventMode)
+      {
+        if (m_pAudioClient)
+          hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
+        else
+          hr = S_FALSE;
+
+        if (SUCCEEDED(hr) && bufferSize > 0)
+        {
+          liDueTime.QuadPart = (double)currentPadding / (double)bufferSize * (double)m_pSettings->m_hnsPeriod * -0.9;
+          // Log(" currentPadding: %d QuadPart: %lld", currentPadding, liDueTime.QuadPart);
+        }
+        else
+        {
+          liDueTime.QuadPart = (double)m_pSettings->m_hnsPeriod * -0.9;
+          if (hr != AUDCLNT_E_NOT_INITIALIZED)
+            Log("WASAPIRenderer::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
+        }
+        SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
+      }
     }
   }
 
-
   return 0;
-}
-
-
-// Queue services
-HRESULT CWASAPIRenderFilter::WaitForSample(DWORD dwTimeout)
-{
-  HANDLE hEvents[3] = {m_hStopThreadEvent, m_hInputSamplesAvailableEvent, m_hDataEvent};
-
-  DWORD result = WaitForMultipleObjects(sizeof(hEvents)/sizeof(HANDLE), hEvents, FALSE, dwTimeout);
-  switch(result)
-  {
-  case WAIT_OBJECT_0: // Stop Event
-    return MPAR_S_THREAD_STOPPING;
-  case WAIT_OBJECT_0 + 1:
-    return S_OK;
-  case WAIT_OBJECT_0 + 2:
-    return MPAR_S_NEED_DATA;
-  case WAIT_FAILED:
-    return HRESULT_FROM_WIN32(GetLastError());
-  default:
-    return S_FALSE;
-  }
 }
 
 // Internal implementation
@@ -311,9 +420,7 @@ HRESULT CWASAPIRenderFilter::EnableMMCSS()
       Log("CWASAPIRenderFilter::EnableMMCSS Putting thread in higher priority for WASAPI mode");
       
       if (!m_hTask)
-      {
         return HRESULT_FROM_WIN32(GetLastError());
-      }
     }
   }
   return S_OK;
@@ -324,13 +431,9 @@ HRESULT CWASAPIRenderFilter::RevertMMCSS()
   if (m_hTask && pfAvRevertMmThreadCharacteristics)
   {
     if (pfAvRevertMmThreadCharacteristics(m_hTask))
-    {
       return S_OK;
-    }
     else
-    {
       return HRESULT_FROM_WIN32(GetLastError());
-    }
   }
   return S_FALSE; // failed since no thread had been boosted
 }
@@ -442,7 +545,7 @@ HRESULT CWASAPIRenderFilter::GetAudioDevice(IMMDevice **ppMMDevice)
   return hr;
 }
 
-HRESULT CWASAPIRenderFilter::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog)
+HRESULT CWASAPIRenderFilter::GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, bool pLog)
 {
   HRESULT hr;
 
@@ -612,7 +715,8 @@ HRESULT CWASAPIRenderFilter::StartAudioClient(IAudioClient** ppAudioClient)
   }
   else
   {
-    Log("WASAPIRenderFilter::StartAudioClient - ignored, already started"); 
+    //Log("WASAPIRenderFilter::StartAudioClient - ignored, already started"); 
+    return hr;
   }
 
   if (!m_pSettings->m_WASAPIUseEventMode)
@@ -626,6 +730,16 @@ HRESULT CWASAPIRenderFilter::StartAudioClient(IAudioClient** ppAudioClient)
     SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
   }
   return hr;
+}
+
+void CWASAPIRenderFilter::CancelDataEvent()
+{
+  if (!m_pSettings->m_WASAPIUseEventMode)
+  {
+    HRESULT hr = CancelWaitableTimer(m_hDataEvent);
+    if (FAILED(hr))
+      Log("WASAPIRenderFilter::CancelDataEvent - CancelWaitableTimer failed: (0x%08x)", hr);
+  }
 }
 
 HRESULT CWASAPIRenderFilter::StopAudioClient(IAudioClient** ppAudioClient)
@@ -642,7 +756,7 @@ HRESULT CWASAPIRenderFilter::StopAudioClient(IAudioClient** ppAudioClient)
       // Let the current audio buffer to be played completely.
       // Some amplifiers will "cache" the incomplete AC3 packets and that causes issues
       // when the next AC3 packets are received
-      WaitForSingleObject(m_hDataEvent, Latency() / 10000);
+      //  WaitForSingleObject(m_hDataEvent, Latency() / 10000);
       
       hr = (*ppAudioClient)->Stop();
       if (FAILED(hr))
@@ -691,27 +805,21 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, 
       return hr;
     }
     else
-    {
       Log("WASAPIRenderFilter::InitAudioClient created missing audio client");
-    }
   }
 
   WAVEFORMATEX *pwfxCM = NULL;
   hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, pWaveFormatEx, &pwfxCM);    
   if (FAILED(hr))
-  {
     Log("WASAPIRenderFilter::InitAudioClient not supported (0x%08x)", hr);
-  }
   else
-  {
     Log("WASAPIRenderFilter::InitAudioClient format supported");
-  }
 
   GetBufferSize(pWaveFormatEx, &m_pSettings->m_hnsPeriod);
 
   if (SUCCEEDED(hr))
   {
-    hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_StreamFlags,
+    hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags,
 	                                m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, pWaveFormatEx, NULL);
     
     // when rebuilding the graph between SD / HD zapping the .NET GC workaround
@@ -732,13 +840,9 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, 
     SAFE_RELEASE(m_pAudioClock);
     hr = m_pAudioClient->GetService(__uuidof(IAudioClock), (void**)&m_pAudioClock);
     if (SUCCEEDED(hr))
-    {
       m_pAudioClock->GetFrequency(&m_nHWfreq);
-    }
     else
-    {
       Log("WASAPIRenderFilter::IAudioClock not found!");
-    }
   }
 
   if (hr == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED) 
@@ -763,17 +867,13 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, 
     );
 
     if (SUCCEEDED(hr)) 
-    {
       hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
-    }
       
     Log("WASAPIRenderFilter::InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames", m_pSettings->m_hnsPeriod, m_nFramesInBuffer);
 
     if (SUCCEEDED (hr)) 
-    {
-      hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_StreamFlags, 
+      hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags, 
 	                                    m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, pWaveFormatEx, NULL);
-    }
  
     if (FAILED(hr))
     {
@@ -785,36 +885,24 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, 
       SAFE_RELEASE(m_pAudioClock);
       hr = m_pAudioClient->GetService(__uuidof(IAudioClock), (void**)&m_pAudioClock);
       if (FAILED(hr))
-      {
         Log("WASAPIRenderFilter::IAudioClock not found!");
-      }
       else
-      {
         m_pAudioClock->GetFrequency(&m_nHWfreq);
-      }
     }
   } // if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) 
 
   // get the buffer size, which is aligned
   if (SUCCEEDED(hr)) 
-  {
     hr = m_pAudioClient->GetBufferSize(&m_nFramesInBuffer);
-  }
 
   // calculate the new period
   if (SUCCEEDED (hr)) 
-  {
     hr = m_pAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)(ppRenderClient));
-  }
 
   if (FAILED(hr))
-  {
     Log("WASAPIRenderFilter::InitAudioClient service initialization failed (0x%08x)", hr);
-  }
   else
-  {
     Log("WASAPIRenderer::InitAudioClient service initialization success");
-  }
 
   if (m_pSettings->m_WASAPIUseEventMode)
   {
@@ -829,8 +917,8 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, 
   REFERENCE_TIME latency(0);
   m_pAudioClient->GetStreamLatency(&latency);
   
-  Log("WASAPIRenderFilter::InitAudioClient device reported latency %I64u ms - buffer based latency %I64u ms", 
-    latency / 10000, Latency() / 10000);
+//  Log("WASAPIRenderFilter::InitAudioClient device reported latency %I64u ms - buffer based latency %I64u ms", 
+//    latency / 10000, Latency() / 10000);
 
   return hr;
 }
