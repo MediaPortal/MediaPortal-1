@@ -21,20 +21,22 @@
 #include "BaseAudioSink.h"
 
 #define MPAR_S_THREAD_STOPPING ((HRESULT)0x00040200)
+#define MPAR_S_OOB_COMMAND_AVAILABLE ((HRESULT)0x00040201)
 
 using namespace std;
 
-class CQueuedAudioSink :
-  public CBaseAudioSink
+class CQueuedAudioSink : public CBaseAudioSink
 {
 public:
-  CQueuedAudioSink(void);
-  virtual ~CQueuedAudioSink(void);
+  CQueuedAudioSink();
+  virtual ~CQueuedAudioSink();
 
 // IAudioSink implementation
 public:
   // Control
-  virtual HRESULT Start();
+  virtual HRESULT Start(REFERENCE_TIME rtStart);
+  virtual HRESULT Run(REFERENCE_TIME rtStart);
+  virtual HRESULT Pause();
   virtual HRESULT BeginStop();
   virtual HRESULT EndStop();
 
@@ -49,6 +51,7 @@ protected:
   enum AudioSinkCommand;
 
   virtual HRESULT PutCommand(AudioSinkCommand nCommand);
+  virtual HRESULT PutOOBCommand(AudioSinkCommand nCommand);
 
   virtual HRESULT WaitForEvents(DWORD dwTimeout, vector<HANDLE>* handles, vector<DWORD>* dwWaitObjects);
   virtual HRESULT GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMediaSample** pSample, DWORD dwTimeout, vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects);
@@ -68,7 +71,8 @@ protected:
     ASC_Resume,
   };
 
-  struct TQueueEntry {
+  struct TQueueEntry 
+  {
     AudioSinkCommand Command;
     CComPtr<IMediaSample> Sample;
     TQueueEntry(AudioSinkCommand nCommand) : Command(nCommand), Sample(NULL) {};
@@ -83,12 +87,16 @@ protected:
   DWORD  m_ThreadId;
   HANDLE m_hThread;
   HANDLE m_hStopThreadEvent;
-  HANDLE m_hInputSamplesAvailableEvent;
+  HANDLE m_hInputAvailableEvent;
+  HANDLE m_hOOBCommandAvailableEvent;
   //HANDLE m_hInputQueueEmptyEvent;
 
   vector<HANDLE> m_hEvents;
   vector<DWORD> m_dwWaitObjects;
 
-  CCritSec m_InputQueueLock;
-  queue<TQueueEntry> m_InputQueue;
+  CCritSec m_inputQueueLock;
+  queue<TQueueEntry> m_inputQueue;
+
+  CCritSec m_OOBInputQueueLock;
+  queue<TQueueEntry> m_OOBInputQueue;
 };

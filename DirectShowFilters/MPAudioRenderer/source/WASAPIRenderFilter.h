@@ -50,6 +50,13 @@ protected:
 // Internal implementation
 private:
 
+  enum RenderState
+  {
+    StateStopped,
+    StateRunning,
+    StatePaused
+  };
+
   // AVRT.dll (Vista or greater)
   typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
   typedef BOOL (__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
@@ -86,4 +93,6 @@ private:
   BOOL                m_bIsAudioClientStarted;
 
   HANDLE              m_hDataEvent;
+
+  RenderState       m_state;
 };

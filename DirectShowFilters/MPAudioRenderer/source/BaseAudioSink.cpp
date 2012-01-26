@@ -76,10 +76,26 @@ HRESULT CBaseAudioSink::Cleanup()
 }
 
 // Control
-HRESULT CBaseAudioSink::Start()
+HRESULT CBaseAudioSink::Start(REFERENCE_TIME rtStart)
 {
   if (m_pNextSink)
-    return m_pNextSink->Start();
+    return m_pNextSink->Start(rtStart);
+
+  return S_OK;
+}
+
+HRESULT CBaseAudioSink::Run(REFERENCE_TIME rtStart)
+{
+  if (m_pNextSink)
+    return m_pNextSink->Run(rtStart);
+
+  return S_OK;
+}
+
+HRESULT CBaseAudioSink::Pause()
+{
+  if (m_pNextSink)
+    return m_pNextSink->Pause();
 
   return S_OK;
 }

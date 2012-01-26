@@ -25,12 +25,15 @@ CQueuedAudioSink::CQueuedAudioSink(void)
 {
   //memset(m_hEvents, 0, sizeof(m_hEvents));
   m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
-  m_hInputSamplesAvailableEvent = CreateEvent(0, TRUE, FALSE, 0);
+  m_hInputAvailableEvent = CreateEvent(0, TRUE, FALSE, 0);
+  m_hOOBCommandAvailableEvent = CreateEvent(0, TRUE, FALSE, 0);
 
-  m_hEvents.push_back(m_hInputSamplesAvailableEvent);
+  m_hEvents.push_back(m_hOOBCommandAvailableEvent);
+  m_hEvents.push_back(m_hInputAvailableEvent);
   m_hEvents.push_back(m_hStopThreadEvent);
 
   m_dwWaitObjects.push_back(S_OK);
+  m_dwWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
   m_dwWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
   //m_hInputQueueEmptyEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -40,16 +43,19 @@ CQueuedAudioSink::~CQueuedAudioSink(void)
 {
   if (m_hStopThreadEvent)
     CloseHandle(m_hStopThreadEvent);
-  if (m_hInputSamplesAvailableEvent)
-    CloseHandle(m_hInputSamplesAvailableEvent);
+  if (m_hInputAvailableEvent)
+    CloseHandle(m_hInputAvailableEvent);
+  if (m_hOOBCommandAvailableEvent)
+    CloseHandle(m_hOOBCommandAvailableEvent);
+
   //if (m_hInputQueueEmptyEvent)
   //  CloseHandle(m_hInputQueueEmptyEvent);
 }
 
 // Control
-HRESULT CQueuedAudioSink::Start()
+HRESULT CQueuedAudioSink::Start(REFERENCE_TIME rtStart)
 {
-  HRESULT hr = CBaseAudioSink::Start();
+  HRESULT hr = CBaseAudioSink::Start(rtStart);
   if (FAILED(hr))
     return hr;
 
@@ -62,6 +68,18 @@ HRESULT CQueuedAudioSink::Start()
   if (!m_hThread)
     return HRESULT_FROM_WIN32(GetLastError());
 
+  return S_OK;
+}
+
+HRESULT CQueuedAudioSink::Run(REFERENCE_TIME rtStart)
+{
+  PutOOBCommand(ASC_Resume);
+  return S_OK;
+}
+
+HRESULT CQueuedAudioSink::Pause()
+{
+  PutOOBCommand(ASC_Pause);
   return S_OK;
 }
 
@@ -87,9 +105,9 @@ HRESULT CQueuedAudioSink::EndStop()
 // Processing
 HRESULT CQueuedAudioSink::PutSample(IMediaSample *pSample)
 {
-  CAutoLock queueLock(&m_InputQueueLock);
-  m_InputQueue.push(pSample);
-  SetEvent(m_hInputSamplesAvailableEvent);
+  CAutoLock queueLock(&m_inputQueueLock);
+  m_inputQueue.push(pSample);
+  SetEvent(m_hInputAvailableEvent);
   //if(m_hInputQueueEmptyEvent)
   //  ResetEvent(m_hInputQueueEmptyEvent);
 
@@ -98,11 +116,20 @@ HRESULT CQueuedAudioSink::PutSample(IMediaSample *pSample)
 
 HRESULT CQueuedAudioSink::PutCommand(AudioSinkCommand nCommand)
 {
-  CAutoLock queueLock(&m_InputQueueLock);
-  m_InputQueue.push(nCommand);
-  SetEvent(m_hInputSamplesAvailableEvent);
+  CAutoLock queueLock(&m_inputQueueLock);
+  m_inputQueue.push(nCommand);
+  SetEvent(m_hInputAvailableEvent);
   //if(m_hInputQueueEmptyEvent)
   //  ResetEvent(m_hInputQueueEmptyEvent);
+
+  return S_OK;
+}
+
+HRESULT CQueuedAudioSink::PutOOBCommand(AudioSinkCommand nCommand)
+{
+  CAutoLock queueLock(&m_OOBInputQueueLock);
+  m_OOBInputQueue.push(nCommand);
+  SetEvent(m_hOOBCommandAvailableEvent);
 
   return S_OK;
 }
@@ -121,10 +148,10 @@ HRESULT CQueuedAudioSink::EndOfStream()
 HRESULT CQueuedAudioSink::BeginFlush()
 {
   {
-    CAutoLock queueLock(&m_InputQueueLock);
-    ResetEvent(m_hInputSamplesAvailableEvent);
-    while (!m_InputQueue.empty())
-      m_InputQueue.pop();
+    CAutoLock queueLock(&m_inputQueueLock);
+    ResetEvent(m_hInputAvailableEvent);
+    while (!m_inputQueue.empty())
+      m_inputQueue.pop();
     //SetEvent(m_hInputQueueEmptyEvent);
   }
 
@@ -175,30 +202,45 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
                                                   vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects)
 {
   HRESULT hr = WaitForEvents(dwTimeout, pHandles, pWaitObjects);
+  
+  {
+    CAutoLock OOBQueueLock(&m_OOBInputQueueLock);
+    if (!m_OOBInputQueue.empty())
+    {
+      TQueueEntry entry = m_OOBInputQueue.front();
+      if (pCommand)
+        *pCommand = entry.Command;
+      
+      m_OOBInputQueue.pop();      
+
+      if (m_OOBInputQueue.empty())
+        ResetEvent(m_hOOBCommandAvailableEvent);
+
+      return S_OK;
+    }
+  }
+
   if (hr != S_OK)
     return hr;
 
-  CAutoLock queueLock(&m_InputQueueLock);
-  
-  if(pSample)
-    SAFE_RELEASE(*pSample); // perhaps release should be out of the lock
-  TQueueEntry entry = m_InputQueue.front();
-  //*pSample = entry.Sample;
-  //if (*pSample)
-  //  (*pSample)->AddRef();
-  if(pSample)
+  if (pSample)
+    SAFE_RELEASE(*pSample);
+
+  CAutoLock queueLock(&m_inputQueueLock);
+  TQueueEntry entry = m_inputQueue.front();
+  if (pSample)
     *pSample = entry.Sample.Detach();
-  if(pCommand)
+  if (pCommand)
     *pCommand = entry.Command;
 
-  m_InputQueue.pop();
-  if (m_InputQueue.empty())
-    ResetEvent(m_hInputSamplesAvailableEvent);
+  m_inputQueue.pop();
+  if (m_inputQueue.empty())
+    ResetEvent(m_hInputAvailableEvent);
   //if (m_InputQueue.empty())
   //  SetEvent(m_hInputQueueEmptyEvent);
+
   return S_OK;
 }
-
 
 DWORD WINAPI CQueuedAudioSink::ThreadEntryPoint(LPVOID lpParameter)
 {

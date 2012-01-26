@@ -38,7 +38,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_hDataEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
-  m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
+  m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
+  m_state(StateStopped)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -248,8 +249,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   // These are wait handles for the thread stopping, new sample arrival and pausing redering
   vector<HANDLE> dataEvents;
+  vector<HANDLE> OOBCommandEvents;
   vector<HANDLE> sampleEvents;
   vector<DWORD> dataWaitObjects;
+  vector<DWORD> OOBCommandWaitObjects;
   vector<DWORD> sampleWaitObjects;
 
   dataEvents.push_back(m_hDataEvent);
@@ -258,21 +261,29 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   dataWaitObjects.push_back(MPAR_S_NEED_DATA);
   dataWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
-  sampleEvents.push_back(m_hInputSamplesAvailableEvent);
+  sampleEvents.push_back(m_hInputAvailableEvent);
   sampleEvents.push_back(m_hStopThreadEvent);
 
   sampleWaitObjects.push_back(S_OK);
   sampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
+  OOBCommandEvents.push_back(m_hStopThreadEvent);
+  OOBCommandEvents.push_back(m_hOOBCommandAvailableEvent);
+
+  OOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+  OOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
+  
   AudioSinkCommand command;
 
   IMediaSample* sample = NULL;
   UINT32 sampleOffset = 0;
-  bool writeSilence = false;
+  UINT32 writeSilence = 0;
 
   EnableMMCSS();
 
   HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &sampleEvents, &sampleWaitObjects);
+
+  m_state = StateRunning;
 
   while(true)
   {
@@ -293,6 +304,21 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     }*/
     else if (hr == MPAR_S_NEED_DATA) // data event
     {
+      DWORD bufferFlags = 0;
+
+      if (!sample && writeSilence == 0 && m_state == StateRunning)
+        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &sampleEvents, &sampleWaitObjects);
+      
+      if (m_state == StatePaused && writeSilence == 0)
+        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &OOBCommandEvents, &OOBCommandWaitObjects);
+
+      if (command == ASC_Resume)
+      {
+        m_state = StateRunning;
+        bufferFlags = 0;
+        writeSilence = false;
+      }
+
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
       BYTE* data = NULL;
@@ -309,9 +335,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
       if (SUCCEEDED(hr))
       {
-        DWORD bufferFlags = 0;
-
-        if (writeSilence || !sample)
+        if (writeSilence > 0 || !sample)
           bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
         else if (sample) // we have at least some data to be written
         {
@@ -352,6 +376,16 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 break;
               }
 
+              if (command == ASC_Pause)
+              {
+                bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+                m_state = StatePaused; 
+                writeSilence = 2;
+                sample->Release();
+                sample = NULL;
+                break;
+              }
+
               // TODO: is this even possible? GetNextSampleOrCommand should fail with some code
               /*else if (!sample)
               {
@@ -375,6 +409,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
           } while (bytesCopied < bufferSizeInBytes);
         }
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, bufferFlags);
+
+        if (bufferFlags == AUDCLNT_BUFFERFLAGS_SILENT && writeSilence > 0)
+          writeSilence--;
+
         if (FAILED(hr))
           Log("WASAPIRenderer::Render thread: ReleaseBuffer failed (0x%08x)", hr);
       }

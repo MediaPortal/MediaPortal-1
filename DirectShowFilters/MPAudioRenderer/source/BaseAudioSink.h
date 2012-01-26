@@ -42,7 +42,9 @@ public:
   virtual HRESULT Cleanup();
 
   // Control
-  virtual HRESULT Start();
+  virtual HRESULT Start(REFERENCE_TIME rtStart);
+  virtual HRESULT Run(REFERENCE_TIME rtStart);
+  virtual HRESULT Pause();
   virtual HRESULT BeginStop();
   virtual HRESULT EndStop();
 

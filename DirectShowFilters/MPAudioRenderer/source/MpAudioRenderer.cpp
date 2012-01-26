@@ -145,8 +145,9 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
       return;
     }
   }
-}
 
+  m_pPipeline->Start(0);
+}
 
 CMPAudioRenderer::~CMPAudioRenderer()
 {
@@ -557,7 +558,7 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
   m_pClock->Reset();
   m_pRenderDevice->Run(tStart);*/
 
-  m_pPipeline->Start();
+  m_pPipeline->Run(tStart);
 
 
   /*
@@ -604,6 +605,8 @@ STDMETHODIMP CMPAudioRenderer::Pause()
   m_dSampleCounter = 0;
   m_rtNextSampleTime = 0;
   m_rtPrevSampleTime = 0;
+
+  m_pPipeline->Pause();
 
   return CBaseRenderer::Pause(); 
 };

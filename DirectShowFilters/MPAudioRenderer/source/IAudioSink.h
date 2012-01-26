@@ -30,8 +30,9 @@ public:
   virtual HRESULT Cleanup() = 0;
 
   // Control
-  virtual HRESULT Start() = 0;
-  //virtual HRESULT Pause() = 0;
+  virtual HRESULT Start(REFERENCE_TIME rtStart) = 0;
+  virtual HRESULT Run(REFERENCE_TIME rtStart) = 0;
+  virtual HRESULT Pause() = 0;
   virtual HRESULT BeginStop() = 0;
   virtual HRESULT EndStop() = 0;
 
