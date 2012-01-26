@@ -122,8 +122,8 @@
       <spinPosY>445</spinPosY>
       <itemWidth>55</itemWidth>
       <itemHeight>55</itemHeight>
-      <textureFocus>album_background_focus.png</textureFocus>
-      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>0</spaceBetweenItems>
       <keepaspectratio>yes</keepaspectratio>
       <textureHeight>65</textureHeight>

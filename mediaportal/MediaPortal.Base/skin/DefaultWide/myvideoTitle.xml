@@ -222,7 +222,7 @@
             <ondown>7</ondown>
             <onup>20</onup>
           </control>
-		  <control>
+	  <control>
             <description>Scan new videos</description>
             <type>button</type>
             <id>7</id>
@@ -231,17 +231,17 @@
             <onup>9</onup>
             <ondown>4755</ondown>
           </control>
-		  <control>
+	  <control>
             <description>Trailers</description>
             <type>button</type>
             <id>4755</id>
             <label>5906</label>
-						<hyperlink>4755</hyperlink>
-						<hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
+	    <hyperlink>4755</hyperlink>
+	    <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
             <onright>50</onright>
             <onup>7</onup>
             <ondown>2</ondown>
-			<visible>plugin.isenabled(OnlineVideos)</visible>
+	    <visible>plugin.isenabled(OnlineVideos)</visible>
           </control>
         </control>
       </control>
@@ -330,7 +330,7 @@
       <posY>212</posY>
       <width>248</width>
       <label>#genre</label>
-      <font>font13</font>
+      <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
@@ -353,7 +353,7 @@
       <posX>305</posX>
       <posY>262</posY>
       <label>#director</label>
-      <font>font13</font>
+      <font>font11</font>
       <width>248</width>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
@@ -378,7 +378,7 @@
       <posY>312</posY>
       <width>248</width>
       <label>#year</label>
-      <font>font13</font>
+      <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
@@ -402,7 +402,7 @@
       <posY>362</posY>
       <width>248</width>
       <label>#runtime</label>
-      <font>font13</font>
+      <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
@@ -426,7 +426,7 @@
       <posY>412</posY>
       <width>248</width>
       <label>#mpaarating</label>
-      <font>font13</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
@@ -456,8 +456,8 @@
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
-	  <!-- Media info list view-->
-		<control>
+    <!-- Media info list view-->
+    <control>
       <description>Video codec</description>
       <type>image</type>
       <id>0</id>
@@ -465,11 +465,10 @@
       <posY>450</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#VideoCodec.png</texture>
+      <texture>logos\#VideoCodec.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
     </control>
 	
 		<control>
@@ -480,14 +479,13 @@
       <posY>450</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#VideoResolution.png</texture>
+      <texture>logos\#VideoResolution.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
     </control>
        
-		<control>
+    <control>
       <description>Aspect ratio</description>
       <type>image</type>
       <id>0</id>
@@ -495,14 +493,13 @@
       <posY>450</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#AspectRatio.png</texture>
+      <texture>logos\#AspectRatio.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
     </control>
 	
-		<control>
+    <control>
       <description>Audio codec</description>
       <type>image</type>
       <id>0</id>
@@ -510,14 +507,13 @@
       <posY>450</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#AudioCodec.png</texture>
+      <texture>logos\#AudioCodec.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
     </control>
 	
-		<control>
+    <control>
       <description>Audio channels</description>
       <type>image</type>
       <id>0</id>
@@ -525,11 +521,10 @@
       <posY>450</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#AudioChannels.png</texture>
+      <texture>logos\#AudioChannels.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.list + control.hasfocus(50)</visible>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
     </control>
      
     <control>
@@ -543,11 +538,11 @@
       <texture>logos\subtitles.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.list+control.hasfocus(50)+string.equals(#HasSubtitles, True)</visible>
+      <visible>facadeview.list+control.hasfocus(50)+string.equals(#HasSubtitles, True)</visible>
     </control>
 		
-		<!-- info visible filmstrip-->
-		<control>
+    <!-- info visible filmstrip-->
+    <control>
       <description>Seperator</description>
       <type>image</type>
       <id>1</id>
@@ -559,7 +554,7 @@
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.filmstrip</visible>
     </control>
-		<control>
+    <control>
       <description>Genre txt</description>
       <type>label</type>
       <id>1</id>
@@ -680,7 +675,7 @@
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
     </control>
-		<control>
+    <control>
       <description>Plot</description>
       <type>fadelabel</type>
       <id>1</id>
@@ -688,12 +683,12 @@
       <posY>685</posY>
       <label>#plot</label>
       <font>font11</font>
-			<width>1160</width>
+      <width>1160</width>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>[facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons|facadeview.coverflow] + string.equals(#hideinfo, False)</visible>
     </control>
-		<control>
+    <control>
       <type>image</type>
       <id>1</id>
       <posX>70</posX>
@@ -701,11 +696,11 @@
       <width>1190</width>
       <height>39</height>
       <texture>osd_bg_top.png</texture>
-			<visible>[facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons|facadeview.coverflow]</visible>
+      <visible>[facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons|facadeview.coverflow]</visible>
     </control>
 						
-		<!-- Media info icon, big icon, filmstrip view-->
-		<control>
+    <!-- Media info icon, big icon, filmstrip view-->
+    <control>
       <description>Video codec</description>
       <type>image</type>
       <id>0</id>
@@ -713,14 +708,13 @@
       <posY>530</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#VideoCodec.png</texture>
+      <texture>logos\#VideoCodec.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip</visible>
     </control>
 	
-		<control>
+    <control>
       <description>Video resolution</description>
       <type>image</type>
       <id>0</id>
@@ -728,14 +722,13 @@
       <posY>530</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#VideoResolution.png</texture>
+      <texture>logos\#VideoResolution.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip</visible>
     </control>
        
-		<control>
+    <control>
       <description>Aspect ratio</description>
       <type>image</type>
       <id>0</id>
@@ -743,14 +736,13 @@
       <posY>530</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#AspectRatio.png</texture>
+      <texture>logos\#AspectRatio.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip</visible>
     </control>
 	
-		<control>
+    <control>
       <description>Audio codec</description>
       <type>image</type>
       <id>0</id>
@@ -758,14 +750,13 @@
       <posY>530</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#AudioCodec.png</texture>
+      <texture>logos\#AudioCodec.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip</visible>
     </control>
 	
-		<control>
+    <control>
       <description>Audio channels</description>
       <type>image</type>
       <id>0</id>
@@ -773,14 +764,13 @@
       <posY>530</posY>
       <width>85</width>
       <height>42</height>
-      <visible>Yes</visible>
-			<texture>logos\#AudioChannels.png</texture>
+      <texture>logos\#AudioChannels.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.filmstrip</visible>
+      <visible>facadeview.filmstrip</visible>
     </control>
 		
-		<control>
+    <control>
       <description>Subtitles</description>
       <type>image</type>
       <id>0</id>
@@ -791,7 +781,7 @@
       <texture>logos\subtitles.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-			<visible>facadeview.filmstrip+string.equals(#HasSubtitles, True)</visible>
+      <visible>facadeview.filmstrip+string.equals(#HasSubtitles, True)</visible>
     </control>
      
     <!--control>
@@ -804,10 +794,10 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-			<visible>string.equals(#MyVideos.PinLocked, True)</visible>
+      <visible>string.equals(#MyVideos.PinLocked, True)</visible>
     </control>
 		
-		<control>
+    <control>
       <description>Content unlock</description>
       <type>label</type>
       <id>1</id>
@@ -817,10 +807,10 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
-			<visible>string.equals(#MyVideos.PinLocked, False)</visible>
+      <visible>string.equals(#MyVideos.PinLocked, False)</visible>
     </control-->
 		
-		<control>
+    <control>
       <description>Content locked</description>
       <type>image</type>
       <id>1</id>
@@ -832,9 +822,9 @@
       <texture>lock.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-		</control>
+    </control>
  
-		<control>
+    <control>
       <description>Content unlock</description>
       <type>image</type>
       <id>1</id>
@@ -847,6 +837,6 @@
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
 		
-		</control>
+    </control>
   </controls>
 </window>

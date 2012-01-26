@@ -49,116 +49,6 @@
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
         <visible>!Control.HasFocus(50)</visible>
         <control>
-          <description>caption of the selected item</description>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>71</posX>
-          <posY>596</posY>
-          <width>285</width>
-          <height>93</height>
-          <font>font11</font>
-          <label>#Play.Current.Title</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>caption of the selected item</description>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>71</posX>
-          <posY>546</posY>
-          <width>285</width>
-          <height>93</height>
-          <font>font11</font>
-          <label>#Play.Current.Artist</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>caption of the selected item</description>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>71</posX>
-          <posY>571</posY>
-          <width>285</width>
-          <height>93</height>
-          <font>font11</font>
-          <label>#Play.Current.Album</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>caption of the selected item2</description>
-          <allowoverlay>yes</allowoverlay>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>217</posX>
-          <posY>473</posY>
-          <width>355</width>
-          <height>87</height>
-          <font>font16</font>
-          <align>left</align>
-          <textcolor>80ffffff</textcolor>
-          <label>#currentplaytime</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>music logo</description>
-          <type>image</type>
-          <overlay>yes</overlay>
-          <id>600</id>
-          <posX>71</posX>
-          <posY>426</posY>
-          <width>121</width>
-          <height>121</height>
-          <keepaspectratio>no</keepaspectratio>
-          <centered>yes</centered>
-          <texture mask="Picturethumbmask.png">#Play.Current.Thumb</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>music logo</description>
-          <type>image</type>
-          <overlay>yes</overlay>
-          <id>1</id>
-          <posX>71</posX>
-          <posY>426</posY>
-          <width>121</width>
-          <height>121</height>
-          <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
-          <visible>!Control.HasFocus(50) + player.hasmedia + control.hasthumb(600)</visible>
-        </control>
-        <control>
-          <description>Progress background</description>
-          <type>image</type>
-          <id>1</id>
-          <posX>60</posX>
-          <posY>626</posY>
-          <width>250</width>
-          <height>27</height>
-          <texture>osd_progress_background.png</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>progress bar</description>
-          <type>progress</type>
-          <id>0</id>
-          <posX>62</posX>
-          <posY>631</posY>
-          <width>250</width>
-          <height>20</height>
-          <offset>0</offset>
-          <height>20</height>
-          <innerheight>20</innerheight>
-          <texturebg>-</texturebg>
-          <lefttexture>-</lefttexture>
-          <midtexture>osd_progress_mid.png</midtexture>
-          <righttexture>-</righttexture>
-          <label>#percentage</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
           <description>group element</description>
           <type>group</type>
           <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
@@ -245,21 +135,6 @@
             <onup>9</onup>
             <ondown>105</ondown>
           </control>
-          <!--control>
-            <description>Global Search Button</description>
-            <type>button</type>
-            <id>104</id>
-            <posX>160</posX>
-            <posY>425</posY>
-            <width>50</width>
-            <height>45</height>
-            <hyperlink>30</hyperlink>
-            <textureFocus>searchbutton_focus.png</textureFocus>
-            <textureNoFocus>searchbutton_nofocus.png</textureNoFocus>
-            <onright>105</onright>
-            <onup>10</onup>
-            <ondown>2</ondown>
-          </control-->
           <control>
             <description>Radiobutton</description>
             <type>button</type>
@@ -274,7 +149,7 @@
             <onleft>10</onleft>
             <onright>106</onright>
             <onup>10</onup>
-            <ondown>2</ondown>
+            <ondown>9876</ondown>
           </control>
           <control>
             <description>Lastfmbutton</description>
@@ -290,7 +165,19 @@
             <onright>50</onright>
             <onup>10</onup>
             <onleft>105</onleft>
+            <ondown>9876</ondown>
+          </control>
+          <control>
+            <description>Music Settings</description>
+            <type>button</type>
+            <id>9876</id>
+            <posX>71</posX>
+            <posY>475</posY>
+            <label>5</label>
+            <hyperlink>14</hyperlink>
+            <onup>105</onup>
             <ondown>2</ondown>
+            <onright>50</onright>
           </control>
         </control>
       </control>
@@ -300,9 +187,9 @@
       <id>1</id>
       <type>image</type>
       <posX>78</posX>
-      <posY>191</posY>
-      <width>215</width>
-      <height>202</height>
+      <posY>140</posY>
+      <width>260</width>
+      <height>260</height>
       <texture mask="Picturethumbmask.png">missing_Coverart.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
@@ -311,9 +198,9 @@
       <id>500</id>
       <type>image</type>
       <posX>78</posX>
-      <posY>191</posY>
-      <width>215</width>
-      <height>202</height>
+      <posY>140</posY>
+      <width>260</width>
+      <height>260</height>
       <texture mask="Picturethumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
@@ -322,9 +209,9 @@
       <type>image</type>
       <id>1</id>
       <posX>78</posX>
-      <posY>191</posY>
-      <width>215</width>
-      <height>202</height>
+      <posY>140</posY>
+      <width>260</width>
+      <height>260</height>
       <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>

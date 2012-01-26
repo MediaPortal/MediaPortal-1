@@ -63,9 +63,9 @@
       <posy>0</posy>
       <width>1280</width>
       <height>720</height>
-      <texture>backgroundtop.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
-      <visible>control.isvisible(91919295)|control.isvisible(91919296)</visible>
+      <texture>black.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>control.isvisible(91919294)|control.isvisible(91919295)|control.isvisible(91919296)</visible>
       <animation effect="fade" time="70">visible</animation>
       <animation effect="fade" time="70" delay="300">hidden</animation>
     </control>
@@ -78,8 +78,8 @@
       <width>1280</width>
       <height>720</height>
       <texture>backgroundthumbsview.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>control.isvisible(91919295)|control.isvisible(91919296)</visible>
+      <colordiffuse>ff003366</colordiffuse>
+      <visible>control.isvisible(91919294)|control.isvisible(91919295)|control.isvisible(91919296)</visible>
       <animation effect="fade" time="70">visible</animation>
       <animation effect="fade" time="70" delay="300">hidden</animation>
     </control>

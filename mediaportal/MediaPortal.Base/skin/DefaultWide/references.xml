@@ -40,7 +40,7 @@
     <textcolor>FFdddddd</textcolor>
     <disabledcolor>80ffffff</disabledcolor>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -50,9 +50,9 @@
     <posX>533</posX>
     <posY>250</posY>
     <width>260</width>
-    <height>45</height>
-    <textXOff>17</textXOff>
-    <textYOff>6</textYOff>
+    <height>40</height>
+    <textXOff>10</textXOff>
+    <textYOff>4</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <font>font12</font>
@@ -64,7 +64,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="0">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -74,9 +74,9 @@
     <posX>533</posX>
     <posY>250</posY>
     <width>260</width>
-    <height>45</height>
-    <textXOff>17</textXOff>
-    <textYOff>6</textYOff>
+    <height>40</height>
+    <textXOff>10</textXOff>
+    <textYOff>4</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <font>font12</font>
@@ -88,7 +88,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -98,10 +98,10 @@
     <posX>97</posX>
     <posY>287</posY>
     <width>260</width>
-    <height>45</height>
+    <height>40</height>
     <label>457</label>
     <textXOff>26</textXOff>
-    <textYOff>6</textYOff>
+    <textYOff>4</textYOff>
     <textXOff2>17</textXOff2>
     <textYOff2>6</textYOff2>
     <textureFocus>button_focus.png</textureFocus>
@@ -128,9 +128,9 @@
     <posX>177</posX>
     <posY>125</posY>
     <width>755</width>
-    <height>45</height>
-    <textXOff>17</textXOff>
-    <textYOff>6</textYOff>
+    <height>40</height>
+    <textXOff>10</textXOff>
+    <textYOff>4</textYOff>
     <upBtnWidth>44</upBtnWidth>
     <downBtnWidth>44</downBtnWidth>
     <deleteBtnWidth>49</deleteBtnWidth>
@@ -179,9 +179,9 @@
     <posX>533</posX>
     <posY>250</posY>
     <width>260</width>
-    <height>45</height>
-    <textXOff>17</textXOff>
-    <textYOff>6</textYOff>
+    <height>40</height>
+    <textXOff>10</textXOff>
+    <textYOff>4</textYOff>
     <textureFocus>togglebutton-on-focus.png</textureFocus>
     <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
     <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
@@ -196,7 +196,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -204,9 +204,9 @@
     <type>sortbutton</type>
     <id>0</id>
     <width>260</width>
-    <height>45</height>
-    <textXOff>17</textXOff>
-    <textYOff>6</textYOff>
+    <height>40</height>
+    <textXOff>10</textXOff>
+    <textYOff>4</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <textureAscending>arrow_round_up_nofocus.png</textureAscending>
@@ -227,7 +227,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -253,13 +253,15 @@
     <textureHeight>40</textureHeight>
     <image>emtpy.png</image>
     <spaceBetweenItems></spaceBetweenItems>
-    <font>font13</font>
+    <font>font11</font>
+    <font2>font10</font2>
+    <font3>font10</font3>
     <shadedColor>20ffffff</shadedColor>
-    <selectedColor3>ffffcc00</selectedColor3>
-    <selectedColor2>ffffcc00</selectedColor2>
-    <selectedColor>ffffcc00</selectedColor>
-    <playedColor>ffffcc00</playedColor>
-    <playedColor2>ffffcc00</playedColor2>
+    <selectedColor3>ff00ff00</selectedColor3>
+    <selectedColor2>ff00ff00</selectedColor2>
+    <selectedColor>ff00ff00</selectedColor>
+    <playedColor>ffa9d0f7</playedColor>
+    <playedColor2>ffa9d0f7</playedColor2>
     <textcolor>ffffffff</textcolor>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
@@ -274,6 +276,7 @@
     <textYOff>2</textYOff>
     <textXOff2>0</textXOff2>
     <textYOff2>2</textYOff2>
+    <textYOff3>4</textYOff3>
     <itemWidth>32</itemWidth>
     <itemHeight>32</itemHeight>
     <IconXOff>12</IconXOff>
@@ -282,7 +285,7 @@
     <unfocusedAlpha>160</unfocusedAlpha>
     <keepaspectratio>false</keepaspectratio>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -612,7 +615,7 @@
     <downloadColor>FF00FF00</downloadColor>
     <selectedColor>FFFFFFFF</selectedColor>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>FF000000</shadowColor>
     <label1YOff>380</label1YOff>
     <label2YOff>390</label2YOff>
@@ -636,7 +639,7 @@
     <textcolor>white</textcolor>
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -654,7 +657,7 @@
     <scrollStartDelaySec>8</scrollStartDelaySec>
     <spaceBetweenItems>2</spaceBetweenItems>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -679,7 +682,7 @@
     <textcolor>white</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
+    <shadowDistance>0</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -756,5 +759,37 @@
     <shadow>no</shadow>
     <animation effect="zoom" start="100,100" end="110,110" time="50">focus</animation>
     <animation effect="zoom" start="110,110" end="100,100" time="50">unfocus</animation>
+  </control>
+  <control>
+    <description>default check button</description>
+    <type>checkbutton</type>
+    <id>1</id>
+    <width>260</width>
+    <height>45</height>
+    <textXOff>17</textXOff>
+    <textYOff>6</textYOff>
+    <textureFocus>list_sub_focus.png</textureFocus>
+    <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+    <font>font12</font>
+    <markWidth>25</markWidth>
+    <markHeight>25</markHeight>
+    <markXOff>10</markXOff>
+    <markalign>right</markalign>
+    <markvalign>middle</markvalign>
+    <textureCheckmark>check-box.png</textureCheckmark>
+    <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
+    <shadowAngle>45</shadowAngle>
+    <shadowDistance>0</shadowDistance>
+    <shadowColor>ff000000</shadowColor>
+    <font>font12</font>
+    <textcolor>ffffffff</textcolor>
+    <colordiffuse>ffffffff</colordiffuse>
+    <disabledcolor>ff808080</disabledcolor>
+    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <dimColor>ff000000</dimColor>
+    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
+    <animation effect="zoom" start="105,105" end="100,100" time="0">unfocus</animation>
+    <textalign>left</textalign>
+    <textvalign>middle</textvalign>
   </control>
 </controls>

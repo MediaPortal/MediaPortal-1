@@ -80,7 +80,7 @@
   <!--     *************************             3D-Buttons           ********************************  -->
   <!--     *******************************************************************************************  -->
   <control Style="NoShadow">
-    <description>BasicHome Button Pictures</description>
+    <description>home BM Pictures</description>
     <type>button</type>
     <id>3</id>
     <posX>45</posX>
@@ -106,7 +106,7 @@
     <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="70">WindowClose</animation>
   </control>
   <control Style="NoShadow">
-    <description>BasicHome Button Videos</description>
+    <description>home BM Videos</description>
     <type>button</type>
     <id>4</id>
     <posX>270</posX>
@@ -132,7 +132,7 @@
     <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="70">WindowClose</animation>
   </control>
   <control Style="NoShadow">
-    <description>BasicHome Button TV</description>
+    <description>home BM TV</description>
     <type>button</type>
     <id>5</id>
     <posX>520</posX>
@@ -158,7 +158,7 @@
     <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="70">WindowClose</animation>
   </control>
   <control Style="NoShadow">
-    <description>BasicHome Button Music</description>
+    <description>home BM Music</description>
     <type>button</type>
     <id>6</id>
     <posX>795</posX>
@@ -176,6 +176,7 @@
     <textcolorNoFocus>00000000</textcolorNoFocus>
     <keepaspectratio>yes</keepaspectratio>
     <onleft>5</onleft>
+    <onright>7</onright>
     <onup>21</onup>
     <ondown>99</ondown>
     <animation effect="zoom" start="100,100" end="120,120" time="100">focus</animation>
@@ -184,17 +185,17 @@
     <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="70">WindowClose</animation>
   </control>
   <control Style="NoShadow">
-    <description>BasicHome Button Radio</description>
+    <description>home BM Weather</description>
     <type>button</type>
-    <id>77</id>
+    <id>7</id>
     <posX>1030</posX>
     <posY>300</posY>
     <width>230</width>
     <height>275</height>
-    <textureFocus>hover_my radio.png</textureFocus>
-    <textureNoFocus>hover_my radio.png</textureNoFocus>
-    <hyperlink>30</hyperlink>
-    <label>665</label>
+    <textureFocus>hover_my weather.png</textureFocus>
+    <textureNoFocus>hover_my weather.png</textureNoFocus>
+    <hyperlink>7977</hyperlink>
+    <label>8</label>
     <font>font16</font>
     <textalign>center</textalign>
     <textYOff>-120</textYOff>

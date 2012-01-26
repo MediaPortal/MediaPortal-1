@@ -207,8 +207,18 @@
             <id>7</id>
             <label>361</label>
             <onright>50</onright>
-            <ondown>2</ondown>
+            <ondown>9876</ondown>
             <onup>6</onup>
+          </control>
+          <control>
+            <description>Picture Settings</description>
+            <type>button</type>
+            <id>9876</id>
+            <label>5</label>
+            <hyperlink>12</hyperlink>
+            <onup>7</onup>
+            <ondown>2</ondown>
+            <onright>50</onright>
           </control>
         </control>
       </control>

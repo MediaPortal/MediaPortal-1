@@ -70,7 +70,7 @@
       <height>20</height>
       <innerheight>20</innerheight>
       <lefttexture>-</lefttexture>
-      <midtexture>osd_progress_mid.png</midtexture>
+      <midtexture>osd_progress_mid_green.png</midtexture>
       <righttexture>-</righttexture>
       <label>#TV.View.Percentage</label>
       <visible>yes</visible>

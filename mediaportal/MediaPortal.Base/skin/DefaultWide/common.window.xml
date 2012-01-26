@@ -2,10 +2,21 @@
 <window>
   <controls>
     <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>270</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>27</posY>
+      <posX>30</posX>
+      <posY>10</posY>
       <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
       <font>font16</font>
       <align>left</align>
@@ -16,7 +27,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1244</posX>
-      <posY>60</posY>
+      <posY>40</posY>
       <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
       <align>right</align>
       <textcolor>White</textcolor>
@@ -28,7 +39,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1140</posX>
-      <posY>85</posY>
+      <posY>60</posY>
       <label>180</label>
       <align>right</align>
       <textcolor>White</textcolor>
@@ -40,7 +51,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1244</posX>
-      <posY>85</posY>
+      <posY>60</posY>
       <label>#totalduration</label>
       <align>right</align>
       <textcolor>White</textcolor>
@@ -51,8 +62,8 @@
       <description>Selected item Label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>65</posY>
+      <posX>30</posX>
+      <posY>40</posY>
       <width>711</width>
       <label>#selecteditem</label>
       <font>font13</font>

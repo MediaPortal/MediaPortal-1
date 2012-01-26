@@ -178,5 +178,7 @@
       <onup>13</onup>
       <ondown>50</ondown>
     </control>
+		
+		<import>myHome_Infoservice.xml</import>
   </controls>
 </window>

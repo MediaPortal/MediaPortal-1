@@ -825,8 +825,8 @@
       <align>right</align>
       <width>90</width>
       <height>90</height>
-      <texture>#infoservice.weather.today.img.big.fullpath</texture>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.TodayIconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -838,8 +838,8 @@
       <align>left</align>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.location</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.Location</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -851,8 +851,8 @@
       <align>left</align>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.today.condition | #infoservice.weather.today.temp</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.TodayCondition | #WorldWeather.TodayTemperature</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Overlay for Weather image</description>
@@ -864,7 +864,7 @@
       <height>115</height>
       <texture>list_sub_focus.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -874,8 +874,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#infoservice.weather.forecast2.day.img.small.fullpath</texture>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay0IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -886,8 +886,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast2.weekday</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay0Day, #WorldWeather.ForecastDay0Date</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -898,8 +898,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast2.mintemp - #infoservice.weather.forecast2.maxtemp</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay0Low - #WorldWeather.ForecastDay0High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -910,8 +910,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast2.day.condition</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay0Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -921,8 +921,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#infoservice.weather.forecast3.day.img.small.fullpath</texture>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay1IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -933,8 +933,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast3.weekday</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay1Day</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -945,8 +945,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast3.mintemp - #infoservice.weather.forecast3.maxtemp</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay1Low - #WorldWeather.ForecastDay1High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -957,8 +957,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast3.day.condition</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay1Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -968,8 +968,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#infoservice.weather.forecast4.day.img.small.fullpath</texture>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay2IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -980,8 +980,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast4.weekday</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay2Day</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -992,8 +992,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast4.mintemp - #infoservice.weather.forecast4.maxtemp</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay2Low - #WorldWeather.ForecastDay2High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -1004,8 +1004,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast4.day.condition</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay2Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -1015,8 +1015,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#infoservice.weather.forecast5.day.img.small.fullpath</texture>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay3IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -1027,8 +1027,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast5.weekday</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay3Day</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -1039,8 +1039,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast5.mintemp - #infoservice.weather.forecast5.maxtemp</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay3Low - #WorldWeather.ForecastDay3High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -1051,8 +1051,8 @@
       <width>220</width>
       <font>font10</font>
       <textcolor>gainsboro</textcolor>
-      <label>#infoservice.weather.forecast5.day.condition</label>
-      <visible>plugin.isenabled(InfoService)+control.hasfocus(7)</visible>
+      <label>#WorldWeather.ForecastDay3Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->

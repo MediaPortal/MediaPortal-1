@@ -130,7 +130,7 @@
           <backgroundX>0</backgroundX>
           <backgroundY>470</backgroundY>
           <backgroundDiffuse>FF000000</backgroundDiffuse>
-          <background>background2.png</background>
+          <background>blue.png</background>
           <showBackground>yes</showBackground>
           <foregroundHeight>720</foregroundHeight>
           <foregroundWidth>1280</foregroundWidth>

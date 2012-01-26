@@ -5,8 +5,6 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      
-      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <control>
@@ -26,8 +24,10 @@
 					<textXOff2>585</textXOff2>
 					<textYOff2>2</textYOff2>
 					<textXOff3>640</textXOff3>
-					<textYOff3>8</textYOff3>
+					<textYOff3>4</textYOff3>
 					<textalign3>right</textalign3>
+					<font>font11</font>
+					<font2>font10</font2>
 					<font3>font10</font3>
           <scrollOffset>2</scrollOffset>
           <spinPosX>1148</spinPosX>
@@ -40,14 +40,14 @@
           <type>thumbnailpanel</type>
           <id>50</id>
           <posX>100</posX>
-          <posY>132</posY>
+          <posY>152</posY>
           <width>1200</width>
           <height>588</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>127</itemWidth>
-          <itemHeight>185</itemHeight>
+          <itemHeight>165</itemHeight>
           <textureWidth>97</textureWidth>
           <textureHeight>147</textureHeight>
           <thumbWidth>96</thumbWidth>
@@ -55,7 +55,7 @@
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <itemWidthBig>170</itemWidthBig>
-          <itemHeightBig>255</itemHeightBig>
+          <itemHeightBig>235</itemHeightBig>
           <thumbWidthBig>142</thumbWidthBig>
           <thumbHeightBig>204</thumbHeightBig>
           <textureWidthBig>143</textureWidthBig>
@@ -74,7 +74,6 @@
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
           <dimColor>ffffffff</dimColor>
-					<keepaspectratio>no</keepaspectratio>
         </control>
         <control>
           <description>Filmstrip view</description>
@@ -110,9 +109,6 @@
           <visible>facadeview.filmstrip</visible>
           <thumbAnimation effect="zoom" start="100,100" end="130,130" time="200">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="130,130" end="100,100" time="200">unfocus</thumbAnimation>
-					<spinPosX>1185</spinPosX>
-          <spinPosY>530</spinPosY>
-					<keepaspectratio>no</keepaspectratio>
         </control>
         <control>
           <description>Cover Flow view</description>
@@ -141,7 +137,7 @@
           <backgroundX>0</backgroundX>
           <backgroundY>470</backgroundY>
           <backgroundDiffuse>FF000000</backgroundDiffuse>
-          <background>background2.png</background>
+          <background>blue.png</background>
           <showBackground>yes</showBackground>
           <foregroundHeight>720</foregroundHeight>
           <foregroundWidth>1280</foregroundWidth>
@@ -450,8 +446,7 @@
               <keepaspectratio>yes</keepaspectratio>
               <texture>logos/mpaa/large/mpaa_nc17.png</texture>
               <visible>string.contains(#mpaarating, Rated NC-17)</visible>
-            </control>-->
-          </controls>]]></subitem>
+            </control>--></controls>]]></subitem>
       </subitems>
     </control>
     <control>
