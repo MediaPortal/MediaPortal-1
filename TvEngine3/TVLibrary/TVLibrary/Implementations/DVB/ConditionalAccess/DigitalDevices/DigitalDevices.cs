@@ -361,7 +361,7 @@ namespace TvLibrary.Implementations.DVB
       // Reset the slot selection for menu browsing.
       _menuContext = -1;
 
-      if (_isCiSlotPresent)
+      if (!_isCiSlotPresent)
       {
         Log.Log.Debug("Digital Devices: no interface to reset");
         return false;
@@ -416,7 +416,7 @@ namespace TvLibrary.Implementations.DVB
       );
       if (hr == 0)
       {
-        title = Marshal.PtrToStringAnsi(_mmiBuffer, returnedByteCount);
+        title = Marshal.PtrToStringAnsi(_mmiBuffer, returnedByteCount).TrimEnd();
         Log.Log.WriteFile("  title = {0}", title);
         Log.Log.WriteFile("Digital Devices: result = success");
         return true;
@@ -437,7 +437,7 @@ namespace TvLibrary.Implementations.DVB
     public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
     {
       Log.Log.Debug("Digital Devices: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
-      if (_isCiSlotPresent)
+      if (!_isCiSlotPresent)
       {
         Log.Log.Debug("Digital Devices: CAM not available");
         return true;    // Don't retry.
@@ -510,7 +510,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
     {
-      if (_isCiSlotPresent)
+      if (!_isCiSlotPresent)
       {
         return false;
       }
