@@ -19,6 +19,8 @@
 
 #define END_OF_STREAM_FLUSH_TIMEOUT (5000)
 
+extern void Log(const char* fmt, ...);
+
 CQueuedAudioSink::CQueuedAudioSink(void)
 : m_hThread(NULL)
 , m_ThreadId(NULL)
@@ -73,6 +75,14 @@ HRESULT CQueuedAudioSink::Start(REFERENCE_TIME rtStart)
 
 HRESULT CQueuedAudioSink::Run(REFERENCE_TIME rtStart)
 {
+  HRESULT hr = S_OK;
+
+  if (!m_hThread)
+    hr = Start(rtStart);
+
+  if (FAILED(hr))
+    Log("QueuedAudioSink::Run - failed to start ThreadProc (0x%08x)", hr);
+
   PutOOBCommand(ASC_Resume);
   return S_OK;
 }
