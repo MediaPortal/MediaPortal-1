@@ -351,7 +351,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             // no data in current sample anymore
             if (dataLeftInSample == 0)
             {
-              HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+              HRESULT result = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
               if (hr == MPAR_S_THREAD_STOPPING) // exit event
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
@@ -359,16 +359,14 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 RevertMMCSS();
                 return 0;
               }
-                
-              if (FAILED(hr))
+              else if (FAILED(result))
               {
-                Log("CWASAPIRenderFilter::Render thread: Buffer underrun, fetching sample failed (0x%08x)", hr);
+                Log("CWASAPIRenderFilter::Render thread: Buffer underrun, fetching sample failed (0x%08x)", result);
                 if (bytesCopied == 0)
                   bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                 break;
               }
-
-              if (command == ASC_Pause)
+              else if (command == ASC_Pause)
               {
                 bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                 m_state = StatePaused; 
