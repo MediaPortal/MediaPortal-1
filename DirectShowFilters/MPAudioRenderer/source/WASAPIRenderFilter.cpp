@@ -77,6 +77,24 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
     m_hDataEvent = CreateWaitableTimer(NULL, TRUE, NULL);
     m_dwStreamFlags = 0;
   }
+
+  m_hDataEvents.push_back(m_hDataEvent);
+  m_hDataEvents.push_back(m_hStopThreadEvent);
+
+  m_dwDataWaitObjects.push_back(MPAR_S_NEED_DATA);
+  m_dwDataWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+
+  m_hSampleEvents.push_back(m_hInputAvailableEvent);
+  m_hSampleEvents.push_back(m_hStopThreadEvent);
+
+  m_dwSampleWaitObjects.push_back(S_OK);
+  m_dwSampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+
+  m_hOOBCommandEvents.push_back(m_hStopThreadEvent);
+  m_hOOBCommandEvents.push_back(m_hOOBCommandAvailableEvent);
+
+  m_dwOOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+  m_dwOOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
 }
 
 CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
@@ -236,43 +254,15 @@ HRESULT CWASAPIRenderFilter::EndOfStream()
   return S_OK;
 }
 
-
 // Processing
 DWORD CWASAPIRenderFilter::ThreadProc()
 {
-  // Initialize thread
-  Log("WASAPIRenderer::Render thread - starting up - thread ID: %d", m_ThreadId);
+  Log("CWASAPIRenderFilter::Render thread - starting up - thread ID: %d", m_ThreadId);
   
   // Polling delay
   LARGE_INTEGER liDueTime; 
   liDueTime.QuadPart = -1LL;
 
-  // These are wait handles for the thread stopping, new sample arrival and pausing redering
-  vector<HANDLE> dataEvents;
-  vector<HANDLE> OOBCommandEvents;
-  vector<HANDLE> sampleEvents;
-  vector<DWORD> dataWaitObjects;
-  vector<DWORD> OOBCommandWaitObjects;
-  vector<DWORD> sampleWaitObjects;
-
-  dataEvents.push_back(m_hDataEvent);
-  dataEvents.push_back(m_hStopThreadEvent);
-
-  dataWaitObjects.push_back(MPAR_S_NEED_DATA);
-  dataWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
-
-  sampleEvents.push_back(m_hInputAvailableEvent);
-  sampleEvents.push_back(m_hStopThreadEvent);
-
-  sampleWaitObjects.push_back(S_OK);
-  sampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
-
-  OOBCommandEvents.push_back(m_hStopThreadEvent);
-  OOBCommandEvents.push_back(m_hOOBCommandAvailableEvent);
-
-  OOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
-  OOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
-  
   AudioSinkCommand command;
 
   IMediaSample* sample = NULL;
@@ -281,36 +271,29 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   EnableMMCSS();
 
-  HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &sampleEvents, &sampleWaitObjects);
+  HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
 
+  StartAudioClient(&m_pAudioClient);
   m_state = StateRunning;
 
   while(true)
   {
-    StartAudioClient(&m_pAudioClient);
-
-    hr = WaitForEvents(INFINITE, &dataEvents, &dataWaitObjects);
+    hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
 
     if (hr == MPAR_S_THREAD_STOPPING) // exit event
     {
-      Log("WASAPIRenderer::Render thread - closing down - thread ID: %d", m_ThreadId);
+      Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
       RevertMMCSS();
       return 0;
     }
-    /*else if (hr == WAIT_OBJECT_0 + 1) // pause event
-    {
-      Log("WASAPIRenderer::Render thread - pausing");
-      //WaitForResume();
-    }*/
     else if (hr == MPAR_S_NEED_DATA) // data event
     {
       DWORD bufferFlags = 0;
 
       if (!sample && writeSilence == 0 && m_state == StateRunning)
-        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &sampleEvents, &sampleWaitObjects);
-      
-      if (m_state == StatePaused && writeSilence == 0)
-        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &OOBCommandEvents, &OOBCommandWaitObjects);
+        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+      else if (m_state == StatePaused && writeSilence == 0)
+        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hOOBCommandEvents, &m_dwOOBCommandWaitObjects);
 
       if (command == ASC_Resume)
       {
@@ -360,17 +343,17 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             // no data in current sample anymore
             if (dataLeftInSample == 0)
             {
-              HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &sampleEvents, &sampleWaitObjects);
+              HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
               if (hr == MPAR_S_THREAD_STOPPING) // exit event
               {
-                Log("WASAPIRenderer::Render thread - closing down - thread ID: %d", m_ThreadId);
+                Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
                 RevertMMCSS();
                 return 0;
               }
                 
               if (FAILED(hr))
               {
-                Log("WASAPIRenderer::Render thread: Buffer underrun, fetching sample failed (0x%08x)", hr);
+                Log("CWASAPIRenderFilter::Render thread: Buffer underrun, fetching sample failed (0x%08x)", hr);
                 if (bytesCopied == 0)
                   bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                 break;
@@ -414,7 +397,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
           writeSilence--;
 
         if (FAILED(hr))
-          Log("WASAPIRenderer::Render thread: ReleaseBuffer failed (0x%08x)", hr);
+          Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
       }
 
       if (!m_pSettings->m_WASAPIUseEventMode)
@@ -433,7 +416,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
         {
           liDueTime.QuadPart = (double)m_pSettings->m_hnsPeriod * -0.9;
           if (hr != AUDCLNT_E_NOT_INITIALIZED)
-            Log("WASAPIRenderer::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
+            Log("CWASAPIRenderFilter::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
         }
         SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
       }

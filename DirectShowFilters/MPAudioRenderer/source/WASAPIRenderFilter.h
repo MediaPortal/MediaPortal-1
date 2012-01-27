@@ -95,4 +95,12 @@ private:
   HANDLE              m_hDataEvent;
 
   RenderState       m_state;
+
+  vector<HANDLE> m_hDataEvents;
+  vector<HANDLE> m_hOOBCommandEvents;
+  vector<HANDLE> m_hSampleEvents;
+
+  vector<DWORD> m_dwDataWaitObjects;
+  vector<DWORD> m_dwOOBCommandWaitObjects;
+  vector<DWORD> m_dwSampleWaitObjects;
 };
