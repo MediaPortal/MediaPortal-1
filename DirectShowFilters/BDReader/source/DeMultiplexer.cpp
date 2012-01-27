@@ -92,6 +92,10 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_videoServiceType = NO_STREAM;
   m_nVideoPid = -1;
 
+  m_nClip = -1;
+  m_nTitle = -1;
+  m_nPlaylist = -1;
+
   m_nMPEG2LastPlaylist = -1;
   m_nMPEG2LastClip = -1;
   m_nMPEG2LastTitleDuration = -1;
@@ -630,6 +634,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       break;
 
     case BD_EVENT_TITLE:
+      m_nTitle = pEv.param;
       break;
 
     case BD_EVENT_PLAYLIST:
@@ -652,7 +657,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
     case BD_EVENT_CHAPTER:
     {
-      BLURAY_TITLE_INFO* title = m_filter.lib.GetTitleInfo(m_nPlaylist);
+      BLURAY_TITLE_INFO* title = m_filter.lib.GetTitleInfo(m_nTitle);
       
       if (title)
       {

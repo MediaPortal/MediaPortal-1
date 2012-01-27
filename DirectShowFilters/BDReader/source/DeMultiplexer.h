@@ -224,6 +224,7 @@ private:
   byte m_readBuffer[READ_SIZE];
 
   INT32 m_nClip;
+  INT32 m_nTitle;
   INT32 m_nPlaylist;
   INT32 m_nMPEG2LastClip;
   INT32 m_nMPEG2LastPlaylist;
