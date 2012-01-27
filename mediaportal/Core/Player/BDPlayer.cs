@@ -1757,7 +1757,6 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_PLAYITEM:
             Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);
             CurrentStreamInfo();
-            _bPopupMenuAvailable = false;
             UpdateMenuItems();
             break;
 
