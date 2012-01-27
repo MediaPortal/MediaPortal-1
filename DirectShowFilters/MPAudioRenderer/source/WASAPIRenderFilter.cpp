@@ -283,6 +283,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     if (hr == MPAR_S_THREAD_STOPPING) // exit event
     {
       Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+      StopAudioClient(&m_pAudioClient);
       RevertMMCSS();
       return 0;
     }
@@ -295,7 +296,14 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       else if (m_state == StatePaused && writeSilence == 0)
         hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hOOBCommandEvents, &m_dwOOBCommandWaitObjects);
 
-      if (command == ASC_Resume)
+      if (hr == MPAR_S_THREAD_STOPPING)
+      {
+        Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+        StopAudioClient(&m_pAudioClient);
+        RevertMMCSS();
+        return 0;
+      }
+      else if (command == ASC_Resume)
       {
         m_state = StateRunning;
         bufferFlags = 0;
@@ -347,6 +355,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               if (hr == MPAR_S_THREAD_STOPPING) // exit event
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+                StopAudioClient(&m_pAudioClient);
                 RevertMMCSS();
                 return 0;
               }
