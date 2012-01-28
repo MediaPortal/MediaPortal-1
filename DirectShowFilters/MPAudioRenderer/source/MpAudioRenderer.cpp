@@ -140,6 +140,8 @@ CMPAudioRenderer::~CMPAudioRenderer()
   if (FAILED(hr))
     Log("Pipeline cleanup failed with: (0x%08x)");
 
+  delete m_pWASAPIRenderer;
+
   SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
