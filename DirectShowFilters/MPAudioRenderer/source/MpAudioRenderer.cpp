@@ -178,14 +178,6 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     return E_INVALIDARG;
   
   Log("CheckMediaType");
-  WAVEFORMATEX *pwfx = (WAVEFORMATEX *) pmt->Format();
-
-  if (!pwfx) 
-    return VFW_E_TYPE_NOT_ACCEPTED;
-
-  return m_pPipeline->NegotiateFormat(pwfx, INFINITE);
-
-/*
 
   if ((pmt->majortype	!= MEDIATYPE_Audio) ||
       (pmt->formattype != FORMAT_WaveFormatEx))
@@ -194,6 +186,14 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
+  WAVEFORMATEX *pwfx = (WAVEFORMATEX *) pmt->Format();
+
+  if (!pwfx) 
+    return VFW_E_TYPE_NOT_ACCEPTED;
+
+  return m_pPipeline->NegotiateFormat(pwfx, INFINITE);
+
+/*
   LogWaveFormat(pwfx, "CheckMediaType");
 
   if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
