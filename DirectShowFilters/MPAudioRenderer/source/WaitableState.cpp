@@ -16,6 +16,8 @@
 
 #include "WaitableState.h"
 
+#include "alloctracing.h"
+
 CWaitableState::CWaitableState(void)
 {
   InitializeEvents();

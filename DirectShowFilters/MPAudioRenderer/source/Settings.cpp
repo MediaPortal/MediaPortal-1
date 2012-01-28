@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "Settings.h"
 
+#include "alloctracing.h"
+
 extern void Log(const char *fmt, ...);
 extern void LogRotate();
 

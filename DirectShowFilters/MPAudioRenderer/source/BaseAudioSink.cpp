@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "BaseAudioSink.h"
 
+#include "alloctracing.h"
+
 extern void Log(const char* fmt, ...);
 extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
 

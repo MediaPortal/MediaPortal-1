@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "QueuedAudioSink.h"
 
+#include "alloctracing.h"
+
 #define END_OF_STREAM_FLUSH_TIMEOUT (5000)
 
 extern void Log(const char* fmt, ...);

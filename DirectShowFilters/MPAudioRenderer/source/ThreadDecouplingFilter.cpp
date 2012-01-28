@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "ThreadDecouplingFilter.h"
 
+#include "alloctracing.h"
+
 HRESULT CThreadDecouplingFilter::EndOfStream()
 {
   // next filter does not know it runs on a separate thread

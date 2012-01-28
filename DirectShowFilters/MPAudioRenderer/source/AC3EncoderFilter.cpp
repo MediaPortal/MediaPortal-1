@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "AC3EncoderFilter.h"
 
+#include "alloctracing.h"
 
 #define AC3_OUT_BUFFER_SIZE   ((AC3_MAX_COMP_FRAME_SIZE + AC3_BITSTREAM_OVERHEAD) * 10)
 #define AC3_OUT_BUFFER_COUNT  20

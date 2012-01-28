@@ -17,6 +17,8 @@
 #include "StdAfx.h"
 #include <streams.h>  // CAutolock
 
+#include "alloctracing.h"
+
 // For more details for memory leak detection see the alloctracing.h header
 //#include "..\..\alloctracing.h"
 
