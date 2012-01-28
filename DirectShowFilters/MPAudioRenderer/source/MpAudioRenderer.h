@@ -29,6 +29,11 @@
 
 #include "IAVSyncClock.h"
 #include "IAudioSink.h"
+#include "IRenderFilter.h"
+
+#include "WASAPIRenderFilter.h"
+#include "BitDepthAdapter.h"
+#include "AC3EncoderFilter.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SyncClock.h"
@@ -122,7 +127,9 @@ private:
   AudioRendererSettings m_Settings;
 
   IAudioSink* m_pPipeline; // entry point for the audio filter pipeline
-  IAudioSink* m_pWASAPIRenderer;
-  IAudioSink* m_pAC3Encoder;
-  IAudioSink* m_pBitDepthAdapter;
+  CWASAPIRenderFilter* m_pWASAPIRenderer;
+  CAC3EncoderFilter*   m_pAC3Encoder;
+  CBitDepthAdapter*    m_pBitDepthAdapter;
+
+  IRenderFilter* m_pRenderFilter;
 };

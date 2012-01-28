@@ -17,31 +17,30 @@
 #pragma once 
 
 #include "stdafx.h"
+#include "IRenderFilter.h"
 #include "Settings.h"
 #include "queuedaudiosink.h"
 
 #define MPAR_S_NEED_DATA ((HRESULT)0x00040201)
+#define CLOCK_DATA_SIZE 10
 
 using namespace std;
 
-class CWASAPIRenderFilter :
-  public CQueuedAudioSink
+class CWASAPIRenderFilter : public CQueuedAudioSink, public IRenderFilter
 {
 public:
   CWASAPIRenderFilter(AudioRendererSettings *pSettings);
   virtual ~CWASAPIRenderFilter(void);
 
-// IAudioSink implementation
-public:
-  // Initialization
+  // IAudioSink implementation
   virtual HRESULT Init();
   virtual HRESULT Cleanup();
-
-  // Format negotiation
   virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
-
-  // Processing
   virtual HRESULT EndOfStream();
+
+  // IRenderFilter implementation
+  virtual HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
+  virtual REFERENCE_TIME Latency();
 
 protected:
   // Processing
@@ -75,6 +74,9 @@ private:
   HRESULT StopAudioClient(IAudioClient** ppAudioClient);
   void CancelDataEvent();
 
+  void ResetClockData();
+  void UpdateAudioClock();
+
   HRESULT CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
   bool    CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
   HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
@@ -95,6 +97,14 @@ private:
   HANDLE              m_hDataEvent;
 
   RenderState       m_state;
+
+  // Audio HW clock data
+  CCritSec            m_csClockLock;
+  UINT64              m_ullHwClock[CLOCK_DATA_SIZE];
+  UINT64              m_ullHwQpc[CLOCK_DATA_SIZE];
+  UINT64              m_dClockDataCollectionCount;
+  int                 m_dClockPosIn;
+  int                 m_dClockPosOut;
 
   vector<HANDLE> m_hDataEvents;
   vector<HANDLE> m_hOOBCommandEvents;

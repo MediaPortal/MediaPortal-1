@@ -623,7 +623,10 @@
     <ClInclude Include="source\FilterApp.h" />
     <ClInclude Include="source\IAudioSink.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
-    <ClInclude Include="source\IRenderDevice.h" />
+    <ClInclude Include="source\IRenderDevice.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\IRenderFilter.h" />
     <ClInclude Include="source\MpAudioRenderer.h" />
     <ClInclude Include="source\MultiSoundTouch.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>

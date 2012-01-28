@@ -155,6 +155,8 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pWASAPIRenderer)
     return E_OUTOFMEMORY;
 
+  m_pRenderFilter = static_cast<IRenderFilter*>(m_pWASAPIRenderer);
+
   m_pAC3Encoder = new CAC3EncoderFilter();
   if (!m_pAC3Encoder)
     return E_OUTOFMEMORY;
@@ -288,10 +290,9 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
 HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 {
-  /*
-  if (m_pRenderDevice)
-    return m_pRenderDevice->AudioClock(pTimestamp, pQpc);
-  else*/
+  if (m_pRenderFilter)
+    return m_pRenderFilter->AudioClock(pTimestamp, pQpc);
+  else
     return S_FALSE;
 
   //TRACE(_T("AudioClock query pos: %I64d qpc: %I64d"), pTimestamp, pQpc);

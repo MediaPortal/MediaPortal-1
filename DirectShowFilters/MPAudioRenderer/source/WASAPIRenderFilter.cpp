@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "WASAPIRenderFilter.h"
+#include "TimeSource.h"
 
 #include "alloctracing.h"
 
@@ -109,6 +110,8 @@ HRESULT CWASAPIRenderFilter::Init()
 
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
+
+  ResetClockData();
 
   return CQueuedAudioSink::Init();
 }
@@ -210,7 +213,6 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   return hr;
 }
 
-// Processing
 HRESULT CWASAPIRenderFilter::EndOfStream()
 {
   // Queue an EOS marker so that it gets processed in 
@@ -220,6 +222,83 @@ HRESULT CWASAPIRenderFilter::EndOfStream()
   //if(m_hInputQueueEmptyEvent)
   //  WaitForSingleObject(m_hInputQueueEmptyEvent, END_OF_STREAM_FLUSH_TIMEOUT); // TODO make this depend on the amount of data in the queue
   return S_OK;
+}
+
+HRESULT CWASAPIRenderFilter::AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc)
+{
+  CAutoLock cAutoLock(&m_csClockLock);
+
+  if (m_dClockPosIn == m_dClockPosOut || m_dClockDataCollectionCount < CLOCK_DATA_SIZE)
+    return S_FALSE;
+
+  //Log("m_dClockPosIn: %d m_dClockPosOut: %d diff: %I64u",m_dClockPosIn, m_dClockPosOut, m_ullHwClock[m_dClockPosIn] - m_ullHwClock[m_dClockPosOut] );
+
+  UINT64 clock = m_ullHwClock[m_dClockPosIn] - m_ullHwClock[m_dClockPosOut];
+  UINT64 qpc = m_ullHwQpc[m_dClockPosIn] - m_ullHwQpc[m_dClockPosOut];
+
+  if (qpc == 0)
+    return S_FALSE;
+
+  UINT64 qpcNow = GetCurrentTimestamp() - m_ullHwQpc[m_dClockPosOut];
+
+  pTimestamp = cMulDiv64(clock, qpcNow, qpc) + m_ullHwClock[m_dClockPosOut];
+  pQpc = qpcNow + m_ullHwQpc[m_dClockPosOut];
+
+  return S_OK;
+}
+
+static UINT64 prevPos = 0; // for debugging only, remove later
+
+void CWASAPIRenderFilter::UpdateAudioClock()
+{
+  if (m_pAudioClock)
+  {
+    CAutoLock cAutoLock(&m_csClockLock);
+
+    UINT64 timestamp = 0;
+    UINT64 qpc = 0;
+    HRESULT hr = m_pAudioClock->GetPosition(&timestamp, &qpc);
+    if (hr != S_OK)
+      return; // no point in adding the data into collection when we cannot get real data
+
+    UINT64 ullHwClock = cMulDiv64(timestamp, 10000000, m_nHWfreq);
+    
+    if (prevPos > ullHwClock)
+      Log("UpdateAudioClock: prevPos: %I64u > ullHwClock: %I64u diff: %I64u ", prevPos, ullHwClock, prevPos - ullHwClock);
+
+    prevPos = ullHwClock;
+
+    if (m_dClockPosIn == m_dClockPosOut)
+    {
+        m_ullHwClock[m_dClockPosIn] = ullHwClock;
+        m_ullHwQpc[m_dClockPosIn] = qpc;
+    }
+    m_dClockPosIn = (m_dClockPosIn + 1) % CLOCK_DATA_SIZE;
+    //if (m_dClockPosIn == m_dClockPosOut)
+    m_dClockPosOut = (m_dClockPosIn + 1) % CLOCK_DATA_SIZE;
+
+    //Log("HW clock diff: %I64u QPC diff: %I64u", m_ullHwClock[m_dClockPosOut] - m_ullHwClock[m_dClockPosIn], m_ullHwQpc[m_dClockPosOut] - m_ullHwQpc[m_dClockPosIn]);
+
+    m_ullHwClock[m_dClockPosIn] = ullHwClock;
+    m_ullHwQpc[m_dClockPosIn] = qpc;
+    m_dClockDataCollectionCount++;
+  }
+}
+
+void CWASAPIRenderFilter::ResetClockData()
+{
+  CAutoLock cAutoLock(&m_csClockLock);
+  Log("WASAPIRenderer::ResetClockData");
+  m_dClockPosIn = 0;
+  m_dClockPosOut = 0;
+  m_dClockDataCollectionCount = 0;
+  ZeroMemory((void*)&m_ullHwClock, sizeof(UINT64) * CLOCK_DATA_SIZE);
+  ZeroMemory((void*)&m_ullHwQpc, sizeof(UINT64) * CLOCK_DATA_SIZE);
+}
+
+REFERENCE_TIME CWASAPIRenderFilter::Latency()
+{
+  return m_pSettings->m_hnsPeriod;
 }
 
 // Processing
@@ -257,6 +336,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     }
     else if (hr == MPAR_S_NEED_DATA) // data event
     {
+      UpdateAudioClock();
+
       DWORD bufferFlags = 0;
 
       if (!sample && writeSilence == 0 && m_state == StateRunning)

@@ -22,7 +22,7 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char *fmt, ...);
+extern void Log(const char* fmt, ...);
 
 // IMediaSeeking interface implementation
 
@@ -81,7 +81,7 @@ STDMETHODIMP CMPAudioRenderer::ConvertTimeFormat(LONGLONG* pTarget, const GUID* 
   return m_pPosition->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
 }
 
-STDMETHODIMP CMPAudioRenderer::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG * pStop, DWORD StopFlags)
+STDMETHODIMP CMPAudioRenderer::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG* pStop, DWORD StopFlags)
 {
   return m_pPosition->SetPositions(pCurrent, CurrentFlags, pStop, StopFlags);
 }
@@ -114,10 +114,14 @@ STDMETHODIMP CMPAudioRenderer::GetRate(double* pdRate)
   return m_pPosition->GetRate(pdRate);
 }
 
-STDMETHODIMP CMPAudioRenderer::GetPreroll(LONGLONG *pPreroll)
+STDMETHODIMP CMPAudioRenderer::GetPreroll(LONGLONG* pPreroll)
 {
   CheckPointer(pPreroll, E_POINTER);
-  //(*pPreroll) = m_pRenderDevice->Latency() * 2;
-  (*pPreroll) = 0;
+  
+  if (m_pRenderFilter)
+    (*pPreroll) = m_pRenderFilter->Latency() * 2;
+  else
+    (*pPreroll) = 0;
+
   return S_OK;
 }

@@ -25,9 +25,9 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char *fmt, ...);
+extern void Log(const char* fmt, ...);
 
-CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock)
+CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock)
   : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
   m_pCurrentRefClock(0),
   m_pPrevRefClock(0),
@@ -57,7 +57,6 @@ void CSyncClock::SetEVRDelay(double pDelay)
   m_dEVRDelay = pDelay;
 }
 
-
 void CSyncClock::SetBias(double pBias)
 {
   m_SynchCorrection.SetBias(pBias);
@@ -66,7 +65,6 @@ void CSyncClock::SetBias(double pBias)
 
 void CSyncClock::SetAdjustment(double pAdjustment)
 {
-
   m_SynchCorrection.SetAdjustment(pAdjustment);
   m_dAdjustment = pAdjustment;
 }
