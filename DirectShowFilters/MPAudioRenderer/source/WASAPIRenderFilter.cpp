@@ -39,7 +39,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_pAudioClock(NULL),
   m_nHWfreq(0),
   m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
-  m_state(StateStopped)
+  m_state(StateStopped),
+  m_bIsAudioClientStarted(false)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -124,24 +125,23 @@ HRESULT CWASAPIRenderFilter::Cleanup()
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
 
-  //SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
-
   return hr;
 }
 
 // Format negotiation
 HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
 {
-  if (pwfx == NULL)
+  if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   // check always from the renderer device?
   if (FormatsEqual(pwfx, m_pInputFormat))
     return S_OK;
 
-  bool bApplyChanges = (nApplyChangesDepth !=0);
-  //if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
-  //  nApplyChangesDepth--;
+  bool bApplyChanges = nApplyChangesDepth != 0;
+
+  if (!bApplyChanges)
+    return S_OK;
 
   Log("CWASAPIRenderFilter::NegotiateFormat");
   LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");
@@ -215,7 +215,7 @@ HRESULT CWASAPIRenderFilter::EndOfStream()
 {
   // Queue an EOS marker so that it gets processed in 
   // the same thread as the audio data.
-  PutSample(NULL); //
+  PutSample(NULL);
   // wait until input queue is empty
   //if(m_hInputQueueEmptyEvent)
   //  WaitForSingleObject(m_hInputQueueEmptyEvent, END_OF_STREAM_FLUSH_TIMEOUT); // TODO make this depend on the amount of data in the queue
@@ -366,13 +366,14 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             sampleOffset += bytesToCopy;
           } while (bytesCopied < bufferSizeInBytes);
         }
+        
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, bufferFlags);
-
-        if (bufferFlags == AUDCLNT_BUFFERFLAGS_SILENT && writeSilence > 0)
-          writeSilence--;
 
         if (FAILED(hr))
           Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
+
+        if (bufferFlags == AUDCLNT_BUFFERFLAGS_SILENT && writeSilence > 0)
+          writeSilence--;
       }
 
       if (!m_pSettings->m_WASAPIUseEventMode)
@@ -594,22 +595,14 @@ HRESULT CWASAPIRenderFilter::GetAvailableAudioDevices(IMMDeviceCollection** ppMM
       Log("  %S",  pwszID);
 
       if (pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven) == S_OK)
-      {
         Log("  supports pull mode: %d", eventDriven.intVal);
-      }
       else
-      {
         Log("  pull mode query failed!");
-      }
 
       if (pProps->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &speakerMask) == S_OK)
-      {
         Log("  speaker mask: %d", speakerMask.uintVal);
-      }
       else
-      {
         Log("  PhysicalSpeakers query failed!");
-      }
 
       CoTaskMemFree(pwszID);
       pwszID = NULL;
@@ -677,13 +670,9 @@ HRESULT CWASAPIRenderFilter::CreateAudioClient(IMMDevice *pMMDevice, IAudioClien
 
   hr = pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, reinterpret_cast<void**>(ppAudioClient));
   if (FAILED(hr))
-  {
     Log("WASAPIRenderFilter::CreateAudioClient activation failed (0x%08x)", hr);
-  }
   else
-  {
     Log("WASAPIRenderFilter::CreateAudioClient success");
-  }
 
   return hr;
 }
@@ -704,14 +693,14 @@ HRESULT CWASAPIRenderFilter::StartAudioClient(IAudioClient** ppAudioClient)
         Log("  start failed (0x%08x)", hr);
       }
       else
-      {
         m_bIsAudioClientStarted = true;
-      }
     }
+    else
+      return E_POINTER;
   }
   else
   {
-    //Log("WASAPIRenderFilter::StartAudioClient - ignored, already started"); 
+    Log("WASAPIRenderFilter::StartAudioClient - ignored, already started"); 
     return hr;
   }
 
@@ -725,6 +714,7 @@ HRESULT CWASAPIRenderFilter::StartAudioClient(IAudioClient** ppAudioClient)
     // We need to manually start the rendering thread when in polling mode
     SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
   }
+
   return hr;
 }
 
