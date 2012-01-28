@@ -103,6 +103,8 @@ public:
   // CMpcAudioRenderer
 private:
 
+  HRESULT SetupFilterPipeline();
+
   HRESULT GetReferenceClockInterface(REFIID riid, void **ppv);
   WAVEFORMATEX* CreateWaveFormatForAC3(int pSamplesPerSec);
 
@@ -119,6 +121,8 @@ private:
 
   AudioRendererSettings m_Settings;
 
-  IAudioSink* m_pPipeline;
+  IAudioSink* m_pPipeline; // entry point for the audio filter pipeline
   IAudioSink* m_pWASAPIRenderer;
+  IAudioSink* m_pAC3Encoder;
+  IAudioSink* m_pBitDepthAdapter;
 };

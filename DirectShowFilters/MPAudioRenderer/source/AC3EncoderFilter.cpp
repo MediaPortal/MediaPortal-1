@@ -85,13 +85,13 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
   {
     if (bApplyChanges)
     {
-      m_bPassThrough = true;
+      //m_bPassThrough = true;
       SAFE_DELETE_ARRAY(m_pRemainingInput);
       SetInputFormat(pwfx);
       SetOutputFormat(pwfx);
-      CloseAC3Encoder();
+      //CloseAC3Encoder();
     }
-    return hr;
+    //return hr;
   }
   // verify input format bit depth, channels and sample rate
   if (pwfx->nChannels > 6 || pwfx->wBitsPerSample != 16 ||
@@ -178,7 +178,7 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
   long nOffset = 0;
   long cbSampleData = pSample->GetActualDataLength();
   BYTE *pData = NULL;
-  pSample->GetTime(&m_rtInSampleTime, NULL);
+  //pSample->GetTime(&m_rtInSampleTime, NULL);
 
   hr = pSample->GetPointer(&pData);
   ASSERT(pData != NULL);

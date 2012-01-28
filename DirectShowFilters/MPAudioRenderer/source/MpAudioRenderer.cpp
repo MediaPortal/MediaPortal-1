@@ -28,6 +28,7 @@
 #include "FilterApp.h"
 
 #include "BitDepthAdapter.h"
+#include "AC3EncoderFilter.h"
 #include "WASAPIRenderFilter.h"
 
 #include "alloctracing.h"
@@ -63,15 +64,12 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_dBias(1.0),
   m_dAdjustment(1.0),
   m_dSampleCounter(0),
-  m_pVolumeHandler(NULL)
+  m_pVolumeHandler(NULL),
+  m_pWASAPIRenderer(NULL),
+  m_pAC3Encoder(NULL),
+  m_pBitDepthAdapter(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
-
-  // Start of the audio pipeline
-  //m_pPipeline = new CBitDepthAdapter();
-  m_pPipeline = m_pWASAPIRenderer = new CWASAPIRenderFilter(&m_Settings);
-  
-  //m_pPipeline->ConnectTo(m_pWASAPIRenderer);
 
   m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_Settings.m_bHWBasedRefClock);
 
@@ -106,6 +104,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
     return;
   }
   
+  SetupFilterPipeline();
+
   hr = m_pPipeline->Init();
   if (FAILED(hr))
   {
@@ -141,10 +141,33 @@ CMPAudioRenderer::~CMPAudioRenderer()
     Log("Pipeline cleanup failed with: (0x%08x)");
 
   delete m_pWASAPIRenderer;
+  delete m_pAC3Encoder;
+  delete m_pBitDepthAdapter;
 
   SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
+}
+
+HRESULT CMPAudioRenderer::SetupFilterPipeline()
+{
+  m_pWASAPIRenderer = new CWASAPIRenderFilter(&m_Settings);
+  if (!m_pWASAPIRenderer)
+    return E_OUTOFMEMORY;
+
+  m_pAC3Encoder = new CAC3EncoderFilter();
+  if (!m_pAC3Encoder)
+    return E_OUTOFMEMORY;
+
+  m_pBitDepthAdapter = new CBitDepthAdapter();
+  if (!m_pBitDepthAdapter)
+    return E_OUTOFMEMORY;
+
+  //n_pBitDepthAdapter->ConnectTo(m_pAC3Encoder);
+  //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
+  
+  // Entry point for the audio filter pipeline
+  m_pPipeline = m_pWASAPIRenderer;
 }
 
 WAVEFORMATEX* CMPAudioRenderer::CreateWaveFormatForAC3(int pSamplesPerSec)
