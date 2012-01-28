@@ -23,8 +23,7 @@
 
 typedef class CBaseAudioSink CNullAudioFilter;
 
-class CBaseAudioSink :
-  public IAudioSink
+class CBaseAudioSink : public IAudioSink
 {
 public:
   CBaseAudioSink(void);
@@ -47,6 +46,7 @@ public:
   virtual HRESULT Pause();
   virtual HRESULT BeginStop();
   virtual HRESULT EndStop();
+  virtual HRESULT SetRate(double dRate);
 
   // Format negotiation
   virtual HRESULT NegotiateFormat(const WAVEFORMATEX* pwfx, int nApplyChangesDepth);
@@ -56,7 +56,7 @@ public:
   virtual HRESULT EndOfStream();
   virtual HRESULT BeginFlush();
   virtual HRESULT EndFlush();
-
+  
 protected:
   // Helpers
   static bool FormatsEqual(const WAVEFORMATEX* pwfx1, const WAVEFORMATEX* pwfx2);
@@ -84,5 +84,5 @@ protected:
   CComQIPtr<IMemAllocator> m_pMemAllocator;
   CComPtr<IMediaSample> m_pNextOutSample;
 
-
+  double m_dRate;
 };
