@@ -28,11 +28,9 @@
 #include <Endpointvolume.h>
 
 #include "IAVSyncClock.h"
-#include "IRenderDevice.h"
 #include "IAudioSink.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
-#include "MultiSoundTouch.h"
 #include "SyncClock.h"
 #include "Settings.h"
 #include "VolumeHandler.h"
@@ -102,46 +100,24 @@ public:
 
   HRESULT AudioClock(UINT64& pTimestamp, UINT64& pQpc);
 
-  // RenderDevice(s) uses these getters
-  WAVEFORMATEX* WaveFormat() { return m_pWaveFileFormat; }
-  AudioRendererSettings* Settings(){ return &m_Settings; }
-  IFilterGraph* Graph(){ return m_pGraph; }
-  CMultiSoundTouch* SoundTouch(){ return m_pSoundTouch; }
-  CCritSec* ResampleLock() { return &m_csResampleLock; }
-  CCritSec* RenderThreadLock() { return &m_RenderThreadLock; }
-  CCritSec* InterfaceLock() { return &m_InterfaceLock; }
-
   // CMpcAudioRenderer
 private:
 
   HRESULT GetReferenceClockInterface(REFIID riid, void **ppv);
   WAVEFORMATEX* CreateWaveFormatForAC3(int pSamplesPerSec);
-  void FlushSamples();
 
   WAVEFORMATEX*         m_pWaveFileFormat;
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
-  CMultiSoundTouch*	    m_pSoundTouch;
    
 private:
   CSyncClock*     m_pClock;
   CVolumeHandler* m_pVolumeHandler;
   double          m_dBias;
   double          m_dAdjustment;
-  CCritSec        m_csResampleLock;
-  CCritSec        m_RenderThreadLock;
   LONGLONG        m_dSampleCounter;
 
-  // Used for detecting dropped data
-  REFERENCE_TIME m_rtNextSampleTime;
-  REFERENCE_TIME m_rtPrevSampleTime;
-
-  // Flush old audio samples only after the new A/V sync point is reached
-  bool m_bFlushSamples;
-
   AudioRendererSettings m_Settings;
-
-  IRenderDevice* m_pRenderDevice;
 
   IAudioSink* m_pPipeline;
   IAudioSink* m_pWASAPIRenderer;

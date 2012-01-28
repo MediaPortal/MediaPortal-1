@@ -99,17 +99,12 @@ STDMETHODIMP CMPAudioRenderer::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLate
 STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
 {
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
-  if (m_dRate != dRate && dRate == 1.0)
-  {
-    m_pRenderDevice->SetRate(dRate);
-
-    m_pSoundTouch->BeginFlush();
-    m_pSoundTouch->clear();
-    m_pSoundTouch->EndFlush();
-  }
+  HRESULT hr = m_pPipeline->SetRate(dRate);
   
+  if (FAILED(hr))
+    return hr;
+
   m_dRate = dRate;
   return S_OK;
 }

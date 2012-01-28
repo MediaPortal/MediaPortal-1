@@ -25,8 +25,6 @@
 #include <FunctionDiscoveryKeys_devpkey.h>
 
 #include "MpAudioRenderer.h"
-#include "DirectSoundRenderer.h"
-#include "WASAPIRenderer.h"
 #include "FilterApp.h"
 
 #include "BitDepthAdapter.h"
@@ -59,18 +57,13 @@ extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char* text);
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr),
-  m_pSoundTouch(NULL),
   m_dRate(1.0),
   m_pReferenceClock(NULL),
   m_pWaveFileFormat(NULL),
   m_dBias(1.0),
   m_dAdjustment(1.0),
   m_dSampleCounter(0),
-  m_rtNextSampleTime(0),
-  m_rtPrevSampleTime(0),
-  m_bFlushSamples(false),
-  m_pVolumeHandler(NULL),
-  m_pRenderDevice(NULL)
+  m_pVolumeHandler(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -128,7 +121,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
 {
   Log("MP Audio Renderer - destructor - instance 0x%x", this);
   
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
   CAutoLock cInterfaceLock(&m_InterfaceLock);
 
   Stop();
@@ -136,15 +128,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
   if (m_pVolumeHandler)
     m_pVolumeHandler->Release();
 
-  if (m_pSoundTouch)
-    m_pSoundTouch->StopResamplingThread();
-
-  // Get rid of the render thread
-  if (m_pRenderDevice)
-    m_pRenderDevice->StopRendererThread();
-
-  delete m_pSoundTouch;
-  delete m_pRenderDevice;
   delete m_pClock;
 
   if (m_pReferenceClock)
@@ -280,9 +263,10 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
 HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 {
+  /*
   if (m_pRenderDevice)
     return m_pRenderDevice->AudioClock(pTimestamp, pQpc);
-  else
+  else*/
     return S_FALSE;
 
   //TRACE(_T("AudioClock query pos: %I64d qpc: %I64d"), pTimestamp, pQpc);
@@ -290,8 +274,7 @@ HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 
 void CMPAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)
 {
-  if (m_pRenderDevice)
-    m_pRenderDevice->OnReceiveFirstSample(pMediaSample);
+
 }
 
 BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
@@ -386,20 +369,6 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
     return false;
 
   */
-}
-
-void CMPAudioRenderer::FlushSamples()
-{
-  Log("Flushing samples");
-
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
-
-  m_pSoundTouch->BeginFlush();
-  m_pSoundTouch->clear();
-  m_pSoundTouch->EndFlush();
-  m_bFlushSamples = false;
-  m_dSampleCounter = 0;
 }
 
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
@@ -524,28 +493,21 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
 STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 {
   Log("Run");
-
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
-  //FlushSamples();
+  HRESULT	hr = S_OK;
 
-  HRESULT	hr;
+  if (m_State == State_Running) 
+    return hr;
 
-  if (m_State == State_Running) return NOERROR;
+  if (m_pClock)
+    m_pClock->Reset();
 
-  /*
-  m_pClock->Reset();
-  m_pRenderDevice->Run(tStart);*/
-
-  m_pPipeline->Run(tStart);
-
-
-  /*
-  if (m_dRate >= 1.0 && m_pSoundTouch)
-  {
-    m_pSoundTouch->setRateChange((m_dRate-1.0)*100);
-  }*/
+  hr = m_pPipeline->Run(tStart);
      
+  if (FAILED(hr))
+    return hr;
+
   return CBaseRenderer::Run(tStart);
 }
 
@@ -554,38 +516,23 @@ STDMETHODIMP CMPAudioRenderer::Stop()
   Log("Stop");
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
-
-  if (m_pSoundTouch)
-  {
-    m_pSoundTouch->GetNextSample(NULL, true);
-    m_pSoundTouch->BeginFlush();
-    m_pSoundTouch->EndFlush();  
-  }
   
-  //m_pRenderDevice->Stop(GetRealState());
   m_pPipeline->BeginStop();
   m_pPipeline->EndStop();
 
   return CBaseRenderer::Stop(); 
 };
 
-
 STDMETHODIMP CMPAudioRenderer::Pause()
 {
+  Log("Pause");
   CAutoLock cInterfaceLock(&m_InterfaceLock);
 
-  Log("Pause");
-
-  FILTER_STATE state = GetRealState();
-
-  //m_pRenderDevice->Pause(state);
-
   m_dSampleCounter = 0;
-  m_rtNextSampleTime = 0;
-  m_rtPrevSampleTime = 0;
+  HRESULT hr = m_pPipeline->Pause();
 
-  m_pPipeline->Pause();
+  if (FAILED(hr))
+    return hr;
 
   return CBaseRenderer::Pause(); 
 };
@@ -596,9 +543,7 @@ HRESULT CMPAudioRenderer::GetReferenceClockInterface(REFIID riid, void **ppv)
   HRESULT hr = S_OK;
 
   if (m_pReferenceClock)
-  {
     return m_pReferenceClock->NonDelegatingQueryInterface(riid, ppv);
-  }
 
   m_pReferenceClock = new CBaseReferenceClock (NAME("MP Audio Clock"), NULL, &hr);
 	
@@ -621,7 +566,9 @@ HRESULT CMPAudioRenderer::EndOfStream()
 {
   Log("EndOfStream");
 
-  m_pPipeline->EndOfStream();
+  HRESULT hr = m_pPipeline->EndOfStream();
+  if (FAILED(hr))
+    return hr;
 
   return CBaseRenderer::EndOfStream();
 }
@@ -632,40 +579,21 @@ HRESULT CMPAudioRenderer::BeginFlush()
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
 
-  HRESULT hrBase = CBaseRenderer::BeginFlush(); 
+  HRESULT hr = CBaseRenderer::BeginFlush(); 
+  if (FAILED(hr))
+    return hr;
 
-  //m_pRenderDevice->BeginFlush();
-  m_pPipeline->BeginFlush();
-
-  /*
-  if (m_pSoundTouch)
-  {
-    m_pSoundTouch->BeginFlush();
-    m_pSoundTouch->clear();
-  }*/
-
-  return hrBase;
+  return m_pPipeline->BeginFlush();
 }
 
 HRESULT CMPAudioRenderer::EndFlush()
 {
   Log("EndFlush");
-
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
   m_dSampleCounter = 0;
-  m_rtNextSampleTime = 0;
-  m_rtPrevSampleTime = 0;
 
-  /*
-  if (m_pSoundTouch)
-  {
-    m_pSoundTouch->EndFlush();
-  }*/
-
-  //m_pRenderDevice->EndFlush();
   m_pPipeline->EndFlush();
-
   m_pClock->Reset();
 
   return CBaseRenderer::EndFlush(); 
@@ -690,14 +618,16 @@ bool CMPAudioRenderer::CheckForLiveSouce()
 
 HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
-  CAutoLock cAutoLock(&m_csResampleLock);
+  //CAutoLock cAutoLock(&m_csResampleLock);
   
   if (m_Settings.m_bUseTimeStretching && m_Settings.m_bEnableSyncAdjustment)
   {
     m_dAdjustment = pAdjustment;
     m_pClock->SetAdjustment(m_dAdjustment);
-    if (m_pSoundTouch)
-      m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
+    //if (m_pSoundTouch)
+      //m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
+
+    // TODO notify pipeline
 
     return S_OK;
   }
@@ -707,7 +637,7 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 
 HRESULT CMPAudioRenderer::SetEVRPresentationDelay(DOUBLE pEVRDelay)
 {
-  CAutoLock cAutoLock(&m_csResampleLock);
+  //CAutoLock cAutoLock(&m_csResampleLock);
 
   bool ret = S_FALSE;
 
@@ -730,7 +660,7 @@ HRESULT CMPAudioRenderer::SetEVRPresentationDelay(DOUBLE pEVRDelay)
 
 HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 {
-  CAutoLock cAutoLock(&m_csResampleLock);
+  //CAutoLock cAutoLock(&m_csResampleLock);
 
   bool ret = S_FALSE;
 
@@ -757,13 +687,15 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
     }
     
     m_pClock->SetBias(m_dBias);
-    if (m_pSoundTouch)
+//    if (m_pSoundTouch)
     {
-      m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
+      // TODO - provide to pipeline
+
+     // m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
       Log("SetBias - updated SoundTouch tempo");
       // ret is not set since we want to be able to indicate the too big / small bias value	  
     }
-    else
+    //else
     {
       Log("SetBias - no SoundTouch avaible!");
       ret = S_FALSE;

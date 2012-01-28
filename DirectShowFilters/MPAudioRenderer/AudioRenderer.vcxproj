@@ -550,13 +550,19 @@
     <ClCompile Include="source\AC3EncoderFilter.cpp" />
     <ClCompile Include="source\BaseAudioSink.cpp" />
     <ClCompile Include="source\BitDepthAdapter.cpp" />
-    <ClCompile Include="source\DirectSoundRenderer.cpp" />
+    <ClCompile Include="source\DirectSoundRenderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\dllmain.cpp" />
     <ClCompile Include="source\dllsetup.cpp" />
     <ClCompile Include="source\FilterApp.cpp" />
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MpAudioRenderer.cpp" />
-    <ClCompile Include="source\MultiSoundTouch.cpp" />
+    <ClCompile Include="source\MultiSoundTouch.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="source\QueuedAudioSink.cpp" />
     <ClCompile Include="source\Settings.cpp" />
     <ClCompile Include="source\SoundTouchEx.cpp" />
@@ -565,7 +571,10 @@
     <ClCompile Include="source\TimeSource.cpp" />
     <ClCompile Include="source\VolumeHandler.cpp" />
     <ClCompile Include="source\WaitableState.cpp" />
-    <ClCompile Include="source\WASAPIRenderer.cpp" />
+    <ClCompile Include="source\WASAPIRenderer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="SoundTouch\source\3dnow_win.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Multichannel|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode lib|x64'">true</ExcludedFromBuild>
@@ -606,14 +615,20 @@
     <ClInclude Include="source\AC3EncoderFilter.h" />
     <ClInclude Include="source\BaseAudioSink.h" />
     <ClInclude Include="source\BitDepthAdapter.h" />
-    <ClInclude Include="source\DirectSoundRenderer.h" />
+    <ClInclude Include="source\DirectSoundRenderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="source\dllsetup.h" />
     <ClInclude Include="source\FilterApp.h" />
     <ClInclude Include="source\IAudioSink.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
     <ClInclude Include="source\IRenderDevice.h" />
     <ClInclude Include="source\MpAudioRenderer.h" />
-    <ClInclude Include="source\MultiSoundTouch.h" />
+    <ClInclude Include="source\MultiSoundTouch.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="source\QueuedAudioSink.h" />
     <ClInclude Include="source\resource.h" />
     <ClInclude Include="source\Settings.h" />
@@ -625,7 +640,10 @@
     <ClInclude Include="source\TimeSource.h" />
     <ClInclude Include="source\VolumeHandler.h" />
     <ClInclude Include="source\WaitableState.h" />
-    <ClInclude Include="source\WASAPIRenderer.h" />
+    <ClInclude Include="source\WASAPIRenderer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SoundTouch\include\BPMDetect.h" />
     <ClInclude Include="SoundTouch\include\FIFOSampleBuffer.h" />
     <ClInclude Include="SoundTouch\include\FIFOSamplePipe.h" />
