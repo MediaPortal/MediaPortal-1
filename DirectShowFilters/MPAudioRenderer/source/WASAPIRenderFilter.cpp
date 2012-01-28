@@ -61,11 +61,24 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
     pfAvRevertMmThreadCharacteristics	= (PTR_AvRevertMmThreadCharacteristics)	GetProcAddress (hLib, "AvRevertMmThreadCharacteristics");
   }
   else
-  {
     pSettings->m_bUseWASAPI = false;	// WASAPI not available below Vista
-  }
+}
 
-  if (pSettings->m_WASAPIUseEventMode)
+CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
+{
+  Log("CWASAPIRenderFilter - destructor - instance 0x%x", this);
+  
+
+  Log("CWASAPIRenderFilter - destructor - instance 0x%x - end", this);
+}
+
+//Initialization
+HRESULT CWASAPIRenderFilter::Init()
+{
+  if (!m_pSettings->m_bUseWASAPI)
+    return S_FALSE;
+
+  if (m_pSettings->m_WASAPIUseEventMode)
   {
     // Using HW DMA buffer based event notification
     m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -95,41 +108,6 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
 
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
-}
-
-CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
-{
-  Log("CWASAPIRenderFilter - destructor - instance 0x%x", this);
-  
-
-  Log("CWASAPIRenderFilter - destructor - instance 0x%x - end", this);
-}
-
-//Initialization
-HRESULT CWASAPIRenderFilter::Init()
-{
-  IMMDeviceCollection* devices = NULL;
-  GetAvailableAudioDevices(&devices, true);
-  SAFE_RELEASE(devices); // currently only log available devices
-
-  if (m_pSettings->m_WASAPIUseEventMode)
-  {
-    // Using HW DMA buffer based event notification
-    m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    m_dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
-  }
-  else
-  {
-    // Using rendering thread polling
-    m_hDataEvent = CreateWaitableTimer(NULL, TRUE, NULL);
-    m_dwStreamFlags = 0;
-  }
-
-  //m_hPauseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  //m_hWaitPauseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  //m_hResumeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  //m_hWaitResumeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  //m_hStopRenderThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
 
   return CQueuedAudioSink::Init();
 }
@@ -137,8 +115,6 @@ HRESULT CWASAPIRenderFilter::Init()
 HRESULT CWASAPIRenderFilter::Cleanup()
 {
   HRESULT hr = CQueuedAudioSink::Cleanup();
-  //CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
-  //CAutoLock cInterfaceLock(m_pRenderer->InterfaceLock());
 
   SAFE_RELEASE(m_pAudioClock);
   SAFE_RELEASE(m_pRenderClient);
@@ -147,14 +123,6 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
-  //if (m_hPauseEvent)
-  //  CloseHandle(m_hPauseEvent);
-  //if (m_hWaitPauseEvent)
-  //  CloseHandle(m_hWaitPauseEvent);
-  //if (m_hResumeEvent)
-  //  CloseHandle(m_hResumeEvent);
-  //if (m_hWaitResumeEvent)
-  //  CloseHandle(m_hWaitResumeEvent);
 
   //SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
 

@@ -38,9 +38,9 @@ CFilterApp theApp;
 
 #define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
+extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
 
-CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
+CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
 {
   ASSERT(phr);
   CMPAudioRenderer *pNewObject = new CMPAudioRenderer(punk, phr);
@@ -54,10 +54,10 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 }
 
 // for logging
-extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
+extern void Log(const char* fmt, ...);
+extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char* text);
 
-CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
+CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr),
   m_pSoundTouch(NULL),
   m_dRate(1.0),
@@ -85,66 +85,41 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   if (!m_pClock)
   {
     if (phr)
-    {
       *phr = E_OUTOFMEMORY;
-      return;
-    }
+    return;
   }
 
   m_pClock->SetAudioDelay(m_Settings.m_lAudioDelay * 10000); // setting in registry is in ms
 
-  /*
-  if (m_Settings.m_bUseWASAPI)
-  {
-    m_pRenderDevice = new WASAPIRenderer(this, phr);   
-    
-    if (*phr != S_OK)
-      m_Settings.m_bUseWASAPI = false;
-  }
-  
-  if (!m_Settings.m_bUseWASAPI)
-  {
-    m_pRenderDevice = new DirectSoundRenderer(this, phr);
-
-    if (FAILED(*phr))
-      return;
-  }
-
-  m_pSoundTouch = new CMultiSoundTouch(m_Settings.m_bEnableAC3Encoding, m_Settings.m_AC3bitrate, m_pClock);
-  
-  if (!m_pSoundTouch)
-  {
-    if(phr)
-    {
-      *phr = E_OUTOFMEMORY;
-      return;
-    }
-  }*/
-
   m_pVolumeHandler = new CVolumeHandler(punk);
 
   if (m_pVolumeHandler)
-  {
     m_pVolumeHandler->AddRef();
-  }
   else
   {
-    if(phr)
+    if (phr)
       *phr = E_OUTOFMEMORY;
+    return;
   }
 
   // CBaseRenderer is using a lazy initialization for the CRendererPosPassThru - we need it always
-  HRESULT hr = S_OK;
   CBasePin *pPin = GetPin(0);
-  m_pPosition = new CRendererPosPassThru(NAME("Renderer CPosPassThru"), CBaseFilter::GetOwner(), (HRESULT *) &hr, pPin);
-  if (!m_pPosition)
+  HRESULT hr = E_OUTOFMEMORY;
+  m_pPosition = new CRendererPosPassThru(NAME("Renderer CPosPassThru"), CBaseFilter::GetOwner(), &hr, pPin);
+  if (!m_pPosition && FAILED(hr))
   {
     if (phr)
-    {
-      *phr = E_OUTOFMEMORY;
-      return;
-    }
+      *phr = hr;
+    return;
   }
+  
+  hr = m_pPipeline->Init();
+  if (FAILED(hr))
+  {
+    if (phr)
+      *phr = hr;
+    return;
+  }  
 
   m_pPipeline->Start(0);
 }
@@ -177,6 +152,10 @@ CMPAudioRenderer::~CMPAudioRenderer()
     SetSyncSource(NULL);
     SAFE_RELEASE(m_pReferenceClock);
   }
+
+  HRESULT hr = m_pPipeline->Cleanup();
+  if (FAILED(hr))
+    Log("Pipeline cleanup failed with: (0x%08x)");
 
   SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
 
