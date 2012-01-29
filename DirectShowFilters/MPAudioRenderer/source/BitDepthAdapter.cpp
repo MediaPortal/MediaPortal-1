@@ -257,7 +257,8 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   long nOffset = 0;
   long cbSampleData = pSample->GetActualDataLength();
   BYTE *pData = NULL;
-  pSample->GetTime(&m_rtInSampleTime, NULL);
+  REFERENCE_TIME rtStop;
+  pSample->GetTime(&m_rtInSampleTime, &rtStop);
 
   hr = pSample->GetPointer(&pData);
   ASSERT(pData != NULL);
