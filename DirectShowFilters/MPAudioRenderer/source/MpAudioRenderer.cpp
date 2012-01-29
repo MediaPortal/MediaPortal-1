@@ -161,17 +161,38 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pBitDepthAdapter)
     return E_OUTOFMEMORY;
 
+
+
   m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
   if (!m_pTimestretchFilter)
     return E_OUTOFMEMORY;
 
-  //m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
+  // Just for testing the sample duplication issue on pause
+  /*
+  
+  CTimeStretchFilter* pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
+  CTimeStretchFilter* pTimestretchFilter1 = new CTimeStretchFilter(&m_Settings);
+  CTimeStretchFilter* pTimestretchFilter2 = new CTimeStretchFilter(&m_Settings);
+  CTimeStretchFilter* pTimestretchFilter3 = new CTimeStretchFilter(&m_Settings);
+  CTimeStretchFilter* pTimestretchFilter4 = new CTimeStretchFilter(&m_Settings);
+
+  pTimestretchFilter->ConnectTo(pTimestretchFilter1);
+  pTimestretchFilter1->ConnectTo(pTimestretchFilter2);
+  pTimestretchFilter2->ConnectTo(pTimestretchFilter3);
+  pTimestretchFilter3->ConnectTo(pTimestretchFilter4);
+  pTimestretchFilter4->ConnectTo(m_pTimestretchFilter);
+  m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
+  
+  */
+
   //n_pBitDepthAdapter->ConnectTo(m_pAC3Encoder);
   //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
-  //m_pPipeline = m_pTimestretchFilter;
+  //m_pPipeline = pTimestretchFilter; 
   m_pPipeline = m_pWASAPIRenderer;
+
+  return S_OK;
 }
 
 WAVEFORMATEX* CMPAudioRenderer::CreateWaveFormatForAC3(int pSamplesPerSec)
