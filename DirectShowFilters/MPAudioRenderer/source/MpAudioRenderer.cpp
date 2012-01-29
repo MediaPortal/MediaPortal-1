@@ -136,9 +136,14 @@ CMPAudioRenderer::~CMPAudioRenderer()
   if (FAILED(hr))
     Log("Pipeline cleanup failed with: (0x%08x)");
 
+  m_pPipeline->DisconnectAll();
+  if (FAILED(hr))
+    Log("Pipeline DisconnectAll failed with: (0x%08x)");
+
   delete m_pWASAPIRenderer;
   delete m_pAC3Encoder;
   delete m_pBitDepthAdapter;
+  delete m_pTimestretchFilter;
 
   SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
 

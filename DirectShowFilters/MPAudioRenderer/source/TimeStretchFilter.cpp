@@ -285,10 +285,18 @@ HRESULT CTimeStretchFilter::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     SAFE_DELETE(oldStreams);
   }
 
-  setTempoInternal(m_fNewTempo, m_fNewAdjustment);
-  setSampleRate(pwfe->Format.nSamplesPerSec);
+  if (m_Streams)
+  {
+    setTempoInternal(m_fNewTempo, m_fNewAdjustment);   
+    setSampleRate(pwfe->Format.nSamplesPerSec);
+  }
 
-  return m_pMemAllocator->Commit();;
+  HRESULT hr = S_OK;
+
+  if (m_pMemAllocator)
+    hr = m_pMemAllocator->Commit();
+
+  return hr;
 }
 
 HRESULT CTimeStretchFilter::EndOfStream()
