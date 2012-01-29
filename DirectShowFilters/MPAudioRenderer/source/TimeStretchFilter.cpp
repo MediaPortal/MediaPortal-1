@@ -113,8 +113,16 @@ DWORD CTimeStretchFilter::ThreadProc()
     }
     else
     {
-      m_pNextOutSample = sample;
-      OutputNextSample();
+      if (command == ASC_Pause && sample)
+      {
+        sample->Release();
+        sample = NULL;
+      }
+      else
+      {
+        m_pNextOutSample = sample;
+        OutputNextSample();
+      }
     }
   }
 
