@@ -34,6 +34,7 @@
 #include "WASAPIRenderFilter.h"
 #include "BitDepthAdapter.h"
 #include "AC3EncoderFilter.h"
+#include "TimeStretchFilter.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SyncClock.h"
@@ -130,6 +131,7 @@ private:
   CWASAPIRenderFilter* m_pWASAPIRenderer;
   CAC3EncoderFilter*   m_pAC3Encoder;
   CBitDepthAdapter*    m_pBitDepthAdapter;
+  CTimeStretchFilter*  m_pTimestretchFilter;
 
   IRenderFilter* m_pRenderFilter;
 };

@@ -27,10 +27,6 @@
 #include "MpAudioRenderer.h"
 #include "FilterApp.h"
 
-#include "BitDepthAdapter.h"
-#include "AC3EncoderFilter.h"
-#include "WASAPIRenderFilter.h"
-
 #include "alloctracing.h"
 
 CFilterApp theApp;
@@ -165,10 +161,16 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pBitDepthAdapter)
     return E_OUTOFMEMORY;
 
+  m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
+  if (!m_pTimestretchFilter)
+    return E_OUTOFMEMORY;
+
+  //m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
   //n_pBitDepthAdapter->ConnectTo(m_pAC3Encoder);
   //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
+  //m_pPipeline = m_pTimestretchFilter;
   m_pPipeline = m_pWASAPIRenderer;
 }
 

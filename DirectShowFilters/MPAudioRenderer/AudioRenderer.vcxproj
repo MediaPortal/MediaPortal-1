@@ -569,6 +569,7 @@
     <ClCompile Include="source\SyncClock.cpp" />
     <ClCompile Include="source\ThreadDecouplingFilter.cpp" />
     <ClCompile Include="source\TimeSource.cpp" />
+    <ClCompile Include="source\TimeStretchFilter.cpp" />
     <ClCompile Include="source\VolumeHandler.cpp" />
     <ClCompile Include="source\WaitableState.cpp" />
     <ClCompile Include="source\WASAPIRenderer.cpp">
@@ -641,6 +642,7 @@
     <ClInclude Include="source\SyncClock.h" />
     <ClInclude Include="source\ThreadDecouplingFilter.h" />
     <ClInclude Include="source\TimeSource.h" />
+    <ClInclude Include="source\TimeStretchFilter.h" />
     <ClInclude Include="source\VolumeHandler.h" />
     <ClInclude Include="source\WaitableState.h" />
     <ClInclude Include="source\WASAPIRenderer.h">

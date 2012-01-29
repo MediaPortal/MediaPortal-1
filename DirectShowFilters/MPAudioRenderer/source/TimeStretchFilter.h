@@ -14,20 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#pragma once 
+
 #include "stdafx.h"
+#include "Settings.h"
 #include "queuedaudiosink.h"
 
-class CThreadDecouplingFilter : public CQueuedAudioSink
+using namespace std;
+
+class CTimeStretchFilter : public CQueuedAudioSink
 {
 public:
-  CThreadDecouplingFilter(void) {};
+  CTimeStretchFilter(AudioRendererSettings *pSettings);
+  ~CTimeStretchFilter();
 
-// IAudioSink implementation
-public:
-  // Processing
-  virtual HRESULT EndOfStream();
+  // IAudioSink implementation
+  HRESULT Init();
+  HRESULT Cleanup();
+  //HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
+  HRESULT EndOfStream();
 
 protected:
+  // Processing
   virtual DWORD ThreadProc();
+
+// Internal implementation
+private:
+
+  AudioRendererSettings* m_pSettings;
+
+  vector<HANDLE> m_hSampleEvents;
+  vector<DWORD>  m_dwSampleWaitObjects;
 };

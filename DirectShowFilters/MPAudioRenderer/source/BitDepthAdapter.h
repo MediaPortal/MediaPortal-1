@@ -21,8 +21,7 @@
 #include <ksmedia.h>
 #include "BaseAudioSink.h"
 
-class CBitDepthAdapter :
-  public CBaseAudioSink
+class CBitDepthAdapter : public CBaseAudioSink
 {
 public:
   CBitDepthAdapter(void);
