@@ -34,6 +34,10 @@ protected:
 
 // IAudioSink implementation
 public:
+  // Initialization
+  HRESULT Init();
+  HRESULT Cleanup();
+
   // Format negotiation
   virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
 

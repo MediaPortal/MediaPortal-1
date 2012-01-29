@@ -106,6 +106,20 @@ CBitDepthAdapter::~CBitDepthAdapter(void)
 {
 }
 
+HRESULT CBitDepthAdapter::Init()
+{
+  HRESULT hr = InitAllocator();
+  if(FAILED(hr))
+    return hr;
+  return CBaseAudioSink::Init();
+}
+
+HRESULT CBitDepthAdapter::Cleanup()
+{
+  m_pMemAllocator.Release();
+  return CBaseAudioSink::Cleanup();
+}
+
 HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
 {
   if (pwfx == NULL)
