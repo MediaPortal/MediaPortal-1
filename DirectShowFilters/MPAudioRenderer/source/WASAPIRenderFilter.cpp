@@ -30,6 +30,7 @@ extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
 // ctor
 CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_pSettings(pSettings),
+  m_hLibAVRT(NULL),
   m_pMMDevice(NULL),
   m_pAudioClient(NULL),
   m_pRenderClient(NULL),
@@ -53,23 +54,29 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   if (!bWASAPIAvailable)
     Log("Disabling WASAPI - OS version earlier than Vista detected");
 
-  HMODULE hLib = NULL;
-
   // Load Vista specifics DLLs
-  hLib = LoadLibrary ("AVRT.dll");
-  if (hLib && bWASAPIAvailable)
+  m_hLibAVRT = LoadLibrary ("AVRT.dll");
+  if (m_hLibAVRT && bWASAPIAvailable)
   {
-    pfAvSetMmThreadCharacteristicsW   = (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (hLib, "AvSetMmThreadCharacteristicsW");
-    pfAvRevertMmThreadCharacteristics	= (PTR_AvRevertMmThreadCharacteristics)	GetProcAddress (hLib, "AvRevertMmThreadCharacteristics");
+    pfAvSetMmThreadCharacteristicsW   = (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (m_hLibAVRT, "AvSetMmThreadCharacteristicsW");
+    pfAvRevertMmThreadCharacteristics	= (PTR_AvRevertMmThreadCharacteristics)	GetProcAddress (m_hLibAVRT, "AvRevertMmThreadCharacteristics");
   }
   else
     pSettings->m_bUseWASAPI = false;	// WASAPI not available below Vista
+
+  if (pSettings->m_bUseWASAPI)
+  {
+    IMMDeviceCollection* devices = NULL;
+    GetAvailableAudioDevices(&devices, true);
+    SAFE_RELEASE(devices); // currently only log available devices
+  }
 }
 
 CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
 {
   Log("CWASAPIRenderFilter - destructor - instance 0x%x", this);
   
+  FreeLibrary(m_hLibAVRT);
 
   Log("CWASAPIRenderFilter - destructor - instance 0x%x - end", this);
 }

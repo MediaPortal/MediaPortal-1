@@ -66,6 +66,8 @@ private:
   PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
   PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
 
+  HMODULE m_hLibAVRT;
+
   HRESULT GetAudioDevice(IMMDevice **ppMMDevice);
   HRESULT GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
   HRESULT CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
