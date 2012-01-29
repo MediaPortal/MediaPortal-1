@@ -22,6 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player.Teletext
 {
@@ -182,6 +183,29 @@ namespace MediaPortal.Player.Teletext
         sbuf.Append((char)langb1);
         sbuf.Append((char)langb2);
         sbuf.Append((char)langb3);
+
+        try
+        {
+            using (MPSettings xmlreader = new MPSettings())
+            {
+                string deflang = xmlreader.GetValueAsString("tvservice", "dvbdefttxtsubtitles", "999;999");
+                string preflang = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
+                int langindex = 0;
+                foreach (string lang in preflang.Split(';'))
+                {
+                    if (lang.Trim() == sbuf.ToString().Trim() && type == 2)
+                    {
+                        if (langindex <= Convert.ToInt16(deflang.Split(';')[1]))
+                        {
+                            xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", page.ToString() + ";" + langindex);
+                            Log.Debug("Found preferred subtitle language {0} on page {1} with index {2}", lang, page, langindex);
+                        }
+                    }
+                    langindex += 1;
+                }
+            }
+        }
+        catch { }
         ttxtDecoder.OnServiceInfo(page, type, sbuf.ToString());
       }
     }
