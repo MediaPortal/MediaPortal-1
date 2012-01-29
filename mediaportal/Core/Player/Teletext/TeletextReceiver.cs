@@ -188,20 +188,23 @@ namespace MediaPortal.Player.Teletext
         {
             using (MPSettings xmlreader = new MPSettings())
             {
-                string deflang = xmlreader.GetValueAsString("tvservice", "dvbdefttxtsubtitles", "999;999");
-                string preflang = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
-                int langindex = 0;
-                foreach (string lang in preflang.Split(';'))
+                // The setting "dvbdefttxtsubtitles" is used to be able to pass the page number to SubtitleSelector when it is available.
+                // It's a runtime value and it would be better not to use MPSettings here if possible?
+                // 999;999 = PageNo;Index. PageNo = found page. Index = index of the selected subtitle languages. The lower, the better.
+                string defLang = xmlreader.GetValueAsString("tvservice", "dvbdefttxtsubtitles", "999;999"); 
+                string prefLang = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
+                int langIndex = 0;
+                foreach (string lang in prefLang.Split(';'))
                 {
                     if (lang.Trim() == sbuf.ToString().Trim() && type == 2)
                     {
-                        if (langindex <= Convert.ToInt16(deflang.Split(';')[1]))
+                        if (langIndex <= Convert.ToInt16(defLang.Split(';')[1]))
                         {
-                            xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", page.ToString() + ";" + langindex);
-                            Log.Debug("Found preferred subtitle language {0} on page {1} with index {2}", lang, page, langindex);
+                            xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", page.ToString() + ";" + langIndex);
+                            Log.Debug("Found preferred subtitle language {0} on page {1} with index {2}", lang, page, langIndex);
                         }
                     }
-                    langindex += 1;
+                    langIndex += 1;
                 }
             }
         }

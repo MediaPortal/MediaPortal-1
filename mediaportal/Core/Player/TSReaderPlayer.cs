@@ -464,7 +464,7 @@ namespace MediaPortal.Player
             try
             {
                 using (MPSettings xmlreader = new MPSettings())
-                    xmlreader.RemoveEntry("tvservice", "dvbdefttxtsubtitles");
+                    xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", "999;999");
             }
             catch { }
             TeletextSubtitleDecoder ttxtDecoder = new TeletextSubtitleDecoder(_dvbSubRenderer);
@@ -682,7 +682,7 @@ namespace MediaPortal.Player
         try
         {
             using (MPSettings xmlreader = new MPSettings())
-                xmlreader.RemoveEntry("tvservice", "dvbdefttxtsubtitles");
+                xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", "999;999");
         }
         catch { }
 
@@ -983,7 +983,7 @@ namespace MediaPortal.Player
       try
       {
           using (MPSettings xmlreader = new MPSettings())
-              xmlreader.RemoveEntry("tvservice", "dvbdefttxtsubtitles");
+              xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", "999;999");
       }
       catch { }
     }

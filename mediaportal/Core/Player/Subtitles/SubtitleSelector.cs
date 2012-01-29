@@ -327,8 +327,9 @@ namespace MediaPortal.Player.Subtitles
       {
           using (MPSettings xmlreader = new MPSettings())
           {
-              string defsub = xmlreader.GetValueAsString("tvservice", "dvbdefttxtsubtitles", "999;999");
-              prefPage = Convert.ToInt16(defsub.Split(';')[0]);
+              // get the currently found active subtitle page set by TeletextReceiver
+              string defSub = xmlreader.GetValueAsString("tvservice", "dvbdefttxtsubtitles", "999;999");
+              prefPage = Convert.ToInt16(defSub.Split(';')[0]);
           }
       }
       catch { }
