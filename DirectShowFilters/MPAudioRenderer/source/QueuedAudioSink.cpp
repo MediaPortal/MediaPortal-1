@@ -86,13 +86,13 @@ HRESULT CQueuedAudioSink::Run(REFERENCE_TIME rtStart)
     Log("QueuedAudioSink::Run - failed to start ThreadProc (0x%08x)", hr);
 
   PutOOBCommand(ASC_Resume);
-  return S_OK;
+  return CBaseAudioSink::Run(rtStart);
 }
 
 HRESULT CQueuedAudioSink::Pause()
 {
   PutOOBCommand(ASC_Pause);
-  return S_OK;
+  return CBaseAudioSink::Pause();
 }
 
 HRESULT CQueuedAudioSink::BeginStop()
