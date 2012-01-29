@@ -161,8 +161,6 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pBitDepthAdapter)
     return E_OUTOFMEMORY;
 
-
-
   m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
   if (!m_pTimestretchFilter)
     return E_OUTOFMEMORY;
@@ -181,16 +179,15 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   pTimestretchFilter2->ConnectTo(pTimestretchFilter3);
   pTimestretchFilter3->ConnectTo(pTimestretchFilter4);
   pTimestretchFilter4->ConnectTo(m_pTimestretchFilter);
-  m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
-  
   */
+
+  m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
 
   //n_pBitDepthAdapter->ConnectTo(m_pAC3Encoder);
   //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
-  //m_pPipeline = pTimestretchFilter; 
-  m_pPipeline = m_pWASAPIRenderer;
+  m_pPipeline = m_pTimestretchFilter; 
 
   return S_OK;
 }
