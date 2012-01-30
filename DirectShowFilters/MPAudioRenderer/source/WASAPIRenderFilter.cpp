@@ -340,6 +340,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     {
       Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
       StopAudioClient(&m_pAudioClient);
+
+      if (sample)
+        sample->Release();
+
       RevertMMCSS();
       return 0;
     }
@@ -358,6 +362,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       {
         Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
         StopAudioClient(&m_pAudioClient);
+
+        if (sample)
+          sample->Release();
+
         RevertMMCSS();
         return 0;
       }
@@ -414,6 +422,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
                 StopAudioClient(&m_pAudioClient);
+
+                if (sample)
+                  sample->Release();
+
                 RevertMMCSS();
                 return 0;
               }
