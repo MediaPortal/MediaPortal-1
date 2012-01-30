@@ -99,11 +99,9 @@ STDMETHODIMP CMPAudioRenderer::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLate
 STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
 {
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-
-  HRESULT hr = m_pPipeline->SetRate(dRate);
   
-  if (FAILED(hr))
-    return hr;
+  if (m_pTimeStretch)
+    m_pTimeStretch->setRate(dRate);
 
   m_dRate = dRate;
   return S_OK;
@@ -118,8 +116,8 @@ STDMETHODIMP CMPAudioRenderer::GetPreroll(LONGLONG* pPreroll)
 {
   CheckPointer(pPreroll, E_POINTER);
   
-  if (m_pRenderFilter)
-    (*pPreroll) = m_pRenderFilter->Latency() * 2;
+  if (m_pRenderer)
+    (*pPreroll) = m_pRenderer->Latency() * 2;
   else
     (*pPreroll) = 0;
 

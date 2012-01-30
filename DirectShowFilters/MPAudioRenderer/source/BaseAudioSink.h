@@ -46,7 +46,6 @@ public:
   virtual HRESULT Pause();
   virtual HRESULT BeginStop();
   virtual HRESULT EndStop();
-  virtual HRESULT SetRate(double dRate);
 
   // Format negotiation
   virtual HRESULT NegotiateFormat(const WAVEFORMATEX* pwfx, int nApplyChangesDepth);
@@ -83,6 +82,4 @@ protected:
   // Output buffer support
   CComQIPtr<IMemAllocator> m_pMemAllocator;
   CComPtr<IMediaSample> m_pNextOutSample;
-
-  double m_dRate;
 };

@@ -19,6 +19,7 @@
 #include "stdafx.h"
 #include "Settings.h"
 #include "queuedaudiosink.h"
+#include "ITimeStretch.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SoundTouchEx.h"
@@ -76,7 +77,7 @@ static DWORD gdwAC3SpeakerOrder[] = {
 
 using namespace std;
 
-class CTimeStretchFilter : public CQueuedAudioSink
+class CTimeStretchFilter : public CQueuedAudioSink, public ITimeStretch
 {
 public:
   CTimeStretchFilter(AudioRendererSettings *pSettings);

@@ -30,6 +30,7 @@
 #include "IAVSyncClock.h"
 #include "IAudioSink.h"
 #include "IRenderFilter.h"
+#include "ITimeStretch.h"
 
 #include "WASAPIRenderFilter.h"
 #include "BitDepthAdapter.h"
@@ -133,5 +134,6 @@ private:
   CBitDepthAdapter*    m_pBitDepthAdapter;
   CTimeStretchFilter*  m_pTimestretchFilter;
 
-  IRenderFilter* m_pRenderFilter;
+  IRenderFilter* m_pRenderer;
+  ITimeStretch* m_pTimeStretch;
 };

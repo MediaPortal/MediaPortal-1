@@ -29,7 +29,6 @@ CBaseAudioSink::CBaseAudioSink(void)
 , m_bOutFormatChanged(false)
 , m_pMemAllocator((IUnknown *)NULL)
 , m_pNextOutSample(NULL)
-, m_dRate(1.0)
 {
 }
 
@@ -117,17 +116,6 @@ HRESULT CBaseAudioSink::EndStop()
     return m_pNextSink->EndStop();
 
   return S_OK;
-}
-
-HRESULT CBaseAudioSink::SetRate(double dRate)
-{
-  if (m_dRate == dRate)
-    return S_OK;
-
-   if (m_pNextSink)
-    return m_pNextSink->SetRate(dRate);
-
-   return S_OK;
 }
 
 // Format negotiation

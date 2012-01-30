@@ -35,7 +35,6 @@ public:
   virtual HRESULT Pause() = 0;
   virtual HRESULT BeginStop() = 0;
   virtual HRESULT EndStop() = 0;
-  virtual HRESULT SetRate(double dRate) = 0;
 
   // Format negotiation
   virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth) = 0;

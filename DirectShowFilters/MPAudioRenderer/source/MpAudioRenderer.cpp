@@ -63,7 +63,9 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pVolumeHandler(NULL),
   m_pWASAPIRenderer(NULL),
   m_pAC3Encoder(NULL),
-  m_pBitDepthAdapter(NULL)
+  m_pBitDepthAdapter(NULL),
+  m_pRenderer(NULL),
+  m_pTimeStretch(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -156,7 +158,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pWASAPIRenderer)
     return E_OUTOFMEMORY;
 
-  m_pRenderFilter = static_cast<IRenderFilter*>(m_pWASAPIRenderer);
+  m_pRenderer = static_cast<IRenderFilter*>(m_pWASAPIRenderer);
 
   m_pAC3Encoder = new CAC3EncoderFilter();
   if (!m_pAC3Encoder)
@@ -169,6 +171,8 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
   if (!m_pTimestretchFilter)
     return E_OUTOFMEMORY;
+
+  m_pTimeStretch = static_cast<ITimeStretch*>(m_pTimestretchFilter);
 
   // Just for testing the sample duplication issue on pause
   /*
@@ -188,11 +192,13 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
 
-  //n_pBitDepthAdapter->ConnectTo(m_pAC3Encoder);
+  //m_pBitDepthAdapter->ConnectTo(m_pTimestretchFilter);
+  //m_pTimestretchFilter->ConnectTo(m_pAC3Encoder);
   //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
-  m_pPipeline = m_pTimestretchFilter; 
+  //m_pPipeline = m_pBitDepthAdapter;
+  m_pPipeline = m_pTimestretchFilter;
 
   return S_OK;
 }
@@ -315,8 +321,8 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
 HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 {
-  if (m_pRenderFilter)
-    return m_pRenderFilter->AudioClock(pTimestamp, pQpc);
+  if (m_pRenderer)
+    return m_pRenderer->AudioClock(pTimestamp, pQpc);
   else
     return S_FALSE;
 
@@ -425,8 +431,6 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-  
-  //return m_pRenderDevice->DoRenderSample(pMediaSample, m_dSampleCounter);
   m_pPipeline->PutSample(pMediaSample);
 
   return S_OK;
@@ -586,8 +590,7 @@ STDMETHODIMP CMPAudioRenderer::Pause()
     return hr;
 
   return CBaseRenderer::Pause(); 
-};
-
+}
 
 HRESULT CMPAudioRenderer::GetReferenceClockInterface(REFIID riid, void **ppv)
 {
@@ -675,10 +678,9 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
   {
     m_dAdjustment = pAdjustment;
     m_pClock->SetAdjustment(m_dAdjustment);
-    //if (m_pSoundTouch)
-      //m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
-
-    // TODO notify pipeline
+    
+    if (m_pTimeStretch)
+      m_pTimeStretch->setTempo(m_dBias, m_dAdjustment);
 
     return S_OK;
   }
@@ -738,17 +740,15 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
     }
     
     m_pClock->SetBias(m_dBias);
-//    if (m_pSoundTouch)
+    if (m_pTimeStretch)
     {
-      // TODO - provide to pipeline
-
-     // m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
+      m_pTimeStretch->setTempo(m_dBias, m_dAdjustment);
       Log("SetBias - updated SoundTouch tempo");
       // ret is not set since we want to be able to indicate the too big / small bias value	  
     }
-    //else
+    else
     {
-      Log("SetBias - no SoundTouch avaible!");
+      Log("SetBias - no timestretch filter in pipeline");
       ret = S_FALSE;
     }
   }
