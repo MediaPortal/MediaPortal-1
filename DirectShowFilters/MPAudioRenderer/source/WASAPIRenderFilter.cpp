@@ -26,8 +26,8 @@ extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
 
 extern void Log(const char* fmt, ...);
 extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
+extern void SetThreadName(DWORD dwThreadID, char* threadName);
 
-// ctor
 CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_pSettings(pSettings),
   m_hLibAVRT(NULL),
@@ -313,6 +313,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 {
   Log("CWASAPIRenderFilter::Render thread - starting up - thread ID: %d", m_ThreadId);
   
+  SetThreadName(-1, "WASAPI-renderer");
+
   // Polling delay
   LARGE_INTEGER liDueTime; 
   liDueTime.QuadPart = -1LL;
