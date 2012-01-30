@@ -328,6 +328,10 @@ DWORD CTimeStretchFilter::ThreadProc()
     if (hr == MPAR_S_THREAD_STOPPING)
     {
       Log("CTimeStretchFilter::timestretch threa - closing down - thread ID: %d", m_ThreadId);
+      
+      if (sample)
+        sample->Release();
+
       return 0;
     }
     else
