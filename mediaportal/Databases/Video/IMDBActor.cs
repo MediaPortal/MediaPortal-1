@@ -62,6 +62,8 @@ namespace MediaPortal.Video.Database
     private string _thumbnailUrl = string.Empty; // New
     private string _placeOfBirth = string.Empty;
     private string _dateOfBirth = string.Empty;
+    private string _placeOfDeath = string.Empty; // New
+    private string _dateOfDeath = string.Empty; // New
     private string _miniBiography = string.Empty;
     private string _biography = string.Empty;
     private ArrayList _movies = new ArrayList();
@@ -105,6 +107,18 @@ namespace MediaPortal.Video.Database
     {
       get { return _placeOfBirth; }
       set { _placeOfBirth = value; }
+    }
+
+    public string DateOfDeath
+    {
+      get { return _dateOfDeath; }
+      set { _dateOfDeath = value; }
+    }
+
+    public string PlaceOfDeath
+    {
+      get { return _placeOfDeath; }
+      set { _placeOfDeath = value; }
     }
 
     public string MiniBiography

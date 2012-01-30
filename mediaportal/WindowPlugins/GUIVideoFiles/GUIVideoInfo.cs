@@ -502,12 +502,6 @@ namespace MediaPortal.GUI.Video
       dlg.SetHeading(498); // menu
       
       // Dialog items
-      MediaPortal.Profile.Settings xmlreader = new MPSettings();
-      if (xmlreader.GetValueAsBool("moviedatabase", "usefanart", false))
-      {
-        dlg.AddLocalizedString(1255); //Refresh fanart
-      }
-
       if (listActors != null)
       {
         GUIListItem item = listActors.SelectedListItem;
@@ -519,6 +513,13 @@ namespace MediaPortal.GUI.Video
 
       dlg.AddLocalizedString(1263); // Set default grabber
       dlg.AddLocalizedString(1262); // Update grabber scripts
+
+      // Fanart refresh
+      MediaPortal.Profile.Settings xmlreader = new MPSettings();
+      if (xmlreader.GetValueAsBool("moviedatabase", "usefanart", false))
+      {
+        dlg.AddLocalizedString(1255); //Refresh fanart
+      }
       
       // Show dialog menu
       dlg.DoModal(GetID);

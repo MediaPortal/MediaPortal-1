@@ -3,7 +3,7 @@
   <id>614</id>
   <defaultcontrol>3</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#selecteditem:#title</define>
+  <define>#selecteditem:#Actor.Name</define>
   <define>#useSelectedFanart:Yes</define>
   <controls>
     <control>
@@ -16,63 +16,112 @@
     	<import>common.window.xml</import>
     	<import>common.time.xml</import>
 	<import>common.video.fanart.xml</import>
-    <control>
+    <!--control>
       <description>Actor Name Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>165</posX>
+      <posX>30</posX>
       <posY>122</posY>
       <label>493</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
-      
-      
     </control>
     <control>
       <description>Actor Name value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>391</posX>
+      <posX>256</posX>
       <posY>112</posY>
-      <width>711</width>
+      <width>836</width>
       <label>#Actor.Name</label>
       <font>font16</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
-    </control>
+    </control-->
     <control>
       <description>Born</description>
       <type>label</type>
       <id>1</id>
-      <posX>164</posX>
-      <posY>150</posY>
+      <posX>30</posX>
+      <posY>122</posY>
       <label>686</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
-      
-      
     </control>
     <control>
       <description>Date of Birth</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>391</posX>
-      <posY>150</posY>
-      <width>711</width>
+      <posX>256</posX>
+      <posY>122</posY>
+      <width>954</width>
       <label>#Actor.DateOfBirth - #Actor.PlaceOfBirth</label>
       <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
-      
-      
+   </control>
+	 <control>
+      <description>Died</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>30</posX>
+      <posY>150</posY>
+      <label>Died:</label>
+      <font>font13</font>
+      <textcolor>FFB2D4F5</textcolor>
+    </control>
+    <control>
+      <description>Date of Death</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>256</posX>
+      <posY>150</posY>
+      <width>954</width>
+      <label>#Actor.DateOfDeath - #Actor.PlaceOfDeath</label>
+      <font>font12</font>
+      <textcolor>FFB2D4F5</textcolor>
+   </control>
+	 <!--Cover-->
+	 <control>
+      <description>Image logo</description>
+      <type>image</type>
+      <id>21</id>
+      <posX>30</posX>
+      <posY>197</posY>
+      <width>170</width>
+      <height>240</height>
+      <texture flipY="true" mask="videothumbmask.png">#thumb</texture>
+      <colorkey>FFFF00FF</colorkey>
+      <colordiffuse>FFFFFFFF</colordiffuse>
+      <keepaspectratio>no</keepaspectratio>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>30</posX>
+      <posY>197</posY>
+      <width>170</width>
+      <height>240</height>
+      <texture flipY="true" mask="videothumbmask.png">Videothumbframe.png</texture>
+    </control>
+		<control>
+      <type>image</type>
+      <id>25</id>
+      <posX>30</posX>
+      <posY>197</posY>
+      <width>170</width>
+      <height>240</height>
+      <texture flipY="true" mask="video_poster_mask.png">#Actor.MovieImage</texture>
+			<visible>control.isvisible(24)</visible>
+			<colorkey>FFFF00FF</colorkey>
+      <colordiffuse>FFFFFFFF</colordiffuse>
+      <keepaspectratio>no</keepaspectratio>
     </control>
     <control>
       <description>Biography</description>
       <type>togglebutton</type>
       <id>3</id>
-      <posX>165</posX>
-      <posY>440</posY>
-      <width>190</width>
+      <posX>30</posX>
+      <posY>468</posY>
+      <width>200</width>
       <label>1011</label>
       <textcolor>ffffffff</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
@@ -81,16 +130,14 @@
       <onright>3</onright>
       <onup>2</onup>
       <ondown>4</ondown>
-      
-      
     </control>
     <control>
       <description>Movies</description>
       <type>togglebutton</type>
       <id>4</id>
-      <posX>165</posX>
-      <posY>485</posY>
-      <width>190</width>
+      <posX>30</posX>
+      <posY>513</posY>
+      <width>200</width>
       <label>342</label>
       <textcolor>ffffffff</textcolor>
       <colordiffuse>ffffffff</colordiffuse>
@@ -104,9 +151,9 @@
 			<description>Trailer (Online Videos)</description>
 			<type>button</type>
 			<id>4755</id>
-			<posX>165</posX>
-      <posY>530</posY>
-      <width>190</width>
+			<posX>30</posX>
+      <posY>558</posY>
+      <width>200</width>
 			<label>IMDb Trailers</label>
 			<hyperlink>4755</hyperlink>
 			<hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
@@ -121,9 +168,9 @@
 			<description>Onlinevideos Trailers</description>
 			<type>button</type>
 			<id>4756</id>
-			<posX>165</posX>
-      <posY>575</posY>
-      <width>190</width>
+			<posX>30</posX>
+      <posY>603</posY>
+      <width>200</width>
 			<label>iTunes Trailers</label>
 			<hyperlink>4755</hyperlink>
 			<hyperlinkParameter>site:iTunes Movie Trailers|search:#ActorMovieTitle|return:Locked</hyperlinkParameter>
@@ -138,48 +185,23 @@
       <description>Biography value</description>
       <type>textboxscrollup</type>
       <id>20</id>
-      <posX>391</posX>
-      <posY>192</posY>
-      <width>728</width>
-      <height>495</height>
+      <posX>266</posX>
+      <posY>197</posY>
+      <width>853</width>
+      <height>467</height>
       <label>#Actor.Biography</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
-    <control>
-      <description>Image logo</description>
-      <type>image</type>
-      <id>21</id>
-      <posX>165</posX>
-      <posY>187</posY>
-      <width>170</width>
-      <height>240</height>
-      <texture flipY="true" mask="videothumbmask.png">#thumb</texture>
-      <colorkey>FFFF00FF</colorkey>
-      <colordiffuse>FFFFFFFF</colordiffuse>
-      <keepaspectratio>no</keepaspectratio>
-      
-      
-    </control>
-    <control>
-      <type>image</type>
-      <id>1</id>
-      <posX>165</posX>
-      <posY>187</posY>
-      <width>170</width>
-      <height>240</height>
-      <texture flipY="true" mask="videothumbmask.png">Videothumbframe.png</texture>
-    </control>
+    
 	<!-- New controls for Actor Movies-->
     <control>
       <description>Movie extra details</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>165</posX>
+      <posX>30</posX>
       <posY>685</posY>
-      <width>1080</width>
+      <width>1220</width>
       <height>13</height>
       <label>#Actor.MovieExtraDetails</label>
       <font>font11</font>
@@ -190,10 +212,10 @@
       <description>textarea</description>
       <type>textboxscrollup</type>
       <id>26</id>
-      <posX>400</posX>
-      <posY>550</posY>
-      <width>860</width>
-      <height>135</height>
+      <posX>275</posX>
+      <posY>560</posY>
+      <width>985</width>
+      <height>117</height>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>4</onup>
@@ -201,27 +223,15 @@
       <font>font11</font>
       <label>#Actor.MoviePlot</label>
     </control>
-    <control>
-      <type>image</type>
-      <id>25</id>
-      <posX>165</posX>
-      <posY>187</posY>
-      <width>170</width>
-      <height>240</height>
-      <texture flipY="true" mask="video_poster_mask.png">#Actor.MovieImage</texture>
-			<visible>control.isvisible(24)</visible>
-			<colorkey>FFFF00FF</colorkey>
-      <colordiffuse>FFFFFFFF</colordiffuse>
-      <keepaspectratio>no</keepaspectratio>
-    </control>
+    
     <control>
       <description>Actors list movies</description>
       <type>listcontrol</type>
       <id>24</id>
-      <posX>400</posX>
-			<width>820</width>
-			<posY>200</posY>
-			<height>380</height>
+      <posX>275</posX>
+			<width>945</width>
+			<posY>197</posY>
+			<height>393</height>
       <onleft>4</onleft>
       <onright>4</onright>
       <scrollOffset>4</scrollOffset>

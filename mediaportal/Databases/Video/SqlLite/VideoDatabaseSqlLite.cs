@@ -221,6 +221,17 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"studios\" TEXT DEFAULT ''";
           m_db.Execute(strSQL);
         }
+        // Actor death infos
+        if (DatabaseUtility.TableColumnExists(m_db, "actorinfo", "dateofdeath") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"dateofdeath\" text DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
+        if (DatabaseUtility.TableColumnExists(m_db, "actorinfo", "placeofdeath") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"placeofdeath\" text DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
       }
 
       catch (Exception ex)
@@ -423,7 +434,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "duration",
                                "CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)");
       DatabaseUtility.AddTable(m_db, "actorinfo",
-                               "CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text, thumbURL text, IMDBActorID text)");
+                               "CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text, thumbURL text, IMDBActorID text, dateofdeath text, placeofdeath text,)");
       DatabaseUtility.AddTable(m_db, "actorinfomovies",
                                "CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text, runtime integer, iswatched integer, role text)");
       DatabaseUtility.AddTable(m_db, "IMDBmovies",
@@ -2940,13 +2951,16 @@ namespace MediaPortal.Video.Database
           // doesnt exists, add it
           strSQL =
             String.Format(
-              "insert into actorinfo (idActor , dateofbirth , placeofbirth , minibio , biography, thumbURL, IMDBActorID ) values( {0},'{1}','{2}','{3}','{4}','{5}','{6}')",
-              idActor, DatabaseUtility.RemoveInvalidChars(actor.DateOfBirth),
+              "insert into actorinfo (idActor , dateofbirth , placeofbirth , minibio , biography, thumbURL, IMDBActorID, dateofdeath , placeofdeath ) values( {0},'{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}')",
+              idActor, 
+              DatabaseUtility.RemoveInvalidChars(actor.DateOfBirth),
               DatabaseUtility.RemoveInvalidChars(actor.PlaceOfBirth),
               DatabaseUtility.RemoveInvalidChars(actor.MiniBiography),
               DatabaseUtility.RemoveInvalidChars(actor.Biography),
               DatabaseUtility.RemoveInvalidChars(actor.ThumbnailUrl),
-              DatabaseUtility.RemoveInvalidChars(actor.IMDBActorID));
+              DatabaseUtility.RemoveInvalidChars(actor.IMDBActorID),
+              DatabaseUtility.RemoveInvalidChars(actor.DateOfDeath),
+              DatabaseUtility.RemoveInvalidChars(actor.PlaceOfDeath));
           m_db.Execute(strSQL);
         }
         else
@@ -2954,13 +2968,16 @@ namespace MediaPortal.Video.Database
           // exists, modify it
           strSQL =
             String.Format(
-              "update actorinfo set dateofbirth='{1}', placeofbirth='{2}' , minibio='{3}' , biography='{4}' , thumbURL='{5}' , IMDBActorID='{6}' where idActor={0}",
-              idActor, DatabaseUtility.RemoveInvalidChars(actor.DateOfBirth),
+              "update actorinfo set dateofbirth='{1}', placeofbirth='{2}' , minibio='{3}' , biography='{4}' , thumbURL='{5}' , IMDBActorID='{6}', dateofdeath='{7}', placeofdeath='{8}' where idActor={0}",
+              idActor, 
+              DatabaseUtility.RemoveInvalidChars(actor.DateOfBirth),
               DatabaseUtility.RemoveInvalidChars(actor.PlaceOfBirth),
               DatabaseUtility.RemoveInvalidChars(actor.MiniBiography),
               DatabaseUtility.RemoveInvalidChars(actor.Biography),
               DatabaseUtility.RemoveInvalidChars(actor.ThumbnailUrl),
-              DatabaseUtility.RemoveInvalidChars(actor.IMDBActorID));
+              DatabaseUtility.RemoveInvalidChars(actor.IMDBActorID),
+              DatabaseUtility.RemoveInvalidChars(actor.DateOfDeath),
+              DatabaseUtility.RemoveInvalidChars(actor.PlaceOfDeath));
           m_db.Execute(strSQL);
           RemoveActorInfoMovie(idActor);
         }
@@ -3085,16 +3102,18 @@ namespace MediaPortal.Video.Database
           return null;
         }
         string strSql = String.Format(
-            "select actorinfo.biography, actorinfo.dateofbirth, actorinfo.minibio, actors.strActor, actorinfo.placeofbirth, actorinfo.thumbURL, actors.IMDBActorID, actorinfo.idActor from actors,actorinfo where actors.idActor=actorinfo.idActor and actors.idActor ={0}", idActor);
+            "select actorinfo.biography, actorinfo.dateofbirth, actorinfo.dateofdeath, actorinfo.minibio, actors.strActor, actorinfo.placeofbirth, actorinfo.placeofdeath, actorinfo.thumbURL, actors.IMDBActorID, actorinfo.idActor from actors,actorinfo where actors.idActor=actorinfo.idActor and actors.idActor ={0}", idActor);
         SQLiteResultSet results = m_db.Execute(strSql);
         if (results.Rows.Count != 0)
         {
           IMDBActor actor = new IMDBActor();
           actor.Biography = DatabaseUtility.Get(results, 0, "actorinfo.biography".Replace("''", "'"));
-          actor.DateOfBirth = DatabaseUtility.Get(results, 0, "actorinfo.dateofbirth");
+          actor.DateOfBirth = DatabaseUtility.Get(results, 0, "actorinfo.dateofbirth".Replace("''", "'"));
+          actor.DateOfDeath = DatabaseUtility.Get(results, 0, "actorinfo.dateofdeath".Replace("''", "'"));
           actor.MiniBiography = DatabaseUtility.Get(results, 0, "actorinfo.minibio".Replace("''", "'"));
           actor.Name = DatabaseUtility.Get(results, 0, "actors.strActor".Replace("''", "'"));
           actor.PlaceOfBirth = DatabaseUtility.Get(results, 0, "actorinfo.placeofbirth".Replace("''", "'"));
+          actor.PlaceOfDeath = DatabaseUtility.Get(results, 0, "actorinfo.placeofdeath".Replace("''", "'"));
           actor.ThumbnailUrl = DatabaseUtility.Get(results, 0, "actorinfo.thumbURL");
           actor.IMDBActorID = DatabaseUtility.Get(results, 0, "actors.IMDBActorID");
           actor.id = Convert.ToInt32(DatabaseUtility.Get(results, 0, "actorinfo.idActor"));

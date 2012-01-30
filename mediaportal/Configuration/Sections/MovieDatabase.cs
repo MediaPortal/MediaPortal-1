@@ -3358,6 +3358,8 @@ namespace MediaPortal.Configuration.Sections
         // Clear previous infos
         tbBirthDate.Text = string.Empty;
         tbBirthPlace.Text = string.Empty;
+        tbDeathDate.Text = string.Empty;
+        tbDeathPlace.Text = string.Empty;
         tbMiniBiography.Text = string.Empty;
         tbBiography.Text = string.Empty;
         tbThumbLoc.Text = string.Empty;
@@ -3377,6 +3379,8 @@ namespace MediaPortal.Configuration.Sections
           // Populate new infos for selected actor
           tbBirthDate.Text = actdetail.DateOfBirth;
           tbBirthPlace.Text = actdetail.PlaceOfBirth;
+          tbDeathDate.Text = actdetail.DateOfDeath;
+          tbDeathPlace.Text = actdetail.PlaceOfDeath;
           tbMiniBiography.Text = actdetail.MiniBiography;
           tbBiography.Text = actdetail.Biography;
           tbThumbLoc.Text = actdetail.ThumbnailUrl;
@@ -3400,6 +3404,8 @@ namespace MediaPortal.Configuration.Sections
           imdbActor.Biography = tbBiography.Text;
           imdbActor.DateOfBirth = tbBirthDate.Text;
           imdbActor.PlaceOfBirth = tbBirthPlace.Text;
+          imdbActor.DateOfDeath = tbDeathDate.Text;
+          imdbActor.PlaceOfDeath = tbDeathPlace.Text;
 
           bool isUrl = (tbThumbLoc.Text.Substring(0, 7) == @"http://");
           if (isUrl)
@@ -3518,6 +3524,8 @@ namespace MediaPortal.Configuration.Sections
           {
             tbBirthDate.Text = actdetail.DateOfBirth;
             tbBirthPlace.Text = actdetail.PlaceOfBirth;
+            tbDeathDate.Text = actdetail.DateOfDeath;
+            tbDeathPlace.Text = actdetail.PlaceOfDeath;
             tbMiniBiography.Text = actdetail.MiniBiography;
             tbBiography.Text = actdetail.Biography;
             tbThumbLoc.Text = actdetail.ThumbnailUrl;
@@ -3528,6 +3536,8 @@ namespace MediaPortal.Configuration.Sections
         {
           tbBirthDate.Text = string.Empty;
           tbBirthPlace.Text = string.Empty;
+          tbDeathDate.Text = string.Empty;
+          tbDeathPlace.Text = string.Empty;
           tbMiniBiography.Text = string.Empty;
           tbBiography.Text = string.Empty;
           tbThumbLoc.Text = string.Empty;

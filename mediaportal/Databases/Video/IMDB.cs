@@ -764,10 +764,12 @@ namespace MediaPortal.Video.Database
         // Photo
         string parserTxt = parser.Content;
         string photoBlock = string.Empty;
+        
         if (parser.skipToStartOf("<td id=\"img_primary\"") &&
             (parser.extractTo("</td>", ref photoBlock)))
         {
           parser.Content = photoBlock;
+        
           if ((parser.skipToEndOf("<img src=\"")) &&
               (parser.extractTo("\"", ref strThumb)))
           {
@@ -775,6 +777,7 @@ namespace MediaPortal.Video.Database
           }
           parser.Content = parserTxt;
         }
+        
         // Birth date
         if ((parser.skipToEndOf("Born:")) &&
             (parser.skipToEndOf("birth_monthday=")) &&
@@ -786,19 +789,25 @@ namespace MediaPortal.Video.Database
         {
           actor.DateOfBirth = value + " " + value2;
         }
+        
         // Death date
         if ((parser.skipToEndOf(">Died:</h4>")) &&
-            (parser.skipToEndOf("deaths\">")) &&
+            (parser.skipToEndOf("deaths\"")) &&
+            (parser.skipToEndOf(">")) &&
             (parser.extractTo("<", ref value)) &&
             (parser.skipToEndOf("death_date=")) &&
             (parser.extractTo("\"", ref value2)))
         {
-          if (actor.DateOfBirth == string.Empty)
-            actor.DateOfBirth = "?";
-          actor.DateOfBirth += " ~ " + value + " " + value2;
+          //if (actor.DateOfBirth == string.Empty)
+          //{
+          //  actor.DateOfBirth = "?";
+          //}
+          actor.DateOfDeath = value + " " + value2;
+          //actor.DateOfBirth += " ~ " + value + " " + value2;
         }
 
         parser.resetPosition();
+        
         // Birth place
         if ((parser.skipToEndOf("birth_place=")) &&
             (parser.skipToEndOf(">")) &&
@@ -806,6 +815,15 @@ namespace MediaPortal.Video.Database
         {
           actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
         }
+
+        // Death place
+        if ((parser.skipToEndOf("death_place=")) &&
+            (parser.skipToEndOf(">")) &&
+            (parser.extractTo("<", ref value)))
+        {
+          actor.PlaceOfDeath = HttpUtility.HtmlDecode(value);
+        }
+
         //Mini Biography
         parser.resetPosition();
         if ((parser.skipToEndOf("<td id=\"overview-top\">")) &&
@@ -879,17 +897,7 @@ namespace MediaPortal.Video.Database
         {
           GetActorMovies(actor, parser, false, false);
         }
-        // Get filmography Director
-        if (isDirectorPass)
-        {
-          parser = dirParser;
-          parser.resetPosition();
-          if (parser.skipToEndOf("name=\"Director\">Director</a>") &&
-              parser.skipToEndOf("</div>"))
-          {
-            GetActorMovies(actor, parser, true, false);
-          }
-        }
+        
         // Get filmography for writers
         if (isWriterPass)
         {
@@ -899,6 +907,18 @@ namespace MediaPortal.Video.Database
             (parser.skipToEndOf("</div>")))
           {
             GetActorMovies(actor, parser, false, true);
+          }
+        }
+
+        // Get filmography Director
+        if (isDirectorPass)
+        {
+          parser = dirParser;
+          parser.resetPosition();
+          if (parser.skipToEndOf("name=\"Director\">Director</a>") &&
+              parser.skipToEndOf("</div>"))
+          {
+            GetActorMovies(actor, parser, true, false);
           }
         }
 
@@ -969,6 +989,12 @@ namespace MediaPortal.Video.Database
               role = Util.Utils.stripHTMLtags(role).Trim();
               role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
                                               .Replace("\r", string.Empty).Trim());
+              
+              if (role != null && role.EndsWith("/"))
+              {
+                role = role.Remove(role.LastIndexOf("/"));
+              }
+
               if (role == string.Empty) // Role case 2, with character link
               {
                 movieParser.resetPosition();
@@ -977,6 +1003,10 @@ namespace MediaPortal.Video.Database
                 role = Util.Utils.stripHTMLtags(role).Trim();
                 role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
                                                   .Replace("\r", string.Empty).Trim());
+                if (role != null && role.EndsWith("/"))
+                {
+                  role = role.Remove(role.LastIndexOf("/"));
+                }
               }
             }
           }
@@ -1001,16 +1031,22 @@ namespace MediaPortal.Video.Database
           // SKip trash titles
           if (!SkipNoMovies(title))
           {
+            string regex = "(\\(.*\\))";
+
+            if (title != null && title.IndexOf("(") > 0)
+            {
+              title = Regex.Replace(title, regex, "").Trim();
+            }
+
             IMDBActor.IMDBActorMovie actorMovie = new IMDBActor.IMDBActorMovie();
             actorMovie.MovieTitle = title;
 
-            string regex = "(\\(.*\\))";
             if (role != null) role = Regex.Replace(role, regex, "").Trim();
             actorMovie.Role = role;
 
             actorMovie.Year = year;
             actorMovie.MovieImdbID = imdbID;
-            // Check if director movie exists in actors movies, concatenate role
+            // Check if director/writer movie exists in actors movies, concatenate role
             // to already fetched actor movie (no duplicate movie entries)
             bool skipAdd = false;
 

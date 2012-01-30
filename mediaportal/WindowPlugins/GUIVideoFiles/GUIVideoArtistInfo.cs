@@ -125,7 +125,25 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name);
       GUIPropertyManager.SetProperty("#Actor.DateOfBirth", _currentActor.DateOfBirth);
       GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", _currentActor.PlaceOfBirth);
-      
+
+      if (_currentActor.DateOfDeath != Strings.Unknown)
+      {
+        GUIPropertyManager.SetProperty("#Actor.DateOfDeath", _currentActor.DateOfDeath);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Actor.DateOfDeath", string.Empty);
+      }
+
+      if (_currentActor.PlaceOfDeath != Strings.Unknown)
+      {
+        GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", _currentActor.PlaceOfDeath);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", string.Empty);
+      }
+
       string biography = _currentActor.Biography;
 
       if (biography == string.Empty || biography == Strings.Unknown)
@@ -171,6 +189,8 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Actor.Name", string.Empty);
       GUIPropertyManager.SetProperty("#Actor.DateOfBirth", string.Empty);
       GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.DateOfDeath", string.Empty);
+      GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", string.Empty);
       GUIPropertyManager.SetProperty("#Actor.Biography", string.Empty);
       GUIPropertyManager.SetProperty("#Actor.Movies", string.Empty);
       GUIPropertyManager.SetProperty("#Actor.MoviePlot", string.Empty);

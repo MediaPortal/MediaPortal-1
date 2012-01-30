@@ -239,6 +239,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel22 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbDeathDate = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpLabel23 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbDeathPlace = new MediaPortal.UserInterface.Controls.MPTextBox();
       ((System.ComponentModel.ISupportInitialize)(this.fanartQ)).BeginInit();
       this.tabControl1.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
@@ -1761,6 +1765,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Controls.Add(this.mpLabel23);
+      this.mpGroupBox3.Controls.Add(this.tbDeathPlace);
+      this.mpGroupBox3.Controls.Add(this.mpLabel22);
+      this.mpGroupBox3.Controls.Add(this.tbDeathDate);
       this.mpGroupBox3.Controls.Add(this.btnRefreshActsInfo);
       this.mpGroupBox3.Controls.Add(this.btnRefreshActInfo);
       this.mpGroupBox3.Controls.Add(this.linklabelActor);
@@ -1786,7 +1794,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabel21
       // 
-      this.mpLabel21.Location = new System.Drawing.Point(6, 114);
+      this.mpLabel21.Location = new System.Drawing.Point(6, 156);
       this.mpLabel21.Name = "mpLabel21";
       this.mpLabel21.Size = new System.Drawing.Size(60, 30);
       this.mpLabel21.TabIndex = 53;
@@ -1797,11 +1805,11 @@ namespace MediaPortal.Configuration.Sections
       this.tbMiniBiography.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tbMiniBiography.BorderColor = System.Drawing.Color.Empty;
-      this.tbMiniBiography.Location = new System.Drawing.Point(72, 114);
+      this.tbMiniBiography.Location = new System.Drawing.Point(86, 156);
       this.tbMiniBiography.Multiline = true;
       this.tbMiniBiography.Name = "tbMiniBiography";
-      this.tbMiniBiography.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-      this.tbMiniBiography.Size = new System.Drawing.Size(414, 49);
+      this.tbMiniBiography.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.tbMiniBiography.Size = new System.Drawing.Size(400, 49);
       this.tbMiniBiography.TabIndex = 52;
       // 
       // mpLabel20
@@ -1825,7 +1833,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabel19
       // 
-      this.mpLabel19.Location = new System.Drawing.Point(6, 167);
+      this.mpLabel19.Location = new System.Drawing.Point(6, 211);
       this.mpLabel19.Name = "mpLabel19";
       this.mpLabel19.Size = new System.Drawing.Size(60, 30);
       this.mpLabel19.TabIndex = 47;
@@ -1837,45 +1845,45 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tbBiography.BorderColor = System.Drawing.Color.Empty;
-      this.tbBiography.Location = new System.Drawing.Point(72, 167);
+      this.tbBiography.Location = new System.Drawing.Point(86, 211);
       this.tbBiography.Multiline = true;
       this.tbBiography.Name = "tbBiography";
       this.tbBiography.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-      this.tbBiography.Size = new System.Drawing.Size(414, 89);
+      this.tbBiography.Size = new System.Drawing.Size(400, 45);
       this.tbBiography.TabIndex = 46;
       // 
       // mpLabel18
       // 
       this.mpLabel18.Location = new System.Drawing.Point(6, 68);
       this.mpLabel18.Name = "mpLabel18";
-      this.mpLabel18.Size = new System.Drawing.Size(60, 30);
+      this.mpLabel18.Size = new System.Drawing.Size(74, 22);
       this.mpLabel18.TabIndex = 45;
       this.mpLabel18.Text = "Birth place:";
       // 
       // tbBirthPlace
       // 
       this.tbBirthPlace.BorderColor = System.Drawing.Color.Empty;
-      this.tbBirthPlace.Location = new System.Drawing.Point(72, 68);
+      this.tbBirthPlace.Location = new System.Drawing.Point(86, 68);
       this.tbBirthPlace.Multiline = true;
       this.tbBirthPlace.Name = "tbBirthPlace";
-      this.tbBirthPlace.Size = new System.Drawing.Size(249, 43);
+      this.tbBirthPlace.Size = new System.Drawing.Size(275, 22);
       this.tbBirthPlace.TabIndex = 44;
       // 
       // mpLabel17
       // 
       this.mpLabel17.Location = new System.Drawing.Point(6, 42);
       this.mpLabel17.Name = "mpLabel17";
-      this.mpLabel17.Size = new System.Drawing.Size(60, 30);
+      this.mpLabel17.Size = new System.Drawing.Size(74, 23);
       this.mpLabel17.TabIndex = 43;
       this.mpLabel17.Text = "Birth date:";
       // 
       // tbBirthDate
       // 
       this.tbBirthDate.BorderColor = System.Drawing.Color.Empty;
-      this.tbBirthDate.Location = new System.Drawing.Point(72, 42);
+      this.tbBirthDate.Location = new System.Drawing.Point(86, 42);
       this.tbBirthDate.Multiline = true;
       this.tbBirthDate.Name = "tbBirthDate";
-      this.tbBirthDate.Size = new System.Drawing.Size(249, 21);
+      this.tbBirthDate.Size = new System.Drawing.Size(275, 21);
       this.tbBirthDate.TabIndex = 42;
       // 
       // pictureBoxActor
@@ -1884,7 +1892,7 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBoxActor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
       this.pictureBoxActor.ErrorImage = null;
       this.pictureBoxActor.InitialImage = null;
-      this.pictureBoxActor.Location = new System.Drawing.Point(327, 16);
+      this.pictureBoxActor.Location = new System.Drawing.Point(367, 16);
       this.pictureBoxActor.Name = "pictureBoxActor";
       this.pictureBoxActor.Size = new System.Drawing.Size(116, 95);
       this.pictureBoxActor.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -1895,9 +1903,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbActor.BorderColor = System.Drawing.Color.Empty;
       this.cbActor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbActor.Location = new System.Drawing.Point(72, 16);
+      this.cbActor.Location = new System.Drawing.Point(86, 16);
       this.cbActor.Name = "cbActor";
-      this.cbActor.Size = new System.Drawing.Size(249, 21);
+      this.cbActor.Size = new System.Drawing.Size(275, 21);
       this.cbActor.TabIndex = 39;
       this.cbActor.SelectedIndexChanged += new System.EventHandler(this.cbActor_SelectedIndexChanged);
       // 
@@ -2840,6 +2848,40 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel14.TabIndex = 21;
       this.mpLabel14.Text = "MPAA Rating:";
       // 
+      // mpLabel22
+      // 
+      this.mpLabel22.Location = new System.Drawing.Point(6, 96);
+      this.mpLabel22.Name = "mpLabel22";
+      this.mpLabel22.Size = new System.Drawing.Size(74, 21);
+      this.mpLabel22.TabIndex = 58;
+      this.mpLabel22.Text = "Death date:";
+      // 
+      // tbDeathDate
+      // 
+      this.tbDeathDate.BorderColor = System.Drawing.Color.Empty;
+      this.tbDeathDate.Location = new System.Drawing.Point(86, 96);
+      this.tbDeathDate.Multiline = true;
+      this.tbDeathDate.Name = "tbDeathDate";
+      this.tbDeathDate.Size = new System.Drawing.Size(275, 21);
+      this.tbDeathDate.TabIndex = 57;
+      // 
+      // mpLabel23
+      // 
+      this.mpLabel23.Location = new System.Drawing.Point(6, 123);
+      this.mpLabel23.Name = "mpLabel23";
+      this.mpLabel23.Size = new System.Drawing.Size(74, 22);
+      this.mpLabel23.TabIndex = 60;
+      this.mpLabel23.Text = "Death place:";
+      // 
+      // tbDeathPlace
+      // 
+      this.tbDeathPlace.BorderColor = System.Drawing.Color.Empty;
+      this.tbDeathPlace.Location = new System.Drawing.Point(86, 123);
+      this.tbDeathPlace.Multiline = true;
+      this.tbDeathPlace.Name = "tbDeathPlace";
+      this.tbDeathPlace.Size = new System.Drawing.Size(275, 22);
+      this.tbDeathPlace.TabIndex = 59;
+      // 
       // MovieDatabase
       // 
       this.Controls.Add(this.tabControl1);
@@ -3114,5 +3156,9 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPButton btnRefreshActors;
     private UserInterface.Controls.MPButton btnRefreshActInfo;
     private UserInterface.Controls.MPButton btnRefreshActsInfo;
+    private UserInterface.Controls.MPLabel mpLabel23;
+    private UserInterface.Controls.MPTextBox tbDeathPlace;
+    private UserInterface.Controls.MPLabel mpLabel22;
+    private UserInterface.Controls.MPTextBox tbDeathDate;
   }
 }
