@@ -180,12 +180,12 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
 
 bool CClip::FakeAudioAvailable()
 {
-  return audioPlaybackPosition <= playlistFirstPacketTime + clipDuration;
+  return audioPlaybackPosition + FAKE_AUDIO_DURATION -1 <= playlistFirstPacketTime + clipDuration;
 }
 
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
-  if (rtStart>playlistFirstPacketTime+clipDuration)superceeded|=SUPERCEEDED_AUDIO_RETURN;
+  if (rtStart + FAKE_AUDIO_DURATION -1 >playlistFirstPacketTime+clipDuration)superceeded|=SUPERCEEDED_AUDIO_RETURN;
   if (superceeded&SUPERCEEDED_AUDIO_RETURN) return NULL;
   if (!FakeAudioAvailable()) return NULL;
 
@@ -279,7 +279,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
 void CClip::Superceed(int superceedType)
 {
   superceeded|=superceedType;
-//  LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
+  LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
   if ((superceedType == SUPERCEEDED_AUDIO_FILL) && firstAudio && !firstVideo) 
   {
     LogDebug("Setting Fake Audio for clip %d", nClip);
@@ -388,8 +388,7 @@ REFERENCE_TIME CClip::Incomplete()
   // clip not played so not incomplete
   if (!firstPacketReturned || !firstPacketAccepted) return 0LL;
 
-  REFERENCE_TIME ret = playlistFirstPacketTime + clipDuration - videoPlaybackPosition;
-  if (playlistFirstPacketTime + clipDuration - audioPlaybackPosition < ret) ret = playlistFirstPacketTime + clipDuration - audioPlaybackPosition; 
+  REFERENCE_TIME ret = clipDuration - earliestPacketAccepted + playlistFirstPacketTime - PlayedDuration();
   if (ret > 5000000LL)
   {    
     LogDebug("clip: Incomplete - nClip: %d lastAudioPosition: %I64d first: %I64d duration: %I64d", 
@@ -412,6 +411,12 @@ REFERENCE_TIME CClip::PlayedDuration()
   if (audioPlaybackPosition < videoPlaybackPosition)
   {
     finish = videoPlaybackPosition;
+  }
+  // slight hack for clips with no audio and only 1 or 2 video frames
+  if (((firstVideo || firstAudio) && !(firstVideo && firstAudio)) && noAudio) 
+  {
+    LogDebug("CClip::PlayedDuration %I64d - full duration chosen, single image clip detected",clipDuration - earliestPacketAccepted + playlistFirstPacketTime);
+    return clipDuration - earliestPacketAccepted + playlistFirstPacketTime;
   }
   playDuration = finish - playlistFirstPacketTime;
   if (abs(clipDuration - playDuration) < HALF_SECOND) 

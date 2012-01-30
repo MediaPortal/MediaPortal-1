@@ -622,6 +622,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
   switch (pEv.event)
   {
     case BD_EVENT_SEEK:
+      Flush(true, true, 0LL);
       break;
 
     case BD_EVENT_STILL_TIME:
