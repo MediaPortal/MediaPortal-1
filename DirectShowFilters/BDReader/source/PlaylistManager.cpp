@@ -24,6 +24,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+#define CLIP_DELAY 0LL
+
 extern void LogDebug(const char *fmt, ...);
 
 CPlaylistManager::CPlaylistManager(void)
@@ -123,6 +125,9 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     m_itCurrentAudioSubmissionPlaylist++;
     m_itCurrentVideoSubmissionPlaylist++;
   }
+
+  m_rtPlaylistOffset += CLIP_DELAY;
+
   return ret; // was current clip interrupted?
 }
 
