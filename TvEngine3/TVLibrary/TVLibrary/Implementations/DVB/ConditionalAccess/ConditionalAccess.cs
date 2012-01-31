@@ -62,6 +62,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
+    private readonly Anysee _anysee;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -84,8 +85,6 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return _HWProvider; }
     }
-
-    //anysee _anysee = null;
 
     #endregion
 
@@ -197,13 +196,14 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _hauppauge);
           Release.DisposeToNull(ref _winTvCiModule);
 
-          /*Log.Log.Info("Check for anysee");
-          _anysee = new anysee(tunerFilter, analyzerFilter);
-          if (_anysee.Isanysee)
+          Log.Log.WriteFile("Check for Anysee");
+          _anysee = new Anysee(tunerFilter);
+          if (_anysee.IsAnysee)
           {
             Log.Log.Info("anysee device detected");
             return;
-          }*/
+          }
+          Release.DisposeToNull(ref _anysee);
 
           Log.Log.WriteFile("Check for ProfRed");
           _profred = new ProfRed(tunerFilter);
@@ -758,6 +758,11 @@ namespace TvLibrary.Implementations.DVB
           _TeVii.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
+        if (_anysee != null)
+        {
+          _anysee.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
       }
       catch (Exception ex)
       {
@@ -1110,6 +1115,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_twinhan);
       Release.Dispose(_profred);
       Release.Dispose(_TeVii);
+      Release.Dispose(_anysee);
     }
 
     #endregion
