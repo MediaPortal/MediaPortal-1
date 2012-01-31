@@ -629,7 +629,7 @@ namespace MediaPortal.GUI.Library
       {
         if (i + 1 < Children.Count)
         {
-          Children[i + 1].YPosition -= (Children[i].Height + spacing);
+          Children[i + 1].YPosition -= (Children[index].Height + spacing);
         }
       }
     }
@@ -642,7 +642,7 @@ namespace MediaPortal.GUI.Library
       {
         if (i + 1 < Children.Count)
         {
-          Children[i + 1].YPosition += (Children[i].Height + spacing);
+          Children[i + 1].YPosition += (Children[index].Height + spacing);
         }
       }
     }
@@ -655,7 +655,7 @@ namespace MediaPortal.GUI.Library
       {
         if (i + 1 < Children.Count)
         {
-          Children[i + 1].XPosition += (Children[i].Width + spacing);
+          Children[i + 1].XPosition += (Children[index].Width + spacing);
         }
       }
     }
@@ -668,7 +668,7 @@ namespace MediaPortal.GUI.Library
       {
         if (i + 1 < Children.Count)
         {
-          Children[i + 1].XPosition -= (Children[i].Width + spacing);
+          Children[i + 1].XPosition -= (Children[index].Width + spacing);
         }
       }
     }
