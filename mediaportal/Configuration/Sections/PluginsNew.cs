@@ -42,6 +42,10 @@ namespace MediaPortal.Configuration.Sections
     private bool isLoaded = false;
     private bool wasLastLoadAdvanced = false;
 
+		private System.Windows.Forms.ImageList imageListLargePlugins;
+		private System.Windows.Forms.ImageList imageListContextMenu;
+		private System.Windows.Forms.ImageList imageListMPInstaller;
+
     private class ItemTag
     {
       public string DllName;
@@ -80,6 +84,52 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+
+			this.imageListLargePlugins = new System.Windows.Forms.ImageList() { ColorDepth = ColorDepth.Depth32Bit, TransparentColor = Color.Transparent, ImageSize = new Size(42, 42) };
+			this.imageListContextMenu = new System.Windows.Forms.ImageList() { ColorDepth = ColorDepth.Depth32Bit, TransparentColor = Color.Transparent, ImageSize = new Size(16, 16) };
+			this.imageListMPInstaller = new System.Windows.Forms.ImageList() { ColorDepth = ColorDepth.Depth32Bit, TransparentColor = Color.Transparent, ImageSize = new Size(42, 42) };
+
+			System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+			// 
+			// imageListLargePlugins
+			// 
+			this.imageListLargePlugins.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageListLargePlugins.Images.Add("0", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.00_plugin_other.png")));
+			this.imageListLargePlugins.Images.Add("1", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.01_plugin_other_off.png")));
+			this.imageListLargePlugins.Images.Add("2", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.02_plugin_window.png")));
+			this.imageListLargePlugins.Images.Add("3", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.03_plugin_window_off.png")));
+			this.imageListLargePlugins.Images.Add("4", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.04_plugin_process.png")));
+			this.imageListLargePlugins.Images.Add("5", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.05_plugin_process_off.png")));
+			this.imageListLargePlugins.Images.Add("6", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.06_plugin_externalplayers.png")));
+			this.imageListLargePlugins.Images.Add("7", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.07_plugin_externalplayers_off.png")));
+			this.imageListLargePlugins.Images.Add("8", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.08_plugin_window_home.png")));
+			this.imageListLargePlugins.Images.Add("9", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.09_plugin_window_plugins.png")));
+			this.imageListLargePlugins.Images.Add("10", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.10_plugin_other_incomp.png")));
+			this.imageListLargePlugins.Images.Add("11", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.11_plugin_other_off_incomp.png")));
+			this.imageListLargePlugins.Images.Add("12", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.12_plugin_window_incomp.png")));
+			this.imageListLargePlugins.Images.Add("13", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.13_plugin_window_off_incomp.png")));
+			this.imageListLargePlugins.Images.Add("14", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.14_plugin_process_incomp.png")));
+			this.imageListLargePlugins.Images.Add("15", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.15_plugin_process_off_incomp.png")));
+			this.imageListLargePlugins.Images.Add("16", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.16_plugin_externalplayers_incomp.png")));
+			this.imageListLargePlugins.Images.Add("17", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.17_plugin_externalplayers_off_incomp.png")));
+			this.imageListLargePlugins.Images.Add("18", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.18_plugin_window_home_incomp.png")));
+			this.imageListLargePlugins.Images.Add("19", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.19_plugin_window_plugins_incomp.png")));
+			this.imageListLargePlugins.Images.Add("20", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.20_alert-ovl.png")));
+
+			// 
+			// imageListContextMenu
+			// 
+			this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageListContextMenu.Images.Add("0", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListContextMenu.00_Enabled.png.bmp")));
+			this.imageListContextMenu.Images.Add("1", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListContextMenu.01_Enabled_off.png.bmp")));
+
+			// 
+			// imageListMPInstaller
+			// 
+			this.imageListMPInstaller.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageListMPInstaller.Images.Add("0", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListMPInstaller.00_application.ico.bmp")));
+
+			this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
     }
 
     public override void OnSectionActivated()
