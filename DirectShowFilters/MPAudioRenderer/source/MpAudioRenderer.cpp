@@ -121,8 +121,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
   
   CAutoLock cInterfaceLock(&m_InterfaceLock);
 
-  Stop();
-
   if (m_pVolumeHandler)
     m_pVolumeHandler->Release();
 

@@ -88,6 +88,9 @@ HRESULT CBaseAudioSink::Start(REFERENCE_TIME rtStart)
 
 HRESULT CBaseAudioSink::Run(REFERENCE_TIME rtStart)
 {
+  if (m_pMemAllocator)
+    m_pMemAllocator->Commit();
+
   if (m_pNextSink)
     return m_pNextSink->Run(rtStart);
 
@@ -104,6 +107,11 @@ HRESULT CBaseAudioSink::Pause()
 
 HRESULT CBaseAudioSink::BeginStop()
 {
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+  
+  m_pNextOutSample.Release();
+
   if (m_pNextSink)
     return m_pNextSink->BeginStop();
 
