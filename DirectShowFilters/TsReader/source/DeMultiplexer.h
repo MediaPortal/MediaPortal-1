@@ -249,4 +249,6 @@ private:
   float m_MinVideoDelta;
 
   bool m_bShuttingDown;
+  bool m_bFirstGopParsed;
+
 };
