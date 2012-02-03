@@ -343,7 +343,11 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
   FlushVideo();
   lastVideoPosition = playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
-  clipPlaylistOffset = totalStreamOffset;
+  if (clipPlaylistOffset != totalStreamOffset)
+  {
+    clipReset = true;
+    clipPlaylistOffset != totalStreamOffset;
+  }
   audioPlaybackPosition = playlistFirstPacketTime;
   videoPlaybackPosition = playlistFirstPacketTime;
   m_rtClipStartingOffset = 0LL;
@@ -356,7 +360,6 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
   firstVideo=true;
   firstPacketAccepted = false;
   firstPacketReturned = false;
-  clipReset = true;
 }
 
 bool CClip::HasAudio()
