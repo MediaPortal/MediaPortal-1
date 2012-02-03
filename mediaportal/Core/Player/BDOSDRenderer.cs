@@ -80,9 +80,15 @@ namespace MediaPortal.Player
         {
           if (item.texture != null && item.width > 0 && item.height > 0)
           {
-			      // todo: support 2 planes
+            // todo: support 2 planes
             if (_OSDTexture == null)
+            {
               _OSDTexture = new Texture(item.texture);
+            }
+          }
+          else
+          {
+            _OSDTexture = null;
           }
         }
       }

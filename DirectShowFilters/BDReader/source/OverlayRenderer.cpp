@@ -40,55 +40,17 @@ COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
   
   m_pPlanesBackbuffer[BD_OVERLAY_PG] = NULL;
   m_pPlanesBackbuffer[BD_OVERLAY_IG] = NULL;
-
-  ResetDirtyRect();
 }
 
 COverlayRenderer::~COverlayRenderer()
 {
-  if (m_pPlanes[BD_OVERLAY_PG] && m_pPlanes[BD_OVERLAY_IG]->texture)
-  {
-    m_pPlanes[BD_OVERLAY_PG]->texture->Release();
-    delete m_pPlanes[BD_OVERLAY_PG];
-  }
-
-  if (m_pPlanes[BD_OVERLAY_IG] && m_pPlanes[BD_OVERLAY_IG]->texture)
-  {
-    m_pPlanes[BD_OVERLAY_IG]->texture->Release();
-    delete m_pPlanes[BD_OVERLAY_IG];
-  }
-
-  if (m_pPlanesBackbuffer[BD_OVERLAY_PG] && m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture)
-  {
-    m_pPlanesBackbuffer[BD_OVERLAY_PG]->texture->Release();
-    delete m_pPlanesBackbuffer[BD_OVERLAY_PG];
-  }
-
-  if (m_pPlanesBackbuffer[BD_OVERLAY_IG] && m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture)
-  {
-    m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture->Release();
-    delete m_pPlanesBackbuffer[BD_OVERLAY_IG];
-  }
+  CloseOverlay(BD_OVERLAY_PG);
+  CloseOverlay(BD_OVERLAY_IG);
 }
 
 void COverlayRenderer::SetD3DDevice(IDirect3DDevice9* device)
 {
   m_pD3DDevice = device;
-
-  BD_OVERLAY ov;
-  ov.x = 0;
-  ov.y = 0;
-  ov.w = 1920;
-  ov.h = 1080;
-  ov.plane = BD_OVERLAY_PG;
-
-  OpenOverlay(&ov);
-  ClearArea(m_pPlanes[BD_OVERLAY_PG], &ov);
-
-  ov.plane = BD_OVERLAY_IG;
-
-  OpenOverlay(&ov);
-  ClearArea(m_pPlanes[BD_OVERLAY_IG], &ov);
 }
 
 void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
@@ -98,9 +60,7 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
     CloseOverlay(-1);
     return;
   }
-  else
-
-  if (ov->plane > BD_OVERLAY_IG) 
+  else if (ov->plane > BD_OVERLAY_IG) 
     return;
 
   LogCommand(ov);
@@ -117,8 +77,15 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
 
   OSDTexture* plane = m_pPlanesBackbuffer[ov->plane];
 
-  if (!plane)
-    return; 
+  // Workaround for some BDs that wont issue BD_OVERLAY_INIT after BD_OVERLAY_CLOSE
+  if (!plane) 
+  {
+    OpenOverlay(ov);
+    plane = m_pPlanesBackbuffer[ov->plane];
+
+    if (!plane)
+      return;
+  }
 
   switch (ov->cmd) 
   {
@@ -150,40 +117,48 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
 
 void COverlayRenderer::OpenOverlay(const BD_OVERLAY* pOv)
 {
-  if (!m_pPlanes[pOv->plane])
+  if ((m_pPlanes[pOv->plane] && pOv) &&
+      (m_pPlanes[pOv->plane]->height != pOv->h ||
+      m_pPlanes[pOv->plane]->width != pOv->w ||
+      m_pPlanes[pOv->plane]->x != pOv->x ||
+      m_pPlanes[pOv->plane]->y != pOv->y))
   {
-    // Create front and back buffer textures
-    for (int i = 0; i < 2; i++)
+    CloseOverlay(pOv->plane);    
+  }
+
+  ResetDirtyRect(pOv);
+
+  // Create front and back buffer textures
+  for (int i = 0; i < 2; i++)
+  {
+    OSDTexture** plane = NULL;
+
+    if (i == 0)
+      plane = &m_pPlanes[pOv->plane];
+    else
+      plane = &m_pPlanesBackbuffer[pOv->plane];
+
+    OSDTexture* osdTexture = new OSDTexture;
+    osdTexture->height = pOv->h;
+    osdTexture->width = pOv->w;
+    osdTexture->x = pOv->x;
+    osdTexture->y = pOv->y;
+    osdTexture->texture = NULL;
+
+    HRESULT hr = m_pD3DDevice->CreateTexture(osdTexture->width, osdTexture->height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, 
+                                              D3DPOOL_DEFAULT, &osdTexture->texture, NULL);
+
+    if (SUCCEEDED(hr))
     {
-      OSDTexture** plane = NULL;
-
-      if (i == 0)
-        plane = &m_pPlanes[pOv->plane];
-      else
-        plane = &m_pPlanesBackbuffer[pOv->plane];
-
-      OSDTexture* osdTexture = new OSDTexture;
-      osdTexture->height = pOv->h;
-      osdTexture->width = pOv->w;
-      osdTexture->x = pOv->x;
-      osdTexture->y = pOv->y;
-      osdTexture->texture = NULL;
-
-      HRESULT hr = m_pD3DDevice->CreateTexture(osdTexture->width, osdTexture->height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, 
-                                                D3DPOOL_DEFAULT, &osdTexture->texture, NULL);
-
-      if (SUCCEEDED(hr))
-      {
-        if (*plane)
-          delete *plane;
-        (*plane) = osdTexture;
-      }
-      else
-      {
-        delete osdTexture;
-        osdTexture = NULL;
-        LogDebug("ovr: OpenOverlay - CreateTexture 0x%08x", hr);
-      }
+      if (*plane)
+        delete *plane;
+      (*plane) = osdTexture;
+    }
+    else
+    {
+      delete osdTexture;
+      osdTexture = NULL;
+      LogDebug("ovr: OpenOverlay - CreateTexture 0x%08x", hr);
     }
   }
 }
@@ -202,6 +177,50 @@ void COverlayRenderer::CloseOverlay(const int pPlane)
     // TODO: clear specific plane
     ClearOverlay();
     CopyToFrontBuffer();
+	
+    OSDTexture nullTexture = {0};
+    m_pLib->HandleOSDUpdate(nullTexture);
+
+    // C# side will release the front buffer
+    switch (pPlane)
+    {
+      case BD_OVERLAY_IG:
+        if (m_pPlanes[BD_OVERLAY_IG])
+        {
+          delete m_pPlanes[BD_OVERLAY_IG];
+          m_pPlanes[BD_OVERLAY_IG] = NULL;
+        }
+
+        if (m_pPlanesBackbuffer[BD_OVERLAY_IG])
+        {
+		  if (m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture)
+            m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture->Release();
+          delete m_pPlanesBackbuffer[BD_OVERLAY_IG];
+          m_pPlanesBackbuffer[BD_OVERLAY_IG] = NULL;
+        }
+
+        break;
+
+      case BD_OVERLAY_PG:
+        if (m_pPlanes[BD_OVERLAY_PG])
+        {
+          delete m_pPlanes[BD_OVERLAY_PG];
+          m_pPlanes[BD_OVERLAY_PG] = NULL;
+        }
+
+        if (m_pPlanesBackbuffer[BD_OVERLAY_PG])
+        {
+          if (m_pPlanesBackbuffer[BD_OVERLAY_PG]->texture)
+            m_pPlanesBackbuffer[BD_OVERLAY_PG]->texture->Release();
+          delete m_pPlanes[BD_OVERLAY_PG];
+          m_pPlanesBackbuffer[BD_OVERLAY_PG] = NULL;
+        }
+
+        break;
+
+      default:
+        LogDebug("ovr: CloseOverlay - invalid plane: %d", pPlane);
+    }
   }
 }
 
@@ -235,19 +254,22 @@ void COverlayRenderer::ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv)
 
 void COverlayRenderer::ClearOverlay()
 {
-  BD_OVERLAY ov;
-  ov.x = 0;
-  ov.y = 0;
-  ov.w = 1920;
-  ov.h = 1080;
-  ov.plane = BD_OVERLAY_IG;
+  if (m_pPlanes[BD_OVERLAY_IG])
+  {
+    BD_OVERLAY ov;
+    ov.x = 0;
+    ov.y = 0;
+    ov.w = m_pPlanes[BD_OVERLAY_IG]->width;
+    ov.h = m_pPlanes[BD_OVERLAY_IG]->height;
+    ov.plane = BD_OVERLAY_IG;
 
-  ClearArea(m_pPlanesBackbuffer[BD_OVERLAY_IG], &ov);
+    ClearArea(m_pPlanesBackbuffer[BD_OVERLAY_IG], &ov);
   
-  m_dirtyRect.left = 0;
-  m_dirtyRect.top = 0;
-  m_dirtyRect.right = 1920;
-  m_dirtyRect.bottom = 1080;
+    m_dirtyRect.left = 0;
+    m_dirtyRect.top = 0;
+    m_dirtyRect.right = m_pPlanes[BD_OVERLAY_IG]->width;
+    m_dirtyRect.bottom = m_pPlanes[BD_OVERLAY_IG]->height;
+  }
 }
 
 void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
@@ -390,11 +412,31 @@ void COverlayRenderer::CopyToFrontBuffer()
   ResetDirtyRect();
 }
 
+void COverlayRenderer::ResetDirtyRect(const BD_OVERLAY* pOv)
+{
+  if (!pOv)
+  {
+    LogDebug("ovr: ResetDirtyRect - no BD_OVERLAY!");
+    return;
+  }
+
+  m_dirtyRect.bottom = 0;
+  m_dirtyRect.top = pOv->h;
+  m_dirtyRect.left = pOv->w;
+  m_dirtyRect.right = 0;
+}
+
 void COverlayRenderer::ResetDirtyRect()
 {
+  if (!m_pPlanes[BD_OVERLAY_IG])
+  {
+    LogDebug("ovr: ResetDirtyRect - no plane!");
+    return;
+  }
+
   m_dirtyRect.bottom = 0;
-  m_dirtyRect.top = 1080;
-  m_dirtyRect.left = 1920;
+  m_dirtyRect.top = m_pPlanes[BD_OVERLAY_IG]->height;
+  m_dirtyRect.left = m_pPlanes[BD_OVERLAY_IG]->width;
   m_dirtyRect.right = 0;
 }
 
@@ -434,7 +476,7 @@ LPCTSTR COverlayRenderer::CommandAsString(int pCmd)
       return _T("BD_OVERLAY_CLEAR");
     case BD_OVERLAY_FLUSH:
       return _T("BD_OVERLAY_FLUSH");
-  	default:
-	  	return _T("UNKNOWN");
+    default:
+      return _T("UNKNOWN");
 	}
 }

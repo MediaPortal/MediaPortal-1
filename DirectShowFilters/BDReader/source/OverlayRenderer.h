@@ -54,6 +54,7 @@ private:
 
   void CopyToFrontBuffer();
   void ResetDirtyRect();
+  void ResetDirtyRect(const BD_OVERLAY* pOv);
   void AdjustDirtyRect(const BD_OVERLAY* pOv);
 
   void LogCommand(const BD_OVERLAY* ov);
