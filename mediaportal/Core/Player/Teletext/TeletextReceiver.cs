@@ -177,6 +177,7 @@ namespace MediaPortal.Player.Teletext
     {
       lock (this)
       {
+        if (page < 100) page += 800;
         Log.Debug("Page {0} is of type {1} and in lang {2}{3}{4}", page, type, (char)langb1, (char)langb2,
                   (char)langb3);
         StringBuilder sbuf = new StringBuilder();
