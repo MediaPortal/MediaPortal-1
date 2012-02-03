@@ -313,9 +313,9 @@ namespace MediaPortal.Configuration.Sections
             strFilenameAndPath = listViewFiles.Items[0].Text;
           }
           // Delete covers
-          FanArt.DeleteCovers(CurrentMovie.Title, CurrentMovie.ID);
+          //FanArt.DeleteCovers(CurrentMovie.Title, CurrentMovie.ID);
           // Delete fanarts
-          FanArt.DeleteFanarts(CurrentMovie.ID);
+          //FanArt.DeleteFanarts(CurrentMovie.ID);
         }
       }
       _conflictFiles = new ArrayList();
@@ -402,7 +402,7 @@ namespace MediaPortal.Configuration.Sections
           pictureBoxActor.Image = null;
         }
         // Clear Actors listboxes
-        listViewAllActors.Items.Clear();
+        //listViewAllActors.Items.Clear();
         listViewMovieActors.Items.Clear();
         // Clear Genres listboxes
         listViewAllGenres.Items.Clear();
@@ -709,7 +709,7 @@ namespace MediaPortal.Configuration.Sections
       listViewMovieActors.BeginUpdate();
       listViewGenres.BeginUpdate();
       listViewAllGenres.BeginUpdate();
-      listViewAllActors.BeginUpdate();
+      //listViewAllActors.BeginUpdate();
       listViewFiles.BeginUpdate();
 
       tbDiscNr.Text = (movie.DVDLabel.Length > 4
@@ -727,6 +727,8 @@ namespace MediaPortal.Configuration.Sections
       tbSummary.Text = movie.Plot;
       tbReview.Text = movie.UserReview; // New dbcolumn for movie details
       tbIMDBNr.Text = movie.IMDBNumber; // Needed for cover search
+      tbStudio.Text = movie.Studios;
+      tbAdded.Text = "Added: " + movie.DateAdded;
       //
       // Images (cover and fanart)
       //
@@ -771,10 +773,10 @@ namespace MediaPortal.Configuration.Sections
         pictureBoxCover.Image = null;
       }
 
-      foreach (ListViewItem item in listViewMovieActors.Items)
-      {
-        listViewAllActors.Items.Add(item.Text);
-      }
+      //foreach (ListViewItem item in listViewMovieActors.Items)
+      //{
+      //  listViewAllActors.Items.Add(item.Text);
+      //}
 
       foreach (ListViewItem item in listViewGenres.Items)
       {
@@ -812,48 +814,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        char[] splitter = {'\n', ','};
-        string[] actors = movie.Cast.Split(splitter);
-
-        if (actors.Length > 0)
-        {
-          for (int i = 0; i < actors.Length; ++i)
-          {
-            string actor;
-            string role = string.Empty;
-            int posEN = actors[i].IndexOf(" as ");
-            int posFR = actors[i].IndexOf(" est ");
-            
-            if (posEN >= 0)
-            {
-              actor = actors[i].Substring(0, posEN);
-              role = actors[i].Substring(posEN + 4);
-            }
-            else if (posFR >= 0)
-            {
-              actor = actors[i].Substring(0, posFR);
-              role = actors[i].Substring(posFR + 5);
-            }
-            else
-            {
-              actor = actors[i];
-            }
-
-            actor = actor.Trim();
-            ListViewItem item = new ListViewItem(actor);
-            item.SubItems.Add(role);
-            listViewMovieActors.Items.Add(item);
-
-            for (int actorIndex = listViewAllActors.Items.Count - 1; actorIndex >= 0; --actorIndex)
-            {
-              if (listViewAllActors.Items[actorIndex].Text == actor)
-              {
-                listViewAllActors.Items.RemoveAt(actorIndex);
-                break;
-              }
-            }
-          }
-        }
+        UpdateActorsList(movie);
 
         listViewMovieActors.Sort();
 
@@ -926,41 +887,38 @@ namespace MediaPortal.Configuration.Sections
         listViewAllGenres.Sort();
       }
 
-      if (listViewAllActors.Items.Count == 0)
-      {
-        ArrayList listActors = new ArrayList();
-        
-        VideoDatabase.GetActors(listActors);
-        char[] splitter = { '|' };
-        string[] sActor;
-        
-        foreach (string actor in listActors)
-        {
-          bool add = true;
-          sActor = actor.Split(splitter);
-
-          foreach (ListViewItem item in listViewMovieActors.Items)
-          {
-            if (item.Text == sActor[1])
-            {
-              add = false;
-              break;
-            }
-          }
-
-          if (add)
-          {
-            listViewAllActors.Items.Add(sActor[1]);
-          }
-        }
-
-        listViewAllActors.Sort();
-      }
       listViewMovieActors.EndUpdate();
       listViewGenres.EndUpdate();
       listViewAllGenres.EndUpdate();
-      listViewAllActors.EndUpdate();
       listViewFiles.EndUpdate();
+    }
+
+    private void UpdateActorsList(IMDBMovie movie)
+    {
+      // 0->idActor, 1->stringActor, 2->IMDBactorId, 3->Role, separator "|"
+      ArrayList mActors = new ArrayList();
+      VideoDatabase.GetActorsByMovieID(movie.ID, ref mActors);
+
+      listViewMovieActors.Items.Clear();
+
+      if (mActors.Count > 0)
+      {
+        char[] splitter = { '|' };
+          
+        foreach (string mActor in mActors)
+        {
+          string[] actors = mActor.Split(splitter);
+          string id = actors[0];
+          string actor = actors[1];
+          string role = actors[3];
+
+          actor = actor.Trim();
+          ListViewItem item = new ListViewItem(actor);
+          item.SubItems.Add(role);
+          item.Tag = id;
+          listViewMovieActors.Items.Add(item);
+        }
+      }
     }
 
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -1004,41 +962,7 @@ namespace MediaPortal.Configuration.Sections
         listViewGenres.Items.Remove(listItem);
       }
     }
-
-    private void buttonMapActors_Click(object sender, EventArgs e)
-    {
-      for (int i = 0; i < listViewAllActors.SelectedItems.Count; ++i)
-      {
-        ListViewItem listItem = listViewAllActors.SelectedItems[i];
-
-        ListViewItem newItem = new ListViewItem(listItem.Text);
-        newItem.SubItems.Add("");
-        listViewMovieActors.Items.Add(newItem);
-      }
-
-      for (int i = listViewAllActors.SelectedItems.Count - 1; i >= 0; i--)
-      {
-        ListViewItem listItem = listViewAllActors.SelectedItems[i];
-
-        listViewAllActors.Items.Remove(listItem);
-      }
-    }
-
-    private void buttonUnmapActors_Click(object sender, EventArgs e)
-    {
-      for (int i = 0; i < listViewMovieActors.SelectedItems.Count; ++i)
-      {
-        ListViewItem listItem = listViewMovieActors.SelectedItems[i];
-        listViewAllActors.Items.Add(listItem.Text);
-      }
-
-      for (int i = listViewMovieActors.SelectedItems.Count - 1; i >= 0; --i)
-      {
-        ListViewItem listItem = listViewMovieActors.SelectedItems[i];
-        listViewMovieActors.Items.Remove(listItem);
-      }
-    }
-
+    
     // Changed - media types added, tbtitle = file
     private void buttonAddFile_Click(object sender, EventArgs e)
     {
@@ -1114,45 +1038,51 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonDeleteActor_Click(object sender, EventArgs e)
     {
-      //if (
-      //  MessageBox.Show("Are you sure you want to delete the selected actors?", "Are you sure?", MessageBoxButtons.YesNo) ==
-      //  DialogResult.Yes)
-      //{
-      //  for (int i = listViewAllActors.SelectedItems.Count - 1; i >= 0; --i)
-      //  {
-      //    ListViewItem listItem = listViewAllActors.SelectedItems[i];
-      //    VideoDatabase.DeleteActor(listItem.Text);
-      //    listViewAllActors.Items.Remove(listItem);
-      //    string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, listItem.Text);
-      //    if (File.Exists(file))
-      //    {
-      //      File.Delete(file);
-      //    }
-      //    file = Util.Utils.GetCoverArtName(Thumbs.MovieActors, listItem.Text);
-      //    if (File.Exists(file))
-      //    {
-      //      File.Delete(file);
-      //    }
-      //  }
-      //  // Actor details
-      //  ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
-      //  PopulateActorInfo();
-      //}
+      if (
+        MessageBox.Show("Are you sure you want to remove selected actors?", "Are you sure?", MessageBoxButtons.YesNo) ==
+        DialogResult.Yes)
+      {
+        for (int i = listViewMovieActors.SelectedItems.Count - 1; i >= 0; --i)
+        {
+          ListViewItem listItem = listViewMovieActors.SelectedItems[i];
+          
+          try
+          {
+            VideoDatabase.DeleteActorFromMovie(CurrentMovie.ID, Convert.ToInt32(listItem.Tag));
+          }
+          catch (Exception){}
+
+          listViewMovieActors.Items.Remove(listItem);
+        }
+        // Refresh Actor details
+        UpdateActorsList(CurrentMovie);
+        ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
+        PopulateActorInfo();
+      }
     }
 
     private void buttonNewActor_Click(object sender, EventArgs e)
     {
-      //if (textBoxNewActor.Text.Length == 0)
-      //{
-      //  return;
-      //}
-      //VideoDatabase.AddActor(textBoxNewActor.Text);
-      //listViewAllActors.Items.Add(textBoxNewActor.Text);
-      //// Sort listview
-      //listViewAllActors.Sort();
-      //// Actor details
-      //ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
-      //PopulateActorInfo();
+      if (tbNewActor.Text.Length == 0)
+      {
+        return;
+      }
+
+      tbNewActorImdbId.Text = tbNewActorImdbId.Text.Trim();
+
+      string nmId = string.Empty;
+      Match nmNo = Regex.Match(tbNewActorImdbId.Text, @"[\d]{7}?");
+      
+      if (nmNo.Success)
+      {
+        nmId = "nm" + tbNewActorImdbId.Text;
+      }
+
+      int actId = VideoDatabase.AddActor(nmId ,tbNewActor.Text.Trim());
+      VideoDatabase.AddActorToMovie(Int32.Parse(tbMovieID.Text), actId, tbNewActorRole.Text);
+      UpdateActorsList(CurrentMovie);
+      ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
+      PopulateActorInfo();
     }
 
     private void btnDeleteGenre_Click(object sender, EventArgs e)
@@ -1211,9 +1141,9 @@ namespace MediaPortal.Configuration.Sections
       }
       // Cover delete
       string title = cbTitle.Items[cbTitle.SelectedIndex].ToString();
-      FanArt.DeleteCovers(title, CurrentMovie.ID);
+      //FanArt.DeleteCovers(title, CurrentMovie.ID);
       // Fanart delete
-      FanArt.DeleteFanarts(CurrentMovie.ID);
+      //FanArt.DeleteFanarts(CurrentMovie.ID);
 
       buttonLookupMovie.Enabled = false;
       btnSave.Enabled = false;
@@ -1485,8 +1415,12 @@ namespace MediaPortal.Configuration.Sections
       // Local images
       string strFilename = string.Empty;
       string strPath = string.Empty;
-      Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
-
+      try
+      {
+        Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFilename);
+      }
+      catch (Exception){}
+      
       if (Directory.Exists(strPath))
       {
         max++;
@@ -1812,15 +1746,7 @@ namespace MediaPortal.Configuration.Sections
           movie.IMDBNumber = cbMovie.Movie.IMDBNumber;
           movie.DirectorID = cbMovie.Movie.DirectorID;
         }
-        //movie.File=
-        //movie.Path=
-        //movie.Top250=
-        //movie.WritingCredits=
-        //movie.CDLabel=
-        //movie.Database=
-        //movie.DVDLabel=
-        //movie.IMDBNumber=
-        //movie.SearchString=
+        
         unchecked
         {
           if (cbWatched.Checked)
@@ -1833,11 +1759,12 @@ namespace MediaPortal.Configuration.Sections
           }
 
           movie.Title = tbTitle.Text;
-          if (movie.DirectorID <= 0)
-            movie.Director = tbDirector.Text;
+          //if (movie.DirectorID <= 0)
+          movie.Director = tbDirector.Text;
           movie.MPARating = tbMPAARating.Text;
           movie.RunTime = Int32.Parse(tbDuration.Text);
           movie.WritingCredits = tbWritingCredits.Text;
+          movie.Studios = tbStudio.Text;
           movie.Plot = tbSummary.Text;
           movie.UserReview = tbReview.Text; // Added review         
           movie.Rating = (float)Double.Parse(tbRating.Text);
@@ -1890,7 +1817,7 @@ namespace MediaPortal.Configuration.Sections
       SaveSettings();
     }
 
-    #region Persistance
+    #region Serialization
 
     public override void LoadSettings() {}
 
@@ -2922,7 +2849,7 @@ namespace MediaPortal.Configuration.Sections
         Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFile);
         if (strFile != string.Empty & strPath != string.Empty)
         {
-          FanArt.DeleteFanarts(CurrentMovie.ID);
+          //FanArt.DeleteFanarts(CurrentMovie.ID);
           // Download fanarts
           FanArt fanartSearch = new FanArt();
           if (!tbFASearchString.Enabled)
@@ -3116,7 +3043,7 @@ namespace MediaPortal.Configuration.Sections
         DatabaseUtility.Split((string)movieFiles[0], out strPath, out strFile);
 
         // Clean old fanarts
-        FanArt.DeleteFanarts(movie.ID);
+        //FanArt.DeleteFanarts(movie.ID);
 
         if (strFile != string.Empty & strPath != string.Empty)
         {
@@ -3384,7 +3311,7 @@ namespace MediaPortal.Configuration.Sections
           tbMiniBiography.Text = actdetail.MiniBiography;
           tbBiography.Text = actdetail.Biography;
           tbThumbLoc.Text = actdetail.ThumbnailUrl;
-          pictureBoxActor.ImageLocation = Util.Utils.GetCoverArt(Thumbs.MovieActors, actdetail.id.ToString());
+          pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actdetail.id.ToString());
         }
       }
       catch (Exception) {}
@@ -3436,7 +3363,7 @@ namespace MediaPortal.Configuration.Sections
               pictureBoxActor.Image = null;
             }
             // Set new image into pbox
-            pictureBoxActor.ImageLocation = Util.Utils.GetCoverArt(Thumbs.MovieActors, imdbActor.id.ToString());
+            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.id.ToString());
           }
           MessageBox.Show("Actor info saved.");
         }
@@ -3448,7 +3375,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     // Refresh Movie actors
-    private void btnRefreshActors_Click(object sender, EventArgs e)
+    private void btnRefreshActors_Click(object sender, EventArgs e) 
     {
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
@@ -3457,6 +3384,7 @@ namespace MediaPortal.Configuration.Sections
       {
         ActorsTableRefresh(CurrentMovie.ID);
         cbActor.SelectedIndex = 0;
+        UpdateActorsList(CurrentMovie);
       }
       else
       {
@@ -3529,7 +3457,7 @@ namespace MediaPortal.Configuration.Sections
             tbMiniBiography.Text = actdetail.MiniBiography;
             tbBiography.Text = actdetail.Biography;
             tbThumbLoc.Text = actdetail.ThumbnailUrl;
-            pictureBoxActor.ImageLocation = Util.Utils.GetCoverArt(Thumbs.MovieActors, actdetail.id.ToString());
+            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actdetail.id.ToString());
           }
         }
         else
@@ -3766,8 +3694,8 @@ namespace MediaPortal.Configuration.Sections
       }
       pbTools.Value = 0;
       // Refresh actors list view
-      listViewAllActors.Items.Clear();
-      listViewAllActors.BeginUpdate();
+      //listViewAllActors.Items.Clear();
+      //listViewAllActors.BeginUpdate();
       listActors = new ArrayList();
       VideoDatabase.GetActors(listActors);
 
@@ -3787,10 +3715,10 @@ namespace MediaPortal.Configuration.Sections
 
         if (add)
         {
-          listViewAllActors.Items.Add(sActor[1]);
+          //listViewAllActors.Items.Add(sActor[1]);
         }
       }
-      listViewAllActors.EndUpdate();
+      //listViewAllActors.EndUpdate();
       // Actor details
       ActorsTableRefresh(Int32.Parse(tbMovieID.Text));
       PopulateActorInfo();

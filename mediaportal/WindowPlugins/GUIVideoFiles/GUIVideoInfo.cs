@@ -315,9 +315,9 @@ namespace MediaPortal.GUI.Video
         string title = currentMovie.Title;
         int id = currentMovie.ID;
         // Delete covers
-        FanArt.DeleteCovers(title, id);
+        //FanArt.DeleteCovers(title, id);
         //Delete fanarts
-        FanArt.DeleteFanarts(id);
+        //FanArt.DeleteFanarts(id);
 
         if (IMDBFetcher.RefreshIMDB(this, ref currentMovie, false, false, true))
         {

@@ -158,6 +158,11 @@ namespace MediaPortal.Video.Database
       _database.AddActorToMovie(lMovieId, lActorId, role);
     }
 
+    public static void DeleteActorFromMovie(int movieId, int actorId)
+    {
+      _database.DeleteActorFromMovie(movieId, actorId);
+    }
+
     public static string GetRoleByMovieAndActorId (int lMovieId, int lActorId)
     {
       return _database.GetRoleByMovieAndActorId(lMovieId, lActorId);

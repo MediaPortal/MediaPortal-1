@@ -281,9 +281,12 @@ namespace MediaPortal.Video.Database
 
           if (_movieDetails.ID >= 0)
           {
-            Util.Utils.FileDelete(largeCoverArt);
-            Util.Utils.FileDelete(coverArt);
-            line1 = GUILocalizeStrings.Get(1009);
+            if (!string.IsNullOrEmpty(_movieDetails.ThumbURL))
+            {
+              Util.Utils.FileDelete(largeCoverArt);
+              Util.Utils.FileDelete(coverArt);
+              line1 = GUILocalizeStrings.Get(1009);
+            }
             OnProgress(line1, _url.Title, string.Empty, percent); // **Too fast so leave percent
           }
           //
@@ -342,7 +345,10 @@ namespace MediaPortal.Video.Database
             //
             // Save cover thumbs
             //
-            DownloadCoverArt(Thumbs.MovieTitle, _movieDetails.ThumbURL, titleExt);
+            if (!string.IsNullOrEmpty(_movieDetails.ThumbURL))
+            {
+              DownloadCoverArt(Thumbs.MovieTitle, _movieDetails.ThumbURL, titleExt);
+            }
             //
             // Set folder.jpg for ripped DVDs
             //

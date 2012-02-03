@@ -798,12 +798,7 @@ namespace MediaPortal.Video.Database
             (parser.skipToEndOf("death_date=")) &&
             (parser.extractTo("\"", ref value2)))
         {
-          //if (actor.DateOfBirth == string.Empty)
-          //{
-          //  actor.DateOfBirth = "?";
-          //}
           actor.DateOfDeath = value + " " + value2;
-          //actor.DateOfBirth += " ~ " + value + " " + value2;
         }
 
         parser.resetPosition();
@@ -849,11 +844,27 @@ namespace MediaPortal.Video.Database
             {
               HTMLParser parser1 = new HTMLParser(strBioBody);
               if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
-                  parser1.extractTo("</p>", ref value))
+                  parser1.skipToEndOf("<div class=\"wikipedia_bio\">") &&
+                  parser1.extractTo("</div>", ref value))
+              
               {
                 value = new HTMLUtil().ConvertHTMLToAnsi(value);
+                value = Regex.Replace(value, @"</h5>\s<h5>", "\n\r");
+                value = Regex.Replace(value, @"<h5>", "\n\r\n\r");
+                value = Regex.Replace(value, @"</h5>", ":\n\r");
                 actor.Biography = Util.Utils.stripHTMLtags(value).Trim();
                 actor.Biography = HttpUtility.HtmlDecode(actor.Biography); // Remove HTML entities like &#189;
+              }
+              else
+              {
+                parser1.resetPosition();
+                if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
+                  parser1.extractTo("</p>", ref value))
+                {
+                  value = new HTMLUtil().ConvertHTMLToAnsi(value);
+                  actor.Biography = Util.Utils.stripHTMLtags(value).Trim();
+                  actor.Biography = HttpUtility.HtmlDecode(actor.Biography); // Remove HTML entities like &#189;
+                }
               }
             }
           }

@@ -49,6 +49,7 @@ namespace MediaPortal.Video.Database
     void GetActorsByMovieID(int idMovie, ref ArrayList actors);
     string GetRoleByMovieAndActorId(int lMovieId, int lActorId);
     void AddActorToMovie(int lMovieId, int lActorId, string role);
+    void DeleteActorFromMovie(int movieId, int actorId);
     void DeleteActor(string actorImdbId);
     void RemoveActorsForMovie(int lMovieId);
     void ClearBookMarksOfMovie(string strFilenameAndPath);

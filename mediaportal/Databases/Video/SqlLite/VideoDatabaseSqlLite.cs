@@ -1105,7 +1105,7 @@ namespace MediaPortal.Video.Database
         DatabaseUtility.RemoveInvalidChars(ref strActorImdbId);
         DatabaseUtility.RemoveInvalidChars(ref strActorName);
         
-        if (null == m_db || strActorImdbId == string.Empty)
+        if (null == m_db)
         {
           return -1;
         }
@@ -1299,6 +1299,19 @@ namespace MediaPortal.Video.Database
           strSQL = String.Format("update actorlinkmovie set strRole = '{0}' where idActor={1} and idMovie={2}", role,lActorId, lMovieId);
           m_db.Execute(strSQL);
         }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void DeleteActorFromMovie(int movieId, int actorId)
+    {
+      try
+      {
+        m_db.Execute(String.Format("delete from actorlinkmovie where idMovie={0} and idActor={1}", movieId, actorId));
       }
       catch (Exception ex)
       {

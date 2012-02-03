@@ -109,7 +109,10 @@ namespace MediaPortal.Util
           try
           {
             if (!localFile.Equals(dbFile, StringComparison.OrdinalIgnoreCase) && File.Exists(localFile))
+            {
+              DeleteFanarts(movieId);
               File.Copy(localFile, dbFile, true);
+            }
           }
           catch (Exception ex)
           {
@@ -121,6 +124,7 @@ namespace MediaPortal.Util
         {
           try
           {
+            DeleteFanarts(movieId);
             var webClient = new WebClient();
             webClient.DownloadFile(localFile, dbFile);
             webClient.Dispose();
@@ -232,6 +236,9 @@ namespace MediaPortal.Util
 
           if (_fanartList.Count > 0)
           {
+            // Delete old FA
+            DeleteFanarts(movieId);
+
             if (countFA == 1) //Only one fanart found
             {
               DownloadFanart(movieId, 0);
@@ -278,6 +285,8 @@ namespace MediaPortal.Util
         if (Directory.Exists(configDir))
         {
           _fileFanArt = SetFanArtFileName(movieId, index);
+
+          DeleteFanarts(movieId);
 
           WebClient webClient = new WebClient();
           webClient.DownloadFile(url, _fileFanArt);
