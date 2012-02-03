@@ -158,6 +158,9 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
 
   HRESULT hr = VFW_E_CANNOT_CONNECT;
 
+//  if (pwfx->wBitsPerSample != 16)
+//    return VFW_E_CANNOT_CONNECT;
+
   if (!m_pAudioClient) 
   {
     if (!m_pMMDevice) 
@@ -321,13 +324,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   AudioSinkCommand command;
 
-  IMediaSample* sample = NULL;
+  CComPtr<IMediaSample> sample;
   UINT32 sampleOffset = 0;
   UINT32 writeSilence = 0;
 
   EnableMMCSS();
 
-  HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+  HRESULT hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
 
   StartAudioClient(&m_pAudioClient);
   m_state = StateRunning;
@@ -340,10 +343,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     {
       Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
       StopAudioClient(&m_pAudioClient);
-
-      if (sample)
-        sample->Release();
-
       RevertMMCSS();
       return 0;
     }
@@ -354,18 +353,14 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       DWORD bufferFlags = 0;
 
       if (!sample && writeSilence == 0 && m_state == StateRunning)
-        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+        hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
       else if (m_state == StatePaused && writeSilence == 0)
-        hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hOOBCommandEvents, &m_dwOOBCommandWaitObjects);
+        hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hOOBCommandEvents, &m_dwOOBCommandWaitObjects);
 
       if (hr == MPAR_S_THREAD_STOPPING)
       {
         Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
         StopAudioClient(&m_pAudioClient);
-
-        if (sample)
-          sample->Release();
-
         RevertMMCSS();
         return 0;
       }
@@ -417,15 +412,11 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             // no data in current sample anymore
             if (dataLeftInSample == 0)
             {
-              HRESULT result = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+              HRESULT result = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
               if (hr == MPAR_S_THREAD_STOPPING) // exit event
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
                 StopAudioClient(&m_pAudioClient);
-
-                if (sample)
-                  sample->Release();
-
                 RevertMMCSS();
                 return 0;
               }
@@ -441,7 +432,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                 m_state = StatePaused; 
                 writeSilence = 2;
-                sample->Release();
+                sample.Release();
                 sample = NULL;
                 break;
               }

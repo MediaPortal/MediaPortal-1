@@ -319,26 +319,22 @@ DWORD CTimeStretchFilter::ThreadProc()
   SetThreadName(-1, "TimeStretchFilter");
 
   AudioSinkCommand command;
-  IMediaSample* sample = NULL;
+  CComPtr<IMediaSample> sample;
 
   while (true)
   {
-    HRESULT hr = GetNextSampleOrCommand(&command, &sample, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+    HRESULT hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
 
     if (hr == MPAR_S_THREAD_STOPPING)
     {
       Log("CTimeStretchFilter::timestretch threa - closing down - thread ID: %d", m_ThreadId);
-      
-      if (sample)
-        sample->Release();
-
       return 0;
     }
     else
     {
       if (command == ASC_Pause && sample)
       {
-        sample->Release();
+        sample.Release();
         sample = NULL;
       }
       else if (sample)
