@@ -1033,13 +1033,13 @@ namespace MediaPortal.Player
         return;
       }
       Log.Info("TSReaderPlayer:Continue graph");
-      _mediaCtrl.Run();
-      _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
-
       if (VMR9Util.g_vmr9 != null)
       {
         VMR9Util.g_vmr9.Enable(true);
       }
+
+      _mediaCtrl.Run();
+      _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
     }
 
     public override void PauseGraph()
@@ -1049,12 +1049,13 @@ namespace MediaPortal.Player
         return;
       }
       Log.Info("TSReaderPlayer:Pause graph");
-      _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-      _mediaCtrl.Pause();
       if (VMR9Util.g_vmr9 != null)
       {
         VMR9Util.g_vmr9.Enable(false);
       }
+
+      _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+      _mediaCtrl.Pause();
     }
 
     public override void WndProc(ref Message m)
@@ -1650,7 +1651,7 @@ namespace MediaPortal.Player
 
             if (iChangedMediaTypes != 1 && VideoChange)
             {
-              if (filterConfig.enableCCSubtitles)
+              if (filterConfig != null && filterConfig.enableCCSubtitles)
               {
                 CleanupCC();
                 DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
@@ -1890,7 +1891,7 @@ namespace MediaPortal.Player
           PostProcessFilterVideo.Clear();
           Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessVideo");
         }
-        if (filterConfig.enableCCSubtitles)
+        if (filterConfig != null && filterConfig.enableCCSubtitles)
         {
           ReleaseCC();
           ReleaseCC2();
@@ -1912,7 +1913,7 @@ namespace MediaPortal.Player
           Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessAudio");
         }
 
-        if (filterConfig.enableMPAudioSwitcher)
+        if (filterConfig != null && filterConfig.enableMPAudioSwitcher)
         {
           IBaseFilter switcher = DirectShowUtil.GetFilterByName(_graphBuilder, "MediaPortal AudioSwitcher");
           if (switcher != null)
@@ -1983,7 +1984,7 @@ namespace MediaPortal.Player
         }
         filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
 
-        if (selection == "Video" && filterConfig.enableCCSubtitles)
+        if (filterConfig != null && selection == "Video" && filterConfig.enableCCSubtitles)
         {
           CoreCCPresent = false;
           CoreCCParserCheck();
@@ -1992,7 +1993,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        if (filterConfig.enableMPAudioSwitcher)
+        if (filterConfig != null && filterConfig.enableMPAudioSwitcher)
         {
           MPAudioSwitcherAdd();
         }

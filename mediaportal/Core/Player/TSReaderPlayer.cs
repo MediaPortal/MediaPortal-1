@@ -169,7 +169,7 @@ namespace MediaPortal.Player
 
     protected override string MatchFilters(string format)
     {
-      if (format == "Video")
+      if (filterConfig != null && format == "Video")
       {
         if (_videoFormat.streamType == VideoStreamType.MPEG2)
         {
@@ -182,13 +182,13 @@ namespace MediaPortal.Player
       }
       else
       {
-        if (AudioType(CurrentAudioStream).Contains("AAC"))
+        if (filterConfig != null && AudioType(CurrentAudioStream).Contains("AAC"))
         {
           return this.filterConfig.AudioAAC;
         }
         else
         {
-          if (AudioType(CurrentAudioStream).Equals("AC3plus"))
+          if (filterConfig != null && AudioType(CurrentAudioStream).Equals("AC3plus"))
           {
             return this.filterConfig.AudioDDPlus;
           }
@@ -202,14 +202,17 @@ namespace MediaPortal.Player
 
     protected override void PostProcessAddVideo()
     {
-      foreach (string filter in this.filterConfig.OtherFilters)
+      if (filterConfig != null)
       {
-        if (FilterHelper.GetVideoCodec().Contains(filter.ToString()) && filter.ToString() != "Core CC Parser")
+        foreach (string filter in this.filterConfig.OtherFilters)
         {
-          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
-          if (comObject != null)
+          if (FilterHelper.GetVideoCodec().Contains(filter.ToString()) && filter.ToString() != "Core CC Parser")
           {
-            PostProcessFilterVideo.Add(filter, comObject);
+            var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+            if (comObject != null)
+            {
+              PostProcessFilterVideo.Add(filter, comObject);
+            }
           }
         }
       }
@@ -217,14 +220,17 @@ namespace MediaPortal.Player
 
     protected override void PostProcessAddAudio()
     {
-      foreach (string filter in this.filterConfig.OtherFilters)
+      if (filterConfig != null)
       {
-        if (FilterHelper.GetAudioCodec().Contains(filter.ToString()))
+        foreach (string filter in this.filterConfig.OtherFilters)
         {
-          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
-          if (comObject != null)
+          if (FilterHelper.GetAudioCodec().Contains(filter.ToString()))
           {
-            PostProcessFilterAudio.Add(filter, comObject);
+            var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+            if (comObject != null)
+            {
+              PostProcessFilterAudio.Add(filter, comObject);
+            }
           }
         }
       }
@@ -232,7 +238,7 @@ namespace MediaPortal.Player
 
     protected override void AudioRendererAdd()
     {
-      if (this.filterConfig.AudioRenderer.Length > 0) //audio renderer must be in graph before audio switcher
+      if (filterConfig != null && this.filterConfig.AudioRenderer.Length > 0) //audio renderer must be in graph before audio switcher
       {
         filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, filterConfig.AudioRenderer, true);
       }
@@ -240,7 +246,7 @@ namespace MediaPortal.Player
 
     protected override void MPAudioSwitcherAdd()
     {
-      if (filterConfig.enableMPAudioSwitcher) //audio switcher must be in graph before tsreader audiochangecallback
+      if (filterConfig != null && filterConfig.enableMPAudioSwitcher) //audio switcher must be in graph before tsreader audiochangecallback
       {
         if (filterCodec._audioSwitcherFilter != null)
         {
@@ -301,6 +307,7 @@ namespace MediaPortal.Player
         _fileSource = (IBaseFilter)reader;
         _ireader = (ITSReader)reader;
         _interfaceTSReader = _fileSource;
+        if (filterConfig != null)
         _ireader.SetRelaxedMode(filterConfig.relaxTsReader); // enable/disable continousity filtering
         _ireader.SetTsReaderCallback(this);
         _ireader.SetRequestAudioChangeCallback(this);
@@ -352,7 +359,7 @@ namespace MediaPortal.Player
           UpdateFilters("Video");
           Log.Debug("TSReaderPlayer: UpdateFilters Video done");
 
-          if (filterConfig.enableDVBBitmapSubtitles)
+          if (filterConfig != null && filterConfig.enableDVBBitmapSubtitles)
           {
             try
             {
@@ -425,7 +432,7 @@ namespace MediaPortal.Player
         else
         {
           DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
-          if (!filterConfig.enableCCSubtitles)
+          if (filterConfig != null && !filterConfig.enableCCSubtitles)
           {
             CleanupCC();
             Log.Debug("TSReaderPlayer: CleanupCC filter (Tv/Recorded Stream Detected)");
@@ -451,7 +458,7 @@ namespace MediaPortal.Player
 
         if (!_isRadio)
         {
-          if (filterConfig.enableDVBTtxtSubtitles || filterConfig.enableDVBBitmapSubtitles)
+          if (filterConfig != null && filterConfig.enableDVBTtxtSubtitles || filterConfig.enableDVBBitmapSubtitles)
           {
             try
             {
@@ -463,7 +470,7 @@ namespace MediaPortal.Player
               Log.Error(e);
             }
           }
-          if (filterConfig.enableDVBBitmapSubtitles)
+          if (filterConfig != null && filterConfig.enableDVBBitmapSubtitles)
           {
             _subtitleStream = (ISubtitleStream)_fileSource;
             if (_subtitleStream == null)
@@ -471,7 +478,7 @@ namespace MediaPortal.Player
               Log.Error("TSReaderPlayer: Unable to get ISubtitleStream interface");
             }
           }
-          if (filterConfig.enableDVBTtxtSubtitles)
+          if (filterConfig != null && filterConfig.enableDVBTtxtSubtitles)
           {
             //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
             _teletextSource = (ITeletextSource)_fileSource;
@@ -486,7 +493,7 @@ namespace MediaPortal.Player
             // if _subtitleStream is null the subtitle will just not setup for bitmap subs 
             _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, ttxtDecoder);
           }
-          else if (filterConfig.enableDVBBitmapSubtitles)
+          else if (filterConfig != null && filterConfig.enableDVBBitmapSubtitles)
           {
             // if only dvb subs are enabled, pass null for ttxtDecoder
             _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
@@ -505,7 +512,7 @@ namespace MediaPortal.Player
         }
         if (!_isRadio)
         {
-          if (filterConfig.enableCCSubtitles)
+          if (filterConfig != null && filterConfig.enableCCSubtitles)
           {
             CleanupCC();
             ReleaseCC();
@@ -540,7 +547,7 @@ namespace MediaPortal.Player
           CurrentSubtitleStream = lastSubIndex;
         }
 
-        if (!filterConfig.autoShowSubWhenTvStarts)
+        if (filterConfig != null && !filterConfig.autoShowSubWhenTvStarts)
         {
           Log.Debug("TSReaderPlayer: Automatically show subtitles when TV starts is set to {0}", filterConfig.autoShowSubWhenTvStarts);
           EnableSubtitle = filterConfig.autoShowSubWhenTvStarts;
@@ -567,7 +574,7 @@ namespace MediaPortal.Player
       filterCodec.CoreCCParser = DirectShowUtil.GetFilterByName(_graphBuilder, "Core CC Parser");
       if (filterCodec.CoreCCParser == null && _videoFormat.streamType == VideoStreamType.MPEG2)
       {
-        if (filterConfig.OtherFilters.Contains("Core CC Parser") && filterConfig.enableCCSubtitles)
+        if (filterConfig != null && filterConfig.OtherFilters.Contains("Core CC Parser") && filterConfig.enableCCSubtitles)
         {
           filterCodec.CoreCCParser = DirectShowUtil.AddFilterToGraph(_graphBuilder, "Core CC Parser");
           CoreCCPresent = true;
@@ -1234,7 +1241,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (filterConfig.enableCCSubtitles)
+        if (filterConfig != null && filterConfig.enableCCSubtitles)
         {
           return (_line21DecoderDigital != null || _line21DecoderAnalog != null);
         }
