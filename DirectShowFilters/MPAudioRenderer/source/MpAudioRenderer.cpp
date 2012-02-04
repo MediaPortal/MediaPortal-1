@@ -64,6 +64,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pWASAPIRenderer(NULL),
   m_pAC3Encoder(NULL),
   m_pBitDepthAdapter(NULL),
+  m_pSampleRateConverter(NULL),
   m_pRenderer(NULL),
   m_pTimeStretch(NULL)
 {
@@ -102,7 +103,13 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
     return;
   }
   
-  SetupFilterPipeline();
+  hr = SetupFilterPipeline();
+  if (FAILED(hr))
+  {
+    if (phr)
+      *phr = hr;
+    return;
+  }  
 
   hr = m_pPipeline->Init();
   if (FAILED(hr))
@@ -144,6 +151,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pAC3Encoder;
   delete m_pBitDepthAdapter;
   delete m_pTimestretchFilter;
+  delete m_pSampleRateConverter;
 
   SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
 
@@ -172,6 +180,10 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   m_pTimeStretch = static_cast<ITimeStretch*>(m_pTimestretchFilter);
 
+  m_pSampleRateConverter = new CSampleRateConverter(&m_Settings);
+  if (!m_pSampleRateConverter)
+    return E_OUTOFMEMORY;
+
   // Just for testing the sample duplication issue on pause
   /*
   
@@ -188,15 +200,17 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   pTimestretchFilter4->ConnectTo(m_pTimestretchFilter);
   */
 
-  m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
-
-  //m_pBitDepthAdapter->ConnectTo(m_pTimestretchFilter);
+  //m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
+  //m_pBitDepthAdapter->ConnectTo(m_pWASAPIRenderer);
+  //m_pSampleRateConverter->ConnectTo(m_pWASAPIRenderer);
   //m_pTimestretchFilter->ConnectTo(m_pAC3Encoder);
   //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
   //m_pPipeline = m_pBitDepthAdapter;
-  m_pPipeline = m_pTimestretchFilter;
+  //m_pPipeline = m_pTimestretchFilter;
+  m_pPipeline = m_pWASAPIRenderer;
+  //m_pPipeline = m_pSampleRateConverter;
 
   return S_OK;
 }

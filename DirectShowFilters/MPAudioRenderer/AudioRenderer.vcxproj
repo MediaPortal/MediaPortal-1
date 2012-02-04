@@ -564,6 +564,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="source\QueuedAudioSink.cpp" />
+    <ClCompile Include="source\SampleRateConverterFilter.cpp" />
     <ClCompile Include="source\Settings.cpp" />
     <ClCompile Include="source\SoundTouchEx.cpp" />
     <ClCompile Include="source\SyncClock.cpp" />
@@ -636,6 +637,7 @@
     </ClInclude>
     <ClInclude Include="source\QueuedAudioSink.h" />
     <ClInclude Include="source\resource.h" />
+    <ClInclude Include="source\SampleRateConverterFilter.h" />
     <ClInclude Include="source\Settings.h" />
     <ClInclude Include="source\SharedInclude.h" />
     <ClInclude Include="source\SoundTouchEx.h" />

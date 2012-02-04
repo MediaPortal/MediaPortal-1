@@ -36,6 +36,7 @@
 #include "BitDepthAdapter.h"
 #include "AC3EncoderFilter.h"
 #include "TimeStretchFilter.h"
+#include "SampleRateConverterFilter.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SyncClock.h"
@@ -129,10 +130,11 @@ private:
   AudioRendererSettings m_Settings;
 
   IAudioSink* m_pPipeline; // entry point for the audio filter pipeline
-  CWASAPIRenderFilter* m_pWASAPIRenderer;
-  CAC3EncoderFilter*   m_pAC3Encoder;
-  CBitDepthAdapter*    m_pBitDepthAdapter;
-  CTimeStretchFilter*  m_pTimestretchFilter;
+  CWASAPIRenderFilter*  m_pWASAPIRenderer;
+  CAC3EncoderFilter*    m_pAC3Encoder;
+  CBitDepthAdapter*     m_pBitDepthAdapter;
+  CTimeStretchFilter*   m_pTimestretchFilter;
+  CSampleRateConverter* m_pSampleRateConverter;
 
   IRenderFilter* m_pRenderer;
   ITimeStretch* m_pTimeStretch;
