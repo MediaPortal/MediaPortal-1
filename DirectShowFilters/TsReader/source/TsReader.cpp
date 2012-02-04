@@ -170,7 +170,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("--------------- v0.4.16a XXX -------------------");
+  LogDebug("--------------- v0.4.16b XXX -------------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;

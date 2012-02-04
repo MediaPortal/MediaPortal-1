@@ -249,6 +249,11 @@ private:
   float m_MinVideoDelta;
 
   bool m_bShuttingDown;
+  
+  int m_lastVidResX;
+  int m_lastVidResY;
+  
+  bool m_mpegParserReset;
   bool m_bFirstGopParsed;
 
 };

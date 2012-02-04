@@ -89,6 +89,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_lastVideoPTS.IsValid = false;
   m_lastAudioPTS.IsValid = false;
   m_mpegParserTriggerFormatChange = false;
+  m_mpegParserReset = true;
   m_videoChanged=false;
   m_audioChanged=false;
   SetMediaChanging(false);
@@ -104,6 +105,8 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bFirstGopFound = false;
   m_bFrame0Found = false;
   m_bFirstGopParsed = false;
+  m_lastVidResX = -1;
+  m_lastVidResY = -1;
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
   m_LastVideoSample = 0;
   m_LastDataFromRtsp = GetTickCount();
@@ -366,6 +369,7 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
 {
   if( m_pids.videoPids.size() != 0 && m_mpegPesParser != NULL)
   {
+    CAutoLock lock (&m_mpegPesParser->m_sectionVideoPmt);
     pmt = m_mpegPesParser->pmt;
   }
 }
@@ -401,6 +405,7 @@ void CDeMultiplexer::FlushVideo()
   m_VideoPrevCC = -1;
   m_bFirstGopFound = false;
   m_bFrame0Found = false;
+  m_mpegParserReset = true;
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
   m_LastVideoSample = 0;
   m_lastVideoPTS.IsValid = false;
@@ -627,6 +632,7 @@ void CDeMultiplexer::Start()
   m_bStarting=true ;
   m_receivedPackets=0;
   m_mpegParserTriggerFormatChange=false;
+  m_mpegParserReset = true;
   m_mpegPesParser->basicVideoInfo.isValid = false;
   m_bFirstGopParsed = false; 
   m_videoChanged=false;
@@ -1268,17 +1274,19 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           }
 //          LogDebug("frame len %d decoded PTS %f p timestamp %f", p->GetCount(), pts.ToClock(), timestamp.ToClock());
 
-          int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
-          int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
-
-          bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), false);
+          bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), false, m_mpegParserReset);
           if (Gop)
           {
+            m_mpegParserReset = true; //Reset next time around (so that it always searches for a full 'Gop' header)
             if (!m_bFirstGopParsed)
             {
               m_bFirstGopParsed = true;
               LogDebug("DeMultiplexer: First Gop parsed after new PAT: res=%dx%d AR=%d:%d fps=%d isInterlaced=%d",m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
             }
+          }
+          else
+          {
+            m_mpegParserReset = false;
           }
 
           if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
@@ -1341,47 +1349,52 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             m_vecVideoBuffers.push_back(pCurrentVideoBuffer);
           }
 
-          if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
+          if (Gop)
           {
-            LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
-            if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
+            if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
             {
-              LogDebug("DeMultiplexer: OnMediaFormatChange triggered by H264Parser, aud %d, vid 1", m_audioChanged);
-              SetMediaChanging(true);
-              if (m_audioChanged)
-                m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE); //Video and audio
-              else
-                m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
-              m_mpegParserTriggerFormatChange=false;
-            }
-            else if (m_mpegParserTriggerFormatChange)
-            {
-              m_videoChanged = true;
-            }
-            LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
-            m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
-          }
-          else //video resolution is the unchanged, but there may be other format changes
-          {
-            if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
-            {
-              if (m_audioChanged || m_videoChanged)
+              LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
+              if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
               {
+                LogDebug("DeMultiplexer: OnMediaFormatChange triggered by H264Parser, aud %d, vid 1", m_audioChanged);
                 SetMediaChanging(true);
-                LogDebug("DeMultiplexer: Got GOP after channel change detected, trigger format change, aud %d, vid %d", m_audioChanged, m_videoChanged);
-                if (m_audioChanged && m_videoChanged)
-                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE);
-                else if (m_audioChanged)
-                  m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
+                if (m_audioChanged)
+                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE); //Video and audio
                 else
-                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE);
+                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
+                m_mpegParserTriggerFormatChange=false;
               }
-              else
+              else if (m_mpegParserTriggerFormatChange)
               {
-                SetMediaChanging(false);
+                m_videoChanged = true;
               }
-              m_mpegParserTriggerFormatChange=false;
+              LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
+              m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
             }
+            else //video resolution is the unchanged, but there may be other format changes
+            {
+              if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
+              {
+                if (m_audioChanged || m_videoChanged)
+                {
+                  SetMediaChanging(true);
+                  LogDebug("DeMultiplexer: Got GOP after channel change detected, trigger format change, aud %d, vid %d", m_audioChanged, m_videoChanged);
+                  if (m_audioChanged && m_videoChanged)
+                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE);
+                  else if (m_audioChanged)
+                    m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
+                  else
+                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE);
+                }
+                else
+                {
+                  SetMediaChanging(false);
+                }
+                m_mpegParserTriggerFormatChange=false;
+              }
+            }
+            m_lastVidResX=m_mpegPesParser->basicVideoInfo.width;
+            m_lastVidResY=m_mpegPesParser->basicVideoInfo.height;
           }
         }
         else
@@ -1597,18 +1610,21 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
 //            LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFrameRate,frame_type,frame_count);
 
-            int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
-            int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
-
-            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), true);
+            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), true, m_mpegParserReset);
             if (Gop)
             {
+              m_mpegParserReset = true; //Reset next time around (so that it always searches for a full 'Gop' header)
               if (!m_bFirstGopParsed)
               {
                 m_bFirstGopParsed = true;
                 LogDebug("DeMultiplexer: First Gop parsed after new PAT: res=%dx%d AR=%d:%d fps=%d isInterlaced=%d",m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
               }
             }
+            else
+            {
+              m_mpegParserReset = false;
+            }
+            
             if (Gop) m_LastValidFrameCount=-1;
 
             if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
@@ -1684,47 +1700,52 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             }
             m_CurrentVideoPts.IsValid=false ;   
             
-            if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
+            if (Gop)
             {
-              LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
-              if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
+              if (m_lastVidResX!=m_mpegPesParser->basicVideoInfo.width || m_lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
               {
-                LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser, aud %d, vid 1", m_audioChanged);
-                SetMediaChanging(true);
-                if (m_audioChanged)
-                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE); //Video and audio
-                else
-                  m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
-                m_mpegParserTriggerFormatChange=false;
-              }
-              else if (m_mpegParserTriggerFormatChange)
-              {
-                m_videoChanged = true;
-              }
-              LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
-              m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
-            }
-            else //video resolution is the unchanged, but there may be other format changes
-            {
-              if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
-              {
-                if (m_audioChanged || m_videoChanged)
+                LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
+                if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
                 {
+                  LogDebug("DeMultiplexer: OnMediaFormatChange triggered by mpeg2Parser, aud %d, vid 1", m_audioChanged);
                   SetMediaChanging(true);
-                  LogDebug("DeMultiplexer: Got GOP after channel change detected, trigger format change, aud %d, vid %d", m_audioChanged, m_videoChanged);
-                  if (m_audioChanged && m_videoChanged)
-                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE);
-                  else if (m_audioChanged)
-                    m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
+                  if (m_audioChanged)
+                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE); //Video and audio
                   else
-                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE);
+                    m_filter.OnMediaTypeChanged(VIDEO_CHANGE); //Video only
+                  m_mpegParserTriggerFormatChange=false;
                 }
-                else
+                else if (m_mpegParserTriggerFormatChange)
                 {
-                  SetMediaChanging(false);
+                  m_videoChanged = true;
                 }
-                m_mpegParserTriggerFormatChange=false;
+                LogDebug("DeMultiplexer: triggering OnVideoFormatChanged");
+                m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,15000000,m_mpegPesParser->basicVideoInfo.isInterlaced);
               }
+              else //video resolution is the unchanged, but there may be other format changes
+              {
+                if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
+                {
+                  if (m_audioChanged || m_videoChanged)
+                  {
+                    SetMediaChanging(true);
+                    LogDebug("DeMultiplexer: Got GOP after channel change detected, trigger format change, aud %d, vid %d", m_audioChanged, m_videoChanged);
+                    if (m_audioChanged && m_videoChanged)
+                      m_filter.OnMediaTypeChanged(VIDEO_CHANGE | AUDIO_CHANGE);
+                    else if (m_audioChanged)
+                      m_filter.OnMediaTypeChanged(AUDIO_CHANGE);
+                    else
+                      m_filter.OnMediaTypeChanged(VIDEO_CHANGE);
+                  }
+                  else
+                  {
+                    SetMediaChanging(false);
+                  }
+                  m_mpegParserTriggerFormatChange=false;
+                }
+              }
+              m_lastVidResX=m_mpegPesParser->basicVideoInfo.width;
+              m_lastVidResY=m_mpegPesParser->basicVideoInfo.height;
             }
           }
           else
@@ -1994,6 +2015,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       m_mpegParserTriggerFormatChange=true;
       SetMediaChanging(true);
       m_bFirstGopParsed = false;
+      m_mpegParserReset = true;
       m_mpegPesParser->basicVideoInfo.isValid = false; 
       if (m_audioStreams.size() == 1)
       {

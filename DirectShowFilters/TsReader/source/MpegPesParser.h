@@ -40,12 +40,14 @@ class CMpegPesParser
 {
 private:
 	CFrameHeaderParser hdrParser;
-	bool ParseVideo(byte* tsPacket,bool isMpeg2);
+	avchdr avc;
+	bool ParseVideo(byte* tsPacket,bool isMpeg2,bool reset);
 
 public:
 	CMpegPesParser();
-	bool OnTsPacket(byte* Frame,int Length,bool isMpeg2);
+	bool OnTsPacket(byte* Frame,int Length,bool isMpeg2,bool reset);
 	CMediaType pmt;
 	BasicVideoInfo basicVideoInfo;
+  CCritSec m_sectionVideoPmt;
 };
 
