@@ -430,7 +430,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               else if (command == ASC_Pause)
               {
                 bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
-                m_state = StatePaused; 
+                m_state = StatePaused;
                 writeSilence = 2;
                 sample.Release();
                 sample = NULL;
@@ -996,8 +996,12 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, 
   REFERENCE_TIME latency(0);
   m_pAudioClient->GetStreamLatency(&latency);
   
-//  Log("WASAPIRenderFilter::InitAudioClient device reported latency %I64u ms - buffer based latency %I64u ms", 
-//    latency / 10000, Latency() / 10000);
+  Log("WASAPIRenderFilter::InitAudioClient device reported latency %I64u ms - buffer based latency %I64u ms", 
+    latency / 10000, Latency() / 10000);
+
+  // Dynamic format change requires restart for the audio client
+  if (m_state != StateStopped)
+    StartAudioClient(&m_pAudioClient);
 
   return hr;
 }
