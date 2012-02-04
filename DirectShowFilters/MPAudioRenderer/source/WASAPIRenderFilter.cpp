@@ -150,8 +150,8 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
 
   bool bApplyChanges = nApplyChangesDepth != 0;
 
-  if (!bApplyChanges)
-    return S_OK;
+  //if (!bApplyChanges)
+  //  return S_OK;
 
   Log("CWASAPIRenderFilter::NegotiateFormat");
   LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");

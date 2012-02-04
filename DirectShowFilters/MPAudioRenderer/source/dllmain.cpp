@@ -247,18 +247,23 @@ void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
   if (pwfx)
   {
     Log("WAVEFORMATEX - %s", text);
-    Log("  nAvgBytesPerSec %d", pwfx->nAvgBytesPerSec);
-    Log("  nBlockAlign     %d", pwfx->nBlockAlign);
-    Log("  nChannels       %d", pwfx->nChannels);
-    Log("  nSamplesPerSec  %d", pwfx->nSamplesPerSec);
-    Log("  wBitsPerSample  %d", pwfx->wBitsPerSample);
-    Log("  wFormatTag      %d", pwfx->wFormatTag);
+    Log("  nAvgBytesPerSec     %d", pwfx->nAvgBytesPerSec);
+    Log("  nBlockAlign         %d", pwfx->nBlockAlign);
+    Log("  nChannels           %d", pwfx->nChannels);
+    Log("  nSamplesPerSec      %d", pwfx->nSamplesPerSec);
+    Log("  wBitsPerSample      %d", pwfx->wBitsPerSample);
+    Log("  wFormatTag          %d", pwfx->wFormatTag);
 
     if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
     {
       WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
       Log("  WAVE_FORMAT_EXTENSIBLE");
-      Log("  dwChannelMask   %d", tmp->dwChannelMask);
+      Log("  dwChannelMask       %d", tmp->dwChannelMask);
+      Log("  wValidBitsPerSample %d", tmp->Samples.wValidBitsPerSample);
+      if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
+        Log("  SubFormat           PCM");
+      else if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+        Log("  SubFormat           FLOAT");
 
       LPOLESTR str;
       LPSTR astr;
@@ -271,6 +276,10 @@ void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
         CoTaskMemFree(str);
       }
     }
+    else if (pwfx->wFormatTag == WAVE_FORMAT_PCM)
+      Log("  SubFormat           PCM");
+    else if (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
+      Log("  SubFormat           FLOAT");
   }
 }
 
