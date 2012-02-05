@@ -16,7 +16,6 @@
 
 #include "stdafx.h"
 #include "SampleRateConverterFilter.h"
-#include "..\libresample\src\samplerate.h"
 
 #include "alloctracing.h"
 
@@ -26,7 +25,8 @@ extern void Log(const char *fmt, ...);
 CSampleRateConverter::CSampleRateConverter(AudioRendererSettings *pSettings)
 : m_bPassThrough(false),
   m_rtInSampleTime(0),
-  m_pSettings(pSettings)
+  m_pSettings(pSettings),
+  m_pSrcState(NULL)
 {
 }
 
@@ -46,11 +46,22 @@ HRESULT CSampleRateConverter::Init()
 HRESULT CSampleRateConverter::Cleanup()
 {
   m_pMemAllocator.Release();
+
+  if (m_pSrcState)
+    m_pSrcState = src_delete(m_pSrcState);
+
   return CBaseAudioSink::Cleanup();
 }
 
-HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
+HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *tmp, int nApplyChangesDepth)
 {
+  // TODO: remove
+  WAVEFORMATEX* pwfx = new WAVEFORMATEX();
+  CopyWaveFormatEx(&pwfx, tmp);
+
+  //pwfx->nSamplesPerSec = 48000 * 2; 
+  //pwfx->nAvgBytesPerSec = 192000 * 2;
+
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
@@ -215,7 +226,12 @@ HRESULT CSampleRateConverter::EndOfStream()
 
 HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties)
 {
-  return CBaseAudioSink::OnInitAllocatorProperties(properties); // for now use defaults
+  properties->cBuffers = 4;
+  properties->cbBuffer = (0x1000);
+  properties->cbPrefix = 0;
+  properties->cbAlign = 8;
+
+  return S_OK;
 }
 
 HRESULT CSampleRateConverter::SetupConversion()
@@ -229,6 +245,16 @@ HRESULT CSampleRateConverter::SetupConversion()
 
   m_nOutFrameSize = m_pOutputFormat->nBlockAlign;
   m_nOutBytesPerSample = m_pOutputFormat->wBitsPerSample / 8;
+
+  if (m_pSrcState)
+    m_pSrcState = src_delete(m_pSrcState);
+
+  int error = 0;
+  m_pSrcState = src_new(SRC_SINC_FASTEST, m_pInputFormat->nChannels, &error) ;
+
+  // TODO better error handling
+  if (error != 0)
+    return S_FALSE;
 
   return S_OK;
 }
@@ -244,6 +270,11 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
 
     if (pcbDataProcessed)
       *pcbDataProcessed = 0;
+
+    int error = src_reset(m_pSrcState);
+    if (error != 0)
+      return S_FALSE;
+
     return hr;
   }
 
@@ -253,7 +284,6 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
   {
     if (m_pNextOutSample)
     {
-
       // if there is not enough space in output sample, flush it
       long nOffset = m_pNextOutSample->GetActualDataLength();
       long nSize = m_pNextOutSample->GetSize();
@@ -280,29 +310,32 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
       return hr;
     }
     ASSERT(pOutData);
+    pOutData += nOffset;
 
+    //int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize * (96000.0 / 44100.0));
     int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
 
     // Just a pass thru for testing
-    //hr = (this->*m_pfnConvert)(pOutData, pData, framesToConvert);
     //memcpy(pOutData, pData, framesToConvert * m_nInFrameSize);
-
+    
     SRC_DATA data;
 
     data.data_in = (float*)pData;
     data.data_out = (float*)pOutData;
-    data.input_frames = framesToConvert;
-    data.output_frames = framesToConvert;
-    data.src_ratio = 2.0;
+    data.input_frames = framesToConvert; //cbData / m_nInFrameSize;
+    data.output_frames = framesToConvert; //(nSize - nOffset) / m_nOutFrameSize;
+    data.src_ratio = 1.0; //96000.0 / 48000.0;
+    data.end_of_input = 0;
 
+    int ret = src_process(m_pSrcState, &data);
 
-    // just for testing
-    int ret = src_simple(&data, SRC_SINC_MEDIUM_QUALITY, 2);
+    Log("to convert: %d input_frames_used: %d output_frames_gen: %d", framesToConvert, data.input_frames_used, data.output_frames_gen);
 
-    pData += framesToConvert * m_nInFrameSize;
-    bytesOutput += framesToConvert * m_nInFrameSize;
-    cbData -= framesToConvert * m_nInFrameSize; 
-    nOffset += framesToConvert * m_nOutFrameSize;
+    pData += data.input_frames_used * m_nOutFrameSize;
+    bytesOutput += data.output_frames_gen * m_nOutFrameSize;
+    cbData -= data.input_frames_used * m_nOutFrameSize;
+    nOffset += data.output_frames_gen * m_nOutFrameSize;
+
     m_pNextOutSample->SetActualDataLength(nOffset);
     if (nOffset + m_nOutFrameSize > nSize)
       OutputNextSample();

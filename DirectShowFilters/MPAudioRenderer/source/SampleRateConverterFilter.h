@@ -21,6 +21,7 @@
 #include <ksmedia.h>
 #include "BaseAudioSink.h"
 #include "Settings.h"
+#include "..\libresample\src\samplerate.h"
 
 class CSampleRateConverter : public CBaseAudioSink
 {
@@ -64,6 +65,8 @@ protected:
   int m_nOutBitsPerSample;  // Valid bits in a sample. 32 for floats
 
   REFERENCE_TIME m_rtInSampleTime;
+
+  SRC_STATE* m_pSrcState;
 
   AudioRendererSettings* m_pSettings;
 };
