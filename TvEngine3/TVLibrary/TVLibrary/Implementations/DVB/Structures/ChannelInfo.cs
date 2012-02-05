@@ -203,7 +203,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         return;
       }
       int section_length = ((buf[1] & 0xF) << 8) + buf[2];
-      int programNumber = (buf[3] << 8) + buf[4];
+      program_number = (buf[3] << 8) + buf[4];
       int version_number = ((buf[5] >> 1) & 0x1F);
       int current_next_indicator = buf[5] & 1;
       pcrPid = ((buf[8] & 0x1F) << 8) + buf[9]; // ! really set pcr pid ! ( ambass )
@@ -211,7 +211,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 
 
       caPMT = new CaPMT();
-      caPMT.ProgramNumber = programNumber;
+      caPMT.ProgramNumber = program_number;
       caPMT.CurrentNextIndicator = current_next_indicator;
       caPMT.VersionNumber = version_number;
       caPMT.CAPmt_Listmanagement = ListManagementType.Only;

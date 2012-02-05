@@ -197,10 +197,11 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _winTvCiModule);
 
           Log.Log.WriteFile("Check for Anysee");
-          _anysee = new Anysee(tunerFilter);
+          _anysee = new Anysee(tunerFilter, card.DevicePath);
           if (_anysee.IsAnysee)
           {
-            Log.Log.Info("anysee device detected");
+            _ciMenu = _anysee;
+            _diSEqCMotor = new DiSEqCMotor(_anysee);
             return;
           }
           Release.DisposeToNull(ref _anysee);
@@ -689,6 +690,10 @@ namespace TvLibrary.Implementations.DVB
           int caPmtLen;
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _twinhan.SendPMT(caPmt, caPmtLen);
+        }
+        if (_anysee != null)
+        {
+          return _anysee.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
       }
       catch (Exception ex)
