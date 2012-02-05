@@ -547,6 +547,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="libresample\src\samplerate.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_linear.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_sinc.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="libresample\src\src_zoh.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="source\AC3EncoderFilter.cpp" />
     <ClCompile Include="source\BaseAudioSink.cpp" />
     <ClCompile Include="source\BitDepthAdapter.cpp" />
@@ -614,6 +626,7 @@
     <None Include="source\MpAudioRenderer.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libresample\src\samplerate.h" />
     <ClInclude Include="source\AC3EncoderFilter.h" />
     <ClInclude Include="source\BaseAudioSink.h" />
     <ClInclude Include="source\BitDepthAdapter.h" />

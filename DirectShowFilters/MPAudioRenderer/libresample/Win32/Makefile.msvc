@@ -1,0 +1,55 @@
+
+# Set the value of $(MSVCDir) for your installation.
+
+# MSVCDir="C:\Progra~1\Micros~1\VC98"
+# CFLAGS=/nologo /MD /W1 /GX /O2 /I "$(MSVCDir)\Include" /I . /I "Win32" /I "src" /D "WIN32" /D "_USRDLL" /YX /FD /Zm1000
+# PROG_LINK_FLAGS=/nologo /incremental:no /libpath:"$(MSVCDir)\Lib" /pdb:"libsamplerate-0.pdb" /machine:I386 /exetype:dynamic
+
+MSVCDir="C:\PROGRA~2\MICROS~2.0\VC"
+CFLAGS=/nologo /MD /W1 /GX /O2 /Zm200 /I "$(MSVCDir)\Include" /I "$(MSVCDir)\PlatformSDK\Include" /I . /I "Win32" /I "src" /D "WIN32" /D "_USRDLL" /YX /FD /Zm1000
+PROG_LINK_FLAGS=/nologo /incremental:no /libpath:"$(MSVCDir)\Lib" /libpath:"$(MSVCDir)\PlatformSDK\Lib" /pdb:"libsamplerate-0.pdb" /machine:I386 /exetype:dynamic
+
+CPP=cl.exe
+LINK32=link.exe
+DLL_LINK_FLAGS=/nologo /dll /incremental:no /libpath:"$(MSVCDir)\Lib" /pdb:"libsamplerate-0.pdb" /implib:".\libsamplerate-0.lib" /machine:I386 /out:"libsamplerate-0.dll"
+
+#====================================================================
+# Targets
+
+ALL : libsamplerate-0.dll
+
+CLEAN :
+    -@erase "src\*.obj"
+
+#====================================================================
+
+LINK32_OBJS= \
+	".\src\samplerate.obj" \
+	".\src\src_linear.obj" \
+	".\src\src_zoh.obj" \
+	".\src\src_sinc.obj"
+
+libsamplerate-0.dll : $(LINK32_OBJS) ".\Win32\libsamplerate-0.def"
+    $(LINK32) $(DLL_LINK_FLAGS) /def:".\Win32\libsamplerate-0.def" $(LINK32_OBJS)
+
+#====================================================================
+# C files in src.
+
+".\src\samplerate.obj" : ".\src\samplerate.c"
+    $(CPP) $(CFLAGS) /Fo".\src\samplerate.obj" /c ".\src\samplerate.c"
+
+".\src\src_linear.obj" : ".\src\src_linear.c"
+    $(CPP) $(CFLAGS) /Fo".\src\src_linear.obj" /c ".\src\src_linear.c"
+
+".\src\src_zoh.obj" : ".\src\src_zoh.c"
+    $(CPP) $(CFLAGS) /Fo".\src\src_zoh.obj" /c ".\src\src_zoh.c"
+
+".\src\src_sinc.obj" : ".\src\src_sinc.c"
+    $(CPP) $(CFLAGS) /Fo".\src\src_sinc.obj" /c ".\src\src_sinc.c"
+
+#====================================================================
+# Bit of extra trickery.
+
+
+# End of Makefile
+#====================================================================

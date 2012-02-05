@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "SampleRateConverterFilter.h"
+#include "..\libresample\src\samplerate.h"
 
 #include "alloctracing.h"
 
@@ -72,8 +73,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApp
       //m_bPassThrough = true;
       SetInputFormat(pwfx);
       SetOutputFormat(pwfx);
+      SetupConversion(); // testing only
     }
-    SetupConversion(); // testing only
     return hr;
   }
 
@@ -94,7 +95,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApp
     isFloat = (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT);
   }
 
-  if (!isPCM && !isFloat)
+  // Sample rate converter can work only with floats
+  if (!isFloat)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   WAVEFORMATEX *pOutWfx;
@@ -219,8 +221,8 @@ HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *pr
 HRESULT CSampleRateConverter::SetupConversion()
 {
   // Only floats
-  m_nOutBitsPerSample = 16;//32;
-  m_nInBitsPerSample = 16;//32;
+  m_nOutBitsPerSample = 32;
+  m_nInBitsPerSample = 32;
 
   m_nInFrameSize = m_pInputFormat->nBlockAlign;
   m_nInBytesPerSample = m_pInputFormat->wBitsPerSample / 8;
@@ -281,8 +283,21 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
 
     int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
 
+    // Just a pass thru for testing
     //hr = (this->*m_pfnConvert)(pOutData, pData, framesToConvert);
-    memcpy(pOutData, pData, framesToConvert * m_nInFrameSize);
+    //memcpy(pOutData, pData, framesToConvert * m_nInFrameSize);
+
+    SRC_DATA data;
+
+    data.data_in = (float*)pData;
+    data.data_out = (float*)pOutData;
+    data.input_frames = framesToConvert;
+    data.output_frames = framesToConvert;
+    data.src_ratio = 2.0;
+
+
+    // just for testing
+    int ret = src_simple(&data, SRC_SINC_MEDIUM_QUALITY, 2);
 
     pData += framesToConvert * m_nInFrameSize;
     bytesOutput += framesToConvert * m_nInFrameSize;
