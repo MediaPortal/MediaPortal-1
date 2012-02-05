@@ -235,7 +235,7 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
   if (hr != S_OK)
     return hr;
 
-  if (*pSample)
+  if (pSample && *pSample)
     (*pSample)->Release();
 
   CAutoLock queueLock(&m_inputQueueLock);
