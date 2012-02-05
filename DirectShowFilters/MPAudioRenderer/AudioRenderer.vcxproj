@@ -271,9 +271,9 @@
       <AdditionalIncludeDirectories>$(DSHOW_BASE);$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;INTEGER_SAMPLES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AssemblerListingLocation>.\obj\Debug/</AssemblerListingLocation>
-      <ObjectFileName>.\obj\Debug/</ObjectFileName>
-      <ProgramDataBaseFileName>.\obj\Debug/</ProgramDataBaseFileName>
+      <AssemblerListingLocation>.\bin\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\bin\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\bin\Debug/</ProgramDataBaseFileName>
       <CompileAs>CompileAsCpp</CompileAs>
       <ShowIncludes>false</ShowIncludes>
     </ClCompile>
@@ -327,9 +327,9 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <AssemblerListingLocation>.\obj\Release/</AssemblerListingLocation>
-      <ObjectFileName>.\obj\Release/</ObjectFileName>
-      <ProgramDataBaseFileName>.\obj\Release/</ProgramDataBaseFileName>
+      <AssemblerListingLocation>.\bin\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\bin\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\bin\Release/</ProgramDataBaseFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
@@ -344,7 +344,7 @@
       <AdditionalLibraryDirectories>$(DSHOW_BASE)Release_MBCS; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\MpAudioRenderer.def</ModuleDefinitionFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
