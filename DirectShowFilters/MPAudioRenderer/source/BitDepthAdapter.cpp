@@ -417,6 +417,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
       return hr;
     }
     ASSERT(pOutData != NULL);
+    pOutData += nOffset;
 
     int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
 
