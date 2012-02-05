@@ -422,7 +422,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               }
               else if (FAILED(result))
               {
-                Log("CWASAPIRenderFilter::Render thread: Buffer underrun, fetching sample failed (0x%08x)", result);
+                Log("CWASAPIRenderFilter::Render thread - fetching sample failed (0x%08x)", result);
                 if (bytesCopied == 0)
                   bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                 break;
@@ -436,15 +436,12 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 sample = NULL;
                 break;
               }
-
-              // TODO: is this even possible? GetNextSampleOrCommand should fail with some code
-              /*else if (!sample)
+              else if (!sample)
               {
-                Log("WASAPIRenderer::Render thread: Buffer underrun, no new samples available!");  
                 if (bytesCopied == 0)
                   bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                 break;
-              }*/
+              }
 
               sample->GetPointer(&sampleData);
               sampleLength = sample->GetActualDataLength();
