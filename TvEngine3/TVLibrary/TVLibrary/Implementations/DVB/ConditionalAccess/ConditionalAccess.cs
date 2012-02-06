@@ -62,6 +62,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
+    private readonly NetUp _netUp;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -280,6 +281,16 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _genpix);
           Release.DisposeToNull(ref _winTvCiModule);
 
+          Log.Log.WriteFile("Check for NetUP tuner");
+          _netUp = new NetUp(tunerFilter);
+          if (_netUp.IsNetUp)
+          {
+            _ciMenu = _netUp;
+            _diSEqCMotor = new DiSEqCMotor(_netUp);
+            return;
+          }
+          Release.DisposeToNull(ref _netUp);
+
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter);
           if (_genericbdas.IsGenericBDAS)
@@ -440,6 +451,10 @@ namespace TvLibrary.Implementations.DVB
             return false;
           Log.Log.Info("WinTVCI:  CAM initialized");
           return true;
+        }
+        if (_netUp != null)
+        {
+          return _netUp.IsCamReady();
         }
       }
       catch (Exception ex)
@@ -690,6 +705,58 @@ namespace TvLibrary.Implementations.DVB
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _twinhan.SendPMT(caPmt, caPmtLen);
         }
+        if (_netUp != null)
+        {
+          // We need to reset descrambling on all channels explicitly.
+          // First build a list of the conditional access contexts for the distinct
+          // set of channels that have to be decrypted.
+          List<ConditionalAccessContext> distinctChannels = new List<ConditionalAccessContext>();
+          Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
+          while (en.MoveNext())
+          {
+            bool exists = false;
+            ConditionalAccessContext ctx = en.Current.Value;
+            foreach (ConditionalAccessContext c in distinctChannels)
+            {
+              if (c.Channel.ServiceId == ctx.Channel.ServiceId &&
+                c.Channel.NetworkId == ctx.Channel.NetworkId &&
+                c.Channel.TransportId == ctx.Channel.NetworkId)
+              {
+                exists = true;
+                break;
+              }
+            }
+            if (!exists)
+            {
+              distinctChannels.Add(ctx);
+            }
+          }
+
+          // Now send PMT as required.
+          if (distinctChannels.Count == 1)
+          {
+            return _netUp.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, pmt, pmtLength);
+          }
+          else
+          {
+            for (int i = 0; i < distinctChannels.Count; i++)
+            {
+              if (i == 0)
+              {
+                _netUp.SendPmt(ListManagementType.First, CommandIdType.Descrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
+              }
+              else if (i == distinctChannels.Count - 1)
+              {
+                _netUp.SendPmt(ListManagementType.Last, CommandIdType.Descrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
+              }
+              else
+              {
+                _netUp.SendPmt(ListManagementType.More, CommandIdType.Descrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
+              }
+            }
+          }
+          return true;
+        }
       }
       catch (Exception ex)
       {
@@ -756,6 +823,11 @@ namespace TvLibrary.Implementations.DVB
         if (_TeVii != null)
         {
           _TeVii.SendDiseqCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_netUp != null)
+        {
+          _netUp.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
       }
@@ -1110,6 +1182,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_twinhan);
       Release.Dispose(_profred);
       Release.Dispose(_TeVii);
+      Release.Dispose(_netUp);
     }
 
     #endregion
