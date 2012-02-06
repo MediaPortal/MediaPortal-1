@@ -108,6 +108,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
     [XMLSkinElement("textcolor3")] protected long _textColor3 = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus2")] protected long _textColorNoFocus2 = 0xFFFFFFFF;
+    [XMLSkinElement("textcolorNoFocus3")] protected long _textColorNoFocus3 = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor2")] protected long _selectedColor2 = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor3")] protected long _selectedColor3 = 0xFFFFFFFF;
@@ -260,7 +263,7 @@ namespace MediaPortal.GUI.Library
                           string strUp, string strDown,
                           string strUpFocus, string strDownFocus,
                           long dwSpinColor, int dwSpinX, int dwSpinY,
-                          string strFont, long dwTextColor, long dwSelectedColor,
+                          string strFont, long dwTextColor, long dwTextColorNoFocus, long dwSelectedColor,
                           string strButton, string strButtonFocus,
                           string strScrollbarBackground, string strScrollbarTop, string strScrollbarBottom,
                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
@@ -282,6 +285,9 @@ namespace MediaPortal.GUI.Library
       _textColor = dwTextColor;
       _textColor2 = dwTextColor;
       _textColor3 = dwTextColor;
+      _textColorNoFocus = dwTextColorNoFocus;
+      _textColorNoFocus2 = dwTextColorNoFocus;
+      _textColorNoFocus3 = dwTextColorNoFocus;
       _buttonNonFocusName = strButton;
       _buttonFocusName = strButtonFocus;
       _scrollbarBackgroundName = strScrollbarBackground;
@@ -685,6 +691,7 @@ namespace MediaPortal.GUI.Library
             else
             {
               label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+              label2.TextColor = _textColorNoFocus2;
             }
 
             label2.Label = pItem.Label2;
@@ -722,6 +729,7 @@ namespace MediaPortal.GUI.Library
         if (!pItem.Selected && !gotFocus)
         {
           dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+          dwColor &= _textColorNoFocus;
         }
         if (!Focus)
         {
@@ -787,6 +795,7 @@ namespace MediaPortal.GUI.Library
             else
             {
               label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+              label2.TextColor &= _textColorNoFocus2;
             }
             label2.Label = _textLine;
             label2.TextAlignment = Alignment.ALIGN_RIGHT;
@@ -860,6 +869,7 @@ namespace MediaPortal.GUI.Library
             else
             {
               label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+              label3.TextColor &= _textColorNoFocus3;
             }
             label3.Label = pItem.Label3;
             if (!string.IsNullOrEmpty(_text3Content))
@@ -2973,6 +2983,30 @@ namespace MediaPortal.GUI.Library
     public long TextColor3
     {
       get { return _textColor3; }
+    }
+
+    /// <summary>
+    /// Get the color of the first not focused label.
+    /// </summary>
+    public long TextColorNoFocus
+    {
+        get { return _textColorNoFocus; }
+    }
+
+    /// <summary>
+    /// Get the color of the second not focused label.
+    /// </summary>
+    public long TextColorNoFocus2
+    {
+        get { return _textColorNoFocus2; }
+    }
+
+    /// <summary>
+    /// Get the color of the third not focused label.
+    /// </summary>
+    public long TextColorNoFocus3
+    {
+        get { return _textColorNoFocus3; }
     }
 
     /// <summary>

@@ -161,6 +161,7 @@ namespace MediaPortal.GUI.Library
                                       int dwSpinY,
                                       string strFont,
                                       long dwTextColor,
+                                      long dwTextColorNoFocus,
                                       long dwSelectedColor,
                                       string strButton,
                                       string strButtonFocus,
@@ -175,7 +176,7 @@ namespace MediaPortal.GUI.Library
              strUp, strDown,
              strUpFocus, strDownFocus,
              dwSpinColor, dwSpinX, dwSpinY,
-             strFont, dwTextColor, dwSelectedColor,
+             strFont, dwTextColor, dwTextColorNoFocus, dwSelectedColor,
              strButton, strButtonFocus,
              strScrollbarBackground, strScrollbarTop, strScrollbarBottom,
              dwShadowAngle, dwShadowDistance, dwShadowColor)
