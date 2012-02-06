@@ -31,6 +31,24 @@
         <label>6036</label>
       </control>
       <control>
+        <description>VC1 Video Codecs</description>
+        <type>button</type>
+        <id>34</id>
+        <label>VC1 Video Codecs</label>
+      </control>
+      <control>
+        <description>VC1i Video Codecs</description>
+        <type>button</type>
+        <id>35</id>
+        <label>VC1i Video Codecs</label>
+      </control>
+      <control>
+        <description>XVID Video Codecs</description>
+        <type>button</type>
+        <id>36</id>
+        <label>XVID Video Codecs</label>
+      </control>
+      <control>
         <description>Audio Codecs</description>
         <type>button</type>
         <id>25</id>
@@ -48,6 +66,24 @@
         <id>27</id>
         <label>6002</label>
       </control>
+      <control>
+        <description>Source Splitter Selection</description>
+        <type>togglebutton</type>
+        <id>39</id>
+        <label>Source Splitter Selection</label>
+      </control>
+      <control>
+        <description>Splitter Source</description>
+        <type>button</type>
+        <id>38</id>
+        <label>Splitter Source</label>
+      </control>	  
+      <control>
+        <description>Splitter Filesync</description>
+        <type>button</type>
+        <id>37</id>
+        <label>Splitter Filesync</label>
+      </control>	    
       <control>
         <description>Apect Ratio</description>
         <type>button</type>
