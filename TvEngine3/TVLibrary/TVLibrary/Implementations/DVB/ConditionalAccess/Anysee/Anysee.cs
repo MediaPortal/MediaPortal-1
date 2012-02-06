@@ -96,7 +96,7 @@ namespace TvLibrary.Implementations.DVB
       CamInserted = 2101,       // CI_MSG_INITIALIZATION_CAM - CAM initialising
       CamOkay = 2102,           // CI_MSG_INSERT_CAM - CAM initialisation finishing
       SendPmtComplete = 2103,   // CI_SEND_PMT_COMPLET - PMT sent to the CAM
-      CamReady = 2105           // ???
+      CamReady = 2105           // CI_USE_MENU - CAM menu can be accessed
     }
 
     private enum AnyseeCiCommand : uint   // CI_CONTROL_COMMAND
