@@ -1375,7 +1375,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             }
             else //video resolution is the unchanged, but there may be other format changes
             {
-              if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
+              if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
               {
                 if (m_audioChanged || m_videoChanged)
                 {
@@ -1726,7 +1726,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               }
               else //video resolution is the unchanged, but there may be other format changes
               {
-                if (m_mpegParserTriggerFormatChange && Gop && !IsAudioChanging())
+                if (m_mpegParserTriggerFormatChange && !IsAudioChanging())
                 {
                   if (m_audioChanged || m_videoChanged)
                   {
@@ -1927,30 +1927,6 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       return; // no
     }
   }
-
-//  if (info.PatVersion != m_iPatVersion)
-//  {
-//    LogDebug("OnNewChannel pat version:%d->%d",m_iPatVersion, info.PatVersion);
-//    if (m_filter.m_bLiveTv && ((m_ReqPatVersion & 0x0F) != (info.PatVersion & 0x0F)) && (m_iPatVersion!=-1))
-//    {
-//      LogDebug("Unexpected LiveTV PAT change due to provider, update m_ReqPatVersion to new PAT version : %d",m_ReqPatVersion);
-//      // Unexpected LiveTV PAT change due to provider.
-//      m_ReqPatVersion = info.PatVersion ;
-//    }
-//    m_iPatVersion=info.PatVersion;
-//    m_bSetAudioDiscontinuity=true;
-//    m_bSetVideoDiscontinuity=true;
-//    Flush();
-////    m_filter.m_bOnZap = true ;
-//  }
-//  else
-//  {
-//    // No audio streams or channel info was not changed
-//    if (pids.audioPids.size()==0 || m_pids == pids )
-//    { 
-//      return; // no
-//    }
-//  }
 
   //remember the old audio & video formats
   int oldVideoServiceType(-1);
