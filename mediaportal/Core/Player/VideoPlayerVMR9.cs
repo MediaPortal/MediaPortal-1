@@ -495,6 +495,13 @@ namespace MediaPortal.Player
 
           IFileSourceFilter interfaceFile = (IFileSourceFilter) _interfaceSourceFilter;
           hr = interfaceFile.Load(m_strCurrentFile, null);
+
+          if (hr != 0)
+          {
+            Error.SetError("Unable to play movie", "Unable build graph for VMR9");
+            Cleanup();
+            return false;
+          }
         }
         else
         {
@@ -738,6 +745,9 @@ namespace MediaPortal.Player
 
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
 
+        //remove orphelin audio renderer
+        RemoveAudioR();
+
         //EnableClock();
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
@@ -892,6 +902,12 @@ namespace MediaPortal.Player
         disableCC();
 
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
+
+        //remove orphelin audio renderer
+        if (iChangedMediaTypes != 2)
+        {
+          RemoveAudioR();
+        }
 
         /*if (!firstinit && !g_Player.Paused)
         {
@@ -1085,9 +1101,10 @@ namespace MediaPortal.Player
       ResetCodecBool();
       
       IPin pPin = FileSync ? DirectShowUtil.FindPin(Splitter, PinDirection.Output, format) : DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, format);
-      RebuildMediaType(pPin);
+
       if (pPin != null)
       {
+        RebuildMediaType(pPin);
         DirectShowUtil.ReleaseComObject(pPin); pPin = null;
       }
 
@@ -1143,26 +1160,29 @@ namespace MediaPortal.Player
     {
       try
       {
-        /*// step 1: figure out the renderer of the graph to be removed
-        int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
-        IEnumFilters enumFilters;
-        hr = graphBuilder.EnumFilters(out enumFilters);
-        do
+        if (!OSInfo.OSInfo.VistaOrLater())
         {
-          int ffetched;
-          IBaseFilter[] filters = new IBaseFilter[1];
-          hr = enumFilters.Next(1, filters, out ffetched);
-          if (hr == 0 && ffetched > 0)
+          // step 1: figure out the renderer of the graph to be removed
+          int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+          IEnumFilters enumFilters;
+          hr = graphBuilder.EnumFilters(out enumFilters);
+          do
           {
-            IBasicVideo2 localBasicVideo = filters[0] as IBasicVideo2;
-            if (localBasicVideo != null)
+            int ffetched;
+            IBaseFilter[] filters = new IBaseFilter[1];
+            hr = enumFilters.Next(1, filters, out ffetched);
+            if (hr == 0 && ffetched > 0)
             {
-              graphBuilder.RemoveFilter(filters[0]);
+              IBasicVideo2 localBasicVideo = filters[0] as IBasicVideo2;
+              if (localBasicVideo != null)
+              {
+                graphBuilder.RemoveFilter(filters[0]);
+              }
+              DirectShowUtil.ReleaseComObject(filters[0]);
             }
-            DirectShowUtil.ReleaseComObject(filters[0]);
-          }
-        } while (hr == 0);
-        DirectShowUtil.ReleaseComObject(enumFilters);*/
+          } while (hr == 0);
+          DirectShowUtil.ReleaseComObject(enumFilters);
+        }
 
         // switch back to directx fullscreen mode
         Log.Info("VideoPlayer9: Enabling DX9 exclusive mode");
@@ -1176,7 +1196,10 @@ namespace MediaPortal.Player
         Vmr9.Enable(false);
 
         // Render file in graph
-        int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          int hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+        }
 
         // render
         DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, null);
