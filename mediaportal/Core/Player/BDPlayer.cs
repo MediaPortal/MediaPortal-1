@@ -528,6 +528,7 @@ namespace MediaPortal.Player
     protected MenuState menuState;
     protected bool _subtitlesEnabled = true;
     protected bool _bPopupMenuAvailable = true;
+    protected Guid GuidFilter;
     #endregion
 
     #region ctor/dtor
@@ -2342,7 +2343,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        ExportGuidFilterAndRelease(filterConfig.VideoH264, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2);
+        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG2, ref GuidFilter);
       }
 
       if (filterConfig.VideoVC1 != filterConfig.VideoH264 || filterConfig.VideoVC1 != filterConfig.VideoMPEG)
@@ -2351,19 +2352,18 @@ namespace MediaPortal.Player
       }
       else
       {
-        ExportGuidFilterAndRelease(filterConfig.VideoH264, BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1);
+        _ireader.SetVideoDecoder((int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1, ref GuidFilter);
       }
     }
 
     private void ExportGuidFilterAndRelease(string filter, BluRayStreamFormats BDStream)
     {
-      Guid guid;
       IBaseFilter dsfilter;
       dsfilter = DirectShowUtil.GetFilterByName(_graphBuilder, filter);
       if (dsfilter == null)
         dsfilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
-      dsfilter.GetClassID(out guid);
-      _ireader.SetVideoDecoder((int)BDStream, ref guid);
+      dsfilter.GetClassID(out GuidFilter);
+      _ireader.SetVideoDecoder((int)BDStream, ref GuidFilter);
       _graphBuilder.RemoveFilter(dsfilter);
       DirectShowUtil.ReleaseComObject(dsfilter);
       dsfilter = null;
