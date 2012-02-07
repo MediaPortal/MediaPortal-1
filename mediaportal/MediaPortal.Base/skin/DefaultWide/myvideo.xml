@@ -223,7 +223,7 @@
             <onup>20</onup>
             <ondown>7</ondown>
           </control>
-	  <control>
+					<control>
             <description>Scan new videos</description>
             <type>button</type>
             <id>7</id>
@@ -231,17 +231,27 @@
             <onright>50</onright>
             <ondown>10</ondown>
             <onup>9</onup>
-            <ondown>4755</ondown>
+            <ondown>9876</ondown>
           </control>
-	  <control>
+					<control>
+            <description>Video Settings</description>
+            <type>button</type>
+            <id>9876</id>
+            <label>6022</label>
+            <hyperlink>703</hyperlink>
+            <onup>7</onup>
+            <ondown>4755</ondown>
+            <onright>50</onright>
+          </control>
+					<control>
             <description>Trailers</description>
             <type>button</type>
             <id>4755</id>
             <label>5906</label>
-	    <hyperlink>4755</hyperlink>
-	    <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
+						<hyperlink>4755</hyperlink>
+						<hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
             <onright>50</onright>
-            <onup>7</onup>
+            <onup>9876</onup>
             <ondown>2</ondown>
 	    <visible>plugin.isenabled(OnlineVideos)</visible>
           </control>
@@ -435,25 +445,49 @@
     </control>
 		
     <control>
-      <description>Seperator</description>
+      <description>Separator</description>
       <type>image</type>
       <id>1</id>
       <posX>71</posX>
-      <posY>500</posY>
+      <posY>520</posY>
       <width>533</width>
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+      <visible>facadeview.list + control.hasfocus(50)</visible>
+    </control>
+		<control>
+      <description>Times watched</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>80</posX>
+      <posY>495</posY>
+      <label>Watched count:</label>
+      <font>font10</font>
+      <align>left</align>
+			<textcolor>FFB2D4F5</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + !string.equals(#timeswatched, -1)</visible>
+    </control>
+		<control>
+      <description>Times watched value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>240</posX>
+      <posY>495</posY>
+      <label>#timeswatched</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + !string.equals(#timeswatched, -1)</visible>
     </control>
     <control>
       <description>Plot value</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>71</posX>
-      <posY>510</posY>
+      <posY>540</posY>
       <width>533</width>
-      <height>190</height>
+      <height>160</height>
       <label>#plot</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>

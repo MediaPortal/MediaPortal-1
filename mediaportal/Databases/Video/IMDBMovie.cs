@@ -387,22 +387,32 @@ namespace MediaPortal.Video.Database
 
       // Watched property
       string strValue = "no";
-      
+
       if (Watched > 0 && !isFolder)
       {
         strValue = "yes";
       }
-      
+
       if (isFolder)
       {
         strValue = string.Empty;
       }
       GUIPropertyManager.SetProperty("#iswatched", strValue);
-      
+
       // Watched percent property
       int percent = 0;
-      VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), ref percent);
+      int timesWatched = 0;
+      VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), out percent, out timesWatched);
       GUIPropertyManager.SetProperty("#watchedpercent", percent.ToString());
+      
+      if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file))
+      {
+        GUIPropertyManager.SetProperty("#timeswatched", timesWatched.ToString());
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#timeswatched", "-1");
+      }
 
       // MediaInfo Properties
       try
@@ -414,12 +424,13 @@ namespace MediaPortal.Video.Database
           SetMediaInfoProperties(file);
         }
       }
+        
       catch (Exception e)
       {
         Log.Error("IMDBMovie Media Info error: file:{0}, error:{1}", file, e);
       }
     }
-    
+
     public void SetPlayProperties()
     {
       // Title suffix for problem with covers and movie with the same name
@@ -505,24 +516,28 @@ namespace MediaPortal.Video.Database
 
     private void SetMediaInfoProperties(string file)
     {
-      VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
-
-      VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
-
-      string hasSubtitles = "false";
-
-      if (mInfo.HasSubtitles)
+      try 
       {
-        hasSubtitles = "true";
-      }
+        VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
 
-      VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
-      GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(mInfo.VideoCodec));
-      GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
-      GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(mInfo.AudioCodec));
-      GUIPropertyManager.SetProperty("#AudioChannels", mInfo.AudioChannels);
-      GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
-      GUIPropertyManager.SetProperty("#AspectRatio", mInfo.AspectRatio);
+        VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
+
+        string hasSubtitles = "false";
+
+        if (mInfo.HasSubtitles)
+        {
+          hasSubtitles = "true";
+        }
+
+        VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
+        GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(mInfo.VideoCodec));
+        GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
+        GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(mInfo.AudioCodec));
+        GUIPropertyManager.SetProperty("#AudioChannels", mInfo.AudioChannels);
+        GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
+        GUIPropertyManager.SetProperty("#AspectRatio", mInfo.AspectRatio);
+      }
+      catch (Exception){}
     }
 
     private string GetStrThumb()

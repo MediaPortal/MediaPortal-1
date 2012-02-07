@@ -111,6 +111,16 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"IMDBActorID\" text DEFAULT ''";
           m_db.Execute(strSQL);
         }
+        if (DatabaseUtility.TableColumnExists(m_db, "actorinfo", "dateofdeath") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"dateofdeath\" text DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
+        if (DatabaseUtility.TableColumnExists(m_db, "actorinfo", "placeofdeath") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"placeofdeath\" text DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
         // Actor table
         if (DatabaseUtility.TableColumnExists(m_db, "actors", "IMDBActorID") == false)
         {
@@ -155,9 +165,14 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"dateWatched\" timestamp DEFAULT '0001-01-01 00:00:00'";
           m_db.Execute(strSQL);
         }
+        if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "studios") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"studios\" TEXT DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
         // Movie table
         bool watchedUpg = false;
-
+        
         if (DatabaseUtility.TableColumnExists(m_db, "movie", "watched") == false)
         {
           string strSQL = "ALTER TABLE \"main\".\"movie\" ADD COLUMN \"watched\" bool DEFAULT 0";
@@ -172,6 +187,14 @@ namespace MediaPortal.Video.Database
           watchedUpg = true;
         }
 
+        // Video file Times watched
+        if (DatabaseUtility.TableColumnExists(m_db, "movie", "timeswatched") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movie\" ADD COLUMN \"timeswatched\" integer DEFAULT 0";
+          m_db.Execute(strSQL);
+          watchedUpg = true;
+        }
+
         if (watchedUpg)
         {
           // Set status for movies after upgrade
@@ -182,6 +205,7 @@ namespace MediaPortal.Video.Database
           {
             int movieId = Int32.Parse(DatabaseUtility.Get(results, i, "idMovie"));
             int watched = Int32.Parse(DatabaseUtility.Get(results, i, "iswatched"));
+            
             if (watched > 0)
             {
               SetMovieWatchedStatus(movieId, true, 100);
@@ -195,6 +219,7 @@ namespace MediaPortal.Video.Database
           {
             int movieId = Int32.Parse(DatabaseUtility.Get(results, i, "idMovie"));
             SetMovieWatchedStatus(movieId, true, 100);
+            SetMovieTimesWatched(movieId);
           }
         }
         // MediaInfo table
@@ -214,23 +239,6 @@ namespace MediaPortal.Video.Database
         {
           DatabaseUtility.AddTable(m_db, "IMDBmovies",
                                    "CREATE TABLE IMDBmovies ( idIMDB text, idTmdb text, strPlot text, strCast text, strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, mpaa text)");
-        }
-        // Studios
-        if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "studios") == false)
-        {
-          string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"studios\" TEXT DEFAULT ''";
-          m_db.Execute(strSQL);
-        }
-        // Actor death infos
-        if (DatabaseUtility.TableColumnExists(m_db, "actorinfo", "dateofdeath") == false)
-        {
-          string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"dateofdeath\" text DEFAULT ''";
-          m_db.Execute(strSQL);
-        }
-        if (DatabaseUtility.TableColumnExists(m_db, "actorinfo", "placeofdeath") == false)
-        {
-          string strSQL = "ALTER TABLE \"main\".\"actorinfo\" ADD COLUMN \"placeofdeath\" text DEFAULT ''";
-          m_db.Execute(strSQL);
         }
       }
 
@@ -418,7 +426,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "genrelinkmovie",
                                "CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)");
       DatabaseUtility.AddTable(m_db, "movie",
-                               "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool)");
+                               "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool, timeswatched integer)");
       DatabaseUtility.AddTable(m_db, "movieinfo",
                                "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text)");
       DatabaseUtility.AddTable(m_db, "actorlinkmovie",
@@ -2076,10 +2084,12 @@ namespace MediaPortal.Video.Database
       {
         string sql = string.Format("select * from duration where idFile={0}", iFileId);
         SQLiteResultSet results = m_db.Execute(sql);
+        
         if (results.Rows.Count == 0)
         {
           return 0;
         }
+        
         int duration;
         Int32.TryParse(DatabaseUtility.Get(results, 0, "duration"), out duration);
         return duration;
@@ -2098,6 +2108,7 @@ namespace MediaPortal.Video.Database
       {
         string sql = String.Format("select * from duration where idFile={0}", iFileId);
         SQLiteResultSet results = m_db.Execute(sql);
+        
         if (results.Rows.Count == 0)
         {
           sql = String.Format("insert into duration ( idDuration,idFile,duration) values(NULL,{0},{1})",
@@ -2123,11 +2134,16 @@ namespace MediaPortal.Video.Database
       {
         string sql = String.Format("select * from movie where idMovie={0}", idMovie);
         SQLiteResultSet results = m_db.Execute(sql);
+        
         if (results.Rows.Count != 0)
         {
           int iWatched = 0;
+          
           if (watched)
+          {
             iWatched = 1;
+          }
+          
           sql = String.Format("update movie set watched={0}, iwatchedPercent = {1} where idMovie={2}",
                               iWatched, percent, idMovie);
         }
@@ -2140,20 +2156,53 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public bool GetMovieWatchedStatus(int idMovie, ref int percent)
+    /// <summary>
+    /// Increase times watched by 1
+    /// </summary>
+    /// <param name="idMovie"></param>
+    public void SetMovieTimesWatched(int idMovie)
     {
       try
       {
-        percent = 0;
         string sql = String.Format("select * from movie where idMovie={0}", idMovie);
         SQLiteResultSet results = m_db.Execute(sql);
+        int watchedCount = 0;
+        Int32.TryParse(DatabaseUtility.Get(results, 0, "movie.timeswatched"), out watchedCount);
+
+        if (results.Rows.Count != 0)
+        {
+          watchedCount++;
+          sql = String.Format("update movie set timeswatched = {0} where idMovie={1}",
+                              watchedCount, idMovie);
+          m_db.Execute(sql);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public bool GetMovieWatchedStatus(int idMovie, out int percent, out int timesWatched)
+    {
+      percent = 0;
+      timesWatched = 0;
+      
+      try
+      {
+        string sql = String.Format("select * from movie where idMovie={0}", idMovie);
+        SQLiteResultSet results = m_db.Execute(sql);
+        
         if (results.Rows.Count == 0)
         {
           return false;
         }
+        
         int watched;
         int.TryParse(DatabaseUtility.Get(results, 0, "watched"), out watched);
         int.TryParse(DatabaseUtility.Get(results, 0, "iwatchedPercent"), out percent);
+        int.TryParse(DatabaseUtility.Get(results, 0, "timeswatched"), out timesWatched);
         
         if (watched != 0)
         {

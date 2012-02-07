@@ -177,8 +177,6 @@
       <orientation>horizontal</orientation>
       <percentage>#rating</percentage>
       <imagesToDraw>10</imagesToDraw>
-      
-      
     </control>
     
 		<control>
@@ -418,6 +416,29 @@
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
+    </control>
+		
+		<control>
+      <description>Times watched</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>91</posX>
+      <posY>485</posY>
+      <label>Watched count:</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+		<control>
+      <description>Times watched value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>485</posY>
+      <label>#timeswatched</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>FFB2D4F5</textcolor>
     </control>
 	
 		<control>
