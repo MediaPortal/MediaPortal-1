@@ -77,10 +77,9 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApp
   {
     if (bApplyChanges)
     {
-      //m_bPassThrough = true;
+      m_bPassThrough = true;
       SetInputFormat(pwfx);
       SetOutputFormat(pwfx);
-      SetupConversion(); // testing only
     }
     return hr;
   }
