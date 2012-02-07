@@ -501,12 +501,14 @@ Packet* CClip::GenerateSparseVideo(REFERENCE_TIME rtStart)
       {
         m_pSparseVideoPacket->rtStart += HALF_SECOND/5;
         m_pSparseVideoPacket->rtStop += HALF_SECOND/5;
+        m_pSparseVideoPacket->bFakeData = true;
       }
     }
     else
     {
       m_pSparseVideoPacket->rtStart += HALF_SECOND/5;
       m_pSparseVideoPacket->rtStop += HALF_SECOND/5;
+      m_pSparseVideoPacket->bFakeData = true;
     }
     ret = new Packet();
     ret->SetData(m_pSparseVideoPacket->GetData(),m_pSparseVideoPacket->GetDataSize());

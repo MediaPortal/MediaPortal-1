@@ -454,8 +454,14 @@ Packet* CDeMultiplexer::GetVideo()
     if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile() <= 0)
       return NULL;
   }
+  Packet * ret = m_playlistManager->GetNextVideoPacket();
 
-  return m_playlistManager->GetNextVideoPacket();
+  if (ret->bFakeData)
+  {
+    ReadFromFile();
+  }
+
+  return ret;
 }
 
 Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
