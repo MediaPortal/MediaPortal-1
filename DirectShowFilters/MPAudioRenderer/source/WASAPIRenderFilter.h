@@ -21,7 +21,8 @@
 #include "Settings.h"
 #include "queuedaudiosink.h"
 
-#define MPAR_S_NEED_DATA ((HRESULT)0x00040201)
+#define MPAR_S_NEED_DATA        ((HRESULT)0x00040201)
+#define MPAR_S_FORMAT_CHANGING  ((HRESULT)0x00040202)
 #define CLOCK_DATA_SIZE 10
 
 using namespace std;
@@ -97,8 +98,11 @@ private:
   BOOL                m_bIsAudioClientStarted;
 
   HANDLE              m_hDataEvent;
+  HANDLE              m_hFormatChangingEvent;
 
-  RenderState       m_state;
+  RenderState         m_state;
+  
+  CCritSec            m_csRenderLock;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;

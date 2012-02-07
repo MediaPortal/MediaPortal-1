@@ -38,6 +38,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_hTask(NULL),
   m_nBufferSize(0),
   m_hDataEvent(NULL),
+  m_hFormatChangingEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
   m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
@@ -100,21 +101,29 @@ HRESULT CWASAPIRenderFilter::Init()
     m_dwStreamFlags = 0;
   }
 
+  m_hFormatChangingEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+  m_hDataEvents.push_back(m_hFormatChangingEvent);
   m_hDataEvents.push_back(m_hDataEvent);
   m_hDataEvents.push_back(m_hStopThreadEvent);
 
+  m_dwDataWaitObjects.push_back(MPAR_S_FORMAT_CHANGING);
   m_dwDataWaitObjects.push_back(MPAR_S_NEED_DATA);
   m_dwDataWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
+  m_hSampleEvents.push_back(m_hFormatChangingEvent);
   m_hSampleEvents.push_back(m_hInputAvailableEvent);
   m_hSampleEvents.push_back(m_hStopThreadEvent);
 
+  m_dwSampleWaitObjects.push_back(MPAR_S_FORMAT_CHANGING);
   m_dwSampleWaitObjects.push_back(S_OK);
   m_dwSampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
+  m_hOOBCommandEvents.push_back(m_hFormatChangingEvent);
   m_hOOBCommandEvents.push_back(m_hStopThreadEvent);
   m_hOOBCommandEvents.push_back(m_hOOBCommandAvailableEvent);
 
+  m_dwOOBCommandWaitObjects.push_back(MPAR_S_FORMAT_CHANGING);
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
 
@@ -134,6 +143,9 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
+
+  if (m_hFormatChangingEvent)
+    CloseHandle(m_hFormatChangingEvent);
 
   return hr;
 }
@@ -186,6 +198,9 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   }
 
   HRESULT hr = VFW_E_CANNOT_CONNECT;
+
+  SetEvent(m_hFormatChangingEvent);
+  CAutoLock lock(&m_csRenderLock);
 
   if (!m_pAudioClient) 
   {
@@ -361,7 +376,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   StartAudioClient(&m_pAudioClient);
   m_state = StateRunning;
 
-  while(true)
+  while (true)
   {
     hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
 
@@ -383,9 +398,12 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       else if (m_state == StatePaused && writeSilence == 0)
         hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hOOBCommandEvents, &m_dwOOBCommandWaitObjects);
 
+      m_csRenderLock.Lock();
+
       if (hr == MPAR_S_THREAD_STOPPING)
       {
         Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+        m_csRenderLock.Unlock();
         StopAudioClient(&m_pAudioClient);
         RevertMMCSS();
         return 0;
@@ -396,6 +414,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
         bufferFlags = 0;
         writeSilence = false;
       }
+      // MPAR_S_FORMAT_CHANGING can be ignored at this state since the
+      // m_pAudioClient hasn't been queried yet for the buffer
 
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
@@ -442,9 +462,16 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               if (hr == MPAR_S_THREAD_STOPPING) // exit event
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+                m_csRenderLock.Unlock();
                 StopAudioClient(&m_pAudioClient);
                 RevertMMCSS();
                 return 0;
+              }
+              else if (hr == MPAR_S_FORMAT_CHANGING)
+              {
+                sample.Release();
+                sample = NULL;
+                break;                  
               }
               else if (FAILED(result))
               {
@@ -484,6 +511,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
         }
         
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, bufferFlags);
+        m_csRenderLock.Unlock();
 
         if (FAILED(hr))
           Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
@@ -495,7 +523,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       if (!m_pSettings->m_WASAPIUseEventMode)
       {
         if (m_pAudioClient)
+        {
+          CAutoLock lock(&m_csRenderLock);
           hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
+        }
         else
           hr = S_FALSE;
 
