@@ -63,16 +63,7 @@ HRESULT CQueuedAudioSink::Start(REFERENCE_TIME rtStart)
   if (FAILED(hr))
     return hr;
 
-  if (!m_hThread)
-  {
-    ResetEvent(m_hStopThreadEvent);
-    m_hThread = CreateThread(0, 0, CQueuedAudioSink::ThreadEntryPoint, (LPVOID)this, 0, &m_ThreadId);
-  }
-
-  if (!m_hThread)
-    return HRESULT_FROM_WIN32(GetLastError());
-
-  return S_OK;
+  return StartThread();
 }
 
 HRESULT CQueuedAudioSink::Run(REFERENCE_TIME rtStart)
@@ -103,14 +94,7 @@ HRESULT CQueuedAudioSink::BeginStop()
 
 HRESULT CQueuedAudioSink::EndStop()
 {
-  if (m_hThread)
-  {
-    WaitForSingleObject(m_hThread, INFINITE); //perhaps a reasonable timeout is needed
-    CloseHandle(m_hThread);
-    m_hThread = NULL;
-    ResetEvent(m_hStopThreadEvent);
-  }
-
+  CloseThread();
   return CBaseAudioSink::EndStop();
 }
 
@@ -257,4 +241,31 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
 DWORD WINAPI CQueuedAudioSink::ThreadEntryPoint(LPVOID lpParameter)
 {
   return ((CQueuedAudioSink *)lpParameter)->ThreadProc();
+}
+
+HRESULT CQueuedAudioSink::CloseThread()
+{
+  if (m_hThread)
+  {
+    WaitForSingleObject(m_hThread, INFINITE);
+    CloseHandle(m_hThread);
+    m_hThread = NULL;
+    ResetEvent(m_hStopThreadEvent);
+  }
+
+  return S_OK;
+}
+
+HRESULT CQueuedAudioSink::StartThread()
+{
+  if (!m_hThread)
+  {
+    ResetEvent(m_hStopThreadEvent);
+    m_hThread = CreateThread(0, 0, CQueuedAudioSink::ThreadEntryPoint, (LPVOID)this, 0, &m_ThreadId);
+  }
+
+  if (!m_hThread)
+    return HRESULT_FROM_WIN32(GetLastError());
+
+  return S_OK;
 }

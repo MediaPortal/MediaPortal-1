@@ -38,7 +38,6 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_hTask(NULL),
   m_nBufferSize(0),
   m_hDataEvent(NULL),
-  m_hFormatChangingEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
   m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
@@ -101,29 +100,21 @@ HRESULT CWASAPIRenderFilter::Init()
     m_dwStreamFlags = 0;
   }
 
-  m_hFormatChangingEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-
-  m_hDataEvents.push_back(m_hFormatChangingEvent);
   m_hDataEvents.push_back(m_hDataEvent);
   m_hDataEvents.push_back(m_hStopThreadEvent);
 
-  m_dwDataWaitObjects.push_back(MPAR_S_FORMAT_CHANGING);
   m_dwDataWaitObjects.push_back(MPAR_S_NEED_DATA);
   m_dwDataWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
-  m_hSampleEvents.push_back(m_hFormatChangingEvent);
   m_hSampleEvents.push_back(m_hInputAvailableEvent);
   m_hSampleEvents.push_back(m_hStopThreadEvent);
 
-  m_dwSampleWaitObjects.push_back(MPAR_S_FORMAT_CHANGING);
   m_dwSampleWaitObjects.push_back(S_OK);
   m_dwSampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
-  m_hOOBCommandEvents.push_back(m_hFormatChangingEvent);
   m_hOOBCommandEvents.push_back(m_hStopThreadEvent);
   m_hOOBCommandEvents.push_back(m_hOOBCommandAvailableEvent);
 
-  m_dwOOBCommandWaitObjects.push_back(MPAR_S_FORMAT_CHANGING);
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
   m_dwOOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
 
@@ -143,9 +134,6 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
-
-  if (m_hFormatChangingEvent)
-    CloseHandle(m_hFormatChangingEvent);
 
   return hr;
 }
@@ -199,8 +187,8 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
 
   HRESULT hr = VFW_E_CANNOT_CONNECT;
 
-  SetEvent(m_hFormatChangingEvent);
-  CAutoLock lock(&m_csRenderLock);
+  SetEvent(m_hStopThreadEvent);
+  CloseThread();
 
   if (!m_pAudioClient) 
   {
@@ -213,6 +201,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
       if (FAILED(hr))
       {
         Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not loaded");
+        StartThread(); // TODO - check if we dont have to start thread here
         return VFW_E_CANNOT_CONNECT;
       }
     }
@@ -234,6 +223,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
       LogWaveFormat(pwfxCM, "Closest match would be" );
       SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
       CoTaskMemFree(pwfxCM);
+      StartThread(); // TODO - check if we dont have to start thread here
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
 
@@ -255,11 +245,11 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
     // Reinitialize audio client
     hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
     if (SUCCEEDED (hr)) 
-    {
       hr = InitAudioClient(m_pInputFormat, &m_pRenderClient);
-    }
   }
   SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
+
+  StartThread();
 
   return hr;
 }
@@ -321,8 +311,8 @@ void CWASAPIRenderFilter::UpdateAudioClock()
 
     if (m_dClockPosIn == m_dClockPosOut)
     {
-        m_ullHwClock[m_dClockPosIn] = ullHwClock;
-        m_ullHwQpc[m_dClockPosIn] = qpc;
+      m_ullHwClock[m_dClockPosIn] = ullHwClock;
+      m_ullHwQpc[m_dClockPosIn] = qpc;
     }
     m_dClockPosIn = (m_dClockPosIn + 1) % CLOCK_DATA_SIZE;
     //if (m_dClockPosIn == m_dClockPosOut)
@@ -414,8 +404,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
         bufferFlags = 0;
         writeSilence = false;
       }
-      // MPAR_S_FORMAT_CHANGING can be ignored at this state since the
-      // m_pAudioClient hasn't been queried yet for the buffer
 
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
@@ -466,12 +454,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 StopAudioClient(&m_pAudioClient);
                 RevertMMCSS();
                 return 0;
-              }
-              else if (hr == MPAR_S_FORMAT_CHANGING)
-              {
-                sample.Release();
-                sample = NULL;
-                break;                  
               }
               else if (FAILED(result))
               {

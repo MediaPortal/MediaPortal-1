@@ -83,6 +83,9 @@ protected:
   static DWORD WINAPI ThreadEntryPoint(LPVOID lpParameter);
   virtual DWORD ThreadProc() = 0;
 
+  virtual HRESULT CloseThread();
+  virtual HRESULT StartThread();
+
 protected:
   DWORD  m_ThreadId;
   HANDLE m_hThread;
