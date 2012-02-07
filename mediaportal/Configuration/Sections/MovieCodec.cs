@@ -67,7 +67,8 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.XVID);
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
         ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
-        //ArrayList availableFileSyncFilters = FilterHelper.GetFilterSplitter();
+        ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
+        ArrayList availableVC1ICyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
         ArrayList availableSourcesFilters = FilterHelper.GetFilterSource();
         //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
@@ -106,29 +107,7 @@ namespace MediaPortal.Configuration.Sections
         }
         availableAudioFilters.Sort();
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
-        //Add Cyberlink PDVD10 Filter
-        while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD10)"))
-        {
-          availableVC1VideoFilters.Add("CyberLink Video Decoder (PDVD10)");
-          availableVC1IVideoFilters.Add("CyberLink Video Decoder (PDVD10)");
-          break;
-        }
-        while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD11)"))
-        {
-          availableVC1VideoFilters.Add("CyberLink Video Decoder (PDVD11)");
-          availableVC1IVideoFilters.Add("CyberLink Video Decoder (PDVD11)");
-          break;
-        }
-        while (availableXVIDVideoFilters.Contains("CyberLink Video Decoder (PDVD11)"))
-        {
-          availableXVIDVideoFilters.Remove("CyberLink Video Decoder (PDVD11)");
-          break;
-        }
-        while (availableXVIDVideoFilters.Contains("CyberLink Video Decoder (PDVD10)"))
-        {
-          availableXVIDVideoFilters.Remove("CyberLink Video Decoder (PDVD10)");
-          break;
-        }
+
         while (availableXVIDVideoFilters.Contains("ArcSoft Video Decoder"))
         {
           availableXVIDVideoFilters.Remove("ArcSoft Video Decoder");
@@ -162,6 +141,8 @@ namespace MediaPortal.Configuration.Sections
         SplitterFileComboBox.Items.AddRange(availableFileSyncFilters.ToArray());
         vc1videoCodecComboBox.Items.AddRange(availableVC1VideoFilters.ToArray());
         vc1ivideoCodecComboBox.Items.AddRange(availableVC1IVideoFilters.ToArray());
+        vc1videoCodecComboBox.Items.AddRange(availableVC1CyberlinkVideoFilters.ToArray());
+        vc1ivideoCodecComboBox.Items.AddRange(availableVC1ICyberlinkVideoFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
         xvidvideoCodecComboBox.Items.AddRange(availableXVIDVideoFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());

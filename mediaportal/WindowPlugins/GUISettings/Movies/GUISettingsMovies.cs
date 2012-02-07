@@ -38,22 +38,37 @@ namespace WindowPlugins.GUISettings.TV
   /// </summary>
   public class GUISettingsMovies : GUIInternalWindow
   {
-    [SkinControl(24)] protected GUIButtonControl btnVideoCodec = null;
-    [SkinControl(25)] protected GUIButtonControl btnAudioCodec = null;
+    [SkinControl(24)]
+    protected GUIButtonControl btnVideoCodec = null;
+    [SkinControl(25)]
+    protected GUIButtonControl btnAudioCodec = null;
     //[SkinControlAttribute(26)]			protected GUIButtonControl btnVideoRenderer=null;
-    [SkinControl(27)] protected GUIButtonControl btnAudioRenderer = null;
-    [SkinControl(28)] protected GUIButtonControl btnAspectRatio = null;
-    [SkinControl(29)] protected GUIButtonControl btnH264VideoCodec = null;
-    [SkinControl(30)] protected GUIButtonControl btnAACAudioCodec = null;
-    [SkinControl(31)] protected GUIToggleButtonControl btnEnableSubtitles = null;
-    [SkinControl(32)] protected GUIButtonControl btnSubtitle = null;
-    [SkinControl(33)] protected GUIButtonControl btnAudioLanguage = null;
-    [SkinControl(34)] protected GUIButtonControl btnVC1VideoCodec = null;
-    [SkinControl(35)] protected GUIButtonControl btnVC1IVideoCodec = null;
-    [SkinControl(36)] protected GUIButtonControl btnXVIDVideoCodec = null;
-    [SkinControl(37)] protected GUIButtonControl btnFileSyncSplitter = null;
-    [SkinControl(38)] protected GUIButtonControl btnSourceSplitter = null;
-	[SkinControl(39)] protected GUIToggleButtonControl btnForceSourceSplitter = null;
+    [SkinControl(27)]
+    protected GUIButtonControl btnAudioRenderer = null;
+    [SkinControl(28)]
+    protected GUIButtonControl btnAspectRatio = null;
+    [SkinControl(29)]
+    protected GUIButtonControl btnH264VideoCodec = null;
+    [SkinControl(30)]
+    protected GUIButtonControl btnAACAudioCodec = null;
+    [SkinControl(31)]
+    protected GUIToggleButtonControl btnEnableSubtitles = null;
+    [SkinControl(32)]
+    protected GUIButtonControl btnSubtitle = null;
+    [SkinControl(33)]
+    protected GUIButtonControl btnAudioLanguage = null;
+    [SkinControl(34)]
+    protected GUIButtonControl btnVC1VideoCodec = null;
+    [SkinControl(35)]
+    protected GUIButtonControl btnVC1IVideoCodec = null;
+    [SkinControl(36)]
+    protected GUIButtonControl btnXVIDVideoCodec = null;
+    [SkinControl(37)]
+    protected GUIButtonControl btnFileSyncSplitter = null;
+    [SkinControl(38)]
+    protected GUIButtonControl btnSourceSplitter = null;
+    [SkinControl(39)]
+    protected GUIToggleButtonControl btnForceSourceSplitter = null;
 
     private class CultureComparer : IComparer
     {
@@ -170,16 +185,16 @@ namespace WindowPlugins.GUISettings.TV
         availableVideoFilters.Remove("Nero Mpeg2 Encoder");
       }
       availableVideoFilters.Sort();
-	  
-   	  ShowSettingsDialog("movieplayer", "mpeg2videocodec", availableVideoFilters);
+
+      ShowSettingsDialog("movieplayer", "mpeg2videocodec", availableVideoFilters);
     }
 
     private void OnH264VideoCodec()
     {
       ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
-	  availableH264VideoFilters.Sort();
-	  
-   	  ShowSettingsDialog("movieplayer", "h264videocodec", availableH264VideoFilters);
+      availableH264VideoFilters.Sort();
+
+      ShowSettingsDialog("movieplayer", "h264videocodec", availableH264VideoFilters);
     }
 
     private void OnAudioCodec()
@@ -202,8 +217,8 @@ namespace WindowPlugins.GUISettings.TV
         availableAudioFilters.Remove("Nero Mpeg2 Encoder");
       }
       availableAudioFilters.Sort();
-	  
-   	  ShowSettingsDialog("movieplayer", "mpeg2audiocodec", availableAudioFilters);
+
+      ShowSettingsDialog("movieplayer", "mpeg2audiocodec", availableAudioFilters);
     }
 
     private void OnAspectRatio()
@@ -253,17 +268,17 @@ namespace WindowPlugins.GUISettings.TV
     private void OnAudioRenderer()
     {
       ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
-	  availableAudioFilters.Sort();
-	  
-   	  ShowSettingsDialog("movieplayer", "audiorenderer", "Default DirectSound Device", availableAudioFilters);
+      availableAudioFilters.Sort();
+
+      ShowSettingsDialog("movieplayer", "audiorenderer", "Default DirectSound Device", availableAudioFilters);
     }
 
     private void OnAACAudioCodec()
     {
       ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
       availableAACAudioFilters.Sort();
-	  
-   	  ShowSettingsDialog("movieplayer", "aacaudiocodec", availableAACAudioFilters);
+
+      ShowSettingsDialog("movieplayer", "aacaudiocodec", availableAACAudioFilters);
     }
 
     private void OnSubtitleOnOff()
@@ -361,44 +376,24 @@ namespace WindowPlugins.GUISettings.TV
         }
       }
     }
-	
-	private void OnVC1VideoCodec()
+
+    private void OnVC1VideoCodec()
     {
       ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
-      ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
+      ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
 
-      while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD10)"))
-      {
-        availableVC1VideoFilters.Add("CyberLink Video Decoder (PDVD10)");
-        break;
-      }
-      while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD11)"))
-      {
-        availableVC1VideoFilters.Add("CyberLink Video Decoder (PDVD11)");
-        break;
-      }
-
+      availableVC1VideoFilters.AddRange(availableVC1CyberlinkVideoFilters.ToArray());
       availableVC1VideoFilters.Sort();
-	  
-   	  ShowSettingsDialog("movieplayer", "vc1videocodec", availableVC1VideoFilters);
+
+      ShowSettingsDialog("movieplayer", "vc1videocodec", availableVC1VideoFilters);
     }
 
-	private void OnVC1IVideoCodec()
+    private void OnVC1IVideoCodec()
     {
       ArrayList availableVC1IVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
-      ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
+      ArrayList availableVC1ICyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
 
-      while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD10)"))
-      {
-        availableVC1IVideoFilters.Add("CyberLink Video Decoder (PDVD10)");
-        break;
-      }
-      while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD11)"))
-      {
-        availableVC1IVideoFilters.Add("CyberLink Video Decoder (PDVD11)");
-        break;
-      }
-	  while (availableVC1IVideoFilters.Contains("MPC - Video decoder"))
+      while (availableVC1IVideoFilters.Contains("MPC - Video decoder"))
       {
         availableVC1IVideoFilters.Remove("MPC - Video decoder");
         break;
@@ -408,86 +403,70 @@ namespace WindowPlugins.GUISettings.TV
         availableVC1IVideoFilters.Remove("WMVideo Decoder DMO");
         break;
       }
-
+      availableVC1IVideoFilters.AddRange(availableVC1ICyberlinkVideoFilters.ToArray());
       availableVC1IVideoFilters.Sort();
-	  
-   	  ShowSettingsDialog("movieplayer", "vc1ivideocodec", availableVC1IVideoFilters);
+
+      ShowSettingsDialog("movieplayer", "vc1ivideocodec", availableVC1IVideoFilters);
     }
 
-	private void OnXVIDVideoCodec()
+    private void OnXVIDVideoCodec()
     {
       ArrayList availableXVIDVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.XVID);
 
-      while (availableXVIDVideoFilters.Contains("CyberLink Video Decoder (PDVD11)"))
-      {
-        availableXVIDVideoFilters.Remove("CyberLink Video Decoder (PDVD11)");
-        break;
-      }
-      while (availableXVIDVideoFilters.Contains("CyberLink Video Decoder (PDVD10)"))
-      {
-        availableXVIDVideoFilters.Remove("CyberLink Video Decoder (PDVD10)");
-        break;
-      }
-      while (availableXVIDVideoFilters.Contains("ArcSoft Video Decoder"))
-      {
-        availableXVIDVideoFilters.Remove("ArcSoft Video Decoder");
-        break;
-      }
-
       availableXVIDVideoFilters.Sort();
-	  
-  	  ShowSettingsDialog("movieplayer", "xvidvideocodec", availableXVIDVideoFilters);
+
+      ShowSettingsDialog("movieplayer", "xvidvideocodec", availableXVIDVideoFilters);
     }
-	
-	private void OnForceSourceSplitter()
+
+    private void OnForceSourceSplitter()
     {
       using (Settings xmlwriter = new MPSettings())
       {
-  		btnFileSyncSplitter.Disabled = !btnForceSourceSplitter.Selected;
-		btnSourceSplitter.Disabled = !btnForceSourceSplitter.Selected;
+        btnFileSyncSplitter.Disabled = !btnForceSourceSplitter.Selected;
+        btnSourceSplitter.Disabled = !btnForceSourceSplitter.Selected;
 
         xmlwriter.SetValueAsBool("movieplayer", "forcesourcesplitter", btnForceSourceSplitter.Selected);
       }
     }
 
-	private void OnFileSyncSplitter()
+    private void OnFileSyncSplitter()
     {
       ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
       availableFileSyncFilters.Sort();
-	  
-	  ShowSettingsDialog("movieplayer", "splitterfilefilter", availableFileSyncFilters);
+
+      ShowSettingsDialog("movieplayer", "splitterfilefilter", availableFileSyncFilters);
     }
-	
-	private void OnSourceSplitter()
+
+    private void OnSourceSplitter()
     {
-	  ArrayList availableSourcesFilters = FilterHelper.GetFilterSource();
+      ArrayList availableSourcesFilters = FilterHelper.GetFilterSource();
       ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
-	  
+
       while (availableFileSyncFilters.Contains("Haali Media Splitter (AR)"))
       {
         availableSourcesFilters.Add("Haali Media Splitter");
         break;
       }
-	  
+
       availableSourcesFilters.Sort();
-	  
-	  ShowSettingsDialog("movieplayer", "splitterfilter", availableSourcesFilters);
+
+      ShowSettingsDialog("movieplayer", "splitterfilter", availableSourcesFilters);
     }
-	
-	private void ShowSettingsDialog(string section, string entry, ArrayList availableValues)
-	{
-	  ShowSettingsDialog(section, entry, "", availableValues);
-	}
-	
-	private void ShowSettingsDialog(string section, string entry, string defaultValue, ArrayList availableValues)
-	{
-	  string strCurrentValue = "";
+
+    private void ShowSettingsDialog(string section, string entry, ArrayList availableValues)
+    {
+      ShowSettingsDialog(section, entry, "", availableValues);
+    }
+
+    private void ShowSettingsDialog(string section, string entry, string defaultValue, ArrayList availableValues)
+    {
+      string strCurrentValue = "";
       using (Settings xmlreader = new MPSettings())
       {
         strCurrentValue = xmlreader.GetValueAsString(section, entry, defaultValue);
       }
-	  
-	  GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
@@ -514,8 +493,8 @@ namespace WindowPlugins.GUISettings.TV
       {
         xmlwriter.SetValue(section, entry, (string)availableValues[dlg.SelectedLabel]);
       }
-	}
-	
+    }
+
     private void SetButtonsState()
     {
       using (Settings xmlreader = new MPSettings())
@@ -524,9 +503,9 @@ namespace WindowPlugins.GUISettings.TV
 
         bool forceSourceSplitter = xmlreader.GetValueAsBool("movieplayer", "forcesourcesplitter", false);
         btnForceSourceSplitter.Selected = forceSourceSplitter;
-		
-		btnFileSyncSplitter.Disabled = !forceSourceSplitter;
-		btnSourceSplitter.Disabled = !forceSourceSplitter;
+
+        btnFileSyncSplitter.Disabled = !forceSourceSplitter;
+        btnSourceSplitter.Disabled = !forceSourceSplitter;
       }
     }
   }

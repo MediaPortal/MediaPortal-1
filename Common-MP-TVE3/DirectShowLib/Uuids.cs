@@ -1751,6 +1751,10 @@ namespace DirectShowLib
     public static readonly Guid VC1 = new Guid(0x31435657, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B,
                                                 0x71);
 
+    /// <summary> MEDIASUBTYPE_VC1_Cyberlink </summary>
+    public static readonly Guid CyberlinkVC1 = new Guid(0xD979F77B, 0xDBEA, 0x4BF6, 0x9E, 0x6D, 0x1D, 0x7E, 0x57, 0xFB, 0xAD,
+                                                0x53);
+
     /// <summary> MEDIASUBTYPE_AVC1 </summary>
     public static readonly Guid AVC1 = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b,
                                                 0x71);
