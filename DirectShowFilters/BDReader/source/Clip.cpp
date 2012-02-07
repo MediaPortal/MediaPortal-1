@@ -468,7 +468,7 @@ bool CClip::SparseVideoAvailable()
 {
   bool ret = false;
   
-  if (videoPlaybackPosition + HALF_SECOND < playlistFirstPacketTime + clipDuration) ret = true;
+  if (videoPlaybackPosition + HALF_SECOND < playlistFirstPacketTime + clipDuration && (m_pSparseVideoPacket || m_vecClipVideoPackets.size()>0)) ret = true;
 
   return ret;
 }
@@ -516,20 +516,23 @@ Packet* CClip::GenerateSparseVideo(REFERENCE_TIME rtStart)
   }
   else
   {
-    ivecVideoBuffers it = m_vecClipVideoPackets.begin();
-    if ((*it)->rtStart !=Packet::INVALID_TIME)
+    if (m_vecClipVideoPackets.size()>0)
     {
-      m_pSparseVideoPacket=*it;
-      it=m_vecClipVideoPackets.erase(it);
-      ret = new Packet();
-      ret->SetData(m_pSparseVideoPacket->GetData(),m_pSparseVideoPacket->GetDataSize());
-      ret->CopyProperties(*m_pSparseVideoPacket);
-    }
-    else
-    {
-      it=m_vecClipVideoPackets.erase(it);
-      if (!m_vecClipVideoPackets.size()) sparseVideo = false;
-      return *it;
+      ivecVideoBuffers it = m_vecClipVideoPackets.begin();
+      if ((*it)->rtStart !=Packet::INVALID_TIME)
+      {
+        m_pSparseVideoPacket=*it;
+        it=m_vecClipVideoPackets.erase(it);
+        ret = new Packet();
+        ret->SetData(m_pSparseVideoPacket->GetData(),m_pSparseVideoPacket->GetDataSize());
+        ret->CopyProperties(*m_pSparseVideoPacket);
+      }
+      else
+      {
+        it=m_vecClipVideoPackets.erase(it);
+        if (!m_vecClipVideoPackets.size()) sparseVideo = false;
+        return *it;
+      }
     }
   }
   return ret;
