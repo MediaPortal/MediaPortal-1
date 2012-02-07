@@ -23,6 +23,8 @@ extern void Log(const char *fmt, ...);
 extern void LogRotate();
 
 unsigned int gAllowedAC3bitrates[9] = {192, 224, 256, 320, 384, 448, 512, 576, 640};
+unsigned int gAllowedSampleRates[7] = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
+unsigned int gAllowedBitDepths[4] = {8, 16, 24, 32};
 
 AudioRendererSettings::AudioRendererSettings() :
   m_bLogSampleTimes(false),
@@ -46,7 +48,9 @@ AudioRendererSettings::AudioRendererSettings() :
   m_dwChannelMaskOverride_5_1(0),
   m_dwChannelMaskOverride_7_1(0),
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
-  m_wWASAPIPreferredDeviceId(NULL)
+  m_wWASAPIPreferredDeviceId(NULL),
+  m_nForceSamplingRate(0),
+  m_nForceBitDepth(0)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.996");
@@ -87,6 +91,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   LPCTSTR HWBasedRefClock = TEXT("HWBasedRefClock");
   LPCTSTR enableSyncAdjustment = TEXT("EnableSyncAdjustment");
+  LPCTSTR forceSamplingRate = TEXT("ForceSamplingRate");
+  LPCTSTR forceBitDepth = TEXT("ForceBitDepth");
   LPCTSTR quality_USE_QUICKSEEK = TEXT("Quality_USE_QUICKSEEK");
   LPCTSTR quality_USE_AA_FILTER = TEXT("Quality_USE_AA_FILTER");
   LPCTSTR quality_AA_FILTER_LENGTH = TEXT("Quality_AA_FILTER_LENGTH");
@@ -110,6 +116,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD logSampleTimesData = 0;
   DWORD HWBasedRefClockData = 1;
   DWORD enableSyncAdjustmentData = 1;
+  DWORD forceSamplingRateData = 0;
+  DWORD forceBitDepthData = 0;
   DWORD quality_USE_QUICKSEEKData = 0;
   DWORD quality_USE_AA_FILTERData = 0;
   DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
@@ -153,6 +161,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
     ReadRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
+    ReadRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
+    ReadRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
 
     // Resampling quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -178,6 +188,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   LogSampleTimes:           %d", logSampleTimesData);
     Log("   HWBasedRefClock:          %d", HWBasedRefClockData);
     Log("   EnableSyncAdjustment:     %d", enableSyncAdjustmentData);
+    Log("   ForceSamplingRate:        %d", forceSamplingRateData);
+    Log("   ForceBitDepth:            %d", forceBitDepthData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
@@ -242,25 +254,31 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_bEnableSyncAdjustment = false;
 
-    m_hnsPeriod = devicePeriodData;
-
-    bool rateOk = false;
-    for (int i = 0; i < sizeof(gAllowedAC3bitrates) / sizeof(int); i++)
+    if (AllowedRate(gAllowedSampleRates, sizeof(gAllowedSampleRates) / sizeof(int), forceSamplingRateData))
+      m_nForceSamplingRate = forceSamplingRateData;
+    else
     {
-      if (gAllowedAC3bitrates[i] == AC3bitrateData)
-      {
-        rateOk = true;
-        break;
-      }
+      m_nForceSamplingRate = 0;
+      Log("   invalid forced sample rate!");
     }
 
-    if (rateOk)
+    if (AllowedRate(gAllowedBitDepths, sizeof(gAllowedBitDepths) / sizeof(int), forceBitDepthData))
+      m_nForceBitDepth = forceBitDepthData;
+    else
+    {
+      m_nForceBitDepth = 0;
+      Log("   invalid forced bit depth!");
+    }
+
+    if (AllowedRate(gAllowedAC3bitrates, sizeof(gAllowedAC3bitrates) / sizeof(int), AC3bitrateData))
       m_AC3bitrate = AC3bitrateData * 1000;
     else
     {
       m_AC3bitrate = 448000;
       Log("   invalid AC3 bitrate, using 448");
     }
+
+    m_hnsPeriod = devicePeriodData;
 
     if (quality_USE_QUICKSEEKData > 0)
       m_bQuality_USE_QUICKSEEK = true;
@@ -306,6 +324,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
       WriteRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
       WriteRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
+      WriteRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
+      WriteRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
       WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
       WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
@@ -316,9 +336,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
     else 
-    {
       Log("Error creating master key %d", result);
-    }
   }
   
   delete[] lpData;
@@ -338,9 +356,7 @@ void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, D
       WriteRegistryKeyDword(hKey, lpSubKey, data);
     }
     else
-    {
       Log("   faíled to create default value for %s", lpSubKey);
-    }
   }
 }
 
@@ -349,13 +365,9 @@ void AudioRendererSettings::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, 
   DWORD dwSize = sizeof(DWORD);
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
   if (result == ERROR_SUCCESS) 
-  {
     Log("Success writing to Registry: %s", lpSubKey);
-  } 
   else 
-  {
     Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
-  }
 }
 
 void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
@@ -372,13 +384,9 @@ void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, 
       WriteRegistryKeyString(hKey, lpSubKey, data);
     }
     else if (error == ERROR_MORE_DATA)
-    {
       Log("   too much data, corrupted registry setting(?):  %s", lpSubKey);      
-    }
     else
-    {
       Log("   error: %d subkey: %s", error, lpSubKey);       
-    }
   }
 }
 
@@ -386,11 +394,22 @@ void AudioRendererSettings::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey,
 {  
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, strlen(data)+1);
   if (result == ERROR_SUCCESS) 
-  {
     Log("Success writing to Registry: %s", lpSubKey);
-  } 
   else 
-  {
     Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
+}
+
+bool AudioRendererSettings::AllowedRate(unsigned int allowedRates[], unsigned int size, int rate)
+{
+  bool rateOk = false;
+  for (int i = 0; i < size; i++)
+  {
+    if (allowedRates[i] == rate)
+    {
+      rateOk = true;
+      break;
+    }
   }
+
+  return rateOk;
 }

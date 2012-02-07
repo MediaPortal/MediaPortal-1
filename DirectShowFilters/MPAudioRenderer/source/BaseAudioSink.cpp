@@ -188,7 +188,8 @@ bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX 
 
   if (pwfx1->wFormatTag != pwfx2->wFormatTag ||
       pwfx1->nChannels != pwfx2->nChannels ||
-      pwfx1->wBitsPerSample != pwfx2->wBitsPerSample) // TODO : improve the checks
+      pwfx1->wBitsPerSample != pwfx2->wBitsPerSample ||
+      pwfx1->nSamplesPerSec != pwfx2->nSamplesPerSec) // TODO : improve the checks
     return false;
 
   return true;

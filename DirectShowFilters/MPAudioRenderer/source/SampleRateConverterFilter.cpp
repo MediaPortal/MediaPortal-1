@@ -22,11 +22,14 @@
 extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
 extern void Log(const char *fmt, ...);
 
+extern unsigned int gAllowedSampleRates[7];
+
 CSampleRateConverter::CSampleRateConverter(AudioRendererSettings *pSettings)
 : m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_pSettings(pSettings),
-  m_pSrcState(NULL)
+  m_pSrcState(NULL),
+  m_dSampleRateRation(1.0)
 {
 }
 
@@ -53,15 +56,8 @@ HRESULT CSampleRateConverter::Cleanup()
   return CBaseAudioSink::Cleanup();
 }
 
-HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *tmp, int nApplyChangesDepth)
+HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
 {
-  // TODO: remove
-  WAVEFORMATEX* pwfx = new WAVEFORMATEX();
-  CopyWaveFormatEx(&pwfx, tmp);
-
-  //pwfx->nSamplesPerSec = 48000 * 2; 
-  //pwfx->nAvgBytesPerSec = 192000 * 2;
-
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
@@ -89,22 +85,15 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *tmp, int nAppl
     return hr;
   }
 
-  // verify input format is PCM or IEEE_FLOAT
-  bool isPCM = false;
+  // verify input format is IEEE_FLOAT
   bool isFloat = false;
   bool isWFExtensible = pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
                         pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
 
   if (isWFExtensible)
-  {
-    isPCM = (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat == KSDATAFORMAT_SUBTYPE_PCM);
     isFloat = (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
-  }
   else 
-  {
-    isPCM = (pwfx->wFormatTag == WAVE_FORMAT_PCM);
     isFloat = (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT);
-  }
 
   // Sample rate converter can work only with floats
   if (!isFloat)
@@ -112,32 +101,52 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *tmp, int nAppl
 
   WAVEFORMATEX *pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
+  pOutWfx->nSamplesPerSec = 0;
 
   hr = VFW_E_TYPE_NOT_ACCEPTED;
-  
-  /*
-  for(; FAILED(hr) && pOutBitDepth->wContainerBits != 0; pOutBitDepth++)
-  {
-    if (*pOutBitDepth == inBitDepth)
-      continue; // skip if same as source
 
-    pOutWfx->wBitsPerSample = pOutBitDepth->wContainerBits;
-    if (isWFExtensible)
+  const unsigned int sampleRateCount = sizeof(gAllowedSampleRates) / sizeof(int);
+  unsigned int startPoint = 0;
+
+  // TODO test duplicate sample rates first
+
+  // Search for the input sample rate in sample rate array
+  bool foundSampleRate = false;
+  for (unsigned int i = 0; i < sampleRateCount && !foundSampleRate; i++)
+  {
+    if (gAllowedSampleRates[i] == pwfx->nSamplesPerSec)
     {
-      ((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat = pOutBitDepth->bIsFloat? KSDATAFORMAT_SUBTYPE_IEEE_FLOAT : KSDATAFORMAT_SUBTYPE_PCM;
-      ((WAVEFORMATEXTENSIBLE *)pwfx)->Samples.wValidBitsPerSample = pOutBitDepth->wValidBits;
+      startPoint = ++i; // select closest sample rate in ascending order 
+      foundSampleRate = true;
     }
-    else
-    {
-      if (pOutBitDepth->wContainerBits != pOutBitDepth->wValidBits)
-        continue; // WAVEFORMATEX cannot describe this format - skip it
-      
-      pOutWfx->wFormatTag = pOutBitDepth->bIsFloat? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
-    }
-    pOutWfx->nBlockAlign = pOutWfx->wBitsPerSample/8 * pOutWfx->nChannels;
-    pOutWfx->nAvgBytesPerSec = pOutWfx->nBlockAlign * pOutWfx->nSamplesPerSec;
+  }
+
+  if (!foundSampleRate)
+    Log("CSampleRateConverter::NegotiateFormat - sample rate (%d) not found in the source array", pwfx->nSamplesPerSec);
   
+  unsigned int sampleRatesTested = 0;
+  for (int i = startPoint; FAILED(hr) && pOutWfx->nSamplesPerSec == 0 && sampleRatesTested < sampleRateCount; i++)
+  {
+    if (pOutWfx->nSamplesPerSec == pwfx->nSamplesPerSec)
+    {
+      sampleRatesTested++;
+      continue; // skip if same as source
+    }
+
+    if (isWFExtensible)
+      ((WAVEFORMATEXTENSIBLE *)pOutWfx)->Format.nSamplesPerSec = gAllowedSampleRates[i];
+    else
+      pOutWfx->nSamplesPerSec = gAllowedSampleRates[i];
+
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
+    sampleRatesTested++;
+
+    if (FAILED(hr))
+      pOutWfx->nSamplesPerSec = 0;
+
+    // Search from the lower end
+    if (i == sampleRateCount - 1)
+      i = 0;
   }
 
   if (FAILED(hr))
@@ -152,9 +161,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *tmp, int nAppl
     SetOutputFormat(pOutWfx, true);
     hr = SetupConversion();
     // TODO: do something meaningfull if SetupConversion fails
-    if (FAILED(hr))
-      m_pfnConvert = NULL;
-  }*/
+    //if (FAILED(hr))
+  }
 
   return S_OK;
 }
@@ -184,7 +192,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
-      Log("BitDepthAdapter: PutSample failed to change format: 0x%08x", hr);
+      Log("SampleRateConverter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
   }
@@ -237,20 +245,19 @@ HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *pr
 HRESULT CSampleRateConverter::SetupConversion()
 {
   // Only floats
-  m_nOutBitsPerSample = 32;
-  m_nInBitsPerSample = 32;
+  m_nBitsPerSample = 32;
 
-  m_nInFrameSize = m_pInputFormat->nBlockAlign;
-  m_nInBytesPerSample = m_pInputFormat->wBitsPerSample / 8;
+  m_nFrameSize = m_pInputFormat->nBlockAlign;
+  m_nBytesPerSample = m_pInputFormat->wBitsPerSample / 8;
 
-  m_nOutFrameSize = m_pOutputFormat->nBlockAlign;
-  m_nOutBytesPerSample = m_pOutputFormat->wBitsPerSample / 8;
+  m_dSampleRateRation = (double)m_pOutputFormat->nSamplesPerSec / (double)m_pInputFormat->nSamplesPerSec;
 
   if (m_pSrcState)
     m_pSrcState = src_delete(m_pSrcState);
 
   int error = 0;
-  m_pSrcState = src_new(SRC_SINC_FASTEST, m_pInputFormat->nChannels, &error) ;
+  //m_pSrcState = src_new(SRC_SINC_FASTEST, m_pInputFormat->nChannels, &error);
+  m_pSrcState = src_new(SRC_LINEAR, m_pInputFormat->nChannels, &error);
 
   // TODO better error handling
   if (error != 0)
@@ -288,7 +295,7 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
       long nOffset = m_pNextOutSample->GetActualDataLength();
       long nSize = m_pNextOutSample->GetSize();
 
-      if (nOffset + m_nOutFrameSize > nSize)
+      if (nOffset + m_nFrameSize > nSize)
         hr = OutputNextSample();
     }
 
@@ -312,38 +319,35 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
     ASSERT(pOutData);
     pOutData += nOffset;
 
-    //int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize * (96000.0 / 44100.0));
-    int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
+    //int framesToConvert = min(cbData / m_nFrameSize, (nSize - nOffset) / (m_nFrameSize * m_dSampleRateRation));
 
-    // Just a pass thru for testing
-    //memcpy(pOutData, pData, framesToConvert * m_nInFrameSize);
-    
     SRC_DATA data;
 
     data.data_in = (float*)pData;
     data.data_out = (float*)pOutData;
-    data.input_frames = framesToConvert; //cbData / m_nInFrameSize;
-    data.output_frames = framesToConvert; //(nSize - nOffset) / m_nOutFrameSize;
-    data.src_ratio = 1.0; //96000.0 / 48000.0;
+    data.input_frames = cbData / m_nFrameSize; //framesToConvert
+    data.output_frames = (nSize - nOffset) / m_nFrameSize; //framesToConvert
+    data.src_ratio = m_dSampleRateRation; //96000.0 / 48000.0;
     data.end_of_input = 0;
 
     int ret = src_process(m_pSrcState, &data);
 
-    Log("to convert: %d input_frames_used: %d output_frames_gen: %d", framesToConvert, data.input_frames_used, data.output_frames_gen);
+    //Log("to convert: %d input_frames_used: %d output_frames_gen: %d", framesToConvert, data.input_frames_used, data.output_frames_gen);
+    Log("input_frames_used: %d output_frames_gen: %d", data.input_frames_used, data.output_frames_gen);
 
-    pData += data.input_frames_used * m_nOutFrameSize;
-    bytesOutput += data.output_frames_gen * m_nOutFrameSize;
-    cbData -= data.input_frames_used * m_nOutFrameSize;
-    nOffset += data.output_frames_gen * m_nOutFrameSize;
+    pData += data.input_frames_used * m_nFrameSize;
+    bytesOutput += data.output_frames_gen * m_nFrameSize;
+    cbData -= data.input_frames_used * m_nFrameSize;
+    nOffset += data.output_frames_gen * m_nFrameSize;
 
     m_pNextOutSample->SetActualDataLength(nOffset);
-    if (nOffset + m_nOutFrameSize > nSize)
+    if (nOffset + m_nFrameSize > nSize)
       OutputNextSample();
 
-    m_rtInSampleTime += framesToConvert * m_nInFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
+    //m_rtInSampleTime += framesToConvert * m_nFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
 
     // all samples should contain an integral number of frames
-    ASSERT(cbData == 0 || cbData >= m_nInFrameSize);
+    ASSERT(cbData == 0 || cbData >= m_nFrameSize);
   }
   
   if (pcbDataProcessed)

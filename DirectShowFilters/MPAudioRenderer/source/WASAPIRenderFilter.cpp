@@ -144,22 +144,48 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  // check always from the renderer device?
   if (FormatsEqual(pwfx, m_pInputFormat))
+  {
+    Log("CWASAPIRenderFilter::NegotiateFormat - new format same as earlier");
+    LogWaveFormat(m_pInputFormat, "CWASAPIRenderFilter::NegotiateFormat");
     return S_OK;
+  }
 
   bool bApplyChanges = nApplyChangesDepth != 0;
 
-  //if (!bApplyChanges)
-  //  return S_OK;
+  if (!bApplyChanges)
+    return S_OK;
 
   Log("CWASAPIRenderFilter::NegotiateFormat");
   LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");
 
-  HRESULT hr = VFW_E_CANNOT_CONNECT;
+  bool forceSampleRate = m_pSettings->m_nForceSamplingRate > 0;
+  bool forceBitDepth = m_pSettings->m_nForceBitDepth > 0;
 
-//  if (pwfx->wBitsPerSample != 16)
-//    return VFW_E_CANNOT_CONNECT;
+  // Check for forced bit depth and/or sampling rate
+  if (forceBitDepth || forceSampleRate)
+  {
+    bool accepted = true;
+    if (forceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->wBitsPerSample)
+        accepted = false;
+
+    if (forceSampleRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->nSamplesPerSec)
+        accepted = false;
+
+    if (accepted)
+    {
+      if (forceSampleRate && forceBitDepth)
+        Log("  -- using forced: sample rate: %d bit depth: %d", pwfx->nSamplesPerSec, pwfx->wBitsPerSample);
+      else if (forceSampleRate)
+        Log("  -- using forced: sample rate: %d", pwfx->nSamplesPerSec);
+      else
+        Log("  -- using forced: bit depth: %d", pwfx->wBitsPerSample);
+    }
+    else
+      return VFW_E_CANNOT_CONNECT;
+  }
+
+  HRESULT hr = VFW_E_CANNOT_CONNECT;
 
   if (!m_pAudioClient) 
   {

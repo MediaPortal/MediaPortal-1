@@ -56,6 +56,9 @@ public:
 
   DWORD m_dwChannelMaskOverride_5_1;
   DWORD m_dwChannelMaskOverride_7_1;
+  
+  int m_nForceSamplingRate;
+  int m_nForceBitDepth;
 
   REFERENCE_TIME m_hnsPeriod;
 
@@ -70,4 +73,6 @@ private:
   void WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   void WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+
+  bool AllowedRate(unsigned int allowedRates[], unsigned int size, int rate);
 };

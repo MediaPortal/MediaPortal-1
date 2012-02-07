@@ -54,15 +54,12 @@ protected:
 protected:
   bool m_bPassThrough;
 
-  // Input buffer layout
-  int m_nInFrameSize;       // Bytes in a frame. A frame contains a sample for each channel
-  int m_nInBytesPerSample;  // Bytes in a sample. Can be 1 to 4. This is the "container" size
-  int m_nInBitsPerSample;   // Valid bits in a sample. 32 for floats
+  // Buffer layout
+  int m_nFrameSize;       // Bytes in a frame. A frame contains a sample for each channel
+  int m_nBytesPerSample;  // Bytes in a sample. Can be 1 to 4. This is the "container" size
+  int m_nBitsPerSample;   // Valid bits in a sample. 32 for floats
 
-  // Output buffer layout
-  int m_nOutFrameSize;      // Bytes in a frame. A frame contains a sample for each channel
-  int m_nOutBytesPerSample; // Bytes in a sample. Can be 1 to 4. This is the "container" size
-  int m_nOutBitsPerSample;  // Valid bits in a sample. 32 for floats
+  double m_dSampleRateRation;
 
   REFERENCE_TIME m_rtInSampleTime;
 

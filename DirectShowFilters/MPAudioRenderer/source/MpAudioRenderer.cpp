@@ -259,7 +259,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   if (!pwfx) 
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  return m_pPipeline->NegotiateFormat(pwfx, 0);
+  return m_pPipeline->NegotiateFormat(pwfx, INFINITE);
 
 /*
   LogWaveFormat(pwfx, "CheckMediaType");
