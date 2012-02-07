@@ -168,6 +168,15 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
   return ret;
 }
 
+void CPlaylist::CurrentClipFilled()
+{
+  if (m_vecClips.size())
+  {
+    (*m_itCurrentAudioSubmissionClip)->Superceed(SUPERCEEDED_AUDIO_FILL);
+    (*m_itCurrentVideoSubmissionClip)->Superceed(SUPERCEEDED_VIDEO_FILL);
+  }
+}
+
 bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, bool seekTarget)
 {
   CAutoLock vectorLock(&m_sectionVector);

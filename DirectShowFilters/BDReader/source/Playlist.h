@@ -42,6 +42,7 @@ public:
   bool RemoveRedundantClips(); // returns true if no clips left;
   bool AcceptAudioPacket(Packet*  packet);
   bool AcceptVideoPacket(Packet*  packet);
+  void CurrentClipFilled();
   void FlushAudio();
   void FlushVideo();
   bool IsEmptiedAudio();

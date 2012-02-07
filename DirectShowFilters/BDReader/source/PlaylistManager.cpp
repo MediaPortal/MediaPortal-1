@@ -72,6 +72,9 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 
   LogDebug("Playlist Manager new Playlist %d clip %d start %6.3f clipOffset %6.3f Audio %d duration %6.3f",nPlaylist, nClip, firstPacketTime/10000000.0, clipOffsetTime/10000000.0, audioPresent, duration/10000000.0);
 
+   //mark current playlist as filled
+  CurrentClipFilled();
+
   REFERENCE_TIME remainingClipTime = Incomplete();
   REFERENCE_TIME playedDuration = ClipPlayTime();
   bool ret = remainingClipTime>5000000LL;
@@ -117,7 +120,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     PushPlaylists();
     m_vecPlaylists.push_back(newPlaylist);
     PopPlaylists(0);
-    //mark current playlist as filled
+
     (*m_itCurrentAudioSubmissionPlaylist)->SetFilledAudio();
     (*m_itCurrentVideoSubmissionPlaylist)->SetFilledVideo();
 
@@ -383,4 +386,12 @@ void CPlaylistManager::PopPlaylists(int difference)
   m_itCurrentVideoPlayBackPlaylist = m_vecPlaylists.begin() + (m_itCurrentVideoPlayBackPlaylistPos - difference);
   m_itCurrentAudioSubmissionPlaylist = m_vecPlaylists.begin() + (m_itCurrentAudioSubmissionPlaylistPos - difference);
   m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin() + (m_itCurrentVideoSubmissionPlaylistPos - difference);
+}
+
+void CPlaylistManager::CurrentClipFilled()
+{
+  if (m_vecPlaylists.size())
+  {
+    (*m_itCurrentVideoSubmissionPlaylist)->CurrentClipFilled();
+  }
 }

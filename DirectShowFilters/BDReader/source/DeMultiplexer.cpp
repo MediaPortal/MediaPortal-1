@@ -710,6 +710,8 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         {
           REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
+          FlushPESBuffers(false);
+
           interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip), 
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration));
 
@@ -720,8 +722,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             REFERENCE_TIME rtClipStart = 0LL;
             Flush(true, true, rtClipStart);
           }
-          else
-            FlushPESBuffers(false);
         }
 
         m_bVideoFormatParsed = false;
@@ -932,6 +932,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
 void CDeMultiplexer::FlushPESBuffers(bool pDiscardData)
 {
+  if (!pDiscardData) 
+    m_playlistManager->CurrentClipFilled();
   if (m_videoServiceType != NO_STREAM && !pDiscardData)
   {
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||

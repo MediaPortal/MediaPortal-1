@@ -55,6 +55,8 @@ public:
   bool HasAudio();
   bool HasVideo();
 
+  void CurrentClipFilled();
+
 protected:
   typedef vector<CPlaylist*>::iterator ivecPlaylists;
   typedef vector<CClip*>::iterator ivecClip;
