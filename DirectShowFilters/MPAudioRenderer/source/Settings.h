@@ -57,9 +57,11 @@ public:
   DWORD m_dwChannelMaskOverride_5_1;
   DWORD m_dwChannelMaskOverride_7_1;
   
+  int m_nResamplingQuality;
+
   int m_nForceSamplingRate;
   int m_nForceBitDepth;
-
+  
   REFERENCE_TIME m_hnsPeriod;
 
   AUDCLNT_SHAREMODE m_WASAPIShareMode;
@@ -74,5 +76,6 @@ private:
   void ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   void WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
 
-  bool AllowedRate(unsigned int allowedRates[], unsigned int size, int rate);
+  bool AllowedValue(unsigned int allowedRates[], unsigned int size, int rate);
+  LPCTSTR ResamplingQualityAsString(int setting);
 };

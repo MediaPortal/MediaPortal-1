@@ -16,15 +16,17 @@
 
 #include "stdafx.h"
 #include "Settings.h"
+#include "..\libresample\src\samplerate.h"
 
 #include "alloctracing.h"
 
 extern void Log(const char *fmt, ...);
 extern void LogRotate();
 
-unsigned int gAllowedAC3bitrates[9] = {192, 224, 256, 320, 384, 448, 512, 576, 640};
-unsigned int gAllowedSampleRates[7] = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
-unsigned int gAllowedBitDepths[4] = {8, 16, 24, 32};
+unsigned int gAllowedAC3bitrates[9]         = {192, 224, 256, 320, 384, 448, 512, 576, 640};
+unsigned int gAllowedSampleRates[7]         = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
+unsigned int gAllowedBitDepths[4]           = {8, 16, 24, 32};
+unsigned int gAllowedResamplingQualities[5] = {0, 1, 2, 3, 4};
 
 AudioRendererSettings::AudioRendererSettings() :
   m_bLogSampleTimes(false),
@@ -50,7 +52,8 @@ AudioRendererSettings::AudioRendererSettings() :
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
   m_wWASAPIPreferredDeviceId(NULL),
   m_nForceSamplingRate(0),
-  m_nForceBitDepth(0)
+  m_nForceBitDepth(0),
+  m_nResamplingQuality(4)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.996");
@@ -93,6 +96,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR enableSyncAdjustment = TEXT("EnableSyncAdjustment");
   LPCTSTR forceSamplingRate = TEXT("ForceSamplingRate");
   LPCTSTR forceBitDepth = TEXT("ForceBitDepth");
+  LPCTSTR resamplingQuality = TEXT("ResamplingQuality");
   LPCTSTR quality_USE_QUICKSEEK = TEXT("Quality_USE_QUICKSEEK");
   LPCTSTR quality_USE_AA_FILTER = TEXT("Quality_USE_AA_FILTER");
   LPCTSTR quality_AA_FILTER_LENGTH = TEXT("Quality_AA_FILTER_LENGTH");
@@ -118,6 +122,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD enableSyncAdjustmentData = 1;
   DWORD forceSamplingRateData = 0;
   DWORD forceBitDepthData = 0;
+  DWORD resamplingQualityData = 4;
   DWORD quality_USE_QUICKSEEKData = 0;
   DWORD quality_USE_AA_FILTERData = 0;
   DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
@@ -163,8 +168,9 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
     ReadRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
     ReadRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
+    ReadRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
 
-    // Resampling quality settings
+    // Timestretch quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
     ReadRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
     ReadRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
@@ -190,6 +196,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   EnableSyncAdjustment:     %d", enableSyncAdjustmentData);
     Log("   ForceSamplingRate:        %d", forceSamplingRateData);
     Log("   ForceBitDepth:            %d", forceBitDepthData);
+    Log("   ResamplingQuality:        %s", ResamplingQualityAsString(resamplingQualityData));
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
@@ -254,7 +261,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_bEnableSyncAdjustment = false;
 
-    if (AllowedRate(gAllowedSampleRates, sizeof(gAllowedSampleRates) / sizeof(int), forceSamplingRateData))
+    if (AllowedValue(gAllowedSampleRates, sizeof(gAllowedSampleRates) / sizeof(int), forceSamplingRateData))
       m_nForceSamplingRate = forceSamplingRateData;
     else
     {
@@ -262,7 +269,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       Log("   invalid forced sample rate!");
     }
 
-    if (AllowedRate(gAllowedBitDepths, sizeof(gAllowedBitDepths) / sizeof(int), forceBitDepthData))
+    if (AllowedValue(gAllowedBitDepths, sizeof(gAllowedBitDepths) / sizeof(int), forceBitDepthData))
       m_nForceBitDepth = forceBitDepthData;
     else
     {
@@ -270,7 +277,15 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       Log("   invalid forced bit depth!");
     }
 
-    if (AllowedRate(gAllowedAC3bitrates, sizeof(gAllowedAC3bitrates) / sizeof(int), AC3bitrateData))
+    if (AllowedValue(gAllowedResamplingQualities, sizeof(gAllowedResamplingQualities) / sizeof(int), resamplingQualityData))
+      m_nResamplingQuality = resamplingQualityData;
+    else
+    {
+      m_nResamplingQuality = 4;
+      Log("   invalid resampling quality setting, using 4 (SRC_LINEAR)");
+    }
+
+    if (AllowedValue(gAllowedAC3bitrates, sizeof(gAllowedAC3bitrates) / sizeof(int), AC3bitrateData))
       m_AC3bitrate = AC3bitrateData * 1000;
     else
     {
@@ -326,6 +341,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
       WriteRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
       WriteRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
+      WriteRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
       WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
       WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
@@ -399,7 +415,7 @@ void AudioRendererSettings::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey,
     Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
 }
 
-bool AudioRendererSettings::AllowedRate(unsigned int allowedRates[], unsigned int size, int rate)
+bool AudioRendererSettings::AllowedValue(unsigned int allowedRates[], unsigned int size, int rate)
 {
   bool rateOk = false;
   for (int i = 0; i < size; i++)
@@ -412,4 +428,23 @@ bool AudioRendererSettings::AllowedRate(unsigned int allowedRates[], unsigned in
   }
 
   return rateOk;
+}
+
+LPCTSTR AudioRendererSettings::ResamplingQualityAsString(int setting)
+{
+	switch (setting)
+	{
+	  case SRC_SINC_BEST_QUALITY:
+		  return _T("SRC_SINC_BEST_QUALITY");
+	  case SRC_SINC_MEDIUM_QUALITY:
+		  return _T("SRC_SINC_MEDIUM_QUALITY");
+	  case SRC_SINC_FASTEST:
+		  return _T("SRC_SINC_FASTEST");
+	  case SRC_ZERO_ORDER_HOLD:
+		  return _T("SRC_ZERO_ORDER_HOLD");
+	  case SRC_LINEAR:
+		  return _T("SRC_LINEAR");
+    default:
+      return _T("UNKNOWN");
+  }
 }

@@ -255,8 +255,7 @@ HRESULT CSampleRateConverter::SetupConversion()
     m_pSrcState = src_delete(m_pSrcState);
 
   int error = 0;
-  //m_pSrcState = src_new(SRC_SINC_FASTEST, m_pInputFormat->nChannels, &error);
-  m_pSrcState = src_new(SRC_LINEAR, m_pInputFormat->nChannels, &error);
+  m_pSrcState = src_new(m_pSettings->m_nResamplingQuality, m_pInputFormat->nChannels, &error);
 
   // TODO better error handling
   if (error != 0)
