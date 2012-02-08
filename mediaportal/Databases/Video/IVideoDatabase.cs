@@ -73,7 +73,8 @@ namespace MediaPortal.Video.Database
     int GetMovieDuration(int iFileId);
     void SetMovieDuration(int iFileId, int duration);
     void SetMovieWatchedStatus(int iFileId, bool watched, int percent);
-    bool GetMovieWatchedStatus(int iFileId, ref int percent);
+    void SetMovieTimesWatched(int idMovie);
+    bool GetMovieWatchedStatus(int iFileId, out int percent, out int timesWatched);
     void DeleteMovie(string strFilenameAndPath);
     int AddMovie(string strFilenameAndPath, bool bHassubtitles);
     void GetMovies(ref ArrayList movies);

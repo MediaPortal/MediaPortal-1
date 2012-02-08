@@ -110,10 +110,12 @@ namespace MediaPortal.GUI.Video
 
       this._isOverlayAllowed = true;
       GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_OVERLAY);
+      
       if ((videoOverlay != null) && (videoOverlay.Focused))
       {
         videoOverlay.Focused = false;
       }
+      
       // GoBack bug fix (corrupted video info)
       if (currentMovie == null)
       {
@@ -127,6 +129,7 @@ namespace MediaPortal.GUI.Video
         }
         return;
       }
+      
       // Refresh data in case that we open movie info after scan (some details missing)
       VideoDatabase.GetMovieInfoById(currentMovie.ID, ref currentMovie);
       // Default picture					
@@ -216,6 +219,8 @@ namespace MediaPortal.GUI.Video
       LoadState();
       
       SearchImages();
+
+
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -411,7 +416,8 @@ namespace MediaPortal.GUI.Video
       if (control == btnWatched)
       {
         int iPercent = 0;
-        VideoDatabase.GetmovieWatchedStatus(currentMovie.ID, ref iPercent);
+        int iTimesWatched = 0;
+        VideoDatabase.GetmovieWatchedStatus(currentMovie.ID, out iPercent, out iTimesWatched);
 
         if (currentMovie.Watched > 0)
         {

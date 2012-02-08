@@ -374,7 +374,9 @@ namespace MediaPortal.Video.Database
             //
             // Check movie table if there is an entry that new movie is already played as share
             int percentage = 0;
-            if (VideoDatabase.GetmovieWatchedStatus(_movieDetails.ID, ref percentage))
+            int timesWatched = 0;
+
+            if (VideoDatabase.GetmovieWatchedStatus(_movieDetails.ID, out percentage, out timesWatched))
             {
               _movieDetails.Watched = 1;
             }
@@ -462,6 +464,7 @@ namespace MediaPortal.Video.Database
 
       // Check for IMDBid 
       Match ttcheck = Regex.Match(_movieDetails.IMDBNumber, @"tt\d{7}");
+      
       if (ttcheck.Success)
       {
         // Returns nmxxxxxxx as actor name (IMDB actorID)
@@ -489,6 +492,7 @@ namespace MediaPortal.Video.Database
           char[] splitter = { '|' };
           string[] temp = actor.Split(splitter);
           actorName = temp[0];
+          
           // Check if actor is movie director
           if (actorName.StartsWith("*d"))
           {
@@ -505,6 +509,7 @@ namespace MediaPortal.Video.Database
             continue;
           
           VideoDatabase.AddActorToMovie(_movieDetails.ID, actorId, role);
+          
           // Update director in movieinfo
           if (director)
           {

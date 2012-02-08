@@ -31,6 +31,7 @@ namespace MediaPortal.Video.Database
     private bool _hasSubtitles;
     private string _audioCodec = string.Empty;
     private string _audioChannels = string.Empty;
+    private double _duration = 0;
 
     public string VideoCodec
     {
@@ -66,6 +67,12 @@ namespace MediaPortal.Video.Database
     {
       get { return _audioChannels; }
       set { _audioChannels = value; }
+    }
+
+    public double Duration
+    {
+      get { return _duration; }
+      set { _duration = value; }
     }
   }
 }
