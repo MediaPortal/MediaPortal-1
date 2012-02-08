@@ -101,14 +101,13 @@ Packet* CPlaylist::ReturnNextVideoPacket()
   }
   else
   {
-    if (m_itCurrentVideoPlayBackClip++ == m_vecClips.end()) 
+    if ((m_itCurrentVideoPlayBackClip+1) == m_vecClips.end()) 
     {
-      m_itCurrentVideoPlayBackClip--;
       SetEmptiedVideo();
     }
     else
     {
-      (*(m_itCurrentVideoPlayBackClip--))->Superceed(SUPERCEEDED_VIDEO_RETURN);
+      (*(m_itCurrentVideoPlayBackClip))->Superceed(SUPERCEEDED_VIDEO_RETURN);
       m_itCurrentVideoPlayBackClip++;
       ret=ReturnNextVideoPacket();
     }

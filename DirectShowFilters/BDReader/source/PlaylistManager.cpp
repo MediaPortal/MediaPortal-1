@@ -234,10 +234,9 @@ Packet* CPlaylistManager::GetNextVideoPacket()
   Packet* ret=(*m_itCurrentVideoPlayBackPlaylist)->ReturnNextVideoPacket();
   if (!ret)
   {
-    if (m_itCurrentVideoPlayBackPlaylist++ == m_vecPlaylists.end()) m_itCurrentVideoPlayBackPlaylist--;
-    else 
+    if (m_itCurrentVideoPlayBackPlaylist + 1 != m_vecPlaylists.end())
     {
-      (*(m_itCurrentVideoPlayBackPlaylist--))->SetEmptiedVideo();
+      (*(m_itCurrentVideoPlayBackPlaylist))->SetEmptiedVideo();
       ret = (*(m_itCurrentVideoPlayBackPlaylist++))->ReturnNextVideoPacket();
       //LogDebug("playlistManager: setting video playback playlist to %d",(*m_itCurrentVideoPlayBackPlaylist)->nPlaylist);
     }

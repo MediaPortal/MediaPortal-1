@@ -476,6 +476,7 @@ bool CClip::SparseVideoAvailable()
 Packet* CClip::GenerateSparseVideo(REFERENCE_TIME rtStart)
 {
   Packet * ret = NULL;
+  if (!SparseVideoAvailable() && m_vecClipVideoPackets.size()==0) return ret;
   if (m_pSparseVideoPacket != NULL)
   {
     if (m_vecClipVideoPackets.size()>0)
