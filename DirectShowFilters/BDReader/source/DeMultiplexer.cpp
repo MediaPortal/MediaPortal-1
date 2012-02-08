@@ -377,7 +377,6 @@ HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
   // Make sure data isn't being processed
   CAutoLock lockRead(&m_sectionRead);
 
-  FlushPESBuffers(true);
 
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
@@ -385,11 +384,13 @@ HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
 
   m_playlistManager->ClearAllButCurrentClip();
   hr = m_filter.lib.SetChapter(nChapter);
-
-  FlushAudio();
-  FlushVideo();
-  FlushSubtitle();
-
+  if (hr)
+  {
+    FlushPESBuffers(true);
+    FlushAudio();
+    FlushVideo();
+    FlushSubtitle();
+  }
   SetHoldAudio(false);
   SetHoldVideo(false);
   SetHoldSubtitle(false);
