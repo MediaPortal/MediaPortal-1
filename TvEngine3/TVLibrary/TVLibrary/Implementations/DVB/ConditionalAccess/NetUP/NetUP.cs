@@ -240,6 +240,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("NetUP: failed to query property support, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         Release.ComObject(pin);
+        return;
       }
 
       Log.Log.Debug("NetUP: supported tuner detected");
