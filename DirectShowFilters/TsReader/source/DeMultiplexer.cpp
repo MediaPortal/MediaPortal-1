@@ -1883,7 +1883,13 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
       int PatReqDiff = (info.PatVersion & 0x0F) - (m_ReqPatVersion & 0x0F);
       int PatIDiff = (info.PatVersion & 0x0F) - (m_iPatVersion & 0x0F);
       
-      if (!((PatIDiff == 1) || (PatIDiff == -15) || (PatReqDiff == 0))) //Not (PAT version incremented by 1 or expected PAT)
+      if (PatIDiff < 0) //Rollover
+      {
+        PatIDiff += 16;
+      }
+      
+      //if (!((PatIDiff == 1) || (PatIDiff == -15) || (PatReqDiff == 0))) //Not (PAT version incremented by 1 or expected PAT)
+      if ((PatIDiff > 7) && (PatReqDiff != 0)) //PAT version change too big/negative and it's not the requested PAT)
       {      
         //Skipped back in timeshift file or possible RTSP seek accuracy problem ?
         if (!m_bWaitGoodPat)
