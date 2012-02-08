@@ -56,13 +56,13 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
 
   noAudio=!audioPresent;
   sparseVideo = false;
-  
+  m_pSparseVideoPacket = NULL;
+
   bSeekTarget = seekTarget;
 
   superceeded=0;
 
   m_videoPmt=NULL;
-  m_pSparseVideoPacket = NULL;
 
   firstAudio=true;
   firstVideo=true;
@@ -280,7 +280,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
     }
     if (packet->rtStart != Packet::INVALID_TIME)
     {
-      if (packet->rtStart - lastVideoPosition > HALF_SECOND && !sparseVideo)
+      if (packet->rtStart - lastVideoPosition > ONE_SECOND && !sparseVideo)
       {
         if (m_vecClipVideoPackets.size()>0)
         {
@@ -375,6 +375,12 @@ void CClip::Reset(REFERENCE_TIME totalStreamOffset)
   earliestPacketAccepted = INT64_MAX;
 
   superceeded=0;
+  sparseVideo = false;
+  if (m_pSparseVideoPacket)
+  {
+    delete m_pSparseVideoPacket;
+    m_pSparseVideoPacket = NULL;
+  }
 
   firstAudio=true;
   firstVideo=true;
@@ -482,7 +488,7 @@ Packet* CClip::GenerateSparseVideo(REFERENCE_TIME rtStart)
     if (m_vecClipVideoPackets.size()>0)
     {
       Packet * pBDPacket = m_vecClipVideoPackets[0];
-      if (m_pSparseVideoPacket->rtStart + HALF_SECOND > pBDPacket->rtStart)
+      if (m_pSparseVideoPacket->rtStart + ONE_SECOND > pBDPacket->rtStart)
       {
         ivecVideoBuffers it = m_vecClipVideoPackets.begin();
         if ((*it)->rtStart !=Packet::INVALID_TIME)
