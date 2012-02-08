@@ -690,13 +690,18 @@ namespace MediaPortal.GUI.Video
                    (item.IsFolder && selectDvdHandler.IsDvdDirectory(item.Path) || Util.Utils.IsVideo(item.Path)))
           {
             string file = item.Path;
+            
             if (item.IsFolder)
+            {
               file = selectDvdHandler.GetFolderVideoFile(item.Path);
+            }
+            
             // Check db for watched status for played movie or changed status in movie info window
             int percentWatched = 0;
             int timesWatched = 0;
-            item.IsPlayed = VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), out percentWatched, out timesWatched);
-            item.Label3 = percentWatched + "%";
+            int movieId = VideoDatabase.GetMovieId(file);
+            item.IsPlayed = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+            item.Label3 = percentWatched + "% #" + timesWatched;
           }
           //Do NOT add OnItemSelected event handler here, because its still there...
           facadeLayout.Add(item);
@@ -1224,30 +1229,40 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    /// <summary>
+    /// Total video duration in seconds (single or multiple -> stacked file(s))
+    /// </summary>
+    /// <param name="files"></param>
+    /// <returns></returns>
     public static int MovieDuration(ArrayList files)
     {
       _totalMovieDuration = 0;
-
-      foreach (string file in files)
+      
+      try 
       {
-        int fileID = VideoDatabase.GetFileId(file);
-        int tempDuration = VideoDatabase.GetMovieDuration(fileID);
-
-        if (tempDuration > 0)
+        foreach (string file in files)
         {
-          _totalMovieDuration += tempDuration;
-        }
-        else
-        {
-          MediaInfoWrapper mInfo = new MediaInfoWrapper(file);
+          int fileID = VideoDatabase.GetFileId(file);
+          int tempDuration = VideoDatabase.GetMovieDuration(fileID);
 
-          if (fileID > -1)
+          if (tempDuration > 0)
           {
-            VideoDatabase.SetMovieDuration(fileID, mInfo.VideoDuration / 1000);
-            _totalMovieDuration += mInfo.VideoDuration / 1000;
+            _totalMovieDuration += tempDuration;
+          }
+          else
+          {
+            MediaInfoWrapper mInfo = new MediaInfoWrapper(file);
+
+            if (fileID > -1)
+            {
+              VideoDatabase.SetMovieDuration(fileID, mInfo.VideoDuration / 1000);
+              _totalMovieDuration += mInfo.VideoDuration / 1000;
+            }
           }
         }
       }
+      catch (Exception){}
+
       return _totalMovieDuration;
     }
 

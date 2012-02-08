@@ -422,7 +422,7 @@
       <description>Times watched</description>
       <type>label</type>
       <id>1</id>
-      <posX>91</posX>
+      <posX>90</posX>
       <posY>485</posY>
       <label>Watched count:</label>
       <font>font10</font>
@@ -433,7 +433,7 @@
       <description>Times watched value</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
+      <posX>260</posX>
       <posY>485</posY>
       <label>#timeswatched</label>
       <font>font10</font>

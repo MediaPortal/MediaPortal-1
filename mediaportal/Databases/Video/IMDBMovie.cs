@@ -362,7 +362,18 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
-      GUIPropertyManager.SetProperty("#runtime", RunTime.ToString());
+
+      int duration = VideoDatabase.GetMovieDuration(VideoDatabase.GetFileId(file));
+
+      if (duration <= 0)
+      {
+        GUIPropertyManager.SetProperty("#runtime", Util.Utils.SecondsToHMSString(RunTime * 60));
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#runtime", Util.Utils.SecondsToHMSString(duration));
+      }
+
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
       GUIPropertyManager.SetProperty("#studios", Studios);
 
@@ -404,7 +415,7 @@ namespace MediaPortal.Video.Database
       int timesWatched = 0;
       VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), out percent, out timesWatched);
       GUIPropertyManager.SetProperty("#watchedpercent", percent.ToString());
-      
+      // Watched count
       if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file))
       {
         GUIPropertyManager.SetProperty("#timeswatched", timesWatched.ToString());
@@ -413,7 +424,7 @@ namespace MediaPortal.Video.Database
       {
         GUIPropertyManager.SetProperty("#timeswatched", "-1");
       }
-
+      
       // MediaInfo Properties
       try
       {

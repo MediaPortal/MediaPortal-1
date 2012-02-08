@@ -21,20 +21,20 @@
           <height>500</height>
           <onleft>2</onleft>
           <onright>2</onright>
-					<textXOff2>585</textXOff2>
+					<textXOff2>545</textXOff2>
 					<textYOff2>2</textYOff2>
 					<textXOff3>640</textXOff3>
-					<textYOff3>4</textYOff3>
+					<textYOff3>5</textYOff3>
 					<textalign3>right</textalign3>
 					<font>font11</font>
 					<font2>font10</font2>
-					<font3>font10</font3>
+					<font3>font9</font3>
           <scrollOffset>2</scrollOffset>
           <spinPosX>1148</spinPosX>
           <spinPosY>660</spinPosY>
           <spinCanFocus>yes</spinCanFocus>
           <unfocusedAlpha>160</unfocusedAlpha>
-        </control>
+				</control>
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>

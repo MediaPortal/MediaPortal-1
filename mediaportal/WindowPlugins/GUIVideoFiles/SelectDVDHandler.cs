@@ -281,10 +281,12 @@ namespace MediaPortal.GUI.Video
             }
             // Find watched status for videos
             int percentWatched = 0;
+            int timesWatched = 0;
+            int movieId = VideoDatabase.GetMovieId(file);
 
             if (fileId >= 0 && markWatchedFiles)
             {
-              if (VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), ref percentWatched))
+              if (VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched))
               {
                 foundWatched = true;
               }
@@ -293,9 +295,9 @@ namespace MediaPortal.GUI.Video
             if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path)))// && foundWatched))
             {
               pItem.IsPlayed = foundWatched;
-              pItem.Label3 = percentWatched + "%";
+              pItem.Label3 = percentWatched + "% #" + timesWatched;
             }
-
+            
             if (!Util.Utils.FileExistsInCache(strThumb) || string.IsNullOrEmpty(strThumb))
             {
               strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,

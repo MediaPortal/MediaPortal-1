@@ -719,8 +719,9 @@ namespace MediaPortal.GUI.Video
         item.Rating = movie.Rating;
         item.IsPlayed = movie.Watched > 0 ? true : false;
         int percent = 0;
-        VideoDatabase.GetmovieWatchedStatus(movie.ID, ref percent);
-        item.Label3 = percent + "%";
+        int timesWatched = 0;
+        VideoDatabase.GetmovieWatchedStatus(movie.ID, out percent, out timesWatched);
+        item.Label3 = percent + "% #" + timesWatched;
         item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 
         itemlist.Add(item);

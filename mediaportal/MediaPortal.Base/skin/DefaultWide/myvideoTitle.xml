@@ -436,14 +436,14 @@
       <type>image</type>
       <id>1</id>
       <posX>71</posX>
-      <posY>520</posY>
+      <posY>500</posY>
       <width>533</width>
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
-		<control>
+		<!--control>
       <description>Times watched</description>
       <type>label</type>
       <id>1</id>
@@ -456,25 +456,25 @@
       <visible>facadeview.list + control.hasfocus(50) + !string.equals(#timeswatched, -1)</visible>
     </control>
 		<control>
-      <description>Realtime video duration</description>
+      <description>Times watched value</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
+      <posX>250</posX>
       <posY>495</posY>
       <label>#timeswatched</label>
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + !string.equals(#timeswatched, -1)</visible>
-    </control>
+    </control-->
     <control>
       <description>Plot value</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>71</posX>
-      <posY>540</posY>
+      <posY>520</posY>
       <width>533</width>
-      <height>160</height>
+      <height>180</height>
       <label>#plot</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
