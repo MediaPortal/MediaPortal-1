@@ -539,7 +539,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as
               // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
               if (m_currentDecoder == CLSID_LAVVideo && (buffer->nNewSegment & NS_SEEK_TARGET) != NS_SEEK_TARGET)
+              {
+                LogDebug("DeliverEndOFStream LAV Only for audio pin wait");
                 DeliverEndOfStream();
+              }
             }
             if ((buffer->nNewSegment & NS_STREAM_RESET) == NS_STREAM_RESET)
             {
@@ -567,8 +570,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               {
                 // Currently no other video decoders than LAV seems to be compatible with
                 // the dynamic format changes
-                if (m_currentDecoder == CLSID_LAVVideo)
-                  hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+                //if (m_currentDecoder == CLSID_LAVVideo)
+                //hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
               }
 
               if (hrAccept != S_OK)
@@ -582,7 +585,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_bZeroTimeStream = true;
                 checkPlaybackState = true;
 
-                DeliverEndOfStream();
+                //LogDebug("DeliverEndOFStream for rebuild");
+                //DeliverEndOfStream();
               }
               else
               {
@@ -596,7 +600,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_bProvidePMT = true;
 				
                 if (m_currentDecoder == CLSID_LAVVideo)
+                {
+                  LogDebug("DeliverEndOFStream LAV Only");
                   DeliverEndOfStream();
+                }
 
                 return ERROR_NO_DATA;
               }
