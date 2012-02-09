@@ -42,8 +42,8 @@ namespace TvLibrary.Implementations.DVB
     private enum BdaExtensionProperty
     {
       Reserved = 0,
-      NBC_PARAMS = 10,     // Property for setting the DVB-S2 parameter
-      BlindScan = 11,     // Property 0for accessing and controlling the hardware blind scan capabilities.
+      NbcParams = 10,     // Property for setting DVB-S2 parameters that could not initially be set through BDA interfaces.
+      BlindScan = 11,     // Property for accessing and controlling the hardware blind scan capabilities.
       TbsAccess = 21      // TBS property for enabling control of the common properties in the BdaExtensionCommand enum.
     }
 
@@ -78,6 +78,28 @@ namespace TvLibrary.Implementations.DVB
       On,                 // Continuous tone on.
       BurstUnmodulated,   // Simple DiSEqC port A (tone burst).
       BurstModulated      // Simple DiSEqC port B (data burst).
+    }
+
+    private enum TbsPilot : uint
+    {
+      Off = 0,
+      On,
+      Unknown               // (Not used...)
+    }
+
+    private enum TbsRollOff : uint
+    {
+      Undefined = 0xff,
+      Twenty = 0,           // 0.2
+      TwentyFive,           // 0.25
+      ThirtyFive            // 0.35
+    }
+
+    private enum TbsDvbsStandard : uint
+    {
+      Auto = 0,
+      Dvbs,
+      Dvbs2
     }
 
     private enum TbsMmiMessage : byte
@@ -167,8 +189,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="deviceName">The corresponding DsDevice name.</param>
     /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
-    [DllImport("TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPStr)] String deviceName);
+    [DllImport("TbsCIapi.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    private static extern IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] String deviceName);
 
     /// <summary>
     /// Check whether a CAM is present in the CI slot.
@@ -225,14 +247,15 @@ namespace TvLibrary.Implementations.DVB
       public byte[] Reserved2;
     }
     
-    // Required to Set the modulator to DVB-S2
-    private struct BDA_NBC_PARAMS
+    // Used to improve tuning speeds for older Conexant-based tuners.
+    [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
+    private struct NbcTuningParams
     {
-        public int rolloff;
-        public int pilot;
-        public int dvbtype;// 1 for dvbs 2 for dvbs2 0 for auto
-        public int fecrate;
-        public int modtype;
+      public TbsRollOff RollOff;
+      public TbsPilot Pilot;
+      public TbsDvbsStandard DvbsStandard;
+      public BinaryConvolutionCodeRate InnerFecRate;
+      public ModulationType ModulationType;
     }
 
     // PCIe/PCI only.
@@ -264,7 +287,7 @@ namespace TvLibrary.Implementations.DVB
     private static readonly Guid IrPropertySet = new Guid(0xb51c4994, 0x0054, 0x4749, 0x82, 0x43, 0x02, 0x9a, 0x66, 0x86, 0x36, 0x36);
 
     private const int TbsAccessParamsSize = 536;
-    private const int TbsNBCParamsSize = 20;
+    private const int NbcTuningParamsSize = 20;
     private const int MaxDiseqcMessageLength = 128;
     private const int MaxPmtLength = 1024;
 
@@ -309,8 +332,16 @@ namespace TvLibrary.Implementations.DVB
 
     private bool _stopMmiHandlerThread = false;
     private Thread _mmiHandlerThread = null;
-    private List<byte> _mmiMessageQueue = null;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
+
+    // This is a first-in-first-out queue of messages that are
+    // ready to be passed to the CAM. Each message is preceded by
+    // a length byte which specifies the complete length of the
+    // message including the message code and any parameters.
+    // The length byte is followed by a message code (TbsMmiMessage).
+    // The final part of the message is zero or more bytes
+    // containing parameter data specific to the message type.
+    private List<byte> _mmiMessageQueue = null;
 
     #endregion
 
@@ -421,7 +452,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
         _generalBuffer, TbsAccessParamsSize,
@@ -461,7 +492,7 @@ namespace TvLibrary.Implementations.DVB
         }
 
         Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-        DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
 
         hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
           _generalBuffer, TbsAccessParamsSize,
@@ -486,7 +517,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
 
       hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
         _generalBuffer, TbsAccessParamsSize,
@@ -506,48 +537,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Sets the DVB-Type for TBS PCIe Card.
-    /// </summary>
-    /// <param name="reply">The reply message.</param>
-    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
-    public void SetDVBS2(DVBSChannel channel)
-    {
-        //Set the Pilot
-        Log.Log.Info("Turbosight: Set DVB-S2");
-        if (channel.ModulationType != ModulationType.ModNbc8Psk && channel.ModulationType != ModulationType.ModNbcQpsk)
-            return;
-        int hr;
-        KSPropertySupport supported;
-        _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NBC_PARAMS,
-                                    out supported);
-        if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
-        {
-            BDA_NBC_PARAMS DVBT = new BDA_NBC_PARAMS();
-            DVBT.fecrate = (int)channel.InnerFecRate;
-            DVBT.modtype = (int)channel.ModulationType;
-            DVBT.pilot = (int)channel.Pilot;
-            DVBT.rolloff = (int)channel.Rolloff;
-            DVBT.dvbtype = 2; //DVB-S2
-            Log.Log.Info("Turbosight: Set DVB-S2: {0}", DVBT.dvbtype);
-            Marshal.StructureToPtr(DVBT, _generalBuffer, true);
-            DVB_MMI.DumpBinary(_generalBuffer, 0, TbsNBCParamsSize);
-
-            hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.NBC_PARAMS,
-              _generalBuffer, TbsNBCParamsSize,
-              _generalBuffer, TbsNBCParamsSize
-            );
-
-            if (hr != 0)
-            {
-                Log.Log.Info("Turbosight: Set DVB-S2 returned {0}", hr, DsError.GetErrorText(hr));
-            }
-        }
-        else
-        {
-            Log.Log.Info("Turbosight: Set DVB-S2 not supported");
-        }
-    }
-    /// <summary>
     /// Set tuning parameters that can or could not previously be set through BDA interfaces.
     /// </summary>
     /// <param name="channel">The channel to tune.</param>
@@ -561,45 +550,91 @@ namespace TvLibrary.Implementations.DVB
         return channel;
       }
 
-      switch (ch.InnerFecRate)
-      {
-        case BinaryConvolutionCodeRate.Rate1_2:
-        case BinaryConvolutionCodeRate.Rate2_3:
-        case BinaryConvolutionCodeRate.Rate3_4:
-        case BinaryConvolutionCodeRate.Rate3_5:
-        case BinaryConvolutionCodeRate.Rate4_5:
-        case BinaryConvolutionCodeRate.Rate5_6:
-        case BinaryConvolutionCodeRate.Rate7_8:
-          ch.InnerFecRate = ch.InnerFecRate;
-          break;
-        case BinaryConvolutionCodeRate.Rate8_9:
-          ch.InnerFecRate = BinaryConvolutionCodeRate.Rate5_11;
-          break;
-        case BinaryConvolutionCodeRate.Rate9_10:
-          ch.InnerFecRate = BinaryConvolutionCodeRate.Rate7_8;
-          break;
-        default:
-          ch.InnerFecRate = BinaryConvolutionCodeRate.RateNotSet;
-          break;
-      }
-      Log.Log.Debug("  inner FEC rate = {0}", ch.InnerFecRate);
+      NbcTuningParams command = new NbcTuningParams();
+      // Default: tuning with "auto" is slower, so avoid it if possible.
+      command.DvbsStandard = TbsDvbsStandard.Auto;
 
-      if (ch.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
+      // FEC rate
+      command.InnerFecRate = ch.InnerFecRate;
+      Log.Log.Debug("  inner FEC rate = {0}", command.InnerFecRate);
+
+      // Modulation
+      if (ch.ModulationType == ModulationType.ModNotSet)
       {
-        if (ch.ModulationType == ModulationType.ModNotSet)
-        {
-          ch.ModulationType = ModulationType.ModQpsk;
-        }
-        else if (ch.ModulationType == ModulationType.ModQpsk)
-        {
-          ch.ModulationType = ModulationType.ModOqpsk;
-        }
-        else if (ch.ModulationType == ModulationType.Mod8Psk)
-        {
-          ch.ModulationType = ModulationType.ModBpsk;
-        }
+        ch.ModulationType = ModulationType.ModQpsk;
+        command.DvbsStandard = TbsDvbsStandard.Dvbs;
       }
+      else if (ch.ModulationType == ModulationType.ModQpsk)
+      {
+        ch.ModulationType = ModulationType.ModNbcQpsk;
+        command.DvbsStandard = TbsDvbsStandard.Dvbs2;
+      }
+      else if (ch.ModulationType == ModulationType.Mod8Psk)
+      {
+        ch.ModulationType = ModulationType.ModNbc8Psk;
+        command.DvbsStandard = TbsDvbsStandard.Dvbs2;
+      }
+      command.ModulationType = ch.ModulationType;
       Log.Log.Debug("  modulation     = {0}", ch.ModulationType);
+
+      // Pilot
+      if (ch.Pilot == Pilot.On)
+      {
+        command.Pilot = TbsPilot.On;
+      }
+      else
+      {
+        command.Pilot = TbsPilot.Off;
+      }
+      Log.Log.Debug("  pilot          = {0}", command.Pilot);
+
+      // Roll-off
+      if (ch.Rolloff == RollOff.Twenty)
+      {
+        command.RollOff = TbsRollOff.Twenty;
+      }
+      else if (ch.Rolloff == RollOff.TwentyFive)
+      {
+        command.RollOff = TbsRollOff.TwentyFive;
+      }
+      else if (ch.Rolloff == RollOff.ThirtyFive)
+      {
+        command.RollOff = TbsRollOff.ThirtyFive;
+      }
+      else
+      {
+        command.RollOff = TbsRollOff.Undefined;
+      }
+      Log.Log.Debug("  roll-off       = {0}", command.RollOff);
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
+      if (hr != 0)
+      {
+        Log.Log.Debug("Turbosight: failed to query property support, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return ch as DVBBaseChannel;
+      }
+      if ((support & KSPropertySupport.Set) == 0)
+      {
+        Log.Log.Debug("Turbosight: NBC tuning parameter property not supported");
+        return ch as DVBBaseChannel;
+      }
+
+      Marshal.StructureToPtr(command, _generalBuffer, true);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, NbcTuningParamsSize);
+
+      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
+        _generalBuffer, NbcTuningParamsSize,
+        _generalBuffer, NbcTuningParamsSize
+      );
+      if (hr == 0)
+      {
+        Log.Log.Debug("Turbosight: result = success");
+      }
+      else
+      {
+        Log.Log.Debug("Turbosight: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
 
       return ch as DVBBaseChannel;
     }
@@ -609,12 +644,13 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Open the conditional access interface.
     /// </summary>
-    public void OpenCi()
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenCi()
     {
       _isCiSlotPresent = IsCiSlotPresent();
       if (!_isCiSlotPresent)
       {
-        return;
+        return false;
       }
 
       if (_ciHandle != IntPtr.Zero)
@@ -628,7 +664,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("Turbosight: interface handle is null");
         _isCiSlotPresent = false;
-        return;
+        return false;
       }
       Log.Log.Debug("Turbosight: interface opened successfully");
 
@@ -638,36 +674,50 @@ namespace TvLibrary.Implementations.DVB
 
       _isCamPresent = IsCamPresent();
       _isCamReady = IsCamReady();
+      return true;
     }
 
     /// <summary>
     /// Close the conditional access interface.
     /// </summary>
-    public void CloseCi()
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseCi()
     {
       if (_ciHandle == IntPtr.Zero)
       {
-        return;
+        return true;
       }
 
       Log.Log.Debug("Turbosight: close conditional access interface");
-      On_Exit_CI(_ciHandle);
+      try
+      {
+        On_Exit_CI(_ciHandle);
+      }
+      catch (Exception ex)
+      {
+        // On_Exit_CI() can throw an access violation exception.
+      }
       _ciHandle = IntPtr.Zero;
       Marshal.FreeCoTaskMem(_mmiMessageBuffer);
       Marshal.FreeCoTaskMem(_mmiResponseBuffer);
       Marshal.FreeCoTaskMem(_pmtBuffer);
+      return true;
     }
 
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    public void ResetCi()
+    /// <param name="rebuildGraph"><c>True</c> if the DirectShow filter graph should be rebuilt after calling this function.</param>
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    public bool ResetCi(out bool rebuildGraph)
     {
       // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple
       // times on a filter instance *even if On_Exit_CI() is called*. The graph must be rebuilt
       // to reset the CI.
       /*CloseCi();
       OpenCi();*/
+      rebuildGraph = true;
+      return true;
     }
 
     /// <summary>
@@ -678,9 +728,9 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Debug("Turbosight: is CI slot present");
 
-      // It does not seem to be possible tell whether a CI slot is actually
-      // present. All that we can check is whether the device itself physically
-      // has a CI slot.
+      // It does not seem to be possible determine whether a CI slot is actually
+      // present. All that we can check is whether the corresponding product has
+      // a CI slot.
       String tunerFilterName = FilterGraphTools.GetFilterName(_tunerFilter);
       bool ciPresent = false;
       for (int i = 0; i < TunersWithCiSlots.Length; i++)
@@ -762,7 +812,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (length > MaxPmtLength)
       {
-        Log.Log.Debug("Turbosight: buffer capacity too small");
+        Log.Log.Debug("Turbosight: buffer capacity too small, length = {0}", length);
         return false;
       }
 
@@ -776,7 +826,7 @@ namespace TvLibrary.Implementations.DVB
         offset++;
       }
 
-      DVB_MMI.DumpBinary(_pmtBuffer, 0, 2 + length);
+      //DVB_MMI.DumpBinary(_pmtBuffer, 0, 2 + length);
 
       TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(length + 2));
       return true;
@@ -1036,7 +1086,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("Turbosight: error in MMI handler thread\r\n{0}", ex.ToString());
+        Log.Log.Debug("Turbosight: exception in MMI handler thread\r\n{0}", ex.ToString());
         return;
       }
     }
@@ -1097,7 +1147,7 @@ namespace TvLibrary.Implementations.DVB
 
       // Read all the entries into a list. Entries are NULL terminated.
       List<String> entries = new List<String>();
-      String entry = "";
+      String entry = String.Empty;
       int entryCount = 0;
       for (int i = 1; i < length; i++)
       {
@@ -1105,7 +1155,7 @@ namespace TvLibrary.Implementations.DVB
         {
           entries.Add(entry);
           entryCount++;
-          entry = "";
+          entry = String.Empty;
         }
         else
         {
@@ -1134,14 +1184,28 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("  # entries = {0}", numEntries);
       if (_ciMenuCallbacks != null)
       {
-        _ciMenuCallbacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
+        try
+        {
+          _ciMenuCallbacks.OnCiMenu(entries[0], entries[1], entries[2], entryCount);
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Debug("Turbosight: menu header callback exception\r\n{0}", ex.ToString());
+        }
       }
       for (int i = 0; i < entryCount; i++)
       {
         Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, entries[i + 3]);
         if (_ciMenuCallbacks != null)
         {
-          _ciMenuCallbacks.OnCiMenuChoice(i, entries[i + 3]);
+          try
+          {
+            _ciMenuCallbacks.OnCiMenuChoice(i, entries[i + 3]);
+          }
+          catch (Exception ex)
+          {
+            Log.Log.Debug("Turbosight: menu entry callback exception\r\n{0}", ex.ToString());
+          }
         }
       }
 
@@ -1169,7 +1233,14 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("  blind  = {0}", blind);
       if (_ciMenuCallbacks != null)
       {
-        _ciMenuCallbacks.OnCiRequest(blind, answerLength, text);
+        try
+        {
+          _ciMenuCallbacks.OnCiRequest(blind, answerLength, text);
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Debug("Turbosight: CAM request callback exception\r\n{0}", ex.ToString());
+        }
       }
     }
 
@@ -1291,7 +1362,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (answer == null)
       {
-        answer = "";
+        answer = String.Empty;
       }
       Log.Log.Debug("Turbosight: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
@@ -1367,8 +1438,6 @@ namespace TvLibrary.Implementations.DVB
         tone22k = Tone22k.On;
       }
       bool successTone = SetToneState(toneBurst, tone22k);
-
-      SetDVBS2(channel); // Don't need to know the result of this. If successfull it will speed up DVB-S2 channel change.
    
       return (successDiseqc && successTone);
     }
@@ -1398,7 +1467,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
         _generalBuffer, TbsAccessParamsSize,
@@ -1475,7 +1544,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void Dispose()
     {
-      if (_isTurbosight)
+      if (!_isTurbosight)
       {
         return;
       }

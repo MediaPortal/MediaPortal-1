@@ -477,7 +477,8 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_turbosight != null)
         {
-          _turbosight.ResetCi();
+          bool rebuildGraph;
+          _turbosight.ResetCi(out rebuildGraph);
         }
       }
       catch (Exception ex)
