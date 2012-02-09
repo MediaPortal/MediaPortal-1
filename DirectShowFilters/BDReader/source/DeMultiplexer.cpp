@@ -939,6 +939,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
 void CDeMultiplexer::FlushPESBuffers(bool pDiscardData)
 {
+  LogDebug("Demux::Flushing PES %d", pDiscardData);
   if (!pDiscardData) 
     m_playlistManager->CurrentClipFilled();
   if (m_videoServiceType != NO_STREAM && !pDiscardData)

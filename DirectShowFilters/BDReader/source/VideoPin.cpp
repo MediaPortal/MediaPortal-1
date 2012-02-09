@@ -540,7 +540,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
               if (m_currentDecoder == CLSID_LAVVideo && (buffer->nNewSegment & NS_SEEK_TARGET) != NS_SEEK_TARGET)
               {
-                LogDebug("DeliverEndOFStream LAV Only for audio pin wait");
+                LogDebug("DeliverEndOFStream LAV Only for audio pin wait (%d,%d)", buffer->nPlaylist, buffer->nClipNumber);
                 DeliverEndOfStream();
               }
             }
@@ -585,7 +585,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
                 m_bZeroTimeStream = true;
                 checkPlaybackState = true;
 
-                //LogDebug("DeliverEndOFStream for rebuild");
+                //LogDebug("DeliverEndOFStream for rebuild (%d,%d)", buffer->nPlaylist, buffer->nClipNumber);
                 //DeliverEndOfStream();
               }
               else
@@ -601,7 +601,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 				
                 if (m_currentDecoder == CLSID_LAVVideo)
                 {
-                  LogDebug("DeliverEndOFStream LAV Only");
+                  LogDebug("DeliverEndOFStream LAV Only (%d,%d)", buffer->nPlaylist, buffer->nClipNumber);
                   DeliverEndOfStream();
                 }
 
