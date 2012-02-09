@@ -296,7 +296,6 @@ namespace TvLibrary.Implementations.DVB
       int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
-        //DVB_MMI.DumpBinary(buffer, 0, returnedByteCount);
         ciState = (CiStateInfo)Marshal.PtrToStructure(buffer, typeof(CiStateInfo));
       }
       Marshal.FreeCoTaskMem(buffer);
@@ -414,7 +413,7 @@ namespace TvLibrary.Implementations.DVB
       UInt32 code = (uint)((uint)NetUpIoControl.PmtListChange | ((byte)listAction << 8) | (uint)command);
       IntPtr buffer = Marshal.AllocCoTaskMem(length);
       Marshal.Copy(pmt, 0, buffer, length);
-      DVB_MMI.DumpBinary(buffer, 0, length);
+      //DVB_MMI.DumpBinary(buffer, 0, length);
       NetUpCommand ncommand = new NetUpCommand(code, buffer, length, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = ncommand.Execute(_propertySet, out returnedByteCount);
@@ -468,7 +467,7 @@ namespace TvLibrary.Implementations.DVB
       {
         while (!_stopMmiHandlerThread)
         {
-          Thread.Sleep(500);
+          Thread.Sleep(5000);
 
           CiStateInfo info;
           int hr = GetCiStatus(out info);
@@ -529,9 +528,31 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("  sub-title = {0}", mmi.SubTitle);
             Log.Log.Debug("  footer    = {0}", mmi.Footer);
             Log.Log.Debug("  # entries = {0}", mmi.EntryCount);
+            try
+            {
+              if (_ciMenuCallbacks != null)
+              {
+                _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, (int)mmi.EntryCount);
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.Log.Debug("NetUP: menu header callback exception: {0}", ex.ToString());
+            }
             for (int i = 0; i < mmi.EntryCount; i++)
             {
-              Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, mmi.Entries[i + 3].Text);
+              Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, mmi.Entries[i].Text);
+              try
+              {
+                if (_ciMenuCallbacks != null)
+                {
+                  _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Entries[i].Text);
+                }
+              }
+              catch (Exception ex)
+              {
+                Log.Log.Debug("NetUP: menu choice callback exception: {0}", ex.ToString());
+              }
             }
           }
         }
