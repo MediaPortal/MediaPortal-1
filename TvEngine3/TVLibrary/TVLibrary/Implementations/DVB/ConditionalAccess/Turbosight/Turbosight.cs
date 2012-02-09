@@ -42,7 +42,8 @@ namespace TvLibrary.Implementations.DVB
     private enum BdaExtensionProperty
     {
       Reserved = 0,
-      BlindScan = 11,     // Property for accessing and controlling the hardware blind scan capabilities.
+      NBC_PARAMS = 10,     // Property for setting the DVB-S2 parameter
+      BlindScan = 11,     // Property 0for accessing and controlling the hardware blind scan capabilities.
       TbsAccess = 21      // TBS property for enabling control of the common properties in the BdaExtensionCommand enum.
     }
 
@@ -223,6 +224,16 @@ namespace TvLibrary.Implementations.DVB
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
       public byte[] Reserved2;
     }
+    
+    // Required to Set the modulator to DVB-S2
+    private struct BDA_NBC_PARAMS
+    {
+        public int rolloff;
+        public int pilot;
+        public int dvbtype;// 1 for dvbs 2 for dvbs2 0 for auto
+        public int fecrate;
+        public int modtype;
+    }
 
     // PCIe/PCI only.
     [StructLayout(LayoutKind.Sequential, Pack = 1), ComVisible(true)]
@@ -253,6 +264,7 @@ namespace TvLibrary.Implementations.DVB
     private static readonly Guid IrPropertySet = new Guid(0xb51c4994, 0x0054, 0x4749, 0x82, 0x43, 0x02, 0x9a, 0x66, 0x86, 0x36, 0x36);
 
     private const int TbsAccessParamsSize = 536;
+    private const int TbsNBCParamsSize = 20;
     private const int MaxDiseqcMessageLength = 128;
     private const int MaxPmtLength = 1024;
 
@@ -493,6 +505,48 @@ namespace TvLibrary.Implementations.DVB
       return success;
     }
 
+    /// <summary>
+    /// Sets the DVB-Type for TBS PCIe Card.
+    /// </summary>
+    /// <param name="reply">The reply message.</param>
+    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
+    public void SetDVBS2(DVBSChannel channel)
+    {
+        //Set the Pilot
+        Log.Log.Info("Turbosight: Set DVB-S2");
+        if (channel.ModulationType != ModulationType.ModNbc8Psk && channel.ModulationType != ModulationType.ModNbcQpsk)
+            return;
+        int hr;
+        KSPropertySupport supported;
+        _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NBC_PARAMS,
+                                    out supported);
+        if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
+        {
+            BDA_NBC_PARAMS DVBT = new BDA_NBC_PARAMS();
+            DVBT.fecrate = (int)channel.InnerFecRate;
+            DVBT.modtype = (int)channel.ModulationType;
+            DVBT.pilot = (int)channel.Pilot;
+            DVBT.rolloff = (int)channel.Rolloff;
+            DVBT.dvbtype = 2; //DVB-S2
+            Log.Log.Info("Turbosight: Set DVB-S2: {0}", DVBT.dvbtype);
+            Marshal.StructureToPtr(DVBT, _generalBuffer, true);
+            DVB_MMI.DumpBinary(_generalBuffer, 0, TbsNBCParamsSize);
+
+            hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.NBC_PARAMS,
+              _generalBuffer, TbsNBCParamsSize,
+              _generalBuffer, TbsNBCParamsSize
+            );
+
+            if (hr != 0)
+            {
+                Log.Log.Info("Turbosight: Set DVB-S2 returned {0}", hr, DsError.GetErrorText(hr));
+            }
+        }
+        else
+        {
+            Log.Log.Info("Turbosight: Set DVB-S2 not supported");
+        }
+    }
     /// <summary>
     /// Set tuning parameters that can or could not previously be set through BDA interfaces.
     /// </summary>
@@ -1314,6 +1368,8 @@ namespace TvLibrary.Implementations.DVB
       }
       bool successTone = SetToneState(toneBurst, tone22k);
 
+      SetDVBS2(channel); // Don't need to know the result of this. If successfull it will speed up DVB-S2 channel change.
+   
       return (successDiseqc && successTone);
     }
 
