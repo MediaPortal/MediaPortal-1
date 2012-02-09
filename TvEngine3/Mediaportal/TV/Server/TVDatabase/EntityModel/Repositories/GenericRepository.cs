@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Design.PluralizationServices;
+using System.Data.Metadata.Edm;
 using System.Data.Objects;
+using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Globalization;
@@ -78,7 +80,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IQueryable<TEntity> GetQuery<TEntity>() where TEntity : class
     {
       var entityName = GetEntityName<TEntity>();
-      return ObjectContext.CreateQuery<TEntity>(entityName);
+      return ObjectContext.CreateQuery<TEntity>(entityName).AsNoTracking();
     }
 
     public IQueryable<TEntity> GetQuery<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class
@@ -192,6 +194,41 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     }
 
 
+    private string GetEntitySetFullName<TEntity>(TEntity entity) where TEntity : class
+    {
+       // If the EntityKey exists, simply get the Entity Set name from the key
+       /*if (entity.EntityKey != null)
+       {
+          return entity.EntityKey.EntitySetName;
+       }
+       else*/
+       {
+          string entityTypeName = entity.GetType().Name;
+          var container = ObjectContext.MetadataWorkspace.GetEntityContainer(ObjectContext.DefaultContainerName, DataSpace.CSpace);
+          string entitySetName = (from meta in container.BaseEntitySets
+                                  where meta.ElementType.Name == entityTypeName
+                                  select meta.Name).First();
+
+          return entitySetName;
+       }
+    }
+
+    private bool IsAttached<TEntity>(string entitySetFullName, TEntity entity) where TEntity : class
+    {      
+      EntityKey key = ObjectContext.CreateEntityKey(entitySetFullName, entity);
+      if (key == null)
+      {
+        throw new ArgumentNullException("key");
+      }
+      ObjectStateEntry entry;
+      if (ObjectContext.ObjectStateManager.TryGetObjectStateEntry(key, out entry))
+      {
+        return (entry.State != EntityState.Detached);
+      }
+      return false;
+    }
+
+
 
     public void Delete<TEntity>(TEntity entity) where TEntity : class
     {
@@ -199,6 +236,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         throw new ArgumentNullException("entity");
       }
+
+      string entitySetFullName = GetEntitySetFullName(entity);
+      if (!IsAttached(entitySetFullName, entity))
+      {
+        ObjectContext.AttachTo(entitySetFullName, entity);  
+      }            
+
       ObjectContext.DeleteObject(entity);
     }
 

@@ -178,7 +178,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionActivated()
     {
-      _cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      _cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       base.OnSectionActivated();
       mpGroupBox1.Visible = false;
       ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
@@ -683,7 +683,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardTimeShiftingChannel(int channelId)
     {
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
         if (card.enabled == false) continue;
@@ -713,7 +713,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     /// <returns>virtual card</returns>
     public VirtualCard GetCardRecordingChannel(int channelId)
     {
-      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards();
+      IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
       foreach (Card card in cards)
       {
         if (card.enabled == false) continue;

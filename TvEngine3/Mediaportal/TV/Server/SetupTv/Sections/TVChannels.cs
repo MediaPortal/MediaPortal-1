@@ -383,7 +383,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         channel.displayName = e.Label;
         channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
         channel.AcceptChanges();
-        RefreshAll();
       }
     }
 
@@ -395,7 +394,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ch.visibleInGuide = e.Item.Checked;
         ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
         ch.AcceptChanges();
-        RefreshAll();
       }
     }
 

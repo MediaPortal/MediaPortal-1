@@ -12,7 +12,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
         // seems a new instance per WCF is the way to go, since a shared context will end up in EF errors.
         get
         {
-          return new Model();
+          var model = new Model();
+          model.ContextOptions.LazyLoadingEnabled = false;
+          model.ContextOptions.ProxyCreationEnabled = false;
+          return model;
         }
       }      
 
