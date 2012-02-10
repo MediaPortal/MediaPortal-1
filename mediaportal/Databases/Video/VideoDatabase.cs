@@ -101,9 +101,9 @@ namespace MediaPortal.Video.Database
       _database.GetFiles(lMovieId, ref movies);
     }
 
-    public static void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo)
+    public static void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh)
     {
-      _database.GetVideoFilesMediaInfo(strFilenameAndPath, ref mediaInfo);
+      _database.GetVideoFilesMediaInfo(strFilenameAndPath, ref mediaInfo, refresh);
     }
 
     public static int AddGenre(string strGenre1)

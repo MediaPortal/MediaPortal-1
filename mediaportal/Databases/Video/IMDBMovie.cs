@@ -527,11 +527,16 @@ namespace MediaPortal.Video.Database
 
     private void SetMediaInfoProperties(string file)
     {
+      SetMediaInfoProperties(file, false);
+    }
+
+    public void SetMediaInfoProperties(string file, bool refresh)
+    {
       try 
       {
         VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
 
-        VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
+        VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo, refresh);
 
         string hasSubtitles = "false";
 
@@ -540,7 +545,6 @@ namespace MediaPortal.Video.Database
           hasSubtitles = "true";
         }
 
-        VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
         GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(mInfo.VideoCodec));
         GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
         GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(mInfo.AudioCodec));

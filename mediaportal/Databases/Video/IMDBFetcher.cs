@@ -1401,7 +1401,7 @@ namespace MediaPortal.Video.Database
     }
 
     /// <summary>
-    /// 
+    /// Returns all video files from path
     /// </summary>
     /// <param name="path"></param>
     /// <param name="availableFiles"></param>
@@ -1414,6 +1414,7 @@ namespace MediaPortal.Video.Database
       {
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Util.Utils.VideoExtensions);
+        ArrayList imagePath = new ArrayList();
         // Thumbs creation spam no1 causing this call
         //
         // Temporary disable thumbcreation
@@ -1447,7 +1448,25 @@ namespace MediaPortal.Video.Database
           }
           else
           {
-            availableFiles.Add(item.Path);
+            bool skipDuplicate = false;
+
+            if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+            {
+              string filePath = Path.GetDirectoryName(item.Path) + @"\" + Path.GetFileNameWithoutExtension(item.Path);
+
+              if (filePath != null && !imagePath.Contains(filePath))
+              {
+                imagePath.Add(filePath);
+              }
+              else
+              {
+                skipDuplicate = true;
+              }
+            }
+            if (!skipDuplicate)
+            {
+              availableFiles.Add(item.Path);
+            }
           }
         }
       }
@@ -1514,6 +1533,7 @@ namespace MediaPortal.Video.Database
             xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
           }
           List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+          
           foreach (GUIListItem item in items)
           {
             if (item.IsFolder)

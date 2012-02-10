@@ -501,17 +501,19 @@ namespace MediaPortal.Video.Database
         string strSQL = String.Format("select * from files where idmovie={0} and idpath={1} and strFileName like '{2}'",
                                       lMovieId, lPathId, strFileName);
         SQLiteResultSet results = m_db.Execute(strSQL);
+        
         if (results != null && results.Rows.Count > 0)
         {
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
-          CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId);
+          CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
           return lFileId;
         }
+
         strSQL = String.Format("insert into files (idFile, idMovie,idPath, strFileName) values(null, {0},{1},'{2}')",
                                lMovieId, lPathId, strFileName);
         results = m_db.Execute(strSQL);
         lFileId = m_db.LastInsertID();
-        CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId);
+        CheckMediaInfo(strFileName, string.Empty, lPathId, lFileId, false);
         return lFileId;
       }
       catch (Exception ex)
@@ -524,7 +526,7 @@ namespace MediaPortal.Video.Database
 
     // Check and add, if necessary, media info for video files
     // Use (file, pathID and fileID) or (full filename with path and fileID)
-    private void CheckMediaInfo(string file, string fullPathFilename, int pathID, int fileID)
+    private void CheckMediaInfo(string file, string fullPathFilename, int pathID, int fileID, bool refresh)
     {
       string strSQL = string.Empty;
       string strFilenameAndPath = string.Empty;
@@ -535,9 +537,12 @@ namespace MediaPortal.Video.Database
       
       // No ftp or http videos
       string path = DatabaseUtility.Get(results, 0, "strPath");
-      if (path.IndexOf("remote:") >= 0 || path.IndexOf("http:") >= 0)
-        return;
       
+      if (path.IndexOf("remote:") >= 0 || path.IndexOf("http:") >= 0)
+      {
+        return;
+      }
+
       // We can use (path+file) or full path filename
       if (fullPathFilename == string.Empty)
       {
@@ -547,15 +552,18 @@ namespace MediaPortal.Video.Database
       {
         strFilenameAndPath = fullPathFilename;
       }
+      
       // Prevent empty database record for empty media scan
       if (!File.Exists(strFilenameAndPath))
+      {
         return;
+      }
 
       // Check if we processed file allready
       strSQL = String.Format("select * from filesmediainfo where idFile={0}", fileID);
-
       results = m_db.Execute(strSQL);
-      if (results.Rows.Count == 0)
+      
+      if (results.Rows.Count == 0 || refresh)
       {
         Log.Info("VideoDatabase media info file: {0}", strFilenameAndPath);
         bool isImage = false;
@@ -574,11 +582,15 @@ namespace MediaPortal.Video.Database
               xmlreader.SetValueAsBool("daemon", "askbeforeplaying", false);
               xmlreader.SetValue("general", "autoplay_video", "No");
             }
-            if(!DaemonTools.Mount(strFilenameAndPath, out drive))
+            
+            if (!DaemonTools.Mount(strFilenameAndPath, out drive))
+            {
               return;
+            }
           }
           isImage = true;
         }
+
         MediaInfoWrapper mInfo = new MediaInfoWrapper(strFilenameAndPath);
         
         if (isImage && DaemonTools.IsMounted(strFilenameAndPath))
@@ -590,15 +602,19 @@ namespace MediaPortal.Video.Database
             xmlwriter.SetValue("general", "autoplay_video", autoplayVideo);
           }
         }
+        
         int subtitles = 0;
 
         if (mInfo.HasSubtitles)
         {
           subtitles = 1;
         }
+
         try
         {
-          strSQL = String.Format(
+          if (results.Rows.Count == 0)
+          {
+            strSQL = String.Format(
               "insert into filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) values({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
               fileID,
               Util.Utils.MakeFileName(mInfo.VideoCodec),
@@ -607,10 +623,37 @@ namespace MediaPortal.Video.Database
               subtitles,
               Util.Utils.MakeFileName(mInfo.AudioCodec),
               mInfo.AudioChannelsFriendly);
+          }
+          else
+          {
+            strSQL = String.Format(
+              "update filesmediainfo set videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' where idFile={0}",
+              fileID,
+              Util.Utils.MakeFileName(mInfo.VideoCodec),
+              mInfo.VideoResolution,
+              mInfo.AspectRatio,
+              subtitles,
+              Util.Utils.MakeFileName(mInfo.AudioCodec),
+              mInfo.AudioChannelsFriendly);
+          }
+          
           // Prevent empty record for future or unknown codecs
           if (mInfo.VideoCodec == string.Empty)
+          {
             return;
+          }
+          
           m_db.Execute(strSQL);
+          
+          string sql = String.Format("select * from duration where idFile={0}", fileID);
+          results = m_db.Execute(sql);
+
+          if (results.Rows.Count > 0)
+          {
+            sql = String.Format("update duration set duration={0} where idFile={1}",
+                                mInfo.VideoDuration / 1000, fileID);
+            m_db.Execute(sql);
+          }
         }
         catch (Exception) {}
       }
@@ -902,7 +945,7 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo)
+    public void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh)
     {
       try
       {
@@ -924,11 +967,11 @@ namespace MediaPortal.Video.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
 
         // Set mInfo for files already in db but not scanned before
-        if (results.Rows.Count == 0)
+        if (results.Rows.Count == 0 || refresh)
         {
           try
           {
-            CheckMediaInfo(string.Empty, strFilenameAndPath, -1, fileID);
+            CheckMediaInfo(string.Empty, strFilenameAndPath, -1, fileID, refresh);
             results = m_db.Execute(strSQL);
           }
           catch (Exception) {}

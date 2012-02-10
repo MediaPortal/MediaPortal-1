@@ -104,6 +104,6 @@ namespace MediaPortal.Video.Database
     SQLiteResultSet GetResults(string sql);
     void ExecuteSQL (string sql);
     string DatabaseName { get; }
-    void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo);
+    void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh);
   }
 }

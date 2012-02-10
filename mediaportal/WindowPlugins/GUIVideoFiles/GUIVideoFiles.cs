@@ -2325,15 +2325,13 @@ namespace MediaPortal.GUI.Video
     {
       GUIListItem item = facadeLayout.SelectedListItem;
       int itemNo = facadeLayout.SelectedListItemIndex;
-      //if (item == null)
-      //{
-      //  return;
-      //}
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      
       if (dlg == null)
       {
         return;
       }
+      
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
@@ -2341,11 +2339,12 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(868); // Reset virtual directory
       }
+      else if (item.IsRemote || (item.IsFolder) && (item.Label == ".."))
+      {
+        return;
+      }
       else
       {
-        // Refresh files/folders
-        dlg.AddLocalizedString(1256); // Refresh current directory
-
         if (!facadeLayout.Focus)
         {
           // Menu button context menuu
@@ -2357,16 +2356,9 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
+          // DVD & files
           if ((Path.GetFileName(item.Path) != string.Empty) || Util.Utils.IsDVD(item.Path))
           {
-            if (item.IsRemote)
-            {
-              return;
-            }
-            if ((item.IsFolder) && (item.Label == ".."))
-            {
-              return;
-            }
             if (Util.Utils.IsDVD(item.Path))
             {
               if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
@@ -2381,6 +2373,7 @@ namespace MediaPortal.GUI.Video
               dlg.AddLocalizedString(368); //IMDB
               dlg.AddLocalizedString(654); //Eject
             }
+            // Folder
             else if (item.IsFolder)
             {
               if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
@@ -2388,6 +2381,7 @@ namespace MediaPortal.GUI.Video
                 dlg.AddLocalizedString(208); //play             
               }
               dlg.AddLocalizedString(926); //Queue
+              
               if (!VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
               {
                 //
@@ -2412,11 +2406,14 @@ namespace MediaPortal.GUI.Video
                 //
                 dlg.AddLocalizedString(102); //Scan            
               }
+              
               dlg.AddLocalizedString(368); //IMDB
+              
               if (Util.Utils.getDriveType(item.Path) == 5)
               {
                 dlg.AddLocalizedString(654); //Eject            
               }
+              
               if (!IsFolderPinProtected(item.Path) && _fileMenuEnabled)
               {
                 dlg.AddLocalizedString(500); // FileMenu            
@@ -2427,6 +2424,7 @@ namespace MediaPortal.GUI.Video
               dlg.AddLocalizedString(208); //Play
               dlg.AddLocalizedString(926); //Queue
               dlg.AddLocalizedString(368); //IMDB
+              
               if (item.IsPlayed)
               {
                 dlg.AddLocalizedString(830); //Reset watched status
@@ -2440,6 +2438,7 @@ namespace MediaPortal.GUI.Video
               {
                 dlg.AddLocalizedString(500); // FileMenu
               }
+              dlg.AddLocalizedString(1264); //Media info
             }
           }
           else if (Util.Utils.IsNetwork(item.Path)) // Process network root with drive letter
@@ -2459,7 +2458,8 @@ namespace MediaPortal.GUI.Video
         {
           dlg.AddLocalizedString(831);
         }
-
+        
+        dlg.AddLocalizedString(1256); // Refresh current directory
         dlg.AddLocalizedString(1263); // Set default grabber
         dlg.AddLocalizedString(1262); // Update grabber scripts
       }
@@ -2610,6 +2610,10 @@ namespace MediaPortal.GUI.Video
           break;
         case 1263: // Set deault grabber script
           SetDefaultGrabber();
+          break;
+        case 1264: // Get media info
+          IMDBMovie mInfo = new IMDBMovie();
+          if (item != null) mInfo.SetMediaInfoProperties(item.Path, true);
           break;
       }
     }
