@@ -163,7 +163,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   bool forceBitDepth = m_pSettings->m_nForceBitDepth > 0;
 
   // Check for forced bit depth and/or sampling rate
-  if (forceBitDepth || forceSampleRate)
+  if ((forceBitDepth || forceSampleRate) && pwfx->wFormatTag != WAVE_FORMAT_DOLBY_AC3_SPDIF)
   {
     bool accepted = true;
     if (forceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->wBitsPerSample)
