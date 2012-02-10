@@ -566,12 +566,14 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             
               HRESULT hrAccept = S_FALSE;
 
+              m_bProvidePMT = true;
+
               if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &m_currentDecoder))
               {
                 // Currently no other video decoders than LAV seems to be compatible with
                 // the dynamic format changes
-                //if (m_currentDecoder == CLSID_LAVVideo)
-                //hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+                if (m_currentDecoder == CLSID_LAVVideo)
+                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
               }
 
               if (hrAccept != S_OK)
@@ -597,13 +599,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
                 buffer->nNewSegment = 0;
                 m_pCachedBuffer = buffer;
-                m_bProvidePMT = true;
 				
-                if (m_currentDecoder == CLSID_LAVVideo)
-                {
-                  LogDebug("DeliverEndOFStream LAV Only (%d,%d)", buffer->nPlaylist, buffer->nClipNumber);
-                  DeliverEndOfStream();
-                }
+                //if (m_currentDecoder == CLSID_LAVVideo)
+                //{
+                //  LogDebug("DeliverEndOFStream LAV Only (%d,%d)", buffer->nPlaylist, buffer->nClipNumber);
+                //  DeliverEndOfStream();
+                //}
 
                 return ERROR_NO_DATA;
               }
