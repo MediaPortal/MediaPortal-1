@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -189,6 +189,18 @@
     </Compile>
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
+    <Compile Include="Sections\Dialogs\SkyDefaultTransponderSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sections\Dialogs\SkyDefaultTransponderSetup.Designer.cs">
+      <DependentUpon>SkyDefaultTransponderSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\ProviderEpgGrabber.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ProviderEpgGrabber.Designer.cs">
+      <DependentUpon>ProviderEpgGrabber.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\DebugOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -663,6 +675,8 @@
     <EmbeddedResource Include="40_upgrade_sqlserver_database.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="61_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="61_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="60_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="60_upgrade_sqlserver_database.sql" />
     <Content Include="images\animation.SatDish.gif" />
@@ -700,6 +714,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormWebStreamTuningDetail.resx">
       <DependentUpon>FormWebStreamTuningDetail.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Dialogs\SkyDefaultTransponderSetup.resx">
+      <DependentUpon>SkyDefaultTransponderSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\ProviderEpgGrabber.resx">
+      <DependentUpon>ProviderEpgGrabber.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DebugOptions.resx">

@@ -21,6 +21,7 @@
 #pragma once
 #include "epgparser.h"
 #include "mhwparser.h"
+#include "SkyManager.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include "..\..\shared\TsHeader.h"
@@ -59,6 +60,16 @@ DECLARE_INTERFACE_(ITsEpgScanner, IUnknown)
 	STDMETHOD(GetMHWChannel)(THIS_ UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName)PURE;
 	STDMETHOD(GetMHWSummary)(THIS_ ULONG programId, char** summary)PURE;
 	STDMETHOD(GetMHWTheme)(THIS_ UINT themeId, char** theme)PURE;
+
+	//	Sky Epg grabbing
+	STDMETHOD(ActivateSkyEpgGrabber)(THIS_ UINT activateCountryId)PURE;
+	STDMETHOD(IsSkyEpgGrabberActive)(THIS_ byte* active)PURE;
+	STDMETHOD(IsSkyEpgReady)(THIS_ byte* ready)PURE;
+	STDMETHOD(HasSkyEpgAborted)(THIS_ byte* aborted)PURE;
+	STDMETHOD(ResetSkyEpgRetrieval)()PURE;
+	STDMETHOD(GetNextSkyEpgChannel)(THIS_ unsigned char* atEnd, unsigned short* channelId, unsigned short* networkId, unsigned short* transportId, unsigned short* serviceId)PURE;
+	STDMETHOD(GetNextSkyEpgChannelEvent)(THIS_ unsigned char* atEnd, unsigned short* eventId, unsigned short* mjdStart, unsigned int* startTime, unsigned int* duration, unsigned char** title, unsigned char** summary, unsigned char** theme, unsigned short* seriesId, byte* seriesTermination)PURE;
+
 	STDMETHOD(Reset)(THIS_)PURE;
 	STDMETHOD(AbortGrabbing)(THIS_)PURE;
   
@@ -89,6 +100,16 @@ public:
 	STDMETHODIMP GetMHWChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName);
 	STDMETHODIMP GetMHWSummary(ULONG programId, char** summary);
 	STDMETHODIMP GetMHWTheme(UINT themeId, char** theme);
+
+	//	Sky Epg grabbing
+	STDMETHODIMP ActivateSkyEpgGrabber(UINT activateCountryId);
+	STDMETHODIMP IsSkyEpgGrabberActive(byte* active);
+	STDMETHODIMP IsSkyEpgReady(byte* ready);
+	STDMETHODIMP HasSkyEpgAborted(byte* aborted);
+	STDMETHODIMP ResetSkyEpgRetrieval();
+	STDMETHODIMP GetNextSkyEpgChannel(unsigned char* atEnd, unsigned short* channelId, unsigned short* networkId, unsigned short* transportId, unsigned short* serviceId);
+	STDMETHODIMP GetNextSkyEpgChannelEvent(unsigned char* atEnd, unsigned short* eventId, unsigned short* mjdStart, unsigned int* startTime, unsigned int* duration, unsigned char** title, unsigned char** summary, unsigned char** theme, unsigned short* seriesId, byte* seriesTermination);
+
 	STDMETHODIMP Reset();
 	STDMETHODIMP AbortGrabbing();
 	STDMETHODIMP SetCallBack(IEpgCallback* callback);
@@ -97,11 +118,13 @@ public:
 protected:
 	CEpgParser m_epgParser;
 	CMhwParser m_mhwParser;
+	CSkyManager skyManager;
   IEpgCallback* m_pCallBack;
 
   	bool IsEPG_PID(int pid);
 	bool IsMHW_PID(int pid);
 	bool IsEIT_PID(int pid);
+	bool IsSkyEpg_PID(int pid);
 private:
 	bool m_bGrabbing;
 	CCriticalSection m_section;

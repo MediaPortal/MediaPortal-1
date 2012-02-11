@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -154,6 +154,9 @@
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\Helper\GraphState.cs" />
     <Compile Include="Implementations\Helper\HResult.cs" />
+    <Compile Include="Implementations\Helper\Providers\SkyItaly.cs" />
+    <Compile Include="Implementations\Helper\Providers\Provider.cs" />
+    <Compile Include="Implementations\Helper\Providers\SkyUK.cs" />
     <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Helper\SidHelper.cs" />
     <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />

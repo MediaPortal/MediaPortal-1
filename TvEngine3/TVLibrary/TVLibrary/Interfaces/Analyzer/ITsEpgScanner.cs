@@ -186,6 +186,77 @@ namespace TvLibrary.Interfaces.Analyzer
     int GetMHWTheme(uint themeId, out IntPtr theme);
 
     /// <summary>
+    /// Starts the sky epg grabber
+    /// Country:
+    /// 1 = UK
+    /// 2 = Italy
+    /// 3 = Australia (Not yet implemented)
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int ActivateSkyEpgGrabber(uint country);
+
+    /// <summary>
+    /// Gets if the Sky epg is active
+    /// </summary>
+    /// <param name="active"></param>
+    /// <returns></returns>
+    [PreserveSig]
+    int IsSkyEpgGrabberActive(ref byte active);
+
+    /// <summary>
+    /// Gets if the Sky epg is ready to be retrieved from tswriter
+    /// </summary>
+    /// <param name="ready"></param>
+    /// <returns></returns>
+    [PreserveSig]
+    int IsSkyEpgReady(ref byte ready);
+
+    /// <summary>
+    /// Gets if the Sky epg grabbing was aborted
+    /// </summary>
+    /// <param name="aborted"></param>
+    /// <returns></returns>
+    [PreserveSig]
+    int HasSkyEpgAborted(ref byte aborted);
+
+    /// <summary>
+    /// Resets the epg retrieval iterators
+    /// </summary>
+    /// <returns></returns>
+    [PreserveSig]
+    int ResetSkyEpgRetrieval();
+
+    /// <summary>
+    /// Gets the next Sky epg channel
+    /// </summary>
+    /// <param name="atEndChannel"></param>
+    /// <param name="channelId"></param>
+    /// <param name="networkId"></param>
+    /// <param name="transportId"></param>
+    /// <param name="serviceId"></param>
+    /// <returns></returns>
+    [PreserveSig]
+    int GetNextSkyEpgChannel(ref byte atEndChannel, ref ushort channelId, ref ushort networkId, ref ushort transportId, ref ushort serviceId);
+
+    /// <summary>
+    /// Gets the next Sky channel epg event
+    /// </summary>
+    /// <param name="atEndChannelEvent"></param>
+    /// <param name="eventId"></param>
+    /// <param name="mjdStart"></param>
+    /// <param name="startTime"></param>
+    /// <param name="duration"></param>
+    /// <param name="title"></param>
+    /// <param name="summary"></param>
+    /// <param name="theme"></param>
+    /// <param name="seriesId"></param>
+    /// <param name="seriesTermination"></param>
+    /// <returns></returns>
+    [PreserveSig]
+    int GetNextSkyEpgChannelEvent(ref byte atEndChannelEvent, ref ushort eventId, ref ushort mjdStart, ref uint startTime, ref uint duration, out IntPtr title, out IntPtr summary, out IntPtr theme, ref ushort seriesId, ref byte seriesTermination);
+
+    /// <summary>
     /// Resets this MHW grabber.
     /// </summary>
     /// <returns></returns>

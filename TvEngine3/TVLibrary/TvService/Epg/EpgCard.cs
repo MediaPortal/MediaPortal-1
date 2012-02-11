@@ -28,6 +28,8 @@ using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvEngine.Events;
 using System.Threading;
+using DirectShowLib.BDA;
+using TvLibrary.Implementations.Helper.Providers;
 
 namespace TvService
 {
@@ -71,6 +73,11 @@ namespace TvService
     private readonly Card _card;
     private IUser _user;
     private readonly EpgDBUpdater _dbUpdater;
+
+    /// <summary>
+    /// Mode (normal or provider - Sky is grabbed by tuning a transponder rather than a specific channel)
+    /// </summary>
+    private eEPGGrabMode _epgGrabMode = eEPGGrabMode.Normal;
 
     #endregion
 
@@ -127,6 +134,17 @@ namespace TvService
     public bool IsGrabbing
     {
       get { return (_state != EpgState.Idle); }
+    }
+
+    /// <summary>
+    /// Gets the EPG grab mode
+    /// </summary>
+    public sealed override BaseEpgGrabber.eEPGGrabMode EPGGrabMode
+    {
+      get
+      {
+        return _epgGrabMode;
+      }
     }
 
     #endregion
@@ -192,14 +210,18 @@ namespace TvService
         {
           //no epg found for this transponder
           Log.Epg("Epg: card:{0} no epg found", _user.CardId);
-          _currentTransponder.InUse = false;
-          _currentTransponder.OnTimeOut();
+
+          //  Null if sky epg grabbing
+          if (_currentTransponder != null)
+          {
+            _currentTransponder.InUse = false;
+            _currentTransponder.OnTimeOut();
+          }
 
           _state = EpgState.Idle;
           _tvController.StopGrabbingEpg(_user);
           _tvController.PauseCard(_user);
           _user.CardId = -1;
-          _currentTransponder.InUse = false;
           return 0;
         }
 
@@ -237,6 +259,9 @@ namespace TvService
       }
       _currentTransponder = TransponderList.Instance.CurrentTransponder;
       Channel channel = _currentTransponder.CurrentChannel;
+
+      //  Normal grab (not by transponder)
+      _epgGrabMode = eEPGGrabMode.Normal;
 
       Log.Epg("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.IdCard,
               TransponderList.Instance.CurrentIndex, channel.DisplayName);
@@ -277,6 +302,245 @@ namespace TvService
       _epgTimer.Enabled = false;
       _isRunning = false;
     }
+
+    /// <summary>
+    /// Checks if it is time to grab the EPG for any specific providers.  Returns true if grab started, or false otherwise
+    /// </summary>
+    public bool GrabProviderEPG(int reGrabAfterMinutes)
+    {
+      try
+      {
+        CardType type = _tvController.Type(Card.IdCard);
+
+        //  If satellite card
+        if (type == CardType.DvbS)
+        {
+          if (GrabSkyUKEPG(reGrabAfterMinutes))
+            return true;
+
+          if (GrabSkyItalyEPG(reGrabAfterMinutes))
+            return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        //  Ensure normal mode is set back and log error
+        _epgGrabMode = eEPGGrabMode.Normal;
+        Log.Error("Exception detected in GrabProviderEpg():\r\n\r\n" + ex.ToString());
+      }
+
+      return false;
+    }
+
+    #region Provider EPGs
+
+    /// <summary>
+    /// Checks if the EPG for Sky UK should be grabbed and starts it if so.  Returns if grabbing was started
+    /// </summary>
+    /// <returns></returns>
+    private bool GrabSkyUKEPG(int reGrabAfterMinutes)
+    {
+      //  If we are not set to grab the Sky UK Epg, return here
+      if (!SkyUK.Instance.EPGGrabbingEnabled)
+        return false;
+
+      //  Get the last grab time
+      DateTime lastEpgGrabTime = SkyUK.Instance.LastEPGGrabTime;
+
+      TimeSpan timeSinceLastGrab = DateTime.Now - lastEpgGrabTime;
+
+      //  If the time since last grab does not reach the threshold, return
+      if (timeSinceLastGrab.TotalMinutes < reGrabAfterMinutes)
+        return false;
+
+      Log.Epg("Initializing grab for Sky UK");
+
+      //  Find all channels on the default transponder
+      IList<TuningDetail> defaultTransponderChannels = TuningDetail.Find(SkyUK.Instance.DefaultTransponderFrequency, 500, (int)SkyUK.Instance.DefaultTransponderPolarisation, (int)SkyUK.Instance.DefaultTransponderInnerFEC, SkyUK.Instance.DefaultTransponderSymbolRate, SkyUK.Instance.NetworkId);
+
+      //  Check at leat 1 channel was found for the default transponder
+      if (defaultTransponderChannels == null || defaultTransponderChannels.Count == 0)
+      {
+        Log.Epg("Error cannot start EPG grabbing for Sky UK as no channels could be found for the default transponder");
+
+        //  Postpone until next grab
+        SkyUK.Instance.LastEPGGrabTime = DateTime.Now;
+
+        return false;
+      }
+
+      Log.Epg("There are " + defaultTransponderChannels.Count.ToString() + " known channels on the default transponder");
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+
+      //  Loop through all channels on the default transponder until epg grabbing is started successfully
+      foreach (TuningDetail currentChannelTuning in defaultTransponderChannels)
+      {
+        Channel referencedChannel = currentChannelTuning.ReferencedChannel();
+
+        if (referencedChannel == null)
+          continue;
+        
+        //  Check the card can tune this channel
+        if (!Card.canTuneTvChannel(referencedChannel.IdChannel))
+        {
+          Log.Epg("Card " + Card.IdCard + " cannot tune '" + referencedChannel.DisplayName + "', trying next");
+          continue;
+        }
+
+        Log.Epg("Tuning to '" + referencedChannel.DisplayName + "' to grab EPG for Sky UK");
+
+        //  Set idle
+        _state = EpgState.Idle;
+
+        _isRunning = true;
+        _user = new User("Sky UK", false, -1);
+
+        //  Sky is grabbed by tuning the default transponder rather than a specific channel
+        _epgGrabMode = eEPGGrabMode.SkyUK;
+
+        IChannel channelTuning = layer.GetTuningChannelByType(referencedChannel, currentChannelTuning.ChannelType);
+
+        //  Try to grab and update last grab time if successful
+        if (GrabEpgForChannel(referencedChannel, channelTuning, _card))
+        {
+          //  Succeeded
+          _state = EpgState.Grabbing;
+          _grabStartTime = DateTime.Now;
+
+          try
+          {
+            _epgTimer.Enabled = true;
+          }
+          catch (ObjectDisposedException)
+          {
+            return false;
+          }
+
+          Log.Epg("EPG grab for Sky UK started successfully");
+
+          return true;
+        }
+        else
+        {
+          _epgGrabMode = eEPGGrabMode.Normal;
+
+          Log.Epg("Failed to start grabbing EPG for Sky UK on channel '" + referencedChannel.DisplayName + "'.  Trying next");
+        }
+      }
+
+      Log.Epg("Failed to start grabbing EPG for Sky UK on any channel in transponder list");
+
+      //  Postpone until next grab
+      SkyUK.Instance.LastEPGGrabTime = DateTime.Now;
+
+      return false;
+    }
+
+    /// <summary>
+    /// Checks if the EPG for Sky Italy should be grabbed and starts it if so.  Returns if grabbing was started
+    /// </summary>
+    /// <returns></returns>
+    private bool GrabSkyItalyEPG(int reGrabAfterMinutes)
+    {
+      //  If we are not set to grab the Sky Italy Epg, return here
+      if (!SkyItaly.Instance.EPGGrabbingEnabled)
+        return false;
+
+      //  Get the last grab time
+      DateTime lastEpgGrabTime = SkyItaly.Instance.LastEPGGrabTime;
+
+      TimeSpan timeSinceLastGrab = DateTime.Now - lastEpgGrabTime;
+
+      //  If the time since last grab does not reach the threshold, return
+      if (timeSinceLastGrab.TotalMinutes < reGrabAfterMinutes)
+        return false;
+
+      Log.Epg("Initializing grab for Sky Italy");
+
+      //  Find all channels on the default transponder
+      IList<TuningDetail> defaultTransponderChannels = TuningDetail.Find(SkyItaly.Instance.DefaultTransponderFrequency, 500, (int)SkyItaly.Instance.DefaultTransponderPolarisation, (int)SkyItaly.Instance.DefaultTransponderInnerFEC, SkyItaly.Instance.DefaultTransponderSymbolRate, SkyItaly.Instance.NetworkId);
+
+      //  Check at leat 1 channel was found for the default transponder
+      if (defaultTransponderChannels == null || defaultTransponderChannels.Count == 0)
+      {
+        Log.Epg("Error cannot start EPG grabbing for Sky Italy as no channels could be found for the default transponder");
+
+        //  Postpone until next grab
+        SkyItaly.Instance.LastEPGGrabTime = DateTime.Now;
+
+        return false;
+      }
+
+      Log.Epg("There are " + defaultTransponderChannels.Count.ToString() + " known channels on the default transponder");
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+
+      //  Loop through all channels on the default transponder until epg grabbing is started successfully
+      foreach (TuningDetail currentChannelTuning in defaultTransponderChannels)
+      {
+        Channel referencedChannel = currentChannelTuning.ReferencedChannel();
+
+        if (referencedChannel == null)
+          continue;
+
+        //  Check the card can tune this channel
+        if (!Card.canTuneTvChannel(referencedChannel.IdChannel))
+        {
+          Log.Epg("Card " + Card.IdCard + " cannot tune '" + referencedChannel.DisplayName + "', trying next");
+          continue;
+        }
+
+        Log.Epg("Tuning to '" + referencedChannel.DisplayName + "' to grab EPG for Sky Italy");
+
+        //  Set idle
+        _state = EpgState.Idle;
+
+        _isRunning = true;
+        _user = new User("Sky Italy", false, -1);
+
+        //  Sky is grabbed by tuning the default transponder rather than a specific channel
+        _epgGrabMode = eEPGGrabMode.SkyItaly;
+
+        IChannel channelTuning = layer.GetTuningChannelByType(referencedChannel, currentChannelTuning.ChannelType);
+
+        //  Try to grab and update last grab time if successful
+        if (GrabEpgForChannel(referencedChannel, channelTuning, _card))
+        {
+          //  Succeeded
+          _state = EpgState.Grabbing;
+          _grabStartTime = DateTime.Now;
+
+          try
+          {
+            _epgTimer.Enabled = true;
+          }
+          catch (ObjectDisposedException)
+          {
+            return false;
+          }
+
+          Log.Epg("EPG grab for Sky Italy started successfully");
+
+          return true;
+        }
+        else
+        {
+          _epgGrabMode = eEPGGrabMode.Normal;
+
+          Log.Epg("Failed to start grabbing EPG for Sky Italy on channel '" + referencedChannel.DisplayName + "'.  Trying next");
+        }
+      }
+
+      Log.Epg("Failed to start grabbing EPG for Sky Italy on any channel in transponder list");
+
+      //  Postpone until next grab
+      SkyItaly.Instance.LastEPGGrabTime = DateTime.Now;
+
+      return false;
+    }
+
+    #endregion
 
     #endregion
 
@@ -637,12 +901,15 @@ namespace TvService
       //if card is not idle anymore we return
       if (IsCardIdle(_user) == false)
       {
-        _currentTransponder.InUse = false;
+        if (_epgGrabMode == eEPGGrabMode.Normal)
+          _currentTransponder.InUse = false;
+
         return;
       }
       Log.Epg("Epg: card:{0} Updating database with new programs", _user.CardId);
       bool timeOut = false;
       _dbUpdater.ReloadConfig();
+
       try
       {
         foreach (EpgChannel epgChannel in _epg)
@@ -671,7 +938,8 @@ namespace TvService
       }
       finally
       {
-        if (timeOut == false)
+
+        if (timeOut == false && _epgGrabMode == eEPGGrabMode.Normal && _currentTransponder != null)
         {
           _currentTransponder.OnTimeOut();
         }
@@ -680,7 +948,29 @@ namespace TvService
           _tvController.StopGrabbingEpg(_user);
           _tvController.PauseCard(_user);
         }
-        _currentTransponder.InUse = false;
+
+        if (_epgGrabMode == eEPGGrabMode.Normal && _currentTransponder != null)
+          _currentTransponder.InUse = false;
+
+        try
+        {
+          //  If Sky UK grab and a timeout wasn't triggered
+          if (_epgGrabMode == eEPGGrabMode.SkyUK && !timeOut)
+            SkyUK.Instance.LastEPGGrabTime = DateTime.Now;
+
+          //  If Sky Italy grab and a timeout wasn't triggered
+          if (_epgGrabMode == eEPGGrabMode.SkyItaly && !timeOut)
+            SkyItaly.Instance.LastEPGGrabTime = DateTime.Now;
+
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Exception in UpdateDatabaseThread(): " + ex.ToString());
+        }
+
+        //  Ensure set back to normal
+        _epgGrabMode = eEPGGrabMode.Normal;
+
         _state = EpgState.Idle;
         _user.CardId = -1;
         _tvController.Fire(this, new TvServerEventArgs(TvServerEventType.ProgramUpdated));

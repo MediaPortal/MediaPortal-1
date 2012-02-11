@@ -461,6 +461,15 @@ namespace TvDatabase
         dbProg.OriginalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
         dbProg.ClearRecordPendingState();
       }
+
+      //  If the epg program has series id information, copy to the program
+      if (ep.SeriesId != 0)
+      {
+        dbProg.SeriesId = ep.SeriesId;
+        dbProg.SeriesTermination = ep.SeriesTermination;
+      }
+
+
       dbProg.Persist();
     }
 

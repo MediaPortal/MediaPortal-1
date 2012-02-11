@@ -219,6 +219,7 @@ namespace SetupTv.Sections
           AddAttribute(nodeSchedule, "RecommendedCard", schedule.RecommendedCard);
           AddAttribute(nodeSchedule, "ScheduleType", schedule.ScheduleType);
           AddAttribute(nodeSchedule, "Series", schedule.Series);
+          AddAttribute(nodeSchedule, "SeriesId", schedule.SeriesId);
           nodeSchedules.AppendChild(nodeSchedule);
         }
         rootElement.AppendChild(nodeSchedules);
@@ -720,6 +721,7 @@ namespace SetupTv.Sections
               schedule.RecommendedCard = Int32.Parse(nodeSchedule.Attributes["RecommendedCard"].Value);
               schedule.ScheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
               schedule.Series = (GetNodeAttribute(nodeSchedule, "Series", "False") == "True");
+              schedule.SeriesId = Int32.Parse((nodeSchedule.Attributes["SeriesId"] != null ? nodeSchedule.Attributes["SeriesId"].Value : "0"));
               if (idChannel > -1)
               {
                 schedule.Persist();

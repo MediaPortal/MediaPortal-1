@@ -50,6 +50,8 @@ namespace TvDatabase
     [TableColumn("starRating", NotNull = true)] private int starRating;
     [TableColumn("classification", NotNull = true)] private string classification;
     [TableColumn("parentalRating", NotNull = true)] private int parentalRating;
+    [TableColumn("seriesId", NotNull = false, NullValue = 0)] private int seriesId;
+    [TableColumn("seriesTermination", NotNull = false, NullValue = 0)] private int seriesTermination;
 
     #endregion
 
@@ -99,6 +101,7 @@ namespace TvDatabase
       this.classification = classification;
       this.parentalRating = parentalRating;
     }
+
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
@@ -538,6 +541,38 @@ namespace TvDatabase
       }
     }
 
+    /// <summary>
+    /// Series Id is used only for Sky UK/IT/AU at the moment for 'series link' functionality
+    /// </summary>
+    public int SeriesId
+    {
+      get
+      {
+        return seriesId;
+      }
+      set
+      {
+        isChanged |= seriesId != value;
+        seriesId = value;
+      }
+    }
+
+    /// <summary>
+    /// Does this program terminate a series?  The schedule can be deleted when it is time to record this program is so
+    /// </summary>
+    public int SeriesTermination
+    {
+      get
+      {
+        return seriesTermination;
+      }
+      set
+      {
+        isChanged |= seriesTermination != value;
+        seriesTermination = value;
+      }
+    }
+
     #endregion
 
     #region Storage and Retrieval
@@ -896,6 +931,26 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
+    /// <summary>
+    /// Gets all programs with the specified series id (series link - Sky UK/IT/AU)
+    /// </summary>
+    /// <param name="seriesId"></param>
+    /// <param name="channelId"></param>
+    /// <returns></returns>
+    public static IList<Program> RetrieveBySeriesId(int seriesId, int channelId)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+
+      //  Add constraints (series id and channel id)
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      sb.AddConstraint(Operator.Equals, "seriesId", seriesId);
+
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+    }
+
     public static void ResetPendingState(int idProgram)
     {
       Program prg = Program.Retrieve(idProgram);
@@ -1148,6 +1203,10 @@ namespace TvDatabase
                               OriginalAirDate,
                               SeriesNum, EpisodeNum, EpisodeName, EpisodePart, StarRating, Classification,
                               parentalRating);
+
+      p.SeriesId = SeriesId;
+      p.SeriesTermination = SeriesTermination;
+
       return p;
     }
 

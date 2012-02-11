@@ -638,8 +638,26 @@ namespace TvDatabase
     {
       //IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       //DateTime startTime = DateTime.Now;
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
+      sb.AddConstraint(Operator.GreaterThan, "endTime", date);
+      sb.AddConstraint(Operator.LessThanOrEquals, "startTime", date);
+      sb.AddOrderByField(true, "startTime");
+      sb.SetRowLimit(1);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList<Program> programs = ObjectFactory.GetCollection<Program>(stmt.Execute());
+      if (programs.Count == 0)
+      {
+        return null;
+      }
+      return programs[0];
+    }
+
+    public Program GetProgramAt(DateTime date, int seriesId)
+    {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
+      sb.AddConstraint(Operator.Equals, "seriesId", seriesId);
       sb.AddConstraint(Operator.GreaterThan, "endTime", date);
       sb.AddConstraint(Operator.LessThanOrEquals, "startTime", date);
       sb.AddOrderByField(true, "startTime");

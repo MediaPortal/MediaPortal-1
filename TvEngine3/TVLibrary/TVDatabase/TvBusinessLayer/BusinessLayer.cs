@@ -1455,6 +1455,9 @@ namespace TvDatabase
           Convert.ToInt32(prog["parentalRating"])
           );
 
+        p.SeriesId = Convert.ToInt32((prog.IsNull("seriesId") ? 0 : prog["seriesId"]));
+        p.SeriesTermination = Convert.ToInt32((prog.IsNull("seriesTermination") ? 0 : prog["seriesTermination"]));
+
         int idChannel = p.IdChannel;
         if (!maps.ContainsKey(idChannel))
         {

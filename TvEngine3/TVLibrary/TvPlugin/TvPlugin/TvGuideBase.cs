@@ -114,6 +114,7 @@ namespace TvPlugin
     private long _currentStartTime = 0;
     private long _currentEndTime = 0;
     private Program _currentProgram = null;
+    private static Schedule currentSchedule;
     private bool _needUpdate = false;
     private DateTime m_dtStartTime = DateTime.Now;
     private ArrayList _colorList = new ArrayList();
@@ -139,6 +140,9 @@ namespace TvPlugin
     private bool _useHdProgramIcon = false;
     private string _hdtvProgramText = String.Empty;
     private bool _guideContinuousScroll = false;
+
+    private bool _useQuickRecordMenu = false;
+    private readonly List<ScheduleRecordingType> _quickRecordMenuSchedules = new List<ScheduleRecordingType>();
 
     // current minimum/maximum indexes
     //private int MaxXIndex; // means rows here (channels)
@@ -223,6 +227,57 @@ namespace TvPlugin
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
+ 
+        //  Load the quick record menu settings
+        _useQuickRecordMenu = xmlreader.GetValueAsBool("mytv", "usequickrecordmenu", false);
+
+        string[] selectedQuickRecordSchedules = xmlreader.GetValueAsString("mytv", "selectedquickrecordschedules", string.Empty).Split(',');
+
+          //  Check loaded items
+        foreach (string selectedSchedule in selectedQuickRecordSchedules)
+        {
+          ScheduleRecordingType schedule = (ScheduleRecordingType)(-1);
+
+          switch (selectedSchedule)
+          {
+            case "Once":
+              schedule = ScheduleRecordingType.Once;
+              break;
+            case "Daily":
+              schedule = ScheduleRecordingType.Daily;
+              break;
+            case "Weekly":
+              schedule = ScheduleRecordingType.Weekly;
+              break;
+            case "EveryTimeOnThisChannel":
+              schedule = ScheduleRecordingType.EveryTimeOnThisChannel;
+              break;
+            case "EveryTimeOnEveryChannel":
+              schedule = ScheduleRecordingType.EveryTimeOnEveryChannel;
+              break;
+            case "Weekends":
+              schedule = ScheduleRecordingType.Weekends;
+              break;
+            case "WorkingDays":
+              schedule = ScheduleRecordingType.WorkingDays;
+              break;
+            case "WeeklyEveryTimeOnThisChannel":
+              schedule = ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
+              break;
+            case "SeriesLink":
+              schedule = ScheduleRecordingType.SeriesLink;
+              break;
+          }
+
+          if (schedule != (ScheduleRecordingType)(-1) && !_quickRecordMenuSchedules.Contains(schedule))
+            _quickRecordMenuSchedules.Add(schedule);
+
+        }
+
+        //  If there are no schedules listed, never use the quick record menu
+        if (_quickRecordMenuSchedules.Count == 0)
+          _useQuickRecordMenu = false;
+
       }
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
@@ -3474,6 +3529,127 @@ namespace TvPlugin
           _needUpdate = true;
         }
       }
+
+      //  Else if we want to use the quick record menu
+      else if (_useQuickRecordMenu)
+      {
+        //  Open the quick record menu
+        GUIDialogMenu quickRecordMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+        if (quickRecordMenu == null)
+        {
+          ShowProgramInfo();
+          return;
+        }
+
+        quickRecordMenu.Reset();
+        quickRecordMenu.SetHeading(GUILocalizeStrings.Get(200096)); //200096=Quick record
+
+        //  If the program has series link information (Sky UK/IT/AU / FreeSat)
+        bool seriesLinkAvailable = (_currentProgram.SeriesId != 0);
+
+        //  Maintain a lookup so we know which schedule the user selected
+        Dictionary<int, ScheduleRecordingType> scheduleIndexLookup = new Dictionary<int, ScheduleRecordingType>();
+
+        int currentIndex = 0;
+
+        //  Loop through all schedules to be added
+        foreach (ScheduleRecordingType schedule in _quickRecordMenuSchedules)
+        {
+          string scheduleDescription = string.Empty;
+
+          switch (schedule)
+          {
+            case ScheduleRecordingType.Daily:
+              //  Record every day at this time
+              scheduleDescription = GUILocalizeStrings.Get(615);
+              break;
+
+            case ScheduleRecordingType.EveryTimeOnEveryChannel:
+              //  Record every time on every channel
+              scheduleDescription = GUILocalizeStrings.Get(613);
+              break;
+
+            case ScheduleRecordingType.EveryTimeOnThisChannel:
+              //  Record every time on this channel
+              scheduleDescription = GUILocalizeStrings.Get(612);
+              break;
+
+            case ScheduleRecordingType.Once:
+              //  Record once
+              scheduleDescription = GUILocalizeStrings.Get(611);
+              break;
+
+            case ScheduleRecordingType.SeriesLink:
+              //  Record series
+              scheduleDescription = GUILocalizeStrings.Get(200095);
+              break;
+
+            case ScheduleRecordingType.Weekends:
+              //  Record weekends
+              scheduleDescription = GUILocalizeStrings.Get(1051);
+              break;
+
+            case ScheduleRecordingType.Weekly:
+              //  Record every week at this time
+              scheduleDescription = GUILocalizeStrings.Get(614);
+              break;
+
+            case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+              //  Weekly on this channel
+              scheduleDescription = GUILocalizeStrings.Get(990000);
+              break;
+
+            case ScheduleRecordingType.WorkingDays:
+              //  Record weekdays
+              scheduleDescription = GUILocalizeStrings.Get(672);
+              break;
+
+          }
+
+          //  If valid schedule
+          if (scheduleDescription != string.Empty)
+          {
+            //  If series link, check it is available and skip of not
+            if (schedule == ScheduleRecordingType.SeriesLink && !seriesLinkAvailable)
+              continue;
+
+            quickRecordMenu.Add(scheduleDescription);
+
+            scheduleIndexLookup.Add(currentIndex, schedule);
+
+            currentIndex++;
+          }
+
+        }
+
+        //  Programme info
+        quickRecordMenu.AddLocalizedString(200097);
+
+        quickRecordMenu.DoModal(GetID);
+        int selectedIndex = quickRecordMenu.SelectedLabel;
+
+        //  If none selected
+        if (selectedIndex == -1)
+          return;
+
+        //  Get the selected schedule from the lookup
+        //  If it is not there, the user has chosen to go to the programme information window
+        ScheduleRecordingType selectedSchedule;
+        if (!scheduleIndexLookup.TryGetValue(selectedIndex, out selectedSchedule))
+        {
+          ShowProgramInfo();
+          return;
+        }
+
+        //  Else try and create the schedule
+        TVProgramInfo.CreateProgram(_currentProgram, (int)selectedSchedule, GetID);
+
+        //  Refresh the gui
+        Update(true);
+
+      }
+
+      //  Else show the program info screen
       else
       {
         ShowProgramInfo();

@@ -84,6 +84,11 @@ namespace TvService
     /// </summary>
     private int _maxRecordFreeCardsToTry;
 
+    /// <summary>
+    /// Lookup table for new 'series link' schedule - used to guarantee the scheduler will only spawn a linked program once
+    /// </summary>
+    private readonly Dictionary<int, int> _scheduleLastRecordingStarted = new Dictionary<int, int>();
+
     #endregion
 
     #region ctor
@@ -201,6 +206,7 @@ namespace TvService
           card = new VirtualCard(user);
           return true;
         }
+
       }
       return false;
     }
@@ -715,6 +721,10 @@ namespace TvService
         case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
           isTimeToRecord = IsTimeToRecordWeeklyEveryTimeOnThisChannel(schedule, currentTime);
           break;
+
+        case ScheduleRecordingType.SeriesLink:
+          isTimeToRecord = IsTimeToRecordSeriesLink(schedule, currentTime);
+          break;
       }
       return isTimeToRecord;
     }
@@ -801,6 +811,84 @@ namespace TvService
       return isTimeToRecord;
     }
 
+    /// <summary>
+    /// Gets if its time to record a series link recording, doesnt record directly, spawns a new record once schedule
+    /// </summary>
+    /// <param name="schedule"></param>
+    /// <returns></returns>
+    private bool IsTimeToRecordSeriesLink(Schedule schedule, DateTime currentTime)
+    {
+      Channel scheduleChannel = schedule.ReferencedChannel();
+
+      if (scheduleChannel == null)
+        return false;
+
+      if (schedule.SeriesId == 0)
+        return false;
+
+      TvDatabase.Program currentProgram = scheduleChannel.GetProgramAt(currentTime.AddMinutes(schedule.PreRecordInterval), schedule.SeriesId);
+
+      
+
+      if (currentProgram != null)
+      {
+
+        //  If this schedule has already spawned this program, skip
+        if (_scheduleLastRecordingStarted.ContainsKey(schedule.IdSchedule) && _scheduleLastRecordingStarted[schedule.IdSchedule] == currentProgram.IdProgram)
+        {
+          Log.Write("Scheduler: Record once for \"" + schedule.ProgramName + "\" has already been spawned, skipping");
+          return false;
+        }
+
+        if (currentTime >= currentProgram.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
+            currentTime <= currentProgram.EndTime.AddMinutes(schedule.PostRecordInterval) &&
+            currentProgram.SeriesId > 0 &&
+            currentProgram.SeriesId == schedule.SeriesId)
+        {
+          if (!schedule.IsSerieIsCanceled(currentProgram.StartTime))
+          {
+            Log.Write("Scheduler: Time to record series link - " + schedule.ProgramName);
+
+            bool createSpawnedOnceSchedule = CreateSpawnedOnceSchedule(schedule, currentProgram);
+
+
+            if (createSpawnedOnceSchedule)
+            {
+              //  Add the last program spawned to the lookup to prevent this schedule spawning this program again
+              if (_scheduleLastRecordingStarted.ContainsKey(schedule.IdSchedule))
+              {
+                Log.Write("Scheduler: Updating last spawned program id to " + currentProgram.IdProgram.ToString() + " for schedule id " + schedule.IdSchedule.ToString());
+
+                _scheduleLastRecordingStarted[schedule.IdSchedule] = currentProgram.IdProgram;
+                Log.Write("Scheduler: Done last action");
+
+              }
+
+              else
+              {
+                Log.Write("Scheduler: Adding last spawned program id to " + currentProgram.IdProgram.ToString() + " for schedule id " + schedule.IdSchedule.ToString());
+
+                _scheduleLastRecordingStarted.Add(schedule.IdSchedule, currentProgram.IdProgram);
+              }
+
+              //  If this is the last episode in the series link, we want to delete the schedule
+              if (currentProgram.SeriesTermination == 1)
+              {
+                Log.Write("Scheduler: This is the last episode in the series.  Deleting series link schedule");
+                schedule.Delete();
+              }
+
+              Log.Write("Scheduler: Spawned record once schedule, resetting timer");
+              ResetTimer(); //lets process the spawned once schedule at once.
+            }
+          }
+        }
+      }
+
+      //  Series link schedule never records directly
+      return false;
+    }
+
     private RecordingDetail IsTimeToRecordWeekly(Schedule schedule, DateTime currentTime, out bool isTimeToRecord)
     {
       isTimeToRecord = false;
@@ -875,6 +963,8 @@ namespace TvService
 
         if (once == null) // make sure that we DO NOT create multiple once recordings.
         {
+          Log.Write("Scheduler: Spawning record once - " + current.Description + ", start time: " + current.StartTime.ToString());
+
           Schedule newSchedule = new Schedule(schedule);
           newSchedule.IdChannel = current.IdChannel;
           newSchedule.StartTime = current.StartTime;
@@ -887,6 +977,9 @@ namespace TvService
           // 'once typed' created schedule will be used instead at next call of IsTimeToRecord()
         }
       }
+
+      if (!isSpawnedOnceScheduleCreated)
+        Log.Write("Scheduler: Once recording already scheduled");
 
       return isSpawnedOnceScheduleCreated;
     }

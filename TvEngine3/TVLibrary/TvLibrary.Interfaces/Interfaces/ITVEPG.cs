@@ -46,6 +46,27 @@ namespace TvLibrary.Interfaces
   public abstract class BaseEpgGrabber : IEpgCallback
   {
     /// <summary>
+    /// EPG grab mode
+    /// </summary>
+    public enum eEPGGrabMode
+    {
+      Normal,
+      SkyUK,
+      SkyItaly,
+    }
+
+    /// <summary>
+    /// Gets the current EPG grab mode
+    /// </summary>
+    public virtual eEPGGrabMode EPGGrabMode
+    {
+      get
+      {
+        return eEPGGrabMode.Normal;
+      }
+    }
+
+    /// <summary>
     /// Gets called when epg has been cancelled
     /// Should be overriden by the class
     /// </summary>

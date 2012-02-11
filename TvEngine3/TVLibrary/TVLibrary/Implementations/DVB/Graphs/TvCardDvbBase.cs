@@ -29,6 +29,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
+using TvLibrary.Implementations.Helper.Providers;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
 using MediaPortal.TV.Epg;
@@ -2393,6 +2394,14 @@ namespace TvLibrary.Implementations.DVB
       _interfaceEpgGrabber.SetCallBack(callback);
       _interfaceEpgGrabber.GrabEPG();
       _interfaceEpgGrabber.GrabMHW();
+
+      // If grabbing for a provider (Sky UK/Italy)
+      if (callback.EPGGrabMode == BaseEpgGrabber.eEPGGrabMode.SkyUK)
+        _interfaceEpgGrabber.ActivateSkyEpgGrabber(SkyUK.Instance.InternalId);
+
+      else if (callback.EPGGrabMode == BaseEpgGrabber.eEPGGrabMode.SkyItaly)
+        _interfaceEpgGrabber.ActivateSkyEpgGrabber(SkyItaly.Instance.InternalId);
+
       _epgGrabbing = true;
     }
 
@@ -2441,6 +2450,142 @@ namespace TvLibrary.Implementations.DVB
         //if (!CheckThreadId()) return null;
         try
         {
+          byte isSkyEpgGrabbingActive = 0;
+          byte isSkyEpgReady = 0;
+          byte hasSkyEpgGrabbingAborted = 0;
+          _interfaceEpgGrabber.IsSkyEpgGrabberActive(ref isSkyEpgGrabbingActive);
+          _interfaceEpgGrabber.IsSkyEpgReady(ref isSkyEpgReady);
+          _interfaceEpgGrabber.HasSkyEpgAborted(ref hasSkyEpgGrabbingAborted);
+
+          List<EpgChannel> epgChannels = new List<EpgChannel>();
+
+          if (isSkyEpgGrabbingActive == 1 && hasSkyEpgGrabbingAborted == 1)
+          {
+            Log.Log.Write("Sky EPG grabbing detected as being aborted");
+
+            _interfaceEpgGrabber.ResetSkyEpgRetrieval();
+            _interfaceEpgGrabber.Reset();
+            return epgChannels;
+          }
+
+          if (isSkyEpgGrabbingActive == 1 && isSkyEpgReady == 1)
+          {
+            //  Reset the epg retrieval
+            _interfaceEpgGrabber.ResetSkyEpgRetrieval();
+
+            byte atEndChannel = 0;
+            ushort channelId = 0;
+            ushort networkId = 0;
+            ushort transportId = 0;
+            ushort serviceId = 0;
+            int numberSkyEpgEventsRetrieved = 0;
+
+            //  Get the first channel
+            _interfaceEpgGrabber.GetNextSkyEpgChannel(ref atEndChannel, ref channelId, ref networkId, ref transportId, ref serviceId);
+
+            //  While we have more channels to retrieve
+            while (atEndChannel == 0)
+            {
+              byte atEndChannelEvent = 0;
+              ushort eventId = 0;
+              ushort mjdStart = 0;
+              uint startTime = 0;
+              uint duration = 0;
+              IntPtr titlePtr;
+              IntPtr summaryPtr;
+              IntPtr themePtr;
+              ushort seriesId = 0;
+              byte seriesTermination = 0;
+
+              //  Get the first event for this channel
+              _interfaceEpgGrabber.GetNextSkyEpgChannelEvent(ref atEndChannelEvent, ref eventId, ref mjdStart, ref startTime, ref duration, out titlePtr, out summaryPtr, out themePtr, ref seriesId, ref seriesTermination);
+
+              //  Try to find this channel
+              EpgChannel skyEpgChannel = null;
+              
+              if(atEndChannelEvent == 0)
+              {
+                skyEpgChannel = new EpgChannel();
+
+                //  Add and populate the epg channel
+                epgChannels.Add(skyEpgChannel);
+
+                DVBBaseChannel baseChannel = new DVBSChannel();
+                baseChannel.NetworkId = networkId;
+                baseChannel.TransportId = transportId;
+                baseChannel.ServiceId = serviceId;
+                baseChannel.Name = string.Empty;
+
+                skyEpgChannel.Channel = baseChannel;
+              }
+
+              while (atEndChannelEvent == 0)
+              {
+                //  Validate the timestamps
+                if (mjdStart != 0 && duration != 0)
+                {
+                  //  Convert modified Julian day and calculate start and end time
+                  DateTime programStartDay = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddSeconds((mjdStart + 2400000.5 - 2440587.5) * 86400);
+                  DateTime programStartTime = programStartDay.AddSeconds(startTime);
+
+                  //  Start time is in UTC, need to convert to local time
+                  programStartTime = programStartTime.ToLocalTime();
+                    
+                  //  Calculate end time
+                  DateTime programEndTime = programStartTime.AddSeconds(duration);
+
+                  string title = string.Empty;
+                  string summary = string.Empty;
+                  string theme = string.Empty;
+
+                  if (titlePtr != IntPtr.Zero)
+                    title = DvbTextConverter.Convert(titlePtr, "");
+
+                  if (summaryPtr != IntPtr.Zero)
+                    summary = DvbTextConverter.Convert(summaryPtr, "");
+
+                  if (themePtr != IntPtr.Zero)
+                    theme = DvbTextConverter.Convert(themePtr, "");
+
+                  //  Populate and add the program
+                  EpgProgram skyProgram = new EpgProgram(programStartTime, programEndTime);
+                  EpgLanguageText skyProgramLang = new EpgLanguageText("ALL", title, summary, theme, 0, "", -1);
+                  skyProgram.Text.Add(skyProgramLang);
+
+                  //  Add the series id, if applicable
+                  if (seriesId != 0)
+                  {
+                    skyProgram.SeriesId = seriesId;
+                    skyProgram.SeriesTermination = seriesTermination;
+                  }
+
+                  skyEpgChannel.Programs.Add(skyProgram);
+
+                  numberSkyEpgEventsRetrieved++;
+                }
+
+                //  Get the next channel event
+                _interfaceEpgGrabber.GetNextSkyEpgChannelEvent(ref atEndChannelEvent, ref eventId, ref mjdStart, ref startTime, ref duration, out titlePtr, out summaryPtr, out themePtr, ref seriesId, ref seriesTermination);
+              }
+
+              //  Sort the programs
+              if (skyEpgChannel != null)
+                skyEpgChannel.Sort();
+
+              //  Get the next channel
+              _interfaceEpgGrabber.GetNextSkyEpgChannel(ref atEndChannel, ref channelId, ref networkId, ref transportId, ref serviceId);
+            }
+
+            Log.Log.Epg("Retrieved EPG events for " + epgChannels.Count.ToString() + " channels");
+            Log.Log.Epg("Number of Sky epg events retrieved: " + numberSkyEpgEventsRetrieved.ToString());
+
+            //  Reset to clear utilised memory
+            _interfaceEpgGrabber.Reset();
+
+            //  All done!  Return the epg channels and the program data!
+            return epgChannels;
+          }
+
           bool dvbReady, mhwReady;
           _interfaceEpgGrabber.IsEPGReady(out dvbReady);
           _interfaceEpgGrabber.IsMHWReady(out mhwReady);
@@ -2452,7 +2597,6 @@ namespace TvLibrary.Implementations.DVB
           mhwReady = titleCount > 10;
           _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
           dvbReady = channelCount > 0;
-          List<EpgChannel> epgChannels = new List<EpgChannel>();
           Log.Log.Epg("dvb:mhw ready MHW {0} titles found", titleCount);
           Log.Log.Epg("dvb:dvb ready.EPG {0} channels", channelCount);
           if (mhwReady)

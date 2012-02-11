@@ -43,7 +43,8 @@ namespace TvDatabase
     EveryTimeOnEveryChannel,
     Weekends,
     WorkingDays,
-    WeeklyEveryTimeOnThisChannel
+    WeeklyEveryTimeOnThisChannel,
+    SeriesLink,
   }
 
   /// <summary>
@@ -80,6 +81,8 @@ namespace TvDatabase
     [TableColumn("canceled", NotNull = true)] private DateTime canceled;
     [TableColumn("recommendedCard", NotNull = true)] private int recommendedCard;
     [TableColumn("series", NotNull = true)] private bool series;
+    [TableColumn("seriesId", NotNull = false, NullValue = 0)]
+    private int seriesId;
 
     #endregion
 
@@ -433,6 +436,21 @@ namespace TvDatabase
       }
     }
 
+    /// <summary>
+    /// Gets/Sets the series id
+    /// </summary>
+    public int SeriesId
+    {
+      get
+      {
+        return seriesId;
+      }
+      set
+      {
+        seriesId = value;
+      }
+    }
+
     #endregion
 
     #region Storage and Retrieval
@@ -660,7 +678,7 @@ namespace TvDatabase
           break;
 
         case (int)ScheduleRecordingType.Daily:
-          progs = Program.RetrieveDaily(schedule.startTime, schedule.endTime,schedule.ReferencedChannel().IdChannel);
+          progs = Program.RetrieveDaily(schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
           break;
 
         case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
@@ -686,6 +704,11 @@ namespace TvDatabase
         case (int)ScheduleRecordingType.WorkingDays:
           progs = Program.RetrieveWorkingDays(schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
           break;
+
+        case (int)ScheduleRecordingType.SeriesLink:
+          progs = Program.RetrieveBySeriesId(schedule.SeriesId, schedule.ReferencedChannel().IdChannel);
+          break;
+
       }
 
       return progs;
@@ -695,7 +718,8 @@ namespace TvDatabase
     {
       if (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel ||
           schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel ||
-          schedule.ScheduleType == (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
+          schedule.ScheduleType == (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel ||
+          schedule.ScheduleType == (int)ScheduleRecordingType.SeriesLink)
       {
         return false;
       }
@@ -1078,6 +1102,16 @@ namespace TvDatabase
             return true;
           }
           break;
+        case ScheduleRecordingType.SeriesLink:
+          if (program.SeriesId == SeriesId && program.IdChannel == IdChannel)
+          {
+            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime, program.IdChannel))
+            {
+              return false;
+            }
+            return true;
+          }
+          break;
         case ScheduleRecordingType.Daily:
           if (program.IdChannel == IdChannel)
           {
@@ -1345,6 +1379,9 @@ namespace TvDatabase
       schedule.series = series;
       schedule.idSchedule = idSchedule;
       schedule.isChanged = false;
+
+      schedule.seriesId = seriesId;
+
       return schedule;
     }
 

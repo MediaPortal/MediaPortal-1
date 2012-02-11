@@ -25,6 +25,8 @@ using TvDatabase;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using System.Threading;
+using TvLibrary.Implementations;
+using TvLibrary.Implementations.Helper.Providers;
 
 namespace TvService
 {
@@ -114,12 +116,20 @@ namespace TvService
       {
         _epgReGrabAfter = 240;
       }
+
+      bool providerEPGGrabbingEnabled = Provider.Instance.ProviderEPGGrabbingEnabled;
+
       TransponderList.Instance.RefreshTransponders();
-      if (TransponderList.Instance.Count == 0)
+      if (TransponderList.Instance.Count == 0 && !providerEPGGrabbingEnabled)
       {
         return;
       }
-      Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
+      if (TransponderList.Instance.Count >= 1)
+        Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
+
+      if (providerEPGGrabbingEnabled)
+        Log.Epg("EPG: grabber initialized for configured providers");
+
       _isRunning = true;
       IList<Card> cards = Card.ListAll();
 
@@ -260,6 +270,10 @@ namespace TvService
       CardType type = _tvController.Type(epgCard.Card.IdCard);
       //skip analog and webstream cards 
       if (type == CardType.Analog || type == CardType.RadioWebStream)
+        return;
+
+      //  Grab all providers, return if one was started successfully
+      if (epgCard.GrabProviderEPG(_epgReGrabAfter))
         return;
 
       while (TransponderList.Instance.GetNextTransponder() != null)

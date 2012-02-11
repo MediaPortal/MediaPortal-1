@@ -114,6 +114,10 @@ void CMhwParser::OnNewSection(int pid, int tableId, CSection& sections)
 	try
 	{
 		CEnterCriticalSection enter(m_section);
+
+		if(m_bDone)
+			return;
+
 //		LogDebug("mhw new section pid:%x tableid:%x %x %x len:%d",pid,tableId,sections.Data[4],sections.Data[5],sections.Data[6], sections.SectionLength);
 		if (!IsSectionWanted(pid,tableId)) return;
 
@@ -191,10 +195,14 @@ bool CMhwParser::isGrabbing()
 bool	CMhwParser::IsEPGReady()
 {
 	CEnterCriticalSection enter(m_section);
+
+	if(m_bDone)
+		return true;
+
 	int passed=(int)(time(NULL)-m_TimeOutTimer);
   if (passed>=30)
   {
-    LogDebug("mhw grabber ended");
+    //LogDebug("mhw grabber ended");
 	  m_bDone=true;
 	  m_bGrabbing=false;
   }
