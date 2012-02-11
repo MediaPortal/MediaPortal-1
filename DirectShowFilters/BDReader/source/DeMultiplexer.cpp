@@ -717,6 +717,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         {
           REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
+          FlushPESBuffers(false);
           interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip), 
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration));
 
@@ -726,10 +727,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             //TODO get clipstart relative to clip start
             REFERENCE_TIME rtClipStart = 0LL;
             Flush(true, true, rtClipStart);
-          }
-          else
-          {
-            FlushPESBuffers(false);
           }
         }
 
