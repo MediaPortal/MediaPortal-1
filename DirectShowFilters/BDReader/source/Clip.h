@@ -103,6 +103,8 @@ protected:
   Packet* m_pSparseVideoPacket;
   int superceeded;
 
+  int nVideoPackets;
+
   CCritSec m_sectionRead;
   CCritSec m_sectionVectorAudio;
   CCritSec m_sectionVectorVideo;

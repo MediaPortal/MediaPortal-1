@@ -39,6 +39,8 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   nClip=clipNumber;
   nPlaylist = playlistNumber;
 
+  nVideoPackets = 0;
+
   playlistFirstPacketTime=firstPacketTime;
 
   lastVideoPosition = playlistFirstPacketTime;
@@ -266,6 +268,8 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
   }
   else
   {
+    nVideoPackets++;
+    if (sparseVideo && nVideoPackets>4) sparseVideo = false;
     if (!firstPacketReturned && packet->rtStart != Packet::INVALID_TIME)
     {
       if (earliestPacketAccepted > packet->rtStart) earliestPacketAccepted = packet->rtStart;
@@ -282,8 +286,9 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
     {
       if (packet->rtStart - lastVideoPosition > ONE_SECOND && !sparseVideo)
       {
-        if (m_vecClipVideoPackets.size()>0)
+        if (m_vecClipVideoPackets.size()>0 && nVideoPackets < 5)
         {
+          LogDebug("Sparse Video detected, ONE_SECOND gap");
           sparseVideo = true;
         }
       }
@@ -304,7 +309,13 @@ void CClip::Superceed(int superceedType)
     noAudio = true;
   }
   if ((superceedType == SUPERCEEDED_VIDEO_FILL) && (lastVideoPosition + HALF_SECOND < playlistFirstPacketTime + clipDuration))
-    sparseVideo = true;
+  {
+    if (nVideoPackets < 5)
+    {
+      LogDebug("SparseVideo detected Over 0.5 Seconds from end on superceeded");
+      sparseVideo = true;
+    }
+  }
 }
 
 bool CClip::IsSuperceeded(int superceedType)
@@ -444,9 +455,9 @@ REFERENCE_TIME CClip::PlayedDuration()
     finish = videoPlaybackPosition;
   }
   // slight hack for clips with no audio and only 1 or 2 video frames
-  if (((firstVideo || firstAudio) && !(firstVideo && firstAudio)) && noAudio) 
+  if ((((firstVideo || firstAudio) && !(firstVideo && firstAudio)) || nVideoPackets<5) && noAudio) 
   {
-    LogDebug("CClip::PlayedDuration %I64d - full duration chosen, single image clip detected",clipDuration - earliestPacketAccepted + playlistFirstPacketTime);
+    LogDebug("CClip::PlayedDuration %I64d - full duration chosen, sparse image clip detected",clipDuration - earliestPacketAccepted + playlistFirstPacketTime);
     return clipDuration - earliestPacketAccepted + playlistFirstPacketTime;
   }
   playDuration = finish - playlistFirstPacketTime;

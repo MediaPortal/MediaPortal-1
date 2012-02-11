@@ -825,5 +825,25 @@ void CVideoPin::LogMediaType(AM_MEDIA_TYPE* pmt)
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
       pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
       pmt->subtype.Data4[6], pmt->subtype.Data4[7]);
+    if (pmt->formattype == FORMAT_MPEG2Video)
+    {
+      MPEG2VIDEOINFO * mp2vi = (MPEG2VIDEOINFO *) pmt->pbFormat;
+      LogDebug("MPEG2 flags %4X, level %d profile %d", mp2vi->dwFlags, mp2vi->dwLevel, mp2vi->dwProfile);
+    }
+    else if (pmt->formattype == FORMAT_VideoInfo)
+    {
+      VIDEOINFOHEADER * vih = (VIDEOINFOHEADER *) pmt->pbFormat;
+      LogDebug("VIH AvgTimePerFrame %I64d", vih->AvgTimePerFrame); 
+    }
+    else if (pmt->formattype == FORMAT_VideoInfo2)
+    {
+      VIDEOINFOHEADER2 * vih2 = (VIDEOINFOHEADER2 *) pmt->pbFormat;
+      LogDebug("VIH2 AvgTimePerFrame %I64d interlaced %4X Aspect ratio X %d Aspect ratio Y %d Control flags %4X", vih2->AvgTimePerFrame, vih2->dwInterlaceFlags, vih2->dwPictAspectRatioX, vih2->dwPictAspectRatioY, vih2->dwControlFlags);  
+    }
+    else if (pmt->formattype == FORMAT_MPEGVideo)
+    {
+      MPEG1VIDEOINFO * mp1vi = (MPEG1VIDEOINFO *) pmt->pbFormat;
+      LogDebug("MPEG1 GOP start %d", mp1vi->dwStartTimeCode);  
+    }
   }
 }
