@@ -80,7 +80,7 @@ private:
   void UpdateAudioClock();
 
   HRESULT CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
-  bool    CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
+  HRESULT CheckFormatChange(IMediaSample* pSample);
   HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
 
   AudioRendererSettings* m_pSettings;
@@ -99,8 +99,6 @@ private:
   HANDLE              m_hDataEvent;
 
   RenderState         m_state;
-  
-  CCritSec            m_csRenderLock;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;

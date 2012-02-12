@@ -56,7 +56,6 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr),
   m_dRate(1.0),
   m_pReferenceClock(NULL),
-  m_pWaveFileFormat(NULL),
   m_dBias(1.0),
   m_dAdjustment(1.0),
   m_dSampleCounter(0),
@@ -152,8 +151,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pBitDepthAdapter;
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
-
-  SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
 }
@@ -259,76 +256,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   if (!pwfx) 
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  return m_pPipeline->NegotiateFormat(pwfx, INFINITE);
-
-/*
-  LogWaveFormat(pwfx, "CheckMediaType");
-
-  if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-  {
-    WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
-    
-    DWORD channelMask5_1 = m_Settings.m_dwChannelMaskOverride_5_1;
-    DWORD channelMask7_1 = m_Settings.m_dwChannelMaskOverride_7_1;
-
-    if (tmp->Format.nChannels == 6 && channelMask5_1 > 0)
-    {
-      Log("CheckMediaType:: overriding 5.1 channel mask to %d", channelMask5_1);
-      tmp->dwChannelMask = channelMask5_1;  
-    }
-
-    if (tmp->Format.nChannels == 8 && channelMask7_1 > 0)
-    {
-      Log("CheckMediaType:: overriding 7.1 channel mask to %d", channelMask7_1);
-      tmp->dwChannelMask = channelMask7_1;  
-    }
-  }
-
-  if (m_Settings.m_bUseTimeStretching)
-  {
-    hr = m_pSoundTouch->CheckFormat(pwfx);
-    if (FAILED(hr))
-      return hr;
-  }
-  else
-  {
-    if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-    {
-      WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
-      if (tmp->SubFormat != KSDATAFORMAT_SUBTYPE_PCM && 
-          tmp->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
-      {
-          return VFW_E_TYPE_NOT_ACCEPTED;
-      }
-    }
-    else if (pwfx->wFormatTag != WAVE_FORMAT_PCM && 
-             pwfx->wFormatTag != WAVE_FORMAT_IEEE_FLOAT)
-    {
-      return VFW_E_TYPE_NOT_ACCEPTED;
-    }
-  }
-
-  if (m_pRenderDevice)
-  {
-    if (m_Settings.m_bEnableAC3Encoding && pwfx->nChannels > 2)
-    {
-      WAVEFORMATEX *pRenderFormat = CreateWaveFormatForAC3(pwfx->nSamplesPerSec);
-      hr = m_pRenderDevice->CheckFormat(pRenderFormat);
-      SAFE_DELETE_WAVEFORMATEX(pRenderFormat);
-    }
-    else
-    {
-      hr = m_pRenderDevice->CheckFormat(pwfx);
-    }
-
-    if (SUCCEEDED(hr))
-    {
-      Log("CheckMediaType - request old samples to be flushed");
-      m_bFlushSamples = true;
-    }
-  }
-
-  return hr;*/
+  return m_pPipeline->NegotiateFormat(pwfx, 0);
 }
 
 HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
@@ -467,61 +395,19 @@ STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **p
 
 HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
 {
-	if (!pmt) return E_POINTER;
+  if (!pmt) return E_POINTER;
   
   HRESULT hr = S_OK;
-  Log("SetMediaType");
 
-  WAVEFORMATEX* pwf = (WAVEFORMATEX*) pmt->Format();
+  Log("SetMediaType - filter state: %d", m_State);
+
+  WAVEFORMATEX* pwf = (WAVEFORMATEX*)pmt->Format();
   
-  /*
-  if (m_pRenderDevice)
-  {
-    if (m_Settings.m_bEnableAC3Encoding && pwf->nChannels > 2)
-    {
-      WAVEFORMATEX* pRenderFormat = CreateWaveFormatForAC3(pwf->nSamplesPerSec);
-      m_pRenderDevice->SetMediaType(pRenderFormat);
-      SAFE_DELETE_WAVEFORMATEX(pRenderFormat);
-    }
-    else
-    {
-      m_pRenderDevice->SetMediaType(pwf);
-    }
-  }*/
-
-  m_pPipeline->NegotiateFormat(pwf, INFINITE);
-
-  SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
-  
-  if (pwf)
-  {
-    hr = CopyWaveFormatEx(&m_pWaveFileFormat, pwf);
-    if (FAILED(hr))
-      return hr;
-
-    /*
-    if (m_pSoundTouch)
-    {
-      //m_pSoundTouch->setChannels(pwf->nChannels);
-      hr = m_pSoundTouch->SetFormat(pwf);
-      if (FAILED(hr))
-      {
-        Log("CMPAudioRenderer::SetMediaType: Format rejected by CMultiSoundTouch (0x%08x)", hr);
-        LogWaveFormat(pwf, "SetMediaType");
-        return hr;
-      }
-
-      m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
-      m_pSoundTouch->setTempoChange(0);
-      m_pSoundTouch->setPitchSemiTones(0);
-      m_pSoundTouch->setSetting(SETTING_USE_QUICKSEEK, m_Settings.m_bQuality_USE_QUICKSEEK);
-      m_pSoundTouch->setSetting(SETTING_USE_AA_FILTER, m_Settings.m_bQuality_USE_AA_FILTER);
-      m_pSoundTouch->setSetting(SETTING_AA_FILTER_LENGTH, m_Settings.m_lQuality_AA_FILTER_LENGTH);
-      m_pSoundTouch->setSetting(SETTING_SEQUENCE_MS, m_Settings.m_lQuality_SEQUENCE_MS); 
-      m_pSoundTouch->setSetting(SETTING_SEEKWINDOW_MS, m_Settings.m_lQuality_SEEKWINDOW_MS);
-      m_pSoundTouch->setSetting(SETTING_OVERLAP_MS, m_Settings.m_lQuality_SEQUENCE_MS);
-    }*/
-  }
+  // Dynamic format changes are handled in the pipeline on sample basis
+  if (m_State != State_Stopped) 
+    m_pPipeline->NegotiateFormat(pwf, 0);
+  else
+    m_pPipeline->NegotiateFormat(pwf, INFINITE);
 
   return CBaseRenderer::SetMediaType(pmt);
 }

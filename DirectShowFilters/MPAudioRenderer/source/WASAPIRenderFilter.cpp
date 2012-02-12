@@ -153,9 +153,6 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
 
   bool bApplyChanges = nApplyChangesDepth != 0;
 
-  if (!bApplyChanges)
-    return S_OK;
-
   Log("CWASAPIRenderFilter::NegotiateFormat");
   LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");
 
@@ -167,10 +164,10 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   {
     bool accepted = true;
     if (forceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->wBitsPerSample)
-        accepted = false;
+      accepted = false;
 
     if (forceSampleRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->nSamplesPerSec)
-        accepted = false;
+      accepted = false;
 
     if (accepted)
     {
@@ -186,9 +183,6 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   }
 
   HRESULT hr = VFW_E_CANNOT_CONNECT;
-
-  SetEvent(m_hStopThreadEvent);
-  CloseThread();
 
   if (!m_pAudioClient) 
   {
@@ -249,9 +243,38 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   }
   SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
 
-  StartThread();
-
   return hr;
+}
+
+HRESULT CWASAPIRenderFilter::CheckFormatChange(IMediaSample* pSample)
+{
+  if (!pSample)
+	return S_OK;
+
+  AM_MEDIA_TYPE *pmt = NULL;
+  bool bFormatChanged = false;
+  
+  HRESULT hr = S_OK;
+
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+    bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
+
+  if (bFormatChanged)
+  {
+    // Apply format change
+    hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
+
+    if (FAILED(hr))
+    {
+      DeleteMediaType(pmt);
+      Log("CWASAPIRenderFilter::CheckFormat failed to change format: 0x%08x", hr);
+      return hr;
+    }
+    else
+      return S_FALSE;
+  }
+
+  return S_OK;
 }
 
 HRESULT CWASAPIRenderFilter::EndOfStream()
@@ -388,12 +411,16 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       else if (m_state == StatePaused && writeSilence == 0)
         hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hOOBCommandEvents, &m_dwOOBCommandWaitObjects);
 
-      m_csRenderLock.Lock();
+      // TODO - what to do in error case? It shouldn't be caused by invalid format
+      // as the NegotiateFormat has alrady given green light for the new format,
+      // unless the audio decoder was not using QueryAccept or provides different
+      // PMT than it was planning to. S_FALSE is returned when format change has applied.
+      if (CheckFormatChange(sample) == S_FALSE)
+        continue;
 
       if (hr == MPAR_S_THREAD_STOPPING)
       {
         Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
-        m_csRenderLock.Unlock();
         StopAudioClient(&m_pAudioClient);
         RevertMMCSS();
         return 0;
@@ -432,7 +459,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             
           // Sanity check to make sure that the calculation won't underflow
           if (sampleOffset <= sampleLength)
-              dataLeftInSample = sampleLength - sampleOffset;
+            dataLeftInSample = sampleLength - sampleOffset;
           else
           {
             dataLeftInSample = 0;
@@ -450,7 +477,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               if (hr == MPAR_S_THREAD_STOPPING) // exit event
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
-                m_csRenderLock.Unlock();
                 StopAudioClient(&m_pAudioClient);
                 RevertMMCSS();
                 return 0;
@@ -478,6 +504,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 break;
               }
 
+              // TODO error checking
+              if (CheckFormatChange(sample) == S_FALSE)
+                break;
+
               sample->GetPointer(&sampleData);
               sampleLength = sample->GetActualDataLength();
               sampleOffset = 0;
@@ -493,9 +523,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
         }
         
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, bufferFlags);
-        m_csRenderLock.Unlock();
 
-        if (FAILED(hr))
+        if (FAILED(hr) && hr != AUDCLNT_E_OUT_OF_ORDER)
           Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
 
         if (bufferFlags == AUDCLNT_BUFFERFLAGS_SILENT && writeSilence > 0)
@@ -505,10 +534,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       if (!m_pSettings->m_WASAPIUseEventMode)
       {
         if (m_pAudioClient)
-        {
-          CAutoLock lock(&m_csRenderLock);
           hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
-        }
         else
           hr = S_FALSE;
 
@@ -590,7 +616,7 @@ HRESULT CWASAPIRenderFilter::GetAudioDevice(IMMDevice **ppMMDevice)
       return hr;
     }
     
-    for (int i = 0 ; i < count ; i++)
+    for (UINT i = 0; i < count; i++)
     {
       LPWSTR pwszID = NULL;
       IMMDevice *endpoint = NULL;
@@ -618,14 +644,10 @@ HRESULT CWASAPIRenderFilter::GetAudioDevice(IMMDevice **ppMMDevice)
           }
         }
         else
-        {
           Log("  devices->GetId failed: (0x%08x)", hr);     
-        }
       }
       else
-      {
         Log("  devices->Item failed: (0x%08x)", hr);  
-      }
 
       CoTaskMemFree(pwszID);
       pwszID = NULL;
@@ -695,7 +717,7 @@ HRESULT CWASAPIRenderFilter::GetAvailableAudioDevices(IMMDeviceCollection** ppMM
 
   if (pLog)
   {
-    for (ULONG i = 0; i < count; i++)
+    for (UINT i = 0; i < count; i++)
     {
       if ((*ppMMDevices)->Item(i, &pEndpoint) != S_OK)
         break;
