@@ -24,8 +24,8 @@
 class CBitDepthAdapter : public CBaseAudioSink
 {
 public:
-  CBitDepthAdapter(void);
-  virtual ~CBitDepthAdapter(void);
+  CBitDepthAdapter();
+  virtual ~CBitDepthAdapter();
 
 // type definitions
 protected:

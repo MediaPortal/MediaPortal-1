@@ -113,7 +113,7 @@ private:
 
   HRESULT SetupFilterPipeline();
 
-  HRESULT GetReferenceClockInterface(REFIID riid, void **ppv);
+  HRESULT GetReferenceClockInterface(REFIID riid, void** ppv);
   WAVEFORMATEX* CreateWaveFormatForAC3(int pSamplesPerSec);
 
   CBaseReferenceClock*	m_pReferenceClock;
@@ -131,7 +131,8 @@ private:
   IAudioSink* m_pPipeline; // entry point for the audio filter pipeline
   CWASAPIRenderFilter*  m_pWASAPIRenderer;
   CAC3EncoderFilter*    m_pAC3Encoder;
-  CBitDepthAdapter*     m_pBitDepthAdapter;
+  CBitDepthAdapter*     m_pInBitDepthAdapter;
+  CBitDepthAdapter*     m_pOutBitDepthAdapter;
   CTimeStretchFilter*   m_pTimestretchFilter;
   CSampleRateConverter* m_pSampleRateConverter;
 

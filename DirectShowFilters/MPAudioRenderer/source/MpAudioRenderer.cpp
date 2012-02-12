@@ -62,7 +62,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pVolumeHandler(NULL),
   m_pWASAPIRenderer(NULL),
   m_pAC3Encoder(NULL),
-  m_pBitDepthAdapter(NULL),
+  m_pInBitDepthAdapter(NULL),
+  m_pOutBitDepthAdapter(NULL),
   m_pSampleRateConverter(NULL),
   m_pRenderer(NULL),
   m_pTimeStretch(NULL)
@@ -148,7 +149,8 @@ CMPAudioRenderer::~CMPAudioRenderer()
 
   delete m_pWASAPIRenderer;
   delete m_pAC3Encoder;
-  delete m_pBitDepthAdapter;
+  delete m_pInBitDepthAdapter;
+  delete m_pOutBitDepthAdapter;
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
 
@@ -167,8 +169,12 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pAC3Encoder)
     return E_OUTOFMEMORY;
 
-  m_pBitDepthAdapter = new CBitDepthAdapter();
-  if (!m_pBitDepthAdapter)
+  m_pInBitDepthAdapter = new CBitDepthAdapter();
+  if (!m_pInBitDepthAdapter)
+    return E_OUTOFMEMORY;
+
+  m_pOutBitDepthAdapter = new CBitDepthAdapter();
+  if (!m_pOutBitDepthAdapter)
     return E_OUTOFMEMORY;
 
   m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
@@ -198,16 +204,17 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   */
 
   //m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
-  //m_pBitDepthAdapter->ConnectTo(m_pWASAPIRenderer);
-  //m_pSampleRateConverter->ConnectTo(m_pWASAPIRenderer);
+  m_pOutBitDepthAdapter->ConnectTo(m_pWASAPIRenderer);
+  m_pSampleRateConverter->ConnectTo(m_pOutBitDepthAdapter);
+  m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
   //m_pTimestretchFilter->ConnectTo(m_pAC3Encoder);
   //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
   //m_pPipeline = m_pBitDepthAdapter;
   //m_pPipeline = m_pTimestretchFilter;
-  m_pPipeline = m_pWASAPIRenderer;
-  //m_pPipeline = m_pSampleRateConverter;
+  //m_pPipeline = m_pWASAPIRenderer;
+  m_pPipeline = m_pInBitDepthAdapter;
 
   return S_OK;
 }
