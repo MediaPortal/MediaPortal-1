@@ -1128,6 +1128,7 @@ namespace MediaPortal.Player
         Vmr9Deinit();
       }
 
+      DirectShowUtil.ReleaseComObject(_vmr9Filter);
       _vmr9Filter = null;
       _graphBuilderInterface = null;
       _scene = null;

@@ -230,6 +230,12 @@ void MPEVRCustomPresenter::ReleaseCallback()
   CAutoLock sLock(&m_lockCallback);
   m_pCallback = NULL;
 
+  if (m_pAVSyncClock)
+    SAFE_RELEASE(m_pAVSyncClock);
+
+  if (m_pMediaSeeking)
+    m_pMediaSeeking.Release();
+
   if (m_pOuterEVR)
     m_pOuterEVR->Release();
 
@@ -244,10 +250,7 @@ MPEVRCustomPresenter::~MPEVRCustomPresenter()
   {
     m_pCallback->PresentImage(0, 0, 0, 0, 0, 0);
   }
-  if (m_pAVSyncClock)
-  {
-    SAFE_RELEASE(m_pAVSyncClock);
-  }
+
   StopWorkers();
 //  DwmEnableMMCSSOnOff(false);
   ReleaseSurfaces();
