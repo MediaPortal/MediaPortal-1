@@ -377,7 +377,6 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
   m_pPipeline->PutSample(pMediaSample);
 
   return S_OK;
