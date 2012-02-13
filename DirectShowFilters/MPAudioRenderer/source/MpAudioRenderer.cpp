@@ -294,8 +294,6 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
   if (FAILED(hr)) return false;
 
-  m_pPipeline->PutSample(pMediaSample);
-
   return false;
 
   // END
