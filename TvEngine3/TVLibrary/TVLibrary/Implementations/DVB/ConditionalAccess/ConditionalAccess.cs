@@ -51,7 +51,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly Twinhan _twinhan;
     private readonly KNCAPI _knc;
     private readonly Hauppauge _hauppauge;
-    private readonly ProfRed _profred;
+    private readonly Prof _prof;
+    private readonly ProfUsb _profUsb;
     private readonly DiSEqCMotor _diSEqCMotor;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     private readonly GenericBDAS _genericbdas;
@@ -205,15 +206,23 @@ namespace TvLibrary.Implementations.DVB
             return;
           }*/
 
-          Log.Log.WriteFile("Check for ProfRed");
-          _profred = new ProfRed(tunerFilter);
-          if (_profred.IsProfRed)
+          Log.Log.WriteFile("Check for Prof USB");
+          _profUsb = new ProfUsb(tunerFilter);
+          if (_profUsb.IsProfUsb)
           {
-            Log.Log.WriteFile("ProfRed card detected");
-            _diSEqCMotor = new DiSEqCMotor(_profred);
+            _diSEqCMotor = new DiSEqCMotor(_profUsb);
             return;
           }
-          Release.DisposeToNull(ref _profred);
+          Release.DisposeToNull(ref _profUsb);
+
+          Log.Log.WriteFile("Check for Prof");
+          _prof = new Prof(tunerFilter);
+          if (_prof.IsProf)
+          {
+            _diSEqCMotor = new DiSEqCMotor(_prof);
+            return;
+          }
+          Release.DisposeToNull(ref _prof);
 
           // TeVii support
           _TeVii = new TeVii();
@@ -743,9 +752,14 @@ namespace TvLibrary.Implementations.DVB
           _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
-        if (_profred != null)
+        if (_profUsb != null)
         {
-          _profred.SendDiseqCommand(parameters, channel);
+          _profUsb.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_prof != null)
+        {
+          _prof.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_genpix != null)
@@ -909,23 +923,13 @@ namespace TvLibrary.Implementations.DVB
           }
           return channel;
         }
-        if (_profred != null)
+        if (_profUsb != null)
         {
-          //Set ProfRed pilot, roll-off settings
-          if (channel.ModulationType == ModulationType.ModNotSet)
-          {
-            channel.ModulationType = ModulationType.ModNotDefined;
-          }
-          if (channel.ModulationType == ModulationType.Mod8Psk)
-          {
-            channel.ModulationType = ModulationType.ModBpsk;
-          }
-          Log.Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          //}
-          return channel;
+          return (DVBSChannel)_profUsb.SetTuningParameters(channel as DVBBaseChannel);
+        }
+        if (_prof != null)
+        {
+          return (DVBSChannel)_prof.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_technoTrend != null)
         {
@@ -1108,7 +1112,8 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_genpix);
       Release.Dispose(_winTvCiModule);
       Release.Dispose(_twinhan);
-      Release.Dispose(_profred);
+      Release.Dispose(_prof);
+      Release.Dispose(_profUsb);
       Release.Dispose(_TeVii);
     }
 
