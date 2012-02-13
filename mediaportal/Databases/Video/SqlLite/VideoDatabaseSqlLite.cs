@@ -442,7 +442,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "duration",
                                "CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)");
       DatabaseUtility.AddTable(m_db, "actorinfo",
-                               "CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text, thumbURL text, IMDBActorID text, dateofdeath text, placeofdeath text,)");
+                               "CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text, thumbURL text, IMDBActorID text, dateofdeath text, placeofdeath text)");
       DatabaseUtility.AddTable(m_db, "actorinfomovies",
                                "CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text, runtime integer, iswatched integer, role text)");
       DatabaseUtility.AddTable(m_db, "IMDBmovies",
@@ -644,16 +644,7 @@ namespace MediaPortal.Video.Database
           }
           
           m_db.Execute(strSQL);
-          
-          string sql = String.Format("select * from duration where idFile={0}", fileID);
-          results = m_db.Execute(sql);
-
-          if (results.Rows.Count > 0)
-          {
-            sql = String.Format("update duration set duration={0} where idFile={1}",
-                                mInfo.VideoDuration / 1000, fileID);
-            m_db.Execute(sql);
-          }
+          SetMovieDuration(fileID, mInfo.VideoDuration / 1000);
         }
         catch (Exception) {}
       }

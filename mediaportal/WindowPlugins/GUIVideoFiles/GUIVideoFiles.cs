@@ -2593,8 +2593,11 @@ namespace MediaPortal.GUI.Video
 
         case 1256: // Refresh current directory
           {
-            if (!string.IsNullOrEmpty(_currentFolder))
+            if (facadeLayout.ListLayout.ListItems.Count > 0 && !string.IsNullOrEmpty(_currentFolder))
+            {
+              facadeLayout.SelectedListItemIndex = 0;
               LoadDirectory(_currentFolder, false);
+            }
           }
           break;
 
@@ -2612,8 +2615,13 @@ namespace MediaPortal.GUI.Video
           SetDefaultGrabber();
           break;
         case 1264: // Get media info
-          IMDBMovie mInfo = new IMDBMovie();
-          if (item != null) mInfo.SetMediaInfoProperties(item.Path, true);
+          if (item != null)
+          {
+            AddFileToDatabase(item.Path);
+            //VideoDatabase.AddMovieFile(item.Path);
+            IMDBMovie mInfo = new IMDBMovie();
+            mInfo.SetMediaInfoProperties(item.Path, true);
+          }
           break;
       }
     }
