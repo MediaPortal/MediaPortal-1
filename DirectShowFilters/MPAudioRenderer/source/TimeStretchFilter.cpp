@@ -343,6 +343,12 @@ DWORD CTimeStretchFilter::ThreadProc()
         long size = sample->GetActualDataLength();
         hr = sample->GetPointer(&pMediaBuffer);
         
+        if (sample->IsDiscontinuity() == S_OK)
+        {
+          sample->SetDiscontinuity(false);
+          m_bDiscontinuity = true;
+        }
+
         if ((hr == S_OK) && m_pMemAllocator)
         {
           uint unprocessedSamplesBefore = numUnprocessedSamples();

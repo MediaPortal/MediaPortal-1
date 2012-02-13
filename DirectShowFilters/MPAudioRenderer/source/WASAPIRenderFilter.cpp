@@ -258,7 +258,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   return hr;
 }
 
-HRESULT CWASAPIRenderFilter::CheckFormatChange(IMediaSample* pSample)
+HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample)
 {
   if (!pSample)
     return S_OK;
@@ -268,13 +268,14 @@ HRESULT CWASAPIRenderFilter::CheckFormatChange(IMediaSample* pSample)
   
   HRESULT hr = S_OK;
 
-  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
     bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
 
   if (bFormatChanged)
   {
     // Apply format change
     hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
+    pSample->SetDiscontinuity(false);
 
     if (FAILED(hr))
     {
@@ -284,6 +285,11 @@ HRESULT CWASAPIRenderFilter::CheckFormatChange(IMediaSample* pSample)
     }
     else
       return S_FALSE;
+  }
+  else if (pSample->IsDiscontinuity() == S_OK)
+  {
+    pSample->SetDiscontinuity(false);
+    return S_FALSE;
   }
 
   return S_OK;
@@ -431,7 +437,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       // as the NegotiateFormat has alrady given green light for the new format,
       // unless the audio decoder was not using QueryAccept or provides different
       // PMT than it was planning to. S_FALSE is returned when format change has applied.
-      if (CheckFormatChange(sample) == S_FALSE)
+      if (CheckSample(sample) == S_FALSE)
         continue;
 
       if (hr == MPAR_S_THREAD_STOPPING)
@@ -521,7 +527,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               }
 
               // TODO error checking
-              if (CheckFormatChange(sample) == S_FALSE)
+              if (CheckSample(sample) == S_FALSE)
                 break;
 
               sample->GetPointer(&sampleData);

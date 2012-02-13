@@ -78,6 +78,7 @@ protected:
   WAVEFORMATEX* m_pInputFormat;
   WAVEFORMATEX* m_pOutputFormat;
   bool m_bOutFormatChanged;
+  bool m_bDiscontinuity;
 
   // Output buffer support
   CComQIPtr<IMemAllocator> m_pMemAllocator;

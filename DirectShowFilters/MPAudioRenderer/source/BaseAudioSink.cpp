@@ -27,6 +27,7 @@ CBaseAudioSink::CBaseAudioSink(void)
 , m_pInputFormat(NULL)
 , m_pOutputFormat(NULL)
 , m_bOutFormatChanged(false)
+, m_bDiscontinuity(false)
 , m_pMemAllocator((IUnknown *)NULL)
 , m_pNextOutSample(NULL)
 {
@@ -320,10 +321,18 @@ HRESULT CBaseAudioSink::RequestNextOutBuffer(REFERENCE_TIME rtStart)
     AM_MEDIA_TYPE pmt;
     if (SUCCEEDED(CreateAudioMediaType(m_pOutputFormat, &pmt, true)))
     {
-      m_pNextOutSample->SetMediaType(&pmt);
+      if (FAILED(m_pNextOutSample->SetMediaType(&pmt)))
+        Log("CBaseAudioSink - failed to set mediatype: 0x%08x", hr);
       FreeMediaType(pmt);
     }
     m_bOutFormatChanged = false;
+  }
+
+  if (m_bDiscontinuity)
+  {
+    if (FAILED(m_pNextOutSample->SetDiscontinuity(true)))
+      Log("CBaseAudioSink - failed to set discontinuity: 0x%08x", hr);
+    m_bDiscontinuity = false;
   }
 
   return S_OK;

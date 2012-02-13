@@ -81,7 +81,7 @@ private:
   void UpdateAudioClock();
 
   HRESULT CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
-  HRESULT CheckFormatChange(IMediaSample* pSample);
+  HRESULT CheckSample(IMediaSample* pSample);
   HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
 
   AudioRendererSettings* m_pSettings;

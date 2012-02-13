@@ -180,13 +180,17 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
     bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
 
+  if (pSample->IsDiscontinuity() == S_OK)
+    m_bDiscontinuity = true;
+
   if (bFormatChanged)
   {
-    // process any remaining input
+    // Process any remaining input
     if (!m_bPassThrough)
       hr = ProcessData(NULL, 0, NULL);
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
+    Log("CSampleRateConverter::PutSample: Processing format change");
     hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
     if (FAILED(hr))
     {
@@ -285,11 +289,11 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
 
   long bytesOutput = 0;
 
-  while(cbData)
+  while (cbData)
   {
     if (m_pNextOutSample)
     {
-      // if there is not enough space in output sample, flush it
+      // If there is not enough space in output sample, flush it
       long nOffset = m_pNextOutSample->GetActualDataLength();
       long nSize = m_pNextOutSample->GetSize();
 
