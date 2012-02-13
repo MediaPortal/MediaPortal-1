@@ -75,6 +75,7 @@ private:
   HRESULT StartAudioClient(IAudioClient** ppAudioClient);
   HRESULT StopAudioClient(IAudioClient** ppAudioClient);
   void CancelDataEvent();
+  void ReleaseResources();
 
   void ResetClockData();
   void UpdateAudioClock();
@@ -94,7 +95,7 @@ private:
   UINT64              m_nHWfreq;
   DWORD               m_dwStreamFlags;
 
-  BOOL                m_bIsAudioClientStarted;
+  bool                m_bIsAudioClientStarted;
 
   HANDLE              m_hDataEvent;
 

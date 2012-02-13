@@ -127,15 +127,21 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 {
   HRESULT hr = CQueuedAudioSink::Cleanup();
 
-  SAFE_RELEASE(m_pAudioClock);
-  SAFE_RELEASE(m_pRenderClient);
-  SAFE_RELEASE(m_pAudioClient);
-  SAFE_RELEASE(m_pMMDevice);
+  ReleaseResources();
 
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
 
   return hr;
+}
+
+void CWASAPIRenderFilter::ReleaseResources()
+{
+  StopAudioClient(&m_pAudioClient);
+  SAFE_RELEASE(m_pAudioClock);
+  SAFE_RELEASE(m_pRenderClient);
+  SAFE_RELEASE(m_pAudioClient);
+  SAFE_RELEASE(m_pMMDevice);
 }
 
 // Format negotiation
@@ -198,6 +204,12 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
         StartThread(); // TODO - check if we dont have to start thread here
         return VFW_E_CANNOT_CONNECT;
       }
+      else
+      {
+        hr = InitAudioClient(m_pInputFormat, &m_pRenderClient);
+        if (FAILED(hr))
+          Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not initialized");
+      }
     }
   }
 
@@ -249,7 +261,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
 HRESULT CWASAPIRenderFilter::CheckFormatChange(IMediaSample* pSample)
 {
   if (!pSample)
-	return S_OK;
+    return S_OK;
 
   AM_MEDIA_TYPE *pmt = NULL;
   bool bFormatChanged = false;
@@ -382,9 +394,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   UINT32 sampleOffset = 0;
   UINT32 writeSilence = 0;
 
+  HRESULT hr = S_FALSE;
+
   EnableMMCSS();
 
-  HRESULT hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+  hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+  if (FAILED(hr))
+    Log("CWASAPIRenderFilter::Render thread - failed to get 1st sample: (0x%08x)");
 
   StartAudioClient(&m_pAudioClient);
   m_state = StateRunning;
