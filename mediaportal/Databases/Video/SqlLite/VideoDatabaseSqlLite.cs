@@ -222,6 +222,13 @@ namespace MediaPortal.Video.Database
             SetMovieTimesWatched(movieId);
           }
         }
+        // Video file duration (stacked)
+        if (DatabaseUtility.TableColumnExists(m_db, "movie", "iduration") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movie\" ADD COLUMN \"iduration\" integer DEFAULT 0";
+          m_db.Execute(strSQL);
+          watchedUpg = true;
+        }
         // MediaInfo table
         if (DatabaseUtility.TableExists(m_db, "filesmediainfo") == false)
         {
@@ -426,7 +433,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "genrelinkmovie",
                                "CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)");
       DatabaseUtility.AddTable(m_db, "movie",
-                               "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool, timeswatched integer)");
+                               "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool, timeswatched integer, iduration integer)");
       DatabaseUtility.AddTable(m_db, "movieinfo",
                                "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text)");
       DatabaseUtility.AddTable(m_db, "actorlinkmovie",
@@ -644,7 +651,7 @@ namespace MediaPortal.Video.Database
           }
           
           m_db.Execute(strSQL);
-          SetMovieDuration(fileID, mInfo.VideoDuration / 1000);
+          SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
         }
         catch (Exception) {}
       }
@@ -2112,7 +2119,31 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public int GetMovieDuration(int iFileId)
+    public int GetMovieDuration(int iMovieId)
+    {
+      try
+      {
+        string sql = string.Format("select * from movie where idMovie={0}", iMovieId);
+        SQLiteResultSet results = m_db.Execute(sql);
+
+        if (results.Rows.Count == 0)
+        {
+          return 0;
+        }
+
+        int duration = 0;
+        Int32.TryParse(DatabaseUtility.Get(results, 0, "iduration"), out duration);
+        return duration;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return 0;
+    }
+
+    public int GetVideoDuration(int iFileId)
     {
       try
       {
@@ -2136,24 +2167,45 @@ namespace MediaPortal.Video.Database
       return 0;
     }
 
-    public void SetMovieDuration(int iFileId, int duration)
+    public void SetVideoDuration(int iFileId, int duration)
     {
       try
       {
-        string sql = String.Format("select * from duration where idFile={0}", iFileId);
-        SQLiteResultSet results = m_db.Execute(sql);
-        
-        if (results.Rows.Count == 0)
+        if (duration > 0)
         {
-          sql = String.Format("insert into duration ( idDuration,idFile,duration) values(NULL,{0},{1})",
-                              iFileId, duration);
+          string sql = String.Format("select * from duration where idFile={0}", iFileId);
+          SQLiteResultSet results = m_db.Execute(sql);
+
+          if (results.Rows.Count == 0)
+          {
+            sql = String.Format("insert into duration ( idDuration,idFile,duration) values(NULL,{0},{1})",
+                                iFileId, duration);
+          }
+          else
+          {
+            sql = String.Format("update duration set duration={0} where idFile={1}",
+                                duration, iFileId);
+          }
+          m_db.Execute(sql);
         }
-        else
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void SetMovieDuration(int iMovieId, int duration)
+    {
+      try
+      {
+        if (duration > 0)
         {
-          sql = String.Format("update duration set duration={0} where idFile={1}",
-                              duration, iFileId);
+          string sql = sql = String.Format("update movie set iduration={0} where idMovie={1}",
+                                           duration, iMovieId);
+          m_db.Execute(sql);
         }
-        m_db.Execute(sql);
       }
       catch (Exception ex)
       {

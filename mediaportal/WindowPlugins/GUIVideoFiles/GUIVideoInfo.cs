@@ -607,7 +607,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIVideoFiles._stackedMovieFiles = files;
         GUIVideoFiles._isStacked = true;
-        GUIVideoFiles.MovieDuration(files);
+        GUIVideoFiles.MovieDuration(files, false);
       }
 
       GUIVideoFiles.PlayMovie(id, false);

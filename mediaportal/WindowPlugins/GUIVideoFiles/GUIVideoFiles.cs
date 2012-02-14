@@ -1101,7 +1101,7 @@ namespace MediaPortal.GUI.Video
             // Stacked movies duration
             if (_totalMovieDuration == 0)
             {
-              MovieDuration(movies);
+              MovieDuration(movies, false);
               _stackedMovieFiles = movies;
             }
 
@@ -1124,7 +1124,7 @@ namespace MediaPortal.GUI.Video
           else if (movies.Count == 1)
           {
             AddFileToDatabase((string)movies[0]);
-            MovieDuration(movies);
+            MovieDuration(movies, false);
           }
           _playlistPlayer.Reset();
           _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
@@ -1231,21 +1231,29 @@ namespace MediaPortal.GUI.Video
 
     /// <summary>
     /// Total video duration in seconds (single or multiple -> stacked file(s))
+    /// Also sets duration into videodatabase (movie table) -> full lenght with stacked parts
+    /// Parameter refresh force duration update even if data is in the videodatabase
     /// </summary>
     /// <param name="files"></param>
+    /// <param name="refresh"></param>
     /// <returns></returns>
-    public static int MovieDuration(ArrayList files)
+    public static int MovieDuration(ArrayList files, bool refresh)
     {
       _totalMovieDuration = 0;
       
+      if (files == null || files.Count == 0)
+      {
+        return _totalMovieDuration;
+      }
+
       try 
       {
         foreach (string file in files)
         {
           int fileID = VideoDatabase.GetFileId(file);
-          int tempDuration = VideoDatabase.GetMovieDuration(fileID);
+          int tempDuration = VideoDatabase.GetVideoDuration(fileID);
 
-          if (tempDuration > 0)
+          if (tempDuration > 0 && !refresh)
           {
             _totalMovieDuration += tempDuration;
           }
@@ -1255,65 +1263,79 @@ namespace MediaPortal.GUI.Video
 
             if (fileID > -1)
             {
-              VideoDatabase.SetMovieDuration(fileID, mInfo.VideoDuration / 1000);
+              // Set video file duration
+              VideoDatabase.SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
               _totalMovieDuration += mInfo.VideoDuration / 1000;
             }
           }
         }
+        // Set movie duration
+        VideoDatabase.SetMovieDuration(VideoDatabase.GetMovieId(files[0].ToString()), _totalMovieDuration);
       }
       catch (Exception){}
 
       return _totalMovieDuration;
     }
 
-    private void AddFileToDatabase(string strFile)
+    /// <summary>
+    /// Adds file (full path) and it's stacked parts (method will search
+    /// for them inside strFile folder) into videodatabase (movie table)
+    /// </summary>
+    /// <param name="strFile"></param>
+    /// <returns></returns>
+    private ArrayList AddFileToDatabase(string strFile)
     {
+      ArrayList files = new ArrayList();
+      
       if (!Util.Utils.IsVideo(strFile))
       {
-        return;
+        return files;
       }
       
       if (PlayListFactory.IsPlayList(strFile))
       {
-        return;
+        return files;
       }
       // Don't add web streams (e.g.: from Online videos)
       if (strFile.StartsWith("http:"))
       {
-        return;
+        return files;
       }
 
-      if (!VideoDatabase.HasMovieInfo(strFile))
+      //if (!VideoDatabase.HasMovieInfo(strFile))
+      //{
+      ArrayList allFiles = new ArrayList();
+      List<GUIListItem> items = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, true);
+      for (int i = 0; i < items.Count; ++i)
       {
-        ArrayList allFiles = new ArrayList();
-        List<GUIListItem> items = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, true);
-        for (int i = 0; i < items.Count; ++i)
+        GUIListItem temporaryListItem = (GUIListItem)items[i];
+        if (temporaryListItem.IsFolder)
         {
-          GUIListItem temporaryListItem = (GUIListItem)items[i];
-          if (temporaryListItem.IsFolder)
-          {
-            continue;
-          }
-          if (temporaryListItem.Path != strFile)
-          {
-            if (Util.Utils.ShouldStack(temporaryListItem.Path, strFile))
-            {
-              allFiles.Add(items[i]);
-            }
-          }
+          continue;
         }
-        int iidMovie = VideoDatabase.AddMovieFile(strFile);
-        foreach (GUIListItem item in allFiles)
+        if (temporaryListItem.Path != strFile)
         {
-          string strPath, strFileName;
-
-          DatabaseUtility.Split(item.Path, out strPath, out strFileName);
-          DatabaseUtility.RemoveInvalidChars(ref strPath);
-          DatabaseUtility.RemoveInvalidChars(ref strFileName);
-          int pathId = VideoDatabase.AddPath(strPath);
-          VideoDatabase.AddFile(iidMovie, pathId, strFileName);
+          if (Util.Utils.ShouldStack(temporaryListItem.Path, strFile))
+          {
+            allFiles.Add(items[i]);
+          }
         }
       }
+      int iidMovie = VideoDatabase.AddMovieFile(strFile);
+      files.Add(strFile);
+      
+      foreach (GUIListItem item in allFiles)
+      {
+        string strPath, strFileName;
+        files.Add(item.Path);
+        DatabaseUtility.Split(item.Path, out strPath, out strFileName);
+        DatabaseUtility.RemoveInvalidChars(ref strPath);
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
+        int pathId = VideoDatabase.AddPath(strPath);
+        VideoDatabase.AddFile(iidMovie, pathId, strFileName);
+      }
+      //}
+      return files;
     }
 
     // CHANGED
@@ -2195,13 +2217,14 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
+      
       AddFileToDatabase(filename);
-
       int idFile = VideoDatabase.GetFileId(filename);
+      
       if (idFile != -1)
       {
-        int movieDuration = (int)g_Player.Duration;
-        VideoDatabase.SetMovieDuration(idFile, movieDuration);
+        int videoDuration = (int)g_Player.Duration;
+        VideoDatabase.SetVideoDuration(idFile, videoDuration);
       }
     }
 
@@ -2418,6 +2441,7 @@ namespace MediaPortal.GUI.Video
               {
                 dlg.AddLocalizedString(500); // FileMenu            
               }
+              dlg.AddLocalizedString(1264); //Media info
             }
             else
             {
@@ -2614,13 +2638,27 @@ namespace MediaPortal.GUI.Video
         case 1263: // Set deault grabber script
           SetDefaultGrabber();
           break;
-        case 1264: // Get media info
+        case 1264: // Get media info (refresh mediainfo and duration)
           if (item != null)
           {
-            AddFileToDatabase(item.Path);
-            //VideoDatabase.AddMovieFile(item.Path);
+            string file = item.Path;
+            SelectDVDHandler sdh = new SelectDVDHandler();
+            
+            if(sdh.IsDvdDirectory(item.Path))
+            {
+              if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+              {
+                file = file + @"\VIDEO_TS\VIDEO_TS.IFO";
+              }
+            }
+
+            ArrayList files = new ArrayList();
+            files = AddFileToDatabase(file);
+            MovieDuration(files, true);
+            int movieId = VideoDatabase.GetMovieId(file);
             IMDBMovie mInfo = new IMDBMovie();
-            mInfo.SetMediaInfoProperties(item.Path, true);
+            mInfo.SetMediaInfoProperties(file, true);
+            mInfo.SetDurationProperty(movieId);
           }
           break;
       }

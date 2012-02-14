@@ -264,14 +264,24 @@ namespace MediaPortal.Video.Database
       _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData);
     }
 
-    public static int GetMovieDuration(int iFileId)
+    public static int GetMovieDuration(int iMovieId)
     {
-      return _database.GetMovieDuration(iFileId);
+      return _database.GetMovieDuration(iMovieId);
     }
 
-    public static void SetMovieDuration(int iFileId, int duration)
+    public static int GetVideoDuration(int iFileId)
     {
-      _database.SetMovieDuration(iFileId, duration);
+      return _database.GetVideoDuration(iFileId);
+    }
+
+    public static void SetVideoDuration(int iFileId, int duration)
+    {
+      _database.SetVideoDuration(iFileId, duration);
+    }
+
+    public static void SetMovieDuration(int iMovieId, int duration)
+    {
+      _database.SetMovieDuration(iMovieId, duration);
     }
 
     public static void SetMovieWatchedStatus(int iMovieId, bool watched, int percent)
