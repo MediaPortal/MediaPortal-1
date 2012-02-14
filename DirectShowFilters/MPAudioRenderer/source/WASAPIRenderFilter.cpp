@@ -159,7 +159,6 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
 
   bool bApplyChanges = nApplyChangesDepth != 0;
 
-  Log("CWASAPIRenderFilter::NegotiateFormat");
   LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");
 
   bool forceSampleRate = m_pSettings->m_nForceSamplingRate > 0;

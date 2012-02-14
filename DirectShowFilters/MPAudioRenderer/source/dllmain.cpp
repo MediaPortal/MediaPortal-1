@@ -246,6 +246,34 @@ void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
 {
   if (pwfx)
   {
+    char type = 'u';
+      
+    if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+    {
+      WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
+
+      if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
+        type = 'i';
+      else if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+        type = 'f';
+
+      Log("EXTENSIBLE - %s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->nSamplesPerSec, 
+        pwfx->wBitsPerSample, type, tmp->Samples.wValidBitsPerSample, pwfx->nChannels, tmp->dwChannelMask, pwfx->nBlockAlign, pwfx->nAvgBytesPerSec);
+    }
+    else
+    {
+      if (pwfx->wFormatTag == WAVE_FORMAT_PCM)
+        type = 'i';
+      else if (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
+        type = 'f';
+
+      Log("EX         - %s: %6dHz %2d%cbits %2dch -- align: %2d avgbytes: %8d", text, pwfx->nSamplesPerSec, pwfx->wBitsPerSample,
+        type, pwfx->nChannels, pwfx->nBlockAlign, pwfx->nAvgBytesPerSec);
+    }
+  }
+
+  /*if (pwfx)
+  {
     Log("WAVEFORMATEX - %s", text);
     Log("  nAvgBytesPerSec     %d", pwfx->nAvgBytesPerSec);
     Log("  nBlockAlign         %d", pwfx->nBlockAlign);
@@ -280,7 +308,7 @@ void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
       Log("  SubFormat           PCM");
     else if (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
       Log("  SubFormat           FLOAT");
-  }
+  }*/
 }
 
 HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src)
