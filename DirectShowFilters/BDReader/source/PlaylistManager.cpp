@@ -198,10 +198,9 @@ Packet* CPlaylistManager::GetNextAudioPacket()
   Packet* ret=(*m_itCurrentAudioPlayBackPlaylist)->ReturnNextAudioPacket();
   if (!ret)
   {
-    if (m_itCurrentAudioPlayBackPlaylist++ == m_vecPlaylists.end()) m_itCurrentAudioPlayBackPlaylist--;
-    else 
+    if (m_itCurrentAudioPlayBackPlaylist - m_vecPlaylists.begin() != m_vecPlaylists.size() - 1) 
     {
-      (*(m_itCurrentAudioPlayBackPlaylist--))->SetEmptiedAudio();
+      (*(m_itCurrentAudioPlayBackPlaylist))->SetEmptiedAudio();
       ret = (*(m_itCurrentAudioPlayBackPlaylist++))->ReturnNextAudioPacket();
       //LogDebug("playlistManager: setting audio playback playlist to %d",(*m_itCurrentAudioPlayBackPlaylist)->nPlaylist);
     }

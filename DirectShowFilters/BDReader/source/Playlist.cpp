@@ -58,14 +58,12 @@ Packet* CPlaylist::ReturnNextAudioPacket()
   }
   else
   {
-    if (m_itCurrentAudioPlayBackClip++ == m_vecClips.end()) 
+    if (m_itCurrentAudioPlayBackClip - m_vecClips.begin() == m_vecClips.size() - 1) 
     {
-      m_itCurrentAudioPlayBackClip--;
       SetEmptiedAudio();
     }
     else
     {
-      m_itCurrentAudioPlayBackClip--;
       (*m_itCurrentAudioPlayBackClip)->Superceed(SUPERCEEDED_AUDIO_RETURN);
       m_itCurrentAudioPlayBackClip++;
       ret=ReturnNextAudioPacket();
