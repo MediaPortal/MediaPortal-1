@@ -61,7 +61,6 @@ public:
   HRESULT CheckInputType(const CMediaType* mtIn);
   HRESULT CheckMediaType(const CMediaType *pmt);
   HRESULT DoRenderSample(IMediaSample *pMediaSample);
-  void    OnReceiveFirstSample(IMediaSample *pMediaSample);
   BOOL    ScheduleSample(IMediaSample *pMediaSample);
   HRESULT SetMediaType(const CMediaType *pmt);
   HRESULT CompleteConnect(IPin *pReceivePin);

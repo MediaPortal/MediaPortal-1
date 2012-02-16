@@ -276,11 +276,6 @@ HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
   //TRACE(_T("AudioClock query pos: %I64d qpc: %I64d"), pTimestamp, pQpc);
 }
 
-void CMPAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)
-{
-
-}
-
 BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 {
   if (!pMediaSample) return false;
@@ -288,16 +283,30 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   REFERENCE_TIME rtSampleTime = 0;
   REFERENCE_TIME rtSampleEndTime = 0;
 
-  //WaitForSingleObject((HANDLE)m_RenderEvent, 0);
-  //HRESULT hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
-
   HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
   if (FAILED(hr)) return false;
 
+  if (hr == S_FALSE || hr == S_OK) 
+  {
+    m_pPipeline->PutSample(pMediaSample);
+    
+    // Lie about the sample being dropped. This way we dont have to
+    // go thru the extra round trip that firing the m_RenderEvent
+    // would cause. Real scheduling is done in the WASAPI renderer 
+    // at the other end of the pipeline
+    
+    return false;
+  }
+  
   return false;
 
   // END
   /*
+
+
+  //WaitForSingleObject((HANDLE)m_RenderEvent, 0);
+  //HRESULT hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
+
 
   REFERENCE_TIME rtSampleTime = 0;
   REFERENCE_TIME rtSampleEndTime = 0;
@@ -373,14 +382,13 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   */
 }
 
-HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
+HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample* pMediaSample)
 {
-  m_pPipeline->PutSample(pMediaSample);
-
+  // Sample was already put into the pipeline in ScheduleSample().
   return S_OK;
 }
 
-STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **ppv)
+STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
   if (riid == IID_IReferenceClock)
     return GetInterface(static_cast<IReferenceClock*>(m_pClock), ppv);
@@ -397,7 +405,7 @@ STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **p
 	return CBaseRenderer::NonDelegatingQueryInterface (riid, ppv);
 }
 
-HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
+HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
 {
   if (!pmt) return E_POINTER;
   
