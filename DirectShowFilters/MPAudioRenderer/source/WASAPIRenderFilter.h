@@ -23,7 +23,7 @@
 
 #define MPAR_S_NEED_DATA        ((HRESULT)0x00040201)
 #define CLOCK_DATA_SIZE 10
-
+#define MAX_SAMPLE_WAIT_TIME INFINITE
 using namespace std;
 
 class CWASAPIRenderFilter : public CQueuedAudioSink, public IRenderFilter
@@ -110,10 +110,8 @@ private:
   int                 m_dClockPosOut;
 
   vector<HANDLE> m_hDataEvents;
-  vector<HANDLE> m_hOOBCommandEvents;
   vector<HANDLE> m_hSampleEvents;
 
   vector<DWORD> m_dwDataWaitObjects;
-  vector<DWORD> m_dwOOBCommandWaitObjects;
   vector<DWORD> m_dwSampleWaitObjects;
 };

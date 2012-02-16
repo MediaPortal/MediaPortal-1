@@ -100,23 +100,19 @@ HRESULT CWASAPIRenderFilter::Init()
     m_dwStreamFlags = 0;
   }
 
-  m_hDataEvents.push_back(m_hDataEvent);
   m_hDataEvents.push_back(m_hStopThreadEvent);
+  m_hDataEvents.push_back(m_hDataEvent);
 
-  m_dwDataWaitObjects.push_back(MPAR_S_NEED_DATA);
   m_dwDataWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
+  m_dwDataWaitObjects.push_back(MPAR_S_NEED_DATA);
 
-  m_hSampleEvents.push_back(m_hInputAvailableEvent);
   m_hSampleEvents.push_back(m_hStopThreadEvent);
+  m_hSampleEvents.push_back(m_hOOBCommandAvailableEvent);
+  m_hSampleEvents.push_back(m_hInputAvailableEvent);
 
-  m_dwSampleWaitObjects.push_back(S_OK);
   m_dwSampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
-
-  m_hOOBCommandEvents.push_back(m_hStopThreadEvent);
-  m_hOOBCommandEvents.push_back(m_hOOBCommandAvailableEvent);
-
-  m_dwOOBCommandWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
-  m_dwOOBCommandWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
+  m_dwSampleWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
+  m_dwSampleWaitObjects.push_back(S_OK);
 
   ResetClockData();
 
@@ -403,7 +399,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   EnableMMCSS();
 
-  hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+  hr = GetNextSampleOrCommand(&command, &sample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
   if (FAILED(hr))
     Log("CWASAPIRenderFilter::Render thread - failed to get 1st sample: (0x%08x)");
 
@@ -427,31 +423,41 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
       DWORD bufferFlags = 0;
 
-      if (!sample && writeSilence == 0 && m_state == StateRunning)
-        hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
-      else if (m_state == StatePaused && writeSilence == 0)
-        hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hOOBCommandEvents, &m_dwOOBCommandWaitObjects);
+      if (!sample && writeSilence == 0)
+      {
+        hr = GetNextSampleOrCommand(&command, &sample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
+        
+        if (hr == MPAR_S_THREAD_STOPPING)
+        {
+          Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+          StopAudioClient(&m_pAudioClient);
+          RevertMMCSS();
+          return 0;
+        }
+
+        if (command == ASC_Pause)
+        {
+          bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+          m_state = StatePaused;
+          writeSilence = 2;
+          sample.Release();
+          sample = NULL;
+        }
+        else if (command == ASC_Resume)
+        {
+          m_state = StateRunning;
+          bufferFlags = 0;
+          writeSilence = false;
+        }
+      }
 
       // TODO - what to do in error case? It shouldn't be caused by invalid format
       // as the NegotiateFormat has alrady given green light for the new format,
       // unless the audio decoder was not using QueryAccept or provides different
-      // PMT than it was planning to. S_FALSE is returned when format change has applied.
+      // PMT than it was planning to. S_FALSE is returned when format change has 
+	  // been applied or there is a discontinuity in the stream.
       if (CheckSample(sample) == S_FALSE)
         continue;
-
-      if (hr == MPAR_S_THREAD_STOPPING)
-      {
-        Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
-        StopAudioClient(&m_pAudioClient);
-        RevertMMCSS();
-        return 0;
-      }
-      else if (command == ASC_Resume)
-      {
-        m_state = StateRunning;
-        bufferFlags = 0;
-        writeSilence = false;
-      }
 
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
