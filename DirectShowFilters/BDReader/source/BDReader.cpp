@@ -128,7 +128,7 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   GetLogFile(filename);
   ::DeleteFile(filename);
   LogDebug("--------- bluray ---------------------");
-  LogDebug("-------------- v0.58 -----------------");
+  LogDebug("-------------- v0.59 -----------------");
 
   LogDebug("CBDReaderFilter::ctor");
   m_pAudioPin = new CAudioPin(GetOwner(), this, phr, &m_section, m_demultiplexer);
