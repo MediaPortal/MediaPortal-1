@@ -182,15 +182,47 @@ HRESULT CBaseAudioSink::EndFlush()
 
 // Helpers
 
-bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX *pwfx2)
+bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEX* pwfx1, const WAVEFORMATEX* pwfx2)
 {
   if ((!pwfx1 && pwfx2) || (pwfx1 && !pwfx2))
     return false;
 
+  bool isWFExtensible1 = pwfx1->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
+                        pwfx1->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+
+  bool isWFExtensible2 = pwfx2->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
+                        pwfx2->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+
+  if (isWFExtensible1 && !isWFExtensible2)
+  {
+    WAVEFORMATEXTENSIBLE* ex1 = (WAVEFORMATEXTENSIBLE*)pwfx1;
+    if (ex1->Samples.wValidBitsPerSample != pwfx1->wBitsPerSample)
+      return false;
+  }
+  else if (!isWFExtensible1 && isWFExtensible2)
+  {
+    WAVEFORMATEXTENSIBLE* ex2 = (WAVEFORMATEXTENSIBLE*)pwfx2;
+    if (ex2->Samples.wValidBitsPerSample != pwfx2->wBitsPerSample)
+      return false;
+  }
+  else if (isWFExtensible1 && isWFExtensible2)
+  {
+    WAVEFORMATEXTENSIBLE* ex1 = (WAVEFORMATEXTENSIBLE*)pwfx1;
+    WAVEFORMATEXTENSIBLE* ex2 = (WAVEFORMATEXTENSIBLE*)pwfx2;
+
+    if (ex1->dwChannelMask != ex2->dwChannelMask ||
+        ex1->SubFormat != ex2->SubFormat ||
+        ex1->Samples.wSamplesPerBlock != ex2->Samples.wSamplesPerBlock ||
+        ex1->Samples.wValidBitsPerSample != ex1->Samples.wValidBitsPerSample)
+      return false;
+  }
+
   if (pwfx1->wFormatTag != pwfx2->wFormatTag ||
       pwfx1->nChannels != pwfx2->nChannels ||
       pwfx1->wBitsPerSample != pwfx2->wBitsPerSample ||
-      pwfx1->nSamplesPerSec != pwfx2->nSamplesPerSec) // TODO : improve the checks
+      pwfx1->nSamplesPerSec != pwfx2->nSamplesPerSec ||
+      pwfx1->nBlockAlign != pwfx2->nBlockAlign ||
+      pwfx1->nAvgBytesPerSec != pwfx2->nAvgBytesPerSec)
     return false;
 
   return true;
