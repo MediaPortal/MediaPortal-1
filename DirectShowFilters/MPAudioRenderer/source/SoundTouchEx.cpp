@@ -19,8 +19,6 @@
 
 #include "alloctracing.h"
 
-extern void Log(const char *fmt, ...);
-
 // conversion functions
 #define NOISE_COEFF   0.7f
 #define SAMPLE_FLOAT  double

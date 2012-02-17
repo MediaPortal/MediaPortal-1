@@ -15,15 +15,13 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "Globals.h"
 #include "AC3EncoderFilter.h"
 
 #include "alloctracing.h"
 
 #define AC3_OUT_BUFFER_SIZE   ((AC3_MAX_COMP_FRAME_SIZE + AC3_BITSTREAM_OVERHEAD) * 10)
 #define AC3_OUT_BUFFER_COUNT  20
-
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
-extern void Log(const char *fmt, ...);
 
 template<class T> inline T odd2even(T x)
 {

@@ -23,54 +23,9 @@
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SoundTouchEx.h"
+#include "Globals.h"
 //#include "SyncClock.h"
 
-typedef struct tagSpeakerPair {
-  DWORD dwLeft, dwRight;
-  __inline DWORD PairMask()  { return dwLeft | dwRight; };
-} SpeakerPair;
-
-// List of speakers that should be handled as a pair
-static SpeakerPair PairedSpeakers[] = {
-  {SPEAKER_FRONT_LEFT, SPEAKER_FRONT_RIGHT},
-  {SPEAKER_BACK_LEFT, SPEAKER_BACK_RIGHT},
-  {SPEAKER_FRONT_LEFT_OF_CENTER, SPEAKER_FRONT_RIGHT_OF_CENTER},
-  {SPEAKER_FRONT_CENTER, SPEAKER_BACK_CENTER}, // not sure about this one
-  {SPEAKER_SIDE_LEFT, SPEAKER_SIDE_RIGHT},
-  {SPEAKER_TOP_FRONT_LEFT, SPEAKER_TOP_FRONT_RIGHT},
-  {SPEAKER_TOP_BACK_LEFT, SPEAKER_TOP_BACK_RIGHT},
-  {SPEAKER_TOP_FRONT_CENTER, SPEAKER_TOP_BACK_CENTER},  // not sure about this one
-  {NULL, NULL} // end marker
-};
-
-static DWORD gdwDefaultChannelMask[] = {
-  0, // no channels - invalid
-  KSAUDIO_SPEAKER_MONO,
-  KSAUDIO_SPEAKER_STEREO,
-  KSAUDIO_SPEAKER_STEREO | KSAUDIO_SPEAKER_GROUND_FRONT_CENTER,
-  KSAUDIO_SPEAKER_QUAD,
-  0, // 5 channels?
-  KSAUDIO_SPEAKER_5POINT1,
-  0, // 7 channels?
-  KSAUDIO_SPEAKER_7POINT1_SURROUND
-};
-
-static DWORD gdwAC3SpeakerOrder[] = {
-  SPEAKER_FRONT_LEFT, 
-  SPEAKER_FRONT_CENTER,
-  SPEAKER_FRONT_RIGHT,
-  SPEAKER_BACK_LEFT, 
-  SPEAKER_BACK_RIGHT,
-  SPEAKER_LOW_FREQUENCY,
-};
-#define cAC3SpeakerOrder  (sizeof(gdwAC3SpeakerOrder)/sizeof(DWORD))
-#define SPEAKER_AC3_VALID_POSITIONS ( \
-  SPEAKER_FRONT_LEFT | \
-  SPEAKER_FRONT_CENTER | \
-  SPEAKER_FRONT_RIGHT | \
-  SPEAKER_BACK_LEFT | \
-  SPEAKER_BACK_RIGHT | \
-  SPEAKER_LOW_FREQUENCY )
 
 #define OUT_BUFFER_SIZE   65536
 #define OUT_BUFFER_COUNT  20

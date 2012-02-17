@@ -15,12 +15,10 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "Globals.h"
 #include "BaseAudioSink.h"
 
 #include "alloctracing.h"
-
-extern void Log(const char* fmt, ...);
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
 
 CBaseAudioSink::CBaseAudioSink(void) 
 : m_pNextSink(NULL)

@@ -22,6 +22,7 @@
 #include <shlobj.h>
 #include <queue>
 
+#include "Globals.h"
 #include "MpAudioRenderer.h"
 
 using namespace std;
@@ -330,6 +331,58 @@ HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src)
 
   return S_OK;
 }
+
+HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE **dst, WAVEFORMATEX *src)
+{
+  if (!src)
+    return S_OK;
+
+  if (!dst)
+    return E_POINTER;
+
+  int	size = sizeof(WAVEFORMATEXTENSIBLE);
+  WAVEFORMATEXTENSIBLE *pwfe = (WAVEFORMATEXTENSIBLE *)new BYTE[size];
+  
+  if (!pwfe)
+    return E_OUTOFMEMORY;
+
+  //ASSERT(pwf->cbSize <= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX));
+  memcpy(pwfe, src, sizeof(WAVEFORMATEX));
+  pwfe->Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+  switch(pwfe->Format.wFormatTag)
+  {
+  case WAVE_FORMAT_PCM:
+    pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
+    break;
+  case WAVE_FORMAT_IEEE_FLOAT:
+    pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+    break;
+  default:
+    delete pwfe;
+    return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+  if (pwfe->Format.nChannels >= 1 && pwfe->Format.nChannels <= 8)
+  {
+    pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
+    if (pwfe->dwChannelMask == 0)
+    {
+      delete pwfe;
+      return VFW_E_TYPE_NOT_ACCEPTED;
+    }
+  }
+  else
+  {
+    delete pwfe;
+    return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+
+  pwfe->Samples.wValidBitsPerSample = pwfe->Format.wBitsPerSample;
+  pwfe->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+  *dst = pwfe;
+
+  return S_OK;
+}
+
 
 // http://blogs.msdn.com/b/stevejs/archive/2005/12/19/505815.aspx
 

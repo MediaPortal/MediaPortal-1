@@ -15,6 +15,7 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "Globals.h"
 #include "WASAPIRenderFilter.h"
 #include "TimeSource.h"
 
@@ -22,11 +23,6 @@
 
 #include <FunctionDiscoveryKeys_devpkey.h>
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
-
-extern void Log(const char* fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
-extern void SetThreadName(DWORD dwThreadID, char* threadName);
 
 CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_pSettings(pSettings),

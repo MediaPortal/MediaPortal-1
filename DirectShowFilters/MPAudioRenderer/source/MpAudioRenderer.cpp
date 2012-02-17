@@ -33,8 +33,6 @@ CFilterApp theApp;
 
 #define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
-
 CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
 {
   ASSERT(phr);

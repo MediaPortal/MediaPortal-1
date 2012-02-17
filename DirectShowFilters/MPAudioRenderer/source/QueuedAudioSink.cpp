@@ -15,13 +15,12 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "Globals.h"
 #include "QueuedAudioSink.h"
 
 #include "alloctracing.h"
 
 #define END_OF_STREAM_FLUSH_TIMEOUT (5000)
-
-extern void Log(const char* fmt, ...);
 
 CQueuedAudioSink::CQueuedAudioSink(void)
 : m_hThread(NULL)

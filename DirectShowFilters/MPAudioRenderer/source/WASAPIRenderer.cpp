@@ -54,11 +54,6 @@ DEFINE_GUIDSTRUCT("0000000b-0cea-0010-8000-00aa00389b71", KSDATAFORMAT_SUBTYPE_I
 
 #endif
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
-
-extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
-
 WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) : 
   m_pMMDevice(NULL),
   m_pAudioClient(NULL),

@@ -21,12 +21,6 @@
 
 #include "alloctracing.h"
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX** dst, const WAVEFORMATEX* src);
-
-extern void Log(const char* fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char* text);
-extern void SetThreadName(DWORD dwThreadID, char* threadName);
-
 #define DEFINE_STREAM_FUNC(funcname, paramtype, paramname) \
   void CTimeStretchFilter::funcname(paramtype paramname) \
   { \

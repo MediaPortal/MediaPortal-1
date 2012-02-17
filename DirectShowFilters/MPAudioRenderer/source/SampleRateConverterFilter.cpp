@@ -15,12 +15,10 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "Globals.h"
 #include "SampleRateConverterFilter.h"
 
 #include "alloctracing.h"
-
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
-extern void Log(const char *fmt, ...);
 
 extern unsigned int gAllowedSampleRates[7];
 

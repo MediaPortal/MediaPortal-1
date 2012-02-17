@@ -15,6 +15,7 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "Globals.h"
 #include "BitDepthAdapter.h"
 
 #include "alloctracing.h"
@@ -45,16 +46,6 @@ struct int24_t
 };
 #pragma pack(pop)
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
-extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
-
-#define IS_WAVEFORMATEXTENSIBLE(pwfx)   (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE && \
-                                         pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX))
-
-#define IS_WAVEFORMAT_FLOAT(pwfx)       (IS_WAVEFORMATEXTENSIBLE(pwfx)? \
-                                         (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT) : \
-                                         (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT))
 
 struct BitDepthDescriptor {
   BYTE wContainerBits;
@@ -530,7 +521,7 @@ template<class Td, class Ts> HRESULT CBitDepthAdapter::ConvertBuffer(BYTE *dst, 
     const Ts *pSrc = (const Ts *)src;
     Td *pDst = (Td *)dst;
     for(i = 0; i < nChannels ; i++)
-      pDst[i] = ConvertSample<Td, Ts>(pSrc[i], bitMask, m_lInSampleError[i]);
+      *(pDst++) = ConvertSample<Td, Ts>((*pSrc++), bitMask, m_lInSampleError[i]);
     src += m_nInFrameSize;
     dst += m_nOutFrameSize;
   }

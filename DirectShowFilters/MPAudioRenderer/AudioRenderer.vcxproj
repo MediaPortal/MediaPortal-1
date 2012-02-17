@@ -569,6 +569,7 @@
     <ClCompile Include="source\dllmain.cpp" />
     <ClCompile Include="source\dllsetup.cpp" />
     <ClCompile Include="source\FilterApp.cpp" />
+    <ClCompile Include="source\Globals.cpp" />
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MpAudioRenderer.cpp" />
     <ClCompile Include="source\MultiSoundTouch.cpp">
@@ -636,6 +637,7 @@
     </ClInclude>
     <ClInclude Include="source\dllsetup.h" />
     <ClInclude Include="source\FilterApp.h" />
+    <ClInclude Include="source\Globals.h" />
     <ClInclude Include="source\IAudioSink.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
     <ClInclude Include="source\IRenderDevice.h">
