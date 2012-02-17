@@ -286,6 +286,88 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample)
   return S_OK;
 }
 
+HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample)
+{
+  /*
+  //WaitForSingleObject((HANDLE)m_RenderEvent, 0);
+  //HRESULT hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
+
+  REFERENCE_TIME rtSampleTime = 0;
+  REFERENCE_TIME rtSampleEndTime = 0;
+  REFERENCE_TIME rtSampleDuration = 0;
+  REFERENCE_TIME rtTime = 0;
+  UINT nFrames = 0;
+  bool discontinuityDetected = false;
+
+  if (m_bFlushSamples)
+  {
+    FlushSamples();
+  }
+
+  if (m_dRate >= 2.0 || m_dRate <= -2.0)
+  {
+    // Do not render Micey Mouse(tm) audio
+    m_dSampleCounter++;
+    return false;
+  }
+  
+  HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
+  if (FAILED(hr)) return false;
+
+  long sampleLength = pMediaSample->GetActualDataLength();
+
+  nFrames = sampleLength / m_pWaveFileFormat->nBlockAlign;
+  rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
+
+  // Get media time
+  m_pClock->GetTime(&rtTime);
+  rtTime = rtTime - m_tStart;
+  rtSampleTime -= m_pRenderDevice->Latency() * 2;
+
+  // Try to keep the A/V sync when data has been dropped
+  if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
+  {
+    discontinuityDetected = true;
+    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
+  }
+
+  if (rtSampleTime - rtTime > 0)
+  {
+    if(m_Settings.m_bLogSampleTimes)
+      Log("     sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
+    
+    if (m_dSampleCounter == 0 || discontinuityDetected)
+    {
+      ASSERT(m_dwAdvise == 0);
+      ASSERT(m_pClock);
+      WaitForSingleObject((HANDLE)m_RenderEvent, 0);
+      hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
+    }
+    else
+    {
+      DoRenderSample(pMediaSample);
+      hr = S_FALSE;
+    }
+    m_dSampleCounter++;
+  }
+  else
+  {
+    Log("DROP sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
+    hr = S_FALSE;
+  }
+
+  m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
+
+  if (hr == S_OK) 
+    return true;
+  else
+    return false;
+
+  */
+
+  return S_OK;
+}
+
 HRESULT CWASAPIRenderFilter::EndOfStream()
 {
   // Queue an EOS marker so that it gets processed in 

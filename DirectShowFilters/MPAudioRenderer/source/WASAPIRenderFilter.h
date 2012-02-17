@@ -82,6 +82,7 @@ private:
 
   HRESULT CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
   HRESULT CheckSample(IMediaSample* pSample);
+  HRESULT CheckStreamTimeline(IMediaSample* pSample);
   HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
 
   AudioRendererSettings* m_pSettings;

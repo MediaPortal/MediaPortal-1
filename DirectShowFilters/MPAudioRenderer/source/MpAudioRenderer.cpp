@@ -31,7 +31,7 @@
 
 CFilterApp theApp;
 
-#define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
+//#define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
 
 CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
 {
@@ -185,33 +185,16 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pSampleRateConverter)
     return E_OUTOFMEMORY;
 
-  // Just for testing the sample duplication issue on pause
-  /*
-  
-  CTimeStretchFilter* pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
-  CTimeStretchFilter* pTimestretchFilter1 = new CTimeStretchFilter(&m_Settings);
-  CTimeStretchFilter* pTimestretchFilter2 = new CTimeStretchFilter(&m_Settings);
-  CTimeStretchFilter* pTimestretchFilter3 = new CTimeStretchFilter(&m_Settings);
-  CTimeStretchFilter* pTimestretchFilter4 = new CTimeStretchFilter(&m_Settings);
-
-  pTimestretchFilter->ConnectTo(pTimestretchFilter1);
-  pTimestretchFilter1->ConnectTo(pTimestretchFilter2);
-  pTimestretchFilter2->ConnectTo(pTimestretchFilter3);
-  pTimestretchFilter3->ConnectTo(pTimestretchFilter4);
-  pTimestretchFilter4->ConnectTo(m_pTimestretchFilter);
-  */
-
-  //m_pTimestretchFilter->ConnectTo(m_pWASAPIRenderer);
-  m_pOutBitDepthAdapter->ConnectTo(m_pWASAPIRenderer);
-  m_pSampleRateConverter->ConnectTo(m_pOutBitDepthAdapter);
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
-  //m_pTimestretchFilter->ConnectTo(m_pAC3Encoder);
+  m_pSampleRateConverter->ConnectTo(m_pOutBitDepthAdapter);
+
+  //m_pTimestretchFilter->ConnectTo(m_pOutBitDepthAdapter);
+
+  m_pOutBitDepthAdapter->ConnectTo(m_pWASAPIRenderer);
+
   //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
-  //m_pPipeline = m_pBitDepthAdapter;
-  //m_pPipeline = m_pTimestretchFilter;
-  //m_pPipeline = m_pWASAPIRenderer;
   m_pPipeline = m_pInBitDepthAdapter;
 
   return S_OK;
@@ -297,87 +280,6 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   }
   
   return false;
-
-  // END
-  /*
-
-
-  //WaitForSingleObject((HANDLE)m_RenderEvent, 0);
-  //HRESULT hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
-
-
-  REFERENCE_TIME rtSampleTime = 0;
-  REFERENCE_TIME rtSampleEndTime = 0;
-  REFERENCE_TIME rtSampleDuration = 0;
-  REFERENCE_TIME rtTime = 0;
-  UINT nFrames = 0;
-  bool discontinuityDetected = false;
-
-  if (m_bFlushSamples)
-  {
-    FlushSamples();
-  }
-
-  if (m_dRate >= 2.0 || m_dRate <= -2.0)
-  {
-    // Do not render Micey Mouse(tm) audio
-    m_dSampleCounter++;
-    return false;
-  }
-  
-  HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
-  if (FAILED(hr)) return false;
-
-  long sampleLength = pMediaSample->GetActualDataLength();
-
-  nFrames = sampleLength / m_pWaveFileFormat->nBlockAlign;
-  rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
-
-  // Get media time
-  m_pClock->GetTime(&rtTime);
-  rtTime = rtTime - m_tStart;
-  rtSampleTime -= m_pRenderDevice->Latency() * 2;
-
-  // Try to keep the A/V sync when data has been dropped
-  if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
-  {
-    discontinuityDetected = true;
-    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
-  }
-
-  if (rtSampleTime - rtTime > 0)
-  {
-    if(m_Settings.m_bLogSampleTimes)
-      Log("     sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
-    
-    if (m_dSampleCounter == 0 || discontinuityDetected)
-    {
-      ASSERT(m_dwAdvise == 0);
-      ASSERT(m_pClock);
-      WaitForSingleObject((HANDLE)m_RenderEvent, 0);
-      hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
-    }
-    else
-    {
-      DoRenderSample(pMediaSample);
-      hr = S_FALSE;
-    }
-    m_dSampleCounter++;
-  }
-  else
-  {
-    Log("DROP sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
-    hr = S_FALSE;
-  }
-
-  m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
-
-  if (hr == S_OK) 
-    return true;
-  else
-    return false;
-
-  */
 }
 
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample* pMediaSample)
@@ -442,12 +344,7 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
   
   Log("CompleteConnect - audio decoder: %S", &filterInfo.achName);
 
-  //if (!m_pRenderDevice) return E_FAIL;
-
   if (SUCCEEDED(hr)) hr = CBaseRenderer::CompleteConnect(pReceivePin);
-  
-  //if (SUCCEEDED(hr)) hr = m_pRenderDevice->CompleteConnect(pReceivePin);
-
   if (SUCCEEDED(hr)) Log("CompleteConnect Success");
 
   return hr;
