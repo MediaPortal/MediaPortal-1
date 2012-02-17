@@ -111,14 +111,12 @@ public:
 private:
 
   HRESULT SetupFilterPipeline();
-
   HRESULT GetReferenceClockInterface(REFIID riid, void** ppv);
-  WAVEFORMATEX* CreateWaveFormatForAC3(int pSamplesPerSec);
-
-  CBaseReferenceClock*	m_pReferenceClock;
-  double					      m_dRate;
    
 private:
+  CBaseReferenceClock*	m_pReferenceClock;
+  double					      m_dRate;
+
   CSyncClock*     m_pClock;
   CVolumeHandler* m_pVolumeHandler;
   double          m_dBias;

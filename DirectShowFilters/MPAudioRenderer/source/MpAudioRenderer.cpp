@@ -200,24 +200,6 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   return S_OK;
 }
 
-WAVEFORMATEX* CMPAudioRenderer::CreateWaveFormatForAC3(int pSamplesPerSec)
-{
-  WAVEFORMATEX* pwfx = (WAVEFORMATEX*)new BYTE[sizeof(WAVEFORMATEX)];
-  if (pwfx)
-  {
-    // SPDIF uses static 2 channels and 16 bit. 
-    // AC3 header contains the real stream information
-    pwfx->wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
-    pwfx->wBitsPerSample = 16;
-    pwfx->nBlockAlign = 4;
-    pwfx->nChannels = 2;
-    pwfx->nSamplesPerSec = pSamplesPerSec;
-    pwfx->nAvgBytesPerSec = pwfx->nSamplesPerSec * pwfx->nBlockAlign;
-    pwfx->cbSize = 0;
-  }
-  return pwfx;
-}
-
 HRESULT CMPAudioRenderer::CheckInputType(const CMediaType *pmt)
 {
   return CheckMediaType(pmt);
