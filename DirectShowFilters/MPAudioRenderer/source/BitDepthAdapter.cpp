@@ -108,11 +108,10 @@ HRESULT CBitDepthAdapter::Init()
 
 HRESULT CBitDepthAdapter::Cleanup()
 {
-  m_pMemAllocator.Release();
   return CBaseAudioSink::Cleanup();
 }
 
-HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
+HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
 {
   if (pwfx == NULL)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -127,7 +126,7 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyCh
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  // try passthrough
+  // Try passthrough
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
   if (SUCCEEDED(hr))
   {
@@ -140,35 +139,21 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyCh
     return hr;
   }
 
-  // verify input format is PCM or IEEE_FLOAT
-  bool isPCM = false;
-  bool isFloat = false;
-  bool isWFExtensible = pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
-                        pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-
-  if (isWFExtensible)
-  {
-    isPCM = (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat == KSDATAFORMAT_SUBTYPE_PCM);
-    isFloat = (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
-  }
-  else 
-  {
-    isPCM = (pwfx->wFormatTag == WAVE_FORMAT_PCM);
-    isFloat = (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT);
-  }
+  // Verify input format is PCM or IEEE_FLOAT
+  bool isPCM = pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_PCM;
+  bool isFloat = pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
 
   if (!isPCM && !isFloat)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   // Finally try alternate bit depths
-  WAVEFORMATEX *pOutWfx;
+  WAVEFORMATEXTENSIBLE* pOutWfx = NULL;
   CopyWaveFormatEx(&pOutWfx, pwfx);
 
-  BitDepthDescriptor inBitDepth = {pwfx->wBitsPerSample, pwfx->wBitsPerSample, isFloat};
-  if (isWFExtensible)
-    inBitDepth.wValidBits = ((WAVEFORMATEXTENSIBLE *)pwfx)->Samples.wValidBitsPerSample;
+  BitDepthDescriptor inBitDepth = {pwfx->Format.wBitsPerSample, pwfx->Format.wBitsPerSample, isFloat};
+  inBitDepth.wValidBits = pwfx->Samples.wValidBitsPerSample;
 
-  BitDepthDescriptor *pOutBitDepth = FindConversion(inBitDepth);
+  BitDepthDescriptor* pOutBitDepth = FindConversion(inBitDepth);
 
   if (pOutBitDepth == NULL)
   {
@@ -182,25 +167,16 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyCh
     if (*pOutBitDepth == inBitDepth)
       continue; // skip if same as source
 
-    pOutWfx->wBitsPerSample = pOutBitDepth->wContainerBits;
-    if (isWFExtensible)
-    {
-      ((WAVEFORMATEXTENSIBLE *)pOutWfx)->SubFormat = pOutBitDepth->bIsFloat? KSDATAFORMAT_SUBTYPE_IEEE_FLOAT : KSDATAFORMAT_SUBTYPE_PCM;
-      ((WAVEFORMATEXTENSIBLE *)pOutWfx)->Samples.wValidBitsPerSample = pOutBitDepth->wValidBits;
-    }
-    else
-    {
-      if (pOutBitDepth->wContainerBits != pOutBitDepth->wValidBits)
-        continue; // WAVEFORMATEX cannot describe this format - skip it
-      
-      pOutWfx->wFormatTag = pOutBitDepth->bIsFloat? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
-    }
-    pOutWfx->nBlockAlign = pOutWfx->wBitsPerSample/8 * pOutWfx->nChannels;
-    pOutWfx->nAvgBytesPerSec = pOutWfx->nBlockAlign * pOutWfx->nSamplesPerSec;
+    pOutWfx->Format.wBitsPerSample = pOutBitDepth->wContainerBits;
+    pOutWfx->SubFormat = pOutBitDepth->bIsFloat? KSDATAFORMAT_SUBTYPE_IEEE_FLOAT : KSDATAFORMAT_SUBTYPE_PCM;
+    pOutWfx->Samples.wValidBitsPerSample = pOutBitDepth->wValidBits;
+    pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample/8 * pOutWfx->Format.nChannels;
+    pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
   
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
 
-    if (FAILED(hr) && isWFExtensible)
+    // Try different speaker setup
+    if (FAILED(hr))
     {
       DWORD dwSpeakers = ((WAVEFORMATEXTENSIBLE *)pOutWfx)->dwChannelMask;
       if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1)
@@ -212,9 +188,9 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyCh
       else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1_SURROUND)
         dwSpeakers = KSAUDIO_SPEAKER_7POINT1;
 
-      if (dwSpeakers != ((WAVEFORMATEXTENSIBLE *)pOutWfx)->dwChannelMask)
+      if (dwSpeakers != pOutWfx->dwChannelMask)
       {
-        ((WAVEFORMATEXTENSIBLE *)pOutWfx)->dwChannelMask = dwSpeakers;
+        pOutWfx->dwChannelMask = dwSpeakers;
         hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
       }
     }
@@ -235,6 +211,8 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyCh
     if (FAILED(hr))
       m_pfnConvert = NULL;
   }
+  else
+    SAFE_DELETE_WAVEFORMATEX(pOutWfx);
 
   return S_OK;
 }
@@ -251,7 +229,7 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   HRESULT hr = S_OK;
 
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
+    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -265,7 +243,7 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     Log("CBitDepthAdapter::PutSample: Processing format change");
-    hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
@@ -325,18 +303,14 @@ HRESULT CBitDepthAdapter::SetupConversion()
   LogWaveFormat(m_pInputFormat, "Input format ");
   LogWaveFormat(m_pOutputFormat, "Output format");
   m_bInFloatSamples = IS_WAVEFORMAT_FLOAT(m_pInputFormat);
-  m_nInFrameSize = m_pInputFormat->nBlockAlign;
-  m_nInBytesPerSample = m_pInputFormat->wBitsPerSample / 8;
-  m_nInBitsPerSample = (IS_WAVEFORMATEXTENSIBLE(m_pInputFormat)?
-    ((WAVEFORMATEXTENSIBLE *)m_pInputFormat)->Samples.wValidBitsPerSample :
-    m_pInputFormat->wBitsPerSample);
+  m_nInFrameSize = m_pInputFormat->Format.nBlockAlign;
+  m_nInBytesPerSample = m_pInputFormat->Format.wBitsPerSample / 8;
+  m_nInBitsPerSample = m_pInputFormat->Samples.wValidBitsPerSample;
 
   m_bOutFloatSamples = IS_WAVEFORMAT_FLOAT(m_pOutputFormat);
-  m_nOutFrameSize = m_pOutputFormat->nBlockAlign;
-  m_nOutBytesPerSample = m_pOutputFormat->wBitsPerSample / 8;
-  m_nOutBitsPerSample = (IS_WAVEFORMATEXTENSIBLE(m_pOutputFormat)?
-    ((WAVEFORMATEXTENSIBLE *)m_pOutputFormat)->Samples.wValidBitsPerSample :
-    m_pOutputFormat->wBitsPerSample);
+  m_nOutFrameSize = m_pOutputFormat->Format.nBlockAlign;
+  m_nOutBytesPerSample = m_pOutputFormat->Format.wBitsPerSample / 8;
+  m_nOutBitsPerSample = m_pOutputFormat->Samples.wValidBitsPerSample;
 
   int srcFuncIdx = m_nInBytesPerSample - 2;
   int dstFuncIdx = m_nOutBytesPerSample - 2;
@@ -424,7 +398,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
     if (nOffset + m_nOutFrameSize > nSize)
       OutputNextSample();
 
-    m_rtInSampleTime += framesToConvert * m_nInFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
+    m_rtInSampleTime += framesToConvert * m_nInFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
 
     // all samples should contain an integral number of frames
     ASSERT(cbData == 0 || cbData >= m_nInFrameSize);
@@ -514,7 +488,7 @@ template<> __inline int16_t ConvertSample<int16_t, int24_t>(int24_t src, long bi
 template<class Td, class Ts> HRESULT CBitDepthAdapter::ConvertBuffer(BYTE *dst, const BYTE *src, long count)
 {
   long bitMask = (0xffffffffu >> m_nOutBitsPerSample);
-  int nChannels = m_pInputFormat->nChannels;
+  int nChannels = m_pInputFormat->Format.nChannels;
   int i;
   while(count--)
   {

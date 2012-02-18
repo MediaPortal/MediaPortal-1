@@ -93,7 +93,7 @@ HRESULT CTimeStretchFilter::Cleanup()
 }
 
 // Format negotiation
-HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
+HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -115,23 +115,9 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApply
   hr = VFW_E_CANNOT_CONNECT;
   
   if (!pwfx)
-    return SetFormat((WAVEFORMATEXTENSIBLE *) NULL);
+    return SetFormat(NULL);
 
-  if (pwfx->cbSize >= 22)
-  {
-    if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
-      return SetFormat((WAVEFORMATEXTENSIBLE *)pwfx);
-    else
-      return VFW_E_TYPE_NOT_ACCEPTED;
-  }
-
-  WAVEFORMATEXTENSIBLE wfe;
-  // Setup WFE
-  hr = ToWaveFormatExtensible(&wfe, pwfx);
-  if (FAILED(hr))
-    return hr;
-
-  return SetFormat(&wfe);
+  return SetFormat(pwfx);
 }
 
 HRESULT CTimeStretchFilter::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, const WAVEFORMATEX *pwf)
@@ -165,7 +151,7 @@ HRESULT CTimeStretchFilter::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, c
   return S_OK;
 }
 
-HRESULT CTimeStretchFilter::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
+HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
 {
   std::vector<CSoundTouchEx*>* newStreams = NULL;
   WAVEFORMATEXTENSIBLE* pWaveFormat = NULL;

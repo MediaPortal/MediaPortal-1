@@ -18,6 +18,8 @@
 #include "Settings.h"
 #include "Globals.h"
 
+#include "alloctracing.h"
+
 // List of speakers that should be handled as a pair
 SpeakerPair PairedSpeakers[] = {
   {SPEAKER_FRONT_LEFT, SPEAKER_FRONT_RIGHT},

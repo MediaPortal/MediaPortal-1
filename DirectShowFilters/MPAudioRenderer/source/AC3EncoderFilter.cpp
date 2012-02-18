@@ -57,12 +57,11 @@ HRESULT CAC3EncoderFilter::Init()
 
 HRESULT CAC3EncoderFilter::Cleanup()
 {
-  m_pMemAllocator.Release();
   return CBaseAudioSink::Cleanup();
 }
 
 // Format negotiation
-HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
+HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE *pwfx, int nApplyChangesDepth)
 {
   if (pwfx == NULL)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -92,22 +91,22 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
     //return hr;
   }
   // verify input format bit depth, channels and sample rate
-  if (pwfx->nChannels > 6 || pwfx->wBitsPerSample != 16 ||
-      (pwfx->nSamplesPerSec != 48000 && pwfx->nSamplesPerSec != 44100))
+  if (pwfx->Format.nChannels > 6 || pwfx->Format.wBitsPerSample != 16 ||
+      (pwfx->Format.nSamplesPerSec != 48000 && pwfx->Format.nSamplesPerSec != 44100))
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   // verify input format is PCM
-  if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
-      pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX))
+  if (pwfx->Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
+      pwfx->Format.cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX))
   {
     if (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat != KSDATAFORMAT_SUBTYPE_PCM)
       return VFW_E_TYPE_NOT_ACCEPTED;
   }
-  else if (pwfx->wFormatTag != WAVE_FORMAT_PCM)
+  else if (pwfx->Format.wFormatTag != WAVE_FORMAT_PCM)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   // Finally verify next sink accepts AC3 format
-  WAVEFORMATEX *pAC3wfx = CreateAC3Format(pwfx->nSamplesPerSec, 0);
+  WAVEFORMATEXTENSIBLE* pAC3wfx = CreateAC3Format(pwfx->Format.nSamplesPerSec, 0);
 
   hr = m_pNextSink->NegotiateFormat(pAC3wfx, nApplyChangesDepth);
 
@@ -122,12 +121,12 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
     SAFE_DELETE_ARRAY(m_pRemainingInput);
     SetInputFormat(pwfx);
     SetOutputFormat(pAC3wfx, true);
-    m_nFrameSize = m_pInputFormat->nChannels * AC3_FRAME_LENGTH *2;
+    m_nFrameSize = m_pInputFormat->Format.nChannels * AC3_FRAME_LENGTH *2;
     m_pRemainingInput = new BYTE[m_nFrameSize];
-    m_nMaxCompressedAC3FrameSize = (m_nBitRate/8 * AC3_FRAME_LENGTH + m_pInputFormat->nSamplesPerSec-1) / m_pInputFormat->nSamplesPerSec;
+    m_nMaxCompressedAC3FrameSize = (m_nBitRate/8 * AC3_FRAME_LENGTH + m_pInputFormat->Format.nSamplesPerSec-1) / m_pInputFormat->Format.nSamplesPerSec;
     if(m_nMaxCompressedAC3FrameSize & 1)
       m_nMaxCompressedAC3FrameSize++;
-    OpenAC3Encoder(m_nBitRate, m_pInputFormat->nChannels, m_pInputFormat->nSamplesPerSec);
+    OpenAC3Encoder(m_nBitRate, m_pInputFormat->Format.nChannels, m_pInputFormat->Format.nSamplesPerSec);
   }
   return S_OK;
 }
@@ -139,13 +138,13 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
-  AM_MEDIA_TYPE *pmt = NULL;
+  AM_MEDIA_TYPE* pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
 
-  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
+    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
 
   if (bFormatChanged)
   {
@@ -154,7 +153,7 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
       hr = ProcessAC3Data(NULL, 0, NULL);
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
-    hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
@@ -230,20 +229,20 @@ HRESULT CAC3EncoderFilter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *prope
   return S_OK;
 }
 
-WAVEFORMATEX *CAC3EncoderFilter::CreateAC3Format(int nSamplesPerSec, int nAC3BitRate)
+WAVEFORMATEXTENSIBLE* CAC3EncoderFilter::CreateAC3Format(int nSamplesPerSec, int nAC3BitRate)
 {
-  WAVEFORMATEX* pwfx = (WAVEFORMATEX*)new BYTE[sizeof(WAVEFORMATEX)];
+  WAVEFORMATEXTENSIBLE* pwfx = (WAVEFORMATEXTENSIBLE*)new BYTE[sizeof(WAVEFORMATEXTENSIBLE)];
   if (pwfx)
   {
     // SPDIF uses static 2 channels and 16 bit. 
     // AC3 header contains the real stream information
-    pwfx->wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
-    pwfx->wBitsPerSample = 16;
-    pwfx->nBlockAlign = 4;
-    pwfx->nChannels = 2;
-    pwfx->nSamplesPerSec = nSamplesPerSec;
-    pwfx->nAvgBytesPerSec = pwfx->nSamplesPerSec * pwfx->nBlockAlign;
-    pwfx->cbSize = 0;
+    pwfx->Format.wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
+    pwfx->Format.wBitsPerSample = 16;
+    pwfx->Format.nBlockAlign = 4;
+    pwfx->Format.nChannels = 2;
+    pwfx->Format.nSamplesPerSec = nSamplesPerSec;
+    pwfx->Format.nAvgBytesPerSec = pwfx->Format.nSamplesPerSec * pwfx->Format.nBlockAlign;
+    pwfx->Format.cbSize = 0;
   }
   return pwfx;
 }
@@ -341,7 +340,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
 
     if (m_cbRemainingInput)
     {
-      REFERENCE_TIME rtStart = m_rtInSampleTime - (m_cbRemainingInput * UNITS / m_pInputFormat->nAvgBytesPerSec);
+      REFERENCE_TIME rtStart = m_rtInSampleTime - (m_cbRemainingInput * UNITS / m_pInputFormat->Format.nAvgBytesPerSec);
       if(!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(rtStart)))
       {
         m_cbRemainingInput = 0;
@@ -408,7 +407,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
       pData += bytesToCopy;
       cbData -= bytesToCopy; 
       bytesOutput += bytesToCopy;
-      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
+      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
       m_cbRemainingInput = 0;
     }
     else
@@ -418,7 +417,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
       pData += m_nFrameSize;
       cbData -= m_nFrameSize; 
       bytesOutput += m_nFrameSize;
-      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
+      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
     }
   }
   

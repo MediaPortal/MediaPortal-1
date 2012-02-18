@@ -37,7 +37,7 @@ public:
   virtual HRESULT EndStop() = 0;
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth) = 0;
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth) = 0;
 
   // Buffer negotiation
   // -- TODO --

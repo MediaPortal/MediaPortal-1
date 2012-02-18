@@ -48,7 +48,7 @@ public:
   virtual HRESULT EndStop();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEX* pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
 
   // Processing
   virtual HRESULT PutSample(IMediaSample* pSample);
@@ -58,16 +58,16 @@ public:
   
 protected:
   // Helpers
-  static bool FormatsEqual(const WAVEFORMATEX* pwfx1, const WAVEFORMATEX* pwfx2);
+  static bool FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEFORMATEXTENSIBLE* pwfx2);
 
   // Initialization
   HRESULT InitAllocator();
-  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
+  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
 
-  HRESULT SetInputFormat(const WAVEFORMATEX* pwfx);
-  HRESULT SetInputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip = FALSE);
-  HRESULT SetOutputFormat(const WAVEFORMATEX* pwfx);
-  HRESULT SetOutputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip = FALSE);
+  HRESULT SetInputFormat(const WAVEFORMATEXTENSIBLE* pwfx);
+  HRESULT SetInputFormat(WAVEFORMATEXTENSIBLE* pwfx, bool bAssumeOwnerShip = FALSE);
+  HRESULT SetOutputFormat(const WAVEFORMATEXTENSIBLE* pwfx);
+  HRESULT SetOutputFormat(WAVEFORMATEXTENSIBLE* pwfx, bool bAssumeOwnerShip = FALSE);
 
   // Output handling
   HRESULT RequestNextOutBuffer(REFERENCE_TIME rtStart);
@@ -75,8 +75,8 @@ protected:
 
 protected:
   IAudioSink* m_pNextSink;
-  WAVEFORMATEX* m_pInputFormat;
-  WAVEFORMATEX* m_pOutputFormat;
+  WAVEFORMATEXTENSIBLE* m_pInputFormat;
+  WAVEFORMATEXTENSIBLE* m_pOutputFormat;
   bool m_bOutFormatChanged;
   bool m_bDiscontinuity;
 

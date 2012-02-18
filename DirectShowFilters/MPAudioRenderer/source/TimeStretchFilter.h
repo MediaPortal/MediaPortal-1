@@ -41,7 +41,7 @@ public:
   // IAudioSink implementation
   HRESULT Init();
   HRESULT Cleanup();
-  HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
   HRESULT EndOfStream();
 
 public: 
@@ -110,7 +110,7 @@ public:
   //HRESULT CheckFormat(WAVEFORMATEX *pwf);
   //HRESULT CheckFormat(WAVEFORMATEXTENSIBLE *pwfe);
   //HRESULT SetFormat(WAVEFORMATEX *pwf);
-  HRESULT SetFormat(WAVEFORMATEXTENSIBLE *pwfe);
+  HRESULT SetFormat(const WAVEFORMATEXTENSIBLE *pwfe);
   HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, const WAVEFORMATEX *pwf);
 
   bool putSamples(const short *inBuffer, long inSamples);
@@ -123,7 +123,7 @@ protected:
 
   // Initialization
   //HRESULT InitAllocator();
-  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
+  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
 
   // Processing
   virtual DWORD ThreadProc();

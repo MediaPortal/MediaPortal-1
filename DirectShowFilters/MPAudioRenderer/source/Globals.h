@@ -40,14 +40,12 @@ extern DWORD gdwAC3SpeakerOrder[];
 #define IS_WAVEFORMATEXTENSIBLE(pwfx)   (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE && \
                                          pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX))
 
-#define IS_WAVEFORMAT_FLOAT(pwfx)       (IS_WAVEFORMATEXTENSIBLE(pwfx)? \
-                                         (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT) : \
-                                         (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT))
+#define IS_WAVEFORMAT_FLOAT(pwfx)       (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
 
 extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
+extern void LogWaveFormat(const WAVEFORMATEXTENSIBLE* pwfx, const char *text);
 
-extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
-extern HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE **dst, WAVEFORMATEX *src);
+extern HRESULT CopyWaveFormatEx(WAVEFORMATEXTENSIBLE** dst, const WAVEFORMATEXTENSIBLE* src);
+extern HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src);
 
 extern void SetThreadName(DWORD dwThreadID, char* threadName);

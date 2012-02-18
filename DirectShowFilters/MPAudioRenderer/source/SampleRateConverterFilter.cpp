@@ -46,15 +46,13 @@ HRESULT CSampleRateConverter::Init()
 
 HRESULT CSampleRateConverter::Cleanup()
 {
-  m_pMemAllocator.Release();
-
   if (m_pSrcState)
     m_pSrcState = src_delete(m_pSrcState);
 
   return CBaseAudioSink::Cleanup();
 }
 
-HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
+HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -82,23 +80,12 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApp
     return hr;
   }
 
-  // verify input format is IEEE_FLOAT
-  bool isFloat = false;
-  bool isWFExtensible = pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
-                        pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-
-  if (isWFExtensible)
-    isFloat = (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
-  else 
-    isFloat = (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT);
-
-  // Sample rate converter can work only with floats
-  if (!isFloat)
+  if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  WAVEFORMATEX *pOutWfx;
+  WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
-  pOutWfx->nSamplesPerSec = 0;
+  pOutWfx->Format.nSamplesPerSec = 0;
 
   hr = VFW_E_TYPE_NOT_ACCEPTED;
 
@@ -111,7 +98,7 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApp
   bool foundSampleRate = false;
   for (unsigned int i = 0; i < sampleRateCount && !foundSampleRate; i++)
   {
-    if (gAllowedSampleRates[i] == pwfx->nSamplesPerSec)
+    if (gAllowedSampleRates[i] == pwfx->Format.nSamplesPerSec)
     {
       startPoint = ++i; // select closest sample rate in ascending order 
       foundSampleRate = true;
@@ -119,27 +106,24 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApp
   }
 
   if (!foundSampleRate)
-    Log("CSampleRateConverter::NegotiateFormat - sample rate (%d) not found in the source array", pwfx->nSamplesPerSec);
+    Log("CSampleRateConverter::NegotiateFormat - sample rate (%d) not found in the source array", pwfx->Format.nSamplesPerSec);
   
   unsigned int sampleRatesTested = 0;
-  for (int i = startPoint; FAILED(hr) && pOutWfx->nSamplesPerSec == 0 && sampleRatesTested < sampleRateCount; i++)
+  for (int i = startPoint; FAILED(hr) && pOutWfx->Format.nSamplesPerSec == 0 && sampleRatesTested < sampleRateCount; i++)
   {
-    if (pOutWfx->nSamplesPerSec == pwfx->nSamplesPerSec)
+    if (pOutWfx->Format.nSamplesPerSec == pwfx->Format.nSamplesPerSec)
     {
       sampleRatesTested++;
       continue; // skip if same as source
     }
 
-    if (isWFExtensible)
-      ((WAVEFORMATEXTENSIBLE *)pOutWfx)->Format.nSamplesPerSec = gAllowedSampleRates[i];
-    else
-      pOutWfx->nSamplesPerSec = gAllowedSampleRates[i];
+    pOutWfx->Format.nSamplesPerSec = gAllowedSampleRates[i];
 
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
     sampleRatesTested++;
 
     if (FAILED(hr))
-      pOutWfx->nSamplesPerSec = 0;
+      pOutWfx->Format.nSamplesPerSec = 0;
 
     // Search from the lower end
     if (i == sampleRateCount - 1)
@@ -160,6 +144,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApp
     // TODO: do something meaningfull if SetupConversion fails
     //if (FAILED(hr))
   }
+  else
+    SAFE_DELETE_WAVEFORMATEX(pOutWfx);
 
   return S_OK;
 }
@@ -176,7 +162,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   HRESULT hr = S_OK;
 
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
+    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
 
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
@@ -189,7 +175,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     Log("CSampleRateConverter::PutSample: Processing format change");
-    hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
@@ -248,16 +234,16 @@ HRESULT CSampleRateConverter::SetupConversion()
   // Only floats
   m_nBitsPerSample = 32;
 
-  m_nFrameSize = m_pInputFormat->nBlockAlign;
-  m_nBytesPerSample = m_pInputFormat->wBitsPerSample / 8;
+  m_nFrameSize = m_pInputFormat->Format.nBlockAlign;
+  m_nBytesPerSample = m_pInputFormat->Format.wBitsPerSample / 8;
 
-  m_dSampleRateRation = (double)m_pOutputFormat->nSamplesPerSec / (double)m_pInputFormat->nSamplesPerSec;
+  m_dSampleRateRation = (double)m_pOutputFormat->Format.nSamplesPerSec / (double)m_pInputFormat->Format.nSamplesPerSec;
 
   if (m_pSrcState)
     m_pSrcState = src_delete(m_pSrcState);
 
   int error = 0;
-  m_pSrcState = src_new(m_pSettings->m_nResamplingQuality, m_pInputFormat->nChannels, &error);
+  m_pSrcState = src_new(m_pSettings->m_nResamplingQuality, m_pInputFormat->Format.nChannels, &error);
 
   // TODO better error handling
   if (error != 0)
@@ -332,8 +318,7 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
 
     int ret = src_process(m_pSrcState, &data);
 
-    //Log("to convert: %d input_frames_used: %d output_frames_gen: %d", framesToConvert, data.input_frames_used, data.output_frames_gen);
-    Log("input_frames_used: %d output_frames_gen: %d", data.input_frames_used, data.output_frames_gen);
+    //Log("input_frames_used: %d output_frames_gen: %d", data.input_frames_used, data.output_frames_gen);
 
     pData += data.input_frames_used * m_nFrameSize;
     bytesOutput += data.output_frames_gen * m_nFrameSize;

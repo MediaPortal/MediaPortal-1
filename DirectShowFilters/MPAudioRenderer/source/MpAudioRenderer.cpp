@@ -200,20 +200,18 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   return S_OK;
 }
 
-HRESULT CMPAudioRenderer::CheckInputType(const CMediaType *pmt)
+HRESULT CMPAudioRenderer::CheckInputType(const CMediaType* pmt)
 {
   return CheckMediaType(pmt);
 }
 
-HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
+HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
 {
   HRESULT hr = S_OK;
   
   if (!pmt) 
     return E_INVALIDARG;
   
-  Log("CheckMediaType");
-
   if ((pmt->majortype	!= MEDIATYPE_Audio) ||
       (pmt->formattype != FORMAT_WaveFormatEx))
   {
@@ -221,12 +219,24 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
-  WAVEFORMATEX *pwfx = (WAVEFORMATEX *) pmt->Format();
+  WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->Format();
 
   if (!pwfx) 
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  return m_pPipeline->NegotiateFormat(pwfx, 0);
+  if (IS_WAVEFORMATEXTENSIBLE(pwfx))
+    return m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0);
+  else
+  {
+    WAVEFORMATEXTENSIBLE* wfe = NULL;
+    hr = ToWaveFormatExtensible(&wfe, pwfx);
+    if (SUCCEEDED(hr))
+    {
+      hr = m_pPipeline->NegotiateFormat(wfe, 0);
+      delete wfe;
+    }
+    return hr;
+  }
 }
 
 HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
@@ -239,7 +249,7 @@ HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
   //TRACE(_T("AudioClock query pos: %I64d qpc: %I64d"), pTimestamp, pQpc);
 }
 
-BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
+BOOL CMPAudioRenderer::ScheduleSample(IMediaSample* pMediaSample)
 {
   if (!pMediaSample) return false;
 
@@ -251,6 +261,25 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 
   if (hr == S_FALSE || hr == S_OK) 
   {
+    WAVEFORMATEXTENSIBLE* wfe = NULL;
+    AM_MEDIA_TYPE* pmt = NULL;
+
+    if (SUCCEEDED(pMediaSample->GetMediaType(&pmt)) && pmt)
+    {
+      WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->pbFormat;
+  
+      // Convert WAVEFORMATEX to WAVEFORMATEXTENSIBLE for internal use
+      if (!IS_WAVEFORMATEXTENSIBLE(pwfx))
+      {
+        ToWaveFormatExtensible(&wfe, pwfx);
+        FreeMediaType(*pmt);
+        pmt->pbFormat = (BYTE*)CoTaskMemAlloc(sizeof(WAVEFORMATEXTENSIBLE));
+        memcpy(pmt->pbFormat, wfe, sizeof(WAVEFORMATEXTENSIBLE));
+        pMediaSample->SetMediaType(pmt);
+        delete wfe;
+      }
+    }
+
     m_pPipeline->PutSample(pMediaSample);
     
     // Lie about the sample being dropped. This way we dont have to
@@ -295,13 +324,29 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
 
   Log("SetMediaType - filter state: %d", m_State);
 
-  WAVEFORMATEX* pwf = (WAVEFORMATEX*)pmt->Format();
+  WAVEFORMATEXTENSIBLE* wfe = NULL;
+  WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->Format();
   
-  // Dynamic format changes are handled in the pipeline on sample basis
-  if (m_State != State_Stopped) 
-    m_pPipeline->NegotiateFormat(pwf, 0);
+  // Dynamic format changes are handled in the pipeline on sample basis  
+  int depth = m_State != State_Stopped ? 0 : INFINITE;
+
+  if (IS_WAVEFORMATEXTENSIBLE(pwfx))
+    hr = m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)pwfx, depth);
   else
-    m_pPipeline->NegotiateFormat(pwf, INFINITE);
+  {
+    WAVEFORMATEXTENSIBLE* wfe = NULL;
+    hr = ToWaveFormatExtensible(&wfe, pwfx);
+    if (SUCCEEDED(hr))
+    {
+      hr = m_pPipeline->NegotiateFormat(wfe, depth);
+      delete wfe;
+    }
+    else
+      return hr;
+  }
+
+  if (FAILED(hr))
+    return hr;
 
   return CBaseRenderer::SetMediaType(pmt);
 }

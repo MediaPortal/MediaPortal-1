@@ -37,19 +37,19 @@ public:
   HRESULT Cleanup();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample *pSample);
+  virtual HRESULT PutSample(IMediaSample* pSample);
   virtual HRESULT EndOfStream();
 
 // Internal implementation
 protected:
   // Initialization
-  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
+  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
   
   HRESULT SetupConversion();
-  HRESULT ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed);
+  HRESULT ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed);
 
 protected:
   bool m_bPassThrough;

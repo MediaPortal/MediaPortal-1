@@ -38,23 +38,23 @@ public:
   HRESULT Cleanup();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample *pSample);
+  virtual HRESULT PutSample(IMediaSample* pSample);
   virtual HRESULT EndOfStream();
 
 // Internal implementation
 protected:
   // Initialization
-  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
+  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
   
   void ResetDithering();
 
   HRESULT SetupConversion();
-  HRESULT ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed);
-  template<class Td, class Ts> HRESULT ConvertBuffer(BYTE *dst, const BYTE *src, long count);
-  template<class Td, class Ts, int nChannels> HRESULT ConvertBuffer(BYTE *dst, const BYTE *src, long count);
+  HRESULT ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed);
+  template<class Td, class Ts> HRESULT ConvertBuffer(BYTE* dst, const BYTE* src, long count);
+  template<class Td, class Ts, int nChannels> HRESULT ConvertBuffer(BYTE* dst, const BYTE* src, long count);
 
 protected:
   bool m_bPassThrough;

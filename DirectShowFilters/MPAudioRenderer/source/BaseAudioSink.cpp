@@ -68,6 +68,9 @@ HRESULT CBaseAudioSink::Init()
 
 HRESULT CBaseAudioSink::Cleanup()
 {
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+  
   m_pMemAllocator.Release();
 
   if (m_pNextSink)
@@ -126,7 +129,7 @@ HRESULT CBaseAudioSink::EndStop()
 }
 
 // Format negotiation
-HRESULT CBaseAudioSink::NegotiateFormat(const WAVEFORMATEX* pwfx, int nApplyChangesDepth)
+HRESULT CBaseAudioSink::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
 {
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
@@ -180,47 +183,21 @@ HRESULT CBaseAudioSink::EndFlush()
 
 // Helpers
 
-bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEX* pwfx1, const WAVEFORMATEX* pwfx2)
+bool CBaseAudioSink::FormatsEqual(const WAVEFORMATEXTENSIBLE* pwfx1, const WAVEFORMATEXTENSIBLE* pwfx2)
 {
   if ((!pwfx1 && pwfx2) || (pwfx1 && !pwfx2))
     return false;
 
-  bool isWFExtensible1 = pwfx1->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
-                        pwfx1->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-
-  bool isWFExtensible2 = pwfx2->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
-                        pwfx2->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-
-  if (isWFExtensible1 && !isWFExtensible2)
-  {
-    WAVEFORMATEXTENSIBLE* ex1 = (WAVEFORMATEXTENSIBLE*)pwfx1;
-    if (ex1->Samples.wValidBitsPerSample != pwfx1->wBitsPerSample)
-      return false;
-  }
-  else if (!isWFExtensible1 && isWFExtensible2)
-  {
-    WAVEFORMATEXTENSIBLE* ex2 = (WAVEFORMATEXTENSIBLE*)pwfx2;
-    if (ex2->Samples.wValidBitsPerSample != pwfx2->wBitsPerSample)
-      return false;
-  }
-  else if (isWFExtensible1 && isWFExtensible2)
-  {
-    WAVEFORMATEXTENSIBLE* ex1 = (WAVEFORMATEXTENSIBLE*)pwfx1;
-    WAVEFORMATEXTENSIBLE* ex2 = (WAVEFORMATEXTENSIBLE*)pwfx2;
-
-    if (ex1->dwChannelMask != ex2->dwChannelMask ||
-        ex1->SubFormat != ex2->SubFormat ||
-        ex1->Samples.wSamplesPerBlock != ex2->Samples.wSamplesPerBlock ||
-        ex1->Samples.wValidBitsPerSample != ex1->Samples.wValidBitsPerSample)
-      return false;
-  }
-
-  if (pwfx1->wFormatTag != pwfx2->wFormatTag ||
-      pwfx1->nChannels != pwfx2->nChannels ||
-      pwfx1->wBitsPerSample != pwfx2->wBitsPerSample ||
-      pwfx1->nSamplesPerSec != pwfx2->nSamplesPerSec ||
-      pwfx1->nBlockAlign != pwfx2->nBlockAlign ||
-      pwfx1->nAvgBytesPerSec != pwfx2->nAvgBytesPerSec)
+  if (pwfx1->Format.wFormatTag != pwfx2->Format.wFormatTag ||
+      pwfx1->Format.nChannels != pwfx2->Format.nChannels ||
+      pwfx1->Format.wBitsPerSample != pwfx2->Format.wBitsPerSample ||
+      pwfx1->Format.nSamplesPerSec != pwfx2->Format.nSamplesPerSec ||
+      pwfx1->Format.nBlockAlign != pwfx2->Format.nBlockAlign ||
+      pwfx1->Format.nAvgBytesPerSec != pwfx2->Format.nAvgBytesPerSec ||
+      pwfx1->dwChannelMask != pwfx2->dwChannelMask ||
+      pwfx1->SubFormat != pwfx2->SubFormat ||
+      pwfx1->Samples.wSamplesPerBlock != pwfx2->Samples.wSamplesPerBlock ||
+      pwfx1->Samples.wValidBitsPerSample != pwfx2->Samples.wValidBitsPerSample)
     return false;
 
   return true;
@@ -277,7 +254,7 @@ HRESULT CBaseAudioSink::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properti
   return S_OK;
 }
 
-HRESULT CBaseAudioSink::SetInputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip)
+HRESULT CBaseAudioSink::SetInputFormat(WAVEFORMATEXTENSIBLE* pwfx, bool bAssumeOwnerShip)
 {
   SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
   if (bAssumeOwnerShip)
@@ -288,13 +265,13 @@ HRESULT CBaseAudioSink::SetInputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip
   return S_OK;
 }
 
-HRESULT CBaseAudioSink::SetInputFormat(const WAVEFORMATEX* pwfx)
+HRESULT CBaseAudioSink::SetInputFormat(const WAVEFORMATEXTENSIBLE* pwfx)
 {
   SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
   return CopyWaveFormatEx(&m_pInputFormat, pwfx);
 }
 
-HRESULT CBaseAudioSink::SetOutputFormat(const WAVEFORMATEX* pwfx)
+HRESULT CBaseAudioSink::SetOutputFormat(const WAVEFORMATEXTENSIBLE* pwfx)
 {
   SAFE_DELETE_WAVEFORMATEX(m_pOutputFormat);
   HRESULT hr = CopyWaveFormatEx(&m_pOutputFormat, pwfx);
@@ -303,7 +280,7 @@ HRESULT CBaseAudioSink::SetOutputFormat(const WAVEFORMATEX* pwfx)
   return hr;
 }
 
-HRESULT CBaseAudioSink::SetOutputFormat(WAVEFORMATEX* pwfx, bool bAssumeOwnerShip)
+HRESULT CBaseAudioSink::SetOutputFormat(WAVEFORMATEXTENSIBLE* pwfx, bool bAssumeOwnerShip)
 {
   HRESULT hr = S_OK;
 
@@ -349,7 +326,7 @@ HRESULT CBaseAudioSink::RequestNextOutBuffer(REFERENCE_TIME rtStart)
   if (m_bOutFormatChanged)
   {
     AM_MEDIA_TYPE pmt;
-    if (SUCCEEDED(CreateAudioMediaType(m_pOutputFormat, &pmt, true)))
+    if (SUCCEEDED(CreateAudioMediaType((WAVEFORMATEX*)m_pOutputFormat, &pmt, true)))
     {
       if (FAILED(m_pNextOutSample->SetMediaType(&pmt)))
         Log("CBaseAudioSink - failed to set mediatype: 0x%08x", hr);

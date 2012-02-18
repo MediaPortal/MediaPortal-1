@@ -25,6 +25,8 @@
 #include "Globals.h"
 #include "MpAudioRenderer.h"
 
+#include "alloctracing.h"
+
 using namespace std;
 
 void SetThreadName(DWORD dwThreadID, char* threadName);
@@ -243,33 +245,21 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
   return NOERROR;
 }
 
-void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
+void LogWaveFormat(const WAVEFORMATEXTENSIBLE* pwfx, const char* text)
 {
   if (pwfx)
   {
     char type = 'u';
       
-    if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+    if (pwfx->Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE)
     {
-      WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
-
-      if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
+      if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_PCM)
         type = 'i';
-      else if (tmp->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+      else if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
         type = 'f';
 
-      Log("EXTENSIBLE - %s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->nSamplesPerSec, 
-        pwfx->wBitsPerSample, type, tmp->Samples.wValidBitsPerSample, pwfx->nChannels, tmp->dwChannelMask, pwfx->nBlockAlign, pwfx->nAvgBytesPerSec);
-    }
-    else
-    {
-      if (pwfx->wFormatTag == WAVE_FORMAT_PCM)
-        type = 'i';
-      else if (pwfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT)
-        type = 'f';
-
-      Log("EX         - %s: %6dHz %2d%cbits %2dch -- align: %2d avgbytes: %8d", text, pwfx->nSamplesPerSec, pwfx->wBitsPerSample,
-        type, pwfx->nChannels, pwfx->nBlockAlign, pwfx->nAvgBytesPerSec);
+      Log("EXTENSIBLE - %s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->Format.nSamplesPerSec, 
+        pwfx->Format.wBitsPerSample, type, pwfx->Samples.wValidBitsPerSample, pwfx->Format.nChannels, pwfx->dwChannelMask, pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec);
     }
   }
 
@@ -312,7 +302,7 @@ void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
   }*/
 }
 
-HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src)
+HRESULT CopyWaveFormatEx(WAVEFORMATEXTENSIBLE** dst, const WAVEFORMATEXTENSIBLE* src)
 {
   if (!src)
     return S_OK;
@@ -320,9 +310,9 @@ HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src)
   if (!dst)
     return E_POINTER;
 
-  int	size = sizeof(WAVEFORMATEX) + src->cbSize;
+  int	size = sizeof(WAVEFORMATEXTENSIBLE) + src->Format.cbSize;
 
-  *dst = (WAVEFORMATEX *)new BYTE[size];
+  *dst = (WAVEFORMATEXTENSIBLE *)new BYTE[size];
 
   if (!*dst)
     return E_OUTOFMEMORY;
@@ -332,7 +322,7 @@ HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src)
   return S_OK;
 }
 
-HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE **dst, WAVEFORMATEX *src)
+HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
 {
   if (!src)
     return S_OK;

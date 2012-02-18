@@ -45,35 +45,35 @@ public:
   virtual HRESULT Cleanup();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample *pSample);
+  virtual HRESULT PutSample(IMediaSample* pSample);
   virtual HRESULT EndOfStream();
   virtual HRESULT BeginFlush();
   virtual HRESULT EndFlush();
 
 protected:
   // Initialization
-  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
+  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
 
-  WAVEFORMATEX *CreateAC3Format(int nSamplesPerSec, int nAC3BitRate);
+  WAVEFORMATEXTENSIBLE* CreateAC3Format(int nSamplesPerSec, int nAC3BitRate);
 
   // AC3 Encoding
   HRESULT OpenAC3Encoder(unsigned int bitrate, unsigned int channels, unsigned int sampleRate);
   HRESULT CloseAC3Encoder();
-  long CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut);
+  long CreateAC3Bitstream(void* buf, size_t size, BYTE* pDataOut);
 
   // Processing
   //HRESULT ProcessPassThroughData(const BYTE *pData, long cbData, long *pcbDataProcessed);
-  HRESULT ProcessAC3Data(const BYTE *pData, long cbData, long *pcbDataProcessed);
+  HRESULT ProcessAC3Data(const BYTE* pData, long cbData, long* pcbDataProcessed);
   //__inline HRESULT ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed)
   //  { return m_bPassThrough? ProcessPassThroughData(pData, cbData, pcbDataProcessed) : ProcessAC3Data(pData, cbData, pcbDataProcessed); };
-  HRESULT ProcessAC3Frame(const BYTE *pData);
+  HRESULT ProcessAC3Frame(const BYTE* pData);
 
 protected:
   bool m_bPassThrough;
-  BYTE *m_pRemainingInput; // buffer for data left over from previous PutSample() call
+  BYTE* m_pRemainingInput; // buffer for data left over from previous PutSample() call
   int m_cbRemainingInput; // valid byte count in above buffer
   int m_nFrameSize; // uncompressed size in bytes, based on input format
   REFERENCE_TIME m_rtInSampleTime; 

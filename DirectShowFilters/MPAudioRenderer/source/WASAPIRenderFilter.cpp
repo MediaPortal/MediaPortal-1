@@ -137,7 +137,7 @@ void CWASAPIRenderFilter::ReleaseResources()
 }
 
 // Format negotiation
-HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
+HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -157,23 +157,23 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
   bool forceBitDepth = m_pSettings->m_nForceBitDepth > 0;
 
   // Check for forced bit depth and/or sampling rate
-  if ((forceBitDepth || forceSampleRate) && pwfx->wFormatTag != WAVE_FORMAT_DOLBY_AC3_SPDIF)
+  if ((forceBitDepth || forceSampleRate) && pwfx->Format.wFormatTag != WAVE_FORMAT_DOLBY_AC3_SPDIF)
   {
     bool accepted = true;
-    if (forceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->wBitsPerSample)
+    if (forceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->Format.wBitsPerSample)
       accepted = false;
 
-    if (forceSampleRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->nSamplesPerSec)
+    if (forceSampleRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->Format.nSamplesPerSec)
       accepted = false;
 
     if (accepted)
     {
       if (forceSampleRate && forceBitDepth)
-        Log("  -- using forced: sample rate: %d bit depth: %d", pwfx->nSamplesPerSec, pwfx->wBitsPerSample);
+        Log("  -- using forced: sample rate: %d bit depth: %d", pwfx->Format.nSamplesPerSec, pwfx->Format.wBitsPerSample);
       else if (forceSampleRate)
-        Log("  -- using forced: sample rate: %d", pwfx->nSamplesPerSec);
+        Log("  -- using forced: sample rate: %d", pwfx->Format.nSamplesPerSec);
       else
-        Log("  -- using forced: bit depth: %d", pwfx->wBitsPerSample);
+        Log("  -- using forced: bit depth: %d", pwfx->Format.wBitsPerSample);
     }
     else
       return VFW_E_CANNOT_CONNECT;
@@ -197,23 +197,23 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
       }
       else
       {
-        hr = InitAudioClient(m_pInputFormat, &m_pRenderClient);
+        hr = InitAudioClient((WAVEFORMATEX*)m_pInputFormat, &m_pRenderClient);
         if (FAILED(hr))
           Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not initialized");
       }
     }
   }
 
-  WAVEFORMATEX *pwfxCM = NULL;
-  const WAVEFORMATEX *pwfxAccepted = NULL;
+  WAVEFORMATEXTENSIBLE* pwfxCM = NULL;
+  const WAVEFORMATEXTENSIBLE* pwfxAccepted = NULL;
   WAVEFORMATEX* tmpPwfx = NULL; 
-  hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, pwfx, &pwfxCM);
+  hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, (WAVEFORMATEX*)pwfx, (WAVEFORMATEX**)&pwfxCM);
   if (hr != S_OK)
   {
-    CopyWaveFormatEx(&tmpPwfx, pwfx);
+    CopyWaveFormatEx((WAVEFORMATEXTENSIBLE**)&tmpPwfx, pwfx);
     tmpPwfx->cbSize = 0;
 
-    hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, tmpPwfx, &pwfxCM);
+    hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, (WAVEFORMATEX*)tmpPwfx, (WAVEFORMATEX**)&pwfxCM);
     if (hr != S_OK)
     {
       Log("CWASAPIRenderFilter::NegotiateFormat WASAPI client refused the format: (0x%08x)", hr);
@@ -224,7 +224,10 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
 
-    pwfxAccepted = tmpPwfx;
+    WAVEFORMATEXTENSIBLE* wfe;
+    ToWaveFormatExtensible(&wfe, tmpPwfx);
+
+    pwfxAccepted = wfe;
   }
   else
     pwfxAccepted = pwfx;
@@ -242,7 +245,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nAppl
     // Reinitialize audio client
     hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
     if (SUCCEEDED (hr)) 
-      hr = InitAudioClient(m_pInputFormat, &m_pRenderClient);
+      hr = InitAudioClient((WAVEFORMATEX*)m_pInputFormat, &m_pRenderClient);
   }
   SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
 
@@ -260,12 +263,12 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample)
   HRESULT hr = S_OK;
 
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
-    bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
+    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
 
   if (bFormatChanged)
   {
     // Apply format change
-    hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
     pSample->SetDiscontinuity(false);
 
     if (FAILED(hr))
@@ -548,7 +551,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       if (m_pSettings->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED || !m_pSettings->m_WASAPIUseEventMode)
         m_pAudioClient->GetCurrentPadding(&currentPadding);
 
-      UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pInputFormat->nBlockAlign;
+      UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pInputFormat->Format.nBlockAlign;
 
       hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
       if (SUCCEEDED(hr))
@@ -1012,7 +1015,7 @@ HRESULT CWASAPIRenderFilter::StopAudioClient(IAudioClient** ppAudioClient)
   return hr;
 }
 
-HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioRenderClient **ppRenderClient)
+HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, IAudioRenderClient** ppRenderClient)
 {
   Log("WASAPIRenderFilter::InitAudioClient");
   HRESULT hr = S_OK;

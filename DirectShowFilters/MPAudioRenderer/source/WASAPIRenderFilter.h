@@ -29,13 +29,13 @@ using namespace std;
 class CWASAPIRenderFilter : public CQueuedAudioSink, public IRenderFilter
 {
 public:
-  CWASAPIRenderFilter(AudioRendererSettings *pSettings);
-  virtual ~CWASAPIRenderFilter(void);
+  CWASAPIRenderFilter(AudioRendererSettings* pSettings);
+  virtual ~CWASAPIRenderFilter();
 
   // IAudioSink implementation
   virtual HRESULT Init();
   virtual HRESULT Cleanup();
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
   virtual HRESULT EndOfStream();
 
   // IRenderFilter implementation
@@ -63,15 +63,15 @@ private:
   HRESULT EnableMMCSS();
   HRESULT RevertMMCSS();
 
-  PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
-  PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
+  PTR_AvSetMmThreadCharacteristicsW	pfAvSetMmThreadCharacteristicsW;
+  PTR_AvRevertMmThreadCharacteristics	pfAvRevertMmThreadCharacteristics;
 
   HMODULE m_hLibAVRT;
 
-  HRESULT GetAudioDevice(IMMDevice **ppMMDevice);
-  HRESULT GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
-  HRESULT CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
-  HRESULT InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioRenderClient **ppRenderClient);
+  HRESULT GetAudioDevice(IMMDevice** ppMMDevice);
+  HRESULT GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, bool pLog); // caller must release ppMMDevices!
+  HRESULT CreateAudioClient(IMMDevice* pMMDevice, IAudioClient** ppAudioClient);
+  HRESULT InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, IAudioRenderClient** ppRenderClient);
   HRESULT StartAudioClient(IAudioClient** ppAudioClient);
   HRESULT StopAudioClient(IAudioClient** ppAudioClient);
   void CancelDataEvent();
@@ -80,10 +80,10 @@ private:
   void ResetClockData();
   void UpdateAudioClock();
 
-  HRESULT CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
+  HRESULT CheckAudioClient(WAVEFORMATEX* pWaveFormatEx);
   HRESULT CheckSample(IMediaSample* pSample);
   HRESULT CheckStreamTimeline(IMediaSample* pSample);
-  HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
+  HRESULT GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, REFERENCE_TIME* pHnsBufferPeriod);
 
   AudioRendererSettings* m_pSettings;
   IMMDevice*          m_pMMDevice;
