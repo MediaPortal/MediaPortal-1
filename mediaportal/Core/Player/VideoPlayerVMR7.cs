@@ -1944,11 +1944,11 @@ namespace MediaPortal.Player
                         FSInfos.Current = true;
                         pStrm.Enable(FSInfos.Id, 0);
                         pStrm.Enable(FSInfos.Id, AMStreamSelectEnableFlags.Enable);
-                        if (FSInfos.Type == StreamType.Audio && FSInfos.Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && GetInterface && !AutoRenderingCheck)
+                        /*if (FSInfos.Type == StreamType.Audio && FSInfos.Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && GetInterface && !AutoRenderingCheck)
                         {
                           iChangedMediaTypes = 1;
                           //DoGraphRebuild();
-                        }
+                        }*/
                       }
                       goto default;
                     default:

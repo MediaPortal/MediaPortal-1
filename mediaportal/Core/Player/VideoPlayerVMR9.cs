@@ -54,16 +54,19 @@ namespace MediaPortal.Player
   }
 
   [ComImport, Guid("B98D13E7-55DB-4385-A33D-09FD1BA26338")]
-  public class LAFSplitterSource { }
+  public class LAVSplitterSource { }
+
+  [ComImport, Guid("171252A0-8820-4AFE-9DF8-5C92B2D66B04")]
+  public class LAVSplitter { }
 
   public class VideoPlayerVMR9 : VideoPlayerVMR7, IGraphRebuildDelegate
   {
     protected VMR9Util Vmr9 = null;
     private Guid LATMAAC = new Guid("000000ff-0000-0010-8000-00aa00389b71");
     private Guid FileSourceSync = new Guid("1AC0BEBD-4D2B-45AD-BCEB-F2C41C5E3788");
-    Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
-    Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
-    Dictionary<string, object> PostProcessFilterMPAudio = new Dictionary<string, object>();
+    private Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
+    private Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    private Dictionary<string, object> PostProcessFilterMPAudio = new Dictionary<string, object>();
     public FilterConfig filterConfig;
     public FilterCodec filterCodec;
 
@@ -149,10 +152,11 @@ namespace MediaPortal.Player
         filterConfig.Audio = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
         filterConfig.AudioAAC = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
         filterConfig.VideoH264 = xmlreader.GetValueAsString("movieplayer", "h264videocodec", "");
-        filterConfig.VideoVC1 = xmlreader.GetValueAsString("movieplayer", "vc1videocodec", "");        
+        filterConfig.VideoVC1 = xmlreader.GetValueAsString("movieplayer", "vc1videocodec", "");
         filterConfig.VideoVC1I = xmlreader.GetValueAsString("movieplayer", "vc1ivideocodec", "");
         filterConfig.VideoXVID = xmlreader.GetValueAsString("movieplayer", "xvidvideocodec", "");
-        filterConfig.AudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+        filterConfig.AudioRenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer",
+                                                                "Default DirectSound Device");
         filterConfig.strextAudioSource = xmlreader.GetValueAsString("movieplayer", "AudioExtSplitterFilter", "");
         filterConfig.strextAudioCodec = xmlreader.GetValueAsString("movieplayer", "AudioExtFilter", "");
 
@@ -249,7 +253,7 @@ namespace MediaPortal.Player
       bool ResultPinAudioRenderer = false;
       IPin PinAudioRenderer = DsFindPin.ByDirection(filterCodec._audioRendererFilter, PinDirection.Input, 0); //audio
       if (PinAudioRenderer != null)
-      DirectShowUtil.IsPinConnected(PinAudioRenderer, out ResultPinAudioRenderer);
+        DirectShowUtil.IsPinConnected(PinAudioRenderer, out ResultPinAudioRenderer);
       if (!ResultPinAudioRenderer && filterCodec._audioRendererFilter != null)
       {
         this.graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
@@ -367,9 +371,11 @@ namespace MediaPortal.Player
           }
           DsUtils.FreePinInfo(pInfo);
           DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+          DirectShowUtil.ReleaseComObject(pinTo);
+          pinTo = null;
         }
-        DirectShowUtil.ReleaseComObject(pPin); pPin = null;
+        DirectShowUtil.ReleaseComObject(pPin);
+        pPin = null;
       }
       Log.Debug("VideoPlayer9: Rebuild LAV Delegate (No Rebuild from MP, LAV Will doing the job)");
       return -1;
@@ -379,8 +385,10 @@ namespace MediaPortal.Player
     {
       DsUtils.FreePinInfo(pInfo);
       DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-      DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
-      DirectShowUtil.ReleaseComObject(pPin); pPin = null;
+      DirectShowUtil.ReleaseComObject(pinTo);
+      pinTo = null;
+      DirectShowUtil.ReleaseComObject(pPin);
+      pPin = null;
     }
 
     protected void RebuildMediaType(IPin pPin)
@@ -406,8 +414,9 @@ namespace MediaPortal.Player
             Log.Info("VideoPlayer9: found H264 video out pin");
             h264Codec = true;
           }
-          if (mediaTypes[0].subType == MediaSubType.XVID || mediaTypes[0].subType == MediaSubType.xvid || mediaTypes[0].subType == MediaSubType.dx50 || mediaTypes[0].subType == MediaSubType.DX50 ||
-            mediaTypes[0].subType == MediaSubType.divx || mediaTypes[0].subType == MediaSubType.DIVX)
+          if (mediaTypes[0].subType == MediaSubType.XVID || mediaTypes[0].subType == MediaSubType.xvid ||
+              mediaTypes[0].subType == MediaSubType.dx50 || mediaTypes[0].subType == MediaSubType.DX50 ||
+              mediaTypes[0].subType == MediaSubType.divx || mediaTypes[0].subType == MediaSubType.DIVX)
           {
             Log.Info("VideoPlayer9: found XVID video out pin");
             xvidCodec = true;
@@ -436,6 +445,31 @@ namespace MediaPortal.Player
       }
       DirectShowUtil.ReleaseComObject(enumMediaTypesAudioVideo);
       enumMediaTypesAudioVideo = null;
+    }
+
+    protected void LoadLAVSplitter(string LAVFilter)
+    {
+      // Prepare delegate for rebuilddelegate with Lavsplitter
+      if (LAVFilter == LAV_SPLITTER_FILTER_SOURCE)
+      {
+        LAVSplitterSource reader = new LAVSplitterSource();
+        _interfaceSourceFilter = reader as IBaseFilter;
+        var objectWithSite = reader as IObjectWithSite;
+        if (objectWithSite != null)
+        {
+          objectWithSite.SetSite(this);
+        }
+      }
+      else if (LAVFilter == LAV_SPLITTER_FILTER)
+      {
+        LAVSplitter reader = new LAVSplitter();
+        Splitter = reader as IBaseFilter;
+        var objectWithSite = reader as IObjectWithSite;
+        if (objectWithSite != null)
+        {
+          objectWithSite.SetSite(this);
+        }
+      }
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
@@ -478,22 +512,15 @@ namespace MediaPortal.Player
         if (extension == ".mpls" || extension == ".bdmv")
           filterConfig.bForceSourceSplitter = false;
 
-        if (filterConfig.strsplitterfilter == LAV_SPLITTER_FILTER_SOURCE)
+        if (filterConfig.strsplitterfilter == LAV_SPLITTER_FILTER_SOURCE && filterConfig.bForceSourceSplitter)
         {
-          // Prepare delegate for rebuilddelegate with Lavsplitter
-          LAFSplitterSource reader = new LAFSplitterSource();
-          _interfaceSourceFilter = reader as IBaseFilter;
-          var objectWithSite = reader as IObjectWithSite;
-          if (objectWithSite != null)
-          {
-            objectWithSite.SetSite(this);
-          }
-          hr = graphBuilder.AddFilter(_interfaceSourceFilter, filterConfig.strsplitterfilter);
+          LoadLAVSplitter(LAV_SPLITTER_FILTER_SOURCE);
+          hr = graphBuilder.AddFilter(_interfaceSourceFilter, LAV_SPLITTER_FILTER_SOURCE);
           DsError.ThrowExceptionForHR(hr);
 
-          Log.Debug("VideoPlayer9: Add LafSplitter Source to graph");
+          Log.Debug("VideoPlayer9: Add LAVSplitter Source to graph");
 
-          IFileSourceFilter interfaceFile = (IFileSourceFilter) _interfaceSourceFilter;
+          IFileSourceFilter interfaceFile = (IFileSourceFilter)_interfaceSourceFilter;
           hr = interfaceFile.Load(m_strCurrentFile, null);
 
           if (hr != 0)
@@ -543,12 +570,30 @@ namespace MediaPortal.Player
           DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.FilesyncSource, out fileSyncbaseFilter);
           if (fileSyncbaseFilter == null)
             graphBuilder.FindFilterByName("File Source (Async.)", out fileSyncbaseFilter);
-          if (fileSyncbaseFilter != null)
+          if (fileSyncbaseFilter != null && filterConfig.bForceSourceSplitter)
           {
             FileSync = true;
             DirectShowUtil.ReleaseComObject(fileSyncbaseFilter);
             fileSyncbaseFilter = null;
-            Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
+            if (filterConfig.strsplitterfilefilter == LAV_SPLITTER_FILTER)
+            {
+              LoadLAVSplitter(LAV_SPLITTER_FILTER);
+              hr = graphBuilder.AddFilter(Splitter, LAV_SPLITTER_FILTER);
+              DsError.ThrowExceptionForHR(hr);
+
+              Log.Debug("VideoPlayer9: Add LAVSplitter to graph");
+
+              if (hr != 0)
+              {
+                Error.SetError("Unable to play movie", "Unable build graph for VMR9");
+                Cleanup();
+                return false;
+              }
+            }
+            else
+            {
+              Splitter = DirectShowUtil.AddFilterToGraph(graphBuilder, filterConfig.strsplitterfilefilter);
+            }
           }
         }
 
