@@ -32,7 +32,10 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for Turbosight tuners.
+  /// A class for handling conditional access and DiSEqC for Turbosight tuners. Note
+  /// that Turbosight drivers seem to still support the original Conexant, NXP and
+  /// Cyprus interfaces/structures. However, it is simpler and probably more
+  /// future-proof to stick with the information in the published SDK.
   /// </summary>
   public class Turbosight : IDiSEqCController, ICiMenuActions, IDisposable
   {
@@ -297,9 +300,15 @@ namespace TvLibrary.Implementations.DVB
     private static readonly string[] TunersWithCiSlots = new string[]
     {
       "TBS 5980 CI Tuner",
-      "TBS 6928 DVBS/S2 Tuner"
-      //"TBS 6992 DVBS/S2 Tuner A"
-      //"TBS 6992 DVBS/S2 Tuner B"
+      "TBS DVBC Tuner",
+      "TBS 6991 DVBS/S2 Tuner A",
+      "TBS 6991 DVBS/S2 Tuner B",
+      "TBS 6992 DVBS/S2 Tuner A",
+      "TBS 6992 DVBS/S2 Tuner B",
+      "TBS 6928 DVBS/S2 Tuner",
+      "TBS 5880 DVB-T/T2 Tuner",
+      "TBS 6618 BDA DVBC Tuner",
+      "TBS 5880 DVBC Tuner"
     };
 
     #endregion
