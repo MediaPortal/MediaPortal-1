@@ -281,6 +281,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
       {
         m_rtClipStartingOffset = packet->rtStart - playlistFirstPacketTime;
       }
+      lastVideoPosition = packet->rtStart;
     }
     if (packet->rtStart != Packet::INVALID_TIME)
     {
