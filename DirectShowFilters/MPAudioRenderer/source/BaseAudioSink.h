@@ -83,4 +83,6 @@ protected:
   // Output buffer support
   CComQIPtr<IMemAllocator> m_pMemAllocator;
   CComPtr<IMediaSample> m_pNextOutSample;
+
+  REFERENCE_TIME m_rtStart;
 };

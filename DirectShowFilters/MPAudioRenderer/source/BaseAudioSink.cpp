@@ -90,6 +90,8 @@ HRESULT CBaseAudioSink::Start(REFERENCE_TIME rtStart)
 
 HRESULT CBaseAudioSink::Run(REFERENCE_TIME rtStart)
 {
+  m_rtStart = rtStart;
+  
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
 
