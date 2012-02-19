@@ -1713,6 +1713,18 @@ namespace MediaPortal.Player
         return _chaptersname;
       }
     }
+    
+    public static double[] JumpPoints
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return null;
+        }
+        return _jumpPoints;
+      }
+    }
 
     public static int Width
     {
