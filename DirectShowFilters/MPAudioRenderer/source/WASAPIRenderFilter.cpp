@@ -192,7 +192,6 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
       if (FAILED(hr))
       {
         Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not loaded");
-        StartThread(); // TODO - check if we dont have to start thread here
         return VFW_E_CANNOT_CONNECT;
       }
       else
@@ -220,7 +219,6 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
       LogWaveFormat(pwfxCM, "Closest match would be" );
       SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
       CoTaskMemFree(pwfxCM);
-      StartThread(); // TODO - check if we dont have to start thread here
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
 
@@ -536,7 +534,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       // as the NegotiateFormat has alrady given green light for the new format,
       // unless the audio decoder was not using QueryAccept or provides different
       // PMT than it was planning to. S_FALSE is returned when format change has 
-	  // been applied or there is a discontinuity in the stream.
+      // been applied or there is a discontinuity in the stream.
       if (CheckSample(sample) == S_FALSE)
         continue;
 
@@ -558,7 +556,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       {
         if (writeSilence > 0 || !sample)
           bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
-        else if (sample) // we have at least some data to be written
+        else if (sample) // We have at least some data to be written
         {
           UINT32 bytesCopied = 0;
           BYTE* sampleData = NULL;
@@ -578,11 +576,11 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
           do
           {
-            // no data in current sample anymore
+            // Fetch new sample if all the available data in the current sample has been consumed
             if (dataLeftInSample == 0)
             {
               HRESULT result = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
-              if (hr == MPAR_S_THREAD_STOPPING) // exit event
+              if (hr == MPAR_S_THREAD_STOPPING)
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
                 StopAudioClient(&m_pAudioClient);
@@ -1063,16 +1061,8 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, 
   GetBufferSize(pWaveFormatEx, &m_pSettings->m_hnsPeriod);
 
   if (SUCCEEDED(hr))
-  {
     hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags,
 	                                m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, pWaveFormatEx, NULL);
-    
-    // when rebuilding the graph between SD / HD zapping the .NET GC workaround
-    // might call the init again. In that case just eat the error 
-    // this needs to be fixed properly if .NET GC workaround is going to be the final solution...
-    if (hr == AUDCLNT_E_ALREADY_INITIALIZED)
-      return S_OK;
-  }
 
   if (FAILED(hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
   {
