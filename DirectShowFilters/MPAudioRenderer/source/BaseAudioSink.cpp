@@ -302,6 +302,19 @@ HRESULT CBaseAudioSink::OutputNextSample()
   HRESULT hr = S_OK;
   if (m_pNextSink && m_pNextOutSample)
   {
+    REFERENCE_TIME rtStart = 0;
+    REFERENCE_TIME rtStop = 0;
+    
+    if (SUCCEEDED(m_pNextOutSample->GetTime(&rtStart, &rtStop)))
+    {
+      UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
+      REFERENCE_TIME rtDuration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+    
+      rtStop = rtStart + rtDuration;
+
+      m_pNextOutSample->SetTime(&rtStart, &rtStop);
+    }
+
     hr = m_pNextSink->PutSample(m_pNextOutSample);
     if (FAILED(hr))
       Log("CBaseAudioSink: Failed to output next sample: 0x%08x", hr);
