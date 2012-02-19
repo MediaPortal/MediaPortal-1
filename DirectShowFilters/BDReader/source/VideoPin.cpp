@@ -638,7 +638,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bZeroTimeStream = false;
           }
 
-          if (m_bDiscontinuity)
+          if (m_bDiscontinuity || buffer->bDiscontinuity)
           {
             LogDebug("vid: set discontinuity");
             pSample->SetDiscontinuity(true);
