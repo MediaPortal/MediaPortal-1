@@ -31,8 +31,6 @@
 
 CFilterApp theApp;
 
-//#define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
-
 CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
 {
   ASSERT(phr);
@@ -157,7 +155,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
 
 HRESULT CMPAudioRenderer::SetupFilterPipeline()
 {
-  m_pWASAPIRenderer = new CWASAPIRenderFilter(&m_Settings);
+  m_pWASAPIRenderer = new CWASAPIRenderFilter(&m_Settings, m_pClock);
   if (!m_pWASAPIRenderer)
     return E_OUTOFMEMORY;
 

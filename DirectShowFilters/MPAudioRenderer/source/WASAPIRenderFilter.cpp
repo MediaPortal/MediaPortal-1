@@ -24,8 +24,9 @@
 #include <FunctionDiscoveryKeys_devpkey.h>
 
 
-CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
+CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
   m_pSettings(pSettings),
+  m_pClock(pClock),
   m_hLibAVRT(NULL),
   m_pMMDevice(NULL),
   m_pAudioClient(NULL),
@@ -34,11 +35,14 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings) :
   m_hTask(NULL),
   m_nBufferSize(0),
   m_hDataEvent(NULL),
+  m_hTimerEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
   m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
   m_state(StateStopped),
-  m_bIsAudioClientStarted(false)
+  m_bIsAudioClientStarted(false),
+  m_rtNextSampleTime(0),
+  m_nSampleNum(0)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -95,6 +99,8 @@ HRESULT CWASAPIRenderFilter::Init()
     m_hDataEvent = CreateWaitableTimer(NULL, TRUE, NULL);
     m_dwStreamFlags = 0;
   }
+
+  m_hTimerEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
   m_hDataEvents.push_back(m_hStopThreadEvent);
   m_hDataEvents.push_back(m_hDataEvent);
@@ -287,86 +293,93 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample)
   return S_OK;
 }
 
-HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample)
+HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENCE_TIME* pDueTime)
 {
-  /*
-  //WaitForSingleObject((HANDLE)m_RenderEvent, 0);
-  //HRESULT hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
+  (*pDueTime) = 0;
 
-  REFERENCE_TIME rtSampleTime = 0;
-  REFERENCE_TIME rtSampleEndTime = 0;
-  REFERENCE_TIME rtSampleDuration = 0;
+  if (!pSample)
+    return S_FALSE;
+
   REFERENCE_TIME rtTime = 0;
-  UINT nFrames = 0;
+  REFERENCE_TIME rtStart = 0;
+  REFERENCE_TIME rtStop = 0;
+  REFERENCE_TIME rtDuration = 0;
+
   bool discontinuityDetected = false;
 
-  if (m_bFlushSamples)
+  HRESULT hr = pSample->GetTime(&rtStart, &rtStop);
+  if (FAILED(hr))
   {
-    FlushSamples();
+    // Render all samples flat that dont have presentation time
+    return MPAR_S_RENDER_SAMPLE;
   }
 
-  if (m_dRate >= 2.0 || m_dRate <= -2.0)
-  {
-    // Do not render Micey Mouse(tm) audio
-    m_dSampleCounter++;
-    return false;
-  }
-  
-  HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
-  if (FAILED(hr)) return false;
+  long sampleLength = pSample->GetActualDataLength();
 
-  long sampleLength = pMediaSample->GetActualDataLength();
-
-  nFrames = sampleLength / m_pWaveFileFormat->nBlockAlign;
-  rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
+  UINT nFrames = sampleLength / m_pInputFormat->Format.nBlockAlign;
+  rtDuration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
   // Get media time
   m_pClock->GetTime(&rtTime);
-  rtTime = rtTime - m_tStart;
-  rtSampleTime -= m_pRenderDevice->Latency() * 2;
+  rtTime = rtTime - m_rtStart;
+  //rtStart -= Latency();// * 2;
+
+  if (m_pSettings->m_bLogSampleTimes)
+    Log("sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f", 
+      rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, rtTime / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
-  if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
+  if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR))// && m_dSampleCounter > 1)
   {
     discontinuityDetected = true;
-    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
+    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
   }
 
-  if (rtSampleTime - rtTime > 0)
+  m_rtNextSampleTime = rtStart + rtDuration;
+
+  REFERENCE_TIME timeStamp = rtStart - rtTime;
+
+  if ((timeStamp > 0 && m_nSampleNum == 0) || discontinuityDetected)
   {
-    if(m_Settings.m_bLogSampleTimes)
-      Log("     sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
+    (*pDueTime) = rtStart;
+    m_nSampleNum++;
+    return MPAR_S_WAIT_RENDER_TIME;
+  }
+  else if (timeStamp < 0)
+  {
+    //Log("dropping sample: %6.3f rtTime: %6.3f", rtStart, rtTime);
+    //return MPAR_S_DROP_SAMPLE;
+  }
+
+  m_nSampleNum++;
+
+  return MPAR_S_RENDER_SAMPLE;
+}
+
+void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence)
+{
+  REFERENCE_TIME rtTime;
+  HRESULT hr = m_pClock->GetTime(&rtTime);
     
-    if (m_dSampleCounter == 0 || discontinuityDetected)
+  // Run flat if getting time fails
+  if (SUCCEEDED(hr))
+  {
+    rtTime -= m_rtStart;
+
+    REFERENCE_TIME rtSilenceDuration = (*pDueTime) - rtTime;
+
+    Log("CalculateSilence: %d", rtSilenceDuration);
+
+    if (rtSilenceDuration > 0)
     {
-      ASSERT(m_dwAdvise == 0);
-      ASSERT(m_pClock);
-      WaitForSingleObject((HANDLE)m_RenderEvent, 0);
-      hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
+      UINT32 framesSilence = rtSilenceDuration / (UNITS / m_pInputFormat->Format.nSamplesPerSec);
+      (*pBytesOfSilence) = framesSilence * m_pInputFormat->Format.nBlockAlign;
     }
     else
-    {
-      DoRenderSample(pMediaSample);
-      hr = S_FALSE;
-    }
-    m_dSampleCounter++;
+      (*pBytesOfSilence) = 0;
   }
   else
-  {
-    Log("DROP sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
-    hr = S_FALSE;
-  }
-
-  m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
-
-  if (hr == S_OK) 
-    return true;
-  else
-    return false;
-
-  */
-
-  return S_OK;
+    (*pBytesOfSilence) = 0;
 }
 
 HRESULT CWASAPIRenderFilter::EndOfStream()
@@ -472,11 +485,19 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   CComPtr<IMediaSample> sample;
   UINT32 sampleOffset = 0;
-  UINT32 writeSilence = 0;
+  UINT32 dataLeftInSample = 0;
+  UINT32 sampleLength = 0;
+  LONGLONG writeSilence = 0;
+  BYTE* sampleData = NULL;
+
+  bool dropSample = false;
+  REFERENCE_TIME dueTime = 0;
 
   HRESULT hr = S_FALSE;
 
   EnableMMCSS();
+
+  m_nSampleNum = 0;
 
   hr = GetNextSampleOrCommand(&command, &sample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
   if (FAILED(hr))
@@ -487,7 +508,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   while (true)
   {
-    hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
+    if (!dropSample)
+      hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
+    else
+    {
+      dropSample = false;
+      hr = MPAR_S_NEED_DATA;
+    }
 
     if (hr == MPAR_S_THREAD_STOPPING) // exit event
     {
@@ -499,44 +526,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     else if (hr == MPAR_S_NEED_DATA) // data event
     {
       UpdateAudioClock();
-
-      DWORD bufferFlags = 0;
-
-      if (!sample && writeSilence == 0)
-      {
-        hr = GetNextSampleOrCommand(&command, &sample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
-        
-        if (hr == MPAR_S_THREAD_STOPPING)
-        {
-          Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
-          StopAudioClient(&m_pAudioClient);
-          RevertMMCSS();
-          return 0;
-        }
-
-        if (command == ASC_Pause)
-        {
-          bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
-          m_state = StatePaused;
-          writeSilence = 2;
-          sample.Release();
-          sample = NULL;
-        }
-        else if (command == ASC_Resume)
-        {
-          m_state = StateRunning;
-          bufferFlags = 0;
-          writeSilence = false;
-        }
-      }
-
-      // TODO - what to do in error case? It shouldn't be caused by invalid format
-      // as the NegotiateFormat has alrady given green light for the new format,
-      // unless the audio decoder was not using QueryAccept or provides different
-      // PMT than it was planning to. S_FALSE is returned when format change has 
-      // been applied or there is a discontinuity in the stream.
-      if (CheckSample(sample) == S_FALSE)
-        continue;
 
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
@@ -554,32 +543,24 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
       if (SUCCEEDED(hr))
       {
-        if (writeSilence > 0 || !sample)
-          bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
-        else if (sample) // We have at least some data to be written
+        UINT32 bytesCopied = 0;
+
+        if (writeSilence > 0 || m_state == StatePaused)
         {
-          UINT32 bytesCopied = 0;
-          BYTE* sampleData = NULL;
-          UINT32 dataLeftInSample = 0;
-          UINT32 sampleLength = sample->GetActualDataLength();
-            
-          // Sanity check to make sure that the calculation won't underflow
-          if (sampleOffset <= sampleLength)
-            dataLeftInSample = sampleLength - sampleOffset;
-          else
-          {
-            dataLeftInSample = 0;
-            sampleOffset = 0;
-          }
+          UINT32 silentBytes = min(writeSilence, bufferSizeInBytes);
+          memset(data, 0, silentBytes);
+          bytesCopied += silentBytes;
+          writeSilence -= silentBytes;
+        }
 
-          sample->GetPointer(&sampleData);
-
+        if (writeSilence == 0)
+        {
           do
           {
             // Fetch new sample if all the available data in the current sample has been consumed
             if (dataLeftInSample == 0)
             {
-              HRESULT result = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+              HRESULT result = GetNextSampleOrCommand(&command, &sample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
               if (hr == MPAR_S_THREAD_STOPPING)
               {
                 Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
@@ -587,54 +568,73 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 RevertMMCSS();
                 return 0;
               }
-              else if (FAILED(result))
+              
+              if (hr == S_OK)
+                sampleOffset = 0;
+              
+              if (command == ASC_Pause)
               {
-                Log("CWASAPIRenderFilter::Render thread - fetching sample failed (0x%08x)", result);
-                if (bytesCopied == 0)
-                  bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+                m_nSampleNum = 0;
+                m_state = StatePaused;
+                sample.Release();
                 break;
               }
-              else if (command == ASC_Pause)
+              else if (command == ASC_Resume)
               {
-                bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
-                m_state = StatePaused;
-                writeSilence = 2;
-                sample.Release();
-                sample = NULL;
+                m_state = StateRunning;
                 break;
               }
               else if (!sample)
-              {
-                if (bytesCopied == 0)
-                  bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                 break;
-              }
 
               // TODO error checking
               if (CheckSample(sample) == S_FALSE)
                 break;
+
+              if (writeSilence == 0 && sampleOffset == 0)
+              {
+                HRESULT schedulingHR = CheckStreamTimeline(sample, &dueTime);
+                if (schedulingHR == MPAR_S_DROP_SAMPLE)
+                {
+                  sample.Release();
+                  break;
+                }
+                else if (schedulingHR == MPAR_S_WAIT_RENDER_TIME)
+                  CalculateSilence(&dueTime, &writeSilence);
+              }
 
               sample->GetPointer(&sampleData);
               sampleLength = sample->GetActualDataLength();
               sampleOffset = 0;
             }
 
-            dataLeftInSample = sampleLength - sampleOffset;
+            if (m_state == StatePaused)
+              writeSilence = bufferSizeInBytes;
 
-            UINT32 bytesToCopy = min(dataLeftInSample, bufferSizeInBytes - bytesCopied);
-            memcpy(data + bytesCopied, sampleData + sampleOffset, bytesToCopy); 
-            bytesCopied += bytesToCopy;
-            sampleOffset += bytesToCopy;
+            if (writeSilence == 0)
+            {
+              dataLeftInSample = sampleLength - sampleOffset;
+
+              UINT32 bytesToCopy = min(dataLeftInSample, bufferSizeInBytes - bytesCopied);
+              memcpy(data + bytesCopied, sampleData + sampleOffset, bytesToCopy); 
+              bytesCopied += bytesToCopy;
+              sampleOffset += bytesToCopy;
+            }
+            else
+            {
+              UINT32 silentBytes = min(writeSilence, bufferSizeInBytes - bytesCopied);
+              memset(data + bytesCopied, 0, silentBytes);
+              bytesCopied += silentBytes;
+              writeSilence -= silentBytes;
+            }
+
           } while (bytesCopied < bufferSizeInBytes);
         }
         
-        hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, bufferFlags);
+        hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, 0);
 
         if (FAILED(hr) && hr != AUDCLNT_E_OUT_OF_ORDER)
           Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
-
-        if (bufferFlags == AUDCLNT_BUFFERFLAGS_SILENT && writeSilence > 0)
-          writeSilence--;
       }
 
       if (!m_pSettings->m_WASAPIUseEventMode)

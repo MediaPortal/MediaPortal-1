@@ -364,7 +364,14 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
       long nSize = m_pNextOutSample->GetSize();
 
       if (nOffset + m_nOutFrameSize > nSize)
+      {
         hr = OutputNextSample();
+
+        UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
+        REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+
+        m_rtInSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+      }
     }
 
     // try to get an output buffer if none available

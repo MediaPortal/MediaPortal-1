@@ -20,16 +20,22 @@
 #include "IRenderFilter.h"
 #include "Settings.h"
 #include "queuedaudiosink.h"
+#include "SyncClock.h"
 
 #define MPAR_S_NEED_DATA        ((HRESULT)0x00040201)
+#define MPAR_S_DROP_SAMPLE      ((HRESULT)0x00040202)
+#define MPAR_S_RENDER_SAMPLE    ((HRESULT)0x00040203)
+#define MPAR_S_WAIT_RENDER_TIME ((HRESULT)0x00040204)
 #define CLOCK_DATA_SIZE 10
 #define MAX_SAMPLE_WAIT_TIME 10 // 10 ms
+#define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
+
 using namespace std;
 
 class CWASAPIRenderFilter : public CQueuedAudioSink, public IRenderFilter
 {
 public:
-  CWASAPIRenderFilter(AudioRendererSettings* pSettings);
+  CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock);
   virtual ~CWASAPIRenderFilter();
 
   // IAudioSink implementation
@@ -82,8 +88,9 @@ private:
 
   HRESULT CheckAudioClient(WAVEFORMATEX* pWaveFormatEx);
   HRESULT CheckSample(IMediaSample* pSample);
-  HRESULT CheckStreamTimeline(IMediaSample* pSample);
+  HRESULT CheckStreamTimeline(IMediaSample* pSample, REFERENCE_TIME* pDueTime);
   HRESULT GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, REFERENCE_TIME* pHnsBufferPeriod);
+  void CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence);
 
   AudioRendererSettings* m_pSettings;
   IMMDevice*          m_pMMDevice;
@@ -99,8 +106,16 @@ private:
   bool                m_bIsAudioClientStarted;
 
   HANDLE              m_hDataEvent;
+  HANDLE              m_hTimerEvent;
+
+  DWORD_PTR           m_dwAdvise;
 
   RenderState         m_state;
+
+  CSyncClock*         m_pClock;
+
+  REFERENCE_TIME      m_rtNextSampleTime;
+  LONGLONG            m_nSampleNum;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;

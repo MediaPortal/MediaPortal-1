@@ -329,8 +329,8 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
     if (nOffset + m_nFrameSize > nSize)
       OutputNextSample();
 
-    //m_rtInSampleTime += framesToConvert * m_nFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
-
+    m_rtInSampleTime += data.output_frames_gen * m_nFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
+    
     // all samples should contain an integral number of frames
     ASSERT(cbData == 0 || cbData >= m_nFrameSize);
   }
