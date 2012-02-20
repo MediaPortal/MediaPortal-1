@@ -2089,6 +2089,32 @@ namespace TvPlugin
         {
           return true;
         }
+        //push chapter and jumppoint information to gui property manager
+        if(g_Player.IsTVRecording && g_Player.HasChapters) 
+        {	
+      	  double[] chapters = g_Player.Chapters;
+      	  double[] jumpPoints = g_Player.JumpPoints;
+      	  
+      	  string strChapters = string.Empty;
+      	  string strJumps = string.Empty;
+      	  
+      	  double duration = g_Player.Duration;
+      	  foreach(double chapter in chapters) {
+      	    double chapterPercent = chapter/duration*100.0d;
+      	  	strChapters += String.Format("{0:0.00}", chapterPercent) + "    ";
+      	  }
+      	  foreach(double jump in jumpPoints) {
+      	    double jumpPercent = jump/duration*100.0d;
+      	  	strJumps += String.Format("{0:0.00}", jumpPercent) + "    ";
+      	  }
+      	  GUIPropertyManager.SetProperty("#TV.Record.chapters", strChapters);
+      	  GUIPropertyManager.SetProperty("#TV.Record.jumppoints", strJumps);
+      	  
+      	  Log.Debug("TVHome.ShowFullScreenWindow - setting chapters::" + strChapters);
+      	  Log.Debug("TVHome.ShowFullScreenWindow - setting jumppoints::" + strJumps);
+        }
+        
+
         Log.Info("TVHome: ShowFullScreenWindow switching to fullscreen tv");
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
@@ -2582,6 +2608,9 @@ namespace TvPlugin
           percentLivePoint *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.View.Percentage", percentLivePoint.ToString());
           GUIPropertyManager.SetProperty("#TV.Record.percent3", percentLivePoint.ToString());
+        
+          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
         }
       }
 
@@ -2613,6 +2642,8 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
       GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
+      GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
     }
 
     private static void UpdateNextEpgProperties(Channel ch)
