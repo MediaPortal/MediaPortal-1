@@ -2382,6 +2382,7 @@ namespace MediaPortal.GUI.Video
           // DVD & files
           if ((Path.GetFileName(item.Path) != string.Empty) || Util.Utils.IsDVD(item.Path))
           {
+            // DVD disc drive
             if (Util.Utils.IsDVD(item.Path))
             {
               if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
@@ -2399,24 +2400,33 @@ namespace MediaPortal.GUI.Video
             // Folder
             else if (item.IsFolder)
             {
+              bool useMediaInfo = false;
+              
               if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
               {
-                dlg.AddLocalizedString(208); //play             
+                dlg.AddLocalizedString(208); //play
+                useMediaInfo = true;
               }
-              dlg.AddLocalizedString(926); //Queue
               
               if (!VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
               {
-                //
-                // Play all
-                //
                 SelectDVDHandler checkIfIsDvd = new SelectDVDHandler();
+                
+                // Simple folder
                 if (!checkIfIsDvd.IsDvdDirectory(item.Path))
                 {
                   dlg.AddLocalizedString(1204); // Play All in selected folder
+                  dlg.AddLocalizedString(926); //Queue
+                  dlg.AddLocalizedString(102); //Scan 
                 }
-                else
+                // DVD folder
+                else if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
                 {
+                  useMediaInfo = true;
+                  dlg.AddLocalizedString(208); //play             
+                  dlg.AddLocalizedString(926); //Queue
+                  dlg.AddLocalizedString(368); //IMDB
+
                   if (item.IsPlayed)
                   {
                     dlg.AddLocalizedString(830); //Reset watched status for DVD folder
@@ -2426,11 +2436,7 @@ namespace MediaPortal.GUI.Video
                     dlg.AddLocalizedString(1260); // Set watched status
                   }
                 }
-                //
-                dlg.AddLocalizedString(102); //Scan            
               }
-              
-              dlg.AddLocalizedString(368); //IMDB
               
               if (Util.Utils.getDriveType(item.Path) == 5)
               {
@@ -2441,7 +2447,11 @@ namespace MediaPortal.GUI.Video
               {
                 dlg.AddLocalizedString(500); // FileMenu            
               }
-              dlg.AddLocalizedString(1264); //Media info
+
+              if (useMediaInfo)
+              {
+                dlg.AddLocalizedString(1264); //Media info
+              }
             }
             else
             {
@@ -2499,6 +2509,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 208: // play
+          _playClicked = true;
           OnClick(itemNo);
           break;
 

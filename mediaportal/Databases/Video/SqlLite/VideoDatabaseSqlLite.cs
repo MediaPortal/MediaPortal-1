@@ -652,9 +652,37 @@ namespace MediaPortal.Video.Database
           
           m_db.Execute(strSQL);
           SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
+          ArrayList movieFiles = new ArrayList();
+          int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
+          VideoDatabase.GetFiles(movieId, ref movieFiles);
+          SetMovieDuration(movieId, MovieDuration(movieFiles));
         }
         catch (Exception) {}
       }
+    }
+
+    private int MovieDuration(ArrayList files)
+    {
+      int totalMovieDuration = 0;
+
+      if (files == null || files.Count == 0)
+      {
+        return totalMovieDuration;
+      }
+
+      try
+      {
+        foreach (string file in files)
+        {
+          int fileID = VideoDatabase.GetFileId(file);
+          int tempDuration = VideoDatabase.GetVideoDuration(fileID);
+
+          totalMovieDuration += tempDuration;
+        }
+      }
+      catch (Exception) { }
+
+      return totalMovieDuration;
     }
 
     public int GetFile(string strFilenameAndPath, out int lPathId, out int lMovieId, bool bExact)

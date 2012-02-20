@@ -363,15 +363,13 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
 
-      int duration = VideoDatabase.GetMovieDuration(VideoDatabase.GetFileId(file));
-
-      if (duration <= 0)
+      if (ID == -1)
       {
-        GUIPropertyManager.SetProperty("#runtime", Util.Utils.SecondsToHMSString(RunTime * 60));
+        SetDurationProperty(VideoDatabase.GetMovieId(file));
       }
       else
       {
-        GUIPropertyManager.SetProperty("#runtime", Util.Utils.SecondsToHMSString(duration));
+        SetDurationProperty(ID);
       }
 
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
@@ -439,6 +437,30 @@ namespace MediaPortal.Video.Database
       catch (Exception e)
       {
         Log.Error("IMDBMovie Media Info error: file:{0}, error:{1}", file, e);
+      }
+    }
+
+    public void SetDurationProperty(int movieId) 
+    {
+      if (RunTime <= 0)
+      {
+        IMDBMovie movie = new IMDBMovie();
+        VideoDatabase.GetMovieInfoById(movieId, ref movie);
+        RunTime = movie.RunTime;
+      }
+      GUIPropertyManager.SetProperty("#runtime", RunTime +
+                              GUILocalizeStrings.Get(2998) +
+                              " (" + Util.Utils.SecondsToHMString(RunTime * 60) + ")");
+
+      int duration = VideoDatabase.GetMovieDuration(movieId);
+
+      if (duration <= 0)
+      {
+        GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#videoruntime", Util.Utils.SecondsToHMSString(duration));
       }
     }
 
