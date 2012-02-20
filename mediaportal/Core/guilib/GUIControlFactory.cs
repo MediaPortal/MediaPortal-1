@@ -911,6 +911,8 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIProgressControl);
         case ("tvprogress"):
           return typeof (GUITVProgressControl);
+        case ("tvcomskipprogress"):
+          return typeof(GUITVComskipProgressControl);
         case ("hscrollbar"):
           return typeof (GUIHorizontalScrollbar);
         case ("vscrollbar"):
