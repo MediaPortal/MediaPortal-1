@@ -80,6 +80,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configAudioRenderer
       // 
+      this.configAudioRenderer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAudioRenderer.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configAudioRenderer.Location = new System.Drawing.Point(403, 154);
       this.configAudioRenderer.Name = "configAudioRenderer";
@@ -90,6 +91,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configDDPlus
       // 
+      this.configDDPlus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDDPlus.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configDDPlus.Location = new System.Drawing.Point(403, 130);
       this.configDDPlus.Name = "configDDPlus";
@@ -100,6 +102,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configAACAudio
       // 
+      this.configAACAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAACAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configAACAudio.Location = new System.Drawing.Point(403, 106);
       this.configAACAudio.Name = "configAACAudio";
@@ -110,6 +113,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configMPEGAudio
       // 
+      this.configMPEGAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configMPEGAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configMPEGAudio.Location = new System.Drawing.Point(403, 83);
       this.configMPEGAudio.Name = "configMPEGAudio";
@@ -120,6 +124,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configH264
       // 
+      this.configH264.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configH264.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configH264.Location = new System.Drawing.Point(403, 48);
       this.configH264.Name = "configH264";
@@ -130,6 +135,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configMPEG
       // 
+      this.configMPEG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configMPEG.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configMPEG.Location = new System.Drawing.Point(403, 24);
       this.configMPEG.Name = "configMPEG";

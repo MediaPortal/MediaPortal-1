@@ -304,6 +304,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configAudioRenderer
       // 
+      this.configAudioRenderer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAudioRenderer.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configAudioRenderer.Location = new System.Drawing.Point(403, 120);
       this.configAudioRenderer.Name = "configAudioRenderer";
@@ -314,6 +315,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configDVDAudio
       // 
+      this.configDVDAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDVDAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configDVDAudio.Location = new System.Drawing.Point(403, 96);
       this.configDVDAudio.Name = "configDVDAudio";
@@ -324,6 +326,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configDVDVideo
       // 
+      this.configDVDVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDVDVideo.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configDVDVideo.Location = new System.Drawing.Point(403, 72);
       this.configDVDVideo.Name = "configDVDVideo";
@@ -334,6 +337,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // configDVDNav
       // 
+      this.configDVDNav.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDVDNav.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
       this.configDVDNav.Location = new System.Drawing.Point(403, 24);
       this.configDVDNav.Name = "configDVDNav";
@@ -520,7 +524,7 @@ namespace MediaPortal.Configuration.Sections
                   RegConfigtoMP(@"Software\Cyberlink\Common\CLVSD");
                   RegConfigtoMP(@"Software\Cyberlink\Common\CLAud");
                 }
-                else
+                else if (!selection.StartsWith("DVD Navigator"))
                 {
                   DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)device);
                   page.Show(this);
