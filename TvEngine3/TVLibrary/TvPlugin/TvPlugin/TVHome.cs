@@ -2101,11 +2101,11 @@ namespace TvPlugin
       	  double duration = g_Player.Duration;
       	  foreach(double chapter in chapters) {
       	    double chapterPercent = chapter/duration*100.0d;
-      	  	strChapters += String.Format("{0:0.00}", chapterPercent) + "    ";
+      	  	strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
       	  }
       	  foreach(double jump in jumpPoints) {
       	    double jumpPercent = jump/duration*100.0d;
-      	  	strJumps += String.Format("{0:0.00}", jumpPercent) + "    ";
+      	  	strJumps += String.Format("{0:0.00}", jumpPercent) + " ";
       	  }
       	  GUIPropertyManager.SetProperty("#TV.Record.chapters", strChapters);
       	  GUIPropertyManager.SetProperty("#TV.Record.jumppoints", strJumps);
