@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+using System.Linq;
 using MediaPortal.ExtensionMethods;
+using System.Collections.Generic;
 
 namespace MediaPortal.GUI.Library
 {
@@ -42,9 +44,12 @@ namespace MediaPortal.GUI.Library
     private GUIAnimation _imageLeft = null;
     private GUIAnimation _imageMid = null;
     private GUIAnimation _imageRight = null;
+    private List<GUIAnimation> _imageFillJump = new List<GUIAnimation>();
     private float _percentage1 = 0;
     private float _percentage2 = 0;
     private float _percentage3 = 0;
+    private List<float> _chapters = new List<float>();
+    private List<float> _jumppoints = new List<float>();
 
 
     [XMLSkinElement("label")] private string _propertyLabel = "";
@@ -63,6 +68,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")] private string _label1 = "";
     [XMLSkinElement("label1")] private string _label2 = "";
     [XMLSkinElement("label2")] private string _label3 = "";
+    [XMLSkinElement("labelchapters")] private string _labelchapters = "";
+    [XMLSkinElement("labeljumppoints")] private string _labeljumppoints = "";
     [XMLSkinElement("TextureOffsetY")] protected int _topTextureOffsetY = 0;
     [XMLSkinElement("toptexture")] protected string _topTextureName;
     [XMLSkinElement("bottomtexture")] protected string _bottomTextureName;
@@ -74,6 +81,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("filltexture1")] protected string _tickFill1TextureName;
     [XMLSkinElement("filltexture2")] protected string _tickFill2TextureName;
     [XMLSkinElement("filltexture3")] protected string _tickFill3TextureName;
+    [XMLSkinElement("jumptexture")] protected string _jumpTextureName;
     [XMLSkinElement("logotexture")] protected string _logoTextureName;
 
     public GUITVComskipProgressControl(int dwParentID)
@@ -86,7 +94,7 @@ namespace MediaPortal.GUI.Library
                                 string strLeftTexture, string strMidTexture,
                                 string strRightTexture, string strTickTexure,
                                 string strTextureFill1, string strTextureFill2, string strTextureFill3,
-                                string strLogoTextureName)
+                                string strTextureJump, string strLogoTextureName)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _topTextureName = strBackGroundTexture;
@@ -98,6 +106,7 @@ namespace MediaPortal.GUI.Library
       _tickFill1TextureName = strTextureFill1;
       _tickFill2TextureName = strTextureFill2;
       _tickFill3TextureName = strTextureFill3;
+      _jumpTextureName = strTextureJump;
       _logoTextureName = strLogoTextureName;
       FinalizeConstruction();
       DimColor = base.DimColor;
@@ -142,6 +151,10 @@ namespace MediaPortal.GUI.Library
       {
         _tickFill3TextureName = string.Empty;
       }
+      if (_jumpTextureName == null)
+      {
+        _jumpTextureName = string.Empty;
+      }
       if (_fillBackGroundTextureName == null)
       {
         _fillBackGroundTextureName = string.Empty;
@@ -180,11 +193,27 @@ namespace MediaPortal.GUI.Library
       _imageTick.ParentControl = this;
       _imageFill1.ParentControl = this;
       _imageFill2.ParentControl = this;
-      _imageFill3.ParentControl = this;
       _imageFillBackground.ParentControl = this;
       _imageLogo = LoadAnimationControl(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName);
       _imageLogo.ParentControl = this;
       FontName = _fontName;
+      
+      //for each of the jump points create an image.
+      string strText = GUIPropertyManager.Parse(LabelJumppoints);
+      	if (strText.Length > 0)
+      	{
+      	  string[] strJumps = strText.Trim().Split(' ');
+  		  _imageFillJump.Clear();
+  		  for(int i=0; i<strJumps.Length; i++) {
+  		  	GUIAnimation anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, 0, 0,
+                                         _jumpTextureName);
+  		  	anim.KeepAspectRatio = false;
+  		  	anim.ParentControl = this;
+  		  	_imageFillJump.Add(anim);
+  		  	
+  		  }
+      	
+      	}
     }
 
     public override void ScaleToScreenResolution()
@@ -232,6 +261,10 @@ namespace MediaPortal.GUI.Library
         if (_imageFill3 != null)
         {
           _imageFill3.Dimmed = value;
+        }
+        foreach (GUIAnimation imageFillJump in _imageFillJump)
+        {
+        	imageFillJump.Dimmed=value;
         }
         if (_imageLeft != null)
         {
@@ -328,6 +361,50 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+      
+      if (LabelJumppoints.Length>0)
+      {
+      	string strText = GUIPropertyManager.Parse(LabelJumppoints);
+      	if (strText.Length > 0)
+      	{
+      		
+      	  string[] strJumps = strText.Trim().Split(' ');
+  		  Jumppoints.Clear();
+  		  for(int i=0; i< strJumps.Length; i++) {
+  		    try 
+  			{
+  		      Jumppoints.Add(float.Parse(strJumps[i]));
+  			}
+  			catch (Exception) {}
+  			if (Jumppoints[i] < 0 || Jumppoints[i] > 100)
+  			{
+  				Jumppoints[i] = 0;
+  			}
+  		  }	
+      	}
+      }
+      if (LabelChapters.Length>0)
+      {
+      	string strText = GUIPropertyManager.Parse(LabelChapters);
+      	if (strText.Length > 0)
+      	{
+      		
+      	  string[] strChaps = strText.Trim().Split(' ');
+  		  Chapters.Clear();
+  		  for(int i=0; i< strChaps.Length; i++) {
+  		    try 
+  			{
+  		      Chapters.Add(float.Parse(strChaps[i]));
+  			}
+  			catch (Exception) {}
+  			if (Chapters[i] < 0 || Chapters[i] > 100)
+  			{
+  				Chapters[i] = 0;
+  			}
+  		  }	
+      	}
+      }
+      
 
       int xPos = _positionX;
       _imageLeft.SetPosition(xPos, _positionY);
@@ -357,16 +434,39 @@ namespace MediaPortal.GUI.Library
       _imageFillBackground.Height = _imageMid.TextureHeight - _fillBackgroundOffsetY * 2;
       _imageFillBackground.SetPosition(xPos, _positionY + _fillBackgroundOffsetY);
       _imageFillBackground.Render(timePassed);
-
-      // render first color
+     
       int xoff = GUIGraphicsContext.ScaleHorizontal(3);
-
-      xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
+	  //render commercial markers
+	  xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
       int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height / 2) - (_fillBackgroundHeight / 2);
-      if (yPos < _positionY)
+	  if (yPos < _positionY)
       {
         yPos = _positionY;
       }
+	  fWidth = (float)iWidth;
+      fWidth /= 100.0f;
+	  float percentIncrement = fWidth;
+	  float fJumpWidth=0;
+	  for(int i=0; i<Jumppoints.Count || i<Chapters.Count; i++) {
+	  	//set the width of the bar
+	  	fJumpWidth = (float)Chapters[i]-(float)Jumppoints[i];
+	  	fJumpWidth *= percentIncrement;
+	  	//set the current starting position
+      	fWidth = percentIncrement*(float)Jumppoints[i];
+      	iWidth1 = (int)Math.Floor(fWidth);
+	  	iCurPos = iWidth1 + xPos;
+	  	//set the rounded width
+	  	iWidth1 = (int)Math.Floor(fJumpWidth);
+	  	if(iWidth1 > 0) {
+	  		_imageFillJump[i].Height = _fillBackgroundHeight;
+	  		_imageFillJump[i].Width = iWidth1;
+	  		_imageFillJump[i].SetPosition(iCurPos, yPos);
+	  		_imageFillJump[i].Render(timePassed);
+	  	}
+	  }
+	  
+      // render first color
+      xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
       fWidth = (float)iWidth;
       fWidth /= 100.0f;
       fWidth *= (float)Percentage1;
@@ -585,7 +685,24 @@ namespace MediaPortal.GUI.Library
           _percentage3 = 100;
         }
       }
+    }    
+    public List<float> Jumppoints
+    {
+      get { return _jumppoints; }
+      set
+      {
+        _jumppoints = value;
+      }
     }
+    public List<float> Chapters
+    {
+      get { return _chapters; }
+      set
+      {
+        _chapters = value;
+      }
+    }
+
 
     public override void Dispose()
     {
@@ -596,6 +713,11 @@ namespace MediaPortal.GUI.Library
       _imageLeft.SafeDispose();
       _imageFill1.SafeDispose();
       _imageFill2.SafeDispose();
+      foreach (GUIAnimation imageFillJump in _imageFillJump)
+        {
+      	  imageFillJump.SafeDispose();
+        }
+      _imageFillJump.SafeDispose();
       _imageFill3.SafeDispose();
       _imageFillBackground.SafeDispose();
       _imageTick.SafeDispose();
@@ -615,6 +737,10 @@ namespace MediaPortal.GUI.Library
       _imageFill1.PreAllocResources();
       _imageFill2.PreAllocResources();
       _imageFill3.PreAllocResources();
+      foreach (GUIAnimation imageFillJump in _imageFillJump)
+        {
+      	  imageFillJump.PreAllocResources();
+        }
       _imageTick.PreAllocResources();
       _imageLogo.PreAllocResources();
     }
@@ -632,6 +758,11 @@ namespace MediaPortal.GUI.Library
       _imageFill1.AllocResources();
       _imageFill2.AllocResources();
       _imageFill3.AllocResources();
+      foreach (GUIAnimation imageFillJump in _imageFillJump)
+        {
+      	  imageFillJump.AllocResources();
+      	  imageFillJump.Filtering = false;
+        }
       _imageTick.AllocResources();
       _imageLogo.AllocResources();
 
@@ -655,6 +786,10 @@ namespace MediaPortal.GUI.Library
       _imageFill1.Height = _height - 6;
       _imageFill2.Height = _height - 6;
       _imageFill3.Height = _height - 6;
+      foreach (GUIAnimation imageFillJump in _imageFillJump)
+        {
+        	imageFillJump.Height=_height - 6;
+        }
       //_imageTick.Height=_height;
     }
 
@@ -677,6 +812,7 @@ namespace MediaPortal.GUI.Library
     {
       get { return _imageFill3.FileName; }
     }
+    
 
     public string TickTextureName
     {
@@ -871,6 +1007,32 @@ namespace MediaPortal.GUI.Library
         _label3 = value;
       }
     }
+    
+    public string LabelJumppoints
+    {
+    	get {return _labeljumppoints; }
+    	set
+    	{
+    		if (value == null)
+    		{
+    			return;
+    		}
+    		_labeljumppoints = value;
+    	}
+    }
+    
+    public string LabelChapters
+    {
+    	get {return _labelchapters; }
+    	set
+    	{
+    		if (value==null)
+    		{
+    			return;
+    		}
+    		_labelchapters=value;
+    	}
+    }
 
     public int TopTextureYOffset
     {
@@ -922,6 +1084,10 @@ namespace MediaPortal.GUI.Library
         if (_imageFill3 != null)
         {
           _imageFill3.DimColor = value;
+        }
+        foreach (GUIAnimation imageFillJump in _imageFillJump)
+        {
+        	imageFillJump.DimColor=value;
         }
         if (_imageLeft != null)
         {
