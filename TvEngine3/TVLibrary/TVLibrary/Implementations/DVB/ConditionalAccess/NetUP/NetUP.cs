@@ -23,10 +23,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using DirectShowLib;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.DVB.Structures;
-using TvLibrary.Channels;
 using DirectShowLib.BDA;
+using TvLibrary.Channels;
+using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -42,11 +42,16 @@ namespace TvLibrary.Implementations.DVB
       Diseqc = 0x100000,
 
       CiStatus = 0x200000,
+      ApplicationInfo = 0x210000,
+      ConditionalAccessInfo = 0x220000,
+      CiReset = 0x230000,
 
       MmiEnterMenu = 0x300000,
       MmiGetMenu = 0x310000,
       MmiAnswerMenu = 0x320000,
       MmiClose = 0x330000,
+      MmiGetEnquiry = 0x340000,
+      MmiPutAnswer = 0x350000,
 
       PmtListChange = 0x400000
     }
@@ -55,8 +60,9 @@ namespace TvLibrary.Implementations.DVB
     private enum NetUpCiState
     {
       Empty = 0,
-      CamPresent,
-      MmiDataReady
+      CamPresent = 1,
+      MmiMenuReady = 2,
+      MmiEnquiryReady = 4
     }
 
     #endregion
@@ -64,13 +70,34 @@ namespace TvLibrary.Implementations.DVB
     #region structs
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
-    private struct CiStateInfo    // NETUP_CAM_STATUS
+    private struct ApplicationInfo    // NETUP_CAM_APPLICATION_INFO
     {
-      public NetUpCiState CiState;
+      public DVB_MMI.ApplicationType ApplicationType;
       public UInt16 Manufacturer;
       public UInt16 ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
       public String RootMenuTitle;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    private struct CiStateInfo    // NETUP_CAM_STATUS
+    {
+      public NetUpCiState CiState;
+
+      // These fields don't ever seem to be filled, but that is okay since
+      // we can query for application info directly.
+      public UInt16 Manufacturer;
+      public UInt16 ManufacturerCode;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      public String RootMenuTitle;
+    }
+
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    private struct CaInfo   // TYP_SLOT_INFO
+    {
+      public UInt32 NumberOfCaSystemIds;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxCaSystemIds)]
+      public UInt16[] CaSystemIds;
     }
 
     private struct MmiMenuEntry
@@ -82,7 +109,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
-    private struct MmiData    // NETUP_CAM_MENU
+    private struct MmiMenu    // NETUP_CAM_MENU
     {
       public bool IsMenu;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
@@ -96,6 +123,23 @@ namespace TvLibrary.Implementations.DVB
       public UInt32 EntryCount;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    private struct MmiEnquiry   // NETUP_CAM_MMI_ENQUIRY
+    {
+	    public bool IsBlindAnswer;
+	    public byte ExpectedAnswerLength;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      public String Prompt;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    private struct MmiAnswer    // NETUP_CAM_MMI_ANSWER
+    {
+	    public byte AnswerLength;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      public String Answer;
+    }
+
     #endregion
 
     #region constants
@@ -104,10 +148,15 @@ namespace TvLibrary.Implementations.DVB
 
     private const int InstanceSize = 32;
     private const int CommandSize = 48;
-    private const int CiStateInfoSize = 264 + 32;
-    private const int MmiDataSize = 8 + (MaxStringLength * (3 + MaxCamMenuEntries));
+    private const int ApplicationInfoSize = 6 + MaxStringLength;
+    private const int CiStateInfoSize = 8 + MaxStringLength;
+    private const int CaInfoSize = 4 + (MaxCaSystemIds * 2);
+    private const int MmiMenuSize = 8 + (MaxStringLength * (3 + MaxCamMenuEntries));
+    private const int MmiEnquirySize = 8 + MaxStringLength;
+    private const int MmiAnswerSize = 4 + MaxStringLength;
     private const int MaxBufferSize = 65536;
     private const int MaxStringLength = 256;
+    private const int MaxCaSystemIds = 256;
     private const int MaxCamMenuEntries = 64;
     private const int MaxDiseqcMessageLength = 64;    // This is to match the _generalBuffer size - the driver limit is MaxBufferSize.
 
@@ -246,7 +295,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("NetUP: supported tuner detected");
       _isNetUp = true;
       _generalBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
-      _mmiBuffer = Marshal.AllocCoTaskMem(MmiDataSize);
+      _mmiBuffer = Marshal.AllocCoTaskMem(MmiMenuSize);
 
       _isCiSlotPresent = IsCiSlotPresent();
       if (_isCiSlotPresent)
@@ -276,7 +325,71 @@ namespace TvLibrary.Implementations.DVB
     #region conditional access
 
     /// <summary>
-    /// Gets the conditional access interface status.
+    /// Read the conditional access application information.
+    /// </summary>
+    /// <returns>an HRESULT indicating whether the application information was successfully retrieved</returns>
+    private int ReadApplicationInformation()
+    {
+      Log.Log.Debug("NetUP: read application information");
+
+      for (int i = 0; i < ApplicationInfoSize; i++)
+      {
+        Marshal.WriteByte(_mmiBuffer, i, 0);
+      }
+      NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.ApplicationInfo, IntPtr.Zero, 0, _mmiBuffer, ApplicationInfoSize);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, out returnedByteCount);
+
+      if (hr == 0 && returnedByteCount == ApplicationInfoSize)
+      {
+        ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
+        Log.Log.Debug("  type         = {0}", info.ApplicationType);
+        Log.Log.Debug("  manufacturer = 0x{0:x}", info.Manufacturer);
+        Log.Log.Debug("  code         = 0x{0:x}", info.ManufacturerCode);
+        Log.Log.Debug("  menu title   = {0}", info.RootMenuTitle);
+      }
+      else
+      {
+        Log.Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+
+      return hr;
+    }
+
+    /// <summary>
+    /// Read the conditional access information.
+    /// </summary>
+    /// <returns>an HRESULT indicating whether the conditional access information was successfully retrieved</returns>
+    private int ReadConditionalAccessInformation()
+    {
+      Log.Log.Debug("NetUP: read conditional access information");
+
+      for (int i = 0; i < CaInfoSize; i++)
+      {
+        Marshal.WriteByte(_mmiBuffer, i, 0);
+      }
+      NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.ConditionalAccessInfo, IntPtr.Zero, 0, _mmiBuffer, CaInfoSize);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, out returnedByteCount);
+      if (hr == 0 && returnedByteCount == CaInfoSize)
+      {
+        CaInfo info = (CaInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(CaInfo));
+        Log.Log.Debug("  # CAS IDs = {0}", info.NumberOfCaSystemIds);
+        for (int i = 0; i < info.NumberOfCaSystemIds; i++)
+        {
+          Log.Log.Debug("  {0,-2}        = 0x{1:x4}", i + 1, info.CaSystemIds[i]);
+        }
+      }
+      else
+      {
+        Log.Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+
+      return hr;
+    }
+
+    /// <summary>
+    /// Get the conditional access interface status.
     /// </summary>
     /// <param name="ciState">State of the CI slot.</param>
     /// <returns>an HRESULT indicating whether the CI status was successfully retrieved</returns>
@@ -294,7 +407,7 @@ namespace TvLibrary.Implementations.DVB
       NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.CiStatus, IntPtr.Zero, 0, buffer, CiStateInfoSize);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == 0 && returnedByteCount == CiStateInfoSize)
       {
         ciState = (CiStateInfo)Marshal.PtrToStructure(buffer, typeof(CiStateInfo));
       }
@@ -303,7 +416,135 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Determines whether a CI slot is present or not.
+    /// Read an MMI menu object and invoke callbacks as necessary.
+    /// </summary>
+    /// <returns>an HRESULT indicating whether the menu object was successfully handled</returns>
+    private int HandleMenu()
+    {
+      Log.Log.Debug("NetUP: read menu");
+
+      MmiMenu mmi;
+      lock (this)
+      {
+        for (int i = 0; i < MmiMenuSize; i++)
+        {
+          Marshal.WriteByte(_mmiBuffer, i, 0);
+        }
+
+        NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MmiMenuSize);
+        int returnedByteCount;
+        int hr = command.Execute(_propertySet, out returnedByteCount);
+        if (hr != 0 || returnedByteCount != MmiMenuSize)
+        {
+          Log.Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return hr;
+        }
+        mmi = (MmiMenu)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiMenu));
+      }
+
+      Log.Log.Debug("  is menu   = {0}", mmi.IsMenu);
+      Log.Log.Debug("  title     = {0}", mmi.Title);
+      Log.Log.Debug("  sub-title = {0}", mmi.SubTitle);
+      Log.Log.Debug("  footer    = {0}", mmi.Footer);
+      Log.Log.Debug("  # entries = {0}", mmi.EntryCount);
+      try
+      {
+        if (_ciMenuCallbacks != null)
+        {
+          _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, (int)mmi.EntryCount);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("NetUP: menu header callback exception: {0}", ex.ToString());
+      }
+      for (int i = 0; i < mmi.EntryCount; i++)
+      {
+        Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, mmi.Entries[i].Text);
+        try
+        {
+          if (_ciMenuCallbacks != null)
+          {
+            _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Entries[i].Text);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Debug("NetUP: menu choice callback exception: {0}", ex.ToString());
+        }
+      }
+      return 0; // success
+    }
+
+    /// <summary>
+    /// Read an MMI enquiry object and invoke callbacks as necessary.
+    /// </summary>
+    /// <returns>an HRESULT indicating whether the enquiry object was successfully handled</returns>
+    private int HandleEnquiry()
+    {
+      Log.Log.Debug("NetUP: read enquiry");
+
+      MmiEnquiry mmi;
+      lock (this)
+      {
+        for (int i = 0; i < MmiEnquirySize; i++)
+        {
+          Marshal.WriteByte(_mmiBuffer, i, 0);
+        }
+
+        NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.MmiGetEnquiry, IntPtr.Zero, 0, _mmiBuffer, MmiEnquirySize);
+        int returnedByteCount;
+        int hr = command.Execute(_propertySet, out returnedByteCount);
+        if (hr != 0 || returnedByteCount != MmiEnquirySize)
+        {
+          Log.Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return hr;
+        }
+        mmi = (MmiEnquiry)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiEnquiry));
+      }
+
+      Log.Log.Debug("  prompt = {0}", mmi.Prompt);
+      Log.Log.Debug("  length = {0}", mmi.ExpectedAnswerLength);
+      Log.Log.Debug("  blind  = {0}", mmi.IsBlindAnswer);
+      try
+      {
+        if (_ciMenuCallbacks != null)
+        {
+          _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, mmi.Prompt);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("NetUP: CAM request callback exception: {0}", ex.ToString());
+      }
+      return 0; // success
+    }
+
+    /// <summary>
+    /// Reset the conditional access interface.
+    /// </summary>
+    /// <param name="rebuildGraph"><c>True</c> if the DirectShow filter graph should be rebuilt after calling this function.</param>
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    public bool ResetCi(out bool rebuildGraph)
+    {
+      Log.Log.Debug("NetUP: reset conditional access interface");
+      rebuildGraph = false;
+
+      NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.CiReset, IntPtr.Zero, 0, IntPtr.Zero, 0);
+      int returnedByteCount;
+      int hr = command.Execute(_propertySet, out returnedByteCount);
+      if (hr == 0)
+      {
+        Log.Log.Debug("NetUP: result = success");
+        return true;
+      }
+
+      Log.Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    /// <summary>
+    /// Determine whether a CI slot is present or not.
     /// </summary>
     /// <returns><c>true</c> if a CI slot is present, otherwise <c>false</c></returns>
     public bool IsCiSlotPresent()
@@ -316,7 +557,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Determines whether a CAM is present or not.
+    /// Determine whether a CAM is present or not.
     /// </summary>
     /// <returns><c>true</c> if a CAM is present, otherwise <c>false</c></returns>
     public bool IsCamPresent()
@@ -347,7 +588,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Determines whether a CAM is present and ready for interaction.
+    /// Determine whether a CAM is present and ready for interaction.
     /// </summary>
     /// <returns><c>true</c> if a CAM is present and ready, otherwise <c>false</c></returns>
     public bool IsCamReady()
@@ -484,9 +725,6 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("NetUP: CI state change");
             Log.Log.Debug("  old state    = {0}", prevCiState.ToString());
             Log.Log.Debug("  new state    = {0}", ciState.ToString());
-            Log.Log.Debug("  manufacturer = 0x{0:x}", info.Manufacturer);
-            Log.Log.Debug("  code         = 0x{0:x}", info.ManufacturerCode);
-            Log.Log.Debug("  menu title   = {0}", info.RootMenuTitle);
 
             prevCiState = ciState;
             if (ciState == NetUpCiState.Empty)
@@ -501,59 +739,13 @@ namespace TvLibrary.Implementations.DVB
             }
           }
 
-          if ((ciState & NetUpCiState.MmiDataReady) != 0)
+          if ((ciState & NetUpCiState.MmiEnquiryReady) != 0)
           {
-            // MMI data is waiting to be retrieved, so let's get it.
-            Log.Log.Debug("NetUP: get new MMI data");
-            MmiData mmi;
-            for (int i = 0; i < MmiDataSize; i++)
-            {
-              Marshal.WriteByte(_mmiBuffer, i, 0);
-            }
-            lock (this)
-            {
-              NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MmiDataSize);
-              int returnedByteCount;
-              hr = command.Execute(_propertySet, out returnedByteCount);
-              if (hr != 0 || returnedByteCount != MmiDataSize)
-              {
-                Log.Log.Debug("NetUP: failed to get MMI data, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-                continue;
-              }
-              mmi = (MmiData)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiData));
-            }
-
-            Log.Log.Debug("  is menu   = {0}", mmi.IsMenu);
-            Log.Log.Debug("  title     = {0}", mmi.Title);
-            Log.Log.Debug("  sub-title = {0}", mmi.SubTitle);
-            Log.Log.Debug("  footer    = {0}", mmi.Footer);
-            Log.Log.Debug("  # entries = {0}", mmi.EntryCount);
-            try
-            {
-              if (_ciMenuCallbacks != null)
-              {
-                _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, (int)mmi.EntryCount);
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Log.Debug("NetUP: menu header callback exception: {0}", ex.ToString());
-            }
-            for (int i = 0; i < mmi.EntryCount; i++)
-            {
-              Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, mmi.Entries[i].Text);
-              try
-              {
-                if (_ciMenuCallbacks != null)
-                {
-                  _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Entries[i].Text);
-                }
-              }
-              catch (Exception ex)
-              {
-                Log.Log.Debug("NetUP: menu choice callback exception: {0}", ex.ToString());
-              }
-            }
+            HandleEnquiry();
+          }
+          if ((ciState & NetUpCiState.MmiMenuReady) != 0)
+          {
+            HandleMenu();
           }
         }
       }
@@ -601,6 +793,9 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       lock (this)
       {
+        ReadApplicationInformation();
+        ReadConditionalAccessInformation();
+
         NetUpCommand command = new NetUpCommand((uint)NetUpIoControl.MmiEnterMenu, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
         hr = command.Execute(_propertySet, out returnedByteCount);
@@ -681,7 +876,49 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SendMenuAnswer(bool cancel, string answer)
     {
-      Log.Log.Debug("NetUP: sending a menu answer is not supported");
+      if (!_isCamPresent)
+      {
+        return false;
+      }
+      if (answer == null)
+      {
+        answer = String.Empty;
+      }
+      Log.Log.Debug("NetUP: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+
+      // We have a limit for the answer string length.
+      if (answer.Length > MaxStringLength)
+      {
+        Log.Log.Debug("NetUP: answer too long, length = {0}", answer.Length);
+        return false;
+      }
+
+      MmiAnswer mmi = new MmiAnswer();
+      mmi.AnswerLength = (byte)answer.Length;
+      mmi.Answer = answer;
+      DVB_MMI.ResponseType responseType = DVB_MMI.ResponseType.Answer;
+      if (cancel)
+      {
+        responseType = DVB_MMI.ResponseType.Cancel;
+      }
+
+      int hr;
+      lock (this)
+      {
+        Marshal.StructureToPtr(mmi, _mmiBuffer, true);
+        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MmiAnswerSize);
+        UInt32 code = (uint)((uint)NetUpIoControl.MmiPutAnswer | ((byte)responseType << 8));
+        NetUpCommand command = new NetUpCommand(code, _mmiBuffer, MmiAnswerSize, IntPtr.Zero, 0);
+        int returnedByteCount;
+        hr = command.Execute(_propertySet, out returnedByteCount);
+      }
+      if (hr == 0)
+      {
+        Log.Log.Debug("NetUP: result = success");
+        return true;
+      }
+
+      Log.Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
