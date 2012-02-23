@@ -118,6 +118,7 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
     }
 
     pOutWfx->Format.nSamplesPerSec = gAllowedSampleRates[i];
+    pOutWfx->Format.nAvgBytesPerSec = gAllowedSampleRates[i] * pOutWfx->Format.nBlockAlign;
 
     hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
     sampleRatesTested++;
@@ -329,7 +330,7 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
     if (nOffset + m_nFrameSize > nSize)
       OutputNextSample();
 
-    m_rtInSampleTime += data.output_frames_gen * m_nFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
+    m_rtInSampleTime += data.output_frames_gen * m_nFrameSize * UNITS / m_pOutputFormat->Format.nAvgBytesPerSec;
     
     // all samples should contain an integral number of frames
     ASSERT(cbData == 0 || cbData >= m_nFrameSize);
