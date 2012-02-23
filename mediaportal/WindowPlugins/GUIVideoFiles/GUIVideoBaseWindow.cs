@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -419,7 +420,30 @@ namespace MediaPortal.GUI.Video
         {
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
           {
-            item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+            //item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+
+            // Show real movie duration (from video file)
+            int mDuration = VideoDatabase.GetMovieDuration(movie.ID);
+
+            if (mDuration <= 0)
+            {
+              ArrayList mFiles = new ArrayList();
+              VideoDatabase.GetFiles(movie.ID, ref mFiles);
+              mDuration = GUIVideoFiles.MovieDuration(mFiles, true);
+
+              if (mDuration <= 0)
+              {
+                item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+              }
+              else
+              {
+                item.Label2 = Util.Utils.SecondsToHMString(mDuration);
+              }
+            }
+            else
+            {
+              item.Label2 = Util.Utils.SecondsToHMString(mDuration);
+            }
           }
           else if (CurrentSortMethod == VideoSort.SortMethod.Year)
           {
@@ -496,6 +520,7 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(367); // rating
       dlg.AddLocalizedString(430); // label
       dlg.AddLocalizedString(527); // unwatched
+      
       if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
       {
         dlg.AddLocalizedString(1221); // date modified

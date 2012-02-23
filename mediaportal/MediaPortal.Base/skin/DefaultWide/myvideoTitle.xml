@@ -431,7 +431,7 @@
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
-		<control>
+		<!--control>
       <description>VideoRuntime value</description>
       <type>label</type>
       <id>1</id>
@@ -442,13 +442,13 @@
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-    </control>
+    </control-->
     <control>
       <description>Separator</description>
       <type>image</type>
       <id>1</id>
       <posX>71</posX>
-      <posY>520</posY>
+      <posY>495</posY>
       <width>533</width>
       <height>1</height>
       <texture>hbar1white.png</texture>
@@ -484,9 +484,9 @@
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>71</posX>
-      <posY>530</posY>
+      <posY>510</posY>
       <width>533</width>
-      <height>170</height>
+      <height>180</height>
       <label>#plot</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -498,7 +498,7 @@
       <type>image</type>
       <id>0</id>
       <posX>80</posX>
-      <posY>470</posY>
+      <posY>445</posY>
       <width>85</width>
       <height>42</height>
       <texture>logos\#VideoCodec.png</texture>
@@ -512,7 +512,7 @@
       <type>image</type>
       <id>0</id>
       <posX>170</posX>
-      <posY>470</posY>
+      <posY>445</posY>
       <width>85</width>
       <height>42</height>
       <texture>logos\#VideoResolution.png</texture>
@@ -526,7 +526,7 @@
       <type>image</type>
       <id>0</id>
       <posX>260</posX>
-      <posY>470</posY>
+      <posY>445</posY>
       <width>85</width>
       <height>42</height>
       <texture>logos\#AspectRatio.png</texture>
@@ -540,7 +540,7 @@
       <type>image</type>
       <id>0</id>
       <posX>350</posX>
-      <posY>470</posY>
+      <posY>445</posY>
       <width>85</width>
       <height>42</height>
       <texture>logos\#AudioCodec.png</texture>
@@ -554,7 +554,7 @@
       <type>image</type>
       <id>0</id>
       <posX>440</posX>
-      <posY>470</posY>
+      <posY>445</posY>
       <width>85</width>
       <height>42</height>
       <texture>logos\#AudioChannels.png</texture>
@@ -568,7 +568,7 @@
       <type>image</type>
       <id>0</id>
       <posX>530</posX>
-      <posY>470</posY>
+      <posY>445</posY>
       <width>85</width>
       <height>42</height>
       <texture>logos\subtitles.png</texture>

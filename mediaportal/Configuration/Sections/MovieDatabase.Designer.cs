@@ -25,9 +25,9 @@ namespace MediaPortal.Configuration.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieDatabase));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFoldernameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -1305,7 +1305,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbStudio.BorderColor = System.Drawing.Color.Empty;
       this.tbStudio.Location = new System.Drawing.Point(73, 173);
       this.tbStudio.Name = "tbStudio";
-      this.tbStudio.Size = new System.Drawing.Size(411, 20);
+      this.tbStudio.Size = new System.Drawing.Size(374, 20);
       this.tbStudio.TabIndex = 37;
       // 
       // mpLabel24
@@ -1331,12 +1331,12 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelIMDBNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.linkLabelIMDBNumber.AutoSize = true;
       this.linkLabelIMDBNumber.LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
-      this.linkLabelIMDBNumber.Location = new System.Drawing.Point(189, 235);
+      this.linkLabelIMDBNumber.Location = new System.Drawing.Point(219, 236);
       this.linkLabelIMDBNumber.Name = "linkLabelIMDBNumber";
-      this.linkLabelIMDBNumber.Size = new System.Drawing.Size(77, 13);
+      this.linkLabelIMDBNumber.Size = new System.Drawing.Size(47, 13);
       this.linkLabelIMDBNumber.TabIndex = 33;
       this.linkLabelIMDBNumber.TabStop = true;
-      this.linkLabelIMDBNumber.Text = "IMDB Number:";
+      this.linkLabelIMDBNumber.Text = "IMDB #:";
       this.linkLabelIMDBNumber.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.linkLabelIMDBNumber.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelIMDBNumber_LinkClicked);
       // 
@@ -1386,7 +1386,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbWritingCredits.BorderColor = System.Drawing.Color.Empty;
       this.tbWritingCredits.Location = new System.Drawing.Point(73, 147);
       this.tbWritingCredits.Name = "tbWritingCredits";
-      this.tbWritingCredits.Size = new System.Drawing.Size(411, 20);
+      this.tbWritingCredits.Size = new System.Drawing.Size(374, 20);
       this.tbWritingCredits.TabIndex = 12;
       // 
       // tbPlotOutline
@@ -1434,7 +1434,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbTagline.BorderColor = System.Drawing.Color.Empty;
       this.tbTagline.Location = new System.Drawing.Point(72, 95);
       this.tbTagline.Name = "tbTagline";
-      this.tbTagline.Size = new System.Drawing.Size(411, 20);
+      this.tbTagline.Size = new System.Drawing.Size(375, 20);
       this.tbTagline.TabIndex = 8;
       // 
       // label4
@@ -1474,7 +1474,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbMPAARating.Location = new System.Drawing.Point(72, 200);
       this.tbMPAARating.Multiline = true;
       this.tbMPAARating.Name = "tbMPAARating";
-      this.tbMPAARating.Size = new System.Drawing.Size(411, 22);
+      this.tbMPAARating.Size = new System.Drawing.Size(375, 22);
       this.tbMPAARating.TabIndex = 22;
       // 
       // tbYear
@@ -1501,7 +1501,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDirector.BorderColor = System.Drawing.Color.Empty;
       this.tbDirector.Location = new System.Drawing.Point(73, 121);
       this.tbDirector.Name = "tbDirector";
-      this.tbDirector.Size = new System.Drawing.Size(411, 20);
+      this.tbDirector.Size = new System.Drawing.Size(374, 20);
       this.tbDirector.TabIndex = 10;
       // 
       // label9
@@ -2034,14 +2034,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgActorMovies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgActorMovies.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgActorMovies.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
       this.dgActorMovies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgActorMovies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
@@ -2061,8 +2061,8 @@ namespace MediaPortal.Configuration.Sections
       // Year
       // 
       this.Year.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.Year.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.Year.DefaultCellStyle = dataGridViewCellStyle8;
       this.Year.HeaderText = "Year";
       this.Year.MinimumWidth = 60;
       this.Year.Name = "Year";
@@ -2071,8 +2071,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Title
       // 
-      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
-      this.Title.DefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
+      this.Title.DefaultCellStyle = dataGridViewCellStyle9;
       this.Title.HeaderText = "Title";
       this.Title.MinimumWidth = 220;
       this.Title.Name = "Title";

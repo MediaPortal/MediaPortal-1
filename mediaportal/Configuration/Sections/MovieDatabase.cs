@@ -1139,12 +1139,8 @@ namespace MediaPortal.Configuration.Sections
       {
         strFilenameAndPath = listViewFiles.Items[0].Text;
       }
-      // Cover delete
+      
       string title = cbTitle.Items[cbTitle.SelectedIndex].ToString();
-      //FanArt.DeleteCovers(title, CurrentMovie.ID);
-      // Fanart delete
-      //FanArt.DeleteFanarts(CurrentMovie.ID);
-
       buttonLookupMovie.Enabled = false;
       btnSave.Enabled = false;
       tabControl2.Enabled = false; // Subtab options for main
@@ -1158,20 +1154,26 @@ namespace MediaPortal.Configuration.Sections
       {
         file = listViewFiles.Items[0].Text;
       }
+      
       if (file == string.Empty)
       {
         file = tbTitle.Text;
       }
+      
       string path, filename;
       Util.Utils.Split(file, out path, out filename);
       movieDetails.Path = path;
       movieDetails.File = filename;
+      
       // Search by IMDB ID number 
       if (_refreshByImdBid == false)
       {
         // Clean old actors info
         if (CurrentMovie.ID > 0)
+        {
           VideoDatabase.RemoveActorsForMovie(CurrentMovie.ID);
+        }
+
         movieDetails.IMDBNumber = string.Empty;
         movieDetails.SearchString = tbTitle.Text;
         GetInfoFromIMDB(ref movieDetails, false);
@@ -1199,6 +1201,7 @@ namespace MediaPortal.Configuration.Sections
       string file;
       string path = movieDetails.Path;
       string filename = movieDetails.File;
+      
       if (path != string.Empty)
       {
         if (path.EndsWith(@"\"))
@@ -1206,11 +1209,13 @@ namespace MediaPortal.Configuration.Sections
           path = path.Substring(0, path.Length - 1);
           movieDetails.Path = path;
         }
+        
         if (filename.StartsWith(@"\"))
         {
           filename = filename.Substring(1);
           movieDetails.File = filename;
         }
+        
         file = path + Path.DirectorySeparatorChar + filename;
       }
       else
@@ -1219,6 +1224,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       int id = movieDetails.ID;
+      
       if (id < 0)
       {
         Log.Info("Adding file:{0}", file);
@@ -1226,6 +1232,7 @@ namespace MediaPortal.Configuration.Sections
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Util.Utils.VideoExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+        
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder)
@@ -1235,7 +1242,6 @@ namespace MediaPortal.Configuration.Sections
           if (Util.Utils.ShouldStack(item.Path, file) && item.Path != file)
           {
             string strPath, strFileName;
-
             DatabaseUtility.Split(item.Path, out strPath, out strFileName);
             DatabaseUtility.RemoveInvalidChars(ref strPath);
             DatabaseUtility.RemoveInvalidChars(ref strFileName);
@@ -1243,11 +1249,13 @@ namespace MediaPortal.Configuration.Sections
             VideoDatabase.AddFile(id, pathId, strFileName);
           }
         }
+
         movieDetails.ID = id;
         string searchString = movieDetails.SearchString;
         VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
         movieDetails.SearchString = searchString;
       }
+      
       if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, actorsCheckBox.Checked, true))
       {
         if (movieDetails != null)
@@ -3379,6 +3387,7 @@ namespace MediaPortal.Configuration.Sections
     {
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
+      
       // Start fetch
       if (IMDBFetcher.FetchMovieActors(this, CurrentMovie))
       {

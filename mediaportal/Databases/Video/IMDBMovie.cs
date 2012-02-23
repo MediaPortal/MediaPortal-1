@@ -362,28 +362,20 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
-
-      if (ID == -1)
-      {
-        SetDurationProperty(VideoDatabase.GetMovieId(file));
-      }
-      else
-      {
-        SetDurationProperty(ID);
-      }
-
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
       GUIPropertyManager.SetProperty("#studios", Studios);
 
       if (ID == -1)
       {
+        SetDurationProperty(VideoDatabase.GetMovieId(file));
         GUIPropertyManager.SetProperty("#hideinfo", "true");
       }
       else
       {
+        SetDurationProperty(ID);
         GUIPropertyManager.SetProperty("#hideinfo", "false");
       }
-
+      
       // Movie id property
       if (!string.IsNullOrEmpty(file))
       {
@@ -413,6 +405,7 @@ namespace MediaPortal.Video.Database
       int timesWatched = 0;
       VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), out percent, out timesWatched);
       GUIPropertyManager.SetProperty("#watchedpercent", percent.ToString());
+      
       // Watched count
       if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file))
       {
@@ -505,6 +498,7 @@ namespace MediaPortal.Video.Database
       {
         ArrayList mList = new ArrayList();
         VideoDatabase.GetMoviesByPath(file, ref mList);
+        
         if (mList.Count > 0)
         {
           Random rnd = new Random();
