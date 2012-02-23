@@ -87,10 +87,12 @@ private:
   void UpdateAudioClock();
 
   HRESULT CheckAudioClient(WAVEFORMATEX* pWaveFormatEx);
-  HRESULT CheckSample(IMediaSample* pSample);
+  HRESULT CheckSample(IMediaSample* pSample, UINT32 framesToFlush);
   HRESULT CheckStreamTimeline(IMediaSample* pSample, REFERENCE_TIME* pDueTime);
   HRESULT GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, REFERENCE_TIME* pHnsBufferPeriod);
   void CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence);
+  void RenderAudio(BYTE* pTarget, UINT32 bufferSizeInBytes, UINT32 &dataLeftInSample, UINT32 &sampleOffset, IMediaSample* pSample, UINT32 &bytesFilled);
+  void RenderSilence(BYTE* pTarget, UINT32 bufferSizeInBytes, LONGLONG &writeSilence, UINT32 &bytesFilled);
 
   AudioRendererSettings* m_pSettings;
   IMMDevice*          m_pMMDevice;

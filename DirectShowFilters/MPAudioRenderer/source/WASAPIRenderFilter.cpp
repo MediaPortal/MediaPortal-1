@@ -256,7 +256,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   return hr;
 }
 
-HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample)
+HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample, UINT32 framesToFlush)
 {
   if (!pSample)
     return S_OK;
@@ -271,6 +271,11 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample)
 
   if (bFormatChanged)
   {
+    // Release outstanding buffer
+    hr = m_pRenderClient->ReleaseBuffer(framesToFlush, 0);
+    if (FAILED(hr))
+      Log("CWASAPIRenderFilter::CheckFormat - ReleaseBuffer: 0x%08x", hr);
+
     // Apply format change
     hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
     pSample->SetDiscontinuity(false);
@@ -311,6 +316,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   if (FAILED(hr))
   {
     // Render all samples flat that dont have presentation time
+    m_nSampleNum++;
     return MPAR_S_RENDER_SAMPLE;
   }
 
@@ -329,7 +335,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
       rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, rtTime / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
-  if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR))// && m_dSampleCounter > 1)
+  if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
   {
     discontinuityDetected = true;
     Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
@@ -368,7 +374,8 @@ void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* p
 
     REFERENCE_TIME rtSilenceDuration = (*pDueTime) - rtTime;
 
-    Log("CalculateSilence: %d", rtSilenceDuration);
+    if (m_pSettings->m_bLogSampleTimes)
+      Log("CWASAPIRenderFilter::CalculateSilence: %6.3", rtSilenceDuration / 10000000.0);
 
     if (rtSilenceDuration > 0)
     {
@@ -543,15 +550,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
       if (SUCCEEDED(hr))
       {
-        UINT32 bytesCopied = 0;
-
-        if (writeSilence > 0 || m_state == StatePaused)
-        {
-          UINT32 silentBytes = min(writeSilence, bufferSizeInBytes);
-          memset(data, 0, silentBytes);
-          bytesCopied += silentBytes;
-          writeSilence -= silentBytes;
-        }
+        UINT32 bytesFilled = 0;
 
         if (writeSilence == 0)
         {
@@ -569,7 +568,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 return 0;
               }
               
-              if (hr == S_OK)
+              if (hr == S_OK && sample)
                 sampleOffset = 0;
               
               if (command == ASC_Pause)
@@ -577,18 +576,20 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 m_nSampleNum = 0;
                 m_state = StatePaused;
                 sample.Release();
-                break;
               }
               else if (command == ASC_Resume)
               {
                 m_state = StateRunning;
                 break;
               }
-              else if (!sample)
-                break;
+            }
 
+            if (m_state != StateRunning)
+              writeSilence = bufferSizeInBytes - bytesFilled;
+            else if (sampleOffset == 0)
+            {
               // TODO error checking
-              if (CheckSample(sample) == S_FALSE)
+              if (CheckSample(sample, bufferSize - currentPadding) == S_FALSE)
                 break;
 
               if (writeSilence == 0 && sampleOffset == 0)
@@ -596,41 +597,25 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 HRESULT schedulingHR = CheckStreamTimeline(sample, &dueTime);
                 if (schedulingHR == MPAR_S_DROP_SAMPLE)
                 {
+                  if (m_pSettings->m_bLogSampleTimes)
+                    Log("CWASAPIRenderFilter::Render thread: drop sample");
                   sample.Release();
                   break;
                 }
                 else if (schedulingHR == MPAR_S_WAIT_RENDER_TIME)
                   CalculateSilence(&dueTime, &writeSilence);
               }
-
-              sample->GetPointer(&sampleData);
-              sampleLength = sample->GetActualDataLength();
-              sampleOffset = 0;
             }
 
-            if (m_state == StatePaused)
-              writeSilence = bufferSizeInBytes;
-
-            if (writeSilence == 0)
-            {
-              dataLeftInSample = sampleLength - sampleOffset;
-
-              UINT32 bytesToCopy = min(dataLeftInSample, bufferSizeInBytes - bytesCopied);
-              memcpy(data + bytesCopied, sampleData + sampleOffset, bytesToCopy); 
-              bytesCopied += bytesToCopy;
-              sampleOffset += bytesToCopy;
-            }
+            if (writeSilence == 0 && sample)
+              RenderAudio(data, bufferSizeInBytes, dataLeftInSample, sampleOffset, sample, bytesFilled);
             else
-            {
-              UINT32 silentBytes = min(writeSilence, bufferSizeInBytes - bytesCopied);
-              memset(data + bytesCopied, 0, silentBytes);
-              bytesCopied += silentBytes;
-              writeSilence -= silentBytes;
-            }
-
-          } while (bytesCopied < bufferSizeInBytes);
+              RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
+          } while (bytesFilled < bufferSizeInBytes);
         }
-        
+        else
+          RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
+
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, 0);
 
         if (FAILED(hr) && hr != AUDCLNT_E_OUT_OF_ORDER)
@@ -663,7 +648,30 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   return 0;
 }
 
-// Internal implementation
+void CWASAPIRenderFilter::RenderSilence(BYTE* pTarget, UINT32 bufferSizeInBytes, LONGLONG &writeSilence, UINT32 &bytesFilled)
+{
+  UINT32 silentBytes = min(writeSilence, bufferSizeInBytes - bytesFilled);
+  memset(pTarget + bytesFilled, 0, silentBytes);
+  bytesFilled += silentBytes;
+  writeSilence -= silentBytes;
+
+  if (m_pSettings->m_bLogSampleTimes)
+    Log("writing buffer with zeroes silentBytes: %d", silentBytes);				
+}
+
+void CWASAPIRenderFilter::RenderAudio(BYTE* pTarget, UINT32 bufferSizeInBytes, UINT32 &dataLeftInSample, UINT32 &sampleOffset, IMediaSample* pSample, UINT32 &bytesFilled)
+{
+  BYTE* sampleData = NULL;
+  pSample->GetPointer(&sampleData);
+
+  dataLeftInSample = pSample->GetActualDataLength() - sampleOffset;
+
+  UINT32 bytesToCopy = min(dataLeftInSample, bufferSizeInBytes - bytesFilled);
+  memcpy(pTarget + bytesFilled, sampleData + sampleOffset, bytesToCopy); 
+  bytesFilled += bytesToCopy;
+  sampleOffset += bytesToCopy;
+}
+
 HRESULT CWASAPIRenderFilter::EnableMMCSS()
 {
   if (!m_hTask)

@@ -199,7 +199,16 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
   HRESULT hr = WaitForEvents(dwTimeout, pHandles, pWaitObjects);
   
   if (hr == WAIT_TIMEOUT || hr == S_FALSE)
+  {
+    if (pSample && *pSample)
+    {
+      (*pSample)->Release();
+      (*pSample) = NULL;
+    }
+
+    *pCommand = ASC_Nop;    
     return WAIT_TIMEOUT;
+  }
   
   {
     CAutoLock OOBQueueLock(&m_OOBInputQueueLock);
