@@ -338,7 +338,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
   {
     discontinuityDetected = true;
-    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
+    Log("  Dropped audio data detected: diff: %7.3f ms MAX_SAMPLE_TIME_ERROR: %7.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
   }
 
   m_rtNextSampleTime = rtStart + rtDuration;
