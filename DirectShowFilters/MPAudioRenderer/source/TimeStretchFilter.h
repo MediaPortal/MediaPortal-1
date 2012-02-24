@@ -111,7 +111,7 @@ public:
   //HRESULT CheckFormat(WAVEFORMATEXTENSIBLE *pwfe);
   //HRESULT SetFormat(WAVEFORMATEX *pwf);
   HRESULT SetFormat(const WAVEFORMATEXTENSIBLE *pwfe);
-  HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, const WAVEFORMATEX *pwf);
+  HRESULT CheckSample(IMediaSample* pSample);
 
   bool putSamples(const short *inBuffer, long inSamples);
   uint receiveSamples(short **outBuffer, uint maxSamples);
@@ -143,6 +143,7 @@ private:
   vector<HANDLE> m_hSampleEvents;
   vector<DWORD>  m_dwSampleWaitObjects;
 
+  AM_MEDIA_TYPE* m_pNewPMT;
 
   static const uint SAMPLE_LEN = 0x40000;
   std::vector<CSoundTouchEx *> *m_Streams;

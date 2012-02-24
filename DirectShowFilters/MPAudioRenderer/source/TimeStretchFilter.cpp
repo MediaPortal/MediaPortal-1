@@ -34,11 +34,11 @@
 CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings) :
   m_pSettings(pSettings),
   m_Streams(NULL),
-  m_pWaveFormat(NULL),
   m_fCurrentTempo(1.0),
   m_fNewAdjustment(1.0),
   m_fCurrentAdjustment(1.0),
-  m_fNewTempo(1.0)
+  m_fNewTempo(1.0),
+  m_pNewPMT(NULL)
 {
 }
 
@@ -46,7 +46,8 @@ CTimeStretchFilter::~CTimeStretchFilter(void)
 {
   Log("CTimeStretchFilter - destructor - instance 0x%x", this);
   
-  SetFormat((PWAVEFORMATEXTENSIBLE)NULL);
+  SetFormat(NULL);
+  DeleteMediaType(m_pNewPMT);
 
   Log("CTimeStretchFilter - destructor - instance 0x%x - end", this);
 }
@@ -98,7 +99,10 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  // check always from the renderer device?
+  // TODO - check why non 16 bit sample formats aren't working!
+  if (pwfx->Format.wBitsPerSample != 16)
+    return VFW_E_TYPE_NOT_ACCEPTED;
+
   if (FormatsEqual(pwfx, m_pInputFormat))
     return S_OK;
 
@@ -117,36 +121,46 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (!pwfx)
     return SetFormat(NULL);
 
-  return SetFormat(pwfx);
+  if (bApplyChanges)
+  {
+    SetInputFormat(pwfx);
+    SetOutputFormat(pwfx);
+    SetFormat(pwfx);
+  }
+
+  return S_OK;
 }
 
-HRESULT CTimeStretchFilter::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, const WAVEFORMATEX *pwf)
+HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample)
 {
-  //ASSERT(pwf->cbSize <= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX));
-  memcpy(pwfe, pwf, sizeof(WAVEFORMATEX)/* + pwf->cbSize*/);
-  pwfe->Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-  switch(pwfe->Format.wFormatTag)
-  {
-    case WAVE_FORMAT_PCM:
-      pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
-      break;
-    case WAVE_FORMAT_IEEE_FLOAT:
-      pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
-      break;
-    default:
-      return VFW_E_TYPE_NOT_ACCEPTED;
-  }
-  if (pwfe->Format.nChannels >= 1 && pwfe->Format.nChannels <= 8)
-  {
-    pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
-    if (pwfe->dwChannelMask == 0)
-      return VFW_E_TYPE_NOT_ACCEPTED;
-  }
-  else
-    return VFW_E_TYPE_NOT_ACCEPTED;
+  if (!pSample)
+    return S_OK;
 
-  pwfe->Samples.wValidBitsPerSample = pwfe->Format.wBitsPerSample;
-  pwfe->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+  AM_MEDIA_TYPE *pmt = NULL;
+  bool bFormatChanged = false;
+  
+  HRESULT hr = S_OK;
+
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
+    bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
+
+  if (bFormatChanged)
+  {
+    // TODO - process remaining samples 
+
+    // Apply format change
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
+    pSample->SetDiscontinuity(false);
+
+    if (FAILED(hr))
+    {
+      DeleteMediaType(pmt);
+      Log("CTimeStretchFilter::CheckFormat failed to change format: 0x%08x", hr);
+      return hr;
+    }
+    else
+      return S_FALSE;
+  }
 
   return S_OK;
 }
@@ -154,7 +168,6 @@ HRESULT CTimeStretchFilter::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, c
 HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
 {
   std::vector<CSoundTouchEx*>* newStreams = NULL;
-  WAVEFORMATEXTENSIBLE* pWaveFormat = NULL;
 
   if (pwfe)
   {
@@ -165,18 +178,9 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
 
     DWORD dwChannelMask = pwfe->dwChannelMask;
 
-    newStreams =  new std::vector<CSoundTouchEx *>;
+    newStreams =  new std::vector<CSoundTouchEx*>;
     if (!newStreams)
       return E_OUTOFMEMORY;
-
-    int size = sizeof(WAVEFORMATEX) + pwfe->Format.cbSize;
-    pWaveFormat = (WAVEFORMATEXTENSIBLE *)new BYTE[size];
-    if (!pWaveFormat)
-    {
-      delete newStreams;
-      return E_OUTOFMEMORY;
-    }
-    memcpy(pWaveFormat, pwfe, size);
 
     map<DWORD, int> inSpeakerOffset;
     map<DWORD, int> outSpeakerOffset;
@@ -241,21 +245,9 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
     }
   }
 
-  // Need to lock the resampling thread from accessing the streams
-  if (m_pMemAllocator)
-    m_pMemAllocator->Decommit();
-
-  CAutoLock allocatorLock(&m_allocatorLock);
-
   // delete old ones
   std::vector<CSoundTouchEx*>* oldStreams = m_Streams;
-  WAVEFORMATEXTENSIBLE* pOldFormat = m_pWaveFormat;
-
   m_Streams = newStreams;
-  m_pWaveFormat = pWaveFormat;
-
-  if (pOldFormat)
-    delete[] (BYTE *)pOldFormat;
 
   if (oldStreams)
   {
@@ -272,12 +264,7 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
     setSampleRate(pwfe->Format.nSamplesPerSec);
   }
 
-  HRESULT hr = S_OK;
-
-  if (m_pMemAllocator)
-    hr = m_pMemAllocator->Commit();
-
-  return hr;
+  return S_OK;
 }
 
 HRESULT CTimeStretchFilter::EndOfStream()
@@ -329,13 +316,19 @@ DWORD CTimeStretchFilter::ThreadProc()
           m_bDiscontinuity = true;
         }
 
+        if (CheckSample(sample) == S_FALSE)
+        {
+          DeleteMediaType(m_pNewPMT);
+          sample->GetMediaType(&m_pNewPMT);
+        }
+
         if ((hr == S_OK) && m_pMemAllocator)
         {
           uint unprocessedSamplesBefore = numUnprocessedSamples();
           uint unprocessedSamplesAfter = 0;
 
-          UINT32 nFrames = size / m_pWaveFormat->Format.nBlockAlign;
-          REFERENCE_TIME estimatedSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
+          UINT32 nFrames = size / m_pOutputFormat->Format.nBlockAlign;
+          REFERENCE_TIME estimatedSampleDuration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
           //double bias = m_pClock->GetBias();
           //double adjustment = m_pClock->Adjustment();
@@ -343,7 +336,7 @@ DWORD CTimeStretchFilter::ThreadProc()
           //setTempoInternal(AVMult, 1.0); // this should be the same as previous line, but in future we want to get rid of the 2nd parameter
 
           // Process the sample 
-          putSamplesInternal((const short*)pMediaBuffer, size / m_pWaveFormat->Format.nBlockAlign);
+          putSamplesInternal((const short*)pMediaBuffer, size / m_pOutputFormat->Format.nBlockAlign);
           unprocessedSamplesAfter = numUnprocessedSamples();
 
           UINT32 nOutFrames = numSamples();
@@ -351,9 +344,9 @@ DWORD CTimeStretchFilter::ThreadProc()
           if (nOutFrames > 0)
           {
             UINT32 nOrigOutFrames = nOutFrames;
-            UINT32 nInFrames = (size / m_pWaveFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
-            double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
-            //double rtProcessedSampleDuration = (double)(nOrigOutFrames - m_nPrevFrameCorr) * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
+            UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
+            double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+            //double rtProcessedSampleDuration = (double)(nOrigOutFrames - m_nPrevFrameCorr) * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
 
             //m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             
@@ -367,13 +360,20 @@ DWORD CTimeStretchFilter::ThreadProc()
               
               if (pMediaBufferOut)
               {
-                int maxBufferSamples = OUT_BUFFER_SIZE / m_pWaveFormat->Format.nBlockAlign;
+                int maxBufferSamples = OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
                 if (nOutFrames > maxBufferSamples)
                   nOutFrames = maxBufferSamples;
 
-                outSample->SetActualDataLength(nOutFrames * m_pWaveFormat->Format.nBlockAlign);
+                outSample->SetActualDataLength(nOutFrames * m_pOutputFormat->Format.nBlockAlign);
                 receiveSamplesInternal((short*)pMediaBufferOut, nOutFrames);
                 //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
+
+                if (m_pNewPMT)
+                {
+                  outSample->SetMediaType(m_pNewPMT);
+                  DeleteMediaType(m_pNewPMT);
+                  m_pNewPMT = NULL;
+                }
 
                 m_pNextOutSample = outSample;
                 OutputNextSample();
