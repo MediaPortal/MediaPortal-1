@@ -342,7 +342,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
     Log("  Dropped audio data detected: diff: %7.3f ms MAX_SAMPLE_TIME_ERROR: %7.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
   }
 
-  m_rtNextSampleTime = rtStart + rtDuration;
+  m_rtNextSampleTime = rtStop;
 
   REFERENCE_TIME timeStamp = rtStart - rtTime;
 

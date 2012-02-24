@@ -128,10 +128,8 @@ protected:
   // Processing
   virtual DWORD ThreadProc();
 
-
   bool putSamplesInternal(const short *inBuffer, long inSamples);
   uint receiveSamplesInternal(short *outBuffer, uint maxSamples);
-
 
   void setTempoInternal(double newTempo, double newAdjustment);
 
@@ -144,6 +142,8 @@ private:
   vector<DWORD>  m_dwSampleWaitObjects;
 
   AM_MEDIA_TYPE* m_pNewPMT;
+  REFERENCE_TIME m_rtInSampleTime;
+  REFERENCE_TIME m_rtNextSampleTime;
 
   static const uint SAMPLE_LEN = 0x40000;
   std::vector<CSoundTouchEx *> *m_Streams;

@@ -18,6 +18,8 @@
 
 #include "stdafx.h"
 
+#define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
+
 typedef struct tagSpeakerPair {
   DWORD dwLeft, dwRight;
   __inline DWORD PairMask()  { return dwLeft | dwRight; };
@@ -26,7 +28,6 @@ typedef struct tagSpeakerPair {
 extern SpeakerPair PairedSpeakers[];
 extern DWORD gdwDefaultChannelMask[];
 extern DWORD gdwAC3SpeakerOrder[];
-
 
 #define cAC3SpeakerOrder  (sizeof(gdwAC3SpeakerOrder)/sizeof(DWORD))
 #define SPEAKER_AC3_VALID_POSITIONS ( \

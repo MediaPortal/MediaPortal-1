@@ -38,7 +38,9 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings) :
   m_fNewAdjustment(1.0),
   m_fCurrentAdjustment(1.0),
   m_fNewTempo(1.0),
-  m_pNewPMT(NULL)
+  m_pNewPMT(NULL),
+  m_rtInSampleTime(0),
+  m_rtNextSampleTime(0)
 {
 }
 
@@ -308,19 +310,39 @@ DWORD CTimeStretchFilter::ThreadProc()
       {
         BYTE *pMediaBuffer = NULL;
         long size = sample->GetActualDataLength();
-        hr = sample->GetPointer(&pMediaBuffer);
-        
+
+        bool initStreamTime = false;
+
         if (sample->IsDiscontinuity() == S_OK)
         {
           sample->SetDiscontinuity(false);
           m_bDiscontinuity = true;
+          initStreamTime = true;
         }
 
         if (CheckSample(sample) == S_FALSE)
         {
           DeleteMediaType(m_pNewPMT);
           sample->GetMediaType(&m_pNewPMT);
+          initStreamTime = true;
         }
+
+        REFERENCE_TIME rtStart = 0;
+        REFERENCE_TIME rtStop = 0;
+        REFERENCE_TIME rtDuration = 0;
+        hr = sample->GetTime(&rtStart, &rtStop);
+
+        if (SUCCEEDED(hr))
+        {
+          // Detect discontinuity in stream timeline
+          if ((abs(m_rtNextSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR) || initStreamTime)
+            m_rtNextSampleTime = m_rtInSampleTime = rtStart;
+
+          UINT nFrames = size / m_pInputFormat->Format.nBlockAlign;
+          m_rtNextSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+        }
+
+        hr = sample->GetPointer(&pMediaBuffer);
 
         if ((hr == S_OK) && m_pMemAllocator)
         {
@@ -350,13 +372,14 @@ DWORD CTimeStretchFilter::ThreadProc()
 
             //m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             
-            IMediaSample* outSample = NULL;
-            hr = m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
+            // try to get an output buffer if none available
+            if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
+              Log("CTimeStretchFilter::timestretch thread - Failed to get next output sample!");
 
-            if (outSample)
+            if (m_pNextOutSample)
             {
               BYTE *pMediaBufferOut = NULL;
-              outSample->GetPointer(&pMediaBufferOut);
+              m_pNextOutSample->GetPointer(&pMediaBufferOut);
               
               if (pMediaBufferOut)
               {
@@ -364,21 +387,21 @@ DWORD CTimeStretchFilter::ThreadProc()
                 if (nOutFrames > maxBufferSamples)
                   nOutFrames = maxBufferSamples;
 
-                outSample->SetActualDataLength(nOutFrames * m_pOutputFormat->Format.nBlockAlign);
+                m_pNextOutSample->SetActualDataLength(nOutFrames * m_pOutputFormat->Format.nBlockAlign);
                 receiveSamplesInternal((short*)pMediaBufferOut, nOutFrames);
                 //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
 
                 if (m_pNewPMT)
                 {
-                  outSample->SetMediaType(m_pNewPMT);
+                  m_pNextOutSample->SetMediaType(m_pNewPMT);
                   DeleteMediaType(m_pNewPMT);
                   m_pNewPMT = NULL;
                 }
 
-                m_pNextOutSample = outSample;
-                OutputNextSample();
+                UINT nOutFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
+                m_rtInSampleTime += nOutFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-                outSample->Release();
+                OutputNextSample();
               }
             }
           }
