@@ -76,6 +76,7 @@ CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
 {
   Log("CWASAPIRenderFilter - destructor - instance 0x%x", this);
   
+  CAutoLock lock(&m_csResources);
   FreeLibrary(m_hLibAVRT);
 
   Log("CWASAPIRenderFilter - destructor - instance 0x%x - end", this);
@@ -501,6 +502,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   REFERENCE_TIME dueTime = 0;
 
   HRESULT hr = S_FALSE;
+
+  CAutoLock lock(&m_csResources);
 
   EnableMMCSS();
 

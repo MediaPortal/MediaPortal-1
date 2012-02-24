@@ -119,6 +119,8 @@ private:
   REFERENCE_TIME      m_rtNextSampleTime;
   LONGLONG            m_nSampleNum;
 
+  CCritSec            m_csResources;
+
   // Audio HW clock data
   CCritSec            m_csClockLock;
   UINT64              m_ullHwClock[CLOCK_DATA_SIZE];
