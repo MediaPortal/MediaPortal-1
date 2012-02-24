@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 using Microsoft.Win32;
 
 #pragma warning disable 108
@@ -370,7 +371,9 @@ namespace MediaPortal.Configuration.Sections
       this.comboDriveType.Items.AddRange(new object[] {
             "dt",
             "scsi",
-            "ide"});
+            "ide",
+            DaemonTools.VirtualCloneDrive
+       });
       this.comboDriveType.Location = new System.Drawing.Point(168, 118);
       this.comboDriveType.Name = "comboDriveType";
       this.comboDriveType.Size = new System.Drawing.Size(288, 21);
