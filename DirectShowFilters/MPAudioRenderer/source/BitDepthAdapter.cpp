@@ -272,7 +272,12 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
 
   // Detect discontinuity in stream timeline
   if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
-    m_rtNextIncomingSampleTime = m_rtInSampleTime = rtStart;
+  {
+    Log("CBitDepthAdapter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
+
+    m_rtInSampleTime = rtStart;
+    ProcessData(NULL, 0, NULL);
+  }
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
   REFERENCE_TIME duration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
@@ -357,10 +362,16 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
   if (!pData) // need to flush any existing data
   {
     if (m_pNextOutSample)
+    {
+      UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
+      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
       hr = OutputNextSample();
+    }
 
     if (pcbDataProcessed)
       *pcbDataProcessed = 0;
+    
     return hr;
   }
 
