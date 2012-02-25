@@ -173,7 +173,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pOutBitDepthAdapter)
     return E_OUTOFMEMORY;
 
-  m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings);
+  m_pTimestretchFilter = new CTimeStretchFilter(&m_Settings, m_pClock);
   if (!m_pTimestretchFilter)
     return E_OUTOFMEMORY;
 
@@ -184,9 +184,9 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
     return E_OUTOFMEMORY;
 
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
-  m_pSampleRateConverter->ConnectTo(m_pOutBitDepthAdapter);
+  m_pSampleRateConverter->ConnectTo(m_pTimestretchFilter);
 
-  //m_pTimestretchFilter->ConnectTo(m_pOutBitDepthAdapter);
+  m_pTimestretchFilter->ConnectTo(m_pOutBitDepthAdapter);
 
   m_pOutBitDepthAdapter->ConnectTo(m_pWASAPIRenderer);
 

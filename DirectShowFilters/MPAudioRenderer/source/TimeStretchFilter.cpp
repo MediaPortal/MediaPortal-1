@@ -31,7 +31,7 @@
     } \
   }
 
-CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings) :
+CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
   m_pSettings(pSettings),
   m_Streams(NULL),
   m_fCurrentTempo(1.0),
@@ -40,7 +40,8 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings) :
   m_fNewTempo(1.0),
   m_pNewPMT(NULL),
   m_rtInSampleTime(0),
-  m_rtNextSampleTime(0)
+  m_rtNextSampleTime(0),
+  m_pClock(pClock)
 {
 }
 
@@ -352,10 +353,10 @@ DWORD CTimeStretchFilter::ThreadProc()
           UINT32 nFrames = size / m_pOutputFormat->Format.nBlockAlign;
           REFERENCE_TIME estimatedSampleDuration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-          //double bias = m_pClock->GetBias();
-          //double adjustment = m_pClock->Adjustment();
-          //double AVMult = m_pClock->SuggestedAudioMultiplier(estimatedSampleDuration, bias, adjustment);
-          //setTempoInternal(AVMult, 1.0); // this should be the same as previous line, but in future we want to get rid of the 2nd parameter
+          double bias = m_pClock->GetBias();
+          double adjustment = m_pClock->Adjustment();
+          double AVMult = m_pClock->SuggestedAudioMultiplier(estimatedSampleDuration, bias, adjustment);
+          setTempoInternal(AVMult, 1.0); // this should be the same as previous line, but in future we want to get rid of the 2nd parameter
 
           // Process the sample 
           putSamplesInternal((const short*)pMediaBuffer, size / m_pOutputFormat->Format.nBlockAlign);

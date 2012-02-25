@@ -24,7 +24,7 @@
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SoundTouchEx.h"
 #include "Globals.h"
-//#include "SyncClock.h"
+#include "SyncClock.h"
 
 
 #define OUT_BUFFER_SIZE   65536
@@ -35,7 +35,7 @@ using namespace std;
 class CTimeStretchFilter : public CQueuedAudioSink, public ITimeStretch
 {
 public:
-  CTimeStretchFilter(AudioRendererSettings *pSettings);
+  CTimeStretchFilter(AudioRendererSettings *pSettings, CSyncClock* pClock);
   ~CTimeStretchFilter();
 
   // IAudioSink implementation
@@ -154,4 +154,6 @@ private:
   double m_fNewAdjustment;
 
   CCritSec m_allocatorLock;
+
+  CSyncClock* m_pClock;
 };
