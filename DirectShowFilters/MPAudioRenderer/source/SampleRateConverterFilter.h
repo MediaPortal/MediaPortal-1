@@ -51,6 +51,8 @@ protected:
   HRESULT SetupConversion();
   HRESULT ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed);
 
+  HRESULT FlushStream();
+
 protected:
   bool m_bPassThrough;
 
@@ -58,6 +60,9 @@ protected:
   int m_nFrameSize;       // Bytes in a frame. A frame contains a sample for each channel
   int m_nBytesPerSample;  // Bytes in a sample. Can be 1 to 4. This is the "container" size
   int m_nBitsPerSample;   // Valid bits in a sample. 32 for floats
+
+  LONGLONG m_llFramesInput;
+  LONGLONG m_llFramesOutput;
 
   double m_dSampleRateRation;
 

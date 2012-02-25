@@ -28,7 +28,9 @@ CSampleRateConverter::CSampleRateConverter(AudioRendererSettings *pSettings)
   m_pSettings(pSettings),
   m_pSrcState(NULL),
   m_dSampleRateRation(1.0),
-  m_rtNextIncomingSampleTime(0)
+  m_rtNextIncomingSampleTime(0),
+  m_llFramesInput(0),
+  m_llFramesOutput(0)
 {
 }
 
@@ -205,7 +207,12 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
 
   // Detect discontinuity in stream timeline
   if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
-    m_rtNextIncomingSampleTime = m_rtInSampleTime = rtStart;
+  {
+    Log("CSampleRateConverter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
+
+    m_rtInSampleTime = rtStart;
+    FlushStream();
+  }
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
   REFERENCE_TIME duration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
@@ -227,14 +234,14 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
 HRESULT CSampleRateConverter::EndOfStream()
 {
   if (!m_bPassThrough)
-    ProcessData(NULL, 0, NULL);
+    FlushStream();
   return CBaseAudioSink::EndOfStream();  
 }
 
 HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties)
 {
   properties->cBuffers = 4;
-  properties->cbBuffer = (0x1000);
+  properties->cbBuffer = (0x10000);
   properties->cbPrefix = 0;
   properties->cbAlign = 8;
 
@@ -257,6 +264,9 @@ HRESULT CSampleRateConverter::SetupConversion()
   int error = 0;
   m_pSrcState = src_new(m_pSettings->m_nResamplingQuality, m_pInputFormat->Format.nChannels, &error);
 
+  m_llFramesInput = 0;
+  m_llFramesOutput = 0;
+
   // TODO better error handling
   if (error != 0)
     return S_FALSE;
@@ -267,21 +277,6 @@ HRESULT CSampleRateConverter::SetupConversion()
 HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed)
 {
   HRESULT hr = S_OK;
-
-  if (!pData) // need to flush any existing data
-  {
-    if (m_pNextOutSample)
-      hr = OutputNextSample();
-
-    if (pcbDataProcessed)
-      *pcbDataProcessed = 0;
-
-    int error = src_reset(m_pSrcState);
-    if (error != 0)
-      return S_FALSE;
-
-    return hr;
-  }
 
   long bytesOutput = 0;
 
@@ -307,12 +302,13 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
     {
       if (pcbDataProcessed)
         *pcbDataProcessed = bytesOutput + cbData; // we can't realy process the data, lie about it!
+
       return hr;
     }
 
     long nOffset = m_pNextOutSample->GetActualDataLength();
     long nSize = m_pNextOutSample->GetSize();
-    BYTE *pOutData = NULL;
+    BYTE* pOutData = NULL;
 
     if (FAILED(hr = m_pNextOutSample->GetPointer(&pOutData)))
     {
@@ -322,15 +318,13 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
     ASSERT(pOutData);
     pOutData += nOffset;
 
-    //int framesToConvert = min(cbData / m_nFrameSize, (nSize - nOffset) / (m_nFrameSize * m_dSampleRateRation));
-
     SRC_DATA data;
 
     data.data_in = (float*)pData;
     data.data_out = (float*)pOutData;
-    data.input_frames = cbData / m_nFrameSize; //framesToConvert
-    data.output_frames = (nSize - nOffset) / m_nFrameSize; //framesToConvert
-    data.src_ratio = m_dSampleRateRation; //96000.0 / 48000.0;
+    data.input_frames = cbData / m_nFrameSize; 
+    data.output_frames = (nSize - nOffset) / m_nFrameSize;
+    data.src_ratio = m_dSampleRateRation;
     data.end_of_input = 0;
 
     int ret = src_process(m_pSrcState, &data);
@@ -341,6 +335,9 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
     bytesOutput += data.output_frames_gen * m_nFrameSize;
     cbData -= data.input_frames_used * m_nFrameSize;
     nOffset += data.output_frames_gen * m_nFrameSize;
+
+    m_llFramesInput += data.input_frames_used;
+    m_llFramesOutput += data.output_frames_gen;
 
     m_pNextOutSample->SetActualDataLength(nOffset);
     if (nOffset + m_nFrameSize > nSize)
@@ -357,6 +354,85 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
   
   if (pcbDataProcessed)
     *pcbDataProcessed = bytesOutput;
+
+  return hr;
+}
+
+HRESULT CSampleRateConverter::FlushStream()
+{
+  HRESULT hr = S_OK;
+
+  if (m_pNextOutSample)
+  {
+    UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
+    m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+    hr = OutputNextSample();
+    if (FAILED(hr))
+    {
+      Log("CSampleRateConverter::FlushStream OutputNextSample failed with: 0x%08x", hr);
+      return hr;
+    }
+  }
+
+  LONGLONG framesLeft = (m_llFramesInput * m_dSampleRateRation) - m_llFramesOutput;
+
+  if (framesLeft > 0)
+  {
+    // SRC allows only one call to "flush" so we use a new sample for the last bits of the stream
+    if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
+      return hr;
+
+    long nSize = m_pNextOutSample->GetSize();
+    BYTE *pOutData = NULL;
+
+    if (FAILED(hr = m_pNextOutSample->GetPointer(&pOutData)))
+    {
+      Log("CSampleRateConverter: Failed to get output buffer pointer: 0x%08x", hr);
+      return hr;
+    }
+  
+    if (nSize / m_nFrameSize < framesLeft)
+      Log("CSampleRateConverter: Overflow - Failed to flush SRC data, increase internal sample size!");
+
+    BYTE* tmp[1];
+    SRC_DATA data;
+    data.data_in = (float*)tmp;
+    data.data_out = (float*)pOutData;
+    data.input_frames = 0;
+    data.output_frames = min(nSize / m_nFrameSize, framesLeft);
+    data.src_ratio = m_dSampleRateRation;
+    data.end_of_input = 1;
+
+    int srcRet = src_process(m_pSrcState, &data);
+
+    if (srcRet == 0 && data.output_frames_gen > 0)
+    {
+      ASSERT(data.output_frames_gen == data.output_frames);
+
+      m_pNextOutSample->SetActualDataLength(data.output_frames_gen * m_nFrameSize);
+
+      UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
+      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+      hr = OutputNextSample();
+      if (FAILED(hr))
+      {
+        Log("CSampleRateConverter::FlushStream OutputNextSample failed with: 0x%08x", hr);
+        return hr;
+      }
+    }
+    else
+      m_pNextOutSample.Release();
+  }
+
+  m_llFramesInput = 0;
+  m_llFramesOutput = 0;
+
+  int srcRet = src_reset(m_pSrcState);
+  if (srcRet != 0)
+    return S_FALSE;
+
   return hr;
 }
 
