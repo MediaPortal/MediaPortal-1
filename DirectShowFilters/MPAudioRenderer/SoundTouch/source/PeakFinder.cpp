@@ -58,13 +58,13 @@ PeakFinder::PeakFinder()
 // Finds 'ground level' of a peak hump by starting from 'peakpos' and proceeding
 // to direction defined by 'direction' until next 'hump' after minimum value will 
 // begin
-int PeakFinder::findGround(const double *data, int peakpos, int direction) const
+int PeakFinder::findGround(const float *data, int peakpos, int direction) const
 {
-    double refvalue;
+    float refvalue;
     int lowpos;
     int pos;
     int climb_count;
-    double delta;
+    float delta;
 
     climb_count = 0;
     refvalue = data[peakpos];
@@ -110,9 +110,9 @@ int PeakFinder::findGround(const double *data, int peakpos, int direction) const
 
 // Find offset where the value crosses the given level, when starting from 'peakpos' and
 // proceeds to direction defined in 'direction'
-int PeakFinder::findCrossingLevel(const double *data, double level, int peakpos, int direction) const
+int PeakFinder::findCrossingLevel(const float *data, float level, int peakpos, int direction) const
 {
-    double peaklevel;
+    float peaklevel;
     int pos;
 
     peaklevel = data[peakpos];
@@ -128,17 +128,17 @@ int PeakFinder::findCrossingLevel(const double *data, double level, int peakpos,
 
 
 // Calculates the center of mass location of 'data' array items between 'firstPos' and 'lastPos'
-double PeakFinder::calcMassCenter(const double *data, int firstPos, int lastPos) const
+double PeakFinder::calcMassCenter(const float *data, int firstPos, int lastPos) const
 {
     int i;
-    double sum;
-    double wsum;
+    float sum;
+    float wsum;
 
     sum = 0;
     wsum = 0;
     for (i = firstPos; i <= lastPos; i ++)
     {
-        sum += (double)i * data[i];
+        sum += (float)i * data[i];
         wsum += data[i];
     }
 
@@ -149,12 +149,12 @@ double PeakFinder::calcMassCenter(const double *data, int firstPos, int lastPos)
 
 
 /// get exact center of peak near given position by calculating local mass of center
-double PeakFinder::getPeakCenter(const double *data, int peakpos) const
+double PeakFinder::getPeakCenter(const float *data, int peakpos) const
 {
-    double peakLevel;            // peak level
+    float peakLevel;            // peak level
     int crosspos1, crosspos2;   // position where the peak 'hump' crosses cutting level
-    double cutLevel;             // cutting value
-    double groundLevel;          // ground level of the peak
+    float cutLevel;             // cutting value
+    float groundLevel;          // ground level of the peak
     int gp1, gp2;               // bottom positions of the peak 'hump'
 
     // find ground positions.
@@ -181,7 +181,7 @@ double PeakFinder::getPeakCenter(const double *data, int peakpos) const
 
 
 
-double PeakFinder::detectPeak(const double *data, int aminPos, int amaxPos) 
+double PeakFinder::detectPeak(const float *data, int aminPos, int amaxPos) 
 {
 
     int i;

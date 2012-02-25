@@ -126,13 +126,13 @@ private:
     class TDStretch *pTDStretch;
 
     /// Virtual pitch parameter. Effective rate & tempo are calculated from these parameters.
-    double virtualRate;
+    float virtualRate;
 
     /// Virtual pitch parameter. Effective rate & tempo are calculated from these parameters.
-    double virtualTempo;
+    float virtualTempo;
 
     /// Virtual pitch parameter. Effective rate & tempo are calculated from these parameters.
-    double virtualPitch;
+    float virtualPitch;
 
     /// Flag: Has sample rate been set?
     BOOL  bSrateSet;
@@ -146,10 +146,10 @@ protected :
     uint  channels;
 
     /// Effective 'rate' value calculated from 'virtualRate', 'virtualTempo' and 'virtualPitch'
-    double rate;
+    float rate;
 
     /// Effective 'tempo' value calculated from 'virtualRate', 'virtualTempo' and 'virtualPitch'
-    double tempo;
+    float tempo;
 
 public:
     SoundTouch();
@@ -163,32 +163,32 @@ public:
 
     /// Sets new rate control value. Normal rate = 1.0, smaller values
     /// represent slower rate, larger faster rates.
-    void setRate(double newRate);
+    void setRate(float newRate);
 
     /// Sets new tempo control value. Normal tempo = 1.0, smaller values
     /// represent slower tempo, larger faster tempo.
-    void setTempo(double newTempo);
+    void setTempo(float newTempo);
 
     /// Sets new rate control value as a difference in percents compared
     /// to the original rate (-50 .. +100 %)
-    void setRateChange(double newRate);
+    void setRateChange(float newRate);
 
     /// Sets new tempo control value as a difference in percents compared
     /// to the original tempo (-50 .. +100 %)
-    void setTempoChange(double newTempo);
+    void setTempoChange(float newTempo);
 
     /// Sets new pitch control value. Original pitch = 1.0, smaller values
     /// represent lower pitches, larger values higher pitch.
-    void setPitch(double newPitch);
+    void setPitch(float newPitch);
 
     /// Sets pitch change in octaves compared to the original pitch  
     /// (-1.00 .. +1.00)
-    void setPitchOctaves(double newPitch);
+    void setPitchOctaves(float newPitch);
 
     /// Sets pitch change in semi-tones compared to the original pitch
     /// (-12 .. +12)
     void setPitchSemiTones(int newPitch);
-    void setPitchSemiTones(double newPitch);
+    void setPitchSemiTones(float newPitch);
 
     /// Sets the number of channels, 1 = mono, 2 = stereo
     void setChannels(uint numChannels);

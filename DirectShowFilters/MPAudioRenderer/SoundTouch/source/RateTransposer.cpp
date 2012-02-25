@@ -74,7 +74,7 @@ public:
 
     /// Sets new target rate. Normal rate = 1.0, smaller values represent slower 
     /// rate, larger faster rates.
-    virtual void setRate(double newRate);
+    virtual void setRate(float newRate);
 
 };
 
@@ -84,7 +84,7 @@ public:
 class RateTransposerFloat : public RateTransposer
 {
 protected:
-    double fSlopeCount;
+    float fSlopeCount;
     SAMPLETYPE sPrevSampleL, sPrevSampleR;
 
     virtual void resetRegisters();
@@ -167,7 +167,7 @@ AAFilter *RateTransposer::getAAFilter()
 
 // Sets new target iRate. Normal iRate = 1.0, smaller values represent slower 
 // iRate, larger faster iRates.
-void RateTransposer::setRate(double newRate)
+void RateTransposer::setRate(float newRate)
 {
     double fCutoff;
 
@@ -222,7 +222,7 @@ void RateTransposer::upsample(const SAMPLETYPE *src, uint nSamples)
 
     // First check that there's enough room in 'storeBuffer' 
     // (+16 is to reserve some slack in the destination buffer)
-    sizeTemp = (uint)((double)nSamples / fRate + 16.0f);
+    sizeTemp = (uint)((float)nSamples / fRate + 16.0f);
 
     // Transpose the samples, store the result into the end of "storeBuffer"
     count = transpose(storeBuffer.ptrEnd(sizeTemp), src, nSamples);
@@ -268,7 +268,7 @@ void RateTransposer::downsample(const SAMPLETYPE *src, uint nSamples)
     storeBuffer.receiveSamples(count);
 
     // Transpose the samples (+16 is to reserve some slack in the destination buffer)
-    sizeTemp = (uint)((double)nSamples / fRate + 16.0f);
+    sizeTemp = (uint)((float)nSamples / fRate + 16.0f);
     count = transpose(outputBuffer.ptrEnd(sizeTemp), tempBuffer.ptrBegin(), count);
     outputBuffer.putSamples(count);
 }
@@ -290,7 +290,7 @@ void RateTransposer::processSamples(const SAMPLETYPE *src, uint nSamples)
     // the filter
     if (bUseAAFilter == FALSE) 
     {
-        sizeReq = (uint)((double)nSamples / fRate + 1.0f);
+        sizeReq = (uint)((float)nSamples / fRate + 1.0f);
         count = transpose(outputBuffer.ptrEnd(sizeReq), src, nSamples);
         outputBuffer.putSamples(count);
         return;
@@ -496,7 +496,7 @@ end:
 
 // Sets new target iRate. Normal iRate = 1.0, smaller values represent slower 
 // iRate, larger faster iRates.
-void RateTransposerInteger::setRate(double newRate)
+void RateTransposerInteger::setRate(float newRate)
 {
     iRate = (int)(newRate * SCALE + 0.5f);
     RateTransposer::setRate(newRate);

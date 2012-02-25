@@ -25,6 +25,6 @@ public:
   ITimeStretch(){};
   virtual ~ITimeStretch(){};
 
-  virtual void setRate(double newRate) = 0;
-  virtual void setTempo(double newTempo, double newAdjustment) = 0;
+  virtual void setRate(float newRate) = 0;
+  virtual void setTempo(float newTempo, float newAdjustment) = 0;
 };

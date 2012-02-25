@@ -112,7 +112,7 @@ class TDStretch : public FIFOProcessor
 protected:
     int channels;
     int sampleReq;
-    double tempo;
+    float tempo;
 
     SAMPLETYPE *pMidBuffer;
     SAMPLETYPE *pRefMidBuffer;
@@ -122,8 +122,8 @@ protected:
     int seekWindowLength;
     int overlapDividerBits;
     int slopingDivider;
-    double nominalSkip;
-    double skipFract;
+    float nominalSkip;
+    float skipFract;
     FIFOSampleBuffer outputBuffer;
     FIFOSampleBuffer inputBuffer;
     BOOL bQuickSeek;
@@ -189,7 +189,7 @@ public:
 
     /// Sets new target tempo. Normal tempo = 'SCALE', smaller values represent slower 
     /// tempo, larger faster tempo.
-    void setTempo(double newTempo);
+    void setTempo(float newTempo);
 
     /// Returns nonzero if there aren't any samples available for outputting.
     virtual void clear();
@@ -256,7 +256,7 @@ public:
     class TDStretch3DNow : public TDStretch
     {
     protected:
-        double calcCrossCorrStereo(const double *mixingPos, const double *compare) const;
+        double calcCrossCorrStereo(const float *mixingPos, const float *compare) const;
     };
 #endif /// ALLOW_3DNOW
 
@@ -266,7 +266,7 @@ public:
     class TDStretchSSE : public TDStretch
     {
     protected:
-        double calcCrossCorrStereo(const double *mixingPos, const double *compare) const;
+        double calcCrossCorrStereo(const float *mixingPos, const float *compare) const;
     };
 
 #endif /// ALLOW_SSE

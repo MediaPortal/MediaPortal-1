@@ -417,12 +417,12 @@ DWORD CTimeStretchFilter::ThreadProc()
   }
 }
 
-DEFINE_STREAM_FUNC(setRate, double, newRate)
-DEFINE_STREAM_FUNC(setRateChange, double, newRate)
-DEFINE_STREAM_FUNC(setTempoChange, double, newTempo)
-DEFINE_STREAM_FUNC(setPitchOctaves, double, newPitch)
+DEFINE_STREAM_FUNC(setRate, float, newRate)
+DEFINE_STREAM_FUNC(setRateChange, float, newRate)
+DEFINE_STREAM_FUNC(setTempoChange, float, newTempo)
+DEFINE_STREAM_FUNC(setPitchOctaves, float, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, int, newPitch)
-DEFINE_STREAM_FUNC(setPitchSemiTones, double, newPitch)
+DEFINE_STREAM_FUNC(setPitchSemiTones, float, newPitch)
 DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
 
 // clear requires a specific handling since we need to be able to use the CAutoLock
@@ -450,13 +450,13 @@ void CTimeStretchFilter::flush()
   } 
 }
 
-void CTimeStretchFilter::setTempo(double newTempo, double newAdjustment)
+void CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
 {
   m_fNewTempo = newTempo;
   m_fNewAdjustment = newAdjustment;
 }
 
-void CTimeStretchFilter::setTempoInternal(double newTempo, double newAdjustment)
+void CTimeStretchFilter::setTempoInternal(float newTempo, float newAdjustment)
 {
   if (m_Streams) 
   { 

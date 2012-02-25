@@ -229,7 +229,6 @@ void * FIRFilter::operator new(size_t s)
 
 FIRFilter * FIRFilter::newInstance()
 {
-#ifndef _WIN64
     uint uExtensions;
 
     uExtensions = detectCPUextensions();
@@ -262,8 +261,6 @@ FIRFilter * FIRFilter::newInstance()
     }
     else
 #endif // ALLOW_3DNOW
-
-#endif	// _WIN64
 
     {
         // ISA optimizations not supported, use plain C version

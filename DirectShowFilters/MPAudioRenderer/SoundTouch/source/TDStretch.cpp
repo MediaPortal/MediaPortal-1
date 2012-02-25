@@ -559,7 +559,7 @@ void TDStretch::calcSeqParameters()
 
 // Sets new target tempo. Normal tempo = 'SCALE', smaller values represent slower 
 // tempo, larger faster tempo.
-void TDStretch::setTempo(double newTempo)
+void TDStretch::setTempo(float newTempo)
 {
     int intskip;
 
@@ -747,8 +747,7 @@ void * TDStretch::operator new(size_t s)
 
 TDStretch * TDStretch::newInstance()
 {
-#ifndef _WIN64
-	uint uExtensions;
+    uint uExtensions;
 
     uExtensions = detectCPUextensions();
 
@@ -782,8 +781,6 @@ TDStretch * TDStretch::newInstance()
     }
     else
 #endif // ALLOW_3DNOW
-
-#endif // _WIN64
 
     {
         // ISA optimizations not supported, use plain C version
@@ -942,14 +939,14 @@ long TDStretch::calcCrossCorrStereo(const short *mixingPos, const short *compare
 void TDStretch::precalcCorrReferenceStereo()
 {
     int i, cnt2;
-    double temp;
+    float temp;
 
     for (i=0 ; i < (int)overlapLength ;i ++) 
     {
-        temp = (double)i * (double)(overlapLength - i);
+        temp = (float)i * (float)(overlapLength - i);
         cnt2 = i * 2;
-        pRefMidBuffer[cnt2] = (double)(pMidBuffer[cnt2] * temp);
-        pRefMidBuffer[cnt2 + 1] = (double)(pMidBuffer[cnt2 + 1] * temp);
+        pRefMidBuffer[cnt2] = (float)(pMidBuffer[cnt2] * temp);
+        pRefMidBuffer[cnt2 + 1] = (float)(pMidBuffer[cnt2 + 1] * temp);
     }
 }
 
@@ -959,31 +956,31 @@ void TDStretch::precalcCorrReferenceStereo()
 void TDStretch::precalcCorrReferenceMono()
 {
     int i;
-    double temp;
+    float temp;
 
     for (i=0 ; i < (int)overlapLength ;i ++) 
     {
-        temp = (double)i * (double)(overlapLength - i);
-        pRefMidBuffer[i] = (double)(pMidBuffer[i] * temp);
+        temp = (float)i * (float)(overlapLength - i);
+        pRefMidBuffer[i] = (float)(pMidBuffer[i] * temp);
     }
 }
 
 
 // Overlaps samples in 'midBuffer' with the samples in 'pInput'
-void TDStretch::overlapStereo(double *pOutput, const double *pInput) const
+void TDStretch::overlapStereo(float *pOutput, const float *pInput) const
 {
     int i;
     int cnt2;
-    double fTemp;
-    double fScale;
-    double fi;
+    float fTemp;
+    float fScale;
+    float fi;
 
-    fScale = 1.0f / (double)overlapLength;
+    fScale = 1.0f / (float)overlapLength;
 
     for (i = 0; i < (int)overlapLength ; i ++) 
     {
-        fTemp = (double)(overlapLength - i) * fScale;
-        fi = (double)i * fScale;
+        fTemp = (float)(overlapLength - i) * fScale;
+        fi = (float)i * fScale;
         cnt2 = 2 * i;
         pOutput[cnt2 + 0] = pInput[cnt2 + 0] * fi + pMidBuffer[cnt2 + 0] * fTemp;
         pOutput[cnt2 + 1] = pInput[cnt2 + 1] * fi + pMidBuffer[cnt2 + 1] * fTemp;
@@ -1008,7 +1005,7 @@ void TDStretch::calculateOverlapLength(int overlapInMsec)
 
 
 
-double TDStretch::calcCrossCorrMono(const double *mixingPos, const double *compare) const
+double TDStretch::calcCrossCorrMono(const float *mixingPos, const float *compare) const
 {
     double corr;
     double norm;
@@ -1026,7 +1023,7 @@ double TDStretch::calcCrossCorrMono(const double *mixingPos, const double *compa
 }
 
 
-double TDStretch::calcCrossCorrStereo(const double *mixingPos, const double *compare) const
+double TDStretch::calcCrossCorrStereo(const float *mixingPos, const float *compare) const
 {
     double corr;
     double norm;
