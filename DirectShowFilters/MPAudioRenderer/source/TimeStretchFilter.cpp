@@ -49,6 +49,9 @@ CTimeStretchFilter::~CTimeStretchFilter(void)
 {
   Log("CTimeStretchFilter - destructor - instance 0x%x", this);
   
+  SetEvent(m_hStopThreadEvent);
+
+  CAutoLock lock(&m_csResources);
   SetFormat(NULL);
   DeleteMediaType(m_pNewPMT);
 
@@ -290,6 +293,8 @@ DWORD CTimeStretchFilter::ThreadProc()
 
   AudioSinkCommand command;
   CComPtr<IMediaSample> sample;
+
+  CAutoLock lock(&m_csResources);
 
   while (true)
   {

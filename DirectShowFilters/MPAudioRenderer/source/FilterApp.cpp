@@ -43,7 +43,6 @@ BOOL CFilterApp::InitInstance()
 
 BOOL CFilterApp::ExitInstance()
 {
-  StopLogger();
   DllEntryPoint(AfxGetInstanceHandle(), DLL_PROCESS_DETACH, 0);
   return __super::ExitInstance();
 }

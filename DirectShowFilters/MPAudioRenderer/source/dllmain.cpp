@@ -117,9 +117,7 @@ string GetLogLine()
 {
   CAutoLock lock(&m_qLock);
   if ( m_logQueue.size() == 0 )
-  {
     return "";
-  }
 
   string ret = m_logQueue.front();
   m_logQueue.pop();
@@ -149,7 +147,7 @@ UINT CALLBACK LogThread(void* param)
         fclose(fp);
       }
     }
-    Sleep(1000);
+    Sleep(1000); // TODO use event & timer so the graph stop wont have 0 to 1 second delay
   }
   return 0;
 }

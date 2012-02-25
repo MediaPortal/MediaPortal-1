@@ -47,6 +47,7 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
 // for logging
 extern void Log(const char* fmt, ...);
 extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char* text);
+extern void StopLogger();
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr),
@@ -151,6 +152,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pSampleRateConverter;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
+  StopLogger();
 }
 
 HRESULT CMPAudioRenderer::SetupFilterPipeline()

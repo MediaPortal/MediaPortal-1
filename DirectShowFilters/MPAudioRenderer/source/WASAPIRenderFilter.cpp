@@ -76,6 +76,8 @@ CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
 {
   Log("CWASAPIRenderFilter - destructor - instance 0x%x", this);
   
+  SetEvent(m_hStopThreadEvent);
+
   CAutoLock lock(&m_csResources);
   FreeLibrary(m_hLibAVRT);
 
@@ -505,13 +507,16 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   CAutoLock lock(&m_csResources);
 
-  EnableMMCSS();
-
   m_nSampleNum = 0;
 
   hr = GetNextSampleOrCommand(&command, &sample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
   if (FAILED(hr))
     Log("CWASAPIRenderFilter::Render thread - failed to get 1st sample: (0x%08x)");
+
+  if (hr == MPAR_S_THREAD_STOPPING)
+    return 0;
+
+  EnableMMCSS();
 
   StartAudioClient(&m_pAudioClient);
   m_state = StateRunning;
@@ -526,14 +531,14 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       hr = MPAR_S_NEED_DATA;
     }
 
-    if (hr == MPAR_S_THREAD_STOPPING) // exit event
+    if (hr == MPAR_S_THREAD_STOPPING)
     {
       Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
       StopAudioClient(&m_pAudioClient);
       RevertMMCSS();
       return 0;
     }
-    else if (hr == MPAR_S_NEED_DATA) // data event
+    else if (hr == MPAR_S_NEED_DATA)
     {
       UpdateAudioClock();
 

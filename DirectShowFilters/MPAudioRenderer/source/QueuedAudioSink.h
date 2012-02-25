@@ -102,4 +102,7 @@ protected:
 
   CCritSec m_OOBInputQueueLock;
   queue<TQueueEntry> m_OOBInputQueue;
+
+  // Lock against this when dealing with resources that are used from the worker thread
+  CCritSec m_csResources;
 };
