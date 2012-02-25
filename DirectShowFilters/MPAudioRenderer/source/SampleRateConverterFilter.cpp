@@ -27,7 +27,8 @@ CSampleRateConverter::CSampleRateConverter(AudioRendererSettings *pSettings)
   m_rtInSampleTime(0),
   m_pSettings(pSettings),
   m_pSrcState(NULL),
-  m_dSampleRateRation(1.0)
+  m_dSampleRateRation(1.0),
+  m_rtNextIncomingSampleTime(0)
 {
 }
 
@@ -198,8 +199,18 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   long nOffset = 0;
   long cbSampleData = pSample->GetActualDataLength();
   BYTE *pData = NULL;
-  REFERENCE_TIME rtStop;
-  pSample->GetTime(&m_rtInSampleTime, &rtStop);
+  REFERENCE_TIME rtStop = 0;
+  REFERENCE_TIME rtStart = 0;
+  pSample->GetTime(&rtStart, &rtStop);
+
+  // Detect discontinuity in stream timeline
+  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
+    m_rtNextIncomingSampleTime = m_rtInSampleTime = rtStart;
+
+  UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
+  REFERENCE_TIME duration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+
+  m_rtNextIncomingSampleTime = rtStart + duration;
 
   hr = pSample->GetPointer(&pData);
   ASSERT(pData != NULL);
@@ -283,7 +294,12 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
       long nSize = m_pNextOutSample->GetSize();
 
       if (nOffset + m_nFrameSize > nSize)
-        hr = OutputNextSample();
+      {
+        UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+        m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;      
+      
+        OutputNextSample();
+      }
     }
 
     // try to get an output buffer if none available
@@ -328,10 +344,13 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
 
     m_pNextOutSample->SetActualDataLength(nOffset);
     if (nOffset + m_nFrameSize > nSize)
+    {
+      UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;      
+      
       OutputNextSample();
+    }
 
-    m_rtInSampleTime += data.output_frames_gen * m_nFrameSize * UNITS / m_pOutputFormat->Format.nAvgBytesPerSec;
-    
     // all samples should contain an integral number of frames
     ASSERT(cbData == 0 || cbData >= m_nFrameSize);
   }

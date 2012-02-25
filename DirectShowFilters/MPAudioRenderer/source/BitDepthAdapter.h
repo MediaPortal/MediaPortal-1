@@ -74,6 +74,7 @@ protected:
 
   BitDepthConversionFunc m_pfnConvert;
 
+  REFERENCE_TIME m_rtNextIncomingSampleTime;
   REFERENCE_TIME m_rtInSampleTime; 
   long m_lInSampleError[32];
 

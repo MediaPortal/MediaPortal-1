@@ -40,7 +40,7 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_fNewTempo(1.0),
   m_pNewPMT(NULL),
   m_rtInSampleTime(0),
-  m_rtNextSampleTime(0),
+  m_rtNextIncomingSampleTime(0),
   m_pClock(pClock)
 {
 }
@@ -341,11 +341,11 @@ DWORD CTimeStretchFilter::ThreadProc()
         if (SUCCEEDED(hr))
         {
           // Detect discontinuity in stream timeline
-          if ((abs(m_rtNextSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR) || initStreamTime)
-            m_rtNextSampleTime = m_rtInSampleTime = rtStart;
+          if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR) || initStreamTime)
+            m_rtNextIncomingSampleTime = m_rtInSampleTime = rtStart;
 
           UINT nFrames = size / m_pInputFormat->Format.nBlockAlign;
-          m_rtNextSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+          m_rtNextIncomingSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
         }
 
         hr = sample->GetPointer(&pMediaBuffer);

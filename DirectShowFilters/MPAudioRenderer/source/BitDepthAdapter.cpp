@@ -89,6 +89,7 @@ BitDepthDescriptor *FindConversion(const BitDepthDescriptor source);
 CBitDepthAdapter::CBitDepthAdapter(void)
 : m_bPassThrough(false)
 , m_rtInSampleTime(0)
+, m_rtNextIncomingSampleTime(0)
 , m_pfnConvert(NULL)
 {
   ResetDithering();
@@ -265,8 +266,18 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   long nOffset = 0;
   long cbSampleData = pSample->GetActualDataLength();
   BYTE *pData = NULL;
-  REFERENCE_TIME rtStop;
-  pSample->GetTime(&m_rtInSampleTime, &rtStop);
+  REFERENCE_TIME rtStop = 0;
+  REFERENCE_TIME rtStart = 0;
+  pSample->GetTime(&rtStart, &rtStop);
+
+  // Detect discontinuity in stream timeline
+  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
+    m_rtNextIncomingSampleTime = m_rtInSampleTime = rtStart;
+
+  UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
+  REFERENCE_TIME duration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+  m_rtNextIncomingSampleTime = rtStart + duration;
 
   hr = pSample->GetPointer(&pData);
   ASSERT(pData != NULL);
@@ -365,12 +376,10 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
 
       if (nOffset + m_nOutFrameSize > nSize)
       {
-        hr = OutputNextSample();
+        UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+        m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-        UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
-        REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
-
-        m_rtInSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+        OutputNextSample();
       }
     }
 
@@ -403,9 +412,12 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
     nOffset += framesToConvert * m_nOutFrameSize;
     m_pNextOutSample->SetActualDataLength(nOffset);
     if (nOffset + m_nOutFrameSize > nSize)
-      OutputNextSample();
+    {
+      UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-    m_rtInSampleTime += framesToConvert * m_nInFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
+      OutputNextSample();
+    }
 
     // all samples should contain an integral number of frames
     ASSERT(cbData == 0 || cbData >= m_nInFrameSize);

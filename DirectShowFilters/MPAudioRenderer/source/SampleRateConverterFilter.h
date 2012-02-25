@@ -61,6 +61,7 @@ protected:
 
   double m_dSampleRateRation;
 
+  REFERENCE_TIME m_rtNextIncomingSampleTime;
   REFERENCE_TIME m_rtInSampleTime;
 
   SRC_STATE* m_pSrcState;

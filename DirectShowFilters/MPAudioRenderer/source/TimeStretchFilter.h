@@ -143,7 +143,7 @@ private:
 
   AM_MEDIA_TYPE* m_pNewPMT;
   REFERENCE_TIME m_rtInSampleTime;
-  REFERENCE_TIME m_rtNextSampleTime;
+  REFERENCE_TIME m_rtNextIncomingSampleTime;
 
   static const uint SAMPLE_LEN = 0x40000;
   std::vector<CSoundTouchEx *> *m_Streams;

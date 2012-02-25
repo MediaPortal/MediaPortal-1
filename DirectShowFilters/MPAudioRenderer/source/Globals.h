@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 
-#define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
+#define MAX_SAMPLE_TIME_ERROR 2000 // 0.2 ms
 
 typedef struct tagSpeakerPair {
   DWORD dwLeft, dwRight;
