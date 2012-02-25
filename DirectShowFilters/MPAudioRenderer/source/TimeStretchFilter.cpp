@@ -105,9 +105,15 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+#ifdef INTEGER_SAMPLES
   // TODO - check why non 16 bit sample formats aren't working!
   if (pwfx->Format.wBitsPerSample != 16)
     return VFW_E_TYPE_NOT_ACCEPTED;
+#else 
+  // only accept 32bit float
+  if (pwfx->Format.wBitsPerSample != 32 || pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+    return VFW_E_TYPE_NOT_ACCEPTED;
+#endif
 
   if (FormatsEqual(pwfx, m_pInputFormat))
     return S_OK;
