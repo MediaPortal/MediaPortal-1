@@ -63,7 +63,7 @@ namespace soundtouch
 
 /// Activate these undef's to overrule the possible sampletype 
 /// setting inherited from some other header file:
-//#undef INTEGER_SAMPLES
+#undef INTEGER_SAMPLES
 //#undef FLOAT_SAMPLES
 
 #if !(INTEGER_SAMPLES || FLOAT_SAMPLES)
