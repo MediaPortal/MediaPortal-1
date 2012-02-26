@@ -26,9 +26,8 @@
 #include "Globals.h"
 #include "SyncClock.h"
 
-
-#define OUT_BUFFER_SIZE   65536
-#define OUT_BUFFER_COUNT  20
+#define OUT_BUFFER_SIZE   (0x25000)
+#define OUT_BUFFER_COUNT  (20)
 
 using namespace std;
 

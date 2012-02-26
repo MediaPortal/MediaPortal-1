@@ -18,8 +18,8 @@
 
 #include "IAudioSink.h"
 
-#define DEFAULT_OUT_BUFFER_COUNT  (4)
-#define DEFAULT_OUT_BUFFER_SIZE   (0x1000)
+#define DEFAULT_OUT_BUFFER_COUNT  (10)
+#define DEFAULT_OUT_BUFFER_SIZE   (0x20000)
 
 typedef class CBaseAudioSink CNullAudioFilter;
 
