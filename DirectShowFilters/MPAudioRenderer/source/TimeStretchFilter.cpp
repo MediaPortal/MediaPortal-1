@@ -99,6 +99,16 @@ HRESULT CTimeStretchFilter::Cleanup()
   return hr;
 }
 
+HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
+{
+  if (m_pSettings->m_bUseTimeStretching)
+    CQueuedAudioSink::PutSample(pSample);
+  else if (m_pNextSink)
+    return m_pNextSink->PutSample(pSample);
+  
+  return S_OK;
+}
+
 // Format negotiation
 HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
 {
@@ -380,7 +390,7 @@ DWORD CTimeStretchFilter::ThreadProc()
             UINT32 nOrigOutFrames = nOutFrames;
             UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
             double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-            //double rtProcessedSampleDuration = (double)(nOrigOutFrames - m_nPrevFrameCorr) * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+            //double rtProcessedSampleDuration = (double)nOrigOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
 
             //m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             

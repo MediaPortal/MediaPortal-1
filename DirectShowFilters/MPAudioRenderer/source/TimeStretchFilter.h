@@ -41,6 +41,7 @@ public:
   // IAudioSink implementation
   HRESULT Init();
   HRESULT Cleanup();
+  HRESULT PutSample(IMediaSample* pSample);
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
   HRESULT EndOfStream();
 
