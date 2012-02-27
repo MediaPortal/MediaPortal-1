@@ -63,15 +63,13 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     TuningDetail GetTuningDetailByURL(DVBBaseChannel dvbChannel, string url);
 
     [OperationContract]
-    void AddTuningDetail(Channel dbChannel, IChannel channel);
+    void AddTuningDetail(int idChannel, IChannel channel);
 
     [OperationContract]
     IList<TuningDetail> GetTuningDetailsByName(string channelName, int channelType);
 
     [OperationContract]
-    void UpdateTuningDetails(Channel dbChannel, IChannel channel);
-
-    
+    void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel);    
 
     [OperationContract]
     Channel GetChannelByName(string channelName, ChannelIncludeRelationEnum includeRelations);

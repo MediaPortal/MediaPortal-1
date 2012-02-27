@@ -154,13 +154,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (schedule != null)
       {
-        for (int i = schedule.Recordings.Count - 1; i >= 0; i--)
+        scheduleRepository.DeleteList(schedule.Recordings);
+        /*for (int i = schedule.Recordings.Count - 1; i >= 0; i--)
         {
           Recording recording = schedule.Recordings[i];
           recording.Schedule = null;
         }
-
-        scheduleRepository.ApplyChanges<Schedule>(scheduleRepository.ObjectContext.Schedules, schedule);
+        scheduleRepository.ApplyChanges<Schedule>(scheduleRepository.ObjectContext.Schedules, schedule);*/
       }
     }
 

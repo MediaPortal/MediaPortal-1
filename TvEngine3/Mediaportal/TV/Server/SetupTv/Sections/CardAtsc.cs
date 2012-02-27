@@ -293,21 +293,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             if (dbChannel.mediaType == (decimal) MediaTypeEnum.TV)
             {
               ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.TV);              
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);              
             }
             else if (dbChannel.mediaType == (decimal) MediaTypeEnum.Radio)
             {
               ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.Radio);                            
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                            
             }
             if (currentDetail == null)
             {
-              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.idChannel, channel);
             }
             else
             {
               //update tuning details...
-              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetails(dbChannel, channel);
+              ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.idChannel, currentDetail.idTuning, channel);
             }
             if (channel.MediaType == MediaTypeEnum.TV)
             {

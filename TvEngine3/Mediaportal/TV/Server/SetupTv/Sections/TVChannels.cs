@@ -121,10 +121,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       tabControl1.TabPages.Clear();
       tabControl1.TabPages.Add(tabPage1);
 
-      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
-      include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-      include |= ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails; 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include);
+      //ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+      //include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
+      //include |= ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails; 
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {
@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = mpListView1.Items[indexes[i]];
 
         Channel channel = (Channel)item.Tag;
-        MappingHelper.AddChannelToGroup(channel, @group, MediaTypeEnum.TV);        
+        MappingHelper.AddChannelToGroup(ref channel, @group, MediaTypeEnum.TV);        
 
         string groupString = item.SubItems[1].Text;
         if (groupString == string.Empty)
@@ -356,8 +356,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (channel.sortOrder != i)
         {
           channel.sortOrder = i;
+          channel.UnloadAllUnchangedRelationsForEntity();
           channels.Add(channel);
           channel.AcceptChanges();
+          mpListView1.Items[i].Tag = channel;
         }
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);

@@ -17,6 +17,12 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         var query = channelGroupRepository.GetAll<ChannelGroup>();
         var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
+        
+        /*foreach (ChannelGroup channelGroup in listAllChannelGroups)
+        {
+          channelGroupRepository.ObjectContext.Detach(channelGroup););  
+        }*/
+
         return listAllChannelGroups;
       }
     }

@@ -231,7 +231,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = mpListView1.Items[indexes[i]];
 
         Channel channel = (Channel)item.Tag;        
-        MappingHelper.AddChannelToGroup(channel, group, MediaTypeEnum.Radio);                
+        MappingHelper.AddChannelToGroup(ref channel, group, MediaTypeEnum.Radio);                
 
         string groupString = item.SubItems[1].Text;
         if (groupString == string.Empty)
@@ -574,7 +574,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                                   idChannel = channel.idChannel
                                 };
         ServiceAgents.Instance.ChannelServiceAgent.SaveTuningDetail(detail);
-        MappingHelper.AddChannelToGroup(channel, TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);                
+        MappingHelper.AddChannelToGroup(ref channel, TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);                
         iInserted++;
       }
       MessageBox.Show("Imported " + iInserted + " new channels from playlist");

@@ -48,10 +48,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CanceledScheduleServiceAgent.cs" />
+    <Compile Include="CardServiceAgent.cs" />
+    <Compile Include="ChannelGroupServiceAgent.cs" />
+    <Compile Include="ChannelServiceAgent.cs" />
+    <Compile Include="ConflictServiceAgent.cs" />
     <Compile Include="DiscoverServiceAgent.cs" />
     <Compile Include="EventServiceAgent.cs" />
     <Compile Include="MappingHelper.cs" />
+    <Compile Include="ProgramServiceAgent.cs" />
+    <Compile Include="RecordingServiceAgent.cs" />
+    <Compile Include="ScheduleServiceAgent.cs" />
     <Compile Include="ServerMonitor.cs" />
+    <Compile Include="ServiceAgent.cs" />
     <Compile Include="ServiceAgents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

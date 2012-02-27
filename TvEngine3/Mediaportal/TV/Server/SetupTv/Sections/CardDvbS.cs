@@ -1133,55 +1133,55 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           if (dbChannel.mediaType == (int)MediaTypeEnum.TV)
           {
             ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
-            MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.TV);                                                      
+            MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);                                                      
             if (checkBoxCreateSignalGroup.Checked)
             {
               group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.DVBS);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.TV);                                                        
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);                                                        
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
               group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.satelliteName);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.TV);                                                        
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);                                                        
             }
             if (checkBoxCreateGroups.Checked)
             {
               group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.TV);                                                                      
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.TV);                                                                      
             }
           }
           if (dbChannel.mediaType == (int)MediaTypeEnum.Radio)
           {
             ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.AllChannels);
-            MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.Radio);             
+            MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);             
             if (checkBoxCreateSignalGroup.Checked)
             {
               group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.RadioGroupNames.DVBS);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.Radio);                           
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                           
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
               group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(context.Satellite.satelliteName);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.Radio);                           
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                           
             }
             if (checkBoxCreateGroups.Checked)
             {
               group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(channel.Provider);
-              MappingHelper.AddChannelToGroup(dbChannel, group, MediaTypeEnum.Radio);                                         
+              MappingHelper.AddChannelToGroup(ref dbChannel, group, MediaTypeEnum.Radio);                                         
             }
           }
 
           if (currentDetail == null)
           {
             channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
-            ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel, channel);
+            ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.idChannel, channel);
           }
           else
           {
             //update tuning details...
             channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
             currentDetail.satIndex = position; //context.Satellite.IdSatellite;
-            ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetails(dbChannel, channel);
+            ServiceAgents.Instance.ChannelServiceAgent.UpdateTuningDetail(dbChannel.idChannel, currentDetail.idTuning, channel);
           }
           if (channel.MediaType == MediaTypeEnum.TV)
           {

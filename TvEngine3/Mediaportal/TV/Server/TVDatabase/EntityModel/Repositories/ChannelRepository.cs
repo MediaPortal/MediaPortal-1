@@ -41,35 +41,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
     {
-      IQueryable<TuningDetail> includeRelations =
-       query.
-         Include(c => c.Channel);
-
+      IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).
+        Include(c => c.Channel.GroupMaps);      
       return includeRelations;
-    }
-    
-
-    public IQueryable<Channel> IncludeSelectRelations<T>(IQueryable<Channel> query,
-                                                      Expression<Func<Channel, IEnumerable<T>>> inc)
-    {
-      IQueryable<Channel> includeRelations =
-        query.
-          Include(inc)
-        ;
-    
-
-      //calling example
-      Expression<Func<Channel, IEnumerable<TuningDetail>>> tuningDetail = c => c.TuningDetails;
-      includeRelations = IncludeSelectRelations<TuningDetail>(includeRelations, tuningDetail);
-
-      Expression<Func<Channel, IEnumerable<ChannelMap>>> channelMaps = c => c.ChannelMaps;
-      includeRelations = IncludeSelectRelations<ChannelMap>(includeRelations, channelMaps);
-      
-
-      //Expression<Func<Channel, IEnumerable<ChannelGroup>>> expression = c => c.GroupMaps.Select(g => g.ChannelGroup);
-
-      return includeRelations;
-    }
+    }    
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations)
     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Objects;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
@@ -15,6 +16,41 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
           var model = new Model();
           model.ContextOptions.LazyLoadingEnabled = false;
           model.ContextOptions.ProxyCreationEnabled = false;
+
+          model.CanceledSchedules.MergeOption = MergeOption.NoTracking;
+          model.CardGroupMaps.MergeOption = MergeOption.NoTracking;
+          model.CardGroups.MergeOption = MergeOption.NoTracking;
+          model.Cards.MergeOption = MergeOption.NoTracking;
+          model.ChannelGroups.MergeOption = MergeOption.NoTracking;
+          model.ChannelLinkageMaps.MergeOption = MergeOption.NoTracking;
+          model.ChannelMaps.MergeOption = MergeOption.NoTracking;
+          model.Channels.MergeOption = MergeOption.NoTracking;
+          model.Conflicts.MergeOption = MergeOption.NoTracking;
+          model.DisEqcMotors.MergeOption = MergeOption.NoTracking;
+          model.Favorites.MergeOption = MergeOption.NoTracking;
+          model.GroupMaps.MergeOption = MergeOption.NoTracking;
+          model.Histories.MergeOption = MergeOption.NoTracking;
+          model.KeywordMaps.MergeOption = MergeOption.NoTracking;
+          model.Keywords.MergeOption = MergeOption.NoTracking;
+          model.PendingDeletions.MergeOption = MergeOption.NoTracking;
+          model.PersonalTVGuideMaps.MergeOption = MergeOption.NoTracking;
+          model.ProgramCategories.MergeOption = MergeOption.NoTracking;
+          model.ProgramCredits.MergeOption = MergeOption.NoTracking;
+          model.Programs.MergeOption = MergeOption.NoTracking;
+          model.RecordingCredits.MergeOption = MergeOption.NoTracking;
+          model.Recordings.MergeOption = MergeOption.NoTracking;
+          model.RuleBasedSchedules.MergeOption = MergeOption.NoTracking;
+          model.Satellites.MergeOption = MergeOption.NoTracking;
+          model.ScheduleRulesTemplates.MergeOption = MergeOption.NoTracking;
+          model.Schedules.MergeOption = MergeOption.NoTracking;
+          model.Settings.MergeOption = MergeOption.NoTracking;
+          model.SoftwareEncoders.MergeOption = MergeOption.NoTracking;
+          model.Timespans.MergeOption = MergeOption.NoTracking;
+          model.TuningDetails.MergeOption = MergeOption.NoTracking;
+          model.TvMovieMappings.MergeOption = MergeOption.NoTracking;
+          model.Versions.MergeOption = MergeOption.NoTracking;
+          
+
           return model;
         }
       }      

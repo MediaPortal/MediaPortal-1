@@ -109,9 +109,9 @@ namespace Mediaportal.TV.Server.TVService.Services
       return ChannelManagement.GetTuningDetail(dvbChannel, url);
     }
 
-    public void AddTuningDetail(Channel dbChannel, IChannel channel)
+    public void AddTuningDetail(int idChannel, IChannel channel)
     {
-      ChannelManagement.AddTuningDetail(dbChannel, channel);
+      ChannelManagement.AddTuningDetail(idChannel, channel);
     }
 
     public IList<TuningDetail> GetTuningDetailsByName(string channelName, int channelType)
@@ -119,9 +119,9 @@ namespace Mediaportal.TV.Server.TVService.Services
       return ChannelManagement.GetTuningDetailsByName(channelName, channelType);
     }
 
-    public void UpdateTuningDetails(Channel dbChannel, IChannel channel)
+    public void UpdateTuningDetail(int idChannel, int idTuning, IChannel channel)
     {
-      ChannelManagement.UpdateTuningDetails(dbChannel, channel);
+      ChannelManagement.UpdateTuningDetail(idChannel, idTuning, channel);
     }
 
 

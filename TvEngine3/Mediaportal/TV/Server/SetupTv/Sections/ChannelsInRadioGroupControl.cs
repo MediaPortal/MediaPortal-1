@@ -193,7 +193,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           continue;
         }
 
-        GroupMap groupMap = MappingHelper.AddChannelToGroup(channel, _channelGroup, MediaTypeEnum.Radio);
+        GroupMap groupMap = MappingHelper.AddChannelToGroup(ref channel, _channelGroup, MediaTypeEnum.Radio);
 
         if (groupMap != null)
         {
@@ -262,7 +262,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = listView1.Items[indexes[i]];
         GroupMap map = (GroupMap)item.Tag;
         Channel channel = map.Channel;
-        MappingHelper.AddChannelToGroup(channel, group, MediaTypeEnum.Radio);                
+        MappingHelper.AddChannelToGroup(ref channel, group, MediaTypeEnum.Radio);                
       }
     }
 

@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
@@ -34,7 +35,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
-{
+{  
   public partial class ChannelsInGroupControl : UserControl
   {
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
@@ -78,12 +79,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         UpdateMenuAndTabs();
 
         listView1.Items.Clear();
-       
 
+        _channelGroup =
+          ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_channelGroup.groupName,
+                                                                                            MediaTypeEnum.TV);
         foreach (GroupMap map in _channelGroup.GroupMaps.OrderBy(c=>c.SortOrder))
         {
           Channel channel = map.Channel;
-          if (channel.mediaType == (int)MediaTypeEnum.TV)
+          //if (channel.mediaType == (int)MediaTypeEnum.TV)
           {
             listView1.Items.Add(CreateItemForChannel(channel, map));
           }
@@ -171,45 +174,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(groupMaps);
     }
 
-    private void AddSelectedItemsToGroup(MPListView sourceListView)
-    {
-      if (_channelGroup == null)
-      {
-        return;
-      }
-
-      foreach (ListViewItem sourceItem in sourceListView.SelectedItems)
-      {
-        Channel channel = null;
-        if (sourceItem.Tag is Channel)
-        {
-          channel = (Channel)sourceItem.Tag;
-        }
-        else if (sourceItem.Tag is GroupMap)
-        {
-          channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannel((((GroupMap)sourceItem.Tag).idChannel));
-        }
-        else
-        {
-          continue;
-        }
-
-        GroupMap groupMap = MappingHelper.AddChannelToGroup(channel, _channelGroup, MediaTypeEnum.TV);        
-
-        if (groupMap != null)
-        {
-          foreach (ListViewItem item in listView1.Items)
-          {
-            if ((item.Tag as Channel) == channel)
-            {
-              item.Tag = groupMap;
-              break;
-            }
-          }
-        }
-      }
-    }
-
     private void UpdateMenuAndTabs()
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
@@ -256,8 +220,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         ListViewItem item = listView1.Items[indexes[i]];
         GroupMap map = (GroupMap)item.Tag;
-        Channel channel = map.Channel;                
-        MappingHelper.AddChannelToGroup(channel, group, MediaTypeEnum.TV);        
+        Channel channel = map.Channel;
+        MappingHelper.AddChannelToGroup(ref channel, group, MediaTypeEnum.TV);        
       }
     }
 
@@ -320,6 +284,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           FormEditChannel dlg = new FormEditChannel();
           dlg.Channel = channel;
           dlg.ShowDialog();
+          map.Channel = dlg.Channel;
           return;
         }
       }
@@ -349,12 +314,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         Channel ch = ((GroupMap) e.Item.Tag).Channel;
         if (ch.visibleInGuide != e.Item.Checked)
         {
-          ch.visibleInGuide = e.Item.Checked;
+          ch.visibleInGuide = e.Item.Checked;          
           ch = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(ch);
           ch.AcceptChanges();
+          ((GroupMap) e.Item.Tag).Channel = ch;
         }
       }
     }
+
+   
 
     private void mpButtonPreview_Click(object sender, EventArgs e)
     {

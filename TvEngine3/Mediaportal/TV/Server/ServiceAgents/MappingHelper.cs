@@ -8,18 +8,16 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 {
   public static class MappingHelper
   {
-    public static GroupMap AddChannelToGroup(Channel channel, ChannelGroup @group, MediaTypeEnum mediaType)
+    public static GroupMap AddChannelToGroup(ref Channel channel, ChannelGroup @group, MediaTypeEnum mediaType)
     {
       foreach (GroupMap groupMap in channel.GroupMaps.Where(groupMap => groupMap.idGroup == @group.idGroup))
       {
-        //already associated ?
         return groupMap;
       }
-      Channel channelDetached = ChannelFactory.Clone(channel);
-      DoAddChannelToGroup(channelDetached, @group, mediaType);      
-      channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channelDetached);      
+      DoAddChannelToGroup(channel, group, mediaType);
+      channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
       channel.AcceptChanges();
-      return channel.GroupMaps.Where(gMap => gMap.idGroup == @group.idGroup).FirstOrDefault();
+      return channel.GroupMaps.FirstOrDefault(gMap => gMap.idGroup == @group.idGroup);
     }
 
     private static void DoAddChannelToGroup(Channel channel, ChannelGroup @group, MediaTypeEnum mediaType)
@@ -36,12 +34,12 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       channel.GroupMaps.Add(groupMap);
     }
 
-    public static GroupMap AddChannelToGroup(Channel channel, string groupName, MediaTypeEnum mediaType)
+    public static GroupMap AddChannelToGroup(ref Channel channel, string groupName, MediaTypeEnum mediaType)
     {
       ChannelGroup channelGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(groupName, mediaType);
       if (channelGroup != null)
       {
-        return AddChannelToGroup(channel, channelGroup, mediaType);
+        return AddChannelToGroup(ref channel, channelGroup, mediaType);
       }
       return null;
     }
@@ -69,12 +67,11 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
         idCard =  card.idCard,
         epgOnly = epg
       };
-      Channel channelDetached = ChannelFactory.Clone(channel);
-
-      channelDetached.ChannelMaps.Add(map);
-      channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channelDetached);
+      
+      channel.ChannelMaps.Add(map);
+      channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
       channel.AcceptChanges();
-      return channel.ChannelMaps.Where(chMap => chMap.idCard == card.idCard).FirstOrDefault();
+      return channel.ChannelMaps.FirstOrDefault(chMap => chMap.idCard == card.idCard);
     }
   
   }

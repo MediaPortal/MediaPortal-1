@@ -71,17 +71,18 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       }
       _channel.displayName = textBoxName.Text;
       _channel.visibleInGuide = checkBoxVisibleInTvGuide.Checked;
-      _channel.mediaType = (int) _mediaType;
-      ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);
+      _channel.mediaType = (int) _mediaType;      
+      _channel = ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(_channel);      
+
       if (_newChannel)
       {
         if (_mediaType == MediaTypeEnum.TV)
         {
-          MappingHelper.AddChannelToGroup(_channel, TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);          
+          MappingHelper.AddChannelToGroup(ref _channel, TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);          
         }
         else if (_mediaType == MediaTypeEnum.Radio)
         {
-          MappingHelper.AddChannelToGroup(_channel, TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);          
+          MappingHelper.AddChannelToGroup(ref _channel, TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);          
         }
       }
       foreach (TuningDetail detail in _tuningDetails)
@@ -111,8 +112,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       if (_channel == null)
       {
         _newChannel = true;
-        _channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
-                               "");        
+        _channel = ChannelFactory.CreateChannel(MediaTypeEnum.TV, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", "");        
       }
       textBoxName.Text = _channel.displayName;
       checkBoxVisibleInTvGuide.Checked = _channel.visibleInGuide;

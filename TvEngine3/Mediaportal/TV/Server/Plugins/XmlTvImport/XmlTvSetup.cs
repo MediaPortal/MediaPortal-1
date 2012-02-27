@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.Plugins.XmlTvImport
     public XmlTvSetup()
       : this("XmlTv")
     {
-      ServiceAgents.Instance.AddService<IXMLTVImportService>(); //XMLTVImportService
+      ServiceAgents.Instance.AddGenericService<IXMLTVImportService>(); //XMLTVImportService
     }
 
     public XmlTvSetup(string name)
