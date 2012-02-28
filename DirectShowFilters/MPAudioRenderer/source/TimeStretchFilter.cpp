@@ -390,9 +390,9 @@ DWORD CTimeStretchFilter::ThreadProc()
             UINT32 nOrigOutFrames = nOutFrames;
             UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
             double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-            //double rtProcessedSampleDuration = (double)nOrigOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+            double rtProcessedSampleDuration = (double)nOrigOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
 
-            //m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
+            m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             
             // try to get an output buffer if none available
             if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
