@@ -211,13 +211,15 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     Log("CSampleRateConverter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
 
     m_rtInSampleTime = rtStart;
-    FlushStream();
+    if (m_nSampleNum > 0)
+      FlushStream();
   }
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
   REFERENCE_TIME duration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
   m_rtNextIncomingSampleTime = rtStart + duration;
+  m_nSampleNum++;
 
   hr = pSample->GetPointer(&pData);
   ASSERT(pData != NULL);
@@ -229,6 +231,12 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     nOffset += cbProcessed;
   }
   return hr;
+}
+
+HRESULT CSampleRateConverter::BeginFlush()
+{
+  m_nSampleNum = 0;
+  return CBaseAudioSink::BeginFlush();
 }
 
 HRESULT CSampleRateConverter::EndOfStream()

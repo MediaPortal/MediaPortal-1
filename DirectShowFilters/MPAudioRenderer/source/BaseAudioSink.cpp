@@ -28,6 +28,7 @@ CBaseAudioSink::CBaseAudioSink(void)
 , m_bDiscontinuity(false)
 , m_pMemAllocator((IUnknown *)NULL)
 , m_pNextOutSample(NULL)
+, m_nSampleNum(0)
 {
 }
 

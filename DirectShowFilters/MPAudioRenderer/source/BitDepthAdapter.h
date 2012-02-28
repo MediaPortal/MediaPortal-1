@@ -38,11 +38,12 @@ public:
   HRESULT Cleanup();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample* pSample);
-  virtual HRESULT EndOfStream();
+  HRESULT PutSample(IMediaSample* pSample);
+  HRESULT BeginFlush();
+  HRESULT EndOfStream();
 
 // Internal implementation
 protected:

@@ -276,13 +276,15 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
     Log("CBitDepthAdapter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
 
     m_rtInSampleTime = rtStart;
-    ProcessData(NULL, 0, NULL);
+    if (m_nSampleNum > 0)
+      ProcessData(NULL, 0, NULL);
   }
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
   REFERENCE_TIME duration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
   m_rtNextIncomingSampleTime = rtStart + duration;
+  m_nSampleNum++;
 
   hr = pSample->GetPointer(&pData);
   ASSERT(pData != NULL);
@@ -296,9 +298,15 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   return hr;
 }
 
+HRESULT CBitDepthAdapter::BeginFlush()
+{
+  m_nSampleNum = 0;
+  return CBaseAudioSink::BeginFlush();
+}
+
 HRESULT CBitDepthAdapter::EndOfStream()
 {
-  if(!m_bPassThrough)
+  if (!m_bPassThrough)
     ProcessData(NULL, 0, NULL);
   return CBaseAudioSink::EndOfStream();  
 }

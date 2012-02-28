@@ -37,16 +37,17 @@ public:
   HRESULT Cleanup();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample* pSample);
-  virtual HRESULT EndOfStream();
+  HRESULT PutSample(IMediaSample* pSample);
+  HRESULT BeginFlush();
+  HRESULT EndOfStream();
 
 // Internal implementation
 protected:
   // Initialization
-  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
+  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
   
   HRESULT SetupConversion();
   HRESULT ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed);
