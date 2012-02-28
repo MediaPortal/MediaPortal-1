@@ -522,15 +522,16 @@ namespace Mediaportal.TV.Server.SetupTV
         //DatabaseManager.Instance.ClearQueryCache();
         Cursor = Cursors.WaitCursor;
         section.Dock = DockStyle.Fill;
+        
+        holderPanel.Controls.Clear();
+        holderPanel.Controls.Add(section);
+
         section.OnSectionActivated();
         if (section != _previousSection && _previousSection != null)
         {
           _previousSection.OnSectionDeActivated();
         }
         _previousSection = section;
-
-        holderPanel.Controls.Clear();
-        holderPanel.Controls.Add(section);
       }
       catch (Exception ex)
       {

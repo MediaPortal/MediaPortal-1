@@ -107,11 +107,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       SaveSettings();
     }
 
+    private bool _ignoreItemCheckedEvent = true;
     public override void OnSectionActivated()
     {
       mpListView1.BeginUpdate();
       try
       {
+        _ignoreItemCheckedEvent = true;
         LoadLanguages();
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgRadioStoreOnlySelected");
         mpCheckBoxStoreOnlySelected.Checked = (setting.value == "yes");
@@ -123,8 +125,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         base.OnSectionActivated();
         mpListView1.Items.Clear();
-        
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+
+        ChannelIncludeRelationEnum includeRelations = ChannelIncludeRelationEnum.TuningDetails;
+        includeRelations |= ChannelIncludeRelationEnum.ChannelMaps;
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.Radio);
 
         foreach (Channel ch in channels)
         {
@@ -240,6 +244,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       finally
       {
         mpListView1.EndUpdate();
+        _ignoreItemCheckedEvent = false;
       }
     }
 
@@ -283,11 +288,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      Channel channel = e.Item.Tag as Channel;
-      if (channel == null)
-        return;
-      channel.grabEpg = e.Item.Checked;
-      ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
+      if (!_ignoreItemCheckedEvent)
+      {
+        Channel channel = e.Item.Tag as Channel;
+        if (channel == null)
+          return;
+        channel.grabEpg = e.Item.Checked;
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel); 
+      }      
     }
 
     private void linkLabelRadioAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
