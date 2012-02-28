@@ -95,8 +95,7 @@ HRESULT CTimeStretchFilter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *prop
 
 HRESULT CTimeStretchFilter::Cleanup()
 {
-  HRESULT hr = CQueuedAudioSink::Cleanup();
-  return hr;
+  return CQueuedAudioSink::Cleanup();
 }
 
 HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
@@ -116,8 +115,7 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
     return VFW_E_TYPE_NOT_ACCEPTED;
 
 #ifdef INTEGER_SAMPLES
-  // TODO - check why non 16 bit sample formats aren't working!
-  if (pwfx->Format.wBitsPerSample != 16)
+  if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_PCM)
     return VFW_E_TYPE_NOT_ACCEPTED;
 #else 
   // only accept 32bit float
