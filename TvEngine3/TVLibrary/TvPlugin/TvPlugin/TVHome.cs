@@ -94,10 +94,22 @@ namespace TvPlugin
       CardChange = 2,
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
-    }    
+    }
+
+    private enum ParameterCommands
+    {
+      NoCommand = 0,
+      FullScreen,
+      NoFullScreen,
+      TVOff,
+      ActiveRecordings,
+      ActiveStreams
+    }
     
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
+    private ParameterCommands _command = ParameterCommands.NoCommand;
+    private string _commandValue = "";
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     private static ChannelNavigator m_navigator;
     private static TVUtil _util;
@@ -426,6 +438,9 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       Log.Info("TVHome:OnPageLoad");
+      var par = _loadParameter;
+      DecodeParameter(par, out _command, out _commandValue);
+      Log.Debug("TVHome:OnPageLoad \"{0}\" command \"{1}\" commandValue \"{2}\"", par, _command, _commandValue);
 
       if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)Window.WINDOW_TVFULLSCREEN)
       {
@@ -504,6 +519,16 @@ namespace TvPlugin
         }
       }
 
+      if ((_command == ParameterCommands.FullScreen || _command == ParameterCommands.NoFullScreen) && _commandValue != "")
+      {
+        Channel tryChannel = Navigator.GetChannel(_commandValue, true);
+        if (tryChannel != null)
+        {
+          channel = tryChannel;
+          Log.Debug("TVHome: OnPageLoad switching to parametered channel {0}", channel.DisplayName);
+        }
+      }
+
       if (channel != null)
       {
         Log.Info("tv home init:{0}", channel.DisplayName);
@@ -523,17 +548,31 @@ namespace TvPlugin
       {
         AutoFullScreenTv();
       }
+      if (_command == ParameterCommands.ActiveRecordings)
+      {
+        OnActiveRecordings();
+      }
+      if (_command == ParameterCommands.ActiveStreams)
+      {
+        OnActiveStreams();
+      }
 
       _onPageLoadDone = true;
       _suspended = false;
 
       UpdateGUIonPlaybackStateChange();
       UpdateCurrentChannel();
+
+      _command = ParameterCommands.NoCommand;
+      _commandValue = "";
     }
 
     private void AutoTurnOnTv(Channel channel)
     {
-      if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
+      if (((_autoTurnOnTv && _command == ParameterCommands.NoCommand) || _command == ParameterCommands.FullScreen || _command == ParameterCommands.NoFullScreen) 
+        && !_playbackStopped && !wasPrevWinTVplugin())
+        // If no command was given, use config setting to determin if TV should be turned on, else
+        // check the command for FullScreen or NoFullScreen TV
       {
         if (!wasPrevWinTVplugin())
         {
@@ -545,10 +584,11 @@ namespace TvPlugin
 
     private void AutoFullScreenTv()
     {
-      if (_autoFullScreen)
+      if ((_autoFullScreen && _command == ParameterCommands.NoCommand) || _command == ParameterCommands.FullScreen)
       {
         // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
         // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
+        // check the calling command if we should override the configured behavior based on skin hyperlink parameter command
         if (!_suspended)
         {
           bool isTvOrRec = (g_Player.IsTV || g_Player.IsTVRecording);
@@ -1525,6 +1565,38 @@ namespace TvPlugin
         {
           Log.Debug("TVHome: HeartBeat Transmitter stopped.");
           heartBeatTransmitterThread.Abort();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Decodes Plugin parameter. Notation
+    /// command(parameter) with
+    /// command being ParameterCommands and parameter a channel DisplayName
+    /// Sample: DecodeParamter("FullScreen(Das Erste)",command,commandValue);
+    /// </summary>
+    /// <param name="source">Value of _loadParameter</param>
+    /// <param name="command">Outputted parameter or NoCommand if not recognized</param>
+    /// <param name="commandValue">Optional parameter or empty string</param>
+    private void DecodeParameter(string source, out ParameterCommands command, out string commandValue)
+    {
+      command = ParameterCommands.NoCommand;
+      commandValue = "";
+
+      if (source != null)
+      {
+        var arr = source.Split(new Char[] { '(', ')' });
+        if (arr.Length >= 1)
+        {
+          try
+          {
+            command = (ParameterCommands)Enum.Parse(typeof(ParameterCommands), arr[0], true);
+          }
+          catch
+          {
+            command = ParameterCommands.NoCommand;
+          }
+          if (command != ParameterCommands.NoCommand && arr.Length >= 2) commandValue = arr[1];
         }
       }
     }

@@ -883,6 +883,18 @@ namespace TvPlugin
       return null;
     }
 
+    public Channel GetChannel(string channelName, bool allChannels)
+    {
+      foreach (Channel chan in channels)
+      {
+        if (chan.DisplayName == channelName && (allChannels || chan.VisibleInGuide))
+        {
+          return chan;
+        }
+      }
+      return null;
+    }
+
     #endregion
 
     #region Serialization
