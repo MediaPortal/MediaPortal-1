@@ -38,18 +38,18 @@ public:
   virtual ~CWASAPIRenderFilter();
 
   // IAudioSink implementation
-  virtual HRESULT Init();
-  virtual HRESULT Cleanup();
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
-  virtual HRESULT EndOfStream();
+  HRESULT Init();
+  HRESULT Cleanup();
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  HRESULT EndOfStream();
 
   // IRenderFilter implementation
-  virtual HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
-  virtual REFERENCE_TIME Latency();
+  HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
+  REFERENCE_TIME Latency();
 
 protected:
   // Processing
-  virtual DWORD ThreadProc();
+  DWORD ThreadProc();
 
 // Internal implementation
 private:
@@ -87,7 +87,7 @@ private:
 
   HRESULT CheckAudioClient(WAVEFORMATEX* pWaveFormatEx);
   HRESULT CheckSample(IMediaSample* pSample, UINT32 framesToFlush);
-  HRESULT CheckStreamTimeline(IMediaSample* pSample, REFERENCE_TIME* pDueTime);
+  HRESULT CheckStreamTimeline(IMediaSample* pSample, REFERENCE_TIME* pDueTime, UINT32 sampleOffset);
   HRESULT GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, REFERENCE_TIME* pHnsBufferPeriod);
   void CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence);
   void RenderAudio(BYTE* pTarget, UINT32 bufferSizeInBytes, UINT32 &dataLeftInSample, UINT32 &sampleOffset, IMediaSample* pSample, UINT32 &bytesFilled);
@@ -116,7 +116,6 @@ private:
   CSyncClock*         m_pClock;
 
   REFERENCE_TIME      m_rtNextSampleTime;
-  LONGLONG            m_nSampleNum;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;

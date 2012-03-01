@@ -66,9 +66,11 @@ HRESULT CTimeStretchFilter::Init()
     return hr;
 
   m_hSampleEvents.push_back(m_hInputAvailableEvent);
+  m_hSampleEvents.push_back(m_hOOBCommandAvailableEvent);
   m_hSampleEvents.push_back(m_hStopThreadEvent);
 
   m_dwSampleWaitObjects.push_back(S_OK);
+  m_dwSampleWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
   m_dwSampleWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
   setTempoChange(0);
@@ -316,15 +318,16 @@ DWORD CTimeStretchFilter::ThreadProc()
 
     if (hr == MPAR_S_THREAD_STOPPING)
     {
-      Log("CTimeStretchFilter::timestretch threa - closing down - thread ID: %d", m_ThreadId);
+      Log("CTimeStretchFilter::timestretch thread - closing down - thread ID: %d", m_ThreadId);
       return 0;
     }
     else
     {
-      if (command == ASC_Pause && sample)
+      if (command == ASC_Flush)
       {
         sample.Release();
-        sample = NULL;
+        SetEvent(m_hCurrentSampleReleased);
+        WaitForSingleObject(m_hFlushDone, INFINITE);
       }
       else if (sample)
       {
@@ -419,9 +422,11 @@ DWORD CTimeStretchFilter::ThreadProc()
                 }
 
                 UINT nOutFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
+                hr = OutputNextSample();
                 m_rtInSampleTime += nOutFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-                OutputNextSample();
+                if (FAILED(hr))
+                  Log("CTimeStretchFilter::timestretch thread OutputNextSample failed with: 0x%08x", hr);
               }
             }
           }

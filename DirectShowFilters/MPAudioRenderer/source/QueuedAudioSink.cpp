@@ -39,6 +39,9 @@ CQueuedAudioSink::CQueuedAudioSink(void)
   m_dwWaitObjects.push_back(MPAR_S_OOB_COMMAND_AVAILABLE);
   m_dwWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
+  m_hCurrentSampleReleased = CreateEvent(0, FALSE, FALSE, 0);
+  m_hFlushDone = CreateEvent(0, FALSE, FALSE, 0);
+
   //m_hInputQueueEmptyEvent = CreateEvent(0, FALSE, FALSE, 0);
 }
 
@@ -50,6 +53,10 @@ CQueuedAudioSink::~CQueuedAudioSink(void)
     CloseHandle(m_hInputAvailableEvent);
   if (m_hOOBCommandAvailableEvent)
     CloseHandle(m_hOOBCommandAvailableEvent);
+  if (m_hCurrentSampleReleased)
+    CloseHandle(m_hCurrentSampleReleased);
+  if (m_hFlushDone)
+    CloseHandle(m_hFlushDone);
 
   //if (m_hInputQueueEmptyEvent)
   //  CloseHandle(m_hInputQueueEmptyEvent);
@@ -142,6 +149,12 @@ HRESULT CQueuedAudioSink::EndOfStream()
 
 HRESULT CQueuedAudioSink::BeginFlush()
 {
+  ResetEvent(m_hCurrentSampleReleased);
+  ResetEvent(m_hFlushDone);
+
+  // Request the derived class to release the current sample and stall threadproc
+  PutOOBCommand(ASC_Flush);
+
   {
     CAutoLock queueLock(&m_inputQueueLock);
     ResetEvent(m_hInputAvailableEvent);
@@ -153,10 +166,15 @@ HRESULT CQueuedAudioSink::BeginFlush()
   return CBaseAudioSink::BeginFlush();
 }
 
-//HRESULT CQueuedAudioSink::EndFlush()
-//{
-//  return CBaseAudioSink::EndFlush();
-//}
+HRESULT CQueuedAudioSink::EndFlush()
+{
+  if (m_hThread)
+    WaitForSingleObject(m_hCurrentSampleReleased, INFINITE);
+
+  HRESULT hr = CBaseAudioSink::EndFlush();
+  SetEvent(m_hFlushDone);
+  return hr;
+}
 
 // Queue services
 HRESULT CQueuedAudioSink::WaitForEvents(DWORD dwTimeout, vector<HANDLE>* pEvents, vector<DWORD>* pWaitObjects)
@@ -194,19 +212,19 @@ HRESULT CQueuedAudioSink::WaitForEvents(DWORD dwTimeout, vector<HANDLE>* pEvents
 // Threading: only one thread should be calling GetNextSampleOrCommand()
 // but it can be different from the one calling PutSample()/PutCommand()
 HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMediaSample** pSample, DWORD dwTimeout,
-                                                  vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects)
+                                                  vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects, bool handleOOBOnly)
 {
   HRESULT hr = WaitForEvents(dwTimeout, pHandles, pWaitObjects);
-  
+
   if (hr == WAIT_TIMEOUT || hr == S_FALSE)
   {
-    if (pSample && *pSample)
+    if (pSample && *pSample && !handleOOBOnly)
     {
       (*pSample)->Release();
       (*pSample) = NULL;
     }
 
-    *pCommand = ASC_Nop;    
+    *pCommand = ASC_Nop;
     return WAIT_TIMEOUT;
   }
   
@@ -223,6 +241,11 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
       if (m_OOBInputQueue.empty())
         ResetEvent(m_hOOBCommandAvailableEvent);
 
+      return S_OK;
+    }
+    else if (handleOOBOnly)
+    {
+      *pCommand = ASC_Nop;
       return S_OK;
     }
   }

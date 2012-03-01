@@ -44,7 +44,7 @@ public:
   virtual HRESULT PutSample(IMediaSample *pSample);
   virtual HRESULT EndOfStream();
   virtual HRESULT BeginFlush();
-  //virtual HRESULT EndFlush();
+  virtual HRESULT EndFlush();
 
 // Queue services
 protected:
@@ -54,7 +54,7 @@ protected:
   virtual HRESULT PutOOBCommand(AudioSinkCommand nCommand);
 
   virtual HRESULT WaitForEvents(DWORD dwTimeout, vector<HANDLE>* handles, vector<DWORD>* dwWaitObjects);
-  virtual HRESULT GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMediaSample** pSample, DWORD dwTimeout, vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects);
+  virtual HRESULT GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMediaSample** pSample, DWORD dwTimeout, vector<HANDLE>* pHandles, vector<DWORD>* pWaitObjects, bool handleOOBOnly = false);
 
   //__inline HANDLE &StopThreadEvent() { return m_hEvents[0]; };
   //__inline HANDLE &InputSamplesAvailableEvent() { return m_hEvents[1]; };
@@ -68,7 +68,7 @@ protected:
     ASC_Flush,
     ASC_Stop,
     ASC_Pause,
-    ASC_Resume,
+    ASC_Resume
   };
 
   struct TQueueEntry 
@@ -93,6 +93,8 @@ protected:
   HANDLE m_hInputAvailableEvent;
   HANDLE m_hOOBCommandAvailableEvent;
   //HANDLE m_hInputQueueEmptyEvent;
+  HANDLE m_hCurrentSampleReleased;
+  HANDLE m_hFlushDone;
 
   vector<HANDLE> m_hEvents;
   vector<DWORD> m_dwWaitObjects;
@@ -104,5 +106,7 @@ protected:
   queue<TQueueEntry> m_OOBInputQueue;
 
   // Lock against this when dealing with resources that are used from the worker thread
-  CCritSec m_csResources;
+  CCritSec  m_csResources;
+
+  CComPtr<IMediaSample> m_pCurrentSample;
 };
