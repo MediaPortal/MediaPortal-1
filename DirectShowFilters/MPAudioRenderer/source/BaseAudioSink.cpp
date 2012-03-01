@@ -331,7 +331,7 @@ HRESULT CBaseAudioSink::RequestNextOutBuffer(REFERENCE_TIME rtStart)
     return E_POINTER;
 
   HRESULT hr = m_pMemAllocator->GetBuffer(&m_pNextOutSample, NULL, NULL, 0);
-  if(FAILED(hr))
+  if (FAILED(hr))
     return hr;
 
   ASSERT(m_pNextOutSample);

@@ -212,7 +212,12 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
 
     m_rtInSampleTime = rtStart;
     if (m_nSampleNum > 0)
+    {
+      Log("CSampleRateConverter - using buffered sample data");
       FlushStream();
+    }
+    else
+      Log("CSampleRateConverter - discarding buffered sample data");
   }
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;

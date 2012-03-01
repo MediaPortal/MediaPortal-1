@@ -47,7 +47,8 @@ struct int24_t
 #pragma pack(pop)
 
 
-struct BitDepthDescriptor {
+struct BitDepthDescriptor 
+{
   BYTE wContainerBits;
   BYTE wValidBits;
   bool bIsFloat;
@@ -58,10 +59,10 @@ struct BitDepthDescriptor {
         && wValidBits == arg.wValidBits
         && bIsFloat == arg.bIsFloat;
   };
-
 };
 
-struct BitDepthConversionDescriptor {
+struct BitDepthConversionDescriptor 
+{
   BitDepthDescriptor Source;
   BitDepthDescriptor *Targets;
 };
@@ -74,7 +75,8 @@ static BitDepthDescriptor gConversionsFromInt32_24[]  = {{32, 32, false}, {24, 2
 static BitDepthDescriptor gConversionsFromInt32[]     = {{32, 32, false}, {32, 32, true}, {32, 24, false}, {24, 24, false}, {16, 16, false}, NULL_BITDEPTH_DESC};
 static BitDepthDescriptor gConversionsFromFloat[]     = {{32, 32, false}, {32, 24, false}, {24, 24, false}, {16, 16, false}, NULL_BITDEPTH_DESC};
 
-static BitDepthConversionDescriptor gValidConversions[] = {
+static BitDepthConversionDescriptor gValidConversions[] = 
+{
   {{16, 0, false}, gConversionsFromInt16},
   {{24, 0, false}, gConversionsFromInt24},
   {{32, 24, false}, gConversionsFromInt32_24},
@@ -86,11 +88,11 @@ static BitDepthConversionDescriptor gValidConversions[] = {
 BitDepthDescriptor *FindConversion(const BitDepthDescriptor source);
 
 
-CBitDepthAdapter::CBitDepthAdapter(void)
-: m_bPassThrough(false)
-, m_rtInSampleTime(0)
-, m_rtNextIncomingSampleTime(0)
-, m_pfnConvert(NULL)
+CBitDepthAdapter::CBitDepthAdapter(void) : 
+  m_bPassThrough(false),
+  m_rtInSampleTime(0),
+  m_rtNextIncomingSampleTime(0),
+  m_pfnConvert(NULL)
 {
   ResetDithering();
 }
@@ -102,7 +104,7 @@ CBitDepthAdapter::~CBitDepthAdapter(void)
 HRESULT CBitDepthAdapter::Init()
 {
   HRESULT hr = InitAllocator();
-  if(FAILED(hr))
+  if (FAILED(hr))
     return hr;
   return CBaseAudioSink::Init();
 }
@@ -277,7 +279,12 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
 
     m_rtInSampleTime = rtStart;
     if (m_nSampleNum > 0)
+    {
+      Log("CBitDepthAdapter - using buffered sample data");
       ProcessData(NULL, 0, NULL);
+    }
+    else
+      Log("CBitDepthAdapter - discarding buffered sample data");
   }
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
@@ -385,7 +392,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
 
   long bytesOutput = 0;
 
-  while(cbData)
+  while (cbData)
   {
     if (m_pNextOutSample)
     {
@@ -530,9 +537,9 @@ template<class Td, class Ts> HRESULT CBitDepthAdapter::ConvertBuffer(BYTE *dst, 
   int i;
   while(count--)
   {
-    const Ts *pSrc = (const Ts *)src;
-    Td *pDst = (Td *)dst;
-    for(i = 0; i < nChannels ; i++)
+    const Ts* pSrc = (const Ts *)src;
+    Td* pDst = (Td *)dst;
+    for(i = 0; i < nChannels; i++)
       *(pDst++) = ConvertSample<Td, Ts>((*pSrc++), bitMask, m_lInSampleError[i]);
     src += m_nInFrameSize;
     dst += m_nOutFrameSize;
@@ -545,9 +552,9 @@ template<class Td, class Ts, int nChannels> HRESULT CBitDepthAdapter::ConvertBuf
   long bitMask = (0xffffffffu >> m_nOutBitsPerSample);
   while(count--)
   {
-    const Ts *pSrc = (const Ts *)src;
-    Td *pDst = (Td *)dst;
-    for(i = 0; i < nChannels ; i++)
+    const Ts* pSrc = (const Ts *)src;
+    Td* pDst = (Td *)dst;
+    for (i = 0; i < nChannels; i++)
       pDst[i] = ConvertSample<Td, Ts>(pSrc[i], bitMask, m_lInSampleError[i]);
     src += m_nInFrameSize;
     dst += m_nOutFrameSize;
@@ -582,9 +589,9 @@ CBitDepthAdapter::BitDepthConversionFunc CBitDepthAdapter::gConversions[4][4] = 
   }
 };
 
-BitDepthDescriptor *FindConversion(const BitDepthDescriptor source)
+BitDepthDescriptor* FindConversion(const BitDepthDescriptor source)
 {
-  BitDepthConversionDescriptor *pConv = gValidConversions;
+  BitDepthConversionDescriptor* pConv = gValidConversions;
 
   while(pConv->Source.wContainerBits != 0)
   {
