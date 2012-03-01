@@ -294,7 +294,12 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   m_nSampleNum++;
 
   hr = pSample->GetPointer(&pData);
-  ASSERT(pData != NULL);
+  ASSERT(pData);
+  if (FAILED(hr))
+  {
+    Log("CBitDepthAdapter::PutSample - failed to get sample's data pointer: 0x%08x", hr);
+    return hr;
+  }
 
   while (nOffset < cbSampleData && SUCCEEDED(hr))
   {
