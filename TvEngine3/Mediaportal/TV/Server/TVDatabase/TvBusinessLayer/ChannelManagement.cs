@@ -738,5 +738,22 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         return channelRepository.IncludeAllRelations(query, includeRelations).ToList();
       }
     }
+
+    public static IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaType, ChannelIncludeRelationEnum include)
+    {
+      try
+      {
+        using (IChannelRepository channelRepository = new ChannelRepository())
+        {
+          var query = channelRepository.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaType);
+          return channelRepository.IncludeAllRelations(query, include).ToList();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
+        throw;
+      }
+    }
   }
 }

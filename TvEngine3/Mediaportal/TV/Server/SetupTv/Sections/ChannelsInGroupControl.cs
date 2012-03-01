@@ -99,13 +99,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         UpdateMenuAndTabs();
 
         listView1.Items.Clear();
+       
 
-        _channelGroup =
-          ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_channelGroup.groupName, _mediaTypeEnum);
-        foreach (GroupMap map in _channelGroup.GroupMaps.OrderBy(c=>c.SortOrder))
+        ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.ChannelMaps;
+        include |= ChannelIncludeRelationEnum.TuningDetails;
+        include |= ChannelIncludeRelationEnum.GroupMaps;
+        include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(_channelGroup.idGroup, _mediaTypeEnum, include);
+
+        foreach (var channel in channels)
         {
-          Channel channel = map.Channel;          
-          listView1.Items.Add(CreateItemForChannel(channel, map));          
+          listView1.Items.Add(CreateItemForChannel(channel, channel.GroupMaps.FirstOrDefault()));
         }
 
         bool isAllChannelsGroup = (_channelGroup.groupName == _allChannelsGroupName);
@@ -195,7 +199,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaTypeEnum, ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {

@@ -153,5 +153,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       return _channel.ListAllChannelsByMediaType(mediaType, includeRelations);
     }
+
+    public IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaTypeEnum, ChannelIncludeRelationEnum include)
+    {
+      return _channel.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaTypeEnum, include);
+    }
   }
 }

@@ -154,7 +154,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       addToFavoritesToolStripMenuItem.DropDownItems.Clear();
 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaTypeEnum, ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {
@@ -274,7 +274,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       dlg.WaitForDisplay();
       ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
       include |= ChannelIncludeRelationEnum.ChannelMaps;
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(include);
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, include);
       foreach (Channel channel in channels)
       {
         if (channel.mediaType == (int)_mediaTypeEnum)

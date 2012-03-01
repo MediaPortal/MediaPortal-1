@@ -65,6 +65,12 @@ namespace Mediaportal.TV.Server.TVService.Services
       return listAllChannelsByMediaType;
     }
 
+    public IList<Channel> GetAllChannelsByGroupIdAndMediaType(int idGroup, MediaTypeEnum mediaType, ChannelIncludeRelationEnum include)
+    {
+      var allChannelsByGroupIdAndMediaType = ChannelManagement.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaType, include);
+      return allChannelsByGroupIdAndMediaType;
+    }
+
     public IList<Channel> GetChannelsByName(string channelName)
     {
       var channelsByName = ChannelManagement.GetChannelsByName(channelName).ToList();
