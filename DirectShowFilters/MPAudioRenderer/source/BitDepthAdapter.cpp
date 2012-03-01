@@ -85,7 +85,7 @@ static BitDepthConversionDescriptor gValidConversions[] =
   {NULL_BITDEPTH_DESC, NULL}
 };
 
-BitDepthDescriptor *FindConversion(const BitDepthDescriptor source);
+BitDepthDescriptor* FindConversion(const BitDepthDescriptor& source);
 
 
 CBitDepthAdapter::CBitDepthAdapter(void) : 
@@ -614,7 +614,7 @@ CBitDepthAdapter::BitDepthConversionFunc CBitDepthAdapter::gConversions[4][4] = 
   }
 };
 
-BitDepthDescriptor* FindConversion(const BitDepthDescriptor source)
+BitDepthDescriptor* FindConversion(const BitDepthDescriptor& source)
 {
   BitDepthConversionDescriptor* pConv = gValidConversions;
 
