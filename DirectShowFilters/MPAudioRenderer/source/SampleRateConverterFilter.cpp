@@ -303,10 +303,16 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
 
       if (nOffset + m_nFrameSize > nSize)
       {
+        hr = OutputNextSample();
+
         UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
         m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;      
-      
-        OutputNextSample();
+
+        if (FAILED(hr))
+        {
+          Log("CSampleRateConverter::ProcessData OutputNextSample failed with: 0x%08x", hr);
+          return hr;
+        }
       }
     }
 
@@ -355,10 +361,16 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
     m_pNextOutSample->SetActualDataLength(nOffset);
     if (nOffset + m_nFrameSize > nSize)
     {
-      UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
-      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;      
+      hr = OutputNextSample();
       
-      OutputNextSample();
+      UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+      if (FAILED(hr))
+      {
+        Log("CSampleRateConverter::ProcessData OutputNextSample failed with: 0x%08x", hr);
+        return hr;
+      }
     }
 
     // all samples should contain an integral number of frames
@@ -377,10 +389,11 @@ HRESULT CSampleRateConverter::FlushStream()
 
   if (m_pNextOutSample)
   {
+    hr = OutputNextSample();
+
     UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
     m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-    hr = OutputNextSample();
     if (FAILED(hr))
     {
       Log("CSampleRateConverter::FlushStream OutputNextSample failed with: 0x%08x", hr);

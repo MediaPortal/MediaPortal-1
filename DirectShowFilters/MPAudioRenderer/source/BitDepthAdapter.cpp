@@ -378,10 +378,16 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
   {
     if (m_pNextOutSample)
     {
+      hr = OutputNextSample();
+      
       UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
       m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-      hr = OutputNextSample();
+      if (FAILED(hr))
+      {
+        Log("CBitDepthAdapter::ProcessData OutputNextSample failed with: 0x%08x", hr);
+        return hr;
+      }
     }
 
     if (pcbDataProcessed)
@@ -402,10 +408,16 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
 
       if (nOffset + m_nOutFrameSize > nSize)
       {
+        hr = OutputNextSample();
+
         UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
         m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-        OutputNextSample();
+        if (FAILED(hr))
+        {
+          Log("CBitDepthAdapter::ProcessData OutputNextSample failed with: 0x%08x", hr);
+          return hr;
+        }
       }
     }
 
@@ -432,17 +444,30 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
     int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
 
     hr = (this->*m_pfnConvert)(pOutData, pData, framesToConvert);
+    if (FAILED(hr))
+    {
+      Log("CBitDepthAdapter::ProcessData m_pfnConvert failed with: 0x%08x", hr);
+      return hr;
+    }
+
     pData += framesToConvert * m_nInFrameSize;
     bytesOutput += framesToConvert * m_nInFrameSize;
     cbData -= framesToConvert * m_nInFrameSize; 
     nOffset += framesToConvert * m_nOutFrameSize;
     m_pNextOutSample->SetActualDataLength(nOffset);
+
     if (nOffset + m_nOutFrameSize > nSize)
     {
+      hr = OutputNextSample();
+      
       UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
       m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
-      OutputNextSample();
+      if (FAILED(hr))
+      {
+        Log("CBitDepthAdapter::ProcessData OutputNextSample failed with: 0x%08x", hr);
+        return hr;
+      }
     }
 
     // all samples should contain an integral number of frames
