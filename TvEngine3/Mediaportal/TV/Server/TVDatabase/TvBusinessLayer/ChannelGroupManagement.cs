@@ -49,6 +49,18 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations)
+    {
+      using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
+      {
+        var query =
+          channelGroupRepository.GetQuery<ChannelGroup>(g => g.GroupMaps.Any(gm => gm.mediaType == (int)mediaType));
+
+        var listAllChannelGroupsByMediaType = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
+        return listAllChannelGroupsByMediaType;
+      }
+    }
+
     public static ChannelGroup GetChannelGroupByNameAndMediaType(string groupName, MediaTypeEnum mediaType)
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())

@@ -2,7 +2,7 @@ using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  partial class RadioCombinations
+  partial class ChannelCombinations
   {
     /// <summary>
     /// Required designer variable.
@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RadioCombinations));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChannelCombinations));
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -43,12 +43,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListViewMapped = new MPListView();
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpLabel2 = new MPLabel();
       this.mpListViewChannels = new MPListView();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.mpComboBoxCard = new MPComboBox();
       this.mpLabel1 = new MPLabel();
-      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.contextMenuStrip1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -162,6 +162,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.columnHeader5.Text = "Name";
       this.columnHeader5.Width = 120;
       // 
+      // imageList1
+      // 
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(1, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(2, "icon.radio_scrambled_and_fta.png");
+      this.imageList1.Images.SetKeyName(3, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
+      // 
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
@@ -183,6 +194,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpListViewChannels.IsChannelListView = false;
       this.mpListViewChannels.LargeImageList = this.imageList1;
       this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
+      this.mpListViewChannels.MultiSelect = false;
       this.mpListViewChannels.Name = "mpListViewChannels";
       this.mpListViewChannels.Size = new System.Drawing.Size(193, 265);
       this.mpListViewChannels.SmallImageList = this.imageList1;
@@ -218,23 +230,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabel1.TabIndex = 9;
       this.mpLabel1.Text = "Card:";
       // 
-      // imageList1
-      // 
-      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "radio_fta_.png");
-      this.imageList1.Images.SetKeyName(1, "radio_scrambled.png");
-      this.imageList1.Images.SetKeyName(2, "icon.radio_scrambled_and_fta.png");
-      this.imageList1.Images.SetKeyName(3, "tv_fta_.png");
-      this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
-      this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
-      // 
-      // RadioCombinations
+      // ChannelCombinations
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
-      this.Name = "RadioCombinations";
+      this.Name = "ChannelCombinations";
       this.Size = new System.Drawing.Size(479, 394);
       this.Load += new System.EventHandler(this.TvCombinations_Load);
       this.contextMenuStrip1.ResumeLayout(false);
@@ -263,7 +264,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.Button btnCombine;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
-    private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.ImageList imageList1;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

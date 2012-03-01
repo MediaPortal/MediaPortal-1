@@ -38,6 +38,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 {  
   public partial class ChannelsInGroupControl : UserControl
   {
+    private string _allChannelsGroupName = TvConstants.TvGroupNames.AllChannels;
+    private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
 
     private static bool _userConfirmedAutoReorder = false;
@@ -45,8 +47,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private ChannelGroup _channelGroup;
 
-    public ChannelsInGroupControl()
+    public ChannelsInGroupControl(MediaTypeEnum mediaType)
     {
+      _mediaTypeEnum = mediaType;
       InitializeComponent();
 
       lvwColumnSorter = new MPListViewStringColumnSorter();
@@ -61,11 +64,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       set { _channelGroup = value; }
     }
 
+    public MediaTypeEnum MediaTypeEnum
+    {
+      get { return _mediaTypeEnum; }
+      set
+      {
+        _mediaTypeEnum = value;
+        if (value == MediaTypeEnum.TV)
+        {
+          _allChannelsGroupName = TvConstants.TvGroupNames.AllChannels;
+        }
+        else if (value == MediaTypeEnum.Radio)
+        {
+          _allChannelsGroupName = TvConstants.RadioGroupNames.AllChannels;
+        }
+      }
+    }
+
     private void listView1_SelectedIndexChanged(object sender, EventArgs e) {}
 
     private void ChannelsInGroupControl_Load(object sender, EventArgs e) {}
 
-    private bool _ignoreItemCheckedEvent = false;
+    private bool _ignoreItemCheckedEvent = false;    
 
     public void OnActivated()
     {
@@ -81,17 +101,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listView1.Items.Clear();
 
         _channelGroup =
-          ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_channelGroup.groupName,
-                                                                                            MediaTypeEnum.TV);
+          ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(_channelGroup.groupName, _mediaTypeEnum);
         foreach (GroupMap map in _channelGroup.GroupMaps.OrderBy(c=>c.SortOrder))
         {
-          Channel channel = map.Channel;
-          //if (channel.mediaType == (int)MediaTypeEnum.TV)
-          {
-            listView1.Items.Add(CreateItemForChannel(channel, map));
-          }
+          Channel channel = map.Channel;          
+          listView1.Items.Add(CreateItemForChannel(channel, map));          
         }
-        bool isAllChannelsGroup = (_channelGroup.groupName == TvConstants.TvGroupNames.AllChannels);
+
+        bool isAllChannelsGroup = (_channelGroup.groupName == _allChannelsGroupName);
         removeChannelFromGroup.Enabled = !isAllChannelsGroup;
         mpButtonDel.Enabled = !isAllChannelsGroup;
       }
@@ -221,7 +238,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = listView1.Items[indexes[i]];
         GroupMap map = (GroupMap)item.Tag;
         Channel channel = map.Channel;
-        MappingHelper.AddChannelToGroup(ref channel, group, MediaTypeEnum.TV);        
+        MappingHelper.AddChannelToGroup(ref channel, group, _mediaTypeEnum);
       }
     }
 

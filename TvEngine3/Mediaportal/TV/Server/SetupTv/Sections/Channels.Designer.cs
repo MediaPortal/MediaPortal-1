@@ -2,7 +2,7 @@ using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  partial class RadioChannels
+  partial class Channels
   {
     /// <summary>
     /// Required designer variable.
@@ -31,33 +31,32 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RadioChannels));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Channels));
       this.mpListView1 = new MPListView();
       this.hdrhekje = new System.Windows.Forms.ColumnHeader();
       this.hdrGroup = new System.Windows.Forms.ColumnHeader();
       this.hdrProvider = new System.Windows.Forms.ColumnHeader();
       this.hdrTypes = new System.Windows.Forms.ColumnHeader();
-      this.hdrDetails = new System.Windows.Forms.ColumnHeader();
+      this.hdrNumberOfDetails = new System.Windows.Forms.ColumnHeader();
       this.channelListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.editChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-      this.renameSelectedChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.renameMarkedChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.addSIDInFrontOfNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.renumberChannelsBySIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpLabelChannelCount = new MPLabel();
-      this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.tabControl1 = new MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.lblFilterLabel = new System.Windows.Forms.Label();
       this.txtFilterString = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MPGroupBox();
-      this.btnPlaylist = new System.Windows.Forms.Button();
-      this.mpButton5 = new MPButton();
-      this.mpButton4 = new MPButton();
+      this.mpButtonDown = new MPButton();
+      this.mpButtonUp = new MPButton();
+      this.mpButtonTestAvailable = new System.Windows.Forms.Button();
       this.mpButtonAdd = new MPButton();
       this.mpButtonEdit = new MPButton();
       this.mpButtonDel = new MPButton();
@@ -66,11 +65,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox3 = new MPGroupBox();
       this.mpButtonDeleteEncrypted = new MPButton();
       this.mpButtonUncheckEncrypted = new MPButton();
-      this.mpButtonTestScrambled = new System.Windows.Forms.Button();
       this.mpGroupBox2 = new MPGroupBox();
       this.mpButtonDelGroup = new MPButton();
       this.mpButtonAddGroup = new MPButton();
       this.mpButtonRenameGroup = new MPButton();
+      this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
       this.groupTabContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.renameGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,24 +95,25 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.hdrGroup,
             this.hdrProvider,
             this.hdrTypes,
-            this.hdrDetails});
+            this.hdrNumberOfDetails});
       this.mpListView1.ContextMenuStrip = this.channelListContextMenuStrip;
+      this.mpListView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.IsChannelListView = false;
       this.mpListView1.LabelEdit = true;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(9, 73);
+      this.mpListView1.Location = new System.Drawing.Point(9, 75);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(438, 192);
+      this.mpListView1.Size = new System.Drawing.Size(438, 189);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
+      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
-      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       // 
       // hdrhekje
       // 
@@ -130,12 +130,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // hdrTypes
       // 
-      this.hdrTypes.Text = "Types";
+      this.hdrTypes.Text = "Mapped Cardtypes";
       this.hdrTypes.Width = 50;
       // 
-      // hdrDetails
+      // hdrNumberOfDetails
       // 
-      this.hdrDetails.Text = "Tuningdetails";
+      this.hdrNumberOfDetails.Text = "Tuningdetails";
       // 
       // channelListContextMenuStrip
       // 
@@ -144,7 +144,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
             this.deleteThisChannelToolStripMenuItem,
             this.editChannelToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.renameSelectedChannelsBySIDToolStripMenuItem,
+            this.renameMarkedChannelsBySIDToolStripMenuItem,
             this.addSIDInFrontOfNameToolStripMenuItem,
             this.renumberChannelsBySIDToolStripMenuItem});
       this.channelListContextMenuStrip.Name = "contextMenuStrip1";
@@ -155,6 +155,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
       this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to group";
+      this.addToFavoritesToolStripMenuItem.Click += new System.EventHandler(this.OnAddToFavoritesMenuItem_Click);
       // 
       // deleteThisChannelToolStripMenuItem
       // 
@@ -175,12 +176,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
       this.toolStripMenuItem1.Size = new System.Drawing.Size(254, 6);
       // 
-      // renameSelectedChannelsBySIDToolStripMenuItem
+      // renameMarkedChannelsBySIDToolStripMenuItem
       // 
-      this.renameSelectedChannelsBySIDToolStripMenuItem.Name = "renameSelectedChannelsBySIDToolStripMenuItem";
-      this.renameSelectedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
-      this.renameSelectedChannelsBySIDToolStripMenuItem.Text = "Rename selected channel(s) by SID";
-      this.renameSelectedChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renameSelectedChannelsBySIDToolStripMenuItem_Click);
+      this.renameMarkedChannelsBySIDToolStripMenuItem.Name = "renameMarkedChannelsBySIDToolStripMenuItem";
+      this.renameMarkedChannelsBySIDToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
+      this.renameMarkedChannelsBySIDToolStripMenuItem.Text = "Rename selected channel(s) by SID";
+      this.renameMarkedChannelsBySIDToolStripMenuItem.Click += new System.EventHandler(this.renameMarkedChannelsBySIDToolStripMenuItem_Click);
       // 
       // addSIDInFrontOfNameToolStripMenuItem
       // 
@@ -210,14 +211,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // mpLabelChannelCount
       // 
       this.mpLabelChannelCount.AutoSize = true;
-      this.mpLabelChannelCount.Location = new System.Drawing.Point(13, 14);
+      this.mpLabelChannelCount.Location = new System.Drawing.Point(380, 7);
       this.mpLabelChannelCount.Name = "mpLabelChannelCount";
       this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
       this.mpLabelChannelCount.TabIndex = 2;
-      // 
-      // openFileDialog1
-      // 
-      this.openFileDialog1.FileName = "openFileDialog1";
       // 
       // tabControl1
       // 
@@ -227,7 +224,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -243,10 +239,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Controls.Add(this.lblFilterLabel);
       this.tabPage1.Controls.Add(this.txtFilterString);
       this.tabPage1.Controls.Add(this.label2);
+      this.tabPage1.Controls.Add(this.mpListView1);
       this.tabPage1.Controls.Add(this.mpGroupBox1);
       this.tabPage1.Controls.Add(this.mpGroupBox3);
       this.tabPage1.Controls.Add(this.mpGroupBox2);
-      this.tabPage1.Controls.Add(this.mpListView1);
       this.tabPage1.Controls.Add(this.mpLabelChannelCount);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -259,18 +255,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // lblFilterLabel
       // 
       this.lblFilterLabel.AutoSize = true;
-      this.lblFilterLabel.Location = new System.Drawing.Point(4, 50);
+      this.lblFilterLabel.Location = new System.Drawing.Point(6, 52);
       this.lblFilterLabel.Name = "lblFilterLabel";
       this.lblFilterLabel.Size = new System.Drawing.Size(116, 13);
-      this.lblFilterLabel.TabIndex = 38;
+      this.lblFilterLabel.TabIndex = 34;
       this.lblFilterLabel.Text = "Filter by Channel Name";
       // 
       // txtFilterString
       // 
-      this.txtFilterString.Location = new System.Drawing.Point(124, 47);
+      this.txtFilterString.Location = new System.Drawing.Point(126, 49);
       this.txtFilterString.Name = "txtFilterString";
-      this.txtFilterString.Size = new System.Drawing.Size(323, 20);
-      this.txtFilterString.TabIndex = 37;
+      this.txtFilterString.Size = new System.Drawing.Size(321, 20);
+      this.txtFilterString.TabIndex = 33;
       this.txtFilterString.TextChanged += new System.EventHandler(this.txtFilterString_TextChanged);
       // 
       // label2
@@ -279,16 +275,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label2.Location = new System.Drawing.Point(6, 2);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(414, 39);
-      this.label2.TabIndex = 36;
+      this.label2.TabIndex = 32;
       this.label2.Text = resources.GetString("label2.Text");
       this.label2.UseMnemonic = false;
       // 
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpGroupBox1.Controls.Add(this.btnPlaylist);
-      this.mpGroupBox1.Controls.Add(this.mpButton5);
-      this.mpGroupBox1.Controls.Add(this.mpButton4);
+      this.mpGroupBox1.Controls.Add(this.mpButtonDown);
+      this.mpGroupBox1.Controls.Add(this.mpButtonUp);
+      this.mpGroupBox1.Controls.Add(this.mpButtonTestAvailable);
       this.mpGroupBox1.Controls.Add(this.mpButtonAdd);
       this.mpGroupBox1.Controls.Add(this.mpButtonEdit);
       this.mpGroupBox1.Controls.Add(this.mpButtonDel);
@@ -298,43 +294,44 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox1.Location = new System.Drawing.Point(9, 270);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(234, 97);
-      this.mpGroupBox1.TabIndex = 35;
+      this.mpGroupBox1.TabIndex = 25;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Channels";
       // 
-      // btnPlaylist
+      // mpButtonDown
       // 
-      this.btnPlaylist.Location = new System.Drawing.Point(8, 68);
-      this.btnPlaylist.Name = "btnPlaylist";
-      this.btnPlaylist.Size = new System.Drawing.Size(123, 23);
-      this.btnPlaylist.TabIndex = 33;
-      this.btnPlaylist.Text = "&Import playlist";
-      this.btnPlaylist.UseVisualStyleBackColor = true;
-      this.btnPlaylist.Click += new System.EventHandler(this.btnPlaylist_Click);
+      this.mpButtonDown.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_down;
+      this.mpButtonDown.Location = new System.Drawing.Point(197, 42);
+      this.mpButtonDown.Name = "mpButtonDown";
+      this.mpButtonDown.Size = new System.Drawing.Size(30, 23);
+      this.mpButtonDown.TabIndex = 25;
+      this.mpButtonDown.UseVisualStyleBackColor = true;
+      this.mpButtonDown.Click += new System.EventHandler(this.mpButtonDown_Click);
       // 
-      // mpButton5
+      // mpButtonUp
       // 
-      this.mpButton5.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_down;
-      this.mpButton5.Location = new System.Drawing.Point(197, 42);
-      this.mpButton5.Name = "mpButton5";
-      this.mpButton5.Size = new System.Drawing.Size(30, 23);
-      this.mpButton5.TabIndex = 25;
-      this.mpButton5.UseVisualStyleBackColor = true;
-      this.mpButton5.Click += new System.EventHandler(this.mpButtonDown_Click);
+      this.mpButtonUp.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_up;
+      this.mpButtonUp.Location = new System.Drawing.Point(197, 16);
+      this.mpButtonUp.Name = "mpButtonUp";
+      this.mpButtonUp.Size = new System.Drawing.Size(30, 23);
+      this.mpButtonUp.TabIndex = 24;
+      this.mpButtonUp.UseVisualStyleBackColor = true;
+      this.mpButtonUp.Click += new System.EventHandler(this.mpButtonUp_Click);
       // 
-      // mpButton4
+      // mpButtonTestAvailable
       // 
-      this.mpButton4.Image = global::Mediaportal.TV.Server.SetupTV.Properties.Resources.icon_up;
-      this.mpButton4.Location = new System.Drawing.Point(197, 16);
-      this.mpButton4.Name = "mpButton4";
-      this.mpButton4.Size = new System.Drawing.Size(30, 23);
-      this.mpButton4.TabIndex = 24;
-      this.mpButton4.UseVisualStyleBackColor = true;
-      this.mpButton4.Click += new System.EventHandler(this.mpButtonUp_Click);
+      this.mpButtonTestAvailable.Location = new System.Drawing.Point(69, 68);
+      this.mpButtonTestAvailable.Margin = new System.Windows.Forms.Padding(2);
+      this.mpButtonTestAvailable.Name = "mpButtonTestAvailable";
+      this.mpButtonTestAvailable.Size = new System.Drawing.Size(125, 23);
+      this.mpButtonTestAvailable.TabIndex = 27;
+      this.mpButtonTestAvailable.Text = "Test timeshifting";
+      this.mpButtonTestAvailable.UseVisualStyleBackColor = true;
+      this.mpButtonTestAvailable.Click += new System.EventHandler(this.mpButtonTestAvailable_Click);
       // 
       // mpButtonAdd
       // 
-      this.mpButtonAdd.Location = new System.Drawing.Point(8, 16);
+      this.mpButtonAdd.Location = new System.Drawing.Point(68, 16);
       this.mpButtonAdd.Name = "mpButtonAdd";
       this.mpButtonAdd.Size = new System.Drawing.Size(60, 23);
       this.mpButtonAdd.TabIndex = 21;
@@ -344,7 +341,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpButtonEdit
       // 
-      this.mpButtonEdit.Location = new System.Drawing.Point(71, 16);
+      this.mpButtonEdit.Location = new System.Drawing.Point(68, 42);
       this.mpButtonEdit.Name = "mpButtonEdit";
       this.mpButtonEdit.Size = new System.Drawing.Size(60, 23);
       this.mpButtonEdit.TabIndex = 22;
@@ -364,9 +361,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpButtonPreview
       // 
-      this.mpButtonPreview.Location = new System.Drawing.Point(8, 42);
+      this.mpButtonPreview.Location = new System.Drawing.Point(6, 16);
       this.mpButtonPreview.Name = "mpButtonPreview";
-      this.mpButtonPreview.Size = new System.Drawing.Size(123, 23);
+      this.mpButtonPreview.Size = new System.Drawing.Size(56, 75);
       this.mpButtonPreview.TabIndex = 16;
       this.mpButtonPreview.Text = "Pre&view";
       this.mpButtonPreview.UseVisualStyleBackColor = true;
@@ -387,18 +384,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpGroupBox3.Controls.Add(this.mpButtonDeleteEncrypted);
       this.mpGroupBox3.Controls.Add(this.mpButtonUncheckEncrypted);
-      this.mpGroupBox3.Controls.Add(this.mpButtonTestScrambled);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(249, 321);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(202, 46);
-      this.mpGroupBox3.TabIndex = 34;
+      this.mpGroupBox3.TabIndex = 24;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Scrambled/encrypted channels";
       // 
       // mpButtonDeleteEncrypted
       // 
-      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(134, 17);
+      this.mpButtonDeleteEncrypted.Location = new System.Drawing.Point(74, 17);
       this.mpButtonDeleteEncrypted.Name = "mpButtonDeleteEncrypted";
       this.mpButtonDeleteEncrypted.Size = new System.Drawing.Size(60, 23);
       this.mpButtonDeleteEncrypted.TabIndex = 29;
@@ -408,24 +404,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // 
       // mpButtonUncheckEncrypted
       // 
-      this.mpButtonUncheckEncrypted.Location = new System.Drawing.Point(71, 17);
+      this.mpButtonUncheckEncrypted.Location = new System.Drawing.Point(8, 17);
       this.mpButtonUncheckEncrypted.Name = "mpButtonUncheckEncrypted";
       this.mpButtonUncheckEncrypted.Size = new System.Drawing.Size(60, 23);
       this.mpButtonUncheckEncrypted.TabIndex = 28;
       this.mpButtonUncheckEncrypted.Text = "Uncheck";
       this.mpButtonUncheckEncrypted.UseVisualStyleBackColor = true;
       this.mpButtonUncheckEncrypted.Click += new System.EventHandler(this.mpButtonUncheckEncrypted_Click);
-      // 
-      // mpButtonTestScrambled
-      // 
-      this.mpButtonTestScrambled.Location = new System.Drawing.Point(8, 17);
-      this.mpButtonTestScrambled.Margin = new System.Windows.Forms.Padding(2);
-      this.mpButtonTestScrambled.Name = "mpButtonTestScrambled";
-      this.mpButtonTestScrambled.Size = new System.Drawing.Size(60, 23);
-      this.mpButtonTestScrambled.TabIndex = 27;
-      this.mpButtonTestScrambled.Text = "Test";
-      this.mpButtonTestScrambled.UseVisualStyleBackColor = true;
-      this.mpButtonTestScrambled.Click += new System.EventHandler(this.mpButtonTestScrambled_Click);
       // 
       // mpGroupBox2
       // 
@@ -437,7 +422,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpGroupBox2.Location = new System.Drawing.Point(249, 270);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(202, 46);
-      this.mpGroupBox2.TabIndex = 33;
+      this.mpGroupBox2.TabIndex = 23;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Channel groups";
       // 
@@ -471,6 +456,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpButtonRenameGroup.UseVisualStyleBackColor = true;
       this.mpButtonRenameGroup.Click += new System.EventHandler(this.mpButtonRenameGroup_Click);
       // 
+      // tableLayoutPanel4
+      // 
+      this.tableLayoutPanel4.ColumnCount = 3;
+      this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+      this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+      this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
+      this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+      this.tableLayoutPanel4.RowCount = 1;
+      this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this.tableLayoutPanel4.Size = new System.Drawing.Size(200, 100);
+      this.tableLayoutPanel4.TabIndex = 0;
+      // 
       // groupTabContextMenuStrip
       // 
       this.groupTabContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -493,12 +491,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.deleteGroupToolStripMenuItem.Text = "Delete Group";
       this.deleteGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteGroupToolStripMenuItem_Click);
       // 
-      // RadioChannels
+      // Channels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
-      this.Name = "RadioChannels";
+      this.Name = "Channels";
       this.Size = new System.Drawing.Size(474, 412);
       this.channelListContextMenuStrip.ResumeLayout(false);
       this.tabControl1.ResumeLayout(false);
@@ -518,22 +516,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.ColumnHeader hdrTypes;
 	private MPLabel mpLabelChannelCount;
 	private System.Windows.Forms.ColumnHeader hdrhekje;
-    private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private MPTabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
+  private MPTabControl tabControl1;
+	private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.ContextMenuStrip channelListContextMenuStrip;
     private System.Windows.Forms.ToolStripMenuItem addToFavoritesToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem deleteThisChannelToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem editChannelToolStripMenuItem;
+	private System.Windows.Forms.ImageList imageList1;
 	private System.Windows.Forms.ColumnHeader hdrProvider;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-    private System.Windows.Forms.ToolStripMenuItem renameSelectedChannelsBySIDToolStripMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem renameMarkedChannelsBySIDToolStripMenuItem;
+	private System.Windows.Forms.ToolStripMenuItem addSIDInFrontOfNameToolStripMenuItem;
 	private System.Windows.Forms.ToolStripMenuItem renumberChannelsBySIDToolStripMenuItem;
+	private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+	private MPGroupBox mpGroupBox2;
 	private MPGroupBox mpGroupBox1;
-	private System.Windows.Forms.Button btnPlaylist;
-	private MPButton mpButton5;
-	private MPButton mpButton4;
 	private MPButton mpButtonAdd;
 	private MPButton mpButtonEdit;
 	private MPButton mpButtonDel;
@@ -542,19 +539,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 	private MPGroupBox mpGroupBox3;
 	private MPButton mpButtonDeleteEncrypted;
 	private MPButton mpButtonUncheckEncrypted;
-	private System.Windows.Forms.Button mpButtonTestScrambled;
-	private MPGroupBox mpGroupBox2;
+	private System.Windows.Forms.Button mpButtonTestAvailable;
 	private MPButton mpButtonDelGroup;
 	private MPButton mpButtonAddGroup;
 	private MPButton mpButtonRenameGroup;
-  private System.Windows.Forms.Label label2;
+	private MPButton mpButtonUp;
+  private MPButton mpButtonDown;
+	private System.Windows.Forms.Label label2;
   private System.Windows.Forms.ColumnHeader hdrGroup;
   private System.Windows.Forms.ContextMenuStrip groupTabContextMenuStrip;
   private System.Windows.Forms.ToolStripMenuItem renameGroupToolStripMenuItem;
   private System.Windows.Forms.ToolStripMenuItem deleteGroupToolStripMenuItem;
-  private System.Windows.Forms.ColumnHeader hdrDetails;
-  private System.Windows.Forms.ImageList imageList1;
-  private System.Windows.Forms.Label lblFilterLabel;
+  private System.Windows.Forms.ColumnHeader hdrNumberOfDetails;
   private System.Windows.Forms.TextBox txtFilterString;
+  private System.Windows.Forms.Label lblFilterLabel;
   }
 }

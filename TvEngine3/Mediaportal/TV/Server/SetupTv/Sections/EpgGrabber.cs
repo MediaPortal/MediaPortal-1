@@ -35,21 +35,25 @@ using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  public partial class RadioEpgGrabber : SectionSettings
+  public partial class EpgGrabber : SectionSettings
   {
     private bool _loaded;
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
 
-    public RadioEpgGrabber()
-      : this("Radio Epg grabber") { }
-
-    public RadioEpgGrabber(string name)
+    public EpgGrabber(string name, MediaTypeEnum mediaType)
       : base(name)
     {
+      MediaTypeEnum = mediaType;
       InitializeComponent();
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
       mpListView1.ListViewItemSorter = lvwColumnSorter;
+    }
+
+    public MediaTypeEnum MediaTypeEnum
+    {
+      get { return _mediaTypeEnum; }
+      set { _mediaTypeEnum = value; }
     }
 
     private void LoadLanguages()
@@ -63,8 +67,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         List<String> codes = languages.GetLanguageCodes();
         List<String> list = languages.GetLanguages();
 
-        
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("radioLanguages");
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgLanguages");
 
         string values = "";
         for (int j = 0; j < list.Count; j++)
@@ -102,12 +105,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionDeActivated()
     {
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("epgRadioStoreOnlySelected", mpCheckBoxStoreOnlySelected.Checked ? "yes" : "no");      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("epgStoreOnlySelected", mpCheckBoxStoreOnlySelected.Checked ? "yes" : "no");
       base.OnSectionDeActivated();
       SaveSettings();
     }
 
     private bool _ignoreItemCheckedEvent = true;
+    private MediaTypeEnum _mediaTypeEnum;
+
     public override void OnSectionActivated()
     {
       mpListView1.BeginUpdate();
@@ -115,7 +120,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _ignoreItemCheckedEvent = true;
         LoadLanguages();
-        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgRadioStoreOnlySelected");
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting("epgStoreOnlySelected");
         mpCheckBoxStoreOnlySelected.Checked = (setting.value == "yes");
         Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
@@ -128,7 +133,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         ChannelIncludeRelationEnum includeRelations = ChannelIncludeRelationEnum.TuningDetails;
         includeRelations |= ChannelIncludeRelationEnum.ChannelMaps;
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.Radio);
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, includeRelations);
+
 
         foreach (Channel ch in channels)
         {
@@ -140,10 +146,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool dvbip = false;
           bool hasFta = false;
           bool hasScrambled = false;
-          if (ch.mediaType != (int)MediaTypeEnum.Radio)
+          if (ch.mediaType != (decimal)_mediaTypeEnum)
             continue;
           if (ch.IsWebstream())
+          {
             continue;
+          }
 
           IList<TuningDetail> tuningDetails = ch.TuningDetails;
           foreach (TuningDetail detail in tuningDetails)
@@ -161,15 +169,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           int imageIndex;
           if (hasFta && hasScrambled)
           {
-            imageIndex = 2;
+            imageIndex = 5;
           }
           else if (hasScrambled)
           {
-            imageIndex = 1;
+            imageIndex = 4;
           }
           else
           {
-            imageIndex = 0;
+            imageIndex = 3;
           }
 
           ListViewItem item = mpListView1.Items.Add(ch.displayName, imageIndex);
@@ -251,7 +259,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void SaveSettings()
     {
       if (false == _loaded)
-        return;
+        return;      
       
       string value = ",";
       for (int i = 0; i < mpListView2.Items.Count; ++i)
@@ -263,7 +271,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           value += ",";
         }
       }
-      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("radioLanguages", value);
+      
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("epgLanguages", value);
       base.SaveSettings();
     }
 
@@ -298,7 +307,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }      
     }
 
-    private void linkLabelRadioAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelTVAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
@@ -314,7 +323,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void linkLabelRadioAllGrouped_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelTVAllGrouped_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
@@ -332,7 +341,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void linkLabelRadioGroupedVisible_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelTVGroupedVisible_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
@@ -350,7 +359,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void linkLabelRadioNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void linkLabelTVNone_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       mpListView1.BeginUpdate();
       try
@@ -385,7 +394,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           value += ",";
         }
         //Log.WriteFile("tvsetup:epggrabber:all: epglang={0}", setting.value);
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("radioLanguages", value);
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgLanguages", value);
       }
       finally
       {
@@ -402,7 +411,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           mpListView2.Items[i].Checked = false;
         }
-        ServiceAgents.Instance.SettingServiceAgent.SaveSetting("radioLanguages", ",");                
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("epgLanguages", ",");
+        Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.value);
       }
       finally
       {

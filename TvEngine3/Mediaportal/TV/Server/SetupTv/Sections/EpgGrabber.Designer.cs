@@ -2,7 +2,7 @@ using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  partial class TvEpgGrabber
+  partial class EpgGrabber
   {
     /// <summary>
     /// Required designer variable.
@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvEpgGrabber));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EpgGrabber));
       this.linkLabelLanguageNone = new System.Windows.Forms.LinkLabel();
       this.linkLabelLanguageAll = new System.Windows.Forms.LinkLabel();
       this.linkLabelTVNone = new System.Windows.Forms.LinkLabel();
@@ -271,12 +271,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabControl1.Size = new System.Drawing.Size(485, 431);
       this.tabControl1.TabIndex = 11;
       // 
-      // TvEpgGrabber
+      // EpgGrabber
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
-      this.Name = "TvEpgGrabber";
+      this.Name = "EpgGrabber";
       this.Size = new System.Drawing.Size(491, 437);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();

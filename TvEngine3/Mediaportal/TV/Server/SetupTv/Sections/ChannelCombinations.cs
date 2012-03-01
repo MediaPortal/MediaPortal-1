@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
@@ -35,7 +36,7 @@ using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  public partial class RadioCombinations : SectionSettings
+  public partial class ChannelCombinations : SectionSettings
   {
     public class CardInfo
     {
@@ -61,10 +62,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter3;
 
     private Dictionary<int, CardType> cards;
+    private MediaTypeEnum _mediaTypeEnum;
 
-    public RadioCombinations(string name)
+    public ChannelCombinations(string name, MediaTypeEnum mediaType)
       : base(name)
     {
+      _mediaTypeEnum = mediaType;
       InitializeComponent();
 
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
@@ -74,6 +77,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
       mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
       mpListViewChannels.ListViewItemSorter = lvwColumnSorter3;
+    }
+
+    public MediaTypeEnum MediaTypeEnum
+    {
+      get { return _mediaTypeEnum; }
+      set { _mediaTypeEnum = value; }
     }
 
     public override void OnSectionDeActivated()
@@ -112,6 +121,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpListViewChannels.Items.Clear();
         mpListViewMapped.Items.Clear();
 
+       
         CardInfo cardInfo = (CardInfo)mpComboBoxCard.SelectedItem;
 
         Card card = cardInfo.Card;
@@ -130,8 +140,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           catch (Exception) {}
           if (channel == null)
             continue;
-          if (channel.mediaType != (decimal) MediaTypeEnum.Radio)
-            continue;
+          if (channel.mediaType != (decimal) _mediaTypeEnum)
+            continue;          
           bool enableDVBS2 = (ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("dvbs" + card.idCard + "enabledvbs2", "false").value == "true");
           List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
           int imageIndex = GetImageIndex(tuningDetails);
@@ -168,20 +178,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.Show(this);
         dlg.WaitForDisplay();
         foreach (Channel channel in allChannels)
-        {          
-          if (channel.mediaType != (decimal)MediaTypeEnum.Radio)
+        {
+          if (channel.mediaType != (decimal)_mediaTypeEnum)
             continue;
 
-          bool isMapped = false;
           IList<ChannelMap> list = channel.ChannelMaps;
-          foreach (ChannelMap map in list)
-          {
-            if (map.idCard == card.idCard)
-            {
-              isMapped = true;
-              break;
-            }
-          }
+          bool isMapped = list.Any(map => map.idCard == card.idCard);
           if (isMapped)
             continue;
 
@@ -250,7 +252,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             if (groupMapMaster.idGroup == groupMap.idGroup)
             {
-              ServiceAgents.Instance.ChannelGroupServiceAgent.DeleteChannelGroupMap(groupMap.idMap);              
+              ServiceAgents.Instance.CardServiceAgent.DeleteGroupMap(groupMap.idMap);              
               alreadyExistsInGroup = true;
               continue;
             }
@@ -259,6 +261,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             groupMap.idChannel = selectedChannel.idChannel;
             ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMap(groupMap);
+
           }
         }
         dlg.Close();
@@ -285,10 +288,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         dlg.WaitForDisplay();
         foreach (Schedule schedule in selectedChannel2.Schedules)
         {
-          schedule.idChannel = selectedChannel.idChannel;
+          schedule.idChannel = selectedChannel.idChannel;          
           ServiceAgents.Instance.ScheduleServiceAgent.SaveSchedule(schedule);
         }
-        dlg.Close();        
+        dlg.Close();
         ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(selectedChannel2.idChannel);
         mpListViewMapped.Items.Remove(listViewItem);
       }
@@ -406,15 +409,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       int imageIndex;
       if (hasFta && hasScrambled)
       {
-        imageIndex = 2;
+        imageIndex = 5;
       }
       else if (hasScrambled)
       {
-        imageIndex = 1;
+        imageIndex = 4;
       }
       else
       {
-        imageIndex = 0;
+        imageIndex = 3;
       }
       return imageIndex;
     }

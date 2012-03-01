@@ -59,5 +59,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
     {
       return _channel.ListAllChannelGroups(includeRelations);
     }
+
+    public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations)
+    {
+      return _channel.ListAllChannelGroupsByMediaType(mediaType, includeRelations);
+    }
   }
 }

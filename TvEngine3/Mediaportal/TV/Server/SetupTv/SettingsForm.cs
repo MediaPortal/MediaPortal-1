@@ -146,24 +146,22 @@ namespace Mediaportal.TV.Server.SetupTV
           }
         }
         
-          
-
         AddServerTvCards(RemoteControl.HostName, false);
 
-        TvChannels tvChannels = new TvChannels();
-        AddSection(tvChannels);
-        AddChildSection(tvChannels, new TvCombinations("TV Combinations"));
-        AddChildSection(tvChannels, new TvChannelMapping());
+        Channels channels = new Channels("TV Channels", MediaTypeEnum.TV);            
+        AddSection(channels);
+        AddChildSection(channels, new ChannelCombinations("TV Combinations", MediaTypeEnum.TV));
+        AddChildSection(channels, new ChannelMapping("TV Mapping", MediaTypeEnum.TV));
 
-        RadioChannels radioChannels = new RadioChannels();
+        Channels radioChannels = new Channels("Radio Channels", MediaTypeEnum.Radio);        
         AddSection(radioChannels);
-        AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
-        AddChildSection(radioChannels, new RadioChannelMapping());
+        AddChildSection(radioChannels, new ChannelCombinations("Radio Combinations", MediaTypeEnum.Radio));
+        AddChildSection(radioChannels, new ChannelMapping("Radio Mapping", MediaTypeEnum.Radio));
 
         Epg EpgSection = new Epg();
         AddSection(EpgSection);
-        AddChildSection(EpgSection, new TvEpgGrabber());
-        AddChildSection(EpgSection, new RadioEpgGrabber());
+        AddChildSection(EpgSection, new EpgGrabber("TV Epg grabber", MediaTypeEnum.TV));
+        AddChildSection(EpgSection, new EpgGrabber("Radio Epg grabber", MediaTypeEnum.Radio)); ;
 
         AddSection(new ScanSettings());
         AddSection(new TvRecording());

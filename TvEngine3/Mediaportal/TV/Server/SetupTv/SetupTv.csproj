@@ -303,29 +303,21 @@
       <SubType>Designer</SubType>
       <DependentUpon>TestService.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvEpgGrabber.resx">
+    <EmbeddedResource Include="Sections\EpgGrabber.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RadioChannelMapping.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RadioChannelMapping.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RadioChannels.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RadioChannels.cs</DependentUpon>
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TvCards.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TvCards.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvChannelMapping.resx">
+    <EmbeddedResource Include="Sections\ChannelMapping.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TvChannelMapping.cs</DependentUpon>
+      <DependentUpon>ChannelMapping.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVChannels.resx">
+    <EmbeddedResource Include="Sections\Channels.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TVChannels.cs</DependentUpon>
+      <DependentUpon>Channels.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -375,23 +367,11 @@
     <Compile Include="Sections\ChannelsInGroupControl.Designer.cs">
       <DependentUpon>ChannelsInGroupControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\ChannelsInRadioGroupControl.cs">
+    <Compile Include="Sections\ChannelCombinations.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\ChannelsInRadioGroupControl.designer.cs">
-      <DependentUpon>ChannelsInRadioGroupControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\Combinations.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Combinations.Designer.cs">
-      <DependentUpon>Combinations.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\RadioCombinations.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\RadioCombinations.Designer.cs">
-      <DependentUpon>RadioCombinations.cs</DependentUpon>
+    <Compile Include="Sections\ChannelCombinations.Designer.cs">
+      <DependentUpon>ChannelCombinations.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\player.cs" />
     <Compile Include="Sections\Plugins.cs">
@@ -399,12 +379,6 @@
     </Compile>
     <Compile Include="Sections\Plugins.Designer.cs">
       <DependentUpon>Plugins.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\RadioEpgGrabber.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\RadioEpgGrabber.Designer.cs">
-      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\ScanSettings.cs">
       <SubType>UserControl</SubType>
@@ -436,23 +410,11 @@
     <Compile Include="Sections\TestService.Designer.cs">
       <DependentUpon>TestService.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\TvEpgGrabber.cs">
+    <Compile Include="Sections\EpgGrabber.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TvEpgGrabber.Designer.cs">
-      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\RadioChannelMapping.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\RadioChannelMapping.Designer.cs">
-      <DependentUpon>RadioChannelMapping.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\RadioChannels.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\RadioChannels.Designer.cs">
-      <DependentUpon>RadioChannels.cs</DependentUpon>
+    <Compile Include="Sections\EpgGrabber.Designer.cs">
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvCards.cs">
       <SubType>UserControl</SubType>
@@ -460,17 +422,17 @@
     <Compile Include="Sections\TvCards.Designer.cs">
       <DependentUpon>TvCards.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\TvChannelMapping.cs">
+    <Compile Include="Sections\ChannelMapping.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TvChannelMapping.Designer.cs">
-      <DependentUpon>TvChannelMapping.cs</DependentUpon>
+    <Compile Include="Sections\ChannelMapping.Designer.cs">
+      <DependentUpon>ChannelMapping.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\TVChannels.cs">
+    <Compile Include="Sections\Channels.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TVChannels.Designer.cs">
-      <DependentUpon>TVChannels.cs</DependentUpon>
+    <Compile Include="Sections\Channels.Designer.cs">
+      <DependentUpon>Channels.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvSchedules.cs">
       <SubType>UserControl</SubType>
@@ -533,10 +495,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Sections\RadioEpgGrabber.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\TvRecording.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TvRecording.cs</DependentUpon>
@@ -583,16 +541,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>ChannelsInGroupControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\ChannelsInRadioGroupControl.resx">
-      <DependentUpon>ChannelsInRadioGroupControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\CIMenu\CI_Menu_Dialog.resx">
       <DependentUpon>CI_Menu_Dialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Combinations.resx">
-      <DependentUpon>Combinations.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\ChannelCombinations.resx">
+      <DependentUpon>ChannelCombinations.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TvTimeshifting.resx">
@@ -605,10 +559,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">
       <DependentUpon>Project.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RadioCombinations.resx">
-      <DependentUpon>RadioCombinations.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Plugins.resx">

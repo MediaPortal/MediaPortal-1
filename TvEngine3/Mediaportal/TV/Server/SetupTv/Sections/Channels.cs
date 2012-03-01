@@ -39,8 +39,10 @@ using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  public partial class TvChannels : SectionSettings
+  public partial class Channels : SectionSettings
   {
+    private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;
+
     public class CardInfo
     {
       protected Card _card;
@@ -71,18 +73,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private Thread _scanThread;
 
     private Dictionary<int, CardType> _cards = null;
-    private IList<Channel> _allChannels = null;
+    private IList<Channel> _allChannels = null;    
 
-    public TvChannels()
-      : this("TV Channels")
-    {
-      mpListView1.IsChannelListView = true;
-      tabControl1.AllowReorderTabs = true;
-    }
-
-    public TvChannels(string name)
+    public Channels(string name, MediaTypeEnum mediaType)
       : base(name)
     {
+      _mediaTypeEnum = mediaType;
       InitializeComponent();
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
@@ -90,6 +86,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       lvwColumnSorter2.Order = SortOrder.Descending;
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
       mpListView1.ListViewItemSorter = lvwColumnSorter;
+    }
+
+    public MediaTypeEnum MediaTypeEnum
+    {
+      get { return _mediaTypeEnum; }
+      set { _mediaTypeEnum = value; }
     }
 
     public override void OnSectionDeActivated()
@@ -120,18 +122,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // bugfix for tab removal, RemoveAt fails sometimes
       tabControl1.TabPages.Clear();
       tabControl1.TabPages.Add(tabPage1);
-
-      //ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
-      //include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-      //include |= ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails; 
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
+      
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(_mediaTypeEnum, ChannelGroupIncludeRelationEnum.None);
 
       foreach (ChannelGroup group in groups)
       {
         TabPage page = new TabPage(group.groupName);
         page.SuspendLayout();
 
-        ChannelsInGroupControl channelsInRadioGroupControl = new ChannelsInGroupControl();
+        ChannelsInGroupControl channelsInRadioGroupControl = new ChannelsInGroupControl(_mediaTypeEnum);        
         channelsInRadioGroupControl.Location = new System.Drawing.Point(9, 9);
         channelsInRadioGroupControl.Anchor = ((AnchorStyles.Top | AnchorStyles.Bottom)
                                               | AnchorStyles.Left)
@@ -190,11 +189,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       include |= ChannelIncludeRelationEnum.ChannelMaps;
       include |= ChannelIncludeRelationEnum.GroupMaps;
 
-      _allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV, include);
+      _allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, include);
 
       tabControl1.TabPages[0].Text = string.Format("Channels ({0})", _allChannels.Count);
 
-      _lvChannelHandler = new ChannelListViewHandler(mpListView1, _allChannels, _cards, txtFilterString, MediaTypeEnum.TV);
+      _lvChannelHandler = new ChannelListViewHandler(mpListView1, _allChannels, _cards, txtFilterString, _mediaTypeEnum);
       _lvChannelHandler.FilterListView("");
     }
 
@@ -239,7 +238,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ListViewItem item = mpListView1.Items[indexes[i]];
 
         Channel channel = (Channel)item.Tag;
-        MappingHelper.AddChannelToGroup(ref channel, @group, MediaTypeEnum.TV);        
+        MappingHelper.AddChannelToGroup(ref channel, @group, _mediaTypeEnum);        
 
         string groupString = item.SubItems[1].Text;
         if (groupString == string.Empty)
@@ -278,7 +277,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(include);
       foreach (Channel channel in channels)
       {
-        if (channel.mediaType == (int)MediaTypeEnum.TV)
+        if (channel.mediaType == (int)_mediaTypeEnum)
         {
           //Broker.Execute("delete from TvMovieMappings WHERE idChannel=" + channel.idChannel);
           ServiceAgents.Instance.ChannelServiceAgent.DeleteChannel(channel.idChannel);

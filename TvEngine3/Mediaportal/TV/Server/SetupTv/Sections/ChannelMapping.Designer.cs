@@ -2,7 +2,7 @@ using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  partial class TvChannelMapping
+  partial class ChannelMapping
   {
     /// <summary>
     /// Required designer variable.
@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvChannelMapping));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChannelMapping));
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
       this.tabPage1.Size = new System.Drawing.Size(446, 366);
       this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "TV Mapping";
+      this.tabPage1.Text = "Channel Mapping";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // mpCheckBoxMapForEpgOnly
@@ -238,12 +238,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.mpLabelChannelCount.Size = new System.Drawing.Size(0, 13);
       this.mpLabelChannelCount.TabIndex = 2;
       // 
-      // TvChannelMapping
+      // ChannelMapping
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
-      this.Name = "TvChannelMapping";
+      this.Name = "ChannelMapping";
       this.Size = new System.Drawing.Size(457, 395);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);

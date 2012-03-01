@@ -36,8 +36,10 @@ using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
-  public partial class TvChannelMapping : SectionSettings
+  public partial class ChannelMapping : SectionSettings
   {
+    private MediaTypeEnum _mediaTypeEnum = MediaTypeEnum.TV;
+
     public class CardInfo
     {
       protected Card _card;
@@ -58,15 +60,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    public TvChannelMapping()
-      : this("TV Mapping") {}
+    
 
     private readonly MPListViewStringColumnSorter lvwColumnSorter1;
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
-    public TvChannelMapping(string name)
+    public ChannelMapping(string name, MediaTypeEnum mediaType)
       : base(name)
     {
+      _mediaTypeEnum = mediaType;
       InitializeComponent();
       //mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(1);
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
@@ -75,6 +77,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.Ascending;
       mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+    }
+
+    public MediaTypeEnum MediaTypeEnum
+    {
+      get { return _mediaTypeEnum; }
+      set { _mediaTypeEnum = value; }
     }
 
     public override void OnSectionActivated()
@@ -174,7 +182,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpListViewMapped.Items.Clear();
         mpListViewChannels.Items.Clear();
 
-        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels().ToList();
+        List<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, ChannelIncludeRelationEnum.TuningDetails).ToList();
 
         Card card = ServiceAgents.Instance.CardServiceAgent.GetCard(((CardInfo)mpComboBoxCard.SelectedItem).Card.idCard);        
         IList<ChannelMap> maps = card.ChannelMaps;
@@ -197,7 +205,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           catch (Exception) {}
           if (channel == null)
             continue;
-          if (channel.mediaType != (decimal) MediaTypeEnum.TV)
+          if (channel.mediaType != (decimal)_mediaTypeEnum)
             continue;
 
 
@@ -232,7 +240,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         items = new List<ListViewItem>();
         foreach (Channel channel in channels)
         {
-          if (channel.mediaType != (decimal) MediaTypeEnum.TV)
+          if (channel.mediaType != (decimal)_mediaTypeEnum)
             continue;
           List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
           // only add channel that is tuneable on the device selected.
