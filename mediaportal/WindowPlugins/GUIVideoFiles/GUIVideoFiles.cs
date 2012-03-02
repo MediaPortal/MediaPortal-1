@@ -1523,7 +1523,7 @@ namespace MediaPortal.GUI.Video
       {
       //  Log.Debug("GUIVideoFiles: SelectCurrentItem - nothing to do for item {0}", _currentSelectedItem.ToString());
       //  return false;
-        GUIPropertyManager.SetProperty("#timeswatched", "-1");
+        GUIPropertyManager.SetProperty("#watchedcount", "-1");
       }
     }
 
@@ -1593,17 +1593,23 @@ namespace MediaPortal.GUI.Video
       
       int iPercent = 0;
       int iTimesWatched = 0;
+      int movieId = VideoDatabase.GetMovieId(movieFileName);
       
       if (!watched)
       {
-        VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), out iPercent, out iTimesWatched);
-        VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), false, iPercent);
+        VideoDatabase.GetmovieWatchedStatus(movieId, out iPercent, out iTimesWatched);
+        VideoDatabase.SetMovieWatchedStatus(movieId, false, iPercent);
       }
       else
       {
         iPercent = 100;
-        VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), out iPercent, out iTimesWatched);
-        VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), true, iPercent);
+        VideoDatabase.GetmovieWatchedStatus(movieId, out iPercent, out iTimesWatched);
+        VideoDatabase.SetMovieWatchedStatus(movieId, true, iPercent);
+
+        if (iTimesWatched <= 0)
+        {
+          VideoDatabase.SetMovieTimesWatched(movieId);
+        }
       }
     }
 

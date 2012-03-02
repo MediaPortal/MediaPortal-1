@@ -409,11 +409,11 @@ namespace MediaPortal.Video.Database
       // Watched count
       if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file))
       {
-        GUIPropertyManager.SetProperty("#timeswatched", timesWatched.ToString());
+        GUIPropertyManager.SetProperty("#watchedcount", timesWatched.ToString());
       }
       else
       {
-        GUIPropertyManager.SetProperty("#timeswatched", "-1");
+        GUIPropertyManager.SetProperty("#watchedcount", "-1");
       }
       
       // MediaInfo Properties

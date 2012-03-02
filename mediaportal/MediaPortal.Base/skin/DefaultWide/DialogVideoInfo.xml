@@ -435,7 +435,7 @@
       <id>1</id>
       <posX>260</posX>
       <posY>485</posY>
-      <label>#timeswatched</label>
+      <label>#watchedcount</label>
       <font>font10</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>

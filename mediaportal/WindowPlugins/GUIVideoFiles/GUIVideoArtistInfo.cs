@@ -464,7 +464,7 @@ namespace MediaPortal.GUI.Video
                                                                    ListItemMovieInfo(item).MovieMpaaRating + " : : : " +
                                                                    GUILocalizeStrings.Get(344) + ": " +
                                                                    ListItemMovieInfo(item).MovieCast);
-        GUIPropertyManager.SetProperty("#ActorMovieTitle", ListItemMovieInfo(item).MovieTitle);
+        GUIPropertyManager.SetProperty("#Actor.MovieTitle", ListItemMovieInfo(item).MovieTitle);
         // For fanart handler
         if (item.IsPlayed)
         {

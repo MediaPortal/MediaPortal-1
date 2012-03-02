@@ -173,7 +173,7 @@
       <width>200</width>
 			<label>iTunes Trailers</label>
 			<hyperlink>4755</hyperlink>
-			<hyperlinkParameter>site:iTunes Movie Trailers|search:#ActorMovieTitle|return:Locked</hyperlinkParameter>
+			<hyperlinkParameter>site:iTunes Movie Trailers|search:#Actor.MovieTitle|return:Locked</hyperlinkParameter>
 			<visible>plugin.isenabled(OnlineVideos)+control.isvisible(24)</visible>
 			<onup>4755</onup>
 			<ondown>3</ondown>

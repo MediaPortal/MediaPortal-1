@@ -80,8 +80,7 @@ namespace MediaPortal.GUI.Library
       _properties["#runtime"] = string.Empty; // imdb movie runtime 
       _properties["#iswatched"] = string.Empty; // boolean indication movie has been watched
       _properties["#watchedpercent"] = string.Empty; // videofile watched percentage
-      _properties["#watchedpercent"] = string.Empty; // videofile watched percentage
-
+      
       _properties["#music.title"] = string.Empty;
       _properties["#music.artist"] = string.Empty;
       _properties["#music.rating"] = string.Empty;
