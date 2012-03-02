@@ -260,17 +260,18 @@
     <selectedColor3>ff00ff00</selectedColor3>
     <selectedColor2>ff00ff00</selectedColor2>
     <selectedColor>ff00ff00</selectedColor>
-    <playedColor>ffa9d0f7</playedColor>
-    <playedColor2>ffa9d0f7</playedColor2>
+    <playedColor>FF9EDD2B</playedColor>
+    <playedColor2>FF9EDD2B</playedColor2>
     <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>90ffffff</textcolorNoFocus>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
-    <colordiffuse>99ffffff</colordiffuse>
+    <colordiffuse>90ffffff</colordiffuse>
     <remoteColor>ffFF9900</remoteColor>
     <remoteColor2>ffFF9900</remoteColor2>
     <downloadColor>ff666666</downloadColor>
     <downloadColor2>ff80ff80</downloadColor2>
-    <dimColor>99ffffff</dimColor>
+    <dimColor>90ffffff</dimColor>
     <scrollStartDelaySec>1</scrollStartDelaySec>
     <textXOff>8</textXOff>
     <textYOff>2</textYOff>
@@ -311,18 +312,22 @@
     <textureHeight>40</textureHeight>
     <image>emtpy.png</image>
     <font>font13</font>
-    <selectedColor3>ffffcc00</selectedColor3>
-    <selectedColor2>ffffcc00</selectedColor2>
-    <selectedColor>ffffcc00</selectedColor>
-    <playedColor>ffffcc00</playedColor>
-    <playedColor2>ffffcc00</playedColor2>
+    <shadedColor>20ffffff</shadedColor>
+    <selectedColor3>ff00ff00</selectedColor3>
+    <selectedColor2>ff00ff00</selectedColor2>
+    <selectedColor>ff00ff00</selectedColor>
+    <playedColor>FFB2D4F5</playedColor>
+    <playedColor2>FFB2D4F5</playedColor2>
     <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>90ffffff</textcolorNoFocus>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
-    <colordiffuse>ffffffff</colordiffuse>
-    <remoteColor>ff000000</remoteColor>
+    <colordiffuse>90ffffff</colordiffuse>
+    <remoteColor>ffFF9900</remoteColor>
+    <remoteColor2>ffFF9900</remoteColor2>
     <downloadColor>ff666666</downloadColor>
-    <dimColor>ffffffff</dimColor>
+    <downloadColor2>ff80ff80</downloadColor2>
+    <dimColor>90ffffff</dimColor>
     <textureCheckmark>check-box.png</textureCheckmark>
     <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
     <MarkWidth>28</MarkWidth>
@@ -360,18 +365,22 @@
     <textureHeight>40</textureHeight>
     <image>emtpy.png</image>
     <font>font13</font>
-    <selectedColor3>ffffcc00</selectedColor3>
-    <selectedColor2>ffffcc00</selectedColor2>
-    <selectedColor>ffffcc00</selectedColor>
-    <playedColor>ffffcc00</playedColor>
-    <playedColor2>ffffcc00</playedColor2>
-    <textcolor>ff000000</textcolor>
+    <shadedColor>20ffffff</shadedColor>
+    <selectedColor3>ff00ff00</selectedColor3>
+    <selectedColor2>ff00ff00</selectedColor2>
+    <selectedColor>ff00ff00</selectedColor>
+    <playedColor>FFB2D4F5</playedColor>
+    <playedColor2>FFB2D4F5</playedColor2>
+    <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>90ffffff</textcolorNoFocus>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
-    <colordiffuse>ffffffff</colordiffuse>
-    <remoteColor>ff000000</remoteColor>
+    <colordiffuse>90ffffff</colordiffuse>
+    <remoteColor>ffFF9900</remoteColor>
+    <remoteColor2>ffFF9900</remoteColor2>
     <downloadColor>ff666666</downloadColor>
-    <dimColor>ffffffff</dimColor>
+    <downloadColor2>ff80ff80</downloadColor2>
+    <dimColor>90ffffff</dimColor>
     <textXOff>8</textXOff>
     <textYOff>5</textYOff>
     <textXOff2>0</textXOff2>
@@ -404,20 +413,21 @@
     <image>emtpy.png</image>
     <font>font13</font>
     <shadedColor>20ffffff</shadedColor>
-    <selectedColor3>ffffcc00</selectedColor3>
-    <selectedColor2>ffffcc00</selectedColor2>
-    <selectedColor>ffffcc00</selectedColor>
-    <playedColor>ffffcc00</playedColor>
-    <playedColor2>ffffcc00</playedColor2>
+    <selectedColor3>ff00ff00</selectedColor3>
+    <selectedColor2>ff00ff00</selectedColor2>
+    <selectedColor>ff00ff00</selectedColor>
+    <playedColor>FFB2D4F5</playedColor>
+    <playedColor2>FFB2D4F5</playedColor2>
     <textcolor>ffffffff</textcolor>
+    <textcolorNoFocus>90ffffff</textcolorNoFocus>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
-    <colordiffuse>99ffffff</colordiffuse>
+    <colordiffuse>90ffffff</colordiffuse>
     <remoteColor>ffFF9900</remoteColor>
     <remoteColor2>ffFF9900</remoteColor2>
     <downloadColor>ff666666</downloadColor>
     <downloadColor2>ff80ff80</downloadColor2>
-    <dimColor>99ffffff</dimColor>
+    <dimColor>90ffffff</dimColor>
     <textXOff>8</textXOff>
     <textYOff>5</textYOff>
     <textXOff2>0</textXOff2>
