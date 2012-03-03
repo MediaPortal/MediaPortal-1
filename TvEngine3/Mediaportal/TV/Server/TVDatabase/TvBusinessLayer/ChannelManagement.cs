@@ -426,14 +426,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (channel != null)
       {
-        channelRepository.DeleteList(channel.Recordings);
+        //channelRepository.DeleteList(channel.Recordings);
 
-        /*for (int i = channel.Recordings.Count - 1; i >= 0; i--)
+        for (int i = channel.Recordings.Count - 1; i >= 0; i--)
         {
           Recording recording = channel.Recordings[i];
           recording.Schedule = null;
         }
-        channelRepository.ApplyChanges<Channel>(channelRepository.ObjectContext.Channels, channel);*/
+        channelRepository.ApplyChanges<Channel>(channelRepository.ObjectContext.Channels, channel);
       }
     }
 

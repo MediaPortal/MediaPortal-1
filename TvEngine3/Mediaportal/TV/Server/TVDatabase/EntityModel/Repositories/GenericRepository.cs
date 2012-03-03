@@ -80,7 +80,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IQueryable<TEntity> GetQuery<TEntity>() where TEntity : class
     {
       var entityName = GetEntityName<TEntity>();
-      return ObjectContext.CreateQuery<TEntity>(entityName).AsNoTracking();
+      return ObjectContext.CreateQuery<TEntity>(entityName).AsNoTracking();      
     }
 
     public IQueryable<TEntity> GetQuery<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class
@@ -241,22 +241,32 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (!IsAttached(entitySetFullName, entity))
       {
         ObjectContext.AttachTo(entitySetFullName, entity);  
-      }            
+      }
+
+      //IObjectWithChangeTracker e = entity as IObjectWithChangeTracker;
+      //e.ChangeTracker.State = ObjectState.Deleted;      
 
       ObjectContext.DeleteObject(entity);
     }
 
-    public void DeleteList<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
+    public void DeleteList<TEntity>(IList<TEntity> entities) where TEntity : class
     {
-      foreach (var entity in entities)
+      for (int i = entities.Count(); i-- > 0; )
+      {
+        TEntity entity = entities[i];
+        Delete(entity);
+      }
+      /*foreach (var entity in entities)
       {
         Delete(entity);
-      }   
+      }*/
     }
 
     public void Delete<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class
     {
-      IEnumerable<TEntity> records = Find<TEntity>(criteria);
+      //IEnumerable<TEntity> records = Find<TEntity>(criteria);
+      var entityName = GetEntityName<TEntity>();
+      IEnumerable<TEntity> records = ObjectContext.CreateQuery<TEntity>(entityName).Where(criteria);
 
       foreach (TEntity record in records)
       {

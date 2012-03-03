@@ -25,27 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       : base(context)
     {
       
-    }
-
-
-    public IQueryable<Program> GetNowAndNextProgramsForChannels(IList<Channel> channels)
-    {    
-      DateTime now = DateTime.Now;
-      var tomorrow = now.AddDays(1);
-
-      IList<int> channelIds = channels.Select(channel => channel.idChannel).ToList();
-
-      var buildContainsExpression = BuildContainsExpression<Channel, int>(e => e.idChannel, channelIds);
-      var programs = GetQuery<Program>().Where(p => p.endTime >= now && p.endTime < tomorrow &&
-      ObjectContext.Channels.Where(buildContainsExpression).Any(c => c.idChannel == p.idChannel));
-
-      //the following didnt work, as it resulted in an exception => "Unable to create a constant value of type" 
-
-      //var programs = GetQuery<Program>().Where(p => p.endTime >= now && p.endTime < tomorrow && channels.Any(c => c.idChannel == p.idChannel)).OrderBy(p => p.idChannel).OrderBy(p => p.startTime);                  
-
-      //so instead we use the above approach. => BuildContainsExpression
-      return programs;
-    }
+    }        
 
     public IQueryable<Program> GetNowAndNextProgramsForChannel(int idChannel)
     {

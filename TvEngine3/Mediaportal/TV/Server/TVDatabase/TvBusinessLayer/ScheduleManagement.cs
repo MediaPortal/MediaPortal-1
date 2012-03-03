@@ -139,7 +139,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {        
         SetRelatedRecordingsToNull(idSchedule, scheduleRepository);
-
         scheduleRepository.Delete<Schedule>(s => s.id_Schedule == idSchedule);
         scheduleRepository.UnitOfWork.SaveChanges();
       }
@@ -154,13 +153,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       if (schedule != null)
       {
-        scheduleRepository.DeleteList(schedule.Recordings);
-        /*for (int i = schedule.Recordings.Count - 1; i >= 0; i--)
+        //scheduleRepository.DeleteList(schedule.Recordings);
+        for (int i = schedule.Recordings.Count - 1; i >= 0; i--)
         {
           Recording recording = schedule.Recordings[i];
-          recording.Schedule = null;
+          recording.idSchedule = null;
         }
-        scheduleRepository.ApplyChanges<Schedule>(scheduleRepository.ObjectContext.Schedules, schedule);*/
+        scheduleRepository.ApplyChanges<Schedule>(scheduleRepository.ObjectContext.Schedules, schedule);
       }
     }
 
@@ -555,7 +554,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         IList<Schedule> schedules =
           scheduleRepository.GetQuery<Schedule>(
-            s => s.scheduleType == (int) ScheduleRecordingType.Once && s.endTime < DateTime.Now).ToList();
+            s => s.scheduleType == (int) ScheduleRecordingType.Once && s.endTime < DateTime.Now).ToList();        
 
         if (schedules.Count > 0)
         {

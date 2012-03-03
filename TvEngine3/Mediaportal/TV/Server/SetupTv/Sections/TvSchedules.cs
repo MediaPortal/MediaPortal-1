@@ -41,6 +41,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
   {
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
 
+    private bool _ignoreRefreshEPG = true;
+
     public TvSchedules()
       : this("Schedules") { }
 
@@ -55,14 +57,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     public override void OnSectionActivated()
     {
-      base.OnSectionActivated();
-      contextMenuStrip1.Items[0].Visible = true;
-      contextMenuStrip1.Items[1].Visible = false;      
-      LoadSchedules();
-      AddGroups();
-      RefreshEPG();
-      RefreshTemplates();
-      SetupScheduleTemplatesMenuItems();
+      try
+      {
+        _ignoreRefreshEPG = true;
+        base.OnSectionActivated();
+        contextMenuStrip1.Items[0].Visible = true;
+        contextMenuStrip1.Items[1].Visible = false;
+        LoadSchedules();
+        AddGroups();
+        RefreshEPG();
+        RefreshTemplates();
+        SetupScheduleTemplatesMenuItems();
+      }
+      finally
+      {
+        _ignoreRefreshEPG = false;        
+      }      
     }
 
     private void SetupScheduleTemplatesMenuItems()
@@ -294,6 +304,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           string a = program.title;
         }
       }*/
+
+      if (_ignoreRefreshEPG)
+      {
+        return;
+      }
 
       if (comboBoxChannels.Items.Count == 0)
       {

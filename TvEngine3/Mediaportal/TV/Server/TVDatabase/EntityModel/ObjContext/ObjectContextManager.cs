@@ -1,19 +1,29 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Objects;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 {
     public static class ObjectContextManager
     {
+      static ObjectContextManager ()
+      {
+        var model = new Model();
+        DropConstraint(model, "Recordings", "FK_ChannelRecording");
+        DropConstraint(model, "Recordings", "FK_RecordingProgramCategory");
+        DropConstraint(model, "Recordings", "FK_ScheduleRecording");          
+      }
 
       public static Model CreateDbContext
       {
         // seems a new instance per WCF is the way to go, since a shared context will end up in EF errors.
         get
-        {
+        {          
           var model = new Model();
+
           model.ContextOptions.LazyLoadingEnabled = false;
           model.ContextOptions.ProxyCreationEnabled = false;
 
@@ -53,7 +63,19 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
           return model;
         }
-      }      
+      }
+
+      private static void DropConstraint(Model model, string tablename, string constraintname)
+      {
+        try
+        {
+          model.ExecuteStoreCommand("ALTER TABLE " + tablename + " DROP CONSTRAINT [" + constraintname + "]");
+        }
+        catch (Exception)
+        {
+          //ignore
+        }        
+      }
 
       /*public static void Init(string[] mappingAssemblies, bool recreateDatabaseIfExist = false, bool lazyLoadingEnabled = true)
         {
@@ -178,5 +200,5 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
         private static Dictionary<string, IObjectContextBuilder<System.Data.Objects.ObjectContext>> objectContextBuilders = new Dictionary<string, IObjectContextBuilder<System.Data.Objects.ObjectContext>>();
 
         private static object _syncLock = new object();*/
-    }
+    }  
 }

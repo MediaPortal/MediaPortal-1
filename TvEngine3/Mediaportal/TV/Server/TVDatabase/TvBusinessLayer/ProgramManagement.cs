@@ -43,11 +43,62 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       try
       {
         using (IProgramRepository programRepository = new ProgramRepository())
-        {
-          IEnumerable<Program> nowAndNextProgramsForChannels =
-            programRepository.GetNowAndNextProgramsForChannels(channels);
-          IDictionary<int, NowAndNext> nowAndNext = BuildNowNextFromResult(nowAndNextProgramsForChannels.ToList());
-          return nowAndNext;
+        {          
+          IDictionary<int, NowAndNext> progList = new Dictionary<int, NowAndNext>();
+          DateTime now = DateTime.Now;
+
+          foreach (Channel channel in channels)
+          {
+            int idChannel = channel.idChannel;
+            DateTime nowStart = SqlDateTime.MinValue.Value;
+            DateTime nowEnd = SqlDateTime.MinValue.Value;
+            string titleNow = string.Empty;
+            string titleNext = string.Empty;
+            int idProgramNow = -1;
+            int idProgramNext = -1;
+            string episodeNameNow = string.Empty;
+            string episodeNameNext = string.Empty;
+            string seriesNumNow = string.Empty;
+            string seriesNumNext = string.Empty;
+            string episodeNumNow = string.Empty;
+            string episodeNumNext = string.Empty;
+            string episodePartNow = string.Empty;
+            string episodePartNext = string.Empty;
+
+            Program nowPrg = programRepository.GetProgramAt(now, channel.idChannel);            
+            if (nowPrg != null)
+            {
+              nowStart = nowPrg.startTime;
+              nowEnd = nowPrg.endTime;
+              titleNow = nowPrg.title;
+              idProgramNow = nowPrg.idProgram;
+              episodeNameNow = nowPrg.episodeName;
+              seriesNumNow = nowPrg.seriesNum;
+              episodeNumNow = nowPrg.episodeNum;
+              episodePartNow = nowPrg.episodePart;
+              Program nextPrg = programRepository.GetProgramAt(nowPrg.endTime, channel.idChannel);
+
+              if (nextPrg != null)
+              {
+                titleNext = nextPrg.title;
+                idProgramNext = nextPrg.idProgram;
+                episodeNameNext = nextPrg.episodeName;
+                seriesNumNext = nextPrg.seriesNum;
+                episodeNumNext = nextPrg.episodeNum;
+                episodePartNext = nextPrg.episodePart;
+              }
+            }
+            
+            var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
+                                                   idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
+                                                   seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
+                                                   episodePartNext);
+
+            progList.Add(idChannel, nowAndNext);
+
+          }
+
+          return progList;
         }
       }
       catch (Exception ex)

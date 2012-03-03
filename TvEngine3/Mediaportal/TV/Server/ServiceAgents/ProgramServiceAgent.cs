@@ -21,6 +21,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     public IDictionary<int, NowAndNext> GetNowAndNext(List<Channel> channels)
     {
+      foreach (var channel in channels)
+      {
+        channel.UnloadAllUnchangedRelationsForEntity();
+      }
       return _channel.GetNowAndNext(channels);
     }
 
