@@ -53,7 +53,8 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bUsePCM(false),
   m_bFirstSample(true),
   m_bZeroTimeStream(false),
-  m_rtStreamTimeOffset(0)
+  m_rtStreamTimeOffset(0),
+  m_bClipEndingNotified(false)
 {
   m_bConnected = false;
   m_rtStart = 0;
@@ -267,8 +268,19 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           Sleep(10);
         else 
         {
-          CreateEmptySample(pSample);
-          Sleep(10);
+          if (!m_bClipEndingNotified)
+          {
+            // Deliver end of stream notification to allow audio renderer to stop buffering.
+            // This should only happen when the stream enters into paused state
+            LogDebug("aud: FillBuffer - DeliverEndOfStream");
+            DeliverEndOfStream();
+            m_bClipEndingNotified = true;
+
+            CreateEmptySample(pSample);
+          }
+          else
+            Sleep(10);
+		  
           return S_OK;
         }
       }
@@ -294,6 +306,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               buffer->nPlaylist, buffer->nNewSegment, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             checkPlaybackState = true;
+            m_bClipEndingNotified = false;
 
             m_demux.m_eAudioClipSeen->Set();
           }
@@ -595,6 +608,7 @@ HRESULT CAudioPin::OnThreadStartPlay()
     CAutoLock lock(CSourceSeeking::m_pLock);
     m_bDiscontinuity = true;
     m_bFirstSample = true;
+    m_bClipEndingNotified = false;
 
     if (m_demux.m_eAudioClipSeen)
       m_demux.m_eAudioClipSeen->Reset();
