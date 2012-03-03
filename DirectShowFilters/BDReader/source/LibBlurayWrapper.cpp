@@ -776,6 +776,11 @@ void CLibBlurayWrapper::ForceTitleBasedPlayback(bool pForce)
   m_bForceTitleBasedPlayback = pForce;
 }
 
+bool CLibBlurayWrapper::ForceTitleBasedPlayback()
+{
+  return m_bForceTitleBasedPlayback;
+}
+
 void CLibBlurayWrapper::SetD3DDevice(IDirect3DDevice9* device)
 {
   m_pOverlayRenderer->SetD3DDevice(device);

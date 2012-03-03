@@ -647,11 +647,13 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
     case BD_EVENT_PLAYLIST:
       m_nPlaylist = pEv.param;
-      m_iAudioIdx = -1;
       break;
 
     case BD_EVENT_AUDIO_STREAM:
-      m_iAudioIdx = pEv.param - 1;			
+      if(m_filter.lib.ForceTitleBasedPlayback() == false && pEv.param != 0xff)
+      {         
+        m_iAudioIdx = pEv.param - 1;			
+      }
       break;
 
     case BD_EVENT_PG_TEXTST_STREAM:
@@ -1761,6 +1763,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
     }	
 		
     bd_player_settings& settings = m_filter.lib.GetBDPlayerSettings();
+    int iAudioIdx_tmp = 0;
     for (int i(0); i < clip->audio_stream_count; i++)
     {
       stAudioStream audio;
@@ -1773,16 +1776,22 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       audio.audioType = clip->audio_streams[i].coding_type;
       audio.pid = clip->audio_streams[i].pid;
 			
-      if (strncmp(audio.language, settings.audioLang, 3) == 0 && m_iAudioIdx < 0)
-        m_iAudioIdx = i;
-      
-      LogDebug("   Audio    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
+      if(m_filter.lib.ForceTitleBasedPlayback())
+      {
+        if (strncmp(audio.language, settings.audioLang, 3) == 0 && m_iAudioIdx < 0)
+        {        
+          iAudioIdx_tmp = i;
+          if (audio.audioType == settings.audioType)
+            m_iAudioIdx = i;
+        }
+      }
+      LogDebug("   Audio #%d:[%4d] %s %s", i, audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
 
       m_audioStreams.push_back(audio);
     }
 		
     if (m_iAudioIdx < 0)
-      m_iAudioIdx = 0;
+      m_iAudioIdx = iAudioIdx_tmp;
 
     m_iAudioStream = m_iAudioIdx;
     m_AudioStreamType = clip->audio_streams[m_iAudioIdx].coding_type;

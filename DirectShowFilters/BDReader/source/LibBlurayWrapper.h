@@ -41,6 +41,7 @@ typedef struct bd_player_settings
 {
   int regionCode;
   int parentalControl;
+  int audioType;
   char audioLang[4];
   char menuLang[4];
   char subtitleLang[4];
@@ -120,6 +121,7 @@ public:
   bool ProvideUserInput(INT64 pPts, UINT32 pKey);
   bool OpenMenu(INT64 pPts);
   void ForceTitleBasedPlayback(bool pForce);
+  bool ForceTitleBasedPlayback();
   void SetD3DDevice(IDirect3DDevice9* device);
   void SetBDPlayerSettings(bd_player_settings pSettings);
   bd_player_settings& GetBDPlayerSettings();

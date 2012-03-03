@@ -43,6 +43,7 @@ namespace MediaPortal.Player
   {
     public int regionCode;
     public int parentalControl;
+    public int audioType;
     [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 4)] 
     public string audioLang;
     [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 4)] 
@@ -700,7 +701,22 @@ namespace MediaPortal.Player
     /// </summary>
     public override int CurrentAudioStream
     {
-      get { return _currentAudioStream; }
+      get 
+      {
+        if (_interfaceBDReader == null)
+        {
+          Log.Warn("BDPlayer: Unable to get CurrentAudioStream -> BDReader not initialized");
+          return _currentAudioStream;
+        }
+        TSReaderPlayer.IAudioStream audioStream = (TSReaderPlayer.IAudioStream)_interfaceBDReader;
+        if (audioStream == null)
+        {
+          Log.Error("BDPlayer: Unable to get IAudioStream interface");
+          return _currentAudioStream;
+        }
+        audioStream.GetAudioStream(ref _currentAudioStream);        
+        return _currentAudioStream; 
+      }
       set
       {
         if (value > AudioStreams)
@@ -723,7 +739,6 @@ namespace MediaPortal.Player
         {
           Log.Warn("BDPlayer: Unable to set CurrentAudioStream -> IAMStreamSelect == null");
         }
-        return;
       }
     }
 
@@ -1533,6 +1548,7 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         settings.audioLang = xmlreader.GetValueAsString("bdplayer", "audiolanguage", "English");
+        settings.audioType = StreamTypetoInt(xmlreader.GetValueAsString("bdplayer", "audiotype", "AC3"));
         settings.subtitleLang = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", "English");
         settings.parentalControl = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
         _subtitlesEnabled = xmlreader.GetValueAsBool("bdplayer", "subtitlesenabled", true);
@@ -1730,15 +1746,25 @@ namespace MediaPortal.Player
         BDEvent bdevent = eventBuffer.Get();
         switch (bdevent.Event)
         {
+          /*
           case (int)BDEvents.BD_EVENT_AUDIO_STREAM:
+            if (_forceTitle)
+              return;
             Log.Debug("BDPlayer: Audio changed to {0}", bdevent.Param);
             if (bdevent.Param != 0xff)
               CurrentAudioStream = bdevent.Param - 1;
             break;
-
-          case (int)BDEvents.BD_EVENT_PG_TEXTST:
+          
+            case (int)BDEvents.BD_EVENT_PG_TEXTST:
             Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
+            if (bdevent.Param == 0)
+            {
+              EnableSubtitle = false;
+            }
+            else
+              EnableSubtitle = true;
             break;
+          */
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
@@ -2614,9 +2640,9 @@ namespace MediaPortal.Player
       switch (stream)
       { 
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3:
-          return "AC-3";          
+          return "AC3";          
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
-          return "DD+";          
+          return "AC3+";          
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTS:
           return "DTS";          
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD:
@@ -2639,6 +2665,29 @@ namespace MediaPortal.Player
           return "VC1";
       }
       return Strings.Unknown;
+    }
+
+    private int StreamTypetoInt(string stream)
+    {
+      switch (stream)
+      {
+        case "LPCM":
+          return (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_LPCM;
+        case "AC3":
+          return (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3;
+        case "DTS":
+          return (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTS;
+        case "TrueHD":
+          return (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_TRUHD;
+        case "AC3+":
+          return (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3PLUS;
+        case "DTS-HD":
+          return (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD;
+        case "DTS-HD Master":
+          return (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER;
+        default:
+          return 0;
+      }
     }
     #endregion
 

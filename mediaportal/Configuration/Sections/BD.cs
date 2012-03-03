@@ -60,6 +60,8 @@ namespace MediaPortal.Configuration.Sections
     private Label label1;
     private ComboBox RegionCodeComboBox;
     private CheckBox SubsEnabled;
+    private MPLabel mpLabel1;
+    private MPComboBox preferredAudioTypeComboBox;
     private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
@@ -74,7 +76,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Populate combo boxes with languages
-      string curCultureName = CultureInfo.CurrentCulture.EnglishName;      
+      string curCultureName = CultureInfo.CurrentCulture.EnglishName;
 
       m_strDefaultSubtitleLanguageISO = curCultureName;
       m_strDefaultAudioLanguageISO = curCultureName;
@@ -83,6 +85,8 @@ namespace MediaPortal.Configuration.Sections
       Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureName);
       string[] regions = { "A", "B", "C" };
       RegionCodeComboBox.Items.AddRange(regions);
+      string[] audioType = { "AC3", "AC3+", "DTS", "DTS-HD", "DTS-HD Master", "LPCM", "TrueHD" };
+      preferredAudioTypeComboBox.Items.AddRange(audioType);
     }
 
     public override void LoadSettings()
@@ -102,7 +106,7 @@ namespace MediaPortal.Configuration.Sections
 
         try
         {
-          defaultAudioLanguageComboBox.SelectedItem=xmlreader.GetValueAsString("bdplayer", "audiolanguage", m_strDefaultAudioLanguageISO);         
+          defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "audiolanguage", m_strDefaultAudioLanguageISO);
         }
         catch (Exception ex)
         {
@@ -110,8 +114,9 @@ namespace MediaPortal.Configuration.Sections
           Log.Error("LoadSettings - failed to load default audio language, using {0} - {1} ", ci.EnglishName, ex);
           defaultAudioLanguageComboBox.SelectedItem = ci.EnglishName;
         }
-        
+
         RegionCodeComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "regioncode", "B");
+        preferredAudioTypeComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "audiotype", "AC3");
         ParentalControlUpDown.Value = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
         SubsEnabled.Checked = xmlreader.GetValueAsBool("bdplayer", "subtitlesenabled", true);
       }
@@ -123,12 +128,13 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValue("bdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
         xmlwriter.SetValue("bdplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
+        xmlwriter.SetValue("bdplayer", "audiotype", preferredAudioTypeComboBox.Text);
         xmlwriter.SetValue("bdplayer", "regioncode", RegionCodeComboBox.SelectedItem);
         xmlwriter.SetValue("bdplayer", "parentalcontrol", ParentalControlUpDown.Value.ToString());
         xmlwriter.SetValueAsBool("bdplayer", "subtitlesenabled", SubsEnabled.Checked);
       }
     }
-
+    
     #region Designer generated code
 
     /// <summary>
@@ -150,11 +156,13 @@ namespace MediaPortal.Configuration.Sections
       this.labelPlayAll = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpTabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.preferredAudioTypeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.SubsEnabled = new System.Windows.Forms.CheckBox();
       this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.SubsEnabled = new System.Windows.Forms.CheckBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -278,13 +286,15 @@ namespace MediaPortal.Configuration.Sections
       this.mpTabPage1.Name = "mpTabPage1";
       this.mpTabPage1.Size = new System.Drawing.Size(464, 382);
       this.mpTabPage1.TabIndex = 9;
-      this.mpTabPage1.Text = "Language";
+      this.mpTabPage1.Text = "Audio & subtitles";
       this.mpTabPage1.UseVisualStyleBackColor = true;
       // 
       // mpGroupBox4
       // 
       this.mpGroupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox4.Controls.Add(this.preferredAudioTypeComboBox);
+      this.mpGroupBox4.Controls.Add(this.mpLabel1);
       this.mpGroupBox4.Controls.Add(this.SubsEnabled);
       this.mpGroupBox4.Controls.Add(this.mpLabel7);
       this.mpGroupBox4.Controls.Add(this.defaultAudioLanguageComboBox);
@@ -293,10 +303,40 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox4.Location = new System.Drawing.Point(14, 12);
       this.mpGroupBox4.Name = "mpGroupBox4";
-      this.mpGroupBox4.Size = new System.Drawing.Size(432, 117);
+      this.mpGroupBox4.Size = new System.Drawing.Size(432, 171);
       this.mpGroupBox4.TabIndex = 10;
       this.mpGroupBox4.TabStop = false;
       this.mpGroupBox4.Text = "Default Language";
+      // 
+      // preferredAudioTypeComboBox
+      // 
+      this.preferredAudioTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.preferredAudioTypeComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.preferredAudioTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.preferredAudioTypeComboBox.Location = new System.Drawing.Point(136, 78);
+      this.preferredAudioTypeComboBox.Name = "preferredAudioTypeComboBox";
+      this.preferredAudioTypeComboBox.Size = new System.Drawing.Size(280, 21);
+      this.preferredAudioTypeComboBox.Sorted = true;
+      this.preferredAudioTypeComboBox.TabIndex = 10;
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(13, 81);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(96, 16);
+      this.mpLabel1.TabIndex = 9;
+      this.mpLabel1.Text = "Audio type:";
+      // 
+      // SubsEnabled
+      // 
+      this.SubsEnabled.AutoSize = true;
+      this.SubsEnabled.Location = new System.Drawing.Point(16, 148);
+      this.SubsEnabled.Name = "SubsEnabled";
+      this.SubsEnabled.Size = new System.Drawing.Size(100, 17);
+      this.SubsEnabled.TabIndex = 8;
+      this.SubsEnabled.Text = "Enable subtitles";
+      this.SubsEnabled.UseVisualStyleBackColor = true;
       // 
       // mpLabel7
       // 
@@ -338,16 +378,6 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.Sorted = true;
       this.defaultSubtitleLanguageComboBox.TabIndex = 7;
       // 
-      // SubsEnabled
-      // 
-      this.SubsEnabled.AutoSize = true;
-      this.SubsEnabled.Location = new System.Drawing.Point(16, 88);
-      this.SubsEnabled.Name = "SubsEnabled";
-      this.SubsEnabled.Size = new System.Drawing.Size(100, 17);
-      this.SubsEnabled.TabIndex = 8;
-      this.SubsEnabled.Text = "Enable subtitles";
-      this.SubsEnabled.UseVisualStyleBackColor = true;
-      // 
       // BD
       // 
       this.Controls.Add(this.tabControl1);
@@ -366,6 +396,6 @@ namespace MediaPortal.Configuration.Sections
 
     }
 
-    #endregion           
+    #endregion    
   }
 }
