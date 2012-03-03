@@ -49,9 +49,9 @@ public:
   //virtual void queueOutputBuffer(IMediaSample *pSample, DWORD dwSeqNo);
 
   //bool SetFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
-  bool SetInputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
+  bool SetInputFormat(int frameSize, int bytesPerSample);
   void SetInputChannels(int leftOffset, int rightOffset = 0);
-  bool SetOutputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
+  bool SetOutputFormat(int frameSize, int bytesPerSample);
   void SetOutputChannels(int leftOffset, int rightOffset = 0);
   bool SetupFormats();
 
@@ -65,9 +65,6 @@ protected:
   // Input buffer layout
   int m_nInFrameSize;       // Bytes in a frame. A frame contains a sample for each channel
   int m_nInBytesPerSample;  // Bytes in a sample. Can be 1 to 4. This is the "container" size
-  int m_nInBitsPerSample;   // Valid bits in a sample. The valid bits are left aligned in the container for integer samples
-                            //   For float samples this field should be 32
-  bool m_bInFloatSamples;   // If true, each sample is a 32bit float, otherwise it is an integer (see above) 
   int m_nInLeftOffset;      // The offset in bytes from the start of a frame of the channel sample to map to the Left channel
   int m_nInRightOffset;     // The offset in bytes from the start of a frame of the channel sample to map to the Right channel
   DeInterleaveFunc m_pfnDeInterleave;
@@ -79,9 +76,6 @@ protected:
   // Output buffer layout
   int m_nOutFrameSize;      // Bytes in a frame. A frame contains a sample for each channel
   int m_nOutBytesPerSample; // Bytes in a sample. Can be 1 to 4. This is the "container" size
-  int m_nOutBitsPerSample;  // Valid bits in a sample. The valid bits are left aligned in the container for integer samples
-                            //   For float samples this field should be 32
-  bool m_bOutFloatSamples;  // If true, each sample is a 32bit float, otherwise it is an integer (see above) 
   int m_nOutLeftOffset;     // The offset in bytes from the start of a frame of the channel sample to map to the Left channel
   int m_nOutRightOffset;    // The offset in bytes from the start of a frame of the channel sample to map to the Right channel
   InterleaveFunc m_pfnInterleave;
@@ -104,48 +98,10 @@ protected:
   HANDLE m_hStopResampleThreadEvent;
   //HANDLE m_hWaitResampleThreadToExitEvent;
 
-  // Dithering support
-  long m_lInSampleErrorLeft;
-  long m_lInSampleErrorRight;
-  long m_lOutSampleErrorLeft;
-  long m_lOutSampleErrorRight;
-
-#ifdef DITHER_SAMPLES
-  void ResetDithering();
-#else
-  __inline void ResetDithering() { };
-#endif
-
   // internal functions to separate/merge streams out of sample buffers
-  virtual void StereoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void StereoDeInterleaveInt16(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void StereoDeInterleaveInt24(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void StereoDeInterleaveInt32(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-
-  virtual void StereoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-  virtual void StereoInterleaveInt16(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-  virtual void StereoInterleaveInt24(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-  virtual void StereoInterleaveInt32(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-
-  virtual void MonoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void MonoDeInterleaveInt16(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void MonoDeInterleaveInt24(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  virtual void MonoDeInterleaveInt32(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-
-  virtual void MonoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-  virtual void MonoInterleaveInt16(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-  virtual void MonoInterleaveInt24(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
-  virtual void MonoInterleaveInt32(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
+  virtual void StereoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
+  virtual void StereoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
+  virtual void MonoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
+  virtual void MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count);
 };
 
-/*
-class CMixingSoundTouch : public CSoundTouchEx
-{
-public:
-  CMixingSoundTouch();
-  ~CMixingSoundTouch();
-
-protected:
-
-}
-*/

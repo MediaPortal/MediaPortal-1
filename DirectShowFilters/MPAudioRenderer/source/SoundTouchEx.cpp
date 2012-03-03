@@ -21,84 +21,7 @@
 
 // conversion functions
 #define NOISE_COEFF   0.7f
-#define SAMPLE_FLOAT  double
-
-__inline long ReadInt24(const BYTE *pValue)
-{
-  return (long)(((DWORD)*(WORD *)pValue) << 8) | (((DWORD)pValue[2]) << 24);
-}
-
-__inline void WriteInt24(BYTE *pDest, long value)
-{
-  value >>= 8;
-  *(WORD *)pDest = (WORD)value;
-  pDest[2] = (BYTE)(value >> 16);
-}
-
-__inline SAMPLE_FLOAT WhiteNoise()
-{
-  return ((SAMPLE_FLOAT)rand())/(RAND_MAX/2) - 1;
-}
-
-__inline short SampleFloatToInt16(SAMPLE_FLOAT sample, long bitMask, register long& error)
-{
-  if (sample > 1.0)
-    return SHRT_MAX;
-  if (sample < -1.0)
-    return -SHRT_MAX;
-
-  sample *= LONG_MAX;
-#ifdef DITHER_SAMPLES
-  sample += WhiteNoise() * NOISE_COEFF * bitMask + error;
-  error = ((long)sample) & bitMask;
-#endif
-  return (((long)sample) & ~bitMask) >> 16;
-}
-
-__inline short SampleInt32ToInt16(long sample, long bitMask, long& error)
-{
-#ifdef DITHER_SAMPLES
-  sample += WhiteNoise() * NOISE_COEFF * bitMask + error;
-  error = sample & bitMask;
-#endif
-  return (sample & ~bitMask) >> 16;
-}
-
-__inline SAMPLE_FLOAT SampleInt16ToFloat(short sample)
-{
-  return ((SAMPLE_FLOAT)sample) / SHRT_MAX;
-}
-
-__inline short SampleInt16ToInt16(short sample, long bitMask, long& error)
-{
-  long lSample = ((long)sample)<<16;
-#ifdef DITHER_SAMPLES
-  sample += WhiteNoise() * NOISE_COEFF * bitMask + error;
-  error = sample & bitMask;
-#endif
-  return (lSample & ~bitMask)>>16;
-}
-
-__inline long SampleInt16ToInt32(short sample, long bitMask)
-{
-  return ((long)sample) << 16;
-}
-
-__inline SAMPLE_FLOAT SampleInt32ToFloat(long sample)
-{
-  return ((SAMPLE_FLOAT)sample) / LONG_MAX;
-}
-
-__inline long SampleFloatToInt32(SAMPLE_FLOAT sample, long bitMask, register long& error)
-{
-  if (sample > 1.0)
-    return LONG_MAX;
-  if (sample < -1.0)
-    return -LONG_MAX;
-
-  sample *= LONG_MAX;
-  return (((long)sample) & ~bitMask);
-}
+//#define SAMPLE_FLOAT  float
 
 
 CSoundTouchEx::CSoundTouchEx()
@@ -112,21 +35,15 @@ CSoundTouchEx::CSoundTouchEx()
   // default to stereo
   m_nInFrameSize = 4;
   m_nInBytesPerSample = 2;
-  m_nInBitsPerSample = 16;
-  m_bInFloatSamples = false;
   m_nInLeftOffset = 0;
   m_nInRightOffset = 2;
-  m_pfnDeInterleave = &CSoundTouchEx::StereoDeInterleaveInt16;
+  m_pfnDeInterleave = &CSoundTouchEx::StereoDeInterleave;
 
   m_nOutFrameSize = 4;
   m_nOutBytesPerSample = 2;
-  m_nOutBitsPerSample = 16;
-  m_bOutFloatSamples = false;
   m_nOutLeftOffset = 0;
   m_nOutRightOffset = 2;
-  m_pfnInterleave = &CSoundTouchEx::StereoInterleaveInt16;
-
-  ResetDithering();
+  m_pfnInterleave = &CSoundTouchEx::StereoInterleave;
 
   m_hInSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
   m_hStopResampleThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -353,12 +270,10 @@ int CSoundTouchEx::getBuffer(BYTE *pOutBuffer, int maxSamples)
 //  return SetupFormats();
 //}
 
-bool CSoundTouchEx::SetInputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat)
+bool CSoundTouchEx::SetInputFormat(int frameSize, int bytesPerSample)
 {
   m_nInFrameSize = frameSize;
   m_nInBytesPerSample = bytesPerSample;
-  m_nInBitsPerSample = bitsPerSample;
-  m_bInFloatSamples = isFloat;
 
   return true;
 }
@@ -369,12 +284,10 @@ void CSoundTouchEx::SetInputChannels(int leftOffset, int rightOffset)
   m_nInRightOffset = rightOffset;
 }
 
-bool CSoundTouchEx::SetOutputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat)
+bool CSoundTouchEx::SetOutputFormat(int frameSize, int bytesPerSample)
 {
   m_nOutFrameSize = frameSize;
   m_nOutBytesPerSample = bytesPerSample;
-  m_nOutBitsPerSample = bitsPerSample;
-  m_bOutFloatSamples = isFloat;
 
   return true;
 }
@@ -388,82 +301,19 @@ void CSoundTouchEx::SetOutputChannels(int leftOffset, int rightOffset)
 // TODO: provide better error information
 bool CSoundTouchEx::SetupFormats()
 {
-  ResetDithering();
-
   // select appropriate input de-interleaving method
-  if (m_bInFloatSamples)
-  {
-    if (m_nInBytesPerSample != 4)
-      return false;
-    m_pfnDeInterleave = (channels == 1? &CSoundTouchEx::MonoDeInterleaveFloat : &CSoundTouchEx::StereoDeInterleaveFloat);
-  }
-  else switch(m_nInBytesPerSample)
-  {
-  case 2:
-    m_pfnDeInterleave = (channels == 1? &CSoundTouchEx::MonoDeInterleaveInt16 : &CSoundTouchEx::StereoDeInterleaveInt16);
-    break;
-  case 3:
-    m_pfnDeInterleave = (channels == 1? &CSoundTouchEx::MonoDeInterleaveInt24 : &CSoundTouchEx::StereoDeInterleaveInt24);
-    break;
-  case 4:
-    m_pfnDeInterleave = (channels == 1? &CSoundTouchEx::MonoDeInterleaveInt32 : &CSoundTouchEx::StereoDeInterleaveInt32);
-    break;
-  default:
-    return false;
-  }
+  m_pfnDeInterleave = (channels == 1? &CSoundTouchEx::MonoDeInterleave : &CSoundTouchEx::StereoDeInterleave);
 
   // select appropriate output interleaving method
-  if (m_bOutFloatSamples)
-  {
-    if (m_nOutBytesPerSample != 4)
-      return false;
-    m_pfnInterleave = (channels == 1? &CSoundTouchEx::MonoInterleaveFloat : &CSoundTouchEx::StereoInterleaveFloat);
-  }
-  else switch(m_nOutBytesPerSample)
-  {
-  case 2:
-    m_pfnInterleave = (channels == 1? &CSoundTouchEx::MonoInterleaveInt16 : &CSoundTouchEx::StereoInterleaveInt16);
-    break;
-  case 3:
-    m_pfnInterleave = (channels == 1? &CSoundTouchEx::MonoInterleaveInt24 : &CSoundTouchEx::StereoInterleaveInt24);
-    break;
-  case 4:
-    m_pfnInterleave = (channels == 1? &CSoundTouchEx::MonoInterleaveInt32 : &CSoundTouchEx::StereoInterleaveInt32);
-    break;
-  default:
-    return false;
-  }
-
+  m_pfnInterleave = (channels == 1? &CSoundTouchEx::MonoInterleave : &CSoundTouchEx::StereoInterleave);
   return true;
 }
-
-#ifdef DITHER_SAMPLES
-void CSoundTouchEx::ResetDithering()
-{
-  m_lInSampleErrorLeft = 
-    m_lInSampleErrorRight =
-    m_lOutSampleErrorLeft =
-    m_lOutSampleErrorRight = 0;
-}
-#endif
 
 // Internal functions to separate/merge streams out of/into sample buffers (from IMediaSample)
 
 #ifdef INTEGER_SAMPLES
 
-void CSoundTouchEx::StereoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = (BYTE *)inBuffer;
-
-  while(count--)
-  {
-    *outBuffer++ = SampleFloatToInt16(*(float *)(pInBuffer + m_nInLeftOffset), 0x0000FFFFL, m_lInSampleErrorLeft);
-    *outBuffer++ = SampleFloatToInt16(*(float *)(pInBuffer + m_nInRightOffset), 0x0000FFFFL, m_lInSampleErrorRight);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoDeInterleaveInt16(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
+void CSoundTouchEx::StereoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
 {
   BYTE *pInBuffer = (BYTE *)inBuffer;
   while(count--)
@@ -474,95 +324,19 @@ void CSoundTouchEx::StereoDeInterleaveInt16(const void *inBuffer, soundtouch::SA
   }
 }
 
-void CSoundTouchEx::StereoDeInterleaveInt24(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = (BYTE *)inBuffer;
-  
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToInt16(ReadInt24(pInBuffer + m_nInLeftOffset), 0x0000FFFFL, m_lInSampleErrorLeft);
-    *outBuffer++ = SampleInt32ToInt16(ReadInt24(pInBuffer + m_nInRightOffset), 0x0000FFFFL, m_lInSampleErrorRight);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoDeInterleaveInt32(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = (BYTE *)inBuffer;
-  
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToInt16(*(long *)(pInBuffer + m_nInLeftOffset), 0x0000FFFFL, m_lInSampleErrorLeft);
-    *outBuffer++ = SampleInt32ToInt16(*(long *)(pInBuffer + m_nInRightOffset), 0x0000FFFFL, m_lInSampleErrorRight);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-
-void CSoundTouchEx::StereoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
+void CSoundTouchEx::StereoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
 {
   BYTE *pOutBuffer = (BYTE *)outBuffer;
-  
+
   while(count--)
   {
-    *(double *)(pOutBuffer + m_nOutLeftOffset) = SampleInt16ToFloat(*inBuffer++);
-    *(double *)(pOutBuffer + m_nOutRightOffset) = SampleInt16ToFloat(*inBuffer++);
+    *(short *)(pOutBuffer + m_nOutLeftOffset) = *inBuffer++;
+    *(short *)(pOutBuffer + m_nOutRightOffset) = *inBuffer++;
     pOutBuffer += m_nOutFrameSize;
   }
 }
 
-void CSoundTouchEx::StereoInterleaveInt16(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = (BYTE *)outBuffer;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(short *)(pOutBuffer + m_nOutLeftOffset) = SampleInt16ToInt16(*inBuffer++, bitMask, m_lOutSampleErrorLeft);
-    *(short *)(pOutBuffer + m_nOutRightOffset) = SampleInt16ToInt16(*inBuffer++, bitMask, m_lOutSampleErrorRight);
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoInterleaveInt24(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = (BYTE *)outBuffer;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    WriteInt24(pOutBuffer + m_nOutLeftOffset, SampleInt16ToInt32(*inBuffer++, bitMask));
-    WriteInt24(pOutBuffer + m_nOutRightOffset, SampleInt16ToInt32(*inBuffer++, bitMask));
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoInterleaveInt32(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = (BYTE *)outBuffer;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(long *)(pOutBuffer + m_nOutLeftOffset) = SampleInt16ToInt32(*inBuffer++, bitMask);
-    *(long *)(pOutBuffer + m_nOutRightOffset) = SampleInt16ToInt32(*inBuffer++, bitMask);
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-
-void CSoundTouchEx::MonoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
-  
-  while(count--)
-  {
-    *outBuffer++ = SampleFloatToInt16(*(double *)pInBuffer, 0x0000FFFFL, m_lInSampleErrorLeft);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoDeInterleaveInt16(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
+void CSoundTouchEx::MonoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
 {
   BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
 
@@ -573,79 +347,20 @@ void CSoundTouchEx::MonoDeInterleaveInt16(const void *inBuffer, soundtouch::SAMP
   }
 }
 
-void CSoundTouchEx::MonoDeInterleaveInt24(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
-  
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToInt16(ReadInt24(pInBuffer), 0x0000FFFFL, m_lInSampleErrorLeft);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoDeInterleaveInt32(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
-  
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToInt16(*(long *)pInBuffer, 0x0000FFFFL, m_lInSampleErrorLeft);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-
-void CSoundTouchEx::MonoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
+void CSoundTouchEx::MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
 {
   BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
 
   while(count--)
   {
-    *(double *)pOutBuffer = SampleInt16ToFloat(*inBuffer++);
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoInterleaveInt16(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(short *)pOutBuffer = SampleInt16ToInt16(*inBuffer++, bitMask, m_lOutSampleErrorLeft);
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoInterleaveInt24(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    WriteInt24(pOutBuffer, SampleInt16ToInt32(*inBuffer++, bitMask));
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoInterleaveInt32(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(long *)pOutBuffer = SampleInt16ToInt32(*inBuffer++, bitMask);
+    *(short *)pOutBuffer = *inBuffer++;
     pOutBuffer += m_nOutFrameSize;
   }
 }
 
 #else
 
-void CSoundTouchEx::StereoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
+void CSoundTouchEx::StereoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
 {
   BYTE *pInBuffer = (BYTE *)inBuffer;
 
@@ -657,43 +372,7 @@ void CSoundTouchEx::StereoDeInterleaveFloat(const void *inBuffer, soundtouch::SA
   }
 }
 
-void CSoundTouchEx::StereoDeInterleaveInt16(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = (BYTE *)inBuffer;
-
-  while(count--)
-  {
-    *outBuffer++ = SampleInt16ToFloat(*(short *)(pInBuffer + m_nInLeftOffset));
-    *outBuffer++ = SampleInt16ToFloat(*(short *)(pInBuffer + m_nInRightOffset));
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoDeInterleaveInt24(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = (BYTE *)inBuffer;
-
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToFloat(ReadInt24(pInBuffer + m_nInLeftOffset));
-    *outBuffer++ = SampleInt32ToFloat(ReadInt24(pInBuffer + m_nInRightOffset));
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoDeInterleaveInt32(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = (BYTE *)inBuffer;
-
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToFloat(*(long *)(pInBuffer + m_nInLeftOffset));
-    *outBuffer++ = SampleInt32ToFloat(*(long *)(pInBuffer + m_nInRightOffset));
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
+void CSoundTouchEx::StereoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
 {
   BYTE *pOutBuffer = (BYTE *)outBuffer;
 
@@ -705,46 +384,7 @@ void CSoundTouchEx::StereoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer
   }
 }
 
-void CSoundTouchEx::StereoInterleaveInt16(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = (BYTE *)outBuffer;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(short *)(pOutBuffer + m_nOutLeftOffset) = SampleFloatToInt16(*inBuffer++, bitMask, m_lOutSampleErrorLeft);
-    *(short *)(pOutBuffer + m_nOutRightOffset) = SampleFloatToInt16(*inBuffer++, bitMask, m_lOutSampleErrorRight);
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoInterleaveInt24(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = (BYTE *)outBuffer;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    WriteInt24(pOutBuffer + m_nOutLeftOffset, SampleFloatToInt32(*inBuffer++, bitMask, m_lOutSampleErrorLeft));
-    WriteInt24(pOutBuffer + m_nOutRightOffset, SampleFloatToInt32(*inBuffer++, bitMask, m_lOutSampleErrorRight));
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::StereoInterleaveInt32(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = (BYTE *)outBuffer;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(long *)(pOutBuffer + m_nOutLeftOffset) = SampleFloatToInt32(*inBuffer++, bitMask, m_lOutSampleErrorLeft);
-    *(long *)(pOutBuffer + m_nOutRightOffset) = SampleFloatToInt32(*inBuffer++, bitMask, m_lOutSampleErrorRight);
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
+void CSoundTouchEx::MonoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
 {
   BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
 
@@ -755,82 +395,13 @@ void CSoundTouchEx::MonoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMP
   }
 }
 
-void CSoundTouchEx::MonoDeInterleaveInt16(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
-
-  while(count--)
-  {
-    *outBuffer++ = SampleInt16ToFloat(*(short *)pInBuffer);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoDeInterleaveInt24(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
-
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToFloat(ReadInt24(pInBuffer));
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoDeInterleaveInt32(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  BYTE *pInBuffer = ((BYTE *)inBuffer) + m_nInLeftOffset;
-
-  while(count--)
-  {
-    *outBuffer++ = SampleInt32ToFloat(*(long *)pInBuffer);
-    pInBuffer += m_nInFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
+void CSoundTouchEx::MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
 {
   BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
 
   while(count--)
   {
     *(float *)pOutBuffer = *inBuffer++;
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoInterleaveInt16(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(short *)pOutBuffer = SampleFloatToInt16(*inBuffer++, bitMask, m_lOutSampleErrorLeft);
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoInterleaveInt24(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    WriteInt24(pOutBuffer, SampleFloatToInt32(*inBuffer++, bitMask, m_lOutSampleErrorLeft));
-    pOutBuffer += m_nOutFrameSize;
-  }
-}
-
-void CSoundTouchEx::MonoInterleaveInt32(const soundtouch::SAMPLETYPE *inBuffer, void *outBuffer, uint count)
-{
-  BYTE *pOutBuffer = ((BYTE *)outBuffer) + m_nOutLeftOffset;
-  long bitMask = (long)(0xFFFFFFFFUL >> m_nOutBitsPerSample);
-
-  while(count--)
-  {
-    *(long *)pOutBuffer = SampleFloatToInt32(*inBuffer++, bitMask, m_lOutSampleErrorLeft);
     pOutBuffer += m_nOutFrameSize;
   }
 }

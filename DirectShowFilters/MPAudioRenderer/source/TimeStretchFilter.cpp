@@ -117,7 +117,8 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
     return VFW_E_TYPE_NOT_ACCEPTED;
 
 #ifdef INTEGER_SAMPLES
-  if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_PCM)
+  // only accept 16bit int
+  if (pwfx->Format.wBitsPerSample != 16 || pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_PCM)
     return VFW_E_TYPE_NOT_ACCEPTED;
 #else 
   // only accept 32bit float
@@ -236,9 +237,9 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
         CSoundTouchEx* pStream = new CSoundTouchEx();
         pStream->setChannels(2);
         pStream->SetInputChannels(inSpeakerOffset[pPair->dwLeft], inSpeakerOffset[pPair->dwRight]);
-        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
         pStream->SetOutputChannels(outSpeakerOffset[pPair->dwLeft], outSpeakerOffset[pPair->dwRight]);
-        pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
         pStream->SetupFormats();
         newStreams->push_back(pStream);
         dwChannelMask &= ~pPair->PairMask(); // mark channels as processed
@@ -255,9 +256,9 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
         // to the mix of the main channels (normally Front Left/Right if available)
         pStream->setChannels(1); 
         pStream->SetInputChannels(inSpeakerOffset[dwSpeaker]);
-        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
         pStream->SetOutputChannels(outSpeakerOffset[dwSpeaker]);
-        pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8);
         pStream->SetupFormats();
         newStreams->push_back(pStream);
         // The following is only necessary if we skip some channels
