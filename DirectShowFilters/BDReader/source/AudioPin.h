@@ -119,5 +119,6 @@ protected:
   REFERENCE_TIME m_rtStreamTimeOffset;
 
   bool m_bZeroStreamOffset;
+  bool m_bClipEndingNotified;
 };
 
