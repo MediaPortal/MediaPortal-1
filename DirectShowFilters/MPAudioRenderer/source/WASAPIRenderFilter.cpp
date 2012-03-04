@@ -288,18 +288,18 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample, UINT32 framesToF
     else
       return S_FALSE;
   }
-  else if (pSample->IsDiscontinuity() == S_OK)
+  /*else if (pSample->IsDiscontinuity() == S_OK)
   {
     pSample->SetDiscontinuity(false);
     return S_FALSE;
-  }
+  }*/
 
   return S_OK;
 }
 
 HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENCE_TIME* pDueTime, UINT32 sampleOffset)
 {
-  (*pDueTime) = 0;
+  *pDueTime = 0;
 
   if (!pSample)
     return S_FALSE;
@@ -333,14 +333,14 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   //rtStart -= Latency();// * 2;
 
   if (m_pSettings->m_bLogSampleTimes)
-    Log("sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f", 
+    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f", 
       rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, rtTime / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
   {
     discontinuityDetected = true;
-    Log("  Dropped audio data detected: diff: %7.3f ms MAX_SAMPLE_TIME_ERROR: %7.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
+    Log("   Dropped audio data detected: diff: %7.3f ms MAX_SAMPLE_TIME_ERROR: %7.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
   }
 
   m_rtNextSampleTime = rtStop;
@@ -353,15 +353,21 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
     if (sampleOffset > 0)
       offsetDelay = sampleOffset / m_pInputFormat->Format.nBlockAlign * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
-    (*pDueTime) = rtStart + offsetDelay;
+    *pDueTime = rtStart + offsetDelay;
     m_nSampleNum++;
+
+    if (m_pSettings->m_bLogSampleTimes)
+      Log("   MPAR_S_WAIT_RENDER_TIME - %6.3f", *pDueTime / 10000000.0);
+
     return MPAR_S_WAIT_RENDER_TIME;
   }
-  else if (timeStamp < 0)
+  /*else if (timeStamp < 0)
   {
     Log("sample late - dropping sample: %6.3f rtTime: %6.3f", rtStart, rtTime);
+    m_nSampleNum = 0;
+
     return MPAR_S_DROP_SAMPLE;
-  }
+  }*/
 
   m_nSampleNum++;
 
@@ -378,21 +384,21 @@ void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* p
   {
     rtTime -= m_rtStart;
 
-    REFERENCE_TIME rtSilenceDuration = (*pDueTime) - rtTime;
+    REFERENCE_TIME rtSilenceDuration = *pDueTime - rtTime;
 
     if (m_pSettings->m_bLogSampleTimes)
-      Log("CWASAPIRenderFilter::CalculateSilence: %6.3", rtSilenceDuration / 10000000.0);
+      Log("CWASAPIRenderFilter::CalculateSilence: %6.3f", rtSilenceDuration / 10000000.0);
 
     if (rtSilenceDuration > 0)
     {
       UINT32 framesSilence = rtSilenceDuration / (UNITS / m_pInputFormat->Format.nSamplesPerSec);
-      (*pBytesOfSilence) = framesSilence * m_pInputFormat->Format.nBlockAlign;
+      *pBytesOfSilence = framesSilence * m_pInputFormat->Format.nBlockAlign;
     }
     else
-      (*pBytesOfSilence) = 0;
+      *pBytesOfSilence = 0;
   }
   else
-    (*pBytesOfSilence) = 0;
+    *pBytesOfSilence = 0;
 }
 
 HRESULT CWASAPIRenderFilter::EndOfStream()
@@ -547,18 +553,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
+      UINT32 bufferSizeInBytes = 0;
       BYTE* data = NULL;
-        
-      m_pAudioClient->GetBufferSize(&bufferSize);
-    
-      // In exclusive mode with even based buffer filling we threat the padding as zero 
-      // -> it will make rest of the code a bit cleaner
-      if (m_pSettings->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED || !m_pSettings->m_WASAPIUseEventMode)
-        m_pAudioClient->GetCurrentPadding(&currentPadding);
-
-      UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pInputFormat->Format.nBlockAlign;
-
-      hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
+       
+      hr = GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
       if (SUCCEEDED(hr))
       {
         UINT32 bytesFilled = 0;
@@ -618,7 +616,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             {
               // TODO error checking
               if (CheckSample(m_pCurrentSample, bufferSize - currentPadding) == S_FALSE)
-                break; // Fetch new WASAPI buffer as the format has changed
+                GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
             }
 
             if (writeSilence == 0 && sampleOffset == 0 || command == ASC_Resume)
@@ -672,6 +670,20 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   }
 
   return 0;
+}
+
+HRESULT CWASAPIRenderFilter::GetWASAPIBuffer(UINT32& bufferSize, UINT32& currentPadding, UINT32& bufferSizeInBytes, BYTE** pData)
+{
+  m_pAudioClient->GetBufferSize(&bufferSize);
+
+  // In exclusive mode with even based buffer filling we threat the padding as zero 
+  // -> it will make rest of the code a bit cleaner
+  if (m_pSettings->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED || !m_pSettings->m_WASAPIUseEventMode)
+    m_pAudioClient->GetCurrentPadding(&currentPadding);
+
+  bufferSizeInBytes = (bufferSize - currentPadding) * m_pInputFormat->Format.nBlockAlign;
+
+  return m_pRenderClient->GetBuffer(bufferSize - currentPadding, pData);
 }
 
 void CWASAPIRenderFilter::RenderSilence(BYTE* pTarget, UINT32 bufferSizeInBytes, LONGLONG &writeSilence, UINT32 &bytesFilled)
