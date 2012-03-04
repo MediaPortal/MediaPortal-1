@@ -508,6 +508,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   BYTE* sampleData = NULL;
 
   bool flush = false;
+  bool sampleProcessed = false;
 
   REFERENCE_TIME dueTime = 0;
 
@@ -584,7 +585,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               if (!m_pCurrentSample)
                 dataLeftInSample = 0;
               
-              if (command == ASC_Flush)
+              if (command == ASC_PutSample)
+              {
+                sampleProcessed = false;
+                sampleOffset = 0;
+                dataLeftInSample = m_pCurrentSample->GetActualDataLength();
+              }
+              else if (command == ASC_Flush)
               {
                 m_pCurrentSample.Release();
 
@@ -619,9 +626,12 @@ DWORD CWASAPIRenderFilter::ThreadProc()
                 GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
             }
 
-            if (writeSilence == 0 && sampleOffset == 0 || command == ASC_Resume)
+            if (writeSilence == 0 && sampleOffset == 0 && !sampleProcessed)
             {
               HRESULT schedulingHR = CheckStreamTimeline(m_pCurrentSample, &dueTime, sampleOffset);
+              sampleProcessed = true;
+              
+              // m_pCurrentSample must exist if CheckStreamTimeline returns either of these
               if (schedulingHR == MPAR_S_DROP_SAMPLE)
               {
                 m_pCurrentSample.Release();
@@ -638,7 +648,11 @@ DWORD CWASAPIRenderFilter::ThreadProc()
           } while (bytesFilled < bufferSizeInBytes);
         }
         else
+        {
           RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
+          if (bytesFilled < bufferSizeInBytes)
+            goto fetchSample; 
+        }
 
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, 0);
 
