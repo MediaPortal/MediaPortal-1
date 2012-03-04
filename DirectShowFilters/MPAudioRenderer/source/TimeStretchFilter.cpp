@@ -355,7 +355,6 @@ DWORD CTimeStretchFilter::ThreadProc()
 
         REFERENCE_TIME rtStart = 0;
         REFERENCE_TIME rtStop = 0;
-        REFERENCE_TIME rtDuration = 0;
         hr = sample->GetTime(&rtStart, &rtStop);
 
         if (SUCCEEDED(hr))
@@ -391,10 +390,9 @@ DWORD CTimeStretchFilter::ThreadProc()
 
           if (nOutFrames > 0)
           {
-            UINT32 nOrigOutFrames = nOutFrames;
             UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
             double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-            double rtProcessedSampleDuration = (double)nOrigOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+            double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
 
             m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             
@@ -424,7 +422,6 @@ DWORD CTimeStretchFilter::ThreadProc()
                   m_pNewPMT = NULL;
                 }
 
-                UINT nOutFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
                 hr = OutputNextSample();
                 m_rtInSampleTime += nOutFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
