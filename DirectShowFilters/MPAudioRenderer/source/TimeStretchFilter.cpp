@@ -330,6 +330,8 @@ DWORD CTimeStretchFilter::ThreadProc()
         SetEvent(m_hCurrentSampleReleased);
         WaitForSingleObject(m_hFlushDone, INFINITE);
       }
+      else if (command == ASC_Pause || command == ASC_Resume)
+        continue;
       else if (sample)
       {
         BYTE *pMediaBuffer = NULL;
