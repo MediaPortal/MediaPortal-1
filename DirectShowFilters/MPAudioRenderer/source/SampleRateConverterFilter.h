@@ -41,7 +41,6 @@ public:
 
   // Processing
   HRESULT PutSample(IMediaSample* pSample);
-  HRESULT BeginFlush();
   HRESULT EndOfStream();
 
 // Internal implementation

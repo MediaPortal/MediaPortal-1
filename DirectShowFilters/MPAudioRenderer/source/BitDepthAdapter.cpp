@@ -89,6 +89,7 @@ BitDepthDescriptor* FindConversion(const BitDepthDescriptor& source);
 
 
 CBitDepthAdapter::CBitDepthAdapter(void) : 
+  CBaseAudioSink(true),  
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
@@ -237,6 +238,10 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
 
+  CAutoLock lock (&m_csOutputSample);
+  if (m_bFlushing)
+    return S_OK;
+
   if (bFormatChanged)
   {
     // Process any remaining input
@@ -310,12 +315,6 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   return hr;
 }
 
-HRESULT CBitDepthAdapter::BeginFlush()
-{
-  m_nSampleNum = 0;
-  return CBaseAudioSink::BeginFlush();
-}
-
 HRESULT CBitDepthAdapter::EndOfStream()
 {
   if (!m_bPassThrough)
@@ -378,6 +377,8 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
     return E_POINTER;
 
   HRESULT hr = S_OK;
+
+  CAutoLock lock (&m_csOutputSample);
 
   if (!pData) // need to flush any existing data
   {

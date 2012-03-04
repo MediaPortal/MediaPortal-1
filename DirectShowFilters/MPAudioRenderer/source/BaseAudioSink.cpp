@@ -20,26 +20,28 @@
 
 #include "alloctracing.h"
 
-CBaseAudioSink::CBaseAudioSink(void) 
-: m_pNextSink(NULL)
-, m_pInputFormat(NULL)
-, m_pOutputFormat(NULL)
-, m_bOutFormatChanged(false)
-, m_bDiscontinuity(false)
-, m_pMemAllocator((IUnknown *)NULL)
-, m_pNextOutSample(NULL)
-, m_nSampleNum(0)
+CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease) : 
+  m_bHandleSampleRelease(bHandleSampleRelease),
+  m_pNextSink(NULL),
+  m_pInputFormat(NULL),
+  m_pOutputFormat(NULL),
+  m_bOutFormatChanged(false),
+  m_bDiscontinuity(false),
+  m_pMemAllocator((IUnknown *)NULL),
+  m_pNextOutSample(NULL),
+  m_nSampleNum(0),
+  m_bFlushing (false)
 {
 }
 
-CBaseAudioSink::~CBaseAudioSink(void)
+CBaseAudioSink::~CBaseAudioSink()
 {
   SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
   SAFE_DELETE_WAVEFORMATEX(m_pOutputFormat);
 }
 
 // Initialization
-HRESULT CBaseAudioSink::ConnectTo(IAudioSink *pSink)
+HRESULT CBaseAudioSink::ConnectTo(IAudioSink* pSink)
 {
   m_pNextSink = pSink;
   return S_OK;
@@ -162,10 +164,10 @@ HRESULT CBaseAudioSink::EndOfStream()
 
 HRESULT CBaseAudioSink::BeginFlush()
 {
+  m_bFlushing = true;
+  
   if (m_pMemAllocator)
     m_pMemAllocator->Decommit();
-  
-  m_pNextOutSample.Release();
 
   if (m_pNextSink)
     return m_pNextSink->BeginFlush();
@@ -175,13 +177,25 @@ HRESULT CBaseAudioSink::BeginFlush()
 
 HRESULT CBaseAudioSink::EndFlush()
 {
+  CAutoLock lock (&m_csOutputSample);
+
+  if (m_bHandleSampleRelease)
+  {
+    m_nSampleNum = 0;
+    m_pNextOutSample.Release();
+  }
+  
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
 
-  if (m_pNextSink)
-   return m_pNextSink->EndFlush();
+  HRESULT hr = S_OK;
 
-  return S_OK;
+  if (m_pNextSink)
+    hr = m_pNextSink->EndFlush();
+
+  m_bFlushing = false;
+
+  return hr;
 }
 
 // Helpers

@@ -22,8 +22,9 @@
 
 extern unsigned int gAllowedSampleRates[7];
 
-CSampleRateConverter::CSampleRateConverter(AudioRendererSettings *pSettings)
-: m_bPassThrough(false),
+CSampleRateConverter::CSampleRateConverter(AudioRendererSettings* pSettings) :
+  CBaseAudioSink(true), 
+  m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_pSettings(pSettings),
   m_pSrcState(NULL),
@@ -171,6 +172,10 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   if (pSample->IsDiscontinuity() == S_OK)
     m_bDiscontinuity = true;
 
+  CAutoLock lock (&m_csOutputSample);
+  if (m_bFlushing)
+    return S_OK;
+
   if (bFormatChanged)
   {
     // Process any remaining input
@@ -243,12 +248,6 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   return hr;
 }
 
-HRESULT CSampleRateConverter::BeginFlush()
-{
-  m_nSampleNum = 0;
-  return CBaseAudioSink::BeginFlush();
-}
-
 HRESULT CSampleRateConverter::EndOfStream()
 {
   if (!m_bPassThrough)
@@ -297,6 +296,8 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *
   HRESULT hr = S_OK;
 
   long bytesOutput = 0;
+
+  CAutoLock lock (&m_csOutputSample);
 
   while (cbData)
   {
@@ -392,6 +393,7 @@ HRESULT CSampleRateConverter::FlushStream()
 {
   HRESULT hr = S_OK;
 
+  CAutoLock lock (&m_csOutputSample);
   if (m_pNextOutSample)
   {
     UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;

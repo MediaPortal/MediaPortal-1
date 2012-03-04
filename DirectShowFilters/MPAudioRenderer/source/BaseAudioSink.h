@@ -26,8 +26,8 @@ typedef class CBaseAudioSink CNullAudioFilter;
 class CBaseAudioSink : public IAudioSink
 {
 public:
-  CBaseAudioSink(void);
-  virtual ~CBaseAudioSink(void);
+  CBaseAudioSink(bool bHandleSampleRelease);
+  virtual ~CBaseAudioSink();
 
 // IAudioSink implementation
 // Provide default implementations
@@ -87,4 +87,8 @@ protected:
   REFERENCE_TIME m_rtStart;
 
   LONGLONG m_nSampleNum;
+
+  bool m_bFlushing;
+  bool m_bHandleSampleRelease; // true if we should release the output sample and reset sample counter
+  CCritSec m_csOutputSample;
 };

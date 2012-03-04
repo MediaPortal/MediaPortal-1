@@ -22,9 +22,10 @@
 
 #define END_OF_STREAM_FLUSH_TIMEOUT (5000)
 
-CQueuedAudioSink::CQueuedAudioSink(void)
-: m_hThread(NULL)
-, m_ThreadId(NULL)
+CQueuedAudioSink::CQueuedAudioSink(void) : 
+  CBaseAudioSink(false),
+  m_hThread(NULL),
+  m_ThreadId(NULL)
 {
   //memset(m_hEvents, 0, sizeof(m_hEvents));
   m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
@@ -107,6 +108,9 @@ HRESULT CQueuedAudioSink::EndStop()
 // Processing
 HRESULT CQueuedAudioSink::PutSample(IMediaSample *pSample)
 {
+  if (m_bFlushing)
+    return S_OK;
+
   CAutoLock queueLock(&m_inputQueueLock);
   m_inputQueue.push(pSample);
   SetEvent(m_hInputAvailableEvent);

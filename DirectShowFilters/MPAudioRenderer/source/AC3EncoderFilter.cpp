@@ -29,15 +29,16 @@ template<class T> inline T odd2even(T x)
 }
 
 
-CAC3EncoderFilter::CAC3EncoderFilter(void)
-: m_bPassThrough(false)
-, m_cbRemainingInput(0)
-, m_pRemainingInput(NULL)
-, m_nFrameSize(AC3_FRAME_LENGTH * AC3_MAX_CHANNELS * 2)
-, m_pEncoder(NULL)
-, m_nBitRate(448000)
-, m_rtInSampleTime(0)
-, m_nMaxCompressedAC3FrameSize(AC3_MAX_COMP_FRAME_SIZE)
+CAC3EncoderFilter::CAC3EncoderFilter(void) : 
+  CBaseAudioSink(true),
+  m_bPassThrough(false),
+  m_cbRemainingInput(0),
+  m_pRemainingInput(NULL),
+  m_nFrameSize(AC3_FRAME_LENGTH * AC3_MAX_CHANNELS * 2),
+  m_pEncoder(NULL),
+  m_nBitRate(448000),
+  m_rtInSampleTime(0),
+  m_nMaxCompressedAC3FrameSize(AC3_MAX_COMP_FRAME_SIZE)
 {
 }
 
@@ -143,6 +144,10 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
   
   HRESULT hr = S_OK;
 
+  CAutoLock lock (&m_csOutputSample);
+  if (m_bFlushing)
+    return S_OK;
+
   if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
     bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
 
@@ -198,7 +203,9 @@ HRESULT CAC3EncoderFilter::EndOfStream()
 }
 
 HRESULT CAC3EncoderFilter::BeginFlush()
-{
+{ 
+  // TODO check
+  
   // Is it necessary to do it before clearing temp buffer?
   // If not CBaseAudioSink already does it
   if (m_pMemAllocator)
@@ -212,6 +219,8 @@ HRESULT CAC3EncoderFilter::BeginFlush()
 
 HRESULT CAC3EncoderFilter::EndFlush()
 {
+  // TODO check
+
   // Not necessary, CBaseAudioSink already does it
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
@@ -328,7 +337,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
 {
   HRESULT hr = S_OK;
 
-  if (pData == NULL) // need to flush any existing data
+  if (!pData) // need to flush any existing data
   {
     if (m_pNextOutSample)
     {
@@ -366,7 +375,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
 
   long bytesOutput = 0;
 
-  while(cbData)
+  while (cbData)
   {
     // do we have enough data for a frame?
     if (cbData + m_cbRemainingInput < m_nFrameSize)
@@ -443,7 +452,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE *pData)
   BYTE *buf = (BYTE*)alloca(m_nMaxCompressedAC3FrameSize); // temporary buffer
 
   int AC3length = ac3_encoder_frame(m_pEncoder, (short*)pData, buf, m_nMaxCompressedAC3FrameSize);
-  nOffset += CreateAC3Bitstream(buf, AC3length, pOutData+nOffset);
+  nOffset += CreateAC3Bitstream(buf, AC3length, pOutData + nOffset);
   m_pNextOutSample->SetActualDataLength(nOffset);
   if (nOffset >= nSize)
     OutputNextSample();
