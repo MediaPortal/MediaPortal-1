@@ -16,9 +16,9 @@ namespace Mediaportal.TV.Server.TVService.Services
     {
     }
 
-    public IDictionary<int, NowAndNext> GetNowAndNext(List<Channel> channels)
+    public IDictionary<int, NowAndNext> GetNowAndNextForChannelGroup(int idGroup)
     {
-      var nowAndNexts = ProgramManagement.GetNowAndNext(channels);
+      var nowAndNexts = ProgramManagement.GetNowAndNextForChannelGroup(idGroup);
       return nowAndNexts;
     }
 

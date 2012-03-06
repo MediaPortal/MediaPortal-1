@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteCard(int idCard)
     {
-      using (ICardRepository cardRepository = new CardRepository())
+      using (ICardRepository cardRepository = new CardRepository(true))
       {
         cardRepository.Delete<Card>(p => p.idCard == idCard);
         cardRepository.UnitOfWork.SaveChanges();
@@ -149,7 +149,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteCardGroup(int idCardGroup)
     {
-      using (ICardRepository cardRepository = new CardRepository())
+      using (ICardRepository cardRepository = new CardRepository(true))
       {
         cardRepository.Delete<CardGroup>(p => p.idCardGroup == idCardGroup);
         cardRepository.UnitOfWork.SaveChanges();
@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteGroupMap(int idMap)
     {
-      using (ICardRepository cardRepository = new CardRepository())
+      using (ICardRepository cardRepository = new CardRepository(true))
       {
         cardRepository.Delete<CardGroupMap>(p => p.idMapping == idMap);
         cardRepository.UnitOfWork.SaveChanges();

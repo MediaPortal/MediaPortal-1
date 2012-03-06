@@ -22,6 +22,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
+    public SettingsRepository(bool trackingEnabled) : base(trackingEnabled)
+    {      
+    }
+
     /// <summary>
     /// saves a value to the database table "Setting"
     /// </summary>    

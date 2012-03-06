@@ -14,10 +14,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
 
   public class ChannelRepository : GenericRepository<Model>, IChannelRepository
-  {
-    
+  {    
     public ChannelRepository()    
     {
+    }
+
+    public ChannelRepository(bool trackingEnabled)
+      : base(trackingEnabled)
+    {      
     }
 
     public ChannelRepository(Model context)

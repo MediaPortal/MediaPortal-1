@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteConflict(int idConflict)
     {
-      using (var conflictRepository = new GenericRepository<Model>())
+      using (var conflictRepository = new GenericRepository<Model>(true))
       {
         conflictRepository.Delete<Conflict>(p => p.idConflict == idConflict);
         conflictRepository.UnitOfWork.SaveChanges();

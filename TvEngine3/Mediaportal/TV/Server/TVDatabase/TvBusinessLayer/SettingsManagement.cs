@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void SaveSetting(string tagName, string value)
     {
-      using (ISettingsRepository settingsRepository = new SettingsRepository())
+      using (ISettingsRepository settingsRepository = new SettingsRepository(true))
       {
         settingsRepository.SaveSetting(tagName, value);
       }
@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static Setting GetSetting(string tagName, string defaultValue)
     {
-      using (ISettingsRepository settingsRepository = new SettingsRepository())
+      using (ISettingsRepository settingsRepository = new SettingsRepository(true))
       {
         return settingsRepository.GetOrSaveSetting(tagName, defaultValue);
       }

@@ -19,13 +19,9 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
       return _channel.GetProgramsForSchedule(schedule);
     }
 
-    public IDictionary<int, NowAndNext> GetNowAndNext(List<Channel> channels)
-    {
-      foreach (var channel in channels)
-      {
-        channel.UnloadAllUnchangedRelationsForEntity();
-      }
-      return _channel.GetNowAndNext(channels);
+    public IDictionary<int, NowAndNext> GetNowAndNextForChannelGroup(int idGroup)
+    {      
+      return _channel.GetNowAndNextForChannelGroup(idGroup);
     }
 
     public IList<Program> GetProgramsByChannelAndStartEndTimes(int idChannel, DateTime startTime, DateTime endTime)

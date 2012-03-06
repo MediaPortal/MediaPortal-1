@@ -26,6 +26,7 @@ using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -398,7 +399,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       else //not in cache, fetch it and update cache, then return.
       {        
-        List<Server.TVDatabase.Entities.Channel> tvChannelList = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.idGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.None).ToList();
+        List<Server.TVDatabase.Entities.Channel> tvChannelList = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.idGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.TuningDetails).ToList();
         if (tvChannelList != null)
         {
           Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
@@ -417,12 +418,15 @@ namespace Mediaportal.TV.TvPlugin
     /// </summary>
     public void FillChannelList()
     {
-      List<Server.TVDatabase.Entities.Channel> tvChannelList = GetChannelListByGroup();
-
       benchClock = Stopwatch.StartNew();
-
       DateTime nextEPGupdate = GetNextEpgUpdate();
-      IDictionary<int, NowAndNext> listNowNext = GetNowAndNext(tvChannelList, nextEPGupdate);
+
+      IList<Channel> tvChannelList = null;
+      IDictionary<int, NowAndNext> listNowNext = null;
+      Parallel.Invoke(
+        () => tvChannelList = GetChannelListByGroup(),
+        () => listNowNext = GetNowAndNext(nextEPGupdate)
+      );            
 
       benchClock.Stop();
       Log.Debug("TvMiniGuide: FillChannelList retrieved {0} programs for {1} channels in {2} ms", listNowNext.Count,
@@ -547,10 +551,10 @@ namespace Mediaportal.TV.TvPlugin
                 break;
             }
           }
-          //StringBuilder sbTmp = new StringBuilder();          
+          
           sbTmp.Length = 0;
 
-          NowAndNext currentNowAndNext = null;
+          NowAndNext currentNowAndNext;
           bool hasNowNext = listNowNext.TryGetValue(channelID, out currentNowAndNext);
 
           if (hasNowNext)
@@ -650,7 +654,7 @@ namespace Mediaportal.TV.TvPlugin
       sbTmp.Length = 0;
     }
 
-    private IDictionary<int, NowAndNext> GetNowAndNext(List<Channel> tvChannelList, DateTime nextEPGupdate)
+    private IDictionary<int, NowAndNext> GetNowAndNext(DateTime nextEPGupdate)
     {
       IDictionary<int, NowAndNext> getNowAndNext = new Dictionary<int, NowAndNext>();
       int idGroup = TVHome.Navigator.CurrentGroup.idGroup;
@@ -659,13 +663,13 @@ namespace Mediaportal.TV.TvPlugin
         bool updateNow = (DateTime.Now >= nextEPGupdate);
         if (updateNow)
         {
-          getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNext(tvChannelList);
+          getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNextForChannelGroup(TVHome.Navigator.CurrentGroup.idGroup);
           _listNowNext[idGroup] = getNowAndNext;
         }
       }
       else
       {
-        getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNext(tvChannelList);
+        getNowAndNext = ServiceAgents.Instance.ProgramServiceAgent.GetNowAndNextForChannelGroup(TVHome.Navigator.CurrentGroup.idGroup);
         _listNowNext.Add(idGroup, getNowAndNext);
       }
       return getNowAndNext;

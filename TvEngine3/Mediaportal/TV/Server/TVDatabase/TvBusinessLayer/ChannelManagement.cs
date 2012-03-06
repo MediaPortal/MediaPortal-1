@@ -364,7 +364,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteAllChannelLinkageMaps(int idPortalChannel)
     {
-      using (IChannelRepository channelRepository = new ChannelRepository())
+      using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
         channelRepository.Delete<ChannelLinkageMap>(p => p.idPortalChannel == idPortalChannel);
         channelRepository.UnitOfWork.SaveChanges();
@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteChannel(int idChannel)
     {
-      using (IChannelRepository channelRepository = new ChannelRepository())
+      using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
         SetRelatedRecordingsToNull(idChannel, channelRepository);
         channelRepository.Delete<Channel>(p => p.idChannel == idChannel);
@@ -657,7 +657,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteTuningDetail(int idTuning)
     {
-      using (IChannelRepository channelRepository = new ChannelRepository())
+      using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
         channelRepository.Delete<TuningDetail>(p => p.idTuning == idTuning);
         channelRepository.UnitOfWork.SaveChanges();
@@ -690,7 +690,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteChannelMap(int idChannelMap)
     {
-      using (IChannelRepository channelRepository = new ChannelRepository())
+      using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
         channelRepository.Delete<ChannelMap>(p => p.idChannelMap == idChannelMap);
         channelRepository.UnitOfWork.SaveChanges();

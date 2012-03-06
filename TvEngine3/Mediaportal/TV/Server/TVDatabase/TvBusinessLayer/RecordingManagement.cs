@@ -25,7 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteRecording(int idRecording)
     {
-      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      using (IRecordingRepository recordingRepository = new RecordingRepository(true))
       {
         recordingRepository.Delete<Recording>(s => s.idRecording == idRecording);
         recordingRepository.UnitOfWork.SaveChanges();
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeletePendingRecordingDeletion(int idPendingDeletion)
     {
-      using (IRecordingRepository recordingRepository = new RecordingRepository())
+      using (IRecordingRepository recordingRepository = new RecordingRepository(true))
       {
         recordingRepository.Delete<PendingDeletion>(s => s.idPendingDeletion == idPendingDeletion);
         recordingRepository.UnitOfWork.SaveChanges();

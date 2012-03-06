@@ -14,7 +14,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IList<Program> GetProgramsForSchedule(Schedule schedule);
     [ServiceKnownType(typeof(NowAndNext))]
     [OperationContract]
-    IDictionary<int, NowAndNext> GetNowAndNext(List<Channel> channels);
+    IDictionary<int, NowAndNext> GetNowAndNextForChannelGroup(int idGroup);
     [OperationContract]
     IList<Program> GetProgramsByChannelAndStartEndTimes(int idChannel, DateTime startTime, DateTime endTime);
     [OperationContract]

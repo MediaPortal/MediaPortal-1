@@ -11,7 +11,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
     void DeleteAllProgramsWithChannelId(int idChannel);
     IQueryable<Program> FindAllProgramsByChannelId(int idChannel);
     IQueryable<Program> GetProgramsByStartEndTimes(DateTime startTime, DateTime endTime);
-    IQueryable<Program> GetNowAndNextProgramsForChannel(int idChannel);
+    
 
     Program GetProgramAt(DateTime date, int idChannel);
     Program GetProgramAt(DateTime date, string title);
@@ -20,5 +20,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
     IQueryable<Program> GetProgramsByDescription(IQueryable<Program> query, string searchCriteria, StringComparisonEnum stringComparison);
     IQueryable<Program> GetProgramsByTimesInterval(DateTime startTime, DateTime endTime);
     IQueryable<Program> IncludeAllRelations(IQueryable<Program> query);
+    IQueryable<Program> GetNowProgramsForChannelGroup (IEnumerable<int> channelList);
+    IQueryable<Program> GetNextProgramsForChannelGroup(IEnumerable<int> channelList);
+    IQueryable<Program> GetNowAndNextProgramsForChannel(int idChannel);
   }
 }

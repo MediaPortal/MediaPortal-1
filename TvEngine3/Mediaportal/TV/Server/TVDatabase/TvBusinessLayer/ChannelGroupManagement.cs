@@ -16,13 +16,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
       {
         var query = channelGroupRepository.GetAll<ChannelGroup>();
-        var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
-        
-        /*foreach (ChannelGroup channelGroup in listAllChannelGroups)
-        {
-          channelGroupRepository.ObjectContext.Detach(channelGroup););  
-        }*/
-
+        var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();              
         return listAllChannelGroups;
       }
     }
@@ -35,7 +29,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query).ToList();
         return listAllChannelGroups;
       }
-    }
+    }   
 
     public static IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType)
     {
@@ -90,7 +84,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteChannelGroupMap(int idMap)
     {
-      using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
+      using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
         channelGroupRepository.Delete<GroupMap>(g => g.idMap == idMap);
         channelGroupRepository.UnitOfWork.SaveChanges();
@@ -121,7 +115,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteChannelGroup(int idGroup)
     {
-      using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository())
+      using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
         channelGroupRepository.Delete<ChannelGroup>(g => g.idGroup == idGroup);
         channelGroupRepository.UnitOfWork.SaveChanges();

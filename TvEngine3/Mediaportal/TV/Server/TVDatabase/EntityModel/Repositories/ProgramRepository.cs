@@ -20,12 +20,35 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     
     public ProgramRepository()    
     {
-    }    
+    }
+
+    public ProgramRepository(bool trackingEnabled)
+      : base(trackingEnabled)
+    {      
+    }
+
+
     public ProgramRepository(Model context)
       : base(context)
     {
       
-    }        
+    }  
+    
+    public IQueryable<Program> GetNowProgramsForChannelGroup (IEnumerable<int> channelList)
+    {
+      DateTime now = DateTime.Now;
+      IQueryable<Program> programs = GetQuery<Program>().Where(p =>
+                      channelList.Contains(p.idChannel) &&
+                      p.endTime > now && p.startTime <= now);
+      return programs;
+    }
+
+    public IQueryable<Program> GetNextProgramsForChannelGroup(IEnumerable<int> channelList)
+    {
+      DateTime now = DateTime.Now;
+      IQueryable<Program> programs = GetQuery<Program>().Where(p => channelList.Contains(p.idChannel) && p.startTime > now).GroupBy(p => p.idChannel).Select(pg => pg.OrderBy(p => p.startTime).FirstOrDefault());
+      return programs;
+    }
 
     public IQueryable<Program> GetNowAndNextProgramsForChannel(int idChannel)
     {

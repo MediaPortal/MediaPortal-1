@@ -30,6 +30,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     private readonly PluralizationService _pluralizer = PluralizationService.CreateService(CultureInfo.GetCultureInfo("en"));
     private bool _disposed;
 
+    private readonly bool _trackingEnabled = false;
+
     ~GenericRepository()
     {
       Dispose();
@@ -42,6 +44,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public GenericRepository()
       : this(string.Empty)
     {
+      this._objectContext = ObjectContextManager.CreateDbContext as TEntity;
+    }
+
+    public GenericRepository(bool trackingEnabled)
+      : this(string.Empty)
+    {
+      _trackingEnabled = trackingEnabled;
       this._objectContext = ObjectContextManager.CreateDbContext as TEntity;
     }
 
@@ -75,18 +84,23 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         return (TEntity)originalItem;
       }
       return default(TEntity);
-    }
+    }    
 
     public IQueryable<TEntity> GetQuery<TEntity>() where TEntity : class
     {
       var entityName = GetEntityName<TEntity>();
-      return ObjectContext.CreateQuery<TEntity>(entityName).AsNoTracking();      
+      if (_trackingEnabled)
+      {
+        return ObjectContext.CreateQuery<TEntity>(entityName);
+      }
+      return ObjectContext.CreateQuery<TEntity>(entityName).AsNoTracking();
     }
 
     public IQueryable<TEntity> GetQuery<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class
     {
       return GetQuery<TEntity>().Where(predicate);
     }
+    
 
     public IQueryable<TEntity> GetQuery<TEntity>(ISpecification<TEntity> specification) where TEntity : class
     {
@@ -255,18 +269,12 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         TEntity entity = entities[i];
         Delete(entity);
-      }
-      /*foreach (var entity in entities)
-      {
-        Delete(entity);
-      }*/
+      }      
     }
 
     public void Delete<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class
     {
-      //IEnumerable<TEntity> records = Find<TEntity>(criteria);
-      var entityName = GetEntityName<TEntity>();
-      IEnumerable<TEntity> records = ObjectContext.CreateQuery<TEntity>(entityName).Where(criteria);
+      IEnumerable<TEntity> records = Find<TEntity>(criteria);                  
 
       foreach (TEntity record in records)
       {
@@ -276,7 +284,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public void Delete<TEntity>(ISpecification<TEntity> criteria) where TEntity : class
     {
-      IEnumerable<TEntity> records = Find<TEntity>(criteria);
+      IEnumerable<TEntity> records = Find<TEntity>(criteria);      
       foreach (TEntity record in records)
       {
         Delete<TEntity>(record);
@@ -285,7 +293,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
     {
-      return GetQuery<TEntity>();//.AsEnumerable();
+      return GetQuery<TEntity>();
     }
 
     public void Update<TEntity>(TEntity entity) where TEntity : class

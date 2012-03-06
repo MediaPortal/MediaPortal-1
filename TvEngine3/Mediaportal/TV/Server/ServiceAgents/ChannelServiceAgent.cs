@@ -43,10 +43,10 @@ namespace Mediaportal.TV.Server.TVService.ServiceAgents
 
     public IList<GroupMap> SaveChannelGroupMaps(IEnumerable<GroupMap> groupMaps)
     {
-      foreach (var groupMap in groupMaps)
+      /*foreach (var groupMap in groupMaps)
       {
         groupMap.UnloadAllUnchangedRelationsForEntity();
-      }
+      }*/
       return _channel.SaveChannelGroupMaps(groupMaps);
     }
 

@@ -17,6 +17,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
+    public ScheduleRepository(bool trackingEnabled)
+      : base(trackingEnabled)
+    {      
+    }
+
     public ScheduleRepository(Model context)
       : base(context)
     {

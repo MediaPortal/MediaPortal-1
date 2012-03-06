@@ -18,6 +18,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
+    public RecordingRepository(bool trackingEnabled)
+      : base(trackingEnabled)
+    {      
+    }
+
     public RecordingRepository(Model context)
       : base(context)
     {

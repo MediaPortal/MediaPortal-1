@@ -18,6 +18,12 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       
     }
+
+    public CardRepository(bool trackingEnabled)
+      : base(trackingEnabled)
+    {      
+    }
+
     public CardRepository(Model context)
       : base(context)
     {

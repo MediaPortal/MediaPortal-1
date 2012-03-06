@@ -136,7 +136,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteSchedule(int idSchedule)
     {
-      using (IScheduleRepository scheduleRepository = new ScheduleRepository())
+      using (IScheduleRepository scheduleRepository = new ScheduleRepository(true))
       {        
         SetRelatedRecordingsToNull(idSchedule, scheduleRepository);
         scheduleRepository.Delete<Schedule>(s => s.id_Schedule == idSchedule);
@@ -207,7 +207,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void UnCancelSerie(Schedule schedule, DateTime startTime, int idChannel)
     {
-      using (IScheduleRepository scheduleRepository = new ScheduleRepository())
+      using (IScheduleRepository scheduleRepository = new ScheduleRepository(true))
       {
         foreach (CanceledSchedule canceledSchedule in schedule.CanceledSchedules)
         {
@@ -550,7 +550,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteOrphanedOnceSchedules()
     {
-      using (IScheduleRepository scheduleRepository = new ScheduleRepository())
+      using (IScheduleRepository scheduleRepository = new ScheduleRepository(true))
       {
         IList<Schedule> schedules =
           scheduleRepository.GetQuery<Schedule>(
