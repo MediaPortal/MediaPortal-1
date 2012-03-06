@@ -25,6 +25,13 @@
 
 #define MAX_REG_LENGTH 256
 
+enum AC3Encoding
+{ 
+  DISABLED = 0,
+  AUTO,
+  FORCED
+};
+
 class AudioRendererSettings
 {
 public:  
@@ -38,7 +45,7 @@ public:
   bool m_bUseWASAPI;
   bool m_WASAPIUseEventMode;
   bool m_bUseTimeStretching;
-  bool m_bEnableAC3Encoding;
+  int  m_lAC3Encoding;
   
   bool m_bQuality_USE_QUICKSEEK;
   bool m_bQuality_USE_AA_FILTER;

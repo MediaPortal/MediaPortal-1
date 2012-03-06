@@ -21,6 +21,7 @@
 #include <ksmedia.h>
 #include "../AC3_encoder/ac3enc.h"
 #include "BaseAudioSink.h"
+#include "Settings.h"
 
 #define AC3_FRAME_LENGTH    (1536)
 #define AC3_MAX_BITRATE     (640000)
@@ -35,8 +36,8 @@ class CAC3EncoderFilter :
   public CBaseAudioSink
 {
 public:
-  CAC3EncoderFilter(void);
-  virtual ~CAC3EncoderFilter(void);
+  CAC3EncoderFilter(AudioRendererSettings* pSettings);
+  virtual ~CAC3EncoderFilter();
 
 // IAudioSink implementation
 public:
@@ -81,4 +82,6 @@ protected:
   int m_nBitRate;
   AC3CodecContext* m_pEncoder;
   int m_nMaxCompressedAC3FrameSize; // based on output format; should always be even
+
+  AudioRendererSettings* m_pSettings;
 };

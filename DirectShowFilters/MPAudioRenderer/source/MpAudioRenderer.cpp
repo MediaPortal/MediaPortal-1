@@ -163,7 +163,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   m_pRenderer = static_cast<IRenderFilter*>(m_pWASAPIRenderer);
 
-  m_pAC3Encoder = new CAC3EncoderFilter();
+  m_pAC3Encoder = new CAC3EncoderFilter(&m_Settings);
   if (!m_pAC3Encoder)
     return E_OUTOFMEMORY;
 
@@ -187,12 +187,9 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
 
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
   m_pSampleRateConverter->ConnectTo(m_pTimestretchFilter);
-
   m_pTimestretchFilter->ConnectTo(m_pOutBitDepthAdapter);
-
-  m_pOutBitDepthAdapter->ConnectTo(m_pWASAPIRenderer);
-
-  //m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
+  m_pOutBitDepthAdapter->ConnectTo(m_pAC3Encoder);
+  m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
   m_pPipeline = m_pInBitDepthAdapter;

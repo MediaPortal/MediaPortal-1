@@ -35,7 +35,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bUseWASAPI(true),
   m_WASAPIUseEventMode(true),
   m_bUseTimeStretching(false),
-  m_bEnableAC3Encoding(false),
+  m_lAC3Encoding(0),
   m_bQuality_USE_QUICKSEEK(false),
   m_bQuality_USE_AA_FILTER(false),
   m_lQuality_AA_FILTER_LENGTH(32),
@@ -83,7 +83,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
   LPCTSTR WASAPIUseEventMode = TEXT("WASAPIUseEventMode");
   LPCTSTR devicePeriod = TEXT("DevicePeriod");
-  LPCTSTR enableAC3Encoding = TEXT("EnableAC3Encoding");
+  LPCTSTR AC3Encoding = TEXT("AC3Encoding");
   LPCTSTR AC3bitrate = TEXT("AC3bitrate");
   LPCTSTR maxBias = TEXT("MaxBias");
   LPCTSTR minBias = TEXT("MinBias");
@@ -110,7 +110,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD WASAPIExclusiveData = 1;
   DWORD WASAPIUseEventModeData = 1;
   DWORD devicePeriodData = 500000;  // 50 ms
-  DWORD enableAC3EncodingData = 0;
+  DWORD AC3EncodingData = 0;        // 0 = disabled, 1 = auto, 2 = forced
   DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
   DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
   DWORD minBiasData = 9000;         // divide with 10000 to get real double value
@@ -156,7 +156,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
     ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
-    ReadRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
+    ReadRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
     ReadRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
     ReadRegistryKeyDword(hKey, maxBias, maxBiasData);
     ReadRegistryKeyDword(hKey, minBias, minBiasData);
@@ -184,7 +184,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   EnableTimestrecthing:     %d", enableTimestretchingData);
     Log("   WASAPIExclusive:          %d", WASAPIExclusiveData);
     Log("   WASAPIUseEventMode:       %d", WASAPIUseEventModeData);
-    Log("   EnableAC3Encoding:        %d", enableAC3EncodingData);
+    Log("   AC3Encoding:              %d (0 = disabled, 1 = auto, 2 = forced)", AC3EncodingData);
     Log("   AC3bitrate:               %d", AC3bitrateData);
     Log("   MaxBias:                  %d", maxBiasData);
     Log("   MinBias:                  %d", minBiasData);
@@ -203,7 +203,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   quality_SEQUENCE_MS:      %d", quality_SEQUENCE_MSData);
     Log("   quality_SEEKWINDOW_MS:    %d", quality_SEEKWINDOW_MSData);
     Log("   quality_OVERLAP_MS:       %d", quality_OVERLAP_MSData);
-    Log("   DevicePeriod:             %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
+    Log("   DevicePeriod:             %d (1 = minimal, 0 = driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:    %s", WASAPIPreferredDeviceData);
 
     if (forceDirectSoundData > 0)
@@ -226,10 +226,10 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_WASAPIUseEventMode = false;
 
-    if (enableAC3EncodingData > 0)
-      m_bEnableAC3Encoding = true;
+    if (AC3EncodingData == DISABLED || AC3EncodingData == AUTO || AC3EncodingData == FORCED)
+      m_lAC3Encoding = AC3EncodingData;
     else
-      m_bEnableAC3Encoding = false;
+      m_lAC3Encoding = 0;
 
     m_dMaxBias = (double)maxBiasData / 10000.0;
     m_dMinBias = (double)minBiasData / 10000.0;
@@ -329,7 +329,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
       WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
       WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
-      WriteRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
+      WriteRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
       WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
       WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
       WriteRegistryKeyDword(hKey, minBias, minBiasData);

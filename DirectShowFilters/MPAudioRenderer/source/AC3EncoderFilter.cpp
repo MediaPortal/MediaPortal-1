@@ -29,8 +29,9 @@ template<class T> inline T odd2even(T x)
 }
 
 
-CAC3EncoderFilter::CAC3EncoderFilter(void) : 
+CAC3EncoderFilter::CAC3EncoderFilter(AudioRendererSettings* pSettings) : 
   CBaseAudioSink(true),
+  m_pSettings(pSettings),
   m_bPassThrough(false),
   m_cbRemainingInput(0),
   m_pRemainingInput(NULL),
@@ -42,7 +43,7 @@ CAC3EncoderFilter::CAC3EncoderFilter(void) :
 {
 }
 
-CAC3EncoderFilter::~CAC3EncoderFilter(void)
+CAC3EncoderFilter::~CAC3EncoderFilter()
 {
   CloseAC3Encoder(); // just in case
   SAFE_DELETE_ARRAY(m_pRemainingInput);
@@ -64,39 +65,50 @@ HRESULT CAC3EncoderFilter::Cleanup()
 // Format negotiation
 HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE *pwfx, int nApplyChangesDepth)
 {
-  if (pwfx == NULL)
+  if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   if (FormatsEqual(pwfx, m_pInputFormat))
     return S_OK;
 
-  if (m_pNextSink == NULL)
+  if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  // try passthrough
+  // Try passthrough
   bool bApplyChanges = (nApplyChangesDepth !=0);
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
-  if (SUCCEEDED(hr))
+  HRESULT hr = VFW_E_TYPE_NOT_ACCEPTED;
+
+  // If AC3 encoding is not forced check first if the audio format can be played without 
+  // encoding (for example 2 channel on SPDIF or channel mixer downmixing the channels)
+  if (m_pSettings->m_lAC3Encoding == DISABLED || m_pSettings->m_lAC3Encoding == AUTO)
   {
-    if (bApplyChanges)
+    hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+    if (SUCCEEDED(hr))
     {
-      //m_bPassThrough = true;
-      SAFE_DELETE_ARRAY(m_pRemainingInput);
-      SetInputFormat(pwfx);
-      SetOutputFormat(pwfx);
-      //CloseAC3Encoder();
+      if (bApplyChanges)
+      {
+        m_bPassThrough = true;
+        SAFE_DELETE_ARRAY(m_pRemainingInput);
+        SetInputFormat(pwfx);
+        SetOutputFormat(pwfx);
+        CloseAC3Encoder();
+      }
+      return hr;
     }
-    //return hr;
   }
-  // verify input format bit depth, channels and sample rate
+
+  if (m_pSettings->m_lAC3Encoding == DISABLED)
+    return VFW_E_TYPE_NOT_ACCEPTED;
+
+  // Verify input format bit depth, channels and sample rate
   if (pwfx->Format.nChannels > 6 || pwfx->Format.wBitsPerSample != 16 ||
       (pwfx->Format.nSamplesPerSec != 48000 && pwfx->Format.nSamplesPerSec != 44100))
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  // verify input format is PCM
+  // Verify input format is PCM
   if (pwfx->Format.wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
       pwfx->Format.cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX))
   {
@@ -116,22 +128,24 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE *pwfx, int
     SAFE_DELETE_WAVEFORMATEX(pAC3wfx);
     return hr;
   }
+
   if (bApplyChanges)
   {
     m_bPassThrough = false;
     SAFE_DELETE_ARRAY(m_pRemainingInput);
     SetInputFormat(pwfx);
     SetOutputFormat(pAC3wfx, true);
-    m_nFrameSize = m_pInputFormat->Format.nChannels * AC3_FRAME_LENGTH *2;
+    m_nFrameSize = m_pInputFormat->Format.nChannels * AC3_FRAME_LENGTH * 2;
     m_pRemainingInput = new BYTE[m_nFrameSize];
     m_nMaxCompressedAC3FrameSize = (m_nBitRate/8 * AC3_FRAME_LENGTH + m_pInputFormat->Format.nSamplesPerSec-1) / m_pInputFormat->Format.nSamplesPerSec;
-    if(m_nMaxCompressedAC3FrameSize & 1)
+    
+    if (m_nMaxCompressedAC3FrameSize & 1)
       m_nMaxCompressedAC3FrameSize++;
+
     OpenAC3Encoder(m_nBitRate, m_pInputFormat->Format.nChannels, m_pInputFormat->Format.nSamplesPerSec);
   }
   return S_OK;
 }
-
 
 // Processing
 HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
