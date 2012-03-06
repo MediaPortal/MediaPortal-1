@@ -156,4 +156,6 @@ private:
   CCritSec m_allocatorLock;
 
   CSyncClock* m_pClock;
+
+  bool m_bResamplingRequested;
 };

@@ -41,7 +41,8 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_pNewPMT(NULL),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
-  m_pClock(pClock)
+  m_pClock(pClock),
+  m_bResamplingRequested(false)
 {
 }
 
@@ -102,7 +103,7 @@ HRESULT CTimeStretchFilter::Cleanup()
 
 HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
 {
-  if (m_pSettings->m_bUseTimeStretching)
+  if (m_pSettings->m_bUseTimeStretching && m_bResamplingRequested)
     CQueuedAudioSink::PutSample(pSample);
   else if (m_pNextSink)
     return m_pNextSink->PutSample(pSample);
@@ -471,6 +472,7 @@ void CTimeStretchFilter::flush()
 
 void CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
 {
+  m_bResamplingRequested = true;
   m_fNewTempo = newTempo;
   m_fNewAdjustment = newAdjustment;
 }
