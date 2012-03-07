@@ -61,9 +61,6 @@ public:
 
   int m_lAudioDelay;
 
-  DWORD m_dwChannelMaskOverride_5_1;
-  DWORD m_dwChannelMaskOverride_7_1;
-  
   int m_nResamplingQuality;
 
   int m_nForceSamplingRate;
