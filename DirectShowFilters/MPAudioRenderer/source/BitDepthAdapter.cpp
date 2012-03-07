@@ -278,11 +278,12 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   pSample->GetTime(&rtStart, &rtStop);
 
   // Detect discontinuity in stream timeline
-  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
+ if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
   {
     Log("CBitDepthAdapter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
 
     m_rtInSampleTime = rtStart;
+
     if (m_nSampleNum > 0)
     {
       Log("CBitDepthAdapter - using buffered sample data");
@@ -291,6 +292,9 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
     else
       Log("CBitDepthAdapter - discarding buffered sample data");
   }
+
+  if (m_nSampleNum == 0)
+    m_rtInSampleTime = rtStart;
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
   REFERENCE_TIME duration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
@@ -384,11 +388,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
   {
     if (m_pNextOutSample)
     {
-      UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
-      hr = OutputNextSample();
-      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
-
-      if (FAILED(hr))
+      if (FAILED(OutputNextSample()))
       {
         Log("CBitDepthAdapter::ProcessData OutputNextSample failed with: 0x%08x", hr);
         return hr;
@@ -429,7 +429,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
     // try to get an output buffer if none available
     if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
     {
-      if (pcbDataProcessed)
+     if (pcbDataProcessed)
         *pcbDataProcessed = bytesOutput + cbData; // we can't realy process the data, lie about it!
       return hr;
     }

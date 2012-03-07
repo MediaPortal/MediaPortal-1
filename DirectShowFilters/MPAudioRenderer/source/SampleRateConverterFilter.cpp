@@ -216,6 +216,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     Log("CSampleRateConverter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
 
     m_rtInSampleTime = rtStart;
+
     if (m_nSampleNum > 0)
     {
       Log("CSampleRateConverter - using buffered sample data");
@@ -224,6 +225,9 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     else
       Log("CSampleRateConverter - discarding buffered sample data");
   }
+
+  if (m_nSampleNum == 0)
+    m_rtInSampleTime = rtStart;
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
   REFERENCE_TIME duration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
@@ -396,11 +400,7 @@ HRESULT CSampleRateConverter::FlushStream()
   CAutoLock lock (&m_csOutputSample);
   if (m_pNextOutSample)
   {
-    UINT nFrames = m_pNextOutSample->GetActualDataLength() / m_pOutputFormat->Format.nBlockAlign;
-    hr = OutputNextSample();
-    m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
-
-    if (FAILED(hr))
+    if (FAILED(OutputNextSample()))
     {
       Log("CSampleRateConverter::FlushStream OutputNextSample failed with: 0x%08x", hr);
       return hr;
