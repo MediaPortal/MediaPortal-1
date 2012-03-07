@@ -28,7 +28,6 @@ template<class T> inline T odd2even(T x)
   return x&1 ? x + 1 : x;
 }
 
-
 CAC3EncoderFilter::CAC3EncoderFilter(AudioRendererSettings* pSettings) : 
   CBaseAudioSink(true),
   m_pSettings(pSettings),
@@ -63,7 +62,7 @@ HRESULT CAC3EncoderFilter::Cleanup()
 }
 
 // Format negotiation
-HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE *pwfx, int nApplyChangesDepth)
+HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -75,7 +74,7 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE *pwfx, int
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   // Try passthrough
-  bool bApplyChanges = (nApplyChangesDepth !=0);
+  bool bApplyChanges = (nApplyChangesDepth !=0 );
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
@@ -167,9 +166,14 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
 
   if (bFormatChanged)
   {
-    // process any remaining input
+    // Process any remaining input
     if (!m_bPassThrough)
+    {
       hr = ProcessAC3Data(NULL, 0, NULL);
+      if (FAILED(hr))
+        Log("AC3Encoder - Failed to process remaining data on format change: 0x%08x");
+    }
+
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
@@ -198,7 +202,7 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
   pSample->GetTime(&m_rtInSampleTime, &rtStop);
 
   hr = pSample->GetPointer(&pData);
-  ASSERT(pData != NULL);
+  ASSERT(pData);
 
   while (nOffset < cbSampleData && SUCCEEDED(hr))
   {
@@ -211,7 +215,7 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
 
 HRESULT CAC3EncoderFilter::EndOfStream()
 {
-  if(!m_bPassThrough)
+  if (!m_bPassThrough)
     ProcessAC3Data(NULL, 0, NULL);
   return CBaseAudioSink::EndOfStream();
 }
@@ -265,12 +269,14 @@ WAVEFORMATEXTENSIBLE* CAC3EncoderFilter::CreateAC3Format(int nSamplesPerSec, int
     pwfx->Format.nChannels = 2;
     pwfx->Format.nSamplesPerSec = nSamplesPerSec;
     pwfx->Format.nAvgBytesPerSec = pwfx->Format.nSamplesPerSec * pwfx->Format.nBlockAlign;
-    pwfx->Format.cbSize = 0;
+    pwfx->Format.cbSize = 22;
+    pwfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
+    pwfx->dwChannelMask = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
   }
   return pwfx;
 }
 
-long CAC3EncoderFilter::CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut)
+long CAC3EncoderFilter::CreateAC3Bitstream(void* buf, size_t size, BYTE* pDataOut)
 {
   size_t length = AC3_DATA_BURST_LENGTH;
 
@@ -449,7 +455,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
   return hr;
 }
 
-HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE *pData)
+HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE* pData)
 {
   HRESULT hr;
   long nOffset = m_pNextOutSample->GetActualDataLength();
@@ -462,7 +468,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE *pData)
     return hr;
   }
 
-  ASSERT(pOutData != NULL);
+  ASSERT(pOutData);
   BYTE *buf = (BYTE*)alloca(m_nMaxCompressedAC3FrameSize); // temporary buffer
 
   int AC3length = ac3_encoder_frame(m_pEncoder, (short*)pData, buf, m_nMaxCompressedAC3FrameSize);

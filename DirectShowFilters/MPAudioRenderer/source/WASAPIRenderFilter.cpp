@@ -158,32 +158,14 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
 
   LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");
 
-  bool forceSampleRate = m_pSettings->m_nForceSamplingRate > 0;
-  bool forceBitDepth = m_pSettings->m_nForceBitDepth > 0;
-
-  // Check for forced bit depth and/or sampling rate
-  if ((forceBitDepth || forceSampleRate) && pwfx->Format.wFormatTag != WAVE_FORMAT_DOLBY_AC3_SPDIF)
-  {
-    bool accepted = true;
-    if (forceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->Format.wBitsPerSample)
-      accepted = false;
-
-    if (forceSampleRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->Format.nSamplesPerSec)
-      accepted = false;
-
-    if (accepted)
-    {
-      if (forceSampleRate && forceBitDepth)
-        Log("  -- using forced: sample rate: %d bit depth: %d", pwfx->Format.nSamplesPerSec, pwfx->Format.wBitsPerSample);
-      else if (forceSampleRate)
-        Log("  -- using forced: sample rate: %d", pwfx->Format.nSamplesPerSec);
-      else
-        Log("  -- using forced: bit depth: %d", pwfx->Format.wBitsPerSample);
-    }
-    else
-      return VFW_E_CANNOT_CONNECT;
-  }
-
+  bool bitDepthForced = (m_pSettings->m_nForceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->Format.wBitsPerSample);
+  bool sampleRateForced = (m_pSettings->m_nForceSamplingRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->Format.nSamplesPerSec);
+  
+  if ((bitDepthForced || sampleRateForced) &&
+    pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL ||
+    pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT && bitDepthForced)
+  return VFW_E_TYPE_NOT_ACCEPTED;
+  
   HRESULT hr = VFW_E_CANNOT_CONNECT;
 
   if (!m_pAudioClient) 
@@ -235,6 +217,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   }
   else
     pwfxAccepted = pwfx;
+  
   Log("CWASAPIRenderFilter::NegotiateFormat WASAPI client accepted the format");
 
   if (bApplyChanges)
