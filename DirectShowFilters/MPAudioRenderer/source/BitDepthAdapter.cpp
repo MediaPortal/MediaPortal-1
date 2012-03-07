@@ -279,8 +279,8 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
 
   // Detect discontinuity in stream timeline
  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
-  {
-    Log("CBitDepthAdapter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
+ {
+    Log("CBitDepthAdapter - stream discontinuity: %6.3f", (rtStart - m_rtNextIncomingSampleTime) / 10000000.0);
 
     m_rtInSampleTime = rtStart;
 

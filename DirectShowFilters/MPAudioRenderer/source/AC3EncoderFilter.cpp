@@ -38,6 +38,7 @@ CAC3EncoderFilter::CAC3EncoderFilter(AudioRendererSettings* pSettings) :
   m_pEncoder(NULL),
   m_nBitRate(448000),
   m_rtInSampleTime(0),
+  m_rtNextIncomingSampleTime(0),
   m_nMaxCompressedAC3FrameSize(AC3_MAX_COMP_FRAME_SIZE)
 {
 }
@@ -51,8 +52,9 @@ CAC3EncoderFilter::~CAC3EncoderFilter()
 HRESULT CAC3EncoderFilter::Init()
 {
   HRESULT hr = InitAllocator();
-  if(FAILED(hr))
+  if (FAILED(hr))
     return hr;
+
   return CBaseAudioSink::Init();
 }
 
@@ -198,8 +200,34 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
   long nOffset = 0;
   long cbSampleData = pSample->GetActualDataLength();
   BYTE *pData = NULL;
-  REFERENCE_TIME rtStop;
-  pSample->GetTime(&m_rtInSampleTime, &rtStop);
+  REFERENCE_TIME rtStop = 0;
+  REFERENCE_TIME rtStart = 0;
+  pSample->GetTime(&rtStart, &rtStop);
+
+  // Detect discontinuity in stream timeline
+  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
+  {
+    Log("AC3Encoder - stream discontinuity: %6.3f", (rtStart - m_rtNextIncomingSampleTime) / 10000000.0);
+
+    m_rtInSampleTime = rtStart;
+
+    if (m_nSampleNum > 0)
+    {
+      Log("AC3Encoder - using buffered sample data");
+      ProcessAC3Data(NULL, 0, NULL);
+    }
+    else
+      Log("AC3Encoder - discarding buffered sample data");
+  }
+
+  if (m_nSampleNum == 0)
+    m_rtInSampleTime = rtStart;
+
+  UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
+  REFERENCE_TIME duration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+  m_rtNextIncomingSampleTime = rtStart + duration;
+  m_nSampleNum++;
 
   hr = pSample->GetPointer(&pData);
   ASSERT(pData);
@@ -217,6 +245,7 @@ HRESULT CAC3EncoderFilter::EndOfStream()
 {
   if (!m_bPassThrough)
     ProcessAC3Data(NULL, 0, NULL);
+
   return CBaseAudioSink::EndOfStream();
 }
 
@@ -369,7 +398,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
 
     if (m_cbRemainingInput)
     {
-      REFERENCE_TIME rtStart = m_rtInSampleTime - (m_cbRemainingInput * UNITS / m_pInputFormat->Format.nAvgBytesPerSec);
+      REFERENCE_TIME rtStart = m_rtInSampleTime - (m_cbRemainingInput * UNITS / m_pOutputFormat->Format.nAvgBytesPerSec);
       if(!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(rtStart)))
       {
         m_cbRemainingInput = 0;
@@ -386,7 +415,11 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
       m_cbRemainingInput = 0;
       // Flush any output samples too
       if (SUCCEEDED(hr) && m_pNextOutSample)
+      {
         hr = OutputNextSample();
+        if (FAILED(hr))
+          Log("AC3Encoder::ProcessAC3Data OutputNextSample failed with: 0x%08x", hr);
+      }
     }
     if (pcbDataProcessed)
       *pcbDataProcessed = 0;
@@ -415,7 +448,18 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
       long nOffset = m_pNextOutSample->GetActualDataLength();
       long nSize = m_pNextOutSample->GetSize();
       if (nOffset + AC3_DATA_BURST_LENGTH > nSize)
+      {
         hr = OutputNextSample();
+
+        UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+        m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+        if (FAILED(hr))
+        {
+          Log("AC3Encoder::ProcessAC3Data OutputNextSample failed with: 0x%08x", hr);
+          return hr;
+        }
+      }
     }
 
     // try to get an output buffer if none available
@@ -436,7 +480,6 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
       pData += bytesToCopy;
       cbData -= bytesToCopy; 
       bytesOutput += bytesToCopy;
-      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
       m_cbRemainingInput = 0;
     }
     else
@@ -446,7 +489,6 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
       pData += m_nFrameSize;
       cbData -= m_nFrameSize; 
       bytesOutput += m_nFrameSize;
-      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->Format.nAvgBytesPerSec;
     }
   }
   
@@ -460,7 +502,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE* pData)
   HRESULT hr;
   long nOffset = m_pNextOutSample->GetActualDataLength();
   long nSize = m_pNextOutSample->GetSize();
-  BYTE *pOutData = NULL;
+  BYTE* pOutData = NULL;
 
   if (FAILED(hr = m_pNextOutSample->GetPointer(&pOutData)))
   {
@@ -469,7 +511,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE* pData)
   }
 
   ASSERT(pOutData);
-  BYTE *buf = (BYTE*)alloca(m_nMaxCompressedAC3FrameSize); // temporary buffer
+  BYTE* buf = (BYTE*)alloca(m_nMaxCompressedAC3FrameSize); // temporary buffer
 
   int AC3length = ac3_encoder_frame(m_pEncoder, (short*)pData, buf, m_nMaxCompressedAC3FrameSize);
   nOffset += CreateAC3Bitstream(buf, AC3length, pOutData + nOffset);

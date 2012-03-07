@@ -74,10 +74,12 @@ protected:
 
 protected:
   bool m_bPassThrough;
-  BYTE* m_pRemainingInput; // buffer for data left over from previous PutSample() call
-  int m_cbRemainingInput; // valid byte count in above buffer
-  int m_nFrameSize; // uncompressed size in bytes, based on input format
+  BYTE* m_pRemainingInput;  // buffer for data left over from previous PutSample() call
+  int m_cbRemainingInput;   // valid byte count in above buffer
+  int m_nFrameSize;         // uncompressed size in bytes, based on input format
+  
   REFERENCE_TIME m_rtInSampleTime; 
+  REFERENCE_TIME m_rtNextIncomingSampleTime;
 
   int m_nBitRate;
   AC3CodecContext* m_pEncoder;

@@ -213,7 +213,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   // Detect discontinuity in stream timeline
   if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
   {
-    Log("CSampleRateConverter - stream discontinuity: %6.3f", (m_rtNextIncomingSampleTime - rtStart) / 10000000.0);
+    Log("CSampleRateConverter - stream discontinuity: %6.3f", (rtStart - m_rtNextIncomingSampleTime) / 10000000.0);
 
     m_rtInSampleTime = rtStart;
 
