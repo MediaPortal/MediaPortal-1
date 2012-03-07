@@ -637,6 +637,8 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
   if (m_pSubtitlePin) 
     m_pSubtitlePin->SetRunningStatus(true);
 	
+  if (m_pVideoPin)
+    m_pVideoPin->SetRunningStatus(true);
   // Set our StreamTime Reference offset to zero
   HRESULT hr = CSource::Run(tStart);
 

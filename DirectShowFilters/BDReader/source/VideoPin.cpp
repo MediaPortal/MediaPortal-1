@@ -847,3 +847,9 @@ void CVideoPin::LogMediaType(AM_MEDIA_TYPE* pmt)
     }
   }
 }
+
+void CVideoPin::SetRunningStatus(bool bOnOff)
+{
+  if (bOnOff)
+    m_bInitDuration = true;
+}
