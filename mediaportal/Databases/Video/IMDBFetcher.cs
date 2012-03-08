@@ -696,7 +696,8 @@ namespace MediaPortal.Video.Database
       string sql = string.Format("update Actors set IMDBActorId='{0}' where idActor ={1}",
                                   _imdbActor.IMDBActorID,
                                   _actorId);
-      VideoDatabase.ExecuteSql(sql);
+      bool error = false;
+      VideoDatabase.ExecuteSql(sql, out error);
       
       VideoDatabase.SetActorInfo(_actorId, _imdbActor);
       

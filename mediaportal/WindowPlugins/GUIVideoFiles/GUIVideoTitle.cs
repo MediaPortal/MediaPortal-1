@@ -667,12 +667,12 @@ namespace MediaPortal.GUI.Video
       if (_searchMovie)
       {
         string sql = "select * from movieinfo where strTitle like '%" + _searchMovieString + "%' order by strTitle asc";
-        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
       }
       else if (_searchActor && handler.CurrentLevelWhere != "title")
       {
         string sql = "select * from actors where strActor like '%" + _searchActorString + "%' order by strActor asc";
-        VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false);
       }
       else
       {
@@ -799,10 +799,18 @@ namespace MediaPortal.GUI.Video
           SetGenreThumbs(itemlist);
           SelectItem();
         }
+
+        if (handler.CurrentLevelWhere.ToLower() == "user groups")
+        {
+          SetUserGroupsThumbs(itemlist);
+          SelectItem();
+        }
+
         else if (handler.CurrentLevelWhere.ToLower() == "actor")
         {
           SetActorThumbs(itemlist);
         }
+
         else if (handler.CurrentLevelWhere.ToLower() == "year")
         {
           SetYearThumbs(itemlist);
@@ -953,6 +961,20 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
+    protected void SetUserGroupsThumbs(ArrayList itemlist)
+    {
+      foreach (GUIListItem item in itemlist)
+      {
+        // get the genre somewhere since the label isn't set yet.
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        if (movie != null)
+        {
+          string usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieUserGroups, movie.SingleUserGroup);
+          SetItemThumb(item, usergroupCover);
+        }
+      }
+    }
     
     protected void SetActorThumbs(ArrayList itemlist)
     {
@@ -1099,7 +1121,7 @@ namespace MediaPortal.GUI.Video
     {
       if (listItem.Label != "..")
       {
-        switch (handler.CurrentLevelWhere.ToLower())
+        switch (handler.CurrentLevelWhere.ToLowerInvariant())
         {
           case "title":
             listItem.IconImageBig = "defaultVideoBig.png";
@@ -1117,6 +1139,12 @@ namespace MediaPortal.GUI.Video
             listItem.IconImageBig = "defaultGenreBig.png";
             listItem.IconImage = "defaultGenre.png";
             listItem.ThumbnailImage = "defaultGenreBig.png";
+            break;
+
+          case "user groups":
+            //listItem.IconImageBig = "defaultGenreBig.png";
+            //listItem.IconImage = "defaultGenre.png";
+            //listItem.ThumbnailImage = "defaultGenreBig.png";
             break;
 
           case "year":
@@ -1653,6 +1681,12 @@ namespace MediaPortal.GUI.Video
             case "genre":
               m_history.Set(facadeLayout.SelectedListItem.Label, view);
               VideoDatabase.GetMoviesByGenre(facadeLayout.SelectedListItem.Label, ref mList);
+              GetRandomMovieId(mList);
+              break;
+
+            case "user groups":
+              m_history.Set(facadeLayout.SelectedListItem.Label, view);
+              VideoDatabase.GetMoviesByUserGroup(facadeLayout.SelectedListItem.Label, ref mList);
               GetRandomMovieId(mList);
               break;
 

@@ -1029,7 +1029,10 @@
     <String id="1261">No GrabberIndexFile found.</String>
     <String id="1262">Update Grabber scripts</String>
     <String id="1263">Set default Grabber script</String>
-		<String id="1264">Update Media info</String>
+    <String id="1264">Update Media info</String>
+		<String id="1265">User groups</String>
+		<String id="1266">Watched</String>
+		<String id="1267">Unwatched</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>

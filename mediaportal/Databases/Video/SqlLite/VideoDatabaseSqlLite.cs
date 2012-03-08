@@ -247,6 +247,18 @@ namespace MediaPortal.Video.Database
           DatabaseUtility.AddTable(m_db, "IMDBmovies",
                                    "CREATE TABLE IMDBmovies ( idIMDB text, idTmdb text, strPlot text, strCast text, strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, mpaa text)");
         }
+        // UserGroups table
+        if (DatabaseUtility.TableExists(m_db, "usergroup") == false)
+        {
+          DatabaseUtility.AddTable(m_db, "usergroup",
+                               "CREATE TABLE usergroup ( idGroup integer primary key, strGroup text, strRule text)");
+        }
+        // UserGroups movie links table
+        if (DatabaseUtility.TableExists(m_db, "usergrouplinkmovie") == false)
+        {
+          DatabaseUtility.AddTable(m_db, "usergrouplinkmovie",
+                               "CREATE TABLE usergrouplinkmovie ( idGroup integer, idMovie integer)");
+        }
       }
 
       catch (Exception ex)
@@ -432,6 +444,10 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
       DatabaseUtility.AddTable(m_db, "genrelinkmovie",
                                "CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)");
+      DatabaseUtility.AddTable(m_db, "usergroup",
+                               "CREATE TABLE usergroup ( idGroup integer primary key, strGroup text, strRule text)");
+      DatabaseUtility.AddTable(m_db, "usergrouplinkmovie",
+                               "CREATE TABLE usergrouplinkmovie ( idGroup integer, idMovie integer)");
       DatabaseUtility.AddTable(m_db, "movie",
                                "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool, timeswatched integer, iduration integer)");
       DatabaseUtility.AddTable(m_db, "movieinfo",
@@ -1161,6 +1177,288 @@ namespace MediaPortal.Video.Database
           return;
         }
         string strSQL = String.Format("delete from genrelinkmovie where idMovie={0}", lMovieId);
+        m_db.Execute(strSQL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    #endregion
+
+    #region UserGroups
+
+    public int AddUserGroup(string strUserGroup1)
+    {
+      try
+      {
+        string strUserGroup = strUserGroup1.Trim();
+        DatabaseUtility.RemoveInvalidChars(ref strUserGroup);
+
+        if (null == m_db)
+        {
+          return -1;
+        }
+        string strSQL = "select * from usergroup where strGroup like '";
+        strSQL += strUserGroup;
+        strSQL += "'";
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        
+        if (results.Rows.Count == 0)
+        {
+          // doesnt exists, add it
+          strSQL = "insert into usergroup (idGroup, strGroup) values( NULL, '";
+          strSQL += strUserGroup;
+          strSQL += "')";
+          m_db.Execute(strSQL);
+          int lUserGroupId = m_db.LastInsertID();
+          return lUserGroupId;
+        }
+        else
+        {
+          int lUserGroupId;
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out lUserGroupId);
+          return lUserGroupId;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return -1;
+    }
+
+    public void AddUserGroupRuleByGroupId(int groupId, string rule)
+    {
+      try
+      {
+        DatabaseUtility.RemoveInvalidChars(ref rule);
+
+        if (null == m_db)
+        {
+          return;
+        }
+
+        string strSQL = String.Format("update usergroup set strRule='{0}' where idGroup={1}", rule, groupId);
+        m_db.Execute(strSQL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void AddUserGroupRuleByGroupName(string groupName, string rule)
+    {
+      try
+      {
+        DatabaseUtility.RemoveInvalidChars(ref rule);
+
+        if (null == m_db)
+        {
+          return;
+        }
+
+        string strSQL = String.Format("update usergroup set strRule='{0}' where strGroup like '{1}'", rule, groupName);
+        m_db.Execute(strSQL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void GetUserGroups(ArrayList userGroups)
+    {
+      if (m_db == null)
+      {
+        return;
+      }
+      try
+      {
+        userGroups.Clear();
+        SQLiteResultSet results = m_db.Execute("select * from usergroup order by strGroup");
+        if (results.Rows.Count == 0)
+        {
+          return;
+        }
+        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        {
+          userGroups.Add(DatabaseUtility.Get(results, iRow, "strGroup"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void GetMovieUserGroups(int movieId, ArrayList userGroups)
+    {
+      if (m_db == null)
+      {
+        return;
+      }
+      try
+      {
+        userGroups.Clear();
+        string strSQL = String.Format("select idGroup from usergrouplinkmovie where idMovie={0}", movieId);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        
+        if (results.Rows.Count == 0)
+        {
+          return;
+        }
+        
+        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        {
+          int groupId = Convert.ToInt32(DatabaseUtility.Get(results, iRow, "idGroup"));
+          strSQL = String.Format("select strGroup from usergroup where idGroup = {0}", groupId);
+          SQLiteResultSet resultsGroup = m_db.Execute(strSQL);
+          
+          if (resultsGroup.Rows.Count > 0)
+          {
+            userGroups.Add(DatabaseUtility.Get(resultsGroup, 0, "strGroup"));
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public string GetUserGroupRule(string group)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return string.Empty;
+        }
+        string strSQL = String.Format("SELECT strRule from usergroup WHERE strGroup like '{0}'", group);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        
+        if (results.Rows.Count != 0)
+        {
+          return DatabaseUtility.Get(results, 0, "strRule");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return string.Empty;
+    }
+
+    public void AddUserGroupToMovie(int lMovieId, int lUserGroupId)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+        string strSQL = String.Format("select * from usergrouplinkmovie where idGroup={0} and idMovie={1}", lUserGroupId,
+                                      lMovieId);
+
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          // doesnt exists, add it
+          strSQL = String.Format("insert into usergrouplinkmovie (idGroup, idMovie) values( {0},{1})", lUserGroupId, lMovieId);
+          m_db.Execute(strSQL);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void RemoveUserGroupFromMovie(int lMovieId, int lUserGroupId)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+        string strSQL = String.Format("delete from usergrouplinkmovie where idGroup={0} and idMovie={1}", lUserGroupId,
+                                      lMovieId);
+
+        m_db.Execute(strSQL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void DeleteUserGroup(string userGroup)
+    {
+      try
+      {
+        string userGroupFiltered = userGroup;
+        DatabaseUtility.RemoveInvalidChars(ref userGroupFiltered);
+        string sql = String.Format("select * from usergroup where strGroup like '{0}'", userGroupFiltered);
+        SQLiteResultSet results = m_db.Execute(sql);
+        if (results.Rows.Count == 0)
+        {
+          return;
+        }
+
+        int idUserGroup;
+        Int32.TryParse(DatabaseUtility.Get(results, 0, "idGroup"), out idUserGroup);
+        m_db.Execute(sql);
+
+        m_db.Execute(String.Format("delete from usergrouplinkmovie where idGroup={0}", idUserGroup));
+        m_db.Execute(String.Format("delete from usergroup where idGroup={0}", idUserGroup));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void RemoveUserGroupsForMovie(int lMovieId)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+        string strSQL = String.Format("delete from usergrouplinkmovie where idMovie={0}", lMovieId);
+        m_db.Execute(strSQL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void RemoveUserGroupRule(string groupName)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+        string strSQL = String.Format("update usergroup set strRule='' where strGroup like '{0}'", groupName);
         m_db.Execute(strSQL);
       }
       catch (Exception ex)
@@ -2770,6 +3068,75 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    public void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies)
+    {
+      try
+      {
+        string strUserGroup = strUserGroup1;
+        DatabaseUtility.RemoveInvalidChars(ref strUserGroup);
+
+        movies.Clear();
+        if (null == m_db)
+        {
+          return;
+        }
+        string strSQL = String.Format(
+          "select * from usergrouplinkmovie,usergroup,movie,movieinfo,actors,path where path.idpath=movie.idpath and usergrouplinkmovie.idGroup=usergroup.idGroup and usergrouplinkmovie.idmovie=movie.idmovie and movieinfo.idmovie=movie.idmovie and usergroup.strGroup='{0}' and movieinfo.iddirector=actors.idActor",
+          strUserGroup);
+
+        SQLiteResultSet results = m_db.Execute(strSQL);
+        if (results.Rows.Count == 0)
+        {
+          return;
+        }
+        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        {
+          IMDBMovie details = new IMDBMovie();
+          details.Rating = (float)Double.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"));
+          if (details.Rating > 10.0f)
+          {
+            details.Rating /= 10.0f;
+          }
+          details.Director = DatabaseUtility.Get(results, iRow, "movieinfo.strDirector");
+          details.WritingCredits = DatabaseUtility.Get(results, iRow, "movieinfo.strCredits");
+          details.TagLine = DatabaseUtility.Get(results, iRow, "movieinfo.strTagLine");
+          details.PlotOutline = DatabaseUtility.Get(results, iRow, "movieinfo.strPlotOutline");
+          details.Plot = DatabaseUtility.Get(results, iRow, "movieinfo.strPlot");
+          // Added user review
+          details.UserReview = DatabaseUtility.Get(results, iRow, "movieinfo.strUserReview");
+          details.Votes = DatabaseUtility.Get(results, iRow, "movieinfo.strVotes");
+          details.Cast = DatabaseUtility.Get(results, iRow, "movieinfo.strCast");
+          details.Year = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iYear"));
+          details.Genre = DatabaseUtility.Get(results, iRow, "movieinfo.strGenre").Trim();
+          details.ThumbURL = DatabaseUtility.Get(results, iRow, "movieinfo.strPictureURL");
+          // Fanart
+          details.FanartURL = DatabaseUtility.Get(results, iRow, "movieinfo.strFanartURL");
+          // Date added
+          details.DateAdded = DatabaseUtility.Get(results, iRow, "movieinfo.dateAdded");
+          // Date watched
+          details.DateWatched = DatabaseUtility.Get(results, iRow, "movieinfo.dateWatched");
+          details.Title = DatabaseUtility.Get(results, iRow, "movieinfo.strTitle");
+          details.Path = DatabaseUtility.Get(results, iRow, "path.strPath");
+          details.DVDLabel = DatabaseUtility.Get(results, iRow, "movie.discid");
+          details.IMDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.IMDBID");
+          long lMovieId = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idMovie"));
+          details.SearchString = String.Format("{0}", details.Title);
+          details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
+          details.MPARating = DatabaseUtility.Get(results, 0, "movieinfo.mpaa");
+          details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
+          details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
+          details.ID = (int)lMovieId;
+          details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
+          movies.Add(details);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
     // Changed - added user review
     public void GetMoviesByActor(string strActor1, ref ArrayList movies)
     {
@@ -2967,7 +3334,7 @@ namespace MediaPortal.Video.Database
 
     // Changed - added user review
     public void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable,
-                                  bool genreTable)
+                                  bool genreTable, bool usergroupTable)
     {
       movies = new ArrayList();
       try
@@ -2992,6 +3359,11 @@ namespace MediaPortal.Video.Database
           {
             movie.SingleGenre = fields.fields[1];
             movie.GenreID = (int)Math.Floor(0.5d + Double.Parse(fields.fields[0]));
+          }
+          if (usergroupTable && !movieinfoTable)
+          {
+            movie.SingleUserGroup = fields.fields[1];
+            movie.UserGroupID = (int)Math.Floor(0.5d + Double.Parse(fields.fields[0]));
           }
           if (movieinfoTable)
           {
@@ -3539,21 +3911,55 @@ namespace MediaPortal.Video.Database
 
     #endregion
 
-    public void ExecuteSQL (string strSql)
+    public void ExecuteSQL (string strSql, out bool error)
     {
+      error = false;
+      
       try
       {
         if (m_db == null)
         {
           return;
         }
+        
         m_db.Execute(strSql);
       }
       catch (Exception ex)
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        error = true;
         Open();
       }
+      return;
+    }
+
+    public ArrayList ExecuteRuleSQL(string strSql, string fieldName, out bool error)
+    {
+      ArrayList values = new ArrayList();
+      error = false;
+
+      try
+      {
+        if (m_db == null)
+        {
+          return values;
+        }
+
+        SQLiteResultSet results = m_db.Execute(strSql);
+
+        for (int iRow = 0; iRow < results.Rows.Count; iRow++)
+        {
+          values.Add(DatabaseUtility.Get(results, iRow, fieldName));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        error = true;
+        Open();
+      }
+      values.Sort();
+      return values;
     }
 
     public string DatabaseName

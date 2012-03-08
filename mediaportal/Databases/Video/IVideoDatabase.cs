@@ -41,6 +41,19 @@ namespace MediaPortal.Video.Database
     void AddGenreToMovie(int lMovieId, int lGenreId);
     void DeleteGenre(string genre);
     void RemoveGenresForMovie(int lMovieId);
+
+    int AddUserGroup(string strUserGroup1);
+    void GetUserGroups(ArrayList userGroups);
+    void GetMovieUserGroups(int movieId, ArrayList userGroups);
+    string GetUserGroupRule(string group);
+    void AddUserGroupRuleByGroupId(int groupId, string rule);
+    void AddUserGroupRuleByGroupName(string groupName, string rule);
+    void AddUserGroupToMovie(int lMovieId, int lUserGroupId);
+    void RemoveUserGroupFromMovie(int lMovieId, int lUserGroupId);
+    void DeleteUserGroup(string userGroup);
+    void RemoveUserGroupsForMovie(int lMovieId);
+    void RemoveUserGroupRule(string groupName);
+
     int AddActor(string strActorImdbId, string strActorName);
     void GetActors(ArrayList actors);
     // Actor by name
@@ -88,10 +101,11 @@ namespace MediaPortal.Video.Database
     void SetDVDLabel(int lMovieId, string strDVDLabel1);
     void GetYears(ArrayList years);
     void GetMoviesByGenre(string strGenre1, ref ArrayList movies);
+    void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies);
     void GetMoviesByActor(string strActor1, ref ArrayList movies);
     void GetMoviesByYear(string strYear, ref ArrayList movies);
     void GetMoviesByPath(string strPath1, ref ArrayList movies);
-    void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable);
+    void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable);
     void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel);
     string GetDVDLabel(string strFile);
     void SetActorInfo(int idActor, IMDBActor actor);
@@ -104,7 +118,8 @@ namespace MediaPortal.Video.Database
     void RemoveExpiredVideoThumbBlacklistEntries();
     void RemoveAllVideoThumbBlacklistEntries();
     SQLiteResultSet GetResults(string sql);
-    void ExecuteSQL (string sql);
+    void ExecuteSQL (string sql, out bool error);
+    ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error);
     string DatabaseName { get; }
     void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh);
   }

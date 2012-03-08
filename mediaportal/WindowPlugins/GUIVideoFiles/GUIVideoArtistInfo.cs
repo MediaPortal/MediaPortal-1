@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.Video
         // Show in list if user have that movie in collection (played property = true)
         ArrayList movies = new ArrayList();
         string sql = "SELECT * FROM movieinfo WHERE IMDBID = '" + _currentActor[i].MovieImdbID + "'";
-        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false);
+        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
 
         if (movies.Count > 0) // We have a movie, color normal or color played for watched
         {
@@ -457,13 +457,13 @@ namespace MediaPortal.GUI.Video
         GUIPropertyManager.SetProperty("#Actor.MovieImage", item.ThumbnailImage);
         GUIPropertyManager.SetProperty("#imdbnumber", ListItemMovieInfo(item).MovieImdbID);
         GUIPropertyManager.SetProperty("#Actor.MovieExtraDetails", GUILocalizeStrings.Get(199) + " " +
-                                                                   ListItemMovieInfo(item).MovieCredits + " : : : " +
+                                                                   ListItemMovieInfo(item).MovieCredits.Replace(" /", ",") + " : : : " +
                                                                    GUILocalizeStrings.Get(174) + " " +
-                                                                   ListItemMovieInfo(item).MovieGenre + " : : : " +
+                                                                   ListItemMovieInfo(item).MovieGenre.Replace(" /", ",") + " : : : " +
                                                                    GUILocalizeStrings.Get(204) + " " +
                                                                    ListItemMovieInfo(item).MovieMpaaRating + " : : : " +
                                                                    GUILocalizeStrings.Get(344) + ": " +
-                                                                   ListItemMovieInfo(item).MovieCast);
+                                                                   ListItemMovieInfo(item).MovieCast.Replace(" /", ","));
         GUIPropertyManager.SetProperty("#Actor.MovieTitle", ListItemMovieInfo(item).MovieTitle);
         // For fanart handler
         if (item.IsPlayed)
@@ -743,7 +743,8 @@ namespace MediaPortal.GUI.Video
                                     columnName,
                                     columnData,
                                     ListItemMovieInfo(item).MovieImdbID);
-        VideoDatabase.ExecuteSql(sql);
+        bool error = false;
+        VideoDatabase.ExecuteSql(sql, out error);
       }
       catch (Exception) {}
     }

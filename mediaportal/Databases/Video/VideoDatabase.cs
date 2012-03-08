@@ -131,6 +131,61 @@ namespace MediaPortal.Video.Database
       _database.RemoveGenresForMovie(lMovieId);
     }
 
+    public static int AddUserGroup(string strUserGroup1)
+    {
+      return _database.AddUserGroup(strUserGroup1);
+    }
+
+    public static void GetUserGroups(ArrayList userGroups)
+    {
+      _database.GetUserGroups(userGroups);
+    }
+
+    public static void GetMovieUserGroups(int movieId, ArrayList userGroups)
+    {
+      _database.GetMovieUserGroups(movieId, userGroups);
+    }
+    
+    public static void AddUserGroupToMovie(int lMovieId, int lUserGroupId)
+    {
+      _database.AddUserGroupToMovie(lMovieId, lUserGroupId);
+    }
+
+    public static void AddUserGroupRuleByGroupId(int groupId, string rule)
+    {
+      _database.AddUserGroupRuleByGroupId(groupId, rule);
+    }
+
+    public static void AddUserGroupRuleByGroupName(string groupName, string rule)
+    {
+      _database.AddUserGroupRuleByGroupName(groupName, rule);
+    }
+
+    public static string GetUserGroupRule(string group)
+    {
+      return _database.GetUserGroupRule(group);
+    }
+
+    public static void RemoveUserGroupFromMovie(int lMovieId, int lUserGroupId)
+    {
+      _database.RemoveUserGroupFromMovie(lMovieId, lUserGroupId);
+    }
+
+    public static void DeleteUserGroup(string userGroup)
+    {
+      _database.DeleteUserGroup(userGroup);
+    }
+
+    public static void RemoveUserGroupsForMovie(int lMovieId)
+    {
+      _database.RemoveUserGroupsForMovie(lMovieId);
+    }
+
+    public static void RemoveUserGroupRule(string groupName)
+    {
+      _database.RemoveUserGroupRule(groupName);
+    }
+
     public static int AddActor(string strActorImdbId, string strActorName)
     {
       return _database.AddActor(strActorImdbId, strActorName);
@@ -350,6 +405,10 @@ namespace MediaPortal.Video.Database
       _database.GetMoviesByGenre(strGenre1, ref movies);
     }
 
+    public static void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies)
+    {
+      _database.GetMoviesByUserGroup(strUserGroup1, ref movies);
+    }
     public static void GetMoviesByActor(string strActor1, ref ArrayList movies)
     {
       _database.GetMoviesByActor(strActor1, ref movies);
@@ -366,9 +425,9 @@ namespace MediaPortal.Video.Database
     }
 
     public static void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable,
-                                         bool genreTable)
+                                         bool genreTable, bool usergroupTable)
     {
-      _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable);
+      _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable);
     }
 
     public static void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
@@ -431,9 +490,14 @@ namespace MediaPortal.Video.Database
       _database.RemoveAllVideoThumbBlacklistEntries();
     }
 
-    public static void  ExecuteSql (string sql)
+    public static void  ExecuteSql (string sql, out bool error)
     {
-      _database.ExecuteSQL(sql);
+      _database.ExecuteSQL(sql, out error);
+    }
+
+    public static ArrayList ExecuteRuleSql(string sql, string fieldName, out bool error)
+    {
+      return _database.ExecuteRuleSQL(sql, fieldName, out error);
     }
   }
 }

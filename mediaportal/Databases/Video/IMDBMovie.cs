@@ -36,7 +36,8 @@ namespace MediaPortal.Video.Database
     private int _mID = -1;
     private string _mStrDirector = string.Empty;
     private string _mStrWritingCredits = string.Empty;
-    private string _mStrGenre = string.Empty;
+    private string _mStrSingleGenre = string.Empty;
+    private string _mStrSingleUserGroup = string.Empty;
     private string _mStrTagLine = string.Empty;
     private string _mStrPlotOutline = string.Empty;
     private string _mStrPlot = string.Empty;
@@ -59,6 +60,7 @@ namespace MediaPortal.Video.Database
     private int _mIWatched;
     private int _mActorID = -1;
     private int _mGenreID = -1;
+    private int _mUserGroupID = -1;
     private string _mStrActor = string.Empty;
     private string _mStrgenre = string.Empty;
     // Movie DirectorID
@@ -104,6 +106,12 @@ namespace MediaPortal.Video.Database
     {
       get { return _mGenreID; }
       set { _mGenreID = value; }
+    }
+
+    public int UserGroupID
+    {
+      get { return _mUserGroupID; }
+      set { _mUserGroupID = value; }
     }
 
     // Added DirectorID
@@ -157,8 +165,14 @@ namespace MediaPortal.Video.Database
 
     public string SingleGenre
     {
-      get { return _mStrGenre; }
-      set { _mStrGenre = value; }
+      get { return _mStrSingleGenre; }
+      set { _mStrSingleGenre = value; }
+    }
+
+    public string SingleUserGroup
+    {
+      get { return _mStrSingleUserGroup; }
+      set { _mStrSingleUserGroup = value; }
     }
 
     public string TagLine
@@ -309,7 +323,8 @@ namespace MediaPortal.Video.Database
       }
       _mStrDirector = string.Empty;
       _mStrWritingCredits = string.Empty;
-      _mStrGenre = string.Empty;
+      _mStrSingleGenre = string.Empty;
+      _mStrSingleUserGroup = string.Empty;
       _mStrgenre = string.Empty;
       _mStrTagLine = string.Empty;
       _mStrPlotOutline = string.Empty;
@@ -347,7 +362,7 @@ namespace MediaPortal.Video.Database
       string strThumb = GetStrThumb();
 
       GUIPropertyManager.SetProperty("#director", Director);
-      GUIPropertyManager.SetProperty("#genre", Genre);
+      GUIPropertyManager.SetProperty("#genre", Genre.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#cast", Cast);
       GUIPropertyManager.SetProperty("#dvdlabel", DVDLabel);
       GUIPropertyManager.SetProperty("#imdbnumber", IMDBNumber);
@@ -358,12 +373,12 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
       GUIPropertyManager.SetProperty("#tagline", TagLine);
       GUIPropertyManager.SetProperty("#votes", Votes);
-      GUIPropertyManager.SetProperty("#credits", WritingCredits);
+      GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
-      GUIPropertyManager.SetProperty("#studios", Studios);
+      GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
 
       if (ID == -1)
       {

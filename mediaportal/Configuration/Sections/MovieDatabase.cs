@@ -407,6 +407,9 @@ namespace MediaPortal.Configuration.Sections
         // Clear Genres listboxes
         listViewAllGenres.Items.Clear();
         listViewGenres.Items.Clear();
+        //Cleat Groups listboxes
+        lvUserGroups.Items.Clear();
+        lvMovieUserGroups.Items.Clear();
         MessageBox.Show("Video database has been cleared", "Video Database", MessageBoxButtons.OK,
                         MessageBoxIcon.Exclamation);
       }
@@ -684,6 +687,7 @@ namespace MediaPortal.Configuration.Sections
       movies.Sort(new MovieTitleComparer());
       int i = 0;
       int index = 0;
+      
       foreach (IMDBMovie movie in movies)
       {
         ComboBoxItemMovie newItem = new ComboBoxItemMovie(movie.Title, movie);
@@ -709,7 +713,8 @@ namespace MediaPortal.Configuration.Sections
       listViewMovieActors.BeginUpdate();
       listViewGenres.BeginUpdate();
       listViewAllGenres.BeginUpdate();
-      //listViewAllActors.BeginUpdate();
+      lvUserGroups.BeginUpdate();
+      lvMovieUserGroups.BeginUpdate();
       listViewFiles.BeginUpdate();
 
       tbDiscNr.Text = (movie.DVDLabel.Length > 4
@@ -766,26 +771,36 @@ namespace MediaPortal.Configuration.Sections
       {
         cbWatched.Checked = false;
       }
-
+      // Movie cover picture
       if (pictureBoxCover.Image != null)
       {
         pictureBoxCover.Image.Dispose();
         pictureBoxCover.Image = null;
       }
-
-      //foreach (ListViewItem item in listViewMovieActors.Items)
-      //{
-      //  listViewAllActors.Items.Add(item.Text);
-      //}
-
+      // Genres
       foreach (ListViewItem item in listViewGenres.Items)
       {
         listViewAllGenres.Items.Add(item.Text);
       }
+      // User groups
+      lvUserGroups.Items.Clear();
+      ArrayList userGroups = new ArrayList();
+      VideoDatabase.GetUserGroups(userGroups);
+
+      foreach (string userGroup in userGroups)
+      {
+        ListViewItem item = new ListViewItem();
+        item.Text = userGroup;
+        lvUserGroups.Items.Add(item);
+      }
+
+      lvUserGroups.Sort();
 
       listViewMovieActors.Items.Clear();
       listViewGenres.Items.Clear();
+      lvMovieUserGroups.Items.Clear();
       listViewFiles.Items.Clear();
+
       if (_clearListBox)
       {
         coversListBox.Items.Clear();
@@ -852,8 +867,27 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
+        // Movie user groups
+        ArrayList movieGroups = new ArrayList();
+        VideoDatabase.GetMovieUserGroups(movie.ID, movieGroups);
+        
+        foreach (string strGroup in movieGroups)
+        {
+          String strCurrentUserGroup = strGroup.Trim();
+          lvMovieUserGroups.Items.Add(strCurrentUserGroup);
+
+          for (int i = lvUserGroups.Items.Count - 1; i >= 0; --i)
+          {
+            if (lvUserGroups.Items[i].Text == strCurrentUserGroup)
+            {
+              lvUserGroups.Items.RemoveAt(i);
+              break;
+            }
+          }
+        }
 
         listViewGenres.Sort();
+        lvMovieUserGroups.Sort();
         ArrayList filenames = new ArrayList();
         VideoDatabase.GetFiles(movie.ID, ref filenames);
         foreach (string filename in filenames)
@@ -886,10 +920,12 @@ namespace MediaPortal.Configuration.Sections
 
         listViewAllGenres.Sort();
       }
-
+      
       listViewMovieActors.EndUpdate();
       listViewGenres.EndUpdate();
       listViewAllGenres.EndUpdate();
+      lvMovieUserGroups.EndUpdate();
+      lvUserGroups.EndUpdate();
       listViewFiles.EndUpdate();
     }
 
@@ -1106,18 +1142,90 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
+
+      foreach (ListViewItem item in listViewAllGenres.Items)
+      {
+        if (item.Text.ToUpperInvariant() == textBoxNewGenre.Text.ToUpperInvariant())
+        {
+          textBoxNewGenre.Text = string.Empty;
+          return;
+        }
+      }
+
       VideoDatabase.AddGenre(textBoxNewGenre.Text);
       listViewAllGenres.Items.Add(textBoxNewGenre.Text);
+      textBoxNewGenre.Text = string.Empty;
     }
 
-    /*
-        private void buttonNewMovie_Click(object sender, EventArgs e)
+    private void btAddUserGroup_Click(object sender, EventArgs e)
+    {
+      if (tbUserGroup.Text.Length == 0)
+      {
+        tbUserGroup.Text = string.Empty;
+        return;
+      }
+
+      foreach (ListViewItem item in lvUserGroups.Items)
+      {
+        if (item.Text.ToUpperInvariant() == tbUserGroup.Text.ToUpperInvariant())
         {
-          cbTitle.SelectedItem = null;
-          IMDBMovie details = new IMDBMovie();
-          UpdateEdit(details);
+          return;
         }
-    */
+      }
+
+      VideoDatabase.AddUserGroup(tbUserGroup.Text);
+      lvUserGroups.Items.Add(tbUserGroup.Text);
+      tbUserGroup.Text = string.Empty;
+    }
+
+    private void btRemoveUserGroup_Click(object sender, EventArgs e)
+    {
+      if (
+        MessageBox.Show("Are you sure you want to delete the selected groups?", "Are you sure?", MessageBoxButtons.YesNo) ==
+        DialogResult.Yes)
+      {
+        for (int i = lvUserGroups.SelectedItems.Count - 1; i >= 0; --i)
+        {
+          ListViewItem listItem = lvUserGroups.SelectedItems[i];
+          VideoDatabase.DeleteUserGroup(listItem.Text);
+          lvUserGroups.Items.Remove(listItem);
+        }
+      }
+    }
+
+    private void btAddUserGroupToMovie_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < lvUserGroups.SelectedItems.Count; ++i)
+      {
+        ListViewItem listItem = lvUserGroups.SelectedItems[i];
+        lvMovieUserGroups.Items.Add(listItem.Text);
+        int iGroup = VideoDatabase.AddUserGroup(listItem.Text);
+        VideoDatabase.AddUserGroupToMovie(CurrentMovie.ID, iGroup);
+      }
+
+      for (int i = lvUserGroups.SelectedItems.Count - 1; i >= 0; i--)
+      {
+        ListViewItem listItem = lvUserGroups.SelectedItems[i];
+        lvUserGroups.Items.Remove(listItem);
+      }
+    }
+
+    private void btRemoveUserGroupFromMovie_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < lvMovieUserGroups.SelectedItems.Count; ++i)
+      {
+        ListViewItem listItem = lvMovieUserGroups.SelectedItems[i];
+        lvUserGroups.Items.Add(listItem.Text);
+        int iGroup = VideoDatabase.AddUserGroup(listItem.Text);
+        VideoDatabase.RemoveUserGroupFromMovie(CurrentMovie.ID, iGroup);
+      }
+
+      for (int i = lvMovieUserGroups.SelectedItems.Count - 1; i >= 0; --i)
+      {
+        ListViewItem listItem = lvMovieUserGroups.SelectedItems[i];
+        lvMovieUserGroups.Items.Remove(listItem);
+      }
+    }
 
     // Changed - FanArt - refresh movie by tt number
     private void buttonLookupMovie_Click(object sender, EventArgs e)
@@ -1783,6 +1891,7 @@ namespace MediaPortal.Configuration.Sections
           movie.Votes = tbVotes.Text;
           movie.PlotOutline = tbPlotOutline.Text;
         }
+        
         foreach (ListViewItem item in listViewGenres.Items)
         {
           if (movie.Genre == string.Empty)
@@ -1794,7 +1903,7 @@ namespace MediaPortal.Configuration.Sections
             movie.Genre += " / " + item.Text;
           }
         }
-
+        
         foreach (ListViewItem item in listViewMovieActors.Items)
         {
           string actor = item.SubItems[0].Text;
@@ -3534,7 +3643,7 @@ namespace MediaPortal.Configuration.Sections
           // Changed method 08.08.2010, reported it works fast with 500+ movies in collection
           ArrayList movies = new ArrayList();
           string sql = "SELECT * FROM movieinfo WHERE IMDBID = '" + actdetail[i].MovieImdbID + "'";
-          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false);
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
 
           if (movies.Count > 0)
           {
@@ -3926,6 +4035,23 @@ namespace MediaPortal.Configuration.Sections
     private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
     {
       ShowHide();
+
+      if (tabControl2.SelectedTab == tabPageUserGroupRules)
+      {
+        ArrayList userGroups = new ArrayList();
+        VideoDatabase.GetUserGroups(userGroups);
+        cbUserGroups.Items.Clear();
+        cbUserGroupFieldName.Items.Clear();
+        cbUserGroupFieldValues.Items.Clear();
+        cbUserGroupFieldOperand.Items.Clear();
+        tbUserGroupFieldValue.Text = string.Empty;
+        tbUserGroupRuleSyntax.Text = string.Empty;
+
+        foreach (string userGroup in userGroups)
+        {
+          cbUserGroups.Items.Add(userGroup);
+        }
+      }
     }
 
     // Progress bar advance
@@ -4052,7 +4178,295 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-    
+
     #endregion
+
+    private void cbUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroups.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldName.Items.Clear();
+      cbUserGroupFieldValues.Items.Clear();
+      cbUserGroupFieldOperand.Items.Clear();
+      tbUserGroupFieldValue.Text = string.Empty;
+      tbUserGroupRuleSyntax.Text = VideoDatabase.GetUserGroupRule(cbUserGroups.SelectedItem.ToString());
+      cbUserGroupType.SelectedIndex = -1;
+
+
+    }
+    
+    private void cbGroupType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupType.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldName.Items.Clear();
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          cbUserGroupFieldName.Items.Add("videoCodec");
+          cbUserGroupFieldName.Items.Add("videoResolution");
+          cbUserGroupFieldName.Items.Add("aspectRatio");
+          cbUserGroupFieldName.Items.Add("audioCodec");
+          cbUserGroupFieldName.Items.Add("audioChannels");
+          break;
+
+        case "MovieInfo":
+          cbUserGroupFieldName.Items.Add("strTitle");
+          cbUserGroupFieldName.Items.Add("strDirector");
+          break;
+
+        case "Actor":
+          cbUserGroupFieldName.Items.Add("strActor");
+          break;
+
+        case "Folder":
+          cbUserGroupFieldName.Items.Add("strPath");
+          break;
+      }
+    }
+
+    private void cbGroupFieldName_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupFieldName.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldOperand.Items.Clear();
+      cbUserGroupFieldValues.Items.Clear();
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          break;
+
+        case "MovieInfo":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          break;
+
+        case "Actor":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          break;
+
+        case "Folder":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          break;
+      }
+
+      ArrayList values = new ArrayList();
+      bool error = false;
+      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+      string sql = string.Empty;
+      
+      switch (fieldName)
+      {
+        case "videoCodec":
+        case "videoResolution":
+        case "aspectRatio":
+        case "audioCodec":
+        case "audioChannels":
+
+          sql = "SELECT DISTINCT " + fieldName + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+          
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "strTitle":
+        case "strDirector":
+          sql = "SELECT DISTINCT " + fieldName + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "strPath":
+          sql = "SELECT DISTINCT " + fieldName + " FROM path";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+      }
+    }
+
+    private void cbUserGroupFieldValues_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupFieldValues.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      tbUserGroupFieldValue.Text = cbUserGroupFieldValues.SelectedItem.ToString();
+    }
+
+    // Generate rule syntax
+    private void btGenerateRuleSyntax_Click(object sender, EventArgs e)
+    {
+      string operand = string.Empty;
+      string sql = string.Empty;
+      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+      
+      switch (cbUserGroupFieldOperand.SelectedItem.ToString())
+      {
+        case "equals":
+          operand = " = '" + tbUserGroupFieldValue.Text + "'";
+          break;
+
+        case "contains":
+          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "%'";
+          break;
+      }
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          sql =
+              "SELECT movieinfo.idMovie FROM filesmediainfo INNER JOIN files ON filesmediainfo.idFile = files.idFile INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "MovieInfo":
+          sql = "SELECT movieinfo.idMovie FROM movieinfo where " + fieldName + operand;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "Actor":
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM actors , movieinfo INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor AND actorlinkmovie.idMovie = movieinfo.idMovie WHERE " + fieldName + operand;;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "Folder":
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM path INNER JOIN files ON files.idPath = path.idPath INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+      }
+    }
+
+    // Check rule syntax
+    private void btUserGroupCheckSyntax_Click(object sender, EventArgs e)
+    {
+      bool error = false;
+
+      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+      {
+        VideoDatabase.ExecuteSql(tbUserGroupRuleSyntax.Text, out error);
+      }
+      else
+      {
+        error = true;
+      }
+
+      if (!error)
+      {
+        MessageBox.Show("Rule syntax OK!");
+      }
+      else
+      {
+        MessageBox.Show("Error in rule syntax!", "Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+      }
+    }
+
+    // Save and execute rule
+    private void btUserGroupRuleSave_Click(object sender, EventArgs e)
+    {
+      try 
+      {
+        string userGroup = cbUserGroups.SelectedItem.ToString();
+        ArrayList values = new ArrayList();
+        bool error = false;
+
+        if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+        {
+          values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+        }
+        else
+        {
+          error = true;
+        }
+        
+        if (error)
+        {
+          MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+
+        VideoDatabase.AddUserGroupRuleByGroupName(cbUserGroups.SelectedItem.ToString(), tbUserGroupRuleSyntax.Text);
+
+        if (values.Count > 0)
+        {
+          foreach (string movieId in values)
+          {
+            VideoDatabase.AddUserGroupToMovie(Convert.ToInt32(movieId), VideoDatabase.AddUserGroup(userGroup));
+          }
+
+          if (cbTitle.SelectedItem != null)
+          {
+            ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
+            UpdateEdit(item.Movie);
+          }
+        }
+      }
+      catch (Exception){}
+    }
+
+    // Delete rule
+    private void btUserGroupRuleRemove_Click(object sender, EventArgs e)
+    {
+      ArrayList values = new ArrayList();
+      bool error = false;
+
+      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+      {
+        values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+      }
+      else
+      {
+        error = true;
+      }
+
+      if (error)
+      {
+        MessageBox.Show("Error in rule syntax!","Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+        return;
+      }
+
+      if (values.Count > 0)
+      {
+        foreach (string movieId in values)
+        {
+          VideoDatabase.RemoveUserGroupsForMovie(Convert.ToInt32(movieId));
+        }
+
+        if (cbTitle.SelectedItem != null)
+        {
+          ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
+          UpdateEdit(item.Movie);
+        }
+      }
+
+      VideoDatabase.RemoveUserGroupRule(cbUserGroups.SelectedItem.ToString());
+      tbUserGroupRuleSyntax.Text = string.Empty;
+    }
   }
 }
