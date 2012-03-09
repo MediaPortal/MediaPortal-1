@@ -52,10 +52,10 @@ namespace MediaPortal.Configuration.Sections
       this.PlayerTabPg = new System.Windows.Forms.TabPage();
       this.tabControlPlayerSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageBassPlayerSettings = new System.Windows.Forms.TabPage();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.BufferingSecondsLbl = new System.Windows.Forms.Label();
       this.CrossFadeSecondsLbl = new System.Windows.Forms.Label();
       this.hScrollBarBuffering = new System.Windows.Forms.HScrollBar();
-      this.enableMixing = new System.Windows.Forms.CheckBox();
       this.hScrollBarCrossFade = new System.Windows.Forms.HScrollBar();
       this.label12 = new System.Windows.Forms.Label();
       this.GaplessPlaybackChkBox = new System.Windows.Forms.CheckBox();
@@ -64,8 +64,14 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.FadeOnStartStopChkbox = new System.Windows.Forms.CheckBox();
       this.tabPageASIOPlayerSettings = new System.Windows.Forms.TabPage();
+      this.lbBalance = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.hScrollBarBalance = new System.Windows.Forms.HScrollBar();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btAsioDeviceSettings = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPageWASAPIPLayerSettings = new System.Windows.Forms.TabPage();
+      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.soundDeviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -117,13 +123,6 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lbBalance = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.hScrollBarBalance = new System.Windows.Forms.HScrollBar();
-      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -178,10 +177,10 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlPlayerSettings.Controls.Add(this.tabPageBassPlayerSettings);
       this.tabControlPlayerSettings.Controls.Add(this.tabPageASIOPlayerSettings);
       this.tabControlPlayerSettings.Controls.Add(this.tabPageWASAPIPLayerSettings);
-      this.tabControlPlayerSettings.Location = new System.Drawing.Point(16, 129);
+      this.tabControlPlayerSettings.Location = new System.Drawing.Point(16, 109);
       this.tabControlPlayerSettings.Name = "tabControlPlayerSettings";
       this.tabControlPlayerSettings.SelectedIndex = 0;
-      this.tabControlPlayerSettings.Size = new System.Drawing.Size(432, 286);
+      this.tabControlPlayerSettings.Size = new System.Drawing.Size(432, 306);
       this.tabControlPlayerSettings.TabIndex = 14;
       // 
       // tabPageBassPlayerSettings
@@ -190,7 +189,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageBassPlayerSettings.Controls.Add(this.BufferingSecondsLbl);
       this.tabPageBassPlayerSettings.Controls.Add(this.CrossFadeSecondsLbl);
       this.tabPageBassPlayerSettings.Controls.Add(this.hScrollBarBuffering);
-      this.tabPageBassPlayerSettings.Controls.Add(this.enableMixing);
       this.tabPageBassPlayerSettings.Controls.Add(this.hScrollBarCrossFade);
       this.tabPageBassPlayerSettings.Controls.Add(this.label12);
       this.tabPageBassPlayerSettings.Controls.Add(this.GaplessPlaybackChkBox);
@@ -201,10 +199,19 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageBassPlayerSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageBassPlayerSettings.Name = "tabPageBassPlayerSettings";
       this.tabPageBassPlayerSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageBassPlayerSettings.Size = new System.Drawing.Size(424, 260);
+      this.tabPageBassPlayerSettings.Size = new System.Drawing.Size(424, 280);
       this.tabPageBassPlayerSettings.TabIndex = 0;
-      this.tabPageBassPlayerSettings.Text = "Standard BASS Player";
+      this.tabPageBassPlayerSettings.Text = "General Settings";
       this.tabPageBassPlayerSettings.UseVisualStyleBackColor = true;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(17, 18);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(188, 13);
+      this.mpLabel3.TabIndex = 14;
+      this.mpLabel3.Text = "Standard BASS Player via DirectShow";
       // 
       // BufferingSecondsLbl
       // 
@@ -239,18 +246,6 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarBuffering.Value = 5000;
       this.hScrollBarBuffering.ValueChanged += new System.EventHandler(this.hScrollBarBuffering_ValueChanged);
       // 
-      // enableMixing
-      // 
-      this.enableMixing.AutoSize = true;
-      this.enableMixing.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableMixing.Location = new System.Drawing.Point(17, 94);
-      this.enableMixing.Name = "enableMixing";
-      this.enableMixing.Size = new System.Drawing.Size(146, 17);
-      this.enableMixing.TabIndex = 13;
-      this.enableMixing.Text = "Upmix Stereo to 5.1 /  7.1";
-      this.enableMixing.UseVisualStyleBackColor = true;
-      this.enableMixing.CheckedChanged += new System.EventHandler(this.enableMixing_CheckedChanged);
-      // 
       // hScrollBarCrossFade
       // 
       this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -278,7 +273,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.GaplessPlaybackChkBox.AutoSize = true;
       this.GaplessPlaybackChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(17, 141);
+      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(17, 118);
       this.GaplessPlaybackChkBox.Name = "GaplessPlaybackChkBox";
       this.GaplessPlaybackChkBox.Size = new System.Drawing.Size(108, 17);
       this.GaplessPlaybackChkBox.TabIndex = 3;
@@ -288,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // StreamOutputLevelNud
       // 
-      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 68);
+      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 48);
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
@@ -310,7 +305,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(14, 70);
+      this.mpLabel1.Location = new System.Drawing.Point(14, 50);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(67, 13);
       this.mpLabel1.TabIndex = 0;
@@ -320,7 +315,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.FadeOnStartStopChkbox.AutoSize = true;
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 118);
+      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 84);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
       this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(97, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
@@ -338,10 +333,56 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageASIOPlayerSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageASIOPlayerSettings.Name = "tabPageASIOPlayerSettings";
       this.tabPageASIOPlayerSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageASIOPlayerSettings.Size = new System.Drawing.Size(424, 260);
+      this.tabPageASIOPlayerSettings.Size = new System.Drawing.Size(424, 280);
       this.tabPageASIOPlayerSettings.TabIndex = 1;
       this.tabPageASIOPlayerSettings.Text = "ASIO";
       this.tabPageASIOPlayerSettings.UseVisualStyleBackColor = true;
+      // 
+      // lbBalance
+      // 
+      this.lbBalance.AutoSize = true;
+      this.lbBalance.Location = new System.Drawing.Point(357, 186);
+      this.lbBalance.Name = "lbBalance";
+      this.lbBalance.Size = new System.Drawing.Size(28, 13);
+      this.lbBalance.TabIndex = 16;
+      this.lbBalance.Text = "0.00";
+      // 
+      // hScrollBarBalance
+      // 
+      this.hScrollBarBalance.Location = new System.Drawing.Point(69, 181);
+      this.hScrollBarBalance.Minimum = -100;
+      this.hScrollBarBalance.Name = "hScrollBarBalance";
+      this.hScrollBarBalance.Size = new System.Drawing.Size(262, 18);
+      this.hScrollBarBalance.TabIndex = 15;
+      this.hScrollBarBalance.ValueChanged += new System.EventHandler(this.hScrollBarBalance_ValueChanged);
+      // 
+      // mpLabel6
+      // 
+      this.mpLabel6.AutoSize = true;
+      this.mpLabel6.Location = new System.Drawing.Point(72, 218);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(282, 26);
+      this.mpLabel6.TabIndex = 14;
+      this.mpLabel6.Text = "In case of multi-channel (not stereo) the left/right positions \r\nare interleaved " +
+    "between the additional channels.";
+      // 
+      // mpLabel7
+      // 
+      this.mpLabel7.AutoSize = true;
+      this.mpLabel7.Location = new System.Drawing.Point(15, 181);
+      this.mpLabel7.Name = "mpLabel7";
+      this.mpLabel7.Size = new System.Drawing.Size(49, 13);
+      this.mpLabel7.TabIndex = 13;
+      this.mpLabel7.Text = "Balance:";
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.AutoSize = true;
+      this.mpLabel4.Location = new System.Drawing.Point(21, 20);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.Size = new System.Drawing.Size(184, 13);
+      this.mpLabel4.TabIndex = 1;
+      this.mpLabel4.Text = "Playback via BASS using ASIO driver";
       // 
       // btAsioDeviceSettings
       // 
@@ -364,6 +405,15 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageWASAPIPLayerSettings.Text = "WasAPI";
       this.tabPageWASAPIPLayerSettings.UseVisualStyleBackColor = true;
       // 
+      // mpLabel5
+      // 
+      this.mpLabel5.AutoSize = true;
+      this.mpLabel5.Location = new System.Drawing.Point(18, 22);
+      this.mpLabel5.Name = "mpLabel5";
+      this.mpLabel5.Size = new System.Drawing.Size(346, 13);
+      this.mpLabel5.TabIndex = 0;
+      this.mpLabel5.Text = "Playback via BASS using Windows Audio Session API (WasAPI) drivers";
+      // 
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -373,9 +423,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.Controls.Add(this.audioPlayerComboBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 13);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(432, 107);
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 85);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "General settings";
@@ -944,70 +994,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
       // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(17, 21);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(188, 13);
-      this.mpLabel3.TabIndex = 14;
-      this.mpLabel3.Text = "Standard BASS Player via DirectShow";
-      // 
-      // mpLabel4
-      // 
-      this.mpLabel4.AutoSize = true;
-      this.mpLabel4.Location = new System.Drawing.Point(21, 20);
-      this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(184, 13);
-      this.mpLabel4.TabIndex = 1;
-      this.mpLabel4.Text = "Playback via BASS using ASIO driver";
-      // 
-      // mpLabel5
-      // 
-      this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(18, 22);
-      this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(346, 13);
-      this.mpLabel5.TabIndex = 0;
-      this.mpLabel5.Text = "Playback via BASS using Windows Audio Session API (WasAPI) drivers";
-      // 
-      // lbBalance
-      // 
-      this.lbBalance.AutoSize = true;
-      this.lbBalance.Location = new System.Drawing.Point(357, 186);
-      this.lbBalance.Name = "lbBalance";
-      this.lbBalance.Size = new System.Drawing.Size(28, 13);
-      this.lbBalance.TabIndex = 16;
-      this.lbBalance.Text = "0.00";
-      // 
-      // hScrollBarBalance
-      // 
-      this.hScrollBarBalance.Location = new System.Drawing.Point(69, 181);
-      this.hScrollBarBalance.Minimum = -100;
-      this.hScrollBarBalance.Name = "hScrollBarBalance";
-      this.hScrollBarBalance.Size = new System.Drawing.Size(262, 18);
-      this.hScrollBarBalance.TabIndex = 15;
-      this.hScrollBarBalance.ValueChanged += new System.EventHandler(this.hScrollBarBalance_ValueChanged);
-      // 
-      // mpLabel6
-      // 
-      this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(72, 218);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(282, 26);
-      this.mpLabel6.TabIndex = 14;
-      this.mpLabel6.Text = "In case of multi-channel (not stereo) the left/right positions \r\nare interleaved " +
-    "between the additional channels.";
-      // 
-      // mpLabel7
-      // 
-      this.mpLabel7.AutoSize = true;
-      this.mpLabel7.Location = new System.Drawing.Point(15, 181);
-      this.mpLabel7.Name = "mpLabel7";
-      this.mpLabel7.Size = new System.Drawing.Size(49, 13);
-      this.mpLabel7.TabIndex = 13;
-      this.mpLabel7.Text = "Balance:";
-      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1100,7 +1086,6 @@ namespace MediaPortal.Configuration.Sections
     private Label label9;
     private MPLabel mpLabel2;
     private MPComboBox soundDeviceComboBox;
-    private CheckBox enableMixing;
     private MPGroupBox groupBoxWinampVis;
     private MPButton btWinampConfig;
     private MPGroupBox groupBoxVUMeter;

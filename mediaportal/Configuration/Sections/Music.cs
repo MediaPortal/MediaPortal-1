@@ -189,9 +189,9 @@ namespace MediaPortal.Configuration.Sections
         { }
 
         audioPlayerComboBox.SelectedIndex = audioPlayer;
-        enableMixing.Checked = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
-        #region Standard Bass Player Settings 
+        #region General Bass Player Settings 
+
         int crossFadeMS = xmlreader.GetValueAsInt("audioplayer", "crossfade", 4000);
 
         if (crossFadeMS < 0)
@@ -399,7 +399,6 @@ namespace MediaPortal.Configuration.Sections
         #region Player Settings
         xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.SelectedIndex);
         xmlwriter.SetValue("audioplayer", "sounddevice", soundDeviceComboBox.Text);
-        xmlwriter.SetValueAsBool("audioplayer", "mixing", enableMixing.Checked);
 
         xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
         xmlwriter.SetValue("audioplayer", "buffering", hScrollBarBuffering.Value);
@@ -566,9 +565,6 @@ namespace MediaPortal.Configuration.Sections
       {
         case "audioplayer":
           return audioPlayerComboBox.SelectedItem.ToString();
-
-        case "mixing":
-          return enableMixing.Checked;
       }
 
       return null;
@@ -653,14 +649,14 @@ namespace MediaPortal.Configuration.Sections
           break;
 
         case 1:
-          tabPageBassPlayerSettings.Enabled = false;
+          tabPageBassPlayerSettings.Enabled = true;
           tabPageASIOPlayerSettings.Enabled = true;
           tabPageWASAPIPLayerSettings.Enabled = false;
           tabControlPlayerSettings.SelectedTab = tabPageASIOPlayerSettings;
           break;
 
         case 2:
-          tabPageBassPlayerSettings.Enabled = false;
+          tabPageBassPlayerSettings.Enabled = true;
           tabPageASIOPlayerSettings.Enabled = false;
           tabPageWASAPIPLayerSettings.Enabled = true;
           tabControlPlayerSettings.SelectedTab = tabPageWASAPIPLayerSettings;
@@ -767,7 +763,7 @@ namespace MediaPortal.Configuration.Sections
     {
       // Free ASIO and reinit it again
       BassAsio.BASS_ASIO_Free();
-      if (BassAsio.BASS_ASIO_Init(soundDeviceComboBox.SelectedIndex, BASSASIOInit.BASS_ASIO_THREAD))
+      if (BassAsio.BASS_ASIO_Init(soundDeviceComboBox.SelectedIndex, BASSASIOInit.BASS_ASIO_DEFAULT))
       {
         if (!BassAsio.BASS_ASIO_ControlPanel())
         {
@@ -904,27 +900,6 @@ namespace MediaPortal.Configuration.Sections
     private void EnableStatusOverlaysChkBox_CheckedChanged(object sender, EventArgs e)
     {
       ShowTrackInfoChkBox.Enabled = EnableStatusOverlaysChkBox.Checked;
-    }
-
-    private void enableMixing_CheckedChanged(object sender, EventArgs e)
-    {
-      SettingsForm.audioplayer_mixing = enableMixing.Checked;
-      if (enableMixing.Checked)
-      {
-        // We must not have checked the "ASIO" at the same time
-        SectionSettings section = GetSection("Music ASIO");
-
-        if (section != null)
-        {
-          bool asio = (bool)section.GetSetting("useasio");
-          if (asio)
-          {
-            enableMixing.Checked = false;
-            MessageBox.Show(this, "Upmixing and ASIO must not be used at the same time",
-                            "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          }
-        }
-      }
     }
 
     private void InitializeVizEngine()
