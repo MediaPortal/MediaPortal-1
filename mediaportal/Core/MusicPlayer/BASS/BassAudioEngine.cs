@@ -1635,10 +1635,9 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-in over 500ms
-            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
+            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1, Config.CrossFadeIntervalMs);
             Bass.BASS_Start();
           }
-
           else
           {
             Bass.BASS_ChannelSetAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1);
@@ -1658,7 +1657,7 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-out over 500ms
-            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0, 500);
+            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0, Config.CrossFadeIntervalMs);
 
             // Wait until the slide is done
             while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
@@ -1699,6 +1698,17 @@ namespace MediaPortal.MusicPlayer.BASS
       Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
       try
       {
+        if (Config.SoftStop)
+        {
+          Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
+          Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
+                                          Config.CrossFadeIntervalMs);
+
+          // Wait until the slide is done
+          while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
+            System.Threading.Thread.Sleep(20);
+        }
+
         if (Config.MusicPlayer == AudioPlayer.Asio)
         {
           if (_asioHandler != null)
