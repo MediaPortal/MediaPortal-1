@@ -35,6 +35,7 @@ using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Tags;
 using Un4seen.Bass.AddOn.WaDsp;
 using Un4seen.BassAsio;
+using Un4seen.BassWasapi;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.MusicPlayer.BASS
@@ -101,7 +102,12 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private BassAsioHandler _asioHandler = null;
     private ASIOPROC _asioProc = null;
-    
+    private int _asioDeviceNumber = -1;
+
+    private BassWasapiHandler _wasapiHandler = null;
+    private WASAPIPROC _wasapiProc = null;
+    private int _wasapiDeviceNumber = -1;
+
     private List<int> DecoderPluginHandles = new List<int>();
 
     private PlayState _state = PlayState.Init;
@@ -127,15 +133,14 @@ namespace MediaPortal.MusicPlayer.BASS
     private bool NeedUpdate = true;
     private bool NotifyPlaying = true;
 
-    
+
     private bool _isCDDAFile = false;
-    private int _asioDeviceNumber = -1;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
 
     private int _mixer = 0;
     // Mixing Matrix
-    private float[,] _MixingMatrix = new float[8,2]
+    private float[,] _MixingMatrix = new float[8, 2]
                                        {
                                          {1, 0}, // left front out = left in
                                          {0, 1}, // right front out = right in
@@ -587,7 +592,7 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             TrackPlaybackCompleted(this, musicStream.FilePath);
           }
-          
+
           // Check, if PlaylistPlayer has to offer more files
           if (Playlists.PlayListPlayer.SingletonPlayer.GetNext() == string.Empty)
           {
@@ -653,7 +658,7 @@ namespace MediaPortal.MusicPlayer.BASS
           // BASS_CONFIG_UPDATEPERIOD is set in InitDSDevice in case 
           // we are going to playback over DirectSound.
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
-          
+
           // Set the Global Volume. 0 = silent, 10000 = Full
           // We get 0 - 100 from Configuration, so multiply by 100
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, Config.StreamVolume * 100);
@@ -676,7 +681,7 @@ namespace MediaPortal.MusicPlayer.BASS
         // Initialise the Stream and Asdio HandlerIndexes with null values
         _streams.Add(null);
         _streams.Add(null);
-        
+
         InitializeControls();
         Config.LoadAudioDecoderPlugins();
         Config.LoadDSPPlugins();
@@ -704,14 +709,20 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         Log.Info("BASS: Initializing BASS audio engine...");
         bool initOK = false;
-        
-        if (Config.MusicPlayer == AudioPlayer.Asio)
+
+        switch (Config.MusicPlayer)
         {
-          initOK = InitAsio();
-        }
-        else
-        {
-          initOK = InitDirectSoundDevice();
+          case AudioPlayer.Bass:
+            initOK = InitDirectSoundDevice();
+            break;
+
+          case AudioPlayer.Asio:
+            initOK = InitAsio();
+            break;
+
+          case AudioPlayer.WasApi:
+            initOK = InitWasapi();
+            break;
         }
 
         if (initOK)
@@ -732,10 +743,10 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             BASSError errorasio = BassAsio.BASS_ASIO_ErrorGetCode();
             Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}",
-                      Enum.GetName(typeof (BASSError), error), Enum.GetName(typeof (BASSError), errorasio));
+                      Enum.GetName(typeof(BASSError), error), Enum.GetName(typeof(BASSError), errorasio));
           }
           else
-            Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof (BASSError), error));
+            Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSError), error));
         }
       }
       catch (Exception ex)
@@ -792,9 +803,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (_asioDeviceNumber > -1)
       {
-        // not playing anything via BASS, so don't need an update thread
-        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
-
         result = BassAsio.BASS_ASIO_Init(_asioDeviceNumber, BASSASIOInit.BASS_ASIO_THREAD);
         if (!result)
         {
@@ -818,7 +826,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
             Log.Info("BASS: Channel Information");
             Log.Info("BASS: ---------------------------------------------");
-            for (int i = 0; i < info.outputs; i ++)
+            for (int i = 0; i < info.outputs; i++)
             {
               BASS_ASIO_CHANNELINFO chanInfo = BassAsio.BASS_ASIO_ChannelGetInfo(false, i);
               if (chanInfo != null)
@@ -849,6 +857,58 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     /// <summary>
+    /// Initialises the Wasapi Device
+    /// </summary>
+    /// <returns></returns>
+    private bool InitWasapi()
+    {
+      bool result = false;
+
+      Log.Info("BASS: Using WasAPI device: {0}", Config.SoundDevice);
+      BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
+
+      int i = 0;
+      // Check if the WASAPI device read is amongst the one retrieved
+      for (i = 0; i < wasapiDevices.Length; i++)
+      {
+        if (wasapiDevices[i].name == Config.SoundDevice)
+        {
+          _wasapiDeviceNumber = i;
+          break;
+        }
+      }
+
+      if (_wasapiDeviceNumber > -1)
+      {
+        // Get some information about the Device
+        BASS_WASAPI_DEVICEINFO info = wasapiDevices[i];
+        if (info != null)
+        {
+          Log.Info("BASS: Device Information");
+          Log.Info("BASS: ---------------------------------------------");
+          Log.Info("BASS: Name: {0}", info.name);
+          Log.Info("BASS: Id: {0}", info.id);
+          Log.Info("BASS: Type: {0}", info.type.ToString());
+          Log.Info("BASS: Shared Mode Channels: {0}", info.mixchans);
+          Log.Info("BASS: Shared Mode Samplerate: {0}", info.mixfreq);
+          Log.Info("BASS: ---------------------------------------------");
+
+          result = true;
+        }
+        else
+        {
+          Log.Error("BASS: Error getting Device Info: {0}", Bass.BASS_ErrorGetCode());
+        }
+      }
+      else
+      {
+        Log.Error("BASS: Specified WasAPI device not found. BASS is disabled.");
+      }
+
+      return result;
+    }
+
+    /// <summary>
     /// Callback from Asio to deliver data from Decoding channel
     /// </summary>
     /// <param name="input"></param>
@@ -858,6 +918,20 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="user"></param>
     /// <returns></returns>
     private int AsioCallback(bool input, int channel, IntPtr buffer, int length, IntPtr user)
+    {
+      // We can simply use the bass method to get some data from a decoding channel 
+      // and store it to the asio buffer in the same moment...
+      return Bass.BASS_ChannelGetData(user.ToInt32(), buffer, length);
+    }
+
+    /// <summary>
+    /// Callback from WasApi to deliver data from Decoding Channel
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    private int WasApiCallback(IntPtr buffer, int length, IntPtr user)
     {
       // We can simply use the bass method to get some data from a decoding channel 
       // and store it to the asio buffer in the same moment...
@@ -971,7 +1045,7 @@ namespace MediaPortal.MusicPlayer.BASS
         // Some Winamp dsps might raise an exception when closing
         BassWaDsp.BASS_WADSP_Free();
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
@@ -981,6 +1055,11 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         BassAsio.BASS_ASIO_Stop();
         BassAsio.BASS_ASIO_Free();
+      }
+
+      if (_wasapiHandler != null)
+      {
+        _wasapiHandler.Dispose();
       }
 
       if (_mixer != 0)
@@ -1023,11 +1102,17 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Info("BASS: Freeing BASS. Non-audio media playback requested.");
         if (Config.MusicPlayer == AudioPlayer.Asio)
         {
-           if (_asioHandler != null)
-           {
-             _asioHandler.Dispose();
-           }
+          if (_asioHandler != null)
+          {
+            _asioHandler.Dispose();
+          }
         }
+
+        if (_wasapiHandler != null)
+        {
+          _wasapiHandler.Dispose();
+        }
+
         if (_mixer != 0)
         {
           Bass.BASS_ChannelStop(_mixer);
@@ -1185,7 +1270,7 @@ namespace MediaPortal.MusicPlayer.BASS
     internal int GetCurrentVizStream()
     {
       // In case od ASIO return the clone of the stream, because for a decoding channel, we can't get data from the original stream
-      if (Config.MusicPlayer == AudioPlayer.Asio)
+      if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
       {
         return _streamcopy.Stream;
       }
@@ -1207,7 +1292,7 @@ namespace MediaPortal.MusicPlayer.BASS
       if (VizWindow.InvokeRequired)
       {
         ShowVisualizationWindowDelegate d = new ShowVisualizationWindowDelegate(ShowVisualizationWindow);
-        VizWindow.Invoke(d, new object[] {visible});
+        VizWindow.Invoke(d, new object[] { visible });
       }
 
       else
@@ -1357,7 +1442,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="methodName"></param>
     private void HandleBassError(string methodName)
     {
-      Log.Error("BASS: {0}() failed: {1}", methodName, Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
+      Log.Error("BASS: {0}() failed: {1}", methodName, Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
     }
 
     /// <summary>
@@ -1366,14 +1451,20 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="stream"></param>
     void CreateMixer(MusicStream stream)
     {
-      if (_asioHandler != null && Config.MusicPlayer == AudioPlayer.Asio)
+      if (_asioHandler != null)
       {
         _asioHandler.Stop();
+        _asioHandler.Dispose();
+      }
+      else if (_wasapiHandler != null)
+      {
+        _wasapiHandler.Stop();
+        _wasapiHandler.Dispose();
       }
 
       BASSFlag mixerFlags = BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_MIXER_NORAMPIN;
 
-      if (Config.MusicPlayer == AudioPlayer.Asio)
+      if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
       {
         mixerFlags |= BASSFlag.BASS_STREAM_DECODE;
       }
@@ -1415,7 +1506,19 @@ namespace MediaPortal.MusicPlayer.BASS
         // and start playing it...start output using default buffer/latency
         _asioHandler.Start(0);
       }
-    } 
+      else if (Config.MusicPlayer == AudioPlayer.WasApi)
+      {
+        // Setup WasApi Handler
+
+        // TODO: Implement Shared mode and allow setting of buffer
+        _wasapiHandler = new BassWasapiHandler(_wasapiDeviceNumber, true, stream.ChannelInfo.freq,
+                                               stream.ChannelInfo.chans, 0f, 0f);
+
+        _wasapiHandler.AddOutputSource(_mixer, BASSFlag.BASS_DEFAULT);
+        _wasapiHandler.Init();
+        _wasapiHandler.Start();
+      }
+    }
 
     #endregion
 
@@ -1471,10 +1574,10 @@ namespace MediaPortal.MusicPlayer.BASS
         else
         {
           // Cue support
-         if (HandleCueFile(ref filePath))
-         {
-           return true;
-         }
+          if (HandleCueFile(ref filePath))
+          {
+            return true;
+          }
         }
 
         // If we're not Crossfading, we want to stop the current stream at this time
@@ -1496,8 +1599,14 @@ namespace MediaPortal.MusicPlayer.BASS
         _filePath = filePath;
 
         MusicStream stream = new MusicStream(filePath);
+
+        if (stream.BassStream == 0)
+        {
+          return false;
+        }
+
         _streams[GetNextStream()] = stream;
-        
+
         // Enable events, for various Playback Actions to be handled
         stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
 
@@ -1517,8 +1626,8 @@ namespace MediaPortal.MusicPlayer.BASS
             CreateMixer(stream);
           }
         }
-        
-        if (Config.MusicPlayer == AudioPlayer.Asio && stream.BassStream != 0)
+
+        if ((Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi) && stream.BassStream != 0)
         {
           // In order to provide data for visualisation we need to clone the stream
           _streamcopy = new StreamCopy();
@@ -1534,7 +1643,7 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Error("BASS: Captured an error on StreamCopy start");
           }
         }
-  
+
         SetCueTrackEndPosition(stream);
 
         // Plugin the stream into the Mixer
@@ -1651,7 +1760,7 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.MusicPlayer == AudioPlayer.Asio && _asioHandler != null)
           {
             _asioHandler.Pause(false);
-            BassAsio.BASS_ASIO_ChannelReset(false, 0, BASSASIOReset.BASS_ASIO_RESET_PAUSE);            
+            BassAsio.BASS_ASIO_ChannelReset(false, 0, BASSASIOReset.BASS_ASIO_RESET_PAUSE);
           }
 
         }
@@ -1689,7 +1798,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
       }
 
-      catch {}
+      catch { }
     }
 
     /// <summary>
@@ -1712,16 +1821,21 @@ namespace MediaPortal.MusicPlayer.BASS
             System.Threading.Thread.Sleep(20);
         }
 
-        if (Config.MusicPlayer == AudioPlayer.Asio)
+        if (_asioHandler != null)
         {
-          if (_asioHandler != null)
-          {
-             _asioHandler.Stop();
-             _asioHandler.Dispose();
-            BassAsio.BASS_ASIO_Stop();
-          }
+          _asioHandler.Stop();
+          _asioHandler.Dispose();
+          BassAsio.BASS_ASIO_Stop();
+          _asioHandler = null;
         }
-  
+
+        if (_wasapiHandler != null)
+        {
+          _wasapiHandler.Stop();
+          _wasapiHandler.Dispose();
+          _wasapiHandler = null;
+        }
+
         Bass.BASS_ChannelStop(_mixer);
         _mixer = 0;
 
@@ -1913,7 +2027,7 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             position += (int)_cueTrackStartPos;
           }
-         
+
           BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position));
         }
       }
@@ -2057,7 +2171,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       if (GUIGraphicsContext.BlankScreen)
-        //BAV || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+      //BAV || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
       {
         //BAV if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
         {
@@ -2202,8 +2316,8 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof (PlayBackType), _playBackType),
-                 Enum.GetName(typeof (PlayBackType), (int)PlayBackType.GAPLESS));
+                 Enum.GetName(typeof(PlayBackType), _playBackType),
+                 Enum.GetName(typeof(PlayBackType), (int)PlayBackType.GAPLESS));
 
         _playBackType = (int)PlayBackType.GAPLESS;
         Config.CrossFadeIntervalMs = 200;
@@ -2218,8 +2332,8 @@ namespace MediaPortal.MusicPlayer.BASS
       if (_savedPlayBackType > -1)
       {
         Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof (PlayBackType), _playBackType),
-                 Enum.GetName(typeof (PlayBackType), _savedPlayBackType));
+                 Enum.GetName(typeof(PlayBackType), _playBackType),
+                 Enum.GetName(typeof(PlayBackType), _savedPlayBackType));
 
         if (_savedPlayBackType == 0)
         {
@@ -2262,6 +2376,10 @@ namespace MediaPortal.MusicPlayer.BASS
         float fpeakR = (int)BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
         dbLeft = 20.0 * Math.Log10(fpeakL);
         dbRight = 20.0 * Math.Log10(fpeakR);
+      }
+      else if (Config.MusicPlayer == AudioPlayer.WasApi)
+      {
+        level = BassWasapi.BASS_WASAPI_GetLevel();
       }
       else
       {
