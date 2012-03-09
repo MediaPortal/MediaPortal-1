@@ -1563,6 +1563,9 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           Log.Info("BASS: playback started");
 
+          // Slide in the Stream over the Cross fade Interval
+          stream.SlideIn();
+
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
           msg.Label = _filePath;
           GUIWindowManager.SendThreadMessage(msg);
