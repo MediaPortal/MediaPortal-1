@@ -1638,19 +1638,22 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-in over 500ms
-            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1, Config.CrossFadeIntervalMs);
-            Bass.BASS_Start();
+            Bass.BASS_ChannelSlideAttribute(_mixer, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
           }
           else
           {
-            Bass.BASS_ChannelSetAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1);
-            Bass.BASS_Start();
+            Bass.BASS_ChannelSetAttribute(_mixer, BASSAttribute.BASS_ATTRIB_VOL, 1);
           }
+
+          BassMix.BASS_Mixer_ChannelPlay(_mixer);
+          Bass.BASS_Start();
 
           if (Config.MusicPlayer == AudioPlayer.Asio && _asioHandler != null)
           {
             _asioHandler.Pause(false);
+            BassAsio.BASS_ASIO_ChannelReset(false, 0, BASSASIOReset.BASS_ASIO_RESET_PAUSE);            
           }
+
         }
 
         else
@@ -1660,23 +1663,20 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-out over 500ms
-            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0, Config.CrossFadeIntervalMs);
+            Bass.BASS_ChannelSlideAttribute(_mixer, BASSAttribute.BASS_ATTRIB_VOL, 0, 500);
 
             // Wait until the slide is done
-            while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
+            while (Bass.BASS_ChannelIsSliding(_mixer, BASSAttribute.BASS_ATTRIB_VOL))
               System.Threading.Thread.Sleep(20);
-
-            Bass.BASS_Pause();
           }
 
-          else
-          {
-            Bass.BASS_Pause();
-          }
+          BassMix.BASS_Mixer_ChannelPause(_mixer);
+          Bass.BASS_Pause();
 
           if (Config.MusicPlayer == AudioPlayer.Asio && _asioHandler != null)
           {
             _asioHandler.Pause(true);
+            BassAsio.BASS_ASIO_ChannelPause(false, 0);
           }
         }
 
