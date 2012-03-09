@@ -652,14 +652,14 @@ namespace MediaPortal.Configuration.Sections
           tabPageBassPlayerSettings.Enabled = true;
           tabPageASIOPlayerSettings.Enabled = true;
           tabPageWASAPIPLayerSettings.Enabled = false;
-          tabControlPlayerSettings.SelectedTab = tabPageASIOPlayerSettings;
+          tabControlPlayerSettings.SelectedTab = tabPageBassPlayerSettings;
           break;
 
         case 2:
           tabPageBassPlayerSettings.Enabled = true;
           tabPageASIOPlayerSettings.Enabled = false;
           tabPageWASAPIPLayerSettings.Enabled = true;
-          tabControlPlayerSettings.SelectedTab = tabPageWASAPIPLayerSettings;
+          tabControlPlayerSettings.SelectedTab = tabPageBassPlayerSettings;
           break;
       }
 
