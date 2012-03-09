@@ -20,19 +20,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.UserInterface.Controls;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
 using BassVis_Api;
 using Un4seen.BassAsio;
+using Un4seen.BassWasapi;
 
 #pragma warning disable 108
 
@@ -750,6 +747,27 @@ namespace MediaPortal.Configuration.Sections
           break;
 
         case (int)AudioPlayer.WasApi:
+          // Get all available ASIO devices and add them to the combo box
+          BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
+          if (wasapiDevices.Length == 0)
+          {
+            MessageBox.Show(this, "No WASAPI Devices available in the system.",
+                            "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            // Default back to BASS Player
+            audioPlayerComboBox.SelectedIndex = 0;
+          }
+          else
+          {
+            foreach (BASS_WASAPI_DEVICEINFO deviceInfo in wasapiDevices)
+            {
+              // Only add enabled and output devices to the list
+              if (deviceInfo.IsEnabled && !deviceInfo.IsInput)
+              {
+                soundDeviceComboBox.Items.Add(deviceInfo.name);
+              }
+            }
+          }
           break;
       }
     }
