@@ -58,8 +58,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private static float _asioBalance;
 
     private static bool _softStop;
-    private static bool _mixing;
-
+    
     private static PlayBackType _playBackType;
 
     private static string _cdDriveLetters = ""; // Contains the Drive letters of all available CD Drives
@@ -127,11 +126,6 @@ namespace MediaPortal.MusicPlayer.BASS
     public static bool SoftStop
     {
       get { return _softStop; }
-    }
-
-    public static bool Mixing
-    {
-      get { return _mixing; }
     }
 
     public static PlayBackType PlayBack
@@ -225,8 +219,6 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         _softStop = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
-
-        _mixing = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
         _asioBalance = (float)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00f;
 

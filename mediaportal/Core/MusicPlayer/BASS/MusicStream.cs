@@ -46,6 +46,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private SYNCPROC _cueTrackEndProcDelegate = null;
     private SYNCPROC _metaTagSyncProcDelegate = null;
     private SYNCPROC _playBackSlideEndDelegate = null;
+    private SYNCPROC _streamFreedDelegate = null;
 
     public delegate void MusicStreamMessageHandler(object sender, StreamAction action);
     public event MusicStreamMessageHandler MusicStreamMessage;
@@ -58,6 +59,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       Ended,
       InternetStreamChanged,
+      Freed,
     }
 
     #endregion
@@ -196,15 +198,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private void CreateStream()
     {
-
-      BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT;
-
-      if (Config.MusicPlayer == AudioPlayer.Asio)
-      {
-        streamFlags |= BASSFlag.BASS_STREAM_DECODE;
-      }
+      BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
       
-
       _fileType = Utils.GetFileType(_filePath);
 
       switch (_fileType.FileMainType)
@@ -287,6 +282,7 @@ namespace MediaPortal.MusicPlayer.BASS
       _playbackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
       _cueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
       _metaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
+      _streamFreedDelegate = new SYNCPROC(StreamFreedProc);
 
       RegisterPlaybackEvents();
 
@@ -442,8 +438,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Public Methods
 
-
-
     /// <summary>
     /// Slide in the Channel over the Defined Crossfade intervall
     /// </summary>
@@ -489,6 +483,11 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
+    /// <summary>
+    /// Set the end position of a song inside a CUE file
+    /// </summary>
+    /// <param name="startPos"></param>
+    /// <param name="endPos"></param>
     public void SetCueTrackEndPos(float startPos, float endPos)
     {
       if (_cueTrackEndEventHandler != 0)
@@ -501,6 +500,22 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         _cueTrackEndEventHandler = RegisterCueTrackEndEvent(Bass.BASS_ChannelSeconds2Bytes(_stream, endPos));
       }      
+    }
+
+    /// <summary>
+    /// Resume Playback of a Paused stream
+    /// </summary>
+    public void ResumePlayback()
+    {
+      Log.Info("BASS: Resuming playback of paused stream for {0}", _filePath);
+      if (Config.SoftStop)
+      {
+        Bass.BASS_ChannelSlideAttribute(_stream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
+      }
+      else
+      {
+        Bass.BASS_ChannelSetAttribute(_stream, BASSAttribute.BASS_ATTRIB_VOL, 1);
+      }
     }
 
     #endregion
@@ -520,6 +535,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       _streamEventSyncHandles.Add(RegisterPlaybackEndEvent(_stream));
+      _streamEventSyncHandles.Add(RegisterStreamFreedEvent(_stream));
     }
 
     /// <summary>
@@ -571,6 +587,29 @@ namespace MediaPortal.MusicPlayer.BASS
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterPlaybackEndEvent of stream {0} failed with error {1}", stream,
+                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+      }
+
+      return syncHandle;
+    }
+
+    /// <summary>
+    /// Register the Stream Freed Event
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    private int RegisterStreamFreedEvent(int stream)
+    {
+      int syncHandle = 0;
+
+      syncHandle = Bass.BASS_ChannelSetSync(stream,
+                                            BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_FREE,
+                                            0, _streamFreedDelegate,
+                                            IntPtr.Zero);
+
+      if (syncHandle == 0)
+      {
+        Log.Debug("BASS: RegisterStreamFreedEvent of stream {0} failed with error {1}", stream,
                   Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
       }
 
@@ -679,6 +718,23 @@ namespace MediaPortal.MusicPlayer.BASS
       if (MusicStreamMessage != null)
       {
         MusicStreamMessage(this, StreamAction.Ended);
+      }
+    }
+
+    /// <summary>
+    /// Stream Freed Procedure
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="stream"></param>
+    /// <param name="data"></param>
+    /// <param name="userData"></param>
+    private void StreamFreedProc(int handle, int stream, int data, IntPtr userData)
+    {
+      Log.Debug("BASS: Stream {0} freed", _filePath);
+
+      if (MusicStreamMessage != null)
+      {
+        MusicStreamMessage(this, StreamAction.Freed);
       }
     }
 
