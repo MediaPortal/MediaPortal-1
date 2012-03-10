@@ -178,7 +178,17 @@
       <percentage>#rating</percentage>
       <imagesToDraw>10</imagesToDraw>
     </control>
-    
+    <control>
+      <description>Rating string</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>999</posX>
+      <posY>120</posY>
+      <label>#strrating</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
 		<control>
       <description>Votes txt</description>
       <type>label</type>

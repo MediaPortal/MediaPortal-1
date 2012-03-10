@@ -3428,7 +3428,7 @@ namespace MediaPortal.Configuration.Sections
           tbMiniBiography.Text = actdetail.MiniBiography;
           tbBiography.Text = actdetail.Biography;
           tbThumbLoc.Text = actdetail.ThumbnailUrl;
-          pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actdetail.id.ToString());
+          pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actdetail.ID.ToString());
         }
       }
       catch (Exception) {}
@@ -3442,7 +3442,7 @@ namespace MediaPortal.Configuration.Sections
         if (Int32.Parse(cbActor.SelectedValue.ToString()) > 0)
         {
           IMDBActor imdbActor = new IMDBActor();
-          imdbActor.id = Int32.Parse(cbActor.SelectedValue.ToString());
+          imdbActor.ID = Int32.Parse(cbActor.SelectedValue.ToString());
           imdbActor.Name = cbActor.Text.Replace(" - Director", ""); // Remove director suffix from the name
           imdbActor.MiniBiography = tbMiniBiography.Text;
           imdbActor.Biography = tbBiography.Text;
@@ -3462,17 +3462,17 @@ namespace MediaPortal.Configuration.Sections
             tbThumbLoc.Text = string.Empty;
           }
           // Update actor info
-          VideoDatabase.SetActorInfo(imdbActor.id, imdbActor);
+          VideoDatabase.SetActorInfo(imdbActor.ID, imdbActor);
           // Update actor thumb
           if (imdbActor.ThumbnailUrl != string.Empty)
           {
-            string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.id.ToString());
-            string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.id.ToString());
+            string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
+            string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
             // Delete old thumbs
             Util.Utils.FileDelete(largeCoverArt);
             Util.Utils.FileDelete(coverArt);
             // Save new thumbs
-            IMDBFetcher.DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.id.ToString());
+            IMDBFetcher.DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.ID.ToString());
             // Clear old image from picture box
             if (pictureBoxActor.Image != null)
             {
@@ -3480,7 +3480,7 @@ namespace MediaPortal.Configuration.Sections
               pictureBoxActor.Image = null;
             }
             // Set new image into pbox
-            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.id.ToString());
+            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
           }
           MessageBox.Show("Actor info saved.");
         }
@@ -3575,7 +3575,7 @@ namespace MediaPortal.Configuration.Sections
             tbMiniBiography.Text = actdetail.MiniBiography;
             tbBiography.Text = actdetail.Biography;
             tbThumbLoc.Text = actdetail.ThumbnailUrl;
-            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actdetail.id.ToString());
+            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actdetail.ID.ToString());
           }
         }
         else
@@ -4424,6 +4424,15 @@ namespace MediaPortal.Configuration.Sections
           {
             ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
             UpdateEdit(item.Movie);
+          }
+
+          if (values.Count == 1)
+          {
+            MessageBox.Show(values.Count + " movie added into group: " + userGroup);
+          }
+          else
+          {
+            MessageBox.Show(values.Count + " movies added into group: " + userGroup);
           }
         }
       }

@@ -382,6 +382,36 @@ namespace MediaPortal.Video.Database
             }
 
             VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
+            
+            // Add groups with rules
+            ArrayList groups = new ArrayList();
+            VideoDatabase.GetUserGroups(groups);
+            
+            foreach (string group in groups)
+            {
+              string rule = VideoDatabase.GetUserGroupRule(group);
+
+              if (!string.IsNullOrEmpty(rule))
+              {
+                try
+                {
+                  ArrayList values = new ArrayList();
+                  bool error = false;
+                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error);
+                  
+                  if (error)
+                  {
+                    continue;
+                  }
+
+                  if (values.Count > 0 && values.Contains(_movieDetails.ID.ToString()))
+                  {
+                    VideoDatabase.AddUserGroupToMovie(_movieDetails.ID, VideoDatabase.AddUserGroup(group));
+                  }
+                }
+                catch (Exception) { }
+              }
+            }
             OnProgress(line1, _url.Title, string.Empty, 100); // **Progress bar end details
           }
         }

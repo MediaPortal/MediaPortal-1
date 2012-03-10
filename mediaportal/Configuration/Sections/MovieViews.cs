@@ -29,6 +29,7 @@ namespace MediaPortal.Configuration.Sections
                                     {
                                       "watched",
                                       "actor",
+                                      "director",
                                       "title",
                                       "genre",
                                       "year",

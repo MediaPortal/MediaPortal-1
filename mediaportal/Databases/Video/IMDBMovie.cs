@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
@@ -371,7 +372,13 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#plotoutline", PlotOutline);
       GUIPropertyManager.SetProperty("#userreview", UserReview); // Added
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
+      GUIPropertyManager.SetProperty("#strrating", "(" + Rating + "/10)");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
+      Int32 votes = 0;
+      if (Int32.TryParse(Votes, out votes))
+      {
+        Votes = String.Format("{0:n0}", votes);
+      }
       GUIPropertyManager.SetProperty("#votes", Votes);
       GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
@@ -379,6 +386,8 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#year", Year.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
+
+      
 
       if (ID == -1)
       {

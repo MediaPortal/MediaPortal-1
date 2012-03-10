@@ -280,6 +280,18 @@
       <percentage>#rating</percentage>
       <visible>facadeview.list+Control.HasFocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
+		<control>
+      <description>Rating string</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>385</posX>
+      <posY>110</posY>
+      <label>#strrating</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>
     <control>
       <id>1</id>
       <type>image</type>
@@ -334,6 +346,39 @@
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
+		<control>
+      <description>Born</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>305</posX>
+      <posY>193</posY>
+      <label>686</label>
+      <font>font10</font>
+      <textcolor>FFB2D4F5</textcolor>
+			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>
+		<control>
+      <description>Date of Birth</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>305</posX>
+      <posY>212</posY>
+      <label>#Actor.DateOfBirth</label>
+      <font>font10</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+   </control>
+	 <control>
+      <description>Place of Birth</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>305</posX>
+      <posY>231</posY>
+      <label>#Actor.PlaceOfBirth</label>
+      <font>font10</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+   </control>
     <control>
       <description>Director txt</description>
       <type>label</type>
@@ -358,6 +403,41 @@
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
+		<control>
+      <description>Died</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>305</posX>
+      <posY>262</posY>
+      <label>Died:</label>
+      <font>font10</font>
+      <textcolor>FFB2D4F5</textcolor>
+			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>
+		<control>
+      <description>Date of Death</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>305</posX>
+      <posY>281</posY>
+      <width>954</width>
+      <label>#Actor.DateOfDeath</label>
+      <font>font10</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+   </control>
+	 <control>
+      <description>Place of Death</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>305</posX>
+      <posY>300</posY>
+      <width>954</width>
+      <label>#Actor.PlaceOfDeath</label>
+      <font>font10</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+   </control>
     <control>
       <description>Year txt</description>
       <type>label</type>
@@ -431,19 +511,7 @@
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
-		<!--control>
-      <description>VideoRuntime value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>80</posX>
-      <posY>440</posY>
-      <width>248</width>
-      <label>#videoruntime</label>
-      <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50)</visible>
-    </control-->
-    <control>
+		<control>
       <description>Separator</description>
       <type>image</type>
       <id>1</id>
@@ -455,31 +523,7 @@
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
-		<!--control>
-      <description>Times watched</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>80</posX>
-      <posY>495</posY>
-      <label>Watched count:</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50) + !string.equals(#timeswatched, -1)</visible>
-    </control>
 		<control>
-      <description>Times watched value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>250</posX>
-      <posY>495</posY>
-      <label>#timeswatched</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50) + !string.equals(#timeswatched, -1)</visible>
-    </control-->
-    <control>
       <description>Plot value</description>
       <type>textboxscrollup</type>
       <id>1</id>
@@ -491,6 +535,19 @@
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>
+		<control>
+      <description>Actor Biography value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>71</posX>
+      <posY>450</posY>
+      <width>533</width>
+      <height>240</height>
+      <label>#Actor.Biography</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
     </control>
     <!-- Media info list view-->
     <control>

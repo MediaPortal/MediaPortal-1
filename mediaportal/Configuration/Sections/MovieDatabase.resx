@@ -146,11 +146,6 @@ langugages can be used.
 Search string will be ignored if IMDBid number exists for
 selected movie.</value>
   </data>
-  <data name="mpLabel34.Text" xml:space="preserve">
-    <value>Create rule for group which will automate linking movies and selected group on rule save or after movie(s) scan.
-You can also add self created rule by paste syntax into Rule syntax textbox (goal is to get movieIds by SQL syntax).
-Only one rule can be added per group.</value>
-  </data>
   <metadata name="Year.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -163,4 +158,8 @@ Only one rule can be added per group.</value>
   <metadata name="IMDBID.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <data name="mpLabel34.Text" xml:space="preserve">
+    <value>Create rule for group which will automate linking movies and selected group on rule save or after movie(s) scan.
+You can also add self created rule by paste syntax into Rule syntax textbox (goal is to get movieIds by SQL syntax)</value>
+  </data>
 </root>

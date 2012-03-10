@@ -412,17 +412,17 @@ namespace MediaPortal.GUI.Video
       }
 
       // Actor group view
-      if (handler.CurrentLevelWhere == "actor")
+      if (handler.CurrentLevelWhere == "actor" || handler.CurrentLevelWhere == "director")
       {
         dlg.Reset();
         dlg.SetHeading(498); // menu
         
         IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
         
-        if (actor != null)
-        {
+        //if (actor != null)
+        //{
           dlg.AddLocalizedString(368); //IMDB
-        }
+        //}
         
         if (protectedShares.Count > 0)
         {
@@ -435,11 +435,17 @@ namespace MediaPortal.GUI.Video
             dlg.AddLocalizedString(1241); //Unlock content
           }
         }
-          
-        dlg.AddLocalizedString(1252); // Search actor
-
-        dlg.AddLocalizedString(1262); // Update grabber scripts
         
+        if (handler.CurrentLevelWhere == "director")
+        {
+          dlg.AddLocalizedString(1268); // Search director
+        }
+        else
+        {
+          dlg.AddLocalizedString(1252); // Search actor
+        }
+        
+        dlg.AddLocalizedString(1262); // Update grabber scripts
         dlg.DoModal(GetID);
 
         if (dlg.SelectedId == -1)
@@ -457,6 +463,7 @@ namespace MediaPortal.GUI.Video
             OnContentLock();
             break;
           case 1252: // Search actor
+          case 1268: // Search director
             OnSearchActor();
             break;
           case 1262: // Update grabber scripts
@@ -666,12 +673,22 @@ namespace MediaPortal.GUI.Video
 
       if (_searchMovie)
       {
-        string sql = "select * from movieinfo where strTitle like '%" + _searchMovieString + "%' order by strTitle asc";
+        string sql = "SELECT * FROM movieinfo WHERE strTitle LIKE '%" + _searchMovieString + "%' ORDER BY strTitle ASC";
         VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
       }
       else if (_searchActor && handler.CurrentLevelWhere != "title")
       {
-        string sql = "select * from actors where strActor like '%" + _searchActorString + "%' order by strActor asc";
+        string sql = string.Empty;
+        
+        if (handler.CurrentLevelWhere == "director")
+        {
+          sql = "SELECT idActor, strActor, imdbActorId FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor WHERE strActor LIKE '%" + _searchActorString + "%' ORDER BY strActor ASC";
+        }
+        else
+        {
+          sql = "SELECT * FROM actors WHERE strActor LIKE '%" + _searchActorString + "%' ORDER BY strActor ASC";
+        }
+        
         VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false);
       }
       else
@@ -685,6 +702,7 @@ namespace MediaPortal.GUI.Video
         listItem.Path = string.Empty;
         listItem.IsFolder = true;
         Util.Utils.SetDefaultIcons(listItem);
+        listItem.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         itemlist.Add(listItem);
       }
 
@@ -806,7 +824,7 @@ namespace MediaPortal.GUI.Video
           SelectItem();
         }
 
-        else if (handler.CurrentLevelWhere.ToLower() == "actor")
+        else if (handler.CurrentLevelWhere.ToLower() == "actor" || handler.CurrentLevelWhere.ToLower() == "director")
         {
           SetActorThumbs(itemlist);
         }
@@ -1130,6 +1148,7 @@ namespace MediaPortal.GUI.Video
             break;
 
           case "actor":
+          case "director":
             listItem.IconImageBig = "defaultActorBig.png";
             listItem.IconImage = "defaultActor.png";
             listItem.ThumbnailImage = "defaultActorBig.png";
@@ -1231,6 +1250,7 @@ namespace MediaPortal.GUI.Video
         FanArt.DeleteCovers(movie.Title, movie.ID);
         // Delete fanarts
         FanArt.DeleteFanarts(movie.ID);
+        VideoDatabase.RemoveUserGroupsForMovie(movie.ID);
         VideoDatabase.DeleteMovieInfoById(movie.ID);
       }
     }
@@ -1245,6 +1265,7 @@ namespace MediaPortal.GUI.Video
       }
       if (actor == null)
       {
+        OnInfo(facadeLayout.SelectedListItemIndex);
         return;
       }
       infoDlg.Actor = actor;
@@ -1273,6 +1294,15 @@ namespace MediaPortal.GUI.Video
     {
       // Set current item if thumb thread is working (thread can still update thumbs while user changed
       // item) thus preventing sudden jump to initial selected item before thread start
+      if (item.Label == "..")
+      {
+        IMDBMovie notMovie = new IMDBMovie();
+        notMovie.SetProperties(true);
+        IMDBActor notActor = new IMDBActor();
+        notActor.SetProperties();
+        return;
+      }
+      
       if (_setThumbs != null && _setThumbs.IsAlive)
       {
         currentSelectedItem = facadeLayout.SelectedListItemIndex;
@@ -1296,12 +1326,24 @@ namespace MediaPortal.GUI.Video
       {
         movie.SetProperties(false, string.Empty);
       }
+
+      IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
       
+      if (actor != null)
+      {
+        actor.SetProperties();
+      }
+      else
+      {
+        actor = new IMDBActor();
+        actor.SetProperties();
+      }
+
       if (movie.ID >= 0)
       {
-        string coverArtImage;
         string titleExt = movie.Title + "{" + movie.ID + "}";
-        coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+        string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+        
         if (Util.Utils.FileExistsInCache(coverArtImage))
         {
           facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
@@ -1309,8 +1351,8 @@ namespace MediaPortal.GUI.Video
       }
       else if (movie.Actor != string.Empty)
       {
-        string coverArtImage;
-        coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, movie.ActorID.ToString());
+        GUIPropertyManager.SetProperty("#title", movie.Actor);
+        string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, movie.ActorID.ToString());
         if (Util.Utils.FileExistsInCache(coverArtImage))
         {
           facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
@@ -1691,6 +1733,7 @@ namespace MediaPortal.GUI.Video
               break;
 
             case "actor":
+            case "director":
               m_history.Set(facadeLayout.SelectedListItem.Label, view);
               VideoDatabase.GetMoviesByActor(facadeLayout.SelectedListItem.Label, ref mList);
               GetRandomMovieId(mList);

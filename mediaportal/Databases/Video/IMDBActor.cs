@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Video.Database
 {
@@ -56,7 +57,7 @@ namespace MediaPortal.Video.Database
 
     
     //Changed - _thumbnailURL added - IMDBActorID added
-    private int _id;
+    private int _id = -1;
     private string _name = string.Empty;
     private string _imdbActorID = string.Empty; // New
     private string _thumbnailUrl = string.Empty; // New
@@ -71,7 +72,7 @@ namespace MediaPortal.Video.Database
     public IMDBActor() {}
 
     //Added
-    public int id
+    public int ID
     {
       get { return _id; }
       set { _id = value; }
@@ -152,6 +153,65 @@ namespace MediaPortal.Video.Database
     public void Add(IMDBActorMovie movie)
     {
       _movies.Add(movie);
+    }
+
+    public void Reset()
+    {
+      _name = string.Empty;
+      _imdbActorID = string.Empty; // New
+      _thumbnailUrl = string.Empty; // New
+      _placeOfBirth = string.Empty;
+      _dateOfBirth = string.Empty;
+      _placeOfDeath = string.Empty; // New
+      _dateOfDeath = string.Empty; // New
+      _miniBiography = string.Empty;
+      _biography = string.Empty;
+    }
+
+    public void SetProperties()
+    {
+      GUIPropertyManager.SetProperty("#Actor.Name", Name);
+      GUIPropertyManager.SetProperty("#Actor.DateOfBirth", DateOfBirth);
+      GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", PlaceOfBirth);
+
+      if (DateOfDeath != Strings.Unknown)
+      {
+        GUIPropertyManager.SetProperty("#Actor.DateOfDeath", DateOfDeath);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Actor.DateOfDeath", string.Empty);
+      }
+
+      if (PlaceOfDeath != Strings.Unknown)
+      {
+        GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", PlaceOfDeath);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", string.Empty);
+      }
+
+      string biography = Biography;
+
+      if (biography == string.Empty || biography == Strings.Unknown)
+      {
+        biography = MiniBiography;
+        if (biography == string.Empty || biography == Strings.Unknown)
+        {
+          biography = string.Empty;
+        }
+      }
+      GUIPropertyManager.SetProperty("#Actor.Biography", biography);
+
+      if (ID == -1)
+      {
+        GUIPropertyManager.SetProperty("#hideActorinfo", "true");
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#hideActorinfo", "false");
+      }
     }
   }
 }

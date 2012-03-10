@@ -122,47 +122,19 @@ namespace MediaPortal.GUI.Video
       base.OnPageLoad();
       _forceRefreshAll = false;
 
-      GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name);
-      GUIPropertyManager.SetProperty("#Actor.DateOfBirth", _currentActor.DateOfBirth);
-      GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", _currentActor.PlaceOfBirth);
-
-      if (_currentActor.DateOfDeath != Strings.Unknown)
-      {
-        GUIPropertyManager.SetProperty("#Actor.DateOfDeath", _currentActor.DateOfDeath);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#Actor.DateOfDeath", string.Empty);
-      }
-
-      if (_currentActor.PlaceOfDeath != Strings.Unknown)
-      {
-        GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", _currentActor.PlaceOfDeath);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", string.Empty);
-      }
-
+      _currentActor.SetProperties();
       string biography = _currentActor.Biography;
 
       if (biography == string.Empty || biography == Strings.Unknown)
       {
-        biography = _currentActor.MiniBiography;
-        if (biography == string.Empty || biography == Strings.Unknown)
-        {
-          biography = "";
-          _viewmode = ViewMode.Movies;
-        }
+        biography = "";
+        _viewmode = ViewMode.Movies;
       }
       else
       {
-
         _viewmode = ViewMode.Biography;
       }
-      GUIPropertyManager.SetProperty("#Actor.Biography", biography);
-      GUIPropertyManager.SetProperty("#Actor.MoviePlot", string.Empty);
-
+      
       if (listActorMovies != null && listActorMovies.Count == 0)
       {
         SetNewproperties();
@@ -181,22 +153,14 @@ namespace MediaPortal.GUI.Video
         _scanThread = null;
       }
       // Refresh actor info
-      _currentActor = VideoDatabase.GetActorInfo(_currentActor.id);
+      _currentActor = VideoDatabase.GetActorInfo(_currentActor.ID);
       
       SaveState();
 
       //Clean properties
-      GUIPropertyManager.SetProperty("#Actor.Name", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.DateOfBirth", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.DateOfDeath", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.PlaceOfDeath", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.Biography", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.Movies", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.MoviePlot", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.MovieImage", string.Empty);
-      GUIPropertyManager.SetProperty("#Actor.MovieExtraDetails", string.Empty);
-
+      IMDBActor actor = new IMDBActor();
+      actor.SetProperties();
+      
       base.OnPageDestroy(newWindowId);
     }
 
@@ -304,7 +268,7 @@ namespace MediaPortal.GUI.Video
       }
       GUIPropertyManager.SetProperty("#Actor.Movies", movies);
 
-      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _currentActor.id.ToString());
+      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _currentActor.ID.ToString());
       if (imgCoverArt != null)
       {
         imgCoverArt.Dispose();
@@ -375,7 +339,7 @@ namespace MediaPortal.GUI.Video
         listActorMovies.Add(item);
       }
 
-      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _currentActor.id.ToString());
+      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _currentActor.ID.ToString());
 
       if (imgCoverArt != null)
       {
@@ -531,7 +495,7 @@ namespace MediaPortal.GUI.Video
         _actorIdState = xmlreader.GetValueAsInt("VideoArtistInfo", "actorid", -1);
         _selectedItemState = xmlreader.GetValueAsInt("VideoArtistInfo", "itemid", -1);
         
-        if (_currentActor.id == _actorIdState)
+        if (_currentActor.ID == _actorIdState)
         {
           if (_viewModeState == "Movies" &&
               GUIWindowManager.GetPreviousActiveWindow() != (int)Window.WINDOW_VIDEO_TITLE &&
@@ -565,7 +529,7 @@ namespace MediaPortal.GUI.Video
       using (Profile.Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("VideoArtistInfo", "lastview", _viewmode);
-        xmlwriter.SetValue("VideoArtistInfo", "actorid", _currentActor.id);
+        xmlwriter.SetValue("VideoArtistInfo", "actorid", _currentActor.ID);
         xmlwriter.SetValue("VideoArtistInfo", "itemid", listActorMovies.SelectedListItemIndex);
       }
     }

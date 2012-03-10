@@ -2449,17 +2449,19 @@ namespace MediaPortal.Video.Database
     {
       try
       {
+        int duration = 0;
         string sql = string.Format("select * from movie where idMovie={0}", iMovieId);
         SQLiteResultSet results = m_db.Execute(sql);
 
         if (results.Rows.Count == 0)
         {
-          return 0;
+          return duration;
         }
 
-        int duration = 0;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "iduration"), out duration);
-        return duration;
+        if (Int32.TryParse(DatabaseUtility.Get(results, 0, "iduration"), out duration))
+        {
+          return duration;
+        }
       }
       catch (Exception ex)
       {
@@ -2692,6 +2694,8 @@ namespace MediaPortal.Video.Database
         FanArt.DeleteCovers(movieDetails.Title, movieDetails.ID);
         // Delete fanarts
         FanArt.DeleteFanarts(movieDetails.ID);
+        // Delete user groups
+        RemoveUserGroupsForMovie(movieDetails.ID);
         //
         strSQL = String.Format("delete from genrelinkmovie where idmovie={0}", lMovieId);
         m_db.Execute(strSQL);
@@ -3664,7 +3668,7 @@ namespace MediaPortal.Video.Database
           actor.PlaceOfDeath = DatabaseUtility.Get(results, 0, "actorinfo.placeofdeath".Replace("''", "'"));
           actor.ThumbnailUrl = DatabaseUtility.Get(results, 0, "actorinfo.thumbURL");
           actor.IMDBActorID = DatabaseUtility.Get(results, 0, "actors.IMDBActorID");
-          actor.id = Convert.ToInt32(DatabaseUtility.Get(results, 0, "actorinfo.idActor"));
+          actor.ID = Convert.ToInt32(DatabaseUtility.Get(results, 0, "actorinfo.idActor"));
 
           strSql = String.Format("select * from actorinfomovies where idActor ={0}", idActor);
           results = m_db.Execute(strSql);
