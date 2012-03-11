@@ -303,7 +303,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (channel == null)
           return;
         channel.grabEpg = e.Item.Checked;
-        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel); 
+        ServiceAgents.Instance.ChannelServiceAgent.SaveChannel(channel);
       }      
     }
 
@@ -312,14 +312,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpListView1.BeginUpdate();
       try
       {
+        _ignoreItemCheckedEvent = true;
+
+        ICollection<Channel> channels = new List<Channel>();
+
         for (int i = 0; i < mpListView1.Items.Count; ++i)
-        {
+        {          
           mpListView1.Items[i].Checked = true;
+          var channel = mpListView1.Items[i].Tag as Channel;
+          if (channel != null)
+          {
+            channel.grabEpg = true;
+            channels.Add(channel);
+          }
+        }
+        if (channels.Count > 0)
+        {
+          ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
         }
       }
       finally
       {
         mpListView1.EndUpdate();
+        _ignoreItemCheckedEvent = false;
       }
     }
 
@@ -328,16 +343,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpListView1.BeginUpdate();
       try
       {
+        _ignoreItemCheckedEvent = true;
+        ICollection<Channel> channels = new List<Channel>();
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           Channel ch = (Channel)mpListView1.Items[i].Tag;
           mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1);
+          channels.Add(ch);
           // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        }
+        if (channels.Count > 0)
+        {
+          ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
         }
       }
       finally
       {
         mpListView1.EndUpdate();
+        _ignoreItemCheckedEvent = false;
       }
     }
 
@@ -346,16 +369,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpListView1.BeginUpdate();
       try
       {
+        _ignoreItemCheckedEvent = true;
+        ICollection<Channel> channels = new List<Channel>();
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           Channel ch = (Channel)mpListView1.Items[i].Tag;
           mpListView1.Items[i].Checked = (ch.GroupMaps.Count > 1 && ch.visibleInGuide);
+          channels.Add(ch);
           // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        }
+        if (channels.Count > 0)
+        {
+          ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
         }
       }
       finally
       {
         mpListView1.EndUpdate();
+        _ignoreItemCheckedEvent = false;
       }
     }
 
@@ -364,14 +395,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpListView1.BeginUpdate();
       try
       {
+        _ignoreItemCheckedEvent = true;
+        ICollection<Channel> channels = new List<Channel>();
         for (int i = 0; i < mpListView1.Items.Count; ++i)
         {
           mpListView1.Items[i].Checked = false;
+          channels.Add(mpListView1.Items[i].Tag as Channel);
+        }
+        if (channels.Count > 0)
+        {
+          ServiceAgents.Instance.ChannelServiceAgent.SaveChannels(channels);
         }
       }
       finally
       {
         mpListView1.EndUpdate();
+        _ignoreItemCheckedEvent = false;
       }
     }
 
