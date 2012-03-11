@@ -59,6 +59,9 @@ public:
   double m_dMaxBias;
   double m_dMinBias;
 
+  int m_lSpeakerConfig; // channel mask
+  int m_lSpeakerCount;
+
   int m_lAudioDelay;
 
   int m_nResamplingQuality;
@@ -82,4 +85,5 @@ private:
 
   bool AllowedValue(unsigned int allowedRates[], unsigned int size, int rate);
   LPCTSTR ResamplingQualityAsString(int setting);
+  unsigned int ChannelCount(unsigned int channelMask);
 };

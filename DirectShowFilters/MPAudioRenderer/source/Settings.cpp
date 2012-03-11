@@ -51,7 +51,9 @@ AudioRendererSettings::AudioRendererSettings() :
   m_wWASAPIPreferredDeviceId(NULL),
   m_nForceSamplingRate(0),
   m_nForceBitDepth(0),
-  m_nResamplingQuality(4)
+  m_nResamplingQuality(4),
+  m_lSpeakerCount(2),
+  m_lSpeakerConfig(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.996");
@@ -99,6 +101,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR quality_SEQUENCE_MS = TEXT("Quality_SEQUENCE_MS");
   LPCTSTR quality_SEEKWINDOW_MS = TEXT("Quality_SEEKWINDOW_MS");
   LPCTSTR quality_OVERLAP_MS = TEXT("Quality_OVERLAP_MS");
+  LPCTSTR speakerConfig = TEXT("SpeakerConfig");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
@@ -117,13 +120,14 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD forceSamplingRateData = 0;
   DWORD forceBitDepthData = 0;
   DWORD resamplingQualityData = 4;
+  DWORD speakerConfigData = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
   DWORD quality_USE_QUICKSEEKData = 0;
   DWORD quality_USE_AA_FILTERData = 0;
   DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
   DWORD quality_SEQUENCE_MSData = 82;       // in ms (same as soundtouch default)
   DWORD quality_SEEKWINDOW_MSData = 28;     // in ms (same as soundtouch default)
   DWORD quality_OVERLAP_MSData = 28;        // in ms (same as soundtouch default)
-
+  
   // settings from Reclock - watch CPU usage when enabling these!
   /*bool usequickseek = false;
   bool useaafilter = false; //seems clearer without it
@@ -161,6 +165,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
     ReadRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
     ReadRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
+    ReadRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
 
     // Timestretch quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -187,6 +192,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ForceSamplingRate:        %d", forceSamplingRateData);
     Log("   ForceBitDepth:            %d", forceBitDepthData);
     Log("   ResamplingQuality:        %s", ResamplingQualityAsString(resamplingQualityData));
+    Log("   speakerConfig:            %d", speakerConfigData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
@@ -275,6 +281,15 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
     m_hnsPeriod = devicePeriodData;
 
+    // TODO validate channel mask
+    if (speakerConfigData > 0)
+    {
+      m_lSpeakerConfig = speakerConfigData;
+      m_lSpeakerCount = ChannelCount(m_lSpeakerConfig);
+    }
+    else
+      m_lSpeakerConfig = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+
     if (quality_USE_QUICKSEEKData > 0)
       m_bQuality_USE_QUICKSEEK = true;
     else
@@ -320,6 +335,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
       WriteRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
       WriteRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
+      WriteRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
       WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
       WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
@@ -426,3 +442,14 @@ LPCTSTR AudioRendererSettings::ResamplingQualityAsString(int setting)
       return _T("UNKNOWN");
   }
 }
+
+unsigned int AudioRendererSettings::ChannelCount(unsigned int channelMask) 
+{ 
+  unsigned int channelCount = 0;
+  for (channelCount = 0; channelMask; channelCount++) 
+  { 
+    channelMask &= channelMask - 1;
+  } 
+
+  return channelCount;
+} 

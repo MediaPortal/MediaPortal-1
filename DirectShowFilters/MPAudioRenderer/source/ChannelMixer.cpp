@@ -86,8 +86,8 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
 
-  pOutWfx->dwChannelMask = 3; // TODO setting
-  pOutWfx->Format.nChannels = 2;
+  pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
+  pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
   pOutWfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
   pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample / 8 * pOutWfx->Format.nChannels;
   pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
