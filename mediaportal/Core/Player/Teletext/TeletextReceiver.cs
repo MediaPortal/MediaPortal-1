@@ -22,6 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Player.Teletext
 {
@@ -182,6 +183,32 @@ namespace MediaPortal.Player.Teletext
         sbuf.Append((char)langb1);
         sbuf.Append((char)langb2);
         sbuf.Append((char)langb3);
+
+        try
+        {
+          using (MPSettings xmlreader = new MPSettings())
+          {
+            // The setting "dvbdefttxtsubtitles" is used to be able to pass the page number to SubtitleSelector when it is available.
+            // It's a runtime value and it would be better not to use MPSettings here if possible?
+            // 999;999 = PageNo;Index. PageNo = found page. Index = index of the selected subtitle languages. The lower, the better.
+            string defLang = xmlreader.GetValueAsString("tvservice", "dvbdefttxtsubtitles", "999;999");
+            string prefLang = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
+            int langIndex = 0;
+            foreach (string lang in prefLang.Split(';'))
+            {
+              if (lang.Trim() == sbuf.ToString().Trim() && type == 2)
+              {
+                if (langIndex <= Convert.ToInt16(defLang.Split(';')[1]))
+                {
+                  xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", page.ToString() + ";" + langIndex);
+                  Log.Debug("Found preferred subtitle language {0} on page {1} with index {2}", lang, page, langIndex);
+                }
+              }
+              langIndex += 1;
+            }
+          }
+        }
+        catch { }
         ttxtDecoder.OnServiceInfo(page, type, sbuf.ToString());
       }
     }
