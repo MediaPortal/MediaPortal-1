@@ -21,12 +21,13 @@
 #include <ksmedia.h>
 #include "BaseAudioSink.h"
 #include "Settings.h"
+#include "IRenderFilter.h"
 #include "..\AE_mixer\AERemap.h"
 
 class CChannelMixer : public CBaseAudioSink
 {
 public:
-  CChannelMixer(AudioRendererSettings* pSettings);
+  CChannelMixer(AudioRendererSettings* pSettings, IRenderFilter* pRenderer);
   virtual ~CChannelMixer();
 
 // IAudioSink implementation
@@ -64,5 +65,6 @@ protected:
   REFERENCE_TIME m_rtInSampleTime;
 
   AudioRendererSettings* m_pSettings;
+  IRenderFilter* m_pRenderer;
 };
 

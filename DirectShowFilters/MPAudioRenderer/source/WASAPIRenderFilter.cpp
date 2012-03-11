@@ -473,6 +473,11 @@ REFERENCE_TIME CWASAPIRenderFilter::Latency()
   return m_pSettings->m_hnsPeriod;
 }
 
+WAVEFORMATEXTENSIBLE* CWASAPIRenderFilter::RenderFormat()
+{
+  return m_pInputFormat;
+}
+
 // Processing
 DWORD CWASAPIRenderFilter::ThreadProc()
 {

@@ -21,8 +21,9 @@
 
 #include "alloctracing.h"
 
-CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings) :
-  CBaseAudioSink(true), 
+CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings, IRenderFilter* pRenderer) :
+  CBaseAudioSink(true),
+  m_pRenderer(pRenderer),
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_pSettings(pSettings),
@@ -232,6 +233,8 @@ HRESULT CChannelMixer::SetupConversion()
 {
   m_nInFrameSize = m_pInputFormat->Format.nBlockAlign;
   m_nOutFrameSize = m_pOutputFormat->Format.nBlockAlign;
+
+  bool ac3Encoded = m_pRenderer->RenderFormat()->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
 
   CAEChannelInfo input;
 

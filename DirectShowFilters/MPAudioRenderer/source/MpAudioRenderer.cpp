@@ -186,7 +186,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pSampleRateConverter)
     return E_OUTOFMEMORY;
 
-  m_pChannelMixer = new CChannelMixer(&m_Settings);
+  m_pChannelMixer = new CChannelMixer(&m_Settings, m_pWASAPIRenderer);
   if (!m_pChannelMixer)
     return E_OUTOFMEMORY;
 
