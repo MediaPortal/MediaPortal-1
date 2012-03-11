@@ -1034,6 +1034,7 @@
 		<String id="1266">Watched</String>
 		<String id="1267">Unwatched</String>
 		<String id="1268">Search director</String>
+		<String id="1269">Directors</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
