@@ -88,7 +88,7 @@ HRESULT CWASAPIRenderFilter::Init()
   if (!m_pSettings->m_bUseWASAPI)
     return S_FALSE;
 
-  if (m_pSettings->m_WASAPIUseEventMode)
+  if (m_pSettings->m_bWASAPIUseEventMode)
   {
     // Using HW DMA buffer based event notification
     m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -644,7 +644,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
           Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
       }
 
-      if (!m_pSettings->m_WASAPIUseEventMode)
+      if (!m_pSettings->m_bWASAPIUseEventMode)
       {
         if (m_pAudioClient)
           hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
@@ -676,7 +676,7 @@ HRESULT CWASAPIRenderFilter::GetWASAPIBuffer(UINT32& bufferSize, UINT32& current
 
   // In exclusive mode with even based buffer filling we threat the padding as zero 
   // -> it will make rest of the code a bit cleaner
-  if (m_pSettings->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED || !m_pSettings->m_WASAPIUseEventMode)
+  if (m_pSettings->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED || !m_pSettings->m_bWASAPIUseEventMode)
     m_pAudioClient->GetCurrentPadding(&currentPadding);
 
   bufferSizeInBytes = (bufferSize - currentPadding) * m_pInputFormat->Format.nBlockAlign;
@@ -1005,7 +1005,7 @@ HRESULT CWASAPIRenderFilter::StartAudioClient(IAudioClient** ppAudioClient)
     return hr;
   }
 
-  if (!m_pSettings->m_WASAPIUseEventMode)
+  if (!m_pSettings->m_bWASAPIUseEventMode)
   {
     LARGE_INTEGER liDueTime;
     liDueTime.QuadPart = 0LL;
@@ -1021,7 +1021,7 @@ HRESULT CWASAPIRenderFilter::StartAudioClient(IAudioClient** ppAudioClient)
 
 void CWASAPIRenderFilter::CancelDataEvent()
 {
-  if (!m_pSettings->m_WASAPIUseEventMode)
+  if (!m_pSettings->m_bWASAPIUseEventMode)
   {
     HRESULT hr = CancelWaitableTimer(m_hDataEvent);
     if (FAILED(hr))
@@ -1183,7 +1183,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, 
   else
     Log("WASAPIRenderer::InitAudioClient service initialization success");
 
-  if (m_pSettings->m_WASAPIUseEventMode)
+  if (m_pSettings->m_bWASAPIUseEventMode)
   {
     hr = m_pAudioClient->SetEventHandle(m_hDataEvent);
     if (FAILED(hr))

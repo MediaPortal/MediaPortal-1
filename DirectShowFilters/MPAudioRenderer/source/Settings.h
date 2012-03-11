@@ -43,7 +43,7 @@ public:
   bool m_bHWBasedRefClock;
   bool m_bEnableSyncAdjustment;
   bool m_bUseWASAPI;
-  bool m_WASAPIUseEventMode;
+  bool m_bWASAPIUseEventMode;
   bool m_bUseTimeStretching;
   int  m_lAC3Encoding;
   

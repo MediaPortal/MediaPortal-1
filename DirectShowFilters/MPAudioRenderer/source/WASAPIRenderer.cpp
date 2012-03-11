@@ -86,7 +86,7 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   GetAvailableAudioDevices(&devices, true);
   SAFE_RELEASE(devices); // currently only log available devices
 
-  if (pRenderer->Settings()->m_WASAPIUseEventMode)
+  if (pRenderer->Settings()->m_bWASAPIUseEventMode)
   {
     // Using HW DMA buffer based event notification
     m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -178,7 +178,7 @@ HRESULT WASAPIRenderer::StopRendererThread()
 
 void WASAPIRenderer::CancelDataEvent()
 {
-  if (!m_pRenderer->Settings()->m_WASAPIUseEventMode)
+  if (!m_pRenderer->Settings()->m_bWASAPIUseEventMode)
   {
     HRESULT hr = CancelWaitableTimer(m_hDataEvent);
     if (FAILED(hr))
@@ -1089,7 +1089,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
     Log("WASAPIRenderer::InitAudioClient service initialization success");
   }
 
-  if (m_pRenderer->Settings()->m_WASAPIUseEventMode)
+  if (m_pRenderer->Settings()->m_bWASAPIUseEventMode)
   {
     hr = m_pAudioClient->SetEventHandle(m_hDataEvent);
     if (FAILED(hr))
@@ -1165,7 +1165,7 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
     Log("WASAPIRenderer::StartAudioClient - ignored, already started"); 
   }
 
-  if (!m_pRenderer->Settings()->m_WASAPIUseEventMode)
+  if (!m_pRenderer->Settings()->m_bWASAPIUseEventMode)
   {
     LARGE_INTEGER liDueTime;
     liDueTime.QuadPart = 0LL;
@@ -1307,7 +1307,7 @@ DWORD WASAPIRenderer::RenderThread()
         // In exclusive mode with even based buffer filling we threat the padding as zero 
         // -> it will make rest of the code a bit cleaner
         if (m_pRenderer->Settings()->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED ||
-            !m_pRenderer->Settings()->m_WASAPIUseEventMode)
+            !m_pRenderer->Settings()->m_bWASAPIUseEventMode)
         {
           m_pAudioClient->GetCurrentPadding(&currentPadding);
         }
@@ -1387,7 +1387,7 @@ DWORD WASAPIRenderer::RenderThread()
         }
       }
       
-      if (!m_pRenderer->Settings()->m_WASAPIUseEventMode)
+      if (!m_pRenderer->Settings()->m_bWASAPIUseEventMode)
   	  {
         if (m_pAudioClient)
         {

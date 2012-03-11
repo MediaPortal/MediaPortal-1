@@ -33,7 +33,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bHWBasedRefClock(true),
   m_bEnableSyncAdjustment(true),
   m_bUseWASAPI(true),
-  m_WASAPIUseEventMode(true),
+  m_bWASAPIUseEventMode(true),
   m_bUseTimeStretching(false),
   m_lAC3Encoding(0),
   m_bQuality_USE_QUICKSEEK(false),
@@ -212,9 +212,9 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
 
     if (WASAPIUseEventModeData > 0)
-      m_WASAPIUseEventMode = true;
+      m_bWASAPIUseEventMode = true;
     else
-      m_WASAPIUseEventMode = false;
+      m_bWASAPIUseEventMode = false;
 
     if (AC3EncodingData == DISABLED || AC3EncodingData == AUTO || AC3EncodingData == FORCED)
       m_lAC3Encoding = AC3EncodingData;
