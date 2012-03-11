@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -423,7 +424,7 @@ namespace Mediaportal.TV.TvPlugin
 
       IList<Channel> tvChannelList = null;
       IDictionary<int, NowAndNext> listNowNext = null;
-      Parallel.Invoke(
+      ThreadHelper.ParallelInvoke(
         () => tvChannelList = GetChannelListByGroup(),
         () => listNowNext = GetNowAndNext(nextEPGupdate)
       );            

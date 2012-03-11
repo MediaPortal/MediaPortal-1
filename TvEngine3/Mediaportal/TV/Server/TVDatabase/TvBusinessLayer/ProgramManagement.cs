@@ -6,7 +6,8 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
-
+using System.Threading.Tasks;
+using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
@@ -45,78 +46,25 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           IQueryable<Channel> channels = programRepository.GetQuery<Channel>(c => c.GroupMaps.Any(g => g.idGroup == idGroup));
           IQueryable<int> channelIds = channels.Select(c => c.idChannel);
 
-          IDictionary<int, NowAndNext> progList = new Dictionary<int, NowAndNext>();          
-          IQueryable<Program> nowPrograms = programRepository.GetNowProgramsForChannelGroup(channelIds);                              
+          IDictionary<int, NowAndNext> progList = new Dictionary<int, NowAndNext>();
 
-          foreach (Program nowPrg in nowPrograms)
-          {
-            int idChannel = nowPrg.idChannel;
-            string titleNext = string.Empty;            
-            int idProgramNext = -1;
-            string episodeNameNext = string.Empty;
-            string seriesNumNext = string.Empty;
-            string episodeNumNext = string.Empty;
-            string episodePartNext = string.Empty;
+          IQueryable<Program> nowPrograms;
+          IList<Program> nextPrograms = null;          
 
-            DateTime nowStart = nowPrg.startTime;
-            DateTime nowEnd = nowPrg.endTime;
-            string titleNow = nowPrg.title;
-            int idProgramNow = nowPrg.idProgram;
-            string episodeNameNow = nowPrg.episodeName;
-            string seriesNumNow = nowPrg.seriesNum;
-            string episodeNumNow = nowPrg.episodeNum;
-            string episodePartNow = nowPrg.episodePart;
-
-            var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
-                                                   idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
-                                                   seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
-                                                   episodePartNext);
-            progList[idChannel] = nowAndNext;
-          }
-
-
-          IQueryable<Program> nextPrograms = programRepository.GetNextProgramsForChannelGroup(channelIds);
-
-          foreach (Program nextPrg in nextPrograms)
-          {
-            NowAndNext nowAndNext;
-            progList.TryGetValue(nextPrg.idChannel, out nowAndNext);
-            
-            int idChannel = nextPrg.idChannel;
-            string titleNext = nextPrg.title;
-            int idProgramNext = nextPrg.idProgram;
-            string episodeNameNext = nextPrg.episodeName;
-            string seriesNumNext = nextPrg.seriesNum;
-            string episodeNumNext = nextPrg.episodeNum;
-            string episodePartNext = nextPrg.episodePart;
-
-            if (nowAndNext == null)
-            {
-              DateTime nowStart = SqlDateTime.MinValue.Value;
-              DateTime nowEnd = SqlDateTime.MinValue.Value; ;
-              string titleNow = string.Empty;
-              int idProgramNow = -1;
-              string episodeNameNow = string.Empty;
-              string seriesNumNow = string.Empty;
-              string episodeNumNow = string.Empty;
-              string episodePartNow = string.Empty;
-              nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
-                                                  idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
-                                                  seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
-                                                  episodePartNext);
-            }
-            else
-            {
-              nowAndNext.TitleNext = titleNext;
-              nowAndNext.IdProgramNext = idProgramNext;
-              nowAndNext.EpisodeNameNext = episodeNameNext;
-              nowAndNext.SeriesNumNext = seriesNumNext;
-              nowAndNext.EpisodeNumNext = episodeNumNext;
-              nowAndNext.EpisodePartNext = episodePartNext;
-            }
-            progList[idChannel] = nowAndNext;       
-          }
-
+          ThreadHelper.ParallelInvoke(
+            delegate
+              {
+                nowPrograms = programRepository.GetNowProgramsForChannelGroup(channelIds);
+                AddNowProgramsToList(nowPrograms, progList);
+              }
+            ,
+            delegate
+              {
+                nextPrograms = programRepository.GetNextProgramsForChannelGroup(channelIds).ToList();
+              }
+          );
+                                
+          AddNextProgramsToList(nextPrograms, progList);
           return progList;
         }
       }
@@ -127,7 +75,79 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    
+    private static void AddNextProgramsToList(IEnumerable<Program> nextPrograms, IDictionary<int, NowAndNext> progList)
+    {      
+      foreach (Program nextPrg in nextPrograms)
+      {
+        NowAndNext nowAndNext;
+        progList.TryGetValue(nextPrg.idChannel, out nowAndNext);
+
+        int idChannel = nextPrg.idChannel;
+        string titleNext = nextPrg.title;
+        int idProgramNext = nextPrg.idProgram;
+        string episodeNameNext = nextPrg.episodeName;
+        string seriesNumNext = nextPrg.seriesNum;
+        string episodeNumNext = nextPrg.episodeNum;
+        string episodePartNext = nextPrg.episodePart;
+
+        if (nowAndNext == null)
+        {
+          DateTime nowStart = SqlDateTime.MinValue.Value;
+          DateTime nowEnd = SqlDateTime.MinValue.Value;
+          ;
+          string titleNow = string.Empty;
+          int idProgramNow = -1;
+          string episodeNameNow = string.Empty;
+          string seriesNumNow = string.Empty;
+          string episodeNumNow = string.Empty;
+          string episodePartNow = string.Empty;
+          nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
+                                      idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
+                                      seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
+                                      episodePartNext);
+        }
+        else
+        {
+          nowAndNext.TitleNext = titleNext;
+          nowAndNext.IdProgramNext = idProgramNext;
+          nowAndNext.EpisodeNameNext = episodeNameNext;
+          nowAndNext.SeriesNumNext = seriesNumNext;
+          nowAndNext.EpisodeNumNext = episodeNumNext;
+          nowAndNext.EpisodePartNext = episodePartNext;
+        }
+        progList[idChannel] = nowAndNext;
+      }
+    }
+
+    private static void AddNowProgramsToList(IEnumerable<Program> nowPrograms, IDictionary<int, NowAndNext> progList)
+    {      
+      foreach (Program nowPrg in nowPrograms)
+      {
+        int idChannel = nowPrg.idChannel;
+        string titleNext = string.Empty;
+        int idProgramNext = -1;
+        string episodeNameNext = string.Empty;
+        string seriesNumNext = string.Empty;
+        string episodeNumNext = string.Empty;
+        string episodePartNext = string.Empty;
+
+        DateTime nowStart = nowPrg.startTime;
+        DateTime nowEnd = nowPrg.endTime;
+        string titleNow = nowPrg.title;
+        int idProgramNow = nowPrg.idProgram;
+        string episodeNameNow = nowPrg.episodeName;
+        string seriesNumNow = nowPrg.seriesNum;
+        string episodeNumNow = nowPrg.episodeNum;
+        string episodePartNow = nowPrg.episodePart;
+
+        var nowAndNext = new NowAndNext(idChannel, nowStart, nowEnd, titleNow, titleNext, idProgramNow,
+                                        idProgramNext, episodeNameNow, episodeNameNext, seriesNumNow,
+                                        seriesNumNext, episodeNumNow, episodeNumNext, episodePartNow,
+                                        episodePartNext);
+        progList[idChannel] = nowAndNext;
+      }
+    }
+
 
     public void InsertPrograms(ImportParams importParams)
     {
