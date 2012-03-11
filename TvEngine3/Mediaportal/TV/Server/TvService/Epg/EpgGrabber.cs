@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
       }
       Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
-      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
+      IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.ChannelMaps);
 
       if (_epgCards != null)
       {
