@@ -559,9 +559,12 @@
     <ClCompile Include="libresample\src\src_zoh.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">CompileAsCpp</CompileAs>
     </ClCompile>
+    <ClCompile Include="AE_mixer\AEChannelInfo.cpp" />
+    <ClCompile Include="AE_mixer\AERemap.cpp" />
     <ClCompile Include="source\AC3EncoderFilter.cpp" />
     <ClCompile Include="source\BaseAudioSink.cpp" />
     <ClCompile Include="source\BitDepthAdapter.cpp" />
+    <ClCompile Include="source\ChannelMixer.cpp" />
     <ClCompile Include="source\DirectSoundRenderer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>
@@ -628,9 +631,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libresample\src\samplerate.h" />
+    <ClInclude Include="AE_mixer\AEAudioFormat.h" />
+    <ClInclude Include="AE_mixer\AEChannelInfo.h" />
+    <ClInclude Include="AE_mixer\AERemap.h" />
+    <ClInclude Include="AE_mixer\AEUtil.h" />
+    <ClInclude Include="AE_mixer\StdString.h" />
     <ClInclude Include="source\AC3EncoderFilter.h" />
     <ClInclude Include="source\BaseAudioSink.h" />
     <ClInclude Include="source\BitDepthAdapter.h" />
+    <ClInclude Include="source\ChannelMixer.h" />
     <ClInclude Include="source\DirectSoundRenderer.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">true</ExcludedFromBuild>

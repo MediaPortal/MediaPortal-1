@@ -37,6 +37,7 @@
 #include "AC3EncoderFilter.h"
 #include "TimeStretchFilter.h"
 #include "SampleRateConverterFilter.h"
+#include "ChannelMixer.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "SyncClock.h"
@@ -132,6 +133,7 @@ private:
   CBitDepthAdapter*     m_pOutBitDepthAdapter;
   CTimeStretchFilter*   m_pTimestretchFilter;
   CSampleRateConverter* m_pSampleRateConverter;
+  CChannelMixer*        m_pChannelMixer;
 
   IRenderFilter* m_pRenderer;
   ITimeStretch* m_pTimeStretch;

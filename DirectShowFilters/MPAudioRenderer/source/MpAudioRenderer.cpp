@@ -150,6 +150,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pOutBitDepthAdapter;
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
+  delete m_pChannelMixer;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
   StopLogger();
@@ -185,8 +186,16 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pSampleRateConverter)
     return E_OUTOFMEMORY;
 
+  m_pChannelMixer = new CChannelMixer(&m_Settings);
+  if (!m_pChannelMixer)
+    return E_OUTOFMEMORY;
+
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
   m_pSampleRateConverter->ConnectTo(m_pTimestretchFilter);
+
+  //m_pSampleRateConverter->ConnectTo(m_pChannelMixer);
+  //m_pChannelMixer->ConnectTo(m_pTimestretchFilter);
+  
   m_pTimestretchFilter->ConnectTo(m_pOutBitDepthAdapter);
   m_pOutBitDepthAdapter->ConnectTo(m_pAC3Encoder);
   m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
