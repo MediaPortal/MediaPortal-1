@@ -116,9 +116,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
       {
-        textBoxTimeShiftFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
-                                                    Environment.GetFolderPath(
-                                                      Environment.SpecialFolder.CommonApplicationData));
+        textBoxTimeShiftFolder.Text = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
         if (!Directory.Exists(textBoxTimeShiftFolder.Text))
         {
           Directory.CreateDirectory(textBoxTimeShiftFolder.Text);
@@ -126,6 +124,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         _needRestart = true;
       }
     }
+
+  
 
     public override void OnSectionActivated()
     {

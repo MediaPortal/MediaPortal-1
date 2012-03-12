@@ -338,18 +338,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       textBoxFolder.Text = info.card.recordingFolder;
       if (String.IsNullOrEmpty(textBoxFolder.Text))
       {
-        string recPath =
-          Utils.ReturnRegistryValue(@"SOFTWARE\Microsoft\Windows\CurrentVersion\MediaCenter\Service\Recording",
-                                    "RecordPath");
-        if (String.IsNullOrEmpty(recPath))
-        {
-          recPath = OSInfo.OSInfo.VistaOrLater()
-                    //Windows Vista and up
-                      ? Environment.GetEnvironmentVariable("PUBLIC") + "\\Recorded TV"
-                    //Windows XP
-                      : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                        "\\Shared Documents\\Recorded TV";
-        }
+        var recPath = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
         if (!Directory.Exists(recPath))
         {
           Directory.CreateDirectory(recPath);
@@ -370,7 +359,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           break;
       }
       */
-    }
+    }   
 
     // Browse Recording folder
     private void buttonBrowse_Click(object sender, EventArgs e)

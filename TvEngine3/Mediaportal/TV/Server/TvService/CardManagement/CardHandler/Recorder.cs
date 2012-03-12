@@ -42,9 +42,27 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <param name="cardHandler">The card handler.</param>
     public Recorder(ITvCardHandler cardHandler) : base(cardHandler)
     {
+      string recordingFolder = cardHandler.DataBaseCard.recordingFolder;
+
+      bool hasFolder = TVDatabase.TVBusinessLayer.Common.IsFolderValid(recordingFolder);
+
+      if (!hasFolder)
+      {
+        recordingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
+        cardHandler.DataBaseCard.recordingFolder = recordingFolder;
+        TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+      }
+
+      if (!Directory.Exists(recordingFolder))
+      {
+        Directory.CreateDirectory(recordingFolder);
+      }
+
       _cardHandler = cardHandler;
       _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").value == "yes");
     }
+
+
 
     protected override void AudioVideoEventHandler(PidType pidType)
     {

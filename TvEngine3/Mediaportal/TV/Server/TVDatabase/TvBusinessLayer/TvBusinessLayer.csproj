@@ -72,6 +72,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Core">
+      <HintPath>..\..\..\..\..\..\mediaportal\Core\bin\Release\Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -89,6 +92,7 @@
     <Compile Include="ChannelGroupManagement.cs" />
     <Compile Include="CardManagement.cs" />
     <Compile Include="CanceledScheduleManagement.cs" />
+    <Compile Include="Common.cs" />
     <Compile Include="ConflictManagement.cs" />
     <Compile Include="Entities\ChannelBLL.cs" />
     <Compile Include="Entities\ProgramBLL.cs" />

@@ -50,7 +50,20 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <param name="cardHandler">The card handler.</param>
     public TimeShifter(ITvCardHandler cardHandler) : base(cardHandler)
     {
+      string timeshiftingFolder = cardHandler.DataBaseCard.timeshiftingFolder;
 
+      bool hasFolder = TVDatabase.TVBusinessLayer.Common.IsFolderValid(timeshiftingFolder);
+      if (!hasFolder)
+      {
+        timeshiftingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
+        cardHandler.DataBaseCard.timeshiftingFolder = timeshiftingFolder;
+        TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+      }
+
+      if (!Directory.Exists(timeshiftingFolder))
+      {
+        Directory.CreateDirectory(timeshiftingFolder);
+      }
 
       _cardHandler = cardHandler;
       
