@@ -105,8 +105,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _asioDeviceNumber = -1;
 
     private BassWasapiHandler _wasapiHandler = null;
-    private WASAPIPROC _wasapiProc = null;
     private int _wasapiDeviceNumber = -1;
+    private bool _wasApiExclusiveMode = false;
 
     private List<int> DecoderPluginHandles = new List<int>();
 
@@ -925,20 +925,6 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     /// <summary>
-    /// Callback from WasApi to deliver data from Decoding Channel
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="length"></param>
-    /// <param name="user"></param>
-    /// <returns></returns>
-    private int WasApiCallback(IntPtr buffer, int length, IntPtr user)
-    {
-      // We can simply use the bass method to get some data from a decoding channel 
-      // and store it to the asio buffer in the same moment...
-      return Bass.BASS_ChannelGetData(user.ToInt32(), buffer, length);
-    }
-
-    /// <summary>
     /// Get the Sound devive as set in the Configuartion
     /// </summary>
     /// <returns></returns>
@@ -1016,6 +1002,8 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        _wasApiExclusiveMode = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", false);
+
         int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "");
         string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
@@ -1510,8 +1498,7 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         // Setup WasApi Handler
 
-        // TODO: Implement Shared mode and allow setting of buffer
-        _wasapiHandler = new BassWasapiHandler(_wasapiDeviceNumber, true, stream.ChannelInfo.freq,
+        _wasapiHandler = new BassWasapiHandler(_wasapiDeviceNumber, _wasApiExclusiveMode, stream.ChannelInfo.freq,
                                                stream.ChannelInfo.chans, 0f, 0f);
 
         _wasapiHandler.AddOutputSource(_mixer, BASSFlag.BASS_DEFAULT);

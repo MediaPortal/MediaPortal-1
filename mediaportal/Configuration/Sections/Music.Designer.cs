@@ -123,6 +123,7 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
+      this.WasapiExclusiveModeCkBox = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -396,11 +397,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageWASAPIPLayerSettings
       // 
+      this.tabPageWASAPIPLayerSettings.Controls.Add(this.WasapiExclusiveModeCkBox);
       this.tabPageWASAPIPLayerSettings.Controls.Add(this.mpLabel5);
       this.tabPageWASAPIPLayerSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageWASAPIPLayerSettings.Name = "tabPageWASAPIPLayerSettings";
       this.tabPageWASAPIPLayerSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageWASAPIPLayerSettings.Size = new System.Drawing.Size(424, 260);
+      this.tabPageWASAPIPLayerSettings.Size = new System.Drawing.Size(424, 280);
       this.tabPageWASAPIPLayerSettings.TabIndex = 2;
       this.tabPageWASAPIPLayerSettings.Text = "WasAPI";
       this.tabPageWASAPIPLayerSettings.UseVisualStyleBackColor = true;
@@ -994,6 +996,17 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
       // 
+      // WasapiExclusiveModeCkBox
+      // 
+      this.WasapiExclusiveModeCkBox.AutoSize = true;
+      this.WasapiExclusiveModeCkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.WasapiExclusiveModeCkBox.Location = new System.Drawing.Point(21, 53);
+      this.WasapiExclusiveModeCkBox.Name = "WasapiExclusiveModeCkBox";
+      this.WasapiExclusiveModeCkBox.Size = new System.Drawing.Size(161, 17);
+      this.WasapiExclusiveModeCkBox.TabIndex = 3;
+      this.WasapiExclusiveModeCkBox.Text = "Use WasApi Exclusive Mode";
+      this.WasapiExclusiveModeCkBox.UseVisualStyleBackColor = true;
+      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1113,5 +1126,6 @@ namespace MediaPortal.Configuration.Sections
     private HScrollBar hScrollBarBalance;
     private MPLabel mpLabel6;
     private MPLabel mpLabel7;
+    private CheckBox WasapiExclusiveModeCkBox;
   }
 }

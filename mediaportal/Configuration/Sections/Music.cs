@@ -230,6 +230,12 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
+        #region BASS WASAPI
+
+        WasapiExclusiveModeCkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", false);
+
+        #endregion
+
         #region Visualization Settings
         int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
@@ -404,9 +410,11 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "streamOutputLevel", StreamOutputLevelNud.Value);
 
         xmlwriter.SetValue("audioplayer", "asiobalance", hScrollBarBalance.Value);
+
+        xmlwriter.SetValueAsBool("audioplayer", "wasapiExclusive", WasapiExclusiveModeCkBox.Checked);
         #endregion
 
-        #region Visualization Settings
+        #region Visualization Settings);
         if (IVizMgr != null && VisualizationsCmbBox.SelectedIndex > 0) // Something else than "None" selected
         {
           List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
