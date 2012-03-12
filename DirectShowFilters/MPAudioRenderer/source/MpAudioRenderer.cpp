@@ -191,11 +191,8 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
     return E_OUTOFMEMORY;
 
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
-  m_pSampleRateConverter->ConnectTo(m_pTimestretchFilter);
-
-  //m_pSampleRateConverter->ConnectTo(m_pChannelMixer);
-  //m_pChannelMixer->ConnectTo(m_pTimestretchFilter);
-  
+  m_pSampleRateConverter->ConnectTo(m_pChannelMixer);
+  m_pChannelMixer->ConnectTo(m_pTimestretchFilter);
   m_pTimestretchFilter->ConnectTo(m_pOutBitDepthAdapter);
   m_pOutBitDepthAdapter->ConnectTo(m_pAC3Encoder);
   m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
