@@ -61,6 +61,7 @@ public:
 
   int m_lSpeakerConfig; // channel mask
   int m_lSpeakerCount;
+  bool m_bForceChannelMixing;
 
   int m_lAudioDelay;
 

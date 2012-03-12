@@ -53,7 +53,8 @@ AudioRendererSettings::AudioRendererSettings() :
   m_nForceBitDepth(0),
   m_nResamplingQuality(4),
   m_lSpeakerCount(2),
-  m_lSpeakerConfig(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT)
+  m_lSpeakerConfig(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT),
+  m_bForceChannelMixing(false)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.996");
@@ -102,6 +103,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR quality_SEEKWINDOW_MS = TEXT("Quality_SEEKWINDOW_MS");
   LPCTSTR quality_OVERLAP_MS = TEXT("Quality_OVERLAP_MS");
   LPCTSTR speakerConfig = TEXT("SpeakerConfig");
+  LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
@@ -121,6 +123,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD forceBitDepthData = 0;
   DWORD resamplingQualityData = 4;
   DWORD speakerConfigData = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+  DWORD forceChannelMixingData = false;
   DWORD quality_USE_QUICKSEEKData = 0;
   DWORD quality_USE_AA_FILTERData = 0;
   DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
@@ -166,6 +169,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
     ReadRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
     ReadRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
+    ReadRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
 
     // Timestretch quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -193,6 +197,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ForceBitDepth:            %d", forceBitDepthData);
     Log("   ResamplingQuality:        %s", ResamplingQualityAsString(resamplingQualityData));
     Log("   speakerConfig:            %d", speakerConfigData);
+    Log("   forceChannelMixing:              %d", forceChannelMixingData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
@@ -290,6 +295,11 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_lSpeakerConfig = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 
+    if (forceChannelMixingData > 0)
+      m_bForceChannelMixing = true;
+    else
+      m_bForceChannelMixing = false;
+
     if (quality_USE_QUICKSEEKData > 0)
       m_bQuality_USE_QUICKSEEK = true;
     else
@@ -336,6 +346,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
       WriteRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
       WriteRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
+      WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
       WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
       WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);

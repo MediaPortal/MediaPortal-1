@@ -69,18 +69,23 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  // try the format directly
-  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
-  if (SUCCEEDED(hr))
+  HRESULT hr = S_OK;
+
+  if (!m_pSettings->m_bForceChannelMixing)
   {
-    if (bApplyChanges)
+    // try the format directly
+    hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+    if (SUCCEEDED(hr))
     {
-      SetInputFormat(pwfx);
-      SetOutputFormat(pwfx);
-      m_bPassThrough = false;
-      hr = SetupConversion();
+      if (bApplyChanges)
+      {
+        SetInputFormat(pwfx);
+        SetOutputFormat(pwfx);
+        m_bPassThrough = false;
+        hr = SetupConversion();
+      }
+      return hr;
     }
-    return hr;
   }
 
   WAVEFORMATEXTENSIBLE* pOutWfx;
