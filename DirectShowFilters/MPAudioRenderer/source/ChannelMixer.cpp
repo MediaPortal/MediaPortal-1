@@ -66,20 +66,30 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
+  //bool ac3Encoded = false;
+
   // try passthrough
-  /*
-  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
-  if (SUCCEEDED(hr))
+  HRESULT hr = S_OK;
+  
+  // TODO check if it is possible to know before hand if the AC3 encoding is going
+  // to take place. Otherwise we need to enable ourselves for every format 
+  // and then just forward the samples in ::PutSample if there is no mixing to be done
+
+  // AC3 encoder has different channel mapping so it needs channel reordering
+  /*if (!ac3Encoded)
   {
-    if (bApplyChanges)
+    m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+    if (SUCCEEDED(hr))
     {
-      m_bPassThrough = true;
-      SetInputFormat(pwfx);
-      SetOutputFormat(pwfx);
+      if (bApplyChanges)
+      {
+        m_bPassThrough = true;
+        SetInputFormat(pwfx);
+        SetOutputFormat(pwfx);
+      }
+      return hr;
     }
-    return hr;
-  }
-  */
+  }*/
 
   if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -87,13 +97,16 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
 
-  pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
-  pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
-  pOutWfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
-  pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample / 8 * pOutWfx->Format.nChannels;
-  pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
+  //if (!ac3Encoded)
+  {
+    pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
+    pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
+    pOutWfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+    pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample / 8 * pOutWfx->Format.nChannels;
+    pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
+  }
   
-  HRESULT hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
+  hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
 
   if (FAILED(hr))
   {
@@ -237,74 +250,97 @@ HRESULT CChannelMixer::SetupConversion()
   bool ac3Encoded = m_pRenderer->RenderFormat()->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
 
   CAEChannelInfo input;
+  CAEChannelInfo output;
 
-  switch (m_pInputFormat->Format.nChannels)
-  {
-    case 1:
-      input = AE_CH_LAYOUT_1_0;
-      break;
+  MapChannelsFromDStoAE(m_pInputFormat, &input);
+  MapChannelsFromDStoAE(m_pOutputFormat, &output, ac3Encoded);
 
-    case 2:
-      input = AE_CH_LAYOUT_2_0;
-      break;
-
-    case 3:
-      if (m_pOutputFormat->dwChannelMask & SPEAKER_LOW_FREQUENCY)
-        input = AE_CH_LAYOUT_2_1;
-      else
-        input = AE_CH_LAYOUT_3_0;
-      
-      break;
-
-    case 4:
-      if (m_pOutputFormat->dwChannelMask & SPEAKER_LOW_FREQUENCY)
-        input = AE_CH_LAYOUT_3_1;
-      else
-        input = AE_CH_LAYOUT_4_0;
-      
-      break;
-
-    case 5:
-      if (m_pOutputFormat->dwChannelMask & SPEAKER_LOW_FREQUENCY)
-        input = AE_CH_LAYOUT_4_1;
-      else
-        input = AE_CH_LAYOUT_5_0;
-      
-      break;
-
-    case 6:
-      input = AE_CH_LAYOUT_5_1;
-      break;
-
-    case 7:
-      input = AE_CH_LAYOUT_7_0;
-      break;
-    
-    case 8:
-      input = AE_CH_LAYOUT_7_1;
-      break;
-    
-    default:
-      ASSERT(false);
-  }
-
-  //CAEChannelInfo input(AE_CH_LAYOUT_5_1);
-  CAEChannelInfo output(AE_CH_LAYOUT_2_0);
-  
-  // AC3 encoder channel mapping correction
-
-  //CAEChannelInfo output(AE_CH_LAYOUT_5_1);
-  /*output += AE_CH_FL;
-  output += AE_CH_FC;
-  output += AE_CH_FR;
-  output += AE_CH_BL;
-  output += AE_CH_BR;
-  output += AE_CH_LFE;*/
-
-  if (!m_pRemap->Initialize(input, output, false, false, AE_CH_LAYOUT_5_1))
+  // TODO check the last parameter
+  if (!m_pRemap->Initialize(input, output, false, false, AE_CH_LAYOUT_7_1)) 
   {
     Log("CChannelMixer::SetupConversion - failed to initialize channel remapper");
     ASSERT(false);
+  }
+
+  return S_OK;
+}
+
+HRESULT CChannelMixer::MapChannelsFromDStoAE(WAVEFORMATEXTENSIBLE* pWfex, CAEChannelInfo* pChannelInfo, bool useAC3Layout)
+{
+  CheckPointer(pWfex, E_POINTER);
+
+  if (useAC3Layout)
+  {
+    switch (pWfex->Format.nChannels)
+    {
+      case 1:
+        *pChannelInfo = AE_AC3_CH_LAYOUT_1_0;
+        break;
+      case 2:
+        *pChannelInfo = AE_AC3_CH_LAYOUT_2_0;
+        break;
+      case 3:
+        if (pWfex->dwChannelMask & SPEAKER_BACK_CENTER)
+          *pChannelInfo = AE_AC3_CH_LAYOUT_2_S;
+        else
+          *pChannelInfo = AE_AC3_CH_LAYOUT_3_0;
+        break;
+      case 4:
+        if (pWfex->dwChannelMask & SPEAKER_BACK_CENTER)
+          *pChannelInfo = AE_AC3_CH_LAYOUT_3_S;
+        else
+          *pChannelInfo = AE_AC3_CH_LAYOUT_4_0;   
+        break;
+      case 5:
+        *pChannelInfo = AE_AC3_CH_LAYOUT_5_0;
+        break;
+      case 6:
+        *pChannelInfo = AE_AC3_CH_LAYOUT_5_1;
+        break;
+      default:
+        return S_FALSE;
+      }
+  }
+  else // non-AC3
+  {
+    switch (pWfex->Format.nChannels)
+    {
+      case 1:
+        *pChannelInfo = AE_CH_LAYOUT_1_0;
+        break;
+      case 2:
+        *pChannelInfo = AE_CH_LAYOUT_2_0;
+        break;
+      case 3:
+        if (pWfex->dwChannelMask & SPEAKER_LOW_FREQUENCY)
+          *pChannelInfo = AE_CH_LAYOUT_2_1;
+        else
+          *pChannelInfo = AE_CH_LAYOUT_3_0;
+        break;
+      case 4:
+        if (pWfex->dwChannelMask & SPEAKER_LOW_FREQUENCY)
+          *pChannelInfo = AE_CH_LAYOUT_3_1;
+        else
+          *pChannelInfo = AE_CH_LAYOUT_4_0;
+        break;
+      case 5:
+        if (pWfex->dwChannelMask & SPEAKER_LOW_FREQUENCY)
+          *pChannelInfo = AE_CH_LAYOUT_4_1;
+        else
+          *pChannelInfo = AE_CH_LAYOUT_5_0;
+        break;
+      case 6:
+        *pChannelInfo = AE_CH_LAYOUT_5_1;
+        break;
+      case 7:
+        *pChannelInfo = AE_CH_LAYOUT_7_0;
+        break;
+      case 8:
+        *pChannelInfo = AE_CH_LAYOUT_7_1;
+        break;
+      default:
+        return S_FALSE;
+      }  
   }
 
   return S_OK;

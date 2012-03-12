@@ -49,6 +49,8 @@ protected:
   HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
   
   HRESULT SetupConversion();
+  HRESULT MapChannelsFromDStoAE(WAVEFORMATEXTENSIBLE* pWfex, CAEChannelInfo* channelInfo, bool useAC3Layout = false);
+
   HRESULT ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed);
 
   HRESULT FlushStream();

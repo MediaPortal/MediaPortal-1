@@ -171,6 +171,25 @@ CAEChannelInfo& CAEChannelInfo::operator=(const enum AEStdChLayout rhs)
   return *this;
 }
 
+CAEChannelInfo& CAEChannelInfo::operator=(const enum AEAC3ChLayout rhs)
+{
+  ASSERT(rhs >= 0 && rhs < AE_CH_LAYOUT_MAX);
+
+  static enum AEChannel layouts[AE_AC3_CH_LAYOUT_MAX][8] = {
+    {AE_CH_FC, AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FR, AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FR, AE_CH_BC , AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FC, AE_CH_FR , AE_CH_BC , AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FR, AE_CH_BL , AE_CH_BR , AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FC, AE_CH_FR , AE_CH_BL , AE_CH_BR , AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FC, AE_CH_FR , AE_CH_BL , AE_CH_BR , AE_CH_LFE, AE_CH_NULL}
+  };
+
+  *this = layouts[rhs];
+  return *this;
+}
+
 bool CAEChannelInfo::operator==(const CAEChannelInfo& rhs)
 {
   /* if the channel count doesnt match, no need to check further */
