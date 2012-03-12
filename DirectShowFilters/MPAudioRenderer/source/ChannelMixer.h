@@ -59,6 +59,8 @@ protected:
   bool m_bPassThrough;
 
   CAERemap* m_pRemap;
+  CAEChannelInfo m_AEInput;
+  CAEChannelInfo m_AEOutput;
 
   int m_nInFrameSize;     // Bytes in a frame. A frame contains a sample for each channel
   int m_nOutFrameSize;     

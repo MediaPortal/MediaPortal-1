@@ -66,45 +66,31 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  //bool ac3Encoded = false;
-
-  // try passthrough
-  HRESULT hr = S_OK;
-  
-  // TODO check if it is possible to know before hand if the AC3 encoding is going
-  // to take place. Otherwise we need to enable ourselves for every format 
-  // and then just forward the samples in ::PutSample if there is no mixing to be done
-
-  // AC3 encoder has different channel mapping so it needs channel reordering
-  /*if (!ac3Encoded)
-  {
-    m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
-    if (SUCCEEDED(hr))
-    {
-      if (bApplyChanges)
-      {
-        m_bPassThrough = true;
-        SetInputFormat(pwfx);
-        SetOutputFormat(pwfx);
-      }
-      return hr;
-    }
-  }*/
-
   if (pwfx->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
     return VFW_E_TYPE_NOT_ACCEPTED;
+
+  // try the format directly
+  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+  if (SUCCEEDED(hr))
+  {
+    if (bApplyChanges)
+    {
+      SetInputFormat(pwfx);
+      SetOutputFormat(pwfx);
+      m_bPassThrough = false;
+      hr = SetupConversion();
+    }
+    return hr;
+  }
 
   WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
 
-  //if (!ac3Encoded)
-  {
-    pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
-    pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
-    pOutWfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
-    pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample / 8 * pOutWfx->Format.nChannels;
-    pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
-  }
+  pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
+  pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
+  pOutWfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+  pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample / 8 * pOutWfx->Format.nChannels;
+  pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
   
   hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
 
@@ -249,18 +235,17 @@ HRESULT CChannelMixer::SetupConversion()
 
   bool ac3Encoded = m_pRenderer->RenderFormat()->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
 
-  CAEChannelInfo input;
-  CAEChannelInfo output;
-
-  MapChannelsFromDStoAE(m_pInputFormat, &input);
-  MapChannelsFromDStoAE(m_pOutputFormat, &output, ac3Encoded);
+  MapChannelsFromDStoAE(m_pInputFormat, &m_AEInput);
+  MapChannelsFromDStoAE(m_pOutputFormat, &m_AEOutput, ac3Encoded);
 
   // TODO check the last parameter
-  if (!m_pRemap->Initialize(input, output, false, false, AE_CH_LAYOUT_7_1)) 
+  if (!m_pRemap->Initialize(m_AEInput, m_AEOutput, false, false, AE_CH_LAYOUT_7_1)) 
   {
     Log("CChannelMixer::SetupConversion - failed to initialize channel remapper");
     ASSERT(false);
   }
+
+  m_bPassThrough = m_AEInput == m_AEOutput;
 
   return S_OK;
 }
