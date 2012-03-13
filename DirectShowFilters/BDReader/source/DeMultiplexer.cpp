@@ -844,7 +844,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         m_pCurrentAudioBuffer->nPlaylist = m_nPlaylist;
         m_pCurrentAudioBuffer->rtTitleDuration = m_rtTitleDuration;
 
-        int pesHeaderLen = p[8] + 9;
+        UINT32 pesHeaderLen = p[8] + 9;
         m_nAudioPesLenght = (p[4] << 8) + p[5] - (pesHeaderLen - 6);
 
         unsigned int flags = p[7];
@@ -874,7 +874,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
           }
         }
 
-        int len = 188 - pesHeaderLen - 4; // 4 for TS packet header
+        UINT32 len = 188 - pesHeaderLen - 4; // 4 for TS packet header
         if (len > 0 && !m_bAC3Substream)
         { 
           byte* ps = p + pesHeaderLen;
