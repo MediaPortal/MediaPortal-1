@@ -99,6 +99,26 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   
   hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
 
+  // Try different speaker setup
+  if (FAILED(hr))
+  {
+    DWORD dwSpeakers = ((WAVEFORMATEXTENSIBLE *)pOutWfx)->dwChannelMask;
+    if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1)
+      dwSpeakers = KSAUDIO_SPEAKER_5POINT1_SURROUND;
+    else if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1_SURROUND)
+      dwSpeakers = KSAUDIO_SPEAKER_5POINT1;
+    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1)
+      dwSpeakers = KSAUDIO_SPEAKER_7POINT1_SURROUND;
+    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1_SURROUND)
+      dwSpeakers = KSAUDIO_SPEAKER_7POINT1;
+
+    if (dwSpeakers != pOutWfx->dwChannelMask)
+    {
+      pOutWfx->dwChannelMask = dwSpeakers;
+      hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
+    }
+  }
+
   if (FAILED(hr))
   {
     SAFE_DELETE_WAVEFORMATEX(pOutWfx);
