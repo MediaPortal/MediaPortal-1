@@ -1133,6 +1133,7 @@ namespace MediaPortal.Configuration.Sections
           VideoDatabase.DeleteGenre(listItem.Text);
           listViewAllGenres.Items.Remove(listItem);
         }
+        pbGenreImage.ImageLocation = string.Empty;
       }
     }
 
@@ -1190,6 +1191,7 @@ namespace MediaPortal.Configuration.Sections
           VideoDatabase.DeleteUserGroup(listItem.Text);
           lvUserGroups.Items.Remove(listItem);
         }
+        pbUserGroupImage.ImageLocation = string.Empty;
       }
     }
 
@@ -2636,6 +2638,9 @@ namespace MediaPortal.Configuration.Sections
         }
         // Fanart tab fields show/hide
         ShowHide();
+
+        pbGenreImage.ImageLocation = string.Empty;
+        pbUserGroupImage.ImageLocation = string.Empty;
       }
     }
 
@@ -3779,6 +3784,425 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
+    #region UserGroups
+    
+    private void cbUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroups.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldName.Items.Clear();
+      cbUserGroupFieldValues.Items.Clear();
+      cbUserGroupFieldOperand.Items.Clear();
+      tbUserGroupFieldValue.Text = string.Empty;
+      tbUserGroupRuleSyntax.Text = VideoDatabase.GetUserGroupRule(cbUserGroups.SelectedItem.ToString());
+      cbUserGroupType.Items.Clear();
+      cbUserGroupType.Items.Add("MediaInfo");
+      cbUserGroupType.Items.Add("MovieInfo");
+      cbUserGroupType.Items.Add("Actor");
+      cbUserGroupType.Items.Add("Folder");
+      pbUserGroupImage.ImageLocation = string.Empty;
+      pbUserGroupImage.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieUserGroups,
+                                                                       cbUserGroups.SelectedItem.ToString());
+    }
+
+    private void cbGroupType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupType.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldName.Items.Clear();
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          cbUserGroupFieldName.Items.Add("videoCodec");
+          cbUserGroupFieldName.Items.Add("videoResolution");
+          cbUserGroupFieldName.Items.Add("aspectRatio");
+          cbUserGroupFieldName.Items.Add("audioCodec");
+          cbUserGroupFieldName.Items.Add("audioChannels");
+          break;
+
+        case "MovieInfo":
+          cbUserGroupFieldName.Items.Add("strTitle");
+          cbUserGroupFieldName.Items.Add("strDirector");
+          break;
+
+        case "Actor":
+          cbUserGroupFieldName.Items.Add("strActor");
+          break;
+
+        case "Folder":
+          cbUserGroupFieldName.Items.Add("strPath");
+          break;
+      }
+    }
+
+    private void cbGroupFieldName_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupFieldName.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      cbUserGroupFieldOperand.Items.Clear();
+      cbUserGroupFieldValues.Items.Clear();
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          break;
+
+        case "MovieInfo":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          cbUserGroupFieldOperand.Items.Add("starts with");
+          cbUserGroupFieldOperand.Items.Add("ends with");
+          break;
+
+        case "Actor":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          cbUserGroupFieldOperand.Items.Add("starts with");
+          cbUserGroupFieldOperand.Items.Add("ends with");
+          break;
+
+        case "Folder":
+          cbUserGroupFieldOperand.Items.Add("equals");
+          cbUserGroupFieldOperand.Items.Add("not equals");
+          cbUserGroupFieldOperand.Items.Add("contains");
+          cbUserGroupFieldOperand.Items.Add("starts with");
+          break;
+      }
+
+      ArrayList values = new ArrayList();
+      bool error = false;
+      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+      string sql = string.Empty;
+
+      switch (fieldName)
+      {
+        case "videoCodec":
+        case "videoResolution":
+        case "aspectRatio":
+        case "audioCodec":
+        case "audioChannels":
+
+          sql = "SELECT DISTINCT " + fieldName + " FROM filesmediainfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "strTitle":
+        case "strDirector":
+          sql = "SELECT DISTINCT " + fieldName + " FROM movieinfo";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+
+        case "strPath":
+          sql = "SELECT DISTINCT " + fieldName + " FROM path";
+          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
+
+          foreach (string value in values)
+          {
+            cbUserGroupFieldValues.Items.Add(value);
+          }
+          break;
+      }
+    }
+
+    private void cbUserGroupFieldValues_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (cbUserGroupFieldValues.SelectedIndex == -1)
+      {
+        return;
+      }
+
+      tbUserGroupFieldValue.Text = cbUserGroupFieldValues.SelectedItem.ToString();
+    }
+
+    // Generate rule syntax
+    private void btGenerateRuleSyntax_Click(object sender, EventArgs e)
+    {
+      string operand = string.Empty;
+      string sql = string.Empty;
+      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
+
+      switch (cbUserGroupFieldOperand.SelectedItem.ToString())
+      {
+        case "equals":
+          operand = " = '" + tbUserGroupFieldValue.Text + "'";
+          break;
+
+        case "not equals":
+          operand = " <> '" + tbUserGroupFieldValue.Text + "'";
+          break;
+
+        case "contains":
+          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "%'";
+          break;
+
+        case "starts with":
+          operand = " LIKE '" + tbUserGroupFieldValue.Text + "%'";
+          break;
+
+        case "ends with":
+          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "'";
+          break;
+      }
+
+      switch (cbUserGroupType.SelectedItem.ToString())
+      {
+        case "MediaInfo":
+          sql =
+              "SELECT movieinfo.idMovie FROM filesmediainfo INNER JOIN files ON filesmediainfo.idFile = files.idFile INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "MovieInfo":
+          sql = "SELECT movieinfo.idMovie FROM movieinfo where " + fieldName + operand;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "Actor":
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM actors , movieinfo INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor AND actorlinkmovie.idMovie = movieinfo.idMovie WHERE " + fieldName + operand; ;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+
+        case "Folder":
+          sql = "SELECT DISTINCT movieinfo.idMovie FROM path INNER JOIN files ON files.idPath = path.idPath INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
+          tbUserGroupRuleSyntax.Text = sql;
+          break;
+      }
+    }
+
+    // Check rule syntax
+    private void btUserGroupCheckSyntax_Click(object sender, EventArgs e)
+    {
+      bool error = false;
+
+      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+      {
+        VideoDatabase.ExecuteSql(tbUserGroupRuleSyntax.Text, out error);
+      }
+      else
+      {
+        error = true;
+      }
+
+      if (!error)
+      {
+        MessageBox.Show("Rule syntax OK!");
+      }
+      else
+      {
+        MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+    }
+
+    // Save and execute rule
+    private void btUserGroupRuleSave_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        string userGroup = cbUserGroups.SelectedItem.ToString();
+        ArrayList values = new ArrayList();
+        bool error = false;
+
+        if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+        {
+          values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+        }
+        else
+        {
+          error = true;
+        }
+
+        if (error)
+        {
+          MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+
+        VideoDatabase.AddUserGroupRuleByGroupName(cbUserGroups.SelectedItem.ToString(), tbUserGroupRuleSyntax.Text);
+
+        if (values.Count > 0)
+        {
+          foreach (string movieId in values)
+          {
+            VideoDatabase.AddUserGroupToMovie(Convert.ToInt32(movieId), VideoDatabase.AddUserGroup(userGroup));
+          }
+
+          if (cbTitle.SelectedItem != null)
+          {
+            ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
+            UpdateEdit(item.Movie);
+          }
+
+          if (values.Count == 1)
+          {
+            MessageBox.Show(values.Count + " movie added into group: " + userGroup);
+          }
+          else
+          {
+            MessageBox.Show(values.Count + " movies added into group: " + userGroup);
+          }
+        }
+      }
+      catch (Exception) { }
+    }
+
+    // Delete rule
+    private void btUserGroupRuleRemove_Click(object sender, EventArgs e)
+    {
+      ArrayList values = new ArrayList();
+      bool error = false;
+
+      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
+      {
+        values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
+      }
+      else
+      {
+        error = true;
+      }
+
+      if (error)
+      {
+        MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+
+      if (values.Count > 0)
+      {
+        foreach (string movieId in values)
+        {
+          VideoDatabase.RemoveUserGroupsForMovie(Convert.ToInt32(movieId));
+        }
+
+        if (cbTitle.SelectedItem != null)
+        {
+          ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
+          UpdateEdit(item.Movie);
+        }
+      }
+
+      VideoDatabase.RemoveUserGroupRule(cbUserGroups.SelectedItem.ToString());
+      tbUserGroupRuleSyntax.Text = string.Empty;
+    }
+
+    // Add group image
+    private void btAddUserGroupImage_Click(object sender, EventArgs e)
+    {
+      if (lvUserGroups.SelectedItems.Count == 1)
+      {
+        AddThumbImage(lvUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+      }
+      if (lvMovieUserGroups.SelectedItems.Count == 1)
+      {
+        AddThumbImage(lvMovieUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+      }
+    }
+
+    // Add genre image
+    private void btAddGenreImage_Click(object sender, EventArgs e)
+    {
+      if (listViewAllGenres.SelectedItems.Count == 1)
+      {
+        AddThumbImage(listViewAllGenres, Thumbs.MovieGenre, pbGenreImage);
+      }
+      if (listViewGenres.SelectedItems.Count == 1)
+      {
+        AddThumbImage(listViewGenres, Thumbs.MovieGenre, pbGenreImage);
+      }
+    }
+
+    private void AddThumbImage(ListView lView, string thumbFolder, PictureBox pBox)
+    {
+      try
+      {
+        OpenFileDialog dlg = new OpenFileDialog();
+        string smallThumb = string.Empty;
+        string largeThumb = string.Empty;
+        dlg.AddExtension = true;
+        dlg.Filter = "JPEG Image (*.jpg,*.jpeg)|*.jpg;*.jpeg|All files (*.*)|*.*";
+        dlg.RestoreDirectory = false;
+        int selectedGroupIndex = -1;
+
+        string strFilename = lView.SelectedItems[0].Text;
+        selectedGroupIndex = lView.SelectedItems[0].Index;
+        smallThumb = Util.Utils.GetCoverArtName(thumbFolder, strFilename);
+        largeThumb = Util.Utils.GetLargeCoverArtName(thumbFolder, strFilename);
+        // open dialog
+        if (dlg.ShowDialog(this) == DialogResult.OK)
+        {
+          if (Util.Picture.CreateThumbnail(dlg.FileName, smallThumb, (int)Thumbs.ThumbResolution,
+                                           (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+          {
+            Util.Picture.CreateThumbnail(dlg.FileName, largeThumb, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+          }
+          pBox.ImageLocation = largeThumb;
+          lView.Select();
+          lView.Items[selectedGroupIndex].Selected = true;
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    private void lvUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+    }
+
+    private void listViewAllGenres_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(listViewAllGenres, Thumbs.MovieGenre, pbGenreImage);
+    }
+
+    private void lvMovieUserGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(lvMovieUserGroups, Thumbs.MovieUserGroups, pbUserGroupImage);
+    }
+
+    private void listViewGenres_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      GetThumb(listViewGenres, Thumbs.MovieGenre, pbGenreImage);
+    }
+
+    private void GetThumb(ListView lView, string thumbsFolder, PictureBox pBox)
+    {
+      if (lView.SelectedItems.Count > 0)
+      {
+        string strFilename = lView.SelectedItems[0].Text;
+        string largeThumb = Util.Utils.GetLargeCoverArtName(thumbsFolder, strFilename);
+        pBox.ImageLocation = largeThumb;
+      }
+    }
+
+    #endregion
+
     #region Tools
 
     // Clear actors trash from the database (ie. unknown, nmxxxxx)
@@ -4035,6 +4459,8 @@ namespace MediaPortal.Configuration.Sections
     private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
     {
       ShowHide();
+      pbGenreImage.ImageLocation = string.Empty;
+      pbUserGroupImage.ImageLocation = string.Empty;
 
       if (tabControl2.SelectedTab == tabPageUserGroupRules)
       {
@@ -4043,10 +4469,12 @@ namespace MediaPortal.Configuration.Sections
         cbUserGroups.Items.Clear();
         cbUserGroupFieldName.Items.Clear();
         cbUserGroupFieldValues.Items.Clear();
+        cbUserGroupType.Items.Clear();
         cbUserGroupFieldOperand.Items.Clear();
         tbUserGroupFieldValue.Text = string.Empty;
         tbUserGroupRuleSyntax.Text = string.Empty;
-
+        
+        
         foreach (string userGroup in userGroups)
         {
           cbUserGroups.Items.Add(userGroup);
@@ -4181,301 +4609,5 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    private void cbUserGroups_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (cbUserGroups.SelectedIndex == -1)
-      {
-        return;
-      }
-
-      cbUserGroupFieldName.Items.Clear();
-      cbUserGroupFieldValues.Items.Clear();
-      cbUserGroupFieldOperand.Items.Clear();
-      tbUserGroupFieldValue.Text = string.Empty;
-      tbUserGroupRuleSyntax.Text = VideoDatabase.GetUserGroupRule(cbUserGroups.SelectedItem.ToString());
-      cbUserGroupType.SelectedIndex = -1;
-
-
-    }
-    
-    private void cbGroupType_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (cbUserGroupType.SelectedIndex == -1)
-      {
-        return;
-      }
-
-      cbUserGroupFieldName.Items.Clear();
-
-      switch (cbUserGroupType.SelectedItem.ToString())
-      {
-        case "MediaInfo":
-          cbUserGroupFieldName.Items.Add("videoCodec");
-          cbUserGroupFieldName.Items.Add("videoResolution");
-          cbUserGroupFieldName.Items.Add("aspectRatio");
-          cbUserGroupFieldName.Items.Add("audioCodec");
-          cbUserGroupFieldName.Items.Add("audioChannels");
-          break;
-
-        case "MovieInfo":
-          cbUserGroupFieldName.Items.Add("strTitle");
-          cbUserGroupFieldName.Items.Add("strDirector");
-          break;
-
-        case "Actor":
-          cbUserGroupFieldName.Items.Add("strActor");
-          break;
-
-        case "Folder":
-          cbUserGroupFieldName.Items.Add("strPath");
-          break;
-      }
-    }
-
-    private void cbGroupFieldName_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (cbUserGroupFieldName.SelectedIndex == -1)
-      {
-        return;
-      }
-
-      cbUserGroupFieldOperand.Items.Clear();
-      cbUserGroupFieldValues.Items.Clear();
-
-      switch (cbUserGroupType.SelectedItem.ToString())
-      {
-        case "MediaInfo":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          break;
-
-        case "MovieInfo":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          cbUserGroupFieldOperand.Items.Add("contains");
-          break;
-
-        case "Actor":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          cbUserGroupFieldOperand.Items.Add("contains");
-          break;
-
-        case "Folder":
-          cbUserGroupFieldOperand.Items.Add("equals");
-          cbUserGroupFieldOperand.Items.Add("contains");
-          break;
-      }
-
-      ArrayList values = new ArrayList();
-      bool error = false;
-      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
-      string sql = string.Empty;
-      
-      switch (fieldName)
-      {
-        case "videoCodec":
-        case "videoResolution":
-        case "aspectRatio":
-        case "audioCodec":
-        case "audioChannels":
-
-          sql = "SELECT DISTINCT " + fieldName + " FROM filesmediainfo";
-          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
-          
-          foreach (string value in values)
-          {
-            cbUserGroupFieldValues.Items.Add(value);
-          }
-          break;
-
-        case "strTitle":
-        case "strDirector":
-          sql = "SELECT DISTINCT " + fieldName + " FROM movieinfo";
-          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
-
-          foreach (string value in values)
-          {
-            cbUserGroupFieldValues.Items.Add(value);
-          }
-          break;
-
-        case "strPath":
-          sql = "SELECT DISTINCT " + fieldName + " FROM path";
-          values = VideoDatabase.ExecuteRuleSql(sql, fieldName, out error);
-
-          foreach (string value in values)
-          {
-            cbUserGroupFieldValues.Items.Add(value);
-          }
-          break;
-      }
-    }
-
-    private void cbUserGroupFieldValues_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      if (cbUserGroupFieldValues.SelectedIndex == -1)
-      {
-        return;
-      }
-
-      tbUserGroupFieldValue.Text = cbUserGroupFieldValues.SelectedItem.ToString();
-    }
-
-    // Generate rule syntax
-    private void btGenerateRuleSyntax_Click(object sender, EventArgs e)
-    {
-      string operand = string.Empty;
-      string sql = string.Empty;
-      string fieldName = cbUserGroupFieldName.SelectedItem.ToString();
-      
-      switch (cbUserGroupFieldOperand.SelectedItem.ToString())
-      {
-        case "equals":
-          operand = " = '" + tbUserGroupFieldValue.Text + "'";
-          break;
-
-        case "contains":
-          operand = " LIKE '%" + tbUserGroupFieldValue.Text + "%'";
-          break;
-      }
-
-      switch (cbUserGroupType.SelectedItem.ToString())
-      {
-        case "MediaInfo":
-          sql =
-              "SELECT movieinfo.idMovie FROM filesmediainfo INNER JOIN files ON filesmediainfo.idFile = files.idFile INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
-
-          tbUserGroupRuleSyntax.Text = sql;
-          break;
-
-        case "MovieInfo":
-          sql = "SELECT movieinfo.idMovie FROM movieinfo where " + fieldName + operand;
-          tbUserGroupRuleSyntax.Text = sql;
-          break;
-
-        case "Actor":
-          sql = "SELECT DISTINCT movieinfo.idMovie FROM actors , movieinfo INNER JOIN actorlinkmovie ON actors.idActor = actorlinkmovie.idActor AND actorlinkmovie.idMovie = movieinfo.idMovie WHERE " + fieldName + operand;;
-          tbUserGroupRuleSyntax.Text = sql;
-          break;
-
-        case "Folder":
-          sql = "SELECT DISTINCT movieinfo.idMovie FROM path INNER JOIN files ON files.idPath = path.idPath INNER JOIN movieinfo ON files.idMovie = movieinfo.idMovie where " + fieldName + operand;
-          tbUserGroupRuleSyntax.Text = sql;
-          break;
-      }
-    }
-
-    // Check rule syntax
-    private void btUserGroupCheckSyntax_Click(object sender, EventArgs e)
-    {
-      bool error = false;
-
-      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
-      {
-        VideoDatabase.ExecuteSql(tbUserGroupRuleSyntax.Text, out error);
-      }
-      else
-      {
-        error = true;
-      }
-
-      if (!error)
-      {
-        MessageBox.Show("Rule syntax OK!");
-      }
-      else
-      {
-        MessageBox.Show("Error in rule syntax!", "Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
-      }
-    }
-
-    // Save and execute rule
-    private void btUserGroupRuleSave_Click(object sender, EventArgs e)
-    {
-      try 
-      {
-        string userGroup = cbUserGroups.SelectedItem.ToString();
-        ArrayList values = new ArrayList();
-        bool error = false;
-
-        if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
-        {
-          values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
-        }
-        else
-        {
-          error = true;
-        }
-        
-        if (error)
-        {
-          MessageBox.Show("Error in rule syntax!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          return;
-        }
-
-        VideoDatabase.AddUserGroupRuleByGroupName(cbUserGroups.SelectedItem.ToString(), tbUserGroupRuleSyntax.Text);
-
-        if (values.Count > 0)
-        {
-          foreach (string movieId in values)
-          {
-            VideoDatabase.AddUserGroupToMovie(Convert.ToInt32(movieId), VideoDatabase.AddUserGroup(userGroup));
-          }
-
-          if (cbTitle.SelectedItem != null)
-          {
-            ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
-            UpdateEdit(item.Movie);
-          }
-
-          if (values.Count == 1)
-          {
-            MessageBox.Show(values.Count + " movie added into group: " + userGroup);
-          }
-          else
-          {
-            MessageBox.Show(values.Count + " movies added into group: " + userGroup);
-          }
-        }
-      }
-      catch (Exception){}
-    }
-
-    // Delete rule
-    private void btUserGroupRuleRemove_Click(object sender, EventArgs e)
-    {
-      ArrayList values = new ArrayList();
-      bool error = false;
-
-      if (!string.IsNullOrEmpty(tbUserGroupRuleSyntax.Text))
-      {
-        values = VideoDatabase.ExecuteRuleSql(tbUserGroupRuleSyntax.Text, "movieinfo.idMovie", out error);
-      }
-      else
-      {
-        error = true;
-      }
-
-      if (error)
-      {
-        MessageBox.Show("Error in rule syntax!","Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
-        return;
-      }
-
-      if (values.Count > 0)
-      {
-        foreach (string movieId in values)
-        {
-          VideoDatabase.RemoveUserGroupsForMovie(Convert.ToInt32(movieId));
-        }
-
-        if (cbTitle.SelectedItem != null)
-        {
-          ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
-          UpdateEdit(item.Movie);
-        }
-      }
-
-      VideoDatabase.RemoveUserGroupRule(cbUserGroups.SelectedItem.ToString());
-      tbUserGroupRuleSyntax.Text = string.Empty;
-    }
   }
 }

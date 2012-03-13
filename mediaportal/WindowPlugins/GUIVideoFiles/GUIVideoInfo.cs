@@ -73,19 +73,19 @@ namespace MediaPortal.GUI.Video
     
     #region Variables
 
-    private ViewMode viewmode = ViewMode.Plot;
-    private IMDBMovie currentMovie = null;
-    private string folderForThumbs = string.Empty;
-    private string[] coverArtUrls = new string[1];
-    private string imdbCoverArtUrl = string.Empty;
-    private ArrayList actors = new ArrayList();
+    private ViewMode _viewmode = ViewMode.Plot;
+    private IMDBMovie _currentMovie;
+    private string _folderForThumbs = string.Empty;
+    private string[] _coverArtUrls = new string[1];
+    private string _imdbCoverArtUrl = string.Empty;
+    private ArrayList _actors = new ArrayList();
     // Saved state settings
     private string _viewModeState = string.Empty;
     private int _selectedItemState = -1;
-    private int _MovieIdState = -1;
+    private int _movieIdState = -1;
 
-    private Thread imageSearchThread = null;
-    private Thread fanartRefreshThread = null;
+    private Thread _imageSearchThread;
+    private Thread _fanartRefreshThread;
 
     #endregion
 
@@ -117,7 +117,7 @@ namespace MediaPortal.GUI.Video
       }
       
       // GoBack bug fix (corrupted video info)
-      if (currentMovie == null)
+      if (_currentMovie == null)
       {
         if (GUIWindowManager.HasPreviousWindow())
         {
@@ -131,16 +131,16 @@ namespace MediaPortal.GUI.Video
       }
       
       // Refresh data in case that we open movie info after scan (some details missing)
-      VideoDatabase.GetMovieInfoById(currentMovie.ID, ref currentMovie);
+      VideoDatabase.GetMovieInfoById(_currentMovie.ID, ref _currentMovie);
       // Default picture					
-      imdbCoverArtUrl = currentMovie.ThumbURL;
-      coverArtUrls = new string[1];
-      coverArtUrls[0] = imdbCoverArtUrl;
+      _imdbCoverArtUrl = _currentMovie.ThumbURL;
+      _coverArtUrls = new string[1];
+      _coverArtUrls[0] = _imdbCoverArtUrl;
       
       ResetSpinControl();
       spinDisc.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_DISC_NUMBER;
       spinDisc.Reset();
-      viewmode = ViewMode.Plot;
+      _viewmode = ViewMode.Plot;
       spinDisc.AddLabel("HD", 0);
       
       for (int i = 0; i < 1000; ++i)
@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Video
       spinDisc.Disabled = true;
       int iItem = 0;
       
-      if (Util.Utils.IsDVD(currentMovie.Path))
+      if (Util.Utils.IsDVD(_currentMovie.Path))
       {
         spinDisc.IsVisible = true;
         spinDisc.Disabled = false;
@@ -161,9 +161,9 @@ namespace MediaPortal.GUI.Video
         int iPos = 0;
         bool bNumber = false;
         
-        for (int i = 0; i < currentMovie.DVDLabel.Length; ++i)
+        for (int i = 0; i < _currentMovie.DVDLabel.Length; ++i)
         {
-          char kar = currentMovie.DVDLabel[i];
+          char kar = _currentMovie.DVDLabel[i];
           if (Char.IsDigit(kar))
           {
             szNumber += kar;
@@ -225,16 +225,16 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      if ((imageSearchThread != null) && (imageSearchThread.IsAlive))
+      if ((_imageSearchThread != null) && (_imageSearchThread.IsAlive))
       {
-        imageSearchThread.Abort();
-        imageSearchThread = null;
+        _imageSearchThread.Abort();
+        _imageSearchThread = null;
       }
 
-      if ((fanartRefreshThread != null) && (fanartRefreshThread.IsAlive))
+      if ((_fanartRefreshThread != null) && (_fanartRefreshThread.IsAlive))
       {
-        fanartRefreshThread.Abort();
-        fanartRefreshThread = null;
+        _fanartRefreshThread.Abort();
+        _fanartRefreshThread = null;
       }
 
       SaveState();
@@ -242,7 +242,7 @@ namespace MediaPortal.GUI.Video
       // Reset currentMovie variable if we go to windows which initialize that variable
       // Database and share views windows are only screens which do that
       if (newWindowId == (int)Window.WINDOW_VIDEOS || newWindowId == (int)Window.WINDOW_VIDEO_TITLE)
-        currentMovie = null;
+        _currentMovie = null;
       
       GUIPropertyManager.SetProperty("#actorThumb", string.Empty);
       
@@ -317,24 +317,18 @@ namespace MediaPortal.GUI.Video
           return;
         }
         // Movie info active, refresh movie
-        string title = currentMovie.Title;
-        int id = currentMovie.ID;
-        // Delete covers
-        //FanArt.DeleteCovers(title, id);
-        //Delete fanarts
-        //FanArt.DeleteFanarts(id);
-
-        if (IMDBFetcher.RefreshIMDB(this, ref currentMovie, false, false, true))
+        
+        if (IMDBFetcher.RefreshIMDB(this, ref _currentMovie, false, false, true))
         {
-          if ((imageSearchThread != null) && (imageSearchThread.IsAlive))
+          if ((_imageSearchThread != null) && (_imageSearchThread.IsAlive))
           {
-            imageSearchThread.Abort();
-            imageSearchThread = null;
+            _imageSearchThread.Abort();
+            _imageSearchThread = null;
           }
 
-          imdbCoverArtUrl = currentMovie.ThumbURL;
-          coverArtUrls = new string[1];
-          coverArtUrls[0] = imdbCoverArtUrl;
+          _imdbCoverArtUrl = _currentMovie.ThumbURL;
+          _coverArtUrls = new string[1];
+          _coverArtUrls[0] = _imdbCoverArtUrl;
           
           ResetSpinControl();
 
@@ -355,19 +349,19 @@ namespace MediaPortal.GUI.Video
       if (control == spinImages)
       {
         int item = spinImages.Value - 1;
-        if (item < 0 || item >= coverArtUrls.Length)
+        if (item < 0 || item >= _coverArtUrls.Length)
         {
           item = 0;
         }
         
-        if (currentMovie.ThumbURL == coverArtUrls[item])
+        if (_currentMovie.ThumbURL == _coverArtUrls[item])
         {
           return;
         }
 
-        currentMovie.ThumbURL = coverArtUrls[item];
+        _currentMovie.ThumbURL = _coverArtUrls[item];
         // Title suffix for problem with covers and movie with the same name
-        string titleExt = currentMovie.Title + "{" + currentMovie.ID + "}";
+        string titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
         string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
         Util.Utils.FileDelete(coverArtImage);
@@ -379,11 +373,11 @@ namespace MediaPortal.GUI.Video
         Util.Utils.FileDelete(largeCoverArtImage);
         Refresh(false);
         Update();
-        int idMovie = currentMovie.ID;
+        int idMovie = _currentMovie.ID;
         
         if (idMovie >= 0)
         {
-          VideoDatabase.SetThumbURL(idMovie, currentMovie.ThumbURL);
+          VideoDatabase.SetThumbURL(idMovie, _currentMovie.ThumbURL);
         }
         return;
       }
@@ -399,7 +393,7 @@ namespace MediaPortal.GUI.Video
       //
       if (control == btnPlot)
       {
-        viewmode = ViewMode.Plot;
+        _viewmode = ViewMode.Plot;
         Update();
       }
       //
@@ -407,7 +401,7 @@ namespace MediaPortal.GUI.Video
       //
       if (control == btnReview)
       {
-        viewmode = ViewMode.Review;
+        _viewmode = ViewMode.Review;
         Update();
       }
       //
@@ -417,15 +411,15 @@ namespace MediaPortal.GUI.Video
       {
         int iPercent = 0;
         int iTimesWatched = 0;
-        VideoDatabase.GetmovieWatchedStatus(currentMovie.ID, out iPercent, out iTimesWatched);
+        VideoDatabase.GetmovieWatchedStatus(_currentMovie.ID, out iPercent, out iTimesWatched);
 
-        if (currentMovie.Watched > 0)
+        if (_currentMovie.Watched > 0)
         {
           GUIPropertyManager.SetProperty("#iswatched", "no");
-          currentMovie.Watched = 0;
-          VideoDatabase.SetMovieWatchedStatus(currentMovie.ID, false, iPercent);
+          _currentMovie.Watched = 0;
+          VideoDatabase.SetMovieWatchedStatus(_currentMovie.ID, false, iPercent);
           ArrayList files = new ArrayList();
-          VideoDatabase.GetFiles(currentMovie.ID, ref files);
+          VideoDatabase.GetFiles(_currentMovie.ID, ref files);
 
           //foreach (string file in files)
           //{
@@ -436,10 +430,10 @@ namespace MediaPortal.GUI.Video
         else
         {
           GUIPropertyManager.SetProperty("#iswatched", "yes");
-          currentMovie.Watched = 1;
-          VideoDatabase.SetMovieWatchedStatus(currentMovie.ID, true, iPercent);
+          _currentMovie.Watched = 1;
+          VideoDatabase.SetMovieWatchedStatus(_currentMovie.ID, true, iPercent);
         }
-        VideoDatabase.SetWatched(currentMovie);
+        VideoDatabase.SetWatched(_currentMovie);
       }
       //
       // ---
@@ -447,7 +441,7 @@ namespace MediaPortal.GUI.Video
       if (control == spinDisc)
       {
         string selectedItem = spinDisc.GetLabel();
-        int idMovie = currentMovie.ID;
+        int idMovie = _currentMovie.ID;
         if (idMovie > 0)
         {
           if (selectedItem != "HD" && selectedItem != "share")
@@ -521,7 +515,7 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(1262); // Update grabber scripts
 
       // Fanart refresh
-      MediaPortal.Profile.Settings xmlreader = new MPSettings();
+      Profile.Settings xmlreader = new MPSettings();
       if (xmlreader.GetValueAsBool("moviedatabase", "usefanart", false))
       {
         dlg.AddLocalizedString(1255); //Refresh fanart
@@ -557,19 +551,19 @@ namespace MediaPortal.GUI.Video
 
     public IMDBMovie Movie
     {
-      get { return currentMovie; }
-      set { currentMovie = value; }
+      get { return _currentMovie; }
+      set { _currentMovie = value; }
     }
 
     public string FolderForThumbs
     {
-      get { return folderForThumbs; }
-      set { folderForThumbs = value; }
+      get { return _folderForThumbs; }
+      set { _folderForThumbs = value; }
     }
 
     private void ShowActors(bool update)
     {
-      viewmode = ViewMode.Cast;
+      _viewmode = ViewMode.Cast;
       
       if (update)
       {
@@ -598,15 +592,15 @@ namespace MediaPortal.GUI.Video
 
     private void PlayMovie()
     {
-      int id = currentMovie.ID;
+      int id = _currentMovie.ID;
 
       ArrayList files = new ArrayList();
       VideoDatabase.GetFiles(id, ref files);
 
       if (files.Count > 1)
       {
-        GUIVideoFiles._stackedMovieFiles = files;
-        GUIVideoFiles._isStacked = true;
+        GUIVideoFiles.StackedMovieFiles = files;
+        GUIVideoFiles.IsStacked = true;
       }
       
       GUIVideoFiles.MovieDuration(files, false);
@@ -615,7 +609,7 @@ namespace MediaPortal.GUI.Video
 
     private void Update()
     {
-      if (currentMovie == null)
+      if (_currentMovie == null)
       {
         return;
       }
@@ -623,7 +617,7 @@ namespace MediaPortal.GUI.Video
       try 
       {
         // Cast
-        if (viewmode == ViewMode.Cast)
+        if (_viewmode == ViewMode.Cast)
         {
           if (tbPlotArea != null) tbPlotArea.IsVisible = false;
           if (tbReviwArea != null) tbReviwArea.IsVisible = false;
@@ -656,7 +650,7 @@ namespace MediaPortal.GUI.Video
           }
         }
         // Plot
-        if (viewmode == ViewMode.Plot)
+        if (_viewmode == ViewMode.Plot)
         {
           if (tbPlotArea != null) tbPlotArea.IsVisible = true;
           if (tbReviwArea != null) tbReviwArea.IsVisible = false;
@@ -671,7 +665,7 @@ namespace MediaPortal.GUI.Video
           if (imgActorArt != null) imgActorArt.IsVisible = false;
         }
         // Review
-        if (viewmode == ViewMode.Review)
+        if (_viewmode == ViewMode.Review)
         {
           if (tbPlotArea != null) tbPlotArea.IsVisible = false;
           if (tbReviwArea != null) tbReviwArea.IsVisible = true;
@@ -686,11 +680,11 @@ namespace MediaPortal.GUI.Video
           if (imgActorArt != null) imgActorArt.IsVisible = false;
         }
 
-        btnWatched.Selected = (currentMovie.Watched != 0);
+        btnWatched.Selected = (_currentMovie.Watched != 0);
         // Set skin control properties
         ArrayList files = new ArrayList();
-        VideoDatabase.GetFiles(currentMovie.ID, ref files);
-        currentMovie.SetProperties(false, (string)files[0]);
+        VideoDatabase.GetFiles(_currentMovie.ID, ref files);
+        _currentMovie.SetProperties(false, (string)files[0]);
 
         if (imgCoverArt != null)
         {
@@ -711,10 +705,10 @@ namespace MediaPortal.GUI.Video
       string largeCoverArtImage = string.Empty; //added by BoelShit
       try
       {
-        string imageUrl = currentMovie.ThumbURL;
+        string imageUrl = _currentMovie.ThumbURL;
         if (imageUrl.Length > 0)
         {
-          string titleExt = currentMovie.Title + "{" + currentMovie.ID + "}";
+          string titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
           coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
           largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
           //added by BoelShit
@@ -722,9 +716,8 @@ namespace MediaPortal.GUI.Video
 
           if (!Util.Utils.FileExistsInCache(coverArtImage))
           {
-            string imageExtension;
-            imageExtension = Path.GetExtension(imageUrl);
-            if (imageExtension.Length > 0)
+            string imageExtension = Path.GetExtension(imageUrl);
+            if (!string.IsNullOrEmpty(imageExtension))
             {
               string temporaryFilename = Path.GetTempFileName();
               string tmpFile = temporaryFilename;
@@ -771,7 +764,7 @@ namespace MediaPortal.GUI.Video
           }
           if (!Util.Utils.FileExistsInCache(coverArtImage))
           {
-            int idMovie = currentMovie.ID;
+            int idMovie = _currentMovie.ID;
             System.Collections.ArrayList movies = new System.Collections.ArrayList();
             VideoDatabase.GetFiles(idMovie, ref movies);
             if (movies.Count > 0)
@@ -783,7 +776,7 @@ namespace MediaPortal.GUI.Video
                 largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.Videos, thumbFile);
                 if (Util.Utils.FileExistsInCache(largeCoverArtImage))
                 {
-                  currentMovie.ThumbURL = "file://" + largeCoverArtImage;
+                  _currentMovie.ThumbURL = "file://" + largeCoverArtImage;
                   Refresh(forceFolderThumb);
                   break;
                 }
@@ -799,7 +792,7 @@ namespace MediaPortal.GUI.Video
             string strFolderImage = string.Empty;
             if (forceFolderThumb)
             {
-              strFolderImage = Path.GetFullPath(currentMovie.Path);
+              strFolderImage = Path.GetFullPath(_currentMovie.Path);
             }
             else
             {
@@ -841,18 +834,18 @@ namespace MediaPortal.GUI.Video
       }
       catch (Exception ex2)
       {
-        Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", currentMovie.ThumbURL, ex2.Message);
+        Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", _currentMovie.ThumbURL, ex2.Message);
       }
       ArrayList files = new ArrayList();
-      VideoDatabase.GetFiles(currentMovie.ID, ref files);
-      currentMovie.SetProperties(false, (string)files[0]);
+      VideoDatabase.GetFiles(_currentMovie.ID, ref files);
+      _currentMovie.SetProperties(false, (string)files[0]);
     }
 
     private void  RenameTitle ()
     {
-      string movieTitle = currentMovie.Title;
+      string movieTitle = _currentMovie.Title;
       ArrayList files = new ArrayList();
-      VideoDatabase.GetFiles(currentMovie.ID, ref files);
+      VideoDatabase.GetFiles(_currentMovie.ID, ref files);
       string movieFileName = string.Empty;
 
       if (files.Count > 0)
@@ -863,14 +856,14 @@ namespace MediaPortal.GUI.Video
 
       GetStringFromKeyboard(ref movieTitle);
       
-      if (string.IsNullOrEmpty(movieTitle) || movieTitle == currentMovie.Title)
+      if (string.IsNullOrEmpty(movieTitle) || movieTitle == _currentMovie.Title)
         return;
       
       movieTitle = movieTitle.Trim();
       
       // Rename cover thumbs
-      string oldTitleExt = currentMovie.Title + "{" + currentMovie.ID + "}";
-      string newTitleExt = movieTitle + "{" + currentMovie.ID + "}"; 
+      string oldTitleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
+      string newTitleExt = movieTitle + "{" + _currentMovie.ID + "}"; 
       string oldSmallThumb= Util.Utils.GetCoverArtName(Thumbs.MovieTitle, oldTitleExt);
       string oldLargeThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, oldTitleExt);
       string newSmallThumb = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, newTitleExt);
@@ -895,31 +888,26 @@ namespace MediaPortal.GUI.Video
         catch (Exception) { }
       }
       
-      currentMovie.Title = movieTitle;
-      VideoDatabase.SetMovieInfoById(currentMovie.ID, ref currentMovie);
+      _currentMovie.Title = movieTitle;
+      VideoDatabase.SetMovieInfoById(_currentMovie.ID, ref _currentMovie);
       
       Update();
       // Update thumbs for share selected item (if we activate videoinfo from share view))
-      if (GUIWindowManager.GetPreviousActiveWindow() == (int)GUIWindow.Window.WINDOW_VIDEOS)
+      if (GUIWindowManager.GetPreviousActiveWindow() == (int)Window.WINDOW_VIDEOS)
       {
-        if (GUIVideoFiles._currentSelectedGUIItem != null)
+        if (GUIVideoFiles.CurrentSelectedGUIItem != null)
         {
-          GUIVideoFiles._currentSelectedGUIItem.IconImage = newSmallThumb;
-          GUIVideoFiles._currentSelectedGUIItem.IconImageBig = newSmallThumb;
-          GUIVideoFiles._currentSelectedGUIItem.ThumbnailImage = newLargeThumb;
+          GUIVideoFiles.CurrentSelectedGUIItem.IconImage = newSmallThumb;
+          GUIVideoFiles.CurrentSelectedGUIItem.IconImageBig = newSmallThumb;
+          GUIVideoFiles.CurrentSelectedGUIItem.ThumbnailImage = newLargeThumb;
         }
       }
-    }
-
-    private void AmazonLookupThread()
-    {
-      //
     }
 
     private void ResetSpinControl()
     {
       spinImages.Reset();
-      spinImages.SetRange(1, coverArtUrls.Length);
+      spinImages.SetRange(1, _coverArtUrls.Length);
       spinImages.Value = 1;
       
       spinImages.ShowRange = true;
@@ -932,9 +920,9 @@ namespace MediaPortal.GUI.Video
       {
         if (aThumbArray.Length > 0)
         {
-          coverArtUrls = null;
-          coverArtUrls = new string[aThumbArray.Length];
-          aThumbArray.CopyTo(coverArtUrls, 0);
+          _coverArtUrls = null;
+          _coverArtUrls = new string[aThumbArray.Length];
+          aThumbArray.CopyTo(_coverArtUrls, 0);
           ResetSpinControl();
         }
       }
@@ -959,7 +947,7 @@ namespace MediaPortal.GUI.Video
     {
       try 
       {
-        actors.Clear();
+        _actors.Clear();
       
         if (listActors != null)
         {
@@ -970,9 +958,9 @@ namespace MediaPortal.GUI.Video
           return;
         }
       
-        VideoDatabase.GetActorsByMovieID(Movie.ID, ref actors);
+        VideoDatabase.GetActorsByMovieID(Movie.ID, ref _actors);
       
-        if (actors.Count == 0)
+        if (_actors.Count == 0)
         {
           return;
         }
@@ -980,7 +968,7 @@ namespace MediaPortal.GUI.Video
         char[] splitter = { '|' };
         string[] temp;
       
-        foreach (string actor in actors)
+        foreach (string actor in _actors)
         {
           temp = actor.Split(splitter);
           GUIListItem item = new GUIListItem();
@@ -1028,8 +1016,8 @@ namespace MediaPortal.GUI.Video
         }
         
         GUIListItem item = listActors.SelectedListItem;
-        item.AlbumInfoTag = currentMovie;
-        IMDBFetcher.FetchMovieActor(this, currentMovie, selectedActor, item.ItemId);
+        item.AlbumInfoTag = _currentMovie;
+        IMDBFetcher.FetchMovieActor(this, _currentMovie, selectedActor, item.ItemId);
         actor = VideoDatabase.GetActorInfo(item.ItemId);
 
         if (actor == null)
@@ -1040,7 +1028,7 @@ namespace MediaPortal.GUI.Video
       }
       
       infoDlg.Actor = actor;
-      infoDlg.Movie = currentMovie;
+      infoDlg.Movie = _currentMovie;
       GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_ARTIST_INFO);
     }
     
@@ -1116,11 +1104,11 @@ namespace MediaPortal.GUI.Video
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
       // show dialog...
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-      pDlgOK.SetHeading(195);
-      pDlgOK.SetLine(1, fetcher.MovieName);
-      pDlgOK.SetLine(2, string.Empty);
-      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      GUIDialogOK pDlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      pDlgOk.SetHeading(195);
+      pDlgOk.SetLine(1, fetcher.MovieName);
+      pDlgOk.SetLine(2, string.Empty);
+      pDlgOk.DoModal(GUIWindowManager.ActiveWindow);
       return true;
     }
 
@@ -1211,12 +1199,12 @@ namespace MediaPortal.GUI.Video
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
       // show dialog...
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       // show dialog...
-      pDlgOK.SetHeading(195);
-      pDlgOK.SetLine(1, fetcher.MovieName);
-      pDlgOK.SetLine(2, string.Empty);
-      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+      pDlgOk.SetHeading(195);
+      pDlgOk.SetLine(1, fetcher.MovieName);
+      pDlgOk.SetLine(2, string.Empty);
+      pDlgOk.DoModal(GUIWindowManager.ActiveWindow);
       return false;
     }
 
@@ -1261,10 +1249,7 @@ namespace MediaPortal.GUI.Video
       {
         return false;
       }
-      else
-      {
-        return true;
-      }
+      return true;
     }
 
     public bool OnSelectActor(IMDBFetcher fetcher, out int selectedActor)
@@ -1346,23 +1331,23 @@ namespace MediaPortal.GUI.Video
     // Fanart refresh thread
     private void OnFanartRefresh()
     {
-      if (currentMovie != null && Win32API.IsConnectedToInternet())
+      if (_currentMovie != null && Win32API.IsConnectedToInternet())
       {
-        if ((fanartRefreshThread != null) && (fanartRefreshThread.IsAlive))
+        if ((_fanartRefreshThread != null) && (_fanartRefreshThread.IsAlive))
         {
-          fanartRefreshThread.Abort();
-          fanartRefreshThread = null;
+          _fanartRefreshThread.Abort();
+          _fanartRefreshThread = null;
         }
 
-        fanartRefreshThread = new Thread(ThreadFanartRefresh);
-        fanartRefreshThread.IsBackground = true;
-        fanartRefreshThread.Start();
+        _fanartRefreshThread = new Thread(ThreadFanartRefresh);
+        _fanartRefreshThread.IsBackground = true;
+        _fanartRefreshThread.Start();
       }
       else
       {
         // Notify user that new fanart download failed
         GUIDialogNotify dlgNotify =
-          (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(1255));
@@ -1379,13 +1364,13 @@ namespace MediaPortal.GUI.Video
         Profile.Settings xmlreader = new MPSettings();
         int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
         FanArt fa = new FanArt();
-        fa.GetTmdbFanartByApi(currentMovie.ID, currentMovie.IMDBNumber, "", true, faCount, "");
+        fa.GetTmdbFanartByApi(_currentMovie.ID, _currentMovie.IMDBNumber, "", true, faCount, "");
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
         // Notify user that new fanart are downloaded
         GUIDialogNotify dlgNotify =
-          (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(1255));
@@ -1399,22 +1384,22 @@ namespace MediaPortal.GUI.Video
     // Images fetch thread
     private void SearchImages()
     {
-      imageSearchThread = new Thread(ThreadSearchImages);
-      imageSearchThread.IsBackground = true;
-      imageSearchThread.Start();
+      _imageSearchThread = new Thread(ThreadSearchImages);
+      _imageSearchThread.IsBackground = true;
+      _imageSearchThread.Start();
     }
 
     private void ThreadSearchImages()
     {
       try
       {
-        if (currentMovie == null)
+        if (_currentMovie == null)
         {
           return;
         }
         // Search for more covers
         string[] thumbUrls = new string[1];
-        IMDBMovie movie = currentMovie;
+        IMDBMovie movie = _currentMovie;
         // TMDB Search  Deda 30.4.2010
         TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
         tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
@@ -1500,20 +1485,20 @@ namespace MediaPortal.GUI.Video
 
     private void LoadState()
     {
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      using (Profile.Settings xmlreader = new MPSettings())
       {
         _viewModeState = xmlreader.GetValueAsString("VideoInfo", "lastview", string.Empty);
-        _MovieIdState = xmlreader.GetValueAsInt("VideoInfo", "movieid", -1);
+        _movieIdState = xmlreader.GetValueAsInt("VideoInfo", "movieid", -1);
         _selectedItemState = xmlreader.GetValueAsInt("VideoInfo", "itemid", -1);
 
         if (_viewModeState == "Cast" &&
               GUIWindowManager.GetPreviousActiveWindow() != (int)Window.WINDOW_VIDEO_TITLE &&
               GUIWindowManager.GetPreviousActiveWindow() != (int)Window.WINDOW_VIDEOS &&
-              _MovieIdState == currentMovie.ID)
+              _movieIdState == _currentMovie.ID)
         {
           if (_selectedItemState >= 0 && listActors != null && listActors.Count >= _selectedItemState)
           {
-            viewmode = ViewMode.Cast;
+            _viewmode = ViewMode.Cast;
             Update();
 
             if (!listActors.IsEnabled)
@@ -1529,11 +1514,11 @@ namespace MediaPortal.GUI.Video
 
     private void SaveState()
     {
-      using (Profile.Settings xmlwriter = new Profile.MPSettings())
+      using (Profile.Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("VideoInfo", "lastview", viewmode);
-        if (currentMovie != null)
-          xmlwriter.SetValue("VideoInfo", "movieid", currentMovie.ID);
+        xmlwriter.SetValue("VideoInfo", "lastview", _viewmode);
+        if (_currentMovie != null)
+          xmlwriter.SetValue("VideoInfo", "movieid", _currentMovie.ID);
         if (listActors != null)
           xmlwriter.SetValue("VideoInfo", "itemid", listActors.SelectedListItemIndex);
       }

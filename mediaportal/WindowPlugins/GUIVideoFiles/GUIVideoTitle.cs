@@ -42,32 +42,32 @@ namespace MediaPortal.GUI.Video
 
     private DirectoryHistory m_history = new DirectoryHistory();
     private string currentFolder = string.Empty;
-    private int currentSelectedItem = -1;
+    private int _currentSelectedItem = -1;
     private VirtualDirectory m_directory = new VirtualDirectory();
-    private Layout[,] layouts;
-    private bool[,] sortasc;
-    private VideoSort.SortMethod[,] sortby;
-    private bool ageConfirmed = false;
-    private ArrayList protectedShares = new ArrayList();
-    private int currentPin = 0;
-    private ArrayList currentProtectedShare = new ArrayList();
+    private Layout[,] _layouts;
+    private bool[,] _sortasc;
+    private VideoSort.SortMethod[,] _sortby;
+    private bool _ageConfirmed;
+    private ArrayList _protectedShares = new ArrayList();
+    private int _currentPin;
+    private ArrayList _currentProtectedShare = new ArrayList();
 
     private bool _movieInfoBeforePlay;
     private bool _playClicked;
-    private bool _scanning = false;
+    private bool _scanning;
     private ArrayList _conflictFiles = new ArrayList();
-    private int scanningFileNumber = 1;
-    private int scanningFileTotal = 1;
+    private int _scanningFileNumber = 1;
+    private int _scanningFileTotal = 1;
     private Thread _setThumbs;
     private ArrayList _threadGUIItems = new ArrayList();
     // Search movie/actor
-    private static bool _searchMovie = false;
-    private static bool _searchActor = false;
+    private static bool _searchMovie;
+    private static bool _searchActor;
     private static string _searchMovieString = string.Empty;
     private static string _searchActorString = string.Empty;
     private static string _currentView = string.Empty;
     // Last View lvl postion on back from VideoInfo screen
-    private int _currentLevel = 0;
+    private int _currentLevel;
     
     #endregion
 
@@ -104,9 +104,9 @@ namespace MediaPortal.GUI.Video
       {
         if (handler.View != null)
         {
-          if (layouts == null)
+          if (_layouts == null)
           {
-            layouts = new Layout[handler.Views.Count,50];
+            _layouts = new Layout[handler.Views.Count,50];
 
             ArrayList viewStrings = new ArrayList();
             viewStrings.Add("List");
@@ -119,19 +119,16 @@ namespace MediaPortal.GUI.Video
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
                 FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
-                layouts[i, j] = GetLayoutNumber(def.DefaultView);
+                _layouts[i, j] = GetLayoutNumber(def.DefaultView);
               }
             }
           }
 
-          return layouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          return _layouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
-        else
-        {
-          return Layout.List;
-        }
+        return Layout.List;
       }
-      set { layouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+      set { _layouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
     }
 
     protected override bool CurrentSortAsc
@@ -140,26 +137,26 @@ namespace MediaPortal.GUI.Video
       {
         if (handler.View != null)
         {
-          if (sortasc == null)
+          if (_sortasc == null)
           {
-            sortasc = new bool[handler.Views.Count,50];
+            _sortasc = new bool[handler.Views.Count,50];
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
                 FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
-                sortasc[i, j] = def.SortAscending;
+                _sortasc[i, j] = def.SortAscending;
               }
             }
           }
 
-          return sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          return _sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
 
         return true;
       }
-      set { sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+      set { _sortasc[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
     }
 
     protected override VideoSort.SortMethod CurrentSortMethod
@@ -168,9 +165,9 @@ namespace MediaPortal.GUI.Video
       {
         if (handler.View != null)
         {
-          if (sortby == null)
+          if (_sortby == null)
           {
-            sortby = new VideoSort.SortMethod[handler.Views.Count,50];
+            _sortby = new VideoSort.SortMethod[handler.Views.Count,50];
 
             ArrayList sortStrings = new ArrayList();
             sortStrings.Add("Name");
@@ -189,24 +186,21 @@ namespace MediaPortal.GUI.Video
 
                 if (defaultSort != -1)
                 {
-                  sortby[i, j] = (VideoSort.SortMethod)defaultSort;
+                  _sortby[i, j] = (VideoSort.SortMethod)defaultSort;
                 }
                 else
                 {
-                  sortby[i, j] = VideoSort.SortMethod.Name;
+                  _sortby[i, j] = VideoSort.SortMethod.Name;
                 }
               }
             }
           }
 
-          return sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          return _sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
-        else
-        {
-          return VideoSort.SortMethod.Name;
-        }
+        return VideoSort.SortMethod.Name;
       }
-      set { sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+      set { _sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
     }
 
     public override void OnAction(Action action)
@@ -266,9 +260,9 @@ namespace MediaPortal.GUI.Video
       // Reset parameters if previous window is not one of video windows
       if (!GUIVideoFiles.IsVideoWindow(previousWindow))
       {
-        ageConfirmed = false;
-        currentPin = 0;
-        currentProtectedShare.Clear();
+        _ageConfirmed = false;
+        _currentPin = 0;
+        _currentProtectedShare.Clear();
         _searchMovieString = string.Empty;
         _searchActorString = string.Empty;
         _searchMovie = false;
@@ -280,7 +274,7 @@ namespace MediaPortal.GUI.Video
       
       if (view == string.Empty)
       {
-        view = ((ViewDefinition)handler.Views[0]).Name;
+        view = handler.Views[0].Name;
       }
 
       handler.CurrentView = view;
@@ -290,7 +284,7 @@ namespace MediaPortal.GUI.Video
       base.OnPageLoad();
 
       LoadDirectory(currentFolder);
-      GetProtectedShares(ref protectedShares);
+      GetProtectedShares(ref _protectedShares);
 
       SetPinLockProperties();
     }
@@ -302,7 +296,7 @@ namespace MediaPortal.GUI.Video
         _setThumbs.Abort();
       }
 
-      currentSelectedItem = facadeLayout.SelectedListItemIndex;
+      _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       if (newWindowId == (int)Window.WINDOW_VIDEO_TITLE ||
           newWindowId == (int)Window.WINDOW_VIDEOS)
       {
@@ -317,11 +311,6 @@ namespace MediaPortal.GUI.Video
       base.OnPageDestroy(newWindowId);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
-    {
-      base.OnClicked(controlId, control, actionType);
-    }
-
     protected override void OnClick(int itemIndex)
     {
       GUIListItem item = facadeLayout.SelectedListItem;
@@ -331,7 +320,7 @@ namespace MediaPortal.GUI.Video
       }
       if (item.IsFolder)
       {
-        currentSelectedItem = -1;
+        _currentSelectedItem = -1;
         if (item.Label == "..")
         {
           handler.CurrentLevel--;
@@ -373,12 +362,12 @@ namespace MediaPortal.GUI.Video
 
         if (files.Count > 1)
         {
-          GUIVideoFiles._stackedMovieFiles = files;
-          GUIVideoFiles._isStacked = true;
+          GUIVideoFiles.StackedMovieFiles = files;
+          GUIVideoFiles.IsStacked = true;
         }
         else
         {
-          GUIVideoFiles._isStacked = false;
+          GUIVideoFiles.IsStacked = false;
         }
         
         GUIVideoFiles.MovieDuration(files, false);
@@ -407,7 +396,7 @@ namespace MediaPortal.GUI.Video
       
       if (movie == null)
       {
-        Dialog_ProtectedContent(dlg);
+        DialogProtectedContent(dlg);
         return;
       }
 
@@ -424,9 +413,9 @@ namespace MediaPortal.GUI.Video
           dlg.AddLocalizedString(368); //IMDB
         //}
         
-        if (protectedShares.Count > 0)
+        if (_protectedShares.Count > 0)
         {
-          if (ageConfirmed)
+          if (_ageConfirmed)
           {
             dlg.AddLocalizedString(1240); //Lock content
           }
@@ -446,6 +435,7 @@ namespace MediaPortal.GUI.Video
         }
         
         dlg.AddLocalizedString(1262); // Update grabber scripts
+        dlg.AddLocalizedString(1263); // Set default grabber
         dlg.DoModal(GetID);
 
         if (dlg.SelectedId == -1)
@@ -475,7 +465,7 @@ namespace MediaPortal.GUI.Video
       // Context menu on folders (Group names)
       if (movie.ID < 0)
       {
-        Dialog_ProtectedContent(dlg);
+        DialogProtectedContent(dlg);
         return;
       }
       // Context menu on movie title
@@ -484,25 +474,47 @@ namespace MediaPortal.GUI.Video
 
       if (handler.CurrentLevelWhere == "title" ||
           handler.CurrentLevelWhere == "recently added" ||
-          handler.CurrentLevelWhere == "recently watched")
+          handler.CurrentLevelWhere == "recently watched" ||
+          handler.CurrentLevelWhere == "user groups")
       {
+        dlg.AddLocalizedString(208); //play
+        dlg.AddLocalizedString(368); //IMDB
+        dlg.AddLocalizedString(926); //add to playlist
+
+        if (handler.CurrentLevelWhere == "user groups")
+        {
+          dlg.AddLocalizedString(1272); //Add usergroup
+          
+          ArrayList userGroups = new ArrayList();
+          ArrayList movieUserGroups = new ArrayList();
+          VideoDatabase.GetUserGroups(userGroups);
+          VideoDatabase.GetMovieUserGroups(movie.ID, movieUserGroups);
+
+          if (movieUserGroups.Count < userGroups.Count)
+          {
+            dlg.AddLocalizedString(1270); //add to usergroup
+          }
+        }
+        
+        if (handler.CurrentLevel > 0)
+        {
+          dlg.AddLocalizedString(1271); //remove from usergroup
+        }
         dlg.AddLocalizedString(118); //rename title
         dlg.AddLocalizedString(925); //delete
-        dlg.AddLocalizedString(368); //IMDB
-        dlg.AddLocalizedString(208); //play
-        dlg.AddLocalizedString(926); //add to playlist
       }
 
       if ((handler.CurrentLevelWhere == "title" ||
            handler.CurrentLevelWhere == "recently added" ||
-           handler.CurrentLevelWhere == "recently watched") && facadeLayout.Count > 1)
+           handler.CurrentLevelWhere == "recently watched") && facadeLayout.Count > 1 ||
+           handler.CurrentLevelWhere == "user groups")
       {
         dlg.AddLocalizedString(1250); //Search movie
       }
       
-      if (protectedShares.Count > 0)
+      if (_protectedShares.Count > 0)
       {
-        if (ageConfirmed)
+        if (_ageConfirmed)
         {
           dlg.AddLocalizedString(1240); //Lock content
         }
@@ -513,6 +525,7 @@ namespace MediaPortal.GUI.Video
       }
       
       dlg.AddLocalizedString(1262); // Update grabber scripts
+      dlg.AddLocalizedString(1263); // Set default grabber
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -546,6 +559,18 @@ namespace MediaPortal.GUI.Video
           break;
         case 1262: // Update grabber scripts
           GUIVideoFiles.UpdateGrabberScripts();
+          break;
+        case 1263: // Set default grabber
+          GUIVideoFiles.SetDefaultGrabber();
+          break;
+        case 1270: // Add to user group
+          OnAddToUserGroup(movie, itemNo);
+          break;
+        case 1271: // Remove from user group
+          OnRemoveFromUserGroup(movie, itemNo);
+          break;
+        case 1272: // Add user group
+          OnAddUserGroup();
           break;
       }
     }
@@ -593,7 +618,7 @@ namespace MediaPortal.GUI.Video
       else
       {
         IMDBMovie movie = listItem.AlbumInfoTag as IMDBMovie;
-        VideoDatabase.GetFiles(movie.ID, ref files);
+        if (movie != null) VideoDatabase.GetFiles(movie.ID, ref files);
         foreach (string file in files)
         {
           listItem.Path = file;
@@ -702,7 +727,7 @@ namespace MediaPortal.GUI.Video
         listItem.Path = string.Empty;
         listItem.IsFolder = true;
         Util.Utils.SetDefaultIcons(listItem);
-        listItem.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+        listItem.OnItemSelected += item_OnItemSelected;
         itemlist.Add(listItem);
       }
 
@@ -710,13 +735,27 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem item = new GUIListItem();
         item.Label = movie.Title;
-        if (handler.CurrentLevel + 1 < handler.MaxLevels)
+        if (handler.CurrentLevelWhere != "user groups")
         {
-          item.IsFolder = true;
+          if (handler.CurrentLevel + 1 < handler.MaxLevels)
+          {
+            item.IsFolder = true;
+          }
+          else
+          {
+            item.IsFolder = false;
+          }
         }
         else
         {
-          item.IsFolder = false;
+          if (string.IsNullOrEmpty(movie.Title) && handler.CurrentLevel + 1 < handler.MaxLevels)
+          {
+            item.IsFolder = true;
+          }
+          else
+          {
+            item.IsFolder = false;
+          }
         }
 
         item.Path = movie.File;
@@ -736,12 +775,12 @@ namespace MediaPortal.GUI.Video
         item.Year = movie.Year;
         item.DVDLabel = movie.DVDLabel;
         item.Rating = movie.Rating;
-        item.IsPlayed = movie.Watched > 0 ? true : false;
+        item.IsPlayed = movie.Watched > 0;
         int percent = 0;
         int timesWatched = 0;
         VideoDatabase.GetmovieWatchedStatus(movie.ID, out percent, out timesWatched);
         item.Label3 = percent + "% #" + timesWatched;
-        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+        item.OnItemSelected += item_OnItemSelected;
 
         itemlist.Add(item);
       }
@@ -802,7 +841,7 @@ namespace MediaPortal.GUI.Video
           GUIListItem item = facadeLayout[itemIndex];
           if (item.Label == selectedItemLabel)
           {
-            currentSelectedItem = itemIndex;
+            _currentSelectedItem = itemIndex;
             SelectItem();
             break;
           }
@@ -877,32 +916,32 @@ namespace MediaPortal.GUI.Video
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
-        currentSelectedItem = facadeLayout.SelectedListItemIndex;
+        _currentSelectedItem = facadeLayout.SelectedListItemIndex;
 
-        if (currentSelectedItem > 0)
+        if (_currentSelectedItem > 0)
         {
-          currentSelectedItem--;
+          _currentSelectedItem--;
         }
 
         LoadDirectory(currentFolder);
 
-        if (currentSelectedItem >= 0)
+        if (_currentSelectedItem >= 0)
         {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
         }
       }
     }
 
     #endregion
 
-    private void Dialog_ProtectedContent(GUIDialogMenu dlg)
+    private void DialogProtectedContent(GUIDialogMenu dlg)
     {
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
-      if (protectedShares.Count > 0)
+      if (_protectedShares.Count > 0)
       {
-        if (ageConfirmed)
+        if (_ageConfirmed)
         {
           dlg.AddLocalizedString(1240); //Lock content
         }
@@ -916,11 +955,22 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(1252); //Search actor
       }
+      if (handler.CurrentLevelWhere == "director" && facadeLayout.Count > 1)
+      {
+        dlg.AddLocalizedString(1268); // Search director
+      }
       else if ((handler.CurrentLevelWhere == "title" ||
                 handler.CurrentLevelWhere == "recently added" ||
-                handler.CurrentLevelWhere == "recently watched") && facadeLayout.Count > 1)
+                handler.CurrentLevelWhere == "recently watched") && facadeLayout.Count > 1 ||
+                handler.CurrentLevelWhere == "user groups")
       {
         dlg.AddLocalizedString(1250); //Search movie
+
+        if (handler.CurrentLevelWhere == "user groups")
+        {
+          dlg.AddLocalizedString(1272); //Add usergroup
+          dlg.AddLocalizedString(1273); //Remove selected usergroup
+        }
       }
 
       dlg.AddLocalizedString(1263); // Set default grabber
@@ -944,6 +994,7 @@ namespace MediaPortal.GUI.Video
           OnSearchMovie();
           break;
         case 1252: //Search actor
+        case 1268: // Search director
           OnSearchActor();
           break;
         case 1263: // Set deault grabber script
@@ -952,15 +1003,28 @@ namespace MediaPortal.GUI.Video
         case 1262: // Update grabber scripts
           GUIVideoFiles.UpdateGrabberScripts();
           break;
+        case 1272: // Add user group
+          OnAddUserGroup();
+          break;
+        case 1273: // Remove user group
+          GUIListItem item = facadeLayout.SelectedListItem;
+
+          if (item == null)
+          {
+            return;
+          }
+
+          OnRemoveUserGroup(item.Label);
+          break;
         
       }
     }
 
     private void SelectItem()
     {
-      if (currentSelectedItem >= 0)
+      if (_currentSelectedItem >= 0)
       {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
       }
     }
 
@@ -982,15 +1046,28 @@ namespace MediaPortal.GUI.Video
 
     protected void SetUserGroupsThumbs(ArrayList itemlist)
     {
+      ArrayList movies = new ArrayList();
+      
       foreach (GUIListItem item in itemlist)
       {
         // get the genre somewhere since the label isn't set yet.
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
         if (movie != null)
         {
-          string usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieUserGroups, movie.SingleUserGroup);
-          SetItemThumb(item, usergroupCover);
+          if (movie.Title == string.Empty)
+          {
+            string usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieUserGroups, movie.SingleUserGroup);
+            SetItemThumb(item, usergroupCover);
+          }
+          else
+          {
+            movies.Add(item);
+          }
         }
+      }
+      if (movies.Count > 0)
+      {
+        SetIMDBThumbs(movies);
       }
     }
     
@@ -1217,15 +1294,15 @@ namespace MediaPortal.GUI.Video
 
       DoDeleteItem(item);
 
-      currentSelectedItem = facadeLayout.SelectedListItemIndex;
-      if (currentSelectedItem > 0)
+      _currentSelectedItem = facadeLayout.SelectedListItemIndex;
+      if (_currentSelectedItem > 0)
       {
-        currentSelectedItem--;
+        _currentSelectedItem--;
       }
       LoadDirectory(currentFolder);
-      if (currentSelectedItem >= 0)
+      if (_currentSelectedItem >= 0)
       {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
       }
     }
 
@@ -1297,7 +1374,7 @@ namespace MediaPortal.GUI.Video
       if (item.Label == "..")
       {
         IMDBMovie notMovie = new IMDBMovie();
-        notMovie.SetProperties(true);
+        notMovie.SetProperties(true, string.Empty);
         IMDBActor notActor = new IMDBActor();
         notActor.SetProperties();
         return;
@@ -1305,7 +1382,7 @@ namespace MediaPortal.GUI.Video
       
       if (_setThumbs != null && _setThumbs.IsAlive)
       {
-        currentSelectedItem = facadeLayout.SelectedListItemIndex;
+        _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       }
 
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
@@ -1368,18 +1445,18 @@ namespace MediaPortal.GUI.Video
     // Show or hide protected content
     private void OnContentLock()
     {
-      if (!ageConfirmed)
+      if (!_ageConfirmed)
       {
         if (RequestPin())
         {
-          ageConfirmed = true;
+          _ageConfirmed = true;
           LoadDirectory(currentFolder);
           GUIPropertyManager.SetProperty("#MyVideos.PinLocked", "false");
         }
         return;
       }
 
-      ageConfirmed = false;
+      _ageConfirmed = false;
       LoadDirectory(currentFolder);
       GUIPropertyManager.SetProperty("#MyVideos.PinLocked", "true");
     }
@@ -1473,6 +1550,103 @@ namespace MediaPortal.GUI.Video
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, itemIndex);
       }
     }
+
+    private void OnAddToUserGroup(IMDBMovie movie, int itemIndex)
+    {
+      ArrayList movieUserGroups = new ArrayList();
+      ArrayList userGroups = new ArrayList();
+      VideoDatabase.GetMovieUserGroups(movie.ID, movieUserGroups);
+      VideoDatabase.GetUserGroups(userGroups);
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null || userGroups.Count == 0 || userGroups.Count == movieUserGroups.Count)
+      {
+        return;
+      }
+
+      dlg.Reset();
+      dlg.SetHeading(498); // menu
+
+      foreach (string userGroup in userGroups)
+      {
+        if (!movieUserGroups.Contains(userGroup))
+        {
+          dlg.Add(userGroup);
+        }
+      }
+      
+      dlg.DoModal(GetID);
+      
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      
+      VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(dlg.SelectedLabelText));
+
+      _currentSelectedItem = itemIndex;
+
+      LoadDirectory(currentFolder);
+
+      if (_currentSelectedItem >= facadeLayout.ListLayout.ListItems.Count)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
+      }
+      else
+      {
+        _currentSelectedItem--;
+
+        if (_currentSelectedItem >= 0)
+        {
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
+        }
+      }
+    }
+
+    private void OnRemoveFromUserGroup(IMDBMovie movie, int itemIndex)
+    {
+      string group = m_history.Get("user groups");
+      VideoDatabase.RemoveUserGroupFromMovie(movie.ID, VideoDatabase.AddUserGroup(group));
+      
+      _currentSelectedItem = itemIndex;
+      
+      LoadDirectory(currentFolder);
+      
+      if (_currentSelectedItem >= facadeLayout.ListLayout.ListItems.Count)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
+      }
+      else
+      {
+        _currentSelectedItem --;
+
+        if (_currentSelectedItem >= 0)
+        {
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
+        }
+      }
+    }
+
+    private void OnAddUserGroup()
+    {
+      string newGroup = string.Empty;
+      GetKeyboard(ref newGroup);
+
+      if (string.IsNullOrEmpty(newGroup))
+      {
+        return;
+      }
+
+      VideoDatabase.AddUserGroup(newGroup);
+      LoadDirectory(currentFolder);
+    }
+
+    private void OnRemoveUserGroup(string group)
+    {
+      VideoDatabase.DeleteUserGroup(group);
+      LoadDirectory(currentFolder);
+    }
     
     // Get all shares and pins for protected video folders
     private void GetProtectedShares(ref ArrayList shares)
@@ -1501,7 +1675,7 @@ namespace MediaPortal.GUI.Video
     {
       bool retry = true;
       bool sucess = false;
-      currentProtectedShare.Clear();
+      _currentProtectedShare.Clear();
       while (retry)
       {
         GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
@@ -1513,20 +1687,20 @@ namespace MediaPortal.GUI.Video
         }
         catch (Exception) {}
 
-        foreach (string p in protectedShares)
+        foreach (string p in _protectedShares)
         {
           char[] splitter = {'|'};
           string[] pin = p.Split(splitter);
 
           if (iPincode != Convert.ToInt32(pin[0]))
           {
-            currentPin = iPincode;
+            _currentPin = iPincode;
             continue;
           }
           if (iPincode == Convert.ToInt32(pin[0]))
           {
-            currentPin = iPincode;
-            currentProtectedShare.Add(pin[1]);
+            _currentPin = iPincode;
+            _currentProtectedShare.Add(pin[1]);
             sucess = true;
           }
         }
@@ -1547,18 +1721,18 @@ namespace MediaPortal.GUI.Video
           retry = true;
         }
       }
-      currentPin = 0;
+      _currentPin = 0;
       return false;
     }
 
     // Skin properties for locked/unlocked indicator
     private void SetPinLockProperties()
     {
-      if (protectedShares.Count == 0)
+      if (_protectedShares.Count == 0)
       {
         GUIPropertyManager.SetProperty("#MyVideos.PinLocked", "");
       }
-      else if (ageConfirmed)
+      else if (_ageConfirmed)
       {
         GUIPropertyManager.SetProperty("#MyVideos.PinLocked", "false");
       }
@@ -1573,48 +1747,46 @@ namespace MediaPortal.GUI.Video
     private bool CheckItem(GUIListItem item)
     {
       string directory = Path.GetDirectoryName(item.Path); // item path
-      VirtualDirectory vDir = new VirtualDirectory();
-      // Get protected share paths for videos
-      vDir.LoadSettings("movies");
 
-      // Check if item belongs to protected shares
-      int pincode = 0;
-      bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
-
-      bool success = false;
-
-      // User unlocked share/shares with PIN and item is within protected shares
-      if (folderPinProtected && ageConfirmed)
+      if (directory != null)
       {
-        // Iterate unlocked shares against current item path
-        foreach (string share in currentProtectedShare)
+        VirtualDirectory vDir = new VirtualDirectory();
+        // Get protected share paths for videos
+        vDir.LoadSettings("movies");
+
+        // Check if item belongs to protected shares
+        int pincode = 0;
+        bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
+
+        bool success = false;
+
+        // User unlocked share/shares with PIN and item is within protected shares
+        if (folderPinProtected && _ageConfirmed)
         {
-          if (!directory.ToLower().Contains(share.ToLower()))
+          // Iterate unlocked shares against current item path
+          foreach (string share in _currentProtectedShare)
           {
-            continue;
-          }
-          else // item belongs to unlocked shares and will be displayed
-          {
+            if (!directory.ToLower().Contains(share.ToLower()))
+            {
+              continue;
+            }
             success = true;
             break;
           }
+          // current item is not within unlocked shares, 
+          // don't show item and go to the next item
+          if (!success)
+          {
+            return false;
+          }
+          return true;
         }
-        // current item is not within unlocked shares, 
+        // Nothing unlocked and item belongs to protected shares,
         // don't show item and go to the next item
-        if (!success)
+        if (folderPinProtected && !_ageConfirmed)
         {
           return false;
         }
-        else // current item is within unlocked shares, show it
-        {
-          return true;
-        }
-      }
-      // Nothing unlocked and item belongs to protected shares,
-      // don't show item and go to the next item
-      else if (folderPinProtected && !ageConfirmed)
-      {
-        return false;
       }
       // Item is not inside protected shares, show it
       return true;
@@ -1628,12 +1800,12 @@ namespace MediaPortal.GUI.Video
         ArrayList movies = new ArrayList(mList);
         ArrayList pShares = new ArrayList();
 
-        foreach (string p in protectedShares)
+        foreach (string p in _protectedShares)
         {
           char[] splitter = { '|' };
           string[] pin = p.Split(splitter);
           // Only add shares which are unlocked
-          if (Convert.ToInt32(pin[0]) == currentPin)
+          if (Convert.ToInt32(pin[0]) == _currentPin)
             pShares.Add(pin[1]);
         }
 
@@ -1659,14 +1831,14 @@ namespace MediaPortal.GUI.Video
           bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
           
           // No PIN entered, remove all protected conetnt
-          if (folderPinProtected && !ageConfirmed)
+          if (folderPinProtected && !_ageConfirmed)
           {
             mList.Remove(m);
             continue;
           }
 
           // PIN entered, check for corresponding shares
-          if (folderPinProtected && ageConfirmed)
+          if (folderPinProtected && _ageConfirmed)
           {
             bool found = false;
 
@@ -1845,7 +2017,7 @@ namespace MediaPortal.GUI.Video
       String heading;
       if (_scanning)
       {
-        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(197), scanningFileNumber, scanningFileTotal);
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(197), _scanningFileNumber, _scanningFileTotal);
       }
       else
       {
@@ -1891,16 +2063,13 @@ namespace MediaPortal.GUI.Video
         _conflictFiles.Add(fetcher.Movie);
         return false;
       }
-      else
-      {
-        // show dialog...
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-        pDlgOK.SetHeading(195);
-        pDlgOK.SetLine(1, fetcher.MovieName);
-        pDlgOK.SetLine(2, string.Empty);
-        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-        return true;
-      }
+      // show dialog...
+      GUIDialogOK pDlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      pDlgOk.SetHeading(195);
+      pDlgOk.SetLine(1, fetcher.MovieName);
+      pDlgOk.SetLine(2, string.Empty);
+      pDlgOk.DoModal(GUIWindowManager.ActiveWindow);
+      return true;
     }
 
     public bool OnDetailsStarting(IMDBFetcher fetcher)
@@ -1911,7 +2080,7 @@ namespace MediaPortal.GUI.Video
       String heading;
       if (_scanning)
       {
-        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(198), scanningFileNumber, scanningFileTotal);
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(198), _scanningFileNumber, _scanningFileTotal);
       }
       else
       {
@@ -1959,7 +2128,7 @@ namespace MediaPortal.GUI.Video
       String heading;
       if (_scanning)
       {
-        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(986), scanningFileNumber, scanningFileTotal);
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(986), _scanningFileNumber, _scanningFileTotal);
       }
       else
       {
@@ -1983,7 +2152,7 @@ namespace MediaPortal.GUI.Video
       String heading;
       if (_scanning)
       {
-        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(986), scanningFileNumber, scanningFileTotal);
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(986), _scanningFileNumber, _scanningFileTotal);
       }
       else
       {
@@ -2024,17 +2193,14 @@ namespace MediaPortal.GUI.Video
         _conflictFiles.Add(fetcher.Movie);
         return false;
       }
-      else
-      {
-        // show dialog...
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-        // show dialog...
-        pDlgOK.SetHeading(195);
-        pDlgOK.SetLine(1, fetcher.MovieName);
-        pDlgOK.SetLine(2, string.Empty);
-        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
-        return false;
-      }
+      // show dialog...
+      GUIDialogOK pDlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      // show dialog...
+      pDlgOk.SetHeading(195);
+      pDlgOk.SetLine(1, fetcher.MovieName);
+      pDlgOk.SetLine(2, string.Empty);
+      pDlgOk.DoModal(GUIWindowManager.ActiveWindow);
+      return false;
     }
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
@@ -2045,20 +2211,17 @@ namespace MediaPortal.GUI.Video
         movieName = string.Empty;
         return false;
       }
-      else
+      movieName = fetcher.MovieName;
+      if (GetKeyboard(ref movieName))
       {
-        movieName = fetcher.MovieName;
-        if (GetKeyboard(ref movieName))
+        if (movieName == string.Empty)
         {
-          if (movieName == string.Empty)
-          {
-            return false;
-          }
-          return true;
+          return false;
         }
-        movieName = string.Empty;
-        return false;
+        return true;
       }
+      movieName = string.Empty;
+      return false;
     }
 
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
@@ -2069,36 +2232,30 @@ namespace MediaPortal.GUI.Video
         selectedMovie = -1;
         return false;
       }
-      else
+      GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
+      // more then 1 movie found
+      // ask user to select 1
+      pDlgSelect.Reset();
+      pDlgSelect.SetHeading(196); //select movie
+      for (int i = 0; i < fetcher.Count; ++i)
       {
-        GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
-        // more then 1 movie found
-        // ask user to select 1
-        pDlgSelect.Reset();
-        pDlgSelect.SetHeading(196); //select movie
-        for (int i = 0; i < fetcher.Count; ++i)
-        {
-          pDlgSelect.Add(fetcher[i].Title);
-        }
-        pDlgSelect.EnableButton(true);
-        pDlgSelect.SetButtonLabel(413); // manual
-        pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
-
-        // and wait till user selects one
-        selectedMovie = pDlgSelect.SelectedLabel;
-        if (pDlgSelect.IsButtonPressed)
-        {
-          return true;
-        }
-        if (selectedMovie == -1)
-        {
-          return false;
-        }
-        else
-        {
-          return true;
-        }
+        pDlgSelect.Add(fetcher[i].Title);
       }
+      pDlgSelect.EnableButton(true);
+      pDlgSelect.SetButtonLabel(413); // manual
+      pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
+
+      // and wait till user selects one
+      selectedMovie = pDlgSelect.SelectedLabel;
+      if (pDlgSelect.IsButtonPressed)
+      {
+        return true;
+      }
+      if (selectedMovie == -1)
+      {
+        return false;
+      }
+      return true;
     }
 
     public bool OnSelectActor(IMDBFetcher fetcher, out int selectedActor)
@@ -2128,8 +2285,8 @@ namespace MediaPortal.GUI.Video
     {
       _scanning = true;
       _conflictFiles.Clear();
-      scanningFileTotal = total;
-      scanningFileNumber = 1;
+      _scanningFileTotal = total;
+      _scanningFileNumber = 1;
       return true;
     }
 
@@ -2212,13 +2369,13 @@ namespace MediaPortal.GUI.Video
 
     public bool OnScanIterating(int count)
     {
-      scanningFileNumber = count;
+      _scanningFileNumber = count;
       return true;
     }
 
     public bool OnScanIterated(int count)
     {
-      scanningFileNumber = count;
+      _scanningFileNumber = count;
       GUIDialogProgress pDlgProgress =
         (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if (pDlgProgress.IsCanceled)

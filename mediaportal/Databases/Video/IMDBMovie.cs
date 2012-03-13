@@ -22,7 +22,6 @@ using System;
 using System.Collections;
 using System.Globalization;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
 using MediaPortal.Util;
 using System.Web;
 
@@ -347,7 +346,7 @@ namespace MediaPortal.Video.Database
       _mStrMpaRating = string.Empty;
       _mIRunTime = 0;
       _mIWatched = 0;
-      _dateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+      _dateAdded = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
       _dateWatched = string.Empty;
       _mstudios = string.Empty;
     }
@@ -372,12 +371,12 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#plotoutline", PlotOutline);
       GUIPropertyManager.SetProperty("#userreview", UserReview); // Added
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
-      GUIPropertyManager.SetProperty("#strrating", "(" + Rating + "/10)");
+      GUIPropertyManager.SetProperty("#strrating", "(" + Rating.ToString(CultureInfo.CurrentCulture) + "/10)");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
       Int32 votes = 0;
       if (Int32.TryParse(Votes, out votes))
       {
-        Votes = String.Format("{0:n0}", votes);
+        Votes = String.Format("{0:N0}", votes);
       }
       GUIPropertyManager.SetProperty("#votes", Votes);
       GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));

@@ -1298,7 +1298,7 @@ namespace MediaPortal.Video.Database
         Open();
       }
     }
-
+    
     public void GetMovieUserGroups(int movieId, ArrayList userGroups)
     {
       if (m_db == null)
@@ -1430,6 +1430,11 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+
+      string thumb = Util.Utils.GetCoverArtName(Thumbs.MovieUserGroups, userGroup);
+      string largeThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieUserGroups, userGroup);
+      Util.Utils.FileDelete(thumb);
+      Util.Utils.FileDelete(largeThumb);
     }
 
     public void RemoveUserGroupsForMovie(int lMovieId)

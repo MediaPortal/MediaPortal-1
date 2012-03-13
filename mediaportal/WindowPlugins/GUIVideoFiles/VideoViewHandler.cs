@@ -158,6 +158,11 @@ namespace MediaPortal.GUI.Video
             sql += orderClause;
           }
           VideoDatabase.GetMoviesByFilter(sql, out movies, false, false, false, true);
+
+          ArrayList moviesExt = new ArrayList();
+          sql = String.Format("SELECT * FROM movieinfo WHERE idMovie NOT IN (SELECT DISTINCT idMovie FROM usergrouplinkmovie) ORDER BY strTitle");
+          VideoDatabase.GetMoviesByFilter(sql, out moviesExt, false, true, false, false);
+          movies.AddRange(moviesExt);
         }
         else if (defRoot.Where == "year")
         {
@@ -597,9 +602,12 @@ namespace MediaPortal.GUI.Video
       }
       if (definition.Where == "user groups")
       {
-        item.Label = movie.SingleUserGroup;
-        item.Label2 = string.Empty;
-        item.Label3 = string.Empty;
+        if (movie.Title == string.Empty)
+        {
+          item.Label = movie.SingleUserGroup;
+          item.Label2 = string.Empty;
+          item.Label3 = string.Empty;
+        }
       }
       if (definition.Where == "actor")
       {
