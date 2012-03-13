@@ -35,5 +35,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract(Name = "ListAllChannelGroupsByMediaTypeWithSpecificRelations")]
     IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType, ChannelGroupIncludeRelationEnum includeRelations);
+
+    [OperationContract]
+    IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations);
   }
 }

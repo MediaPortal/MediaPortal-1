@@ -28,6 +28,12 @@ namespace Mediaportal.TV.Server.TVService.Services
       return listAllChannelGroupsByMediaType;
     }
 
+    public IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
+    {
+      var listAllCustomChannelGroups = ChannelGroupManagement.ListAllCustomChannelGroups(includeRelations);
+      return listAllCustomChannelGroups;
+    }
+
     public IList<ChannelGroup> ListAllChannelGroupsByMediaType(MediaTypeEnum mediaType)
     {
       var listAllChannelGroupsByMediaType = ChannelGroupManagement.ListAllChannelGroupsByMediaType(mediaType);

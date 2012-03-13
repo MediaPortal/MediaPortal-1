@@ -25,11 +25,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Channels;
+using System.Threading.Tasks;
 using System.Xml;
 
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -148,80 +150,80 @@ namespace Mediaportal.TV.TvPlugin
       //System.Diagnostics.Debugger.Launch();
       try
       {
-        SetupDatabaseConnection();
-        Log.Info("get channels from database");        
-        channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).ToList();
-
-        Log.Info("found:{0} tv channels", channels.Count);
-        TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
+        SetupDatabaseConnection();
 
-        ChannelGroup allRadioChannelsGroup =
-          ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(
-            TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio);
+        Task taskGetAllChannels = Task.Factory.StartNew(delegate
+                                            {
+                                              Log.Info("get channels from database");
+                                              channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV, ChannelIncludeRelationEnum.None).ToList();
+                                              Log.Info("found:{0} tv channels", channels.Count);
+                                            });
 
-        IList<Channel> radioChannels =
-          ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.Radio).ToList();
-
-        if (radioChannels != null)
+        Task taskGetOrCreateGroup = Task.Factory.StartNew(delegate
         {
-          if (allRadioChannelsGroup != null && radioChannels.Count > allRadioChannelsGroup.GroupMaps.Count)
-          {
-            MappingHelper.AddChannelsToGroup(radioChannels, allRadioChannelsGroup);            
-          }
-        }
-        Log.Info("Done.");
+          ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
+        });
+                        
 
-        Log.Info("get all groups from database");
-        IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups().OrderBy(g => g.groupName).ToList();                        
+        Task taskAddRadioChannelsToGroup = Task.Factory.StartNew(AddRadioChannelsToGroup);
+        Task taskGetAllGroups = Task.Factory.StartNew(GetAllGroups);                
+        taskGetOrCreateGroup.WaitAndHandleExceptions();
+        taskGetAllChannels.WaitAndHandleExceptions();
+        taskAddRadioChannelsToGroup.WaitAndHandleExceptions();
+        taskGetAllGroups.WaitAndHandleExceptions();
 
-        bool hideAllChannelsGroup = false;
-        using (
-          Settings xmlreader =
-            new MPSettings())
-        {
-          hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
-        }
-
-        IList<Channel> tvchannels = new List<Channel>();
-        foreach (ChannelGroup group in groups)
-        {
-          if (group.groupName == TvConstants.TvGroupNames.AllChannels)
-          {
-            IList<GroupMap> allgroupMaps = group.GroupMaps;
-            foreach (Channel channel in channels)
-            {
-              if (channel.mediaType == (int)MediaTypeEnum.TV)
-              {
-                bool groupContainsChannel = 
-                  allgroupMaps.Where(map => map.idGroup == group.idGroup).Any(map => map.idChannel == channel.idChannel);
-                if (!groupContainsChannel) //not part of allchannels
-                {
-                  tvchannels.Add(channel);
-                }
-              }
-            }
-            break;
-          }
-        }
-
-        ChannelGroup allchannelsGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);                
-        MappingHelper.AddChannelsToGroup(radioChannels, allRadioChannelsGroup);            
-
-        foreach (ChannelGroup group in groups)
-        {
-          if (hideAllChannelsGroup && group.groupName.Equals(TvConstants.TvGroupNames.AllChannels) && groups.Count > 1)
-          {
-            continue;
-          }
-          m_groups.Add(group);
-        }
-        Log.Info("loaded {0} tv groups", m_groups.Count);
+        TvNotifyManager.OnNotifiesChanged();
       }
       catch (Exception ex)
       {
         Log.Error("TVHome: Error in Reload");
         Log.Error(ex);        
+      }      
+    }
+
+    private void GetAllGroups()
+    {
+      bool hideAllChannelsGroup;
+      using (Settings xmlreader = new MPSettings())
+      {
+        hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+      }
+
+      Log.Info("get all groups from database");
+      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+      include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
+
+      if (hideAllChannelsGroup)
+      {
+        m_groups =
+          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include).OrderBy(g => g.groupName).
+            ToList();
+      }
+      else
+      {
+        m_groups =
+          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include).OrderBy(g => g.groupName).ToList();
+      }
+      Log.Info("loaded {0} tv groups", m_groups.Count);
+    }
+
+    private static void AddRadioChannelsToGroup()
+    {
+      ChannelGroup allRadioChannelsGroup = null;
+      IList<Channel> radioChannels = null;
+      ThreadHelper.ParallelInvoke(
+        () => allRadioChannelsGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(
+          TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio),
+        () => radioChannels =
+              ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.Radio,
+                                                                                    ChannelIncludeRelationEnum.GroupMaps).ToList()
+        );
+
+      if (radioChannels != null && allRadioChannelsGroup != null &&
+          radioChannels.Count > allRadioChannelsGroup.GroupMaps.Count)
+      {
+        MappingHelper.AddChannelsToGroup(radioChannels, allRadioChannelsGroup);
       }
     }
 
@@ -271,7 +273,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return null;
         }
-        return (ChannelGroup)m_groups[m_currentgroup];
+        return m_groups[m_currentgroup];
       }
     }
 

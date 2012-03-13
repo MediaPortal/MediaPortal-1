@@ -4,6 +4,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Channel = Mediaportal.TV.Server.TVDatabase.Entities.Channel;
 
@@ -120,6 +121,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         channelGroupRepository.Delete<ChannelGroup>(g => g.idGroup == idGroup);
         channelGroupRepository.UnitOfWork.SaveChanges();
       }      
+    }
+
+    public static IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
+    {
+      using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
+      {
+        var query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.groupName != TvConstants.TvGroupNames.AllChannels && g.groupName != TvConstants.RadioGroupNames.AllChannels);
+        var listAllChannelGroups = channelGroupRepository.IncludeAllRelations(query, includeRelations).ToList();
+        return listAllChannelGroups;
+      }
     }
   }
 }
