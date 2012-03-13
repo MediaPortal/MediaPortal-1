@@ -512,7 +512,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         {
           CAutoLock lock(m_section);
 
-          if (buffer->nNewSegment>0)
+          if (buffer->nNewSegment > 0)
           {
             if ((buffer->nNewSegment & NS_NEW_CLIP) == NS_NEW_CLIP)
             {
@@ -525,7 +525,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               checkPlaybackState = true;
               m_bClipEndingNotified = false;
 
-              if (buffer->bResuming)
+              if (buffer->bResuming || buffer->nNewSegment & NS_INTERRUPTED)
               {
                 m_bDoFakeSeek = true;
                 m_rtStreamOffset = buffer->rtPlaylistTime;

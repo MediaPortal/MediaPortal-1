@@ -34,7 +34,7 @@ extern void LogDebug(const char *fmt, ...);
 #define ONE_SECOND  10000000LL
 #define TWO_SECONDS 20000000LL
 
-CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, bool seekTarget)
+CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME totalStreamOffset, bool audioPresent, REFERENCE_TIME duration, bool seekTarget, bool interrupted)
 {
   nClip=clipNumber;
   nPlaylist = playlistNumber;
@@ -61,6 +61,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   m_pSparseVideoPacket = NULL;
 
   bSeekTarget = seekTarget;
+  clipInterrupted = interrupted;
 
   superceeded=0;
 
@@ -126,6 +127,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
       ret->bDiscontinuity=true;
       firstAudio=false;
       if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
+      if (clipInterrupted) ret->nNewSegment |= NS_INTERRUPTED;
     }
   
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
@@ -168,6 +170,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
         ret->nNewSegment = NS_STREAM_RESET;
         if (bSeekTarget) ret->nNewSegment |= NS_SEEK_TARGET; 
         if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
+        if (clipInterrupted) ret->nNewSegment |= NS_INTERRUPTED;
         firstVideo = false;
         bSeekTarget = false;
         ret->pmt = CreateMediaType(m_videoPmt);

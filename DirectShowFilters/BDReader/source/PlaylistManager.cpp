@@ -44,10 +44,10 @@ CPlaylistManager::~CPlaylistManager(void)
 
   CAutoLock vectorLock(&m_sectionVector);
   ivecPlaylists it = m_vecPlaylists.begin();
-  while (it!=m_vecPlaylists.end())
+  while (it != m_vecPlaylists.end())
   {
-    CPlaylist * playlist=*it;
-    it=m_vecPlaylists.erase(it);
+    CPlaylist* playlist = *it;
+    it = m_vecPlaylists.erase(it);
     delete playlist;
   }
 }
@@ -72,50 +72,50 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 
   LogDebug("Playlist Manager new Playlist %d clip %d start %6.3f clipOffset %6.3f Audio %d duration %6.3f",nPlaylist, nClip, firstPacketTime/10000000.0, clipOffsetTime/10000000.0, audioPresent, duration/10000000.0);
 
-   //mark current playlist as filled
+  // Mark current playlist as filled
   CurrentClipFilled();
 
   REFERENCE_TIME remainingClipTime = Incomplete();
   REFERENCE_TIME playedDuration = ClipPlayTime();
-  bool ret = remainingClipTime>5000000LL;
+  bool ret = remainingClipTime > 5000000LL;
 
   //LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
 
   m_rtPlaylistOffset += playedDuration;
 
-  if (m_vecPlaylists.size()==0)
+  if (m_vecPlaylists.empty())
   {
-    //first playlist
-    CPlaylist * firstPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    firstPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false);
+    // First playlist
+    CPlaylist* firstPlaylist = new CPlaylist(nPlaylist, firstPacketTime);
+    firstPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false, false);
 
     m_vecPlaylists.push_back(firstPlaylist);
     m_itCurrentAudioPlayBackPlaylist = m_itCurrentVideoPlayBackPlaylist = m_itCurrentAudioSubmissionPlaylist = m_itCurrentVideoSubmissionPlaylist = m_vecPlaylists.begin();
   }
   else if (m_vecPlaylists.back()->nPlaylist == nPlaylist)
   {
-    //new clip in existing playlist
-    CPlaylist * existingPlaylist = m_vecPlaylists.back();
-    existingPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration==0);
+    // New clip in existing playlist
+    CPlaylist* existingPlaylist = m_vecPlaylists.back();
+    existingPlaylist->CreateNewClip(nClip, firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration == 0, ret);
   }
   else
   {
-    //completely new playlist
-    CPlaylist * existingPlaylist = m_vecPlaylists.back();
+    // A completely new playlist
+    CPlaylist* existingPlaylist = m_vecPlaylists.back();
     vector<CClip*> audioLess = existingPlaylist->Superceed();
     if (audioLess.size())
     {
       ivecClip it = audioLess.begin();
-      while (it!=audioLess.end())
+      while (it != audioLess.end())
       {
-        CClip * clip=*it;
+        CClip* clip = *it;
         m_vecNonFilledClips.push_back(clip);
         ++it;
       }
     }
 
-    CPlaylist * newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration==0);
+    CPlaylist* newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
+    newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, playedDuration == 0, ret);
     
     PushPlaylists();
     m_vecPlaylists.push_back(newPlaylist);
