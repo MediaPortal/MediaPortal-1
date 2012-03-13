@@ -1573,6 +1573,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                                GUILocalizeStrings.Get(736), "", null, ProgramState.None, DateTime.MinValue,
                                string.Empty,
                                string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+        prog.Channel = channel;
         if (programs == null)
         {
           programs = new List<ProgramBLL>();
