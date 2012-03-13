@@ -108,11 +108,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void AddGroups()
     {
       comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
       foreach (ChannelGroup group in groups)
+      {
         comboBoxGroups.Items.Add(new ComboBoxExItem(group.groupName, -1, group.idGroup));
+      }
       if (comboBoxGroups.Items.Count == 0)
+      {
         comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
+      }
       comboBoxGroups.SelectedIndex = 0;
     }
 
@@ -376,7 +380,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       comboBoxChannels.Items.Clear();
       if (idItem.Id == -1)
       {
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
         foreach (Channel ch in channels)
         {
           if (ch.mediaType != (decimal) MediaTypeEnum.TV) continue;
