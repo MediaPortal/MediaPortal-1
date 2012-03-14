@@ -54,7 +54,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           ThreadHelper.ParallelInvoke(
             delegate
               {
-                nowPrograms = programRepository.GetNowProgramsForChannelGroup(channelIds);
+                using (IProgramRepository programRepositoryForThread = new ProgramRepository())
+                {
+                  nowPrograms = programRepositoryForThread.GetNowProgramsForChannelGroup(channelIds);
+                }
                 AddNowProgramsToList(nowPrograms, progList);
               }
             ,
