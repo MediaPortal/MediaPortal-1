@@ -1496,9 +1496,24 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        // Setup WasApi Handler
+        bool initMode = _wasApiExclusiveMode;
+        // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
+        if (_wasApiExclusiveMode)
+        {
+          BASSWASAPIFormat wasapiFormat = BassWasapi.BASS_WASAPI_CheckFormat(_wasapiDeviceNumber,
+                                                                             stream.ChannelInfo.freq,
+                                                                             stream.ChannelInfo.chans,
+                                                                             BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE);
 
-        _wasapiHandler = new BassWasapiHandler(_wasapiDeviceNumber, _wasApiExclusiveMode, stream.ChannelInfo.freq,
+          if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
+          {
+            Log.Warn("BASS: Stream {0} can't be played in exclusive mode. Switch to shared mode.");
+            initMode = false;
+          }
+        }
+
+        // Setup WasApi Handler
+        _wasapiHandler = new BassWasapiHandler(_wasapiDeviceNumber, initMode, stream.ChannelInfo.freq,
                                                stream.ChannelInfo.chans, 0f, 0f);
 
         _wasapiHandler.AddOutputSource(_mixer, BASSFlag.BASS_DEFAULT);
