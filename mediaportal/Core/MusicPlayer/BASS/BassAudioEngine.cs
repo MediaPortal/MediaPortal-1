@@ -1517,6 +1517,8 @@ namespace MediaPortal.MusicPlayer.BASS
                                                stream.ChannelInfo.chans, 0f, 0f);
 
         _wasapiHandler.AddOutputSource(_mixer, BASSFlag.BASS_DEFAULT);
+        _wasapiHandler.Volume = (float)Config.StreamVolume / 100f;
+
         _wasapiHandler.Init();
         _wasapiHandler.Start();
       }
