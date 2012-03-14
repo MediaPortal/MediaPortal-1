@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// </summary>
     public bool IsPartialRecordingSeriesPending
     {
-      get { return ((_entity.state & (int)ProgramState.PartialRecordSeriesPending) == (int)ProgramState.PartialRecordSeriesPending); }
+      get { return (_entity != null && (_entity.state & (int)ProgramState.PartialRecordSeriesPending) == (int)ProgramState.PartialRecordSeriesPending); }
       set
       {
         ProgramState newState = (ProgramState)_entity.state;
