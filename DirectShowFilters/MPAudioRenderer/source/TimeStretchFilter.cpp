@@ -112,7 +112,7 @@ HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
 }
 
 // Format negotiation
-HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
+HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -128,13 +128,16 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
 #endif
 
   if (FormatsEqual(pwfx, m_pInputFormat))
+  {
+    *pChOrder = m_chOrder;
     return S_OK;
+  }
 
   bool bApplyChanges = (nApplyChangesDepth != 0);
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
   if (FAILED(hr))
     return hr;
 
@@ -151,6 +154,8 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
     SetOutputFormat(pwfx);
     SetFormat(pwfx);
   }
+
+  m_chOrder = *pChOrder;
 
   return S_OK;
 }
@@ -173,7 +178,8 @@ HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample)
     // TODO - process remaining samples 
 
     // Apply format change
-    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
+    ChannelOrder chOrder;
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
     pSample->SetDiscontinuity(false);
 
     if (FAILED(hr))
@@ -183,7 +189,10 @@ HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample)
       return hr;
     }
     else
-      return S_FALSE;
+    {
+      m_chOrder = chOrder;
+	    return S_FALSE; // format changed
+    }
   }
 
   return S_OK;

@@ -41,7 +41,7 @@ public:
   HRESULT Init();
   HRESULT Cleanup();
   HRESULT PutSample(IMediaSample* pSample);
-  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
 
 public: 

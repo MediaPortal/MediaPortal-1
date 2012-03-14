@@ -40,13 +40,12 @@ public:
   // IAudioSink implementation
   HRESULT Init();
   HRESULT Cleanup();
-  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
 
   // IRenderFilter implementation
   HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
   REFERENCE_TIME Latency();
-  WAVEFORMATEXTENSIBLE* RenderFormat();
 
 protected:
   // Processing

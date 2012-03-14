@@ -46,7 +46,7 @@ public:
   virtual HRESULT Cleanup();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
 
   // Processing
   virtual HRESULT PutSample(IMediaSample* pSample);

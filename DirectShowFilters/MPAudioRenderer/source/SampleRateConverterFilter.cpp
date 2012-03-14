@@ -56,13 +56,16 @@ HRESULT CSampleRateConverter::Cleanup()
   return CBaseAudioSink::Cleanup();
 }
 
-HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
+HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   if (FormatsEqual(pwfx, m_pInputFormat))
+  {
+    *pChOrder = m_chOrder;
     return S_OK;
+  }
 
   if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -72,7 +75,7 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
     nApplyChangesDepth--;
 
   // try passthrough
-  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+  HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
   if (SUCCEEDED(hr))
   {
     if (bApplyChanges)
@@ -81,6 +84,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
       SetInputFormat(pwfx);
       SetOutputFormat(pwfx);
     }
+
+    m_chOrder = *pChOrder;
     return hr;
   }
 
@@ -124,7 +129,7 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
     pOutWfx->Format.nSamplesPerSec = gAllowedSampleRates[i];
     pOutWfx->Format.nAvgBytesPerSec = gAllowedSampleRates[i] * pOutWfx->Format.nBlockAlign;
 
-    hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
+    hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
     sampleRatesTested++;
 
     if (FAILED(hr))
@@ -151,6 +156,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
   }
   else
     SAFE_DELETE_WAVEFORMATEX(pOutWfx);
+
+  m_chOrder = *pChOrder;
 
   return S_OK;
 }
@@ -184,13 +191,15 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     Log("CSampleRateConverter::PutSample: Processing format change");
-    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
+    ChannelOrder chOrder;
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
       Log("SampleRateConverter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+    m_chOrder = chOrder;
   }
 
   if (pmt)

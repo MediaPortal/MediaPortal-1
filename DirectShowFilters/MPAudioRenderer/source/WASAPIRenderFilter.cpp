@@ -142,7 +142,7 @@ void CWASAPIRenderFilter::ReleaseResources()
 }
 
 // Format negotiation
-HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
+HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -151,6 +151,8 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   {
     Log("CWASAPIRenderFilter::NegotiateFormat - new format same as earlier");
     LogWaveFormat(m_pInputFormat, "CWASAPIRenderFilter::NegotiateFormat");
+    *pChOrder = m_chOrder;
+
     return S_OK;
   }
 
@@ -236,6 +238,8 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   }
   SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
 
+  m_chOrder = *pChOrder = DS_ORDER;
+
   return hr;
 }
 
@@ -260,7 +264,8 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample, UINT32 framesToF
       Log("CWASAPIRenderFilter::CheckFormat - ReleaseBuffer: 0x%08x", hr);
 
     // Apply format change
-    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
+    ChannelOrder chOrder;
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
     pSample->SetDiscontinuity(false);
 
     if (FAILED(hr))
@@ -270,7 +275,10 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample, UINT32 framesToF
       return hr;
     }
     else
+    {
+      m_chOrder = chOrder;
       return S_FALSE;
+    }
   }
   /*else if (pSample->IsDiscontinuity() == S_OK)
   {
@@ -471,11 +479,6 @@ void CWASAPIRenderFilter::ResetClockData()
 REFERENCE_TIME CWASAPIRenderFilter::Latency()
 {
   return m_pSettings->m_hnsPeriod;
-}
-
-WAVEFORMATEXTENSIBLE* CWASAPIRenderFilter::RenderFormat()
-{
-  return m_pInputFormat;
 }
 
 // Processing

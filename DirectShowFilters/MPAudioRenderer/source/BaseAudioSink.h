@@ -48,7 +48,7 @@ public:
   virtual HRESULT EndStop();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
 
   // Processing
   virtual HRESULT PutSample(IMediaSample* pSample);
@@ -91,4 +91,6 @@ protected:
   bool m_bFlushing;
   bool m_bHandleSampleRelease; // true if we should release the output sample and reset sample counter
   CCritSec m_csOutputSample;
+  
+  ChannelOrder m_chOrder;
 };

@@ -37,7 +37,7 @@ public:
   HRESULT Cleanup();
 
   // Format negotiation
-  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
 
   // Processing
   HRESULT PutSample(IMediaSample* pSample);

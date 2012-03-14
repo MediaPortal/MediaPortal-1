@@ -27,7 +27,7 @@
 class CChannelMixer : public CBaseAudioSink
 {
 public:
-  CChannelMixer(AudioRendererSettings* pSettings, IRenderFilter* pRenderer);
+  CChannelMixer(AudioRendererSettings* pSettings);
   virtual ~CChannelMixer();
 
 // IAudioSink implementation
@@ -37,7 +37,7 @@ public:
   HRESULT Cleanup();
 
   // Format negotiation
-  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
 
   // Processing
   HRESULT PutSample(IMediaSample* pSample);
@@ -48,7 +48,7 @@ protected:
   // Initialization
   HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
   
-  HRESULT SetupConversion();
+  HRESULT SetupConversion(ChannelOrder chOrder);
   HRESULT MapChannelsFromDStoAE(WAVEFORMATEXTENSIBLE* pWfex, CAEChannelInfo* channelInfo, bool useAC3Layout = false);
 
   HRESULT ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed);
@@ -63,7 +63,7 @@ protected:
   CAEChannelInfo m_AEOutput;
 
   int m_nInFrameSize;     // Bytes in a frame. A frame contains a sample for each channel
-  int m_nOutFrameSize;     
+  int m_nOutFrameSize;
 
   REFERENCE_TIME m_rtNextIncomingSampleTime;
   REFERENCE_TIME m_rtInSampleTime;

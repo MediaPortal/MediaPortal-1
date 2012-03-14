@@ -16,6 +16,13 @@
 
 #pragma once
 
+
+enum ChannelOrder
+{
+  DS_ORDER,
+  AC3_ORDER
+};
+
 //typedef interface IAudioSink IAudioSink;
 
 struct  IAudioSink
@@ -37,7 +44,7 @@ public:
   virtual HRESULT EndStop() = 0;
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth) = 0;
+  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder) = 0;
 
   // Buffer negotiation
   // -- TODO --

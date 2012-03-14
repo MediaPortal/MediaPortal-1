@@ -64,13 +64,16 @@ HRESULT CAC3EncoderFilter::Cleanup()
 }
 
 // Format negotiation
-HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
+HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   if (FormatsEqual(pwfx, m_pInputFormat))
+  {
+    *pChOrder = m_chOrder;
     return S_OK;
+  }
 
   if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -86,7 +89,7 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
   // encoding (for example 2 channel on SPDIF or channel mixer downmixing the channels)
   if (m_pSettings->m_lAC3Encoding == DISABLED || m_pSettings->m_lAC3Encoding == AUTO)
   {
-    hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+    hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
     if (SUCCEEDED(hr))
     {
       if (bApplyChanges)
@@ -97,6 +100,8 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
         SetOutputFormat(pwfx);
         CloseAC3Encoder();
       }
+
+      m_chOrder = *pChOrder;
       return hr;
     }
   }
@@ -122,7 +127,7 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
   // Finally verify next sink accepts AC3 format
   WAVEFORMATEXTENSIBLE* pAC3wfx = CreateAC3Format(pwfx->Format.nSamplesPerSec, 0);
 
-  hr = m_pNextSink->NegotiateFormat(pAC3wfx, nApplyChangesDepth);
+  hr = m_pNextSink->NegotiateFormat(pAC3wfx, nApplyChangesDepth, pChOrder);
 
   if (FAILED(hr))
   {
@@ -145,6 +150,9 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
 
     OpenAC3Encoder(m_nBitRate, m_pInputFormat->Format.nChannels, m_pInputFormat->Format.nSamplesPerSec);
   }
+
+  *pChOrder = AC3_ORDER;
+
   return S_OK;
 }
 
@@ -178,13 +186,15 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
 
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
-    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
+    ChannelOrder chOrder;
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
       Log("AC3Encoder: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+	m_chOrder = chOrder;
   }
 
   if (pmt)

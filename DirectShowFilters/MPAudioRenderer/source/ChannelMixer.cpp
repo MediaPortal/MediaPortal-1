@@ -21,13 +21,12 @@
 
 #include "alloctracing.h"
 
-CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings, IRenderFilter* pRenderer) :
+CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings) :
   CBaseAudioSink(true),
-  m_pRenderer(pRenderer),
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_pSettings(pSettings),
-  m_rtNextIncomingSampleTime(0)
+  m_rtNextIncomingSampleTime(0)  
 {
   m_pRemap = new CAERemap();
 }
@@ -51,13 +50,16 @@ HRESULT CChannelMixer::Cleanup()
   return CBaseAudioSink::Cleanup();
 }
 
-HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
+HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
   if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   if (FormatsEqual(pwfx, m_pInputFormat))
+  {
+    *pChOrder = m_chOrder;
     return S_OK;
+  }
 
   if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
@@ -74,7 +76,7 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (!m_pSettings->m_bForceChannelMixing)
   {
     // try the format directly
-    hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+    hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
     if (SUCCEEDED(hr))
     {
       if (bApplyChanges)
@@ -82,8 +84,10 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
         SetInputFormat(pwfx);
         SetOutputFormat(pwfx);
         m_bPassThrough = false;
-        hr = SetupConversion();
+        hr = SetupConversion(*pChOrder);
       }
+
+      m_chOrder = *pChOrder;
       return hr;
     }
   }
@@ -97,7 +101,8 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample / 8 * pOutWfx->Format.nChannels;
   pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
   
-  hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
+  hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
+  m_chOrder = *pChOrder;
 
   // Try different speaker setup
   if (FAILED(hr))
@@ -115,7 +120,7 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
     if (dwSpeakers != pOutWfx->dwChannelMask)
     {
       pOutWfx->dwChannelMask = dwSpeakers;
-      hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth);
+      hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
     }
   }
 
@@ -130,7 +135,7 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
     m_bPassThrough = false;
     SetInputFormat(pwfx);
     SetOutputFormat(pOutWfx, true);
-    hr = SetupConversion();
+    hr = SetupConversion(*pChOrder);
   }
   else
     SAFE_DELETE_WAVEFORMATEX(pOutWfx);
@@ -167,13 +172,15 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     Log("CChannelMixer::PutSample: Processing format change");
-    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1);
+    ChannelOrder chOrder;
+    hr = NegotiateFormat((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, 1, &chOrder);
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
       Log("SampleRateConverter: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+    m_chOrder = chOrder;
   }
 
   if (pmt)
@@ -253,15 +260,13 @@ HRESULT CChannelMixer::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* propertie
   return S_OK;
 }
 
-HRESULT CChannelMixer::SetupConversion()
+HRESULT CChannelMixer::SetupConversion(ChannelOrder chOrder)
 {
   m_nInFrameSize = m_pInputFormat->Format.nBlockAlign;
   m_nOutFrameSize = m_pOutputFormat->Format.nBlockAlign;
 
-  bool ac3Encoded = m_pRenderer->RenderFormat()->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL;
-
   MapChannelsFromDStoAE(m_pInputFormat, &m_AEInput);
-  MapChannelsFromDStoAE(m_pOutputFormat, &m_AEOutput, ac3Encoded);
+  MapChannelsFromDStoAE(m_pOutputFormat, &m_AEOutput, chOrder == AC3_ORDER);
 
   // TODO check the last parameter
   if (!m_pRemap->Initialize(m_AEInput, m_AEOutput, false, false, AE_CH_LAYOUT_7_1)) 

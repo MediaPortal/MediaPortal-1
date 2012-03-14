@@ -30,7 +30,8 @@ CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease) :
   m_pMemAllocator((IUnknown *)NULL),
   m_pNextOutSample(NULL),
   m_nSampleNum(0),
-  m_bFlushing (false)
+  m_bFlushing(false),
+  m_chOrder(DS_ORDER)
 {
 }
 
@@ -134,13 +135,19 @@ HRESULT CBaseAudioSink::EndStop()
 }
 
 // Format negotiation
-HRESULT CBaseAudioSink::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth)
+HRESULT CBaseAudioSink::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
   if (m_pNextSink)
-    return m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
+  {
+    HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
+    if (SUCCEEDED(hr))
+      m_chOrder = *pChOrder;
+	
+    return hr;
+  }
 
   return VFW_E_TYPE_NOT_ACCEPTED;
 }

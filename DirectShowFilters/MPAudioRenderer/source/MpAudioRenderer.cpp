@@ -186,7 +186,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pSampleRateConverter)
     return E_OUTOFMEMORY;
 
-  m_pChannelMixer = new CChannelMixer(&m_Settings, m_pWASAPIRenderer);
+  m_pChannelMixer = new CChannelMixer(&m_Settings);
   if (!m_pChannelMixer)
     return E_OUTOFMEMORY;
 
@@ -227,15 +227,17 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
   if (!pwfx) 
     return VFW_E_TYPE_NOT_ACCEPTED;
 
+  ChannelOrder chOrder(DS_ORDER);
+
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
-    return m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0);
+    return m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0, &chOrder);
   else
   {
     WAVEFORMATEXTENSIBLE* wfe = NULL;
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
-      hr = m_pPipeline->NegotiateFormat(wfe, 0);
+      hr = m_pPipeline->NegotiateFormat(wfe, 0, &chOrder);
       delete wfe;
     }
     return hr;
@@ -332,16 +334,17 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
   
   // Dynamic format changes are handled in the pipeline on sample basis  
   int depth = m_State != State_Stopped ? 0 : INFINITE;
+  ChannelOrder chOrder(DS_ORDER);
 
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
-    hr = m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)pwfx, depth);
+    hr = m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)pwfx, depth, &chOrder);
   else
   {
     WAVEFORMATEXTENSIBLE* wfe = NULL;
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
-      hr = m_pPipeline->NegotiateFormat(wfe, depth);
+      hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
       delete wfe;
     }
     else
