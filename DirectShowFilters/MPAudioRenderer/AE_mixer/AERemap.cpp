@@ -25,6 +25,7 @@
 
 #include "AERemap.h"
 
+#include "..\source\Globals.h"
 #include "..\..\alloctracing.h"
 
 using namespace std;
@@ -220,9 +221,9 @@ bool CAERemap::Initialize(CAEChannelInfo input, CAEChannelInfo output, bool fina
     }
   }
 
-#if 0
+#if 1
   /* dump the matrix */
-  CLog::Log(LOGINFO, "==[Downmix Matrix]==");
+  Log("==[Downmix Matrix]==");
   for(unsigned int o = 0; o < output.Count(); ++o)
   {
     AEMixInfo *info = &m_mixInfo[output[o]];
@@ -236,9 +237,9 @@ bool CAERemap::Initialize(CAEChannelInfo input, CAEChannelInfo output, bool fina
       s.append(CStdString(" ") + CAEChannelInfo::GetChName(input[info->srcIndex[i].index]) + lvl);
     }
 
-    CLog::Log(LOGINFO, "%s", s.c_str());
+    Log("%s", s.c_str());
   }
-  CLog::Log(LOGINFO, "====================\n");
+  Log("====================\n");
 #endif
 
   return true;
