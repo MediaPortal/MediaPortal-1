@@ -110,7 +110,7 @@ namespace MediaPortal.Util
           {
             if (!localFile.Equals(dbFile, StringComparison.OrdinalIgnoreCase) && File.Exists(localFile))
             {
-              DeleteFanarts(movieId);
+              DeleteFanart(movieId, index);
               File.Copy(localFile, dbFile, true);
             }
           }
@@ -124,7 +124,7 @@ namespace MediaPortal.Util
         {
           try
           {
-            DeleteFanarts(movieId);
+            DeleteFanart(movieId, index);
             var webClient = new WebClient();
             webClient.DownloadFile(localFile, dbFile);
             webClient.Dispose();
@@ -161,7 +161,7 @@ namespace MediaPortal.Util
         string tmdbUrl = string.Empty; // TMDB Fanart api URL
         string tmdbUrlWorkaround = string.Empty; // Sometimes link conatains double "/" before ttnumber
         // Firts try by IMDB id (100% accurate) then, if fail, by movie name (first result will be taken as defult fanart, no random)
-        if (imdbTT != string.Empty && imdbTT.StartsWith("tt"))
+        if ( imdbTT != string.Empty && imdbTT.StartsWith("tt"))
         {
           tmdbUrl = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
                     imdbTT;
@@ -286,7 +286,7 @@ namespace MediaPortal.Util
         {
           _fileFanArt = SetFanArtFileName(movieId, index);
 
-          DeleteFanarts(movieId);
+          DeleteFanart(movieId, index);
 
           WebClient webClient = new WebClient();
           webClient.DownloadFile(url, _fileFanArt);
@@ -376,6 +376,18 @@ namespace MediaPortal.Util
         string file = SetFanArtFileName(movieId, i);
         DeleteFile(file);
       }
+    }
+
+    public static void DeleteFanart(int movieId, int index)
+    {
+      if (movieId == -1)
+        return;
+
+      string configDir;
+      GetFanArtFolder(out configDir);
+
+      string file = SetFanArtFileName(movieId, index);
+      DeleteFile(file);
     }
 
     // Returns default MP fanart folder

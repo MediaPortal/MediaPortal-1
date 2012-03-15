@@ -1039,6 +1039,9 @@
 		<String id="1271">Remove selected movie from User group</String>
 		<String id="1272">Add New User group</String>
 		<String id="1273">Remove Selected User group</String>
+		<String id="1274">Studio:</String>
+		<String id="1275">Language:</String>
+		<String id="1276">Country:</String>
 		<String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>

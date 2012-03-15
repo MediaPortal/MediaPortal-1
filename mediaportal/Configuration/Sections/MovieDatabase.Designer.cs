@@ -24,9 +24,9 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -130,6 +130,7 @@ namespace MediaPortal.Configuration.Sections
       this.MovieRole = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabPageActorDetails = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btAddActorImage = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel23 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbDeathPlace = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel22 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -213,6 +214,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPageFanart = new System.Windows.Forms.TabPage();
       this.groupbox11 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btFADelete = new MediaPortal.UserInterface.Controls.MPButton();
       this.btFanartNext = new MediaPortal.UserInterface.Controls.MPButton();
       this.btFanartPrevious = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelFanartImageIndex = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -919,7 +921,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbNewActorImdbId.Name = "tbNewActorImdbId";
       this.tbNewActorImdbId.Size = new System.Drawing.Size(176, 20);
       this.tbNewActorImdbId.TabIndex = 63;
-      this.toolTipMPvdb.SetToolTip(this.tbNewActorImdbId, "Enter IMDB actor id including leading zeros.\r\n\r\ni.e.:(0012345) or (1234567)");
+      this.toolTipMPvdb.SetToolTip(this.tbNewActorImdbId, "Enter IMDB actor id including leading zeros.\r\n\r\ni.e.:(nm0012345) or (nm1234567)");
       // 
       // btUserGroupSaveRule
       // 
@@ -1578,6 +1580,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Controls.Add(this.btAddActorImage);
       this.mpGroupBox3.Controls.Add(this.mpLabel23);
       this.mpGroupBox3.Controls.Add(this.tbDeathPlace);
       this.mpGroupBox3.Controls.Add(this.mpLabel22);
@@ -1605,6 +1608,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.TabIndex = 1;
       this.mpGroupBox3.TabStop = false;
       // 
+      // btAddActorImage
+      // 
+      this.btAddActorImage.Location = new System.Drawing.Point(356, 123);
+      this.btAddActorImage.Name = "btAddActorImage";
+      this.btAddActorImage.Size = new System.Drawing.Size(94, 22);
+      this.btAddActorImage.TabIndex = 61;
+      this.btAddActorImage.Text = "Add image";
+      this.toolTipMPvdb.SetToolTip(this.btAddActorImage, "Add local actor image for current actor.");
+      this.btAddActorImage.UseVisualStyleBackColor = true;
+      this.btAddActorImage.Click += new System.EventHandler(this.btAddActorImage_Click);
+      // 
       // mpLabel23
       // 
       this.mpLabel23.Location = new System.Drawing.Point(6, 123);
@@ -1619,7 +1633,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDeathPlace.Location = new System.Drawing.Point(86, 123);
       this.tbDeathPlace.Multiline = true;
       this.tbDeathPlace.Name = "tbDeathPlace";
-      this.tbDeathPlace.Size = new System.Drawing.Size(235, 22);
+      this.tbDeathPlace.Size = new System.Drawing.Size(251, 22);
       this.tbDeathPlace.TabIndex = 59;
       // 
       // mpLabel22
@@ -1636,7 +1650,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbDeathDate.Location = new System.Drawing.Point(86, 96);
       this.tbDeathDate.Multiline = true;
       this.tbDeathDate.Name = "tbDeathDate";
-      this.tbDeathDate.Size = new System.Drawing.Size(235, 21);
+      this.tbDeathDate.Size = new System.Drawing.Size(251, 21);
       this.tbDeathDate.TabIndex = 57;
       // 
       // mpLabel21
@@ -1715,7 +1729,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbBirthPlace.Location = new System.Drawing.Point(86, 68);
       this.tbBirthPlace.Multiline = true;
       this.tbBirthPlace.Name = "tbBirthPlace";
-      this.tbBirthPlace.Size = new System.Drawing.Size(235, 22);
+      this.tbBirthPlace.Size = new System.Drawing.Size(251, 22);
       this.tbBirthPlace.TabIndex = 44;
       // 
       // mpLabel17
@@ -1732,7 +1746,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbBirthDate.Location = new System.Drawing.Point(86, 42);
       this.tbBirthDate.Multiline = true;
       this.tbBirthDate.Name = "tbBirthDate";
-      this.tbBirthDate.Size = new System.Drawing.Size(235, 21);
+      this.tbBirthDate.Size = new System.Drawing.Size(251, 21);
       this.tbBirthDate.TabIndex = 42;
       // 
       // pictureBoxActor
@@ -1741,9 +1755,9 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBoxActor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
       this.pictureBoxActor.ErrorImage = null;
       this.pictureBoxActor.InitialImage = null;
-      this.pictureBoxActor.Location = new System.Drawing.Point(327, 16);
+      this.pictureBoxActor.Location = new System.Drawing.Point(356, 16);
       this.pictureBoxActor.Name = "pictureBoxActor";
-      this.pictureBoxActor.Size = new System.Drawing.Size(123, 129);
+      this.pictureBoxActor.Size = new System.Drawing.Size(94, 101);
       this.pictureBoxActor.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxActor.TabIndex = 41;
       this.pictureBoxActor.TabStop = false;
@@ -1754,7 +1768,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbActor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbActor.Location = new System.Drawing.Point(86, 16);
       this.cbActor.Name = "cbActor";
-      this.cbActor.Size = new System.Drawing.Size(235, 21);
+      this.cbActor.Size = new System.Drawing.Size(251, 21);
       this.cbActor.TabIndex = 39;
       this.cbActor.SelectedIndexChanged += new System.EventHandler(this.cbActor_SelectedIndexChanged);
       // 
@@ -1794,14 +1808,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgActorMovies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgActorMovies.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgActorMovies.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       this.dgActorMovies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgActorMovies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
@@ -1821,8 +1835,8 @@ namespace MediaPortal.Configuration.Sections
       // Year
       // 
       this.Year.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-      dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.Year.DefaultCellStyle = dataGridViewCellStyle8;
+      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.Year.DefaultCellStyle = dataGridViewCellStyle2;
       this.Year.HeaderText = "Year";
       this.Year.MinimumWidth = 60;
       this.Year.Name = "Year";
@@ -1831,8 +1845,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Title
       // 
-      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
-      this.Title.DefaultCellStyle = dataGridViewCellStyle9;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
+      this.Title.DefaultCellStyle = dataGridViewCellStyle3;
       this.Title.HeaderText = "Title";
       this.Title.MinimumWidth = 220;
       this.Title.Name = "Title";
@@ -2578,6 +2592,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupbox11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupbox11.Controls.Add(this.btFADelete);
       this.groupbox11.Controls.Add(this.btFanartNext);
       this.groupbox11.Controls.Add(this.btFanartPrevious);
       this.groupbox11.Controls.Add(this.labelFanartImageIndex);
@@ -2597,11 +2612,23 @@ namespace MediaPortal.Configuration.Sections
       this.groupbox11.TabIndex = 1;
       this.groupbox11.TabStop = false;
       // 
+      // btFADelete
+      // 
+      this.btFADelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btFADelete.Location = new System.Drawing.Point(383, 219);
+      this.btFADelete.Name = "btFADelete";
+      this.btFADelete.Size = new System.Drawing.Size(67, 23);
+      this.btFADelete.TabIndex = 57;
+      this.btFADelete.Text = "Delete";
+      this.toolTipMPvdb.SetToolTip(this.btFADelete, "Delete current fanart");
+      this.btFADelete.UseVisualStyleBackColor = true;
+      this.btFADelete.Click += new System.EventHandler(this.btFADelete_Click);
+      // 
       // btFanartNext
       // 
       this.btFanartNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btFanartNext.AutoSize = true;
-      this.btFanartNext.Location = new System.Drawing.Point(383, 221);
+      this.btFanartNext.Location = new System.Drawing.Point(296, 219);
       this.btFanartNext.Name = "btFanartNext";
       this.btFanartNext.Size = new System.Drawing.Size(67, 23);
       this.btFanartNext.TabIndex = 56;
@@ -2625,9 +2652,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.labelFanartImageIndex.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
       this.labelFanartImageIndex.BackColor = System.Drawing.Color.Transparent;
-      this.labelFanartImageIndex.Location = new System.Drawing.Point(185, 221);
+      this.labelFanartImageIndex.Location = new System.Drawing.Point(203, 221);
       this.labelFanartImageIndex.Name = "labelFanartImageIndex";
-      this.labelFanartImageIndex.Size = new System.Drawing.Size(210, 19);
+      this.labelFanartImageIndex.Size = new System.Drawing.Size(87, 19);
       this.labelFanartImageIndex.TabIndex = 54;
       this.labelFanartImageIndex.Text = "Image 1 of 1";
       this.labelFanartImageIndex.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2683,6 +2710,7 @@ namespace MediaPortal.Configuration.Sections
       this.fanartListBox.Name = "fanartListBox";
       this.fanartListBox.Size = new System.Drawing.Size(119, 212);
       this.fanartListBox.TabIndex = 43;
+      this.toolTipMPvdb.SetToolTip(this.fanartListBox, "Click on fanart from list to replace current fanart.");
       this.fanartListBox.SelectedIndexChanged += new System.EventHandler(this.fanartListBox_SelectedIndexChanged);
       // 
       // pictureBoxFanArt
@@ -3772,5 +3800,7 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPButton btAddUserGroupImage;
     private UserInterface.Controls.MPGroupBox mpGroupBox9;
     private UserInterface.Controls.MPGroupBox mpGroupBox10;
+    private UserInterface.Controls.MPButton btFADelete;
+    private UserInterface.Controls.MPButton btAddActorImage;
   }
 }

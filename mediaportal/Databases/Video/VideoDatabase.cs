@@ -344,9 +344,14 @@ namespace MediaPortal.Video.Database
       _database.SetMovieWatchedStatus(iMovieId, watched, percent);
     }
 
-    public static void SetMovieTimesWatched(int idMovie)
+    public static void MovieWatchedCountIncrease(int idMovie)
     {
-      _database.SetMovieTimesWatched(idMovie);
+      _database.MovieWatchedCountIncrease(idMovie);
+    }
+
+    public static void SetMovieWatchedCount(int movieId , int watchedCount)
+    {
+      _database.SetMovieWatchedCount(movieId, watchedCount);
     }
 
     public static bool GetmovieWatchedStatus(int iMovieId, out int percent, out int timesWatched)
@@ -498,6 +503,30 @@ namespace MediaPortal.Video.Database
     public static ArrayList ExecuteRuleSql(string sql, string fieldName, out bool error)
     {
       return _database.ExecuteRuleSQL(sql, fieldName, out error);
+    }
+
+    public static bool CheckMovieImdbId(string id)
+    {
+      return _database.CheckMovieImdbId(id);
+    }
+
+    public static bool CheckActorImdbId(string id)
+    {
+      return _database.CheckActorImdbId(id);
+    }
+
+    public static void ImportNfo(string nfoFile)
+    {
+      _database.ImportNfo(nfoFile);
+    }
+    /// <summary>
+    /// Returns all video files from path
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="availableFiles"></param>
+    public static void GetVideoFiles(string path, ref ArrayList availableFiles)
+    {
+      _database.GetVideoFiles(path, ref availableFiles);
     }
   }
 }

@@ -668,7 +668,7 @@ namespace MediaPortal.GUI.Video
         {
           string actorImdbId = VideoDatabase.GetActorImdbId(movie.ActorID);
 
-          if (!string.IsNullOrEmpty(actorImdbId))
+          if (VideoDatabase.CheckActorImdbId(actorImdbId))
           {
             actor = IMDBFetcher.FetchMovieActor(this, movie, actorImdbId, movie.ActorID);
           }
@@ -857,7 +857,7 @@ namespace MediaPortal.GUI.Video
           SelectItem();
         }
 
-        if (handler.CurrentLevelWhere.ToLower() == "user groups")
+        else if (handler.CurrentLevelWhere.ToLower() == "user groups")
         {
           SetUserGroupsThumbs(itemlist);
           SelectItem();
@@ -873,7 +873,6 @@ namespace MediaPortal.GUI.Video
           SetYearThumbs(itemlist);
           SelectItem();
         }
-
         else
         {
           // Assign thumbnails also for the custom views. Bugfix for Mantis 0001471: 
@@ -911,7 +910,6 @@ namespace MediaPortal.GUI.Video
 
         }
 
-        //bool getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
@@ -1050,7 +1048,6 @@ namespace MediaPortal.GUI.Video
       
       foreach (GUIListItem item in itemlist)
       {
-        // get the genre somewhere since the label isn't set yet.
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
         if (movie != null)
         {
@@ -1113,7 +1110,6 @@ namespace MediaPortal.GUI.Video
     {
       foreach (GUIListItem item in itemlist)
       {
-        // get the years somewhere since the label isn't set yet.
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
         if (movie != null) 
         {
@@ -1238,9 +1234,6 @@ namespace MediaPortal.GUI.Video
             break;
 
           case "user groups":
-            //listItem.IconImageBig = "defaultGenreBig.png";
-            //listItem.IconImage = "defaultGenre.png";
-            //listItem.ThumbnailImage = "defaultGenreBig.png";
             break;
 
           case "year":
@@ -1369,8 +1362,6 @@ namespace MediaPortal.GUI.Video
     
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      // Set current item if thumb thread is working (thread can still update thumbs while user changed
-      // item) thus preventing sudden jump to initial selected item before thread start
       if (item.Label == "..")
       {
         IMDBMovie notMovie = new IMDBMovie();
@@ -1379,7 +1370,8 @@ namespace MediaPortal.GUI.Video
         notActor.SetProperties();
         return;
       }
-      
+      // Set current item if thumb thread is working (thread can still update thumbs while user changed
+      // item) thus preventing sudden jump to initial selected item before thread start
       if (_setThumbs != null && _setThumbs.IsAlive)
       {
         _currentSelectedItem = facadeLayout.SelectedListItemIndex;
@@ -1426,7 +1418,7 @@ namespace MediaPortal.GUI.Video
           facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
         }
       }
-      else if (movie.Actor != string.Empty)
+      if (movie.Actor != string.Empty)
       {
         GUIPropertyManager.SetProperty("#title", movie.Actor);
         string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, movie.ActorID.ToString());
@@ -1435,10 +1427,9 @@ namespace MediaPortal.GUI.Video
           facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
         }
       }
-      // Random movieId by view (for FA)
+      // Random movieId by view (for FA) for selected groups
       string view = handler.CurrentLevelWhere;
       ArrayList mList = new ArrayList();
-      
       GetItemViewHistory(view, mList);
     }
     
@@ -1900,8 +1891,12 @@ namespace MediaPortal.GUI.Video
 
             case "user groups":
               m_history.Set(facadeLayout.SelectedListItem.Label, view);
-              VideoDatabase.GetMoviesByUserGroup(facadeLayout.SelectedListItem.Label, ref mList);
-              GetRandomMovieId(mList);
+              IMDBMovie movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
+              if (movie == null || movie.ID == -1)
+              {
+                VideoDatabase.GetMoviesByUserGroup(facadeLayout.SelectedListItem.Label, ref mList);
+                GetRandomMovieId(mList);
+              }
               break;
 
             case "actor":

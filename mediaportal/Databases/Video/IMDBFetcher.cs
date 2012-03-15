@@ -44,7 +44,7 @@ namespace MediaPortal.Video.Database
     private IMDB.IProgress _progress;
     private bool _disableCancel;
     private bool _getActors;
-    private bool _isFanArt;
+    private bool _useFanArt;
     private static bool _currentCreateVideoThumbs; // Original setting for thumbnail creation
     private String _actor;
     private IMDBActor _imdbActor;
@@ -292,15 +292,32 @@ namespace MediaPortal.Video.Database
           //
           // FanArt grab
           //
-          _isFanArt = xmlreader.GetValueAsBool("moviedatabase", "usefanart", false);
+          _useFanArt = xmlreader.GetValueAsBool("moviedatabase", "usefanart", false);
 
-          if (_isFanArt)
+          if (_useFanArt)
           {
+            string localFanart = string.Empty;
             FanArt fanartSearch = new FanArt();
             // Check local fanart (only if every movie is in it's own folder), lookin for fanart.jpg
             if (folderTitle)
             {
-              string localFanart = moviePath + @"\fanart.jpg";
+              localFanart = moviePath + @"\fanart.jpg";
+              if (File.Exists(localFanart))
+              {
+                _movieDetails.FanartURL = "file://" + localFanart;
+              }
+              else
+              {
+                localFanart = moviePath + @"\" + Util.Utils.GetFilename(movieFile, true) + @"-fanart.jpg";
+                if (File.Exists(localFanart))
+                {
+                  _movieDetails.FanartURL = "file://" + localFanart;
+                }
+              }
+            }
+            else
+            {
+              localFanart = moviePath + @"\" + Util.Utils.GetFilename(movieFile, true) + @"-fanart.jpg";
               if (File.Exists(localFanart))
               {
                 _movieDetails.FanartURL = "file://" + localFanart;
@@ -329,8 +346,7 @@ namespace MediaPortal.Video.Database
           //
           //if (_getActors)
           //{
-          Match ttcheck = Regex.Match(_movieDetails.IMDBNumber, @"tt\d{7}");
-          if (ttcheck.Success)
+          if (VideoDatabase.CheckMovieImdbId(_movieDetails.IMDBNumber))
           {
             line1 = GUILocalizeStrings.Get(344); // **Progress bar actors start sets actual value to 0
             OnProgress(line1, _url.Title, string.Empty, 0);
@@ -493,9 +509,7 @@ namespace MediaPortal.Video.Database
       }
 
       // Check for IMDBid 
-      Match ttcheck = Regex.Match(_movieDetails.IMDBNumber, @"tt\d{7}");
-      
-      if (ttcheck.Success)
+      if (VideoDatabase.CheckMovieImdbId(_movieDetails.IMDBNumber))
       {
         // Returns nmxxxxxxx as actor name (IMDB actorID)
         IMDBSearch imdbActors = new IMDBSearch();
@@ -571,7 +585,7 @@ namespace MediaPortal.Video.Database
       IMDB imdb = new IMDB();
 
       // Don't search for actor if name is IMDBactorId (little speed up)
-      if (!actor.StartsWith("nm"))
+      if (!VideoDatabase.CheckActorImdbId(actor))
       {
         imdb = fetcher.FindActor(actor);
 
@@ -1354,9 +1368,9 @@ namespace MediaPortal.Video.Database
       bool success = true;
       ArrayList availableFiles = new ArrayList();
       foreach (string path in paths)
-        // Caution - Thumb creation spam no1 starts in CountFiles
+      // Caution - Thumb creation spam no1 starts in CountFiles
       {
-        CountFiles(path, ref availableFiles);
+        VideoDatabase.GetVideoFiles(path, ref availableFiles);
       }
       if (progress != null)
       {
@@ -1430,92 +1444,7 @@ namespace MediaPortal.Video.Database
       }
       return success;
     }
-
-    /// <summary>
-    /// Returns all video files from path
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="availableFiles"></param>
-    private static void CountFiles(string path, ref ArrayList availableFiles)
-    {
-      //
-      // Count the files in the current directory
-      //
-      try
-      {
-        VirtualDirectory dir = new VirtualDirectory();
-        dir.SetExtensions(Util.Utils.VideoExtensions);
-        ArrayList imagePath = new ArrayList();
-        // Thumbs creation spam no1 causing this call
-        //
-        // Temporary disable thumbcreation
-        //
-        using (Settings xmlreader = new MPSettings())
-        {
-          _currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-        }
-        using (Settings xmlwriter = new MPSettings())
-        {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
-        }
-
-        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
-        foreach (GUIListItem item in items)
-        {
-          if (item.IsFolder)
-          {
-            if (item.Label != "..")
-            {
-              if (item.Path.ToLower().IndexOf("video_ts") >= 0)
-              {
-                string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
-                availableFiles.Add(strFile);
-              }
-              else
-              {
-                CountFiles(item.Path, ref availableFiles);
-              }
-            }
-          }
-          else
-          {
-            bool skipDuplicate = false;
-
-            if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
-            {
-              string filePath = Path.GetDirectoryName(item.Path) + @"\" + Path.GetFileNameWithoutExtension(item.Path);
-
-              if (filePath != null && !imagePath.Contains(filePath))
-              {
-                imagePath.Add(filePath);
-              }
-              else
-              {
-                skipDuplicate = true;
-              }
-            }
-            if (!skipDuplicate)
-            {
-              availableFiles.Add(item.Path);
-            }
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        Log.Info("Exception counting files:{0}", e);
-        // Ignore
-      }
-      finally
-      {
-        // Restore thumbcreation setting
-        using (Settings xmlwriter = new MPSettings())
-        {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
-        }
-      }
-    }
-
+    
     public static bool GetInfoFromIMDB(IMDB.IProgress progress, ref IMDBMovie movieDetails, bool isFuzzyMatching,
                                        bool getActors)
     {

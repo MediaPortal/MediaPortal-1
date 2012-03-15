@@ -1005,14 +1005,14 @@ namespace MediaPortal.GUI.Video
       if (actor == null || actor.Count == 0 || refresh)
       {
         string selectedActor;
-        
-        if (listActors.SelectedListItem.Label3 == string.Empty)
+
+        if (VideoDatabase.CheckActorImdbId(listActors.SelectedListItem.Label3))
         {
-           selectedActor = listActors.SelectedListItem.Label2; // Actor name
+           selectedActor = listActors.SelectedListItem.Label3; // ActorImdbId
         }
         else
         {
-          selectedActor = listActors.SelectedListItem.Label3; // ActorImdbId
+          selectedActor = listActors.SelectedListItem.Label2; // Actor Name
         }
         
         GUIListItem item = listActors.SelectedListItem;

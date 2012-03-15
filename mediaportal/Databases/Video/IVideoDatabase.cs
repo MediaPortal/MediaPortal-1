@@ -88,7 +88,8 @@ namespace MediaPortal.Video.Database
     void SetVideoDuration(int iFileId, int duration);
     void SetMovieDuration(int iMovieId, int duration);
     void SetMovieWatchedStatus(int iFileId, bool watched, int percent);
-    void SetMovieTimesWatched(int idMovie);
+    void MovieWatchedCountIncrease(int idMovie);
+    void SetMovieWatchedCount(int movieId, int watchedCount);
     bool GetMovieWatchedStatus(int iFileId, out int percent, out int timesWatched);
     void DeleteMovie(string strFilenameAndPath);
     int AddMovie(string strFilenameAndPath, bool bHassubtitles);
@@ -122,5 +123,9 @@ namespace MediaPortal.Video.Database
     ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error);
     string DatabaseName { get; }
     void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh);
+    bool CheckMovieImdbId(string id);
+    bool CheckActorImdbId(string id);
+    void ImportNfo(string nfoFile);
+    void GetVideoFiles(string path, ref ArrayList availableFiles);
   }
 }

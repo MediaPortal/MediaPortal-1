@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
@@ -49,6 +50,8 @@ namespace MediaPortal.Video.Database
     }
 
     #endregion
+
+    private bool _currentCreateVideoThumbs;
 
     #region helper funcs
 
@@ -170,6 +173,16 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"studios\" TEXT DEFAULT ''";
           m_db.Execute(strSQL);
         }
+        if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "country") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"country\" TEXT DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
+        if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "language") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"language\" TEXT DEFAULT ''";
+          m_db.Execute(strSQL);
+        }
         // Movie table
         bool watchedUpg = false;
         
@@ -219,7 +232,7 @@ namespace MediaPortal.Video.Database
           {
             int movieId = Int32.Parse(DatabaseUtility.Get(results, i, "idMovie"));
             SetMovieWatchedStatus(movieId, true, 100);
-            SetMovieTimesWatched(movieId);
+            MovieWatchedCountIncrease(movieId);
           }
         }
         // Video file duration (stacked)
@@ -451,7 +464,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "movie",
                                "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool, timeswatched integer, iduration integer)");
       DatabaseUtility.AddTable(m_db, "movieinfo",
-                               "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text)");
+                               "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text, country text, language text)");
       DatabaseUtility.AddTable(m_db, "actorlinkmovie",
                                "CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer, strRole text)");
       DatabaseUtility.AddTable(m_db, "actors",
@@ -1489,10 +1502,20 @@ namespace MediaPortal.Video.Database
         {
           return -1;
         }
+        string strSQL = string.Empty;
 
-        string strSQL = "select * from Actors where IMDBActorId = '";
-        strSQL += strActorImdbId;
-        strSQL += "'";
+        if (strActorImdbId == Strings.Unknown)
+        {
+          strSQL = "select * from Actors where strActor like '";
+          strSQL += strActorName;
+          strSQL += "'";
+        }
+        else
+        {
+          strSQL = "select * from Actors where IMDBActorId = '";
+          strSQL += strActorImdbId;
+          strSQL += "'";
+        }
         SQLiteResultSet results = m_db.Execute(strSQL);
         
         if (results.Rows.Count == 0)
@@ -1908,6 +1931,54 @@ namespace MediaPortal.Video.Database
         strLine = details1.Director;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.Director = strLine;
+        // add director Id
+        int lDirector = - 1;
+        if (details1.DirectorID < 1 && !string.IsNullOrEmpty(details1.Director))
+        {
+          lDirector = AddActor("", details1.Director);
+          AddActorToMovie(details1.ID, lDirector, GUILocalizeStrings.Get(199).Replace(":", string.Empty));
+          
+          if (!CheckMovieImdbId(details1.IMDBNumber))
+          {
+            // Add actors from cast
+            ArrayList vecActors = new ArrayList();
+            ArrayList vecRoles = new ArrayList();
+            if (details1.Cast != Strings.Unknown)
+            {
+              string castFix = details1.Cast.Replace("''", "'");
+              char[] splitter = { '\n', ',' };
+              string[] actors = castFix.Split(splitter);
+
+              for (int i = 0; i < actors.Length; ++i)
+              {
+                int pos = actors[i].IndexOf(" as ");
+                string actor = actors[i];
+                string role = string.Empty;
+                if (pos >= 0)
+                {
+                  if (actor.Length >= pos + 4)
+                  {
+                    role = actor.Substring(pos + 4);
+                  }
+                  actor = actors[i].Substring(0, pos);
+                }
+                actor = actor.Trim();
+                role = role.Trim();
+                int lActorId = AddActor(string.Empty, actor);
+                vecActors.Add(lActorId);
+                vecRoles.Add(role);
+              }
+            }
+            for (int i = 0; i < vecActors.Count; i++)
+            {
+              AddActorToMovie(lMovieId, (int)vecActors[i], (string)vecRoles[i]);
+            }
+          }
+        }
+        else
+        {
+          lDirector = details1.DirectorID;
+        }
         // Plot
         strLine = details1.Plot;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
@@ -1982,9 +2053,14 @@ namespace MediaPortal.Video.Database
         strLine = details1.Studios;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.Studios = strLine;
-
-        // add director
-        int lDirector = details1.DirectorID;
+        // Country
+        strLine = details1.Country;
+        DatabaseUtility.RemoveInvalidChars(ref strLine);
+        details1.Country = strLine;
+        // Language
+        strLine = details1.Language;
+        DatabaseUtility.RemoveInvalidChars(ref strLine);
+        details1.Language = strLine;
         // add all genres
         string szGenres = details.Genre;
         ArrayList vecGenres = new ArrayList();
@@ -2027,7 +2103,7 @@ namespace MediaPortal.Video.Database
           // Insert new movie info - no date watched update
           strSQL =
             String.Format(
-              "insert into movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}')",
+              "insert into movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios, country, language) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}','{22}','{23}')",
               lMovieId, lDirector, details1.PlotOutline,
               details1.Plot, details1.TagLine,
               details1.Votes, strRating,
@@ -2035,7 +2111,7 @@ namespace MediaPortal.Video.Database
               details1.Year, details1.Genre,
               details1.ThumbURL, details1.Title,
               details1.IMDBNumber, details1.MPARating, details1.RunTime, details1.Watched, details1.UserReview,
-              details1.FanartURL, details1.Director, details1.DateAdded, details1.Studios);
+              details1.FanartURL, details1.Director, details1.DateAdded, details1.Studios, details1.Country, details1.Language);
 
           //			Log.Error("dbs:{0}", strSQL);
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -2045,7 +2121,7 @@ namespace MediaPortal.Video.Database
           // Update movie info (no dateAdded update)
           strSQL =
             String.Format(
-              "update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} , strUserReview='{16}', strFanartURL='{17}' , strDirector ='{18}', dateWatched='{19}', studios = '{20}' where idMovie={21}",
+              "update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} , strUserReview='{16}', strFanartURL='{17}' , strDirector ='{18}', dateWatched='{19}', studios = '{20}', country = '{21}', language = '{22}' where idMovie={23}",
               lDirector, details1.PlotOutline,
               details1.Plot, details1.TagLine,
               details1.Votes, strRating,
@@ -2054,7 +2130,11 @@ namespace MediaPortal.Video.Database
               details1.ThumbURL, details1.Title,
               details1.IMDBNumber,
               details1.MPARating, details1.RunTime,
-              details1.Watched, details1.UserReview, details1.FanartURL, details1.Director, details1.DateWatched ,details1.Studios, lMovieId);
+              details1.Watched, details1.UserReview, 
+              details1.FanartURL, details1.Director, 
+              details1.DateWatched ,details1.Studios,
+              details1.Country, details1.Language,
+              lMovieId);
 
           //		Log.Error("dbs:{0}", strSQL);
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -2071,8 +2151,11 @@ namespace MediaPortal.Video.Database
           details1.Genre = details1.Genre.Replace("''", "'");
           details1.Title = details1.Title.Replace("''", "'");
           details1.UserReview = details1.UserReview.Replace("''", "'");
-          details1.Director = details1.Director.Replace("''", "'");
+          if (details1.Director != null) details1.Director = details1.Director.Replace("''", "'");
           details1.Studios = details1.Studios.Replace("''", "'");
+          details1.Country = details1.Country.Replace("''", "'");
+          details1.Language = details1.Language.Replace("''", "'");
+
         }
       }
       catch (Exception ex)
@@ -2115,6 +2198,8 @@ namespace MediaPortal.Video.Database
           int fileId = VideoDatabase.GetFileId(file);
           VideoDatabase.DeleteMovieStopTime(fileId);
         }
+
+        RemoveUserGroupsForMovie((int) lMovieId);
 
         string strSQL = String.Format("delete from genrelinkmovie where idmovie={0}", lMovieId);
         m_db.Execute(strSQL);
@@ -2194,7 +2279,7 @@ namespace MediaPortal.Video.Database
       try
       {
         string strSQL = String.Format(
-          "select * from movieinfo,movie,path where path.idpath=movie.idpath and movie.idMovie=movieinfo.idMovie and movieinfo.idmovie={0}",//" and idDirector=idActor",
+          "select * from movieinfo,movie,path where path.idpath=movie.idpath and movie.idMovie=movieinfo.idMovie and movieinfo.idmovie={0}",
           lMovieId);
 
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -2237,6 +2322,8 @@ namespace MediaPortal.Video.Database
         details.Watched = Int32.Parse(DatabaseUtility.Get(results, 0, "movieinfo.iswatched"));
         details.ID = lMovieId;
         details.Studios = DatabaseUtility.Get(results, 0, "movieinfo.studios");
+        details.Country = DatabaseUtility.Get(results, 0, "movieinfo.country");
+        details.Language = DatabaseUtility.Get(results, 0, "movieinfo.language");
         // Add directorID
         try 
         {
@@ -2244,7 +2331,6 @@ namespace MediaPortal.Video.Database
         }
         catch (Exception)
         {
-
           details.DirectorID = -1;
         }
       }
@@ -2579,7 +2665,7 @@ namespace MediaPortal.Video.Database
     /// Increase times watched by 1
     /// </summary>
     /// <param name="idMovie"></param>
-    public void SetMovieTimesWatched(int idMovie)
+    public void MovieWatchedCountIncrease(int idMovie)
     {
       try
       {
@@ -2593,6 +2679,27 @@ namespace MediaPortal.Video.Database
           watchedCount++;
           sql = String.Format("update movie set timeswatched = {0} where idMovie={1}",
                               watchedCount, idMovie);
+          m_db.Execute(sql);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void SetMovieWatchedCount(int movieId , int watchedCount)
+    {
+      try
+      {
+        string sql = String.Format("select * from movie where idMovie={0}", movieId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        
+        if (results.Rows.Count != 0)
+        {
+          sql = String.Format("update movie set timeswatched = {0} where idMovie={1}",
+                              watchedCount, movieId);
           m_db.Execute(sql);
         }
       }
@@ -2842,6 +2949,8 @@ namespace MediaPortal.Video.Database
           details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
+          details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
+          details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
           // Add directorID
           try 
           {
@@ -3021,7 +3130,7 @@ namespace MediaPortal.Video.Database
           return;
         }
         string strSQL = String.Format(
-          "select * from genrelinkmovie,genre,movie,movieinfo,actors,path where path.idpath=movie.idpath and genrelinkmovie.idGenre=genre.idGenre and genrelinkmovie.idmovie=movie.idmovie and movieinfo.idmovie=movie.idmovie and genre.strGenre='{0}' and movieinfo.iddirector=actors.idActor",
+          "select * from genrelinkmovie,genre,movie,movieinfo,path where path.idpath=movie.idpath and genrelinkmovie.idGenre=genre.idGenre and genrelinkmovie.idmovie=movie.idmovie and movieinfo.idmovie=movie.idmovie and genre.strGenre='{0}'",
           strGenre);
 
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -3061,12 +3170,14 @@ namespace MediaPortal.Video.Database
           details.IMDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.IMDBID");
           long lMovieId = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idMovie"));
           details.SearchString = String.Format("{0}", details.Title);
-          details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
-          details.MPARating = DatabaseUtility.Get(results, 0, "movieinfo.mpaa");
+          details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
+          details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
           details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
           details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
+          details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
+          details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
           movies.Add(details);
         }
       }
@@ -3090,7 +3201,7 @@ namespace MediaPortal.Video.Database
           return;
         }
         string strSQL = String.Format(
-          "select * from usergrouplinkmovie,usergroup,movie,movieinfo,actors,path where path.idpath=movie.idpath and usergrouplinkmovie.idGroup=usergroup.idGroup and usergrouplinkmovie.idmovie=movie.idmovie and movieinfo.idmovie=movie.idmovie and usergroup.strGroup='{0}' and movieinfo.iddirector=actors.idActor",
+          "select * from usergrouplinkmovie,usergroup,movie,movieinfo,path where path.idpath=movie.idpath and usergrouplinkmovie.idGroup=usergroup.idGroup and usergrouplinkmovie.idmovie=movie.idmovie and movieinfo.idmovie=movie.idmovie and usergroup.strGroup='{0}'",
           strUserGroup);
 
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -3130,12 +3241,14 @@ namespace MediaPortal.Video.Database
           details.IMDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.IMDBID");
           long lMovieId = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idMovie"));
           details.SearchString = String.Format("{0}", details.Title);
-          details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
-          details.MPARating = DatabaseUtility.Get(results, 0, "movieinfo.mpaa");
+          details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
+          details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
           details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
           details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
+          details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
+          details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
           movies.Add(details);
         }
       }
@@ -3200,12 +3313,14 @@ namespace MediaPortal.Video.Database
           details.IMDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.IMDBID");
           long lMovieId = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idMovie"));
           details.SearchString = String.Format("{0}", details.Title);
-          details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
-          details.MPARating = DatabaseUtility.Get(results, 0, "movieinfo.mpaa");
+          details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
+          details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
           details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
           details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
+          details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
+          details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
           movies.Add(details);
         }
       }
@@ -3230,7 +3345,7 @@ namespace MediaPortal.Video.Database
           return;
         }
         string strSQL = String.Format(
-          "select * from movie,movieinfo,actors,path where path.idpath=movie.idpath and movieinfo.idmovie=movie.idmovie and movieinfo.iddirector=actors.idActor and movieinfo.iYear={0}",
+          "select * from movie,movieinfo,path where path.idpath=movie.idpath and movieinfo.idmovie=movie.idmovie and movieinfo.iYear={0}",
           iYear);
 
         SQLiteResultSet results = m_db.Execute(strSQL);
@@ -3270,12 +3385,14 @@ namespace MediaPortal.Video.Database
           details.IMDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.IMDBID");
           long lMovieId = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idMovie"));
           details.SearchString = String.Format("{0}", details.Title);
-          details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
-          details.MPARating = DatabaseUtility.Get(results, 0, "movieinfo.mpaa");
+          details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
+          details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
           details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
           details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
+          details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
+          details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
           movies.Add(details);
         }
       }
@@ -3411,6 +3528,8 @@ namespace MediaPortal.Video.Database
             movie.Watched = Int32.Parse(DatabaseUtility.Get(results, i, "movieinfo.iswatched"));
             movie.ID = (int)lMovieId;
             movie.Studios= DatabaseUtility.Get(results, i, "movieinfo.studios");
+            movie.Country = DatabaseUtility.Get(results, i, "movieinfo.country");
+            movie.Language = DatabaseUtility.Get(results, i, "movieinfo.language");
             // FanArt search need this (for database GUI view)
             // Share view is handled in GUIVideoFIles class)
             ArrayList files = new ArrayList();
@@ -3591,7 +3710,7 @@ namespace MediaPortal.Video.Database
                                           movieRole);
         m_db.Execute(strSQL);
         // populate IMDB Movies
-        if (movie.MovieImdbID.ToLower().StartsWith("tt"))
+        if (CheckMovieImdbId(movie.MovieImdbID))
         {
           strSQL = String.Format("select * from IMDBMovies where idIMDB='{0}'", movie.MovieImdbID);
           SQLiteResultSet results = m_db.Execute(strSQL);
@@ -3971,6 +4090,428 @@ namespace MediaPortal.Video.Database
       return values;
     }
 
+    public bool CheckMovieImdbId(string id)
+    {
+      // IMDBtt search check tt number, must be exactly 9 chars with leading zeros if needed
+      if (id == null || id.Length != 9)
+      {
+        return false;
+      }
+      // Final IMDBtt check
+      Match ttNo = Regex.Match(id, @"tt[\d]{7}?");
+      if (!ttNo.Success)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    public bool CheckActorImdbId(string id)
+    {
+      // IMDBnm search check nm number, must be exactly 9 chars with leading zeros if needed
+      if (id == null || id.Length != 9)
+      {
+        return false;
+      }
+      // Final IMDBtt check
+      Match ttNo = Regex.Match(id, @"nm[\d]{7}?");
+      if (!ttNo.Success)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    public void ImportNfo(string nfoFile)
+    {
+      XmlDocument doc = new XmlDocument();
+      doc.Load(nfoFile);
+      if (doc.DocumentElement != null)
+      {
+        int id = 0;
+        XmlNodeList movieList = doc.DocumentElement.SelectNodes("/movie");
+        foreach (XmlNode nodeMovie in movieList)
+        {
+          XmlNode nodeTitle = nodeMovie.SelectSingleNode("title");
+          XmlNode nodeRating = nodeMovie.SelectSingleNode("rating");
+          XmlNode nodeYear = nodeMovie.SelectSingleNode("year");
+          XmlNode nodeDuration = nodeMovie.SelectSingleNode("runtime");
+          XmlNode nodePlotShort = nodeMovie.SelectSingleNode("outline");
+          XmlNode nodePlot = nodeMovie.SelectSingleNode("plot");
+          XmlNode nodeTagline = nodeMovie.SelectSingleNode("tagline");
+          XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
+          XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
+          XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
+          XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
+          XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
+          XmlNode nodeStudio = nodeMovie.SelectSingleNode("studio");
+          XmlNode nodePlayCount = nodeMovie.SelectSingleNode("playcount");
+          XmlNode nodeWatched = nodeMovie.SelectSingleNode("watched");
+          XmlNode nodeFanart = nodeMovie.SelectSingleNode("fanart");
+          XmlNode nodePoster = nodeMovie.SelectSingleNode("thumb");
+
+          string genre = string.Empty;
+          XmlNodeList genreList = nodeMovie.SelectNodes("genre");
+          foreach (XmlNode nodeGenre in genreList)
+          {
+            // added check to see if nodeGenre was valid
+            if (nodeGenre != null && nodeGenre.InnerText != null)
+            {
+              if (genre.Length > 0)
+              {
+                genre += " / ";
+              }
+              genre += nodeGenre.InnerText;
+            }
+          }
+
+          string credits = string.Empty;
+          XmlNodeList creditsList = nodeMovie.SelectNodes("Credits/Credit");
+          foreach (XmlNode nodeCredit in creditsList)
+          {
+            // Added check for firstname, lastname valid
+            string firstname = string.Empty;
+            string lastname = string.Empty;
+            XmlNode nodeFirstName = nodeCredit.SelectSingleNode("FirstName");
+            XmlNode nodeLastName = nodeCredit.SelectSingleNode("LastName");
+            if (nodeFirstName != null && nodeFirstName.InnerText != null)
+            {
+              firstname = nodeFirstName.InnerText;
+            }
+            if (nodeLastName != null && nodeLastName.InnerText != null)
+            {
+              lastname = nodeLastName.InnerText;
+            }
+            if (credits.Length > 0)
+            {
+              credits += " / ";
+            }
+            credits += String.Format("{0} {1}", firstname, lastname);
+          }
+
+          IMDBMovie movie = new IMDBMovie();
+
+          string path = string.Empty;
+          string fileName = string.Empty;
+          // Get path from *.nfo file)
+          Util.Utils.Split(nfoFile, out path, out fileName);
+          // Movie filename to search from gathered files from nfo path
+          fileName = Util.Utils.GetFilename(fileName, true);
+          // Get all video files from nfo path
+          ArrayList files = new ArrayList();
+          GetVideoFiles(path, ref files);
+
+          foreach (String file in files)
+          {
+            string tmpFile = string.Empty;
+            string tmpPath = string.Empty;
+            // Read filename
+            Util.Utils.Split(file, out tmpPath, out tmpFile);
+            // Remove extension
+            tmpFile = Util.Utils.GetFilename(tmpFile, true);
+            // Remove stack endings (CD1...)
+            Util.Utils.RemoveStackEndings(ref tmpFile);
+            // Check and add to vdb and get movieId
+            if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+            {
+              id = VideoDatabase.AddMovie(file, true);
+              movie.ID = id;
+            }
+          }
+
+          // CD label
+          movie.CDLabel = string.Empty;
+          // Director
+          if (nodeDirector != null)
+          {
+            movie.Director = nodeDirector.InnerText;
+            movie.DirectorID = VideoDatabase.AddActor(string.Empty, movie.Director);
+          }
+          // DVD label
+          movie.DVDLabel = string.Empty;
+          // Genre
+          movie.Genre = genre;
+          if (nodeImdbNumber != null)
+          {
+            movie.IMDBNumber = nodeImdbNumber.InnerText;
+          }
+          // Studio
+          if (nodeStudio != null)
+          {
+            movie.Studios = nodeStudio.InnerText;
+          }
+          // MPAA
+          if (nodeMpaa != null)
+          {
+            movie.MPARating = nodeMpaa.InnerText;
+          }
+          else
+          {
+            movie.MPARating = "NR";
+          }
+          // Plot
+          if (nodePlot != null)
+          {
+            movie.Plot = nodePlot.InnerText;
+          }
+          else
+          {
+            movie.Plot = string.Empty;
+          }
+          // Short plot
+          if (nodePlotShort != null)
+          {
+            movie.PlotOutline = nodePlotShort.InnerText;
+          }
+          else
+          {
+            movie.PlotOutline = string.Empty;
+          }
+          // Rating
+          if (nodeRating != null)
+          {
+            movie.Rating = (float)Double.Parse(nodeRating.InnerText);
+            if (movie.Rating > 10.0f)
+            {
+              movie.Rating /= 10.0f;
+            }
+          }
+          // Duration
+          if (nodeDuration != null)
+          {
+            int runtime = 0;
+            if (Int32.TryParse(nodeDuration.InnerText, out runtime))
+            {
+              movie.RunTime = runtime;
+            }
+            else
+            {
+              string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
+              MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
+              if (mc.Count > 0)
+              {
+                foreach (Match m in mc)
+                {
+                  int hours = 0;
+                  Int32.TryParse(m.Groups["h"].Value, out hours);
+                  int minutes = 0;
+                  Int32.TryParse(m.Groups["m"].Value, out minutes);
+                  hours = hours * 60;
+                  minutes = hours + minutes;
+                  movie.RunTime = minutes;
+                }
+              }
+            }
+          }
+          else
+          {
+            movie.RunTime = 0;
+          }
+          // Search string
+          movie.SearchString = string.Empty;
+          // Tagline
+          if (nodeTagline != null)
+          {
+            movie.TagLine = nodeTagline.InnerText;
+          }
+          // Poster
+          if (nodePoster != null)
+          {
+
+            movie.ThumbURL = nodePoster.InnerText;
+          }
+          // Fanart
+          if (nodeFanart != null)
+          {
+            movie.FanartURL = nodeFanart.InnerText;
+          }
+          // Title
+          movie.Title = nodeTitle.InnerText;
+          // Top250
+          if (nodeTop250 != null)
+          {
+            int top250 = 0;
+            Int32.TryParse(nodeTop250.InnerText, out top250);
+            movie.Top250 = top250;
+          }
+          else
+          {
+            movie.Top250 = 0;
+          }
+          // Votes
+          if (nodeVotes != null)
+          {
+            movie.Votes = nodeVotes.InnerText;
+          }
+          // Watched
+          if (nodeWatched != null)
+          {
+            if (nodeWatched.InnerText == "true")
+            {
+              movie.Watched = 1;
+              VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
+            }
+            else
+            {
+              movie.Watched = 0;
+              VideoDatabase.SetMovieWatchedStatus(movie.ID, false, 0);
+            }
+          }
+          // Watched count
+          if (nodePlayCount != null)
+          {
+            int watchedCount = 0;
+            Int32.TryParse(nodePlayCount.InnerText, out watchedCount);
+            SetMovieWatchedCount(movie.ID, watchedCount);
+          }
+          // Writing credits
+          movie.WritingCredits = credits;
+          // Year
+          if (nodeYear != null)
+          {
+            int year = 0;
+            Int32.TryParse(nodeYear.InnerText, out year);
+            movie.Year = year;
+          }
+          else
+          {
+            movie.Year = 0;
+          }
+
+          // Cast parse
+          string cast = string.Empty;
+          XmlNodeList actorsList = nodeMovie.SelectNodes("actor");
+          foreach (XmlNode nodeActor in actorsList)
+          {
+            string name = string.Empty;
+            string role = string.Empty;
+            string actorImdbId = string.Empty;
+            string line = string.Empty;
+            XmlNode nodeActorName = nodeActor.SelectSingleNode("name");
+            XmlNode nodeActorRole = nodeActor.SelectSingleNode("role");
+            XmlNode nodeActorImdbId = nodeActor.SelectSingleNode("imdb");
+            if (nodeActorName != null && nodeActorName.InnerText != null)
+            {
+              name = nodeActorName.InnerText;
+            }
+            if (nodeActorRole != null && nodeActorRole.InnerText != null)
+            {
+              role = nodeActorRole.InnerText;
+            }
+            if (nodeActorImdbId != null)
+            {
+              actorImdbId = nodeActorImdbId.InnerText;
+            }
+            if (!string.IsNullOrEmpty(name))
+            {
+              if (!string.IsNullOrEmpty(role))
+              {
+                line = String.Format("{0} as {1}\n", name, role);
+              }
+              else
+              {
+                line = String.Format("{0}\n", name);
+              }
+              cast += line;
+
+              if (!VideoDatabase.CheckActorImdbId(actorImdbId))
+              {
+                actorImdbId = string.Empty;
+              }
+              int actId = VideoDatabase.AddActor(actorImdbId, name);
+              if (string.IsNullOrEmpty(role))
+              {
+                role = string.Empty;
+              }
+              VideoDatabase.AddActorToMovie(id, actId, role);
+            }
+          }
+          // Cast
+          movie.Cast = cast;
+          VideoDatabase.SetMovieInfoById(id, ref movie);
+        }
+      }
+    }
+
+    public void GetVideoFiles(string path, ref ArrayList availableFiles)
+    {
+      //
+      // Count the files in the current directory
+      //
+      try
+      {
+        VirtualDirectory dir = new VirtualDirectory();
+        dir.SetExtensions(Util.Utils.VideoExtensions);
+        ArrayList imagePath = new ArrayList();
+        // Thumbs creation spam no1 causing this call
+        //
+        // Temporary disable thumbcreation
+        //
+        using (Settings xmlreader = new MPSettings())
+        {
+          _currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        }
+        using (Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+        }
+
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+        foreach (GUIListItem item in items)
+        {
+          if (item.IsFolder)
+          {
+            if (item.Label != "..")
+            {
+              if (item.Path.ToUpperInvariant().IndexOf("VIDEO_TS") >= 0)
+              {
+                string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
+                availableFiles.Add(strFile);
+              }
+              else
+              {
+                GetVideoFiles(item.Path, ref availableFiles);
+              }
+            }
+          }
+          else
+          {
+            bool skipDuplicate = false;
+
+            if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+            {
+              string filePath = Path.GetDirectoryName(item.Path) + @"\" + Path.GetFileNameWithoutExtension(item.Path);
+
+              if (!imagePath.Contains(filePath))
+              {
+                imagePath.Add(filePath);
+              }
+              else
+              {
+                skipDuplicate = true;
+              }
+            }
+            if (!skipDuplicate)
+            {
+              availableFiles.Add(item.Path);
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Info("VideoDatabas: Exception counting video files:{0}", e);
+      }
+      finally
+      {
+        // Restore thumbcreation setting
+        using (Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
+        }
+      }
+    }
+    
     public string DatabaseName
     {
       get

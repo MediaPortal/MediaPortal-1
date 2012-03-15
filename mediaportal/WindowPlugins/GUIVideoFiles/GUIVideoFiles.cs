@@ -1609,7 +1609,7 @@ namespace MediaPortal.GUI.Video
 
         if (iTimesWatched <= 0)
         {
-          VideoDatabase.SetMovieTimesWatched(movieId);
+          VideoDatabase.MovieWatchedCountIncrease(movieId);
         }
       }
     }
@@ -2069,7 +2069,7 @@ namespace MediaPortal.GUI.Video
           {
             watchedMovies.Add(strFilePath);
             VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true, playTimePercentage);
-            VideoDatabase.SetMovieTimesWatched(VideoDatabase.GetMovieId(strFilePath));
+            VideoDatabase.MovieWatchedCountIncrease(VideoDatabase.GetMovieId(strFilePath));
           }
           else
           {
@@ -2208,7 +2208,7 @@ namespace MediaPortal.GUI.Video
           details.Watched = 1;
           VideoDatabase.SetWatched(details);
           VideoDatabase.SetMovieWatchedStatus(iidMovie, true, playTimePercentage);
-          VideoDatabase.SetMovieTimesWatched(iidMovie);
+          VideoDatabase.MovieWatchedCountIncrease(iidMovie);
           // Set date watched
           details.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
           VideoDatabase.SetDateWatched(details);

@@ -74,7 +74,11 @@ namespace MediaPortal.Video.Database
     // Date watched
     private string _dateWatched = string.Empty;
     // Studios
-    private string _mstudios = string.Empty;
+    private string _mStrStudios = string.Empty;
+    // Country
+    private string _mStrCountry= string.Empty;
+    // Language
+    private string _mStrLanguage = string.Empty;
 
     public IMDBMovie() {}
 
@@ -306,8 +310,20 @@ namespace MediaPortal.Video.Database
 
     public string Studios
     {
-      get { return _mstudios; }
-      set { _mstudios = value; }
+      get { return _mStrStudios; }
+      set { _mStrStudios = value; }
+    }
+
+    public string Country
+    {
+      get { return _mStrCountry; }
+      set { _mStrCountry = value; }
+    }
+
+    public string Language
+    {
+      get { return _mStrLanguage; }
+      set { _mStrLanguage = value; }
     }
 
     public void Reset()
@@ -348,7 +364,9 @@ namespace MediaPortal.Video.Database
       _mIWatched = 0;
       _dateAdded = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
       _dateWatched = string.Empty;
-      _mstudios = string.Empty;
+      _mStrStudios = string.Empty;
+      _mStrCountry = string.Empty;
+      _mStrLanguage = string.Empty;
     }
 
     [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
@@ -385,8 +403,8 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#year", Year.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
-
-      
+      GUIPropertyManager.SetProperty("#country", Country);
+      GUIPropertyManager.SetProperty("#language", Language);
 
       if (ID == -1)
       {
