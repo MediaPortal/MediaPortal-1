@@ -759,6 +759,7 @@ namespace MediaPortal.Configuration.Sections
       tbVotes.Text = movie.Votes;
       tbRating.Text = movie.Rating.ToString();
       tbDirector.Text = movie.Director;
+      tbDirectorId.Text = movie.DirectorID.ToString();
       tbWritingCredits.Text = movie.WritingCredits;
       _idMovie = movie.ID;
       tbMovieID.Text = _idMovie.ToString();
@@ -766,6 +767,8 @@ namespace MediaPortal.Configuration.Sections
       tbReview.Text = movie.UserReview; // New dbcolumn for movie details
       tbIMDBNr.Text = movie.IMDBNumber; // Needed for cover search
       tbStudio.Text = movie.Studios;
+      tbLanguage.Text = movie.Language;
+      tbCountry.Text = movie.Country;
       tbAdded.Text = "Added: " + movie.DateAdded;
       //
       // Images (cover and fanart)
@@ -1769,7 +1772,6 @@ namespace MediaPortal.Configuration.Sections
           movie.ID = cbMovie.Movie.ID;
           // Needed for IMDB Covers search Deda 30.4.2010
           movie.IMDBNumber = cbMovie.Movie.IMDBNumber;
-          movie.DirectorID = cbMovie.Movie.DirectorID;
         }
         
         unchecked
@@ -1786,10 +1788,13 @@ namespace MediaPortal.Configuration.Sections
           movie.Title = tbTitle.Text;
           //if (movie.DirectorID <= 0)
           movie.Director = tbDirector.Text;
+          movie.DirectorID = Convert.ToInt32(tbDirectorId.Text);
           movie.MPARating = tbMPAARating.Text;
           movie.RunTime = Int32.Parse(tbDuration.Text);
           movie.WritingCredits = tbWritingCredits.Text;
           movie.Studios = tbStudio.Text;
+          movie.Language = tbLanguage.Text;
+          movie.Country = tbCountry.Text;
           movie.Plot = tbSummary.Text;
           movie.UserReview = tbReview.Text; // Added review         
           movie.Rating = (float)Double.Parse(tbRating.Text);
@@ -3424,6 +3429,10 @@ namespace MediaPortal.Configuration.Sections
       // Start fetch
       if (IMDBFetcher.FetchMovieActors(this, CurrentMovie))
       {
+        IMDBMovie movie = new IMDBMovie();
+        VideoDatabase.GetMovieInfoById(CurrentMovie.ID, ref movie);
+        tbDirectorId.Text = movie.DirectorID.ToString();
+        tbDirector.Text = movie.Director;
         ActorsTableRefresh(CurrentMovie.ID);
         cbActor.SelectedIndex = 0;
         UpdateActorsList(CurrentMovie);

@@ -2293,6 +2293,15 @@ namespace MediaPortal.Video.Database
           details.Rating /= 10.0f;
         }
         details.Director = DatabaseUtility.Get(results, 0, "movieinfo.strDirector").Replace("''", "'");
+        // Add directorID
+        try
+        {
+          details.DirectorID = Int32.Parse(DatabaseUtility.Get(results, 0, "movieinfo.idDirector"));
+        }
+        catch (Exception)
+        {
+          details.DirectorID = -1;
+        }
         details.WritingCredits = DatabaseUtility.Get(results, 0, "movieinfo.strCredits").Replace("''", "'");
         details.TagLine = DatabaseUtility.Get(results, 0, "movieinfo.strTagLine").Replace("''", "'");
         details.PlotOutline = DatabaseUtility.Get(results, 0, "movieinfo.strPlotOutline").Replace("''", "'");
@@ -2324,15 +2333,7 @@ namespace MediaPortal.Video.Database
         details.Studios = DatabaseUtility.Get(results, 0, "movieinfo.studios");
         details.Country = DatabaseUtility.Get(results, 0, "movieinfo.country");
         details.Language = DatabaseUtility.Get(results, 0, "movieinfo.language");
-        // Add directorID
-        try 
-        {
-          details.DirectorID = Int32.Parse(DatabaseUtility.Get(results, 0, "movieinfo.idDirector"));
-        }
-        catch (Exception)
-        {
-          details.DirectorID = -1;
-        }
+        
       }
       catch (Exception ex)
       {
@@ -2954,7 +2955,7 @@ namespace MediaPortal.Video.Database
           // Add directorID
           try 
           {
-            details.DirectorID = Int32.Parse(DatabaseUtility.Get(results, 0, "movieinfo.idDirector"));
+            details.DirectorID = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"));
           }
           catch (Exception)
           {
@@ -3147,6 +3148,9 @@ namespace MediaPortal.Video.Database
             details.Rating /= 10.0f;
           }
           details.Director = DatabaseUtility.Get(results, iRow, "movieinfo.strDirector");
+          int directorId = -1;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"), out directorId);
+          details.DirectorID = directorId;
           details.WritingCredits = DatabaseUtility.Get(results, iRow, "movieinfo.strCredits");
           details.TagLine = DatabaseUtility.Get(results, iRow, "movieinfo.strTagLine");
           details.PlotOutline = DatabaseUtility.Get(results, iRow, "movieinfo.strPlotOutline");
@@ -3218,6 +3222,9 @@ namespace MediaPortal.Video.Database
             details.Rating /= 10.0f;
           }
           details.Director = DatabaseUtility.Get(results, iRow, "movieinfo.strDirector");
+          int directorId = -1;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"), out directorId);
+          details.DirectorID = directorId;
           details.WritingCredits = DatabaseUtility.Get(results, iRow, "movieinfo.strCredits");
           details.TagLine = DatabaseUtility.Get(results, iRow, "movieinfo.strTagLine");
           details.PlotOutline = DatabaseUtility.Get(results, iRow, "movieinfo.strPlotOutline");
@@ -3290,6 +3297,9 @@ namespace MediaPortal.Video.Database
             details.Rating /= 10.0f;
           }
           details.Director = DatabaseUtility.Get(results, iRow, "movieinfo.strDirector");
+          int directorId = -1;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"), out directorId);
+          details.DirectorID = directorId;
           details.WritingCredits = DatabaseUtility.Get(results, iRow, "movieinfo.strCredits");
           details.TagLine = DatabaseUtility.Get(results, iRow, "movieinfo.strTagLine");
           details.PlotOutline = DatabaseUtility.Get(results, iRow, "movieinfo.strPlotOutline");
@@ -3362,6 +3372,9 @@ namespace MediaPortal.Video.Database
             details.Rating /= 10.0f;
           }
           details.Director = DatabaseUtility.Get(results, iRow, "movieinfo.strDirector");
+          int directorId = -1;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.idDirector"), out directorId);
+          details.DirectorID = directorId;
           details.WritingCredits = DatabaseUtility.Get(results, iRow, "movieinfo.strCredits");
           details.TagLine = DatabaseUtility.Get(results, iRow, "movieinfo.strTagLine");
           details.PlotOutline = DatabaseUtility.Get(results, iRow, "movieinfo.strPlotOutline");
@@ -3499,6 +3512,9 @@ namespace MediaPortal.Video.Database
               movie.Rating /= 10.0f;
             }
             movie.Director = DatabaseUtility.Get(results, i, "movieinfo.strDirector");
+            int directorId = -1;
+            Int32.TryParse(DatabaseUtility.Get(results, i, "movieinfo.idDirector"), out directorId);
+            movie.DirectorID = directorId;
             movie.WritingCredits = DatabaseUtility.Get(results, i, "movieinfo.strCredits");
             movie.TagLine = DatabaseUtility.Get(results, i, "movieinfo.strTagLine");
             movie.PlotOutline = DatabaseUtility.Get(results, i, "movieinfo.strPlotOutline");

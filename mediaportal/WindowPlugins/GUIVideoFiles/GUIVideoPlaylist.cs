@@ -364,6 +364,7 @@ namespace MediaPortal.GUI.Video
                 pItem.Label2 = string.Empty;
               }
             }
+            pItem.OnItemSelected += OnItemSelected;
             itemlist.Add(pItem);
             Util.Utils.SetDefaultIcons(pItem);
           }
@@ -495,7 +496,7 @@ namespace MediaPortal.GUI.Video
                   {
                     listItem.Label = String.Format("({0}:) {1}", listItem.Path.Substring(0, 1), movieDetails.Title);
                   }
-                  string coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+                  string coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title + "{" + movieDetails.ID + "}");
                   if (Util.Utils.FileExistsInCache(coverArtImage))
                   {
                     listItem.ThumbnailImage = coverArtImage;
@@ -511,6 +512,30 @@ namespace MediaPortal.GUI.Video
                   break;
                 }
               }
+            }
+          }
+        }
+        else
+        {
+          // Try to fetch covers for playlist items added from database views
+          int movieId = VideoDatabase.GetMovieId(listItem.Path);
+          if (movieId > 0)
+          {
+            IMDBMovie movie = new IMDBMovie();
+            VideoDatabase.GetMovieInfoById(movieId, ref movie);
+            listItem.AlbumInfoTag = movie;
+            string cover = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movie.Title + "{" + movieId + "}");
+            if (Util.Utils.FileExistsInCache(cover))
+            {
+              listItem.ThumbnailImage = cover;
+              listItem.IconImageBig = cover;
+              listItem.IconImage = cover;
+            }
+            // look for better thumbs
+            cover = Util.Utils.ConvertToLargeCoverArt(cover);
+            if (Util.Utils.FileExistsInCache(cover))
+            {
+              listItem.ThumbnailImage = cover;
             }
           }
         }
@@ -781,6 +806,47 @@ namespace MediaPortal.GUI.Video
       }
 
       UpdateButtonStates();
+    }
+
+    private void OnItemSelected(GUIListItem item, GUIControl parent)
+    {
+      if (item.Label == "..")
+      {
+        IMDBMovie notMovie = new IMDBMovie();
+        notMovie.SetProperties(true, string.Empty);
+        IMDBActor notActor = new IMDBActor();
+        notActor.SetProperties();
+        return;
+      }
+      IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+
+      if (movie == null)
+      {
+        movie = new IMDBMovie();
+      }
+
+      ArrayList files = new ArrayList();
+      VideoDatabase.GetFiles(movie.ID, ref files);
+
+      if (files.Count > 0)
+      {
+        movie.SetProperties(false, (string)files[0]);
+      }
+      else
+      {
+        movie.SetProperties(false, string.Empty);
+      }
+
+      if (movie.ID >= 0)
+      {
+        string titleExt = movie.Title + "{" + movie.ID + "}";
+        string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+
+        if (Util.Utils.FileExistsInCache(coverArtImage))
+        {
+          facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
+        }
+      }
     }
   }
 }

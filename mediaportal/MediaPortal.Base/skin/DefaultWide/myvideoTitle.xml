@@ -531,7 +531,7 @@
       <posY>510</posY>
       <width>533</width>
       <height>180</height>
-      <label>#plot</label>
+      <label>#plotoutline</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>

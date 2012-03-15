@@ -452,7 +452,7 @@
       <posY>440</posY>
       <width>248</width>
       <label>#videoruntime</label>
-      <font>font11</font>
+			<font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
     </control>
@@ -501,7 +501,7 @@
       <posY>530</posY>
       <width>533</width>
       <height>170</height>
-      <label>#plot</label>
+      <label>#plotoutline</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>

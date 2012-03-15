@@ -2596,6 +2596,15 @@ namespace MediaPortal.GUI.Video
 
         case 1260: // Set watched status
           SetMovieWatchStatus(item.Path, item.IsFolder, true);
+          int mId= VideoDatabase.GetMovieId(item.Path);
+          IMDBMovie movie= new IMDBMovie();
+          VideoDatabase.GetMovieInfoById(mId, ref movie);
+          if (movie.ID > 0)
+          {
+            movie.Watched = 1;
+            movie.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            VideoDatabase.SetWatched(movie);
+          }
           selectedIndex = facadeLayout.SelectedListItemIndex;
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
