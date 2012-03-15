@@ -118,8 +118,6 @@ HRESULT CBaseAudioSink::BeginStop()
   if (m_pMemAllocator)
     m_pMemAllocator->Decommit();
   
-  m_pNextOutSample.Release();
-
   if (m_pNextSink)
     return m_pNextSink->BeginStop();
 
@@ -128,6 +126,9 @@ HRESULT CBaseAudioSink::BeginStop()
 
 HRESULT CBaseAudioSink::EndStop()
 {
+  CAutoLock lock (&m_csOutputSample);
+  m_pNextOutSample.Release();
+
   if (m_pNextSink)
     return m_pNextSink->EndStop();
 
