@@ -44,11 +44,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         using (IProgramRepository programRepository = new ProgramRepository())
         {
           IQueryable<Channel> channels = programRepository.GetQuery<Channel>(c => c.GroupMaps.Any(g => g.idGroup == idGroup));
-          IQueryable<int> channelIds = channels.Select(c => c.idChannel);
+          IList<int> channelIds = channels.Select(c => c.idChannel).ToList();
 
           IDictionary<int, NowAndNext> progList = new Dictionary<int, NowAndNext>();
 
-          IQueryable<Program> nowPrograms;
+          IList<Program> nowPrograms;
           IList<Program> nextPrograms = null;          
 
           ThreadHelper.ParallelInvoke(
@@ -56,7 +56,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               {
                 using (IProgramRepository programRepositoryForThread = new ProgramRepository())
                 {
-                  nowPrograms = programRepositoryForThread.GetNowProgramsForChannelGroup(channelIds);
+                  nowPrograms = programRepositoryForThread.GetNowProgramsForChannelGroup(channelIds).ToList();
                 }
                 AddNowProgramsToList(nowPrograms, progList);
               }
