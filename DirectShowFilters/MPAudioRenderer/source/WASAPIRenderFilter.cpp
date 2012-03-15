@@ -526,9 +526,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   {
     if (flush)
     {
+      HandleFlush();
       flush = false;
-      SetEvent(m_hCurrentSampleReleased);
-      WaitForSingleObject(m_hFlushDone, INFINITE);
     }
     
     hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
@@ -544,108 +543,111 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     {
       UpdateAudioClock();
 
+      UINT32 bytesFilled = 0;
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
       UINT32 bufferSizeInBytes = 0;
       BYTE* data = NULL;
+      DWORD flags = 0;
+
+      static BYTE* prevData = NULL;
        
       hr = GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
       if (SUCCEEDED(hr))
       {
-        UINT32 bytesFilled = 0;
-
-        if (writeSilence == 0)
+        do
         {
-          do
+          fetchSample:
+
+          bool OOBCommandOnly = dataLeftInSample > 0 || m_state != StateRunning;
+
+          if (dataLeftInSample == 0 || OOBCommandOnly)
           {
-            fetchSample:
-
-            bool OOBCommandOnly = dataLeftInSample > 0 || m_state != StateRunning;
-
-            if (dataLeftInSample == 0 || OOBCommandOnly)
+            HRESULT result = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents,
+                                                    &m_dwSampleWaitObjects, OOBCommandOnly);
+            if (result == MPAR_S_THREAD_STOPPING)
             {
-              HRESULT result = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents,
-                                                      &m_dwSampleWaitObjects, OOBCommandOnly);
-              if (result == MPAR_S_THREAD_STOPPING)
-              {
-                Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
-                StopAudioClient(&m_pAudioClient);
-                RevertMMCSS();
-                return 0;
-              }
+              Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+              StopAudioClient(&m_pAudioClient);
+              RevertMMCSS();
+              return 0;
+            }
 
+            if (!m_pCurrentSample)
+              dataLeftInSample = 0;
+              
+            if (command == ASC_PutSample)
+            {
+              sampleProcessed = false;
+              sampleOffset = 0;
+              dataLeftInSample = m_pCurrentSample->GetActualDataLength();
+            }
+            else if (command == ASC_Flush)
+            {
+              m_pCurrentSample.Release();
+
+              flush = true;
+              sampleData = NULL;
+              sampleOffset = 0;
+              dataLeftInSample = 0;
+
+              //goto fetchSample;
+              break;
+            }
+            else if (command == ASC_Pause)
+            {
+              m_nSampleNum = 0;
+              m_state = StatePaused;
+            }
+            else if (command == ASC_Resume)
+            {
+              sampleProcessed = false;
+              writeSilence = 0;
+              m_state = StateRunning;
               if (!m_pCurrentSample)
-                dataLeftInSample = 0;
-              
-              if (command == ASC_PutSample)
-              {
-                sampleProcessed = false;
-                sampleOffset = 0;
-                dataLeftInSample = m_pCurrentSample->GetActualDataLength();
-              }
-              else if (command == ASC_Flush)
-              {
-                m_pCurrentSample.Release();
-
-                flush = true;
-                sampleData = NULL;
-                sampleOffset = 0;
-                dataLeftInSample = 0;
-
-                //goto fetchSample;
-                break;
-              }
-              else if (command == ASC_Pause)
-              {
-                m_nSampleNum = 0;
-                m_state = StatePaused;
-              }
-              else if (command == ASC_Resume)
-              {
-                sampleProcessed = false;
-                writeSilence = 0;
-                m_state = StateRunning;
-              }
-            }
-
-            if (m_state != StateRunning)
-              writeSilence = bufferSizeInBytes - bytesFilled;
-            else if (sampleOffset == 0 && !OOBCommandOnly)
-            {
-              // TODO error checking
-              if (CheckSample(m_pCurrentSample, bufferSize - currentPadding) == S_FALSE)
-                GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
-            }
-
-            if (writeSilence == 0 && (sampleOffset == 0 || m_nSampleNum == 0) && !sampleProcessed)
-            {
-              HRESULT schedulingHR = CheckStreamTimeline(m_pCurrentSample, &dueTime, sampleOffset);
-              sampleProcessed = true;
-              
-              // m_pCurrentSample must exist if CheckStreamTimeline returns either of these
-              if (schedulingHR == MPAR_S_DROP_SAMPLE)
-              {
-                m_pCurrentSample.Release();
                 goto fetchSample;
-              }
-              else if (schedulingHR == MPAR_S_WAIT_RENDER_TIME)
-                CalculateSilence(&dueTime, &writeSilence);
             }
+          }
 
-            if (writeSilence == 0 && m_pCurrentSample)
-              RenderAudio(data, bufferSizeInBytes, dataLeftInSample, sampleOffset, m_pCurrentSample, bytesFilled);
-            else
-              RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
-          } while (bytesFilled < bufferSizeInBytes);
-        }
-        else
-        {
-          RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
-          if (bytesFilled < bufferSizeInBytes)
-            goto fetchSample;
-        }
+          if (m_state != StateRunning)
+            writeSilence = bufferSizeInBytes - bytesFilled;
+          else if (sampleOffset == 0 && !OOBCommandOnly)
+          {
+            // TODO error checking
+            if (CheckSample(m_pCurrentSample, bufferSize - currentPadding) == S_FALSE)
+              GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
+		  }
 
-        hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, 0);
+          if (writeSilence == 0 && (sampleOffset == 0 || m_nSampleNum == 0) && !sampleProcessed)
+          {
+            HRESULT schedulingHR = CheckStreamTimeline(m_pCurrentSample, &dueTime, sampleOffset);
+            sampleProcessed = true;
+              
+            // m_pCurrentSample must exist if CheckStreamTimeline returns either of these
+            if (schedulingHR == MPAR_S_DROP_SAMPLE)
+            {
+              m_pCurrentSample.Release();
+              goto fetchSample;
+            }
+            else if (schedulingHR == MPAR_S_WAIT_RENDER_TIME)
+              CalculateSilence(&dueTime, &writeSilence);
+          }
+
+          if (writeSilence == 0 && m_pCurrentSample)
+            RenderAudio(data, bufferSizeInBytes, dataLeftInSample, sampleOffset, m_pCurrentSample, bytesFilled);
+          else
+          {
+            if (bufferSizeInBytes == writeSilence)
+              flags = AUDCLNT_BUFFERFLAGS_SILENT;
+
+            if (!m_pCurrentSample)
+              writeSilence = bufferSizeInBytes;
+
+            RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
+          }
+        } while (bytesFilled < bufferSizeInBytes);
+
+        hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, flags);
 
         if (FAILED(hr) && hr != AUDCLNT_E_OUT_OF_ORDER)
           Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
@@ -713,6 +715,30 @@ void CWASAPIRenderFilter::RenderAudio(BYTE* pTarget, UINT32 bufferSizeInBytes, U
   memcpy(pTarget + bytesFilled, sampleData + sampleOffset, bytesToCopy); 
   bytesFilled += bytesToCopy;
   sampleOffset += bytesToCopy;
+  
+  if (m_pSettings->m_bLogSampleTimes)
+    Log("writing buffer with data: %d", bytesToCopy);
+}
+
+void CWASAPIRenderFilter::HandleFlush()
+{
+  UINT32 bufferSize = 0;
+  UINT32 currentPadding = 0;
+  UINT32 bufferSizeInBytes = 0;
+  BYTE* data = NULL;
+
+  HRESULT hr = GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
+  if (SUCCEEDED(hr))
+  {
+    hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, AUDCLNT_BUFFERFLAGS_SILENT);
+    if (FAILED(hr))
+      Log("CWASAPIRenderFilter::HandleFlush - GetWASAPIBuffer failed: (0x%08x)", hr);
+  }
+  else
+    Log("CWASAPIRenderFilter::HandleFlush - ReleaseBuffer failed: (0x%08x)", hr);
+
+  SetEvent(m_hCurrentSampleReleased);
+  WaitForSingleObject(m_hFlushDone, INFINITE);
 }
 
 HRESULT CWASAPIRenderFilter::EnableMMCSS()
