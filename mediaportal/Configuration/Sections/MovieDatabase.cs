@@ -925,7 +925,7 @@ namespace MediaPortal.Configuration.Sections
         listViewGenres.Sort();
         lvMovieUserGroups.Sort();
         ArrayList filenames = new ArrayList();
-        VideoDatabase.GetFiles(movie.ID, ref filenames);
+        VideoDatabase.GetFilesForMovie(movie.ID, ref filenames);
         foreach (string filename in filenames)
         {
           listViewFiles.Items.Add(filename);
@@ -3070,7 +3070,7 @@ namespace MediaPortal.Configuration.Sections
             _progressDialog.Count++;
           continue;
         }
-        VideoDatabase.GetFiles(movie.ID, ref movieFiles);
+        VideoDatabase.GetFilesForMovie(movie.ID, ref movieFiles);
         string strFile = string.Empty;
         string strPath = string.Empty;
 

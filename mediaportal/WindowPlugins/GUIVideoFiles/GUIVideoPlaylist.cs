@@ -826,7 +826,7 @@ namespace MediaPortal.GUI.Video
       }
 
       ArrayList files = new ArrayList();
-      VideoDatabase.GetFiles(movie.ID, ref files);
+      VideoDatabase.GetFilesForMovie(movie.ID, ref files);
 
       if (files.Count > 0)
       {

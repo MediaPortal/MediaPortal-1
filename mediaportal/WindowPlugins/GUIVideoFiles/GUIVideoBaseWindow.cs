@@ -428,7 +428,7 @@ namespace MediaPortal.GUI.Video
             if (mDuration <= 0)
             {
               ArrayList mFiles = new ArrayList();
-              VideoDatabase.GetFiles(movie.ID, ref mFiles);
+              VideoDatabase.GetFilesForMovie(movie.ID, ref mFiles);
               mDuration = GUIVideoFiles.MovieDuration(mFiles, true);
 
               if (mDuration <= 0)

@@ -419,7 +419,7 @@ namespace MediaPortal.GUI.Video
           _currentMovie.Watched = 0;
           VideoDatabase.SetMovieWatchedStatus(_currentMovie.ID, false, iPercent);
           ArrayList files = new ArrayList();
-          VideoDatabase.GetFiles(_currentMovie.ID, ref files);
+          VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
 
           //foreach (string file in files)
           //{
@@ -595,7 +595,7 @@ namespace MediaPortal.GUI.Video
       int id = _currentMovie.ID;
 
       ArrayList files = new ArrayList();
-      VideoDatabase.GetFiles(id, ref files);
+      VideoDatabase.GetFilesForMovie(id, ref files);
 
       if (files.Count > 1)
       {
@@ -683,7 +683,7 @@ namespace MediaPortal.GUI.Video
         btnWatched.Selected = (_currentMovie.Watched != 0);
         // Set skin control properties
         ArrayList files = new ArrayList();
-        VideoDatabase.GetFiles(_currentMovie.ID, ref files);
+        VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
         _currentMovie.SetProperties(false, (string)files[0]);
 
         if (imgCoverArt != null)
@@ -766,7 +766,7 @@ namespace MediaPortal.GUI.Video
           {
             int idMovie = _currentMovie.ID;
             System.Collections.ArrayList movies = new System.Collections.ArrayList();
-            VideoDatabase.GetFiles(idMovie, ref movies);
+            VideoDatabase.GetFilesForMovie(idMovie, ref movies);
             if (movies.Count > 0)
             {
               for (int i = 0; i < movies.Count; i++)
@@ -837,7 +837,7 @@ namespace MediaPortal.GUI.Video
         Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", _currentMovie.ThumbURL, ex2.Message);
       }
       ArrayList files = new ArrayList();
-      VideoDatabase.GetFiles(_currentMovie.ID, ref files);
+      VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
       _currentMovie.SetProperties(false, (string)files[0]);
     }
 
@@ -845,7 +845,7 @@ namespace MediaPortal.GUI.Video
     {
       string movieTitle = _currentMovie.Title;
       ArrayList files = new ArrayList();
-      VideoDatabase.GetFiles(_currentMovie.ID, ref files);
+      VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
       string movieFileName = string.Empty;
 
       if (files.Count > 0)

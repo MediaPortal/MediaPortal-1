@@ -196,7 +196,7 @@ namespace MediaPortal.Video.Database
           string moviePath = _movieDetails.Path;
           // Find movie file(s)
           ArrayList files = new ArrayList();
-          VideoDatabase.GetFiles(_movieDetails.ID, ref files);
+          VideoDatabase.GetFilesForMovie(_movieDetails.ID, ref files);
           
           // Remove stack endings for video file(CD, Part...)
           if (files.Count > 0)

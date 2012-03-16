@@ -546,7 +546,7 @@ namespace MediaPortal.Video.Database
           int r = rnd.Next(mList.Count);
           IMDBMovie movieDetails = (IMDBMovie)mList[r];
           mList.Clear();
-          VideoDatabase.GetFiles(movieDetails.ID, ref mList);
+          VideoDatabase.GetFilesForMovie(movieDetails.ID, ref mList);
 
           if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
           {

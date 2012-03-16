@@ -683,7 +683,7 @@ namespace MediaPortal.Video.Database
           SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
           ArrayList movieFiles = new ArrayList();
           int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
-          VideoDatabase.GetFiles(movieId, ref movieFiles);
+          VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
           SetMovieDuration(movieId, MovieDuration(movieFiles));
         }
         catch (Exception) {}
@@ -929,7 +929,7 @@ namespace MediaPortal.Video.Database
         // Delete files data from other tables
         string strSQL = string.Empty;
         ArrayList files = new ArrayList();
-        GetFiles(lMovieId, ref files);
+        GetFilesForMovie(lMovieId, ref files);
 
         foreach (string file in files)
         {
@@ -959,11 +959,11 @@ namespace MediaPortal.Video.Database
       return GetFile(strFilenameAndPath, out lPathId, out lMovieId, true);
     }
 
-    public void GetFiles(int lMovieId, ref ArrayList movies)
+    public void GetFilesForMovie(int lMovieId, ref ArrayList files)
     {
       try
       {
-        movies.Clear();
+        files.Clear();
         if (null == m_db)
         {
           return;
@@ -990,7 +990,7 @@ namespace MediaPortal.Video.Database
           {
             strFile = strPath + strFile;
           }
-          movies.Add(strFile);
+          files.Add(strFile);
         }
       }
       catch (Exception ex)
@@ -2191,7 +2191,7 @@ namespace MediaPortal.Video.Database
 
         // Delete movie file stop time data
         ArrayList files = new ArrayList();
-        VideoDatabase.GetFiles((int)lMovieId, ref files);
+        VideoDatabase.GetFilesForMovie((int)lMovieId, ref files);
 
         foreach (string file in files)
         {
@@ -3192,11 +3192,10 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies)
+    public void GetMoviesByUserGroup(string strUserGroup, ref ArrayList movies)
     {
       try
       {
-        string strUserGroup = strUserGroup1;
         DatabaseUtility.RemoveInvalidChars(ref strUserGroup);
 
         movies.Clear();
@@ -3549,7 +3548,7 @@ namespace MediaPortal.Video.Database
             // FanArt search need this (for database GUI view)
             // Share view is handled in GUIVideoFIles class)
             ArrayList files = new ArrayList();
-            GetFiles(movie.ID, ref files);
+            GetFilesForMovie(movie.ID, ref files);
             if (files.Count > 0)
             {
               // We need only first file if there is multiple files for one movie, fanart class will handle filename

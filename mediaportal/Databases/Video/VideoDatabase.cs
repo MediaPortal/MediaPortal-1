@@ -96,9 +96,9 @@ namespace MediaPortal.Video.Database
       return _database.GetFileId(strFilenameAndPath);
     }
 
-    public static void GetFiles(int lMovieId, ref ArrayList movies)
+    public static void GetFilesForMovie(int lMovieId, ref ArrayList files)
     {
-      _database.GetFiles(lMovieId, ref movies);
+      _database.GetFilesForMovie(lMovieId, ref files);
     }
 
     public static void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh)
@@ -410,10 +410,11 @@ namespace MediaPortal.Video.Database
       _database.GetMoviesByGenre(strGenre1, ref movies);
     }
 
-    public static void GetMoviesByUserGroup(string strUserGroup1, ref ArrayList movies)
+    public static void GetMoviesByUserGroup(string strUserGroup, ref ArrayList movies)
     {
-      _database.GetMoviesByUserGroup(strUserGroup1, ref movies);
+      _database.GetMoviesByUserGroup(strUserGroup, ref movies);
     }
+
     public static void GetMoviesByActor(string strActor1, ref ArrayList movies)
     {
       _database.GetMoviesByActor(strActor1, ref movies);
@@ -505,11 +506,21 @@ namespace MediaPortal.Video.Database
       return _database.ExecuteRuleSQL(sql, fieldName, out error);
     }
 
+    /// <summary>
+    /// Check if id is valid IMDB movieId (tt1234567) including leading zeros (tt0004567)
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public static bool CheckMovieImdbId(string id)
     {
       return _database.CheckMovieImdbId(id);
     }
 
+    /// <summary>
+    /// Check if id is valid IMDB actoId (nm1234567) including leading zeros (nm0004567)
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public static bool CheckActorImdbId(string id)
     {
       return _database.CheckActorImdbId(id);
@@ -519,8 +530,9 @@ namespace MediaPortal.Video.Database
     {
       _database.ImportNfo(nfoFile);
     }
+
     /// <summary>
-    /// Returns all video files from path
+    /// Returns all video files from path (for files with videoextension defined in MP)
     /// </summary>
     /// <param name="path"></param>
     /// <param name="availableFiles"></param>
