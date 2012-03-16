@@ -153,7 +153,7 @@ CAEChannelInfo& CAEChannelInfo::operator=(const enum AEStdChLayout rhs)
 {
   ASSERT(rhs >= 0 && rhs < AE_CH_LAYOUT_MAX);
 
-  static enum AEChannel layouts[AE_CH_LAYOUT_MAX][9] = {
+  static enum AEChannel layouts[AE_CH_LAYOUT_MAX][17] = {
     {AE_CH_FC, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_LFE, AE_CH_NULL},
@@ -164,18 +164,9 @@ CAEChannelInfo& CAEChannelInfo::operator=(const enum AEStdChLayout rhs)
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_BL , AE_CH_BR , AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_BL , AE_CH_BR , AE_CH_LFE, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_BL , AE_CH_BR , AE_CH_SL , AE_CH_SR, AE_CH_NULL},
-    {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_BL , AE_CH_BR , AE_CH_SL , AE_CH_SR, AE_CH_LFE, AE_CH_NULL}
-  };
-
-  *this = layouts[rhs];
-  return *this;
-}
-
-CAEChannelInfo& CAEChannelInfo::operator=(const enum AEAC3ChLayout rhs)
-{
-  ASSERT(rhs >= 0 && rhs < AE_CH_LAYOUT_MAX);
-
-  static enum AEChannel layouts[AE_AC3_CH_LAYOUT_MAX][8] = {
+    {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_BL , AE_CH_BR , AE_CH_SL , AE_CH_SR, AE_CH_LFE, AE_CH_NULL},
+    
+    // AC3
     {AE_CH_FC, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_BC , AE_CH_NULL},

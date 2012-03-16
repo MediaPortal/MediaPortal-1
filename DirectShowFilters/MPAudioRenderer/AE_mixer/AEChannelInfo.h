@@ -56,15 +56,7 @@ enum AEStdChLayout
   AE_CH_LAYOUT_5_1,
   AE_CH_LAYOUT_7_0,
   AE_CH_LAYOUT_7_1,
-
-  AE_CH_LAYOUT_MAX
-};
-
-enum AEAC3ChLayout
-{
-  AE_AC3_CH_LAYOUT_INVALID = -1,
-
-  AE_AC3_CH_LAYOUT_1_0 = 0, // Mono (Center only)
+  AE_AC3_CH_LAYOUT_1_0,     // Mono (Center only)
   AE_AC3_CH_LAYOUT_2_0,     // 2-channel stereo (Left + Right), optionally carrying matrixed Dolby Surround
   AE_AC3_CH_LAYOUT_2_S,     // 2-channel stereo with mono surround (Left, Right, Surround)
   AE_AC3_CH_LAYOUT_3_0,     // 3-channel stereo (Left, Center, Right)
@@ -73,7 +65,7 @@ enum AEAC3ChLayout
   AE_AC3_CH_LAYOUT_5_0,     // 5-channel surround (Left, Center, Right, Left Surround, Right Surround)
   AE_AC3_CH_LAYOUT_5_1,     // 5-channel surround + LFE (Left, Center, Right, Left Surround, Right Surround, LFE)
 
-  AE_AC3_CH_LAYOUT_MAX
+  AE_CH_LAYOUT_MAX
 };
 
 class CAEChannelInfo {
@@ -85,7 +77,6 @@ public:
   CAEChannelInfo& operator=(const CAEChannelInfo& rhs);
   CAEChannelInfo& operator=(const enum AEChannel* rhs);
   CAEChannelInfo& operator=(const enum AEStdChLayout rhs);
-  CAEChannelInfo& operator=(const enum AEAC3ChLayout rhs);
   bool operator==(const CAEChannelInfo& rhs);
   bool operator!=(const CAEChannelInfo& rhs);
   void operator+=(const enum AEChannel rhs);
