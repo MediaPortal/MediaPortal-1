@@ -83,8 +83,8 @@ namespace Mediaportal.TV.TvPlugin
 
     #region Private members
 
-    private List<ChannelGroup> m_groups = new List<ChannelGroup>();
-    // Contains all channel groups (including an "all channels" group)
+    private List<ChannelGroup> _groups = new List<ChannelGroup>();
+    // Contains all channel groups (including an "all _channels" group)
 
     private int m_currentgroup = 0;
     private DateTime m_zaptime;
@@ -94,7 +94,7 @@ namespace Mediaportal.TV.TvPlugin
     private int m_zapgroup = -1;
     private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
     private ChannelBLL m_currentChannel = null;
-    private IList<Channel> channels = new List<Channel>();
+    private IDictionary<int, Channel> _channels = new Dictionary<int, Channel>();
     private bool reentrant = false;    
 
     #endregion
@@ -143,34 +143,24 @@ namespace Mediaportal.TV.TvPlugin
         Log.Error("Unable to create/modify gentle.config {0},{1}", ex.Message, ex.StackTrace);
       }
       Log.Info("ChannelNavigator::Reload()");*/
-    }
-
+    }   
+    
     public void ReLoad()
     {
       //System.Diagnostics.Debugger.Launch();
       try
       {
-        m_groups.Clear();
+        _groups.Clear();
         SetupDatabaseConnection();
-
-        Task taskGetAllChannels = Task.Factory.StartNew(delegate
-                                            {
-                                              Log.Info("get channels from database");
-                                              channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV, ChannelIncludeRelationEnum.None).ToList();
-                                              Log.Info("found:{0} tv channels", channels.Count);
-                                            });
-
+        Task taskGetAllChannels = Task.Factory.StartNew(GetAllChannels);
         Task taskGetOrCreateGroup = Task.Factory.StartNew(delegate
         {
           ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
         });
-                        
-
-        Task taskAddRadioChannelsToGroup = Task.Factory.StartNew(AddRadioChannelsToGroup);
+        
         Task taskGetAllGroups = Task.Factory.StartNew(GetAllGroups);                
         taskGetOrCreateGroup.WaitAndHandleExceptions();
         taskGetAllChannels.WaitAndHandleExceptions();
-        taskAddRadioChannelsToGroup.WaitAndHandleExceptions();
         taskGetAllGroups.WaitAndHandleExceptions();
 
         TvNotifyManager.OnNotifiesChanged();
@@ -180,6 +170,16 @@ namespace Mediaportal.TV.TvPlugin
         Log.Error("TVHome: Error in Reload");
         Log.Error(ex);        
       }      
+    }
+
+    private void GetAllChannels()
+    {
+      Log.Info("get _channels from database");
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV,
+                                                                                                      ChannelIncludeRelationEnum
+                                                                                                        .None);
+      _channels = channels.Distinct().ToDictionary(c => c.idChannel);
+      Log.Info("found:{0} tv channels", _channels.Count);
     }
 
     private void GetAllGroups()
@@ -196,36 +196,17 @@ namespace Mediaportal.TV.TvPlugin
 
       if (hideAllChannelsGroup)
       {
-        m_groups =
+        _groups =
           ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include).OrderBy(g => g.groupName).
             ToList();
       }
       else
       {
-        m_groups =
+        _groups =
           ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include).OrderBy(g => g.groupName).ToList();
       }
-      Log.Info("loaded {0} tv groups", m_groups.Count);
-    }
-
-    private static void AddRadioChannelsToGroup()
-    {
-      ChannelGroup allRadioChannelsGroup = null;
-      IList<Channel> radioChannels = null;
-      ThreadHelper.ParallelInvoke(
-        () => allRadioChannelsGroup = ServiceAgents.Instance.ChannelGroupServiceAgent.GetChannelGroupByNameAndMediaType(
-          TvConstants.RadioGroupNames.AllChannels, MediaTypeEnum.Radio),
-        () => radioChannels =
-              ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.Radio,
-                                                                                    ChannelIncludeRelationEnum.GroupMaps).ToList()
-        );
-
-      if (radioChannels != null && allRadioChannelsGroup != null &&
-          radioChannels.Count > allRadioChannelsGroup.GroupMaps.Count)
-      {
-        MappingHelper.AddChannelsToGroup(radioChannels, allRadioChannelsGroup);
-      }
-    }
+      Log.Info("loaded {0} tv groups", _groups.Count);
+    }    
 
     #endregion
 
@@ -269,11 +250,11 @@ namespace Mediaportal.TV.TvPlugin
     {
       get
       {
-        if (m_groups.Count == 0)
+        if (_groups.Count == 0)
         {
           return null;
         }
-        return m_groups[m_currentgroup];
+        return _groups[m_currentgroup];
       }
     }
 
@@ -290,7 +271,7 @@ namespace Mediaportal.TV.TvPlugin
     /// </summary>
     public List<ChannelGroup> Groups
     {
-      get { return m_groups; }
+      get { return _groups; }
     }
 
     /// <summary>
@@ -342,7 +323,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return CurrentGroup.groupName;
         }
-        return ((ChannelGroup)m_groups[m_zapgroup]).groupName;
+        return _groups[m_zapgroup].groupName;
       }
     }
 
@@ -539,7 +520,7 @@ namespace Mediaportal.TV.TvPlugin
       IList<GroupMap> channels = CurrentGroup.GroupMaps;
       if (channelNr >= 0)
       {
-        Log.Debug("channels.Count {0}", channels.Count);
+        Log.Debug("_channels.Count {0}", channels.Count);
 
         bool found = false;
         int iCounter = 0;
@@ -557,7 +538,7 @@ namespace Mediaportal.TV.TvPlugin
 
               if (detail.channelNumber == channelNr)
               {
-                Log.Debug("find channel: iCounter {0}, detail.channelNumber {1}, detail.name {2}, channels.Count {3}",
+                Log.Debug("find channel: iCounter {0}, detail.channelNumber {1}, detail.name {2}, _channels.Count {3}",
                           iCounter, detail.channelNumber, detail.name, channels.Count);
                 found = true;
                 ZapToChannel(iCounter + 1, useZapDelay);
@@ -727,7 +708,7 @@ namespace Mediaportal.TV.TvPlugin
         m_zapgroup = m_zapgroup + 1; // Zap from last zap group
       }
 
-      if (m_zapgroup >= m_groups.Count)
+      if (m_zapgroup >= _groups.Count)
       {
         m_zapgroup = 0;
       }
@@ -759,7 +740,7 @@ namespace Mediaportal.TV.TvPlugin
 
       if (m_zapgroup < 0)
       {
-        m_zapgroup = m_groups.Count - 1;
+        m_zapgroup = _groups.Count - 1;
       }
 
       if (useZapDelay)
@@ -818,9 +799,9 @@ namespace Mediaportal.TV.TvPlugin
     /// <returns></returns>
     private int GetGroupIndex(string groupname)
     {
-      for (int i = 0; i < m_groups.Count; i++)
+      for (int i = 0; i < _groups.Count; i++)
       {
-        ChannelGroup group = m_groups[i];
+        ChannelGroup group = _groups[i];
         if (group.groupName == groupname)
         {
           return i;
@@ -836,19 +817,21 @@ namespace Mediaportal.TV.TvPlugin
 
     public ChannelBLL GetChannel(int channelId, bool allChannels)
     {
-      foreach (Channel chan in channels)
+      Channel channel;
+      bool found = _channels.TryGetValue(channelId, out channel);
+      if (found)
       {
-        if (chan.idChannel == channelId && (allChannels || chan.visibleInGuide))
+        if (!allChannels && !channel.visibleInGuide)
         {
-          return new ChannelBLL(chan);
+          channel = null;
         }
       }
-      return null;
+      return new ChannelBLL(channel);      
     }
 
     public Channel GetChannel(string channelName)
     {
-      return channels.FirstOrDefault(chan => chan.displayName == channelName && chan.visibleInGuide);
+      return _channels.Values.FirstOrDefault(chan => chan.displayName == channelName && chan.visibleInGuide);
     }
 
     #endregion
@@ -862,7 +845,7 @@ namespace Mediaportal.TV.TvPlugin
       m_zapdelay = 1000 * xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2);
       string groupname = xmlreader.GetValueAsString("mytv", "group", TvConstants.TvGroupNames.AllChannels);
       m_currentgroup = GetGroupIndex(groupname);
-      if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+      if (m_currentgroup < 0 || m_currentgroup >= _groups.Count) // Group no longer exists?
       {
         m_currentgroup = 0;
       }
@@ -871,9 +854,9 @@ namespace Mediaportal.TV.TvPlugin
 
       if (m_currentChannel.Entity == null)
       {
-        if (m_currentgroup < m_groups.Count)
+        if (m_currentgroup < _groups.Count)
         {
-          ChannelGroup group = m_groups[m_currentgroup];
+          ChannelGroup group = _groups[m_currentgroup];
           if (group.GroupMaps.Count > 0)
           {
             GroupMap gm = group.GroupMaps[0];
@@ -900,9 +883,9 @@ namespace Mediaportal.TV.TvPlugin
       }
 
       //if we still havent found the right group, then iterate through the selected group and find the channelname.      
-      if (!foundMatchingGroupName && m_currentChannel.Entity != null && m_groups != null)
+      if (!foundMatchingGroupName && m_currentChannel.Entity != null && _groups != null)
       {
-        foreach (GroupMap groupMap in ((ChannelGroup)m_groups[m_currentgroup]).GroupMaps)
+        foreach (GroupMap groupMap in ((ChannelGroup)_groups[m_currentgroup]).GroupMaps)
         {
           if (groupMap.Channel.displayName == currentchannelName)
           {
@@ -914,7 +897,7 @@ namespace Mediaportal.TV.TvPlugin
       }
 
 
-      // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "channels group") for that channel and set is as the new currentgroup
+      // if the groupname does not match any of the groups assigned to the channel, then find the last group avail. (avoiding the all "_channels group") for that channel and set is as the new currentgroup
       if (!foundMatchingGroupName && m_currentChannel.Entity != null && m_currentChannel.Entity.GroupMaps.Count > 0)
       {
         GroupMap groupMap = m_currentChannel.Entity.GroupMaps[m_currentChannel.Entity.GroupMaps.Count - 1];
@@ -925,7 +908,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           m_currentgroup = GetGroupIndex(group.groupName);
 
-          if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+          if (m_currentgroup < 0 || m_currentgroup >= _groups.Count) // Group no longer exists?
           {
             m_currentgroup = 0;
           }
@@ -954,7 +937,7 @@ namespace Mediaportal.TV.TvPlugin
           {
             if (m_currentgroup > -1)
             {
-              groupName = ((ChannelGroup)m_groups[m_currentgroup]).groupName;
+              groupName = _groups[m_currentgroup].groupName;
             }
             else if (m_currentChannel.Entity != null)
             {
@@ -995,7 +978,7 @@ namespace Mediaportal.TV.TvPlugin
             {
               if (m_currentgroup > -1)
               {
-                ChannelGroup cg = m_groups[m_currentgroup];
+                ChannelGroup cg = _groups[m_currentgroup];
                 if (cg.GroupMaps.Count > 0)
                 {
                   GroupMap gm = cg.GroupMaps[0];

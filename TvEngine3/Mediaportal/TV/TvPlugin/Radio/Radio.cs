@@ -70,7 +70,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
     private static bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
     private static ChannelGroup selectedGroup;
-    public static readonly List<ChannelGroup> AllRadioGroups = new List<ChannelGroup>();
+    public static List<ChannelGroup> AllRadioGroups = new List<ChannelGroup>();
 
     #endregion
     
@@ -305,19 +305,9 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
       if (AllRadioGroups.Count == 0)
       {
-        IList<ChannelGroup> allGroups =
-          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio).ToList();
-
-        foreach (ChannelGroup group in allGroups)
-        {
-          if (hideAllChannelsGroup && group.groupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
-              allGroups.Count > 1)
-          {
-            continue;
-          }
-
-          AllRadioGroups.Add(group);
-        }
+        ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+        include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
+        AllRadioGroups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include).ToList();        
       }
     }
 
@@ -418,6 +408,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       int totalItems = 0;
       if (currentFolder == null || currentFolder == "..")
       {
+ 
         IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio).ToList();
         foreach (ChannelGroup group in groups)
         {
