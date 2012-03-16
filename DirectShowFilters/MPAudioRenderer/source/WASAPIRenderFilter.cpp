@@ -616,7 +616,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             // TODO error checking
             if (CheckSample(m_pCurrentSample, bufferSize - currentPadding) == S_FALSE)
               GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
-		  }
+          }
 
           if (writeSilence == 0 && (sampleOffset == 0 || m_nSampleNum == 0) && !sampleProcessed)
           {
@@ -700,7 +700,7 @@ void CWASAPIRenderFilter::RenderSilence(BYTE* pTarget, UINT32 bufferSizeInBytes,
   bytesFilled += silentBytes;
   writeSilence -= silentBytes;
 
-  if (m_pSettings->m_bLogSampleTimes)
+  if (m_pSettings->m_bLogDebug)
     Log("writing buffer with zeroes silentBytes: %d", silentBytes);
 }
 
@@ -716,7 +716,7 @@ void CWASAPIRenderFilter::RenderAudio(BYTE* pTarget, UINT32 bufferSizeInBytes, U
   bytesFilled += bytesToCopy;
   sampleOffset += bytesToCopy;
   
-  if (m_pSettings->m_bLogSampleTimes)
+  if (m_pSettings->m_bLogDebug)
     Log("writing buffer with data: %d", bytesToCopy);
 }
 

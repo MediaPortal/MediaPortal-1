@@ -30,6 +30,7 @@ unsigned int gAllowedResamplingQualities[5] = {0, 1, 2, 3, 4};
 
 AudioRendererSettings::AudioRendererSettings() :
   m_bLogSampleTimes(false),
+  m_bLogDebug(false),
   m_bHWBasedRefClock(true),
   m_bEnableSyncAdjustment(true),
   m_bUseWASAPI(true),
@@ -90,6 +91,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR minBias = TEXT("MinBias");
   LPCTSTR audioDelay = TEXT("AudioDelay");
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
+  LPCTSTR logDebug = TEXT("LogDebug");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   LPCTSTR HWBasedRefClock = TEXT("HWBasedRefClock");
   LPCTSTR enableSyncAdjustment = TEXT("EnableSyncAdjustment");
@@ -117,6 +119,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD minBiasData = 9000;         // divide with 10000 to get real double value
   DWORD audioDelayData = 0;         // in ms
   DWORD logSampleTimesData = 0;
+  DWORD logDebugData = 0;
   DWORD HWBasedRefClockData = 1;
   DWORD enableSyncAdjustmentData = 1;
   DWORD forceSamplingRateData = 0;
@@ -163,6 +166,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, minBias, minBiasData);
     ReadRegistryKeyDword(hKey, audioDelay, audioDelayData);
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
+    ReadRegistryKeyDword(hKey, logDebug, logDebugData);
     ReadRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
     ReadRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
     ReadRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
@@ -191,6 +195,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   MinBias:                  %d", minBiasData);
     Log("   AudioDelay:               %d", audioDelayData);
     Log("   LogSampleTimes:           %d", logSampleTimesData);
+    Log("   LogDebug:                 %d", logDebugData);
     Log("   HWBasedRefClock:          %d", HWBasedRefClockData);
     Log("   EnableSyncAdjustment:     %d", enableSyncAdjustmentData);
     Log("   ForceSamplingRate:        %d", forceSamplingRateData);
@@ -241,6 +246,11 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_bLogSampleTimes = true;
     else
       m_bLogSampleTimes = false;
+    
+    if (logDebugData > 0)
+      m_bLogDebug = true;
+    else
+      m_bLogDebug = false;
 
     if (HWBasedRefClockData > 0)
       m_bHWBasedRefClock = true;
@@ -340,6 +350,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, minBias, minBiasData);
       WriteRegistryKeyDword(hKey, audioDelay, audioDelayData);
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
+      WriteRegistryKeyDword(hKey, logDebug, logDebugData);
       WriteRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
       WriteRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
       WriteRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);

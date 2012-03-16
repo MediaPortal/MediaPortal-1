@@ -40,6 +40,7 @@ public:
 
 public:
   bool m_bLogSampleTimes;
+  bool m_bLogDebug;
   bool m_bHWBasedRefClock;
   bool m_bEnableSyncAdjustment;
   bool m_bUseWASAPI;
