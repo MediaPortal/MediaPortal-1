@@ -22,6 +22,8 @@ namespace Mediaportal.TV.Server.TVControl
     private const BasicHttpSecurityMode HttpSecurityMode = BasicHttpSecurityMode.None;
     private const string NetTcpBindingName = "netTcpBinding";
     private const string DefaultBasicHttpBindingName = "defaultBasicHttpBinding";
+    private const int ReceiveTimeout = 60;//seconds
+    private const int SendTimeout = 60;//seconds
 
     /// <summary>
     /// 
@@ -34,6 +36,8 @@ namespace Mediaportal.TV.Server.TVControl
         Name = NetTcpBindingName,
         MaxBufferSize = MaxBufferSize,
         MaxReceivedMessageSize = MaxReceivedMessageSize,
+        ReceiveTimeout = new TimeSpan(0, 0, 0, ReceiveTimeout),
+        SendTimeout = new TimeSpan(0, 0, 0, SendTimeout),   
       };
       SetReaderQuotas(netTcpBinding.ReaderQuotas);
       return netTcpBinding;
@@ -45,7 +49,9 @@ namespace Mediaportal.TV.Server.TVControl
       {
         Name = DefaultBasicHttpBindingName,
         MaxBufferSize = MaxBufferSize,
-        MaxReceivedMessageSize = MaxReceivedMessageSize,                               
+        MaxReceivedMessageSize = MaxReceivedMessageSize,
+        ReceiveTimeout = new TimeSpan(0, 0, 0, ReceiveTimeout),
+        SendTimeout = new TimeSpan(0, 0, 0, SendTimeout),   
         Security =
           {
             Mode = HttpSecurityMode,
@@ -57,7 +63,7 @@ namespace Mediaportal.TV.Server.TVControl
     }
 
     private static void SetReaderQuotas (XmlDictionaryReaderQuotas readerQuotas)
-    {
+    {      
       readerQuotas.MaxDepth = ReaderQuotasMaxDepth;
       readerQuotas.MaxStringContentLength = ReaderQuotasMaxStringContentLength;
       readerQuotas.MaxArrayLength = ReaderQuotasMaxArrayLength;
