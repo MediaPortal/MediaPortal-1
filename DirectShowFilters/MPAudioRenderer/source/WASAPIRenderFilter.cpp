@@ -170,7 +170,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   
   HRESULT hr = VFW_E_CANNOT_CONNECT;
 
-  if (!m_pAudioClient) 
+  if (!m_pAudioClient)
   {
     if (!m_pMMDevice) 
       hr = GetAudioDevice(&m_pMMDevice);
@@ -280,11 +280,15 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample, UINT32 framesToF
       return S_FALSE;
     }
   }
-  /*else if (pSample->IsDiscontinuity() == S_OK)
+  else if (pSample->IsDiscontinuity() == S_OK)
   {
+    hr = m_pRenderClient->ReleaseBuffer(framesToFlush, 0);
+    if (FAILED(hr))
+      Log("CWASAPIRenderFilter::CheckFormat - discontinuity - ReleaseBuffer: 0x%08x", hr);
+    
     pSample->SetDiscontinuity(false);
     return S_FALSE;
-  }*/
+  }
 
   return S_OK;
 }
