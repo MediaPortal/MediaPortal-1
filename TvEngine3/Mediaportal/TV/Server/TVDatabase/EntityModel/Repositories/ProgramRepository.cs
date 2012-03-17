@@ -14,27 +14,27 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
-{  
+{
   public class ProgramRepository : GenericRepository<Model>, IProgramRepository
   {
-    
-    public ProgramRepository()    
+
+    public ProgramRepository()
     {
     }
 
     public ProgramRepository(bool trackingEnabled)
       : base(trackingEnabled)
-    {      
+    {
     }
 
 
     public ProgramRepository(Model context)
       : base(context)
     {
-      
-    }  
-    
-    public IQueryable<Program> GetNowProgramsForChannelGroup (IEnumerable<int> channelList)
+
+    }
+
+    public IQueryable<Program> GetNowProgramsForChannelGroup(IEnumerable<int> channelList)
     {
       DateTime now = DateTime.Now;
       IQueryable<Program> programs = GetQuery<Program>().Where(p =>
@@ -46,17 +46,32 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IQueryable<Program> GetNextProgramsForChannelGroup(IEnumerable<int> channelList)
     {
       DateTime now = DateTime.Now;
-      IQueryable<Program> programs = GetQuery<Program>().Where(p => channelList.Contains(p.idChannel) && p.startTime > now).GroupBy(p => p.idChannel).Select(pg => pg.OrderBy(p => p.startTime).FirstOrDefault());
+      //IQueryable<Program> programs = GetQuery<Program>().Where(p => channelList.Contains(p.idChannel) && p.startTime > now).GroupBy(p => p.idChannel).Select(pg => pg.OrderBy(p => p.startTime).FirstOrDefault());
+
+      var q = GetQuery<Program>().Where(p =>
+            channelList.Contains(p.idChannel) && p.startTime > now)
+        .GroupBy(p => p.idChannel)
+        .Select(pg => new
+        {
+          idChannel = pg.Key,
+          minStartTime = pg.Min(p => p.startTime)
+        });
+      IQueryable<Program> programs =
+              GetQuery<Program>().Where(p =>
+                  q.Any(pmin =>
+                    p.idChannel == pmin.idChannel &&
+                    p.startTime == pmin.minStartTime));
+
       return programs;
     }
 
     public IQueryable<Program> GetNowAndNextProgramsForChannel(int idChannel)
     {
-      DateTime now = DateTime.Now;           
+      DateTime now = DateTime.Now;
       var programs =
-        GetQuery<Program>().Where(p => p.idChannel == idChannel && p.endTime >= now).Include(p=>p.Channel)
+        GetQuery<Program>().Where(p => p.idChannel == idChannel && p.endTime >= now).Include(p => p.Channel)
         .Include(p => p.ProgramCategory)
-        .Include(p => p.ProgramCredits)        
+        .Include(p => p.ProgramCredits)
         .OrderBy(p => p.startTime)
         .Take(2);
       return programs;
@@ -64,7 +79,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public void DeleteAllProgramsWithChannelId(int idChannel)
     {
-      Delete<Program>(p=> p.idChannel == idChannel);
+      Delete<Program>(p => p.idChannel == idChannel);
       UnitOfWork.SaveChanges();
     }
 
@@ -72,7 +87,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       var findAllProgramsByChannelId = GetQuery<Program>().Where(p => p.idChannel == idChannel);
       return findAllProgramsByChannelId;
-    }    
+    }
 
     public Program GetProgramAt(DateTime date, int idChannel)
     {
@@ -91,7 +106,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IQueryable<Program> GetProgramsByTitle(IQueryable<Program> query, string searchCriteria, StringComparisonEnum stringComparison)
     {
       DateTime now = DateTime.Now;
-      query = query.Where(p => p.Channel.visibleInGuide && p.endTime > now);      
+      query = query.Where(p => p.Channel.visibleInGuide && p.endTime > now);
 
       if (!string.IsNullOrEmpty(searchCriteria))
       {
@@ -195,9 +210,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
 
     public IQueryable<Program> GetProgramsByStartEndTimes(DateTime startTime, DateTime endTime)
-    {      
+    {
       //Expression<Func<Program, bool>> a = Utility.And<Program>(p => p.Channel.visibleInGuide, p => p.Channel.visibleInGuide);
-      var query = GetQuery<Program>(p => p.Channel.visibleInGuide && p.startTime < endTime && p.endTime > startTime);                                                    
+      var query = GetQuery<Program>(p => p.Channel.visibleInGuide && p.startTime < endTime && p.endTime > startTime);
       return query;
     }
 
@@ -205,7 +220,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       var includeRelations = query.Include(p => p.ProgramCategory)
         .Include(p => p.Channel);
-                                  
+
       return includeRelations;
     }
 
