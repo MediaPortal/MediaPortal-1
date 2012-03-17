@@ -1,7 +1,9 @@
 ﻿<#@ template language="C#" debug="false" hostspecific="true"#>
-<#@ include file="EF.Utility.CS.ttinclude"#><#@
+<#@ include file="EF.Utility.CS.OOB.ttinclude"#><#@
  output extension=".cs"#><#
 // Copyright (c) Microsoft Corporation.  All rights reserved.
+
+DefineMetadata();
 
 CodeGenerationTools code = new CodeGenerationTools(this);
 MetadataTools ef = new MetadataTools(this);
@@ -13,7 +15,7 @@ EntityFrameworkTemplateFileManager fileManager = EntityFrameworkTemplateFileMana
 string inputFile = @"Model.edmx";
 EdmItemCollection ItemCollection = loader.CreateEdmItemCollection(inputFile);
 ModelNamespace = loader.GetModelNamespace(inputFile);
-DefaultSummaryComment = GetResourceString("Template_CommentNoDocumentation");
+DefaultSummaryComment = CodeGenerationTools.GetResourceString("Template_CommentNoDocumentation");
 string namespaceName = code.VsNamespaceSuggestion();
 UpdateObjectNamespaceMap(namespaceName);
 
@@ -32,7 +34,9 @@ BeginNamespace(namespaceName, code);
     public const string ConnectionString = "name=<#=container.Name#>";
     public const string ContainerName = "<#=container.Name#>";
 
-    #region Constructors
+<#
+region.Begin("Constructors", 2);
+#>
 
     public <#=code.Escape(container)#>()
         : base(ConnectionString, ContainerName)
@@ -77,11 +81,10 @@ BeginNamespace(namespaceName, code);
             this.StoreReferenceKeyValues(entity);
         }
     }
-
-    #endregion
-
 <#
-        region.Begin("ObjectSet Properties", 2);
+        region.End();
+
+        region.Begin("ObjectSet Properties");
 
         foreach (EntitySet entitySet in container.BaseEntitySets.OfType<EntitySet>())
         {
@@ -104,6 +107,25 @@ BeginNamespace(namespaceName, code);
             var parameters = FunctionImportParameter.Create(edmFunction.Parameters, code, ef);
             string paramList = String.Join(", ", parameters.Select(p => p.FunctionParameterType + " " + p.FunctionParameterName).ToArray());
             TypeUsage returnType = edmFunction.ReturnParameter == null ? null : ef.GetElementType(edmFunction.ReturnParameter.TypeUsage);
+            if (edmFunction.IsComposable)
+            {
+#>
+
+    /// <summary>
+    /// <#=SummaryComment(edmFunction)#>
+    /// </summary><#=LongDescriptionCommentElement(edmFunction, region.CurrentIndentLevel)#><#=ParameterComments(parameters.Select(p => new Tuple<string, string>(p.RawFunctionParameterName, SummaryComment(p.Source))), region.CurrentIndentLevel)#>
+    [EdmFunction("<#=edmFunction.NamespaceName#>", "<#=edmFunction.Name#>")]
+    <#=code.SpaceAfter(NewModifier(edmFunction))#><#=AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction))#> <#="IQueryable<" + MultiSchemaEscape(returnType, code) + ">"#> <#=code.Escape(edmFunction)#>(<#=paramList#>)
+    {
+<#
+                WriteFunctionParameters(parameters);
+#>
+        return base.CreateQuery<<#=MultiSchemaEscape(returnType, code)#>>("[<#=edmFunction.NamespaceName#>].[<#=edmFunction.Name#>](<#=string.Join(", ", parameters.Select(p => "@" + p.EsqlParameterName).ToArray())#>)"<#=code.StringBefore(", ", string.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()))#>);
+    }
+<#
+            }
+            else
+            {
 #>
 
     /// <summary>
@@ -112,32 +134,13 @@ BeginNamespace(namespaceName, code);
     <#=code.SpaceAfter(NewModifier(edmFunction))#><#=AccessibilityAndVirtual(Accessibility.ForMethod(edmFunction))#> <#=returnType == null ? "int" : "ObjectResult<" + MultiSchemaEscape(returnType, code) + ">"#> <#=code.Escape(edmFunction)#>(<#=paramList#>)
     {
 <#
-            foreach (var parameter in parameters)
-            {
-                if (!parameter.NeedsLocalVariable)
-                {
-                    continue;
-                }
-#>
-
-        ObjectParameter <#=parameter.LocalVariableName#>;
-
-        if (<#=parameter.IsNullableOfT ? parameter.FunctionParameterName + ".HasValue" : parameter.FunctionParameterName + " != null"#>)
-        {
-            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", <#=parameter.FunctionParameterName#>);
-        }
-        else
-        {
-            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", typeof(<#=parameter.RawClrTypeName#>));
-        }
-<#
-            }
+                WriteFunctionParameters(parameters);
 #>
         return base.ExecuteFunction<#=returnType == null ? "" : "<" + MultiSchemaEscape(returnType, code) + ">"#>("<#=edmFunction.Name#>"<#=code.StringBefore(", ", String.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()))#>);
     }
 <#
-           if(returnType != null && returnType.EdmType.BuiltInTypeKind == BuiltInTypeKind.EntityType)
-           {
+                if(returnType != null && returnType.EdmType.BuiltInTypeKind == BuiltInTypeKind.EntityType)
+                {
 #>
 
     /// <summary>
@@ -147,28 +150,13 @@ BeginNamespace(namespaceName, code);
     <#=code.SpaceAfter(NewModifier(edmFunction))#><#=Accessibility.ForMethod(edmFunction)#> <#=returnType == null ? "int" : "ObjectResult<" + MultiSchemaEscape(returnType, code) + ">"#> <#=code.Escape(edmFunction)#>(<#=code.StringAfter(paramList, ", ")#>MergeOption mergeOption)
     {
 <#
-            foreach (FunctionImportParameter parameter in parameters)
-            {
-                if (!parameter.NeedsLocalVariable)
-                    continue;
-#>
-        ObjectParameter <#=parameter.LocalVariableName#>;
-        if (<#=parameter.IsNullableOfT ? parameter.FunctionParameterName + ".HasValue" : parameter.FunctionParameterName + " != null"#>)
-        {
-            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", <#=parameter.FunctionParameterName#>);
-        }
-        else
-        {
-            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", typeof(<#=parameter.RawClrTypeName#>));
-        }
-
-<#
-            }
+                    WriteFunctionParameters(parameters);
 #>
         return base.<#=returnType == null ? "ExecuteFunction" : "ExecuteFunction<" + MultiSchemaEscape(returnType, code) + ">"#>("<#=edmFunction.Name#>", mergeOption<#=code.StringBefore(", ", string.Join(", ", parameters.Select(p => p.ExecuteParameterName).ToArray()))#>);
     }
 <#
-        }
+                }
+            }
         }
         region.End();
 #>
@@ -200,12 +188,12 @@ private void WriteHeader(EntityFrameworkTemplateFileManager fileManager, params 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
 using System.Data.EntityClient;
 using System.Data.Metadata.Edm;
-using System.Data.Objects.DataClasses;
 using System.Data.Objects;
-using System.Data;
+using System.Data.Objects.DataClasses;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -860,7 +848,7 @@ public static class SelfTrackingEntitiesContextExtensions
         foreach(EdmProperty property in entityType.Properties)
         {
             object value;
-            if(property.TypeUsage.EdmType is PrimitiveType && entity.ChangeTracker.OriginalValues.TryGetValue(property.Name, out value))
+            if(property.TypeUsage.EdmType is SimpleType && entity.ChangeTracker.OriginalValues.TryGetValue(property.Name, out value))
             {
                 originalValueRecord.SetValue(property, value);
             }
@@ -885,7 +873,7 @@ public static class SelfTrackingEntitiesContextExtensions
         {
             object value;
             string propertyPath = String.Format(CultureInfo.InvariantCulture, "{0}.{1}", propertyPathToType, property.Name);
-            if (property.TypeUsage.EdmType is PrimitiveType && originalValueSource.TryGetValue(propertyPath, out value))
+            if (property.TypeUsage.EdmType is SimpleType && originalValueSource.TryGetValue(propertyPath, out value))
             {
                 if (complexOriginalValueRecord != null)
                 {
@@ -930,11 +918,11 @@ public static class SelfTrackingEntitiesContextExtensions
 
     private static void SetValue(this OriginalValueRecord record, EdmProperty edmProperty, object value)
     {
-        if (value == null)
+        PrimitiveType primitiveType = edmProperty.TypeUsage.EdmType as PrimitiveType;
+        if (value == null && primitiveType != null)
         {
-            Type entityClrType = ((PrimitiveType)edmProperty.TypeUsage.EdmType).ClrEquivalentType;
-            if (entityClrType.IsValueType &&
-                !(entityClrType.IsGenericType && typeof(Nullable<>) == entityClrType.GetGenericTypeDefinition()))
+            Type entityClrType = primitiveType.ClrEquivalentType;
+            if (entityClrType.IsValueType && !edmProperty.Nullable)
             {
                 // Skip setting null original values on non-nullable CLR types because the ObjectStateEntry won't allow this
                 return;
@@ -1471,18 +1459,31 @@ string LongDescriptionCommentElement(MetadataItem item, int indentLevel)
     return string.Empty;
 }
 
-
 string MultiSchemaEscape(TypeUsage usage, CodeGenerationTools code)
 {
-    StructuralType structural = usage.EdmType as StructuralType;
-    if (structural != null)
+    MetadataTools ef = new MetadataTools(this);
+    if (usage.EdmType != null)
     {
-        return MultiSchemaEscape(structural, code);
+        if (usage.EdmType is StructuralType)
+        {
+            return MultiSchemaEscape(usage.EdmType, code);
+        }
+        else if (usage.EdmType is EnumType)
+        {
+            string typeName = MultiSchemaEscape(usage.EdmType, code);
+            if (ef.IsNullable(usage))
+            {
+                return String.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", typeName);
+            }
+
+            return typeName;
+        }
     }
+
     return code.Escape(usage);
 }
 
-string MultiSchemaEscape(StructuralType type, CodeGenerationTools code)
+string MultiSchemaEscape(EdmType type, CodeGenerationTools code)
 {
     if (type.NamespaceName != ModelNamespace)
     {
@@ -1533,7 +1534,6 @@ string NewModifier(Type type, string memberName)
     return string.Empty;
 }
 
-
 string PrefixLinesOfMultilineComment(string prefix, string comment)
 {
     return comment.Replace(Environment.NewLine, Environment.NewLine + prefix);
@@ -1550,6 +1550,29 @@ string ParameterComments(IEnumerable<Tuple<string, string>> parameters, int inde
         builder.Append(String.Format(CultureInfo.InvariantCulture, " <param name=\"{0}\">{1}</param>", parameter.Item1, parameter.Item2));
     }
     return builder.ToString();
+}
+
+private void WriteFunctionParameters(IEnumerable<FunctionImportParameter> parameters)
+{
+    foreach (FunctionImportParameter parameter in parameters)
+    {
+        if (!parameter.NeedsLocalVariable)
+        {
+            continue;
+        }
+#>
+        ObjectParameter <#=parameter.LocalVariableName#>;
+        if (<#=parameter.IsNullableOfT ? parameter.FunctionParameterName + ".HasValue" : parameter.FunctionParameterName + " != null"#>)
+        {
+            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", <#=parameter.FunctionParameterName#>);
+        }
+        else
+        {
+            <#=parameter.LocalVariableName#> = new ObjectParameter("<#=parameter.EsqlParameterName#>", typeof(<#=parameter.RawClrTypeName#>));
+        }
+
+<#+
+    }
 }
 
 string XmlEntityize(string text)
@@ -1572,7 +1595,6 @@ const string XMLCOMMENT_START = "///";
 
 public string ModelNamespace{ get; set; }
 
-
 string GetObjectNamespace(string csdlNamespaceName)
 {
     string objectNamespace;
@@ -1584,14 +1606,12 @@ string GetObjectNamespace(string csdlNamespaceName)
     return csdlNamespaceName;
 }
 
-
 static bool HasBaseMemberWithMatchingName(Type type, string memberName)
 {
     BindingFlags bindingFlags = BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Public
                 | BindingFlags.Instance | BindingFlags.Static;
     return type.GetMembers(bindingFlags).Where(m => IsVisibleMember(m)).Any(m => m.Name == memberName);
 }
-
 
 static bool IsVisibleMethod(MethodBase methodBase)
 {
@@ -1648,23 +1668,10 @@ void UpdateObjectNamespaceMap(string objectNamespace)
     }
 }
 
-private static string GetResourceString(string resourceName)
+private void DefineMetadata()
 {
-    return ResourceManager.GetString(resourceName,
-         null); //  Take default culture.
-}
-
-static System.Resources.ResourceManager ResourceManager
-{
-    get
-    {
-        if (_resourceManager == null)
-        {
-            System.Resources.ResourceManager resourceManager = new System.Resources.ResourceManager("System.Data.Entity.Design", typeof(System.Data.Entity.Design.MetadataItemCollectionFactory).Assembly);
-            System.Threading.Interlocked.CompareExchange(ref _resourceManager, resourceManager, null);
-        }
-        return _resourceManager;
+    TemplateMetadata[MetadataConstants.TT_TEMPLATE_NAME] = "CSharpSelfTracking.Context";
+    TemplateMetadata[MetadataConstants.TT_TEMPLATE_VERSION] = "4.2";
+    TemplateMetadata[MetadataConstants.TT_MINIMUM_ENTITY_FRAMEWORK_VERSION] = "4.2";
     }
-}
-static System.Resources.ResourceManager _resourceManager;
 #>
