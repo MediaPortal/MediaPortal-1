@@ -6,43 +6,62 @@
   <!-- Channel section lists all the Channels available from this website. -->
 
   <Channels>
-
-    <Channel id="dr1@dr.dk" siteId="dr1" />
-    <!-- DR1 -->
-    <Channel id="dr2@dr.dk" siteId="dr2" />
-    <!-- DR2 -->
-    <Channel id="tv2@tv2.dk" siteId="tv+2" />
-    <!-- TV2 -->
-    <Channel id="tv2film@tv2.dk" siteId="TV+2+Film" />
-    <!-- TV2 Film-->
-    <Channel id="tvzulu@tv2.dk" siteId="TV+2+Zulu" />
-    <!-- TV2 Zulu-->
-    <Channel id="tvcharlie@tv2.dk" siteId="TV+2+charlie" />
-    <!-- TV2 Charlie-->
-    <Channel id="tvnews@tv2.dk" siteId="TV+2+NEWS" />
-    <!-- TV2 News-->
-    <Channel id="tvsyd@tvsyd.dk" siteId="TV+Syd" />
-    <!-- TV Syd-->
-    <Channel id="dk4@dk4.dk" siteId="DK4" />
+    <!-- 6'eren -->
+    <Channel id="6'eren" siteId="6%B4eren" />
+    <!-- Canal9 -->
+    <Channel id="Canal9" siteId="CANAL9" />
     <!-- DK4-->
-    <Channel id="tv3@tv3.dk" siteId="tv3" />
-    <!-- tv3 -->
-    <Channel id="tv3+@tv3.dk" siteId="tv3%2B" />
-    <!-- tv3+ -->
-    <Channel id="sbs.net" siteId="SBS+Net"/>
-    <!-- SBS.NET -->
-    <Channel id="kanal4@kanal4.dk" siteId="Kanal+4"/>
+    <Channel id="dk4@dk4.dk" siteId="DK4" />
+    <!-- DR1 -->
+    <Channel id="dr1@dr.dk" siteId="dr1" />
+    <!-- DR2 -->
+    <Channel id="dr2@dr.dk" siteId="dr2" />
+    <!-- DR HD -->
+    <Channel id="dr+hd@dr.dk" siteId="dr+hd" />
+    <!-- DR K -->
+    <Channel id="DR K" siteId="dr+k" />
+    <!-- DR Ramasjang -->
+    <Channel id="DR Ramasjang" siteId="dr+ramasjang" />
     <!-- Kanal 4 -->
-    <Channel id="kanal5@kanal5.dk" siteId="Kanal+5"/>
+    <Channel id="kanal4@kanal4.dk" siteId="Kanal+4"/>
     <!-- Kanal 5 -->
-    <Channel id="kk@kanalkobenhavn.dk" siteId="Kanal%20K%F8benhavn" />
+    <Channel id="kanal5@kanal5.dk" siteId="Kanal+5"/>
     <!-- Kanal Kobenhavn -->
-    <Channel id="sv1@svt.se" siteId="svt1" />
+    <Channel id="kk@kanalkobenhavn.dk" siteId="Kanal%20K%F8benhavn" />
+    <!-- Skandinavia -->
+    <Channel id="Skandinavia" siteId="Skandinavia" />
+    <!-- TV Syd-->
+    <Channel id="tvsyd@tvsyd.dk" siteId="TV+Syd" />
+    <!-- TV2 -->
+    <Channel id="tv2@tv2.dk" siteId="tv+2" />
+    <!-- TV2 Charlie -->
+    <Channel id="tvcharlie@tv2.dk" siteId="TV+2+charlie" />
+    <!-- TV2 Film -->
+    <Channel id="tv2film@tv2.dk" siteId="TV+2+Film" />
+    <!-- TV2 News -->
+    <Channel id="TV2 News" siteId="TV+2+NEWS" />
+    <!-- TV2 Sport -->
+    <Channel id="TV2 Sport" siteId="tv+2+sport" />
+    <!-- TV2 Sport HD-->
+    <Channel id="TV2 Sport HD" siteId="tv+2+sport+hd" />
+    <!-- TV2 Zulu-->
+    <Channel id="tvzulu@tv2.dk" siteId="TV+2+Zulu" />
+    <!-- TV3 -->
+    <Channel id="tv3@tv3.dk" siteId="tv3" />
+    <!-- TV3+ -->
+    <Channel id="tv3+@tv3.dk" siteId="tv3%2B" />
+    <!-- TV3 Puls-->
+    <Channel id="TV3 Puls" siteId="tv3+puls" />
+    <!-- SBS.NET -->
+    <Channel id="sbs.net" siteId="SBS+Net"/>
+    
     <!-- TV1 Sverige -->
-    <Channel id="sv2@svt.se" siteId="svt2" />
+    <Channel id="sv1@svt.se" siteId="svt1" />
     <!-- TV2 Sverige -->
-    <Channel id="sv4@svt.se" siteId="TV4+Sverige" />
+    <Channel id="sv2@svt.se" siteId="svt2" />
     <!-- TV4 Sverige -->
+    <Channel id="sv4@svt.se" siteId="TV4+Sverige" />
+    
     <Channel id="nrk1@nrk.no" siteId="NRK1" />
     <Channel id="nrk2@nrk.no" siteId="NRK2" />
     <Channel id="TV2Norge@nrk.no" siteId="TV+2+Norge" />
@@ -68,6 +87,8 @@
     <Channel id="DiscoveryScience" siteId="Discovery+Science" />
     <Channel id="DiscoveryCivilisation" siteId="Discovery+Civilisation" />
     <Channel id="Eurosport" siteId="Eurosport" />
+    <Channel id="Eurosport 2" siteId="Eurosport+2" />
+    <Channel id="Eurosport HD" siteId="Eurosport+hd" />
     <Channel id="HallmarkChannel" siteId="Hallmark+Channel" />
     <Channel id="MTV" siteId="MTV" />
     <Channel id="NationalGeographicChannel" siteId="National+Geographic+Channel" />
@@ -104,11 +125,8 @@
     <Channel id="ViaSatSport3@viasat.dk" siteId="ViaSat+Sport+3" />
     <Channel id="ViasatSportSverige@viasat.se" siteId="Viasat+Sport+Sverige" />
 
-
     <Channel id="voice@voice.dk" siteId="Voice+TV" />
     <Channel id="TV3Sverige@svt.se" siteId="TV3+Sverige" />
-
-
   </Channels>
 
   <!-- Formating of Listing -->
