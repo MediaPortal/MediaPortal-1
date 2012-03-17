@@ -174,38 +174,44 @@ namespace Mediaportal.TV.TvPlugin
 
     private void GetAllChannels()
     {
-      Log.Info("get _channels from database");
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV,
-                                                                                                      ChannelIncludeRelationEnum
-                                                                                                        .None);
-      _channels = channels.Distinct().ToDictionary(c => c.idChannel);
-      Log.Info("found:{0} tv channels", _channels.Count);
+      if (_channels.Count == 0)
+      {
+        Log.Info("get _channels from database");
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV,
+                                                                                                        ChannelIncludeRelationEnum
+                                                                                                          .None);
+        _channels = channels.Distinct().ToDictionary(c => c.idChannel);
+        Log.Info("found:{0} tv channels", _channels.Count); 
+      }
     }
 
     private void GetAllGroups()
     {
-      bool hideAllChannelsGroup;
-      using (Settings xmlreader = new MPSettings())
+      if (_groups.Count == 0)
       {
-        hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
-      }
+        bool hideAllChannelsGroup;
+        using (Settings xmlreader = new MPSettings())
+        {
+          hideAllChannelsGroup = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+        }
 
-      Log.Info("get all groups from database");
-      ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
-      include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
+        Log.Info("get all groups from database");
+        ChannelGroupIncludeRelationEnum include = ChannelGroupIncludeRelationEnum.GroupMaps;
+        include |= ChannelGroupIncludeRelationEnum.GroupMapsChannel;
 
-      if (hideAllChannelsGroup)
-      {
-        _groups =
-          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include).OrderBy(g => g.groupName).
-            ToList();
+        if (hideAllChannelsGroup)
+        {
+          _groups =
+            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllCustomChannelGroups(include).OrderBy(g => g.groupName).
+              ToList();
+        }
+        else
+        {
+          _groups =
+            ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include).OrderBy(g => g.groupName).ToList();
+        }
+        Log.Info("loaded {0} tv groups", _groups.Count);
       }
-      else
-      {
-        _groups =
-          ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(include).OrderBy(g => g.groupName).ToList();
-      }
-      Log.Info("loaded {0} tv groups", _groups.Count);
     }    
 
     #endregion
