@@ -55,14 +55,20 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       bool hasFolder = TVDatabase.TVBusinessLayer.Common.IsFolderValid(timeshiftingFolder);
       if (!hasFolder)
       {
-        timeshiftingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
-        cardHandler.DataBaseCard.timeshiftingFolder = timeshiftingFolder;
-        TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+        timeshiftingFolder = SetDefaultTimeshiftingFolder(cardHandler);
       }
 
       if (!Directory.Exists(timeshiftingFolder))
       {
-        Directory.CreateDirectory(timeshiftingFolder);
+        try
+        {
+          Directory.CreateDirectory(timeshiftingFolder);
+        }
+        catch (Exception)
+        {
+          timeshiftingFolder = SetDefaultTimeshiftingFolder(cardHandler);
+          Directory.CreateDirectory(timeshiftingFolder); //if it fails, then nothing works reliably.s
+        }   
       }
 
       _cardHandler = cardHandler;
@@ -74,6 +80,15 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
+    }
+
+    private static string SetDefaultTimeshiftingFolder(ITvCardHandler cardHandler)
+    {
+      string timeshiftingFolder;
+      timeshiftingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultTimeshiftingFolder();
+      cardHandler.DataBaseCard.timeshiftingFolder = timeshiftingFolder;
+      TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+      return timeshiftingFolder;
     }
 
     /// <summary>

@@ -48,20 +48,34 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 
       if (!hasFolder)
       {
-        recordingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
-        cardHandler.DataBaseCard.recordingFolder = recordingFolder;
-        TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+        recordingFolder = SetDefaultRecordingFolder(cardHandler);
       }
 
       if (!Directory.Exists(recordingFolder))
       {
-        Directory.CreateDirectory(recordingFolder);
+        try
+        {
+          Directory.CreateDirectory(recordingFolder);
+        }
+        catch (Exception)
+        {
+          recordingFolder = SetDefaultRecordingFolder(cardHandler);
+          Directory.CreateDirectory(recordingFolder); //if it fails, then nothing works reliably.
+        }        
       }
 
       _cardHandler = cardHandler;
       _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").value == "yes");
     }
 
+    private static string SetDefaultRecordingFolder(ITvCardHandler cardHandler)
+    {
+      string recordingFolder;
+      recordingFolder = TVDatabase.TVBusinessLayer.Common.GetDefaultRecordingFolder();
+      cardHandler.DataBaseCard.recordingFolder = recordingFolder;
+      TVDatabase.TVBusinessLayer.CardManagement.SaveCard(cardHandler.DataBaseCard);
+      return recordingFolder;
+    }
 
 
     protected override void AudioVideoEventHandler(PidType pidType)
