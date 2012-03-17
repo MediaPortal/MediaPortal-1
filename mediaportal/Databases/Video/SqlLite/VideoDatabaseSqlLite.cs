@@ -4139,313 +4139,537 @@ namespace MediaPortal.Video.Database
 
     public void ImportNfo(string nfoFile)
     {
-      XmlDocument doc = new XmlDocument();
-      doc.Load(nfoFile);
-      if (doc.DocumentElement != null)
+      try
       {
-        int id = 0;
-        XmlNodeList movieList = doc.DocumentElement.SelectNodes("/movie");
-        foreach (XmlNode nodeMovie in movieList)
+        XmlDocument doc = new XmlDocument();
+        doc.Load(nfoFile);
+        
+        if (doc.DocumentElement != null)
         {
-          XmlNode nodeTitle = nodeMovie.SelectSingleNode("title");
-          XmlNode nodeRating = nodeMovie.SelectSingleNode("rating");
-          XmlNode nodeYear = nodeMovie.SelectSingleNode("year");
-          XmlNode nodeDuration = nodeMovie.SelectSingleNode("runtime");
-          XmlNode nodePlotShort = nodeMovie.SelectSingleNode("outline");
-          XmlNode nodePlot = nodeMovie.SelectSingleNode("plot");
-          XmlNode nodeTagline = nodeMovie.SelectSingleNode("tagline");
-          XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
-          XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
-          XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
-          XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
-          XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
-          XmlNode nodeStudio = nodeMovie.SelectSingleNode("studio");
-          XmlNode nodePlayCount = nodeMovie.SelectSingleNode("playcount");
-          XmlNode nodeWatched = nodeMovie.SelectSingleNode("watched");
-          XmlNode nodeFanart = nodeMovie.SelectSingleNode("fanart");
-          XmlNode nodePoster = nodeMovie.SelectSingleNode("thumb");
+          int id = 0;
 
-          string genre = string.Empty;
-          XmlNodeList genreList = nodeMovie.SelectNodes("genre");
-          foreach (XmlNode nodeGenre in genreList)
+          XmlNodeList movieList = doc.DocumentElement.SelectNodes("/movie");
+          
+          if (movieList == null)
           {
-            // added check to see if nodeGenre was valid
-            if (nodeGenre != null && nodeGenre.InnerText != null)
+            return;
+          }
+
+          foreach (XmlNode nodeMovie in movieList)
+          {
+            IMDBMovie movie = new IMDBMovie();
+            string genre = string.Empty;
+            string credits = string.Empty;
+            string cast = string.Empty;
+            string path = string.Empty;
+            string fileName = string.Empty;
+            string dateAdded = string.Empty;
+
+            #region nodes
+
+            XmlNode nodeTitle = nodeMovie.SelectSingleNode("title");
+            XmlNode nodeRating = nodeMovie.SelectSingleNode("rating");
+            XmlNode nodeYear = nodeMovie.SelectSingleNode("year");
+            XmlNode nodeDuration = nodeMovie.SelectSingleNode("runtime");
+            XmlNode nodePlotShort = nodeMovie.SelectSingleNode("outline");
+            XmlNode nodePlot = nodeMovie.SelectSingleNode("plot");
+            XmlNode nodeTagline = nodeMovie.SelectSingleNode("tagline");
+            XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
+            XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
+            XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
+            XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
+            XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
+            XmlNode nodeStudio = nodeMovie.SelectSingleNode("studio");
+            XmlNode nodePlayCount = nodeMovie.SelectSingleNode("playcount");
+            XmlNode nodeWatched = nodeMovie.SelectSingleNode("watched");
+            XmlNode nodeFanart = nodeMovie.SelectSingleNode("fanart");
+            XmlNode nodePoster = nodeMovie.SelectSingleNode("thumb");
+            XmlNode nodeLanguage = nodeMovie.SelectSingleNode("language");
+            XmlNode nodeCountry = nodeMovie.SelectSingleNode("country");
+            XmlNode nodeReview = nodeMovie.SelectSingleNode("review");
+            
+            #endregion
+
+            #region Genre
+
+            XmlNodeList genreList = nodeMovie.SelectNodes("genre");
+            foreach (XmlNode nodeGenre in genreList)
             {
-              if (genre.Length > 0)
+              // added check to see if nodeGenre was valid
+              if (nodeGenre != null && nodeGenre.InnerText != null)
               {
-                genre += " / ";
+                if (genre.Length > 0)
+                {
+                  genre += " / ";
+                }
+                genre += nodeGenre.InnerText;
               }
-              genre += nodeGenre.InnerText;
             }
-          }
 
-          string credits = string.Empty;
-          XmlNodeList creditsList = nodeMovie.SelectNodes("Credits/Credit");
-          foreach (XmlNode nodeCredit in creditsList)
-          {
-            // Added check for firstname, lastname valid
-            string firstname = string.Empty;
-            string lastname = string.Empty;
-            XmlNode nodeFirstName = nodeCredit.SelectSingleNode("FirstName");
-            XmlNode nodeLastName = nodeCredit.SelectSingleNode("LastName");
-            if (nodeFirstName != null && nodeFirstName.InnerText != null)
-            {
-              firstname = nodeFirstName.InnerText;
-            }
-            if (nodeLastName != null && nodeLastName.InnerText != null)
-            {
-              lastname = nodeLastName.InnerText;
-            }
-            if (credits.Length > 0)
-            {
-              credits += " / ";
-            }
-            credits += String.Format("{0} {1}", firstname, lastname);
-          }
+            // Genre
+            movie.Genre = genre;
+            
+            #endregion
 
-          IMDBMovie movie = new IMDBMovie();
+            #region Credits (Writers)
 
-          string path = string.Empty;
-          string fileName = string.Empty;
-          // Get path from *.nfo file)
-          Util.Utils.Split(nfoFile, out path, out fileName);
-          // Movie filename to search from gathered files from nfo path
-          fileName = Util.Utils.GetFilename(fileName, true);
-          // Get all video files from nfo path
-          ArrayList files = new ArrayList();
-          GetVideoFiles(path, ref files);
-
-          foreach (String file in files)
-          {
-            string tmpFile = string.Empty;
-            string tmpPath = string.Empty;
-            // Read filename
-            Util.Utils.Split(file, out tmpPath, out tmpFile);
-            // Remove extension
-            tmpFile = Util.Utils.GetFilename(tmpFile, true);
-            // Remove stack endings (CD1...)
-            Util.Utils.RemoveStackEndings(ref tmpFile);
-            // Check and add to vdb and get movieId
-            if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+            XmlNodeList creditsList = nodeMovie.SelectNodes("Credits/Credit");
+            foreach (XmlNode nodeCredit in creditsList)
             {
-              id = VideoDatabase.AddMovie(file, true);
-              movie.ID = id;
+              // Added check for firstname, lastname valid
+              string firstname = string.Empty;
+              string lastname = string.Empty;
+              XmlNode nodeFirstName = nodeCredit.SelectSingleNode("FirstName");
+              XmlNode nodeLastName = nodeCredit.SelectSingleNode("LastName");
+              if (nodeFirstName != null && nodeFirstName.InnerText != null)
+              {
+                firstname = nodeFirstName.InnerText;
+              }
+              if (nodeLastName != null && nodeLastName.InnerText != null)
+              {
+                lastname = nodeLastName.InnerText;
+              }
+              if (credits.Length > 0)
+              {
+                credits += " / ";
+              }
+              credits += String.Format("{0} {1}", firstname, lastname);
             }
-          }
 
-          // CD label
-          movie.CDLabel = string.Empty;
-          // Director
-          if (nodeDirector != null)
-          {
-            movie.Director = nodeDirector.InnerText;
-            movie.DirectorID = VideoDatabase.AddActor(string.Empty, movie.Director);
-          }
-          // DVD label
-          movie.DVDLabel = string.Empty;
-          // Genre
-          movie.Genre = genre;
-          if (nodeImdbNumber != null)
-          {
-            movie.IMDBNumber = nodeImdbNumber.InnerText;
-          }
-          // Studio
-          if (nodeStudio != null)
-          {
-            movie.Studios = nodeStudio.InnerText;
-          }
-          // MPAA
-          if (nodeMpaa != null)
-          {
-            movie.MPARating = nodeMpaa.InnerText;
-          }
-          else
-          {
-            movie.MPARating = "NR";
-          }
-          // Plot
-          if (nodePlot != null)
-          {
-            movie.Plot = nodePlot.InnerText;
-          }
-          else
-          {
-            movie.Plot = string.Empty;
-          }
-          // Short plot
-          if (nodePlotShort != null)
-          {
-            movie.PlotOutline = nodePlotShort.InnerText;
-          }
-          else
-          {
-            movie.PlotOutline = string.Empty;
-          }
-          // Rating
-          if (nodeRating != null)
-          {
-            movie.Rating = (float)Double.Parse(nodeRating.InnerText);
-            if (movie.Rating > 10.0f)
+            // Writing credits
+            movie.WritingCredits = credits;
+
+            #endregion
+
+            #region Moviefiles
+            
+            // Get path from *.nfo file)
+            Util.Utils.Split(nfoFile, out path, out fileName);
+            // Movie filename to search from gathered files from nfo path
+            fileName = Util.Utils.GetFilename(fileName, true);
+            // Get all video files from nfo path
+            ArrayList files = new ArrayList();
+            GetVideoFiles(path, ref files);
+
+            foreach (String file in files)
             {
-              movie.Rating /= 10.0f;
+              string tmpFile = string.Empty;
+              string tmpPath = string.Empty;
+              // Read filename
+              Util.Utils.Split(file, out tmpPath, out tmpFile);
+              // Remove extension
+              tmpFile = Util.Utils.GetFilename(tmpFile, true);
+              // Remove stack endings (CD1...)
+              Util.Utils.RemoveStackEndings(ref tmpFile);
+              // Check and add to vdb and get movieId
+              if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+              {
+                id = VideoDatabase.AddMovie(file, true);
+                movie.ID = id;
+              }
             }
-          }
-          // Duration
-          if (nodeDuration != null)
-          {
-            int runtime = 0;
-            if (Int32.TryParse(nodeDuration.InnerText, out runtime))
+
+            #endregion
+
+            #region DateAdded
+
+            movie.DateAdded = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            
+            #endregion
+
+            #region Title
+
+            // Title
+            if (nodeTitle != null)
             {
-              movie.RunTime = runtime;
+              movie.Title = nodeTitle.InnerText;
+            }
+
+            #endregion
+
+            #region Language
+
+            // Title
+            if (nodeLanguage != null)
+            {
+              movie.Language = nodeLanguage.InnerText;
+            }
+
+            #endregion
+
+            #region Country
+
+            // Title
+            if (nodeCountry != null)
+            {
+              movie.Country = nodeCountry.InnerText;
+            }
+
+            #endregion
+
+            #region IMDB number
+
+            // IMDB number
+            if (nodeImdbNumber != null)
+            {
+              if (CheckMovieImdbId(nodeImdbNumber.InnerText))
+              {
+                movie.IMDBNumber = nodeImdbNumber.InnerText;
+              }
+            }
+
+            #endregion
+
+            #region CD/DVD labels
+
+            // CD label
+            movie.CDLabel = string.Empty;
+
+            // DVD label
+            movie.DVDLabel = string.Empty;
+
+            #endregion
+
+            #region Director
+
+            // Director
+            if (nodeDirector != null)
+            {
+              movie.Director = nodeDirector.InnerText;
+              movie.DirectorID = VideoDatabase.AddActor(string.Empty, movie.Director);
+            }
+
+            #endregion
+
+            #region Studio
+
+            // Studio
+            if (nodeStudio != null)
+            {
+              movie.Studios = nodeStudio.InnerText;
+            }
+
+            #endregion
+
+            #region MPAA
+
+            // MPAA
+            if (nodeMpaa != null)
+            {
+              movie.MPARating = nodeMpaa.InnerText;
             }
             else
             {
-              string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
-              MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
-              if (mc.Count > 0)
+              movie.MPARating = "NR";
+            }
+            
+            #endregion
+            
+            #region Plot/Short plot
+
+            // Plot
+            if (nodePlot != null)
+            {
+              movie.Plot = nodePlot.InnerText;
+            }
+            else
+            {
+              movie.Plot = string.Empty;
+            }
+            // Short plot
+            if (nodePlotShort != null)
+            {
+              movie.PlotOutline = nodePlotShort.InnerText;
+            }
+            else
+            {
+              movie.PlotOutline = string.Empty;
+            }
+
+            #endregion
+
+            #region Review
+
+            // Title
+            if (nodeReview != null)
+            {
+              movie.UserReview = nodeReview.InnerText;
+            }
+
+            #endregion
+
+            #region Rating (n.n/10)
+
+            // Rating
+            if (nodeRating != null)
+            {
+              double rating = 0;
+              if (Double.TryParse(nodeRating.InnerText, out rating))
               {
-                foreach (Match m in mc)
+                movie.Rating = (float) rating;
+                
+                if (movie.Rating > 10.0f)
                 {
-                  int hours = 0;
-                  Int32.TryParse(m.Groups["h"].Value, out hours);
-                  int minutes = 0;
-                  Int32.TryParse(m.Groups["m"].Value, out minutes);
-                  hours = hours * 60;
-                  minutes = hours + minutes;
-                  movie.RunTime = minutes;
+                  movie.Rating /= 10.0f;
                 }
               }
             }
-          }
-          else
-          {
-            movie.RunTime = 0;
-          }
-          // Search string
-          movie.SearchString = string.Empty;
-          // Tagline
-          if (nodeTagline != null)
-          {
-            movie.TagLine = nodeTagline.InnerText;
-          }
-          // Poster
-          if (nodePoster != null)
-          {
 
-            movie.ThumbURL = nodePoster.InnerText;
-          }
-          // Fanart
-          if (nodeFanart != null)
-          {
-            movie.FanartURL = nodeFanart.InnerText;
-          }
-          // Title
-          movie.Title = nodeTitle.InnerText;
-          // Top250
-          if (nodeTop250 != null)
-          {
-            int top250 = 0;
-            Int32.TryParse(nodeTop250.InnerText, out top250);
-            movie.Top250 = top250;
-          }
-          else
-          {
-            movie.Top250 = 0;
-          }
-          // Votes
-          if (nodeVotes != null)
-          {
-            movie.Votes = nodeVotes.InnerText;
-          }
-          // Watched
-          if (nodeWatched != null)
-          {
-            if (nodeWatched.InnerText == "true")
-            {
-              movie.Watched = 1;
-              VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
-            }
-            else
-            {
-              movie.Watched = 0;
-              VideoDatabase.SetMovieWatchedStatus(movie.ID, false, 0);
-            }
-          }
-          // Watched count
-          if (nodePlayCount != null)
-          {
-            int watchedCount = 0;
-            Int32.TryParse(nodePlayCount.InnerText, out watchedCount);
-            SetMovieWatchedCount(movie.ID, watchedCount);
-          }
-          // Writing credits
-          movie.WritingCredits = credits;
-          // Year
-          if (nodeYear != null)
-          {
-            int year = 0;
-            Int32.TryParse(nodeYear.InnerText, out year);
-            movie.Year = year;
-          }
-          else
-          {
-            movie.Year = 0;
-          }
+            #endregion
 
-          // Cast parse
-          string cast = string.Empty;
-          XmlNodeList actorsList = nodeMovie.SelectNodes("actor");
-          foreach (XmlNode nodeActor in actorsList)
-          {
-            string name = string.Empty;
-            string role = string.Empty;
-            string actorImdbId = string.Empty;
-            string line = string.Empty;
-            XmlNode nodeActorName = nodeActor.SelectSingleNode("name");
-            XmlNode nodeActorRole = nodeActor.SelectSingleNode("role");
-            XmlNode nodeActorImdbId = nodeActor.SelectSingleNode("imdb");
-            if (nodeActorName != null && nodeActorName.InnerText != null)
+            #region Duration
+
+            // Duration
+            if (nodeDuration != null)
             {
-              name = nodeActorName.InnerText;
-            }
-            if (nodeActorRole != null && nodeActorRole.InnerText != null)
-            {
-              role = nodeActorRole.InnerText;
-            }
-            if (nodeActorImdbId != null)
-            {
-              actorImdbId = nodeActorImdbId.InnerText;
-            }
-            if (!string.IsNullOrEmpty(name))
-            {
-              if (!string.IsNullOrEmpty(role))
+              int runtime = 0;
+              if (Int32.TryParse(nodeDuration.InnerText, out runtime))
               {
-                line = String.Format("{0} as {1}\n", name, role);
+                movie.RunTime = runtime;
               }
               else
               {
-                line = String.Format("{0}\n", name);
+                string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
+                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
+                if (mc.Count > 0)
+                {
+                  foreach (Match m in mc)
+                  {
+                    int hours = 0;
+                    Int32.TryParse(m.Groups["h"].Value, out hours);
+                    int minutes = 0;
+                    Int32.TryParse(m.Groups["m"].Value, out minutes);
+                    hours = hours*60;
+                    minutes = hours + minutes;
+                    movie.RunTime = minutes;
+                  }
+                }
               }
-              cast += line;
-
-              if (!VideoDatabase.CheckActorImdbId(actorImdbId))
-              {
-                actorImdbId = string.Empty;
-              }
-              int actId = VideoDatabase.AddActor(actorImdbId, name);
-              if (string.IsNullOrEmpty(role))
-              {
-                role = string.Empty;
-              }
-              VideoDatabase.AddActorToMovie(id, actId, role);
             }
+            else
+            {
+              movie.RunTime = 0;
+            }
+
+            #endregion
+
+            // Search string
+            movie.SearchString = string.Empty;
+
+            #region Tagline
+
+            // Tagline
+            if (nodeTagline != null)
+            {
+              movie.TagLine = nodeTagline.InnerText;
+            }
+
+            #endregion
+
+            #region TOP250
+
+            // Top250
+            if (nodeTop250 != null)
+            {
+              int top250 = 0;
+              Int32.TryParse(nodeTop250.InnerText, out top250);
+              movie.Top250 = top250;
+            }
+            else
+            {
+              movie.Top250 = 0;
+            }
+
+
+            #endregion
+
+            #region votes
+
+            // Votes
+            if (nodeVotes != null)
+            {
+              movie.Votes = nodeVotes.InnerText;
+            }
+
+            #endregion
+
+            #region Watched/watched count
+
+            // Watched
+            if (nodeWatched != null)
+            {
+              if (nodeWatched.InnerText == "true" || nodeWatched.InnerText == "1")
+              {
+                movie.Watched = 1;
+                VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
+              }
+              else
+              {
+                movie.Watched = 0;
+                VideoDatabase.SetMovieWatchedStatus(movie.ID, false, 0);
+              }
+            }
+            // Watched count
+            if (nodePlayCount != null)
+            {
+              int watchedCount = 0;
+              Int32.TryParse(nodePlayCount.InnerText, out watchedCount);
+              SetMovieWatchedCount(movie.ID, watchedCount);
+            }
+
+            #endregion
+
+            #region Year
+
+            // Year
+            if (nodeYear != null)
+            {
+              int year = 0;
+              Int32.TryParse(nodeYear.InnerText, out year);
+              movie.Year = year;
+            }
+
+            #endregion
+
+            #region poster
+
+            // Poster
+            if (nodePoster != null)
+            {
+              string thumbJpgFile = path + @"\" + Util.Utils.GetFilename(nodePoster.InnerText, true) + ".jpg";
+              string thumbTbnFile = path + @"\" + Util.Utils.GetFilename(nodePoster.InnerText, true) + ".tbn";
+              string titleExt = movie.Title + "{" + id + "}";
+              
+              if (File.Exists(thumbJpgFile))
+              {
+                movie.ThumbURL = thumbJpgFile;
+                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+
+                if (Util.Picture.CreateThumbnail(thumbJpgFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
+                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+                {
+                  Util.Picture.CreateThumbnail(thumbJpgFile, coverArt, (int)Thumbs.ThumbResolution,
+                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+                }
+              }
+              else if (File.Exists(thumbTbnFile))
+              {
+                movie.ThumbURL = thumbTbnFile;
+                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+                
+                if (Util.Picture.CreateThumbnail(thumbTbnFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
+                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+                {
+                  Util.Picture.CreateThumbnail(thumbTbnFile, coverArt, (int)Thumbs.ThumbResolution,
+                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+                }
+              }
+            }
+
+            #endregion
+
+            #region Fanart
+
+            // Fanart
+            if (nodeFanart != null)
+            {
+              string faFile = path + @"\" + nodeFanart.InnerText;
+
+              if (!File.Exists(faFile))
+              {
+                faFile = path + @"\fanart.jpg";
+                
+                if (!File.Exists(faFile))
+                {
+                  faFile = string.Empty;
+                }
+              }
+              FanArt fa = new FanArt();
+              if (faFile == string.Empty && CheckMovieImdbId(movie.IMDBNumber))
+              {
+                fa.GetTmdbFanartByApi(id, movie.IMDBNumber, "", true, 1, "");
+              }
+              else
+              {
+                fa.GetLocalFanart(id, "file://" + faFile, 0);
+                movie.FanartURL = faFile;
+              }
+            }
+
+            #endregion
+
+            #region Cast
+
+            // Cast parse
+            XmlNodeList actorsList = nodeMovie.SelectNodes("actor");
+            foreach (XmlNode nodeActor in actorsList)
+            {
+              string name = string.Empty;
+              string role = string.Empty;
+              string actorImdbId = string.Empty;
+              string line = string.Empty;
+              XmlNode nodeActorName = nodeActor.SelectSingleNode("name");
+              XmlNode nodeActorRole = nodeActor.SelectSingleNode("role");
+              XmlNode nodeActorImdbId = nodeActor.SelectSingleNode("imdb");
+              if (nodeActorName != null && nodeActorName.InnerText != null)
+              {
+                name = nodeActorName.InnerText;
+              }
+              if (nodeActorRole != null && nodeActorRole.InnerText != null)
+              {
+                role = nodeActorRole.InnerText;
+              }
+              if (nodeActorImdbId != null)
+              {
+                if (CheckActorImdbId(nodeActorImdbId.InnerText))
+                {
+                  actorImdbId = nodeActorImdbId.InnerText;
+                }
+              }
+              if (!string.IsNullOrEmpty(name))
+              {
+                if (!string.IsNullOrEmpty(role))
+                {
+                  line = String.Format("{0} as {1}\n", name, role);
+                }
+                else
+                {
+                  line = String.Format("{0}\n", name);
+                }
+                cast += line;
+
+                int actId = VideoDatabase.AddActor(actorImdbId, name);
+                
+                VideoDatabase.AddActorToMovie(id, actId, role);
+              }
+            }
+            // Cast
+            movie.Cast = cast;
+
+            #endregion
+
+            VideoDatabase.SetMovieInfoById(id, ref movie);
           }
-          // Cast
-          movie.Cast = cast;
-          VideoDatabase.SetMovieInfoById(id, ref movie);
         }
       }
+      catch (Exception ex)
+      {
+        Log.Error("Error importing nfo file {0}:{1} ", nfoFile, ex);
+      }
+    }
+
+    public void MakeNfo (int movieId)
+    {
+      string moviePath = string.Empty;
+      string movieFile = string.Empty;
+      ArrayList movieFiles = new ArrayList();
+
+      GetFilesForMovie(movieId, ref movieFiles);
+      IMDBMovie movieDetails = new IMDBMovie();
+      GetMovieInfoById(movieId, ref movieDetails);
+      moviePath = movieDetails.Path;
     }
 
     public void GetVideoFiles(string path, ref ArrayList availableFiles)
@@ -4478,7 +4702,7 @@ namespace MediaPortal.Video.Database
           {
             if (item.Label != "..")
             {
-              if (item.Path.ToUpperInvariant().IndexOf("VIDEO_TS") >= 0)
+              if (item.Path.IndexOf("VIDEO_TS", StringComparison.InvariantCultureIgnoreCase) >= 0)
               {
                 string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
                 availableFiles.Add(strFile);

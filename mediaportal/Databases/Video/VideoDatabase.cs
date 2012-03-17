@@ -531,6 +531,11 @@ namespace MediaPortal.Video.Database
       _database.ImportNfo(nfoFile);
     }
 
+    public static void MakeNfo (int movieId)
+    {
+      _database.MakeInfo(movieId);
+    }
+
     /// <summary>
     /// Returns all video files from path (for files with videoextension defined in MP)
     /// </summary>

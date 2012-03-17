@@ -2825,7 +2825,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonImport
       // 
-      this.buttonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonImport.Location = new System.Drawing.Point(6, 19);
       this.buttonImport.Name = "buttonImport";
       this.buttonImport.Size = new System.Drawing.Size(76, 27);

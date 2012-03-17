@@ -210,8 +210,12 @@ namespace MediaPortal.Video.Database
           // Every movie in it's own folder?
           if (folderTitle)
           {
-            localCover = moviePath + @"\folder.jpg";
-            if (File.Exists(localCover))
+            string folderCover = moviePath + @"\folder.jpg";
+            if (File.Exists(folderCover))
+            {
+              _movieDetails.ThumbURL = "file://" + folderCover;
+            }
+            else if (File.Exists(localCover))
             {
               _movieDetails.ThumbURL = "file://" + localCover;
             }
