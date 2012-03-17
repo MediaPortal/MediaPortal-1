@@ -1116,6 +1116,14 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     /// <summary>
+    /// Start the ci handler with the graph
+    /// </summary>
+    internal void OnStartGraph()
+    {
+      StartCiHandlerThread();
+    }
+
+    /// <summary>
     /// Set parameter to null when stopping the Graph.
     /// </summary>
     public void OnStopGraph()
