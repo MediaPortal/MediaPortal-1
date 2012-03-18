@@ -313,19 +313,26 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
     m_hnsPeriod = devicePeriodData;
 
+    if (forceChannelMixingData > 0)
+      m_bForceChannelMixing = true;
+    else
+      m_bForceChannelMixing = false;
+
     // TODO validate channel mask
     if (speakerConfigData > 0)
     {
       m_lSpeakerConfig = speakerConfigData;
       m_lSpeakerCount = ChannelCount(m_lSpeakerConfig);
+
+      if (AC3EncodingForced && m_lSpeakerCount > 6 && m_bForceChannelMixing)
+      {
+        m_lSpeakerConfig = KSAUDIO_SPEAKER_5POINT1_SURROUND;
+        m_lSpeakerCount = 6;
+        Log("   Warning: incompatible settings. ForceChannelMixing + AC3 encoding forced + more than 6 channels");
+      }
     }
     else
       m_lSpeakerConfig = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
-
-    if (forceChannelMixingData > 0)
-      m_bForceChannelMixing = true;
-    else
-      m_bForceChannelMixing = false;
 
     if (quality_USE_QUICKSEEKData > 0)
       m_bQuality_USE_QUICKSEEK = true;
