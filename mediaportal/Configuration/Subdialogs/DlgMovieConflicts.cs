@@ -284,6 +284,12 @@ namespace MediaPortal.Configuration.Sections
           string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
           strMovieName = Path.GetFileName(dvdFolder);
         }
+        else if (strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
+        {
+          // BD folder
+          string bdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV"));
+          strMovieName = Path.GetFileName(bdFolder);
+        }
         else
         {
           // Movie - Movie folder title + remove CD from title

@@ -2676,7 +2676,7 @@ namespace MediaPortal.Configuration.Sections
         string path, filename;
         Util.Utils.Split(fileDVD, out path, out filename);
 
-        if (filename.ToUpper() == "VIDEO_TS.IFO")
+        if (filename.ToUpper() == "VIDEO_TS.IFO" || filename.ToUpper() == "INDEX.BDMV")
         {
           string directoryDVD = path.Substring(0, path.LastIndexOf("\\"));
           if (Directory.Exists(directoryDVD))

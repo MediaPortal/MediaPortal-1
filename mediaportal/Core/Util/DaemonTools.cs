@@ -21,8 +21,10 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.Player;
 
 namespace MediaPortal.Util
 {
@@ -93,6 +95,14 @@ namespace MediaPortal.Util
 
     public static bool Mount(string IsoFile, out string VirtualDrive)
     {
+      if (g_Player.Playing)
+      {
+        //string file = g_Player.CurrentFile;
+        //if (g_Player.CheckIfImage(file))
+        {
+          g_Player.Stop();
+        }
+      }
       VirtualDrive = string.Empty;
       if (IsoFile == null) return false;
       if (IsoFile == string.Empty) return false;
@@ -141,6 +151,7 @@ namespace MediaPortal.Util
           return false;
         }
       }
+      RemovableDriveHelper.SetMountTime(DateTime.Now);
       VirtualDrive = _Drive;
       _MountedIsoFile = IsoFile;
       Log.Debug("Mount time: {0}s", String.Format("{0:N}", (DateTime.Now - startTime).TotalSeconds));
@@ -188,6 +199,14 @@ namespace MediaPortal.Util
       //  if (ext.Equals(extension))
       //    return true;
       //return false;
+    }
+
+    /// <summary>
+    /// Returns current mounted ISO filename with full path
+    /// </summary>
+    public static string MountedIsoFile
+    {
+      get { return _MountedIsoFile; }
     }
   }
 }

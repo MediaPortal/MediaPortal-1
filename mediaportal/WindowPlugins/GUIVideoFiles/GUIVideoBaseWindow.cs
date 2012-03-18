@@ -510,8 +510,7 @@ namespace MediaPortal.GUI.Video
       }
       dlg.Reset();
       dlg.SetHeading(495); // Sort options
-      
-      // Watch for enums in VideoSort.cs
+
       // Watch for enums in VideoSort.cs
       dlg.AddLocalizedString(365); // name
       dlg.AddLocalizedString(104); // date created (date)
@@ -697,6 +696,21 @@ namespace MediaPortal.GUI.Video
         GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
       }
       selectDVDHandler.OnPlayDVD(drive, GetID);
+    }
+
+    protected void OnPlayBD(String drive, int parentId)
+    {
+      ISelectBDHandler selectBDHandler;
+      if (GlobalServiceProvider.IsRegistered<ISelectBDHandler>())
+      {
+        selectBDHandler = GlobalServiceProvider.Get<ISelectBDHandler>();
+      }
+      else
+      {
+        selectBDHandler = new SelectBDHandler();
+        GlobalServiceProvider.Add<ISelectBDHandler>(selectBDHandler);
+      }
+      selectBDHandler.OnPlayBD(drive, GetID);
     }
 
     protected void OnPlayFiles(System.Collections.ArrayList filesList)

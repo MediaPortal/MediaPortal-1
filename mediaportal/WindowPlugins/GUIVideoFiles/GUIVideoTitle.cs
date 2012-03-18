@@ -1758,7 +1758,7 @@ namespace MediaPortal.GUI.Video
           // Iterate unlocked shares against current item path
           foreach (string share in _currentProtectedShare)
           {
-            if (!directory.ToLower().Contains(share.ToLower()))
+          if (!directory.ToUpperInvariant().Contains(share.ToUpperInvariant()))
             {
               continue;
             }

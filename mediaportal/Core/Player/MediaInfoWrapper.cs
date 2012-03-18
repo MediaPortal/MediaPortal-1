@@ -136,7 +136,10 @@ namespace MediaPortal.Player
 
           if (!File.Exists(strFile))
           {
-            return;
+            strFile = Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv";
+
+            if (!File.Exists(strFile))
+              return;
           }
         }
         
@@ -159,7 +162,12 @@ namespace MediaPortal.Player
           // get all other info from main title's 1st vob
           strFile = mainTitle;
         }
-        
+        else if (strFile.ToLower().EndsWith(".bdmv"))
+        {
+          string path = Path.GetDirectoryName(strFile) + @"\STREAM";
+          strFile = GetLargestFileInDirectory(path, "*.m2ts");
+        }
+
         _mI.Open(strFile);
 
         NumberFormatInfo providerNumber = new NumberFormatInfo();

@@ -120,6 +120,22 @@ namespace MediaPortal.Util
       return true;
     }
 
+    /// <summary>
+    /// Provides system last mount
+    /// </summary>
+    public static void SetMountTime(DateTime mountTime)
+    {
+      _mountTime = mountTime;
+    }
+
+    /// <summary>
+    /// Provides system last mount time
+    /// </summary>
+    public static void SetExamineCDTime(DateTime ExamineCDTime)
+    {
+      _examineCDTime = ExamineCDTime;
+    }
+
     #endregion
 
     #region private methods
@@ -152,6 +168,12 @@ namespace MediaPortal.Util
       char volumeLetter = GetVolumeLetter(volumeInformation.UnitMask);
       string path = (volumeLetter + @":").ToUpperInvariant();
       string driveName = Utils.GetDriveName(path);
+
+      _volumeInsertTime = DateTime.Now;
+      TimeSpan tsMount = DateTime.Now - _mountTime;
+      TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
+      TimeSpan tsVolumeRemoval = DateTime.Now - _volumeRemovalTime;
+
       if (Utils.IsRemovable(path) || Utils.IsHD(path))
       {
         Log.Debug("Detected new device: {0}", volumeLetter);
@@ -163,7 +185,18 @@ namespace MediaPortal.Util
       }
       else if (Utils.IsDVD(path))
       {
-        Log.Debug("Detected new optical media: {0}", volumeLetter);
+        // AnyDVD is causing media removed & inserted events when waking up from S3/S4 
+        // We need to filter out those as it could trigger false autoplay event 
+        if (tsExamineCD.TotalMilliseconds < _volumeRemovalDelay
+          || (tsVolumeRemoval.TotalMilliseconds < _volumeRemovalDelay || tsMount.TotalMilliseconds < _volumeRemovalDelay))
+        {
+          Log.Error("Ignoring volume inserted event - drive {0} - timespan examineCD {1} s - timespan mount {2} s - timespan volume removal {3} s",
+            volumeLetter, tsExamineCD.TotalMilliseconds / 1000, tsMount.TotalMilliseconds / 1000, tsVolumeRemoval.TotalMilliseconds / 1000);
+          Log.Debug("   _volumeRemovalDelay = {1}", _volumeRemovalDelay);
+          return false;
+        }
+
+        Log.Error("Detected new optical media: {0}", volumeLetter);
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED, 0, 0, 0, 0, 0, 0);
         msg.Label = path;
         GUIGraphicsContext.SendMessage(msg);
@@ -181,6 +214,12 @@ namespace MediaPortal.Util
     {
       char volumeLetter = GetVolumeLetter(volumeInformation.UnitMask);
       string path = (volumeLetter + @":").ToUpperInvariant();
+      
+      _volumeRemovalTime = DateTime.Now;
+      TimeSpan tsMount = DateTime.Now - _mountTime;
+      TimeSpan tsExamineCD = DateTime.Now - _examineCDTime;
+      TimeSpan tsVolumeInsert = DateTime.Now - _volumeInsertTime;
+            
       if (!Utils.IsDVD(path))
       {
         Log.Debug("Detected device remove: {0}", volumeLetter);
@@ -192,7 +231,17 @@ namespace MediaPortal.Util
       }
       else if (Utils.IsDVD(path))
       {
-        Log.Debug("Detected optical media removal: {0}", volumeLetter);
+
+        // AnyDVD is causing media removed & inserted events when Mount/Unmount Volume
+        // We need to filter out those as it could trigger false autoplay event
+        if (tsExamineCD.TotalMilliseconds < _volumeRemovalDelay || tsMount.TotalMilliseconds < _volumeRemovalDelay || tsVolumeInsert.TotalMilliseconds < _volumeRemovalDelay)
+        { 
+          Log.Error("Ignoring volume removed event - drive {0} - time after examineCD {1} s - time after Mount {2} s - time after VolumeInsert {3} s",
+            volumeLetter, tsExamineCD.TotalMilliseconds / 1000, tsMount.TotalMilliseconds / 1000, tsVolumeInsert.TotalMilliseconds / 1000);
+          return false;
+        }
+        Log.Error("Detected optical media removal: {0}", volumeLetter);
+        Log.Debug("  time after ExamineCD {0} s", tsExamineCD.TotalMilliseconds / 1000);
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED, 0, 0, 0, 0, 0, 0);
         msg.Label = path;
         GUIGraphicsContext.SendMessage(msg);
@@ -364,6 +413,13 @@ namespace MediaPortal.Util
     private const int DBT_DEVICEARRIVAL = 0x8000;
     private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
     private const int DBT_DEVTYPE_VOLUME = 2;
+
+    // For event filtering
+    private static DateTime _mountTime = new DateTime();    
+    private static DateTime _examineCDTime = new DateTime();
+    private static DateTime _volumeRemovalTime = new DateTime();
+    private static DateTime _volumeInsertTime = new DateTime();
+    private static int _volumeRemovalDelay = 5000; // In milliseconds
 
     #endregion
 

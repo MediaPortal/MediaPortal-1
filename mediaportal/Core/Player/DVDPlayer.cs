@@ -826,7 +826,12 @@ namespace MediaPortal.Player
                   // subsequent playback.
                 case DvdDomain.Stop:
                   Log.Debug("EVT:DVDPlayer:domain=stop");
-                  Stop();
+                  //Fix unmounting/mounting for the same volume (i.e AnyDVD) 
+                  if (!File.Exists(g_Player.CurrentFile))
+                  {
+                    Log.Debug("EVT:DVDPlayer:domain=stop");
+                    Stop();
+                  }
                   break;
                 case DvdDomain.VideoManagerMenu:
                   Log.Debug("EVT:DVDPlayer:domain=videomanagermenu (menu)");

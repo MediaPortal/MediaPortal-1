@@ -43,6 +43,8 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox wmvGroupBox;
     private MPCheckBox wmvCheckBox;
     private MPLabel mpLabel2;
+    private MPLabel mpLabel1;
+    private MPTextBox extensionsTextBox;
     private bool _init = false;
 
     public MoviePlayer()
@@ -68,6 +70,12 @@ namespace MediaPortal.Configuration.Sections
       LoadSettings();
     }
 
+    public override void OnSectionDeActivated()
+    {
+      base.OnSectionDeActivated();
+      SaveSettings();
+    }
+
     /// <summary>
     /// Loads the movie player settings
     /// </summary>
@@ -84,6 +92,7 @@ namespace MediaPortal.Configuration.Sections
         externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
         externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
         wmvCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "wmvaudio", false);
+        extensionsTextBox.Text = xmlreader.GetValueAsString("movieplayer", "extensions", "");
       }
     }
 
@@ -102,6 +111,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);
         xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
         xmlwriter.SetValueAsBool("movieplayer", "wmvaudio", wmvCheckBox.Checked);
+        xmlwriter.SetValue("movieplayer", "extensions", extensionsTextBox.Text.Trim());
       }
     }
 
@@ -119,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
       }
       base.Dispose(disposing);
     }
-
+    
     #region Designer generated code
 
     /// <summary>
@@ -129,6 +139,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBoxExternalPlayer = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.extensionsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.externalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.parametersTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -146,10 +158,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxExternalPlayer
       // 
-      this.groupBoxExternalPlayer.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxExternalPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxExternalPlayer.Controls.Add(this.mpLabel1);
+      this.groupBoxExternalPlayer.Controls.Add(this.extensionsTextBox);
       this.groupBoxExternalPlayer.Controls.Add(this.externalPlayerCheckBox);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersButton);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersTextBox);
@@ -160,16 +172,39 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxExternalPlayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxExternalPlayer.Location = new System.Drawing.Point(3, 71);
       this.groupBoxExternalPlayer.Name = "groupBoxExternalPlayer";
-      this.groupBoxExternalPlayer.Size = new System.Drawing.Size(472, 112);
+      this.groupBoxExternalPlayer.Size = new System.Drawing.Size(466, 191);
       this.groupBoxExternalPlayer.TabIndex = 1;
       this.groupBoxExternalPlayer.TabStop = false;
       this.groupBoxExternalPlayer.Text = "External player";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(34, 122);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(383, 26);
+      this.mpLabel1.TabIndex = 9;
+      this.mpLabel1.Text = "Video files extension filter to use external player only for specific file(s)\r\n(u" +
+          "se semi colon to separate extensions [e.g.: .avi; .mkv], leave empty for all fil" +
+          "es)";
+      // 
+      // extensionsTextBox
+      // 
+      this.extensionsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionsTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.extensionsTextBox.CharacterCasing = System.Windows.Forms.CharacterCasing.Lower;
+      this.extensionsTextBox.Location = new System.Drawing.Point(37, 161);
+      this.extensionsTextBox.Name = "extensionsTextBox";
+      this.extensionsTextBox.Size = new System.Drawing.Size(413, 20);
+      this.extensionsTextBox.TabIndex = 8;
+      this.extensionsTextBox.WordWrap = false;
       // 
       // externalPlayerCheckBox
       // 
       this.externalPlayerCheckBox.AutoSize = true;
       this.externalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.externalPlayerCheckBox.Location = new System.Drawing.Point(19, 28);
+      this.externalPlayerCheckBox.Location = new System.Drawing.Point(19, 93);
       this.externalPlayerCheckBox.Name = "externalPlayerCheckBox";
       this.externalPlayerCheckBox.Size = new System.Drawing.Size(231, 17);
       this.externalPlayerCheckBox.TabIndex = 0;
@@ -179,10 +214,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersButton
       // 
-      this.parametersButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersButton.Location = new System.Drawing.Point(384, 84);
+      this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersButton.Location = new System.Drawing.Point(378, 50);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 6;
@@ -192,19 +225,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.parametersTextBox.Location = new System.Drawing.Point(168, 84);
+      this.parametersTextBox.Location = new System.Drawing.Point(168, 50);
       this.parametersTextBox.Name = "parametersTextBox";
-      this.parametersTextBox.Size = new System.Drawing.Size(208, 20);
+      this.parametersTextBox.Size = new System.Drawing.Size(202, 20);
       this.parametersTextBox.TabIndex = 5;
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 88);
+      this.label2.Location = new System.Drawing.Point(16, 54);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 15);
       this.label2.TabIndex = 4;
@@ -212,10 +243,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.Location = new System.Drawing.Point(384, 60);
+      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Location = new System.Drawing.Point(378, 26);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;
@@ -225,19 +254,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.fileNameTextBox.Location = new System.Drawing.Point(168, 60);
+      this.fileNameTextBox.Location = new System.Drawing.Point(168, 26);
       this.fileNameTextBox.Name = "fileNameTextBox";
-      this.fileNameTextBox.Size = new System.Drawing.Size(208, 20);
+      this.fileNameTextBox.Size = new System.Drawing.Size(202, 20);
       this.fileNameTextBox.TabIndex = 2;
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 64);
+      this.label1.Location = new System.Drawing.Point(16, 30);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(80, 16);
       this.label1.TabIndex = 1;
@@ -245,16 +272,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // wmvGroupBox
       // 
-      this.wmvGroupBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.wmvGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.wmvGroupBox.Location = new System.Drawing.Point(3, 3);
       this.wmvGroupBox.Name = "wmvGroupBox";
-      this.wmvGroupBox.Size = new System.Drawing.Size(472, 62);
+      this.wmvGroupBox.Size = new System.Drawing.Size(466, 62);
       this.wmvGroupBox.TabIndex = 7;
       this.wmvGroupBox.TabStop = false;
       this.wmvGroupBox.Text = "WMV playback (internal player)";
@@ -289,6 +314,7 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.ResumeLayout(false);
       this.wmvGroupBox.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -301,7 +327,12 @@ namespace MediaPortal.Configuration.Sections
     private void externalPlayerCheckBox_CheckedChanged(object sender, EventArgs e)
     {
       fileNameTextBox.Enabled =
-        fileNameButton.Enabled = parametersTextBox.Enabled = parametersButton.Enabled = externalPlayerCheckBox.Checked;
+        fileNameButton.Enabled =
+        parametersTextBox.Enabled =
+        parametersButton.Enabled =
+        extensionsTextBox.Enabled =
+        externalPlayerCheckBox.Checked;
+
     }
 
     /// <summary>
@@ -336,6 +367,7 @@ namespace MediaPortal.Configuration.Sections
     {
       ParameterForm parameters = new ParameterForm();
       parameters.AddParameter("%filename%", "Will be replaced by currently selected media file");
+      parameters.AddParameter("%root%", "Will be replaced by root directory from currently selected media file");
       if (parameters.ShowDialog(parametersButton) == DialogResult.OK)
       {
         parametersTextBox.Text += parameters.SelectedParameter;

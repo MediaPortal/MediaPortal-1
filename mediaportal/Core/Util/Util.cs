@@ -825,8 +825,8 @@ namespace MediaPortal.Util
         return;
       }
 
-      // Do not try to create thumbnails for DVDs
-      if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO"))
+      // Do not try to create thumbnails for DVDs/BDs
+      if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO") || path.Contains("BDMV\\index.bdmv"))
       {
         return;
       }
@@ -1304,6 +1304,114 @@ namespace MediaPortal.Util
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
       if (getDriveType(strDrive) == 2) return true;
+      return false;
+    }
+
+    // Check if filename is from mounted ISO image
+    public static bool IsISOImage(string fileName)
+    {
+      string extension = Path.GetExtension(fileName).ToLower();
+      if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
+        return false;
+
+      string vDrive = DaemonTools.GetVirtualDrive();
+      string bDrive = Path.GetPathRoot(fileName);
+
+      if (vDrive == Util.Utils.RemoveTrailingSlash(bDrive))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is BluRay. Use after mounting image!!!
+    /// Returns changed filename as index.bdmv with full path if ISO is BluRay.
+    /// </summary>
+    /// <param name="bdIsoFilename"></param>
+    /// <param name="fileName"></param>
+    /// <returns>true/false and full index.bdmv path as filename</returns>
+    public static bool IsBDImage(string bdIsoFilename, ref string fileName)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(bdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string bdFilename = String.Format(@"{0}:\BDMV\index.bdmv", driverLetter);
+
+        if (File.Exists(bdFilename))
+        {
+          fileName = bdFilename;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is BluRay. Use after mounting image!!!
+    /// </summary>
+    /// <param name="bdIsoFilename"></param>
+    /// <returns></returns>
+    public static bool IsBDImage(string bdIsoFilename)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(bdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string fileName = String.Format(@"{0}:\BDMV\index.bdmv", driverLetter);
+
+        if (File.Exists(fileName))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is DVD. Use after mounting image!!!
+    /// </summary>
+    /// <param name="dvdIsoFilename"></param>
+    /// <returns>true/false</returns>
+    public static bool IsDVDImage(string dvdIsoFilename)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(dvdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+
+        if (File.Exists(fileName))
+        {
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is DVD and returns full path video_ts.ifo as filename. Use after mounting image!!!
+    /// </summary>
+    /// <param name="dvdIsoFilename"></param>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public static bool IsDVDImage(string dvdIsoFilename, ref string fileName)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(dvdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string dvdFileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+
+        if (File.Exists(dvdFileName))
+        {
+          fileName = dvdFileName;
+          return true;
+        }
+      }
       return false;
     }
 
@@ -1837,9 +1945,33 @@ namespace MediaPortal.Util
           {
             if (File.Exists(strPath))
             {
-              if (strParams.IndexOf("%filename%") >= 0)
-                strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
+              // %root% argument handling (TMT can only play BD/DVD/VCD images using root directory)
+              // other video files will go to the player with full path
+              if (strParams.IndexOf("%root%") >= 0)
+              {
+                DirectoryInfo dirInfo = new DirectoryInfo(strFile);
 
+                if (dirInfo.Parent != null)
+                {
+                  string dirLvl = dirInfo.Parent.ToString();
+
+                  // BluRay, DVD, VCD, HDDVD
+                  if (dirLvl.Equals("bdmv", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("video_ts", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("vcd", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("hddvd_ts", StringComparison.OrdinalIgnoreCase))
+                  {
+                    dirInfo = new DirectoryInfo(dirInfo.Parent.FullName);
+                    if (dirInfo.Parent != null)
+                      strFile = dirInfo.Parent.FullName;
+                  }
+                  strParams = strParams.Replace("%root%", "\"" + strFile + "\"");
+                }
+              }
+              // %filename% argument handling
+              else if (strParams.IndexOf("%filename%") >= 0)
+                strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
+              
               Process movieplayer = new Process();
               string strWorkingDir = Path.GetFullPath(strPath);
               string strFileName = Path.GetFileName(strPath);
@@ -1883,7 +2015,7 @@ namespace MediaPortal.Util
       }
       return false;
     }
-
+    
     public static DateTime longtodate(long ldate)
     {
       try
