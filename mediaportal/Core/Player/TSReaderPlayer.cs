@@ -45,6 +45,9 @@ namespace MediaPortal.Player
     protected ISubtitleStream _subtitleStream = null;
     protected TeletextReceiver _ttxtReceiver = null;
     protected ITeletextSource _teletextSource = null;
+    
+    //Set to false to use normal CoreCCParser - Set to true for using CoreCCParser H264 Build Test
+    protected bool CoreCCParserH264 = false;
 
     #endregion
 
@@ -572,7 +575,15 @@ namespace MediaPortal.Player
         filterCodec.CoreCCParser = null;
       }
       filterCodec.CoreCCParser = DirectShowUtil.GetFilterByName(_graphBuilder, "Core CC Parser");
-      if (filterCodec.CoreCCParser == null && _videoFormat.streamType == VideoStreamType.MPEG2)
+      if (filterCodec.CoreCCParser == null && _videoFormat.streamType == VideoStreamType.MPEG2 && !CoreCCParserH264)
+      {
+        if (filterConfig != null && filterConfig.OtherFilters.Contains("Core CC Parser") && filterConfig.enableCCSubtitles)
+        {
+          filterCodec.CoreCCParser = DirectShowUtil.AddFilterToGraph(_graphBuilder, "Core CC Parser");
+          CoreCCPresent = true;
+        }
+      }
+      else if (filterCodec.CoreCCParser == null && CoreCCParserH264)
       {
         if (filterConfig != null && filterConfig.OtherFilters.Contains("Core CC Parser") && filterConfig.enableCCSubtitles)
         {
@@ -582,11 +593,15 @@ namespace MediaPortal.Player
       }
       else
       {
-        if (filterCodec.CoreCCParser != null && _videoFormat.streamType == VideoStreamType.MPEG2)
+        if (filterCodec.CoreCCParser != null && _videoFormat.streamType == VideoStreamType.MPEG2 && !CoreCCParserH264)
         {
           CoreCCPresent = true;
         }
-        else if (filterCodec.CoreCCParser != null && _videoFormat.streamType == VideoStreamType.H264)
+        else if (filterCodec.CoreCCParser != null && CoreCCParserH264)
+        {
+          CoreCCPresent = true;
+        }
+        else if (filterCodec.CoreCCParser != null && _videoFormat.streamType == VideoStreamType.H264 && !CoreCCParserH264)
         {
           _graphBuilder.RemoveFilter(filterCodec.CoreCCParser);
           DirectShowUtil.ReleaseComObject(filterCodec.CoreCCParser);
