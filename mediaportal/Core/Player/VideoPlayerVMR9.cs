@@ -506,8 +506,15 @@ namespace MediaPortal.Player
         // add the VMR9 in the graph
         // after enabeling exclusive mode, if done first it causes MediPortal to minimize if for example the "Windows key" is pressed while playing a video
         Vmr9 = new VMR9Util();
-        Vmr9.AddVMR9(graphBuilder);
-        Vmr9.Enable(false);
+        if (File.Exists(m_strCurrentFile) && extension != ".dts" && extension != ".mp3" && extension != ".mka" && extension != ".ac3")
+        {
+          Vmr9.AddVMR9(graphBuilder);
+          Vmr9.Enable(false);
+        }
+        else
+        {
+          AudioOnly = true;
+        }
 
         if (extension == ".mpls" || extension == ".bdmv")
           filterConfig.bForceSourceSplitter = false;
@@ -611,7 +618,7 @@ namespace MediaPortal.Player
 
         // check if current "File" is a file... it could also be a URL
         // Directory.Getfiles, ... will other give us an exception
-        if (File.Exists(m_strCurrentFile))
+        if (File.Exists(m_strCurrentFile) && !AudioOnly)
         {
           //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
           string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile),
@@ -795,7 +802,7 @@ namespace MediaPortal.Player
 
         //EnableClock();
 
-        if (Vmr9 == null || !Vmr9.IsVMR9Connected)
+        if (Vmr9 == null || !Vmr9.IsVMR9Connected && !AudioOnly)
         {
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           mediaCtrl = null;

@@ -264,6 +264,7 @@ namespace MediaPortal.Player
     protected bool MediatypeVideo = false;
     protected bool MediatypeAudio = false;
     protected bool MediatypeSubtitle = false;
+    protected bool AudioOnly = false;
 
     public override double[] Chapters
     {
