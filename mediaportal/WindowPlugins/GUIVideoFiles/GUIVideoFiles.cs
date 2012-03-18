@@ -329,12 +329,12 @@ namespace MediaPortal.GUI.Video
       {
         VirtualDirectory vDir = new VirtualDirectory();
         vDir.LoadSettings("movies");
-        int pincode = 0;
-        bool folderPinProtected = vDir.IsProtectedShare(_currentFolder, out pincode);
-        if (folderPinProtected)
-        {
-          _currentFolder = string.Empty;
-        }
+        //int pincode = 0;
+        //bool folderPinProtected = vDir.IsProtectedShare(_currentFolder, out pincode);
+        //if (folderPinProtected)
+        //{
+        //  _currentFolder = string.Empty;
+        //}
       }
 
       if (_currentFolder.Length > 0 && !_virtualDirectory.IsRemote(_currentFolder))
@@ -1827,8 +1827,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    [Obsolete(
-      "This method is obsolete; use method PlayMovieFromPlayList(bool askForResumeMovie, bool requestPin) instead.")]
+    [Obsolete("This method is obsolete; use method PlayMovieFromPlayList(bool askForResumeMovie, bool requestPin) instead.")]
     public static void PlayMovieFromPlayList(bool askForResumeMovie)
     {
       PlayMovieFromPlayList(askForResumeMovie, -1, false);
@@ -3135,9 +3134,7 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-      catch (ThreadAbortException)
-      {
-      }
+      catch (ThreadAbortException) { }
     }
 
     public static void Reset()

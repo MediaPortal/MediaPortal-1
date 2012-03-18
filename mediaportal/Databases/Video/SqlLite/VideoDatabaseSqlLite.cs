@@ -4665,11 +4665,41 @@ namespace MediaPortal.Video.Database
       string moviePath = string.Empty;
       string movieFile = string.Empty;
       ArrayList movieFiles = new ArrayList();
+      string nfoFile = string.Empty;
 
       GetFilesForMovie(movieId, ref movieFiles);
+      movieFile = Util.Utils.GetFilename(movieFiles[0].ToString(), true);
+      nfoFile = movieFile + ".nfo";
+      
       IMDBMovie movieDetails = new IMDBMovie();
       GetMovieInfoById(movieId, ref movieDetails);
       moviePath = movieDetails.Path;
+
+      XmlDocument doc = new XmlDocument();
+      XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+      
+      XmlNode tagsNode = doc.CreateElement("movie");
+      
+      XmlNode tagNode = doc.CreateElement("title");
+      tagNode.InnerText = movieDetails.Title;
+      
+      tagsNode.AppendChild(tagNode);
+      doc.AppendChild(tagsNode);
+      
+      doc.InsertBefore(xmldecl, tagsNode);
+      doc.Save(nfoFile);
+    }
+
+    private XmlNode AddSimpleTag(string tagName, string value, XmlDocument doc)
+    {
+      XmlNode rootNode = doc.CreateElement("SimpleTag");
+      XmlNode nameNode = doc.CreateElement("name");
+      nameNode.InnerText = tagName;
+      XmlNode valueNode = doc.CreateElement("value");
+      valueNode.InnerText = value;
+      rootNode.AppendChild(nameNode);
+      rootNode.AppendChild(valueNode);
+      return rootNode;
     }
 
     public void GetVideoFiles(string path, ref ArrayList availableFiles)

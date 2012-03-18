@@ -1216,18 +1216,17 @@ namespace MediaPortal.Video.Database
               {
                 return false;
               }
-              //if (!fetcher.OnMovieNotFound(fetcher))
-              //{
-              //  return false;
-              //}
-              //if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
-              //{
-              //  return false;
-              //}
-              //if (strMovieName == string.Empty)
-              //{
-              //  return false;
-              //}
+              if (selectedMovie == -1)
+              {
+                if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
+                {
+                  return false;
+                }
+                if (strMovieName == string.Empty)
+                {
+                  return false;
+                }
+              }
             }
             else if (selectedMovie == -1)
             {
