@@ -612,6 +612,30 @@
     <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\00_plugin_other.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\01_plugin_other_off.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\02_plugin_window.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\03_plugin_window_off.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\04_plugin_process.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\05_plugin_process_off.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\06_plugin_externalplayers.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\07_plugin_externalplayers_off.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\08_plugin_window_home.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\09_plugin_window_plugins.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\10_plugin_other_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\11_plugin_other_off_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\12_plugin_window_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\13_plugin_window_off_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\14_plugin_process_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\15_plugin_process_off_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\16_plugin_externalplayers_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\17_plugin_externalplayers_off_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\18_plugin_window_home_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\19_plugin_window_plugins_incomp.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\20_alert-ovl.png" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListContextMenu\00_Enabled.png.bmp" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListContextMenu\01_Enabled_off.png.bmp" />
+    <EmbeddedResource Include="Sections\Images\Plugins\imageListMPInstaller\00_application.ico.bmp" />
     <EmbeddedResource Include="ConfigSplashScreen.resx">
       <DependentUpon>ConfigSplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>

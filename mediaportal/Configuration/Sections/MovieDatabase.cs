@@ -587,6 +587,10 @@ namespace MediaPortal.Configuration.Sections
         DlgMovieConflicts dlg = new DlgMovieConflicts();
         for (int i = 0; i < _conflictFiles.Count; ++i)
         {
+          if (_conflictFiles[i] == null)
+		  {
+            continue;
+		  }
           IMDBMovie currentMovie = (IMDBMovie)_conflictFiles[i];
           string strFileName = string.Empty;
           string path = currentMovie.Path;

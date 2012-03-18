@@ -206,6 +206,8 @@ private:
   int m_iPatVersion;
   int m_ReqPatVersion;
   int m_WaitNewPatTmo;
+  DWORD m_WaitGoodPatTmo;
+  bool m_bWaitGoodPat;
   int m_receivedPackets;
 
   bool m_bFirstGopFound;
@@ -249,4 +251,11 @@ private:
   float m_MinVideoDelta;
 
   bool m_bShuttingDown;
+  
+  int m_lastVidResX;
+  int m_lastVidResY;
+  
+  bool m_mpegParserReset;
+  bool m_bFirstGopParsed;
+
 };
