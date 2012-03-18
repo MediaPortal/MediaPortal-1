@@ -262,20 +262,37 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_bEnableSyncAdjustment = false;
 
-    if (AllowedValue(gAllowedSampleRates, sizeof(gAllowedSampleRates) / sizeof(int), forceSamplingRateData))
+    bool AC3EncodingForced = AC3EncodingData == FORCED;
+    bool sampleRateAllowed = AllowedValue(gAllowedSampleRates, sizeof(gAllowedSampleRates) / sizeof(int), forceSamplingRateData);
+    bool bitDepthAllowed = AllowedValue(gAllowedBitDepths, sizeof(gAllowedBitDepths) / sizeof(int), forceBitDepthData);
+
+    if (AC3EncodingForced)
+    {
+      if (sampleRateAllowed && (forceSamplingRateData != 48000 && forceSamplingRateData != 44100))
+      {
+        Log("   Warning: AC3 encoding forced and sampling rate set to non-matching!");
+        sampleRateAllowed = false;
+      }
+    }
+    else if (AC3EncodingData == AUTO && (forceSamplingRateData != 48000 && forceSamplingRateData != 44100))
+      Log("   Warning: Using other than 48000 hz or 44100 hz sampling rates will disable AC3 encoding!");
+
+    if (sampleRateAllowed || forceSamplingRateData == 0)
       m_nForceSamplingRate = forceSamplingRateData;
     else
     {
       m_nForceSamplingRate = 0;
-      Log("   invalid forced sample rate!");
+      if (forceSamplingRateData != 0)
+        Log("   invalid forced sample rate!");
     }
 
-    if (AllowedValue(gAllowedBitDepths, sizeof(gAllowedBitDepths) / sizeof(int), forceBitDepthData))
+    if (bitDepthAllowed && !AC3EncodingForced || forceBitDepthData == 0)
       m_nForceBitDepth = forceBitDepthData;
     else
     {
       m_nForceBitDepth = 0;
-      Log("   invalid forced bit depth!");
+      if (forceBitDepthData != 0)
+        Log("   invalid forced bit depth!");
     }
 
     if (AllowedValue(gAllowedResamplingQualities, sizeof(gAllowedResamplingQualities) / sizeof(int), resamplingQualityData))

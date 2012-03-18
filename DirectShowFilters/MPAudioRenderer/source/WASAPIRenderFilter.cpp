@@ -164,10 +164,14 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   bool sampleRateForced = (m_pSettings->m_nForceSamplingRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->Format.nSamplesPerSec);
   
   if ((bitDepthForced || sampleRateForced) &&
-    pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL ||
-    pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT && bitDepthForced)
-  return VFW_E_TYPE_NOT_ACCEPTED;
+       pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL ||
+       pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT && bitDepthForced)
+    return VFW_E_TYPE_NOT_ACCEPTED;
   
+  if (((bitDepthForced && m_pSettings->m_nForceBitDepth != pwfx->Format.wBitsPerSample) ||
+       (sampleRateForced && m_pSettings->m_nForceSamplingRate != pwfx->Format.nSamplesPerSec)))
+    return VFW_E_TYPE_NOT_ACCEPTED;
+
   HRESULT hr = VFW_E_CANNOT_CONNECT;
 
   if (!m_pAudioClient)
