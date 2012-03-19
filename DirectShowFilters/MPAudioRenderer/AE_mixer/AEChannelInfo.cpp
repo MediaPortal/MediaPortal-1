@@ -169,8 +169,8 @@ CAEChannelInfo& CAEChannelInfo::operator=(const enum AEStdChLayout rhs)
     // AC3
     {AE_CH_FC, AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_NULL},
-    {AE_CH_FL, AE_CH_FR, AE_CH_BC , AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_FC , AE_CH_NULL},
+    {AE_CH_FL, AE_CH_FR, AE_CH_BC , AE_CH_NULL},
     {AE_CH_FL, AE_CH_FC, AE_CH_FR , AE_CH_BC , AE_CH_NULL},
     {AE_CH_FL, AE_CH_FR, AE_CH_BL , AE_CH_BR , AE_CH_NULL},
     {AE_CH_FL, AE_CH_FC, AE_CH_FR , AE_CH_BL , AE_CH_BR , AE_CH_NULL},
