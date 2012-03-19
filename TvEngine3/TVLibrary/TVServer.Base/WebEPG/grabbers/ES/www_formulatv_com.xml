@@ -1,119 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="4" timezone="W. Europe Standard Time" version="2.0" />
+  <Info availableDays="4" timezone="" version="2.0" />
   <Channels>
     <Channel id="telecinco@telecinco.es" siteId="1/telecinco" />
     <Channel id="antena3@antena3.com" siteId="2/antena-3-television" />
     <Channel id="la1@rtve.es" siteId="3/la-1" />
     <Channel id="la2@rtve.es" siteId="4/la-2" />
-    <Channel id="canal+@plus.es" siteId="5/canal-plus" />
-    <Channel id="telemadrid@telemadrid.es" siteId="6/telemadrid" />
-    <Channel id="axn@axn.es" siteId="7/axn" />
-    <Channel id="etb2@eitb.com" siteId="8/euskal-telebista-2" />
-    <Channel id="tv-canaria@rtvc.es" siteId="9/tv-canaria" />
-    <Channel id="canal-9@rtvv.es" siteId="10/canal-9" />
-    <Channel id="tv3@tv3.cat" siteId="13/tv3" />
-    <Channel id="canalsur@canalsur.es" siteId="15/canal-sur" />
-    <Channel id="tvg@crtvg.es" siteId="18/tvg" />
-    <Channel id="calle13@calle13-es.com" siteId="19/calle-13" />
-    <Channel id="paramount-comedy@paramountcomedy.es" siteId="21/paramount-comedy" />
-    <Channel id="fox@foxtv.es" siteId="22/fox-espana" />
     <Channel id="cuatro@cuatro.com" siteId="25/cuatro" />
     <Channel id="lasexta@lasexta.com" siteId="26/lasexta" />
-    <Channel id="syfy@syfy.es" siteId="28/syfy-espana" />
+    <Channel id="sci-fi@scifi.es" siteId="28/sci-fi-espana" />
     <Channel id="teledeporte@rtve.es" siteId="30/teledeporte" />
     <Channel id="clan-tv@rtve.es" siteId="32/clan-tve" />
-    <Channel id="setenveo@setenveo.es" siteId="33/sony-entertainment-television" />
-    <Channel id="cosmopolitan@cosmopolitan.es" siteId="35/cosmopolitan" />
-    <Channel id="canal-hollywood@canalhollywood.es" siteId="36/canal-hollywood" />
-    <Channel id="mtv-españa@mtv.es" siteId="38/mtv-espana" />
-    <Channel id="viajar@sogecable.es" siteId="39/canal-viajar" />
-    <Channel id="eurosport@eurosport-tv.com" siteId="40/eurosport" />
-    <Channel id="national-geographic@nationalgeographic.com.es" siteId="41/national-geographic" />
-    <Channel id="discovery-channel@tudiscovery.com" siteId="42/discovery-channel" />
-    <Channel id="the-biography-channel@thebiographychannel.es" siteId="/43/the-biography-channel" />
-    <Channel id="sportmania@plus.es" siteId="44/sportmania" />
-    <Channel id="cartoon-network@cartoonnetwork.es" siteId="46/cartoon-network" />
+    <Channel id="the-biography-channel@thebiographychannel.es" siteId="43/the-biography-channel" />
     <Channel id="vh1@vh1.com" siteId="47/vh1" />
-    <Channel id="canal-historia@canalhistoria.com" siteId="48/canal-de-historia" />
     <Channel id="odisea@odisea.es" siteId="49/odisea" />
-    <Channel id="nick@nickelodeon.es" siteId="50/nick" />
-    <Channel id="disney-xd@disney.es" siteId="51/disney-xd" />
-    <Channel id="canal-cocina@canalcocina.es" siteId="52/canal-cocina" />
     <Channel id="40tv@prisa.com" siteId="53/40-tv" />
-    <Channel id="24h@rtve.es" siteId="55/canal-24-horas" />
-    <Channel id="intereconomia@intereconomia.com" siteId="56/intereconomia" />
     <Channel id="fdf@telecinco.es" siteId="57/fdf" />
-    <Channel id="la-siete@telecinco.es" siteId="58/la-siete" />
+    <Channel id="la siete@telecinco.es" siteId="58/la-siete" />
     <Channel id="veo7@veo.es" siteId="59/veo-tv" />
-    <Channel id="mtv-2@mtv.es" siteId="62/mtv-2" />
-    <Channel id="mtv-base@mtv.es" siteId="63/mtv-base" />
-    <Channel id="mtv-hits@mtv.es" siteId="64/mtv-hits" />
     <Channel id="buzz@teuve.com" siteId="65/buzz" />
-    <Channel id="tcm@canaltcm.com" siteId="66/tcm" />
-    <Channel id="extreme-teuve@teuve.com" siteId="67/extreme-teuve" />
-    <Channel id="mgm@canalmgm.tv" siteId="68/mgm" />
-    <Channel id="somos@canalsomos.tv" siteId="69/somos" />
-    <Channel id="cinematk@cinematk.com" siteId="70/cinematk" />
-    <Channel id="neox@antena3.com" siteId="71/antenaneox" />
-    <Channel id="nova@antena3.com" siteId="72/antenanova" />
-    <Channel id="disneyjunior@disney.es" siteId="73/playhouse-disney" />
-    <Channel id="discovery-science@tudiscovery.com" siteId="75/discovery-science" />
-    <Channel id="discovery-civilization@tudiscovery.com" siteId="76/discovery-civilization" />
-    <Channel id="discovery-turbo@tudiscovery.com" siteId="77/discovery-turbo" />
     <Channel id="eurosport-2@eurosport-tv.com" siteId="78/eurosport-2" />
-    <Channel id="vh1-classics@vh1.com" siteId="79/vh1-classics" />
     <Channel id="sol-musica@solmusica.com" siteId="80/sol-musica" />
-    <Channel id="real-madrid-tv@realmadrid.com" siteId="81/real-madrid-tv" />
-    <Channel id="barca-tv@fcbarcelona.cat" siteId="82/barca-tv" />
-    <Channel id="espn-classic@espnclassic.com" siteId="83/espn-classic" />
-    <Channel id="tv5-monde@tv5.org" siteId="84/tv5-monde" />
     <Channel id="tnt@turner.com" siteId="85/tnt-espana" />
-    <Channel id="canal+2@plus.es" siteId="86/canal-plus-2" />
-    <Channel id="canal+hd@plus.es" siteId="87/canal-plus-hd" />
-    <Channel id="castilla-la-mancha@rtvcm.es" siteId="88/castilla-la-mancha-television" />
     <Channel id="ib3@ib3.tv" siteId="89/ib3-televisio" />
-    <Channel id="aragontelevision@aragontelevision.es" siteId="90/aragon-television" />
-    <Channel id="television-asturias@rtpa.es" siteId="91/television-principado-de-asturias" />
-    <Channel id="canal+accion@plus.es" siteId="92/canal-plus-accion" />
-    <Channel id="canal+comedia@plus.es" siteId="93/canal-plus-comedia" />
-    <Channel id="canal+dcine@plus.es" siteId="94/canal-plus-dcine" />
-    <Channel id="7-tv-murcia@7rm.es" siteId="96/7-region-de-murcia" />
     <Channel id="animax@animax.es" siteId="97/animax" />
-    <Channel id="boomerang@cartoonnetwork.com" siteId="98/boomerang" />
-    <Channel id="dark-teuve@teuve.com" siteId="99/dark-teuve" />
-    <Channel id="cinestar@teuve.com" siteId="100/cine-star-teuve" />
-    <Channel id="kidsco@kidscotv.tv" siteId="101/kids-co" />
-    <Channel id="natura@naturateuve.es" siteId="102/canal-natura" />
-    <Channel id="canal+futbol@plus.es" siteId="103/canal-plus-futbol" />
-    <Channel id="canal+deporte@plus.es" siteId="104/canal-plus-deportes" />
-    <Channel id="canal+eventos@plus.es" siteId="105/canal-plus-eventos" />
-    <Channel id="canal-extremadura@tv.canalextremadura.es" siteId="113/canal-extremadura" />
-    <Channel id="goltv@goltelevision.com" siteId="119/gol-television" />
-    <Channel id="fox-crime@foxcrime.es" siteId="127/fox-crime" />
-    <Channel id="la-10@la10.com" siteId="130/la-10" />
-    <Channel id="marcatv@veo.es" siteId="138/marca-tv" />
-    <Channel id="lasexta2@lasexta.com" siteId="139/lasexta2" />
-    <Channel id="lasexta3@lasexta.com" siteId="143/lasexta3" />
-    <Channel id="13tv@veo.es" siteId="145/13tv" />
-    <Channel id="crimen-investigacion" siteId="148/crimen-and-investigacion" />
-    <Channel id="divinity@telecinco.es" siteId="153/divinity" />
-    <Channel id="playboy-tv@sogecable.es" siteId="155/playboy-tv" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.formulatv.com/programacion/[ID]/[YYYY]-[MM]-[DD]/" post="" external="false" encoding="windows-1252" />
     <Html>
-      <Template name="default" start="fecprgd" end="gderecho">
+      <Template name="default" start="fecprgd" end="Elige">
         <SectionTemplate tags="D">
           <TemplateText>
 		&lt;div class="prglihora"&gt;&lt;#START&gt;&lt;/div&gt;
-		&lt;div class="prglicnt"&gt;&lt;div class="prglitit"&gt;&lt;#TITLE&gt;&lt;/div&gt;
-		&lt;z(&gt;
-		&lt;div class="prgliemi"&gt;&lt;#SUBTITLE&gt;&lt;/div&gt;
-		&lt;div class="prglidesc"&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
-		&lt;/z)?&gt;
-          </TemplateText>	
-      </SectionTemplate>
+		&lt;div class="prglicnt"&gt;
+		&lt;div class="prglitit"&gt;
+		&lt;#TITLE&gt;
+          </TemplateText>
+        </SectionTemplate>
       </Template>
     </Html>
   </Listing>

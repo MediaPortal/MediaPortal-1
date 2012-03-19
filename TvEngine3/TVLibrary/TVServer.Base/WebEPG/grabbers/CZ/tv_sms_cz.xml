@@ -22,12 +22,10 @@
   <Channel id="tvdeko@deko.cz" siteId="Deko" />
   <Channel id="doq@doq.cz" siteId="DoQ" />
   <Channel id="discovery@discovery.cz" siteId="Discovery" />
-  <Channel id="discoveryHD@discovery.cz" siteId="Discovery HD" />
   <Channel id="Eurosport@eurosport.cz" siteId="EuroSport" />
   <Channel id="Eurosport2@eurosport.cz" siteId="EuroSport2" />
   <Channel id="filmplus@filmplus.cz" siteId="Film+" />
   <Channel id="Filmbox@filmbox.cz" siteId="Filmbox" />
-  <Channel id="FilmboxHD@filmbox.cz" siteId="Filmbox HD" />
   <Channel id="FilmBoxExtra@filmbox.cz" siteId="Fimlbox extra" />
   <Channel id="Fun1@fun1.cz" siteId="FUN1" />
   <Channel id="Hallmark@hallmark.cz" siteId="Hallmark" />
@@ -44,7 +42,6 @@
   <Channel id="nostalgia@nostalgia.cz" siteId="Nostalgia" />
   <Channel id="Ocko@ocko.cz" siteId="%D3%E8ko" />
   <Channel id="Paprika@paprika.cz" siteId="Paprika" />
-  <Channel id="PrimaCool@prima.cz" siteId="Prima Cool" />
   <Channel id="publictv@publictv.cz" siteId="Public TV" />
   <Channel id="Spektrum@spektrum.cz" siteId="Spektrum" />
   <Channel id="Sport1@sport1.cz" siteId="Sport1" />
@@ -72,14 +69,6 @@
   <Channel id="bebe@bebe.sk" siteId="BeBe" />
   <Channel id="tva@tva.sk" siteId="TVA" />
 
-  <Channel id="thehistorychannel@co.uk" siteId="The History Channel HD" />
-  
-  <Channel id="NationalGeographicWild@nationalgeographic.cz" siteId="National Geographic Wild" />
-  <Channel id="Travel_Channel@travelchannel.uk" siteId="Travel Channel" />
-  <Channel id="VH1@vh1e.com" siteId="VH1" />
-  <Channel id="playboy_tv@playboy.uk" siteId="Playboy TV" />
-  <Channel id="private_spice@privatespice.com" siteId="Private Spice" />
-
   </Channels>
   <Listing type="Html">
     <Site url="http://tv.sms.cz/index.php?P_id_kategorie=56456&amp;P_soubor=%2Ftelevize%2Findex.php%3Fdatum%3D[YYYY]-[MM]-[DD]%26zobrazeni%3D" post="" cookies="P_cookies_siroke_zobrazeni=false;P_cookies_televize_stanice=[ID]" external="false" encoding="windows-1250" />
@@ -87,20 +76,24 @@
       <Template name="default" start="pruh_delka" end="-- obsah --">
         <SectionTemplate tags="T">
 <TemplateText>
-&lt;table&gt;
-&lt;tr&gt;&lt;td class="cas"&gt;&lt;#START&gt;&lt;/td&gt;
-&lt;td class="nazev"&gt;&lt;#TITLE&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;z(&gt;&lt;tr&gt;
-&lt;td class="info1"&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/z)?&gt;
+&lt;table &gt;
+&lt;tr&gt;&lt;td class="cas"&gt;&lt;#START&gt;
+&lt;/td&gt;
+&lt;td class="nazev"&gt;&lt;#TITLE&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;z(&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;
+&lt;td class="info1"&gt;&lt;#DESCRIPTION&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/z)?&gt;
 &lt;/table&gt;
 </TemplateText>
         </SectionTemplate>
       </Template>
       <Searches>
-        <Search match="\([0-9]{1,4}[, ]+[0-9]{0,4}\)" field="#EPISODE" remove="true" />
+        <Search match="\([0-9]{1,3}[,][0-9]{0,3}\)" field="#EPISODE" remove="true" />
         <Search match="\([0-9]{1,3}\)" field="#EPISODE" remove="true" />
-        <Search match="\([0-9]{1,4}[/][0-9]{0,4}\)" field="#EPISODE" remove="true" />
+        <Search match="\([0-9]{1,3}[/][0-9]{0,3}\)" field="#EPISODE" remove="true" />
         <Search match="\/[P]{1}\/" field="#PREMIERE" remove="true" />
         <Search match="\/[R]{1}\/" field="#REPEAT" remove="true" />
       </Searches>

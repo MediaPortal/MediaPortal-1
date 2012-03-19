@@ -1,665 +1,418 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="en" availableDays="10" timezone="GMT Standard Time" version="2.2.1" />
+  <Info language="en" availableDays="14" timezone="GMT Standard Time" version="2.2.0" />
   <Channels>
-    <Channel id="100% Babes" siteId="50930" />
-    <Channel id="102.5 Clyde 1" siteId="50622" />
-    <Channel id="3e" siteId="50499" />
-    <Channel id="4Music" siteId="50742" />
-    <Channel id="5* (Freeview)" siteId="50636" />
-    <Channel id="5* Plus 1" siteId="50600" />
-    <Channel id="5*" siteId="50544" />
-    <Channel id="5USA Plus 1" siteId="50599" />
-    <Channel id="5USA" siteId="50543" />
-    <Channel id="98 FM" siteId="50898" />
-    <Channel id="AAG" siteId="51011" />
-    <Channel id="Aaj Tak" siteId="51012" />
-    <Channel id="Absolute 80s" siteId="50533" />
-    <Channel id="Absolute Classic Rock" siteId="50278" />
-    <Channel id="Absolute Radio 90s" siteId="51031" />
-    <Channel id="Absolute Radio Extra" siteId="51001" />
-    <Channel id="Absolute" siteId="500" />
-    <Channel id="AIT International" siteId="50962" />
-    <Channel id="Al Jazeera English (Freeview)" siteId="51000" />
-    <Channel id="Al Jazeera English" siteId="50610" />
-    <Channel id="Alibi Plus 1" siteId="50506" />
-    <Channel id="Alibi" siteId="26" />
-    <Channel id="Amateur Babes" siteId="50932" />
-    <Channel id="Animal Planet Analogue" siteId="512" />
-    <Channel id="Animal Planet Plus 1" siteId="604" />
-    <Channel id="Animal Planet" siteId="73" />
-    <Channel id="ARY Digital" siteId="577" />
-    <Channel id="ARY News" siteId="50939" />
-    <Channel id="ARY QTV" siteId="50961" />
-    <Channel id="At The Races" siteId="653" />
-    <Channel id="B4U Movies" siteId="562" />
-    <Channel id="B4U Music" siteId="50375" />
-    <Channel id="BabyTV" siteId="50579" />
-    <Channel id="BBC 1 East" siteId="50236" />
-    <Channel id="BBC 1 HD" siteId="51035" />
-    <Channel id="BBC 1 London" siteId="50231" />
-    <Channel id="BBC 1 Midlands" siteId="50232" />
-    <Channel id="BBC 1 North East" siteId="50237" />
-    <Channel id="BBC 1 North West" siteId="50238" />
-    <Channel id="BBC 1 North" siteId="50235" />
-    <Channel id="BBC 1 Northern Ireland" siteId="203" />
-    <Channel id="BBC 1 Scotland" siteId="202" />
-    <Channel id="BBC 1 South East" siteId="50240" />
-    <Channel id="BBC 1 South West" siteId="50239" />
-    <Channel id="BBC 1 South" siteId="50234" />
-    <Channel id="BBC 1 Wales" siteId="201" />
-    <Channel id="BBC 1 West" siteId="50233" />
-    <Channel id="BBC 1" siteId="1" />
-    <Channel id="BBC 2 East" siteId="50247" />
-    <Channel id="BBC 2 London" siteId="50251" />
-    <Channel id="BBC 2 Midlands" siteId="50245" />
-    <Channel id="BBC 2 North East" siteId="50244" />
-    <Channel id="BBC 2 North West" siteId="50242" />
-    <Channel id="BBC 2 North" siteId="50243" />
-    <Channel id="BBC 2 Northern Ireland (Digital)" siteId="633" />
-    <Channel id="BBC 2 Northern Ireland" siteId="206" />
-    <Channel id="BBC 2 Scotland (Digital)" siteId="634" />
-    <Channel id="BBC 2 Scotland" siteId="205" />
-    <Channel id="BBC 2 South East" siteId="50250" />
-    <Channel id="BBC 2 South West" siteId="50249" />
-    <Channel id="BBC 2 South" siteId="50248" />
-    <Channel id="BBC 2 Wales (Digital)" siteId="635" />
-    <Channel id="BBC 2 West" siteId="50246" />
-    <Channel id="BBC 2" siteId="2" />
-    <Channel id="BBC 3" siteId="74" />
-    <Channel id="BBC 4 (Freeview)" siteId="616" />
-    <Channel id="BBC 4" siteId="88" />
-    <Channel id="BBC 6 Music" siteId="645" />
-    <Channel id="BBC Alba" siteId="50749" />
-    <Channel id="BBC Entertainment (Sweden)" siteId="50966" />
-    <Channel id="BBC Entertainment" siteId="84" />
-    <Channel id="BBC HD (Sweden)" siteId="50967" />
-    <Channel id="BBC HD" siteId="50530" />
-    <Channel id="BBC Knowledge (Asia)" siteId="51051" />
-    <Channel id="BBC Knowledge (Sweden)" siteId="50969" />
-    <Channel id="BBC Lifestyle (Sweden)" siteId="50968" />
-    <Channel id="BBC London 94.9 FM" siteId="50625" />
-    <Channel id="BBC News" siteId="20" />
-    <Channel id="BBC Parliament" siteId="21" />
-    <Channel id="BBC Radio 1Xtra" siteId="666" />
-    <Channel id="BBC Radio 7" siteId="5944" />
-    <Channel id="BBC Radio Aberdeen" siteId="50362" />
-    <Channel id="BBC Radio Asian Network" siteId="5946" />
-    <Channel id="BBC Radio Cymru" siteId="50222" />
-    <Channel id="BBC Radio Five Live Sports Extra" siteId="640" />
-    <Channel id="BBC Radio Five Live" siteId="506" />
-    <Channel id="BBC Radio Four Longwave" siteId="646" />
-    <Channel id="BBC Radio Four" siteId="505" />
-    <Channel id="BBC Radio Foyle" siteId="50363" />
-    <Channel id="BBC Radio Highland" siteId="50364" />
-    <Channel id="BBC Radio Nan Gaidheal" siteId="50365" />
-    <Channel id="BBC Radio One" siteId="502" />
-    <Channel id="BBC Radio Orkney" siteId="50366" />
-    <Channel id="BBC Radio Scotland MW" siteId="50367" />
-    <Channel id="BBC Radio Scotland" siteId="552" />
-    <Channel id="BBC Radio Shetland" siteId="50369" />
-    <Channel id="BBC Radio Solway" siteId="50370" />
-    <Channel id="BBC Radio Three" siteId="504" />
-    <Channel id="BBC Radio Tweed" siteId="50371" />
-    <Channel id="BBC Radio Two" siteId="503" />
-    <Channel id="BBC Radio Ulster MW" siteId="50368" />
-    <Channel id="BBC Radio Ulster" siteId="554" />
-    <Channel id="BBC Radio Wales" siteId="553" />
-    <Channel id="BBC World News" siteId="551" />
-    <Channel id="BBC World Service Radio" siteId="549" />
-    <Channel id="BET Plus 1" siteId="50920" />
-    <Channel id="BET" siteId="50918" />
-    <Channel id="bid tv" siteId="612" />
-    <Channel id="Bio HD" siteId="50862" />
-    <Channel id="Bio" siteId="582" />
-    <Channel id="Blighty" siteId="50274" />
-    <Channel id="Bliss" siteId="50225" />
-    <Channel id="Blue Tube" siteId="50889" />
-    <Channel id="Body in Balance" siteId="50933" />
-    <Channel id="Boomerang Plus 1" siteId="50487" />
-    <Channel id="Boomerang" siteId="547" />
-    <Channel id="British Eurosport" siteId="519" />
-    <Channel id="British Eurosport2" siteId="614" />
-    <Channel id="Capital Radio" siteId="507" />
-    <Channel id="Cartoon Network Plus 1" siteId="608" />
-    <Channel id="Cartoon Network Too" siteId="50503" />
-    <Channel id="Cartoon Network" siteId="7" />
-    <Channel id="Cartoonito" siteId="50574" />
-    <Channel id="CBBC" siteId="638" />
-    <Channel id="CBeebies" siteId="639" />
-    <Channel id="CBS Action" siteId="50542" />
-    <Channel id="CBS Drama" siteId="50606" />
-    <Channel id="CBS Reality Plus 1" siteId="50352" />
-    <Channel id="CBS Reality" siteId="5910" />
-    <Channel id="CCTV-9" siteId="50624" />
-    <Channel id="Challenge Analogue" siteId="510" />
-    <Channel id="Challenge Plus 1" siteId="50289" />
-    <Channel id="Challenge" siteId="10" />
-    <Channel id="Channel 4 HD" siteId="50632" />
-    <Channel id="Channel 4 Plus 1" siteId="50592" />
-    <Channel id="Channel 4" siteId="4" />
-    <Channel id="Channel 5 HD" siteId="50978" />
-    <Channel id="Channel 5" siteId="5" />
-    <Channel id="Channel M" siteId="50925" />
-    <Channel id="Channel" siteId="53" />
-    <Channel id="Chart Show TV" siteId="50358" />
-    <Channel id="Chat Box" siteId="50615" />
-    <Channel id="Chelsea TV" siteId="50286" />
-    <Channel id="Chill" siteId="50587" />
-    <Channel id="Choice FM" siteId="50474" />
-    <Channel id="Cinand oi" siteId="50908" />
-    <Channel id="cITV (Freeview)" siteId="50539" />
-    <Channel id="cITV" siteId="50486" />
-    <Channel id="City Channel South" siteId="50891" />
-    <Channel id="City Channel" siteId="50890" />
-    <Channel id="Citybeat 96.7 and 102.5 FM" siteId="50899" />
-    <Channel id="Classic FM" siteId="501" />
-    <Channel id="CNBC" siteId="521" />
-    <Channel id="CNN" siteId="548" />
-    <Channel id="Colors" siteId="51013" />
-    <Channel id="Comedy Central Analogue" siteId="588" />
-    <Channel id="Comedy Central Extra Plus 1" siteId="50628" />
-    <Channel id="Comedy Central Extra" siteId="50229" />
-    <Channel id="Comedy Central HD" siteId="51006" />
-    <Channel id="Comedy Central Plus 1" siteId="50457" />
-    <Channel id="Comedy Central" siteId="83" />
-    <Channel id="Community Channel (Freeview)" siteId="6314" />
-    <Channel id="Community Channel" siteId="6264" />
-    <Channel id="Cool FM" siteId="50900" />
-    <Channel id="Create and Craft (Freeview)" siteId="50965" />
-    <Channel id="Create and Craft" siteId="50958" />
-    <Channel id="Crime And Investigation Network HD" siteId="50863" />
-    <Channel id="Crime And Investigation Network Plus 1" siteId="50893" />
-    <Channel id="Crime And Investigation Network" siteId="50536" />
-    <Channel id="Current TV" siteId="51034" />
-    <Channel id="Dance Nation" siteId="50226" />
-    <Channel id="Dave Ja Vu" siteId="50284" />
-    <Channel id="Dave" siteId="27" />
-    <Channel id="Daystar" siteId="50938" />
-    <Channel id="Dirty Talk" siteId="50909" />
-    <Channel id="Discovery Analogue" siteId="513" />
-    <Channel id="Discovery DMAX Plus 1" siteId="50638" />
-    <Channel id="Discovery DMAX Plus 2" siteId="50645" />
-    <Channel id="Discovery DMAX" siteId="50637" />
-    <Channel id="Discovery HD" siteId="50518" />
-    <Channel id="Discovery History Plus 1" siteId="50659" />
-    <Channel id="Discovery History" siteId="11" />
-    <Channel id="Discovery Plus 1" siteId="31" />
-    <Channel id="Discovery Real Time Analogue" siteId="514" />
-    <Channel id="Discovery Real Time Plus 1" siteId="605" />
-    <Channel id="Discovery Real Time" siteId="13" />
-    <Channel id="Discovery Science Plus 1" siteId="50649" />
-    <Channel id="Discovery Science" siteId="14" />
-    <Channel id="Discovery Shed" siteId="50894" />
-    <Channel id="Discovery Travel and Living" siteId="15" />
-    <Channel id="Discovery Turbo" siteId="126" />
-    <Channel id="Discovery" siteId="12" />
-    <Channel id="Disney Cinemagic HD" siteId="50868" />
-    <Channel id="Disney Cinemagic Plus 1" siteId="50489" />
-    <Channel id="Disney Cinemagic" siteId="642" />
-    <Channel id="Disney Plus 1" siteId="580" />
-    <Channel id="Disney XD HD" siteId="51032" />
-    <Channel id="Disney XD Plus 1" siteId="50946" />
-    <Channel id="Disney XD" siteId="50945" />
-    <Channel id="Disney" siteId="67" />
-    <Channel id="Diva TV Plus 1" siteId="50743" />
-    <Channel id="Diva TV" siteId="50617" />
-    <Channel id="Downtown Radio" siteId="50901" />
-    <Channel id="E!" siteId="50230" />
-    <Channel id="E4 HD" siteId="50952" />
-    <Channel id="E4 Plus 1" siteId="50224" />
-    <Channel id="E4" siteId="587" />
-    <Channel id="East Coast FM" siteId="50902" />
-    <Channel id="Eden HD" siteId="51025" />
-    <Channel id="Eden Plus 1" siteId="603" />
-    <Channel id="Eden" siteId="28" />
-    <Channel id="ESPN (TopUpTV)" siteId="51003" />
-    <Channel id="ESPN America (Alternate Feed) HD" siteId="50976" />
-    <Channel id="ESPN America (Alternate Feed)" siteId="50546" />
-    <Channel id="ESPN America HD" siteId="50975" />
-    <Channel id="ESPN America" siteId="6346" />
-    <Channel id="ESPN Classic" siteId="50493" />
-    <Channel id="ESPN HD" siteId="50943" />
-    <Channel id="ESPN" siteId="50942" />
-    <Channel id="Euronews" siteId="570" />
-    <Channel id="Eurosport HD" siteId="50706" />
-    <Channel id="Eurosport" siteId="68" />
-    <Channel id="Eurosport2" siteId="50376" />
-    <Channel id="Extreme Sports Channel" siteId="630" />
-    <Channel id="Fashion TV" siteId="632" />
-    <Channel id="Film24" siteId="50644" />
-    <Channel id="Film4 HD" siteId="50979" />
-    <Channel id="Film4 Plus 1" siteId="598" />
-    <Channel id="Film4" siteId="100" />
-    <Channel id="Flava" siteId="50357" />
-    <Channel id="FM 104" siteId="50903" />
-    <Channel id="Food Network Plus 1" siteId="50954" />
-    <Channel id="Food Network" siteId="50953" />
-    <Channel id="FOX News" siteId="50912" />
-    <Channel id="France 24" siteId="50611" />
-    <Channel id="FX HD" siteId="50650" />
-    <Channel id="FX" siteId="50253" />
-    <Channel id="FX+" siteId="50456" />
-    <Channel id="Galaxy Birmingham" siteId="50259" />
-    <Channel id="Galaxy Digital" siteId="50479" />
-    <Channel id="Galaxy Manchester" siteId="50258" />
-    <Channel id="Galaxy North East" siteId="50261" />
-    <Channel id="Galaxy Scotland" siteId="50657" />
-    <Channel id="Galaxy South Coast" siteId="50886" />
-    <Channel id="Galaxy Yorkshire" siteId="50260" />
-    <Channel id="Gay Network" siteId="50614" />
-    <Channel id="Gay TV" siteId="50876" />
-    <Channel id="Gaydar Radio" siteId="50590" />
-    <Channel id="GayDateTV" siteId="50287" />
-    <Channel id="GEO News" siteId="51010" />
-    <Channel id="GEO UK" siteId="51014" />
-    <Channel id="God UK Analogue" siteId="535" />
-    <Channel id="God UK" siteId="526" />
-    <Channel id="GOLD (TopUpTV)" siteId="50947" />
-    <Channel id="GOLD Plus 1" siteId="662" />
-    <Channel id="Gold Radio" siteId="50601" />
-    <Channel id="GOLD" siteId="18" />
-    <Channel id="Good Food HD" siteId="51002" />
-    <Channel id="Good Food Plus 1" siteId="50254" />
-    <Channel id="Good Food" siteId="629" />
-    <Channel id="Heart 100-102 South Devon" siteId="50895" />
-    <Channel id="Heart 100.7 West Midlands" siteId="50255" />
-    <Channel id="Heart 102.3 Dorset" siteId="50668" />
-    <Channel id="Heart 102.4 and 103.5 Sussex" siteId="50730" />
-    <Channel id="Heart 102.4 Gloucester" siteId="50726" />
-    <Channel id="Heart 102.4 Norwich" siteId="50880" />
-    <Channel id="Heart 102.6 and 97.4 Oxfordshire" siteId="50664" />
-    <Channel id="Heart 102.6 Somerset" siteId="50711" />
-    <Channel id="Heart 102.7 Peterborough" siteId="50881" />
-    <Channel id="Heart 102.8 and 103.1 Kent" siteId="50913" />
-    <Channel id="Heart 102.9 and 97.0 Berkshire and North Hampshire" siteId="50733" />
-    <Channel id="Heart 103 and 97.4 Cambridge" siteId="50669" />
-    <Channel id="Heart 103 Bath" siteId="50712" />
-    <Channel id="Heart 103 Cymru" siteId="50915" />
-    <Channel id="Heart 103.3 Milton Keynes" siteId="50665" />
-    <Channel id="Heart 103.4 Wrexham" siteId="50704" />
-    <Channel id="Heart 106 East Midlands" siteId="50589" />
-    <Channel id="Heart 106.2 London" siteId="647" />
-    <Channel id="Heart 96.1 Colchester" siteId="50727" />
-    <Channel id="Heart 96.2 and 97.3 North Devon" siteId="50703" />
-    <Channel id="Heart 96.3 and 102.6 Essex" siteId="50662" />
-    <Channel id="Heart 96.3 Bristol" siteId="50713" />
-    <Channel id="Heart 96.3 Wales Coast" siteId="50914" />
-    <Channel id="Heart 96.4 Torbay" siteId="50722" />
-    <Channel id="Heart 96.6 Northampton" siteId="50882" />
-    <Channel id="Heart 96.7 and 97.5 Hampshire" siteId="50710" />
-    <Channel id="Heart 96.9 Bedford" siteId="50883" />
-    <Channel id="Heart 97.0 and 103.0 Exeter" siteId="50661" />
-    <Channel id="Heart 97.0 and 96.6 Plymouth" siteId="50723" />
-    <Channel id="Heart 97.1 and 96.4 Ipswich" siteId="50728" />
-    <Channel id="Heart 97.1 Wirral" siteId="50699" />
-    <Channel id="Heart 97.2 and 102.2 Wiltshire" siteId="50714" />
-    <Channel id="Heart 97.6 Dunstable" siteId="50884" />
-    <Channel id="Heart Digital" siteId="50256" />
-    <Channel id="Heat Radio" siteId="50620" />
-    <Channel id="History Analogue" siteId="509" />
-    <Channel id="History HD" siteId="50550" />
-    <Channel id="History Plus 1" siteId="579" />
-    <Channel id="History" siteId="72" />
-    <Channel id="Hit Music Radio Digital" siteId="50275" />
-    <Channel id="Home (TopUpTV)" siteId="50272" />
-    <Channel id="Home and Health Plus 1" siteId="50448" />
-    <Channel id="Home and Health" siteId="564" />
-    <Channel id="Home Plus 1" siteId="644" />
-    <Channel id="Home" siteId="30" />
-    <Channel id="horror channel Plus 1" siteId="50660" />
-    <Channel id="horror channel" siteId="50277" />
-    <Channel id="Horse and Country" siteId="50591" />
-    <Channel id="Hustler TV" siteId="50931" />
-    <Channel id="Ideal and More" siteId="50960" />
-    <Channel id="Ideal Extra" siteId="50959" />
-    <Channel id="Ideal World (Freeview)" siteId="51039" />
-    <Channel id="Ideal World" siteId="50395" />
-    <Channel id="Imagine...Dil Se" siteId="51033" />
-    <Channel id="Information TV Plus 1" siteId="51027" />
-    <Channel id="Information TV" siteId="50280" />
-    <Channel id="Investigation Discovery" siteId="50877" />
-    <Channel id="ITV1 Anglia" siteId="50" />
-    <Channel id="ITV1 Border (English)" siteId="54" />
-    <Channel id="ITV1 Border (Scottish)" siteId="637" />
-    <Channel id="ITV1 Central HD" siteId="50981" />
-    <Channel id="ITV1 Central Plus 1" siteId="51042" />
-    <Channel id="ITV1 Central" siteId="52" />
-    <Channel id="ITV1 Granada HD" siteId="50983" />
-    <Channel id="ITV1 Granada" siteId="56" />
-    <Channel id="ITV1 Granada/Border Plus 1" siteId="51044" />
-    <Channel id="ITV1 HD" siteId="50865" />
-    <Channel id="ITV1 London Plus 1" siteId="51040" />
-    <Channel id="ITV1 London" siteId="3" />
-    <Channel id="ITV1 Meridian" siteId="59" />
-    <Channel id="ITV1 South East Plus 1" siteId="51043" />
-    <Channel id="ITV1 Thames Valley (North) HD" siteId="50993" />
-    <Channel id="ITV1 Thames Valley (North)" siteId="50555" />
-    <Channel id="ITV1 Thames Valley (South) HD" siteId="50994" />
-    <Channel id="ITV1 Thames Valley (South)" siteId="50556" />
-    <Channel id="ITV1 Tyne Tees" siteId="61" />
-    <Channel id="ITV1 Wales" siteId="57" />
-    <Channel id="ITV1 West Country" siteId="63" />
-    <Channel id="ITV1 West Plus 1" siteId="51045" />
-    <Channel id="ITV1 West" siteId="78" />
-    <Channel id="ITV1 Yorkshire" siteId="64" />
-    <Channel id="ITV1 Yorkshire/TT Plus 1" siteId="51046" />
-    <Channel id="ITV2 HD" siteId="51024" />
-    <Channel id="ITV2 Plus 1 (Freeview)" siteId="51041" />
-    <Channel id="ITV2 Plus 1" siteId="50551" />
-    <Channel id="ITV2" siteId="32" />
-    <Channel id="ITV3 HD" siteId="51037" />
-    <Channel id="ITV3 Plus 1" siteId="50552" />
-    <Channel id="ITV3" siteId="50283" />
-    <Channel id="ITV4 HD" siteId="51038" />
-    <Channel id="ITV4 Plus 1" siteId="50869" />
-    <Channel id="ITV4" siteId="50470" />
-    <Channel id="Jazeera Children" siteId="51009" />
-    <Channel id="Jazz FM" siteId="581" />
-    <Channel id="Kerrang! Radio" siteId="50585" />
-    <Channel id="Kerrang!" siteId="606" />
-    <Channel id="Kiss 100" siteId="6263" />
-    <Channel id="Kiss TV" siteId="50372" />
-    <Channel id="Kix!" siteId="50653" />
-    <Channel id="LBC News" siteId="50282" />
-    <Channel id="LBC" siteId="50262" />
-    <Channel id="Leicester Sound" siteId="50663" />
-    <Channel id="Liverpool FC TV" siteId="50609" />
-    <Channel id="Magic 105.4" siteId="50584" />
-    <Channel id="Magic" siteId="50373" />
-    <Channel id="Menand ovies" siteId="51026" />
-    <Channel id="Mercury FM Herts" siteId="50885" />
-    <Channel id="Mercury FM" siteId="50708" />
-    <Channel id="MGM HD" siteId="50957" />
-    <Channel id="Military History" siteId="50701" />
-    <Channel id="more4 Plus 1" siteId="50460" />
-    <Channel id="more4" siteId="50459" />
-    <Channel id="Motors TV" siteId="6351" />
-    <Channel id="Movies 24 +" siteId="50595" />
-    <Channel id="Movies 24" siteId="50535" />
-    <Channel id="Movies4Men 2 Plus 1" siteId="50864" />
-    <Channel id="Movies4Men 2" siteId="50463" />
-    <Channel id="Movies4Men Plus 1" siteId="50641" />
-    <Channel id="Movies4Men" siteId="50464" />
-    <Channel id="MTV Base" siteId="119" />
-    <Channel id="MTV Classic" siteId="120" />
-    <Channel id="MTV Dance" siteId="597" />
-    <Channel id="MTV Hits" siteId="118" />
-    <Channel id="MTV Ireland" siteId="50380" />
-    <Channel id="MTV Music" siteId="50629" />
-    <Channel id="MTV Plus 1" siteId="50640" />
-    <Channel id="MTV Rocks" siteId="117" />
-    <Channel id="MTV" siteId="115" />
-    <Channel id="MTVN HD" siteId="50870" />
-    <Channel id="MUTV" siteId="122" />
-    <Channel id="My TV" siteId="51017" />
-    <Channel id="Nat Geo Wild HD" siteId="50896" />
-    <Channel id="Nat Geo Wild" siteId="601" />
-    <Channel id="National Geographic Analogue" siteId="516" />
-    <Channel id="National Geographic Channel Plus 1" siteId="607" />
-    <Channel id="National Geographic HD" siteId="50519" />
-    <Channel id="National Geographic" siteId="79" />
-    <Channel id="Newstalk 106-108 FM" siteId="50621" />
-    <Channel id="NHK World" siteId="50964" />
-    <Channel id="Nick Junior 2" siteId="50507" />
-    <Channel id="Nick Junior Analogue" siteId="111" />
-    <Channel id="Nick Junior" siteId="112" />
-    <Channel id="Nick Replay" siteId="113" />
-    <Channel id="Nickelodeon Analogue" siteId="109" />
-    <Channel id="Nickelodeon HD" siteId="51022" />
-    <Channel id="Nickelodeon" siteId="110" />
-    <Channel id="Nicktoons Replay" siteId="50941" />
-    <Channel id="Nicktoons" siteId="654" />
-    <Channel id="NME TV" siteId="50630" />
-    <Channel id="Phoenix CNE" siteId="528" />
-    <Channel id="Pick TV Plus 1" siteId="50997" />
-    <Channel id="Pick TV" siteId="50468" />
-    <Channel id="Planet Rock" siteId="50477" />
-    <Channel id="Playboy TV" siteId="89" />
-    <Channel id="Playhouse Disney +" siteId="50626" />
-    <Channel id="Playhouse Disney" siteId="643" />
-    <Channel id="Pop Girl Plus 1" siteId="50702" />
-    <Channel id="Pop Girl" siteId="50602" />
-    <Channel id="Pop" siteId="50398" />
-    <Channel id="Premier Sports" siteId="51054" />
-    <Channel id="Press TV" siteId="50940" />
-    <Channel id="price-drop tv (Freeview)" siteId="51004" />
-    <Channel id="price-drop tv" siteId="50361" />
-    <Channel id="Primetime" siteId="50949" />
-    <Channel id="Private Spice" siteId="50580" />
-    <Channel id="Propeller TV" siteId="50545" />
-    <Channel id="Q" siteId="50374" />
-    <Channel id="Q102 Dublin" siteId="50911" />
-    <Channel id="Q102.9 FM" siteId="50904" />
-    <Channel id="Quest (Freeview)" siteId="50970" />
-    <Channel id="Quest Plus 1" siteId="50951" />
-    <Channel id="Quest" siteId="50907" />
-    <Channel id="QVC Beauty" siteId="51030" />
-    <Channel id="QVC" siteId="529" />
-    <Channel id="Racing UK" siteId="50937" />
-    <Channel id="Ram FM" siteId="50725" />
-    <Channel id="Real Radio (Northwest)" siteId="50534" />
-    <Channel id="Really" siteId="50360" />
-    <Channel id="Record TV" siteId="51018" />
-    <Channel id="Red Dragon" siteId="50667" />
-    <Channel id="Red Hot 40+" siteId="50510" />
-    <Channel id="Red Hot Amateur" siteId="50512" />
-    <Channel id="Red Hot Fetish" siteId="50511" />
-    <Channel id="Red Hot Mums" siteId="50515" />
-    <Channel id="Red Hot TV" siteId="50516" />
-    <Channel id="Revelation TV" siteId="50935" />
-    <Channel id="RTand 1" siteId="300" />
-    <Channel id="RTand 2" siteId="301" />
-    <Channel id="RTand 2fm" siteId="6348" />
-    <Channel id="RTand 2XM" siteId="50924" />
-    <Channel id="RTand Chill" siteId="51029" />
-    <Channel id="RTand Choice" siteId="50921" />
-    <Channel id="RTand Gold" siteId="51028" />
-    <Channel id="RTand Lyric FM" siteId="6349" />
-    <Channel id="RTand Pulse" siteId="50922" />
-    <Channel id="RTand r Radio" siteId="50923" />
-    <Channel id="RTand Radio 1 Extra" siteId="50476" />
-    <Channel id="RTand Radio 1 FM" siteId="6320" />
-    <Channel id="RTand Radio 1 LW" siteId="6347" />
-    <Channel id="RTand Raidiand#243; na Gaeltachta" siteId="6352" />
-    <Channel id="Rush HD" siteId="50654" />
-    <Channel id="Russia Today (Freeview)" siteId="50887" />
-    <Channel id="Russia Today" siteId="50504" />
-    <Channel id="S4C Digital" siteId="87" />
-    <Channel id="S4C-2" siteId="50241" />
-    <Channel id="SAB TV" siteId="50996" />
-    <Channel id="Sahara One" siteId="51016" />
-    <Channel id="Scuzz" siteId="50227" />
-    <Channel id="Setanta Ireland" siteId="50386" />
-    <Channel id="Setanta Sports 1 Irish Version" siteId="50603" />
-    <Channel id="Showcase 2" siteId="51053" />
-    <Channel id="Showcase" siteId="51052" />
-    <Channel id="Sky 3D" siteId="51023" />
-    <Channel id="Sky Arts 1 HD" siteId="50529" />
-    <Channel id="Sky Arts 1" siteId="583" />
-    <Channel id="Sky Arts 2 HD" siteId="50892" />
-    <Channel id="Sky Arts 2" siteId="50798" />
-    <Channel id="Sky Atlantic HD" siteId="51050" />
-    <Channel id="Sky Atlantic" siteId="51049" />
-    <Channel id="Sky Living HD" siteId="50948" />
-    <Channel id="Sky Living Loves" siteId="50977" />
-    <Channel id="Sky Living Plus 1" siteId="6033" />
-    <Channel id="Sky Living" siteId="19" />
-    <Channel id="Sky LIVINGit Plus 1" siteId="50888" />
-    <Channel id="Sky LIVINGit" siteId="50350" />
-    <Channel id="Sky Movies Action and Adventure HD" siteId="50751" />
-    <Channel id="Sky Movies Action and Adventure" siteId="96" />
-    <Channel id="Sky Movies Box Office 1 HD" siteId="50524" />
-    <Channel id="Sky Movies Box Office 2 HD" siteId="50525" />
-    <Channel id="Sky Movies Box Office 701" siteId="50290" />
-    <Channel id="Sky Movies Box Office 702" siteId="50291" />
-    <Channel id="Sky Movies Box Office 703" siteId="50292" />
-    <Channel id="Sky Movies Box Office 704" siteId="50293" />
-    <Channel id="Sky Movies Box Office 705" siteId="50294" />
-    <Channel id="Sky Movies Box Office 706" siteId="50295" />
-    <Channel id="Sky Movies Box Office 707" siteId="50296" />
-    <Channel id="Sky Movies Box Office 708" siteId="50297" />
-    <Channel id="Sky Movies Box Office 709" siteId="50298" />
-    <Channel id="Sky Movies Box Office 710" siteId="50299" />
-    <Channel id="Sky Movies Box Office 711" siteId="50300" />
-    <Channel id="Sky Movies Box Office 712" siteId="50301" />
-    <Channel id="Sky Movies Box Office 713" siteId="50302" />
-    <Channel id="Sky Movies Box Office 714" siteId="50303" />
-    <Channel id="Sky Movies Box Office 715" siteId="50304" />
-    <Channel id="Sky Movies Box Office 716" siteId="50305" />
-    <Channel id="Sky Movies Box Office 717" siteId="50306" />
-    <Channel id="Sky Movies Box Office 718" siteId="50307" />
-    <Channel id="Sky Movies Box Office 719" siteId="50308" />
-    <Channel id="Sky Movies Box Office 720" siteId="50309" />
-    <Channel id="Sky Movies Box Office 721" siteId="50310" />
-    <Channel id="Sky Movies Box Office 722" siteId="50311" />
-    <Channel id="Sky Movies Box Office 723" siteId="50312" />
-    <Channel id="Sky Movies Box Office 724" siteId="50313" />
-    <Channel id="Sky Movies Box Office 725" siteId="50314" />
-    <Channel id="Sky Movies Box Office 726" siteId="50315" />
-    <Channel id="Sky Movies Box Office 727" siteId="50316" />
-    <Channel id="Sky Movies Box Office 728" siteId="50317" />
-    <Channel id="Sky Movies Box Office 729" siteId="50318" />
-    <Channel id="Sky Movies Box Office 730" siteId="50319" />
-    <Channel id="Sky Movies Box Office 731" siteId="50320" />
-    <Channel id="Sky Movies Box Office 732" siteId="50321" />
-    <Channel id="Sky Movies Box Office 733" siteId="50322" />
-    <Channel id="Sky Movies Box Office 734" siteId="50323" />
-    <Channel id="Sky Movies Box Office 735" siteId="50324" />
-    <Channel id="Sky Movies Box Office 736" siteId="50325" />
-    <Channel id="Sky Movies Box Office 737" siteId="50461" />
-    <Channel id="Sky Movies Box Office 738" siteId="50326" />
-    <Channel id="Sky Movies Box Office 739" siteId="50327" />
-    <Channel id="Sky Movies Box Office 740" siteId="50955" />
-    <Channel id="Sky Movies Box Office 741" siteId="50956" />
-    <Channel id="Sky Movies Box Office 744" siteId="50332" />
-    <Channel id="Sky Movies Box Office 754" siteId="50342" />
-    <Channel id="Sky Movies Box Office 755" siteId="50343" />
-    <Channel id="Sky Movies Box Office 756" siteId="50344" />
-    <Channel id="Sky Movies Box Office 757" siteId="50345" />
-    <Channel id="Sky Movies Box Office 758" siteId="50346" />
-    <Channel id="Sky Movies Box Office 759" siteId="50347" />
-    <Channel id="Sky Movies Box Office 760" siteId="50348" />
-    <Channel id="Sky Movies Box Office 761" siteId="50349" />
-    <Channel id="Sky Movies Box Office Events" siteId="50381" />
-    <Channel id="Sky Movies Classics HD" siteId="50998" />
-    <Channel id="Sky Movies Classics" siteId="114" />
-    <Channel id="Sky Movies Comedy HD" siteId="50754" />
-    <Channel id="Sky Movies Comedy" siteId="91" />
-    <Channel id="Sky Movies Crime and Thriller HD" siteId="50527" />
-    <Channel id="Sky Movies Crime and Thriller" siteId="50576" />
-    <Channel id="Sky Movies Drama and Romance HD" siteId="50753" />
-    <Channel id="Sky Movies Drama and Romance" siteId="97" />
-    <Channel id="Sky Movies Family HD" siteId="50755" />
-    <Channel id="Sky Movies Family" siteId="92" />
-    <Channel id="Sky Movies Indie HD" siteId="50950" />
-    <Channel id="Sky Movies Indie" siteId="50480" />
-    <Channel id="Sky Movies Modern Greats HD" siteId="50752" />
-    <Channel id="Sky Movies Modern Greats" siteId="98" />
-    <Channel id="Sky Movies Premiere Analogue" siteId="41" />
-    <Channel id="Sky Movies Premiere HD" siteId="50643" />
-    <Channel id="Sky Movies Premiere Plus 1" siteId="95" />
-    <Channel id="Sky Movies Premiere" siteId="90" />
-    <Channel id="Sky Movies Sci-Fi/Horror HD" siteId="50756" />
-    <Channel id="Sky Movies Sci-Fi/Horror" siteId="93" />
-    <Channel id="Sky Movies Showcase HD" siteId="50526" />
-    <Channel id="Sky Movies Showcase" siteId="50575" />
-    <Channel id="Sky News HD" siteId="50972" />
-    <Channel id="Sky News" siteId="70" />
-    <Channel id="Sky Sports 1" siteId="43" />
-    <Channel id="Sky Sports 2" siteId="44" />
-    <Channel id="Sky Sports 3" siteId="45" />
-    <Channel id="Sky Sports 4" siteId="590" />
-    <Channel id="Sky Sports HD 1" siteId="50508" />
-    <Channel id="Sky Sports HD 2" siteId="50537" />
-    <Channel id="Sky Sports HD 3" siteId="50642" />
-    <Channel id="Sky Sports HD 4" siteId="50971" />
-    <Channel id="Sky Sports News HD" siteId="50999" />
-    <Channel id="Sky Sports News" siteId="530" />
-    <Channel id="Sky Vegas" siteId="50570" />
-    <Channel id="Sky1 HD" siteId="50528" />
-    <Channel id="Sky1" siteId="65" />
-    <Channel id="Sky2" siteId="6156" />
-    <Channel id="SkyPoker.com" siteId="50569" />
-    <Channel id="Smart Live Casino" siteId="51021" />
-    <Channel id="Smash Hits! Radio" siteId="51007" />
-    <Channel id="Smash Hits!" siteId="6262" />
-    <Channel id="Smooth Radio 100.4" siteId="50497" />
-    <Channel id="Smooth Radio 102.2" siteId="50396" />
-    <Channel id="Smooth Radio 105.2" siteId="50737" />
-    <Channel id="Smooth Radio 105.7" siteId="50738" />
-    <Channel id="Smooth Radio 106.6" siteId="50739" />
-    <Channel id="Smooth Radio 97.5 and 107.7" siteId="50740" />
-    <Channel id="Sony Entertainment TV Asia" siteId="560" />
-    <Channel id="Sony MAX" siteId="50565" />
-    <Channel id="speed auction tv" siteId="50496" />
-    <Channel id="Spin 103.8" siteId="50905" />
-    <Channel id="Star Gold" siteId="50563" />
-    <Channel id="Star News" siteId="631" />
-    <Channel id="Star One" siteId="50562" />
-    <Channel id="Star Plus" siteId="628" />
-    <Channel id="STV HD" siteId="50974" />
-    <Channel id="STV Plus 1" siteId="51047" />
-    <Channel id="STV" siteId="60" />
-    <Channel id="SyFy HD" siteId="50879" />
-    <Channel id="SyFy Plus 1" siteId="50488" />
-    <Channel id="SyFy" siteId="35" />
-    <Channel id="talkSport" siteId="550" />
-    <Channel id="TCM 2" siteId="50505" />
-    <Channel id="TCM" siteId="24" />
-    <Channel id="Teleg" siteId="567" />
-    <Channel id="Television X (TopUpTV)" siteId="50465" />
-    <Channel id="Television X Analogue" siteId="517" />
-    <Channel id="Television X" siteId="16" />
-    <Channel id="Ten-17 FM" siteId="50731" />
-    <Channel id="TG4" siteId="128" />
-    <Channel id="The Adult Channel" siteId="99" />
-    <Channel id="The Box" siteId="541" />
-    <Channel id="The Dating Channel" siteId="50288" />
-    <Channel id="The Hits!: Radio" siteId="50586" />
-    <Channel id="The Style Network" siteId="50919" />
-    <Channel id="The Vault" siteId="50359" />
-    <Channel id="Tiny Pop Plus 1" siteId="50594" />
-    <Channel id="Tiny Pop" siteId="50399" />
-    <Channel id="Today FM" siteId="50741" />
-    <Channel id="Travel Channel Plus 1" siteId="50354" />
-    <Channel id="Travel Channel" siteId="103" />
-    <Channel id="Trent FM" siteId="50732" />
-    <Channel id="True Entertainment" siteId="50934" />
-    <Channel id="True Movies 2" siteId="50509" />
-    <Channel id="True Movies" siteId="50446" />
-    <Channel id="TV3" siteId="302" />
-    <Channel id="TV5MONDE" siteId="568" />
-    <Channel id="TVX Amateur" siteId="50871" />
-    <Channel id="TVX Brits" siteId="50872" />
-    <Channel id="U105" siteId="50623" />
-    <Channel id="Universal Channel HD" siteId="50973" />
-    <Channel id="Universal Channel Plus 1" siteId="50744" />
-    <Channel id="Universal Channel" siteId="508" />
-    <Channel id="UTV HD" siteId="50986" />
-    <Channel id="UTV Plus 1" siteId="51048" />
-    <Channel id="UTV" siteId="62" />
-    <Channel id="VH1 UK" siteId="116" />
-    <Channel id="Viewers Wives" siteId="50875" />
-    <Channel id="Vintage TV" siteId="51005" />
-    <Channel id="Viva" siteId="6261" />
-    <Channel id="Watch Plus 1" siteId="50800" />
-    <Channel id="Watch" siteId="50799" />
-    <Channel id="wedding tv" siteId="50572" />
-    <Channel id="XFM London" siteId="648" />
-    <Channel id="XFM Manchester" siteId="50666" />
-    <Channel id="XXX Gay" siteId="50531" />
-    <Channel id="Yesterday (Freeview)" siteId="50619" />
-    <Channel id="Yesterday Plus 1" siteId="50263" />
-    <Channel id="Yesterday" siteId="5945" />
-    <Channel id="Zee Cafe" siteId="51036" />
-    <Channel id="Zee Cinema" siteId="50383" />
-    <Channel id="Zee Punjabi" siteId="50384" />
-    <Channel id="Zee TV" siteId="533" />
-    <Channel id="Zing" siteId="50382" />
+    <Channel id="abc1@disney.co.uk" siteId="50281" />
+    <Channel id="abc1d@disney.co.uk" siteId="50462" />
+    <Channel id="animal@discovery.com" siteId="73" />
+    <Channel id="animalan@discovery.com" siteId="512" />
+    <Channel id="animalp1@discovery.com" siteId="604" />
+    <Channel id="arydigital.tv" siteId="577" />
+    <Channel id="attheraces.co.uk" siteId="653" />
+    <Channel id="b4utv.com" siteId="50357" />
+    <Channel id="movies@b4utv.com" siteId="562" />
+    <Channel id="music@b4utv.com" siteId="50375" />
+    <Channel id="bbc1@bbc.co.uk" siteId="1" />
+    <Channel id="bbc1ea@bbc.co.uk" siteId="50236" />
+    <Channel id="bbc1lo@bbc.co.uk" siteId="50231" />
+    <Channel id="bbc1mi@bbc.co.uk" siteId="50232" />
+    <Channel id="bbc1no@bbc.co.uk" siteId="50235" />
+    <Channel id="bbc1ne@bbc.co.uk" siteId="50237" />
+    <Channel id="bbc1nw@bbc.co.uk" siteId="50238" />
+    <Channel id="bbc1ni@bbc.co.uk" siteId="203" />
+    <Channel id="bbc1sc@bbc.co.uk" siteId="202" />
+    <Channel id="bbc1so@bbc.co.uk" siteId="50234" />
+    <Channel id="bbc1se@bbc.co.uk" siteId="50240" />
+    <Channel id="bbc1sw@bbc.co.uk" siteId="50239" />
+    <Channel id="bbc1wa@bbc.co.uk" siteId="201" />
+    <Channel id="bbc1we@bbc.co.uk" siteId="50233" />
+    <Channel id="bbc2@bbc.co.uk" siteId="2" />
+    <Channel id="bbc2ea@bbc.co.uk" siteId="50247" />
+    <Channel id="bbc2lo@bbc.co.uk" siteId="50251" />
+    <Channel id="bbc2mi@bbc.co.uk" siteId="50245" />
+    <Channel id="bbc2no@bbc.co.uk" siteId="50243" />
+    <Channel id="bbc2ne@bbc.co.uk" siteId="50244" />
+    <Channel id="bbc2nw@bbc.co.uk" siteId="50242" />
+    <Channel id="bbc2nid@bbc.co.uk" siteId="633" />
+    <Channel id="bbc2ni@bbc.co.uk" siteId="206" />
+    <Channel id="bbc2scd@bbc.co.uk" siteId="634" />
+    <Channel id="bbc2sc@bbc.co.uk" siteId="205" />
+    <Channel id="bbc2so@bbc.co.uk" siteId="50248" />
+    <Channel id="bbc2se@bbc.co.uk" siteId="50250" />
+    <Channel id="bbc2sw@bbc.co.uk" siteId="50249" />
+    <Channel id="bbc2wa@bbc.co.uk" siteId="204" />
+    <Channel id="bbc2we@bbc.co.uk" siteId="50246" />
+    <Channel id="bbc2wad@bbc.co.uk" siteId="635" />
+    <Channel id="bbc3@bbc.co.uk" siteId="74" />
+    <Channel id="bbc4d@bbc.co.uk" siteId="616" />
+    <Channel id="bbc4@bbc.co.uk" siteId="88" />
+    <Channel id="bbchd@bbc.co.uk" siteId="50530" />
+    <Channel id="bbcn@bbc.co.uk" siteId="20" />
+    <Channel id="bbcpar@bbc.co.uk" siteId="21" />
+    <Channel id="bbcp@bbc.co.uk" siteId="84" />
+    <Channel id="bbcw@bbc.co.uk" siteId="551" />
+    <Channel id="bestdirect.tv" siteId="50450" />
+    <Channel id="bestdirectp@bestdirect.tv" siteId="50451" />
+    <Channel id="bid.tv" siteId="612" />
+    <Channel id="thebiographychannel.co.uk" siteId="582" />
+    <Channel id="bloomberg.co.uk" siteId="121" />
+    <Channel id="boom@cartoon-network.co.uk" siteId="547" />
+    <Channel id="p1boom@cartoon-network.co.uk" siteId="50487" />
+    <Channel id="bravo.co.uk" siteId="75" />
+    <Channel id="2@bravo.co.uk" siteId="50484" />
+    <Channel id="an@bravo.co.uk" siteId="511" />
+    <Channel id="p1@bravo.co.uk" siteId="6448" />
+    <Channel id="eurosport.co.uk" siteId="519" />
+    <Channel id="tt@eurosport.co.uk" siteId="50454" />
+    <Channel id="2@eurosport.co.uk" siteId="614" />
+    <Channel id="cartoon-network.co.uk" siteId="7" />
+    <Channel id="2@cartoon-network.co.uk" siteId="50503" />
+    <Channel id="p1@cartoon-network.co.uk" siteId="608" />
+    <Channel id="cartoonito.co.uk" siteId="50574" />
+    <Channel id="cbbc@bbc.co.uk" siteId="638" />
+    <Channel id="cbeeb@bbc.co.uk" siteId="639" />
+    <Channel id="challengetv.co.uk" siteId="10" />
+    <Channel id="an@challengetv.co.uk" siteId="510" />
+    <Channel id="p1@challengetv.co.uk" siteId="50289" />
+    <Channel id="channeltv.co.uk" siteId="53" />
+    <Channel id="channel4.com" siteId="4" />
+    <Channel id="channel6@matv.co.uk" siteId="50499" />
+    <Channel id="chartshow.tv" siteId="50358" />
+    <Channel id="bliss@chartshow.tv" siteId="50225" />
+    <Channel id="tv@classicfm.com" siteId="50353" />
+    <Channel id="climax3-1@redhottv.co.uk" siteId="50490" />
+    <Channel id="climax3-2@redhottv.co.uk" siteId="50491" />
+    <Channel id="climax3-3@redhottv.co.uk" siteId="50492" />
+    <Channel id="cnbceurope.com" siteId="521" />
+    <Channel id="cnn.com" siteId="548" />
+    <Channel id="dt@communitychannel.org" siteId="6314" />
+    <Channel id="cab@communitychannel.org" siteId="50453" />
+    <Channel id="communitychannel.org" siteId="6264" />
+    <Channel id="crimeandinvestigation.co.uk" siteId="50536" />
+    <Channel id="english@dw-world.de" siteId="50467" />
+    <Channel id="discoverychannel.co.uk" siteId="12" />
+    <Channel id="an@discoverychannel.co.uk" siteId="513" />
+    <Channel id="15@discoverychannel.co.uk" siteId="50582" />
+    <Channel id="civil@discoverychannel.co.uk" siteId="11" />
+    <Channel id="home@discoverychannel.co.uk" siteId="564" />
+    <Channel id="homep1@discoverychannel.co.uk" siteId="50448" />
+    <Channel id="hd@discoverychannel.co.uk" siteId="50518" />
+    <Channel id="p1@discoverychannel.co.uk" siteId="31" />
+    <Channel id="real@discoverychannel.co.uk" siteId="13" />
+    <Channel id="realan@discoverychannel.co.uk" siteId="514" />
+    <Channel id="realextra@discoverychannel.co.uk" siteId="50455" />
+    <Channel id="realp1@discoverychannel.co.uk" siteId="605" />
+    <Channel id="science@discoverychannel.co.uk" siteId="14" />
+    <Channel id="travel@discoverychannel.co.uk" siteId="15" />
+    <Channel id="turbo@discoverychannel.co.uk" siteId="126" />
+    <Channel id="disneychannel.co.uk" siteId="67" />
+    <Channel id="cinemagic@disneychannel.co.uk" siteId="642" />
+    <Channel id="cinemagicp1@disneychannel.co.uk" siteId="50489" />
+    <Channel id="p1@disneychannel.co.uk" siteId="580" />
+    <Channel id="eonline.com" siteId="50230" />
+    <Channel id="e4@channel4.com" siteId="587" />
+    <Channel id="e4p1@channel4.com" siteId="50224" />
+    <Channel id="more4@channel4.com" siteId="50459" />
+    <Channel id="more4p1@channel4.com" siteId="50460" />
+    <Channel id="espnclassic.co.uk" siteId="50493" />
+    <Channel id="euronews.net" siteId="570" />
+    <Channel id="eurosport@eurosport.com" siteId="68" />
+    <Channel id="eurosport2@eurosport.com" siteId="50376" />
+    <Channel id="sports@extreme.com" siteId="630" />
+    <Channel id="ftn.tv" siteId="6195" />
+    <Channel id="film4@channel4.com" siteId="100" />
+    <Channel id="film4p1@channel4.com" siteId="598" />
+    <Channel id="five.tv" siteId="5" />
+    <Channel id="life@five.tv" siteId="50544" />
+    <Channel id="us@five.tv" siteId="50543" />
+    <Channel id="flaunt.tv" siteId="50226" />
+    <Channel id="fxuk.tv" siteId="50253" />
+    <Channel id="p2@fxuk.tv" siteId="50456" />
+    <Channel id="gaydatetv.co.uk" siteId="50287" />
+    <Channel id="europe@god.tv" siteId="50356" />
+    <Channel id="uk@god.tv" siteId="526" />
+    <Channel id="ukan@god.tv" siteId="535" />
+    <Channel id="thegolfchanneluk.com" siteId="50541" />
+    <Channel id="hallmarkchannel.co.uk" siteId="508" />
+    <Channel id="thehistorychannel.co.uk" siteId="72" />
+    <Channel id="an@thehistorychannel.co.uk" siteId="509" />
+    <Channel id="hd@thehistorychannel.co.uk" siteId="50550" />
+    <Channel id="p1@thehistorychannel.co.uk" siteId="579" />
+    <Channel id="hollywoodtv-tv" siteId="50498" />
+    <Channel id="dt@ibuy.tv" siteId="626" />
+    <Channel id="ibuy.tv" siteId="532" />
+    <Channel id="2@ibuy.tv" siteId="615" />
+    <Channel id="idealworld.tv" siteId="50395" />
+    <Channel id="information.tv" siteId="50280" />
+    <Channel id="2@information.tv" siteId="50566" />
+    <Channel id="itv1an@itv.com" siteId="50" />
+    <Channel id="itv1be@itv.com" siteId="54" />
+    <Channel id="itv1bs@itv.com" siteId="637" />
+    <Channel id="itv1ce@itv.com" siteId="52" />
+    <Channel id="itv1gr@itv.com" siteId="56" />
+    <Channel id="itv1lo@itv.com" siteId="3" />
+    <Channel id="itv1me@itv.com" siteId="59" />
+    <Channel id="itv1tt@itv.com" siteId="61" />
+    <Channel id="itv1tvn@itv.com" siteId="50555" />
+    <Channel id="itv1tvs@itv.com" siteId="50556" />
+    <Channel id="itv1wa@itv.com" siteId="57" />
+    <Channel id="itv1we@itv.com" siteId="78" />
+    <Channel id="itv1wc@itv.com" siteId="63" />
+    <Channel id="itv1yo@itv.com" siteId="64" />
+    <Channel id="itv2@itv.com" siteId="32" />
+    <Channel id="p1itv2@itv.com" siteId="50551" />
+    <Channel id="itv3@itv.com" siteId="50283" />
+    <Channel id="p1itv3@itv.com" siteId="50552" />
+    <Channel id="itv4@itv.com" siteId="50470" />
+    <Channel id="citv@itv.com" siteId="50486" />
+    <Channel id="citvd@itv.com" siteId="50539" />
+    <Channel id="jetix.co.uk" siteId="105" />
+    <Channel id="an@jetix.co.uk" siteId="104" />
+    <Channel id="p1@jetix.co.uk" siteId="609" />
+    <Channel id="tv@kerrang.com" siteId="606" />
+    <Channel id="tv@kiss100.com" siteId="50372" />
+    <Channel id="legaltv.co.uk" siteId="50547" />
+    <Channel id="livingtv.co.uk" siteId="19" />
+    <Channel id="2@livingtv.co.uk" siteId="50350" />
+    <Channel id="p1@livingtv.co.uk" siteId="6033" />
+    <Channel id="lifetv.org.uk" siteId="50520" />
+    <Channel id="life24@lifetv.org.uk" siteId="50521" />
+    <Channel id="lifeshowcase@lifetv.org.uk" siteId="50522" />
+    <Channel id="magic@kerrang.com" siteId="50373" />
+    <Channel id="max.tv" siteId="50565" />
+    <Channel id="menmot@itv.com" siteId="107" />
+    <Channel id="menmoa@itv.com" siteId="81" />
+    <Channel id="motorstv.com" siteId="6351" />
+    <Channel id="tvmovies24.com" siteId="50535" />
+    <Channel id="more24@tvmovies24.com" siteId="50549" />
+    <Channel id="base@mtv.co.uk" siteId="119" />
+    <Channel id="dance@mtv.co.uk" siteId="597" />
+    <Channel id="flux@mtv.co.uk" siteId="50252" />
+    <Channel id="hits@mtv.co.uk" siteId="118" />
+    <Channel id="ie@mtv.co.uk" siteId="50380" />
+    <Channel id="mtv.co.uk" siteId="115" />
+    <Channel id="2@mtv.co.uk" siteId="117" />
+    <Channel id="mutv@manutd.com" siteId="122" />
+    <Channel id="movies4men.co.uk" siteId="50464" />
+    <Channel id="2@movies4men.co.uk" siteId="50463" />
+    <Channel id="nasn.com" siteId="6346" />
+    <Channel id="europe@nasn.com" siteId="50546" />
+    <Channel id="nationalgeographic.co.uk" siteId="79" />
+    <Channel id="an@nationalgeographic.co.uk" siteId="516" />
+    <Channel id="hd@nationalgeographic.co.uk" siteId="50519" />
+    <Channel id="p1@nationalgeographic.co.uk" siteId="607" />
+    <Channel id="wild@nationalgeographic.co.uk" siteId="601" />
+    <Channel id="jr@nick.co.uk" siteId="112" />
+    <Channel id="jr2@nick.co.uk" siteId="50507" />
+    <Channel id="jran@nick.co.uk" siteId="111" />
+    <Channel id="replay@nick.co.uk" siteId="113" />
+    <Channel id="toons@nick.co.uk" siteId="654" />
+    <Channel id="nick.co.uk" siteId="110" />
+    <Channel id="an@nick.co.uk" siteId="109" />
+    <Channel id="pa2@paramountcomedy.com" siteId="50229" />
+    <Channel id="paramountcomedy.com" siteId="83" />
+    <Channel id="p1@paramountcomedy.com" siteId="50457" />
+    <Channel id="ana@paramountcomedy.com" siteId="588" />
+    <Channel id="performance-channel.com" siteId="527" />
+    <Channel id="phoenixcne.com" siteId="528" />
+    <Channel id="playboytv.co.uk" siteId="89" />
+    <Channel id="playboy1@playboytv.co.uk" siteId="50495" />
+    <Channel id="ph@disneychannel.co.uk" siteId="643" />
+    <Channel id="pokerzone.tv" siteId="50559" />
+    <Channel id="popclub.tv" siteId="50398" />
+    <Channel id="tinypop@popclub.tv" siteId="50399" />
+    <Channel id="price-drop.tv" siteId="50361" />
+    <Channel id="propellertv.co.uk" siteId="50545" />
+    <Channel id="tv@q4music.com" siteId="50374" />
+    <Channel id="qvcuk.com" siteId="529" />
+    <Channel id="realestatetv.tv" siteId="50523" />
+    <Channel id="p1@realestatetv.tv" siteId="50577" />
+    <Channel id="40pwives@redhottv.co.uk" siteId="50510" />
+    <Channel id="allgirl@redhottv.co.uk" siteId="50515" />
+    <Channel id="amateur@redhottv.co.uk" siteId="50512" />
+    <Channel id="raw@redhottv.co.uk" siteId="50511" />
+    <Channel id="rears@redhottv.co.uk" siteId="50516" />
+    <Channel id="wives@redhottv.co.uk" siteId="50517" />
+    <Channel id="rockworld.tv" siteId="50560" />
+    <Channel id="1@rte.ie" siteId="300" />
+    <Channel id="2@rte.ie" siteId="301" />
+    <Channel id="russiatoday.ru" siteId="50504" />
+    <Channel id="s4c.co.uk" siteId="85" />
+    <Channel id="s4cd@s4c.co.uk" siteId="87" />
+    <Channel id="s4c2@s4c.co.uk" siteId="50241" />
+    <Channel id="scifi.com" siteId="35" />
+    <Channel id="p1@scifi.com" siteId="50488" />
+    <Channel id="scuzz.tv" siteId="50227" />
+    <Channel id="golf@setanta.com" siteId="50561" />
+    <Channel id="ie@setanta.com" siteId="50386" />
+    <Channel id="sports1@setanta.com" siteId="6350" />
+    <Channel id="sports1tt@setanta.com" siteId="50564" />
+    <Channel id="sports2@setanta.com" siteId="50452" />
+    <Channel id="skyarts@sky.com" siteId="583" />
+    <Channel id="skyartshd@sky.com" siteId="50529" />
+    <Channel id="skyboxoff01@sky.com" siteId="50290" />
+    <Channel id="skyboxoff02@sky.com" siteId="50291" />
+    <Channel id="skyboxoff03@sky.com" siteId="50292" />
+    <Channel id="skyboxoff04@sky.com" siteId="50293" />
+    <Channel id="skyboxoff05@sky.com" siteId="50294" />
+    <Channel id="skyboxoff06@sky.com" siteId="50295" />
+    <Channel id="skyboxoff07@sky.com" siteId="50296" />
+    <Channel id="skyboxoff08@sky.com" siteId="50297" />
+    <Channel id="skyboxoff09@sky.com" siteId="50298" />
+    <Channel id="skyboxoff10@sky.com" siteId="50299" />
+    <Channel id="skyboxoff11@sky.com" siteId="50300" />
+    <Channel id="skyboxoff12@sky.com" siteId="50301" />
+    <Channel id="skyboxoff13@sky.com" siteId="50302" />
+    <Channel id="skyboxoff14@sky.com" siteId="50303" />
+    <Channel id="skyboxoff15@sky.com" siteId="50304" />
+    <Channel id="skyboxoff16@sky.com" siteId="50305" />
+    <Channel id="skyboxoff17@sky.com" siteId="50306" />
+    <Channel id="skyboxoff18@sky.com" siteId="50307" />
+    <Channel id="skyboxoff19@sky.com" siteId="50308" />
+    <Channel id="skyboxoff20@sky.com" siteId="50309" />
+    <Channel id="skyboxoff21@sky.com" siteId="50310" />
+    <Channel id="skyboxoff22@sky.com" siteId="50311" />
+    <Channel id="skyboxoff23@sky.com" siteId="50312" />
+    <Channel id="skyboxoff24@sky.com" siteId="50313" />
+    <Channel id="skyboxoff25@sky.com" siteId="50314" />
+    <Channel id="skyboxoff26@sky.com" siteId="50315" />
+    <Channel id="skyboxoff27@sky.com" siteId="50316" />
+    <Channel id="skyboxoff28@sky.com" siteId="50317" />
+    <Channel id="skyboxoff29@sky.com" siteId="50318" />
+    <Channel id="skyboxoff30@sky.com" siteId="50319" />
+    <Channel id="skyboxoff31@sky.com" siteId="50320" />
+    <Channel id="skyboxoff32@sky.com" siteId="50321" />
+    <Channel id="skyboxoff33@sky.com" siteId="50322" />
+    <Channel id="skyboxoff34@sky.com" siteId="50323" />
+    <Channel id="skyboxoff35@sky.com" siteId="50324" />
+    <Channel id="skyboxoff36@sky.com" siteId="50325" />
+    <Channel id="skyboxoff37@sky.com" siteId="50326" />
+    <Channel id="skyboxoff38@sky.com" siteId="50327" />
+    <Channel id="skyboxoff39@sky.com" siteId="50328" />
+    <Channel id="skyboxoff40@sky.com" siteId="50329" />
+    <Channel id="skyboxoff41@sky.com" siteId="50330" />
+    <Channel id="skyboxoff42@sky.com" siteId="50331" />
+    <Channel id="skyboxoff43@sky.com" siteId="50332" />
+    <Channel id="skyboxoff44@sky.com" siteId="50333" />
+    <Channel id="skyboxoff46@sky.com" siteId="50335" />
+    <Channel id="skyboxoff47@sky.com" siteId="50336" />
+    <Channel id="skyboxoff48@sky.com" siteId="50337" />
+    <Channel id="skyboxoff49@sky.com" siteId="50339" />
+    <Channel id="skyboxoff50@sky.com" siteId="50342" />
+    <Channel id="skyboxoff51@sky.com" siteId="50343" />
+    <Channel id="skyboxoff52@sky.com" siteId="50345" />
+    <Channel id="skyboxoffev@sky.com" siteId="50381" />
+    <Channel id="skyboxoff1hd@sky.com" siteId="50524" />
+    <Channel id="skyboxoff2hd@sky.com" siteId="50525" />
+    <Channel id="skymoviespremiere@sky.com" siteId="90" />
+    <Channel id="skymovies1a@sky.com" siteId="41" />
+    <Channel id="p1skymoviespremiere@sky.com" siteId="95" />
+    <Channel id="skymovies2a@sky.com" siteId="40" />
+    <Channel id="skymoviescomedy@sky.com" siteId="91" />
+    <Channel id="skymoviesactionthriller@sky.com" siteId="96" />
+    <Channel id="skymoviesfamily@sky.com" siteId="92" />
+    <Channel id="skymoviesdrama@sky.com" siteId="97" />
+    <Channel id="skymoviesscifihorror@sky.com" siteId="93" />
+    <Channel id="skymoviesclassics@sky.com" siteId="114" />
+    <Channel id="skymoviesindie@sky.com" siteId="50480" />
+    <Channel id="skymoviesmoderngreats@sky.com" siteId="98" />
+    <Channel id="skymovieshd1@sky.com" siteId="50526" />
+    <Channel id="skymovieshd2@sky.com" siteId="50527" />
+    <Channel id="skymoviessd1@sky.com" siteId="50575" />
+    <Channel id="skymoviessd2@sky.com" siteId="50576" />
+    <Channel id="skynews@sky.com" siteId="70" />
+    <Channel id="skyone@sky.com" siteId="65" />
+    <Channel id="skyonehd@sky.com" siteId="50528" />
+    <Channel id="skypoker@sky.com" siteId="50569" />
+    <Channel id="skytwo@sky.com" siteId="6156" />
+    <Channel id="skysports1@sky.com" siteId="43" />
+    <Channel id="skysports2@sky.com" siteId="44" />
+    <Channel id="skysports3@sky.com" siteId="45" />
+    <Channel id="skysportshd@sky.com" siteId="50508" />
+    <Channel id="skysportshd2@sky.com" siteId="50537" />
+    <Channel id="skysportsne@sky.com" siteId="530" />
+    <Channel id="skysportsx@sky.com" siteId="590" />
+    <Channel id="skytravel@sky.com" siteId="71" />
+    <Channel id="skytravelex@sky.com" siteId="6280" />
+    <Channel id="skytravelp1@sky.com" siteId="50285" />
+    <Channel id="skythree@sky.com" siteId="50468" />
+    <Channel id="skyvegas@sky.com" siteId="50570" />
+    <Channel id="tv@smashhits.net" siteId="6262" />
+    <Channel id="setasia.tv" siteId="560" />
+    <Channel id="speedauction.tv" siteId="50496" />
+    <Channel id="spiceuk.tv" siteId="652" />
+    <Channel id="gold@uk.startv.com" siteId="50563" />
+    <Channel id="news@uk.startv.com" siteId="631" />
+    <Channel id="one@uk.startv.com" siteId="50562" />
+    <Channel id="plus@uk.startv.com" siteId="628" />
+    <Channel id="stv.tv" siteId="60" />
+    <Channel id="tt@tcmonline.co.uk" siteId="50273" />
+    <Channel id="tcmonline.co.uk" siteId="24" />
+    <Channel id="2@tcmonline.co.uk" siteId="50505" />
+    <Channel id="dt@teachers.tv" siteId="50393" />
+    <Channel id="teachers.tv" siteId="50390" />
+    <Channel id="teleg.co.uk" siteId="567" />
+    <Channel id="televisionx.co.uk" siteId="16" />
+    <Channel id="an@televisionx.co.uk" siteId="517" />
+    <Channel id="tt@televisionx.co.uk" siteId="50465" />
+    <Channel id="tg4.ie" siteId="128" />
+    <Channel id="theadultchannel.co.uk" siteId="99" />
+    <Channel id="thebox.co.uk" siteId="541" />
+    <Channel id="thebusinesschannel.com" siteId="50558" />
+    <Channel id="thedatingchannel.com" siteId="50288" />
+    <Channel id="thejewellerychannel.tv" siteId="50554" />
+    <Channel id="thomsontv.com" siteId="584" />
+    <Channel id="hits@kerrang.com" siteId="6260" />
+    <Channel id="tmf@mtv.co.uk" siteId="6261" />
+    <Channel id="trade.tv" siteId="50531" />
+    <Channel id="truemovies.tv" siteId="50446" />
+    <Channel id="2@truemovies.tv" siteId="50509" />
+    <Channel id="vault@chartshow.tv" siteId="50359" />
+    <Channel id="travelchannel.co.uk" siteId="103" />
+    <Channel id="p1@travelchannel.co.uk" siteId="50354" />
+    <Channel id="trouble@uktv.co.uk" siteId="25" />
+    <Channel id="troublean@uktv.co.uk" siteId="518" />
+    <Channel id="troublep1@uktv.co.uk" siteId="50228" />
+    <Channel id="tv3.ie" siteId="302" />
+    <Channel id="tv5.org" siteId="568" />
+    <Channel id="twcfight.com" siteId="50447" />
+    <Channel id="uktvbrighti@uktv.co.uk" siteId="6194" />
+    <Channel id="uktvdoc@uktv.co.uk" siteId="28" />
+    <Channel id="uktvdocp1@uktv.co.uk" siteId="603" />
+    <Channel id="uktvdrama@uktv.co.uk" siteId="26" />
+    <Channel id="uktvdramap1@uktv.co.uk" siteId="50506" />
+    <Channel id="uktvfood@uktv.co.uk" siteId="629" />
+    <Channel id="uktvfoodp1@uktv.co.uk" siteId="50254" />
+    <Channel id="uktvg2@uktv.co.uk" siteId="27" />
+    <Channel id="uktvg2p1@uktv.co.uk" siteId="50284" />
+    <Channel id="uktvgoldtt@uktv.co.uk" siteId="50270" />
+    <Channel id="uktvgold@uktv.co.uk" siteId="18" />
+    <Channel id="uktvgoldp1@uktv.co.uk" siteId="662" />
+    <Channel id="uktvhist@uktv.co.uk" siteId="5945" />
+    <Channel id="uktvhistp1@uktv.co.uk" siteId="50263" />
+    <Channel id="uktvpeople@uktv.co.uk" siteId="50274" />
+    <Channel id="uktvstylett@uktv.co.uk" siteId="50272" />
+    <Channel id="uktvstyle@uktv.co.uk" siteId="30" />
+    <Channel id="uktvstylega@uktv.co.uk" siteId="50360" />
+    <Channel id="uktvstylep1@uktv.co.uk" siteId="644" />
+    <Channel id="u.tv" siteId="62" />
+    <Channel id="classic@vh1.co.uk" siteId="120" />
+    <Channel id="vh1.co.uk" siteId="116" />
+    <Channel id="weddingtv.com" siteId="50572" />
+    <Channel id="p1@weddingtv.com" siteId="50578" />
+    <Channel id="cinema@zeetv.co.uk" siteId="50383" />
+    <Channel id="pun@zeetelevision.com" siteId="50384" />
+    <Channel id="guj@zeetelevision.com" siteId="50385" />
+    <Channel id="music@zeetv.co.uk" siteId="50382" />
+    <Channel id="zeetv.co.uk" siteId="533" />
+    <Channel id="zonehorror.tv" siteId="50277" />
+    <Channel id="zonereality.co.uk" siteId="5910" />
+    <Channel id="p1@zonereality.co.uk" siteId="50352" />
+    <Channel id="extra@zonereality.co.uk" siteId="50483" />
+    <Channel id="zonethriller.tv" siteId="50542" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.mydigiguide.com/dgx/wbl.dll?h=35&amp;a=2&amp;ch=[ID]&amp;dt=[DAY_OFFSET]&amp;el=" post="" external="false" encoding="" delay="1000"/>
+    <Site url="http://www.mydigiguide.com/dgx/wbl.dll?h=35&amp;a=2&amp;ch=[ID]&amp;dt=[DAY_OFFSET]&amp;el=" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="Listings:">
         <SectionTemplate tags="T">
@@ -674,14 +427,6 @@
 		</TemplateText>
         </SectionTemplate>
       </Template>
-     <Searches>
-	<Search match="Series [0-9]{1,3}" field="#EPISODE" remove="false" />
-	<Search match="Part [0-9]{1,3}" field="#SEASON" remove="false" />
-	<Search match="episode [0-9]{1,3}" field="#SEASON" remove="false" />
-	<Search match=" Subtitles," field="#SUBTITLES" remove="true" />
-	<Search match=" Repeat," field="#REPEAT" remove="true" />
-	<Search match=" Widescreen," field="#WIDESCREEN" remove="true" /> 
-     </Searches>
     </Html>
   </Listing>
 </Grabber>

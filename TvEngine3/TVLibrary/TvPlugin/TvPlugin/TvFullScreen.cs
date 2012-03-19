@@ -627,7 +627,7 @@ namespace TvPlugin
             {
               if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
               {
-                msg.Label = "CC1";
+                msg.Label = "CC1 Analog or Digital";
               }
               else
               {
@@ -2146,7 +2146,7 @@ namespace TvPlugin
 
       if (g_Player.SupportsCC)
       {
-        dlg.Add("CC1");
+        dlg.Add("CC1 Analog or Digital");
       }
 
       // get the number of subtitles in the current movie
@@ -2166,7 +2166,7 @@ namespace TvPlugin
 
       // select/focus the subtitle, which is active atm.
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
-      if (g_Player.EnableSubtitle && nbSubStreams > 0)
+      if (g_Player.EnableSubtitle && nbSubStreams >= 0)
       {
         if (g_Player.SupportsCC)
         {

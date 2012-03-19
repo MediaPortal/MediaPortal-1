@@ -331,17 +331,10 @@ namespace TvLibrary.Implementations
                     _cards.Add(dvbsCard);
                     connected = true;
                   }
-                  if (connected)
-                  {
-                    graphBuilder.RemoveFilter(tmp);
-                    Release.ComObject("tmp filter", tmp);
-                    break; // already found one, no need to continue
-                  }
-                  else if (n == (pulcNetworkTypes - 1))
-                  {
-                    Log.Log.WriteFile("Connected with generic MS Network Provider however network types don't match, using the original method");
-                  }
+                  if (connected) break; // already found one, no need to continue
                 }
+                graphBuilder.RemoveFilter(tmp);
+                Release.ComObject("tmp filter", tmp);
               }
               else
               {

@@ -1,171 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Info availableDays="7" timezone="" version="2.0" />
   <Channels>
-	<Channel id="Andalucía TV" siteId="106" />
-	<Channel id="Antena 3" siteId="3" />
-	<Channel id="Aprende Inglés TV" siteId="158" />
-	<Channel id="AXN" siteId="27" />
-	<Channel id="Baby TV" siteId="133" />
-	<Channel id="BBC World" siteId="81" />
-	<Channel id="Bloomberg" siteId="78" />
-	<Channel id="Boomerang" siteId="45" />
-	<Channel id="Boomerang +1" siteId="46" />
-	<Channel id="Buzz Rojo" siteId="28" />
-	<Channel id="Buzz" siteId="32" />
-	<Channel id="Calle 13" siteId="25" />
-	<Channel id="Canal 24h" siteId="76" />
-	<Channel id="Canal 33" siteId="17" />
-	<Channel id="Canal 9" siteId="7" />
-	<Channel id="Canal 9 Internacional" siteId="102" />
-	<Channel id="Canal Andalucía" siteId="13" />
-	<Channel id="Canal Arte" siteId="92" />
-	<Channel id="Canal Barça" siteId="134" />
-	<Channel id="Canal Cocina" siteId="65" />
-	<Channel id="Canal de las Estrellas" siteId="98" />
-	<Channel id="Canal Historia" siteId="57" />
-	<Channel id="Canal Hogarutil" siteId="110" />
-	<Channel id="Canal Hollywood +1" siteId="165" />
-	<Channel id="Canal Hollywood" siteId="164" />
-	<Channel id="Canal Natura" siteId="60" />
-	<Channel id="Canal Odisea" siteId="59" />
-	<Channel id="Canal Panda" siteId="40" />
-	<Channel id="Canal Playboy" siteId="145" />
-	<Channel id="Canal Sur" siteId="8" />
-	<Channel id="Caracol TV Internacional" siteId="93" />
-	<Channel id="Cartoon Network +1" siteId="42" />
-	<Channel id="Cartoon Network" siteId="41" />
-	<Channel id="Cazavisión" siteId="155" />
-	<Channel id="CinemaTK" siteId="24" />
-	<Channel id="Clan TVE" siteId="47" />
-	<Channel id="CNBC" siteId="79" />
-	<Channel id="CNN Internacional" siteId="80" />
-	<Channel id="Cosmopolitan" siteId="29" />
-	<Channel id="Cuatro" siteId="4" />
-	<Channel id="Cubavisión" siteId="96" />
-	<Channel id="CyL 7" siteId="114" />
-	<Channel id="DeCasa" siteId="66" />
-	<Channel id="Deutsche Welle" siteId="89" />
-	<Channel id="Discovery Channel" siteId="56" />
-	<Channel id="Discovery Civilization" siteId="62" />
-	<Channel id="Discovery Science" siteId="64" />
-	<Channel id="Discovery Turbo" siteId="63" />
-	<Channel id="Disney Channel" siteId="37" />
-	<Channel id="Disney Channel +1" siteId="38" />
-	<Channel id="Disney Cinemagic" siteId="35" />
-	<Channel id="Disney Cinemagic +1" siteId="36" />
-	<Channel id="Disney Junior" siteId="39" />
-	<Channel id="Disney XD" siteId="43" />
-	<Channel id="Disney XD +1" siteId="153" />
-	<Channel id="Ecua TV" siteId="147" />
-	<Channel id="Ecuavisa Internacional" siteId="97" />
-	<Channel id="ESPN Classic" siteId="53" />
-	<Channel id="ETB SAT" siteId="104" />
-	<Channel id="Euronews" siteId="77" />
-	<Channel id="Eurosport 2" siteId="50" />
-	<Channel id="Eurosport" siteId="49" />
-	<Channel id="EWTN" siteId="86" />
-	<Channel id="Extreme Sports" siteId="52" />
-	<Channel id="Extreme Teuve" siteId="19" />
-	<Channel id="FDF" siteId="33" />
-	<Channel id="FOX" siteId="26" />
-	<Channel id="Gol Televisión +1" siteId="154" />
-	<Channel id="Gol Televisión" siteId="150" />
-	<Channel id="IB3" siteId="10" />
-	<Channel id="Intereconomía Business" siteId="159" />
-	<Channel id="Intereconomía" siteId="84" />
-	<Channel id="KidsCo" siteId="40" />
-	<Channel id="La 1" siteId="1" />
-	<Channel id="La 2" siteId="2" />
-	<Channel id="La 7" siteId="51" />
-	<Channel id="La 10" siteId="161" />
-	<Channel id="La Otra" siteId="15" />
-	<Channel id="La Sexta" siteId="6" />
-	<Channel id="La Sexta 2" siteId="167" />
-	<Channel id="Libertad Digital TV" siteId="85" />
-	<Channel id="Marca TV" siteId="166" />
-	<Channel id="Mezzo" siteId="75" />
-	<Channel id="MGM" siteId="20" />
-	<Channel id="Mirador Arco Iris" siteId="144" />
-	<Channel id="Mirador Morbo 1" siteId="142" />
-	<Channel id="Mirador Morbo 2" siteId="143" />
-	<Channel id="Mirador X 1" siteId="136" />
-	<Channel id="Mirador X 2" siteId="137" />
-	<Channel id="Mirador XX 1" siteId="138" />
-	<Channel id="Mirador XX 2" siteId="139" />
-	<Channel id="Mirador XX 3" siteId="140" />
-	<Channel id="Mirador XX 4" siteId="141" />
-	<Channel id="Motors TV" siteId="54" />
-	<Channel id="MTV España" siteId="69" />
-	<Channel id="MTV Music" siteId="146" />
-	<Channel id="MTV Rocks" siteId="70" />
-	<Channel id="National Geographic" siteId="61" />
-	<Channel id="Neox" siteId="151" />
-	<Channel id="Nick Junior" siteId="162" />
-	<Channel id="Nickelodeon" siteId="44" />
-	<Channel id="Nova" siteId="152" />
-	<Channel id="Novelísima" siteId="148" />
-	<Channel id="ORO Sports TV" siteId="168" />
-	<Channel id="Paramount Comedy" siteId="31" />
-	<Channel id="Popular TV" siteId="88" />
-	<Channel id="PPV Cine 1" siteId="115" />
-	<Channel id="PPV Cine 2" siteId="116" />
-	<Channel id="PPV Cine 3" siteId="117" />
-	<Channel id="PPV Cine 4" siteId="118" />
-	<Channel id="PPV Cine 5" siteId="119" />
-	<Channel id="PPV Cine 6" siteId="120" />
-	<Channel id="PPV Cine 7" siteId="121" />
-	<Channel id="PPV Cine 8" siteId="122" />
-	<Channel id="PPV Cine 9" siteId="123" />
-	<Channel id="PPV Fútbol 1" siteId="124" />
-	<Channel id="PPV Fútbol 2" siteId="125" />
-	<Channel id="PPV Fútbol 3" siteId="126" />
-	<Channel id="PPV Fútbol 4" siteId="127" />
-	<Channel id="PPV Fútbol 5" siteId="128" />
-	<Channel id="PPV Fútbol 6" siteId="129" />
-	<Channel id="PPV Fútbol 7" siteId="130" />
-	<Channel id="Punt 2" siteId="16" />
-	<Channel id="Sol Música" siteId="68" />
-	<Channel id="Somos Teuve" siteId="23" />
-	<Channel id="SYFY" siteId="163" />
-	<Channel id="TCM" siteId="21" />
-	<Channel id="TCM +1" siteId="22" />
-	<Channel id="TCM Clásico" siteId="160" />
-	<Channel id="Telecinco" siteId="5" />
-	<Channel id="Teledeporte" siteId="48" />
-	<Channel id="Telemadrid SAT" siteId="101" />
-	<Channel id="Telemadrid" siteId="11" />
-	<Channel id="Televisión CM" siteId="14" />
-	<Channel id="The Biography Channel" siteId="58" />
-	<Channel id="Tlnovelas" siteId="34" />
-	<Channel id="TV Canaria Internacional" siteId="103" />
-	<Channel id="TV Chile Internacional" siteId="95" />
-	<Channel id="TV Colombia" siteId="94" />
-	<Channel id="TV Murcia" siteId="135" />
-	<Channel id="TV3" siteId="12" />
-	<Channel id="TV3.CAT" siteId="105" />
-	<Channel id="TV5 Monde" siteId="91" />
-	<Channel id="TV Castilla y León" siteId="9" />
-	<Channel id="TVG Sat" siteId="100" />
-	<Channel id="Veo7" siteId="157" />
-	<Channel id="VH1 Classic" siteId="74" />
-	<Channel id="VH1" siteId="73" />
-	<Channel id="Yacht &amp; Sail" siteId="55" />
+    <Channel id="la1@rtve.es" siteId="1" />
+    <Channel id="la2@rtve.es" siteId="2" />
+    <Channel id="antena3@antena3.com" siteId="3" />
+    <Channel id="cuatro@cuatro.com" siteId="4" />
+    <Channel id="telecinco@telecinco.es" siteId="5" />
+    <Channel id="lasexta@lasexta.com" siteId="6" />
+    <Channel id="ib3@ib3.tv" siteId="10" />
+    <Channel id="cinestar@teuve.com" siteId="18" />
+    <Channel id="calle13@calle13-es.com" siteId="25" />
+    <Channel id="fox@foxtv.es" siteId="26" />
+    <Channel id="axn@axn.es" siteId="27" />
+    <Channel id="cosmopolitan@cosmopolitan.es" siteId="29" />
+    <Channel id="paramount-comedy@paramountcomedy.es" siteId="31" />
+    <Channel id="buzz@teuve.com" siteId="32" />
+    <Channel id="fdf@telecinco.es" siteId="33" />
+    <Channel id="disney-cinemagic@disney.es" siteId="35" />
+    <Channel id="disney-channel@disney.es" siteId="36" />
+    <Channel id="disney-channel-1@disney.es" siteId="38" />
+    <Channel id="playhouse@disney.es" siteId="39" />
+    <Channel id="cartoon-network.es@cartoonnetwork.es" siteId="41" />
+    <Channel id="disney-xd@disney.es" siteId="43" />
+    <Channel id="nickelodeon@nickelodeon.es" siteId="44" />
+    <Channel id="teledeporte@rtve.es" siteId="48" />
+    <Channel id="eurosport@eurosport-tv.com" siteId="49" />
+    <Channel id="eurosport-2@eurosport-tv.com" siteId="50" />
+    <Channel id="la siete@telecinco.es" siteId="51" />
+    <Channel id="discovery-channel@tudiscovery.com" siteId="56" />
+    <Channel id="canal-historia@canalhistoria.com" siteId="57" />
+    <Channel id="the-biography-channel@thebiographychannel.es" siteId="58" />
+    <Channel id="odisea@odisea.es" siteId="59" />
+    <Channel id="national-geographic@nationalgeographic.com.es" siteId="61" />
+    <Channel id="discovery-channel@tudiscovery.com" siteId="62" />
+    <Channel id="canal-cocina@canalcocina.es" siteId="65" />
+    <Channel id="decasa@canaldecasa.es" siteId="66" />
+    <Channel id="sol-musica@solmusica.com" siteId="68" />
+    <Channel id="mtv-españa@mtv.es" siteId="69" />
+    <Channel id="vh1@vh1.com" siteId="73" />
+    <Channel id="euronews@euronews.net" siteId="77" />
+    <Channel id="goltv@goltv.tv" siteId="150" />
+    <Channel id="veo7@veo.es" siteId="157" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.ono.es/ocioytv/programacion/?list=true&amp;hour=&amp;day=[DAY_OFFSET]&amp;dialId=[ID]" post="" external="false" encoding=""  />
+    <Site url="http://ocioytv.ono.es/epg/list.action?sec=69&amp;hour=&amp;day=[DAY_OFFSET]&amp;dialId=[ID]" post="" external="false" encoding="iso-8859-1" />
     <Html>
-      <Template name="default" start="textCanal" end="Ver toda la programaci">
+      <Template name="default" start="listaProgramas" end="Ver toda la programaci">
         <SectionTemplate tags="SPAN">
           <TemplateText>	
-		&lt;span class="resultado"&gt;&lt;#START&gt;&lt;a class="showhide" onclick="return false;" href="#contCanal_0_0"&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/span&gt;
-		&lt;span class="categoria"&gt;&lt;#GENRE&gt;&lt;/span&gt;
-		&lt;div id="contCanal_0_0" class="esconder"&gt;
+		&lt;span class="resultado"&gt;&lt;#START&gt;&lt;a class="showhide" onclick="return false;" 				href="#contCanal_0_0"&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/span&gt;								&lt;span class="categoria"&gt;&lt;#GENRE&gt;&lt;/span&gt;								&lt;div id="contCanal_0_0" class="esconder"&gt;
 		&lt;ul&gt;
-		&lt;!--												&lt;li&gt;&lt;strong&gt;Emisión:&lt;/strong&gt; lunes, 16.11.2009 00:00h - 00:12h (Una hora menos en Canarias)&lt;/li&gt;--&gt;	
-		&lt;li&gt;&lt;#DESCRIPTION&gt;.&lt;/li&gt;
-		&lt;li&gt;&lt;strong&gt;Valoración edad:&lt;/strong&gt; 17&lt;/li&gt;
-	 </TemplateText>
+		&lt;!--															&lt;li&gt;&lt;strong&gt;Emisión:&lt;/strong&gt; lunes, 16.11.2009 00:00h - 00:12h (Una hora menos 		en Canarias)&lt;/li&gt;--&gt;												&lt;li&gt;&lt;#DESCRIPTION&gt;.&lt;/li&gt;
+		&lt;li&gt;&lt;strong&gt;Valoración edad:&lt;/strong&gt; 17&lt;/li&gt;							&lt;li&gt;&lt;strong&gt;Título de capítulo:&lt;/strong&gt;&lt;#SUBTITLE&gt;&lt;/li&gt;					&lt;li&gt;&lt;strong&gt;Número de capítulo:&lt;/strong&gt; &lt;#EPISODE&gt;&lt;/li&gt;					&lt;!--														--&gt;
+          </TemplateText>
         </SectionTemplate>
       </Template>
     </Html>

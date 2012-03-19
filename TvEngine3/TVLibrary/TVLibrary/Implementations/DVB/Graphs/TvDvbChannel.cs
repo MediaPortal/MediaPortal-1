@@ -44,7 +44,8 @@ namespace TvLibrary.Implementations.DVB
 
     #region local variables
 
-    private bool _listenCA = false;
+    private bool _cancelled;
+    private bool _listenCA;
 
     /// <summary>
     /// Indicates that PMT was grabbed
@@ -125,7 +126,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// The graph builder for the capture card graph.
     /// </summary>
-    protected IFilterGraph2 _graphBuilder;
+    protected IFilterGraph2 _graphBuilder;    
 
     #endregion
 
@@ -138,6 +139,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public TvDvbChannel()
     {
+      _cancelled = false;
       _listenCA = false;
       _eventPMT = new ManualResetEvent(false);
       _eventCA = new ManualResetEvent(false);
@@ -167,6 +169,7 @@ namespace TvLibrary.Implementations.DVB
     public TvDvbChannel(IFilterGraph2 graphBuilder, ConditionalAccess ca, MDPlugs mdplugs, IBaseFilter tif,
                         IBaseFilter tsWriter, int subChannelId, IChannel channel)
     {
+      _cancelled = false;
       _listenCA = false;
       _eventPMT = new ManualResetEvent(false);
       _eventCA = new ManualResetEvent(false);
@@ -267,6 +270,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if PMT was found, otherwise <c>false</c></returns>
     protected virtual bool WaitForPMT()
     {
+      ThrowExceptionIfTuneCancelled();
+
       bool foundPMT = false;
       int retryCount = 0;
       int lookForPid;
@@ -303,6 +308,7 @@ namespace TvLibrary.Implementations.DVB
 
             if (_eventPMT.WaitOne(timeoutPMT, true))
             {
+              ThrowExceptionIfTuneCancelled();
               TimeSpan ts = DateTime.Now - dtNow;
               Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
               DateTime dtNowPMT2CAM = DateTime.Now;
@@ -325,7 +331,8 @@ namespace TvLibrary.Implementations.DVB
                         SetMpegPidMapping(_channelInfo);
                         if (_mdplugs != null && _channelInfo.scrambled)
                         {
-                          _mdplugs.SetChannel(_currentChannel, _channelInfo, false);
+                          //_mdplugs.SetChannel(_currentChannel, _channelInfo, false);
+                          _mdplugs.AddSubChannel(_subChannelId,_currentChannel, _channelInfo, false);
                         }
                       }
                       Log.Log.Info("subch:{0} stop tif", _subChannelId);
@@ -363,7 +370,7 @@ namespace TvLibrary.Implementations.DVB
               break;
             }
             else
-            {
+            {             
               // Timeout waiting for PMT
               TimeSpan ts = DateTime.Now - dtNow;
               Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
@@ -376,6 +383,15 @@ namespace TvLibrary.Implementations.DVB
       }
 
       return foundPMT;
+    }
+
+    private void ThrowExceptionIfTuneCancelled()
+    {
+      if (_cancelled)
+      {
+        Log.Log.Debug("WaitForPMT: tuning interrupted.");
+        throw new TvExceptionTuneCancelled();
+      }
     }
 
     /// <summary>
@@ -863,7 +879,7 @@ namespace TvLibrary.Implementations.DVB
 
       // reset event before starting to wait
       _eventPMT.Reset();
-
+      ThrowExceptionIfTuneCancelled();
       if (pmtPid < 0)
         return false;
       if (pmtPid == _pmtPid)
@@ -1117,6 +1133,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected virtual bool SendPmtToCam(out bool updatePids, out int waitInterval)
     {
+      ThrowExceptionIfTuneCancelled();
       lock (this)
       {
         DVBBaseChannel channel = _currentChannel as DVBBaseChannel;
@@ -1141,10 +1158,11 @@ namespace TvLibrary.Implementations.DVB
               }
               else
               {
+                ThrowExceptionIfTuneCancelled();
                 foundCA = true;
                 TimeSpan ts = DateTime.Now - dtNow;
                 Log.Log.Info("subch:{0} SendPmt:CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
-              }
+              }              
             }
           }
         }
@@ -1303,6 +1321,17 @@ namespace TvLibrary.Implementations.DVB
       get { return (_pmtVersion > -1 && _channelInfo.pids.Count > 0); }
     }
 
+    /// <summary>
+    /// cancels the tune
+    /// </summary>    
+    public void CancelTune ()
+    {
+      Log.Log.WriteFile("subch:{0} CancelTune()", _subChannelId);
+      _cancelled = true;
+      _eventCA.Set();
+      _eventPMT.Set();
+    }    
+
     #endregion
 
     #region tswriter callback handlers
@@ -1353,7 +1382,8 @@ namespace TvLibrary.Implementations.DVB
                 SetMpegPidMapping(_channelInfo);
                 if (_mdplugs != null && _channelInfo.scrambled)
                 {
-                  _mdplugs.SetChannel(_currentChannel, _channelInfo, true);
+                  //_mdplugs.SetChannel(_currentChannel, _channelInfo, true);
+                  _mdplugs.AddSubChannel(_subChannelId, _currentChannel, _channelInfo, true);
                 }
               }
             }

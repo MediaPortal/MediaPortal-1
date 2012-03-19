@@ -194,6 +194,10 @@ namespace TvLibrary.Implementations.DVB
       {
         throw;
       }
+      catch (TvExceptionTuneCancelled)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
@@ -218,6 +222,10 @@ namespace TvLibrary.Implementations.DVB
         }
         ITvSubChannel ch = base.Tune(subChannelId, channel);
         return ch;
+      }
+      catch (TvExceptionTuneCancelled)
+      {
+        throw;
       }
       catch (TvExceptionNoSignal)
       {

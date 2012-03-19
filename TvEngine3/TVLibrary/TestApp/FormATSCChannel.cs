@@ -49,7 +49,7 @@ namespace TestApp
     private void buttonOK_Click(object sender, EventArgs e)
     {
       _channel.Frequency = -1;
-      _channel.SymbolRate = -1;
+      //_channel.SymbolRate = -1;
       _channel.TransportId = -1;
       _channel.ModulationType = DirectShowLib.BDA.ModulationType.ModNotSet;
       _channel.PhysicalChannel = Int32.Parse(textboxFreq.Text);
