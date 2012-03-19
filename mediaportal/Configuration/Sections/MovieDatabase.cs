@@ -1728,37 +1728,6 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-
-    // Import nfo xml
-    private void buttonImport_Click(object sender, EventArgs e)
-    {
-      FolderBrowserDialog fBrowser = new FolderBrowserDialog();
-      
-      if (fBrowser.ShowDialog(this) != DialogResult.OK)
-      {
-        return;
-      }
-
-      ArrayList nfoFiles = new ArrayList();
-      GetNfoFiles(fBrowser.SelectedPath, ref nfoFiles);
-
-      foreach (string nfoFile in nfoFiles)
-      {
-        VideoDatabase.ImportNfo(nfoFile);
-      }
-
-      LoadMovies(0);
-    }
-
-    private void GetNfoFiles(string path, ref ArrayList availableFiles)
-    {
-      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
-
-      foreach (string file in files)
-      {
-        availableFiles.Add(file);
-      }
-    }
     
     // Changed
     private IMDBMovie CurrentMovie
@@ -1908,6 +1877,9 @@ namespace MediaPortal.Configuration.Sections
         }
         preferFileNameCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "preferfilenameforsearch", false);
 
+        // Create nfo file
+        chbCreateNfoFile.Checked = xmlreader.GetValueAsBool("moviedatabase", "createnfo", false);
+
         // Movie info before play
         chbShowMovieInfoOnPlay.Checked = xmlreader.GetValueAsBool("moviedatabase", "movieinfobeforeplay", false);
         chbMovieInfoOnShares.Checked = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
@@ -1976,6 +1948,9 @@ namespace MediaPortal.Configuration.Sections
         // Folder movie title
         xmlwriter.SetValueAsBool("moviedatabase", "usefolderastitle", _useFolderAsTitle);
         xmlwriter.SetValueAsBool("moviedatabase", "preferfilenameforsearch", preferFileNameCheckBox.Checked);
+
+        // Create nfo file
+        xmlwriter.SetValueAsBool("moviedatabase", "createnfo", chbCreateNfoFile.Checked);
 
         // Movie info before play
         xmlwriter.SetValueAsBool("moviedatabase", "movieinfobeforeplay", chbShowMovieInfoOnPlay.Checked);
@@ -4408,8 +4383,158 @@ namespace MediaPortal.Configuration.Sections
       }
       pbTools.Value = 0;
     }
-    
 
+    // Import nfo xml
+    private void buttonImportNfo_Click(object sender, EventArgs e)
+    {
+      FolderBrowserDialog fBrowser = new FolderBrowserDialog();
+
+      if (fBrowser.ShowDialog(this) != DialogResult.OK)
+      {
+        return;
+      }
+
+      _nfoFiles = new ArrayList();
+      GetNfoFiles(fBrowser.SelectedPath, ref _nfoFiles);
+
+      // Set refresh status for background worker
+      _isRefreshing = true;
+      // Freeze current panel (do not mess up while refreshing)
+      this.Enabled = false;
+      // Progress setup
+      _progressDialog = new DlgProgress();
+      _progressDialog.SetHeading("Importing movies");
+      _progressDialog.TopMost = true;
+      _progressDialog.DisableCancel();
+      _progressDialog.SetLine1("Movie:");
+      _progressDialog.SetLine2("Importing...");
+      _progressDialog.SetPercentage(100);
+      _progressDialog.Total = _nfoFiles.Count;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      // Set backgroundworker
+      BackgroundWorker bgwNfo = new BackgroundWorker();
+      bgwNfo.WorkerSupportsCancellation = true;
+      bgwNfo.WorkerReportsProgress = false;
+      bgwNfo.DoWork += new DoWorkEventHandler(ImportNfo);
+      bgwNfo.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelNfoWorker);
+      // Start worker by passing parameter moviecollection
+      bgwNfo.RunWorkerAsync();
+
+      while (_isRefreshing)
+      {
+        if (!_progressDialog.CancelScan)
+        {
+          Application.DoEvents();
+        }
+        else
+        {
+          _isRefreshing = false;
+          bgwNfo.CancelAsync();
+          return;
+        }
+      }
+    }
+
+    // Import nfos DoWork event handler
+    private void ImportNfo(object sender, DoWorkEventArgs e)
+    {
+      foreach (string nfoFile in _nfoFiles)
+      {
+        if (!_isRefreshing)
+        {
+          e.Cancel = true;
+          break;
+        }
+
+        _progressDialog.SetLine1("Importing: " + nfoFile);
+
+        VideoDatabase.ImportNfo(nfoFile);
+
+        // Update progress
+        if (_progressDialog.Count < _nfoFiles.Count)
+          _progressDialog.Count++;
+      }
+      _isRefreshing = false;
+    }
+
+    // Export movies
+    private void buttonExportNfo_Click(object sender, EventArgs e)
+    {
+      // Set refresh status for background worker
+      _isRefreshing = true;
+      // Freeze current panel (do not mess up while refreshing)
+      this.Enabled = false;
+      // Progress setup
+      _progressDialog = new DlgProgress();
+      _progressDialog.SetHeading("Exporting movies");
+      _progressDialog.TopMost = true;
+      _progressDialog.DisableCancel();
+      _progressDialog.SetLine1("Movie:");
+      _progressDialog.SetLine2("Exporting...");
+      _progressDialog.SetPercentage(100);
+      _progressDialog.Total = cbTitle.Items.Count - 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      // Set backgroundworker
+      BackgroundWorker bgwNfo = new BackgroundWorker();
+      bgwNfo.WorkerSupportsCancellation = true;
+      bgwNfo.WorkerReportsProgress = false;
+      bgwNfo.DoWork += new DoWorkEventHandler(ExportNfo);
+      bgwNfo.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelNfoWorker);
+      // Start worker by passing parameter moviecollection
+      bgwNfo.RunWorkerAsync();
+
+      while (_isRefreshing)
+      {
+        if (!_progressDialog.CancelScan)
+        {
+          Application.DoEvents();
+        }
+        else
+        {
+          _isRefreshing = false;
+          bgwNfo.CancelAsync();
+          return;
+        }
+      }
+    }
+
+    // Export movies DoWork event handler
+    private void ExportNfo(object sender, DoWorkEventArgs e)
+    {
+      ArrayList movies = new ArrayList();
+      VideoDatabase.GetMovies(ref movies);
+
+      foreach (IMDBMovie movie in movies)
+      {
+        if (!_isRefreshing)
+        {
+          e.Cancel = true;
+          break;
+        }
+
+        _progressDialog.SetLine1("Exporting: " + movie.Title);
+
+        VideoDatabase.MakeNfo(movie.ID);
+
+        // Update progress
+        if (_progressDialog.Count < movies.Count)
+          _progressDialog.Count++;
+      }
+      _isRefreshing = false;
+    }
+
+    private void GetNfoFiles(string path, ref ArrayList availableFiles)
+    {
+      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+
+      foreach (string file in files)
+      {
+        availableFiles.Add(file);
+      }
+    }
+    
     #endregion
 
     #region Other
@@ -4501,6 +4626,30 @@ namespace MediaPortal.Configuration.Sections
       this.Enabled = true;
     }
 
+    private void CancelNfoWorker(object sender, RunWorkerCompletedEventArgs e)
+    {
+      BackgroundWorker bgw = (BackgroundWorker)sender;
+      _progressDialog.CloseProgress();
+      // Show message
+      if (e.Cancelled)
+      {
+        MessageBox.Show("Import canceled !");
+      }
+      else if (e.Error != null)
+      {
+        MessageBox.Show("Error: " + e.Error.Message);
+      }
+      else
+      {
+        MessageBox.Show("Done!");
+      }
+      bgw.Dispose();
+      // Refresh all movies
+      LoadMovies(0);
+      cbTitle.SelectedIndex = 0;
+      this.Enabled = true;
+    }
+
     // Show-hide some of the controls
     private void ShowHide()
     {
@@ -4558,7 +4707,8 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-
+    
     #endregion
+
   }
 }
