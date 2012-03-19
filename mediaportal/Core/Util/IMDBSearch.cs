@@ -132,7 +132,6 @@ namespace MediaPortal.Util
 
       actorList.Clear();
 
-      //string movieURL = "http://www.imdb.com/title/" + imdbMovieID;
       string movieURL = "http://www.imdb.com/title/" + imdbMovieID + @"/fullcredits#cast";
       string strBodyActors = GetPage(movieURL, "utf-8");
       movieURL = "http://www.imdb.com/title/" + imdbMovieID;
@@ -143,20 +142,20 @@ namespace MediaPortal.Util
         return;
 
       // Director
-      string strDirector = string.Empty;
+      string strDirectorImdbId = string.Empty;
       string strDirectorName = string.Empty;
       string regexBlockPattern =
         @"name=""director[s]""(?<directors_block>.*?)<h5>";
       string regexPattern = @"<a\s+href=""/name/(?<idDirector>nm\d{7})/""[^>]*>(?<movieDirectors>[^<]+)</a>";
       string block =
         Regex.Match(HttpUtility.HtmlDecode(strBodyActors), regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
-      strDirector = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
+      strDirectorImdbId = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
       strDirectorName = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value;
 
-      if (strDirector != string.Empty)
+      if (strDirectorImdbId != string.Empty)
       {
         // Add prefix that it's director, will be removed on fetching details
-        actorList.Add("*d" + strDirectorName + "|" + strDirector + "|" + GUILocalizeStrings.Get(199).Replace(":", string.Empty));
+        actorList.Add("*d" + strDirectorName + "|" + strDirectorImdbId + "|" + GUILocalizeStrings.Get(199).Replace(":", string.Empty));
       }
 
       //Writers
@@ -183,7 +182,7 @@ namespace MediaPortal.Util
               if (actorList[i].ToString().Contains(writerId))
               {
                 // Check if writer is also director and add new role
-                actorList[i] = actorList[i] + ", " + GUILocalizeStrings.Get(199).Replace(":", string.Empty);
+                actorList[i] = actorList[i] + ", " + GUILocalizeStrings.Get(200).Replace(":", string.Empty);
                 found = true;
                 break;
               }

@@ -230,8 +230,10 @@ namespace MediaPortal.Configuration.Sections
       this.pictureBoxFanArt = new System.Windows.Forms.PictureBox();
       this.tabPageTools = new System.Windows.Forms.TabPage();
       this.mpGroupBox11 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpTextBox18 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.btExportNfo = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpTextBox21 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.buttonImport = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonImportNfos = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpTextBox16 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpTextBox17 = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -239,6 +241,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpTextBox15 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpTextBox14 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.chbCreateNfoFile = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useFoldernameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
@@ -385,7 +388,7 @@ namespace MediaPortal.Configuration.Sections
       this.refreshdbCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.refreshdbCheckBox.AutoSize = true;
       this.refreshdbCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.refreshdbCheckBox.Location = new System.Drawing.Point(20, 224);
+      this.refreshdbCheckBox.Location = new System.Drawing.Point(16, 205);
       this.refreshdbCheckBox.Name = "refreshdbCheckBox";
       this.refreshdbCheckBox.Size = new System.Drawing.Size(264, 17);
       this.refreshdbCheckBox.TabIndex = 5;
@@ -400,7 +403,7 @@ namespace MediaPortal.Configuration.Sections
       this.actorsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.actorsCheckBox.AutoSize = true;
       this.actorsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.actorsCheckBox.Location = new System.Drawing.Point(20, 246);
+      this.actorsCheckBox.Location = new System.Drawing.Point(16, 274);
       this.actorsCheckBox.Name = "actorsCheckBox";
       this.actorsCheckBox.Size = new System.Drawing.Size(132, 17);
       this.actorsCheckBox.TabIndex = 4;
@@ -415,7 +418,7 @@ namespace MediaPortal.Configuration.Sections
       this.skipCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.skipCheckBox.AutoSize = true;
       this.skipCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.skipCheckBox.Location = new System.Drawing.Point(20, 203);
+      this.skipCheckBox.Location = new System.Drawing.Point(16, 184);
       this.skipCheckBox.Name = "skipCheckBox";
       this.skipCheckBox.Size = new System.Drawing.Size(161, 17);
       this.skipCheckBox.TabIndex = 1;
@@ -2802,15 +2805,38 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox11.Controls.Add(this.mpTextBox18);
+      this.mpGroupBox11.Controls.Add(this.btExportNfo);
       this.mpGroupBox11.Controls.Add(this.mpTextBox21);
-      this.mpGroupBox11.Controls.Add(this.buttonImport);
+      this.mpGroupBox11.Controls.Add(this.buttonImportNfos);
       this.mpGroupBox11.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox11.Location = new System.Drawing.Point(3, 181);
       this.mpGroupBox11.Name = "mpGroupBox11";
-      this.mpGroupBox11.Size = new System.Drawing.Size(453, 59);
+      this.mpGroupBox11.Size = new System.Drawing.Size(453, 87);
       this.mpGroupBox11.TabIndex = 54;
       this.mpGroupBox11.TabStop = false;
-      this.mpGroupBox11.Text = "Import nfo files";
+      this.mpGroupBox11.Text = "Import/Export nfo files";
+      // 
+      // mpTextBox18
+      // 
+      this.mpTextBox18.BorderColor = System.Drawing.Color.Empty;
+      this.mpTextBox18.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.mpTextBox18.Location = new System.Drawing.Point(89, 59);
+      this.mpTextBox18.Multiline = true;
+      this.mpTextBox18.Name = "mpTextBox18";
+      this.mpTextBox18.Size = new System.Drawing.Size(351, 14);
+      this.mpTextBox18.TabIndex = 56;
+      this.mpTextBox18.Text = "Create nfo files for all movies";
+      // 
+      // btExportNfo
+      // 
+      this.btExportNfo.Location = new System.Drawing.Point(7, 52);
+      this.btExportNfo.Name = "btExportNfo";
+      this.btExportNfo.Size = new System.Drawing.Size(76, 27);
+      this.btExportNfo.TabIndex = 55;
+      this.btExportNfo.Text = "Export";
+      this.btExportNfo.UseVisualStyleBackColor = true;
+      this.btExportNfo.Click += new System.EventHandler(this.buttonExportNfo_Click);
       // 
       // mpTextBox21
       // 
@@ -2823,15 +2849,15 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox21.TabIndex = 51;
       this.mpTextBox21.Text = "Import nfo files to add movies into database.\r\n";
       // 
-      // buttonImport
+      // buttonImportNfos
       // 
-      this.buttonImport.Location = new System.Drawing.Point(6, 19);
-      this.buttonImport.Name = "buttonImport";
-      this.buttonImport.Size = new System.Drawing.Size(76, 27);
-      this.buttonImport.TabIndex = 54;
-      this.buttonImport.Text = "Import";
-      this.buttonImport.UseVisualStyleBackColor = true;
-      this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
+      this.buttonImportNfos.Location = new System.Drawing.Point(6, 19);
+      this.buttonImportNfos.Name = "buttonImportNfos";
+      this.buttonImportNfos.Size = new System.Drawing.Size(76, 27);
+      this.buttonImportNfos.TabIndex = 54;
+      this.buttonImportNfos.Text = "Import";
+      this.buttonImportNfos.UseVisualStyleBackColor = true;
+      this.buttonImportNfos.Click += new System.EventHandler(this.buttonImportNfo_Click);
       // 
       // mpGroupBox6
       // 
@@ -2875,9 +2901,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.pbTools.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.pbTools.Location = new System.Drawing.Point(6, 288);
+      this.pbTools.Location = new System.Drawing.Point(0, 295);
       this.pbTools.Name = "pbTools";
-      this.pbTools.Size = new System.Drawing.Size(444, 23);
+      this.pbTools.Size = new System.Drawing.Size(453, 22);
       this.pbTools.TabIndex = 45;
       // 
       // mpGroupBox5
@@ -2917,6 +2943,19 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox14.Size = new System.Drawing.Size(351, 14);
       this.mpTextBox14.TabIndex = 51;
       this.mpTextBox14.Text = "Upgrade cover thumbnail file names to the new naming rule.\r\n";
+      // 
+      // chbCreateNfoFile
+      // 
+      this.chbCreateNfoFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.chbCreateNfoFile.AutoSize = true;
+      this.chbCreateNfoFile.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chbCreateNfoFile.Location = new System.Drawing.Point(16, 251);
+      this.chbCreateNfoFile.Name = "chbCreateNfoFile";
+      this.chbCreateNfoFile.Size = new System.Drawing.Size(89, 17);
+      this.chbCreateNfoFile.TabIndex = 18;
+      this.chbCreateNfoFile.Text = "Create nfo file";
+      this.toolTipMPvdb.SetToolTip(this.chbCreateNfoFile, "Check thisto create nfo file for movie after scan.");
+      this.chbCreateNfoFile.UseVisualStyleBackColor = true;
       // 
       // useFoldernameCheckBox
       // 
@@ -3151,6 +3190,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.chbCreateNfoFile);
       this.groupBox1.Controls.Add(this.tbTitlePrefixes);
       this.groupBox1.Controls.Add(this.checkBoxStripTitlePrefix);
       this.groupBox1.Controls.Add(this.refreshdbCheckBox);
@@ -3173,7 +3213,7 @@ namespace MediaPortal.Configuration.Sections
       this.tbTitlePrefixes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.tbTitlePrefixes.BorderColor = System.Drawing.Color.Empty;
-      this.tbTitlePrefixes.Location = new System.Drawing.Point(295, 268);
+      this.tbTitlePrefixes.Location = new System.Drawing.Point(291, 227);
       this.tbTitlePrefixes.Name = "tbTitlePrefixes";
       this.tbTitlePrefixes.Size = new System.Drawing.Size(146, 20);
       this.tbTitlePrefixes.TabIndex = 17;
@@ -3183,7 +3223,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStripTitlePrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxStripTitlePrefix.AutoSize = true;
       this.checkBoxStripTitlePrefix.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxStripTitlePrefix.Location = new System.Drawing.Point(20, 269);
+      this.checkBoxStripTitlePrefix.Location = new System.Drawing.Point(16, 228);
       this.checkBoxStripTitlePrefix.Name = "checkBoxStripTitlePrefix";
       this.checkBoxStripTitlePrefix.Size = new System.Drawing.Size(259, 17);
       this.checkBoxStripTitlePrefix.TabIndex = 16;
@@ -3902,6 +3942,9 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPLabel mpLabel37;
     private UserInterface.Controls.MPGroupBox mpGroupBox11;
     private UserInterface.Controls.MPTextBox mpTextBox21;
-    private UserInterface.Controls.MPButton buttonImport;
+    private UserInterface.Controls.MPButton buttonImportNfos;
+    private UserInterface.Controls.MPButton btExportNfo;
+    private UserInterface.Controls.MPTextBox mpTextBox18;
+    private UserInterface.Controls.MPCheckBox chbCreateNfoFile;
   }
 }
