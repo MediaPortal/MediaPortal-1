@@ -1022,7 +1022,8 @@ namespace MediaPortal.Video.Database
         SQLiteResultSet results = m_db.Execute(strSQL);
 
         // Set mInfo for files already in db but not scanned before
-        if (results.Rows.Count == 0 || refresh)
+        //if (results.Rows.Count == 0 || refresh)  // Do not scan 0 result beacuse it stall MP (multi scan of the same file produce error)
+        if (results.Rows.Count > 0 && refresh) // Only refresh from context menu "Refresh media info" from shares view
         {
           try
           {
