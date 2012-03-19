@@ -1753,9 +1753,7 @@ namespace MediaPortal.GUI.Video
 
     private void SetMovieProperties(string path, string filename)
     {
-      bool isFile = false;
-      if (Util.Utils.IsVideo(path))
-        isFile = true;
+      bool isFile = Util.Utils.IsVideo(path);
       IMDBMovie info = new IMDBMovie();
       if (path == "..")
       {
@@ -1768,7 +1766,7 @@ namespace MediaPortal.GUI.Video
       bool isFound = false;
       try
       {
-        if (Directory.Exists(path))
+        if (Directory.Exists(path) && !Util.Utils.IsVideo(filename))
         {
           isDirectory = true;
           string[] files = Directory.GetFiles(path);
