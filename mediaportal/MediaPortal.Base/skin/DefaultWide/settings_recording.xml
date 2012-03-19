@@ -2,8 +2,9 @@
 <window>
 	<id>701</id>
 	<defaultcontrol>4</defaultcontrol>
-	<allowoverlay>no</allowoverlay>
-	<rememberLastFocusedControl>yes</rememberLastFocusedControl>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:6007</define>
+	<define>#header.hover:hover_my tv.png</define>
 	<controls>
 		<import>common.settings.xml</import>
 		<control>
