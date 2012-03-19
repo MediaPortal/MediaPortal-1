@@ -59,19 +59,19 @@ public:
 
   static const AMOVIESETUP_FILTER sudASFilter;
 
+  HRESULT Receive(IMediaSample* pSample);
   HRESULT CheckInputType(const CMediaType* mtIn);
-  HRESULT CheckMediaType(const CMediaType *pmt);
-  HRESULT DoRenderSample(IMediaSample *pMediaSample);
-  BOOL    ScheduleSample(IMediaSample *pMediaSample);
-  HRESULT SetMediaType(const CMediaType *pmt);
-  HRESULT CompleteConnect(IPin *pReceivePin);
+  HRESULT CheckMediaType(const CMediaType* pmt);
+  HRESULT DoRenderSample(IMediaSample* pMediaSample);
+  HRESULT SetMediaType(const CMediaType* pmt);
+  HRESULT CompleteConnect(IPin* pReceivePin);
   HRESULT EndOfStream();
   HRESULT BeginFlush();
   HRESULT EndFlush();
 
   DECLARE_IUNKNOWN
-  static CUnknown* WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
-  STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void **ppv);
+  static CUnknown* WINAPI CreateInstance(LPUNKNOWN punk, HRESULT* phr);
+  STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
 
   // === IMediaFilter
   STDMETHOD(Run)(REFERENCE_TIME tStart);
@@ -100,10 +100,10 @@ public:
   // === IAVSyncClock
   STDMETHOD(AdjustClock)(DOUBLE adjustment);
   STDMETHOD(SetBias)(DOUBLE bias);
-  STDMETHOD(GetBias)(DOUBLE *bias);
-  STDMETHOD(GetMaxBias)(DOUBLE *pMaxBias);
-  STDMETHOD(GetMinBias)(DOUBLE *pMinBias);
-  STDMETHOD(GetClockData)(CLOCKDATA *pClockData);
+  STDMETHOD(GetBias)(DOUBLE* bias);
+  STDMETHOD(GetMaxBias)(DOUBLE* pMaxBias);
+  STDMETHOD(GetMinBias)(DOUBLE* pMinBias);
+  STDMETHOD(GetClockData)(CLOCKDATA* pClockData);
   STDMETHOD(SetEVRPresentationDelay)(DOUBLE pEVRDelay);
 
   HRESULT AudioClock(UINT64& pTimestamp, UINT64& pQpc);
@@ -111,6 +111,7 @@ public:
   // CMpcAudioRenderer
 private:
 
+  bool DeliverSample(IMediaSample* pSample);
   HRESULT SetupFilterPipeline();
   HRESULT GetReferenceClockInterface(REFIID riid, void** ppv);
    
@@ -122,7 +123,6 @@ private:
   CVolumeHandler* m_pVolumeHandler;
   double          m_dBias;
   double          m_dAdjustment;
-  LONGLONG        m_dSampleCounter;
 
   AudioRendererSettings m_Settings;
 

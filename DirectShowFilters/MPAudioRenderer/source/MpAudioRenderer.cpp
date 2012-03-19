@@ -55,7 +55,6 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pReferenceClock(NULL),
   m_dBias(1.0),
   m_dAdjustment(1.0),
-  m_dSampleCounter(0),
   m_pVolumeHandler(NULL),
   m_pWASAPIRenderer(NULL),
   m_pAC3Encoder(NULL),
@@ -254,48 +253,76 @@ HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
   //TRACE(_T("AudioClock query pos: %I64d qpc: %I64d"), pTimestamp, pQpc);
 }
 
-BOOL CMPAudioRenderer::ScheduleSample(IMediaSample* pMediaSample)
+HRESULT CMPAudioRenderer::Receive(IMediaSample* pSample)
 {
-  if (!pMediaSample) return false;
+  ASSERT(pSample);
 
-  REFERENCE_TIME rtSampleTime = 0;
-  REFERENCE_TIME rtSampleEndTime = 0;
-
-  HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
-  if (FAILED(hr)) return false;
-
-  if (hr == S_FALSE || hr == S_OK) 
+  // It may return VFW_E_SAMPLE_REJECTED code to say don't bother
+  HRESULT hr = PrepareReceive(pSample);
+  ASSERT(m_bInReceive == SUCCEEDED(hr));
+  if (FAILED(hr)) 
   {
-    WAVEFORMATEXTENSIBLE* wfe = NULL;
-    AM_MEDIA_TYPE* pmt = NULL;
+    if (hr == VFW_E_SAMPLE_REJECTED) 
+      return NOERROR;
 
-    if (SUCCEEDED(pMediaSample->GetMediaType(&pmt)) && pmt)
+    return hr;
+  }
+
+  if (m_State == State_Paused) 
+  {
     {
-      WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->pbFormat;
-  
-      // Convert WAVEFORMATEX to WAVEFORMATEXTENSIBLE for internal use
-      if (!IS_WAVEFORMATEXTENSIBLE(pwfx))
+      CAutoLock cRendererLock(&m_InterfaceLock);
+      if (m_State == State_Stopped)
       {
-        ToWaveFormatExtensible(&wfe, pwfx);
-        FreeMediaType(*pmt);
-        pmt->pbFormat = (BYTE*)CoTaskMemAlloc(sizeof(WAVEFORMATEXTENSIBLE));
-        memcpy(pmt->pbFormat, wfe, sizeof(WAVEFORMATEXTENSIBLE));
-        pMediaSample->SetMediaType(pmt);
-        delete wfe;
+        m_bInReceive = FALSE;
+        return NOERROR;
       }
     }
-
-    m_pPipeline->PutSample(pMediaSample);
-    
-    // Lie about the sample being dropped. This way we dont have to
-    // go thru the extra round trip that firing the m_RenderEvent
-    // would cause. Real scheduling is done in the WASAPI renderer 
-    // at the other end of the pipeline
-    
-    return false;
+    Ready();
   }
+
+  // http://blogs.msdn.com/b/mediasdkstuff/archive/2008/09/19/custom-directshow-audio-renderer-hangs-playback-in-windows-media-player-11.aspx
+  DeliverSample(pSample);
+
+  m_bInReceive = FALSE;
+
+  CAutoLock cRendererLock(&m_InterfaceLock);
+  if (m_State == State_Stopped)
+    return NOERROR;
+
+  CAutoLock cSampleLock(&m_RendererLock);
+
+  ClearPendingSample();
+  SendEndOfStream();
+  CancelNotification();
+
+  return NOERROR;
+}
+
+bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
+{
+  if (!pSample) return false;
+
+  WAVEFORMATEXTENSIBLE* wfe = NULL;
+  AM_MEDIA_TYPE* pmt = NULL;
+
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
+  {
+    WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->pbFormat;
   
-  return false;
+    // Convert WAVEFORMATEX to WAVEFORMATEXTENSIBLE for internal use
+    if (!IS_WAVEFORMATEXTENSIBLE(pwfx))
+    {
+      ToWaveFormatExtensible(&wfe, pwfx);
+      FreeMediaType(*pmt);
+      pmt->pbFormat = (BYTE*)CoTaskMemAlloc(sizeof(WAVEFORMATEXTENSIBLE));
+      memcpy(pmt->pbFormat, wfe, sizeof(WAVEFORMATEXTENSIBLE));
+      pSample->SetMediaType(pmt);
+      delete wfe;
+    }
+  }
+
+  return m_pPipeline->PutSample(pSample) == S_OK ? true : false;
 }
 
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample* pMediaSample)
@@ -421,7 +448,6 @@ STDMETHODIMP CMPAudioRenderer::Pause()
   Log("Pause");
   CAutoLock cInterfaceLock(&m_InterfaceLock);
 
-  m_dSampleCounter = 0;
   HRESULT hr = m_pPipeline->Pause();
 
   if (FAILED(hr))
@@ -471,9 +497,12 @@ HRESULT CMPAudioRenderer::BeginFlush()
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
 
-  HRESULT hr = CBaseRenderer::BeginFlush(); 
-  if (FAILED(hr))
-    return hr;
+  if (m_State == State_Paused) 
+    NotReady();
+
+  SourceThreadCanWait(FALSE);
+  CancelNotification();
+  ClearPendingSample();
 
   return m_pPipeline->BeginFlush();
 }
@@ -483,8 +512,6 @@ HRESULT CMPAudioRenderer::EndFlush()
   Log("EndFlush");
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
-  m_dSampleCounter = 0;
-
   m_pPipeline->EndFlush();
   m_pClock->Reset();
 
