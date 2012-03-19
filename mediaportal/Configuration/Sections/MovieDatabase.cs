@@ -169,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
     // Refresh images backgroundworker state
     private bool _isRefreshing;
 
-    bool currentCreateVideoThumbs = false;
+    private ArrayList _nfoFiles = new ArrayList();
 
     private ArrayList _conflictFiles = new ArrayList();
 
