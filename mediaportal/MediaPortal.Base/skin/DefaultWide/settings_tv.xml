@@ -2,35 +2,26 @@
 <window>
   <id>700</id>
   <defaultcontrol>24</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6014</define>
+  <define>#header.hover:hover_my tv.png</define>
   <controls>
     <import>common.settings.xml</import>
     <control>
-      <description>background</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>435</posX>
-      <posY>120</posY>
-      <height>520</height>
-      <width>435</width>
-      <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-    </control>
-    <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
-      <posX>465</posX>
-      <posY>160</posY>
-      <layout>StackLayout(0, Horizontal, True)</layout>
+      
+      
+      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <posX>99</posX>
+      <posY>188</posY>
+      <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <control>
         <description>MPEG-2 Video Codecs</description>
         <type>button</type>
         <id>24</id>
         <label>6000</label>
-        <width>350</width>
         <onup>17</onup>
       </control>
       <control>
@@ -38,42 +29,36 @@
         <type>button</type>
         <id>35</id>
         <label>6036</label>
-        <width>350</width>
       </control>
       <control>
         <description>Audio Codecs</description>
         <type>button</type>
         <id>25</id>
         <label>6001</label>
-        <width>350</width>
       </control>
       <control>
         <description>LATM AAC Audio Codecs</description>
         <type>button</type>
         <id>36</id>
         <label>6039</label>
-        <width>350</width>
       </control>
       <control>
         <description>Audio Renderer</description>
         <type>button</type>
         <id>33</id>
         <label>6002</label>
-        <width>350</width>
       </control>
       <control>
         <description>De-interlacing</description>
         <type>button</type>
         <id>27</id>
         <label>6003</label>
-        <width>350</width>
       </control>
       <control>
         <description>Apect Ratio</description>
         <type>button</type>
         <id>28</id>
         <label>6004</label>
-        <width>350</width>
         <ondown>30</ondown>
       </control>
       <control>
@@ -81,7 +66,6 @@
         <type>button</type>
         <id>30</id>
         <label>6006</label>
-        <width>350</width>
         <ondown>24</ondown>
       </control>
     </control>
