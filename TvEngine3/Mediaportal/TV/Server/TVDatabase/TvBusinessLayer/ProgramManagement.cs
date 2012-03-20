@@ -47,8 +47,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         using (IProgramRepository programRepository = new ProgramRepository())
         {
-          IQueryable<Channel> channels = programRepository.GetQuery<Channel>(c => c.GroupMaps.Any(g => g.idGroup == idGroup));
-          IList<int> channelIds = channels.Select(c => c.idChannel).ToList();
+          //IQueryable<Channel> channels = programRepository.GetQuery<Channel>(c => c.GroupMaps.Any(g => g.idGroup == idGroup));
+          //IList<int> channelIds = channels.Select(c => c.idChannel).ToList();
 
           IDictionary<int, NowAndNext> progList = new Dictionary<int, NowAndNext>();
 
@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
               Stopwatch s1 = Stopwatch.StartNew();
               using (IProgramRepository programRepositoryForThread = new ProgramRepository())
               {
-                IQueryable<Program> nowProgramsForChannelGroup = programRepositoryForThread.GetNowProgramsForChannelGroup(channelIds);
+                IQueryable<Program> nowProgramsForChannelGroup = programRepositoryForThread.GetNowProgramsForChannelGroup(idGroup);
                 //Log.Debug("GetNowProgramsForChannelGroup SQL = {0}", nowProgramsForChannelGroup.ToTraceString());
                 nowPrograms = nowProgramsForChannelGroup.ToList();
               }
@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             delegate
             {
               Stopwatch s2 = Stopwatch.StartNew();
-              IQueryable<Program> nextProgramsForChannelGroup = programRepository.GetNextProgramsForChannelGroup(channelIds);
+              IQueryable<Program> nextProgramsForChannelGroup = programRepository.GetNextProgramsForChannelGroup(idGroup);
               //Log.Debug("GetNextProgramsForChannelGroup SQL = {0}", nextProgramsForChannelGroup.ToTraceString());
               nextPrograms = nextProgramsForChannelGroup.ToList();
               Log.Debug("GetNowProgramsForChannelGroup took {0}", s2.ElapsedMilliseconds);

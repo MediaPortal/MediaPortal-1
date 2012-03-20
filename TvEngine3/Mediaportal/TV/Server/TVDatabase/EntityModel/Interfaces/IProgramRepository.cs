@@ -20,8 +20,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
     IQueryable<Program> GetProgramsByDescription(IQueryable<Program> query, string searchCriteria, StringComparisonEnum stringComparison);
     IQueryable<Program> GetProgramsByTimesInterval(DateTime startTime, DateTime endTime);
     IQueryable<Program> IncludeAllRelations(IQueryable<Program> query);
-    IQueryable<Program> GetNowProgramsForChannelGroup (IEnumerable<int> channelList);
-    IQueryable<Program> GetNextProgramsForChannelGroup(IEnumerable<int> channelList);
+    IQueryable<Program> GetNowProgramsForChannelGroup(int idGroup);
+    IQueryable<Program> GetNextProgramsForChannelGroup(int idGroup);
     IQueryable<Program> GetNowAndNextProgramsForChannel(int idChannel);
   }
 }

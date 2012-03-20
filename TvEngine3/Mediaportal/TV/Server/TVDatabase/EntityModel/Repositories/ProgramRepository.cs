@@ -34,22 +34,25 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     }
 
-    public IQueryable<Program> GetNowProgramsForChannelGroup(IEnumerable<int> channelList)
+    public IQueryable<Program> GetNowProgramsForChannelGroup(int idGroup)
     {
+      IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.idGroup == idGroup)).Select(g=>g.idChannel);
+
       DateTime now = DateTime.Now;
       IQueryable<Program> programs = GetQuery<Program>().Where(p =>
-                      channelList.Contains(p.idChannel) &&
+                      channels.Contains(p.idChannel) &&
                       p.endTime > now && p.startTime <= now);
       return programs;
     }
 
-    public IQueryable<Program> GetNextProgramsForChannelGroup(IEnumerable<int> channelList)
+    public IQueryable<Program> GetNextProgramsForChannelGroup(int idGroup)
     {
+      IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.idGroup == idGroup)).Select(g => g.idChannel);
       DateTime now = DateTime.Now;
       //IQueryable<Program> programs = GetQuery<Program>().Where(p => channelList.Contains(p.idChannel) && p.startTime > now).GroupBy(p => p.idChannel).Select(pg => pg.OrderBy(p => p.startTime).FirstOrDefault());
 
       var q = GetQuery<Program>().Where(p =>
-            channelList.Contains(p.idChannel) && p.startTime > now)
+            channels.Contains(p.idChannel) && p.startTime > now)
         .GroupBy(p => p.idChannel)
         .Select(pg => new
         {
