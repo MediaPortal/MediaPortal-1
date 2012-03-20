@@ -25,6 +25,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
@@ -170,7 +171,13 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (_tvServiceThread == null)
       {
-        //System.Diagnostics.Debugger.Launch();        
+#if DEBUG
+        if (File.Exists(@"c:\debug_tvservice.txt"))
+        {
+          System.Diagnostics.Debugger.Launch();        
+        }
+#endif
+        
 
         if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
         {
