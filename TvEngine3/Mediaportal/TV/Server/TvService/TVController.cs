@@ -31,6 +31,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Xml;
 using MediaPortal.Common.Utils;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces;
@@ -767,8 +768,8 @@ namespace Mediaportal.TV.Server.TVService
           Log.Info("Controller: scheduler stopped...");
         }
         //stop the epg grabber
-        StopEPGgrabber();
-        _epgGrabber.Dispose();
+        StopEPGgrabber();        
+        _epgGrabber.SafeDispose();
         _epgGrabber = null;
 
         //clean up the tv cards
