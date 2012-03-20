@@ -24,6 +24,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
         {          
           var model = new Model();
 
+          model.ContextOptions.DefaultQueryPlanCachingSetting = true;
           model.ContextOptions.LazyLoadingEnabled = false;
           model.ContextOptions.ProxyCreationEnabled = false;
 
