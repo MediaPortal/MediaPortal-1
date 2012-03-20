@@ -233,7 +233,15 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
       FlushStream();
     }
     else
+    {
       Log("CSampleRateConverter - discarding buffered sample data");
+      m_llFramesInput = 0;
+      m_llFramesOutput = 0;
+
+      int srcRet = src_reset(m_pSrcState);
+      if (srcRet != 0)
+        Log("CSampleRateConverter - src_reset returned error: %d", srcRet);
+    }
   }
 
   if (m_nSampleNum == 0)
