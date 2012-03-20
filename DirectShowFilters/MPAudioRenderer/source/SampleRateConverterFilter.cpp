@@ -371,8 +371,8 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE* pData, long cbData, long* 
     data.end_of_input = 0;
 
     int ret = src_process(m_pSrcState, &data);
-
-    //Log("input_frames_used: %d output_frames_gen: %d", data.input_frames_used, data.output_frames_gen);
+    
+	//LogProcessingInfo(&data);
 
     pData += data.input_frames_used * m_nFrameSize;
     bytesOutput += data.output_frames_gen * m_nFrameSize;
@@ -480,6 +480,17 @@ HRESULT CSampleRateConverter::FlushStream()
     return S_FALSE;
 
   return hr;
+}
+
+void CSampleRateConverter::LogProcessingInfo(SRC_DATA* pData)
+{
+  double durIn = (double)m_llFramesInput * (double)UNITS / (double)m_pInputFormat->Format.nSamplesPerSec;
+  double durOut = (double)m_llFramesOutput * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+
+  double ration = (double)m_llFramesOutput / (double)m_llFramesInput;
+
+  Log("ration set: %8.7f real: %8.7f input_frames_used: %6d output_frames_gen: %6d - durIn: %6.3f durOut: %6.3f", 
+    m_dSampleRateRation, ration, pData->input_frames_used, pData->output_frames_gen, durIn / 10000000.0, durOut / 10000000.0);
 }
 
 

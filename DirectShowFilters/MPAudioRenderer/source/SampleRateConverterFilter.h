@@ -53,6 +53,8 @@ protected:
 
   HRESULT FlushStream();
 
+  void LogProcessingInfo(SRC_DATA* pData);
+
 protected:
   bool m_bPassThrough;
 
