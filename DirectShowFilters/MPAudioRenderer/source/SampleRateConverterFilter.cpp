@@ -313,7 +313,7 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE* pData, long cbData, long* 
 {
   HRESULT hr = S_OK;
 
-  long bytesOutput = 0;
+  long bytesProcessed = 0;
 
   CAutoLock lock (&m_csOutputSample);
 
@@ -344,7 +344,7 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE* pData, long cbData, long* 
     if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
     {
       if (pcbDataProcessed)
-        *pcbDataProcessed = bytesOutput + cbData; // we can't realy process the data, lie about it!
+        *pcbDataProcessed = bytesProcessed + cbData; // we can't realy process the data, lie about it!
 
       return hr;
     }
@@ -372,10 +372,10 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE* pData, long cbData, long* 
 
     int ret = src_process(m_pSrcState, &data);
     
-	//LogProcessingInfo(&data);
+    //LogProcessingInfo(&data);
 
+    bytesProcessed += data.input_frames_used * m_nFrameSize;
     pData += data.input_frames_used * m_nFrameSize;
-    bytesOutput += data.output_frames_gen * m_nFrameSize;
     cbData -= data.input_frames_used * m_nFrameSize;
     nOffset += data.output_frames_gen * m_nFrameSize;
 
@@ -402,7 +402,7 @@ HRESULT CSampleRateConverter::ProcessData(const BYTE* pData, long cbData, long* 
   }
   
   if (pcbDataProcessed)
-    *pcbDataProcessed = bytesOutput;
+    *pcbDataProcessed = bytesProcessed;
 
   return hr;
 }
