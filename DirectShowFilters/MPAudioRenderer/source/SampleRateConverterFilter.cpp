@@ -31,7 +31,8 @@ CSampleRateConverter::CSampleRateConverter(AudioRendererSettings* pSettings) :
   m_dSampleRateRation(1.0),
   m_rtNextIncomingSampleTime(0),
   m_llFramesInput(0),
-  m_llFramesOutput(0)
+  m_llFramesOutput(0),
+  m_nFrameSize(0)
 {
 }
 
@@ -268,7 +269,7 @@ HRESULT CSampleRateConverter::EndOfStream()
   return CBaseAudioSink::EndOfStream();  
 }
 
-HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties)
+HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties)
 {
   properties->cBuffers = 4;
   properties->cbBuffer = (0x10000);
@@ -280,11 +281,7 @@ HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *pr
 
 HRESULT CSampleRateConverter::SetupConversion()
 {
-  // Only floats
-  m_nBitsPerSample = 32;
-
   m_nFrameSize = m_pInputFormat->Format.nBlockAlign;
-  m_nBytesPerSample = m_pInputFormat->Format.wBitsPerSample / 8;
 
   m_dSampleRateRation = (double)m_pOutputFormat->Format.nSamplesPerSec / (double)m_pInputFormat->Format.nSamplesPerSec;
 
@@ -304,7 +301,7 @@ HRESULT CSampleRateConverter::SetupConversion()
   return S_OK;
 }
 
-HRESULT CSampleRateConverter::ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed)
+HRESULT CSampleRateConverter::ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed)
 {
   HRESULT hr = S_OK;
 
