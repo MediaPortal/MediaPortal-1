@@ -489,6 +489,10 @@ namespace TvLibrary.Implementations.DVB
     ///<returns></returns>
     public bool OnRunGraph(int servicedId)
     {
+      if (_digitalEveryWhere != null)
+      {
+        _digitalEveryWhere.OnStartGraph();
+      }
       return true;
     }
 
