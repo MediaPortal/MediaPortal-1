@@ -400,13 +400,9 @@ namespace MediaPortal.Video.Database
             {
               _movieDetails.Watched = 1;
             }
-
+            // Add movie info
             VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
-            if (xmlreader.GetValueAsBool("moviedatabase", "createnfo", false))
-            {
-              VideoDatabase.MakeNfo(_movieDetails.ID);
-            }
-
+            
             // Add groups with rules
             ArrayList groups = new ArrayList();
             VideoDatabase.GetUserGroups(groups);

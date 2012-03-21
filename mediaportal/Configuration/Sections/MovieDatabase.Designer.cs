@@ -31,7 +31,6 @@ namespace MediaPortal.Configuration.Sections
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.refreshdbCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.actorsCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.skipCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpButton2 = new MediaPortal.UserInterface.Controls.MPButton();
       this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -241,7 +240,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpTextBox15 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpTextBox14 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.chbCreateNfoFile = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useFoldernameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
@@ -397,21 +395,6 @@ namespace MediaPortal.Configuration.Sections
         "hed according to IMDB ID number.");
       this.refreshdbCheckBox.UseVisualStyleBackColor = true;
       this.refreshdbCheckBox.CheckedChanged += new System.EventHandler(this.refreshdbCheckBox_CheckedChanged);
-      // 
-      // actorsCheckBox
-      // 
-      this.actorsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.actorsCheckBox.AutoSize = true;
-      this.actorsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.actorsCheckBox.Location = new System.Drawing.Point(16, 274);
-      this.actorsCheckBox.Name = "actorsCheckBox";
-      this.actorsCheckBox.Size = new System.Drawing.Size(132, 17);
-      this.actorsCheckBox.TabIndex = 4;
-      this.actorsCheckBox.Text = "Download actor details";
-      this.toolTipMPvdb.SetToolTip(this.actorsCheckBox, "Check this for downloading movie actor details.\r\nWarning: This will significally " +
-        "increase grab time.");
-      this.actorsCheckBox.UseVisualStyleBackColor = true;
-      this.actorsCheckBox.Visible = false;
       // 
       // skipCheckBox
       // 
@@ -1668,9 +1651,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btAddActorImage
       // 
-      this.btAddActorImage.Location = new System.Drawing.Point(356, 123);
+      this.btAddActorImage.Location = new System.Drawing.Point(342, 123);
       this.btAddActorImage.Name = "btAddActorImage";
-      this.btAddActorImage.Size = new System.Drawing.Size(94, 22);
+      this.btAddActorImage.Size = new System.Drawing.Size(108, 22);
       this.btAddActorImage.TabIndex = 61;
       this.btAddActorImage.Text = "Add image";
       this.toolTipMPvdb.SetToolTip(this.btAddActorImage, "Add local actor image for current actor.");
@@ -1811,11 +1794,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.pictureBoxActor.BackgroundImage = global::MediaPortal.Configuration.Properties.Resources.icon_help;
       this.pictureBoxActor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+      this.pictureBoxActor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
       this.pictureBoxActor.ErrorImage = null;
       this.pictureBoxActor.InitialImage = null;
-      this.pictureBoxActor.Location = new System.Drawing.Point(356, 16);
+      this.pictureBoxActor.Location = new System.Drawing.Point(343, 16);
       this.pictureBoxActor.Name = "pictureBoxActor";
-      this.pictureBoxActor.Size = new System.Drawing.Size(94, 101);
+      this.pictureBoxActor.Size = new System.Drawing.Size(107, 99);
       this.pictureBoxActor.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.pictureBoxActor.TabIndex = 41;
       this.pictureBoxActor.TabStop = false;
@@ -2826,7 +2810,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox18.Name = "mpTextBox18";
       this.mpTextBox18.Size = new System.Drawing.Size(351, 14);
       this.mpTextBox18.TabIndex = 56;
-      this.mpTextBox18.Text = "Create nfo files for all movies";
+      this.mpTextBox18.Text = "Create MP nfo files for all movies";
       // 
       // btExportNfo
       // 
@@ -2847,7 +2831,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox21.Name = "mpTextBox21";
       this.mpTextBox21.Size = new System.Drawing.Size(351, 14);
       this.mpTextBox21.TabIndex = 51;
-      this.mpTextBox21.Text = "Import nfo files to add movies into database.\r\n";
+      this.mpTextBox21.Text = "Import MP nfo files to add movies into database.\r\n";
       // 
       // buttonImportNfos
       // 
@@ -2943,19 +2927,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox14.Size = new System.Drawing.Size(351, 14);
       this.mpTextBox14.TabIndex = 51;
       this.mpTextBox14.Text = "Upgrade cover thumbnail file names to the new naming rule.\r\n";
-      // 
-      // chbCreateNfoFile
-      // 
-      this.chbCreateNfoFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.chbCreateNfoFile.AutoSize = true;
-      this.chbCreateNfoFile.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.chbCreateNfoFile.Location = new System.Drawing.Point(16, 251);
-      this.chbCreateNfoFile.Name = "chbCreateNfoFile";
-      this.chbCreateNfoFile.Size = new System.Drawing.Size(89, 17);
-      this.chbCreateNfoFile.TabIndex = 18;
-      this.chbCreateNfoFile.Text = "Create nfo file";
-      this.toolTipMPvdb.SetToolTip(this.chbCreateNfoFile, "Check thisto create nfo file for movie after scan.");
-      this.chbCreateNfoFile.UseVisualStyleBackColor = true;
       // 
       // useFoldernameCheckBox
       // 
@@ -3190,11 +3161,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.chbCreateNfoFile);
       this.groupBox1.Controls.Add(this.tbTitlePrefixes);
       this.groupBox1.Controls.Add(this.checkBoxStripTitlePrefix);
       this.groupBox1.Controls.Add(this.refreshdbCheckBox);
-      this.groupBox1.Controls.Add(this.actorsCheckBox);
       this.groupBox1.Controls.Add(this.skipCheckBox);
       this.groupBox1.Controls.Add(this.mpButton2);
       this.groupBox1.Controls.Add(this.startButton);
@@ -3753,7 +3722,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPTextBox tbImageLocation;
     private MediaPortal.UserInterface.Controls.MPCheckBox skipCheckBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox actorsCheckBox;
     private MediaPortal.UserInterface.Controls.MPComboBox cbTitle;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton buttonRemoveFile;
@@ -3945,6 +3913,5 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPButton buttonImportNfos;
     private UserInterface.Controls.MPButton btExportNfo;
     private UserInterface.Controls.MPTextBox mpTextBox18;
-    private UserInterface.Controls.MPCheckBox chbCreateNfoFile;
   }
 }

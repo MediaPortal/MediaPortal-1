@@ -18,7 +18,7 @@
       <textcolor>White</textcolor>
     </control>           
     <control>
-      <description>background image</description>
+      <description>Background Image</description>
       <type>image</type>
       <id>1</id>
       <width>1280</width>
@@ -208,7 +208,7 @@
       <posX>680</posX>
       <posY>156</posY>
       <label>#year</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -228,7 +228,7 @@
       <posX>850</posX>
       <posY>156</posY>
       <label>#votes</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <!--control>
@@ -249,7 +249,7 @@
       <posY>156</posY>
       <width>200</width>
       <label>#mpaarating</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>    
     </control-->
     <control>
@@ -269,7 +269,7 @@
       <posX>680</posX>
       <posY>202</posY>      
       <label>#language</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
      <control>
@@ -289,7 +289,7 @@
       <posX>850</posX>
       <posY>202</posY>      
       <label>#country</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>    
     </control>    			
     <control>
@@ -297,7 +297,7 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>228</posY>
+      <posY>233</posY>
       <label>174</label>
       <font>font11</font>
       <textcolor>FFB2D4F5</textcolor>
@@ -307,10 +307,10 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>248</posY>
+      <posY>253</posY>
       <width>480</width>
       <label>#genre</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -318,7 +318,7 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>274</posY>
+      <posY>279</posY>
       <label>199</label>
       <font>font11</font>
       <textcolor>FFB2D4F5</textcolor>
@@ -328,10 +328,10 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>294</posY>
+      <posY>299</posY>
       <width>480</width>
       <label>#director</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -339,7 +339,7 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>320</posY>
+      <posY>325</posY>
       <label>200</label>
       <font>font11</font>
       <textcolor>FFB2D4F5</textcolor>
@@ -349,10 +349,10 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>340</posY>
+      <posY>345</posY>
       <width>480</width>
       <label>#credits</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -360,7 +360,7 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>366</posY>
+      <posY>371</posY>
       <label>1274</label>
       <font>font11</font>
       <textcolor>FFB2D4F5</textcolor>
@@ -370,10 +370,10 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>386</posY>
+      <posY>391</posY>
       <width>480</width>
       <label>#studios</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>    
     <control>
@@ -381,19 +381,19 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>415</posY>
+      <posY>420</posY>
       <label>299</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
     </control>
     <control>
       <description>Runtime Value</description>
       <type>label</type>
       <id>1</id>
-      <posX>790</posX>
-      <posY>415</posY>
+      <posX>793</posX>
+      <posY>420</posY>
       <label>#runtime</label>
-      <font>font11</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
     <control>
@@ -411,7 +411,7 @@
       <description>Watched Count Value</description>
       <type>label</type>
       <id>1</id>
-      <posX>215</posX>
+      <posX>210</posX>
       <posY>485</posY>
       <label>#watchedcount</label>
       <font>font10</font>
@@ -531,7 +531,7 @@
       <posY>465</posY>
       <width>70</width>
       <height>40</height>
-      <visible>!string.equals(#HasSubtitles, True)</visible>
+      <visible>string.equals(#HasSubtitles, True)</visible>
       <texture>logos\subtitles.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
@@ -618,6 +618,7 @@
     </control>
     <!-- ********** Actors/Cast Image And info (Down)  ********** -->
      <control>
+      <description>Actors/Cast Image</description>
       <id>1</id>
       <type>image</type>
       <posX>150</posX>
@@ -665,7 +666,7 @@
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>810</posX>
-      <posY>532</posY>
+      <posY>530</posY>
       <width>450</width>
       <font>font11</font>
       <height>162</height>
@@ -675,7 +676,7 @@
       <onup>2</onup>
       <ondown>2</ondown>
       <seperator>: : : : :</seperator>
-      <label>#plot</label>
+      <label>#plotoutline</label>
       <visible>control.isvisible(24)</visible>
     </control>
     <!-- ********** Actors list (Old style for Non EN Scrapers)  ********** -->
@@ -683,10 +684,10 @@
       <description>Actors list</description>
       <type>textbox</type>
       <id>22</id>
-      <posX>355</posX>
-      <posY>525</posY>
-      <width>846</width>
-      <height>175</height>
+      <posX>325</posX>
+      <posY>530</posY>
+      <width>920</width>
+      <height>162</height>
       <onleft>2</onleft>
       <onright>2</onright>
       <onup>2</onup>
