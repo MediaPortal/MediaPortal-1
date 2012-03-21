@@ -487,22 +487,37 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
       DatabaseUtility.AddTable(m_db, "filesmediainfo",
                                "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+      // Indexes
+      // ActorInfo
       DatabaseUtility.AddIndex(m_db, "idxactorinfo_idActor",
                                "CREATE INDEX idxactorinfo_idActor ON actorinfo(idActor ASC)");
+      // ActorInfoMovies
       DatabaseUtility.AddIndex(m_db, "idxactorinfomovies_idActor",
                                "CREATE INDEX idxactorinfomovies_idActor ON actorinfomovies(idActor ASC)");
+      // ActorLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idActor",
                                "CREATE INDEX idxactorlinkmovie_idActor ON actorlinkmovie(idActor ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idMovie",
                                "CREATE INDEX idxactorlinkmovie_idMovie ON actorlinkmovie(idMovie ASC)");
+      // Actors
       DatabaseUtility.AddIndex(m_db, "idxactors_strActor", "CREATE INDEX idxactors_strActor ON actors(strActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactors_idActor", 
+                              "CREATE UNIQUE INDEX idxactors_idActor ON actors(idActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactors_idIMDB",
+                              "CREATE INDEX idxactors_idIMDB ON actors(IMDBActorID ASC)");
+      // Files
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile", "CREATE UNIQUE INDEX idxfiles_idFile ON files(idFile ASC)");
       DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
       DatabaseUtility.AddIndex(m_db, "idxfiles_idPath", "CREATE INDEX idxfiles_idPath ON files(idPath ASC)");
+      // GenreLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idGenre",
                                "CREATE INDEX idxgenrelinkmovie_idGenre ON genrelinkmovie(idGenre ASC)");
       DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idMovie",
                                "CREATE INDEX idxgenrelinkmovie_idMovie ON genrelinkmovie(idMovie ASC)");
+      // Movie
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie", "CREATE UNIQUE INDEX idxmovie_idMovie ON movie(idMovie ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovie_idPath", "CREATE INDEX idxmovie_idPath ON movie(idPath ASC)");
+      // MovieInfo
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear", "CREATE INDEX idxmovieinfo_iYear ON movieinfo(iYear ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idDirector",
                                "CREATE INDEX idxmovieinfo_idDirector ON movieinfo(idDirector ASC)");
@@ -510,19 +525,33 @@ namespace MediaPortal.Video.Database
                                "CREATE UNIQUE INDEX idxmovieinfo_idMovie ON movieinfo(idMovie ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_strTitle",
                                "CREATE INDEX idxmovieinfo_strTitle ON movieinfo(strTitle ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idIMDB",
+                               "CREATE INDEX idxmovieinfo_idIMDB ON movieinfo(IMDBID ASC)");
+      // Path
+      DatabaseUtility.AddIndex(m_db, "idxpath_idPath", "CREATE INDEX idxpath_idPath ON path(idPath ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
+      // VideThumbList
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strPath",
                                "CREATE INDEX idxVideoThumbBList_strPath ON VideoThumbBList(strPath ASC, strExpires ASC)");
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strExpires",
                                "CREATE INDEX idxVideoThumbBList_strExpires ON VideoThumbBList(strExpires ASC)");
+      // FilesMediaInfo
       DatabaseUtility.AddIndex(m_db, "idxfilesmediainfo_idFile",
                                "CREATE UNIQUE INDEX idxfilesmediainfo_idFile ON filesmediainfo (idFile ASC)");
+      // UserGroup
       DatabaseUtility.AddIndex(m_db, "idxuserGroup_idGroup",
                                "CREATE UNIQUE INDEX idxuserGroup_idGroup ON usergroup (idGroup ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxuserGroup_strGroup",
+                               "CREATE INDEX idxuserGroup_strGroup ON usergroup (strGroup ASC)");
+      // userGroupLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxusergrouplinkmovie_idGroup",
                                "CREATE INDEX idxusergrouplinkmovie_idGroup ON usergrouplinkmovie (idGroup ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxusergrouplinkmovie_idMovie",
+                               "CREATE INDEX idxusergrouplinkmovie_idMovie ON usergrouplinkmovie (idMovie ASC)");
+      // Duration
       DatabaseUtility.AddIndex(m_db, "idxduration_idFile",
                                "CREATE UNIQUE INDEX idxduration_idFile ON duration (idFile ASC)");
+      // IMDBMovies
       DatabaseUtility.AddIndex(m_db, "idximdbmovies_idIMDB",
                                "CREATE UNIQUE INDEX idximdbmovies_idIMDB ON IMDBmovies (idIMDB ASC)");
 
