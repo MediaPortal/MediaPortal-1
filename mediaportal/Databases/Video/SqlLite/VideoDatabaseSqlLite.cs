@@ -515,6 +515,16 @@ namespace MediaPortal.Video.Database
                                "CREATE INDEX idxVideoThumbBList_strPath ON VideoThumbBList(strPath ASC, strExpires ASC)");
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strExpires",
                                "CREATE INDEX idxVideoThumbBList_strExpires ON VideoThumbBList(strExpires ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxfilesmediainfo_idFile",
+                               "CREATE UNIQUE INDEX idxfilesmediainfo_idFile ON filesmediainfo (idFile ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxuserGroup_idGroup",
+                               "CREATE UNIQUE INDEX idxuserGroup_idGroup ON usergroup (idGroup ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxusergrouplinkmovie_idGroup",
+                               "CREATE INDEX idxusergrouplinkmovie_idGroup ON usergrouplinkmovie (idGroup ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxduration_idFile",
+                               "CREATE UNIQUE INDEX idxduration_idFile ON duration (idFile ASC)");
+      DatabaseUtility.AddIndex(m_db, "idximdbmovies_idIMDB",
+                               "CREATE UNIQUE INDEX idximdbmovies_idIMDB ON IMDBmovies (idIMDB ASC)");
 
       return;
     }
@@ -4195,11 +4205,9 @@ namespace MediaPortal.Video.Database
             #region Genre
 
             XmlNodeList genres = nodeMovie.SelectNodes("genres/genre");
-            //string genre = string.Empty;
+            
             foreach (XmlNode nodeGenre in genres)
             {
-              //XmlNode nodeGenre = genres.SelectSingleNode("genre");
-              // added check to see if nodeGenre was valid
               if (nodeGenre.InnerText != null)
               {
                 if (genre.Length > 0)
@@ -4450,10 +4458,7 @@ namespace MediaPortal.Video.Database
             }
 
             #endregion
-
-            // Search string
-            movie.SearchString = string.Empty;
-
+            
             #region Tagline
 
             // Tagline
@@ -4613,33 +4618,24 @@ namespace MediaPortal.Video.Database
             #region Fanart
 
             // Fanart
-            if (nodeFanart != null)
-            {
-              string faFile = path + @"\" + nodeFanart.InnerText;
+            XmlNodeList fanartNodeList = nodeMovie.SelectNodes("fanart/thumb");
 
-              if (!File.Exists(faFile))
+            int faIndex = 0;
+
+            foreach (XmlNode fanartNode in fanartNodeList)
+            {
+              if (fanartNode != null)
               {
-                faFile = string.Empty;
-              }
-              
-              FanArt fa = new FanArt();
-              if (faFile != string.Empty)
-              {
-                fa.GetLocalFanart(id, "file://" + faFile, 0);
-                movie.FanartURL = faFile;
-              }
-              else if (nodeFanart.InnerText.StartsWith("http:"))
-              {
-                fa.GetTmdbFanartByUrl(id, nodeFanart.InnerText, 0);
-                movie.FanartURL = nodeFanart.InnerText;
-              }
-              else 
-              {
-                if (CheckMovieImdbId(movie.IMDBNumber))
+                string faFile = path + @"\" + fanartNode.InnerText;
+                FanArt fa = new FanArt();
+                
+                if (File.Exists(faFile))
                 {
-                  fa.GetTmdbFanartByApi(id, movie.IMDBNumber, "", true, 1, "");
+                  fa.GetLocalFanart(id, "file://" + faFile, faIndex);
+                  movie.FanartURL = faFile;
                 }
               }
+              faIndex ++;
             }
 
             #endregion
@@ -4666,8 +4662,6 @@ namespace MediaPortal.Video.Database
               XmlNode nodeActorBiography= nodeActor.SelectSingleNode("biography");
               XmlNode nodeActorThumbnail = nodeActor.SelectSingleNode("thumb");
 
-              bool imdbCheck = false;
-
               if (nodeActorName != null && nodeActorName.InnerText != null)
               {
                 name = nodeActorName.InnerText;
@@ -4680,7 +4674,6 @@ namespace MediaPortal.Video.Database
               {
                 if (CheckActorImdbId(nodeActorImdbId.InnerText))
                 {
-                  imdbCheck = true;
                   actorImdbId = nodeActorImdbId.InnerText;
                 }
               }
@@ -4771,10 +4764,11 @@ namespace MediaPortal.Video.Database
       // Split to filename and path
       Util.Utils.Split(movieFile, out moviePath, out movieFile);
       // Check for DVD folder
-      if (movieFile.ToUpper() == "VIDEO_TS.IFO")
+      if (movieFile.ToUpperInvariant() == "VIDEO_TS.IFO")
       {
         // Remove \VIDEO_TS from directory structure
         string directoryDVD = moviePath.Substring(0, moviePath.LastIndexOf("\\"));
+        
         if (Directory.Exists(directoryDVD))
         {
           moviePath = directoryDVD;
@@ -4793,213 +4787,164 @@ namespace MediaPortal.Video.Database
       // Prepare XML
       XmlDocument doc = new XmlDocument();
       XmlDeclaration xmldecl = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+      
       // Main tag
-      XmlNode tagsNode = doc.CreateElement("movie");
+      XmlNode mainNode = doc.CreateElement("movie");
+      XmlNode subNode;
 
       #region Movie fields
 
       // Title
-      XmlNode tagNode = doc.CreateElement("title");
-      tagNode.InnerText = movieDetails.Title;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "title", movieDetails.Title);
       //  movie IMDB number
-      tagNode = doc.CreateElement("imdb");
-      tagNode.InnerText = movieDetails.IMDBNumber;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "imdb", movieDetails.IMDBNumber);
       //  Language
-      tagNode = doc.CreateElement("language");
-      tagNode.InnerText = movieDetails.Language;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "language", movieDetails.Language);
       //  Country
-      tagNode = doc.CreateElement("country");
-      tagNode.InnerText = movieDetails.Country;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "country", movieDetails.Country);
       //  Year
-      tagNode = doc.CreateElement("year");
-      tagNode.InnerText = movieDetails.Year.ToString();
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "year", movieDetails.Year.ToString());
       //  Rating
-      tagNode = doc.CreateElement("rating");
-      tagNode.InnerText = movieDetails.Rating.ToString().Replace(",", ".");
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "rating", movieDetails.Rating.ToString().Replace(",", "."));
       //  Runtime
-      tagNode = doc.CreateElement("runtime");
-      tagNode.InnerText = movieDetails.RunTime.ToString();
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "runtime", movieDetails.RunTime.ToString());
       // MPAA
-      tagNode = doc.CreateElement("mpaa");
-      tagNode.InnerText = movieDetails.MPARating;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "mpaa", movieDetails.MPARating);
       // Votes
-      tagNode = doc.CreateElement("votes");
-      tagNode.InnerText = movieDetails.Votes;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "votes", movieDetails.Votes);
       // TOp 250
-      tagNode = doc.CreateElement("top250");
-      tagNode.InnerText = movieDetails.Top250.ToString();
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "top250", movieDetails.Top250.ToString());
       // Studio
-      tagNode = doc.CreateElement("studio");
-      tagNode.InnerText = movieDetails.Studios;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "studio", movieDetails.Studios);
       //  Director
-      tagNode = doc.CreateElement("director");
-      tagNode.InnerText = movieDetails.Director;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "director", movieDetails.Director);
       //  Director imdbId
-      tagNode = doc.CreateElement("directorimdb");
-      tagNode.InnerText = GetActorImdbId(movieDetails.ID);
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "directorimdb", GetActorImdbId(movieDetails.ID));
       // Credits
-      tagNode = doc.CreateElement("credits");
-      tagNode.InnerText = movieDetails.WritingCredits;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "credits", movieDetails.WritingCredits);
       // Tagline
-      tagNode = doc.CreateElement("tagline");
-      tagNode.InnerText = movieDetails.TagLine;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "tagline", movieDetails.TagLine);
       // Plot outline (short one)
-      tagNode = doc.CreateElement("outline");
-      tagNode.InnerText = movieDetails.PlotOutline;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "outline", movieDetails.PlotOutline);
       // Plot - long
-      tagNode = doc.CreateElement("plot");
-      tagNode.InnerText = movieDetails.Plot;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "plot", movieDetails.Plot);
       // Review
-      tagNode = doc.CreateElement("review");
-      tagNode.InnerText = movieDetails.UserReview;
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "review", movieDetails.UserReview);
       // Watched
-      tagNode = doc.CreateElement("watched");
       string watched = "false";
+      
       if (movieDetails.Watched > 0)
       {
         watched = "true";
       }
-      tagNode.InnerText = watched;
-      tagsNode.AppendChild(tagNode);
+
+      CreateXmlNode(mainNode, doc, "watched", watched);
+      
       // Watched count
-      tagNode = doc.CreateElement("playcount");
       int percent = 0;
       int watchedCount = 0;
       GetMovieWatchedStatus(movieId, out percent, out watchedCount);
-      tagNode.InnerText = watchedCount.ToString();
-      tagsNode.AppendChild(tagNode);
+      CreateXmlNode(mainNode, doc, "playcount", watchedCount.ToString());
+      
       // Poster
-      tagNode = doc.CreateElement("thumb");
       string titleExt = movieDetails.Title + "{" + movieId + "}";
       string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
       string coverFilename = moviePath + @"\" + movieFile + ".jpg";
+      
       if (File.Exists(largeCoverArtImage))
       {
         File.Copy(largeCoverArtImage, coverFilename, true);
-        tagNode.InnerText = movieFile + ".jpg";
-        tagsNode.AppendChild(tagNode);
+        CreateXmlNode(mainNode, doc, "thumb", movieFile + ".jpg");
       }
 
       // Fanart
-      tagNode = doc.CreateElement("fanart");
-      XmlNode subTagnode = doc.CreateElement("thumb");
-      
       string faFile = string.Empty;
-      FanArt.GetFanArtfilename(movieId, 0, out faFile);
-
-      if (File.Exists(faFile))
+      subNode = doc.CreateElement("fanart");
+      
+      for (int i = 0; i < 5; i++)
       {
-        string faFilename = moviePath + @"\" + movieFile + "-fanart.jpg";
-        File.Copy(faFile, faFilename, true);
-        subTagnode.InnerText = movieFile + "-fanart.jpg";
+        FanArt.GetFanArtfilename(movieId, i, out faFile);
+        string index = string.Empty;
+
+        if (File.Exists(faFile))
+        {
+          if (i > 0)
+          {
+            index = i.ToString();
+          }
+
+          string faFilename = moviePath + @"\" + movieFile + "-fanart" + index + ".jpg";
+          File.Copy(faFile, faFilename, true);
+          CreateXmlNode(subNode, doc, "thumb", movieFile + "-fanart" + index + ".jpg");
+          
+        }
       }
-      tagNode.AppendChild(subTagnode);
-      tagsNode.AppendChild(tagNode);
+      mainNode.AppendChild(subNode);
+
       // Genre
       string szGenres = movieDetails.Genre;
       
       if (szGenres.IndexOf("/") >= 0)
       {
-        tagNode = doc.CreateElement("genres");
+        subNode = doc.CreateElement("genres");
         Tokens f = new Tokens(szGenres, new[] { '/' });
+        
         foreach (string strGenre in f)
         {
-          subTagnode = doc.CreateElement("genre");
-          String strCurrentGenre = strGenre.Trim();
-          subTagnode.InnerText = strCurrentGenre;
-          tagNode.AppendChild(subTagnode);
+          CreateXmlNode(subNode, doc, "genre", strGenre.Trim());
         }
-        tagsNode.AppendChild(tagNode);
+        
+        mainNode.AppendChild(subNode);
       }
       else
       {
-        tagNode = doc.CreateElement("genre");
-        tagNode.InnerText = szGenres.Trim();
-        tagsNode.AppendChild(tagNode);
+        CreateXmlNode(mainNode, doc, "genre", szGenres.Trim());
       }
+      
       // Cast
       ArrayList castList = new ArrayList();
-      
       GetActorsByMovieID(movieId, ref castList);
 
       foreach (string actor in castList)
       {
         IMDBActor actorInfo = new IMDBActor();
-        tagNode = doc.CreateElement("actor");
+        subNode = doc.CreateElement("actor");
 
         char[] splitter = { '|' };
         string[] temp = actor.Split(splitter);
         actorInfo = GetActorInfo(Convert.ToInt32(temp[0]));
 
-        subTagnode = doc.CreateElement("name");
-        subTagnode.InnerText = temp[1];
-        tagNode.AppendChild(subTagnode);
-
-        subTagnode = doc.CreateElement("role");
-        subTagnode.InnerText = temp[3];
-        tagNode.AppendChild(subTagnode);
-        
-        subTagnode = doc.CreateElement("imdb");
-        subTagnode.InnerText = temp[2];
-        tagNode.AppendChild(subTagnode);
+        CreateXmlNode(subNode, doc, "name", temp[1]);
+        CreateXmlNode(subNode, doc, "role", temp[3]);
+        CreateXmlNode(subNode, doc, "imdb", temp[2]);
 
         if (actorInfo != null)
         {
-          subTagnode = doc.CreateElement("thumb");
-          subTagnode.InnerText = actorInfo.ThumbnailUrl;
-          tagNode.AppendChild(subTagnode);
-
-          subTagnode = doc.CreateElement("birthdate");
-          subTagnode.InnerText = actorInfo.DateOfBirth;
-          tagNode.AppendChild(subTagnode);
-
-          subTagnode = doc.CreateElement("birthplace");
-          subTagnode.InnerText = actorInfo.PlaceOfBirth;
-          tagNode.AppendChild(subTagnode);
-
-          subTagnode = doc.CreateElement("deathdate");
-          subTagnode.InnerText = actorInfo.DateOfDeath;
-          tagNode.AppendChild(subTagnode);
-
-          subTagnode = doc.CreateElement("deathplace");
-          subTagnode.InnerText = actorInfo.PlaceOfDeath;
-          tagNode.AppendChild(subTagnode);
-
-          subTagnode = doc.CreateElement("minibiography");
-          subTagnode.InnerText = actorInfo.MiniBiography;
-          tagNode.AppendChild(subTagnode);
-
-          subTagnode = doc.CreateElement("biography");
-          subTagnode.InnerText = actorInfo.Biography;
-          tagNode.AppendChild(subTagnode);
+          CreateXmlNode(subNode, doc, "thumb", actorInfo.ThumbnailUrl);
+          CreateXmlNode(subNode, doc, "birthdate", actorInfo.DateOfBirth);
+          CreateXmlNode(subNode, doc, "birthplace", actorInfo.PlaceOfBirth);
+          CreateXmlNode(subNode, doc, "deathdate", actorInfo.DateOfDeath);
+          CreateXmlNode(subNode, doc, "deathplace", actorInfo.PlaceOfDeath);
+          CreateXmlNode(subNode, doc, "minibiography", actorInfo.MiniBiography);
+          CreateXmlNode(subNode, doc, "biography", actorInfo.Biography);
         }
-        tagsNode.AppendChild(tagNode);
+
+        mainNode.AppendChild(subNode);
       }
       
       #endregion
 
       // End and save
-      doc.AppendChild(tagsNode);
-      doc.InsertBefore(xmldecl, tagsNode);
+      doc.AppendChild(mainNode);
+      doc.InsertBefore(xmldecl, mainNode);
       doc.Save(nfoFile);
+    }
+
+    private void CreateXmlNode(XmlNode mainNode, XmlDocument doc, string element, string innerTxt)
+    {
+      XmlNode subNode = doc.CreateElement(element);
+      subNode.InnerText = innerTxt;
+      mainNode.AppendChild(subNode);
     }
 
     public void GetVideoFiles(string path, ref ArrayList availableFiles)

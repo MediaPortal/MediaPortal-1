@@ -25,7 +25,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -36,7 +35,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using System.Text.RegularExpressions;
 
 #pragma warning disable 108
 
@@ -318,7 +316,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       _conflictFiles = new ArrayList();
-      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, actorsCheckBox.Checked,
+      IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
                            refreshdbCheckBox.Checked);
       LoadMovies(0);
     }
@@ -1405,7 +1403,7 @@ namespace MediaPortal.Configuration.Sections
         movieDetails.SearchString = searchString;
       }
       
-      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, actorsCheckBox.Checked, true))
+      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch, true, true))
       {
         if (movieDetails != null)
         {
@@ -1876,10 +1874,7 @@ namespace MediaPortal.Configuration.Sections
           preferFileNameCheckBox.Visible = true;
         }
         preferFileNameCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "preferfilenameforsearch", false);
-
-        // Create nfo file
-        chbCreateNfoFile.Checked = xmlreader.GetValueAsBool("moviedatabase", "createnfo", false);
-
+        
         // Movie info before play
         chbShowMovieInfoOnPlay.Checked = xmlreader.GetValueAsBool("moviedatabase", "movieinfobeforeplay", false);
         chbMovieInfoOnShares.Checked = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
@@ -1899,7 +1894,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Load activated databases-Changed 
         skipCheckBox.Checked = true; // xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
-        actorsCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
+        //actorsCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
 
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
         if (iNumber > 0)
@@ -1949,9 +1944,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("moviedatabase", "usefolderastitle", _useFolderAsTitle);
         xmlwriter.SetValueAsBool("moviedatabase", "preferfilenameforsearch", preferFileNameCheckBox.Checked);
 
-        // Create nfo file
-        xmlwriter.SetValueAsBool("moviedatabase", "createnfo", chbCreateNfoFile.Checked);
-
         // Movie info before play
         xmlwriter.SetValueAsBool("moviedatabase", "movieinfobeforeplay", chbShowMovieInfoOnPlay.Checked);
         xmlwriter.SetValueAsBool("moviedatabase", "movieinfoshareview", chbMovieInfoOnShares.Checked);
@@ -1962,7 +1954,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Database
         xmlwriter.SetValueAsBool("moviedatabase", "scanskipexisting", skipCheckBox.Checked);
-        xmlwriter.SetValueAsBool("moviedatabase", "getactors", actorsCheckBox.Checked);
+        xmlwriter.SetValueAsBool("moviedatabase", "getactors", true);
 
         xmlwriter.SetValue("moviedatabase", "number", lvDatabase.Items.Count);
         for (int i = 0; i < lvDatabase.Items.Count; i++)
@@ -4633,7 +4625,7 @@ namespace MediaPortal.Configuration.Sections
       // Show message
       if (e.Cancelled)
       {
-        MessageBox.Show("Import canceled !");
+        MessageBox.Show("Canceled !");
       }
       else if (e.Error != null)
       {
@@ -4709,6 +4701,5 @@ namespace MediaPortal.Configuration.Sections
     #endregion
     
     #endregion
-
   }
 }
