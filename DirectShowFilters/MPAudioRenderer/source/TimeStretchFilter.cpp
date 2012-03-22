@@ -400,12 +400,6 @@ DWORD CTimeStretchFilter::ThreadProc()
 
           if (nOutFrames > 0)
           {
-            UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
-            double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-            double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-
-            m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
-            
             // try to get an output buffer if none available
             if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
               Log("CTimeStretchFilter::timestretch thread - Failed to get next output sample!");
@@ -431,6 +425,13 @@ DWORD CTimeStretchFilter::ThreadProc()
                   DeleteMediaType(m_pNewPMT);
                   m_pNewPMT = NULL;
                 }
+
+                UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
+                double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+                double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+
+                m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
+                //Log(m_pClock->DebugData());
 
                 hr = OutputNextSample();
                 m_rtInSampleTime += nOutFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
