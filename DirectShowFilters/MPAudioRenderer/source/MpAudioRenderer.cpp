@@ -440,6 +440,9 @@ STDMETHODIMP CMPAudioRenderer::Stop()
   m_pPipeline->BeginStop();
   m_pPipeline->EndStop();
 
+  if (m_Settings.m_bDoCleanupOnStop)
+    m_pPipeline->Cleanup();
+
   return CBaseRenderer::Stop(); 
 };
 
