@@ -152,6 +152,7 @@ private:
   double m_fCurrentAdjustment;
   double m_fNewTempo;
   double m_fNewAdjustment;
+  int m_nFramesCarriedOver;
 
   CCritSec m_allocatorLock;
 

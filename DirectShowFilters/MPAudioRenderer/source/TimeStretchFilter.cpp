@@ -42,6 +42,7 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
   m_pClock(pClock),
+  m_nFramesCarriedOver(0),
   m_bResamplingRequested(false)
 {
 }
@@ -422,10 +423,13 @@ DWORD CTimeStretchFilter::ThreadProc()
               
               if (pMediaBufferOut)
               {
+                int extraFrames = 0;
                 int maxBufferSamples = OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
                 if (nOutFrames > maxBufferSamples)
+                {
+                  extraFrames = nOutFrames - maxBufferSamples;
                   nOutFrames = maxBufferSamples;
-
+                }
                 m_pNextOutSample->SetActualDataLength(nOutFrames * m_pOutputFormat->Format.nBlockAlign);
                 receiveSamplesInternal((short*)pMediaBufferOut, nOutFrames);
                 //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
@@ -439,7 +443,9 @@ DWORD CTimeStretchFilter::ThreadProc()
 
                 UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
                 double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-                double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+                double rtProcessedSampleDuration = (double)(nOutFrames + extraFrames - m_nFramesCarriedOver) * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+
+                m_nFramesCarriedOver = extraFrames;
 
                 m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
                 //Log(m_pClock->DebugData());
@@ -478,6 +484,7 @@ void CTimeStretchFilter::clear()
     for(int i = 0; i < m_Streams->size(); i++) 
       m_Streams->at(i)->clear(); 
   } 
+  m_nFramesCarriedOver = 0;
 }
 
 // flush requires a specific handling since we need to be able to use the CAutoLock
@@ -488,7 +495,8 @@ void CTimeStretchFilter::flush()
   { 
     for(int i = 0; i < m_Streams->size(); i++) 
       m_Streams->at(i)->flush(); 
-  } 
+  }
+  m_nFramesCarriedOver = 0;
 }
 
 void CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
