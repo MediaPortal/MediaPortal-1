@@ -371,7 +371,18 @@ DWORD CTimeStretchFilter::ThreadProc()
         {
           // Detect discontinuity in stream timeline
           if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR) || initStreamTime)
+          {
             m_rtNextIncomingSampleTime = m_rtInSampleTime = rtStart;
+
+            // TODO use the bufferredn 
+
+            /*UINT32 nOutFrames = numSamples();
+            uint unprocessedSamplesBefore = numUnprocessedSamples();*/
+            flush();
+            
+            /*uint unprocessedSamplesAfter = numUnprocessedSamples();
+            nOutFrames = numSamples();*/
+          }
 
           UINT nFrames = size / m_pInputFormat->Format.nBlockAlign;
           m_rtNextIncomingSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
