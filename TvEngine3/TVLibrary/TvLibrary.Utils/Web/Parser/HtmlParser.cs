@@ -98,7 +98,8 @@ namespace MediaPortal.Utils.Web
       int count = 0;
       if (pageSource != null)
       {
-        count = _profiler.MatchCount(pageSource.Substring(startIndex, endIndex - startIndex));
+          //run the replacement tasks before parsing the page source
+          count = _profiler.MatchCount(Replacements(pageSource.Substring(startIndex, endIndex - startIndex)));
       }
 
       return count;
@@ -163,7 +164,6 @@ namespace MediaPortal.Utils.Web
         sectionSource = _profiler.GetSource(index);
       }
 
-
       Match result = null;
       try
       {
@@ -196,7 +196,6 @@ namespace MediaPortal.Utils.Web
           _sectionSource += sectionSource.Substring(end, sectionSource.Length - end);
         }
       }
-
       return found;
     }
 
@@ -307,6 +306,68 @@ namespace MediaPortal.Utils.Web
     #endregion
 
     #region Private Methods
+
+    /// <summary>
+    /// Goes through all the replacement tasks and does the replacement each time on the modified page.
+    /// The result page will be retuned.
+    /// </summary>
+    /// <param name="pageSource">Source of the page as string</param>
+    /// <returns>Modified (replace) pageSource</returns>
+    private string Replacements(string pageSource)
+    {
+        string page = string.Empty;
+        if (pageSource == string.Empty || pageSource == null)
+        {
+            return string.Empty;
+        }
+        else
+        {
+            page = pageSource;
+        }
+
+        foreach (HtmlReplaceData replaceTask in _template.replaceList)
+        {
+            if (replaceTask.Match == null || replaceTask.Replace == null)
+            {
+                continue;
+            }
+            page = ReplaceRegex(page, replaceTask.Match, replaceTask.Replace);
+        }
+
+        return page;
+    }
+
+    /// <summary>
+    /// Does the replacements to the text by regex. The result text will be returned.
+    /// </summary>
+    /// <param name="text">Some text as string</param>
+    /// <param name="regexMatch">text or regex to replace</param>
+    /// <param name="replaceText">string for replacement</param>
+    /// <returns>Modified (replaced) text</returns>
+    private string ReplaceRegex(string text, string regexMatch, string replaceText)
+    {
+        if (text == string.Empty)
+        {
+            return string.Empty;
+        }
+        if (regexMatch == string.Empty)
+        {
+            return text;   
+        }
+
+        string result = null;
+        try
+        {
+            Regex searchRegex = new Regex(regexMatch);
+            result = searchRegex.Replace(text, replaceText);
+        }
+        catch (ArgumentException)
+        {
+            return string.Empty;
+        }
+
+        return result;
+    }
 
     /// <summary>
     /// Gets the java sub link params.
