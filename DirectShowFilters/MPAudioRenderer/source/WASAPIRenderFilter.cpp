@@ -637,7 +637,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
           {
             // TODO error checking
             if (CheckSample(m_pCurrentSample, bufferSize - currentPadding) == S_FALSE)
+            {
               GetWASAPIBuffer(bufferSize, currentPadding, bufferSizeInBytes, &data);
+              bytesFilled = 0;
+            }
           }
 
           if (writeSilence == 0 && (sampleOffset == 0 || m_nSampleNum == 0) && !sampleProcessed)
