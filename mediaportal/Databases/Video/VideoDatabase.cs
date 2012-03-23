@@ -106,6 +106,11 @@ namespace MediaPortal.Video.Database
       _database.GetVideoFilesMediaInfo(strFilenameAndPath, ref mediaInfo, refresh);
     }
 
+    public static bool HasMediaInfo(string fileName)
+    {
+      return _database.HasMediaInfo(fileName);
+    }
+
     public static int AddGenre(string strGenre1)
     {
       return _database.AddGenre(strGenre1);

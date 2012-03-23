@@ -32,5 +32,6 @@ namespace MediaPortal.Services
     bool OnPlayDVD(string drive, int parentId);
     void SetIMDBThumbs(IList items, bool markWatchedFilesm, bool eachMovieHasDedicatedFolder);
     string GetFolderVideoFile(string path);
+    bool IsDvdDirectory(string path);
   }
 }

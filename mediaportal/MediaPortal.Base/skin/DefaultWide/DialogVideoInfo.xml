@@ -662,7 +662,7 @@
       <textvisible3>no</textvisible3>
     </control>	
     <control>
-      <description>Plot value (When Cast Info View)</description>
+      <description>Shrot Plot value (When Cast Info View)</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>810</posX>

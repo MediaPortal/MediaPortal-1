@@ -3,6 +3,7 @@
   <id>28</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>[facadeview.filmstrip|facadeview.coverflow]</allowoverlay>
+  <define>#useSelectedFanart:Yes</define>
   <controls>
     <control>
       <description>BG</description>
@@ -14,6 +15,7 @@
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
+    <import>common.video.fanart.xml</import>
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
@@ -140,7 +142,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="videothumbmask.png">missing_Coverart.png</texture>
-      <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
+      <visible>facadeview.playlist+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
     </control>
     <control>
       <id>500</id>
@@ -150,7 +152,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="videothumbmask.png">#selectedthumb</texture>
-      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <visible>facadeview.playlist+Control.HasFocus(50)</visible>
     </control>
     <control>
       <type>image</type>
@@ -160,7 +162,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="videothumbmask.png">Videothumbframe.png</texture>
-      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <visible>facadeview.playlist+Control.HasFocus(50)</visible>
     </control>
     <control>
       <description>Selected item Label</description>

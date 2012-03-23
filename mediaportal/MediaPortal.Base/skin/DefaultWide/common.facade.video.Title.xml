@@ -15,32 +15,32 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <posX>622</posX>
-          <posY>200</posY>
-          <width>650</width>
-          <height>500</height>
+          <posX>602</posX>
+          <posY>175</posY>
+          <width>642</width>
+          <height>520</height>
           <onleft>2</onleft>
           <onright>2</onright>
-					<textXOff2>545</textXOff2>
-					<textYOff2>2</textYOff2>
-					<textXOff3>640</textXOff3>
-					<textYOff3>5</textYOff3>
-					<textalign3>right</textalign3>
-					<font>font11</font>
-					<font2>font10</font2>
-					<font3>font9</font3>
+	  <textXOff2>535</textXOff2>
+	  <textYOff2>2</textYOff2>
+	  <textXOff3>632</textXOff3>
+	  <textYOff3>5</textYOff3>
+	  <textalign3>right</textalign3>
+	  <font>font11</font>
+	  <font2>font10</font2>
+	  <font3>font9</font3>
           <scrollOffset>2</scrollOffset>
           <spinPosX>1148</spinPosX>
           <spinPosY>660</spinPosY>
           <spinCanFocus>yes</spinCanFocus>
           <unfocusedAlpha>160</unfocusedAlpha>
-				</control>
+	</control>
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
           <id>50</id>
           <posX>100</posX>
-          <posY>152</posY>
+          <posY>142</posY>
           <width>1200</width>
           <height>588</height>
           <scrollOffset>1</scrollOffset>
@@ -82,7 +82,7 @@
           <id>50</id>
           <scrollOffset>2</scrollOffset>
           <posX>70</posX>
-          <posY>220</posY>
+          <posY>250</posY>
           <width>1244</width>
           <height>720</height>
           <onup>2</onup>
@@ -156,9 +156,9 @@
           <folderPrefix>[</folderPrefix>
           <folderSuffix>]</folderSuffix>
           <font1>font13</font1>
-          <font2>font10</font2>
-          <label1>#title</label1>
-          <label2>#genre</label2>
+          <font2>-</font2>
+          <label1>-</label1>
+          <label2>-</label2>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>FFFF0000</remoteColor>
           <playedColor>FFA0D0FF</playedColor>
@@ -167,14 +167,14 @@
           <shadowAngle>45</shadowAngle>
           <shadowDistance>0</shadowDistance>
           <shadowColor>FF000000</shadowColor>
-          <label1YOff>405</label1YOff>
-          <label2YOff>430</label2YOff>
+          <label1YOff>1000</label1YOff>
+          <label2YOff>1000</label2YOff>
           <pageSize>5</pageSize>
           <keepaspectratio>no</keepaspectratio>
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
           <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
-          <scrollbarYOff>455</scrollbarYOff>
+          <scrollbarYOff>415</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
           <cards flipY="yes" diffuse="Thumb_Mask.png" mask="videothumbmask.png">videothumbmask.png</cards>
           <subitems>

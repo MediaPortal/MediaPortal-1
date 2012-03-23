@@ -292,7 +292,7 @@ namespace MediaPortal.GUI.Video
               }
             }
             // Set watched status for list item
-            if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path)))// && foundWatched))
+            if (!pItem.IsFolder || IsDvdDirectory(pItem.Path))
             {
               pItem.IsPlayed = foundWatched;
               pItem.Label3 = percentWatched + "% #" + timesWatched;
@@ -340,6 +340,9 @@ namespace MediaPortal.GUI.Video
 
     public string GetFolderVideoFile(string path)
     {
+      if (string.IsNullOrEmpty(path))
+        return string.Empty;
+
       // IFind first movie file in folder
       string strExtension = Path.GetExtension(path).ToLower();
       if (VirtualDirectory.IsImageFile(strExtension))
@@ -368,6 +371,10 @@ namespace MediaPortal.GUI.Video
           {
             Log.Debug("GUIVideoFiles: DVD folder detected - {0}", strDirs[0]);
             return String.Format(@"{0}\VIDEO_TS.IFO", strDirs[0]);
+          }
+          else
+          {
+            return string.Empty;
           }
         }
         string[] strFiles = null;
