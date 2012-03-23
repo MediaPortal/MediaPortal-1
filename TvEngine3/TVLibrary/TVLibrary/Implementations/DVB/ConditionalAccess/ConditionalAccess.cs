@@ -584,7 +584,9 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     private static byte[] PatchPMT_AstonCrypt2(byte[] PMT, int pmtLength, out int newPmtLength)
     {
-      byte[] newPMT = new byte[1024]; // create a new array.
+      byte[] newPMT = new byte[pmtLength]; // create a new array.
+
+      Log.Log.Info("Conditional Access:  PatchPMT_AstonCrypt2 : pmtLength {0}", pmtLength);
 
       int ps = 0;
       int pd = 0;
@@ -595,12 +597,12 @@ namespace TvLibrary.Implementations.DVB
         newPMT[pd++] = PMT[ps++];
 
       // Need to patch audio AC3 channels 0x06, , , , ,0x6A in real AC3 descriptor 0x81, .... for ( at least !) ASTONCRYPT CAM module
-      while ((ps + 5 < pmtLength) && (pd < 1024))
+      while ((ps + 5 < pmtLength) && (pd < pmtLength))
       {
         int len = PMT[ps + 4] + 5;
         for (int i = 0; i < len; ++i)
         {
-          if (pd >= 1024)
+          if (pd >= pmtLength)
             break;
           if ((i == 0) && (PMT[ps] == 0x06) && (PMT[ps + 5] == 0x6A))
           {
