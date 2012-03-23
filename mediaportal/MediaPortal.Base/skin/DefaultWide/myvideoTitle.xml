@@ -47,117 +47,7 @@
         <type>group</type>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
-        <visible>!Control.HasFocus(50)</visible>
-        <control>
-          <description>caption of the selected item</description>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>71</posX>
-          <posY>596</posY>
-          <width>285</width>
-          <height>93</height>
-          <font>font11</font>
-          <label>#Play.Current.Title</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>caption of the selected item</description>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>71</posX>
-          <posY>546</posY>
-          <width>285</width>
-          <height>93</height>
-          <font>font11</font>
-          <label>#Play.Current.Artist</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>caption of the selected item</description>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>71</posX>
-          <posY>571</posY>
-          <width>285</width>
-          <height>93</height>
-          <font>font11</font>
-          <label>#Play.Current.Album</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>caption of the selected item2</description>
-          <allowoverlay>yes</allowoverlay>
-          <type>label</type>
-          <overlay>yes</overlay>
-          <id>0</id>
-          <posX>217</posX>
-          <posY>473</posY>
-          <width>355</width>
-          <height>87</height>
-          <font>font16</font>
-          <align>left</align>
-          <textcolor>80ffffff</textcolor>
-          <label>#currentplaytime</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>music logo</description>
-          <type>image</type>
-          <overlay>yes</overlay>
-          <id>600</id>
-          <posX>71</posX>
-          <posY>426</posY>
-          <width>121</width>
-          <height>121</height>
-          <keepaspectratio>no</keepaspectratio>
-          <centered>yes</centered>
-          <texture mask="Picturethumbmask.png">#Play.Current.Thumb</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>music logo</description>
-          <type>image</type>
-          <overlay>yes</overlay>
-          <id>1</id>
-          <posX>71</posX>
-          <posY>426</posY>
-          <width>121</width>
-          <height>121</height>
-          <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
-          <visible>!Control.HasFocus(50) + player.hasmedia + control.hasthumb(600)</visible>
-        </control>
-        <control>
-          <description>Progress background</description>
-          <type>image</type>
-          <id>1</id>
-          <posX>60</posX>
-          <posY>626</posY>
-          <width>250</width>
-          <height>27</height>
-          <texture>osd_progress_background.png</texture>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
-        <control>
-          <description>progress bar</description>
-          <type>progress</type>
-          <id>0</id>
-          <posX>62</posX>
-          <posY>631</posY>
-          <width>250</width>
-          <height>20</height>
-          <offset>0</offset>
-          <height>20</height>
-          <innerheight>20</innerheight>
-          <texturebg>-</texturebg>
-          <lefttexture>-</lefttexture>
-          <midtexture>osd_progress_mid.png</midtexture>
-          <righttexture>-</righttexture>
-          <label>#percentage</label>
-          <visible>!Control.HasFocus(50)+player.hasmedia</visible>
-        </control>
+        <visible>!Control.HasFocus(50)</visible>        
         <control>
           <description>button group</description>
           <type>group</type>
@@ -231,7 +121,7 @@
             <onup>9</onup>
             <ondown>4755</ondown>
           </control>
-	  <control>
+          <control>
             <description>Trailers</description>
             <type>button</type>
             <id>4755</id>
@@ -240,36 +130,35 @@
 	    <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
             <onright>50</onright>
             <onup>7</onup>
-            <ondown>2</ondown>
+            <ondown>9876</ondown>
 	    <visible>plugin.isenabled(OnlineVideos)</visible>
           </control>
+          <control>
+            <description>Video settings</description>
+            <type>button</type>
+            <id>9876</id>
+            <label>Video Settings</label>
+            <hyperlink>703</hyperlink>
+            <onright>50</onright>
+            <onup>7</onup>
+            <ondown>2</ondown>            
+          </control>	  
         </control>
       </control>
     </control>
     <import>common.facade.video.title.xml</import>
+    <import>myvideo.common.mediainfo.xml</import>   
     <!-- info visible when in list view for titles -->
     <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>78</posX>
-      <posY>140</posY>
-      <width>900</width>
-      <label>#title</label>
-      <font>font18</font>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <visible>facadeview.list+Control.HasFocus(50)</visible>
-    </control>
-    <control>
+      <description>Star Rating</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>78</posX>
-      <posY>110</posY>
-      <width>302</width>
+      <posX>73</posX>
+      <posY>95</posY>
+      <width>220</width>
       <height>40</height>
-      <textureWidth>28</textureWidth>
-      <textureHeight>28</textureHeight>
+      <textureWidth>23</textureWidth>
+      <textureHeight>23</textureHeight>
       <subitems>
         <subitem>greystar.png</subitem>
         <subitem>star.png</subitem>
@@ -280,56 +169,110 @@
       <percentage>#rating</percentage>
       <visible>facadeview.list+Control.HasFocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
-		<control>
-      <description>Rating string</description>
+    <control>
+      <description>Text Rating/Votes Value</description>
       <type>label</type>
       <id>1</id>
-      <posX>385</posX>
-      <posY>110</posY>
-      <label>#strrating</label>
-      <font>font10</font>
+      <posX>314</posX>
+      <posY>94</posY>
+      <label>#strrating - #votes Votes</label>
+      <font>font11</font>
       <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
+      <textcolor>60FFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
+    </control>    
     <control>
+      <description>Selected item Label (Title)</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>73</posX>
+      <posY>115</posY>
+      <width>900</width>
+      <label>#title</label>
+      <font>font17</font>
+      <align>left</align>
+      <textcolor>ffffffff</textcolor>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
+    </control>    
+    <control>
+      <description>Movie Cover</description>
       <id>1</id>
       <type>image</type>
-      <posX>79</posX>
-      <posY>193</posY>
-      <width>180</width>
-      <height>250</height>
+      <posX>73</posX>
+      <posY>175</posY>
+      <width>190</width>
+      <height>263</height>
       <texture mask="videothumbmask.png">missing_Coverart.png</texture>
       <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
     </control>
     <control>
       <id>500</id>
       <type>image</type>
-      <posX>79</posX>
-      <posY>193</posY>
-      <width>180</width>
-      <height>250</height>
+      <posX>73</posX>
+      <posY>175</posY>
+      <width>190</width>
+      <height>263</height>
       <texture mask="videothumbmask.png">#selectedthumb</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>79</posX>
-      <posY>193</posY>
-      <width>180</width>
-      <height>250</height>
+      <posX>73</posX>
+      <posY>175</posY>
+      <width>190</width>
+      <height>263</height>
       <texture mask="videothumbmask.png">Videothumbframe.png</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
+    <!-- ********** Movie Info  ********** -->
     <control>
-      <description>Genre txt</description>
+      <description>Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>298</posX>
+      <posY>178</posY>
+      <width>70</width>
+      <height>37</height>      
+      <texture>logos\watched.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#iswatched,yes) + string.equals(#hideinfo, False)</visible>            
+    </control>
+    <control>
+      <description>Not Watched Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>298</posX>
+      <posY>178</posY>
+      <width>70</width>
+      <height>37</height>      
+      <texture>logos\watched_no.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#iswatched,no) + string.equals(#hideinfo, False)</visible>         
+    </control>    	    	
+    <control>
+      <description>Certification (MPAA) Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>375</posX>
+      <posY>178</posY>
+      <width>70</width>
+      <height>37</height>      
+      <texture>logos\#mpaarating.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>    
+    <control>
+      <description>Genre Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>193</posY>
+      <posX>300</posX>
+      <posY>233</posY>
       <label>174</label>
-      <font>font10</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
@@ -338,55 +281,22 @@
       <description>Genre value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>212</posY>
-      <width>248</width>
+      <posX>300</posX>
+      <posY>253</posY>
+      <width>253</width>
       <label>#genre</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-		<control>
-      <description>Born</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>193</posY>
-      <label>686</label>
-      <font>font10</font>
-      <textcolor>FFB2D4F5</textcolor>
-			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
-    </control>
-		<control>
-      <description>Date of Birth</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>212</posY>
-      <label>#Actor.DateOfBirth</label>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
-			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
-   </control>
-	 <control>
-      <description>Place of Birth</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>231</posY>
-      <label>#Actor.PlaceOfBirth</label>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
-			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
-   </control>
+    </control>    
     <control>
-      <description>Director txt</description>
+      <description>Director Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>243</posY>
+      <posX>300</posX>
+      <posY>284</posY>
       <label>199</label>
-      <font>font10</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
@@ -395,57 +305,22 @@
       <description>Director value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>262</posY>
+      <posX>300</posX>
+      <posY>304</posY>
       <label>#director</label>
       <font>font11</font>
-      <width>248</width>
+      <width>253</width>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-		<control>
-      <description>Died</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>262</posY>
-      <label>Died:</label>
-      <font>font10</font>
-      <textcolor>FFB2D4F5</textcolor>
-			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
-    </control>
-		<control>
-      <description>Date of Death</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>281</posY>
-      <width>954</width>
-      <label>#Actor.DateOfDeath</label>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
-			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
-   </control>
-	 <control>
-      <description>Place of Death</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>300</posY>
-      <width>954</width>
-      <label>#Actor.PlaceOfDeath</label>
-      <font>font10</font>
-      <textcolor>FFFFFFFF</textcolor>
-			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
-   </control>
+    </control>    
     <control>
-      <description>Year txt</description>
+      <description>Year Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>293</posY>
+      <posX>300</posX>
+      <posY>335</posY>
       <label>201</label>
-      <font>font10</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
@@ -454,22 +329,22 @@
       <description>Year value</description>
       <type>label</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>312</posY>
-      <width>248</width>
+      <posX>300</posX>
+      <posY>355</posY>
+      <width>253</width>
       <label>#year</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
-      <description>Runtime txt</description>
+      <description>Runtime Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>343</posY>
+      <posX>300</posX>
+      <posY>386</posY>
       <label>299</label>
-      <font>font10</font>
+      <font>font11</font>
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
@@ -478,405 +353,216 @@
       <description>Runtime value</description>
       <type>label</type>
       <id>1</id>
-      <posX>305</posX>
-      <posY>362</posY>
-      <width>248</width>
+      <posX>300</posX>
+      <posY>406</posY>
+      <width>253</width>
       <label>#runtime</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>MPAA txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>393</posY>
-      <label>173</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>MPAA Rating</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>412</posY>
-      <width>248</width>
-      <label>#mpaarating</label>
-      <font>font11</font>
-      <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-		<control>
-      <description>Separator</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>71</posX>
-      <posY>495</posY>
-      <width>533</width>
-      <height>1</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-		<control>
-      <description>Plot value</description>
-      <type>textboxscrollup</type>
-      <id>1</id>
-      <posX>71</posX>
-      <posY>510</posY>
-      <width>533</width>
-      <height>180</height>
-      <label>#plotoutline</label>
-      <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-		<control>
-      <description>Actor Biography value</description>
-      <type>textboxscrollup</type>
-      <id>1</id>
-      <posX>71</posX>
-      <posY>450</posY>
-      <width>533</width>
-      <height>240</height>
-      <label>#Actor.Biography</label>
-      <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
-			<visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
-    </control>
-    <!-- Media info list view-->
+    </control>    
+    <!-- ********** Media Info Logos (List View) ********** -->
     <control>
       <description>Video codec</description>
       <type>image</type>
       <id>0</id>
-      <posX>80</posX>
-      <posY>445</posY>
-      <width>85</width>
-      <height>42</height>
+      <posX>71</posX>
+      <posY>455</posY>
+      <width>70</width>
+      <height>40</height>
       <texture>logos\#VideoCodec.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-    </control>
-	
-		<control>
+    </control>	
+    <control>
       <description>Video resolution</description>
       <type>image</type>
       <id>0</id>
-      <posX>170</posX>
-      <posY>445</posY>
-      <width>85</width>
-      <height>42</height>
+      <posX>151</posX>
+      <posY>455</posY>
+      <width>70</width>
+      <height>40</height>
       <texture>logos\#VideoResolution.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-    </control>
-       
+    </control>       
     <control>
       <description>Aspect ratio</description>
       <type>image</type>
       <id>0</id>
-      <posX>260</posX>
-      <posY>445</posY>
-      <width>85</width>
-      <height>42</height>
+      <posX>231</posX>
+      <posY>455</posY>
+      <width>70</width>
+      <height>40</height>
       <texture>logos\#AspectRatio.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-    </control>
-	
+    </control>	
     <control>
       <description>Audio codec</description>
       <type>image</type>
       <id>0</id>
-      <posX>350</posX>
-      <posY>445</posY>
-      <width>85</width>
-      <height>42</height>
+      <posX>311</posX>
+      <posY>455</posY>
+      <width>70</width>
+      <height>40</height>
       <texture>logos\#AudioCodec.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-    </control>
-	
+    </control>	
     <control>
       <description>Audio channels</description>
       <type>image</type>
       <id>0</id>
-      <posX>440</posX>
-      <posY>445</posY>
-      <width>85</width>
-      <height>42</height>
+      <posX>391</posX>
+      <posY>455</posY>
+      <width>70</width>
+      <height>40</height>
       <texture>logos\#AudioChannels.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-    </control>
-     
+    </control>     
     <control>
       <description>Subtitles</description>
       <type>image</type>
       <id>0</id>
-      <posX>530</posX>
-      <posY>445</posY>
-      <width>85</width>
-      <height>42</height>
+      <posX>471</posX>
+      <posY>455</posY>
+      <width>70</width>
+      <height>40</height>
       <texture>logos\subtitles.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#HasSubtitles, True)</visible>
     </control>
-		
-    <!-- info visible filmstrip-->
     <control>
-      <description>Seperator</description>
+      <description>Separator Line</description>
       <type>image</type>
       <id>1</id>
       <posX>71</posX>
-      <posY>575</posY>
-      <width>1180</width>
+      <posY>505</posY>
+      <width>475</width>
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>facadeview.filmstrip</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
-      <description>Genre txt</description>
-      <type>label</type>
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
       <id>1</id>
-      <posX>80</posX>
-      <posY>575</posY>
-      <label>174</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Genre value</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>80</posX>
-      <posY>595</posY>
-      <width>1180</width>
-      <label>#genre</label>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Director txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>80</posX>
-      <posY>625</posY>
-      <label>199</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Director value</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>80</posX>
-      <posY>645</posY>
-      <label>#director</label>
-      <font>font13</font>
-      <width>1180</width>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Year txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>65</posX>
-      <posY>100</posY>
-      <label>201</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Year value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>65</posX>
-      <posY>120</posY>
-      <width>248</width>
-      <label>#year</label>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Runtime txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>190</posX>
-      <posY>100</posY>
-      <label>299</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Runtime value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>190</posX>
-      <posY>120</posY>
-      <width>248</width>
-      <label>#runtime</label>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>MPAA txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>345</posX>
-      <posY>100</posY>
-      <label>173</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>MPAA Rating</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>345</posX>
-      <posY>120</posY>
-      <width>248</width>
-      <label>#mpaarating</label>
-      <font>font13</font>
-      <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.filmstrip + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Plot</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>80</posX>
-      <posY>685</posY>
+      <posX>72</posX>
+      <posY>525</posY>
+      <width>475</width>
+      <height>162</height>
       <label>#plot</label>
       <font>font11</font>
-      <width>1160</width>
-      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>        
+    <!-- ********** Actor /Director  Info (View Only In There View)  ********** -->
+    <control>
+      <description>Born Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>175</posY>
+      <label>686</label>
+      <font>font10</font>
       <textcolor>FFB2D4F5</textcolor>
-      <visible>[facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons|facadeview.coverflow] + string.equals(#hideinfo, False)</visible>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
     </control>
     <control>
+      <description>Date of Birth Value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>197</posY>
+      <width>255</width>
+      <label>#Actor.DateOfBirth</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>
+    <control>
+      <description>Place of Birth Value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>225</posY>
+      <width>255</width>
+      <height>90</height>
+      <label>#Actor.PlaceOfBirth</label>
+      <font>font11</font>
+      <textcolor>90FFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>
+    <control>
+      <description>Died Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>312</posY>
+      <label>Died:</label>
+      <font>font10</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>
+    <control>
+      <description>Date of Death Value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>334</posY>
+      <width>255</width>
+      <label>#Actor.DateOfDeath</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>
+    <control>
+      <description>Place of Death Value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>362</posY>
+      <width>255</width>
+      <height>90</height>
+      <label>#Actor.PlaceOfDeath</label>
+      <font>font11</font>
+      <textcolor>90FFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>
+    <control>
+      <description>Separator Line</description>
       <type>image</type>
       <id>1</id>
-      <posX>70</posX>
-      <posY>680</posY>
-      <width>1190</width>
-      <height>39</height>
-      <texture>osd_bg_top.png</texture>
-      <visible>[facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons|facadeview.coverflow]</visible>
+      <posX>71</posX>
+      <posY>462</posY>
+      <width>475</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
     </control>
-						
-    <!-- Media info icon, big icon, filmstrip view-->
     <control>
-      <description>Video codec</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>350</posX>
-      <posY>530</posY>
-      <width>85</width>
-      <height>42</height>
-      <texture>logos\#VideoCodec.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <visible>facadeview.filmstrip</visible>
-    </control>
-	
-    <control>
-      <description>Video resolution</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>440</posX>
-      <posY>530</posY>
-      <width>85</width>
-      <height>42</height>
-      <texture>logos\#VideoResolution.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <visible>facadeview.filmstrip</visible>
-    </control>
-       
-    <control>
-      <description>Aspect ratio</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>530</posX>
-      <posY>530</posY>
-      <width>85</width>
-      <height>42</height>
-      <texture>logos\#AspectRatio.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <visible>facadeview.filmstrip</visible>
-    </control>
-	
-    <control>
-      <description>Audio codec</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>620</posX>
-      <posY>530</posY>
-      <width>85</width>
-      <height>42</height>
-      <texture>logos\#AudioCodec.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <visible>facadeview.filmstrip</visible>
-    </control>
-	
-    <control>
-      <description>Audio channels</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>710</posX>
-      <posY>530</posY>
-      <width>85</width>
-      <height>42</height>
-      <texture>logos\#AudioChannels.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <visible>facadeview.filmstrip</visible>
-    </control>
-		
-    <control>
-      <description>Subtitles</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>800</posX>
-      <posY>530</posY>
-      <width>85</width>
-      <height>42</height>
-      <texture>logos\subtitles.png</texture>
-      <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-      <visible>facadeview.filmstrip+string.equals(#HasSubtitles, True)</visible>
-    </control>
-     
+      <description>Actor Biography value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>73</posX>
+      <posY>480</posY>
+      <width>475</width>
+      <height>208</height>
+      <label>#Actor.Biography</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
+    </control>     
     <!--control>
       <description>Content locked</description>
       <type>label</type>
@@ -888,8 +574,7 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>string.equals(#MyVideos.PinLocked, True)</visible>
-    </control>
-		
+    </control>		
     <control>
       <description>Content unlock</description>
       <type>label</type>
@@ -901,35 +586,32 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>string.equals(#MyVideos.PinLocked, False)</visible>
-    </control-->
-		
+    </control-->		
     <control>
       <description>Content locked</description>
       <type>image</type>
       <id>1</id>
-      <posX>1160</posX>
-      <posY>100</posY>
-      <width>82</width>
-      <height>82</height>
+      <posX>1165</posX>
+      <posY>80</posY>
+      <width>80</width>
+      <height>80</height>
       <visible>string.equals(#MyVideos.PinLocked, True)</visible>
       <texture>lock.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-    </control>
- 
+    </control> 
     <control>
       <description>Content unlock</description>
       <type>image</type>
       <id>1</id>
-      <posX>1160</posX>
-      <posY>100</posY>
-      <width>82</width>
-      <height>82</height>
+      <posX>1165</posX>
+      <posY>80</posY>
+      <width>80</width>
+      <height>80</height>
       <visible>string.equals(#MyVideos.PinLocked, False)</visible>
       <texture>unlock.png</texture>
       <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
-		
-    </control>
+      <centered>yes</centered>		
+    </control>    
   </controls>
 </window>

@@ -487,22 +487,37 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
       DatabaseUtility.AddTable(m_db, "filesmediainfo",
                                "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+      // Indexes
+      // ActorInfo
       DatabaseUtility.AddIndex(m_db, "idxactorinfo_idActor",
                                "CREATE INDEX idxactorinfo_idActor ON actorinfo(idActor ASC)");
+      // ActorInfoMovies
       DatabaseUtility.AddIndex(m_db, "idxactorinfomovies_idActor",
                                "CREATE INDEX idxactorinfomovies_idActor ON actorinfomovies(idActor ASC)");
+      // ActorLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idActor",
                                "CREATE INDEX idxactorlinkmovie_idActor ON actorlinkmovie(idActor ASC)");
       DatabaseUtility.AddIndex(m_db, "idxactorlinkmovie_idMovie",
                                "CREATE INDEX idxactorlinkmovie_idMovie ON actorlinkmovie(idMovie ASC)");
+      // Actors
       DatabaseUtility.AddIndex(m_db, "idxactors_strActor", "CREATE INDEX idxactors_strActor ON actors(strActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactors_idActor", 
+                              "CREATE UNIQUE INDEX idxactors_idActor ON actors(idActor ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxactors_idIMDB",
+                              "CREATE INDEX idxactors_idIMDB ON actors(IMDBActorID ASC)");
+      // Files
+      DatabaseUtility.AddIndex(m_db, "idxfiles_idFile", "CREATE UNIQUE INDEX idxfiles_idFile ON files(idFile ASC)");
       DatabaseUtility.AddIndex(m_db, "idxfiles_idMovie", "CREATE INDEX idxfiles_idMovie ON files(idMovie ASC)");
       DatabaseUtility.AddIndex(m_db, "idxfiles_idPath", "CREATE INDEX idxfiles_idPath ON files(idPath ASC)");
+      // GenreLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idGenre",
                                "CREATE INDEX idxgenrelinkmovie_idGenre ON genrelinkmovie(idGenre ASC)");
       DatabaseUtility.AddIndex(m_db, "idxgenrelinkmovie_idMovie",
                                "CREATE INDEX idxgenrelinkmovie_idMovie ON genrelinkmovie(idMovie ASC)");
+      // Movie
+      DatabaseUtility.AddIndex(m_db, "idxmovie_idMovie", "CREATE UNIQUE INDEX idxmovie_idMovie ON movie(idMovie ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovie_idPath", "CREATE INDEX idxmovie_idPath ON movie(idPath ASC)");
+      // MovieInfo
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_iYear", "CREATE INDEX idxmovieinfo_iYear ON movieinfo(iYear ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idDirector",
                                "CREATE INDEX idxmovieinfo_idDirector ON movieinfo(idDirector ASC)");
@@ -510,19 +525,33 @@ namespace MediaPortal.Video.Database
                                "CREATE UNIQUE INDEX idxmovieinfo_idMovie ON movieinfo(idMovie ASC)");
       DatabaseUtility.AddIndex(m_db, "idxmovieinfo_strTitle",
                                "CREATE INDEX idxmovieinfo_strTitle ON movieinfo(strTitle ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxmovieinfo_idIMDB",
+                               "CREATE INDEX idxmovieinfo_idIMDB ON movieinfo(IMDBID ASC)");
+      // Path
+      DatabaseUtility.AddIndex(m_db, "idxpath_idPath", "CREATE INDEX idxpath_idPath ON path(idPath ASC)");
       DatabaseUtility.AddIndex(m_db, "idxpath_strPath", "CREATE INDEX idxpath_strPath ON path(strPath ASC)");
+      // VideThumbList
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strPath",
                                "CREATE INDEX idxVideoThumbBList_strPath ON VideoThumbBList(strPath ASC, strExpires ASC)");
       DatabaseUtility.AddIndex(m_db, "idxVideoThumbBList_strExpires",
                                "CREATE INDEX idxVideoThumbBList_strExpires ON VideoThumbBList(strExpires ASC)");
+      // FilesMediaInfo
       DatabaseUtility.AddIndex(m_db, "idxfilesmediainfo_idFile",
                                "CREATE UNIQUE INDEX idxfilesmediainfo_idFile ON filesmediainfo (idFile ASC)");
+      // UserGroup
       DatabaseUtility.AddIndex(m_db, "idxuserGroup_idGroup",
                                "CREATE UNIQUE INDEX idxuserGroup_idGroup ON usergroup (idGroup ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxuserGroup_strGroup",
+                               "CREATE INDEX idxuserGroup_strGroup ON usergroup (strGroup ASC)");
+      // userGroupLinkMovie
       DatabaseUtility.AddIndex(m_db, "idxusergrouplinkmovie_idGroup",
                                "CREATE INDEX idxusergrouplinkmovie_idGroup ON usergrouplinkmovie (idGroup ASC)");
+      DatabaseUtility.AddIndex(m_db, "idxusergrouplinkmovie_idMovie",
+                               "CREATE INDEX idxusergrouplinkmovie_idMovie ON usergrouplinkmovie (idMovie ASC)");
+      // Duration
       DatabaseUtility.AddIndex(m_db, "idxduration_idFile",
                                "CREATE UNIQUE INDEX idxduration_idFile ON duration (idFile ASC)");
+      // IMDBMovies
       DatabaseUtility.AddIndex(m_db, "idximdbmovies_idIMDB",
                                "CREATE UNIQUE INDEX idximdbmovies_idIMDB ON IMDBmovies (idIMDB ASC)");
 
@@ -569,137 +598,7 @@ namespace MediaPortal.Video.Database
       }
       return -1;
     }
-
-    // Check and add, if necessary, media info for video files
-    // Use (file, pathID and fileID) or (full filename with path and fileID)
-    private void CheckMediaInfo(string file, string fullPathFilename, int pathID, int fileID, bool refresh)
-    {
-      string strSQL = string.Empty;
-      string strFilenameAndPath = string.Empty;
-      
-      // Get path name from pathID
-      strSQL = String.Format("select * from path where idPath={0}", pathID);
-      SQLiteResultSet results = m_db.Execute(strSQL);
-      
-      // No ftp or http videos
-      string path = DatabaseUtility.Get(results, 0, "strPath");
-      
-      if (path.IndexOf("remote:") >= 0 || path.IndexOf("http:") >= 0)
-      {
-        return;
-      }
-
-      // We can use (path+file) or full path filename
-      if (fullPathFilename == string.Empty)
-      {
-        strFilenameAndPath = path + file.Replace("''", "'");
-      }
-      else
-      {
-        strFilenameAndPath = fullPathFilename;
-      }
-      
-      // Prevent empty database record for empty media scan
-      if (!File.Exists(strFilenameAndPath))
-      {
-        return;
-      }
-
-      // Check if we processed file allready
-      strSQL = String.Format("select * from filesmediainfo where idFile={0}", fileID);
-      results = m_db.Execute(strSQL);
-      
-      if (results.Rows.Count == 0 || refresh)
-      {
-        Log.Info("VideoDatabase media info file: {0}", strFilenameAndPath);
-        bool isImage = false;
-        string drive = string.Empty;
-        bool daemonAutoPlay = false;
-        string autoplayVideo = string.Empty;
-        
-        if (VirtualDirectory.IsImageFile(Path.GetExtension(strFilenameAndPath)))
-        {
-          if (!DaemonTools.IsMounted(strFilenameAndPath))
-          {
-            using (Settings xmlreader = new MPSettings())
-            {
-              daemonAutoPlay = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
-              autoplayVideo = xmlreader.GetValueAsString("general", "autoplay_video", "Ask");
-              xmlreader.SetValueAsBool("daemon", "askbeforeplaying", false);
-              xmlreader.SetValue("general", "autoplay_video", "No");
-            }
-            
-            if (!DaemonTools.Mount(strFilenameAndPath, out drive))
-            {
-              return;
-            }
-          }
-          isImage = true;
-        }
-
-        MediaInfoWrapper mInfo = new MediaInfoWrapper(strFilenameAndPath);
-        
-        if (isImage && DaemonTools.IsMounted(strFilenameAndPath))
-        {
-          DaemonTools.UnMount();
-          using (Settings xmlwriter = new MPSettings())
-          {
-            xmlwriter.SetValueAsBool("daemon", "askbeforeplaying", daemonAutoPlay);
-            xmlwriter.SetValue("general", "autoplay_video", autoplayVideo);
-          }
-        }
-        
-        int subtitles = 0;
-
-        if (mInfo.HasSubtitles)
-        {
-          subtitles = 1;
-        }
-
-        try
-        {
-          if (results.Rows.Count == 0)
-          {
-            strSQL = String.Format(
-              "insert into filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) values({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
-          }
-          else
-          {
-            strSQL = String.Format(
-              "update filesmediainfo set videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' where idFile={0}",
-              fileID,
-              Util.Utils.MakeFileName(mInfo.VideoCodec),
-              mInfo.VideoResolution,
-              mInfo.AspectRatio,
-              subtitles,
-              Util.Utils.MakeFileName(mInfo.AudioCodec),
-              mInfo.AudioChannelsFriendly);
-          }
-          
-          // Prevent empty record for future or unknown codecs
-          if (mInfo.VideoCodec == string.Empty)
-          {
-            return;
-          }
-          
-          m_db.Execute(strSQL);
-          SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
-          ArrayList movieFiles = new ArrayList();
-          int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
-          VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
-          SetMovieDuration(movieId, MovieDuration(movieFiles));
-        }
-        catch (Exception) {}
-      }
-    }
-
+    
     private int MovieDuration(ArrayList files)
     {
       int totalMovieDuration = 0;
@@ -1010,6 +909,140 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    #endregion
+
+    # region MediaInfo
+
+    // Check and add, if necessary, media info for video files
+    // Use (file, pathID and fileID) or (full filename with path and fileID)
+    private void CheckMediaInfo(string file, string fullPathFilename, int pathID, int fileID, bool refresh)
+    {
+      string strSQL = string.Empty;
+      string strFilenameAndPath = string.Empty;
+
+      // Get path name from pathID
+      strSQL = String.Format("select * from path where idPath={0}", pathID);
+      SQLiteResultSet results = m_db.Execute(strSQL);
+
+      // No ftp or http videos
+      string path = DatabaseUtility.Get(results, 0, "strPath");
+
+      if (path.IndexOf("remote:") >= 0 || path.IndexOf("http:") >= 0)
+      {
+        return;
+      }
+
+      // We can use (path+file) or full path filename
+      if (fullPathFilename == string.Empty)
+      {
+        strFilenameAndPath = path + file.Replace("''", "'");
+      }
+      else
+      {
+        strFilenameAndPath = fullPathFilename;
+      }
+
+      // Prevent empty database record for empty media scan
+      if (!File.Exists(strFilenameAndPath))
+      {
+        return;
+      }
+
+      // Check if we processed file allready
+      strSQL = String.Format("select * from filesmediainfo where idFile={0}", fileID);
+      results = m_db.Execute(strSQL);
+
+      if (results.Rows.Count == 0 || refresh)
+      {
+        Log.Info("VideoDatabase media info file: {0}", strFilenameAndPath);
+        bool isImage = false;
+        string drive = string.Empty;
+        bool daemonAutoPlay = false;
+        string autoplayVideo = string.Empty;
+
+        if (VirtualDirectory.IsImageFile(Path.GetExtension(strFilenameAndPath)))
+        {
+          if (!DaemonTools.IsMounted(strFilenameAndPath))
+          {
+            using (Settings xmlreader = new MPSettings())
+            {
+              daemonAutoPlay = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+              autoplayVideo = xmlreader.GetValueAsString("general", "autoplay_video", "Ask");
+              xmlreader.SetValueAsBool("daemon", "askbeforeplaying", false);
+              xmlreader.SetValue("general", "autoplay_video", "No");
+            }
+
+            if (!DaemonTools.Mount(strFilenameAndPath, out drive))
+            {
+              return;
+            }
+          }
+          isImage = true;
+        }
+
+        MediaInfoWrapper mInfo = new MediaInfoWrapper(strFilenameAndPath);
+
+        if (isImage && DaemonTools.IsMounted(strFilenameAndPath))
+        {
+          DaemonTools.UnMount();
+          using (Settings xmlwriter = new MPSettings())
+          {
+            xmlwriter.SetValueAsBool("daemon", "askbeforeplaying", daemonAutoPlay);
+            xmlwriter.SetValue("general", "autoplay_video", autoplayVideo);
+          }
+        }
+
+        int subtitles = 0;
+
+        if (mInfo.HasSubtitles)
+        {
+          subtitles = 1;
+        }
+
+        try
+        {
+          if (results.Rows.Count == 0)
+          {
+            strSQL = String.Format(
+              "insert into filesmediainfo (idFile, videoCodec, videoResolution, aspectRatio, hasSubtitles, audioCodec, audioChannels) values({0},'{1}','{2}','{3}',{4},'{5}','{6}')",
+              fileID,
+              Util.Utils.MakeFileName(mInfo.VideoCodec),
+              mInfo.VideoResolution,
+              mInfo.AspectRatio,
+              subtitles,
+              Util.Utils.MakeFileName(mInfo.AudioCodec),
+              mInfo.AudioChannelsFriendly);
+          }
+          else
+          {
+            strSQL = String.Format(
+              "update filesmediainfo set videoCodec='{1}', videoResolution='{2}', aspectRatio='{3}', hasSubtitles='{4}', audioCodec='{5}', audioChannels='{6}' where idFile={0}",
+              fileID,
+              Util.Utils.MakeFileName(mInfo.VideoCodec),
+              mInfo.VideoResolution,
+              mInfo.AspectRatio,
+              subtitles,
+              Util.Utils.MakeFileName(mInfo.AudioCodec),
+              mInfo.AudioChannelsFriendly);
+          }
+
+          // Prevent empty record for future or unknown codecs
+          if (mInfo.VideoCodec == string.Empty)
+          {
+            return;
+          }
+
+          m_db.Execute(strSQL);
+          SetVideoDuration(fileID, mInfo.VideoDuration / 1000);
+          ArrayList movieFiles = new ArrayList();
+          int movieId = VideoDatabase.GetMovieId(strFilenameAndPath);
+          VideoDatabase.GetFilesForMovie(movieId, ref movieFiles);
+          SetMovieDuration(movieId, MovieDuration(movieFiles));
+        }
+        catch (Exception) { }
+      }
+    }
+
     public void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh)
     {
       try
@@ -1040,7 +1073,7 @@ namespace MediaPortal.Video.Database
             CheckMediaInfo(string.Empty, strFilenameAndPath, -1, fileID, refresh);
             results = m_db.Execute(strSQL);
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
 
         mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
@@ -1067,6 +1100,40 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase mediainfo exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+    }
+
+    public bool HasMediaInfo(string fileName)
+    {
+      try
+      {
+        if (fileName == String.Empty || !Util.Utils.IsVideo(fileName))
+          return false;
+
+        if (fileName.IndexOf("remote:") >= 0 || fileName.IndexOf("http:") >= 0)
+          return false;
+
+        int fileID = GetFileId(fileName);
+
+        if (fileID < 1)
+        {
+          return false;
+        }
+
+        // Get media info from database
+        string strSQL = String.Format("select * from filesmediainfo where idFile={0}", fileID);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+
+        if (results.Rows.Count > 0)
+        {
+          return true;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase mediainfo exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
     }
 
     #endregion
@@ -4150,6 +4217,7 @@ namespace MediaPortal.Video.Database
 
     public void ImportNfo(string nfoFile)
     {
+      IMDBMovie movie = new IMDBMovie();
       try
       {
         XmlDocument doc = new XmlDocument();
@@ -4168,7 +4236,6 @@ namespace MediaPortal.Video.Database
 
           foreach (XmlNode nodeMovie in movieList)
           {
-            IMDBMovie movie = new IMDBMovie();
             string genre = string.Empty;
             string cast = string.Empty;
             string path = string.Empty;

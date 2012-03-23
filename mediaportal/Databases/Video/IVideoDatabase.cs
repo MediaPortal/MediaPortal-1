@@ -147,6 +147,7 @@ namespace MediaPortal.Video.Database
     ArrayList ExecuteRuleSQL(string sql, string fieldName, out bool error);
     string DatabaseName { get; }
     void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo, bool refresh);
+    bool HasMediaInfo(string fileName);
     bool CheckMovieImdbId(string id);
     bool CheckActorImdbId(string id);
     void ImportNfo(string nfoFile);
