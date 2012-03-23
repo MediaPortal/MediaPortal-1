@@ -148,7 +148,7 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 
 void CWASAPIRenderFilter::ReleaseResources()
 {
-  StopAudioClient(&m_pAudioClient);
+  StopAudioClient();
   SAFE_RELEASE(m_pAudioClock);
   SAFE_RELEASE(m_pRenderClient);
   SAFE_RELEASE(m_pAudioClient);
@@ -195,26 +195,11 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
 
   CAutoLock lock(&m_csResources);
 
-  if (!m_pAudioClient)
+  hr = CreateAudioClient();
+  if (FAILED(hr))
   {
-    if (!m_pMMDevice) 
-      hr = GetAudioDevice(&m_pMMDevice);
-
-    if (SUCCEEDED(hr))
-    {
-      hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
-      if (FAILED(hr))
-      {
-        Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not loaded");
-        return VFW_E_CANNOT_CONNECT;
-      }
-      else
-      {
-        hr = InitAudioClient((WAVEFORMATEX*)m_pInputFormat, &m_pRenderClient);
-        if (FAILED(hr))
-          Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not initialized");
-      }
-    }
+    Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not initialized: (0x%08x)", hr);
+    return VFW_E_CANNOT_CONNECT;
   }
 
   WAVEFORMATEXTENSIBLE* pwfxCM = NULL;
@@ -250,16 +235,14 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   if (bApplyChanges)
   {
     // Stop and discard audio client
-    StopAudioClient(&m_pAudioClient);
+    StopAudioClient();
     SAFE_RELEASE(m_pRenderClient);
     SAFE_RELEASE(m_pAudioClock); // locking might be needed
     SAFE_RELEASE(m_pAudioClient);
 
     SetInputFormat(pwfxAccepted);
     // Reinitialize audio client
-    hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
-    if (SUCCEEDED (hr)) 
-      hr = InitAudioClient((WAVEFORMATEX*)m_pInputFormat, &m_pRenderClient);
+    hr = CreateAudioClient(true);
   }
   SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
 
@@ -539,14 +522,40 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   hr = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
   if (FAILED(hr))
-    Log("CWASAPIRenderFilter::Render thread - failed to get 1st sample: (0x%08x)");
+    Log("CWASAPIRenderFilter::Render thread - failed to get 1st sample: (0x%08x)", hr);
 
   if (hr == MPAR_S_THREAD_STOPPING)
     return 0;
 
   EnableMMCSS();
+  
+  m_csResources.Lock();
 
-  StartAudioClient(&m_pAudioClient);
+  if (m_pSettings->m_bReleaseDeviceOnStop)
+  {
+    if (m_pInputFormat)
+    {
+      hr = CreateAudioClient(true);
+      if (FAILED(hr))
+      {
+        Log("CWASAPIRenderFilter::Render thread Error, audio client not available: (0x%08x)", hr);
+        m_csResources.Unlock();
+        return 0;
+      }
+    }
+  }
+
+  if (m_pAudioClient)
+  {
+    hr = StartAudioClient();
+    if (FAILED(hr))
+    {
+      Log("CWASAPIRenderFilter::Render thread Error, starting audio client failed: (0x%08x)", hr);
+      m_csResources.Unlock();
+      return 0;
+    }
+  }
+
   m_state = StateRunning;
 
   while (true)
@@ -563,10 +572,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
     if (hr == MPAR_S_THREAD_STOPPING || !m_pAudioClient)
     {
-      Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
-      StopAudioClient(&m_pAudioClient);
-      RevertMMCSS();
-      m_csResources.Unlock();
+      StopRenderThread();
       return 0;
     }
     else if (hr == MPAR_S_NEED_DATA)
@@ -600,10 +606,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
             if (result == MPAR_S_THREAD_STOPPING || !m_pAudioClient)
             {
-              Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
-              StopAudioClient(&m_pAudioClient);
-              RevertMMCSS();
-              m_csResources.Unlock();
+              StopRenderThread();
               return 0;
             }
 
@@ -715,6 +718,15 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   
   m_csResources.Unlock();
   return 0;
+}
+
+void CWASAPIRenderFilter::StopRenderThread()
+{
+  Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
+  StopAudioClient();
+  RevertMMCSS();
+  m_csResources.Unlock();
+  m_state = StateStopped;
 }
 
 HRESULT CWASAPIRenderFilter::GetWASAPIBuffer(UINT32& bufferSize, UINT32& currentPadding, UINT32& bufferSizeInBytes, BYTE** pData)
@@ -1025,40 +1037,54 @@ HRESULT CWASAPIRenderFilter::GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, RE
 }
 
 
-HRESULT CWASAPIRenderFilter::CreateAudioClient(IMMDevice* pMMDevice, IAudioClient** ppAudioClient)
+HRESULT CWASAPIRenderFilter::CreateAudioClient(bool init)
 {
-  HRESULT hr = S_OK;
+  if (m_pAudioClient && !init)
+    return S_OK;
 
   Log("WASAPIRenderFilter::CreateAudioClient");
 
   // AudioClient needs to be stopped beforehand
   //StopAudioClient(ppAudioClient);
 
-  if (!pMMDevice)
+  HRESULT hr = S_OK;
+
+  if (!m_pMMDevice)
   {
-    Log("WASAPIRenderFilter::CreateAudioClient failed, device not loaded");
-    return E_FAIL;
+    hr = GetAudioDevice(&m_pMMDevice);
+
+    if (FAILED(hr))
+    {
+      Log("WASAPIRenderFilter::CreateAudioClient failed - no MMDevice available (0x%08x)", hr);
+      return E_FAIL;
+    }
   }
 
-  hr = pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, reinterpret_cast<void**>(ppAudioClient));
+  SAFE_RELEASE(m_pAudioClient);
+
+  hr = m_pMMDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, NULL, reinterpret_cast<void**>(&m_pAudioClient));
   if (FAILED(hr))
     Log("WASAPIRenderFilter::CreateAudioClient activation failed (0x%08x)", hr);
   else
+  {
     Log("WASAPIRenderFilter::CreateAudioClient success");
+    if (init)
+      hr = InitAudioClient();
+  }
 
   return hr;
 }
 
-HRESULT CWASAPIRenderFilter::StartAudioClient(IAudioClient** ppAudioClient)
+HRESULT CWASAPIRenderFilter::StartAudioClient()
 {
   HRESULT hr = S_OK;
   if (!m_bIsAudioClientStarted)
   {
     Log("WASAPIRenderFilter::StartAudioClient");
 
-    if ((*ppAudioClient))
+    if (m_pAudioClient)
     {
-      hr = (*ppAudioClient)->Start();
+      hr = m_pAudioClient->Start();
       if (FAILED(hr))
       {
         m_bIsAudioClientStarted = false;
@@ -1100,7 +1126,7 @@ void CWASAPIRenderFilter::CancelDataEvent()
   }
 }
 
-HRESULT CWASAPIRenderFilter::StopAudioClient(IAudioClient** ppAudioClient)
+HRESULT CWASAPIRenderFilter::StopAudioClient()
 {
   HRESULT hr = S_OK;
   if (m_bIsAudioClientStarted)
@@ -1109,18 +1135,18 @@ HRESULT CWASAPIRenderFilter::StopAudioClient(IAudioClient** ppAudioClient)
 
     m_bIsAudioClientStarted = false;
 
-    if (*ppAudioClient)
+    if (m_pAudioClient)
     {
       // Let the current audio buffer to be played completely.
       // Some amplifiers will "cache" the incomplete AC3 packets and that causes issues
       // when the next AC3 packets are received
       //  WaitForSingleObject(m_hDataEvent, Latency() / 10000);
       
-      hr = (*ppAudioClient)->Stop();
+      hr = m_pAudioClient->Stop();
       if (FAILED(hr))
         Log("   stop failed (0x%08x)", hr);
 
-      hr = (*ppAudioClient)->Reset();
+      hr = m_pAudioClient->Reset();
       if (FAILED(hr))
         Log("   reset failed (0x%08x)", hr);
     }
@@ -1128,7 +1154,7 @@ HRESULT CWASAPIRenderFilter::StopAudioClient(IAudioClient** ppAudioClient)
   return hr;
 }
 
-HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, IAudioRenderClient** ppRenderClient)
+HRESULT CWASAPIRenderFilter::InitAudioClient()
 {
   Log("WASAPIRenderFilter::InitAudioClient");
   HRESULT hr = S_OK;
@@ -1154,30 +1180,18 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, 
     }
   }
 
-  if (!m_pAudioClient)
-  {
-    hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
-    if (FAILED(hr))
-    {
-      Log("WASAPIRenderFilter::InitAudioClient failed to create audio client (0x%08x)", hr);
-      return hr;
-    }
-    else
-      Log("WASAPIRenderFilter::InitAudioClient created missing audio client");
-  }
-
   WAVEFORMATEX *pwfxCM = NULL;
-  hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, pWaveFormatEx, &pwfxCM);    
+  hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, (WAVEFORMATEX*)m_pInputFormat, &pwfxCM);    
   if (FAILED(hr))
     Log("WASAPIRenderFilter::InitAudioClient not supported (0x%08x)", hr);
   else
     Log("WASAPIRenderFilter::InitAudioClient format supported");
 
-  GetBufferSize(pWaveFormatEx, &m_pSettings->m_hnsPeriod);
+  GetBufferSize((WAVEFORMATEX*)m_pInputFormat, &m_pSettings->m_hnsPeriod);
 
   if (SUCCEEDED(hr))
     hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags,
-	                                m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, pWaveFormatEx, NULL);
+	                                m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)m_pInputFormat, NULL);
 
   if (FAILED(hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
   {
@@ -1212,18 +1226,18 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, 
                   10000.0 * // (hns / ms) *
                   1000 * // (ms / s) *
                   m_nFramesInBuffer / // frames /
-                  pWaveFormatEx->nSamplesPerSec  // (frames / s)
+                  m_pInputFormat->Format.nSamplesPerSec  // (frames / s)
                   + 0.5 // rounding
     );
 
     if (SUCCEEDED(hr)) 
-      hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
+      hr = CreateAudioClient();
       
     Log("WASAPIRenderFilter::InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames", m_pSettings->m_hnsPeriod, m_nFramesInBuffer);
 
     if (SUCCEEDED (hr)) 
       hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags, 
-	                                    m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, pWaveFormatEx, NULL);
+	                                    m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)m_pInputFormat, NULL);
  
     if (FAILED(hr))
     {
@@ -1247,7 +1261,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, 
 
   // calculate the new period
   if (SUCCEEDED (hr)) 
-    hr = m_pAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)(ppRenderClient));
+    hr = m_pAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)(&m_pRenderClient));
 
   if (FAILED(hr))
     Log("WASAPIRenderFilter::InitAudioClient service initialization failed (0x%08x)", hr);
@@ -1272,7 +1286,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, 
 
   // Dynamic format change requires restart for the audio client
   if (m_state != StateStopped)
-    StartAudioClient(&m_pAudioClient);
+    StartAudioClient();
 
   return hr;
 }

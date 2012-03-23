@@ -69,6 +69,8 @@ private:
   HRESULT EnableMMCSS();
   HRESULT RevertMMCSS();
 
+  void StopRenderThread();
+
   PTR_AvSetMmThreadCharacteristicsW	pfAvSetMmThreadCharacteristicsW;
   PTR_AvRevertMmThreadCharacteristics	pfAvRevertMmThreadCharacteristics;
 
@@ -76,10 +78,10 @@ private:
 
   HRESULT GetAudioDevice(IMMDevice** ppMMDevice);
   HRESULT GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, bool pLog); // caller must release ppMMDevices!
-  HRESULT CreateAudioClient(IMMDevice* pMMDevice, IAudioClient** ppAudioClient);
-  HRESULT InitAudioClient(const WAVEFORMATEX* pWaveFormatEx, IAudioRenderClient** ppRenderClient);
-  HRESULT StartAudioClient(IAudioClient** ppAudioClient);
-  HRESULT StopAudioClient(IAudioClient** ppAudioClient);
+  HRESULT CreateAudioClient(bool init = false);
+  HRESULT InitAudioClient();
+  HRESULT StartAudioClient();
+  HRESULT StopAudioClient();
   void CancelDataEvent();
   void ReleaseResources();
 
