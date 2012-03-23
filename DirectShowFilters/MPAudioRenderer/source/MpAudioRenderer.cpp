@@ -440,8 +440,8 @@ STDMETHODIMP CMPAudioRenderer::Stop()
   m_pPipeline->BeginStop();
   m_pPipeline->EndStop();
 
-  if (m_Settings.m_bDoCleanupOnStop)
-    m_pPipeline->Cleanup();
+  if (m_Settings.m_bReleaseDeviceOnStop)
+    m_pRenderer->ReleaseDevice();
 
   return CBaseRenderer::Stop(); 
 };

@@ -71,7 +71,7 @@ public:
   int m_nForceSamplingRate;
   int m_nForceBitDepth;
 
-  bool m_bDoCleanupOnStop;
+  bool m_bReleaseDeviceOnStop;
   
   REFERENCE_TIME m_hnsPeriod;
 

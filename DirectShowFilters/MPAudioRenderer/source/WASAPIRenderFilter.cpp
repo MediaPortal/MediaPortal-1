@@ -79,6 +79,12 @@ CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
   CAutoLock lock(&m_csResources);
   FreeLibrary(m_hLibAVRT);
 
+  if (m_hDataEvent)
+  {
+    CloseHandle(m_hDataEvent);
+    m_hDataEvent = NULL;
+  }
+
   Log("CWASAPIRenderFilter - destructor - instance 0x%x - end", this);
 }
 
@@ -137,12 +143,6 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 
   ReleaseResources();
 
-  if (m_hDataEvent)
-  {
-    CloseHandle(m_hDataEvent);
-    m_hDataEvent = NULL;
-  }
-
   return hr;
 }
 
@@ -153,6 +153,11 @@ void CWASAPIRenderFilter::ReleaseResources()
   SAFE_RELEASE(m_pRenderClient);
   SAFE_RELEASE(m_pAudioClient);
   SAFE_RELEASE(m_pMMDevice);
+}
+
+void CWASAPIRenderFilter::ReleaseDevice()
+{
+  Cleanup();
 }
 
 // Format negotiation

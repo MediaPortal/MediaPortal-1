@@ -46,6 +46,7 @@ public:
   // IRenderFilter implementation
   HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
   REFERENCE_TIME Latency();
+  void ReleaseDevice();
 
 protected:
   // Processing

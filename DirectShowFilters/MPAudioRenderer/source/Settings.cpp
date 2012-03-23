@@ -56,7 +56,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lSpeakerCount(2),
   m_lSpeakerConfig(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT),
   m_bForceChannelMixing(false),
-  m_bDoCleanupOnStop(false)
+  m_bReleaseDeviceOnStop(false)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.997");
@@ -107,7 +107,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR quality_OVERLAP_MS = TEXT("Quality_OVERLAP_MS");
   LPCTSTR speakerConfig = TEXT("SpeakerConfig");
   LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
-  LPCTSTR doCleanupOnStop = TEXT("DoCleanupOnStop");
+  LPCTSTR releaseDeviceOnStop = TEXT("ReleaseDeviceOnStop");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
@@ -129,7 +129,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD resamplingQualityData = 4;
   DWORD speakerConfigData = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
   DWORD forceChannelMixingData = 0;
-  DWORD doCleanupOnStopData = 0;
+  DWORD releaseDeviceOnStopData = 0;
   DWORD quality_USE_QUICKSEEKData = 0;
   DWORD quality_USE_AA_FILTERData = 0;
   DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
@@ -177,7 +177,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
     ReadRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
     ReadRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
-    ReadRegistryKeyDword(hKey, doCleanupOnStop, doCleanupOnStopData);
+    ReadRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
 
     // SoundTouch quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -207,7 +207,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ResamplingQuality:        %s", ResamplingQualityAsString(resamplingQualityData));
     Log("   SpeakerConfig:            %d", speakerConfigData);
     Log("   ForceChannelMixing:       %d", forceChannelMixingData);
-    Log("   DoCleanupOnStop:          %d", doCleanupOnStopData);
+    Log("   DoCleanupOnStop:          %d", releaseDeviceOnStopData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
@@ -339,10 +339,10 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     else
       m_lSpeakerConfig = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 
-    if (doCleanupOnStopData > 0)
-      m_bDoCleanupOnStop = true;
+    if (releaseDeviceOnStopData > 0)
+      m_bReleaseDeviceOnStop = true;
     else
-      m_bDoCleanupOnStop = false;
+      m_bReleaseDeviceOnStop = false;
 
     if (quality_USE_QUICKSEEKData > 0)
       m_bQuality_USE_QUICKSEEK = true;
@@ -392,7 +392,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
       WriteRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
       WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
-      WriteRegistryKeyDword(hKey, doCleanupOnStop, doCleanupOnStopData);
+      WriteRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
       WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
       WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
