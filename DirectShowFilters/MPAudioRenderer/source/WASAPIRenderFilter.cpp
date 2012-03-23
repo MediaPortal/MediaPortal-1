@@ -193,6 +193,8 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
 
   HRESULT hr = VFW_E_CANNOT_CONNECT;
 
+  CAutoLock lock(&m_csResources);
+
   if (!m_pAudioClient)
   {
     if (!m_pMMDevice) 
@@ -533,8 +535,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   HRESULT hr = S_FALSE;
 
-  CAutoLock lock(&m_csResources);
-
   m_nSampleNum = 0;
 
   hr = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
@@ -557,13 +557,16 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       flush = false;
     }
     
+    m_csResources.Unlock();
     hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
+    m_csResources.Lock();
 
-    if (hr == MPAR_S_THREAD_STOPPING)
+    if (hr == MPAR_S_THREAD_STOPPING || !m_pAudioClient)
     {
       Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
       StopAudioClient(&m_pAudioClient);
       RevertMMCSS();
+      m_csResources.Unlock();
       return 0;
     }
     else if (hr == MPAR_S_NEED_DATA)
@@ -590,13 +593,17 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
           if (dataLeftInSample == 0 || OOBCommandOnly)
           {
+            m_csResources.Unlock();
             HRESULT result = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents,
                                                     &m_dwSampleWaitObjects, OOBCommandOnly);
-            if (result == MPAR_S_THREAD_STOPPING)
+            m_csResources.Lock();
+
+            if (result == MPAR_S_THREAD_STOPPING || !m_pAudioClient)
             {
               Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
               StopAudioClient(&m_pAudioClient);
               RevertMMCSS();
+              m_csResources.Unlock();
               return 0;
             }
 
@@ -705,7 +712,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       }
     }
   }
-
+  
+  m_csResources.Unlock();
   return 0;
 }
 
