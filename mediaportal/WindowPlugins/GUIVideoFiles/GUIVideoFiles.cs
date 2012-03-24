@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -676,11 +677,7 @@ namespace MediaPortal.GUI.Video
         _currentFolder = newFolderName;
       }
 
-      if (facadeLayout != null)
-      {
-        GUIControl.ClearControl(GetID, facadeLayout.GetID);
-      }
-      
+      GUIControl.ClearControl(GetID, facadeLayout.GetID);
       List<GUIListItem> itemlist = null;
 
       //Tweak to boost performance when starting/stopping playback
@@ -693,6 +690,10 @@ namespace MediaPortal.GUI.Video
 
         foreach (GUIListItem item in itemlist)
         {
+          // set label 1 & 2
+          SetLabel(item);
+          
+          // Set watched status and label 3
           if (watchedFiles != null && watchedFiles.Contains(item.Path))
           {
             item.IsPlayed = true;
@@ -720,9 +721,9 @@ namespace MediaPortal.GUI.Video
             item.Label3 = percentWatched + "% #" + timesWatched;
           }
           //Do NOT add OnItemSelected event handler here, because its still there...
-          if (facadeLayout != null) facadeLayout.Add(item);
+          facadeLayout.Add(item);
         }
-      }
+      } // End Cached items
       else
       {
         // here we get ALL files in every subdir, look for folderthumbs, defaultthumbs, etc
@@ -795,26 +796,30 @@ namespace MediaPortal.GUI.Video
           }
           itemlist = itemfiltered;
         }
-        
-        foreach (GUIListItem item in itemlist)
-        {
-          item.OnItemSelected += item_OnItemSelected;
-          if (facadeLayout != null) facadeLayout.Add(item);
-        }
 
         // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
         ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
         SetImdbThumbs(itemlist, selectDvdHandler);
 
+        foreach (GUIListItem item in itemlist)
+        {
+          SetLabel(item);
+          item.OnItemSelected += item_OnItemSelected;
+          facadeLayout.Add(item);
+        }
+
         _cachedItems = itemlist;
         _cachedDir = _currentFolder;
-      }
+      } // End non cache items
 
-      OnSort();
+      
+      facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
+      UpdateButtonStates();
+
       int selectedIndex = -1;
-      Int32.TryParse( _history.Get(_currentFolder), out selectedIndex);
+      Int32.TryParse(_history.Get(_currentFolder), out selectedIndex);
 
-      if (facadeLayout != null && itemlist.Count >= selectedIndex)
+      if (itemlist.Count >= selectedIndex)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedIndex);
       }
@@ -836,18 +841,13 @@ namespace MediaPortal.GUI.Video
           _resetCount++;
           ResetShares();
           LoadDirectory(_virtualDirectory.DefaultShare.Path, false);
+          GUIWaitCursor.Hide();
           return;
         }
       }
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(totalItems));
-
-      //if (!itemSelected)
-      //{
-      //  UpdateButtonStates();
-      //  SelectCurrentItem();
-      //}
 
       // Reload thumbs if previous load thumb thread aborted (only when cache is active)
       // If thumb thread was aborted and on next loaddirectory with cache "on", some thumbs
@@ -1591,6 +1591,36 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+
+    private void SetLabel(GUIListItem item)
+    {
+      string strSize1 = string.Empty, strDate = string.Empty;
+      if (item.FileInfo != null && !item.IsFolder)
+      {
+        strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
+      }
+      if (item.FileInfo != null && !item.IsFolder)
+      {
+        if (CurrentSortMethod == VideoSort.SortMethod.Modified)
+          strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
+                    item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        else
+          strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
+                    item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+      }
+      if (CurrentSortMethod == VideoSort.SortMethod.Name)
+      {
+        item.Label2 = strSize1;
+      }
+      else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
+      {
+        item.Label2 = strDate;
+      }
+      else
+      {
+        item.Label2 = strSize1;
+      }
+    }
 
     private void GUIWindowManager_OnNewMessage(GUIMessage message)
     {
@@ -3186,12 +3216,8 @@ namespace MediaPortal.GUI.Video
 
       ArrayList movieFiles = new ArrayList();
       VideoDatabase.GetFilesForMovie(idMovie, ref movieFiles);
-      if (movieFiles.Count <= 0)
-      {
-        return;
-      }
-
-      if (!CheckMovie(idMovie))
+      
+      if (movieFiles.Count <= 0 || !CheckMovie(idMovie))
       {
         return;
       }
@@ -3690,6 +3716,8 @@ namespace MediaPortal.GUI.Video
       try
       {
         _threadISelectDVDHandler.SetIMDBThumbs(_threadGUIItems, _markWatchedFiles, _eachFolderIsMovie);
+        // Refresh thumb on selected item
+        _currentSelectedItem = facadeLayout.SelectedListItemIndex;
         SelectCurrentItem();
       }
       catch (ThreadAbortException)
