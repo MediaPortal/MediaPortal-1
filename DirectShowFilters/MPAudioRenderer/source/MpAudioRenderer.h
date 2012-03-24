@@ -137,4 +137,6 @@ private:
 
   IRenderFilter* m_pRenderer;
   ITimeStretch* m_pTimeStretch;
+  
+  AM_MEDIA_TYPE m_mediaType;
 };

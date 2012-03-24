@@ -322,6 +322,11 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
     }
   }
 
+  if (pmt)
+    m_mediaType = *pmt;
+  else if (m_mediaType.pbFormat)
+    pSample->SetMediaType(&m_mediaType);
+
   return m_pPipeline->PutSample(pSample) == S_OK ? true : false;
 }
 

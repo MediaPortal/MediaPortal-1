@@ -361,17 +361,14 @@ HRESULT CBaseAudioSink::RequestNextOutBuffer(REFERENCE_TIME rtStart)
   m_pNextOutSample->SetActualDataLength(0);
   m_pNextOutSample->SetTime(&rtStart, NULL);
 
-  if (m_bOutFormatChanged)
+  AM_MEDIA_TYPE pmt;
+  if (SUCCEEDED(CreateAudioMediaType((WAVEFORMATEX*)m_pOutputFormat, &pmt, true)))
   {
-    AM_MEDIA_TYPE pmt;
-    if (SUCCEEDED(CreateAudioMediaType((WAVEFORMATEX*)m_pOutputFormat, &pmt, true)))
-    {
-      if (FAILED(m_pNextOutSample->SetMediaType(&pmt)))
-        Log("CBaseAudioSink - failed to set mediatype: 0x%08x", hr);
-      FreeMediaType(pmt);
-    }
-    m_bOutFormatChanged = false;
+    if (FAILED(m_pNextOutSample->SetMediaType(&pmt)))
+      Log("CBaseAudioSink - failed to set mediatype: 0x%08x", hr);
+    FreeMediaType(pmt);
   }
+  m_bOutFormatChanged = false;
 
   if (m_bDiscontinuity)
   {
