@@ -613,7 +613,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             if (!m_pCurrentSample)
               dataLeftInSample = 0;
               
-            if (command == ASC_PutSample)
+            if (command == ASC_PutSample && m_pCurrentSample)
             {
               sampleProcessed = false;
               sampleOffset = 0;
