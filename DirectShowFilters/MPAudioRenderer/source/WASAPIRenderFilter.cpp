@@ -75,6 +75,7 @@ CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
   Log("CWASAPIRenderFilter - destructor - instance 0x%x", this);
   
   SetEvent(m_hStopThreadEvent);
+  WaitForSingleObject(m_hThread, INFINITE);
 
   CAutoLock lock(&m_csResources);
   FreeLibrary(m_hLibAVRT);
