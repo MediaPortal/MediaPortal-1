@@ -94,7 +94,6 @@ protected:
   HANDLE m_hOOBCommandAvailableEvent;
   //HANDLE m_hInputQueueEmptyEvent;
   HANDLE m_hCurrentSampleReleased;
-  HANDLE m_hFlushDone;
 
   vector<HANDLE> m_hEvents;
   vector<DWORD> m_dwWaitObjects;

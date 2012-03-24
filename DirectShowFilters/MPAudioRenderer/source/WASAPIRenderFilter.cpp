@@ -130,17 +130,7 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 {
   HRESULT hr = CQueuedAudioSink::Cleanup();
 
-  if (m_hThread)
-  {
-    SetEvent(m_hStopThreadEvent);
-    DWORD result = WaitForSingleObject(m_hThread, INFINITE);
-
-    if (result != WAIT_OBJECT_0)
-      Log("CWASAPIRenderFilter::Cleanup - failed to stop the thread (0x%08x)", HRESULT_FROM_WIN32(GetLastError()));
-  }
-
   CAutoLock lock(&m_csResources);
-
   ReleaseResources();
 
   return hr;
@@ -725,7 +715,8 @@ void CWASAPIRenderFilter::StopRenderThread()
   Log("CWASAPIRenderFilter::Render thread - closing down - thread ID: %d", m_ThreadId);
   StopAudioClient();
   RevertMMCSS();
-  m_csResources.Unlock();
+  CloseThread();
+  m_csResources.Unlock();  
   m_state = StateStopped;
 }
 
@@ -788,7 +779,6 @@ void CWASAPIRenderFilter::HandleFlush()
     Log("CWASAPIRenderFilter::HandleFlush - ReleaseBuffer failed: (0x%08x)", hr);
 
   SetEvent(m_hCurrentSampleReleased);
-  WaitForSingleObject(m_hFlushDone, INFINITE);
 }
 
 HRESULT CWASAPIRenderFilter::EnableMMCSS()

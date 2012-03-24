@@ -41,7 +41,6 @@ CQueuedAudioSink::CQueuedAudioSink(void) :
   m_dwWaitObjects.push_back(MPAR_S_THREAD_STOPPING);
 
   m_hCurrentSampleReleased = CreateEvent(0, FALSE, FALSE, 0);
-  m_hFlushDone = CreateEvent(0, FALSE, FALSE, 0);
 
   //m_hInputQueueEmptyEvent = CreateEvent(0, FALSE, FALSE, 0);
 }
@@ -56,8 +55,6 @@ CQueuedAudioSink::~CQueuedAudioSink(void)
     CloseHandle(m_hOOBCommandAvailableEvent);
   if (m_hCurrentSampleReleased)
     CloseHandle(m_hCurrentSampleReleased);
-  if (m_hFlushDone)
-    CloseHandle(m_hFlushDone);
 
   //if (m_hInputQueueEmptyEvent)
   //  CloseHandle(m_hInputQueueEmptyEvent);
@@ -101,7 +98,6 @@ HRESULT CQueuedAudioSink::BeginStop()
 
 HRESULT CQueuedAudioSink::EndStop()
 {
-  CloseThread();
   return CBaseAudioSink::EndStop();
 }
 
@@ -154,7 +150,6 @@ HRESULT CQueuedAudioSink::EndOfStream()
 HRESULT CQueuedAudioSink::BeginFlush()
 {
   ResetEvent(m_hCurrentSampleReleased);
-  ResetEvent(m_hFlushDone);
 
   // Request the derived class to release the current sample and stall threadproc
   PutOOBCommand(ASC_Flush);
@@ -176,7 +171,6 @@ HRESULT CQueuedAudioSink::EndFlush()
     WaitForSingleObject(m_hCurrentSampleReleased, INFINITE);
 
   HRESULT hr = CBaseAudioSink::EndFlush();
-  SetEvent(m_hFlushDone);
   return hr;
 }
 
@@ -283,9 +277,11 @@ DWORD WINAPI CQueuedAudioSink::ThreadEntryPoint(LPVOID lpParameter)
 
 HRESULT CQueuedAudioSink::CloseThread()
 {
+  CAutoLock lock(&m_csResources);
+
   if (m_hThread)
   {
-    WaitForSingleObject(m_hThread, INFINITE);
+    //WaitForSingleObject(m_hThread, INFINITE);
     CloseHandle(m_hThread);
     m_hThread = NULL;
     ResetEvent(m_hStopThreadEvent);
@@ -296,6 +292,8 @@ HRESULT CQueuedAudioSink::CloseThread()
 
 HRESULT CQueuedAudioSink::StartThread()
 {
+  CAutoLock lock(&m_csResources);
+
   if (!m_hThread)
   {
     ResetEvent(m_hStopThreadEvent);

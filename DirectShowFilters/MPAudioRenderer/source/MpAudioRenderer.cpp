@@ -503,8 +503,6 @@ HRESULT CMPAudioRenderer::BeginFlush()
 {
   Log("BeginFlush");
 
-  CAutoLock cInterfaceLock(&m_InterfaceLock);
-
   if (m_State == State_Paused) 
     NotReady();
 
@@ -512,7 +510,10 @@ HRESULT CMPAudioRenderer::BeginFlush()
   CancelNotification();
   ClearPendingSample();
 
-  return m_pPipeline->BeginFlush();
+  HRESULT hr = m_pPipeline->BeginFlush();
+  WaitForReceiveToComplete();
+
+  return hr;
 }
 
 HRESULT CMPAudioRenderer::EndFlush()
