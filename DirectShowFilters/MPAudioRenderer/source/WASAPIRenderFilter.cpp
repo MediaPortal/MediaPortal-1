@@ -328,8 +328,8 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   //rtStart -= Latency();// * 2;
 
   if (m_pSettings->m_bLogSampleTimes)
-    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f", 
-      rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, rtTime / 10000000.0);
+    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f early: %6.3f ", 
+      rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, rtTime / 10000000.0, (rtStart - rtTime) / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
@@ -358,7 +358,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   }
   /*else if (timeStamp < 0)
   {
-    Log("sample late - dropping sample: %6.3f rtTime: %6.3f", rtStart, rtTime);
+    Log("sample late - dropping sample: %6.3f rtTime: %6.3f", rtStart / 10000000.0, rtTime / 10000000.0);
     m_nSampleNum = 0;
 
     return MPAR_S_DROP_SAMPLE;
@@ -382,7 +382,7 @@ void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* p
     REFERENCE_TIME rtSilenceDuration = *pDueTime - rtTime;
 
     if (m_pSettings->m_bLogSampleTimes)
-      Log("CWASAPIRenderFilter::CalculateSilence: %6.3f", rtSilenceDuration / 10000000.0);
+      Log("   calculateSilence: %6.3f", rtSilenceDuration / 10000000.0);
 
     if (rtSilenceDuration > 0)
     {
