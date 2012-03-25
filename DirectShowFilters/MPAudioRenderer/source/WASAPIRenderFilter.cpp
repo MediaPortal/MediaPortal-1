@@ -40,7 +40,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
   m_state(StateStopped),
   m_bIsAudioClientStarted(false),
-  m_rtNextSampleTime(0)
+  m_rtNextSampleTime(0),
+  m_rtHwStart(0)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -324,12 +325,18 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   rtDuration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
   // Get media time
-  rtTime = m_pClock->GetHWTime() - m_rtStart;
+  REFERENCE_TIME rtRefClock = 0;
+  
+  m_pClock->GetTime(&rtRefClock);
+  rtRefClock -= m_rtStart;
+  rtTime = m_pClock->GetHWTime() - m_rtHwStart;
+
+  REFERENCE_TIME rtHWOffset = rtTime - rtRefClock;
 
   if (m_pSettings->m_bLogSampleTimes)
-    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f early: %6.3f ", 
+    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f rtRefClock: %6.3f early: %6.3f ", 
       rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, 
-      rtTime / 10000000.0, (rtStart - rtTime) / 10000000.0);
+      rtTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtTime) / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
@@ -348,7 +355,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
     if (sampleOffset > 0)
       offsetDelay = sampleOffset / m_pInputFormat->Format.nBlockAlign * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
-    *pDueTime = rtStart + offsetDelay;
+    *pDueTime = timeStamp + offsetDelay + rtHWOffset;
     m_nSampleNum++;
 
     if (m_pSettings->m_bLogSampleTimes)
@@ -356,7 +363,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
     return MPAR_S_WAIT_RENDER_TIME;
   }
-  else if (timeStamp + Latency() < 0)
+  else if (timeStamp < 0)
   {
     // TODO implement partial sample dropping
     Log("   sample late - dropping sample: %6.3f rtTime: %6.3f", rtStart / 10000000.0, rtTime / 10000000.0);
@@ -373,7 +380,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence)
 {
   REFERENCE_TIME rtTime = m_pClock->GetHWTime();
-  rtTime -= m_rtStart;
+  rtTime -= m_rtHwStart;
 
   REFERENCE_TIME rtSilenceDuration = *pDueTime - rtTime;
 
@@ -475,6 +482,25 @@ void CWASAPIRenderFilter::ResetClockData()
 REFERENCE_TIME CWASAPIRenderFilter::Latency()
 {
   return m_pSettings->m_hnsPeriod;
+}
+
+HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
+{
+  REFERENCE_TIME rtTime = 0;
+  REFERENCE_TIME rtHwTime = 0;
+
+  HRESULT hr = m_pClock->GetTime(&rtTime);
+  rtHwTime = m_pClock->GetHWTime();
+
+  if (SUCCEEDED(hr))
+  {
+    m_rtHwStart = rtStart + (rtHwTime - rtTime);
+    Log("CWASAPIRenderFilter::Run - ref clock: %6.3f HW clock: %6.3f", rtStart / 10000000.0, m_rtHwStart / 10000000.0 );
+  }
+  else
+    Log("CWASAPIRenderFilter::Run - error (0x%08x)", hr);
+
+  return CQueuedAudioSink::Run(rtStart);
 }
 
 // Processing
@@ -1274,4 +1300,5 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
 
   return hr;
 }
+
 

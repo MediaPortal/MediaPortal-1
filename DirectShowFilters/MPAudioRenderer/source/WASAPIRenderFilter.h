@@ -42,6 +42,7 @@ public:
   HRESULT Cleanup();
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
+  HRESULT Run(REFERENCE_TIME rtStart);
 
   // IRenderFilter implementation
   HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
@@ -121,6 +122,7 @@ private:
   CSyncClock*         m_pClock;
 
   REFERENCE_TIME      m_rtNextSampleTime;
+  REFERENCE_TIME      m_rtHwStart;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;
