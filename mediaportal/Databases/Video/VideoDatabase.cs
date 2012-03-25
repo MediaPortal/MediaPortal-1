@@ -536,9 +536,9 @@ namespace MediaPortal.Video.Database
       _database.ImportNfo(nfoFile);
     }
 
-    public static void MakeNfo (int movieId)
+    public static bool MakeNfo (int movieId)
     {
-      _database.MakeNfo(movieId);
+      return _database.MakeNfo(movieId);
     }
 
     /// <summary>
