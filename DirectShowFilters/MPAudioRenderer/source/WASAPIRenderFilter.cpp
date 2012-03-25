@@ -286,6 +286,7 @@ HRESULT CWASAPIRenderFilter::CheckSample(IMediaSample* pSample, UINT32 framesToF
       Log("CWASAPIRenderFilter::CheckFormat - discontinuity - ReleaseBuffer: 0x%08x", hr);
     
     pSample->SetDiscontinuity(false);
+    m_nSampleNum = 0;
     return S_FALSE;
   }
 
@@ -323,13 +324,12 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   rtDuration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
   // Get media time
-  m_pClock->GetTime(&rtTime);
-  rtTime = rtTime - m_rtStart;
-  //rtStart -= Latency();// * 2;
+  rtTime = m_pClock->GetHWTime() - m_rtStart;
 
   if (m_pSettings->m_bLogSampleTimes)
     Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f early: %6.3f ", 
-      rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, rtTime / 10000000.0, (rtStart - rtTime) / 10000000.0);
+      rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, 
+      rtTime / 10000000.0, (rtStart - rtTime) / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
@@ -356,13 +356,14 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
     return MPAR_S_WAIT_RENDER_TIME;
   }
-  /*else if (timeStamp < 0)
+  else if (timeStamp + Latency() < 0)
   {
-    Log("sample late - dropping sample: %6.3f rtTime: %6.3f", rtStart / 10000000.0, rtTime / 10000000.0);
+    // TODO implement partial sample dropping
+    Log("   sample late - dropping sample: %6.3f rtTime: %6.3f", rtStart / 10000000.0, rtTime / 10000000.0);
     m_nSampleNum = 0;
 
     return MPAR_S_DROP_SAMPLE;
-  }*/
+  }
 
   m_nSampleNum++;
 
@@ -371,26 +372,18 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
 void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence)
 {
-  REFERENCE_TIME rtTime;
-  HRESULT hr = m_pClock->GetTime(&rtTime);
-    
-  // Run flat if getting time fails
-  if (SUCCEEDED(hr))
+  REFERENCE_TIME rtTime = m_pClock->GetHWTime();
+  rtTime -= m_rtStart;
+
+  REFERENCE_TIME rtSilenceDuration = *pDueTime - rtTime;
+
+  if (m_pSettings->m_bLogSampleTimes)
+    Log("   calculateSilence: %6.3f", rtSilenceDuration / 10000000.0);
+
+  if (rtSilenceDuration > 0)
   {
-    rtTime -= m_rtStart;
-
-    REFERENCE_TIME rtSilenceDuration = *pDueTime - rtTime;
-
-    if (m_pSettings->m_bLogSampleTimes)
-      Log("   calculateSilence: %6.3f", rtSilenceDuration / 10000000.0);
-
-    if (rtSilenceDuration > 0)
-    {
-      UINT32 framesSilence = rtSilenceDuration / (UNITS / m_pInputFormat->Format.nSamplesPerSec);
-      *pBytesOfSilence = framesSilence * m_pInputFormat->Format.nBlockAlign;
-    }
-    else
-      *pBytesOfSilence = 0;
+    UINT32 framesSilence = rtSilenceDuration / (UNITS / m_pInputFormat->Format.nSamplesPerSec);
+    *pBytesOfSilence = framesSilence * m_pInputFormat->Format.nBlockAlign;
   }
   else
     *pBytesOfSilence = 0;
