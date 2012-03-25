@@ -170,6 +170,7 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList _nfoFiles = new ArrayList();
 
     private ArrayList _conflictFiles = new ArrayList();
+    private ArrayList notFoundMovie = new ArrayList();
 
     private List<BaseShares.ShareData> _sharesData = null;
 
@@ -4388,6 +4389,7 @@ namespace MediaPortal.Configuration.Sections
 
       _nfoFiles = new ArrayList();
       GetNfoFiles(fBrowser.SelectedPath, ref _nfoFiles);
+      notFoundMovie = new ArrayList();
 
       // Set refresh status for background worker
       _isRefreshing = true;
@@ -4508,7 +4510,12 @@ namespace MediaPortal.Configuration.Sections
 
         _progressDialog.SetLine1("Exporting: " + movie.Title);
 
-        VideoDatabase.MakeNfo(movie.ID);
+         if(!VideoDatabase.MakeNfo(movie.ID))
+         {
+           // Movie filenot found
+           notFoundMovie.Add(movie.Title + "\n");
+           Log.Info("Nfo export error: Video file not exists for movie {0}.", movie.Title);
+          }
 
         // Update progress
         if (_progressDialog.Count < movies.Count)
@@ -4631,11 +4638,23 @@ namespace MediaPortal.Configuration.Sections
       {
         MessageBox.Show("Error: " + e.Error.Message);
       }
+      else if (notFoundMovie.Count > 0)
+      {
+        string notFoundMovies = string.Empty;
+
+        foreach (string movie in notFoundMovie)
+        {
+          notFoundMovies = notFoundMovies + movie;
+        }
+
+        MessageBox.Show("Some of movies can't be exported (movie file not exist):\n" +  notFoundMovies);
+      }
       else
       {
         MessageBox.Show("Done!");
       }
       bgw.Dispose();
+      notFoundMovie.Clear();
       // Refresh all movies
       LoadMovies(0);
       cbTitle.SelectedIndex = 0;

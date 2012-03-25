@@ -4817,7 +4817,7 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void MakeNfo (int movieId)
+    public bool MakeNfo (int movieId)
     {
       string moviePath = string.Empty;
       string movieFile = string.Empty;
@@ -4828,6 +4828,12 @@ namespace MediaPortal.Video.Database
       GetFilesForMovie(movieId, ref movieFiles);
       // Wee need only 1 if they are stacked
       movieFile = movieFiles[0].ToString();
+
+      if (!File.Exists(movieFile))
+      {
+        return false;
+      }
+
       // Split to filename and path
       Util.Utils.Split(movieFile, out moviePath, out movieFile);
       // Check for DVD folder
@@ -5005,6 +5011,7 @@ namespace MediaPortal.Video.Database
       doc.AppendChild(mainNode);
       doc.InsertBefore(xmldecl, mainNode);
       doc.Save(nfoFile);
+      return true;
     }
 
     private void CreateXmlNode(XmlNode mainNode, XmlDocument doc, string element, string innerTxt)
