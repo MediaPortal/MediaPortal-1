@@ -47,6 +47,7 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer
   m_dSuggestedAudioMultiplier(1.0),
   m_ullPrevSystemTime(0),
   m_ullPrivateTime(0),
+  m_ullHWPrivateTime(0),
   m_bDiscontinuity(false)
 {
 }
@@ -205,7 +206,21 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   //Log("diff %I64d delta: %I64d synchCorrectedDelta: %I64d", delta - synchCorrectedDelta, delta, synchCorrectedDelta);
 
+  m_ullHWPrivateTime = m_ullHWPrivateTime + delta;
   m_ullPrivateTime = m_ullPrivateTime + synchCorrectedDelta;
 
   return m_ullPrivateTime;
+}
+
+REFERENCE_TIME CSyncClock::GetHWTime()
+{
+  REFERENCE_TIME rtTime;
+  CAutoLock cObjectLock(this);
+
+  // Update the HW clock information
+  CBaseReferenceClock::GetTime(&rtTime);
+
+  // Log("rtTime: %6.3f m_ullRealPrivateTime: %6.3f", rtTime / 10000000.0, m_ullRealPrivateTime/ 10000000.0);
+
+  return m_ullHWPrivateTime;
 }

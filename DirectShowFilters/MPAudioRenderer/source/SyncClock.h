@@ -29,6 +29,7 @@ public:
   CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock);
 
   REFERENCE_TIME GetPrivateTime();
+  REFERENCE_TIME GetHWTime();
 
   void SetBias(double pBias);
   void SetAdjustment(double pAdjustment);
@@ -53,6 +54,7 @@ private:
   double m_dBias;
   double m_dSystemClockMultiplier;
 
+  UINT64 m_ullHWPrivateTime;
   UINT64 m_ullPrivateTime;
   UINT64 m_ullPrevSystemTime;
 
