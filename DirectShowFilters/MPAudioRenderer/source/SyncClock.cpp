@@ -178,15 +178,13 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
         m_dSystemClockMultiplier = prevMultiplier;
 
       if (m_bHWBasedRefClock)
-      {
         m_SynchCorrection.SetAVMult(m_dSystemClockMultiplier);
-      }
 
       m_ullPrevTimeHW = hwClock;
       m_ullPrevQpcHW = hwQpc;
     }
   }
-  else if (hr != S_OK)
+  else
   {
     //Log("AudioClock() returned error (0x%08x)");
     if (m_ullStartTimeSystem == 0)
@@ -197,19 +195,17 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   }
 
   INT64 delta = qpcNow - m_ullPrevSystemTime;
-  INT64 deltaOrig = delta;
 
   if (qpcNow < m_ullPrevSystemTime)
-  {
     delta += REFERENCE_TIME(ULLONG_MAX) + 1;
-  }
 
   m_ullPrevSystemTime = qpcNow;
 
-  INT64 synchCorrectedDelta = m_SynchCorrection.GetCorrectedTimeDelta(deltaOrig);
+  INT64 synchCorrectedDelta = m_SynchCorrection.GetCorrectedTimeDelta(delta);
 
   //Log("diff %I64d delta: %I64d synchCorrectedDelta: %I64d", delta - synchCorrectedDelta, delta, synchCorrectedDelta);
 
   m_ullPrivateTime = m_ullPrivateTime + synchCorrectedDelta;
+
   return m_ullPrivateTime;
 }
