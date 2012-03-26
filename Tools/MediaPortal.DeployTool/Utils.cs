@@ -210,7 +210,7 @@ namespace MediaPortal.DeployTool
       return NewFileName;
     }
 
-    private static string GetUserAgentOsString()
+    internal static string GetUserAgentOsString()
     {
       return "Windows NT " + OSInfo.OSInfo.OSMajorVersion + "." + OSInfo.OSInfo.OSMinorVersion;
     }

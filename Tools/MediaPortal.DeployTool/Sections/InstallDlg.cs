@@ -185,6 +185,7 @@ namespace MediaPortal.DeployTool.Sections
             AddPackageToListView(new MySQLChecker());
           AddPackageToListView(new TvServerChecker());
           AddPackageToListView(new TvPluginChecker());
+		  AddPackageToListView(new LAVFilterMPEInstall());
           break;
 
         case "tvserver_master":
@@ -198,10 +199,12 @@ namespace MediaPortal.DeployTool.Sections
         case "client":
           AddPackageToListView(new MediaPortalChecker());
           AddPackageToListView(new TvPluginChecker());
+		  AddPackageToListView(new LAVFilterMPEInstall());
           break;
 
         case "mp_only":
           AddPackageToListView(new MediaPortalChecker());
+		  AddPackageToListView(new LAVFilterMPEInstall());
           break;
 
         case "download_only":
