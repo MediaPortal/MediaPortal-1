@@ -236,9 +236,6 @@ ShowUninstDetails show
   ${LOG_TEXT} "DEBUG" "MACRO SectionList ${MacroName}"
   ; This macro used to perform operation on multiple sections.
   ; List all of your components in following manner here.
-!ifndef HEISE_BUILD
-  !insertmacro "${MacroName}" "SecGabest"
-!endif
   !insertmacro "${MacroName}" "SecPowerScheduler"
   !insertmacro "${MacroName}" "SecMpeInstaller"
 !macroend
@@ -590,35 +587,6 @@ SectionEnd
   RMDir /r "$MPdir.Base\Wizards"
 !macroend
 
-!ifndef HEISE_BUILD
-Section "-MPC-HC audio/video decoders" SecGabest
-  ${LOG_TEXT} "INFO" "Installing MPC-HC audio/video decoders..."
-
-  SetOutPath "$MPdir.Base"
-  ; register the default video and audio codecs from the MediaPlayer Classic Home Cinema Project
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax"   "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\Mpeg2DecFilter.ax" "$MPdir.Base\Mpeg2DecFilter.ax" "$MPdir.Base"
-  
-  ; adjust the merit of this directshow filter
-  SetOutPath "$MPdir.Base"
-  File "${git_ROOT}\Tools\Script & Batch tools\SetMerit\bin\Release\SetMerit.exe"
-
-  ${LOG_TEXT} "INFO" "set merit for MPA"
-  nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {3D446B6F-71DE-4437-BE15-8CE47174340F} 00600000'
-  ${LOG_TEXT} "INFO" "set merit for MPV"
-  nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
-SectionEnd
-!macro Remove_${SecGabest}
-  ${LOG_TEXT} "INFO" "Uninstalling MPC-HC audio/video decoders..."
-
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpaDecFilter.ax"
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\Mpeg2DecFilter.ax"
-
-  ; remove the tool to adjust the merit
-  Delete "$MPdir.Base\SetMerit.exe"
-!macroend
-!endif
-
 Section "-Powerscheduler Client plugin" SecPowerScheduler
   ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
 
@@ -870,13 +838,6 @@ Function LoadPreviousSettings
 
   !insertmacro UpdateBackupSections
 
-!ifndef HEISE_BUILD
-  ; update the component status -> commandline parameters have higher priority than registry values
-  ${If} $noGabest = 1
-    !insertmacro UnselectSection ${SecGabest}
-  ${EndIf}
-!endif
-
   ; update component selection, according to possible selections
   ;Call .onSelChange
 
@@ -1056,8 +1017,3 @@ FunctionEnd
 #---------------------------------------------------------------------------
 # SECTION DESCRIPTIONS
 #---------------------------------------------------------------------------
-!ifndef HEISE_BUILD
-!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecGabest}  $(DESC_SecGabest)
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
-!endif
