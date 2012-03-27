@@ -25,23 +25,26 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Xml;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
   internal class LAVFilterMPEInstall : IInstallationPackage
   {
-    static Version cachedLatestOnlineVersion = null;
-
     const string lavId = "b7738156-b6ec-4f0f-b1a8-b5010349d8b1";
     const string mpeUrl = "http://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=24";
     const string mpeUpdateUrl = "http://www.team-mediaportal.com/index.php?option=com_mtree&task=att_download&link_id=162&cf_id=52";
 
+    readonly string mpeUpdateFile = Application.StartupPath + "\\deploy\\" + "LAVFilters.xml";
     readonly string fileName = Application.StartupPath + "\\deploy\\" + "LAVFilters.mpe1";
     readonly string installedMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
 
+    static Version onlineVersion = null;
+
     public string GetDisplayName()
     {
-      return "Install LAV Filters";
+      return "LAV Filters" + (onlineVersion != null ? " " + onlineVersion.ToString() : "");
     }
 
     public bool Download()
@@ -105,10 +108,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       Version vLavInstalled = GetInstalledLAVVersion();
       if (vLavInstalled != null && vMpeInstalled != null)
       {
-        Version vOnline = GetLatestAvailableMPEVersion();
-        if (vOnline != null)
+        onlineVersion = GetLatestAvailableMPEVersion();
+        if (onlineVersion != null)
         {
-          if (vMpeInstalled >= vOnline) result.state = CheckState.INSTALLED;
+          if (vMpeInstalled >= onlineVersion) result.state = CheckState.INSTALLED;
           else result.needsDownload = !File.Exists(fileName);
         }
         else
@@ -172,34 +175,92 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     Version GetLatestAvailableMPEVersion()
     {
-      if (cachedLatestOnlineVersion == null)
+      if (!File.Exists(mpeUpdateFile) || (DateTime.Now - new FileInfo(mpeUpdateFile).LastWriteTime).TotalMinutes > 60)
       {
-        try
+        bool downloadSuccess = DownloadMpeUpdateXml();
+        if (!downloadSuccess && !File.Exists(mpeUpdateFile)) return null;
+      }
+      try
+      {
+        XmlDocument xDoc = new XmlDocument();
+        xDoc.Load(mpeUpdateFile);
+        var versionNode = xDoc.SelectNodes("//PackageClass/GeneralInfo/Version");
+        List<Version> versions = new List<Version>();
+        foreach (XmlElement versionNodee in versionNode)
         {
-          XmlDocument xDoc = new XmlDocument();
-          xDoc.Load(mpeUpdateUrl);
-          var versionNode = xDoc.SelectNodes("//PackageClass/GeneralInfo/Version");
-          List<Version> versions = new List<Version>();
-          foreach (XmlElement versionNodee in versionNode)
-          {
-            versions.Add(new Version(
-            int.Parse(versionNodee.SelectSingleNode("Major").InnerText),
-              int.Parse(versionNodee.SelectSingleNode("Minor").InnerText),
-                int.Parse(versionNodee.SelectSingleNode("Build").InnerText),
-                  int.Parse(versionNodee.SelectSingleNode("Revision").InnerText)));
-          }
-          if (versions.Count > 0)
-          {
-            versions.Sort();
-            cachedLatestOnlineVersion = versions[versions.Count - 1];
-          }
+          versions.Add(new Version(
+          int.Parse(versionNodee.SelectSingleNode("Major").InnerText),
+            int.Parse(versionNodee.SelectSingleNode("Minor").InnerText),
+              int.Parse(versionNodee.SelectSingleNode("Build").InnerText),
+                int.Parse(versionNodee.SelectSingleNode("Revision").InnerText)));
         }
-        catch (Exception ex)
+        if (versions.Count > 0)
         {
-          // error checking for latest online version
+          versions.Sort();
+          return versions[versions.Count - 1];
         }
       }
-      return cachedLatestOnlineVersion;
+      catch (Exception ex)
+      {
+        // error checking for latest online version
+      }
+      return null;
+    }
+
+    /// <summary>
+    /// Download the LAV Filter MPE update.xml that contains the information what is the latest version from the MediaPortal homepage and store it locally.
+    /// </summary>
+    /// <returns>true when the file was successfully downloaded and saved, otherwise false.</returns>
+    bool DownloadMpeUpdateXml()
+    {
+      HttpWebResponse response = null;
+      try
+      {
+        HttpWebRequest request = HttpWebRequest.Create(mpeUpdateUrl) as HttpWebRequest;
+        if (request != null)
+        {
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          request.UserAgent = @"Mozilla/4.0 (compatible; MSIE 7.0;" + Utils.GetUserAgentOsString();
+          request.UseDefaultCredentials = true;
+          request.Timeout = 10000; // don't wait longer than 10 seconds for data to start receiving
+          request.Accept = "*/*"; // we accept any content type
+          request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate"); // we accept compressed content
+          response = request.GetResponse() as HttpWebResponse;
+          if (response == null) return false;
+          Stream responseStream;
+          if (response.ContentEncoding.ToLower().Contains("gzip"))
+          {
+            responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+          }
+          else if (response.ContentEncoding.ToLower().Contains("deflate"))
+          {
+            responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
+          }
+          else
+          {
+            responseStream = response.GetResponseStream();
+          }
+          // UTF8 is the default encoding as fallback
+          Encoding responseEncoding = Encoding.UTF8;
+          // try to get the response encoding if one was specified
+          if (response.CharacterSet != null && !String.IsNullOrEmpty(response.CharacterSet.Trim())) responseEncoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
+          using (StreamReader reader = new StreamReader(responseStream, responseEncoding, true))
+          {
+            string str = reader.ReadToEnd().Trim();
+            File.WriteAllText(mpeUpdateFile, str);
+            return true;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        // error downloading update.xml for LAV Filter MPE
+      }
+      finally
+      {
+        if (response != null) ((IDisposable)response).Dispose();
+      }
+      return false;
     }
   }
 }
