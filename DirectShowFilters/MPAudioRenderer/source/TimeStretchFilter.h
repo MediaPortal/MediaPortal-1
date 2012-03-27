@@ -141,7 +141,7 @@ private:
   vector<HANDLE> m_hSampleEvents;
   vector<DWORD>  m_dwSampleWaitObjects;
 
-  AM_MEDIA_TYPE* m_pNewPMT;
+  AM_MEDIA_TYPE* m_pPMT;
   REFERENCE_TIME m_rtInSampleTime;
   REFERENCE_TIME m_rtNextIncomingSampleTime;
 
