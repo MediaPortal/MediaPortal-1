@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using MediaPortal.Dialogs;
@@ -1478,6 +1479,23 @@ namespace MediaPortal.GUI.Video
         if (AmazonImagesDownloaded != null)
         {
           AmazonImagesDownloaded(thumbUrls);
+        }
+
+        if (VideoDatabase.CheckMovieImdbId(movie.IMDBNumber))
+        {
+          string restriction = "7";
+
+          TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
+          DateTime searchDate = DateTime.Today - ts;
+          DateTime lastUpdate;
+          
+          if (DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd 00:00:00", null, DateTimeStyles.None, out lastUpdate))
+          {
+            if (searchDate > lastUpdate)
+            {
+
+            }
+          }
         }
       }
       catch (ThreadAbortException) { }

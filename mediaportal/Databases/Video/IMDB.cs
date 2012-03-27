@@ -399,19 +399,7 @@ namespace MediaPortal.Video.Database
       }
       return strBody;
     }
-
-    /// <summary>
-    /// cuts end of sting after strWord
-    /// </summary>
-    private void RemoveAllAfter(ref string strLine, string strWord)
-    {
-      int iPos = strLine.IndexOf(strWord);
-      if (iPos > 0)
-      {
-        strLine = strLine.Substring(0, iPos);
-      }
-    }
-
+    
     /// <summary>
     /// make a searchstring out of the filename
     /// </summary>
@@ -539,19 +527,8 @@ namespace MediaPortal.Video.Database
     {
       try
       {
-        /*
-        // extract host from url, to find out which mezhod should be called
-        int		iStart = url.URL.IndexOf(".")+1;
-        int		iEnd = url.URL.IndexOf(".",iStart);
-        if ((iStart<0) || (iEnd<0))
-        {
-          // could not extract hostname!
-          Log.Info("Movie DB lookup GetDetails(): could not extract hostname from {0}",url.URL);
-          return false;
-        }
-        string	strHost = url.URL.Substring(iStart,iEnd-iStart).ToUpper();*/
-
         MovieInfoDatabase currentDB = null;
+        
         foreach (MovieInfoDatabase db in _databaseList)
         {
           if (db.ID == url.Database)
@@ -559,10 +536,12 @@ namespace MediaPortal.Video.Database
             currentDB = db;
           }
         }
+        
         if (currentDB == null)
         {
           return false;
         }
+        
         if (currentDB.Grabber == null)
         {
           return false;
@@ -624,6 +603,13 @@ namespace MediaPortal.Video.Database
 
     private void FindIMDBActor(string strURL)
     {
+      string[] vdbParserStr = VdbParserStringActor();
+
+      if (vdbParserStr == null || vdbParserStr.Length != 29)
+      {
+        return;
+      }
+
       try
       {
         string absoluteUri;
@@ -631,8 +617,11 @@ namespace MediaPortal.Video.Database
         string strBody = GetPage(strURL, "utf-8", out absoluteUri);
         string value = string.Empty;
         HTMLParser parser = new HTMLParser(strBody);
-        if ((parser.skipToEndOf("<title>")) &&
-            (parser.extractTo("</title>", ref value)) && !value.ToLower().Equals("imdb name search"))
+        
+        //if ((parser.skipToEndOf("<title>")) &&
+        //    (parser.extractTo("</title>", ref value)) && !value.ToLower().Equals("imdb name search"))
+        if ((parser.skipToEndOf(vdbParserStr[0])) &&
+            (parser.extractTo(vdbParserStr[1], ref value)) && !value.ToLower().Equals(vdbParserStr[2]))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = Util.Utils.RemoveParenthesis(value).Trim();
@@ -640,6 +629,7 @@ namespace MediaPortal.Video.Database
           _elements.Add(oneUrl);
           return;
         }
+
         parser.resetPosition();
 
         string popularBody = string.Empty;
@@ -648,43 +638,64 @@ namespace MediaPortal.Video.Database
         string name = string.Empty;
         string role = string.Empty;
 
-        if (parser.skipToStartOfNoCase("Popular names"))
+        //if (parser.skipToStartOfNoCase("Popular names"))
+        if (parser.skipToStartOfNoCase(vdbParserStr[3]))
         {
-          parser.skipToEndOf("<table>");
-          parser.extractTo("</table>", ref popularBody);
+          //parser.skipToEndOf("<table>");
+          parser.skipToEndOf(vdbParserStr[4]);
+          //parser.extractTo("</table>", ref popularBody);
+          parser.extractTo(vdbParserStr[5], ref popularBody);
 
           parser = new HTMLParser(popularBody);
           
-          //<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
-          while (parser.skipToStartOf("href=\"/name/"))
+          //while (parser.skipToStartOf("href=\"/name/"))
+          while (parser.skipToStartOf(vdbParserStr[6]))
           {
-            parser.skipToEndOf("href=\"");
-            parser.extractTo("\"", ref url);
-            parser.skipToEndOf("Image()).src='/rg/find-name-");
-            parser.skipToEndOf("';\">");
-            parser.extractTo("</a>", ref name);
-            parser.skipToEndOf("<small>(");
-            parser.extractTo(",", ref role);
+            //parser.skipToEndOf("href=\"");
+            parser.skipToEndOf(vdbParserStr[7]);
+            //parser.extractTo("\"", ref url);
+            parser.extractTo(vdbParserStr[8], ref url);
+            //parser.skipToEndOf("Image()).src='/rg/find-name-");
+            parser.skipToEndOf(vdbParserStr[9]);
+            //parser.skipToEndOf("';\">");
+            parser.skipToEndOf(vdbParserStr[10]);
+            //parser.extractTo("</a>", ref name);
+            parser.extractTo(vdbParserStr[11], ref name);
+            //parser.skipToEndOf("<small>(");
+            parser.skipToEndOf(vdbParserStr[12]);
+            //parser.extractTo(",", ref role);
+            parser.extractTo(vdbParserStr[13], ref role);
+            
             if (role != string.Empty)
+            {
               name += " - " + role;
+            }
+
             name = new HTMLUtil().ConvertHTMLToAnsi(name);
             name = Util.Utils.RemoveParenthesis(name).Trim();
             IMDBUrl newUrl = new IMDBUrl("http://www.imdb.com" + url, name, "IMDB");
             _elements.Add(newUrl);
-            parser.skipToEndOf("</tr>");
+            //parser.skipToEndOf("</tr>");
+            parser.skipToEndOf(vdbParserStr[14]);
           }
         }
         parser = new HTMLParser(strBody);
         
-        if (parser.skipToStartOfNoCase("Exact Matches"))
+        //if (parser.skipToStartOfNoCase("Exact Matches"))
+        if (parser.skipToStartOfNoCase(vdbParserStr[15]))
         {
-          parser.skipToEndOf("<table>");
-          parser.extractTo("</table>", ref exactBody);
+          //parser.skipToEndOf("<table>");
+          parser.skipToEndOf(vdbParserStr[16]);
+          //parser.extractTo("</table>", ref exactBody);
+          parser.extractTo(vdbParserStr[17], ref exactBody);
         }
-        else if (parser.skipToStartOfNoCase("Approx Matches"))
+        //else if (parser.skipToStartOfNoCase("Approx Matches"))
+        else if (parser.skipToStartOfNoCase(vdbParserStr[18]))
         {
-          parser.skipToEndOf("<table>");
-          parser.extractTo("</table>", ref exactBody);
+          //parser.skipToEndOf("<table>");
+          parser.skipToEndOf(vdbParserStr[19]);
+          //parser.extractTo("</table>", ref exactBody);
+          parser.extractTo(vdbParserStr[20], ref exactBody);
         }
         else
         {
@@ -695,23 +706,37 @@ namespace MediaPortal.Video.Database
         url = string.Empty;
         name = string.Empty;
         role = string.Empty;
+        
         //<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
-        while (parser.skipToStartOf("href=\"/name/"))
+        //while (parser.skipToStartOf("href=\"/name/"))
+        while (parser.skipToStartOf(vdbParserStr[21]))
         {
-          parser.skipToEndOf("href=\"");
-          parser.extractTo("\"", ref url);
-          parser.skipToEndOf("Image()).src='/rg/find-name-");
-          parser.skipToEndOf("';\">");
-          parser.extractTo("</a>", ref name);
-          parser.skipToEndOf("<small>(");
-          parser.extractTo(",", ref role);
+          //parser.skipToEndOf("href=\"");
+          parser.skipToEndOf(vdbParserStr[22]);
+          //parser.extractTo("\"", ref url);
+          parser.extractTo(vdbParserStr[23], ref url);
+          //parser.skipToEndOf("Image()).src='/rg/find-name-");
+          parser.skipToEndOf(vdbParserStr[24]);
+          //parser.skipToEndOf("';\">");
+          parser.skipToEndOf(vdbParserStr[25]);
+          //parser.extractTo("</a>", ref name);
+          parser.extractTo(vdbParserStr[26], ref name);
+          //parser.skipToEndOf("<small>(");
+          parser.skipToEndOf(vdbParserStr[27]);
+          //parser.extractTo(",", ref role);
+          parser.extractTo(vdbParserStr[28], ref role);
+
           if (role != string.Empty)
+          {
             name += " - " + role;
+          }
+
           name = new HTMLUtil().ConvertHTMLToAnsi(name);
           name = Util.Utils.RemoveParenthesis(name).Trim();
           IMDBUrl newUrl = new IMDBUrl("http://www.imdb.com" + url, name, "IMDB");
           _elements.Add(newUrl);
-          parser.skipToEndOf("</tr>");
+          //parser.skipToEndOf("</tr>");
+          parser.skipToEndOf(vdbParserStr[29]);
         }
       }
       catch (Exception ex)
@@ -724,18 +749,29 @@ namespace MediaPortal.Video.Database
     public bool GetActorDetails(IMDBUrl url, out IMDBActor actor)
     {
       actor = new IMDBActor();
+
+      string[] vdbParserStr = VdbParserStringActorDetails();
+
+      if (vdbParserStr == null || vdbParserStr.Length != 45)
+      {
+        return false;
+      }
+
       try
       {
         string absoluteUri;
         string strBody = GetPage(url.URL, "utf-8", out absoluteUri);
+        
         if (strBody == null)
         {
           return false;
         }
+        
         if (strBody.Length == 0)
         {
           return false;
         }
+        
         // IMDBActorID
         try
         {
@@ -749,29 +785,38 @@ namespace MediaPortal.Video.Database
         string strThumb = string.Empty;
         string value = string.Empty;
         string value2 = string.Empty;
+        
         // Actor name
-        if ((parser.skipToEndOf("<title>")) &&
-            (parser.extractTo("- IMDb</title>", ref value)))
+        //if ((parser.skipToEndOf("<title>")) &&
+        //    (parser.extractTo("- IMDb</title>", ref value)))
+        if ((parser.skipToEndOf(vdbParserStr[0])) &&
+            (parser.extractTo(vdbParserStr[1], ref value)))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = Util.Utils.RemoveParenthesis(value).Trim();
           actor.Name = HttpUtility.HtmlDecode(value.Trim());
         }
+        
         if (actor.Name == string.Empty)
         {
           actor.Name = url.Title;
         }
+        
         // Photo
         string parserTxt = parser.Content;
         string photoBlock = string.Empty;
         
-        if (parser.skipToStartOf("<td id=\"img_primary\"") &&
-            (parser.extractTo("</td>", ref photoBlock)))
+        //if (parser.skipToStartOf("<td id=\"img_primary\"") &&
+        //    (parser.extractTo("</td>", ref photoBlock)))
+        if (parser.skipToStartOf(vdbParserStr[2]) &&
+            (parser.extractTo(vdbParserStr[3], ref photoBlock)))
         {
           parser.Content = photoBlock;
         
-          if ((parser.skipToEndOf("<img src=\"")) &&
-              (parser.extractTo("\"", ref strThumb)))
+          //if ((parser.skipToEndOf("<img src=\"")) &&
+          //    (parser.extractTo("\"", ref strThumb)))
+          if ((parser.skipToEndOf(vdbParserStr[4])) &&
+              (parser.extractTo(vdbParserStr[5], ref strThumb)))
           {
             actor.ThumbnailUrl = strThumb;
           }
@@ -779,24 +824,36 @@ namespace MediaPortal.Video.Database
         }
         
         // Birth date
-        if ((parser.skipToEndOf("Born:")) &&
-            (parser.skipToEndOf("birth_monthday=")) &&
-            (parser.skipToEndOf(">")) &&
-            (parser.extractTo("<", ref value)) &&
-            (parser.skipToEndOf("year=")) &&
-            (parser.extractTo("\"", ref value2)))
+        //if ((parser.skipToEndOf("Born:")) &&
+        //    (parser.skipToEndOf("birth_monthday=")) &&
+        //    (parser.skipToEndOf(">")) &&
+        //    (parser.extractTo("<", ref value)) &&
+        //    (parser.skipToEndOf("year=")) &&
+        //    (parser.extractTo("\"", ref value2)))
+        if ((parser.skipToEndOf(vdbParserStr[6])) &&
+            (parser.skipToEndOf(vdbParserStr[7])) &&
+            (parser.skipToEndOf(vdbParserStr[8])) &&
+            (parser.extractTo(vdbParserStr[9], ref value)) &&
+            (parser.skipToEndOf(vdbParserStr[10])) &&
+            (parser.extractTo(vdbParserStr[11], ref value2)))
 
         {
           actor.DateOfBirth = value + " " + value2;
         }
         
         // Death date
-        if ((parser.skipToEndOf(">Died:</h4>")) &&
-            (parser.skipToEndOf("deaths\"")) &&
-            (parser.skipToEndOf(">")) &&
-            (parser.extractTo("<", ref value)) &&
-            (parser.skipToEndOf("death_date=")) &&
-            (parser.extractTo("\"", ref value2)))
+        //if ((parser.skipToEndOf(">Died:</h4>")) &&
+        //    (parser.skipToEndOf("deaths\"")) &&
+        //    (parser.skipToEndOf(">")) &&
+        //    (parser.extractTo("<", ref value)) &&
+        //    (parser.skipToEndOf("death_date=")) &&
+        //    (parser.extractTo("\"", ref value2)))
+        if ((parser.skipToEndOf(vdbParserStr[12])) &&
+            (parser.skipToEndOf(vdbParserStr[13])) &&
+            (parser.skipToEndOf(vdbParserStr[14])) &&
+            (parser.extractTo(vdbParserStr[15], ref value)) &&
+            (parser.skipToEndOf(vdbParserStr[16])) &&
+            (parser.extractTo(vdbParserStr[17], ref value2)))
         {
           actor.DateOfDeath = value + " " + value2;
         }
@@ -804,49 +861,71 @@ namespace MediaPortal.Video.Database
         parser.resetPosition();
         
         // Birth place
-        if ((parser.skipToEndOf("birth_place=")) &&
-            (parser.skipToEndOf(">")) &&
-            (parser.extractTo("<", ref value)))
+        //if ((parser.skipToEndOf("birth_place=")) &&
+        //    (parser.skipToEndOf(">")) &&
+        //    (parser.extractTo("<", ref value)))
+        if ((parser.skipToEndOf(vdbParserStr[18])) &&
+            (parser.skipToEndOf(vdbParserStr[19])) &&
+            (parser.extractTo(vdbParserStr[20], ref value)))
         {
           actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
         }
 
         // Death place
-        if ((parser.skipToEndOf("death_place=")) &&
-            (parser.skipToEndOf(">")) &&
-            (parser.extractTo("<", ref value)))
+        //if ((parser.skipToEndOf("death_place=")) &&
+        //    (parser.skipToEndOf(">")) &&
+        //    (parser.extractTo("<", ref value)))
+        if ((parser.skipToEndOf(vdbParserStr[21])) &&
+            (parser.skipToEndOf(vdbParserStr[22])) &&
+            (parser.extractTo(vdbParserStr[23], ref value)))
         {
           actor.PlaceOfDeath = HttpUtility.HtmlDecode(value);
         }
 
         //Mini Biography
         parser.resetPosition();
-        if ((parser.skipToEndOf("<td id=\"overview-top\">")) &&
-            (parser.skipToEndOf("<p>")) &&
-            (parser.extractTo("See full bio</a>", ref value)))
+        
+        //if ((parser.skipToEndOf("<td id=\"overview-top\">")) &&
+        //    (parser.skipToEndOf("<p>")) &&
+        //    (parser.extractTo("See full bio</a>", ref value)))
+        if ((parser.skipToEndOf(vdbParserStr[24])) &&
+            (parser.skipToEndOf(vdbParserStr[25])) &&
+            (parser.extractTo(vdbParserStr[26], ref value)))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           actor.MiniBiography = Util.Utils.stripHTMLtags(value);
           actor.MiniBiography = actor.MiniBiography.Replace("See full bio »", string.Empty).Trim();
           actor.MiniBiography = HttpUtility.HtmlDecode(actor.MiniBiography); // Remove HTML entities like &#189;
+          
           if (actor.MiniBiography != string.Empty)
           {
             // get complete biography
             string bioURL = absoluteUri;
-            if (!bioURL.EndsWith("/"))
+            
+            //if (!bioURL.EndsWith("/"))
+            if (!bioURL.EndsWith(vdbParserStr[27]))
             {
-              bioURL += "/bio";
+              //bioURL += "/bio";
+              bioURL += vdbParserStr[28];
             }
             else
-              bioURL += "bio";
+            {
+              //bioURL += "bio";
+              bioURL += vdbParserStr[29];
+            }
+
             string strBioBody = GetPage(bioURL, "utf-8", out absoluteUri);
+            
             if (!string.IsNullOrEmpty(strBioBody))
             {
               HTMLParser parser1 = new HTMLParser(strBioBody);
-              if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
-                  parser1.skipToEndOf("<div class=\"wikipedia_bio\">") &&
-                  parser1.extractTo("</div>", ref value))
-              
+
+              //if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
+              //    parser1.skipToEndOf("<div class=\"wikipedia_bio\">") &&
+              //    parser1.extractTo("</div>", ref value))
+              if (parser1.skipToEndOf(vdbParserStr[30]) &&
+                  parser1.skipToEndOf(vdbParserStr[31]) &&
+                  parser1.extractTo(vdbParserStr[32], ref value))
               {
                 value = new HTMLUtil().ConvertHTMLToAnsi(value);
                 value = Regex.Replace(value, @"</h5>\s<h5>", "\n\r");
@@ -858,8 +937,11 @@ namespace MediaPortal.Video.Database
               else
               {
                 parser1.resetPosition();
-                if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
-                  parser1.extractTo("</p>", ref value))
+                
+                //if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
+                //  parser1.extractTo("</p>", ref value))
+                if (parser1.skipToEndOf(vdbParserStr[33]) &&
+                  parser1.extractTo(vdbParserStr[34], ref value))
                 {
                   value = new HTMLUtil().ConvertHTMLToAnsi(value);
                   actor.Biography = Util.Utils.stripHTMLtags(value).Trim();
@@ -879,8 +961,10 @@ namespace MediaPortal.Video.Database
         HTMLParser dirParser = new HTMLParser(); // HTML body for Director
         HTMLParser wriParser = new HTMLParser(); // HTML body for Writers
 
-        if ((parser.skipToEndOf("name=\"Director\">Director</a>")) &&
-            (parser.skipToEndOf("</div>")))
+        //if ((parser.skipToEndOf("name=\"Director\">Director</a>")) &&
+        //    (parser.skipToEndOf("</div>")))
+        if ((parser.skipToEndOf(vdbParserStr[35])) &&
+            (parser.skipToEndOf(vdbParserStr[36])))
         {
           isDirectorPass = true;
           dirParser.Content = parser.Content;
@@ -888,8 +972,10 @@ namespace MediaPortal.Video.Database
         
         parser.resetPosition();
 
-        if ((parser.skipToEndOf("name=\"Writer\">Writer</a>")) &&
-            (parser.skipToEndOf("</div>")))
+        //if ((parser.skipToEndOf("name=\"Writer\">Writer</a>")) &&
+        //    (parser.skipToEndOf("</div>")))
+        if ((parser.skipToEndOf(vdbParserStr[37])) &&
+            (parser.skipToEndOf(vdbParserStr[38])))
         {
           isWriterPass = true;
           wriParser.Content = parser.Content;
@@ -897,8 +983,10 @@ namespace MediaPortal.Video.Database
 
         parser.resetPosition();
 
-        if (parser.skipToEndOf("name=\"Actress\">Actress</a>") || 
-            parser.skipToEndOf("name=\"Actor\">Actor</a>"))
+        //if (parser.skipToEndOf("name=\"Actress\">Actress</a>") || 
+        //    parser.skipToEndOf("name=\"Actor\">Actor</a>"))
+        if (parser.skipToEndOf(vdbParserStr[39]) ||
+          parser.skipToEndOf(vdbParserStr[40]))
         {
           isActorPass = true;
         }
@@ -914,8 +1002,11 @@ namespace MediaPortal.Video.Database
         {
           parser = wriParser;
           parser.resetPosition();
-          if ((parser.skipToEndOf("name=\"Writer\">Writer</a>")) &&
-            (parser.skipToEndOf("</div>")))
+
+          //if ((parser.skipToEndOf("name=\"Writer\">Writer</a>")) &&
+          //  (parser.skipToEndOf("</div>")))
+          if ((parser.skipToEndOf(vdbParserStr[41])) &&
+            (parser.skipToEndOf(vdbParserStr[42])))
           {
             GetActorMovies(actor, parser, false, true);
           }
@@ -926,8 +1017,11 @@ namespace MediaPortal.Video.Database
         {
           parser = dirParser;
           parser.resetPosition();
-          if (parser.skipToEndOf("name=\"Director\">Director</a>") &&
-              parser.skipToEndOf("</div>"))
+          
+          //if (parser.skipToEndOf("name=\"Director\">Director</a>") &&
+          //    parser.skipToEndOf("</div>"))
+          if (parser.skipToEndOf(vdbParserStr[43]) &&
+              parser.skipToEndOf(vdbParserStr[44]))
           {
             GetActorMovies(actor, parser, true, false);
           }
@@ -950,53 +1044,82 @@ namespace MediaPortal.Video.Database
 
     private void GetActorMovies(IMDBActor actor, HTMLParser parser, bool director, bool writer)
     {
+      string[] vdbParserStr = VdbParserStringActorMovies();
+
+      if (vdbParserStr == null || vdbParserStr.Length != 19)
+      {
+        return;
+      }
+
       string movies = string.Empty;
+      
       // Get films and roles block
-      if (parser.extractTo("<div id", ref movies))
+      //if (parser.extractTo("<div id", ref movies))
+      if (parser.extractTo(vdbParserStr[0], ref movies))
       {
         parser.Content = movies;
       }
+      
       // Parse block for evey film and get year, title and it's imdbID and role
-      while (parser.skipToStartOf("<span class=\"year_column\""))
+      //while (parser.skipToStartOf("<span class=\"year_column\""))
+      while (parser.skipToStartOf(vdbParserStr[1]))
       {
         string movie = string.Empty;
-        if (parser.extractTo("<div class", ref movie))
+        
+        //if (parser.extractTo("<div class", ref movie))
+        if (parser.extractTo(vdbParserStr[2], ref movie))
         {
-          movie += "</li>";
+          //movie += "</li>";
+          movie += vdbParserStr[3];
           HTMLParser movieParser = new HTMLParser(movie);
           string title = string.Empty;
           string strYear = string.Empty;
           string role = string.Empty;
           string imdbID = string.Empty;
           // IMDBid
-          movieParser.skipToEndOf("title/");
-          movieParser.extractTo("/", ref imdbID);
+          //movieParser.skipToEndOf("title/");
+          movieParser.skipToEndOf(vdbParserStr[4]);
+          //movieParser.extractTo("/", ref imdbID);
+          movieParser.extractTo(vdbParserStr[5], ref imdbID);
           // Title
           movieParser.resetPosition();
-          movieParser.skipToEndOf("<a");
-          movieParser.skipToEndOf(">");
-          movieParser.extractTo("<br/>", ref title);
+          //movieParser.skipToEndOf("<a");
+          movieParser.skipToEndOf(vdbParserStr[6]);
+          //movieParser.skipToEndOf(">");
+          movieParser.skipToEndOf(vdbParserStr[7]);
+          //movieParser.extractTo("<br/>", ref title);
+          movieParser.extractTo(vdbParserStr[8], ref title);
           title = Util.Utils.stripHTMLtags(title);
           title = title.Replace("\n", " ").Replace("\r", string.Empty);
           title = HttpUtility.HtmlDecode(title.Trim()); // Remove HTML entities like &#189;
           // Year
           movieParser.resetPosition();
-          if (movieParser.skipToStartOf(">20") &&
-              movieParser.skipToEndOf(">"))
+          
+          //if (movieParser.skipToStartOf(">20") &&
+          //    movieParser.skipToEndOf(">"))
+          if (movieParser.skipToStartOf(vdbParserStr[9]) &&
+              movieParser.skipToEndOf(vdbParserStr[10]))
           {
-            movieParser.extractTo("<", ref strYear);
+            //movieParser.extractTo("<", ref strYear);
+            movieParser.extractTo(vdbParserStr[11], ref strYear);
           }
-          else if (movieParser.skipToStartOf(">19") &&
-                   movieParser.skipToEndOf(">"))
+          //else if (movieParser.skipToStartOf(">19") &&
+          //         movieParser.skipToEndOf(">"))
+          else if (movieParser.skipToStartOf(vdbParserStr[12]) &&
+                   movieParser.skipToEndOf(vdbParserStr[13]))
           {
-            movieParser.extractTo("<", ref strYear);
+            //movieParser.extractTo("<", ref strYear);
+            movieParser.extractTo(vdbParserStr[14], ref strYear);
           }
+          
           // Roles
           if (!director && !writer)
           {
-            if (movieParser.skipToEndOf("<br/>")) // Role case 1, no character link
+            //if (movieParser.skipToEndOf("<br/>")) // Role case 1, no character link
+            if (movieParser.skipToEndOf(vdbParserStr[15])) // Role case 1, no character link
             {
-              movieParser.extractTo("<", ref role);
+              //movieParser.extractTo("<", ref role);
+              movieParser.extractTo(vdbParserStr[16], ref role);
               role = Util.Utils.stripHTMLtags(role).Trim();
               role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
                                               .Replace("\r", string.Empty).Trim());
@@ -1009,11 +1132,14 @@ namespace MediaPortal.Video.Database
               if (role == string.Empty) // Role case 2, with character link
               {
                 movieParser.resetPosition();
-                movieParser.skipToEndOf("<br/>");
-                movieParser.extractTo("</a>", ref role);
+                //movieParser.skipToEndOf("<br/>");
+                movieParser.skipToEndOf(vdbParserStr[17]);
+                //movieParser.extractTo("</a>", ref role);
+                movieParser.extractTo(vdbParserStr[18], ref role);
                 role = Util.Utils.stripHTMLtags(role).Trim();
                 role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
                                                   .Replace("\r", string.Empty).Trim());
+                
                 if (role != null && role.EndsWith("/"))
                 {
                   role = role.Remove(role.LastIndexOf("/"));
@@ -1031,6 +1157,7 @@ namespace MediaPortal.Video.Database
           }
           
           int year = 0;
+          
           try
           {
             year = Int32.Parse(strYear.Substring(0, 4));
@@ -1039,6 +1166,7 @@ namespace MediaPortal.Video.Database
           {
             year = 1900;
           }
+
           // SKip trash titles
           if (!SkipNoMovies(title))
           {
@@ -1115,6 +1243,27 @@ namespace MediaPortal.Video.Database
       {
         return false;
       }
+    }
+
+    // Find actor parser strings
+    private string[] VdbParserStringActor()
+    {
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("ActorInfoMain");
+      return vdbParserStr;
+    }
+
+    // Actor detals parser strings
+    private string[] VdbParserStringActorDetails()
+    {
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("ActorInfoDetails");
+      return vdbParserStr;
+    }
+
+    // Actor movies & roles parser strings
+    private string[] VdbParserStringActorMovies()
+    {
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("ActorInfoMovies");
+      return vdbParserStr;
     }
 
     #endregion

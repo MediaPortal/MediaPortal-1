@@ -79,6 +79,8 @@ namespace MediaPortal.Video.Database
     private string _mStrCountry= string.Empty;
     // Language
     private string _mStrLanguage = string.Empty;
+    // Info update date
+    private string _lastUpdate = string.Empty;
 
     public IMDBMovie() {}
 
@@ -326,6 +328,12 @@ namespace MediaPortal.Video.Database
       set { _mStrLanguage = value; }
     }
 
+    public string LastUpdate
+    {
+      get { return _lastUpdate; }
+      set { _lastUpdate = value; }
+    }
+
     public void Reset()
     {
       Reset(false);
@@ -367,6 +375,7 @@ namespace MediaPortal.Video.Database
       _mStrStudios = string.Empty;
       _mStrCountry = string.Empty;
       _mStrLanguage = string.Empty;
+      _lastUpdate = string.Empty;
     }
 
     [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
@@ -405,6 +414,9 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#country", Country);
       GUIPropertyManager.SetProperty("#language", Language);
+      DateTime lastUpdate;
+      DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
+      GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToString());
 
       if (ID == -1)
       {

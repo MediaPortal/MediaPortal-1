@@ -122,7 +122,7 @@
             <ondown>4755</ondown>
           </control>
           <control>
-            <description>Trailers</description>
+            <description>IMDb Trailer (OnlineVideos)</description>
             <type>button</type>
             <id>4755</id>
             <label>5906</label>
@@ -140,9 +140,20 @@
             <label>Video Settings</label>
             <hyperlink>703</hyperlink>
             <onright>50</onright>
-            <onup>7</onup>
+            <onup>4755</onup>
+            <ondown>84623</ondown>            
+          </control>
+          <control>
+            <description>Subtitles (SubCentral)</description>
+            <type>button</type>
+            <id>84623</id>
+            <label>287</label>
+            <hyperlink>84623</hyperlink>
+            <onright>50</onright>
+            <onup>9876</onup>
             <ondown>2</ondown>            
-          </control>	  
+            <visible>plugin.isenabled(SubCentral)</visible>
+          </control>          	  
         </control>
       </control>
     </control>
@@ -508,7 +519,7 @@
       <id>1</id>
       <posX>300</posX>
       <posY>312</posY>
-      <label>Died:</label>
+      <label>1277</label>
       <font>font10</font>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideActorinfo, False)</visible>
