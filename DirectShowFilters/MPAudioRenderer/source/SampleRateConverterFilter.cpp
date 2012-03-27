@@ -75,7 +75,7 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
   if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
-  // try passthrough
+  // Try passthrough
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
   if (SUCCEEDED(hr))
   {

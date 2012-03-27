@@ -169,6 +169,7 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
     // Process any remaining input
     if (!m_bPassThrough)
       hr = ProcessData(NULL, 0, NULL);
+
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     Log("CChannelMixer::PutSample: Processing format change");
@@ -413,7 +414,6 @@ HRESULT CChannelMixer::ProcessData(const BYTE* pData, long cbData, long* pcbData
     ASSERT(pOutData);
     pOutData += nOffset;
 
-    // TODO: process sample data
     int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
 
     m_pRemap->Remap((float*)pData, (float*)pOutData, framesToConvert);
@@ -424,7 +424,6 @@ HRESULT CChannelMixer::ProcessData(const BYTE* pData, long cbData, long* pcbData
     nOffset += framesToConvert * m_nOutFrameSize;
     m_pNextOutSample->SetActualDataLength(nOffset);
 
-    m_pNextOutSample->SetActualDataLength(nOffset);
     if (nOffset + m_nOutFrameSize > nSize)
     {
       hr = OutputNextSample();

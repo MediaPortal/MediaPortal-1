@@ -117,7 +117,7 @@ HRESULT CBitDepthAdapter::Cleanup()
 
 HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
-  if (pwfx == NULL)
+  if (!pwfx)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   if (FormatsEqual(pwfx, m_pInputFormat))
@@ -126,7 +126,7 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
     return S_OK;
   }
 
-  if (m_pNextSink == NULL)
+  if (!m_pNextSink)
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   bool bApplyChanges = (nApplyChangesDepth != 0);
@@ -267,8 +267,8 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   pSample->GetTime(&rtStart, &rtStop);
 
   // Detect discontinuity in stream timeline
- if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
- {
+  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
+  {
     Log("CBitDepthAdapter - stream discontinuity: %6.3f", (rtStart - m_rtNextIncomingSampleTime) / 10000000.0);
 
     m_rtInSampleTime = rtStart;
@@ -286,7 +286,7 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
     m_rtInSampleTime = rtStart;
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
-  REFERENCE_TIME duration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+  REFERENCE_TIME duration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
   m_rtNextIncomingSampleTime = rtStart + duration;
   m_nSampleNum++;
@@ -302,7 +302,7 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
   while (nOffset < cbSampleData && SUCCEEDED(hr))
   {
     long cbProcessed = 0;
-    hr = ProcessData(pData+nOffset, cbSampleData - nOffset, &cbProcessed);
+    hr = ProcessData(pData + nOffset, cbSampleData - nOffset, &cbProcessed);
     nOffset += cbProcessed;
   }
   return hr;
@@ -364,7 +364,7 @@ HRESULT CBitDepthAdapter::SetupConversion()
   return S_OK;
 }
 
-HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed)
+HRESULT CBitDepthAdapter::ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed)
 {
   if (!m_pfnConvert)
     return E_POINTER;
@@ -432,7 +432,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
       Log("BiDepthAdapter: Failed to get output buffer pointer: 0x%08x", hr);
       return hr;
     }
-    ASSERT(pOutData != NULL);
+    ASSERT(pOutData);
     pOutData += nOffset;
 
     int framesToConvert = min(cbData / m_nInFrameSize, (nSize - nOffset) / m_nOutFrameSize);
@@ -470,6 +470,7 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE *pData, long cbData, long *pcbD
   
   if (pcbDataProcessed)
     *pcbDataProcessed = bytesOutput;
+
   return hr;
 }
 
