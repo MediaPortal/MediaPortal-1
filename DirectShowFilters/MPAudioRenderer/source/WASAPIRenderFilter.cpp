@@ -332,9 +332,9 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   rtHWTime = m_pClock->GetHWTime() - m_rtHwStart;
 
   if (m_pSettings->m_bLogSampleTimes)
-    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtHWTime: %6.3f rtRefClock: %6.3f early: %6.3f ", 
+    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtHWTime: %6.3f rtRefClock: %6.3f early: %6.3f queue: %d", 
       rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, 
-      rtHWTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtHWTime) / 10000000.0);
+      rtHWTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtHWTime) / 10000000.0, m_inputQueue.size());
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
