@@ -46,9 +46,6 @@ public:
 
 // Internal implementation
 protected:
-  // Initialization
-  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
-  
   void ResetDithering();
 
   HRESULT SetupConversion();

@@ -20,8 +20,8 @@
 
 #include "alloctracing.h"
 
-#define AC3_OUT_BUFFER_SIZE   ((AC3_MAX_COMP_FRAME_SIZE + AC3_BITSTREAM_OVERHEAD) * 10)
-#define AC3_OUT_BUFFER_COUNT  20
+#define AC3_OUT_BUFFER_SIZE   ((AC3_MAX_COMP_FRAME_SIZE + AC3_BITSTREAM_OVERHEAD) * 5)
+#define AC3_OUT_BUFFER_COUNT  4
 
 template<class T> inline T odd2even(T x)
 {

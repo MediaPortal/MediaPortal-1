@@ -45,9 +45,6 @@ public:
 
 // Internal implementation
 protected:
-  // Initialization
-  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
-  
   HRESULT SetupConversion();
   HRESULT ProcessData(const BYTE* pData, long cbData, long* pcbDataProcessed);
 

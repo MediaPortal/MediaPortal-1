@@ -277,16 +277,6 @@ HRESULT CSampleRateConverter::EndOfStream()
   return CBaseAudioSink::EndOfStream();  
 }
 
-HRESULT CSampleRateConverter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties)
-{
-  properties->cBuffers = 4;
-  properties->cbBuffer = (0x10000);
-  properties->cbPrefix = 0;
-  properties->cbAlign = 8;
-
-  return S_OK;
-}
-
 HRESULT CSampleRateConverter::SetupConversion()
 {
   m_nFrameSize = m_pInputFormat->Format.nBlockAlign;

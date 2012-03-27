@@ -286,7 +286,7 @@ HRESULT CBitDepthAdapter::PutSample(IMediaSample *pSample)
     m_rtInSampleTime = rtStart;
 
   UINT nFrames = cbSampleData / m_pInputFormat->Format.nBlockAlign;
-  REFERENCE_TIME duration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+  REFERENCE_TIME duration = nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
   m_rtNextIncomingSampleTime = rtStart + duration;
   m_nSampleNum++;
@@ -313,11 +313,6 @@ HRESULT CBitDepthAdapter::EndOfStream()
   if (!m_bPassThrough)
     ProcessData(NULL, 0, NULL);
   return CBaseAudioSink::EndOfStream();  
-}
-
-HRESULT CBitDepthAdapter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties)
-{
-  return CBaseAudioSink::OnInitAllocatorProperties(properties); // for now use defaults
 }
 
 void CBitDepthAdapter::ResetDithering()

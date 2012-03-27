@@ -251,16 +251,6 @@ HRESULT CChannelMixer::EndOfStream()
   return CBaseAudioSink::EndOfStream();  
 }
 
-HRESULT CChannelMixer::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties)
-{
-  properties->cBuffers = 4;
-  properties->cbBuffer = (0x10000);
-  properties->cbPrefix = 0;
-  properties->cbAlign = 8;
-
-  return S_OK;
-}
-
 HRESULT CChannelMixer::SetupConversion(ChannelOrder chOrder)
 {
   m_nInFrameSize = m_pInputFormat->Format.nBlockAlign;

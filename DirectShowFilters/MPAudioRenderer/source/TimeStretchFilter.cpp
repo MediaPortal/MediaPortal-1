@@ -88,16 +88,6 @@ HRESULT CTimeStretchFilter::Init()
   return CQueuedAudioSink::Init();
 }
 
-HRESULT CTimeStretchFilter::OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties)
-{
-  properties->cBuffers = OUT_BUFFER_COUNT;
-  properties->cbBuffer = OUT_BUFFER_SIZE;
-  properties->cbPrefix = 0;
-  properties->cbAlign = 8;
-
-  return S_OK;  
-}
-
 HRESULT CTimeStretchFilter::Cleanup()
 {
   return CQueuedAudioSink::Cleanup();
@@ -427,7 +417,7 @@ DWORD CTimeStretchFilter::ThreadProc()
               if (pMediaBufferOut)
               {
                 int extraFrames = 0;
-                int maxBufferSamples = OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
+                int maxBufferSamples = DEFAULT_OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
                 if (nOutFrames > maxBufferSamples)
                 {
                   extraFrames = nOutFrames - maxBufferSamples;

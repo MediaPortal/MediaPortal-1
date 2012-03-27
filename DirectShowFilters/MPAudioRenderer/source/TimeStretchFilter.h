@@ -26,9 +26,6 @@
 #include "Globals.h"
 #include "SyncClock.h"
 
-#define OUT_BUFFER_SIZE   (0x25000)
-#define OUT_BUFFER_COUNT  (20)
-
 using namespace std;
 
 class CTimeStretchFilter : public CQueuedAudioSink, public ITimeStretch
@@ -120,11 +117,6 @@ public:
   //bool processSample(IMediaSample *pMediaSample);
 
 protected:
-
-  // Initialization
-  //HRESULT InitAllocator();
-  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES* properties);
-
   // Processing
   virtual DWORD ThreadProc();
 
