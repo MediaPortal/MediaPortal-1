@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -768,7 +769,9 @@ namespace MediaPortal.Configuration.Sections
       tbStudio.Text = movie.Studios;
       tbLanguage.Text = movie.Language;
       tbCountry.Text = movie.Country;
-      tbAdded.Text = "Added: " + movie.DateAdded;
+      DateTime added;
+      DateTime.TryParseExact(movie.DateAdded, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out added);
+      tbAdded.Text = "Added: " + added;
       //
       // Images (cover and fanart)
       //
@@ -2177,6 +2180,9 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
+      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+
       _progressDialog = new DlgProgress();
       _progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
       _progressDialog.TopMost = true;
@@ -2188,6 +2194,17 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Count = 1;
       _progressDialog.Show();
       if (DownloadFile(_grabberIndexFile, GrabberIndexUrl) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      _progressDialog.SetLine1("Downloading the VDBparser file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
       {
         _progressDialog.CloseProgress();
         return;

@@ -183,6 +183,11 @@ namespace MediaPortal.Video.Database
           string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"language\" TEXT DEFAULT ''";
           m_db.Execute(strSQL);
         }
+        if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "lastupdate") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"lastupdate\" timestamp DEFAULT '0001-01-01 00:00:00'";
+          m_db.Execute(strSQL);
+        }
         // Movie table
         bool watchedUpg = false;
         
@@ -464,7 +469,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "movie",
                                "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool, timeswatched integer, iduration integer)");
       DatabaseUtility.AddTable(m_db, "movieinfo",
-                               "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text, country text, language text)");
+                               "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strDirector text, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text, dateAdded timestamp, dateWatched timestamp, studios text, country text, language text, lastupdate timestamp)");
       DatabaseUtility.AddTable(m_db, "actorlinkmovie",
                                "CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer, strRole text)");
       DatabaseUtility.AddTable(m_db, "actors",
@@ -2139,6 +2144,8 @@ namespace MediaPortal.Video.Database
         strLine = details1.Language;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.Language = strLine;
+        // Last update
+        details1.LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         // add all genres
         string szGenres = details.Genre;
         ArrayList vecGenres = new ArrayList();
@@ -2181,15 +2188,19 @@ namespace MediaPortal.Video.Database
           // Insert new movie info - no date watched update
           strSQL =
             String.Format(
-              "insert into movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios, country, language) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}','{22}','{23}')",
+              "insert into movieinfo ( idMovie, idDirector, strPlotOutline, strPlot, strTagLine, strVotes, fRating, strCast, strCredits, iYear, strGenre, strPictureURL, strTitle, IMDBID, mpaa, runtime, iswatched, strUserReview, strFanartURL, strDirector, dateAdded, studios, country, language, lastupdate) values({0},{1},'{2}','{3}','{4}','{5}','{6}','{7}','{8}',{9},'{10}','{11}','{12}','{13}','{14}',{15},{16},'{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}')",
               lMovieId, lDirector, details1.PlotOutline,
               details1.Plot, details1.TagLine,
               details1.Votes, strRating,
               details1.Cast, details1.WritingCredits,
               details1.Year, details1.Genre,
               details1.ThumbURL, details1.Title,
-              details1.IMDBNumber, details1.MPARating, details1.RunTime, details1.Watched, details1.UserReview,
-              details1.FanartURL, details1.Director, details1.DateAdded, details1.Studios, details1.Country, details1.Language);
+              details1.IMDBNumber, details1.MPARating, 
+              details1.RunTime, details1.Watched, 
+              details1.UserReview, details1.FanartURL, 
+              details1.Director, details1.DateAdded, 
+              details1.Studios, details1.Country, 
+              details1.Language, details1.LastUpdate);
 
           //			Log.Error("dbs:{0}", strSQL);
           SQLiteResultSet result = m_db.Execute(strSQL);
@@ -2199,7 +2210,7 @@ namespace MediaPortal.Video.Database
           // Update movie info (no dateAdded update)
           strSQL =
             String.Format(
-              "update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} , strUserReview='{16}', strFanartURL='{17}' , strDirector ='{18}', dateWatched='{19}', studios = '{20}', country = '{21}', language = '{22}' where idMovie={23}",
+              "update movieinfo set idDirector={0}, strPlotOutline='{1}', strPlot='{2}', strTagLine='{3}', strVotes='{4}', fRating='{5}', strCast='{6}',strCredits='{7}', iYear={8}, strGenre='{9}', strPictureURL='{10}', strTitle='{11}', IMDBID='{12}', mpaa='{13}', runtime={14}, iswatched={15} , strUserReview='{16}', strFanartURL='{17}' , strDirector ='{18}', dateWatched='{19}', studios = '{20}', country = '{21}', language = '{22}' , lastupdate = '{23}' where idMovie={24}",
               lDirector, details1.PlotOutline,
               details1.Plot, details1.TagLine,
               details1.Votes, strRating,
@@ -2211,7 +2222,7 @@ namespace MediaPortal.Video.Database
               details1.Watched, details1.UserReview, 
               details1.FanartURL, details1.Director, 
               details1.DateWatched ,details1.Studios,
-              details1.Country, details1.Language,
+              details1.Country, details1.Language, details1.LastUpdate,
               lMovieId);
 
           //		Log.Error("dbs:{0}", strSQL);
@@ -2411,6 +2422,7 @@ namespace MediaPortal.Video.Database
         details.Studios = DatabaseUtility.Get(results, 0, "movieinfo.studios");
         details.Country = DatabaseUtility.Get(results, 0, "movieinfo.country");
         details.Language = DatabaseUtility.Get(results, 0, "movieinfo.language");
+        details.LastUpdate = DatabaseUtility.Get(results, 0, "movieinfo.lastupdate");
         
       }
       catch (Exception ex)
@@ -3260,6 +3272,7 @@ namespace MediaPortal.Video.Database
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
           details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
+          details.LastUpdate = DatabaseUtility.Get(results, iRow, "movieinfo.lastupdate");
           movies.Add(details);
         }
       }
@@ -3333,6 +3346,7 @@ namespace MediaPortal.Video.Database
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
           details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
+          details.LastUpdate = DatabaseUtility.Get(results, iRow, "movieinfo.lastupdate");
           movies.Add(details);
         }
       }
@@ -3408,6 +3422,7 @@ namespace MediaPortal.Video.Database
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
           details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
+          details.LastUpdate = DatabaseUtility.Get(results, iRow, "movieinfo.lastupdate");
           movies.Add(details);
         }
       }
@@ -3483,6 +3498,7 @@ namespace MediaPortal.Video.Database
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
           details.Language = DatabaseUtility.Get(results, iRow, "movieinfo.language");
+          details.LastUpdate = DatabaseUtility.Get(results, iRow, "movieinfo.lastupdate");
           movies.Add(details);
         }
       }
@@ -3623,6 +3639,7 @@ namespace MediaPortal.Video.Database
             movie.Studios= DatabaseUtility.Get(results, i, "movieinfo.studios");
             movie.Country = DatabaseUtility.Get(results, i, "movieinfo.country");
             movie.Language = DatabaseUtility.Get(results, i, "movieinfo.language");
+            movie.LastUpdate = DatabaseUtility.Get(results, i, "movieinfo.lastupdate");
             // FanArt search need this (for database GUI view)
             // Share view is handled in GUIVideoFIles class)
             ArrayList files = new ArrayList();

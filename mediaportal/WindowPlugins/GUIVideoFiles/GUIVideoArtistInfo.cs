@@ -64,6 +64,7 @@ namespace MediaPortal.GUI.Video
     
     private bool _forceRefreshAll; // Refresh all movies (context menu)
     private string _strBody = string.Empty; // Fetched html body for IMDB
+    private string[] _vdbParserStr;
     
     #endregion
 
@@ -121,6 +122,8 @@ namespace MediaPortal.GUI.Video
     {
       base.OnPageLoad();
       _forceRefreshAll = false;
+
+      _vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("GUIVideoArtistInfo");
 
       _currentActor.SetProperties();
       string biography = _currentActor.Biography;
@@ -866,16 +869,24 @@ namespace MediaPortal.GUI.Video
 
     private string GetPlotImdb(GUIListItem item)
     {
-      string strUrl = String.Format("http://m.imdb.com/title/{0}", ListItemMovieInfo(item).MovieImdbID);
-      //string regex = @"<h2>Storyline</h2>.*?<p>(?<moviePlotShort>.+?)</p>"; // Full IMDB.com
-      string regex = @"<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>";
-      
+      if (_vdbParserStr == null || _vdbParserStr.Length != 10)
+      {
+        return string.Empty;
+      }
+
+      //string strUrl = String.Format("http://m.imdb.com/title/{0}", ListItemMovieInfo(item).MovieImdbID);
+      string strUrl = String.Format(_vdbParserStr[0], ListItemMovieInfo(item).MovieImdbID);
+      //string regex = @"<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>";
+      string regex = _vdbParserStr[1];
+
       _strBody = string.Empty;
       string shortPlot = GetPlot(strUrl, regex, ref _strBody);
 
       // Full plot
-      strUrl = String.Format("http://m.imdb.com/title/{0}/plotsummary", ListItemMovieInfo(item).MovieImdbID);
-      regex = @"<section\sclass=""plot"".*?<p>(?<moviePlot>.*?)</p>";
+      //strUrl = String.Format("http://m.imdb.com/title/{0}/plotsummary", ListItemMovieInfo(item).MovieImdbID);
+      strUrl = String.Format(_vdbParserStr[2], ListItemMovieInfo(item).MovieImdbID);
+      //regex = @"<section\sclass=""plot"".*?<p>(?<moviePlot>.*?)</p>";
+      regex = _vdbParserStr[3];
       
       string plotBody = string.Empty;
       string fullPlot = GetPlot(strUrl, regex, ref plotBody);
@@ -892,18 +903,12 @@ namespace MediaPortal.GUI.Video
     private void GetExtraDataImdb(GUIListItem item)
     {
       //Update title/Year
-      string regex = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+      //string regex = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+      string regex = _vdbParserStr[4];
       string title = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieTitle"].Value.Trim();
-      int year = 0;
-      try
-      {
-        year = int.Parse(Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieYear"].Value.Trim());
+      int year = 1900;
       
-      }
-      catch (Exception)
-      {
-        Log.Error("GUIVieoArtistInfo - Get ExtraDataIMDB_Error parsing year: '{0}'", Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieYear"].Value);  
-      }
+      int.TryParse(Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieYear"].Value.Trim(), out year);
       
       if (title != string.Empty)
       {
@@ -918,7 +923,8 @@ namespace MediaPortal.GUI.Video
       }
       
       // Director
-      regex = @"(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref="".*?>(?<director>.*?)</a>";
+      //regex = @"(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref="".*?>(?<director>.*?)</a>";
+      regex = _vdbParserStr[5];
       string director = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["director"].Value.Trim();
       
       if (director == string.Empty)
@@ -928,7 +934,8 @@ namespace MediaPortal.GUI.Video
       ListItemMovieInfo(item).MovieCredits = director;
 
       // Genre
-      regex = @"<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>";
+      //regex = @"<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>";
+      regex = _vdbParserStr[6];
       string genre = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["genre"].Value.Trim();
       genre = genre.Replace(", ", " / ");
       
@@ -939,7 +946,8 @@ namespace MediaPortal.GUI.Video
       ListItemMovieInfo(item).MovieGenre = genre;
 
       // Rating
-      regex = @"<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>";
+      //regex = @"<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>";
+      regex = _vdbParserStr[7];
       string mpaaRating = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["rating"].Value.Trim();
       
       if (mpaaRating == string.Empty)
@@ -949,7 +957,8 @@ namespace MediaPortal.GUI.Video
       ListItemMovieInfo(item).MovieMpaaRating = mpaaRating;
 
       // Actors
-      regex = @"<div\sclass=""label"">\s+<div\sclass=""title"">\s+<a\shref="".*?>(?<actor>.*?)<";
+      //regex = @"<div\sclass=""label"">\s+<div\sclass=""title"">\s+<a\shref="".*?>(?<actor>.*?)<";
+      regex = _vdbParserStr[8];
       MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline);
       
       string strActor = string.Empty;
@@ -971,6 +980,11 @@ namespace MediaPortal.GUI.Video
 
     private string GetThumbImdb(GUIListItem item)
     {
+      if (_vdbParserStr == null || _vdbParserStr.Length != 10)
+      {
+        return string.Empty;
+      }
+
       string strBody = string.Empty;
       string thumb = string.Empty;
 
@@ -984,9 +998,10 @@ namespace MediaPortal.GUI.Video
       {
         strBody = _strBody;
       }
-      thumb = Regex.Match(strBody, @"<div\sclass=""poster"">\s+<a\shref=""(?<poster>.*?)""",
+      //thumb = Regex.Match(strBody, @"<div\sclass=""poster"">\s+<a\shref=""(?<poster>.*?)""",
+      //                            RegexOptions.Singleline).Groups["poster"].Value;
+      thumb = Regex.Match(strBody, _vdbParserStr[9],
                                   RegexOptions.Singleline).Groups["poster"].Value;
-      
       _strBody = string.Empty;
       return thumb;
     }

@@ -791,6 +791,9 @@ namespace MediaPortal.GUI.Video
               {
                 item.Label = pair.Key;
               }
+              SetLabel(item);
+              item.OnItemSelected += item_OnItemSelected;
+              facadeLayout.Add(item);
               itemfiltered.Add(item);
             }
           }
@@ -801,12 +804,12 @@ namespace MediaPortal.GUI.Video
         ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
         SetImdbThumbs(itemlist, selectDvdHandler);
 
-        foreach (GUIListItem item in itemlist)
-        {
-          SetLabel(item);
-          item.OnItemSelected += item_OnItemSelected;
-          facadeLayout.Add(item);
-        }
+        //foreach (GUIListItem item in itemlist)
+        //{
+        //  SetLabel(item);
+        //  item.OnItemSelected += item_OnItemSelected;
+        //  facadeLayout.Add(item);
+        //}
 
         _cachedItems = itemlist;
         _cachedDir = _currentFolder;

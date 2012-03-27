@@ -39,7 +39,7 @@ namespace MediaPortal.Util
     private string _fileFanArtDefault = string.Empty;
     private string _fileMovie = string.Empty;
     private string _fanartUrl = string.Empty;
-
+    
     public int Count
     {
       get { return _fanartList.Count; }
@@ -155,6 +155,13 @@ namespace MediaPortal.Util
 
       _fanartList.Clear();
 
+      string[] vdbParserStr = VdbParserString();
+
+      if (vdbParserStr == null || vdbParserStr.Length != 6)
+      {
+        return;
+      }
+
       try
       {
         string strAbsUrl = string.Empty;
@@ -163,28 +170,33 @@ namespace MediaPortal.Util
         // Firts try by IMDB id (100% accurate) then, if fail, by movie name (first result will be taken as defult fanart, no random)
         if ( imdbTT != string.Empty && imdbTT.StartsWith("tt"))
         {
-          tmdbUrl = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-                    imdbTT;
-          tmdbUrlWorkaround =
-            "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-            imdbTT;
+          //tmdbUrl = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+          //          imdbTT;
+          tmdbUrl = vdbParserStr[0] + imdbTT;
+          //tmdbUrlWorkaround =
+          //  "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+          //  imdbTT;
+          tmdbUrlWorkaround = vdbParserStr[1] + imdbTT;
         }
         else
         {
           if (strSearch == string.Empty)
           {
-            tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-                      title;
-            tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-                                title;
-
+            //tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+            //          title;
+            tmdbUrl = vdbParserStr[2] + title;
+            //tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+            //                    title;
+            tmdbUrlWorkaround = vdbParserStr[3] + title;
           }
           else
           {
-            tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-                      strSearch;
-            tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-                                strSearch;
+            //tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+            //          strSearch;
+            tmdbUrl = vdbParserStr[2] +strSearch;
+            //tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+            //                    strSearch;
+            tmdbUrlWorkaround = vdbParserStr[3] + strSearch;
           }
           random = false;
         }
@@ -199,7 +211,8 @@ namespace MediaPortal.Util
           }
         }
 
-        string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
+        //string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
+        string matchBackdrop = vdbParserStr[4];
 
         // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
         string configDir;
@@ -215,7 +228,8 @@ namespace MediaPortal.Util
             {
               string strBd = string.Empty;
               strBd = mBd.Groups["BackDrop"].Value;
-              if (strBd.Contains("original"))
+              
+              if (strBd.Contains(vdbParserStr[5]))
               {
                 // Hack the extension cause many files shows as png but in reality on TMDB they are jpg (bug in API)
                 int extfile = 0;
@@ -476,6 +490,12 @@ namespace MediaPortal.Util
         }
       }
       return strFName;
+    }
+
+    private string[] VdbParserString()
+    {
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("FanArt");
+      return vdbParserStr;
     }
 
     #endregion

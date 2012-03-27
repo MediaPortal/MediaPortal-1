@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using MediaPortal.Dialogs;
@@ -576,6 +577,7 @@ namespace MediaPortal.GUI.Video
       }
     }
     
+    /*
     protected override void SetLabels()
     {
       base.SetLabels();
@@ -585,6 +587,7 @@ namespace MediaPortal.GUI.Video
         ((VideoViewHandler)handler).SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
       }
     }
+    */
 
     protected override void OnQueueItem(int itemIndex)
     {
@@ -730,6 +733,9 @@ namespace MediaPortal.GUI.Video
         Util.Utils.SetDefaultIcons(listItem);
         listItem.OnItemSelected += OnItemSelected;
         itemlist.Add(listItem);
+        SetLabel(listItem);
+        ((VideoViewHandler)handler).SetLabel(listItem.AlbumInfoTag as IMDBMovie, ref listItem);
+        facadeLayout.Add(listItem);
       }
 
       foreach (IMDBMovie movie in movies)
@@ -782,23 +788,27 @@ namespace MediaPortal.GUI.Video
         VideoDatabase.GetmovieWatchedStatus(movie.ID, out percent, out timesWatched);
         item.Label3 = percent + "% #" + timesWatched;
         item.OnItemSelected += OnItemSelected;
-
+        SetLabel(item);
+        ((VideoViewHandler)handler).SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
+        facadeLayout.Add(item);
         itemlist.Add(item);
       }
       
       int itemIndex = 0;
 
-      foreach (GUIListItem item in itemlist)
-      {
-        facadeLayout.Add(item);
-      }
+      //foreach (GUIListItem item in itemlist)
+      //{
+      //  facadeLayout.Add(item);
+      //}
       // Set selected item history
       string viewFolder = SetItemViewHistory();
 
       string selectedItemLabel = m_history.Get(viewFolder);
 
       // Sort
-      OnSort();
+      facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
+      UpdateButtonStates();
+      SelectCurrentItem();
 
       if (string.IsNullOrEmpty(selectedItemLabel) && facadeLayout.SelectedListItem != null)
       {
@@ -930,8 +940,96 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
-
+    
     #endregion
+
+    private void SetLabel(GUIListItem item)
+    {
+      IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+
+      if (movie != null && movie.ID > 0 && !item.IsFolder)
+      {
+        if (CurrentSortMethod == VideoSort.SortMethod.Name)
+        {
+          //item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+
+          // Show real movie duration (from video file)
+          int mDuration = VideoDatabase.GetMovieDuration(movie.ID);
+
+          if (mDuration <= 0)
+          {
+            ArrayList mFiles = new ArrayList();
+            VideoDatabase.GetFilesForMovie(movie.ID, ref mFiles);
+            mDuration = GUIVideoFiles.MovieDuration(mFiles, true);
+
+            if (mDuration <= 0)
+            {
+              item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+            }
+            else
+            {
+              item.Label2 = Util.Utils.SecondsToHMString(mDuration);
+            }
+          }
+          else
+          {
+            item.Label2 = Util.Utils.SecondsToHMString(mDuration);
+          }
+        }
+        else if (CurrentSortMethod == VideoSort.SortMethod.Year)
+        {
+          item.Label2 = movie.Year.ToString();
+        }
+        else if (CurrentSortMethod == VideoSort.SortMethod.Rating)
+        {
+          item.Label2 = movie.Rating.ToString();
+        }
+        else if (CurrentSortMethod == VideoSort.SortMethod.Label)
+        {
+          item.Label2 = movie.DVDLabel.ToString();
+        }
+        else if (CurrentSortMethod == VideoSort.SortMethod.Size)
+        {
+          if (item.FileInfo != null)
+          {
+            item.Label2 = Util.Utils.GetSize(item.FileInfo.Length);
+          }
+          else
+          {
+            item.Label2 = Util.Utils.SecondsToHMString(movie.RunTime * 60);
+          }
+        }
+      }
+      else
+      {
+        string strSize1 = string.Empty, strDate = string.Empty;
+        if (item.FileInfo != null && !item.IsFolder)
+        {
+          strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
+        }
+        if (item.FileInfo != null && !item.IsFolder)
+        {
+          if (CurrentSortMethod == VideoSort.SortMethod.Modified)
+            strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
+                      item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          else
+            strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
+                      item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        }
+        if (CurrentSortMethod == VideoSort.SortMethod.Name)
+        {
+          item.Label2 = strSize1;
+        }
+        else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
+        {
+          item.Label2 = strDate;
+        }
+        else
+        {
+          item.Label2 = strSize1;
+        }
+      }
+    }
 
     private void DialogProtectedContent(GUIDialogMenu dlg)
     {

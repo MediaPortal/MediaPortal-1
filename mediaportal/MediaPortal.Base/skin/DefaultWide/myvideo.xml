@@ -143,9 +143,19 @@
             <hyperlink>703</hyperlink>
             <onright>50</onright>
             <onup>4755</onup>
-            <ondown>2</ondown>
-            <onright>50</onright>
+            <ondown>84623</ondown>            
           </control>
+          <control>
+            <description>Subtitles (SubCentral)</description>
+            <type>button</type>
+            <id>84623</id>
+            <label>287</label>
+            <hyperlink>84623</hyperlink>
+            <onright>50</onright>
+            <onup>9876</onup>
+            <ondown>2</ondown>            
+            <visible>!plugin.isenabled(SubCentral)</visible>
+          </control>          
         </control>
       </control>
     </control>
@@ -317,35 +327,11 @@
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
     </control>
     <control>
-      <description>Year Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>300</posX>
-      <posY>335</posY>
-      <label>201</label>
-      <font>font11</font>
-      <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
-      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Year value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>300</posX>
-      <posY>355</posY>
-      <width>253</width>
-      <label>#year</label>
-      <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
       <description>Runtime Label</description>
       <type>label</type>
       <id>1</id>
       <posX>300</posX>
-      <posY>386</posY>
+      <posY>335</posY>
       <label>299</label>
       <font>font11</font>
       <align>left</align>
@@ -357,12 +343,59 @@
       <type>label</type>
       <id>1</id>
       <posX>300</posX>
-      <posY>406</posY>
+      <posY>355</posY>
       <width>253</width>
       <label>#runtime</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
+      <description>Year Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>386</posY>
+      <label>201</label>
+      <font>font11</font>
+      <align>left</align>
+      <textcolor>FFB2D4F5</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
+      <description>Year value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>406</posY>
+      <width>253</width>
+      <label>#year</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>    
+    <control>
+      <description>Duration Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>390</posX>
+      <posY>386</posY>
+      <label>437</label>
+      <font>font11</font>
+      <align>left</align>
+      <textcolor>FFB2D4F5</textcolor>
+      <visible>facadeview.list + control.hasfocus(50) + string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
+      <description>Duration value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>390</posX>
+      <posY>406</posY>      
+      <label>#videoruntime</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <visible>facadeview.list + control.hasfocus(50)+string.equals(#hideinfo, False)</visible>      
     </control>
     <!-- ********** Media Info Logos (List View) ********** -->
     <control>
