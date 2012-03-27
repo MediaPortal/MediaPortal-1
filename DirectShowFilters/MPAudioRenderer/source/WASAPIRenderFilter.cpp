@@ -301,7 +301,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   if (!pSample)
     return S_FALSE;
 
-  REFERENCE_TIME rtTime = 0;
+  REFERENCE_TIME rtHWTime = 0;
   REFERENCE_TIME rtStop = 0;
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtDuration = 0;
@@ -329,14 +329,12 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   
   m_pClock->GetTime(&rtRefClock);
   rtRefClock -= m_rtStart;
-  rtTime = m_pClock->GetHWTime() - m_rtHwStart;
-
-  REFERENCE_TIME rtHWOffset = rtTime - rtRefClock;
+  rtHWTime = m_pClock->GetHWTime() - m_rtHwStart;
 
   if (m_pSettings->m_bLogSampleTimes)
-    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtTime: %6.3f rtRefClock: %6.3f early: %6.3f ", 
+    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtHWTime: %6.3f rtRefClock: %6.3f early: %6.3f ", 
       rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, 
-      rtTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtTime) / 10000000.0);
+      rtHWTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtHWTime) / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
@@ -347,29 +345,28 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
   m_rtNextSampleTime = rtStop;
 
-  REFERENCE_TIME timeStamp = rtStart - rtTime;
+  REFERENCE_TIME offsetDelay = 0;
+  if (sampleOffset > 0)
+    offsetDelay = sampleOffset / m_pInputFormat->Format.nBlockAlign * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
-  if ((timeStamp > 0 && m_nSampleNum == 0) || discontinuityDetected)
+  *pDueTime = rtStart + offsetDelay;
+
+  if (*pDueTime < rtHWTime - Latency())
   {
-    REFERENCE_TIME offsetDelay = 0;
-    if (sampleOffset > 0)
-      offsetDelay = sampleOffset / m_pInputFormat->Format.nBlockAlign * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+    // TODO implement partial sample dropping
+    Log("   dropping late sample - pDueTime: %6.3f rtHWTime: %6.3f", *pDueTime / 10000000.0, rtHWTime / 10000000.0);
+    m_nSampleNum = 0;
 
-    *pDueTime = timeStamp + offsetDelay + rtHWOffset;
+    return MPAR_S_DROP_SAMPLE;
+  }
+  else if ((m_nSampleNum == 0 && *pDueTime > rtHWTime - Latency()) || discontinuityDetected)
+  {
     m_nSampleNum++;
 
     if (m_pSettings->m_bLogSampleTimes)
       Log("   MPAR_S_WAIT_RENDER_TIME - %6.3f", *pDueTime / 10000000.0);
 
     return MPAR_S_WAIT_RENDER_TIME;
-  }
-  else if (timeStamp < 0)
-  {
-    // TODO implement partial sample dropping
-    Log("   sample late - dropping sample: %6.3f rtTime: %6.3f", rtStart / 10000000.0, rtTime / 10000000.0);
-    m_nSampleNum = 0;
-
-    return MPAR_S_DROP_SAMPLE;
   }
 
   m_nSampleNum++;
@@ -379,13 +376,12 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
 void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence)
 {
-  REFERENCE_TIME rtTime = m_pClock->GetHWTime();
-  rtTime -= m_rtHwStart;
-
-  REFERENCE_TIME rtSilenceDuration = *pDueTime - rtTime;
+  REFERENCE_TIME rtHWTime = m_pClock->GetHWTime() - m_rtHwStart;
+  REFERENCE_TIME rtSilenceDuration = *pDueTime - rtHWTime;
 
   if (m_pSettings->m_bLogSampleTimes)
-    Log("   calculateSilence: %6.3f", rtSilenceDuration / 10000000.0);
+    Log("   calculateSilence: %6.3f pDueTime: %6.3f rtHWTime: %6.3f", 
+      rtSilenceDuration / 10000000.0, *pDueTime / 10000000.0, rtHWTime / 10000000.0);
 
   if (rtSilenceDuration > 0)
   {
@@ -525,12 +521,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   bool sampleProcessed = false;
 
   REFERENCE_TIME dueTime = 0;
+  REFERENCE_TIME maxSampleWaitTime = Latency() / 20000;
 
   HRESULT hr = S_FALSE;
 
   m_nSampleNum = 0;
 
-  hr = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents, &m_dwSampleWaitObjects);
+  hr = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, maxSampleWaitTime, &m_hSampleEvents, &m_dwSampleWaitObjects);
   if (FAILED(hr))
     Log("CWASAPIRenderFilter::Render thread - failed to get 1st sample: (0x%08x)", hr);
 
@@ -610,7 +607,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
           if (dataLeftInSample == 0 || OOBCommandOnly)
           {
             m_csResources.Unlock();
-            HRESULT result = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, MAX_SAMPLE_WAIT_TIME, &m_hSampleEvents,
+            HRESULT result = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, maxSampleWaitTime, &m_hSampleEvents,
                                                     &m_dwSampleWaitObjects, OOBCommandOnly);
             m_csResources.Lock();
 
@@ -652,7 +649,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               writeSilence = 0;
               m_state = StateRunning;
               if (!m_pCurrentSample)
+              {
+                dataLeftInSample = 0;
                 goto fetchSample;
+              }
             }
           }
 
@@ -677,6 +677,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             if (schedulingHR == MPAR_S_DROP_SAMPLE)
             {
               m_pCurrentSample.Release();
+              dataLeftInSample = 0;
               goto fetchSample;
             }
             else if (schedulingHR == MPAR_S_WAIT_RENDER_TIME)

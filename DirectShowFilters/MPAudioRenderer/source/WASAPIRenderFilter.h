@@ -27,7 +27,6 @@
 #define MPAR_S_RENDER_SAMPLE    ((HRESULT)0x00040203)
 #define MPAR_S_WAIT_RENDER_TIME ((HRESULT)0x00040204)
 #define CLOCK_DATA_SIZE 10
-#define MAX_SAMPLE_WAIT_TIME 10 // 10 ms
 
 using namespace std;
 
