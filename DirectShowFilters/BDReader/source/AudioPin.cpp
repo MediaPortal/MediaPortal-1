@@ -706,6 +706,14 @@ HRESULT CAudioPin::ChangeRate()
   return S_OK;
 }
 
+STDMETHODIMP CAudioPin::SetRate(double dRate)
+{
+  if (dRate != 1.0)
+    return VFW_E_UNSUPPORTED_AUDIO;  
+  else
+    return S_OK;
+}
+
 STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG* pCurrent)
 {
   //LogDebug("aud: GetCurrentPosition");

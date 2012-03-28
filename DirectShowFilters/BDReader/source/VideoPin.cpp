@@ -783,6 +783,14 @@ HRESULT CVideoPin::ChangeRate()
   return S_OK;
 }
 
+STDMETHODIMP CVideoPin::SetRate(double dRate)
+{
+  if (dRate != 1.0)
+    return VFW_E_UNSUPPORTED_AUDIO;  
+  else
+    return S_OK;
+}
+
 STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
 {
   //LogDebug("vid:GetCurrentPosition");

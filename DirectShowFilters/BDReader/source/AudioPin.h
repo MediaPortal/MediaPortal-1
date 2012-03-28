@@ -72,6 +72,7 @@ public:
   HRESULT ChangeStart();
   HRESULT ChangeStop();
   HRESULT ChangeRate();
+  STDMETHODIMP SetRate(double dRate);
   STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG* pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest);
   STDMETHODIMP GetDuration(LONGLONG* pDuration);
@@ -81,6 +82,8 @@ public:
   HRESULT DeliverEndFlush();
   HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
   bool IsConnected();
+
+  
 
   void SetInitialMediaType(const CMediaType* pmt);
 

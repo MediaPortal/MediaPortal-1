@@ -50,6 +50,7 @@ public:
   HRESULT ChangeStart();
   HRESULT ChangeStop();
   HRESULT ChangeRate();
+  STDMETHODIMP SetRate(double dRate);
   HRESULT OnThreadStartPlay();
   STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
