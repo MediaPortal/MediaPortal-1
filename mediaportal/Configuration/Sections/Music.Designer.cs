@@ -71,6 +71,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btAsioDeviceSettings = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPageWASAPIPLayerSettings = new System.Windows.Forms.TabPage();
+      this.WasapiExclusiveModeCkBox = new System.Windows.Forms.CheckBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -123,7 +124,6 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
-      this.WasapiExclusiveModeCkBox = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -289,7 +289,7 @@ namespace MediaPortal.Configuration.Sections
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
       this.StreamOutputLevelNud.Value = new decimal(new int[] {
-            85,
+            100,
             0,
             0,
             0});
@@ -318,9 +318,9 @@ namespace MediaPortal.Configuration.Sections
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 84);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
-      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(97, 17);
+      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(128, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
-      this.FadeOnStartStopChkbox.Text = "Fade-in on start";
+      this.FadeOnStartStopChkbox.Text = "Fade-in on start / stop";
       this.FadeOnStartStopChkbox.UseVisualStyleBackColor = true;
       // 
       // tabPageASIOPlayerSettings
@@ -406,6 +406,17 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageWASAPIPLayerSettings.TabIndex = 2;
       this.tabPageWASAPIPLayerSettings.Text = "WasAPI";
       this.tabPageWASAPIPLayerSettings.UseVisualStyleBackColor = true;
+      // 
+      // WasapiExclusiveModeCkBox
+      // 
+      this.WasapiExclusiveModeCkBox.AutoSize = true;
+      this.WasapiExclusiveModeCkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.WasapiExclusiveModeCkBox.Location = new System.Drawing.Point(21, 53);
+      this.WasapiExclusiveModeCkBox.Name = "WasapiExclusiveModeCkBox";
+      this.WasapiExclusiveModeCkBox.Size = new System.Drawing.Size(161, 17);
+      this.WasapiExclusiveModeCkBox.TabIndex = 3;
+      this.WasapiExclusiveModeCkBox.Text = "Use WasApi Exclusive Mode";
+      this.WasapiExclusiveModeCkBox.UseVisualStyleBackColor = true;
       // 
       // mpLabel5
       // 
@@ -995,17 +1006,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.TabIndex = 6;
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
-      // 
-      // WasapiExclusiveModeCkBox
-      // 
-      this.WasapiExclusiveModeCkBox.AutoSize = true;
-      this.WasapiExclusiveModeCkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.WasapiExclusiveModeCkBox.Location = new System.Drawing.Point(21, 53);
-      this.WasapiExclusiveModeCkBox.Name = "WasapiExclusiveModeCkBox";
-      this.WasapiExclusiveModeCkBox.Size = new System.Drawing.Size(161, 17);
-      this.WasapiExclusiveModeCkBox.TabIndex = 3;
-      this.WasapiExclusiveModeCkBox.Text = "Use WasApi Exclusive Mode";
-      this.WasapiExclusiveModeCkBox.UseVisualStyleBackColor = true;
       // 
       // Music
       // 
