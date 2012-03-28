@@ -108,6 +108,9 @@ namespace MediaPortal.MusicPlayer.BASS
     private WASAPIPROC _wasapiProc = null;
     private bool _wasApiExclusiveMode = false;
     private BASS_WASAPI_DEVICEINFO _wasapiDeviceInfo = null;
+    private bool _wasapiSwitchedToMixed = false;
+    private int _wasapiMixedChans = 0;
+    private int _wasapiMixedFreq = 0;
 
     private List<int> DecoderPluginHandles = new List<int>();
 
@@ -1547,6 +1550,11 @@ namespace MediaPortal.MusicPlayer.BASS
               frequency = _wasapiDeviceInfo.mixfreq;
               chans = _wasapiDeviceInfo.mixchans;
 
+              // Save the original frequency, so that we don't need to recreate the mixer every time
+              _wasapiSwitchedToMixed = true;
+              _wasapiMixedChans = stream.ChannelInfo.chans;
+              _wasapiMixedFreq = stream.ChannelInfo.freq;
+
               // Recreate Mixer with new value
               Log.Debug("BASS: Creating new {0} channel mixer for frequency {1}", chans, frequency);
               _mixer = BassMix.BASS_Mixer_StreamCreate(frequency, chans, mixerFlags);
@@ -1555,6 +1563,9 @@ namespace MediaPortal.MusicPlayer.BASS
             else
             {
               initFlags |= BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
+              _wasapiSwitchedToMixed = false;
+              _wasapiMixedChans = 0;
+              _wasapiMixedFreq = 0;
             }
           }
 
@@ -1685,12 +1696,15 @@ namespace MediaPortal.MusicPlayer.BASS
           BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer);
           if (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans)
           {
-            // The new stream has a different frequency or number of channels
-            // We need a new mixer
-            if (!CreateMixer(stream))
+            if (!_wasapiSwitchedToMixed || stream.ChannelInfo.freq != _wasapiMixedFreq || stream.ChannelInfo.chans != _wasapiMixedChans)
             {
-              Log.Error("BASS: Could not create Mixer. Aborting playback.");
-              return false;
+              // The new stream has a different frequency or number of channels
+              // We need a new mixer
+              if (!CreateMixer(stream))
+              {
+                Log.Error("BASS: Could not create Mixer. Aborting playback.");
+                return false;
+              }
             }
           }
         }
@@ -1896,12 +1910,12 @@ namespace MediaPortal.MusicPlayer.BASS
                                           Config.CrossFadeIntervalMs);
 
           // Wait until the slide is done
-          // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 500 ms
+          // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 100 ms
           DateTime start = DateTime.Now;
           while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
           {
             System.Threading.Thread.Sleep(20);
-            if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 500)
+            if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 100)
             {
               break;
             }
