@@ -1572,6 +1572,18 @@ namespace MediaPortal.MusicPlayer.BASS
           if (BassWasapi.BASS_WASAPI_Init(_wasapiDeviceNumber, frequency, chans,
                                       initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
           {
+            BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
+
+            Log.Info("BASS: Wasapi Device successfully initialised");
+            Log.Info("BASS: ---------------------------------------------");
+            Log.Info("BASS: Buffer Length: {0}", wasapiInfo.buflen);
+            Log.Info("BASS: Channels: {0}", wasapiInfo.chans);
+            Log.Info("BASS: Frequency: {0}", wasapiInfo.freq);
+            Log.Info("BASS: Format: {0}", wasapiInfo.format.ToString());
+            Log.Info("BASS: InitFlags: {0}", wasapiInfo.initflags.ToString());
+            Log.Info("BASS: Exclusive: {0}", wasapiInfo.IsExclusive.ToString());
+            Log.Info("BASS: ---------------------------------------------");
+
             BassWasapi.BASS_WASAPI_SetVolume(true, (float)Config.StreamVolume / 100f);
             BassWasapi.BASS_WASAPI_Start();
             result = true;
