@@ -104,9 +104,10 @@ namespace MediaPortal.MusicPlayer.BASS
     private ASIOPROC _asioProc = null;
     private int _asioDeviceNumber = -1;
 
-    private BassWasapiHandler _wasapiHandler = null;
     private int _wasapiDeviceNumber = -1;
+    private WASAPIPROC _wasapiProc = null;
     private bool _wasApiExclusiveMode = false;
+    private BASS_WASAPI_DEVICEINFO _wasapiDeviceInfo = null;
 
     private List<int> DecoderPluginHandles = new List<int>();
 
@@ -867,6 +868,8 @@ namespace MediaPortal.MusicPlayer.BASS
       Log.Info("BASS: Using WasAPI device: {0}", Config.SoundDevice);
       BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
 
+      _wasapiProc = new WASAPIPROC(WasApiCallback);
+
       int i = 0;
       // Check if the WASAPI device read is amongst the one retrieved
       for (i = 0; i < wasapiDevices.Length; i++)
@@ -881,16 +884,16 @@ namespace MediaPortal.MusicPlayer.BASS
       if (_wasapiDeviceNumber > -1)
       {
         // Get some information about the Device
-        BASS_WASAPI_DEVICEINFO info = wasapiDevices[i];
-        if (info != null)
+        _wasapiDeviceInfo = wasapiDevices[i];
+        if (_wasapiDeviceInfo != null)
         {
           Log.Info("BASS: Device Information");
           Log.Info("BASS: ---------------------------------------------");
-          Log.Info("BASS: Name: {0}", info.name);
-          Log.Info("BASS: Id: {0}", info.id);
-          Log.Info("BASS: Type: {0}", info.type.ToString());
-          Log.Info("BASS: Shared Mode Channels: {0}", info.mixchans);
-          Log.Info("BASS: Shared Mode Samplerate: {0}", info.mixfreq);
+          Log.Info("BASS: Name: {0}", _wasapiDeviceInfo.name);
+          Log.Info("BASS: Id: {0}", _wasapiDeviceInfo.id);
+          Log.Info("BASS: Type: {0}", _wasapiDeviceInfo.type.ToString());
+          Log.Info("BASS: Shared Mode Channels: {0}", _wasapiDeviceInfo.mixchans);
+          Log.Info("BASS: Shared Mode Samplerate: {0}", _wasapiDeviceInfo.mixfreq);
           Log.Info("BASS: ---------------------------------------------");
 
           result = true;
@@ -919,9 +922,24 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private int AsioCallback(bool input, int channel, IntPtr buffer, int length, IntPtr user)
     {
-      // We can simply use the bass method to get some data from a decoding channel 
-      // and store it to the asio buffer in the same moment...
       return Bass.BASS_ChannelGetData(user.ToInt32(), buffer, length);
+    }
+
+    /// <summary>
+    /// Callback from WasApi to deliver data from Decoding channel
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    private int WasApiCallback(IntPtr buffer, int length, IntPtr user)
+    {
+      if (_mixer == 0)
+      {
+        return 0;
+      }
+
+      return Bass.BASS_ChannelGetData(_mixer, buffer, length);
     }
 
     /// <summary>
@@ -1045,9 +1063,9 @@ namespace MediaPortal.MusicPlayer.BASS
         BassAsio.BASS_ASIO_Free();
       }
 
-      if (_wasapiHandler != null)
+      if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        _wasapiHandler.Dispose();
+        BassWasapi.BASS_WASAPI_Free();
       }
 
       if (_mixer != 0)
@@ -1096,9 +1114,9 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
 
-        if (_wasapiHandler != null)
+        if (Config.MusicPlayer == AudioPlayer.WasApi)
         {
-          _wasapiHandler.Dispose();
+          BassWasapi.BASS_WASAPI_Free();
         }
 
         if (_mixer != 0)
@@ -1437,17 +1455,18 @@ namespace MediaPortal.MusicPlayer.BASS
     /// Create a Mixer Channel with corresponding channel values
     /// </summary>
     /// <param name="stream"></param>
-    void CreateMixer(MusicStream stream)
+    private bool CreateMixer(MusicStream stream)
     {
+      bool result = false;
+
       if (_asioHandler != null)
       {
         _asioHandler.Stop();
         _asioHandler.Dispose();
       }
-      else if (_wasapiHandler != null)
+      else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        _wasapiHandler.Stop();
-        _wasapiHandler.Dispose();
+        BassWasapi.BASS_WASAPI_Free();
       }
 
       BASSFlag mixerFlags = BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_MIXER_NORAMPIN;
@@ -1462,66 +1481,99 @@ namespace MediaPortal.MusicPlayer.BASS
       _mixer = BassMix.BASS_Mixer_StreamCreate(stream.ChannelInfo.freq, stream.ChannelInfo.chans, mixerFlags);
       Bass.BASS_ChannelPlay(_mixer, false);
 
-      if (Config.MusicPlayer == AudioPlayer.Asio)
+      switch (Config.MusicPlayer)
       {
-        // now setup ASIO manually
-        _asioHandler = new BassAsioHandler();
-        _asioHandler.AssignOutputChannel(_mixer);
-        _asioHandler.Pan = Config.AsioBalance;
-        _asioHandler.Volume = (float)Config.StreamVolume / 100f;
+        case AudioPlayer.Bass:
+        case AudioPlayer.DShow:
 
-        _asioProc = new ASIOPROC(AsioCallback);
+          result = true;
+          
+          break;
 
-        // enable 1st output channel...(0=first)
-        BassAsio.BASS_ASIO_ChannelEnable(false, 0, _asioProc, new IntPtr(_mixer));
+        case AudioPlayer.Asio:
 
-        // and join the next channels to it
-        for (int i = 1; i < stream.ChannelInfo.chans; i++)
-        {
-          BassAsio.BASS_ASIO_ChannelJoin(false, i, 0);
-        }
+          // setup ASIO manually
+          _asioHandler = new BassAsioHandler();
+          _asioHandler.AssignOutputChannel(_mixer);
+          _asioHandler.Pan = Config.AsioBalance;
+          _asioHandler.Volume = (float)Config.StreamVolume / 100f;
 
-        // since we joined the channels, the next commands will apply to all channles joined
-        // so setting the values to the first channels changes them all automatically
-        // set the source format (float, as the decoding channel is)
-        BassAsio.BASS_ASIO_ChannelSetFormat(false, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT);
+          _asioProc = new ASIOPROC(AsioCallback);
 
-        // set the source rate
-        BassAsio.BASS_ASIO_ChannelSetRate(false, 0, (double)stream.ChannelInfo.freq);
-        // try to set the device rate too (saves resampling)
-        BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq);
+          // enable 1st output channel...(0=first)
+          BassAsio.BASS_ASIO_ChannelEnable(false, 0, _asioProc, new IntPtr(_mixer));
 
-        // and start playing it...start output using default buffer/latency
-        _asioHandler.Start(0);
-      }
-      else if (Config.MusicPlayer == AudioPlayer.WasApi)
-      {
-        bool initMode = _wasApiExclusiveMode;
-        // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
-        if (_wasApiExclusiveMode)
-        {
-          BASSWASAPIFormat wasapiFormat = BassWasapi.BASS_WASAPI_CheckFormat(_wasapiDeviceNumber,
-                                                                             stream.ChannelInfo.freq,
-                                                                             stream.ChannelInfo.chans,
-                                                                             BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE);
-
-          if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
+          // and join the next channels to it
+          for (int i = 1; i < stream.ChannelInfo.chans; i++)
           {
-            Log.Warn("BASS: Stream {0} can't be played in exclusive mode. Switch to shared mode.");
-            initMode = false;
+            BassAsio.BASS_ASIO_ChannelJoin(false, i, 0);
           }
-        }
 
-        // Setup WasApi Handler
-        _wasapiHandler = new BassWasapiHandler(_wasapiDeviceNumber, initMode, stream.ChannelInfo.freq,
-                                               stream.ChannelInfo.chans, 0f, 0f);
+          // since we joined the channels, the next commands will apply to all channles joined
+          // so setting the values to the first channels changes them all automatically
+          // set the source format (float, as the decoding channel is)
+          BassAsio.BASS_ASIO_ChannelSetFormat(false, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT);
 
-        _wasapiHandler.AddOutputSource(_mixer, BASSFlag.BASS_DEFAULT);
-        _wasapiHandler.Volume = (float)Config.StreamVolume / 100f;
+          // set the source rate
+          BassAsio.BASS_ASIO_ChannelSetRate(false, 0, (double)stream.ChannelInfo.freq);
+          // try to set the device rate too (saves resampling)
+          BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq);
 
-        _wasapiHandler.Init();
-        _wasapiHandler.Start();
+          // and start playing it...start output using default buffer/latency
+          _asioHandler.Start(0);
+          result = true;
+
+          break;
+
+        case AudioPlayer.WasApi:
+
+          BASSWASAPIInit initFlags = BASSWASAPIInit.BASS_WASAPI_AUTOFORMAT;
+
+          int frequency = stream.ChannelInfo.freq;
+          int chans = stream.ChannelInfo.chans;
+
+          // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
+          if (_wasApiExclusiveMode)
+          {
+            BASSWASAPIFormat wasapiFormat = BassWasapi.BASS_WASAPI_CheckFormat(_wasapiDeviceNumber,
+                                                                               stream.ChannelInfo.freq,
+                                                                               stream.ChannelInfo.chans,
+                                                                               BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE);
+
+            if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
+            {
+              Log.Warn("BASS: Stream can't be played in exclusive mode. Switch to shared mode.");
+              initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED;
+              frequency = _wasapiDeviceInfo.mixfreq;
+              chans = _wasapiDeviceInfo.mixchans;
+
+              // Recreate Mixer with new value
+              Log.Debug("BASS: Creating new {0} channel mixer for frequency {1}", chans, frequency);
+              _mixer = BassMix.BASS_Mixer_StreamCreate(frequency, chans, mixerFlags);
+              Bass.BASS_ChannelPlay(_mixer, false);
+            }
+            else
+            {
+              initFlags |= BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
+            }
+          }
+
+          if (BassWasapi.BASS_WASAPI_Init(_wasapiDeviceNumber, frequency, chans,
+                                      initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
+          {
+            BassWasapi.BASS_WASAPI_SetVolume(true, (float)Config.StreamVolume / 100f);
+            BassWasapi.BASS_WASAPI_Start();
+            result = true;
+          }
+          else
+          {
+            Log.Error("BASS: Couldn't init WASAPI device. Error: {0}", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+          }
+
+          break;
       }
+
+      return result;
     }
 
     #endregion
@@ -1618,7 +1670,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (_mixer == 0)
         {
-          CreateMixer(stream);
+          if (!CreateMixer(stream))
+          {
+            Log.Error("BASS: Could not create Mixer. Aborting playback.");
+            return false;
+          }
         }
         else
         {
@@ -1627,7 +1683,11 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             // The new stream has a different frequency or number of channels
             // We need a new mixer
-            CreateMixer(stream);
+            if (!CreateMixer(stream))
+            {
+              Log.Error("BASS: Could not create Mixer. Aborting playback.");
+              return false;
+            }
           }
         }
 
@@ -1659,6 +1719,10 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           BassAsio.BASS_ASIO_Stop();
           playbackStarted = BassAsio.BASS_ASIO_Start(0);
+        }
+        else if (Config.MusicPlayer == AudioPlayer.WasApi && !BassWasapi.BASS_WASAPI_IsStarted())
+        {
+          playbackStarted = BassWasapi.BASS_WASAPI_Start();
         }
         else
         {
@@ -1821,8 +1885,16 @@ namespace MediaPortal.MusicPlayer.BASS
                                           Config.CrossFadeIntervalMs);
 
           // Wait until the slide is done
+          // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 500 ms
+          DateTime start = DateTime.Now;
           while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
+          {
             System.Threading.Thread.Sleep(20);
+            if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 500)
+            {
+              break;
+            }
+          }
         }
 
         if (_asioHandler != null)
@@ -1833,12 +1905,13 @@ namespace MediaPortal.MusicPlayer.BASS
           _asioHandler = null;
         }
 
-        if (_wasapiHandler != null)
+        // hwahrmann: The WASAPI Free never returns on my system. Leave it commented until the root cause is found
+        /*
+        if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
         {
-          _wasapiHandler.Stop();
-          _wasapiHandler.Dispose();
-          _wasapiHandler = null;
+          BassWasapi.BASS_WASAPI_Free();
         }
+        */
 
         Bass.BASS_ChannelStop(_mixer);
         _mixer = 0;
