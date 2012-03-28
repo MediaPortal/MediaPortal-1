@@ -56,7 +56,7 @@ CDVBSub::CDVBSub( LPUNKNOWN pUnk, HRESULT *phr, CCritSec *pLock ) :
   GetLogFile(filename);
   ::DeleteFile(filename);
 
-  LogDebug("-------------- MediaPortal DVBSub3.ax version 1.0. ----------------");
+  LogDebug("-------------- MediaPortal DVBSub3.ax version 1.0.1 ----------------");
   
   // Create subtitle decoder
   m_pSubDecoder = new CDVBSubDecoder();
@@ -382,7 +382,7 @@ STDMETHODIMP CDVBSub::SetHDMV( bool pHDMV )
 //
 void CDVBSub::NotifySubtitle()
 {
-  LogDebugMediaPosition( "Subtitle arrived - media position" );  
+  //LogDebugMediaPosition( "Subtitle arrived - media position" );  
 
   // Calculate the time stamp
   CSubtitle* pSubtitle( NULL );
