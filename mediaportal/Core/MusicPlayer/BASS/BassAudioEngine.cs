@@ -1613,6 +1613,10 @@ namespace MediaPortal.MusicPlayer.BASS
             {
               result = _asioHandler.Pause(false);   // Continue playback of Paused stream
             }
+            else if (Config.MusicPlayer == AudioPlayer.WasApi)
+            {
+              BassWasapi.BASS_WASAPI_Start();
+            }
 
             if (result)
             {
@@ -1830,7 +1834,10 @@ namespace MediaPortal.MusicPlayer.BASS
             _asioHandler.Pause(false);
             BassAsio.BASS_ASIO_ChannelReset(false, 0, BASSASIOReset.BASS_ASIO_RESET_PAUSE);
           }
-
+          else if (Config.MusicPlayer == AudioPlayer.WasApi)
+          {
+            BassWasapi.BASS_WASAPI_Start();
+          }
         }
 
         else
@@ -1854,6 +1861,10 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             _asioHandler.Pause(true);
             BassAsio.BASS_ASIO_ChannelPause(false, 0);
+          }
+          else if (Config.MusicPlayer == AudioPlayer.WasApi)
+          {
+            BassWasapi.BASS_WASAPI_Stop(true);
           }
         }
 
