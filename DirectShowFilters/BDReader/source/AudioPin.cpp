@@ -394,7 +394,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         if (hasTimestamp && m_dRateSeeking == 1.0)
         {
-          if (m_bDiscontinuity || buffer->bDiscontinuity)
+          if (m_bDiscontinuity || buffer->bDiscontinuity || buffer->pmt)
           {
             LogDebug("aud: set discontinuity");
             pSample->SetDiscontinuity(true);
