@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.Library
         _images[index].RepeatBehavior = _repeatBehavior;
         _images[index].DiffuseFileName = _diffuseFileName;
         _images[index].MaskFileName = _maskFileName;
-        _images[index].FlipY = _flipX;
+        _images[index].FlipX = _flipX;
         _images[index].FlipY = _flipY;
         _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
                                  _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners,
