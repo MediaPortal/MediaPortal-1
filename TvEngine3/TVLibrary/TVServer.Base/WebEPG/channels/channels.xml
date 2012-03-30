@@ -3036,8 +3036,8 @@
     <entry name="FullName">EinsPlus</entry>
   </section>
   <section name="758">
-    <entry name="ChannelID">plus@tv4.se</entry>
-    <entry name="FullName">TV4 Plus</entry>
+    <entry name="ChannelID">sjuan@tv4.se</entry>
+    <entry name="FullName">Sjuan</entry>
   </section>
   <section name="759">
     <entry name="ChannelID">plus@uk.startv.com</entry>
@@ -5468,8 +5468,8 @@
 	<entry name="FullName">Toon Disney</entry>
   </section>
     <section name="1366">
-    <entry name="ChannelID">playhouse@disney.no</entry>
-	<entry name="FullName">Disney Playhouse</entry>
+    <entry name="ChannelID">junior@disney.go.com</entry>
+	<entry name="FullName">Disney Junior</entry>
   </section>
   <section name="1367">
     <entry name="ChannelID">sportn@viasat.no</entry>

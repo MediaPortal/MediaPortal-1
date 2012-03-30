@@ -366,15 +366,6 @@ namespace TvPlugin
 
     #region Public methods
 
-    /// <summary>
-    /// Sets last failed channel
-    /// </summary>
-    /// <param name="failedChannel"></param>
-    public void SetFailingChannel(Channel failedChannel)
-    {
-      m_currentChannel = failedChannel;
-    }
-
     public void ZapNow()
     {
       m_zaptime = DateTime.Now.AddSeconds(-1);
