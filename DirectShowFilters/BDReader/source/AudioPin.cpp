@@ -210,16 +210,79 @@ void CAudioPin::SetInitialMediaType(const CMediaType* pmt)
   m_mtInitial = *pmt;
 }
 
-void CAudioPin::CreateEmptySample(IMediaSample *pSample)
+HRESULT CAudioPin::DoBufferProcessingLoop()
 {
-  if (pSample)
+  Command com;
+  OnThreadStartPlay();
+
+  do 
   {
-    pSample->SetTime(NULL, NULL);
-    pSample->SetActualDataLength(0);
-    pSample->SetSyncPoint(false);
-  }
-  else
-    LogDebug("aud: CreateEmptySample() invalid sample!");
+    while (!CheckRequest(&com)) 
+    {
+      IMediaSample* pSample;
+
+      HRESULT hr = GetDeliveryBuffer(&pSample, NULL, NULL, 0);
+      if (FAILED(hr)) 
+      {
+        Sleep(1);
+        continue;	// go round again. Perhaps the error will go away
+        // or the allocator is decommited & we will be asked to
+        // exit soon.
+      }
+
+      // Virtual function user will override.
+      hr = FillBuffer(pSample);
+
+      if (hr == S_OK) 
+      {
+        hr = Deliver(pSample);     
+        pSample->Release();
+
+        // downstream filter returns S_FALSE if it wants us to
+        // stop or an error if it's reporting an error.
+        if (hr != S_OK)
+        {
+          DbgLog((LOG_TRACE, 2, TEXT("Deliver() returned %08x; stopping"), hr));
+          return S_OK;
+        }
+      }
+      else if (hr == ERROR_NO_DATA)
+      {
+        pSample->Release(); 
+      }
+      else if (hr == S_FALSE) 
+      {
+        // derived class wants us to stop pushing data
+        pSample->Release();
+        LogDebug("vid: DeliverEndOfStream - downstream filter rejected the sample");
+        DeliverEndOfStream();
+        return S_OK;
+      } 
+      else 
+      {
+        // derived class encountered an error
+        pSample->Release();
+        DbgLog((LOG_ERROR, 1, TEXT("Error %08lX from FillBuffer!!!"), hr));
+        DeliverEndOfStream();
+        LogDebug("vid: DeliverEndOfStream - unhandled error in ::FillBuffer");
+        m_pFilter->NotifyEvent(EC_ERRORABORT, hr, 0);
+        return hr;
+      }
+     // all paths release the sample
+    }
+    // For all commands sent to us there must be a Reply call!
+	  if (com == CMD_RUN || com == CMD_PAUSE) 
+    {
+      Reply(NOERROR);
+	  } 
+    else if (com != CMD_STOP) 
+    {
+      Reply((DWORD) E_UNEXPECTED);
+      DbgLog((LOG_ERROR, 1, TEXT("Unexpected command!!!")));
+	  }
+  } while (com != CMD_STOP);
+
+  return S_FALSE;
 }
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
@@ -239,9 +302,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       if (!m_bSeekDone || m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging() || m_demux.m_bRebuildOngoing || 
         m_demux.m_eAudioClipSeen->Check())
       {
-        CreateEmptySample(pSample);
         Sleep(1);
-        return S_OK;
+        return ERROR_NO_DATA;
       }
 
       if (m_pCachedBuffer)
@@ -256,7 +318,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       if (m_demux.EndOfFile())
       {
         LogDebug("aud: set EOF");
-        CreateEmptySample(pSample);
         m_demux.m_eAudioClipSeen->Set();
         return S_FALSE;
       }
@@ -271,16 +332,14 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           {
             // Deliver end of stream notification to allow audio renderer to stop buffering.
             // This should only happen when the stream enters into paused state
-            LogDebug("aud: FillBuffer - DeliverEndOfStream");
-            DeliverEndOfStream();
+            //LogDebug("aud: FillBuffer - DeliverEndOfStream");
+            //DeliverEndOfStream();
             m_bClipEndingNotified = true;
-
-            CreateEmptySample(pSample);
           }
           else
             Sleep(10);
 		  
-          return S_OK;
+          return ERROR_NO_DATA;
         }
       }
       else
@@ -359,18 +418,15 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               CMediaType mt(*buffer->pmt);
               SetMediaType(&mt);
               pSample->SetMediaType(&mt);
-
-              CreateEmptySample(pSample);
               m_pCachedBuffer = buffer;
 
-              return S_OK;
+              return ERROR_NO_DATA;
             }
           }
         } // lock ends
 
         if (checkPlaybackState)
         {
-          CreateEmptySample(pSample);
           m_pCachedBuffer = buffer;
           LogDebug("aud: cached push  %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
           
@@ -384,7 +440,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           }
           m_pCachedBuffer->nNewSegment = 0;
 
-          return S_OK;
+          return ERROR_NO_DATA;
         }
   
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;

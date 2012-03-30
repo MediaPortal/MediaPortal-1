@@ -67,6 +67,7 @@ public:
   HRESULT BreakConnect();
   HRESULT OnThreadStartPlay();
   HRESULT OnThreadDestroy();  
+  HRESULT DoBufferProcessingLoop();
 
   // CSourceSeeking
   HRESULT ChangeStart();
@@ -83,8 +84,6 @@ public:
   HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
   bool IsConnected();
 
-  
-
   void SetInitialMediaType(const CMediaType* pmt);
 
 protected:
@@ -92,7 +91,6 @@ protected:
 
   void JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer);
   void ProcessAudioSample(Packet* pBuffer, IMediaSample* pSample);
-  void CreateEmptySample(IMediaSample* pSample);
 
   inline void ConvertLPCMFromBE(BYTE* src, void* dest, int channels, int nSamples, int sampleSize, int channelMap);
   
