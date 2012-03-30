@@ -1995,8 +1995,12 @@ namespace MediaPortal.Video.Database
       details.File = strFileName;
     }
 
-    // Changed cast fix
     public void SetMovieInfoById(int lMovieId, ref IMDBMovie details)
+    {
+      SetMovieInfoById(lMovieId, ref details, false);
+    }
+    
+    public void SetMovieInfoById(int lMovieId, ref IMDBMovie details, bool updateTimeStamp)
     {
       try
       {
@@ -2145,7 +2149,14 @@ namespace MediaPortal.Video.Database
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.Language = strLine;
         // Last update
-        details1.LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        if (updateTimeStamp)
+        {
+          details1.LastUpdate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+        else
+        {
+          details1.LastUpdate = existingDetails.LastUpdate;
+        }
         // add all genres
         string szGenres = details.Genre;
         ArrayList vecGenres = new ArrayList();
@@ -2376,7 +2387,9 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
-        details.Rating = (float)Double.Parse(DatabaseUtility.Get(results, 0, "movieinfo.fRating"));
+        double rating = 0;
+        Double.TryParse(DatabaseUtility.Get(results, 0, "movieinfo.fRating"), out rating);
+        details.Rating = (float)rating;
         if (details.Rating > 10.0f)
         {
           details.Rating /= 10.0f;
@@ -2416,8 +2429,12 @@ namespace MediaPortal.Video.Database
         details.SearchString = String.Format("{0}", details.Title);
         details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
         details.MPARating = DatabaseUtility.Get(results, 0, "movieinfo.mpaa");
-        details.RunTime = Int32.Parse(DatabaseUtility.Get(results, 0, "movieinfo.runtime"));
-        details.Watched = Int32.Parse(DatabaseUtility.Get(results, 0, "movieinfo.iswatched"));
+        int runtime = 0;
+        Int32.TryParse(DatabaseUtility.Get(results, 0, "movieinfo.runtime"), out runtime);
+        details.RunTime = runtime;
+        int watched = 0;
+        Int32.TryParse(DatabaseUtility.Get(results, 0, "movieinfo.iswatched"), out watched);
+        details.Watched = watched;
         details.ID = lMovieId;
         details.Studios = DatabaseUtility.Get(results, 0, "movieinfo.studios");
         details.Country = DatabaseUtility.Get(results, 0, "movieinfo.country");
@@ -3232,7 +3249,9 @@ namespace MediaPortal.Video.Database
         for (int iRow = 0; iRow < results.Rows.Count; iRow++)
         {
           IMDBMovie details = new IMDBMovie();
-          details.Rating = (float)Double.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"));
+          double rating = 0;
+          Double.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"), out rating);
+          details.Rating = (float)rating;
           if (details.Rating > 10.0f)
           {
             details.Rating /= 10.0f;
@@ -3266,8 +3285,12 @@ namespace MediaPortal.Video.Database
           details.SearchString = String.Format("{0}", details.Title);
           details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
           details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
-          details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
-          details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
+          int runtime = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"), out runtime);
+          details.RunTime = runtime;
+          int watched = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"), out watched);
+          details.Watched = watched;
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
@@ -3306,7 +3329,9 @@ namespace MediaPortal.Video.Database
         for (int iRow = 0; iRow < results.Rows.Count; iRow++)
         {
           IMDBMovie details = new IMDBMovie();
-          details.Rating = (float)Double.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"));
+          double rating = 0;
+          Double.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"), out rating);
+          details.Rating = (float)rating;
           if (details.Rating > 10.0f)
           {
             details.Rating /= 10.0f;
@@ -3340,8 +3365,12 @@ namespace MediaPortal.Video.Database
           details.SearchString = String.Format("{0}", details.Title);
           details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
           details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
-          details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
-          details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
+          int runtime = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"), out runtime);
+          details.RunTime = runtime;
+          int watched = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"), out watched);
+          details.Watched = watched;
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
@@ -3382,7 +3411,9 @@ namespace MediaPortal.Video.Database
         for (int iRow = 0; iRow < results.Rows.Count; iRow++)
         {
           IMDBMovie details = new IMDBMovie();
-          details.Rating = (float)Double.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"));
+          double rating = 0;
+          Double.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"), out rating);
+          details.Rating = (float)rating;
           if (details.Rating > 10.0f)
           {
             details.Rating /= 10.0f;
@@ -3416,8 +3447,12 @@ namespace MediaPortal.Video.Database
           details.SearchString = String.Format("{0}", details.Title);
           details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
           details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
-          details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
-          details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
+          int runtime = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"), out runtime);
+          details.RunTime = runtime;
+          int watched = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"), out watched);
+          details.Watched = watched;
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
@@ -3458,7 +3493,9 @@ namespace MediaPortal.Video.Database
         for (int iRow = 0; iRow < results.Rows.Count; iRow++)
         {
           IMDBMovie details = new IMDBMovie();
-          details.Rating = (float)Double.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"));
+          double rating = 0;
+          Double.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.fRating"), out rating);
+          details.Rating = (float)rating;
           if (details.Rating > 10.0f)
           {
             details.Rating /= 10.0f;
@@ -3492,8 +3529,12 @@ namespace MediaPortal.Video.Database
           details.SearchString = String.Format("{0}", details.Title);
           details.CDLabel = DatabaseUtility.Get(results, iRow, "path.cdlabel");
           details.MPARating = DatabaseUtility.Get(results, iRow, "movieinfo.mpaa");
-          details.RunTime = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"));
-          details.Watched = Int32.Parse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"));
+          int runtime = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.runtime"), out runtime);
+          details.RunTime = runtime;
+          int watched = 0;
+          Int32.TryParse(DatabaseUtility.Get(results, iRow, "movieinfo.iswatched"), out watched);
+          details.Watched = watched;
           details.ID = (int)lMovieId;
           details.Studios = DatabaseUtility.Get(results, iRow, "movieinfo.studios");
           details.Country = DatabaseUtility.Get(results, iRow, "movieinfo.country");
@@ -3599,7 +3640,9 @@ namespace MediaPortal.Video.Database
           }
           if (movieinfoTable)
           {
-            movie.Rating = (float)Double.Parse(DatabaseUtility.Get(results, i, "movieinfo.fRating"));
+            double rating = 0;
+            Double.TryParse(DatabaseUtility.Get(results, i, "movieinfo.fRating"), out rating);
+            movie.Rating = (float)rating;
             if (movie.Rating > 10.0f)
             {
               movie.Rating /= 10.0f;
@@ -3633,8 +3676,12 @@ namespace MediaPortal.Video.Database
             movie.SearchString = String.Format("{0}", movie.Title);
             movie.CDLabel = DatabaseUtility.Get(results, i, "path.cdlabel");
             movie.MPARating = DatabaseUtility.Get(results, i, "movieinfo.mpaa");
-            movie.RunTime = Int32.Parse(DatabaseUtility.Get(results, i, "movieinfo.runtime"));
-            movie.Watched = Int32.Parse(DatabaseUtility.Get(results, i, "movieinfo.iswatched"));
+            int runtime = 0;
+            Int32.TryParse(DatabaseUtility.Get(results, i, "movieinfo.runtime"), out runtime);
+            movie.RunTime = runtime;
+            int watched = 0;
+            Int32.TryParse(DatabaseUtility.Get(results, i, "movieinfo.iswatched"), out watched);
+            movie.Watched = watched;
             movie.ID = (int)lMovieId;
             movie.Studios= DatabaseUtility.Get(results, i, "movieinfo.studios");
             movie.Country = DatabaseUtility.Get(results, i, "movieinfo.country");
@@ -4824,7 +4871,7 @@ namespace MediaPortal.Video.Database
 
             #endregion
 
-            VideoDatabase.SetMovieInfoById(id, ref movie);
+            VideoDatabase.SetMovieInfoById(id, ref movie, true);
           }
         }
       }

@@ -263,6 +263,11 @@ namespace MediaPortal.Video.Database
       _database.SetMovieInfoById(lMovieId, ref details);
     }
 
+    public static void SetMovieInfoById(int lMovieId, ref IMDBMovie details, bool updateTimeStamp)
+    {
+      _database.SetMovieInfoById(lMovieId, ref details, updateTimeStamp);
+    }
+
     public static void DeleteMovieInfo(string strFileNameAndPath)
     {
       _database.DeleteMovieInfo(strFileNameAndPath);

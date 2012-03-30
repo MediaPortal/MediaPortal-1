@@ -245,9 +245,22 @@ namespace MediaPortal.Configuration.Sections
 
       UpdateControlStatus();
       LoadMovies(0);
+      
       if (cbTitle.Items.Count > 0)
       {
         cbTitle.SelectedIndex = 0;
+      }
+
+      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+      
+      if (!File.Exists(parserIndexFile))
+      {
+        string parserIndexFileBase = Config.GetFile(Config.Dir.Base, "VDBParserStrings.xml");
+
+        if (File.Exists(parserIndexFileBase))
+        {
+          File.Copy(parserIndexFileBase, parserIndexFile, true);
+        }
       }
     }
 
@@ -1403,7 +1416,7 @@ namespace MediaPortal.Configuration.Sections
 
         movieDetails.ID = id;
         string searchString = movieDetails.SearchString;
-        VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
+        VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails, true);
         movieDetails.SearchString = searchString;
       }
       
@@ -1478,7 +1491,7 @@ namespace MediaPortal.Configuration.Sections
       //
       details.IMDBNumber = tbIMDBNr.Text;
 
-      VideoDatabase.SetMovieInfoById(details.ID, ref details);
+      VideoDatabase.SetMovieInfoById(details.ID, ref details, true);
       // Add files to movie
       string strPath = string.Empty;
       foreach (ListViewItem item in listViewFiles.Items)

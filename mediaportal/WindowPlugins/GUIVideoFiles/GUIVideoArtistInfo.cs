@@ -302,21 +302,31 @@ namespace MediaPortal.GUI.Video
         }
         item.AlbumInfoTag = Actor[i];
 
+        string filenameL = string.Empty;
+        string path = string.Empty;
         // Find image
-        string path = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\ActorsMovies\";
-        string filenameL = _currentActor[i].MovieImdbID + ".jpg";
-        
-        if (File.Exists(path + filenameL))
+        if (VideoDatabase.CheckMovieImdbId(_currentActor[i].MovieImdbID))
         {
-          filenameL = path + filenameL; // Movie cover file
-          item.IconImage = filenameL;
-        }
-        else
-        {
-          filenameL = string.Empty; // Movie cover file
-          item.IconImage = string.Empty;
-        }
+          string ttFolder = Regex.Replace(_currentActor[i].MovieImdbID, "(tt(0*))", string.Empty);
+          int i_ttFolder = 0;
+          int.TryParse(ttFolder, out i_ttFolder);
+          i_ttFolder = i_ttFolder / 25000; // 25000 thumbs in one folder
+          ttFolder = i_ttFolder.ToString();
+          path = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\ActorsMovies\" + ttFolder + @"\";
+          filenameL = _currentActor[i].MovieImdbID + ".jpg";
 
+          if (File.Exists(path + filenameL))
+          {
+            filenameL = path + filenameL; // Movie cover file
+            item.IconImage = filenameL;
+          }
+          else
+          {
+            filenameL = string.Empty; // Movie cover file
+            item.IconImage = string.Empty;
+          }
+        }
+        
         // Show in list if user have that movie in collection (played property = true)
         ArrayList movies = new ArrayList();
         string sql = "SELECT * FROM movieinfo WHERE IMDBID = '" + _currentActor[i].MovieImdbID + "'";
@@ -667,37 +677,47 @@ namespace MediaPortal.GUI.Video
     {
       // Save image (large and small)
       string filenameL = string.Empty;
-      string path = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\ActorsMovies\";
-      
-      if (ListItemMovieInfo(item).MovieImdbID != string.Empty)
-      {
-        filenameL = ListItemMovieInfo(item).MovieImdbID;
-      }
 
-      if (filenameL != string.Empty)
+      if (VideoDatabase.CheckMovieImdbId(ListItemMovieInfo(item).MovieImdbID))
       {
-        if (!Directory.Exists(path))
+        string ttFolder = Regex.Replace(ListItemMovieInfo(item).MovieImdbID, "(tt(0*))", string.Empty);
+        int ittFolder = 0;
+        int.TryParse(ttFolder, out ittFolder);
+        ittFolder = ittFolder / 25000;
+        ttFolder = ittFolder.ToString();
+
+        string path = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\ActorsMovies\" + ittFolder + @"\";
+
+        if (ListItemMovieInfo(item).MovieImdbID != string.Empty)
         {
-          Directory.CreateDirectory(path);
+          filenameL = ListItemMovieInfo(item).MovieImdbID;
         }
 
-        filenameL = path + filenameL + @".jpg";
+        if (filenameL != string.Empty)
+        {
+          if (!Directory.Exists(path))
+          {
+            Directory.CreateDirectory(path);
+          }
 
-        string temporaryFilename = Path.GetTempFileName();
-        string tmpFile = temporaryFilename;
-        temporaryFilename += ".jpg";
-        string temporaryFilenameLarge = Util.Utils.ConvertToLargeCoverArt(temporaryFilename);
-        temporaryFilenameLarge += ".jpg";
-        Util.Utils.FileDelete(tmpFile);
-        Util.Utils.FileDelete(temporaryFilenameLarge);
-        Util.Utils.DownLoadAndCacheImage(thumb, temporaryFilename);
-        // Convert downloaded image to large and small file and save on disk
-        SaveCover(temporaryFilename, filenameL);// Temp file is deleted in SetCover method
+          filenameL = path + filenameL + @".jpg";
 
-        // Update database
-        ExecuteSql("strPictureURL", thumb, item);
-        item.IconImage = filenameL;
-        item.ThumbnailImage = filenameL;
+          string temporaryFilename = Path.GetTempFileName();
+          string tmpFile = temporaryFilename;
+          temporaryFilename += ".jpg";
+          string temporaryFilenameLarge = Util.Utils.ConvertToLargeCoverArt(temporaryFilename);
+          temporaryFilenameLarge += ".jpg";
+          Util.Utils.FileDelete(tmpFile);
+          Util.Utils.FileDelete(temporaryFilenameLarge);
+          Util.Utils.DownLoadAndCacheImage(thumb, temporaryFilename);
+          // Convert downloaded image to large and small file and save on disk
+          SaveCover(temporaryFilename, filenameL); // Temp file is deleted in SetCover method
+
+          // Update database
+          ExecuteSql("strPictureURL", thumb, item);
+          item.IconImage = filenameL;
+          item.ThumbnailImage = filenameL;
+        }
       }
     }
     

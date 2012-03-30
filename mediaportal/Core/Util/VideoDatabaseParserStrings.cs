@@ -31,25 +31,42 @@ namespace MediaPortal.Util
 {
   public static class VideoDatabaseParserStrings
   {
+    /// <summary>
+    /// Sections:
+    /// GUIVideoArtistInfo, FanArt, IMDBposter, IMDBActors,
+    /// IMPAwardsposter, TMDBPosters, TMDBActorImages
+    /// IMDBActorInfoMain, IMDBActorInfoDetails, IMDBActorInfoMovies
+    /// </summary>
+    /// <param name="section"></param>
+    /// <returns></returns>
     public static string[] GetParserStrings(string section)
     {
       ArrayList result = new ArrayList();
       
       try
       {
-        string grabberIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
-        string grabberIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+        string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+        string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
         XmlDocument doc = new XmlDocument();
         
-        if (!File.Exists(grabberIndexFile))
+        if (!File.Exists(parserIndexFile))
         {
-          if (DownloadFile(grabberIndexFile, grabberIndexUrl) == false)
+          if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
           {
-            return result.ToArray(typeof(string)) as string[];
+            string parserIndexFileBase = Config.GetFile(Config.Dir.Base, "VDBParserStrings.xml");
+
+            if (File.Exists(parserIndexFileBase))
+            {
+              File.Copy(parserIndexFileBase, parserIndexFile, true);
+            }
+            else
+            {
+              return result.ToArray(typeof(string)) as string[];
+            }
           }
         }
 
-        doc.Load(grabberIndexFile);
+        doc.Load(parserIndexFile);
 
         if (doc.DocumentElement != null)
         {
@@ -61,13 +78,13 @@ namespace MediaPortal.Util
             return result.ToArray(typeof(string)) as string[];
           }
 
-          XmlNodeList strings = dbSections.SelectNodes("string");
+          XmlNodeList parserStrings = dbSections.SelectNodes("string");
 
-          if (strings != null)
+          if (parserStrings != null)
           {
-            foreach (XmlNode parseString in strings)
+            foreach (XmlNode parserString in parserStrings)
             {
-              result.Add(parseString.InnerText);
+              result.Add(parserString.InnerText);
             }
           }
         }
@@ -81,13 +98,13 @@ namespace MediaPortal.Util
 
     private static bool DownloadFile(string filepath, string url)
     {
-      string grabberTempFile = Path.GetTempFileName();
+      string parserTempFile = Path.GetTempFileName();
 
       try
       {
-        if (File.Exists(grabberTempFile))
+        if (File.Exists(parserTempFile))
         {
-          File.Delete(grabberTempFile);
+          File.Delete(parserTempFile);
         }
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -105,7 +122,7 @@ namespace MediaPortal.Util
           {
             using (TextReader tin = new StreamReader(resStream, Encoding.Default))
             {
-              using (TextWriter tout = File.CreateText(grabberTempFile))
+              using (TextWriter tout = File.CreateText(parserTempFile))
               {
                 while (true)
                 {
@@ -122,7 +139,7 @@ namespace MediaPortal.Util
         }
 
         File.Delete(filepath);
-        File.Move(grabberTempFile, filepath);
+        File.Move(parserTempFile, filepath);
         return true;
       }
       catch (Exception ex)

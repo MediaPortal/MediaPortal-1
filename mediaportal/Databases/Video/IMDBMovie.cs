@@ -401,11 +401,12 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#strrating", "(" + Rating.ToString(CultureInfo.CurrentCulture) + "/10)");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
       Int32 votes = 0;
+      string strVotes = string.Empty;
       if (Int32.TryParse(Votes, out votes))
       {
-        Votes = String.Format("{0:N0}", votes);
+        strVotes = String.Format("{0:N0}", votes);
       }
-      GUIPropertyManager.SetProperty("#votes", Votes);
+      GUIPropertyManager.SetProperty("#votes", strVotes);
       GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
@@ -416,7 +417,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#language", Language);
       DateTime lastUpdate;
       DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
-      GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToString());
+      GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToShortDateString());
 
       if (ID == -1)
       {

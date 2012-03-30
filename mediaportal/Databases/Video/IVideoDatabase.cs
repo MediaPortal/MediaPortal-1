@@ -84,6 +84,7 @@ namespace MediaPortal.Video.Database
     // Movie info
     void SetMovieInfo(string strFilenameAndPath, ref IMDBMovie details);
     void SetMovieInfoById(int lMovieId, ref IMDBMovie details);
+    void SetMovieInfoById(int lMovieId, ref IMDBMovie details, bool updateTimeStamp);
     void DeleteMovieInfo(string strFileNameAndPath);
     void DeleteMovieInfoById(long lMovieId);
     bool HasMovieInfo(string strFilenameAndPath);
