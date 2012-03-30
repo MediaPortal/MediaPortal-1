@@ -1217,8 +1217,8 @@ namespace MediaPortal.Video.Database
     private string CleanCrlf(string stringToClean)
     {
       string cleanString = string.Empty;
-      cleanString = Util.Utils.stripHTMLtags(cleanString).Trim();
-      cleanString = HttpUtility.HtmlDecode(stringToClean.Replace("\n", " ").Replace("\r", string.Empty).Trim());
+      cleanString = Util.Utils.stripHTMLtags(stringToClean).Trim();
+      cleanString = HttpUtility.HtmlDecode(cleanString.Replace("\n", " ").Replace("\r", string.Empty).Trim());
 
       if (cleanString != null && cleanString.EndsWith("/"))
       {
