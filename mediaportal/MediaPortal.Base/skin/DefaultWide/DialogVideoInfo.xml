@@ -396,13 +396,35 @@
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
     </control>
+		<control>
+      <description>Last update Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>50</posX>
+      <posY>455</posY>
+      <label>1279</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Last update Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>200</posX>
+      <posY>455</posY>
+      <label>#lastupdate</label>
+      <font>font10</font>
+      <align>left</align>
+      <textcolor>FFB2D4F5</textcolor>
+    </control>  
     <control>
       <description>Watched Count Label</description>
       <type>label</type>
       <id>1</id>
       <posX>50</posX>
       <posY>485</posY>
-      <label>Watched count:</label>
+      <label>1278</label>
       <font>font10</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
@@ -411,7 +433,7 @@
       <description>Watched Count Value</description>
       <type>label</type>
       <id>1</id>
-      <posX>210</posX>
+      <posX>200</posX>
       <posY>485</posY>
       <label>#watchedcount</label>
       <font>font10</font>
@@ -662,7 +684,7 @@
       <textvisible3>no</textvisible3>
     </control>	
     <control>
-      <description>Plot value (When Cast Info View)</description>
+      <description>Shrot Plot value (When Cast Info View)</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>810</posX>
