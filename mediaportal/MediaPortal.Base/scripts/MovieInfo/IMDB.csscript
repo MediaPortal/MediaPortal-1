@@ -275,7 +275,7 @@ internal class Grabber : IIMDBScriptGrabber
                 ("http://www.imdb.com" + imdbURL, "*" + imdbTitle + " " + imdbOptions, "IMDB");
               elements.Add(url);
               iCount++;
-			}
+			      }
             imdbEntry = imdbEntry.NextMatch();
             if (iCount > iLimit)
             {
@@ -303,8 +303,11 @@ internal class Grabber : IIMDBScriptGrabber
 
       string strAbsUrl;
       string strBody = GetPage(url.URL, "utf-8", out strAbsUrl);
+      
       if (string.IsNullOrEmpty(strBody))
+      {
         return false;
+      }
 
       string regexBlockPattern = string.Empty;
       string regexPattern = string.Empty;
@@ -397,8 +400,6 @@ internal class Grabber : IIMDBScriptGrabber
 
       // Actors
       regexBlockPattern = @"<table class=""cast"">.*?</table>|<table class=""cast_list"">.*?</table>";
-      //regexPattern = 
-      //  ";\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\"><a href=\"/character/ch[0-9]*/\">(?<role>.*?)<|;\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\">(?<role>.*?)<|<td[^<]*<a\\s+href=\"/name/nm\\d{7}/\"[^>]*>(?<actor>[^<]*)</a>.*?<div[^<]*<a\\s+href=\"/character/ch\\d{7}/\"[^>]*>(?<role>[^<]*)</a>";
       string others = @"td class=""nm""><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=""char"">(?<role>.*?)<";
       regexPattern =
             @"href=""/name/nm\d{7}/"".*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
@@ -461,22 +462,22 @@ internal class Grabber : IIMDBScriptGrabber
       }
 
       // Genres
-        regexBlockPattern =
-          @"<h4[^>]*>Genre[s]?:[^<]*</h4>(?<genres_block>.+?)</div>";
-        regexPattern = @"""\s*href=""/[Gg]enre[s]?/(?<movieGenres>.+?)""";
-        block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
-        MatchCollection mcGenre = Regex.Matches(block, regexPattern);
-        string genre = string.Empty;
-        foreach (Match m in mcGenre)
-        {
-          genre = genre + m.Groups["movieGenres"] + " / ";
-        }
-        try
-        {
-          movieDetails.Genre = HttpUtility.HtmlDecode(genre.Remove(genre.LastIndexOf(" / ")));
-        }
-        catch (Exception){}
-
+      regexBlockPattern =
+        @"<h4[^>]*>Genre[s]?:[^<]*</h4>(?<genres_block>.+?)</div>";
+      regexPattern = @"""\s*href=""/[Gg]enre[s]?/(?<movieGenres>.+?)""";
+      block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
+      MatchCollection mcGenre = Regex.Matches(block, regexPattern);
+      string genre = string.Empty;
+      foreach (Match m in mcGenre)
+      {
+        genre = genre + m.Groups["movieGenres"] + " / ";
+      }
+      try
+      {
+        movieDetails.Genre = HttpUtility.HtmlDecode(genre.Remove(genre.LastIndexOf(" / ")));
+      }
+      catch (Exception){}
+      				
       // MPARating
       //
       // Get rating from main movie page if exists
@@ -484,8 +485,11 @@ internal class Grabber : IIMDBScriptGrabber
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
       regexPattern = @"alt=""(?<rating>.*?)""";
       string mCertUSA = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["rating"].Value.Replace("_", "-");
+      
       if (mCertUSA.ToLower().Contains("tv-"))
+      {
         mCertUSA = string.Empty;
+      }
 
       //Get all other ratings
       string mpaRating = string.Empty;
@@ -502,6 +506,7 @@ internal class Grabber : IIMDBScriptGrabber
       //Try to find rating according user country
       char[] splitter = { '|' };
       string[] landRating = tempRating.Split(splitter);
+      
       if (landRating.Length > 0)
       {
         for (int i = 0; i < landRating.Length; ++i)
@@ -579,9 +584,9 @@ internal class Grabber : IIMDBScriptGrabber
       movieDetails.Votes = votes.Replace(",", "");
 
       // Plot short
-        regexPattern = @"itemprop=""description"">(?<moviePlotShort>[^<]+)<";
-        string shortPlot = Regex.Match(strBody, regexPattern, RegexOptions.Singleline).Groups["moviePlotShort"].Value;
-        movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot)).Trim();
+      regexPattern = @"itemprop=""description"">(?<moviePlotShort>[^<]+)<";
+      string shortPlot = Regex.Match(strBody, regexPattern, RegexOptions.Singleline).Groups["moviePlotShort"].Value;
+      movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot)).Trim();
 
       // Plot long
       string strPlotUrl = "http://www.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
@@ -679,8 +684,8 @@ internal class Grabber : IIMDBScriptGrabber
       // Make the Webrequest
       //Log.Info("IMDB: get page:{0}", strURL);
       WebRequest req = WebRequest.Create(strUrl);
-	  req.Headers.Add("Accept-Language", "en-US");
-	  req.Timeout = 10000;
+	    req.Headers.Add("Accept-Language", "en-US");
+	    req.Timeout = 10000;
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();

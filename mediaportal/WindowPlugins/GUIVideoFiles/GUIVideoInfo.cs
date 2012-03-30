@@ -22,6 +22,9 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -1483,22 +1486,181 @@ namespace MediaPortal.GUI.Video
 
         if (VideoDatabase.CheckMovieImdbId(movie.IMDBNumber))
         {
-          string restriction = "7";
+          string restriction = "7"; // Refresh every week votes, rating
 
           TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
           DateTime searchDate = DateTime.Today - ts;
           DateTime lastUpdate;
           
-          if (DateTime.TryParseExact(movie.LastUpdate, "yyyy-MM-dd 00:00:00", null, DateTimeStyles.None, out lastUpdate))
+          if (DateTime.TryParse(movie.LastUpdate, out lastUpdate))
           {
             if (searchDate > lastUpdate)
             {
-
+              if (Win32API.IsConnectedToInternet() && VideoDatabase.CheckMovieImdbId(_currentMovie.IMDBNumber))
+              {
+                RefreshImdbData();
+              }
             }
           }
         }
       }
       catch (ThreadAbortException) { }
+    }
+
+    private void RefreshImdbData()
+    {
+      try
+      {
+        string uri;
+        string movieUrl = "http://www.imdb.com/title/" + _currentMovie.IMDBNumber;
+        string strBody = GetPage(movieUrl, "utf-8", out uri);
+        string regexPattern = string.Empty;
+        string[] vdbParserStr = VdbParserStringVideoInfo();
+
+        if (vdbParserStr == null || vdbParserStr.Length != 3)
+        {
+          return;
+        }
+
+        // Runtime
+        regexPattern = vdbParserStr[0];
+        int runtime;
+          
+        if (int.TryParse(Regex.Match(strBody, regexPattern).Groups["movieRuntime"].Value, out runtime))
+        {
+          if (_currentMovie.RunTime <= 0 && runtime > 0)
+          {
+            _currentMovie.RunTime = runtime;
+            GUIPropertyManager.SetProperty("#runtime", _currentMovie.RunTime +
+                                                       GUILocalizeStrings.Get(2998) +
+                                                       " (" + Util.Utils.SecondsToHMString(_currentMovie.RunTime*60) +
+                                                       ")");
+          }
+        }
+
+        // Rating
+        regexPattern = vdbParserStr[1];
+        string rating = Regex.Match(strBody, regexPattern).Groups["movieScore"].Value.Replace('.', ',');
+          
+        if (!string.IsNullOrEmpty(rating))
+        {
+          double dRating = 0;
+          Double.TryParse(rating, out dRating);
+
+          if (dRating > 0)
+          {
+            _currentMovie.Rating = (float) dRating;
+
+            if (_currentMovie.Rating > 10.0f)
+            {
+              _currentMovie.Rating /= 10.0f;
+            }
+
+            GUIPropertyManager.SetProperty("#rating", _currentMovie.Rating.ToString());
+            GUIPropertyManager.SetProperty("#strrating",
+                                           "(" + _currentMovie.Rating.ToString(CultureInfo.CurrentCulture) + "/10)");
+          }
+        }
+        
+        // Votes
+        regexPattern = vdbParserStr[2];
+        string strVotes = Regex.Match(strBody, regexPattern).Groups["moviePopularity"].Value;
+        
+        strVotes = strVotes.Replace(",", "");
+          
+        Int32 i_votes = 0;
+        string votes = string.Empty;
+        Int32.TryParse(strVotes, out i_votes);
+
+        if (i_votes > 0)
+        {
+          votes = String.Format("{0:N0}", i_votes);
+          GUIPropertyManager.SetProperty("#votes", votes);
+          _currentMovie.Votes = strVotes;
+        }
+          
+        VideoDatabase.SetMovieInfoById(_currentMovie.ID, ref _currentMovie, true);
+
+        DateTime lastUpdate;
+        DateTime.TryParseExact(_currentMovie.LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
+        GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToShortDateString());
+      }
+      catch (Exception){}
+    }
+
+    // Get videoinfo parser strings
+    private string[] VdbParserStringVideoInfo()
+    {
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("GUIVideoInfo");
+      return vdbParserStr;
+    }
+
+    // Download helper
+    private string GetPage(string strUrl, string strEncode, out string absoluteUri)
+    {
+      string strBody = "";
+      absoluteUri = string.Empty;
+      Stream receiveStream = null;
+      StreamReader sr = null;
+      WebResponse result = null;
+      try
+      {
+        // Make the Webrequest
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
+
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          req.Headers.Add("Accept-Language", "en-US");
+          req.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
+          req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
+        result = req.GetResponse();
+        receiveStream = result.GetResponseStream();
+
+        // Encoding: depends on selected page
+        Encoding encode = Encoding.GetEncoding(strEncode);
+        using (sr = new StreamReader(receiveStream, encode))
+        {
+          strBody = sr.ReadToEnd();
+        }
+
+
+        absoluteUri = result.ResponseUri.AbsoluteUri;
+      }
+      catch (Exception)
+      {
+        //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+      }
+      finally
+      {
+        if (sr != null)
+        {
+          try
+          {
+            sr.Close();
+          }
+          catch (Exception) { }
+        }
+        if (receiveStream != null)
+        {
+          try
+          {
+            receiveStream.Close();
+          }
+          catch (Exception) { }
+        }
+        if (result != null)
+        {
+          try
+          {
+            result.Close();
+          }
+          catch (Exception) { }
+        }
+      }
+      return strBody;
     }
 
     private void LoadState()

@@ -79,18 +79,22 @@ namespace MediaPortal.Util
       string defaultPic = "";
 
       // First lets take default IMDB cover because maybe it is not in the IMDB Product thumbs group
+      
       // Get Main Movie page and find default poster link
       //string defaultPosterPageLinkURL = "http://www.imdb.com/title/" + imdbID;
       string defaultPosterPageLinkURL = vdbParserStr[0] + imdbID;
       string strBodyPicDefault = GetPage(defaultPosterPageLinkURL, "utf-8");
+      
       //Match posterPageLink = Regex.Match(strBodyPicDefault,
       //                                   @"id=""img_primary"">.*?src='/rg/title-overview/primary/images.*?href=""(?<defaultPic>.*?)""",
       //                                   RegexOptions.Singleline);
       Match posterPageLink = Regex.Match(strBodyPicDefault, vdbParserStr[1], RegexOptions.Singleline);
 
       // Now parse default cover picture html page to get default cover
+      
       //strBodyPicDefault = GetPage("http://www.imdb.com" + posterPageLink.Groups["defaultPic"].Value, "utf-8");
       strBodyPicDefault = GetPage(vdbParserStr[2] + posterPageLink.Groups["defaultPic"].Value, "utf-8");
+      
       //Match jpgDefault = Regex.Match(strBodyPicDefault, @"<img[\s]id=.*?alt=.*?src=""(?<jpg>.*?jpg)");
       Match jpgDefault = Regex.Match(strBodyPicDefault, vdbParserStr[3]);
 
@@ -105,9 +109,11 @@ namespace MediaPortal.Util
         return;
 
       // Then get all we can from IMDB Product thumbs group for movie
+      
       //string posterPageLinkURL = "http://www.imdb.com/title/" + imdbID + "/mediaindex?refine=product";
       string posterPageLinkURL = vdbParserStr[4] + imdbID + vdbParserStr[5];
       string strBodyThumbs = GetPage(posterPageLinkURL, "utf-8");
+      
       // Get all thumbs links and put it in the PIC group
       //MatchCollection thumbs = Regex.Matches(strBodyThumbs, @"(?<PIC>/media/rm\d*/tt\d*)");
       MatchCollection thumbs = Regex.Matches(strBodyThumbs, vdbParserStr[6]);
@@ -117,10 +123,11 @@ namespace MediaPortal.Util
         // Get picture
         string posterUrl = "http://www.imdb.com" + HttpUtility.HtmlDecode(thumb.Groups["PIC"].Value);
         string strBodyPic = GetPage(posterUrl, "utf-8");
+        
         //Match jpg = Regex.Match(strBodyPic, @"<img[\s]id=.*?alt=.*?src=""(?<jpg>.*?jpg)");
         Match jpg = Regex.Match(strBodyPic, vdbParserStr[7]);
+        
         // No default Picture again if it's here
-        // System.Windows.Forms.MessageBox.Show(HttpUtility.HtmlDecode(JPG.Groups["jpg"].Value));
         if (HttpUtility.HtmlDecode(jpg.Groups["jpg"].Value) != defaultPic &
             HttpUtility.HtmlDecode(jpg.Groups["jpg"].Value) != "")
         {
@@ -146,7 +153,7 @@ namespace MediaPortal.Util
 
       string[] vdbParserStr = VdbParserStringIMDBActors();
 
-      if (vdbParserStr == null || vdbParserStr.Length != 6)
+      if (vdbParserStr == null || vdbParserStr.Length != 7)
       {
         return;
       }
@@ -155,6 +162,7 @@ namespace MediaPortal.Util
 
       //string movieURL = "http://www.imdb.com/title/" + imdbMovieID + @"/fullcredits#cast";
       string movieURL = "http://www.imdb.com/title/" + imdbMovieID + vdbParserStr[0];
+      
       string strBodyActors = GetPage(movieURL, "utf-8");
       movieURL = "http://www.imdb.com/title/" + imdbMovieID;
       string strBody = GetPage(movieURL, "utf-8");
@@ -166,15 +174,17 @@ namespace MediaPortal.Util
       // Director
       string strDirectorImdbId = string.Empty;
       string strDirectorName = string.Empty;
+      
       //string regexBlockPattern =
       //  @"name=""director[s]""(?<directors_block>.*?)<h5>";
       string regexBlockPattern = vdbParserStr[1];
+      
       //string regexPattern = @"<a\s+href=""/name/(?<idDirector>nm\d{7})/""[^>]*>(?<movieDirectors>[^<]+)</a>";
       string regexPattern = vdbParserStr[2];
-      string block =
+      string regexBlock =
         Regex.Match(HttpUtility.HtmlDecode(strBodyActors), regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
-      strDirectorImdbId = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
-      strDirectorName = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value;
+      strDirectorImdbId = Regex.Match(regexBlock, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
+      strDirectorName = Regex.Match(regexBlock, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value;
 
       if (strDirectorImdbId != string.Empty)
       {
@@ -183,9 +193,12 @@ namespace MediaPortal.Util
       }
 
       //Writers
+      regexBlockPattern = vdbParserStr[3];
+      regexBlock = Regex.Match(HttpUtility.HtmlDecode(strBody), regexBlockPattern, RegexOptions.Singleline).Groups["writers_block"].Value;
+
       //regexPattern = @"/writer-\d/.*?/name/(?<imdbWriterId>nm\d{7})/""[\s]+>(?<writer>.*?)</a>";
-      regexPattern = vdbParserStr[3];
-      MatchCollection mc = Regex.Matches(strBody, regexPattern, RegexOptions.Singleline);
+      regexPattern = vdbParserStr[4];
+      MatchCollection mc = Regex.Matches(regexBlock, regexPattern);
 
       if (mc.Count != 0)
       {
@@ -195,8 +208,10 @@ namespace MediaPortal.Util
           writerId = HttpUtility.HtmlDecode(m.Groups["imdbWriterId"].Value.Trim());
           
           string strWriterName = string.Empty;
-          strWriterName = m.Groups["writer"].Value;
-          strWriterName = HttpUtility.HtmlDecode((strWriterName).Trim());
+          strWriterName = HttpUtility.HtmlDecode(m.Groups["writer"].Value.Trim());
+
+          string writerRole = string.Empty;
+          writerRole = HttpUtility.HtmlDecode(m.Groups["wrole"].Value.Trim());
 
           bool found = false;
           
@@ -207,8 +222,16 @@ namespace MediaPortal.Util
               if (actorList[i].ToString().Contains(writerId))
               {
                 // Check if writer is also director and add new role
-                actorList[i] = actorList[i] + ", " + GUILocalizeStrings.Get(200).Replace(":", string.Empty);
-                found = true;
+                if (!string.IsNullOrEmpty(writerRole))
+                {
+                  actorList[i] = actorList[i] + ", " + GUILocalizeStrings.Get(200)+ " " + writerRole.Replace("(", string.Empty).Replace(")", string.Empty);
+                  found = true;
+                }
+                else
+                {
+                  actorList[i] = actorList[i] + ", " + GUILocalizeStrings.Get(200).Replace(":", string.Empty);
+                  found = true;
+                }
                 break;
               }
             }
@@ -216,17 +239,27 @@ namespace MediaPortal.Util
           
           if (!found && writerId != string.Empty)
           {
-            actorList.Add(strWriterName + "|" + writerId + "|" +
+            if (!string.IsNullOrEmpty(writerRole))
+            {
+              actorList.Add(strWriterName + "|" + writerId + "|" +
+                          GUILocalizeStrings.Get(200)+ " " + writerRole.Replace("(", string.Empty).Replace(")", string.Empty));
+            }
+            else
+            {
+              actorList.Add(strWriterName + "|" + writerId + "|" +
                           GUILocalizeStrings.Get(200).Replace(":", string.Empty));
+            }
           }
         }
       }
 
       // cast
+      
       //regexBlockPattern = @"<table class=""cast"">.*?</table>|<table class=""cast_list"">.*?</table>";
-      regexBlockPattern = vdbParserStr[4];
+      regexBlockPattern = vdbParserStr[5];
+      
       //regexPattern = @"<td[^<]*<a\s+href=""/name/(?<imdbActorID>nm\d{7})/""[^>]*>(?<actor>[^<]*)</a>.*?<td.class=""char"">(?<role>.*?)<*?</td>";
-      regexPattern = vdbParserStr[5];
+      regexPattern = vdbParserStr[6];
 
       Match castBlock = Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline);
       string strCastBlock = HttpUtility.HtmlDecode(castBlock.Value);
@@ -294,7 +327,7 @@ namespace MediaPortal.Util
 
     private string[] VdbParserStringIMDBPoster()
     {
-      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("IMDBposter");
+      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("IMDBPoster");
       return vdbParserStr;
     }
 

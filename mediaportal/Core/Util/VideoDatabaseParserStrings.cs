@@ -31,6 +31,14 @@ namespace MediaPortal.Util
 {
   public static class VideoDatabaseParserStrings
   {
+    /// <summary>
+    /// Sections:
+    /// GUIVideoArtistInfo, FanArt, IMDBposter, IMDBActors,
+    /// IMPAwardsposter, TMDBPosters, TMDBActorImages
+    /// IMDBActorInfoMain, IMDBActorInfoDetails, IMDBActorInfoMovies
+    /// </summary>
+    /// <param name="section"></param>
+    /// <returns></returns>
     public static string[] GetParserStrings(string section)
     {
       ArrayList result = new ArrayList();
@@ -45,7 +53,16 @@ namespace MediaPortal.Util
         {
           if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
           {
-            return result.ToArray(typeof(string)) as string[];
+            string parserIndexFileBase = Config.GetFile(Config.Dir.Base, "VDBParserStrings.xml");
+
+            if (File.Exists(parserIndexFileBase))
+            {
+              File.Copy(parserIndexFileBase, parserIndexFile, true);
+            }
+            else
+            {
+              return result.ToArray(typeof(string)) as string[];
+            }
           }
         }
 
