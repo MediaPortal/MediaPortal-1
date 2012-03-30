@@ -476,7 +476,11 @@ Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
       return NULL;
   }
 
-  return m_playlistManager->GetNextAudioPacket(playlist, clip);
+  Packet* packet = m_playlistManager->GetNextAudioPacket(playlist, clip);
+  if (packet->rtTitleDuration == 0)
+    packet->rtTitleDuration = m_rtTitleDuration; // for fake audio
+
+  return packet;
 }
 
 ///
@@ -493,7 +497,11 @@ Packet* CDeMultiplexer::GetAudio()
       return NULL;
   }
 
-  return m_playlistManager->GetNextAudioPacket();
+  Packet* packet = m_playlistManager->GetNextAudioPacket();
+  if (packet->rtTitleDuration == 0)
+    packet->rtTitleDuration = m_rtTitleDuration; // for fake audio
+
+  return packet;
 }
 
 /// Starts the demuxer
