@@ -545,9 +545,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               }
             }
             if ((buffer->nNewSegment & NS_STREAM_RESET) == NS_STREAM_RESET)
-            {
               m_bInitDuration = true;
-            }
           }
 
           if (buffer->pmt)
@@ -565,7 +563,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               LogMediaType(buffer->pmt);
             
               HRESULT hrAccept = S_FALSE;
-
               m_bProvidePMT = true;
 
               if (m_pReceiver && CheckVideoFormat(&buffer->pmt->subtype, &m_currentDecoder))
