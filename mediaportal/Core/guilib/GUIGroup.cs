@@ -625,12 +625,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].YPosition -= (Children[i].Height + spacing);
-        }
+        Children[i].YPosition -= (Children[index].Height + spacing);
       }
     }
 
@@ -638,12 +635,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].YPosition += (Children[i].Height + spacing);
-        }
+        Children[i].YPosition -= (Children[index].Height + spacing);
       }
     }
 
@@ -651,12 +645,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].XPosition += (Children[i].Width + spacing);
-        }
+        Children[i].XPosition -= (Children[index].Width + spacing);
       }
     }
 
@@ -664,12 +655,9 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
 
-      for (int i = index; i < Children.Count; i++)
+      for (int i = index + 1; i < Children.Count; i++)
       {
-        if (i + 1 < Children.Count)
-        {
-          Children[i + 1].XPosition -= (Children[i].Width + spacing);
-        }
+        Children[i].XPosition -= (Children[index].Width + spacing);
       }
     }
 
