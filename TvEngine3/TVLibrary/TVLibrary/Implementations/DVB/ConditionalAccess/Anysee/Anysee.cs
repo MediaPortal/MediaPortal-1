@@ -410,6 +410,7 @@ namespace TvLibrary.Implementations.DVB
         if (function == IntPtr.Zero)
         {
           Log.Log.Debug("Anysee: failed to locate the CreateDtvCIAPI function");
+          return;
         }
         try
         {
@@ -418,12 +419,14 @@ namespace TvLibrary.Implementations.DVB
         catch (Exception ex)
         {
           Log.Log.Debug("Anysee: failed to load the CreateDtvCIAPI function: {0}", ex.ToString());
+          return;
         }
 
         function = GetProcAddress(lib, "DestroyDtvCIAPI");
         if (function == IntPtr.Zero)
         {
           Log.Log.Debug("Anysee: failed to locate the DestroyDtvCIAPI function");
+          return;
         }
         try
         {
@@ -432,12 +435,14 @@ namespace TvLibrary.Implementations.DVB
         catch (Exception ex)
         {
           Log.Log.Debug("Anysee: failed to load the DestroyDtvCIAPI function: {0}", ex.ToString());
+          return;
         }
 
         function = GetProcAddress(lib, "GetanyseeNumberofDevicesEx");
         if (function == IntPtr.Zero)
         {
           Log.Log.Debug("Anysee: failed to locate the GetanyseeNumberofDevicesEx function");
+          return;
         }
         try
         {
@@ -446,12 +451,14 @@ namespace TvLibrary.Implementations.DVB
         catch (Exception ex)
         {
           Log.Log.Debug("Anysee: failed to load the GetanyseeNumberofDevicesEx function: {0}", ex.ToString());
+          return;
         }
 
         function = GetProcAddress(lib, "?OpenCILib@CCIAPI@@UAGJPAUHWND__@@H@Z");
         if (function == IntPtr.Zero)
         {
           Log.Log.Debug("Anysee: failed to locate the OpenCILib function");
+          return;
         }
         try
         {
@@ -460,12 +467,14 @@ namespace TvLibrary.Implementations.DVB
         catch (Exception ex)
         {
           Log.Log.Debug("Anysee: failed to load the OpenCILib function: {0}", ex.ToString());
+          return;
         }
 
         function = GetProcAddress(lib, "?CI_Control@CCIAPI@@UAGJKPAJ0@Z");
         if (function == IntPtr.Zero)
         {
           Log.Log.Debug("Anysee: failed to locate the CI_Control function");
+          return;
         }
         try
         {
@@ -474,6 +483,7 @@ namespace TvLibrary.Implementations.DVB
         catch (Exception ex)
         {
           Log.Log.Debug("Anysee: failed to load the CI_Control function: {0}", ex.ToString());
+          return;
         }
 
         _dllLoaded = true;
