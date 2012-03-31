@@ -190,6 +190,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           groupMap.SortOrder = i;
           groupMaps.Add(groupMap);
           groupMap.AcceptChanges();
+          groupMap.UnloadAllUnchangedRelationsForEntity();
         }
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(groupMaps);

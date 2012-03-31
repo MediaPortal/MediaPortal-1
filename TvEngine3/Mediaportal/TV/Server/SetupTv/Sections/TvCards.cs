@@ -381,6 +381,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         card.enabled = mpListView1.Items[i].Checked;
         cards.Add(card);
+        card.UnloadAllUnchangedRelationsForEntity();
       }
 
       ServiceAgents.Instance.CardServiceAgent.SaveCards(cards);
