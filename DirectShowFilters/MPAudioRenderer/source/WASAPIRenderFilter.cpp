@@ -632,7 +632,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               sampleOffset = 0;
               dataLeftInSample = 0;
 
-              //goto fetchSample;
               break;
             }
             else if (command == ASC_Pause)

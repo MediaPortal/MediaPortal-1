@@ -313,6 +313,8 @@ DWORD CTimeStretchFilter::ThreadProc()
   AudioSinkCommand command;
   CComPtr<IMediaSample> sample;
 
+  m_csResources.Lock();
+
   while (true)
   {
     m_csResources.Unlock();
