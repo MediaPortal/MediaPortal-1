@@ -204,7 +204,12 @@ namespace TvLibrary.Implementations.DVB
           }
           Marshal.WriteInt32(returnedByteCountBuffer, 0);
 
-          /*Marshal.WriteInt32(commandBuffer, 0, (Int32)_controlCode);
+          // Right now it seems that NetUP's drivers require 4 bit
+          // integers on 32 bit systems and 8 bit integers on 64 bit
+          // systems. This is somewhat inconvenient. I have reported
+          // the issue to them.
+          //  -mm1352000, 01-04-2012
+          Marshal.WriteInt32(commandBuffer, 0, (int)_controlCode);
           Marshal.WriteInt32(commandBuffer, 4, _inBuffer.ToInt32());
           Marshal.WriteInt32(commandBuffer, 8, _inBufferSize);
           Marshal.WriteInt32(commandBuffer, 12, _outBuffer.ToInt32());
@@ -215,14 +220,14 @@ namespace TvLibrary.Implementations.DVB
           Marshal.WriteInt32(commandBuffer, 32, 0);
           Marshal.WriteInt32(commandBuffer, 36, 0);
           Marshal.WriteInt32(commandBuffer, 40, 0);
-          Marshal.WriteInt32(commandBuffer, 44, 0);*/
+          Marshal.WriteInt32(commandBuffer, 44, 0);
 
-          Marshal.WriteInt64(commandBuffer, 0, _controlCode);
+          /*Marshal.WriteInt64(commandBuffer, 0, _controlCode);
           Marshal.WriteInt64(commandBuffer, 8, _inBuffer.ToInt64());
           Marshal.WriteInt64(commandBuffer, 16, _inBufferSize);
           Marshal.WriteInt64(commandBuffer, 24, _outBuffer.ToInt64());
           Marshal.WriteInt64(commandBuffer, 32, _outBufferSize);
-          Marshal.WriteInt64(commandBuffer, 40, returnedByteCountBuffer.ToInt64());
+          Marshal.WriteInt64(commandBuffer, 40, returnedByteCountBuffer.ToInt64());*/
 
           hr = ps.Set(BdaExtensionPropertySet, 0, instanceBuffer, InstanceSize, commandBuffer, CommandSize);
           if (hr == 0)
@@ -500,6 +505,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return hr;
         }
+        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MmiEnquirySize);
         mmi = (MmiEnquiry)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiEnquiry));
       }
 
