@@ -41,10 +41,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     public IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query, ChannelGroupIncludeRelationEnum includeRelations)
     {
-      bool groupMaps = (includeRelations & ChannelGroupIncludeRelationEnum.GroupMaps) == ChannelGroupIncludeRelationEnum.GroupMaps;
-      bool groupMapsChannel = (includeRelations & ChannelGroupIncludeRelationEnum.GroupMapsChannel) == ChannelGroupIncludeRelationEnum.GroupMapsChannel;
-      bool groupMapsTuningDetails = (includeRelations & ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails) == ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails;
-      bool keywordMap = (includeRelations & ChannelGroupIncludeRelationEnum.KeywordMap) == ChannelGroupIncludeRelationEnum.KeywordMap;
+      bool groupMaps = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMaps);
+      bool groupMapsChannel = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMapsChannel);
+      bool groupMapsTuningDetails = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.GroupMapsTuningDetails);
+      bool keywordMap = includeRelations.HasFlag(ChannelGroupIncludeRelationEnum.KeywordMap);
 
       if (groupMaps)
       {

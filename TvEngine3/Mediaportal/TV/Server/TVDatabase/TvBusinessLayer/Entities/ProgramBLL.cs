@@ -236,11 +236,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     /// <returns>true if program is running at tCurTime</returns>
     public bool IsRunningAt(DateTime tCurTime)
     {
-      bool bRunningAt = false;
-      if (tCurTime >= _entity.startTime && tCurTime <= _entity.endTime)
-      {
-        bRunningAt = true;
-      }
+      bool bRunningAt = tCurTime >= _entity.startTime && tCurTime <= _entity.endTime;
       return bRunningAt;
     }
   }

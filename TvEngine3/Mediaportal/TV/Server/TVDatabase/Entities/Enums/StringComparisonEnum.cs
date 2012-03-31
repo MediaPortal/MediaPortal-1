@@ -25,8 +25,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   [Flags]
   public enum StringComparisonEnum
   {
-    StartsWith,
-    EndsWith
+    StartsWith = 1,
+    EndsWith = 2
   }
-  
 }

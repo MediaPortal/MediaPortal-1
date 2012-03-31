@@ -24,7 +24,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class ChannelManagement
   {
-
     public static IList<Channel> GetAllChannelsByGroupId(int idGroup)
     {
       try
@@ -182,17 +181,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         var query = channelRepository.GetQuery<TuningDetail>(t => t.channelType == channelType);        
 
-        if ((tuningDetailSearchEnum & TuningDetailSearchEnum.NetworkId) == TuningDetailSearchEnum.NetworkId)
+        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.NetworkId)))
         {
           query = query.Where(t => t.networkId == dvbChannel.NetworkId);
         }
 
-        if ((tuningDetailSearchEnum & TuningDetailSearchEnum.ServiceId) == TuningDetailSearchEnum.ServiceId)
+        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId)))
         {
           query = query.Where(t => t.serviceId == dvbChannel.ServiceId);
         }
 
-        if ((tuningDetailSearchEnum & TuningDetailSearchEnum.TransportId) == TuningDetailSearchEnum.TransportId)
+        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.TransportId)))
         {
           query = query.Where(t => t.transportId == dvbChannel.TransportId);
         }

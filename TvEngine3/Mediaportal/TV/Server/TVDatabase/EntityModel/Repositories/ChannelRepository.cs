@@ -51,15 +51,20 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     }    
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations)
-    {
-      bool channelLinkMapsChannelLink = (includeRelations & ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink) == ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink;
-      bool channelLinkMapsChannelPortal = (includeRelations & ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal) == ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal;
-      bool channelMaps = (includeRelations & ChannelIncludeRelationEnum.ChannelMaps) == ChannelIncludeRelationEnum.ChannelMaps;
-      bool channelMapsCard = (includeRelations & ChannelIncludeRelationEnum.ChannelMapsCard) == ChannelIncludeRelationEnum.ChannelMapsCard;
-      bool groupMaps = (includeRelations & ChannelIncludeRelationEnum.GroupMaps) == ChannelIncludeRelationEnum.GroupMaps;
-      bool groupMapsChannelGroup = (includeRelations & ChannelIncludeRelationEnum.GroupMapsChannelGroup) == ChannelIncludeRelationEnum.GroupMapsChannelGroup;
-      bool tuningDetails = (includeRelations & ChannelIncludeRelationEnum.TuningDetails) == ChannelIncludeRelationEnum.TuningDetails;      
-      
+    {      
+      bool channelLinkMapsChannelLink = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink);
+      bool channelLinkMapsChannelPortal = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal);
+      bool channelMaps = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMaps);
+      bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
+      bool groupMaps = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMaps);
+      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
+      bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
+
+      if (tuningDetails)
+      {
+        query = query.Include(c => c.TuningDetails);
+      }
+
       if (channelLinkMapsChannelLink)
       {
         query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelLink));
@@ -83,11 +88,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (groupMapsChannelGroup)
       {
         query = query.Include(c => c.GroupMaps.Select(g => g.ChannelGroup));
-      }
-      if (tuningDetails)
-      {
-        query = query.Include(c => c.TuningDetails);
-      }
+      }      
 
       return query;
     }

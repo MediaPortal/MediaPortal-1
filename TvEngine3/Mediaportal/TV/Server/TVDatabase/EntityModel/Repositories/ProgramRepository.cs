@@ -113,8 +113,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       if (!string.IsNullOrEmpty(searchCriteria))
       {
-        bool startsWith = (stringComparison & StringComparisonEnum.StartsWith) == StringComparisonEnum.StartsWith;
-        bool endsWith = (stringComparison & StringComparisonEnum.EndsWith) == StringComparisonEnum.EndsWith;
+        bool startsWith = (stringComparison.HasFlag(StringComparisonEnum.StartsWith));
+        bool endsWith = (stringComparison.HasFlag(StringComparisonEnum.EndsWith));
 
         if (startsWith && endsWith)
         {
@@ -144,8 +144,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       if (!string.IsNullOrEmpty(searchCriteria))
       {
-        bool startsWith = (stringComparison & StringComparisonEnum.StartsWith) == StringComparisonEnum.StartsWith;
-        bool endsWith = (stringComparison & StringComparisonEnum.EndsWith) == StringComparisonEnum.EndsWith;
+        bool startsWith = (stringComparison.HasFlag(StringComparisonEnum.StartsWith));
+        bool endsWith = (stringComparison.HasFlag(StringComparisonEnum.EndsWith));
 
         if (startsWith && endsWith)
         {
@@ -175,8 +175,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       if (!string.IsNullOrEmpty(searchCriteria))
       {
-        bool startsWith = (stringComparison & StringComparisonEnum.StartsWith) == StringComparisonEnum.StartsWith;
-        bool endsWith = (stringComparison & StringComparisonEnum.EndsWith) == StringComparisonEnum.EndsWith;
+        bool startsWith = (stringComparison.HasFlag(StringComparisonEnum.StartsWith));
+        bool endsWith = (stringComparison.HasFlag(StringComparisonEnum.EndsWith));
 
         if (startsWith && endsWith)
         {

@@ -188,6 +188,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
       include |= ChannelIncludeRelationEnum.ChannelMaps;
       include |= ChannelIncludeRelationEnum.GroupMaps;
+      include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
 
       _allChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, include);
 

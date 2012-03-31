@@ -25,8 +25,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Enums
   [Flags]
   public enum TuningDetailSearchEnum
   {
-    NetworkId,
-    ServiceId,
-    TransportId    
+    NetworkId = 1,
+    ServiceId = 2,
+    TransportId = 4    
   }      
 }
