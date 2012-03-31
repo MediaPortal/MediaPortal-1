@@ -417,7 +417,7 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
 
 STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 {
-  Log("Run");
+  Log("Run - %6.3f", tStart / 10000000.0);
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
   HRESULT	hr = S_OK;
