@@ -132,6 +132,8 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>Model.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <EmbeddedResource Include="Model.MSSQL.ssdl" />
+    <EmbeddedResource Include="Model.MySQL.ssdl" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
