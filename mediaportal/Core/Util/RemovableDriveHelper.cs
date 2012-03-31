@@ -190,13 +190,13 @@ namespace MediaPortal.Util
         if (tsExamineCD.TotalMilliseconds < _volumeRemovalDelay
           || (tsVolumeRemoval.TotalMilliseconds < _volumeRemovalDelay || tsMount.TotalMilliseconds < _volumeRemovalDelay))
         {
-          Log.Error("Ignoring volume inserted event - drive {0} - timespan examineCD {1} s - timespan mount {2} s - timespan volume removal {3} s",
-            volumeLetter, tsExamineCD.TotalMilliseconds / 1000, tsMount.TotalMilliseconds / 1000, tsVolumeRemoval.TotalMilliseconds / 1000);
-          Log.Debug("   _volumeRemovalDelay = {1}", _volumeRemovalDelay);
+          Log.Debug("Ignoring volume inserted event - drive {0} - timespan mount {1} s",
+            volumeLetter, tsMount.TotalMilliseconds / 1000);
+          Log.Debug("   _volumeRemovalDelay = {0}", _volumeRemovalDelay);
           return false;
         }
 
-        Log.Error("Detected new optical media: {0}", volumeLetter);
+        Log.Debug("Detected new optical media: {0}", volumeLetter);
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED, 0, 0, 0, 0, 0, 0);
         msg.Label = path;
         GUIGraphicsContext.SendMessage(msg);
@@ -236,11 +236,11 @@ namespace MediaPortal.Util
         // We need to filter out those as it could trigger false autoplay event
         if (tsExamineCD.TotalMilliseconds < _volumeRemovalDelay || tsMount.TotalMilliseconds < _volumeRemovalDelay || tsVolumeInsert.TotalMilliseconds < _volumeRemovalDelay)
         { 
-          Log.Error("Ignoring volume removed event - drive {0} - time after examineCD {1} s - time after Mount {2} s - time after VolumeInsert {3} s",
-            volumeLetter, tsExamineCD.TotalMilliseconds / 1000, tsMount.TotalMilliseconds / 1000, tsVolumeInsert.TotalMilliseconds / 1000);
+          Log.Debug("Ignoring volume removed event - drive {0} - time after Mount {1} s",
+            volumeLetter, tsMount.TotalMilliseconds / 1000);
           return false;
         }
-        Log.Error("Detected optical media removal: {0}", volumeLetter);
+        Log.Debug("Detected optical media removal: {0}", volumeLetter);
         Log.Debug("  time after ExamineCD {0} s", tsExamineCD.TotalMilliseconds / 1000);
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED, 0, 0, 0, 0, 0, 0);
         msg.Label = path;
