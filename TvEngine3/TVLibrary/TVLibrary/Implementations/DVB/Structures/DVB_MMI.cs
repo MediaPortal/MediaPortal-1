@@ -56,27 +56,111 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// MMI Tags inside MMI object
+    /// MMI message tag.
     /// </summary>
-    public enum MMI_TAGS
+    public enum MmiTag
     {
-      /// Close menu
-      CLOSE = 0x9F8800,
-      /// Enquiry from CAM
-      ENQUIRY = 0x9F8807,
-      /// More menu entries
-      MENU_MORE = 0x9F880A,
-      /// Last menu entry
-      MENU_LAST = 0x9F8809,
-      /// More list items
-      LIST_MORE = 0x9F880D,
-      /// Last list item
-      LIST_LAST = 0x9F880C,
-      /// More text
-      TEXT_MORE = 0x9F8804,
-      /// Last text
-      TEXT_LAST = 0x9F8803
-    } ;
+      /// Profile enquiry.
+      ProfileEnquiry = 0x9f8010,
+      /// Profile.
+      Profile,
+      /// Profile change.
+      ProfileChange,
+
+      /// Application information enquiry.
+      ApplicationInfoEnquiry = 0x9f8020,
+      /// Application information.
+      ApplicationInfo,
+      /// Enter menu.
+      EnterMenu,
+
+      /// Conditional access information enquiry.
+      ConditionalAccessInfoEnquiry = 0x9f8030,
+      /// Conditional access information.
+      ConditionalAccessInfo,
+      /// Conditional access information programme map table.
+      ConditionalAccessPmt,
+      /// Conditional access information programme map table response.
+      ConditionalAccessPmtResponse,
+
+      /// Tune.
+      Tune = 0x9f8400,
+      /// Replace.
+      Replace,
+      /// Clear replace.
+      ClearReplace,
+      /// Ask release.
+      AskRelease,
+
+      /// Date/time enquiry.
+      DateTimeEnquiry = 0x9f8440,
+      /// Date/time.
+      DateTime,
+
+      /// Close man-machine interface.
+      CloseMmi = 0x9F8800,
+      /// Display control.
+      DisplayControl,
+      /// Display reply.
+      DisplayReply,
+      /// Text - last.
+      TextLast,
+      /// Text - more.
+      TextMore,
+      /// Keypad control.
+      KeypadControl,
+      /// Key press.
+      KeyPress,
+      /// Enquiry.
+      Enquiry,
+      /// Answer.
+      Answer,
+      /// Menu - last.
+      MenuLast,
+      /// Menu - more.
+      MenuMore,
+      /// Menu answer.
+      MenuAnswer,
+      /// List - last.
+      ListLast,
+      /// List - more.
+      ListMore,
+      /// Subtitle segment - last.
+      SubtitleSegmentLast,
+      /// Subtitle segment - more.
+      SubtitleSegmentMore,
+      /// Display message.
+      DisplayMessage,
+      /// Scene end mark.
+      SceneEndMark,
+      /// Scene done.
+      SceneDone,
+      /// Scene control.
+      SceneControl,
+      /// Subtitle download - last.
+      SubtitleDownloadLast,
+      /// Subtitle download - more.
+      SubtitleDownloadMore,
+      /// Flush download.
+      FlushDownload,
+      /// Download reply.
+      DownloadReply,
+
+      /// Communication command.
+      CommsCommand = 0x9f8c00,
+      /// Connection descriptor.
+      ConnectionDescriptor,
+      /// Communication reply.
+      CommsReply,
+      /// Communication send - last.
+      CommsSendLast,
+      /// Communication send - more.
+      CommsSendMore,
+      /// Communication receive - last.
+      CommsReceiveLast,
+      /// Communication receive - more.
+      CommsReceiveMore
+    }
 
     #endregion
 
@@ -86,10 +170,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="sourceData"></param>
     /// <param name="offset"></param>
     /// <returns></returns>
-    public static MMI_TAGS ToMMITag(byte[] sourceData, int offset)
+    public static MmiTag ToMMITag(byte[] sourceData, int offset)
     {
       return
-        (MMI_TAGS)
+        (MmiTag)
         (((Int32)sourceData[offset] << 16) | ((Int32)sourceData[offset + 1] << 8) | ((Int32)sourceData[offset + 2]));
     }
 
@@ -127,18 +211,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Sets length info to byte positions
-    /// </summary>
-    /// <param name="length">(word) Length</param>
-    /// <param name="uLength1">(byte) LowByte of Length</param>
-    /// <param name="uLength2">(byte) HighByte of Length</param>
-    public static void SetLength(UInt16 length, ref byte uLength1, ref byte uLength2)
-    {
-      uLength1 = ((byte)(length % 256));
-      uLength2 = ((byte)(length / 256));
-    }
-
-    /// <summary>
     /// Converts bytes to String
     /// </summary>
     /// <param name="sourceData">source byte[]</param>
@@ -165,10 +237,10 @@ namespace TvLibrary.Implementations.DVB
     public static int GetCIText(byte[] sourceData, int offset, ref List<String> menuEntries)
     {
       byte Length; // We assume that text Length is smaller 127
-      MMI_TAGS Tag;
+      MmiTag Tag;
 
       Tag = ToMMITag(sourceData, offset);
-      if ((Tag != MMI_TAGS.TEXT_MORE) && (Tag != MMI_TAGS.TEXT_LAST))
+      if ((Tag != MmiTag.TextMore) && (Tag != MmiTag.TextLast))
       {
         return -1;
       }
@@ -197,65 +269,95 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates a "CloseMMI" data set
     /// </summary>
-    /// <param name="uData">reference to byte[]</param>
-    public static void CreateMMIClose(ref byte[] uData)
+    /// <returns>a CloseMmi APDU</param>
+    public static byte[] CreateMMIClose()
     {
-      // MMI Tag
+      // MMI tag
+      byte[] uData = new byte[5];
       uData[0] = 0x9F;
       uData[1] = 0x88;
       uData[2] = 0x00;
       uData[3] = 0x01; // length field
       uData[4] = 0x00; // close_mmi_cmd_id (immediately)
+      return uData;
     }
 
     /// <summary>
     /// Creates a "SelectMenuChoice" data set
     /// </summary>
     /// <param name="choice">selected index (0 means back)</param>
-    /// <param name="uData">reference to byte[]</param>
-    public static void CreateMMISelect(byte choice, ref byte[] uData)
+    /// <returns>a MenuAnswer APDU</return>
+    public static byte[] CreateMMISelect(byte choice)
     {
-      // MMI Tag
+      // MMI tag
+      byte[] uData = new byte[5];
       uData[0] = 0x9F;
       uData[1] = 0x88;
       uData[2] = 0x0B; // send choice
       uData[3] = 0x01; // length field
       uData[4] = choice; // choice
+      return uData;
     }
 
     /// <summary>
     /// Creates an CI Menu Answer package
     /// </summary>
-    /// <param name="Cancel">true to cancel</param>
-    /// <param name="Answer">answer string</param>
+    /// <param name="cancel">true to cancel</param>
+    /// <param name="answer">answer string</param>
     /// <param name="uData">target buffer</param>
     /// <param name="uLength1">length byte1</param>
     /// <param name="uLength2">length byte2</param>
-    /// <returns>byte array</returns>
-    public static void CreateMMIAnswer(bool Cancel, String Answer, ref byte[] uData, ref byte uLength1,
-                                       ref byte uLength2)
+    /// <returns>an Answer APDU</returns>
+    public static byte[] CreateMMIAnswer(ResponseType responseType, String answer)
     {
-      if (Cancel == true)
+      char[] answerChars = answer.ToCharArray();
+
+      // Calculate the number of bytes that are needed to encode the
+      // length value.
+      int lengthToEncode = answerChars.Length + 1;
+      int byteCount = 1;
+      if (lengthToEncode > 127)
       {
-        uData[3] = 1; // length field
-        uData[4] = 0; // answ_id "cancel"
-        SetLength(5, ref uLength1, ref uLength2); // set correct length
-      }
-      else
-      {
-        uData[3] = (byte)(Answer.Length + 1); // length field + 1 byte answ_id
-        uData[4] = 1; // answ_id "answer"
-        char[] answerChars = Answer.ToCharArray();
-        for (int p = 0; p < answerChars.Length; p++)
+        int tempLength = lengthToEncode;
+        while (tempLength > 255)
         {
-          uData[5 + p] = (byte)answerChars[p]; // answer string
+          tempLength = tempLength / 256;
+          byteCount++;
         }
-        SetLength((ushort)(5 + answerChars.Length), ref uLength1, ref uLength2); // set correct length
       }
-      // MMI Tag
+
+      // MMI tag
+      byte[] uData = new byte[4 + byteCount + answerChars.Length];
       uData[0] = 0x9F;
       uData[1] = 0x88;
       uData[2] = 0x08; // send enquiry answer
+
+      uData[3 + byteCount] = (byte)responseType;
+
+      // answer string
+      int offset = 4 + byteCount;
+      for (int p = 0; p < answerChars.Length; p++)
+      {
+        uData[offset + p] = (byte)answerChars[p];
+      }
+
+      // length field
+      if (byteCount == 1)
+      {
+        uData[3] = (byte)lengthToEncode;
+      }
+      else
+      {
+        uData[3] = (byte)(byteCount | 0x80);
+        while (lengthToEncode > 1)
+        {
+          uData[2 + byteCount] = (byte)(lengthToEncode % 256);
+          lengthToEncode = lengthToEncode / 256;
+          byteCount--;
+        }
+      }
+
+      return uData;
     }
 
     /// <summary>
@@ -314,22 +416,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="length">total length</param>
     public static void DumpBinary(IntPtr sourceData, int offset, int length)
     {
-      byte[] tmpBuffer = IntPtrToByteArray(sourceData, offset, length);
-      DumpBinary(tmpBuffer, offset, length);
-    }
-
-    /// <summary>
-    /// Copys data from IntPtr to new byte[]
-    /// </summary>
-    /// <param name="sourceData">IntPtr to source data</param>
-    /// <param name="offset">starting offset</param>
-    /// <param name="length">length</param>
-    /// <returns>new byte[]</returns>
-    public static byte[] IntPtrToByteArray(IntPtr sourceData, int offset, int length)
-    {
       byte[] tmpBuffer = new byte[length];
       Marshal.Copy(sourceData, tmpBuffer, offset, length);
-      return tmpBuffer;
+      DumpBinary(tmpBuffer, offset, length);
     }
   }
 
@@ -382,7 +471,7 @@ namespace TvLibrary.Implementations.DVB
     public void HandleMMI(byte[] MMI, int MMI_length)
     {
       // parse starting 3 bytes == tag
-      DVB_MMI.MMI_TAGS uMMITag = DVB_MMI.ToMMITag(MMI, 0);
+      DVB_MMI.MmiTag uMMITag = DVB_MMI.ToMMITag(MMI, 0);
 
       // dumping binary APDU
 #if DEBUG
@@ -399,7 +488,7 @@ namespace TvLibrary.Implementations.DVB
                     mmiOffset);
 #endif
       int offset = 0; // starting with 0; reading whole struct from start
-      if (uMMITag == DVB_MMI.MMI_TAGS.CLOSE)
+      if (uMMITag == DVB_MMI.MmiTag.CloseMmi)
       {
         // Close menu
         byte nDelay = 0;
@@ -418,7 +507,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("{0}: OnCiCloseDisplay: cannot do callback!", m_cardName);
         }
       }
-      if (uMMITag == DVB_MMI.MMI_TAGS.ENQUIRY)
+      if (uMMITag == DVB_MMI.MmiTag.Enquiry)
       {
         // request input
         bool bPasswordMode = false;
@@ -444,8 +533,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("{0}: OnCiRequest: cannot do callback!", m_cardName);
         }
       }
-      if (uMMITag == DVB_MMI.MMI_TAGS.LIST_LAST || uMMITag == DVB_MMI.MMI_TAGS.MENU_LAST ||
-          uMMITag == DVB_MMI.MMI_TAGS.MENU_MORE || uMMITag == DVB_MMI.MMI_TAGS.LIST_MORE)
+      if (uMMITag == DVB_MMI.MmiTag.ListLast || uMMITag == DVB_MMI.MmiTag.MenuLast ||
+          uMMITag == DVB_MMI.MmiTag.MenuMore || uMMITag == DVB_MMI.MmiTag.ListMore)
       {
         // step forward; begin with offset+1; stop when 0x9F reached
         // should be modified to offset + mmioffset+1 ?
@@ -456,7 +545,7 @@ namespace TvLibrary.Implementations.DVB
           offset++;
         }
         uMMITag = DVB_MMI.ToMMITag(MMI, offset); // get next MMI tag
-        Log.Log.Debug("{0}: MMI Parse: Got MENU_LAST, skipped to next block on index: {1}; new Tag {2}", m_cardName,
+        Log.Log.Debug("{0}: _mmiHandler Parse: Got MENU_LAST, skipped to next block on index: {1}; new Tag {2}", m_cardName,
                       offset, uMMITag);
 
         int nChoices = 0;

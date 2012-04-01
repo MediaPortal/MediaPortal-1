@@ -1225,8 +1225,14 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
       /* QuerySupported has been done in GetCAMName already */
-      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 5);
-      DVB_MMI.CreateMMIClose(ref caData.uData);
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
+      byte[] apdu = DVB_MMI.CreateMMIClose();
+      caData.uLength1 = (byte)(apdu.Length % 256);
+      caData.uLength2 = (byte)(apdu.Length / 256);
+      for (int i = 0; i < apdu.Length; i++)
+      {
+        caData.uData[i] = apdu[i];
+      }
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
       int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE,
@@ -1254,9 +1260,14 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
       /* QuerySupported has been done in GetCAMName already */
-      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 5);
-      DVB_MMI.CreateMMISelect(choice, ref caData.uData);
-
+      FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
+      byte[] apdu = DVB_MMI.CreateMMISelect(choice);
+      caData.uLength1 = (byte)(apdu.Length % 256);
+      caData.uLength2 = (byte)(apdu.Length / 256);
+      for (int i = 0; i < apdu.Length; i++)
+      {
+        caData.uData[i] = apdu[i];
+      }
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
       int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE,
@@ -1287,7 +1298,18 @@ namespace TvLibrary.Implementations.DVB
       }
       /* QuerySupported has been done in GetCAMName already */
       FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
-      DVB_MMI.CreateMMIAnswer(Cancel, Answer, ref caData.uData, ref caData.uLength1, ref caData.uLength2);
+      DVB_MMI.ResponseType responseType = DVB_MMI.ResponseType.Answer;
+      if (Cancel)
+      {
+        responseType = DVB_MMI.ResponseType.Cancel;
+      }
+      byte[] apdu = DVB_MMI.CreateMMIAnswer(responseType, Answer);
+      caData.uLength1 = (byte)(apdu.Length % 256);
+      caData.uLength2 = (byte)(apdu.Length / 256);
+      for (int i = 0; i < apdu.Length; i++)
+      {
+        caData.uData[i] = apdu[i];
+      }
       //Log.Log.Debug("FireDTV:Created answer: length:{0},{1}", caData.uLength1, caData.uLength2);
       //DVB_MMI.DumpBinary(caData.uData,0,caData.uLength1);
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);

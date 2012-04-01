@@ -341,7 +341,7 @@ namespace TvLibrary.Implementations.DVB
           {
             CIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 0);
             MMIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 4);
-            if (!SilentMode) Log.Log.WriteFile("Twinhan:  CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
+            if (!SilentMode) Log.Log.WriteFile("Twinhan:  CI State:{0:X} _mmiHandler State:{1:X}", CIState, MMIState);
           }
           else
           {
@@ -865,7 +865,7 @@ namespace TvLibrary.Implementations.DVB
               MMIInfoStruct MMI = ReadMMI();
               if (MMI != null)
               {
-                Log.Log.Debug("TwinHan MMI:");
+                Log.Log.Debug("TwinHan _mmiHandler:");
                 Log.Log.Debug("Type        :{0}", MMI.Type);
                 Log.Log.Debug("Header:      {0}", MMI.Header);
                 Log.Log.Debug("SubHeader:   {0}", MMI.SubHeader);
@@ -906,7 +906,7 @@ namespace TvLibrary.Implementations.DVB
               }
               break;
             default:
-              Log.Log.Write("MMI State {0}", (CIState)MMIState);
+              Log.Log.Write("_mmiHandler State {0}", (CIState)MMIState);
               break;
           }
           Thread.Sleep(500);
