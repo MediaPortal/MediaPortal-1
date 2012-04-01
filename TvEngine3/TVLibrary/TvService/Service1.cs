@@ -25,6 +25,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Principal;
 using System.ServiceProcess;
 using System.Threading;
@@ -32,6 +33,7 @@ using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Xml;
+using MediaPortal.Common.Utils.Logger;
 using TvDatabase;
 using TvLibrary.Log;
 using TvControl;
@@ -91,6 +93,16 @@ namespace TvService
     /// </summary>
     private static void Main(string[] args)
     {
+      // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
+      var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
+      var dataPath = Log.GetPathName();
+      var loggerPath = Path.Combine(dataPath, "\\log");
+#if DEBUG
+      if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
+#endif
+      CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
+
+      
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
 
