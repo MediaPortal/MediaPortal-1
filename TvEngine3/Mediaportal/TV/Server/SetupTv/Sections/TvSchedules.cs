@@ -341,7 +341,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
             item.SubItems.Add(prg.seriesNum);
             item.SubItems.Add(prg.episodeNum);
-            item.SubItems.Add(prg.ProgramCategory.category);
+            if (prg.ProgramCategory != null)
+            {
+              item.SubItems.Add(prg.ProgramCategory.category); 
+            }            
             item.SubItems.Add(prg.originalAirDate.GetValueOrDefault(DateTime.MinValue).ToString("HH:mm:ss", mmddFormat));
             item.SubItems.Add(prg.classification);
             item.SubItems.Add(Convert.ToString(prg.starRating));
