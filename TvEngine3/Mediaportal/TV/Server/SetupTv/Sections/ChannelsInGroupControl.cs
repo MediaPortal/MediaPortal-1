@@ -105,7 +105,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         include |= ChannelIncludeRelationEnum.TuningDetails;
         include |= ChannelIncludeRelationEnum.GroupMaps;
         include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
-        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(_channelGroup.idGroup, _mediaTypeEnum, include);
+        IOrderedEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(_channelGroup.idGroup, _mediaTypeEnum, include).OrderBy(c=>
+                                                                                                                                                                                        {
+                                                                                                                                                                                          var firstOrDefault = c.GroupMaps.FirstOrDefault();
+                                                                                                                                                                                          return firstOrDefault != null ? firstOrDefault.SortOrder : 0;
+                                                                                                                                                                                        });
 
         foreach (var channel in channels)
         {
@@ -189,8 +193,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           groupMap.SortOrder = i;
           groupMap.UnloadAllUnchangedRelationsForEntity();
+          groupMap.ChangeTracker.State = ObjectState.Modified;
           groupMaps.Add(groupMap);
-          groupMap.AcceptChanges();          
         }
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(groupMaps);
