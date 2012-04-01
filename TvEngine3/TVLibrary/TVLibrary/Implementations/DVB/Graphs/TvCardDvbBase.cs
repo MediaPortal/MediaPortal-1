@@ -168,11 +168,6 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterWinTvUsb;
 
     /// <summary>
-    /// DigitalDevices CI filter
-    /// </summary>
-    protected IBaseFilter _filterDigitalDevicesCI;
-
-    /// <summary>
     /// Capture device
     /// </summary>
     protected DsDevice _captureDevice;
@@ -181,11 +176,6 @@ namespace TvLibrary.Implementations.DVB
     /// WinTV CI device
     /// </summary>
     protected DsDevice _deviceWinTvUsb;
-
-    /// <summary>
-    /// DigitalDevices CI device
-    /// </summary>
-    protected DsDevice _deviceDigitalDevicesCI;
 
     /// <summary>
     /// EPG Grabber callback
@@ -1233,118 +1223,6 @@ namespace TvLibrary.Implementations.DVB
       }
       _digitalDevices.Dispose();
       return false;
-
-      FilterInfo pInfo;
-      IBaseFilter tmpCiFilter = null;
-      String CiDeviceName = String.Empty;
-      bool filterSuccess = false;
-
-      lastFilter.QueryFilterInfo(out pInfo);
-      //Log.Log.Debug(pInfo.achName);
-
-      if (_captureDevice == null)
-        return false;
-
-      if (!_captureDevice.DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56"))
-        return false;
-
-      Log.Log.WriteFile("dvb:  DigitalDevices CI: try to connect [demux]");
-      IPin lastFilterOutputPin = null;
-      IPin demuxPinIn = null;
-      IBaseFilter tmpDemux = null;
-      try
-      {
-        tmpDemux = (IBaseFilter)new MPEG2Demultiplexer();
-        _graphBuilder.AddFilter(tmpDemux, "MPEG2-Demultiplexer");
-
-        lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
-        demuxPinIn = DsFindPin.ByDirection(tmpDemux, PinDirection.Input, 0);
-        
-        // If connection to Demux is possible, CI filter cannot be put between.
-        // this test removes a 30 .. 45 second delay when the graphbuilder tries to 
-        // render Capture->CI->Demux and CI is not enabled for this tuner.
-        if (_graphBuilder.Connect(lastFilterOutputPin, demuxPinIn) == 0)
-        {
-          Log.Log.WriteFile("dvb:  DigitalDevices CI: connection to [demux] successful, CI not available or configured for this tuner.");
-          Log.Log.WriteFile("dvb:  DigitalDevices CI: disconnect [demux], HR:" + lastFilterOutputPin.Disconnect());
-          return false;
-        }
-      }
-      finally
-      {
-        Release.ComObject(pInfo.achName+" pin0", lastFilterOutputPin);
-        Release.ComObject("tifdemux pinin", demuxPinIn);
-        _graphBuilder.RemoveFilter(tmpDemux);
-        Release.ComObject("tmpDemux", tmpDemux);
-      }
-
-      try
-      {
-        DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
-        DsDevice DDCIDevice = null;
-        for (int capIndex = 0; capIndex < capDevices.Length; capIndex++)
-        {
-          // DD components have a common device path part. 
-          if (!(capDevices[capIndex].DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56") &&
-                capDevices[capIndex].Name.ToLowerInvariant().Contains("common interface")))
-            continue;
-
-          CiDeviceName = capDevices[capIndex].Name;
-
-          //try add filter to graph
-          Log.Log.Info("dvb:  Adding {0} to graph", CiDeviceName);
-          if (
-            _graphBuilder.AddSourceFilterForMoniker(capDevices[capIndex].Mon, null, capDevices[capIndex].Name,
-                                                    out tmpCiFilter) == 0)
-          {
-            //DigitalDevices ci module found
-            Log.Log.Info("dvb:  {0} detected", CiDeviceName);
-
-            String filterName = tunerOnly ? "Tuner" : "Capture";
-            //now render [Tuner/Capture]->[CI]
-            Log.Log.Info("dvb:  Render [{0}]->[{1}]", filterName, CiDeviceName);
-            if (_capBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter) != 0)
-            {
-              Log.Log.Info("dvb:  Render [{0}]->[{1}] failed", filterName, CiDeviceName);
-              _graphBuilder.RemoveFilter(tmpCiFilter);
-              continue;
-            }
-            // filter connected, device found
-            if (!DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
-            {
-              DDCIDevice = capDevices[capIndex];
-              break;
-            }
-          }
-          //cannot add filter to graph...
-          Log.Log.Info("dvb:  failed to add {0} filter to graph, try to find more devices.", CiDeviceName);
-          //there can be multiple CI devices, try next one
-        }
-        if (DDCIDevice == null)
-          return false;
-
-        Log.Log.WriteFile("dvb:  Setting lastFilter to Digital Devices CI");
-        lastFilter = tmpCiFilter;
-        _filterDigitalDevicesCI = tmpCiFilter;
-        _deviceDigitalDevicesCI = DDCIDevice;
-
-        filterSuccess = true;
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Error("dvb:   Error adding CI: {0}", ex.Message);
-        filterSuccess = false;
-        return filterSuccess;
-      }
-      finally
-      {
-        if (!filterSuccess && tmpCiFilter != null)
-        {
-          _graphBuilder.RemoveFilter(tmpCiFilter);
-          Release.ComObject(CiDeviceName, tmpCiFilter);
-        }
-      }
     }
 
     /// <summary>
@@ -2003,6 +1881,10 @@ namespace TvLibrary.Implementations.DVB
         while (Release.ComObject(_filterWinTvUsb) > 0)
           ;
         _filterWinTvUsb = null;
+      }
+      if (_digitalDevices != null)
+      {
+        _digitalDevices.Dispose();
       }
       if (_filterTIF != null)
       {

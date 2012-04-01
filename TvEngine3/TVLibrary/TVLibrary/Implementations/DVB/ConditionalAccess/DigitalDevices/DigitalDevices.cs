@@ -32,7 +32,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// A class for handling conditional access for Digital Devices tuners.
   /// </summary>
-  public partial class DigitalDevices : ICiMenuActions, IDisposable
+  public class DigitalDevices : ICiMenuActions, IDisposable
   {
     #region enums
 
@@ -110,13 +110,15 @@ namespace TvLibrary.Implementations.DVB
     private class CiContext
     {
       public IKsPropertySet PropertySet;
+      public DsDevice Device;
       public String FilterName;
       public String CamMenuTitle;
       public Int32 CamMenuId;
 
-      public CiContext(IBaseFilter filter)
+      public CiContext(IBaseFilter filter, DsDevice device)
       {
         PropertySet = filter as IKsPropertySet;
+        Device = device;
         FilterName = FilterGraphTools.GetFilterName(filter);
         CamMenuTitle = FilterName;
         CamMenuId = 0;
@@ -307,7 +309,7 @@ namespace TvLibrary.Implementations.DVB
           }
 
           // Excellent - CI filter successfully added!
-          _ciContexts.Add(new CiContext(tmpCiFilter));
+          _ciContexts.Add(new CiContext(tmpCiFilter, captureDevices[i]));
           Log.Log.Debug("Digital Devices: total of {0} CI filter(s) in the graph", _ciContexts.Count);
           DevicesInUse.Instance.Add(captureDevices[i]);
           lastFilter = tmpCiFilter;
@@ -905,11 +907,14 @@ namespace TvLibrary.Implementations.DVB
 
         foreach (CiContext context in _ciContexts)
         {
+          DevicesInUse.Instance.Remove(context.Device);
+          context.Device = null;
           _graph.RemoveFilter(context.PropertySet as IBaseFilter);
           Release.ComObject(context.PropertySet);
         }
       }
       Marshal.FreeCoTaskMem(_mmiBuffer);
+      _isDigitalDevices = false;
     }
 
     #endregion

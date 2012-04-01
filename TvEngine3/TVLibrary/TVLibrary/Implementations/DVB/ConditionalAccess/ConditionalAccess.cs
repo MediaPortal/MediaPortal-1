@@ -96,6 +96,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
+    /// <param name="digitalDevices">A Digital Device CI handler (if present).</param>
     /// <param name="card">Determines the type of TV card</param>    
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
                              TvCardBase card, DigitalDevices digitalDevices)
@@ -1100,7 +1101,6 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_technoTrend);
       Release.Dispose(_digitalEveryWhere);
       Release.Dispose(_hauppauge);
-      Release.Dispose(_DigitalDevices);
       Release.Dispose(_conexant);
       Release.Dispose(_genericbdas);
       Release.Dispose(_isgenericatsc);
