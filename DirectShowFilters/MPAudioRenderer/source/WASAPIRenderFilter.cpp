@@ -40,6 +40,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_dwStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK),
   m_state(StateStopped),
   m_bIsAudioClientStarted(false),
+  m_bDeviceInitialized(false),
   m_rtNextSampleTime(0),
   m_rtHwStart(0)
 {
@@ -527,7 +528,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   m_nSampleNum = 0;
 
-  
   m_csResources.Lock();
 
   if (m_pSettings->m_bReleaseDeviceOnStop)
@@ -538,6 +538,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
       if (FAILED(hr))
       {
         Log("CWASAPIRenderFilter::Render thread Error, audio client not available: (0x%08x)", hr);
+        StopRenderThread();
         m_csResources.Unlock();
         return 0;
       }
@@ -550,9 +551,18 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     if (FAILED(hr))
     {
       Log("CWASAPIRenderFilter::Render thread Error, starting audio client failed: (0x%08x)", hr);
+      StopRenderThread();
       m_csResources.Unlock();
       return 0;
     }
+  }
+
+  if (!m_bDeviceInitialized)
+  {
+    Log("CWASAPIRenderFilter::Render thread Error, device not initialized");
+    StopRenderThread();
+    m_csResources.Unlock();
+    return 0;
   }
 
   EnableMMCSS();
@@ -1140,6 +1150,7 @@ void CWASAPIRenderFilter::CancelDataEvent()
 HRESULT CWASAPIRenderFilter::StopAudioClient()
 {
   HRESULT hr = S_OK;
+  m_bDeviceInitialized = false;
   if (m_bIsAudioClientStarted)
   {
     Log("WASAPIRenderFilter::StopAudioClient");
@@ -1298,6 +1309,8 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
   // Dynamic format change requires restart for the audio client
   if (m_state != StateStopped)
     StartAudioClient();
+
+  m_bDeviceInitialized = true;
 
   return hr;
 }

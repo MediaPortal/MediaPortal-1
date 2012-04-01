@@ -110,6 +110,7 @@ private:
   DWORD               m_dwStreamFlags;
 
   bool                m_bIsAudioClientStarted;
+  bool                m_bDeviceInitialized;
 
   HANDLE              m_hDataEvent;
   HANDLE              m_hTimerEvent;
