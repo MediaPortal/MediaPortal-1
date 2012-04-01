@@ -261,13 +261,6 @@ HRESULT CAC3EncoderFilter::EndOfStream()
 
 HRESULT CAC3EncoderFilter::BeginFlush()
 { 
-  // TODO check
-  
-  // Is it necessary to do it before clearing temp buffer?
-  // If not CBaseAudioSink already does it
-  if (m_pMemAllocator)
-    m_pMemAllocator->Decommit();
-  
   // locking?
   m_cbRemainingInput = 0;
 
@@ -276,12 +269,6 @@ HRESULT CAC3EncoderFilter::BeginFlush()
 
 HRESULT CAC3EncoderFilter::EndFlush()
 {
-  // TODO check
-
-  // Not necessary, CBaseAudioSink already does it
-  if (m_pMemAllocator)
-    m_pMemAllocator->Commit();
-
   return CBaseAudioSink::EndFlush();
 }
 
