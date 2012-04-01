@@ -38,11 +38,7 @@ namespace Mediaportal.TV.Server.TVService.Services
   /// </summary>  
   public class TvControllerService : IControllerService
   {
-    private readonly IInternalControllerService _service;
-    public TvControllerService ()
-    {
-      _service = GlobalServiceProvider.Get<IInternalControllerService>();
-    }
+    private IInternalControllerService _service;    
 
     #region Implementation of IControllerService
 
@@ -54,7 +50,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     {
       get
       {
-        return _service.GetAssemblyVersion;
+        return Service.GetAssemblyVersion;
       }
     }
 
@@ -64,7 +60,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     ///<value>Number which indicates the cards installed</value>
     public int Cards
     {
-      get { return _service.Cards; }
+      get { return Service.Cards; }
     }
 
     /// <summary>
@@ -74,7 +70,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if successful</returns>
     public bool InitConditionalAccess(int cardId)
     {
-      return _service.InitConditionalAccess(cardId);
+      return Service.InitConditionalAccess(cardId);
     }
 
     /// <summary>
@@ -84,7 +80,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <value>cardtype</value>
     public CardType Type(int cardId)
     {
-      return _service.Type(cardId);
+      return Service.Type(cardId);
     }
 
     /// <summary>
@@ -94,7 +90,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>name of card</returns>
     public string CardName(int cardId)
     {
-      return _service.CardName(cardId);
+      return Service.CardName(cardId);
     }
 
     /// <summary>
@@ -103,7 +99,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(int cardId, IChannel channel)
     {
-      return _service.CanTune(cardId, channel);
+      return Service.CanTune(cardId, channel);
     }
 
     /// <summary>
@@ -112,7 +108,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if card is present otherwise false</returns>
     public bool CardPresent(int cardId)
     {
-      return _service.CardPresent(cardId);
+      return Service.CardPresent(cardId);
     }
 
     /// <summary>
@@ -121,7 +117,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if card is present otherwise false</returns>		
     public void CardRemove(int cardId)
     {
-      _service.CardRemove(cardId);
+      Service.CardRemove(cardId);
     }
 
     /// <summary>
@@ -131,7 +127,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>devicePath of card</returns>
     public string CardDevice(int cardId)
     {
-      return _service.CardDevice(cardId);
+      return Service.CardDevice(cardId);
     }
 
     /// <summary>
@@ -141,7 +137,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true when tuner is locked to a signal otherwise false</returns>
     public bool TunerLocked(int cardId)
     {
-      return _service.TunerLocked(cardId);
+      return Service.TunerLocked(cardId);
     }
 
     /// <summary>
@@ -151,7 +147,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>signal quality (0-100)</returns>
     public int SignalQuality(int cardId)
     {
-      return _service.SignalQuality(cardId);
+      return Service.SignalQuality(cardId);
     }
 
     /// <summary>
@@ -161,7 +157,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>signal level (0-100)</returns>
     public int SignalLevel(int cardId)
     {
-      return _service.SignalLevel(cardId);
+      return Service.SignalLevel(cardId);
     }
 
     /// <summary>
@@ -170,7 +166,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="cardId">id of the card.</param>
     public void UpdateSignalSate(int cardId)
     {
-      _service.UpdateSignalSate(cardId);
+      Service.UpdateSignalSate(cardId);
     }
 
     /// <summary>
@@ -180,7 +176,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true when card is scanning otherwise false</returns>
     public bool IsScanning(int cardId)
     {
-      return _service.IsScanning(cardId);
+      return Service.IsScanning(cardId);
     }
 
     /// <summary>
@@ -190,7 +186,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true when card is grabbing the epg  otherwise false</returns>
     public bool IsGrabbingEpg(int cardId)
     {
-      return _service.IsGrabbingEpg(cardId);
+      return Service.IsGrabbingEpg(cardId);
     }
 
     /// <summary>
@@ -201,7 +197,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>list of all channels found</returns>    
     public IChannel[] Scan(int cardId, IChannel channel)
     {
-      return _service.Scan(cardId, channel);
+      return Service.Scan(cardId, channel);
     }
 
     /// <summary>
@@ -212,7 +208,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>list of all channels found</returns>
     public IChannel[] ScanNIT(int cardId, IChannel channel)
     {
-      return _service.ScanNIT(cardId, channel);
+      return Service.ScanNIT(cardId, channel);
     }
 
     /// <summary>
@@ -222,7 +218,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>minium channel number</returns>
     public int MinChannel(int cardId)
     {
-      return _service.MinChannel(cardId);
+      return Service.MinChannel(cardId);
     }
 
     /// <summary>
@@ -232,7 +228,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>maximum channel number</returns>
     public int MaxChannel(int cardId)
     {
-      return _service.MaxChannel(cardId);
+      return Service.MaxChannel(cardId);
     }
 
     /// <summary>
@@ -243,7 +239,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>id of Schedule or -1 if  card not recording</returns>
     public int GetRecordingSchedule(int cardId, int channelId)
     {
-      return _service.GetRecordingSchedule(cardId, channelId);
+      return Service.GetRecordingSchedule(cardId, channelId);
     }
 
     /// <summary>
@@ -254,7 +250,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>URL containing the RTSP adress on which the recording can be found</returns>
     public string GetRecordingUrl(int idRecording)
     {
-      return _service.GetRecordingUrl(idRecording);
+      return Service.GetRecordingUrl(idRecording);
     }
 
     /// <summary>
@@ -264,7 +260,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>The contents of the chapters file of the recording</returns>
     public string GetRecordingChapters(int idRecording)
     {
-      return _service.GetRecordingChapters(idRecording);
+      return Service.GetRecordingChapters(idRecording);
     }
 
     /// <summary>
@@ -273,7 +269,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="idRecording">The id recording.</param>
     public bool DeleteRecording(int idRecording)
     {
-      return _service.DeleteRecording(idRecording);
+      return Service.DeleteRecording(idRecording);
     }
 
     /// <summary>
@@ -281,7 +277,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     public bool DeleteInvalidRecordings()
     {
-      return _service.DeleteInvalidRecordings();
+      return Service.DeleteInvalidRecordings();
     }
 
     /// <summary>
@@ -289,7 +285,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     public bool DeleteWatchedRecordings(string currentTitle)
     {
-      return _service.DeleteWatchedRecordings(currentTitle);
+      return Service.DeleteWatchedRecordings(currentTitle);
     }
 
     /// <summary>
@@ -301,7 +297,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if a card is recording the schedule, otherwise false</returns>
     public bool IsRecordingSchedule(int idSchedule, out IVirtualCard card)
     {
-      return _service.IsRecordingSchedule(idSchedule, out card);
+      return Service.IsRecordingSchedule(idSchedule, out card);
     }
 
     /// <summary>
@@ -314,7 +310,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public bool IsRecording(int idChannel, out IVirtualCard card)
     {
-      return _service.IsRecording(idChannel, out card);
+      return Service.IsRecording(idChannel, out card);
     }
 
     /// <summary>
@@ -325,7 +321,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public bool IsAnyCardRecording()
     {
-      return _service.IsAnyCardRecording();
+      return Service.IsAnyCardRecording();
     }
 
     /// <summary>
@@ -340,7 +336,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public bool IsAnyCardRecordingOrTimeshifting(IUser userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
     {
-      return _service.IsAnyCardRecordingOrTimeshifting(userTS, out isUserTS, out isAnyUserTS, out isRec);
+      return Service.IsAnyCardRecordingOrTimeshifting(userTS, out isUserTS, out isAnyUserTS, out isRec);
     }
 
     /// <summary>
@@ -350,7 +346,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns></returns>
     public void StopRecordingSchedule(int idSchedule)
     {
-      _service.StopRecordingSchedule(idSchedule);
+      Service.StopRecordingSchedule(idSchedule);
     }
 
     /// <summary>
@@ -359,7 +355,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     public void OnNewSchedule()
     {
-      _service.OnNewSchedule();
+      Service.OnNewSchedule();
     }
 
     /// <summary>
@@ -367,8 +363,8 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     public bool EpgGrabberEnabled
     {
-      get { return _service.EpgGrabberEnabled; }
-      set { _service.EpgGrabberEnabled = value; }
+      get { return Service.EpgGrabberEnabled; }
+      set { Service.EpgGrabberEnabled = value; }
     }
 
     /// <summary>
@@ -376,7 +372,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     public void Restart()
     {
-      _service.Restart();
+      Service.Restart();
     }
 
     /// <summary>
@@ -389,7 +385,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public bool IsCardInUse(int cardId, out IUser user)
     {
-      return _service.IsCardInUse(cardId, out user);
+      return Service.IsCardInUse(cardId, out user);
     }
 
     /// <summary>
@@ -398,7 +394,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="user"></param>
     public Dictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
     {
-      return _service.GetAllChannelStatesCached(user);
+      return Service.GetAllChannelStatesCached(user);
     }
 
     /// <summary>
@@ -409,7 +405,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
     public ChannelState GetChannelState(int idChannel, IUser user)
     {
-      return _service.GetChannelState(idChannel, user);
+      return Service.GetChannelState(idChannel, user);
     }
 
     /// <summary>
@@ -418,7 +414,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <value>The server ip adresses.</value>
     public IEnumerable<string> ServerIpAdresses
     {
-      get { return _service.ServerIpAdresses; }
+      get { return Service.ServerIpAdresses; }
     }
 
     /// <summary>
@@ -428,7 +424,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <value>The streaming port</value>
     public int StreamingPort
     {
-      get { return _service.StreamingPort; }
+      get { return Service.StreamingPort; }
     }
 
     /// <summary>
@@ -437,7 +433,19 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <value>The streaming clients.</value>
     public List<RtspClient> StreamingClients
     {
-      get { return _service.StreamingClients; }
+      get { return Service.StreamingClients; }
+    }
+
+    private IInternalControllerService Service
+    {
+      get
+      {
+        if (_service == null)
+        {
+          _service = GlobalServiceProvider.Get<IInternalControllerService>();
+        }
+        return _service;
+      }
     }
 
     /// <summary>
@@ -446,7 +454,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="cardId">card id</param>
     public void DiSEqCReset(int cardId)
     {
-      _service.DiSEqCReset(cardId);
+      Service.DiSEqCReset(cardId);
     }
 
     /// <summary>
@@ -455,7 +463,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="cardId">card id</param>
     public void DiSEqCStopMotor(int cardId)
     {
-      _service.DiSEqCStopMotor(cardId);
+      Service.DiSEqCStopMotor(cardId);
     }
 
     /// <summary>
@@ -464,7 +472,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="cardId">card id</param>
     public void DiSEqCSetEastLimit(int cardId)
     {
-      _service.DiSEqCSetEastLimit(cardId);
+      Service.DiSEqCSetEastLimit(cardId);
     }
 
     /// <summary>
@@ -473,7 +481,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="cardId">card id</param>
     public void DiSEqCSetWestLimit(int cardId)
     {
-      _service.DiSEqCSetWestLimit(cardId);
+      Service.DiSEqCSetWestLimit(cardId);
     }
 
     /// <summary>
@@ -483,7 +491,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="onoff">on/off</param>
     public void DiSEqCForceLimit(int cardId, bool onoff)
     {
-      _service.DiSEqCForceLimit(cardId, onoff);
+      Service.DiSEqCForceLimit(cardId, onoff);
     }
 
     /// <summary>
@@ -494,7 +502,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="numberOfSteps">Number of steps</param>
     public void DiSEqCDriveMotor(int cardId, DiSEqCDirection direction, byte numberOfSteps)
     {
-      _service.DiSEqCDriveMotor(cardId, direction, numberOfSteps);
+      Service.DiSEqCDriveMotor(cardId, direction, numberOfSteps);
     }
 
     /// <summary>
@@ -504,7 +512,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="position">position</param>
     public void DiSEqCStorePosition(int cardId, byte position)
     {
-      _service.DiSEqCStorePosition(cardId, position);
+      Service.DiSEqCStorePosition(cardId, position);
     }
 
     /// <summary>
@@ -513,7 +521,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="cardId">card id</param>
     public void DiSEqCGotoReferencePosition(int cardId)
     {
-      _service.DiSEqCGotoReferencePosition(cardId);
+      Service.DiSEqCGotoReferencePosition(cardId);
     }
 
     /// <summary>
@@ -523,7 +531,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="position">position</param>
     public void DiSEqCGotoPosition(int cardId, byte position)
     {
-      _service.DiSEqCGotoPosition(cardId, position);
+      Service.DiSEqCGotoPosition(cardId, position);
     }
 
     /// <summary>
@@ -535,7 +543,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="stepsElevation">elvation</param>
     public void DiSEqCGetPosition(int cardId, out int satellitePosition, out int stepsAzimuth, out int stepsElevation)
     {
-      _service.DiSEqCGetPosition(cardId, out satellitePosition, out stepsAzimuth, out stepsElevation);
+      Service.DiSEqCGetPosition(cardId, out satellitePosition, out stepsAzimuth, out stepsElevation);
     }
 
     /// <summary>
@@ -548,7 +556,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public int GetSubChannels(int idCard)
     {
-      return _service.GetSubChannels(idCard);
+      return Service.GetSubChannels(idCard);
     }
 
     /// <summary>
@@ -561,7 +569,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public string GetStreamingUrl(IUser user)
     {
-      return _service.GetStreamingUrl(user);
+      return Service.GetStreamingUrl(user);
     }
 
     /// <summary>
@@ -573,7 +581,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public string RecordingFileName(ref IUser user)
     {
-      return _service.RecordingFileName(ref user);
+      return Service.RecordingFileName(ref user);
     }
 
     /// <summary>
@@ -583,7 +591,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>IChannel</returns>
     public IChannel CurrentChannel(ref IUser user)
     {
-      return _service.CurrentChannel(ref user);
+      return Service.CurrentChannel(ref user);
     }
 
     /// <summary>
@@ -593,7 +601,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns></returns>
     public int CurrentDbChannel(ref IUser user)
     {
-      return _service.CurrentDbChannel(ref user);
+      return Service.CurrentDbChannel(ref user);
     }
 
     /// <summary>
@@ -603,7 +611,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>channel name</returns>
     public string CurrentChannelName(ref IUser user)
     {
-      return _service.CurrentChannelName(ref user);
+      return Service.CurrentChannelName(ref user);
     }
 
     /// <summary>
@@ -616,7 +624,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public bool IsScrambled(ref IUser user)
     {
-      return _service.IsScrambled(ref user);
+      return Service.IsScrambled(ref user);
     }
 
     /// <summary>
@@ -628,7 +636,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public string TimeShiftFileName(ref IUser user)
     {
-      return _service.TimeShiftFileName(ref user);
+      return Service.TimeShiftFileName(ref user);
     }
 
     /// <summary>
@@ -639,7 +647,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     public bool TimeShiftGetCurrentFilePosition(ref IUser user, ref long position, ref long bufferId)
     {
-      return _service.TimeShiftGetCurrentFilePosition(ref user, ref position, ref bufferId);
+      return Service.TimeShiftGetCurrentFilePosition(ref user, ref position, ref bufferId);
     }
 
     /// <summary>
@@ -649,7 +657,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true when card is timeshifting otherwise false</returns>
     public bool IsTimeShifting(ref IUser user)
     {
-      return _service.IsTimeShifting(ref user);
+      return Service.IsTimeShifting(ref user);
     }
 
     /// <summary>
@@ -660,7 +668,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>timespan containing the rotation time</returns>
     public TimeSpan TeletextRotation(IUser user, int pageNumber)
     {
-      return _service.TeletextRotation(user, pageNumber);
+      return Service.TeletextRotation(user, pageNumber);
     }
 
     /// <summary>
@@ -673,7 +681,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public bool HasTeletext(IUser user)
     {
-      return _service.HasTeletext(user);
+      return Service.HasTeletext(user);
     }
 
     /// <summary>
@@ -683,7 +691,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="onOff">boolean indicating if teletext grabbing should be enabled or not</param>
     public void GrabTeletext(IUser user, bool onOff)
     {
-      _service.GrabTeletext(user, onOff);
+      Service.GrabTeletext(user, onOff);
     }
 
     /// <summary>
@@ -697,7 +705,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public byte[] GetTeletextPage(IUser user, int pageNumber, int subPageNumber)
     {
-      return _service.GetTeletextPage(user, pageNumber, subPageNumber);
+      return Service.GetTeletextPage(user, pageNumber, subPageNumber);
     }
 
     /// <summary>
@@ -710,7 +718,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public int SubPageCount(IUser user, int pageNumber)
     {
-      return _service.SubPageCount(user, pageNumber);
+      return Service.SubPageCount(user, pageNumber);
     }
 
     /// <summary>
@@ -720,7 +728,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>Teletext pagenumber for the red button</returns>
     public int GetTeletextRedPageNumber(IUser user)
     {
-      return _service.GetTeletextRedPageNumber(user);
+      return Service.GetTeletextRedPageNumber(user);
     }
 
     /// <summary>
@@ -730,7 +738,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>Teletext pagenumber for the green button</returns>
     public int GetTeletextGreenPageNumber(IUser user)
     {
-      return _service.GetTeletextGreenPageNumber(user);
+      return Service.GetTeletextGreenPageNumber(user);
     }
 
     /// <summary>
@@ -740,7 +748,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>Teletext pagenumber for the yellow button</returns>
     public int GetTeletextYellowPageNumber(IUser user)
     {
-      return _service.GetTeletextYellowPageNumber(user);
+      return Service.GetTeletextYellowPageNumber(user);
     }
 
     /// <summary>
@@ -750,7 +758,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>Teletext pagenumber for the blue button</returns>
     public int GetTeletextBluePageNumber(IUser user)
     {
-      return _service.GetTeletextBluePageNumber(user);
+      return Service.GetTeletextBluePageNumber(user);
     }
 
     /// <summary>
@@ -763,7 +771,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="recordingFile"></param>
     public void CopyTimeShiftFile(long position1, string bufferFile1, long position2, string bufferFile2, string recordingFile)
     {
-      _service.CopyTimeShiftFile(position1, bufferFile1, position2, bufferFile2, recordingFile);
+      Service.CopyTimeShiftFile(position1, bufferFile1, position2, bufferFile2, recordingFile);
     }
 
     /// <summary>
@@ -773,7 +781,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>List containing all audio streams</returns>
     public IEnumerable<IAudioStream> AvailableAudioStreams(IUser user)
     {
-      return _service.AvailableAudioStreams(user);
+      return Service.AvailableAudioStreams(user);
     }
 
     /// <summary>
@@ -783,7 +791,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>List containing all audio streams</returns>
     public IVideoStream GetCurrentVideoStream(IUser user)
     {
-      return _service.GetCurrentVideoStream(user);
+      return Service.GetCurrentVideoStream(user);
     }
 
     /// <summary>
@@ -792,7 +800,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="user">The user.</param>
     public void StopCard(IUser user)
     {
-      _service.StopCard(user);
+      Service.StopCard(user);
     }
 
     /// <summary>
@@ -805,7 +813,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public int TimeShiftingWouldUseCard(ref IUser user, int idChannel)
     {
-      return _service.TimeShiftingWouldUseCard(ref user, idChannel);
+      return Service.TimeShiftingWouldUseCard(ref user, idChannel);
     }
 
     /// <summary>
@@ -820,7 +828,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>        
     public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card, bool forceCardId)
     {
-      return _service.StartTimeShifting(ref user, idChannel, out card, forceCardId);
+      return Service.StartTimeShifting(ref user, idChannel, out card, forceCardId);
     }
 
     /// <summary>
@@ -835,7 +843,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card, out bool cardChanged)
     {
-      return _service.StartTimeShifting(ref user, idChannel, out card, out cardChanged);
+      return Service.StartTimeShifting(ref user, idChannel, out card, out cardChanged);
     }
 
     /// <summary>
@@ -849,7 +857,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public TvResult StartTimeShifting(ref IUser user, int idChannel, out IVirtualCard card)
     {
-      return _service.StartTimeShifting(ref user, idChannel, out card);
+      return Service.StartTimeShifting(ref user, idChannel, out card);
     }
 
     /// <summary>
@@ -860,7 +868,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if success otherwise false</returns>
     public bool StopTimeShifting(ref IUser user, TvStoppedReason reason)
     {
-      return _service.StopTimeShifting(ref user, reason);
+      return Service.StopTimeShifting(ref user, reason);
     }
 
     /// <summary>
@@ -870,7 +878,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if success otherwise false</returns>
     public bool StopTimeShifting(ref IUser user)
     {
-      return _service.StopTimeShifting(ref user);
+      return Service.StopTimeShifting(ref user);
     }
 
     /// <summary>
@@ -881,7 +889,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if success otherwise false</returns>
     public TvResult StartRecording(ref IUser user, ref string fileName)
     {
-      return _service.StartRecording(ref user, ref fileName);
+      return Service.StartRecording(ref user, ref fileName);
     }
 
     /// <summary>
@@ -891,7 +899,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if success otherwise false</returns>
     public bool StopRecording(ref IUser user)
     {
-      return _service.StopRecording(ref user);
+      return Service.StopRecording(ref user);
     }
 
     /// <summary>
@@ -903,7 +911,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if succeeded</returns>
     public TvResult Scan(ref IUser user, IChannel channel, int idChannel)
     {
-      return _service.Scan(ref user, channel, idChannel);
+      return Service.Scan(ref user, channel, idChannel);
     }
 
     /// <summary>
@@ -915,7 +923,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if succeeded</returns>
     public TvResult Tune(ref IUser user, IChannel channel, int idChannel)
     {
-      return _service.Tune(ref user, channel, idChannel);
+      return Service.Tune(ref user, channel, idChannel);
     }
 
     /// <summary>
@@ -925,7 +933,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns></returns>
     public IDictionary<string, IUser> GetUsersForCard(int cardId)
     {
-      return _service.GetUsersForCard(cardId);
+      return Service.GetUsersForCard(cardId);
     }
 
     /// <summary>
@@ -938,7 +946,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </returns>
     public bool IsOwner(int cardId, IUser user)
     {
-      return _service.IsOwner(cardId, user);
+      return Service.IsOwner(cardId, user);
     }
 
     /// <summary>
@@ -948,7 +956,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true/false</returns>
     public bool SupportsQualityControl(int cardId)
     {
-      return _service.SupportsQualityControl(cardId);
+      return Service.SupportsQualityControl(cardId);
     }
 
     /// <summary>
@@ -958,7 +966,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true/false</returns>
     public bool SupportsBitRateModes(int cardId)
     {
-      return _service.SupportsBitRateModes(cardId);
+      return Service.SupportsBitRateModes(cardId);
     }
 
     /// <summary>
@@ -968,7 +976,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true/false</returns>
     public bool SupportsPeakBitRateMode(int cardId)
     {
-      return _service.SupportsPeakBitRateMode(cardId);
+      return Service.SupportsPeakBitRateMode(cardId);
     }
 
     /// <summary>
@@ -978,7 +986,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true/false</returns>
     public bool SupportsBitRate(int cardId)
     {
-      return _service.SupportsBitRate(cardId);
+      return Service.SupportsBitRate(cardId);
     }
 
     /// <summary>
@@ -987,7 +995,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="cardId">Unique id of the card</param>
     public void ReloadCardConfiguration(int cardId)
     {
-      _service.ReloadCardConfiguration(cardId);
+      Service.ReloadCardConfiguration(cardId);
     }
 
     /// <summary>
@@ -997,7 +1005,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>QualityType</returns>
     public QualityType GetQualityType(int cardId)
     {
-      return _service.GetQualityType(cardId);
+      return Service.GetQualityType(cardId);
     }
 
     /// <summary>
@@ -1007,7 +1015,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="qualityType">The new quality type</param>
     public void SetQualityType(int cardId, QualityType qualityType)
     {
-      _service.SetQualityType(cardId, qualityType);
+      Service.SetQualityType(cardId, qualityType);
     }
 
     /// <summary>
@@ -1017,7 +1025,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>QualityType</returns>
     public VIDEOENCODER_BITRATE_MODE GetBitRateMode(int cardId)
     {
-      return _service.GetBitRateMode(cardId);
+      return Service.GetBitRateMode(cardId);
     }
 
     /// <summary>
@@ -1027,7 +1035,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <param name="bitRateMode">The new bitrate mdoe</param>
     public void SetBitRateMode(int cardId, VIDEOENCODER_BITRATE_MODE bitRateMode)
     {
-      _service.SetBitRateMode(cardId, bitRateMode);
+      Service.SetBitRateMode(cardId, bitRateMode);
     }
 
     /// <summary>
@@ -1037,7 +1045,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true/false</returns>
     public bool CiMenuSupported(int cardId)
     {
-      return _service.CiMenuSupported(cardId);
+      return Service.CiMenuSupported(cardId);
     }
 
     /// <summary>
@@ -1047,7 +1055,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if successful</returns>
     public bool EnterCiMenu(int cardId)
     {
-      return _service.EnterCiMenu(cardId);
+      return Service.EnterCiMenu(cardId);
     }
 
     /// <summary>
@@ -1058,7 +1066,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if successful</returns>
     public bool SelectMenu(int cardId, byte choice)
     {
-      return _service.SelectMenu(cardId, choice);
+      return Service.SelectMenu(cardId, choice);
     }
 
     /// <summary>
@@ -1068,7 +1076,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns>true if successful</returns>
     public bool CloseMenu(int cardId)
     {
-      return _service.CloseMenu(cardId);
+      return Service.CloseMenu(cardId);
     }
 
     /// <summary>
@@ -1080,7 +1088,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns></returns>
     public bool SendMenuAnswer(int cardId, bool cancel, string answer)
     {
-      return _service.SendMenuAnswer(cardId, cancel, answer);
+      return Service.SendMenuAnswer(cardId, cancel, answer);
     }
 
     /// <summary>
@@ -1091,7 +1099,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns></returns>
     public bool SetCiMenuHandler(int cardId, ICiMenuCallbacks callbackHandler)
     {
-      return _service.SetCiMenuHandler(cardId, callbackHandler);
+      return Service.SetCiMenuHandler(cardId, callbackHandler);
     }
 
     public event CiMenuCallback OnCiMenu;
@@ -1105,42 +1113,42 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <returns></returns>
     public void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter)
     {
-      _service.GetStreamQualityCounters(user, out totalTSpackets, out discontinuityCounter);
+      Service.GetStreamQualityCounters(user, out totalTSpackets, out discontinuityCounter);
     }
 
     public void RegisterUserForHeartbeatMonitoring (string username)
     {
-      _service.RegisterUserForHeartbeatMonitoring(username);
+      Service.RegisterUserForHeartbeatMonitoring(username);
     }    
 
     public void RegisterUserForCiMenu(string username)
     {
-      _service.RegisterUserForHeartbeatMonitoring(username);
+      Service.RegisterUserForHeartbeatMonitoring(username);
     }
 
     public void UnRegisterUserForHeartbeatMonitoring(string username)
     {
-      _service.UnRegisterUserForHeartbeatMonitoring(username);
+      Service.UnRegisterUserForHeartbeatMonitoring(username);
     }
 
     public void UnRegisterUserForCiMenu(string username)
     {
-      _service.UnRegisterUserForCiMenu(username);
+      Service.UnRegisterUserForCiMenu(username);
     }
 
     public void RegisterUserForTvServerEvents(string username)
     {
-      _service.RegisterUserForTvServerEvents(username);
+      Service.RegisterUserForTvServerEvents(username);
     }
     public void UnRegisterUserForTvServerEvents(string username)
     {
-      _service.UnRegisterUserForTvServerEvents(username);
+      Service.UnRegisterUserForTvServerEvents(username);
     }
 
 
     public IDictionary<string, byte[]> GetPluginBinaries()
     {
-      return _service.GetPluginBinaries();
+      return Service.GetPluginBinaries();
     }
 
 
