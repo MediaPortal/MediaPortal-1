@@ -12,6 +12,7 @@
     {
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btnSetDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.dataGridViews = new System.Windows.Forms.DataGridView();
       this.dgViewName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -34,9 +35,10 @@
       // 
       // groupBox
       // 
-      this.groupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox.Controls.Add(this.btnSetDefaults);
       this.groupBox.Controls.Add(this.btnAdd);
       this.groupBox.Controls.Add(this.dataGridViews);
       this.groupBox.Controls.Add(this.dataGrid);
@@ -48,6 +50,16 @@
       this.groupBox.Size = new System.Drawing.Size(462, 408);
       this.groupBox.TabIndex = 0;
       this.groupBox.TabStop = false;
+      // 
+      // btnSetDefaults
+      // 
+      this.btnSetDefaults.Location = new System.Drawing.Point(28, 172);
+      this.btnSetDefaults.Name = "btnSetDefaults";
+      this.btnSetDefaults.Size = new System.Drawing.Size(83, 22);
+      this.btnSetDefaults.TabIndex = 9;
+      this.btnSetDefaults.Text = "Set defaults";
+      this.btnSetDefaults.UseVisualStyleBackColor = true;
+      this.btnSetDefaults.Click += new System.EventHandler(this.btnSetDefaults_Click);
       // 
       // btnAdd
       // 
@@ -79,13 +91,13 @@
       this.dataGridViews.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
       this.dataGridViews.Size = new System.Drawing.Size(440, 147);
       this.dataGridViews.TabIndex = 4;
-      this.dataGridViews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
-      this.dataGridViews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
-      this.dataGridViews.DragOver += new System.Windows.Forms.DragEventHandler(this.OnDragOver);
       this.dataGridViews.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViews_CellEndEdit);
       this.dataGridViews.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
       this.dataGridViews.SelectionChanged += new System.EventHandler(this.dataGridViews_SelectionChanged);
       this.dataGridViews.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
+      this.dataGridViews.DragOver += new System.Windows.Forms.DragEventHandler(this.OnDragOver);
+      this.dataGridViews.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
+      this.dataGridViews.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
       // 
       // dgViewName
       // 
@@ -111,9 +123,9 @@
       this.dataGrid.AllowUserToDeleteRows = false;
       this.dataGrid.AllowUserToResizeColumns = false;
       this.dataGrid.AllowUserToResizeRows = false;
-      this.dataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid.BackgroundColor = System.Drawing.SystemColors.Control;
       dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
       dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightSteelBlue;
@@ -139,14 +151,14 @@
       this.dataGrid.RowHeadersVisible = false;
       this.dataGrid.Size = new System.Drawing.Size(440, 161);
       this.dataGrid.TabIndex = 8;
-      this.dataGrid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
-      this.dataGrid.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
-      this.dataGrid.DragOver += new System.Windows.Forms.DragEventHandler(this.OnDragOver);
       this.dataGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
       this.dataGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGrid_CurrentCellDirtyStateChanged);
       this.dataGrid.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGrid_DataError);
-      this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGrid_KeyDown);
       this.dataGrid.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
+      this.dataGrid.DragOver += new System.Windows.Forms.DragEventHandler(this.OnDragOver);
+      this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGrid_KeyDown);
+      this.dataGrid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
+      this.dataGrid.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
       // 
       // dgSelection
       // 
@@ -212,14 +224,14 @@
       // 
       // lblActionCodes
       // 
-      this.lblActionCodes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblActionCodes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.lblActionCodes.Location = new System.Drawing.Point(16, 364);
       this.lblActionCodes.Name = "lblActionCodes";
       this.lblActionCodes.Size = new System.Drawing.Size(430, 29);
       this.lblActionCodes.TabIndex = 7;
       this.lblActionCodes.Text = "Use the \"Ins\" and \"Del\" key to insert and delete lines. Drag the rows to change o" +
-          "rder";
+    "rder";
       this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // btnDelete
@@ -262,5 +274,6 @@
     private MediaPortal.UserInterface.Controls.MPButton btnAdd;
     private System.Windows.Forms.DataGridViewTextBoxColumn dgViewName;
     private System.Windows.Forms.DataGridViewTextBoxColumn dgLocalisedName;
+    private UserInterface.Controls.MPButton btnSetDefaults;
   }
 }
