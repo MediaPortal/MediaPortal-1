@@ -1493,6 +1493,12 @@ namespace MediaPortal.GUI.Video
       else
       {
         movie.SetProperties(false, string.Empty);
+
+        // Set title properties for other views (year, genres..)
+        if (!string.IsNullOrEmpty(item.Label))
+        {
+          GUIPropertyManager.SetProperty("#title", item.Label);
+        }
       }
 
       IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
