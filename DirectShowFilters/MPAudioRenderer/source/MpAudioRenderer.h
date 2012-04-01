@@ -51,7 +51,7 @@
 #endif
 
 [uuid("EC9ED6FC-7B03-4cb6-8C01-4EABE109F26B")]
-class CMPAudioRenderer : public CBaseRenderer, IMediaSeeking, IAVSyncClock
+class CMPAudioRenderer : public CBaseRenderer, IMediaSeeking, IAVSyncClock, IAMFilterMiscFlags
 {
 public:
   CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr);
@@ -96,6 +96,9 @@ public:
   STDMETHODIMP SetRate(double dRate);
   STDMETHODIMP GetRate(double* pdRate);
   STDMETHODIMP GetPreroll(LONGLONG *pPreroll);
+
+  // === IAMFilterMiscFlags
+  ULONG STDMETHODCALLTYPE GetMiscFlags();
 
   // === IAVSyncClock
   STDMETHOD(AdjustClock)(DOUBLE adjustment);

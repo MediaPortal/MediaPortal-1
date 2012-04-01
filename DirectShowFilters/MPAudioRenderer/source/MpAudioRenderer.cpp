@@ -350,6 +350,13 @@ STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void** p
   if (riid == IID_IBasicAudio)
     return GetInterface(static_cast<IBasicAudio*>(m_pVolumeHandler), ppv);
 
+  if (riid == IID_IAMFilterMiscFlags)
+  {
+    *ppv = static_cast<IAMFilterMiscFlags*>(this);
+    AddRef();
+    return S_OK;
+  }
+
 	return CBaseRenderer::NonDelegatingQueryInterface (riid, ppv);
 }
 
@@ -665,4 +672,9 @@ HRESULT CMPAudioRenderer::GetClockData(CLOCKDATA *pClockData)
   m_pClock->GetClockData(pClockData);
 
   return S_OK;
+}
+
+ULONG CMPAudioRenderer::GetMiscFlags()
+{
+  return AM_FILTER_MISC_FLAGS_IS_RENDERER;
 }
