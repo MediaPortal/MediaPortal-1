@@ -411,6 +411,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
+      MPARating = Util.Utils.MakeFileName(MPARating);
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
       GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#country", Country);

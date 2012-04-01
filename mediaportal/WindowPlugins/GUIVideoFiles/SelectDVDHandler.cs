@@ -215,7 +215,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem pItem;
         IMDBMovie movieDetails = new IMDBMovie();
-
+        
         for (int x = 0; x < items.Count; x++)
         {
           string strThumb = string.Empty;
@@ -242,7 +242,39 @@ namespace MediaPortal.GUI.Video
             {
               if (eachMovieHasDedicatedFolder)
               {
-                file = GetFolderVideoFile(pItem.Path);
+                string[] strFiles = null;
+                try
+                {
+                  strFiles = Directory.GetFiles(pItem.Path);
+                }
+                catch (Exception) { }
+                
+                if (strFiles != null)
+                {
+                  for (int i = 0; i < strFiles.Length; ++i)
+                  {
+                    string extensionension = Path.GetExtension(strFiles[i]);
+                    if (VirtualDirectory.IsImageFile(extensionension))
+                    {
+                      if (DaemonTools.IsEnabled)
+                      {
+                        file = strFiles[i];
+                        break;
+                      }
+                      continue;
+                    }
+                    if (VirtualDirectory.IsValidExtension(strFiles[i], Util.Utils.VideoExtensions, false))
+                    {
+                      // Skip hidden files
+                      if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+                      {
+                        continue;
+                      }
+                      file =  strFiles[i];
+                      break;
+                    }
+                  }
+                }
               }
             }
           }
@@ -304,6 +336,14 @@ namespace MediaPortal.GUI.Video
                                        Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
               if (!Util.Utils.FileExistsInCache(strThumb))
               {
+                string fPic = Path.ChangeExtension(file, ".jpg");
+
+                if (File.Exists(fPic) && (eachMovieHasDedicatedFolder))
+                {
+                  pItem.ThumbnailImage = fPic;
+                  pItem.IconImageBig = fPic;
+                  pItem.IconImage = fPic;
+                }
                 continue;
               }
             }
