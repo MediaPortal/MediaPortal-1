@@ -96,7 +96,7 @@ namespace TvService
       // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
       var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
       var dataPath = Log.GetPathName();
-      var loggerPath = Path.Combine(dataPath, "\\log");
+      var loggerPath = dataPath + (dataPath.EndsWith("\\") ? "log" : "\\log");
 #if DEBUG
       if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
 #endif
