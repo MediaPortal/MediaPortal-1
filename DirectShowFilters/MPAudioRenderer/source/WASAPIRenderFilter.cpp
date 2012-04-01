@@ -1090,7 +1090,21 @@ HRESULT CWASAPIRenderFilter::CreateAudioClient(bool init)
   {
     Log("WASAPIRenderFilter::CreateAudioClient success");
     if (init)
-      hr = InitAudioClient();
+    {
+      unsigned int loopCount = 0;
+      do 
+      {
+        loopCount++;
+        hr = InitAudioClient();
+        if (hr == AUDCLNT_E_DEVICE_IN_USE) // retry few times if we could get the exclusive WASAPI device handle
+        {
+          Log("WASAPIRenderFilter::CreateAudioClient - audio client in use, trying again - loopCount: %d", loopCount);
+          Sleep(50);
+        }
+        else
+          break;
+      } while (hr == AUDCLNT_E_DEVICE_IN_USE && loopCount < 20);
+    }
   }
 
   return hr;
