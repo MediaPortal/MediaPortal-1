@@ -11,6 +11,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
   public static class EntityExtensions
   {
 
+   
+
     private static bool IsAssignableToGenericType(Type givenType, Type genericType)
     {
       if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
@@ -82,19 +84,24 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         }
         else
         {
-
           for (int i = deleteChangeTrackers.Count - 1; i >= 0; i--)
           {
             changeTrackers.RemoveAt(deleteChangeTrackers[i]);
-          }
-          
+          }          
+        }
+      }    
+                          
 
-          /*foreach (var objectWithChangeTracker in deleteChangeTrackers)
-          {
-            changeTrackers.Add(objectWithChangeTracker);
-          } */         
+      foreach (PropertyInfo propertyInfo in properties)
+      {
+        var objectWithChangeTracker = propertyInfo.GetValue(trackingItem, null) as IObjectWithChangeTracker;
+        
+        if (objectWithChangeTracker != null && objectWithChangeTracker.ChangeTracker.State == ObjectState.Unchanged)
+        {
+          propertyInfo.SetValue(trackingItem, null, null);
         }
       }
+
 
       trackingItem.StartTracking();
     }

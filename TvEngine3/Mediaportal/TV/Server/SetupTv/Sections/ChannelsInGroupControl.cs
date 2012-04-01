@@ -188,9 +188,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         if (groupMap.SortOrder != i)
         {
           groupMap.SortOrder = i;
-          groupMaps.Add(groupMap);
-          groupMap.AcceptChanges();
           groupMap.UnloadAllUnchangedRelationsForEntity();
+          groupMaps.Add(groupMap);
+          groupMap.AcceptChanges();          
         }
       }
       ServiceAgents.Instance.ChannelServiceAgent.SaveChannelGroupMaps(groupMaps);
