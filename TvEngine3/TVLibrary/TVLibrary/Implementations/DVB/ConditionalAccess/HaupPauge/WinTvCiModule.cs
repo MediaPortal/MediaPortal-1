@@ -227,7 +227,6 @@ namespace TvLibrary.Implementations.DVB
 
       // Check if the WinTV-CI is actually installed in this system.
       DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
-      DsDevice winTvCiDevice = null;
       for (int i = 0; i < captureDevices.Length; i++)
       {
         if (captureDevices[i].Name != null && captureDevices[i].Name.ToLowerInvariant().Equals("wintvciusbbda source"))
@@ -238,11 +237,11 @@ namespace TvLibrary.Implementations.DVB
             return false;
           }
           Log.Log.Debug("WinTV-CI: found WinTV-CI device");
-          winTvCiDevice = captureDevices[i];
+          _winTvCiDevice = captureDevices[i];
           break;
         }
       }
-      if (winTvCiDevice == null)
+      if (_winTvCiDevice == null)
       {
         Log.Log.Info("WinTV-CI: WinTV-CI device not found");
         return false;
@@ -261,14 +260,16 @@ namespace TvLibrary.Implementations.DVB
       if (_graph == null)
       {
         Log.Log.Debug("WinTV-CI: failed to get graph reference");
+        _winTvCiDevice = null;
         return false;
       }
 
       // Add the WinTV-CI filter to the graph.
-      hr = _graph.AddSourceFilterForMoniker(winTvCiDevice.Mon, null, winTvCiDevice.Name, out _winTvCiFilter);
+      hr = _graph.AddSourceFilterForMoniker(_winTvCiDevice.Mon, null, _winTvCiDevice.Name, out _winTvCiFilter);
       if (hr != 0)
       {
         Log.Log.Debug("WinTV-CI: failed to add filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        _winTvCiDevice = null;
         if (_winTvCiFilter != null)
         {
           _graph.RemoveFilter(_winTvCiFilter);
@@ -290,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       // Success!
-      DevicesInUse.Instance.Add(winTvCiDevice);
+      DevicesInUse.Instance.Add(_winTvCiDevice);
       _isCiSlotPresent = true;
       lastFilter = _winTvCiFilter;
       return true;
@@ -680,14 +681,19 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void Dispose()
     {
-      if (_isWinTvCi && _winTvCiFilter != null)
+      if (_winTvCiFilter != null)
       {
         CloseCi();
-        DevicesInUse.Instance.Remove(_winTvCiDevice);
-        _winTvCiDevice = null;
         _graph.RemoveFilter(_winTvCiFilter);
         Release.ComObject(_winTvCiFilter);
+        _winTvCiFilter = null;
       }
+      if (_winTvCiDevice != null)
+      {
+        DevicesInUse.Instance.Remove(_winTvCiDevice);
+        _winTvCiDevice = null;
+      }
+      _isWinTvCi = false;
     }
 
     #endregion
