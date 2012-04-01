@@ -530,18 +530,15 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   m_csResources.Lock();
 
-  if (m_pSettings->m_bReleaseDeviceOnStop)
+  if (m_pSettings->m_bReleaseDeviceOnStop && !m_pAudioClient && m_pInputFormat)
   {
-    if (m_pInputFormat)
+    hr = CreateAudioClient(true);
+    if (FAILED(hr))
     {
-      hr = CreateAudioClient(true);
-      if (FAILED(hr))
-      {
-        Log("CWASAPIRenderFilter::Render thread Error, audio client not available: (0x%08x)", hr);
-        StopRenderThread();
-        m_csResources.Unlock();
-        return 0;
-      }
+      Log("CWASAPIRenderFilter::Render thread Error, audio client not available: (0x%08x)", hr);
+      StopRenderThread();
+      m_csResources.Unlock();
+      return 0;
     }
   }
 
