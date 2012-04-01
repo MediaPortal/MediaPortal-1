@@ -606,9 +606,12 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
             if (result == MPAR_S_THREAD_STOPPING || !m_pAudioClient)
             {
-              hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, flags);
-              if (FAILED(hr) && hr != AUDCLNT_E_OUT_OF_ORDER)
-                Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
+              if (m_pAudioClient)
+              {
+                hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, flags);
+                if (FAILED(hr) && hr != AUDCLNT_E_OUT_OF_ORDER)
+                  Log("CWASAPIRenderFilter::Render thread: ReleaseBuffer failed (0x%08x)", hr);
+              }
 
               StopRenderThread();
               return 0;
