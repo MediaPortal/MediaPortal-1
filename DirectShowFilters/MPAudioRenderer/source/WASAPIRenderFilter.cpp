@@ -746,6 +746,7 @@ void CWASAPIRenderFilter::StopRenderThread()
   StopAudioClient();
   RevertMMCSS();
   CloseThread();
+  m_pCurrentSample.Release();
   SetEvent(m_hCurrentSampleReleased);
   m_csResources.Unlock();  
   m_state = StateStopped;
