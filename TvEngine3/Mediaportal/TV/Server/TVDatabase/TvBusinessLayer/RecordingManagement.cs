@@ -160,7 +160,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           rec.isRecording = false;          
         }
-        recordingRepository.UpdateList(activeRecordings);
+
+        recordingRepository.ApplyChanges(recordingRepository.ObjectContext.Recordings, activeRecordings);
+        //recordingRepository.UpdateList(activeRecordings);
         recordingRepository.UnitOfWork.SaveChanges();
       }            
     }
