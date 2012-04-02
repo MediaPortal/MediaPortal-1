@@ -62,7 +62,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pOutBitDepthAdapter(NULL),
   m_pSampleRateConverter(NULL),
   m_pRenderer(NULL),
-  m_pTimeStretch(NULL)
+  m_pTimeStretch(NULL),
+  m_pMediaType(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -323,11 +324,15 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
   }
 
   if (pmt)
-    m_mediaType = *pmt;
-  else if (m_mediaType.pbFormat)
-    pSample->SetMediaType(&m_mediaType);
+  {
+    if (m_pMediaType)
+      DeleteMediaType(m_pMediaType);
+    m_pMediaType = CreateMediaType(pmt);
+  }
+  else if (m_pMediaType)
+    pSample->SetMediaType(m_pMediaType);
 
-  return m_pPipeline->PutSample(pSample) == S_OK ? true : false;
+  return  m_pPipeline->PutSample(pSample) == S_OK ? true : false;
 }
 
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample* pMediaSample)
@@ -390,10 +395,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
       return hr;
   }
 
-  if (FAILED(hr))
-    return hr;
-
-  return CBaseRenderer::SetMediaType(pmt);
+  return hr;
 }
 
 HRESULT CMPAudioRenderer::CompleteConnect(IPin* pReceivePin)
