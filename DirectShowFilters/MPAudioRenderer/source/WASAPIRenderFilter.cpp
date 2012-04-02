@@ -141,6 +141,7 @@ HRESULT CWASAPIRenderFilter::Cleanup()
 
 void CWASAPIRenderFilter::ReleaseResources()
 {
+  m_bDeviceInitialized = false;
   StopAudioClient();
   SAFE_RELEASE(m_pAudioClock);
   SAFE_RELEASE(m_pRenderClient);
@@ -1162,7 +1163,6 @@ void CWASAPIRenderFilter::CancelDataEvent()
 HRESULT CWASAPIRenderFilter::StopAudioClient()
 {
   HRESULT hr = S_OK;
-  m_bDeviceInitialized = false;
   if (m_bIsAudioClientStarted)
   {
     Log("WASAPIRenderFilter::StopAudioClient");
