@@ -57,11 +57,9 @@ namespace MediaPortal.Configuration
     private MPCheckBox checkBoxPASV;
     public MPCheckBox cbCreateThumbs;
     public MPLabel labelCreateThumbs;
-
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private Container components = null;
+    public MPCheckBox cbEachFolderIsMovie;
+    private ToolTip toolTipEditShare;
+    private IContainer components;
 
     public EditShareForm()
     {
@@ -99,7 +97,10 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditShareForm));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbCreateThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelCreateThumbs = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxPASV = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -126,14 +127,16 @@ namespace MediaPortal.Configuration
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+      this.toolTipEditShare = new System.Windows.Forms.ToolTip(this.components);
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.cbEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.cbCreateThumbs);
       this.groupBox1.Controls.Add(this.labelCreateThumbs);
       this.groupBox1.Controls.Add(this.checkBoxPASV);
@@ -165,6 +168,19 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Folder settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // cbEachFolderIsMovie
+      // 
+      this.cbEachFolderIsMovie.AutoSize = true;
+      this.cbEachFolderIsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbEachFolderIsMovie.Location = new System.Drawing.Point(216, 140);
+      this.cbEachFolderIsMovie.Name = "cbEachFolderIsMovie";
+      this.cbEachFolderIsMovie.Size = new System.Drawing.Size(181, 17);
+      this.cbEachFolderIsMovie.TabIndex = 29;
+      this.cbEachFolderIsMovie.Text = "Every movie has its own directory";
+      this.toolTipEditShare.SetToolTip(this.cbEachFolderIsMovie, resources.GetString("cbEachFolderIsMovie.ToolTip"));
+      this.cbEachFolderIsMovie.UseVisualStyleBackColor = true;
+      this.cbEachFolderIsMovie.Visible = false;
       // 
       // cbCreateThumbs
       // 
@@ -204,15 +220,13 @@ namespace MediaPortal.Configuration
       // 
       this.comboBox1.BorderColor = System.Drawing.Color.Empty;
       this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBox1.Items.AddRange(new object[]
-                                      {
-                                        "List",
-                                        "Icons",
-                                        "Big Icons",
-                                        "Album",
-                                        "Filmstrip",
-                                        "Cover Flow"
-                                      });
+      this.comboBox1.Items.AddRange(new object[] {
+            "List",
+            "Icons",
+            "Big Icons",
+            "Album",
+            "Filmstrip",
+            "Cover Flow"});
       this.comboBox1.Location = new System.Drawing.Point(16, 136);
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(184, 21);
@@ -223,16 +237,14 @@ namespace MediaPortal.Configuration
       this.label9.AutoSize = true;
       this.label9.Location = new System.Drawing.Point(16, 120);
       this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(69, 13);
+      this.label9.Size = new System.Drawing.Size(75, 13);
       this.label9.TabIndex = 24;
       this.label9.Text = "Default layout:";
       // 
       // textBoxRemoteFolder
       // 
-      this.textBoxRemoteFolder.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxRemoteFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxRemoteFolder.BorderColor = System.Drawing.Color.Empty;
       this.textBoxRemoteFolder.Location = new System.Drawing.Point(16, 320);
       this.textBoxRemoteFolder.Name = "textBoxRemoteFolder";
@@ -332,10 +344,8 @@ namespace MediaPortal.Configuration
       // 
       // pinCodeTextBox
       // 
-      this.pinCodeTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.pinCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.pinCodeTextBox.BorderColor = System.Drawing.Color.Empty;
       this.pinCodeTextBox.Location = new System.Drawing.Point(216, 40);
       this.pinCodeTextBox.MaxLength = 4;
@@ -354,9 +364,7 @@ namespace MediaPortal.Configuration
       // 
       // folderButton
       // 
-      this.folderButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.folderButton.Location = new System.Drawing.Point(368, 88);
       this.folderButton.Name = "folderButton";
       this.folderButton.Size = new System.Drawing.Size(24, 20);
@@ -367,10 +375,8 @@ namespace MediaPortal.Configuration
       // 
       // folderTextBox
       // 
-      this.folderTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.folderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderTextBox.Location = new System.Drawing.Point(16, 88);
       this.folderTextBox.Name = "folderTextBox";
@@ -388,10 +394,8 @@ namespace MediaPortal.Configuration
       // 
       // nameTextBox
       // 
-      this.nameTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.nameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.nameTextBox.Location = new System.Drawing.Point(16, 40);
       this.nameTextBox.Name = "nameTextBox";
@@ -409,9 +413,7 @@ namespace MediaPortal.Configuration
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(342, 369);
       this.cancelButton.Name = "cancelButton";
@@ -423,9 +425,7 @@ namespace MediaPortal.Configuration
       // 
       // okButton
       // 
-      this.okButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(262, 369);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -455,6 +455,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -656,6 +657,12 @@ namespace MediaPortal.Configuration
     {
       get { return cbCreateThumbs.Checked; }
       set { cbCreateThumbs.Checked = value; }
+    }
+
+    public bool EachFolderIsMovie
+    {
+      get { return cbEachFolderIsMovie.Checked; }
+      set { cbEachFolderIsMovie.Checked = value; }
     }
   }
 }

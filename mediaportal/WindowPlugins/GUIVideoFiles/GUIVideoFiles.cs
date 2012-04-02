@@ -279,7 +279,7 @@ namespace MediaPortal.GUI.Video
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
         _markWatchedFiles = xmlreader.GetValueAsBool("movies", "markwatched", true);
-        _eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
+        //_eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
         _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
@@ -1458,20 +1458,17 @@ namespace MediaPortal.GUI.Video
           AddFileToDatabase(strFile);
         }
 
-        using (Profile.Settings xmlreader = new MPSettings())
+        if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
         {
-          bool foldercheck = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
-          if (foldercheck)
-          {
-            movieDetails.SearchString = Path.GetFileName(Path.GetDirectoryName(strMovie));
-          }
-          else
-          {
-            movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
-          }
-          movieDetails.File = Path.GetFileName(strFile);
+          movieDetails.SearchString = Path.GetFileName(Path.GetDirectoryName(strMovie));
         }
-
+        else
+        {
+          movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
+        }
+        
+        movieDetails.File = Path.GetFileName(strFile);
+        
         if (movieDetails.File == string.Empty)
         {
           movieDetails.Path = strFile;
@@ -3523,7 +3520,7 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
-        _threadISelectDVDHandler.SetIMDBThumbs(_threadGUIItems, _markWatchedFiles, _eachFolderIsMovie);
+        _threadISelectDVDHandler.SetIMDBThumbs(_threadGUIItems, _markWatchedFiles);
         // Refresh thumb on selected item
         _currentSelectedItem = facadeLayout.SelectedListItemIndex;
         SelectCurrentItem();

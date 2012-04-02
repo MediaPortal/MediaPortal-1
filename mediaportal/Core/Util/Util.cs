@@ -756,7 +756,7 @@ namespace MediaPortal.Util
     /// <param name="dir1">share path</param>
     /// <param name="dir2">selected item path</param>
     /// <returns>true: paths are equal, false: paths do not match</returns>
-    private static bool AreEqual(string dir1, string dir2)
+    public static bool AreEqual(string dir1, string dir2)
     {
       if (dir1 == string.Empty | dir2 == string.Empty)
         return false;
@@ -814,6 +814,32 @@ namespace MediaPortal.Util
       }
     }
 
+    public static bool IsFolderDedicatedMovieFolder(string directory)
+    {
+      using (MPSettings xmlreader = new MPSettings())
+      {
+        const int maximumShares = 128;
+
+        for (int index = 0; index < maximumShares; index++)
+        {
+          // Get share dir
+          string sharePath = String.Format("sharepath{0}", index);
+          string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+          // Get item dir
+          string itemDir = string.Empty;
+          itemDir = (GetParentDirectory(directory));
+          
+          // Check if share dir correspond to item dir
+          if (AreEqual(shareDir, itemDir))
+          {
+            string eachFolderIsMovie = String.Format("eachfolderismovie{0}", index);
+            bool folderMovie = xmlreader.GetValueAsBool("movies", eachFolderIsMovie, false);
+            return folderMovie;
+          }
+        }
+      }
+      return false;
+    }
 
     public static void GetVideoThumb(object i)
     {
@@ -1405,7 +1431,7 @@ namespace MediaPortal.Util
       if (StackRegExpressions != null) return StackRegExpressions;
       string[] pattern = {
                            "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
-                           "\\s*[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
+                           "\\s*[-_+ ]\\({0,1}(cd|dis[ck]|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
 
       StackRegExpressions = new Regex[]

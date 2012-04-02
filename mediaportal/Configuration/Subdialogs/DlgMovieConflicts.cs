@@ -287,9 +287,10 @@ namespace MediaPortal.Configuration.Sections
         else
         {
           // Movie - Movie folder title + remove CD from title
-          using (Settings xmlreader = new MPSettings())
-          {
-            bool foldercheck = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+          string dir = Path.GetDirectoryName(strFileName);
+          bool foldercheck = Util.Utils.IsFolderDedicatedMovieFolder(dir);
+          //using (Settings xmlreader = new MPSettings())
+          //{
             if (foldercheck)
             {
               strMovieName = Path.GetFileName(Path.GetDirectoryName(strFileName));
@@ -307,7 +308,7 @@ namespace MediaPortal.Configuration.Sections
                 strMovieName = pattern[i].Replace(strMovieName, "");
               }
             }
-          }
+          //}
         }
 
         _textBoxTitle.Text = strMovieName;

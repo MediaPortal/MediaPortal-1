@@ -50,6 +50,7 @@ namespace MediaPortal.Configuration.Sections
       public Layout DefaultLayout = MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
       public bool ScanShare = false;
       public bool CreateThumbs = true;
+      public bool EachFolderIsMovie = false;
       
       public bool HasPinCode
       {
@@ -314,12 +315,18 @@ namespace MediaPortal.Configuration.Sections
         editShare.labelCreateThumbs.Visible = true;
         editShare.cbCreateThumbs.Visible = true;
         editShare.CreateThumbs = true;
+
+        editShare.cbEachFolderIsMovie.Visible = true;
+        editShare.EachFolderIsMovie = false;
       }
       else
       {
         editShare.labelCreateThumbs.Visible = false;
         editShare.cbCreateThumbs.Visible = false;
         editShare.CreateThumbs = true;
+
+        editShare.cbEachFolderIsMovie.Visible = false;
+        editShare.EachFolderIsMovie = false;
       }
 
       DialogResult dialogResult = editShare.ShowDialog(this);
@@ -343,6 +350,7 @@ namespace MediaPortal.Configuration.Sections
           //    drivetype != 5)
           //{
           shareData.CreateThumbs = editShare.CreateThumbs;
+          shareData.EachFolderIsMovie = editShare.EachFolderIsMovie;
           //}
           //else
           //{
@@ -411,12 +419,18 @@ namespace MediaPortal.Configuration.Sections
             editShare.labelCreateThumbs.Visible = true;
             editShare.cbCreateThumbs.Visible = true;
             editShare.CreateThumbs = shareData.CreateThumbs;
+
+            editShare.cbEachFolderIsMovie.Visible = true;
+            editShare.EachFolderIsMovie = shareData.EachFolderIsMovie;
           }
           else
           {
             editShare.labelCreateThumbs.Visible = false;
             editShare.cbCreateThumbs.Visible = false;
             editShare.CreateThumbs = true;
+
+            editShare.cbEachFolderIsMovie.Visible = false;
+            editShare.EachFolderIsMovie = false;
           }
 
           DialogResult dialogResult = editShare.ShowDialog(this);
@@ -442,6 +456,7 @@ namespace MediaPortal.Configuration.Sections
               //    drivetype != 5)
               //{
               shareData.CreateThumbs = editShare.CreateThumbs;
+              shareData.EachFolderIsMovie = editShare.EachFolderIsMovie;
               //}
               //else
               //{
@@ -700,10 +715,14 @@ namespace MediaPortal.Configuration.Sections
           }
           // For Movies Shares, we can indicate, if we want to create thumbs
           bool thumbs = true;
+          bool folderIsMovie = false;
+
           if (section == "movies")
           {
             string thumbsCreate = String.Format("videothumbscreate{0}", index);
             thumbs = xmlreader.GetValueAsBool(section, thumbsCreate, true);
+            string eachFolderIsMovie = String.Format("eachfolderismovie{0}", index);
+            folderIsMovie = xmlreader.GetValueAsBool(section, eachFolderIsMovie, false);
           }
 
           if (!String.IsNullOrEmpty(shareNameData))
@@ -725,6 +744,7 @@ namespace MediaPortal.Configuration.Sections
             if (section == "movies")
             {
               newShare.CreateThumbs = thumbs;
+              newShare.EachFolderIsMovie = folderIsMovie;
             }
             AddShare(newShare, shareNameData.Equals(defaultShare));
           }
@@ -794,6 +814,9 @@ namespace MediaPortal.Configuration.Sections
           {
             string thumbs = String.Format("videothumbscreate{0}", index);
             xmlwriter.RemoveEntry(section, thumbs);
+
+            string movieFolder = String.Format("eachfolderismovie{0}", index);
+            xmlwriter.RemoveEntry(section, movieFolder);
           }
           
           string shareNameData = string.Empty;
@@ -809,6 +832,7 @@ namespace MediaPortal.Configuration.Sections
           bool shareScanData = false;
           //ThumbsCreate (default true)
           bool thumbsCreate = true;
+          bool folderIsMovie = false;
 
           if (CurrentShares != null && CurrentShares.Count > index)
           {
@@ -829,6 +853,7 @@ namespace MediaPortal.Configuration.Sections
               shareScanData = shareData.ScanShare;
               // ThumbsCreate
               thumbsCreate = shareData.CreateThumbs;
+              folderIsMovie = shareData.EachFolderIsMovie;
 
               if (CurrentShares[index] == DefaultShare)
               {
@@ -856,6 +881,9 @@ namespace MediaPortal.Configuration.Sections
               {
                 string thumbs = String.Format("videothumbscreate{0}", index);
                 xmlwriter.SetValueAsBool(section, thumbs, thumbsCreate);
+
+                string folderMovie = String.Format("eachfolderismovie{0}", index);
+                xmlwriter.SetValueAsBool(section, folderMovie, folderIsMovie);
               }
             }
           }

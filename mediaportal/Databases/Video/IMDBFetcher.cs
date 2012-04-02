@@ -49,6 +49,7 @@ namespace MediaPortal.Video.Database
     private IMDBActor _imdbActor;
     private int _actorId;
     private int _actorIndex;
+    private static bool _foldercheck = true;
     
     public IMDBFetcher(IMDB.IProgress progress)
     {
@@ -183,15 +184,13 @@ namespace MediaPortal.Video.Database
           OnProgress(line1, _url.Title, string.Empty, 20);
           
           // Get special settings for grabbing
-          bool folderTitle;
+          bool folderTitle = _foldercheck;
           int faCount;
           bool stripPrefix;
           bool useFanArt;
           
           using (Settings xmlreader = new MPSettings())
           {
-            // Folder name for title (Change scraped title with folder name)
-            folderTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
             // Number of downloaded fanart per movie
             faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
             stripPrefix = xmlreader.GetValueAsBool("moviedatabase", "striptitleprefixes", false);
@@ -1163,6 +1162,8 @@ namespace MediaPortal.Video.Database
       string strFileName = string.Empty;
       string path = currentMovie.Path;
       string filename = currentMovie.File;
+      _foldercheck = Util.Utils.IsFolderDedicatedMovieFolder(path);
+
       if (path != string.Empty)
       {
         if (path.EndsWith(@"\"))
@@ -1209,9 +1210,8 @@ namespace MediaPortal.Video.Database
             // Movie - Folder title and new ->remove CDx from name
             using (Settings xmlreader = new MPSettings())
             {
-              bool foldercheck = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
               bool preferFileName = xmlreader.GetValueAsBool("moviedatabase", "preferfilenameforsearch", false);
-              if (foldercheck && !preferFileName)
+              if (_foldercheck && !preferFileName)
               {
                 strMovieName = Path.GetFileName(Path.GetDirectoryName(strFileName));
               }
@@ -1223,7 +1223,7 @@ namespace MediaPortal.Video.Database
               var pattern = Util.Utils.StackExpression();
               for (int i = 0; i < pattern.Length; i++)
               {
-                if (foldercheck == false && pattern[i].IsMatch(strMovieName))
+                if (_foldercheck == false && pattern[i].IsMatch(strMovieName))
                 {
                   strMovieName = pattern[i].Replace(strMovieName, "");
                 }

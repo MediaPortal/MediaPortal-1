@@ -240,10 +240,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpTextBox15 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpTextBox14 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.useFoldernameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.groupBoxActiveGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel39 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpNumericUpDownLimit = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.mpDeleteGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this.bDatabaseDown = new MediaPortal.UserInterface.Controls.MPButton();
@@ -733,7 +733,7 @@ namespace MediaPortal.Configuration.Sections
       this.preferFileNameCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.preferFileNameCheckBox.AutoSize = true;
       this.preferFileNameCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.preferFileNameCheckBox.Location = new System.Drawing.Point(35, 239);
+      this.preferFileNameCheckBox.Location = new System.Drawing.Point(14, 239);
       this.preferFileNameCheckBox.Name = "preferFileNameCheckBox";
       this.preferFileNameCheckBox.Size = new System.Drawing.Size(204, 17);
       this.preferFileNameCheckBox.TabIndex = 14;
@@ -742,7 +742,6 @@ namespace MediaPortal.Configuration.Sections
         "arching\r\nmovies, but movie title will use folder name.\r\nThis will not work in fo" +
         "lders with ripped DVD.");
       this.preferFileNameCheckBox.UseVisualStyleBackColor = true;
-      this.preferFileNameCheckBox.Visible = false;
       this.preferFileNameCheckBox.CheckedChanged += new System.EventHandler(this.preferFileNameCheckBox_CheckedChanged);
       // 
       // btnNew
@@ -2928,19 +2927,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox14.TabIndex = 51;
       this.mpTextBox14.Text = "Upgrade cover thumbnail file names to the new naming rule.\r\n";
       // 
-      // useFoldernameCheckBox
-      // 
-      this.useFoldernameCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.useFoldernameCheckBox.AutoSize = true;
-      this.useFoldernameCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useFoldernameCheckBox.Location = new System.Drawing.Point(15, 216);
-      this.useFoldernameCheckBox.Name = "useFoldernameCheckBox";
-      this.useFoldernameCheckBox.Size = new System.Drawing.Size(258, 17);
-      this.useFoldernameCheckBox.TabIndex = 13;
-      this.useFoldernameCheckBox.Text = "Folder name for title (each movie in it\'s own folder)";
-      this.useFoldernameCheckBox.UseVisualStyleBackColor = true;
-      this.useFoldernameCheckBox.CheckedChanged += new System.EventHandler(this.useFoldername_CheckedChanged);
-      // 
       // tabControl1
       // 
       this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -2971,11 +2957,11 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxActiveGrabbers
       // 
       this.groupBoxActiveGrabbers.BackColor = System.Drawing.Color.Transparent;
+      this.groupBoxActiveGrabbers.Controls.Add(this.mpLabel39);
       this.groupBoxActiveGrabbers.Controls.Add(this.chbMovieInfoOnShares);
       this.groupBoxActiveGrabbers.Controls.Add(this.chbShowMovieInfoOnPlay);
       this.groupBoxActiveGrabbers.Controls.Add(this.fanartQ);
       this.groupBoxActiveGrabbers.Controls.Add(this.preferFileNameCheckBox);
-      this.groupBoxActiveGrabbers.Controls.Add(this.useFoldernameCheckBox);
       this.groupBoxActiveGrabbers.Controls.Add(this.useFanartCheckBox);
       this.groupBoxActiveGrabbers.Controls.Add(this.mpNumericUpDownLimit);
       this.groupBoxActiveGrabbers.Controls.Add(this.mpDeleteGrabber);
@@ -2991,6 +2977,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxActiveGrabbers.TabIndex = 0;
       this.groupBoxActiveGrabbers.TabStop = false;
       this.groupBoxActiveGrabbers.Text = "Internet database search settings";
+      // 
+      // mpLabel39
+      // 
+      this.mpLabel39.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpLabel39.AutoSize = true;
+      this.mpLabel39.Location = new System.Drawing.Point(12, 223);
+      this.mpLabel39.Name = "mpLabel39";
+      this.mpLabel39.Size = new System.Drawing.Size(164, 13);
+      this.mpLabel39.TabIndex = 51;
+      this.mpLabel39.Text = "Every movie has its own directory";
       // 
       // mpNumericUpDownLimit
       // 
@@ -3787,7 +3783,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel12;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel13;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel14;
-    private MediaPortal.UserInterface.Controls.MPCheckBox useFoldernameCheckBox;
     private System.Windows.Forms.ToolTip toolTipMPvdb;
     private System.Windows.Forms.TabPage tabPageActorDetails;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
@@ -3913,5 +3908,6 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPButton buttonImportNfos;
     private UserInterface.Controls.MPButton btExportNfo;
     private UserInterface.Controls.MPTextBox mpTextBox18;
+    private UserInterface.Controls.MPLabel mpLabel39;
   }
 }

@@ -157,7 +157,7 @@ namespace MediaPortal.Configuration.Sections
     // Last used file extension filter (Fileopen dialog when adding video file manually)
     private int _lastExt;
     // Folder name as movie title
-    private bool _useFolderAsTitle;
+    //private bool _useFolderAsTitle;
     // Cover upgrade
     private bool _coversUpgraded;
     private bool _settingsLoaded;
@@ -1883,13 +1883,6 @@ namespace MediaPortal.Configuration.Sections
         }
         SetFanartFileIndexLabel(0);
 
-        // Folder movie title
-        _useFolderAsTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
-        useFoldernameCheckBox.Checked = _useFolderAsTitle;
-        if (_useFolderAsTitle)
-        {
-          preferFileNameCheckBox.Visible = true;
-        }
         preferFileNameCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "preferfilenameforsearch", false);
         
         // Movie info before play
@@ -1958,7 +1951,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("moviedatabase", "fanartnumber", (int)fanartQ.Value);
         
         // Folder movie title
-        xmlwriter.SetValueAsBool("moviedatabase", "usefolderastitle", _useFolderAsTitle);
         xmlwriter.SetValueAsBool("moviedatabase", "preferfilenameforsearch", preferFileNameCheckBox.Checked);
 
         // Movie info before play
@@ -3210,20 +3202,20 @@ namespace MediaPortal.Configuration.Sections
     }
 
     // Folder as movie title checkbox
-    private void useFoldername_CheckedChanged(object sender, EventArgs e)
-    {
-      _useFolderAsTitle = ((CheckBox)sender).Checked;
-      if (_useFolderAsTitle)
-      {
-        preferFileNameCheckBox.Visible = true;
-      }
-      else
-      {
-        preferFileNameCheckBox.Visible = false;
-        preferFileNameCheckBox.Checked = false;
-      }
-      SaveSettings();
-    }
+    //private void useFoldername_CheckedChanged(object sender, EventArgs e)
+    //{
+    //  _useFolderAsTitle = ((CheckBox)sender).Checked;
+    //  if (_useFolderAsTitle)
+    //  {
+    //    preferFileNameCheckBox.Visible = true;
+    //  }
+    //  else
+    //  {
+    //    preferFileNameCheckBox.Visible = false;
+    //    preferFileNameCheckBox.Checked = false;
+    //  }
+    //  SaveSettings();
+    //}
 
     // Prefer filename rather than folder name
     private void preferFileNameCheckBox_CheckedChanged(object sender, EventArgs e)
