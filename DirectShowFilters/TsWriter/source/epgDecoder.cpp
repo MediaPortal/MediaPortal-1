@@ -162,7 +162,7 @@ HRESULT CEpgDecoder::DecodeEPG(byte* buf,int len,int PID)
 					if (descriptor_tag ==0x4d)
 					{
 						//					LogDebug("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
-						DecodeShortEventDescriptor(&buf[start+off],epgEvent, lNetworkId);
+						DecodeShortEventDescriptor(&buf[start+off],epgEvent, lNetworkId, PID);
 					}
 					else if (descriptor_tag ==0x54)
 					{
@@ -412,7 +412,7 @@ HRESULT CEpgDecoder::DecodePremierePrivateEPG(byte* buf,int len)
 					if (descriptor_tag ==0x4d)
 					{
 						//					LogDebug("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
-						DecodeShortEventDescriptor( &buf[start+off],epgEvent,0);
+						DecodeShortEventDescriptor( &buf[start+off],epgEvent,0,0);
 					}
 					else if (descriptor_tag ==0x54)
 					{
@@ -695,7 +695,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 	}	
 }
 
-void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int NetworkID)
+void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int NetworkID, int PID)
 {
 	try
 	{
@@ -750,7 +750,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			// buf[7] - huffman table id. Including this reduces the chance of non encoded
 			// text being sent through
 
-			if(buf[6]==0x1f && CanDecodeNetwork(NetworkID))
+			if(buf[6]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
 			}
@@ -795,7 +795,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int N
 			// 0x1f is tag for freesat/freeview huffman encoding
 			// off+2 - huffman table id. Including this reduces the chance of non encoded
 			// text being sent through
-			if(buf[off+1]==0x1f && CanDecodeNetwork(NetworkID))
+			if(buf[off+1]==0x1f && CanDecodeNetworkOrPID(NetworkID, PID))
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
 			}
@@ -1157,9 +1157,9 @@ bool CEpgDecoder::IsEPGGrabbing()
 	return m_bParseEPG;
 }
 
-bool CEpgDecoder::CanDecodeNetwork(int NetworkID)
+bool CEpgDecoder::CanDecodeNetworkOrPID(int NetworkID, int PID)
 {
-	if(NetworkID == 9018 || NetworkID == 59)
+	if(NetworkID == 9018 || NetworkID == 59 || PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG)
 	{
 		return true;
 	}
