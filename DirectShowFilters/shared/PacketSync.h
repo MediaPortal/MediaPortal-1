@@ -20,14 +20,8 @@
  */
 #pragma once
 
-#define TS_PACKET_SYNC  0x47
-#define TS_PACKET_LEN   188
-#define MT2S_PACKET_LEN 192
-
-// It is enough to analyzed the stream only once hence the static
-static bool m_streamTypeDetected = false;
-static int  m_packetLen = TS_PACKET_LEN;
-static int  m_syncbyteOffset = 0;
+#define TS_PACKET_SYNC 0x47
+#define TS_PACKET_LEN  188
 
 class CPacketSync
 {
@@ -37,7 +31,6 @@ public:
 public:
   virtual ~CPacketSync(void);
   void OnRawData(byte* pData, int nDataLen);
-  bool AnalyzeStream(byte* pData, int nDataLen);
   virtual void OnTsPacket(byte* tsPacket);
   void Reset(void);
 

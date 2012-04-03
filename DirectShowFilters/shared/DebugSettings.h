@@ -24,8 +24,7 @@
 //   TsWriter:
 //     DisableCRCCheck
 //     DumpRawTS
-//     TsReader:
-//     BDReader:
+//   TsReader:
 //     DoNotAllowSlowMotionDuringZapping
 
 
