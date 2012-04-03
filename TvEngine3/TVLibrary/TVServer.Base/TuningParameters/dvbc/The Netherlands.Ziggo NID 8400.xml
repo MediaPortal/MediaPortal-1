@@ -146,6 +146,11 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <Frequency>417000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
     <Frequency>425000</Frequency>
     <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
