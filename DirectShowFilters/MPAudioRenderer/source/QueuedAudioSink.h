@@ -99,7 +99,7 @@ protected:
   vector<DWORD> m_dwWaitObjects;
 
   CCritSec m_inputQueueLock;
-  queue<TQueueEntry> m_inputQueue;
+  vector<TQueueEntry> m_inputQueue;
 
   CCritSec m_OOBInputQueueLock;
   queue<TQueueEntry> m_OOBInputQueue;

@@ -26,6 +26,7 @@
 
 #include "MpAudioRenderer.h"
 #include "FilterApp.h"
+#include "TimeSource.h"
 
 #include "alloctracing.h"
 
@@ -63,7 +64,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pSampleRateConverter(NULL),
   m_pRenderer(NULL),
   m_pTimeStretch(NULL),
-  m_pMediaType(NULL)
+  m_pMediaType(NULL),
+  m_lastSampleArrivalTime(0)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -203,6 +205,22 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   return S_OK;
 }
 
+STDMETHODIMP CMPAudioRenderer::GetState(DWORD dwMSecs, FILTER_STATE* State)
+{
+  CheckPointer(State, E_POINTER);
+
+  if (m_pRenderer->BufferredDataDuration() <= 10000000 &&       // 1 s
+      GetCurrentTimestamp() - m_lastSampleArrivalTime < 500000) // 50 ms
+  {
+    NotifyEvent(EC_STARVATION, 0, 0);
+    *State = m_State;
+    
+    return VFW_S_STATE_INTERMEDIATE;
+  }
+
+  return __super::GetState(dwMSecs, State);
+}
+
 HRESULT CMPAudioRenderer::CheckInputType(const CMediaType* pmt)
 {
   return CheckMediaType(pmt);
@@ -257,6 +275,8 @@ HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 HRESULT CMPAudioRenderer::Receive(IMediaSample* pSample)
 {
   ASSERT(pSample);
+
+  m_lastSampleArrivalTime = GetCurrentTimestamp();
 
   // It may return VFW_E_SAMPLE_REJECTED code to say don't bother
   HRESULT hr = PrepareReceive(pSample);

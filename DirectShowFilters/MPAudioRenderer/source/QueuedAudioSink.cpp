@@ -108,7 +108,7 @@ HRESULT CQueuedAudioSink::PutSample(IMediaSample *pSample)
     return S_OK;
 
   CAutoLock queueLock(&m_inputQueueLock);
-  m_inputQueue.push(pSample);
+  m_inputQueue.push_back(pSample);
   SetEvent(m_hInputAvailableEvent);
   //if(m_hInputQueueEmptyEvent)
   //  ResetEvent(m_hInputQueueEmptyEvent);
@@ -119,7 +119,7 @@ HRESULT CQueuedAudioSink::PutSample(IMediaSample *pSample)
 HRESULT CQueuedAudioSink::PutCommand(AudioSinkCommand nCommand)
 {
   CAutoLock queueLock(&m_inputQueueLock);
-  m_inputQueue.push(nCommand);
+  m_inputQueue.push_back(nCommand);
   SetEvent(m_hInputAvailableEvent);
   //if(m_hInputQueueEmptyEvent)
   //  ResetEvent(m_hInputQueueEmptyEvent);
@@ -158,7 +158,7 @@ HRESULT CQueuedAudioSink::BeginFlush()
     CAutoLock queueLock(&m_inputQueueLock);
     ResetEvent(m_hInputAvailableEvent);
     while (!m_inputQueue.empty())
-      m_inputQueue.pop();
+      m_inputQueue.erase(m_inputQueue.begin());
     //SetEvent(m_hInputQueueEmptyEvent);
   }
 
@@ -261,7 +261,7 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
   if (pCommand)
     *pCommand = entry.Command;
 
-  m_inputQueue.pop();
+  m_inputQueue.erase(m_inputQueue.begin());
   if (m_inputQueue.empty())
     ResetEvent(m_hInputAvailableEvent);
   //if (m_InputQueue.empty())

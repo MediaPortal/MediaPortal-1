@@ -42,15 +42,19 @@ public:
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
   HRESULT Run(REFERENCE_TIME rtStart);
+  HRESULT Pause();
+  HRESULT BeginStop();
 
   // IRenderFilter implementation
   HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
   REFERENCE_TIME Latency();
   void ReleaseDevice();
+  REFERENCE_TIME BufferredDataDuration();
 
 protected:
   // Processing
   DWORD ThreadProc();
+  HRESULT PutSample(IMediaSample* pSample);
 
 // Internal implementation
 private:
@@ -118,6 +122,7 @@ private:
   DWORD_PTR           m_dwAdvise;
 
   RenderState         m_state;
+  FILTER_STATE        m_filterState;
 
   CSyncClock*         m_pClock;
 
@@ -137,4 +142,7 @@ private:
 
   vector<DWORD> m_dwDataWaitObjects;
   vector<DWORD> m_dwSampleWaitObjects;
+
+  UINT32 m_nSampleOffset;
+  UINT32 m_nDataLeftInSample;
 };

@@ -29,4 +29,5 @@ public:
   virtual HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc) = 0;
   virtual REFERENCE_TIME Latency() = 0;
   virtual void ReleaseDevice() = 0;
+  virtual REFERENCE_TIME BufferredDataDuration() = 0;
 };

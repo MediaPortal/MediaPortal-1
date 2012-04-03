@@ -77,6 +77,7 @@ public:
   STDMETHOD(Run)(REFERENCE_TIME tStart);
   STDMETHOD(Stop)();
   STDMETHOD(Pause)();
+  STDMETHOD(GetState)(DWORD dwMSecs, FILTER_STATE* State);
 
   // === IMediaSeeking - implementation is located in MediaSeeking.cpp
   STDMETHODIMP IsFormatSupported(const GUID* pFormat);
@@ -121,6 +122,8 @@ private:
 private:
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
+
+  UINT64          m_lastSampleArrivalTime;
 
   CSyncClock*     m_pClock;
   CVolumeHandler* m_pVolumeHandler;

@@ -42,7 +42,9 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_bIsAudioClientStarted(false),
   m_bDeviceInitialized(false),
   m_rtNextSampleTime(0),
-  m_rtHwStart(0)
+  m_rtHwStart(0),
+  m_nSampleOffset(0),
+  m_nDataLeftInSample(0)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -334,9 +336,9 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   rtHWTime = m_pClock->GetHWTime() - m_rtHwStart;
 
   if (m_pSettings->m_bLogSampleTimes)
-    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtHWTime: %6.3f rtRefClock: %6.3f early: %6.3f queue: %d", 
+    Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtHWTime: %6.3f rtRefClock: %6.3f early: %6.3f queue: %d %6.3f", 
       rtStart / 10000000.0, rtStop / 10000000.0, rtDuration / 10000000.0, (rtStart - m_rtNextSampleTime) / 10000000.0, 
-      rtHWTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtHWTime) / 10000000.0, m_inputQueue.size());
+      rtHWTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtHWTime) / 10000000.0, m_inputQueue.size(), BufferredDataDuration() / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
@@ -498,10 +500,33 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
   else
     Log("CWASAPIRenderFilter::Run - error (0x%08x)", hr);
 
+  m_filterState = State_Running;
   return CQueuedAudioSink::Run(rtStart);
 }
 
+HRESULT CWASAPIRenderFilter::Pause()
+{
+  m_filterState = State_Paused;
+  return CQueuedAudioSink::Pause();
+}
+
+HRESULT CWASAPIRenderFilter::BeginStop()
+{
+  m_filterState = State_Stopped;
+  return CQueuedAudioSink::BeginStop();
+}
+
 // Processing
+HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
+{
+ HRESULT hr = CQueuedAudioSink::PutSample(pSample);
+
+  if (m_filterState != State_Running)
+    Log("Buffering...%6.3f", BufferredDataDuration() / 10000000.0);
+
+  return hr;
+}
+
 DWORD CWASAPIRenderFilter::ThreadProc()
 {
   Log("CWASAPIRenderFilter::Render thread - starting up - thread ID: %d", m_ThreadId);
@@ -514,8 +539,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
   AudioSinkCommand command;
   
-  UINT32 sampleOffset = 0;
-  UINT32 dataLeftInSample = 0;
   LONGLONG writeSilence = 0;
   BYTE* sampleData = NULL;
 
@@ -603,9 +626,9 @@ DWORD CWASAPIRenderFilter::ThreadProc()
         {
           fetchSample:
 
-          bool OOBCommandOnly = dataLeftInSample > 0;
+          bool OOBCommandOnly = m_nDataLeftInSample > 0;
 
-          if (dataLeftInSample == 0 || OOBCommandOnly)
+          if (m_nDataLeftInSample == 0 || OOBCommandOnly)
           {
             m_csResources.Unlock();
             HRESULT result = GetNextSampleOrCommand(&command, &m_pCurrentSample.p, maxSampleWaitTime, &m_hSampleEvents,
@@ -626,13 +649,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             }
 
             if (!m_pCurrentSample)
-              dataLeftInSample = 0;
+              m_nDataLeftInSample = 0;
               
             if (command == ASC_PutSample && m_pCurrentSample)
             {
               sampleProcessed = false;
-              sampleOffset = 0;
-              dataLeftInSample = m_pCurrentSample->GetActualDataLength();
+              m_nSampleOffset = 0;
+              m_nDataLeftInSample = m_pCurrentSample->GetActualDataLength();
             }
             else if (command == ASC_Flush)
             {
@@ -640,8 +663,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
               flush = true;
               sampleData = NULL;
-              sampleOffset = 0;
-              dataLeftInSample = 0;
+              m_nSampleOffset = 0;
+              m_nDataLeftInSample = 0;
 
               break;
             }
@@ -657,7 +680,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               m_state = StateRunning;
               if (!m_pCurrentSample)
               {
-                dataLeftInSample = 0;
+                m_nDataLeftInSample = 0;
                 goto fetchSample;
               }
             }
@@ -665,7 +688,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
           if (m_state != StateRunning)
             writeSilence = bufferSizeInBytes - bytesFilled;
-          else if (sampleOffset == 0 && !OOBCommandOnly)
+          else if (m_nSampleOffset == 0 && !OOBCommandOnly)
           {
             // TODO error checking
             if (CheckSample(m_pCurrentSample, bufferSize - currentPadding) == S_FALSE)
@@ -675,16 +698,16 @@ DWORD CWASAPIRenderFilter::ThreadProc()
             }
           }
 
-          if (writeSilence == 0 && (sampleOffset == 0 || m_nSampleNum == 0) && !sampleProcessed)
+          if (writeSilence == 0 && (m_nSampleOffset == 0 || m_nSampleNum == 0) && !sampleProcessed)
           {
-            HRESULT schedulingHR = CheckStreamTimeline(m_pCurrentSample, &dueTime, sampleOffset);
+            HRESULT schedulingHR = CheckStreamTimeline(m_pCurrentSample, &dueTime, m_nSampleOffset);
             sampleProcessed = true;
               
             // m_pCurrentSample must exist if CheckStreamTimeline returns either of these
             if (schedulingHR == MPAR_S_DROP_SAMPLE)
             {
               m_pCurrentSample.Release();
-              dataLeftInSample = 0;
+              m_nDataLeftInSample = 0;
               goto fetchSample;
             }
             else if (schedulingHR == MPAR_S_WAIT_RENDER_TIME)
@@ -692,7 +715,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
           }
 
           if (writeSilence == 0 && m_pCurrentSample)
-            RenderAudio(data, bufferSizeInBytes, dataLeftInSample, sampleOffset, m_pCurrentSample, bytesFilled);
+            RenderAudio(data, bufferSizeInBytes, m_nDataLeftInSample, m_nSampleOffset, m_pCurrentSample, bytesFilled);
           else
           {
             if (bufferSizeInBytes == writeSilence)
@@ -746,8 +769,35 @@ void CWASAPIRenderFilter::StopRenderThread()
   CloseThread();
   m_pCurrentSample.Release();
   SetEvent(m_hCurrentSampleReleased);
-  m_csResources.Unlock();  
   m_state = StateStopped;
+  m_nSampleOffset = 0;
+  m_nDataLeftInSample = 0;
+  m_csResources.Unlock();
+}
+
+REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
+{
+  CAutoLock queueLock(&m_inputQueueLock);
+
+  REFERENCE_TIME rtDuration = 0;
+  REFERENCE_TIME rtStart = 0;
+  REFERENCE_TIME rtStop = 0;
+
+  vector<TQueueEntry>::iterator it = m_inputQueue.begin();
+  while (it != m_inputQueue.end())
+  {
+    it->Sample->GetTime(&rtStart, &rtStop);
+    rtDuration += rtStop - rtStart;
+    it++;
+  }
+
+  if (m_pCurrentSample.p)
+  {
+    UINT nFrames = (m_pCurrentSample.p->GetActualDataLength() - m_nSampleOffset) / m_pInputFormat->Format.nBlockAlign;
+    rtDuration += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+  }
+
+  return rtDuration;
 }
 
 HRESULT CWASAPIRenderFilter::GetWASAPIBuffer(UINT32& bufferSize, UINT32& currentPadding, UINT32& bufferSizeInBytes, BYTE** pData)
