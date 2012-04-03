@@ -27,6 +27,9 @@ namespace MediaPortal.Configuration.Sections
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
       System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -50,14 +53,12 @@ namespace MediaPortal.Configuration.Sections
       this.btnBrofseFA = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonUpdateGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonAddGrabber = new MediaPortal.UserInterface.Controls.MPButton();
-      this.sharesListBox = new System.Windows.Forms.CheckedListBox();
       this.buttonRemoveFile = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonAddFile = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonDeleteActor = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonNewActor = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSaveActorInfo = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnClearActorsTrash = new MediaPortal.UserInterface.Controls.MPButton();
-      this.preferFileNameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.btnNew = new MediaPortal.UserInterface.Controls.MPButton();
       this.fanartQ = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.chbShowMovieInfoOnPlay = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -240,10 +241,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpTextBox15 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpTextBox14 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.preferFileNameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.groupBoxActiveGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabel39 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpNumericUpDownLimit = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.mpDeleteGrabber = new MediaPortal.UserInterface.Controls.MPButton();
       this.bDatabaseDown = new MediaPortal.UserInterface.Controls.MPButton();
@@ -259,6 +260,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpComboBoxAvailableDatabases = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabPageScan = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel39 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.dgShares = new System.Windows.Forms.DataGridView();
       this.tbTitlePrefixes = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.checkBoxStripTitlePrefix = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPageEditor = new MediaPortal.UserInterface.Controls.MPTabPage();
@@ -295,6 +298,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.shareName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.sharePath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.shareScan = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.shareDedicatedFolder = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.fanartQ)).BeginInit();
       this.tabControl2.SuspendLayout();
       this.tabPageTitle.SuspendLayout();
@@ -338,6 +345,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAvailableGrabbers.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dgShares)).BeginInit();
       this.tabPageEditor.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -642,20 +650,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpButtonAddGrabber.UseVisualStyleBackColor = true;
       this.mpButtonAddGrabber.Click += new System.EventHandler(this.mpButtonAdd_Click);
       // 
-      // sharesListBox
-      // 
-      this.sharesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.sharesListBox.CheckOnClick = true;
-      this.sharesListBox.Location = new System.Drawing.Point(16, 24);
-      this.sharesListBox.Name = "sharesListBox";
-      this.sharesListBox.Size = new System.Drawing.Size(425, 154);
-      this.sharesListBox.TabIndex = 0;
-      this.toolTipMPvdb.SetToolTip(this.sharesListBox, "Local or network folders which will\r\nbe used for search and scan video files.");
-      this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
-      this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
-      // 
       // buttonRemoveFile
       // 
       this.buttonRemoveFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -727,22 +721,6 @@ namespace MediaPortal.Configuration.Sections
       this.toolTipMPvdb.SetToolTip(this.btnClearActorsTrash, "Clear names like \'unknown\' or \'nm......\'");
       this.btnClearActorsTrash.UseVisualStyleBackColor = true;
       this.btnClearActorsTrash.Click += new System.EventHandler(this.btnClearActorsTrash_Click);
-      // 
-      // preferFileNameCheckBox
-      // 
-      this.preferFileNameCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.preferFileNameCheckBox.AutoSize = true;
-      this.preferFileNameCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.preferFileNameCheckBox.Location = new System.Drawing.Point(14, 239);
-      this.preferFileNameCheckBox.Name = "preferFileNameCheckBox";
-      this.preferFileNameCheckBox.Size = new System.Drawing.Size(204, 17);
-      this.preferFileNameCheckBox.TabIndex = 14;
-      this.preferFileNameCheckBox.Text = "Prefer video filename for movie search";
-      this.toolTipMPvdb.SetToolTip(this.preferFileNameCheckBox, "Helper option for movies in it\'s own folder.\r\nThis will use video filename for se" +
-        "arching\r\nmovies, but movie title will use folder name.\r\nThis will not work in fo" +
-        "lders with ripped DVD.");
-      this.preferFileNameCheckBox.UseVisualStyleBackColor = true;
-      this.preferFileNameCheckBox.CheckedChanged += new System.EventHandler(this.preferFileNameCheckBox_CheckedChanged);
       // 
       // btnNew
       // 
@@ -2927,6 +2905,21 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBox14.TabIndex = 51;
       this.mpTextBox14.Text = "Upgrade cover thumbnail file names to the new naming rule.\r\n";
       // 
+      // preferFileNameCheckBox
+      // 
+      this.preferFileNameCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.preferFileNameCheckBox.AutoSize = true;
+      this.preferFileNameCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.preferFileNameCheckBox.Location = new System.Drawing.Point(16, 268);
+      this.preferFileNameCheckBox.Name = "preferFileNameCheckBox";
+      this.preferFileNameCheckBox.Size = new System.Drawing.Size(204, 17);
+      this.preferFileNameCheckBox.TabIndex = 58;
+      this.preferFileNameCheckBox.Text = "Prefer video filename for movie search";
+      this.toolTipMPvdb.SetToolTip(this.preferFileNameCheckBox, "Helper option for movies in it\'s own folder.\r\nThis will use video filename for se" +
+        "arching\r\nmovies, but movie title will use folder name.\r\nThis will not work in fo" +
+        "lders with ripped DVD.");
+      this.preferFileNameCheckBox.UseVisualStyleBackColor = true;
+      // 
       // tabControl1
       // 
       this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -2957,11 +2950,9 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxActiveGrabbers
       // 
       this.groupBoxActiveGrabbers.BackColor = System.Drawing.Color.Transparent;
-      this.groupBoxActiveGrabbers.Controls.Add(this.mpLabel39);
       this.groupBoxActiveGrabbers.Controls.Add(this.chbMovieInfoOnShares);
       this.groupBoxActiveGrabbers.Controls.Add(this.chbShowMovieInfoOnPlay);
       this.groupBoxActiveGrabbers.Controls.Add(this.fanartQ);
-      this.groupBoxActiveGrabbers.Controls.Add(this.preferFileNameCheckBox);
       this.groupBoxActiveGrabbers.Controls.Add(this.useFanartCheckBox);
       this.groupBoxActiveGrabbers.Controls.Add(this.mpNumericUpDownLimit);
       this.groupBoxActiveGrabbers.Controls.Add(this.mpDeleteGrabber);
@@ -2977,16 +2968,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxActiveGrabbers.TabIndex = 0;
       this.groupBoxActiveGrabbers.TabStop = false;
       this.groupBoxActiveGrabbers.Text = "Internet database search settings";
-      // 
-      // mpLabel39
-      // 
-      this.mpLabel39.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.mpLabel39.AutoSize = true;
-      this.mpLabel39.Location = new System.Drawing.Point(12, 223);
-      this.mpLabel39.Name = "mpLabel39";
-      this.mpLabel39.Size = new System.Drawing.Size(164, 13);
-      this.mpLabel39.TabIndex = 51;
-      this.mpLabel39.Text = "Every movie has its own directory";
       // 
       // mpNumericUpDownLimit
       // 
@@ -3157,13 +3138,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.mpLabel39);
+      this.groupBox1.Controls.Add(this.preferFileNameCheckBox);
+      this.groupBox1.Controls.Add(this.dgShares);
       this.groupBox1.Controls.Add(this.tbTitlePrefixes);
       this.groupBox1.Controls.Add(this.checkBoxStripTitlePrefix);
       this.groupBox1.Controls.Add(this.refreshdbCheckBox);
       this.groupBox1.Controls.Add(this.skipCheckBox);
       this.groupBox1.Controls.Add(this.mpButton2);
       this.groupBox1.Controls.Add(this.startButton);
-      this.groupBox1.Controls.Add(this.sharesListBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
@@ -3171,6 +3154,50 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scan Movie Folders";
+      // 
+      // mpLabel39
+      // 
+      this.mpLabel39.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpLabel39.AutoSize = true;
+      this.mpLabel39.Location = new System.Drawing.Point(13, 252);
+      this.mpLabel39.Name = "mpLabel39";
+      this.mpLabel39.Size = new System.Drawing.Size(143, 13);
+      this.mpLabel39.TabIndex = 59;
+      this.mpLabel39.Text = "Every movie in it\'s own folder";
+      // 
+      // dgShares
+      // 
+      this.dgShares.AllowUserToAddRows = false;
+      this.dgShares.AllowUserToDeleteRows = false;
+      this.dgShares.AllowUserToResizeRows = false;
+      this.dgShares.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.dgShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+      this.dgShares.BackgroundColor = System.Drawing.SystemColors.Window;
+      this.dgShares.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      this.dgShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.dgShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.shareName,
+            this.sharePath,
+            this.shareScan,
+            this.shareDedicatedFolder});
+      this.dgShares.Location = new System.Drawing.Point(6, 19);
+      this.dgShares.MultiSelect = false;
+      this.dgShares.Name = "dgShares";
+      this.dgShares.RowHeadersVisible = false;
+      this.dgShares.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+      this.dgShares.Size = new System.Drawing.Size(444, 159);
+      this.dgShares.TabIndex = 57;
+      this.dgShares.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgShares_CellContentClick);
       // 
       // tbTitlePrefixes
       // 
@@ -3565,6 +3592,51 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel14.TabIndex = 21;
       this.mpLabel14.Text = "MPAA Rating:";
       // 
+      // shareName
+      // 
+      this.shareName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.shareName.DefaultCellStyle = dataGridViewCellStyle5;
+      this.shareName.HeaderText = "Name";
+      this.shareName.Name = "shareName";
+      this.shareName.ReadOnly = true;
+      this.shareName.Width = 60;
+      // 
+      // sharePath
+      // 
+      this.sharePath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      this.sharePath.DefaultCellStyle = dataGridViewCellStyle6;
+      this.sharePath.HeaderText = "Folder";
+      this.sharePath.MinimumWidth = 50;
+      this.sharePath.Name = "sharePath";
+      this.sharePath.ReadOnly = true;
+      this.sharePath.Width = 61;
+      // 
+      // shareScan
+      // 
+      this.shareScan.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.shareScan.FalseValue = "false";
+      this.shareScan.HeaderText = "Scan";
+      this.shareScan.MinimumWidth = 69;
+      this.shareScan.Name = "shareScan";
+      this.shareScan.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.shareScan.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      this.shareScan.TrueValue = "true";
+      this.shareScan.Width = 69;
+      // 
+      // shareDedicatedFolder
+      // 
+      this.shareDedicatedFolder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      this.shareDedicatedFolder.FalseValue = "false";
+      this.shareDedicatedFolder.HeaderText = "Every movie in it\'s own folder";
+      this.shareDedicatedFolder.MinimumWidth = 200;
+      this.shareDedicatedFolder.Name = "shareDedicatedFolder";
+      this.shareDedicatedFolder.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.shareDedicatedFolder.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      this.shareDedicatedFolder.TrueValue = "true";
+      this.shareDedicatedFolder.Width = 200;
+      // 
       // MovieDatabase
       // 
       this.AutoSize = true;
@@ -3632,6 +3704,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageScan.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dgShares)).EndInit();
       this.tabPageEditor.ResumeLayout(false);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
@@ -3642,7 +3715,6 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.CheckedListBox sharesListBox;
     private MediaPortal.UserInterface.Controls.MPButton startButton;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageEditor;
@@ -3831,7 +3903,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox tbCoverSearchStr;
     private MediaPortal.UserInterface.Controls.MPTextBox tbTitlePrefixes;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStripTitlePrefix;
-    private MediaPortal.UserInterface.Controls.MPCheckBox preferFileNameCheckBox;
     private MediaPortal.UserInterface.Controls.MPButton btnNew;
     private MediaPortal.UserInterface.Controls.MPNumericUpDown fanartQ;
     private MediaPortal.UserInterface.Controls.MPLabel labelFanartImageIndex;
@@ -3908,6 +3979,12 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPButton buttonImportNfos;
     private UserInterface.Controls.MPButton btExportNfo;
     private UserInterface.Controls.MPTextBox mpTextBox18;
+    private System.Windows.Forms.DataGridView dgShares;
     private UserInterface.Controls.MPLabel mpLabel39;
+    private UserInterface.Controls.MPCheckBox preferFileNameCheckBox;
+    private System.Windows.Forms.DataGridViewTextBoxColumn shareName;
+    private System.Windows.Forms.DataGridViewTextBoxColumn sharePath;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn shareScan;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn shareDedicatedFolder;
   }
 }

@@ -2299,6 +2299,14 @@ namespace MediaPortal.Video.Database
           VideoDatabase.DeleteMovieStopTime(fileId);
         }
 
+        IMDBMovie movie = new IMDBMovie();
+        GetMovieInfoById((int) lMovieId, ref movie);
+
+        // Delete movie cover
+        FanArt.DeleteCovers(movie.Title, (int) lMovieId);
+        // Delete movie fanart
+        FanArt.DeleteFanarts((int) lMovieId);
+        // Delete user groups for movie
         RemoveUserGroupsForMovie((int) lMovieId);
 
         string strSQL = String.Format("delete from genrelinkmovie where idmovie={0}", lMovieId);

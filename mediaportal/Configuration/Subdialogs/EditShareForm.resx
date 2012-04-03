@@ -121,8 +121,8 @@
     <value>180, 17</value>
   </metadata>
   <data name="cbEachFolderIsMovie.ToolTip" xml:space="preserve">
-    <value>Use this if you have every movie in it's own folder.
-This will also change MP movie scraping behaviour to search movie
+    <value>Use this option if this new share have dedicated movie subdirectories.
+Option will change MP movie scraping behaviour to search movie
 with the name as folder name.
 Beware that folder do not contain more than one video file
 otherwise you will not be satisfied.</value>

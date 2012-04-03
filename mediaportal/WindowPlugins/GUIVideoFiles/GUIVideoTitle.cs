@@ -1415,11 +1415,6 @@ namespace MediaPortal.GUI.Video
       }
       if (!item.IsRemote)
       {
-        // Delete covers
-        FanArt.DeleteCovers(movie.Title, movie.ID);
-        // Delete fanarts
-        FanArt.DeleteFanarts(movie.ID);
-        VideoDatabase.RemoveUserGroupsForMovie(movie.ID);
         VideoDatabase.DeleteMovieInfoById(movie.ID);
       }
     }

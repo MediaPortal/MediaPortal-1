@@ -173,11 +173,11 @@ namespace MediaPortal.Configuration
       // 
       this.cbEachFolderIsMovie.AutoSize = true;
       this.cbEachFolderIsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbEachFolderIsMovie.Location = new System.Drawing.Point(216, 140);
+      this.cbEachFolderIsMovie.Location = new System.Drawing.Point(259, 140);
       this.cbEachFolderIsMovie.Name = "cbEachFolderIsMovie";
-      this.cbEachFolderIsMovie.Size = new System.Drawing.Size(181, 17);
+      this.cbEachFolderIsMovie.Size = new System.Drawing.Size(133, 17);
       this.cbEachFolderIsMovie.TabIndex = 29;
-      this.cbEachFolderIsMovie.Text = "Every movie has its own directory";
+      this.cbEachFolderIsMovie.Text = "Dedicated movie folder";
       this.toolTipEditShare.SetToolTip(this.cbEachFolderIsMovie, resources.GetString("cbEachFolderIsMovie.ToolTip"));
       this.cbEachFolderIsMovie.UseVisualStyleBackColor = true;
       this.cbEachFolderIsMovie.Visible = false;

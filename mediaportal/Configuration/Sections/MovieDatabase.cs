@@ -213,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       //
       // Clear any existing entries
       //
-      sharesListBox.Items.Clear();
+      dgShares.Rows.Clear();
 
       //
       // Load selected shares
@@ -223,18 +223,21 @@ namespace MediaPortal.Configuration.Sections
       if (section != null)
       {
         _sharesData = (List<BaseShares.ShareData>)section.GetSetting("sharesdata");
+        int dgRows = 0;
+        
         foreach (BaseShares.ShareData share in _sharesData)
         {
-          //
-          // Add to share to list box and default to selected
-          //
-          sharesListBox.Items.Add(share.Folder, share.ScanShare);
+          // Add to share to shareDatagrid
+          dgShares.Rows.Add();
+          dgShares.Rows[dgRows].Cells[0].Value = share.Name;
+          dgShares.Rows[dgRows].Cells[1].Value = share.Folder;
+          dgShares.Rows[dgRows].Cells[2].Value = share.ScanShare;
+          dgShares.Rows[dgRows].Cells[3].Value = share.EachFolderIsMovie;
+          dgRows++;
         }
       }
-
       // Movie Folders
       // Fetch extensions
-      //
       section = GetSection("Video Extensions");
 
       if (section != null)
@@ -266,36 +269,38 @@ namespace MediaPortal.Configuration.Sections
 
     #region Scan tab
 
-    private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+    private void dgShares_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
-      BaseShares.ShareData share = _sharesData[e.Index];
-      share.ScanShare = e.NewValue == CheckState.Checked ? true : false;
-      UpdateControlStatus();
-    }
+      dgShares.EndEdit();
+      
+      if (e.ColumnIndex == 2)
+      {
+        BaseShares.ShareData share = _sharesData[e.RowIndex];
+        share.ScanShare = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
+        UpdateControlStatus();
+      }
 
-    /// <summary>
-    /// 
-    /// </summary>
+      if (e.ColumnIndex == 3)
+      {
+        BaseShares.ShareData share = _sharesData[e.RowIndex];
+        share.EachFolderIsMovie = Convert.ToBoolean(dgShares[e.ColumnIndex, e.RowIndex].Value.ToString());
+        UpdateControlStatus();
+      }
+    }
+    
     private void UpdateControlStatus()
     {
-      startButton.Enabled = sharesListBox.CheckedItems.Count > 0;
+      foreach (BaseShares.ShareData share in _sharesData)
+      {
+        if (share.ScanShare)
+        {
+          startButton.Enabled = true;
+          return;
+        }
+      }
+      startButton.Enabled = false;
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void sharesListBox_SelectedIndexChanged(object sender, EventArgs e)
-    {
-      UpdateControlStatus();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
+    
     private void startButton_Click(object sender, EventArgs e)
     {
       groupBox1.Enabled = false;
@@ -303,33 +308,18 @@ namespace MediaPortal.Configuration.Sections
       groupBox1.Enabled = true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     private void RebuildDatabase()
     {
       ArrayList availablePaths = new ArrayList();
-      for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
+      foreach (BaseShares.ShareData share in _sharesData)
       {
-        string path = sharesListBox.Items[sharesListBox.CheckedIndices[index]].ToString();
-        availablePaths.Add(path);
-      }
-      // Clean covers and fanarts (only if refresh cb is checked)
-      if (refreshdbCheckBox.Checked)
-      {
-        for (int i = 0; i < cbTitle.Items.Count - 1; i++)
+        if (share.ScanShare)
         {
-          cbTitle.SelectedIndex = i;
-          ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
-          CurrentMovie.ID = item.Movie.ID;
-          string strFilenameAndPath = string.Empty;
-
-          if (listViewFiles.Items.Count > 0)
-          {
-            strFilenameAndPath = listViewFiles.Items[0].Text;
-          }
+          string path = share.Folder;
+          availablePaths.Add(path);
         }
       }
+      
       _conflictFiles = new ArrayList();
       IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
                            refreshdbCheckBox.Checked);
@@ -1727,10 +1717,6 @@ namespace MediaPortal.Configuration.Sections
         }
         // Delete movie
         VideoDatabase.DeleteMovieInfoById(CurrentMovie.ID);
-        // Delete covers
-        FanArt.DeleteCovers(CurrentMovie.Title, CurrentMovie.ID);
-        // Delete fanarts
-        FanArt.DeleteFanarts(CurrentMovie.ID);
         // When delete movie from the database do not back to index 0
         {
           int currentIndex = cbTitle.SelectedIndex;
@@ -4740,7 +4726,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-    
+
     #endregion
   }
 }
