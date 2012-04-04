@@ -2299,6 +2299,14 @@ namespace MediaPortal.Video.Database
           VideoDatabase.DeleteMovieStopTime(fileId);
         }
 
+        IMDBMovie movie = new IMDBMovie();
+        GetMovieInfoById((int) lMovieId, ref movie);
+
+        // Delete movie cover
+        FanArt.DeleteCovers(movie.Title, (int) lMovieId);
+        // Delete movie fanart
+        FanArt.DeleteFanarts((int) lMovieId);
+        // Delete user groups for movie
         RemoveUserGroupsForMovie((int) lMovieId);
 
         string strSQL = String.Format("delete from genrelinkmovie where idmovie={0}", lMovieId);
@@ -5095,20 +5103,19 @@ namespace MediaPortal.Video.Database
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Util.Utils.VideoExtensions);
         ArrayList imagePath = new ArrayList();
+        
         // Thumbs creation spam no1 causing this call
         //
         // Temporary disable thumbcreation
         //
-        using (Settings xmlreader = new MPSettings())
+        using (Settings xmlReaderWriter = new MPSettings())
         {
-          _currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-        }
-        using (Settings xmlwriter = new MPSettings())
-        {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+          _currentCreateVideoThumbs = xmlReaderWriter.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          xmlReaderWriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
         }
 
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+        
         foreach (GUIListItem item in items)
         {
           if (item.IsFolder)

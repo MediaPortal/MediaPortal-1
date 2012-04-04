@@ -85,5 +85,11 @@ namespace MediaPortal.Configuration.Sections
     {
       base.SaveSettings("Video");
     }
+
+    public override void OnSectionActivated()
+    {
+      base.Section = "Video";
+      base.OnSectionActivated();
+    }
   }
 }
