@@ -89,7 +89,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>
@@ -102,7 +102,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>
@@ -115,7 +115,7 @@
       <width>300</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0" >visible</animation>
     </control>

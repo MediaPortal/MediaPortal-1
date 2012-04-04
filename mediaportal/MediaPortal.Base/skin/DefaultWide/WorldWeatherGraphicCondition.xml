@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************      Hours Row      **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(10, Horizontal, true)</layout>
+      <posX>340</posX>
+      <posY>210</posY>
+      <control>
+        <description>hour 0 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour0StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour1StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour2StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour3StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour4StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour5StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour6StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour7StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour8StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour9StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour10StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 start time</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <label>#WorldWeather.ForecastHour11StartTime</label>
+        <font>font10</font>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ********************************    Labels Column    **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>100</posX>
+      <posY>240</posY>
+      <control>
+        <description>temperature label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationCondition</label>
+        <font>font10</font>
+        <height>50</height>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+      </control>
+      <control>
+        <description>wind label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationWind</label>
+        <font>font10</font>
+        <height>50</height>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+      </control>
+      <control>
+        <description>temperature label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationTemperature</label>
+        <font>font10</font>
+        <height>50</height>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+      </control>
+      <control>
+        <description>pressure label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationPressure</label>
+        <font>font10</font>
+        <height>50</height>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+      </control>
+      <control>
+        <description>humidity label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationHumidity</label>
+        <font>font10</font>
+        <height>50</height>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+      </control>
+      <control>
+        <description>precipitation label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationPrecipitation</label>
+        <font>font10</font>
+        <height>50</height>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+      </control>
+      <control>
+        <description>cloud coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <label>#WorldWeather.TranslationCloudCoverage</label>
+        <font>font10</font>
+        <height>50</height>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************************  Condition Icons Row  **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(21, Horizontal, true)</layout>
+      <posX>340</posX>
+      <posY>230</posY>
+      <control>
+        <description>hour 0 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour0IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour1IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour2IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour3IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour4IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour5IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour6IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour7IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour8IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour9IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour10IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 condition icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>50</width>
+        <height>50</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour11IconImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************************    Wind Icons Row     **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(42, Horizontal, true)</layout>
+      <posX>350</posX>
+      <posY>290</posY>
+      <control>
+        <description>hour 0 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour0WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour1WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour2WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour3WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour4WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour5WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour6WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour7WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour8WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour9WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour10WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 wind icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour11WindDirectionImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************************  Temperature Icons Row  ************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(42, Horizontal, true)</layout>
+      <posX>350</posX>
+      <posY>340</posY>
+      <control>
+        <description>hour 0 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour0TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour1TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour2TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour3TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour4TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour5TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour6TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour7TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour8TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour9TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour10TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 temperature icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour11TemperatureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************************   Pressure Icons Row  **************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(42, Horizontal, true)</layout>
+      <posX>350</posX>
+      <posY>390</posY>
+      <control>
+        <description>hour 0 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour0PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour1PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour2PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour3PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour4PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour5PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour6PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour7PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour8PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour9PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour10PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 pressure icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour11PressureImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ******************************  Humidity Icons Row  * *************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(42, Horizontal, true)</layout>
+      <posX>350</posX>
+      <posY>440</posY>
+      <control>
+        <description>hour 0 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour0HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour1HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour2HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour3HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour4HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour5HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour6HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour7HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour8HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour9HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour10HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 Humidity icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour11HumidityImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ****************************  Precipitation Icons Row  ************************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(42, Horizontal, true)</layout>
+      <posX>350</posX>
+      <posY>490</posY>
+      <control>
+        <description>hour 0 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour0PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour1PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour2PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour3PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour4PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour5PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour6PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour7PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour8PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour9PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour10PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 Precipitation icon</description>
+        <type>image</type>
+        <id>0</id>
+        <width>30</width>
+        <height>30</height>
+        <align>center</align>
+        <texture>#WorldWeather.ForecastHour11PrecipitationImage</texture>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     ****************************  Cloud Coverage Label Row   **********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(11, Horizontal, true)</layout>
+      <posX>345</posX>
+      <posY>555</posY>
+      <control>
+        <description>hour 0 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour0CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour0StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 1 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour1CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour1StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 2 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour2CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour2StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 3 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour3CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour3StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 4 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour4CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour4StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 5 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour5CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour5StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 6 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour6CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour6StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 7 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour7CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour7StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 8 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour8CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour8StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 9 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour9CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour9StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 10 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour10CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour10StartDay, )</visible>
+      </control>
+      <control>
+        <description>hour 11 Cloud Coverage label</description>
+        <type>label</type>
+        <id>0</id>
+        <width>60</width>
+        <align>center</align>
+        <font>font10</font>
+        <label>#WorldWeather.ForecastHour11CloudCoverage</label>
+        <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ForecastHour11StartDay, )</visible>
+      </control>
+    </control>
+    <!-- **************************  Separator lines   ***************************-->>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>230</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>280</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>330</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>380</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>430</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>480</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>100</posX>
+      <posY>530</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.ConditionView,Graphic)</visible>
+    </control>
+  </controls>
+</window>

@@ -8,7 +8,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>1280</width>
       <height>720</height>
     </control>
@@ -17,8 +17,6 @@
     <control>
       <description>button group</description>
       <type>group</type>
-      
-      
       <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="0,-300">WindowClose</animation>
       <posX>71</posX>
@@ -77,8 +75,6 @@
     <control>
       <description>info group</description>
       <type>group</type>
-      
-      
       <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="0,-300">WindowClose</animation>
       <control>
@@ -168,8 +164,6 @@
     <control>
       <description>current playtime Label</description>
       <type>fadelabel</type>
-      
-      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>1</id>
@@ -179,13 +173,11 @@
       <label>#numberplace.time</label>
       <font>font14</font>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>BarVerGroup</description>
       <type>group</type>
-      
-      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>700</id>
@@ -226,8 +218,6 @@
     <control>
       <description>BarHorGroup</description>
       <type>group</type>
-      
-      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>705</id>
@@ -257,8 +247,6 @@
     <control>
       <description>TheButton</description>
       <type>group</type>
-      
-      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <id>10</id>
@@ -290,10 +278,10 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
-        <textureDisabled>icon_empty_nofocus.png</textureDisabled>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
+        <textureDisabled>icon_empty_nofocus1.png</textureDisabled>
       </control>
       <control>
         <type>cell</type>
@@ -308,9 +296,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -325,9 +313,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -342,9 +330,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -359,9 +347,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -376,9 +364,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -393,9 +381,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -410,9 +398,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -427,9 +415,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 2 -->
       <control>
@@ -444,9 +432,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -461,9 +449,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -478,9 +466,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -495,9 +483,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -512,9 +500,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -529,9 +517,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -546,9 +534,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -563,9 +551,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -580,9 +568,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 3 -->
       <control>
@@ -597,9 +585,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -614,9 +602,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -631,9 +619,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -648,9 +636,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -665,9 +653,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -682,9 +670,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -699,9 +687,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -716,9 +704,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -733,9 +721,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 4 -->
       <control>
@@ -750,9 +738,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -767,9 +755,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -784,9 +772,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -801,9 +789,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -818,9 +806,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -835,9 +823,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -852,9 +840,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -869,9 +857,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -886,9 +874,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 5 -->
       <control>
@@ -903,9 +891,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -920,9 +908,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -937,9 +925,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -954,9 +942,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -971,9 +959,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -988,9 +976,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1005,9 +993,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1022,9 +1010,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1039,9 +1027,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 6 -->
       <control>
@@ -1056,9 +1044,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1073,9 +1061,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1090,9 +1078,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1107,9 +1095,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1124,9 +1112,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1141,9 +1129,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1158,9 +1146,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1175,9 +1163,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1192,9 +1180,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 7 -->
       <control>
@@ -1209,9 +1197,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1226,9 +1214,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1243,9 +1231,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1260,9 +1248,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1277,9 +1265,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1294,9 +1282,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1311,9 +1299,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1328,9 +1316,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1345,9 +1333,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 8 -->
       <control>
@@ -1362,9 +1350,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1379,9 +1367,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1396,9 +1384,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1413,9 +1401,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1430,9 +1418,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1447,9 +1435,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1464,9 +1452,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1481,9 +1469,9 @@
         <width>74</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1498,9 +1486,9 @@
         <width>72</width>
         <height>52</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <!-- row 9 -->
       <control>
@@ -1515,9 +1503,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1532,9 +1520,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1549,9 +1537,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1566,9 +1554,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1583,9 +1571,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1600,9 +1588,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1617,9 +1605,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1634,9 +1622,9 @@
         <width>74</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
       <control>
         <type>cell</type>
@@ -1651,9 +1639,9 @@
         <width>72</width>
         <height>51</height>
         <font>font16</font>
-        <textcolor>White</textcolor>
-        <textureFocus>icon_empty_focus.png</textureFocus>
-        <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
+        <textcolor>ivory</textcolor>
+        <textureFocus>icon_empty_focus1.png</textureFocus>
+        <textureNoFocus>icon_empty_nofocus1.png</textureNoFocus>
       </control>
     </control>
   </controls>

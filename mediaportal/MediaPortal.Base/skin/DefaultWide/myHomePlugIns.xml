@@ -178,5 +178,34 @@
       <onup>13</onup>
       <ondown>50</ondown>
     </control>
+    <!--    *******************************************************************************************  -->
+    <!--    *************************  RSS-FEED ON BASIC HOME  **************************************  -->
+    <!--    *******************************************************************************************  -->
+    <control Style="BasicHomeFade">
+      <description>RSS Feed Background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>80</posX>
+      <posY>630</posY>
+      <width>1100</width>
+      <texture>list_sub_focus.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
+    </control>
+    <control Style="BasicHomeFade">
+      <description>Feed items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>100</posX>
+      <posY>640</posY>
+      <width>1060</width>
+      <align>left</align>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <animation effect="fade" time="250">VisibleChange</animation>
+      <wrapString> : : : </wrapString>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
+    </control>
   </controls>
 </window>

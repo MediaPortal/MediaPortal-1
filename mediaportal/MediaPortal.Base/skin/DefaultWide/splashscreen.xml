@@ -11,8 +11,8 @@
       <description>splashscreen text</description>
       <type>label</type>
       <id>2</id>
-      <textsize>36</textsize>
-      <textcolor>#a9d0f7</textcolor>
+      <textsize>20</textsize>
+      <textcolor>#6FAFE1</textcolor>
     </control>
   </controls>
 </window>

@@ -15,11 +15,16 @@
       <id>1</id>
       <width>1280</width>
       <height>720</height>
-      <texture>background.png</texture>
+      <texture>background.jpg</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
+    <import>WorldWeatherNormalCondition.xml</import>
+    <import>WorldWeatherHourCondition.xml</import>
+    <import>WorldWeatherGraphicCondition.xml</import>
     <import>WorldWeatherGeoClock.xml</import>
-    <import>WorldWeatherStarrySky.xml</import>
+    <import>WorldWeatherHolidays.xml</import>
+    <import>WorldWeatherImage.xml</import>
+    <import>WorldWeatherAstronomy.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <!-- *** Provider Info *** -->
@@ -27,23 +32,13 @@
       <description>Provider Info</description>
       <type>label</type>
       <id>0</id>
-      <posX>710</posX>
+      <posX>0</posX>
       <posY>680</posY>
-      <label>#WorldWeather.TranslationProvider</label>
+      <width>1366</width>
+      <label>#WorldWeather.TranslationProvider #WorldWeather.Provider (#WorldWeather.TranslationCurrentCondition) + #WorldWeather.ForecastProvider (#WorldWeather.TranslationForecastCondition)</label>
       <font>font9</font>
-      <align>right</align>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>Provider Logo</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>720</posX>
-      <posY>681</posY>
-      <width>70</width>
-      <height>25</height>
-      <texture>#WorldWeather.ProviderImage</texture>
+      <align>center</align>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
     </control>
     <!-- *** Buttons *** -->
@@ -57,20 +52,29 @@
         <description>Display</description>
         <type>button</type>
         <id>2</id>
-        <label>Switch View</label>
+        <label>Switch display type</label>
         <onup>123</onup>
+        <ondown>5</ondown>
+        <visible>!string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ConditionView,Hour)</visible>
+      </control>
+      <control>
+        <description>View</description>
+        <type>button</type>
+        <id>5</id>
+        <label>Switch image view type</label>
+        <onup>2</onup>
         <ondown>3</ondown>
-        <onleft>2</onleft>
         <onright>50</onright>
+        <visible>string.equals(#WorldWeather.View,Condition)|string.equals(#WorldWeather.View,Image)</visible>
       </control>
       <control>
         <description>Location</description>
         <type>button</type>
         <id>3</id>
         <label>Location</label>
-        <onup>2</onup>
+        <onup>5</onup>
         <ondown>4</ondown>
-        <onright>50</onright>
+        <visible>[string.equals(#WorldWeather.View,Condition)|string.equals(#WorldWeather.View,Image)]+!string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ConditionView,Hour)</visible>
       </control>
       <control>
         <description>Browser Map</description>
@@ -78,118 +82,125 @@
         <id>4</id>
         <label>Browser Map</label>
         <onup>3</onup>
-        <ondown>5</ondown>
-        <visible>string.equals(#WorldWeather.View,Condition)</visible>
-      </control>
-      <control>
-        <description>View</description>
-        <type>button</type>
-        <id>5</id>
-        <label>Switch image view type</label>
-        <onup>4</onup>
         <ondown>9</ondown>
-        <onright>50</onright>
-        <onleft>50</onleft>
-        <visible>string.equals(#WorldWeather.View,Image)</visible>
+        <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ConditionView,Hour)</visible>
       </control>
       <control>
         <description>Refresh</description>
         <type>button</type>
         <id>9</id>
         <label>Refresh</label>
-        <onup>5</onup>
-        <ondown>20</ondown>
-        <onright>50</onright>
-      </control>
-      <control>
-        <description>Holiday and Season</description>
-        <type>button</type>
-        <id>20</id>
-        <label>#WorldWeather.TranslationHoliday/#WorldWeather.TranslationSeason</label>
-        <onup>9</onup>
+        <onup>4</onup>
         <ondown>10</ondown>
-        <visible>string.equals(#WorldWeather.View,Condition)</visible>
+        <visible>string.equals(#WorldWeather.View,Condition)+!string.equals(#WorldWeather.ConditionView,Graphic)+!string.equals(#WorldWeather.ConditionView,Hour)</visible>
       </control>
       <control>
-        <description>Satellite image</description>
+        <description>Satellite image 0</description>
         <type>button</type>
         <id>10</id>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageSatelliteEnabled,true)+string.equals(#WorldWeather.ImagePrecipitationEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
-        <label>#WorldWeather.TranslationSatelliteImage</label>
         <onup>9</onup>
         <ondown>11</ondown>
+        <label>#WorldWeather.ImageWeather0Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather0Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image Precipitation</description>
+        <description>Satellite image 1</description>
         <type>button</type>
         <id>11</id>
+        <label>#WorldWeather.ImageWeather1Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather1Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
         <onup>10</onup>
         <ondown>12</ondown>
-        <label>#WorldWeather.TranslationPrecipitation</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImagePrecipitationEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image Temperature</description>
+        <description>Satellite image 2</description>
         <type>button</type>
         <id>12</id>
         <onup>11</onup>
         <ondown>13</ondown>
-        <label>#WorldWeather.TranslationTemperature</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageTemperatureEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+        <label>#WorldWeather.ImageWeather2Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather2Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image Wind</description>
+        <description>Satellite image 3</description>
         <type>button</type>
         <id>13</id>
         <onup>12</onup>
         <ondown>14</ondown>
-        <label>#WorldWeather.TranslationWind</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWindEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+        <label>#WorldWeather.ImageWeather3Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather3Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image UV-Index</description>
+        <description>Satellite image 4</description>
         <type>button</type>
         <id>14</id>
         <onup>13</onup>
         <ondown>15</ondown>
-        <label>#WorldWeather.TranslationUVIndexImage</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageUVIndexEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+        <label>#WorldWeather.ImageWeather4Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather4Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image Pollen</description>
+        <description>Satellite image 5</description>
         <type>button</type>
         <id>15</id>
         <onup>14</onup>
         <ondown>16</ondown>
-        <label>#WorldWeather.TranslationPollenCountImage</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImagePollenCountEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+        <label>#WorldWeather.ImageWeather5Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather5Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image Suntime</description>
+        <description>Satellite image 6</description>
         <type>button</type>
         <id>16</id>
         <onup>15</onup>
         <ondown>17</ondown>
-        <label>#WorldWeather.TranslationSuntimeImage</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageSuntimeEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+        <label>#WorldWeather.ImageWeather6Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather6Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image World</description>
+        <description>Satellite image 7</description>
         <type>button</type>
         <id>17</id>
         <onup>16</onup>
         <ondown>18</ondown>
-        <label>#WorldWeather.TranslationWorldImage</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWorldEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+        <label>#WorldWeather.ImageWeather7Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather7Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
       </control>
       <control>
-        <description>Satellite image WebCam</description>
+        <description>Satellite image 8</description>
         <type>button</type>
         <id>18</id>
         <onup>17</onup>
+        <ondown>19</ondown>
+        <label>#WorldWeather.ImageWeather8Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather8Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+      </control>
+      <control>
+        <description>Satellite image 9</description>
+        <type>button</type>
+        <id>19</id>
+        <onup>18</onup>
+        <ondown>20</ondown>
+        <label>#WorldWeather.ImageWeather9Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather9Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+      </control>
+      <control>
+        <description>Satellite image 10</description>
+        <type>button</type>
+        <id>20</id>
+        <onup>19</onup>
+        <ondown>21</ondown>
+        <label>#WorldWeather.ImageWeather10Description</label>
+        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWeather10Enabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+      </control>
+      <control>
+        <description>View Zodiac Image</description>
+        <type>button</type>
+        <id>21</id>
+        <onup>20</onup>
         <ondown>2</ondown>
-        <label>#WorldWeather.TranslationWebcamImage</label>
-        <visible>string.equals(#WorldWeather.View,Image)+string.equals(#WorldWeather.ImageWebcamEnabled,true)+string.equals(#WorldWeather.ImageView,Flat)</visible>
+        <label>#WorldWeather.TranslationZodiac</label>
+        <visible>string.equals(#WorldWeather.View,Astronomy)+string.equals(#WorldWeather.ImageZodiacEnabled,true)</visible>
       </control>
     </control>
     <!-- *** Location *** -->
@@ -197,687 +208,14 @@
       <description>Location label</description>
       <type>label</type>
       <id>0</id>
-      <posX>60</posX>
-      <posY>27</posY>
+      <posX>30</posX>
+      <posY>10</posY>
       <width>600</width>
       <label>#(L(8))  #WorldWeather.Location</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
     </control>
-    <!-- *** Weather Icon *** -->
-    <control>
-      <description>current weather icon</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1050</posX>
-      <posY>89</posY>
-      <height>187</height>
-      <width>187</width>
-      <texture>#WorldWeather.TodayIconImage</texture>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current Moonphase image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1030</posX>
-      <posY>275</posY>
-      <height>60</height>
-      <width>60</width>
-      <texture>#WorldWeather.LocationMoonPhaseImage</texture>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Temperature label *** -->
-    <control>
-      <description>Current Temp static label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>99</posY>
-      <label>#WorldWeather.TranslationTemperature:</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current temp label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>650</posX>
-      <posY>99</posY>
-      <label>#WorldWeather.TodayTemperature</label>
-      <font>font12</font>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>130</posY>
-      <width>650</width>
-      <height>0</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Current condition label *** -->
-    <control>
-      <description>current condition static label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>130</posY>
-      <label>#WorldWeather.TranslationCondition:</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current feels like label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>650</posX>
-      <posY>130</posY>
-      <label>#WorldWeather.TodayCondition</label>
-      <font>font12</font>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>162</posY>
-      <width>650</width>
-      <height>0</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Current wind label *** -->
-    <control>
-      <description>current wind static label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>161</posY>
-      <label>#WorldWeather.TranslationWind:</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current wind label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>650</posX>
-      <posY>161</posY>
-      <label>#WorldWeather.TodayWindDirection - #WorldWeather.TodayWindSpeed</label>
-      <font>font12</font>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>192</posY>
-      <width>650</width>
-      <height>0</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Current humidity label *** -->
-    <control>
-      <description>current humidity static label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>192</posY>
-      <label>#WorldWeather.TranslationHumidity:</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current humidity label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>650</posX>
-      <posY>192</posY>
-      <label>#WorldWeather.TodayHumidity, #WorldWeather.TodayPressure, #WorldWeather.TodayBarometricPressure</label>
-      <font>font12</font>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>223</posY>
-      <width>650</width>
-      <height>0</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Current sunset label *** -->
-    <control>
-      <description>current sunrise static label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>223</posY>
-      <label>#WorldWeather.TranslationSunrise:</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current sunrise label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>650</posX>
-      <posY>223</posY>
-      <label>#WorldWeather.LocationSunriseTime</label>
-      <font>font12</font>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>254</posY>
-      <width>650</width>
-      <height>0</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Current sunrise label *** -->
-    <control>
-      <description>current sunset static label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>254</posY>
-      <label>#WorldWeather.TranslationSunset:</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current sunset label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>650</posX>
-      <posY>254</posY>
-      <label>#WorldWeather.LocationSunsetTime</label>
-      <font>font12</font>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider horizontal</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>284</posY>
-      <width>650</width>
-      <height>0</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Current moonphase label *** -->
-    <control>
-      <description>current moonphase static label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>372</posX>
-      <posY>284</posY>
-      <label>#WorldWeather.TranslationMoonPhase:</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>current moonphase label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>650</posX>
-      <posY>284</posY>
-      <label>#WorldWeather.LocationMoonPhase</label>
-      <font>font12</font>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Forecast (Today) *** -->
-    <control>
-      <description>divider</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>73</posX>
-      <posY>348</posY>
-      <height>309</height>
-      <width>0</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>20ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>Actual label</description>
-      <type>button</type>
-      <id>0</id>
-      <posX>85</posX>
-      <posY>346</posY>
-      <align>center</align>
-      <textalign>center</textalign>
-      <textYOff>0</textYOff>
-      <height>37</height>
-      <width>206</width>
-      <label>143</label>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-      <font>font11</font>
-      <textureNoFocus>button_focus.png</textureNoFocus>
-    </control>
-    <control>
-      <description>Actual Hi label</description>
-      <type>label</type>
-      <id>0</id>
-      <align>center</align>
-      <width>206</width>
-      <posX>85</posX>
-      <posY>404</posY>
-      <label>#WorldWeather.TodayTemperature</label>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)+string.equals(#WorldWeather.FeedEnabled,false)</visible>
-      <font>font12</font>
-      <textcolor>coral</textcolor>
-    </control>
-    <control>
-      <description>Actual low label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>85</posX>
-      <posY>429</posY>
-      <align>center</align>
-      <width>206</width>
-      <label>-</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)+string.equals(#WorldWeather.FeedEnabled,false)</visible>
-    </control>
-    <control>
-      <description>Actual general weather label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>85</posX>
-      <posY>618</posY>
-      <align>center</align>
-      <alignY>top</alignY>
-      <width>206</width>
-      <label>#WorldWeather.TodayCondition</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)+string.equals(#WorldWeather.FeedEnabled,false)</visible>
-    </control>
-    <control>
-      <description>Actual icon</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>115</posX>
-      <posY>437</posY>
-      <height>140</height>
-      <width>140</width>
-      <texture>#WorldWeather.TodayIconImage</texture>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)+string.equals(#WorldWeather.FeedEnabled,false)</visible>
-    </control>
-    <control>
-      <description>Actual Weather Feed</description>
-      <type>textboxscrollup</type>
-      <id>0</id>
-      <posX>90</posX>
-      <posY>390</posY>
-      <width>230</width>
-      <height>270</height>
-      <label>#WorldWeather.Feed</label>
-      <visible>string.equals(#WorldWeather.View,Condition)+string.equals(#WorldWeather.FeedEnabled,true)+!control.hasfocus(20)</visible>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-    </control>
-    <control>
-      <description>divider</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>348</posY>
-      <height>309</height>
-      <width>0</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>20ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 0 label</description>
-      <type>button</type>
-      <id>0</id>
-      <posX>319</posX>
-      <posY>346</posY>
-      <align>center</align>
-      <textalign>center</textalign>
-      <textYOff>0</textYOff>
-      <height>37</height>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay0Day</label>
-      <font>font11</font>
-      <textureNoFocus>button_focus.png</textureNoFocus>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 0 Hi label</description>
-      <type>label</type>
-      <id>0</id>
-      <align>center</align>
-      <width>206</width>
-      <posX>319</posX>
-      <posY>404</posY>
-      <label>#WorldWeather.ForecastDay0High</label>
-      <font>font12</font>
-      <textcolor>coral</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 0 low label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>319</posX>
-      <posY>429</posY>
-      <align>center</align>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay0Low</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 0 general weather label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>319</posX>
-      <posY>618</posY>
-      <align>center</align>
-      <alignY>top</alignY>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay0Condition</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 0 icon</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>349</posX>
-      <posY>437</posY>
-      <height>140</height>
-      <width>140</width>
-      <texture>#WorldWeather.ForecastDay0IconImage</texture>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>539</posX>
-      <posY>348</posY>
-      <height>309</height>
-      <width>0</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>20ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 1 label</description>
-      <type>button</type>
-      <id>0</id>
-      <posX>553</posX>
-      <posY>346</posY>
-      <align>center</align>
-      <textalign>center</textalign>
-      <textYOff>0</textYOff>
-      <height>37</height>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay1Day</label>
-      <font>font11</font>
-      <textureNoFocus>button_focus.png</textureNoFocus>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 1 Hi label</description>
-      <type>label</type>
-      <id>0</id>
-      <align>center</align>
-      <width>206</width>
-      <posX>553</posX>
-      <posY>404</posY>
-      <label>#WorldWeather.ForecastDay1High</label>
-      <font>font12</font>
-      <textcolor>coral</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 1 low label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>553</posX>
-      <posY>429</posY>
-      <align>center</align>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay1Low</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 1 general weather label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>553</posX>
-      <posY>618</posY>
-      <align>center</align>
-      <alignY>top</alignY>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay1Condition</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 1 icon</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>583</posX>
-      <posY>437</posY>
-      <height>140</height>
-      <width>140</width>
-      <texture>#WorldWeather.ForecastDay1IconImage</texture>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>773</posX>
-      <posY>348</posY>
-      <height>309</height>
-      <width>0</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>20ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 2 label</description>
-      <type>button</type>
-      <id>0</id>
-      <posX>788</posX>
-      <posY>346</posY>
-      <align>center</align>
-      <textalign>center</textalign>
-      <textYOff>0</textYOff>
-      <height>37</height>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay2Day</label>
-      <font>font11</font>
-      <textureNoFocus>button_focus.png</textureNoFocus>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 2 Hi label</description>
-      <type>label</type>
-      <id>0</id>
-      <align>center</align>
-      <width>206</width>
-      <posX>788</posX>
-      <posY>404</posY>
-      <label>#WorldWeather.ForecastDay2High</label>
-      <font>font12</font>
-      <textcolor>coral</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 2 low label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>788</posX>
-      <posY>429</posY>
-      <align>center</align>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay2Low</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 2 general weather label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>788</posX>
-      <posY>618</posY>
-      <align>center</align>
-      <alignY>top</alignY>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay2Condition</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 2 icon</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>818</posX>
-      <posY>437</posY>
-      <height>140</height>
-      <width>140</width>
-      <texture>#WorldWeather.ForecastDay2IconImage</texture>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1008</posX>
-      <posY>348</posY>
-      <height>309</height>
-      <width>0</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>20ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 3 label</description>
-      <type>button</type>
-      <id>0</id>
-      <posX>1022</posX>
-      <posY>346</posY>
-      <align>center</align>
-      <textalign>center</textalign>
-      <textYOff>0</textYOff>
-      <height>37</height>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay3Day</label>
-      <font>font11</font>
-      <textureNoFocus>button_focus.png</textureNoFocus>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 3 Hi label</description>
-      <type>label</type>
-      <id>0</id>
-      <align>center</align>
-      <width>206</width>
-      <posX>1022</posX>
-      <posY>404</posY>
-      <label>#WorldWeather.ForecastDay3High</label>
-      <font>font12</font>
-      <textcolor>coral</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 3 low label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1022</posX>
-      <posY>429</posY>
-      <align>center</align>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay3Low</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 3 general weather label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1022</posX>
-      <posY>618</posY>
-      <align>center</align>
-      <alignY>top</alignY>
-      <width>206</width>
-      <label>#WorldWeather.ForecastDay3Condition</label>
-      <font>font12</font>
-      <textcolor>bba9d0f7</textcolor>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>day 3 icon</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1052</posX>
-      <posY>437</posY>
-      <height>140</height>
-      <width>140</width>
-      <texture>#WorldWeather.ForecastDay3IconImage</texture>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <control>
-      <description>divider</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1242</posX>
-      <posY>348</posY>
-      <height>309</height>
-      <width>0</width>
-      <texture>slider_vertical.png</texture>
-      <colordiffuse>20ffffff</colordiffuse>
-      <visible>string.equals(#WorldWeather.View,Condition)+!control.hasfocus(20)</visible>
-    </control>
-    <!-- *** Imports *** -->
-    <import>WorldWeatherHolidays.xml</import>
-    <import>WorldWeatherImage.xml</import>
   </controls>
 </window>

@@ -5,11 +5,11 @@
   <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      
-      
       <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <posX>99</posX>
@@ -76,8 +76,6 @@
       <description>Skin Preview</description>
       <type>image</type>
       <id>20</id>
-      
-      
       <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <posX>570</posX>
