@@ -18,9 +18,9 @@
       <posX>30</posX>
       <posY>10</posY>
       <label>#(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>left</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -30,7 +30,7 @@
       <posY>40</posY>
       <label>#selectedindex/#itemcount #(iif(and(neq(L(102012), #currentmodule), neq(L(102002), #currentmodule), neq(L(100100), #currentmodule), neq(L(102015), #currentmodule)), #currentmodule, ' '))</label>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
@@ -42,7 +42,7 @@
       <posY>60</posY>
       <label>180</label>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
     </control>
@@ -54,7 +54,7 @@
       <posY>60</posY>
       <label>#totalduration</label>
       <align>right</align>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
       <font>font10</font>
       <visible>string.equals(#totalduration)+[window.isvisible(500)|window.isvisible(501)|window.isvisible(504)]</visible>
     </control>
@@ -68,7 +68,8 @@
       <label>#selecteditem</label>
       <font>font13</font>
       <align>left</align>
-      <textcolor>ffa9d0f7</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>!window.isvisible(6)+!window.isvisible(25)</visible>
     </control>
   </controls>
 </window>

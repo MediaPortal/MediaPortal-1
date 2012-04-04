@@ -3,13 +3,13 @@
   <id>1</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <define>#currentmodule:#currentmodule   #TV.View.channel</define>
+  <define>#header.label:#(L(605))  #TV.View.channel</define>
   <controls>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>1280</width>
       <height>720</height>
     </control>
@@ -159,7 +159,7 @@
       <label>#TV.View.start - #TV.View.stop  #TV.View.title</label>
       <font>font13</font>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Seperator</description>
@@ -182,7 +182,7 @@
       <height>90</height>
       <label>#TV.View.description</label>
       <font>font11</font>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
       <seperator>&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;</seperator>
       <animation effect="zoom" start="100,100" end="1,1" center="863,635" time="70">WindowClose</animation>
     </control>
@@ -193,14 +193,14 @@
       <posX>515</posX>
       <posY>530</posY>
       <width>720</width>
-      <height>28</height>
+      <height>22</height>
       <label>#TV.View.Percentage</label>
       <texturebg>osd_progress_background.png</texturebg>
       <onlymidtexture>yes</onlymidtexture>
       <midwidth>716</midwidth>
-      <midheight>20</midheight>
-      <midoffsetX>3</midoffsetX>
-      <midoffsetY>4</midoffsetY>
+      <midheight>16</midheight>
+      <midoffsetX>4</midoffsetX>
+      <midoffsetY>3</midoffsetY>
       <midtexture>osd_progress_mid.png</midtexture>
       <visible>yes</visible>
     </control>

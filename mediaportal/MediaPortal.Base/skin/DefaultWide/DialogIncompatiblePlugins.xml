@@ -9,7 +9,7 @@
       <type>image</type>
       <width>1280</width>
       <height>720</height>
-      <texture>background.png</texture>
+      <texture>background.jpg</texture>
     </control>
     <control>
       <type>label</type>
@@ -19,7 +19,7 @@
       <font>font16</font>
       <align>left</align>
       <label>1910</label>
-      <textcolor>White</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <id>0</id>

@@ -8,13 +8,13 @@
       <description>Location label</description>
       <type>label</type>
       <id>0</id>
-      <posX>60</posX>
-      <posY>27</posY>
+      <posX>30</posX>
+    <posY>10</posY>
       <width>600</width>
       <label>#(L(8))  #(L(19100))</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>string.equals(#WorldWeather.View,GeoClock)</visible>
     </control>
     <control>

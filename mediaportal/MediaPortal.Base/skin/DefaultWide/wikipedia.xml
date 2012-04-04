@@ -8,7 +8,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>1280</width>
       <height>720</height>
     </control>
@@ -70,7 +70,7 @@
       <label>Article title/searchterm</label>
       <font>font14</font>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       
@@ -84,7 +84,7 @@
       <label>Image description</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control style="NoShadow">
       
@@ -111,7 +111,7 @@
       <height>582</height>
       <texture />
       <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
     </control>

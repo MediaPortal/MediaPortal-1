@@ -21,9 +21,7 @@
       <posY>125</posY>
       <label>171</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Artist value</description>
@@ -35,8 +33,6 @@
       <font>font16</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Born</description>
@@ -46,9 +42,7 @@
       <posY>150</posY>
       <label>686</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Years Active</description>
@@ -58,9 +52,7 @@
       <posY>175</posY>
       <label>687</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Genres</description>
@@ -70,9 +62,7 @@
       <posY>200</posY>
       <label>135</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Tones</description>
@@ -82,9 +72,7 @@
       <posY>225</posY>
       <label>175</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Styles</description>
@@ -94,9 +82,7 @@
       <posY>250</posY>
       <label>176</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Instruments</description>
@@ -106,9 +92,7 @@
       <posY>275</posY>
       <label>688</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Artist value</description>
@@ -119,8 +103,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Born value</description>
@@ -131,8 +113,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Years Active value</description>
@@ -143,8 +123,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Genres value</description>
@@ -155,8 +133,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Tones value</description>
@@ -168,8 +144,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Styles value</description>
@@ -181,8 +155,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Instruments value</description>
@@ -193,8 +165,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>artist image</description>
@@ -208,63 +178,53 @@
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>no</keepaspectratio>
-      
-      
     </control>
     <!--control>
-      <type>image</type>
-      <id>0</id>
-      <posX>177</posX>
-      <posY>312</posY>
-      <width>200</width>
-      <height>200</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbframe.png</texture>
-      
-      
-    </control-->
-    <control Style="NoShadow">
-      <description>textarea</description>
-      <type>textbox</type>
-      <id>4</id>
-      <posY>312</posY>
-      <onleft>5</onleft>
-      <onright>5</onright>
-      <onup>5</onup>
-      <ondown>5</ondown>
-      <font>font11</font>
-      
-      
-    </control>
-    <control>
-      <description>Bio/Albums</description>
-      <type>button</type>
-      <id>5</id>
-      <posX>177</posX>
-      <posY>525</posY>
-      <width>160</width>
-      <label>689</label>
-      <onleft>4</onleft>
-      <onright>4</onright>
-      <onup>6</onup>
-      <ondown>6</ondown>
-      
-      
-    </control>
-    <control>
-      <description>Refresh</description>
-      <type>button</type>
-      <id>6</id>
-      <posX>177</posX>
-      <posY>570</posY>
-      <width>160</width>
-      <label>184</label>
-      <font>font13</font>
-      <onleft>4</onleft>
-      <onright>4</onright>
-      <onup>5</onup>
-      <ondown>5</ondown>
-      
-      
-    </control>
-  </controls>
+    <type>image</type>
+    <id>0</id>
+    <posX>177</posX>
+    <posY>312</posY>
+    <width>200</width>
+    <height>200</height>
+    <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbframe.png</texture>
+  </control-->
+  <control Style="NoShadow">
+    <description>textarea</description>
+    <type>textbox</type>
+    <id>4</id>
+    <posY>312</posY>
+    <onleft>5</onleft>
+    <onright>5</onright>
+    <onup>5</onup>
+    <ondown>5</ondown>
+    <font>font11</font>
+  </control>
+  <control>
+    <description>Bio/Albums</description>
+    <type>button</type>
+    <id>5</id>
+    <posX>177</posX>
+    <posY>525</posY>
+    <width>160</width>
+    <label>689</label>
+    <onleft>4</onleft>
+    <onright>4</onright>
+    <onup>6</onup>
+    <ondown>6</ondown>
+  </control>
+  <control>
+    <description>Refresh</description>
+    <type>button</type>
+    <id>6</id>
+    <posX>177</posX>
+    <posY>570</posY>
+    <width>160</width>
+    <label>184</label>
+    <font>font13</font>
+    <onleft>4</onleft>
+    <onright>4</onright>
+    <onup>5</onup>
+    <ondown>5</ondown>
+  </control>
+</controls>
 </window>

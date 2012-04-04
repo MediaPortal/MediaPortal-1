@@ -28,9 +28,9 @@
       <width>800</width>
       <label>4558</label>
       <align>left</align>
-      <font>font11</font>
+      <font>font12</font>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>divider horizontal</description>
@@ -40,7 +40,7 @@
       <posY>144</posY>
       <width>600</width>
       <height>1</height>
-      <texture>hbar1gainsboro.png</texture>
+      <texture>hbar1white.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
     </control>
@@ -53,9 +53,9 @@
       <width>800</width>
       <label>#fanarthandler.tvseries.latest1.serieName - #fanarthandler.tvseries.latest1.seasonIndexx#fanarthandler.tvseries.latest1.episodeIndex: #fanarthandler.tvseries.latest1.episodeName  (#fanarthandler.tvseries.latest1.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
+      <font>font11</font>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVSeries updates</description>
@@ -66,9 +66,9 @@
       <width>800</width>
       <label>#fanarthandler.tvseries.latest2.serieName - #fanarthandler.tvseries.latest2.seasonIndexx#fanarthandler.tvseries.latest2.episodeIndex: #fanarthandler.tvseries.latest2.episodeName  (#fanarthandler.tvseries.latest2.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
+      <font>font11</font>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVSeries updates</description>
@@ -79,9 +79,9 @@
       <width>800</width>
       <label>#fanarthandler.tvseries.latest3.serieName - #fanarthandler.tvseries.latest3.seasonIndexx#fanarthandler.tvseries.latest3.episodeIndex: #fanarthandler.tvseries.latest3.episodeName  (#fanarthandler.tvseries.latest3.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
+      <font>font11</font>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Cover1</description>
@@ -106,9 +106,9 @@
       <height>109</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
+      <font>font11</font>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Cover2</description>
@@ -133,9 +133,9 @@
       <height>109</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
+      <font>font11</font>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Cover3</description>
@@ -160,9 +160,9 @@
       <height>109</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
+      <font>font11</font>
       <visible>plugin.isenabled(Fanart Handler)+control.hasfocus(212)+plugin.isenabled(MP-TV Series)+string.equals(#fanarthandler.tvseries.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************   RECENTLY ADDED - MOVING PICTURES   ****************************  -->
@@ -177,7 +177,7 @@
       <height>140</height>
       <texture>list_sub_focus.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Updates label</description>
@@ -188,9 +188,9 @@
       <width>800</width>
       <label>4558</label>
       <align>left</align>
-      <font>font11</font>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font12</font>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>divider horizontal</description>
@@ -200,9 +200,9 @@
       <posY>144</posY>
       <width>600</width>
       <height>1</height>
-      <texture>hbar1gainsboro.png</texture>
+      <texture>hbar1white.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Moving Pictures updates</description>
@@ -213,9 +213,9 @@
       <width>800</width>
       <label>#fanarthandler.movingpicture.latest1.title - #fanarthandler.movingpicture.latest1.genre - #fanarthandler.movingpicture.latest1.runtime - #fanarthandler.movingpicture.latest1.year  (#fanarthandler.movingpicture.latest1.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Moving Pictures updates</description>
@@ -226,9 +226,9 @@
       <width>800</width>
       <label>#fanarthandler.movingpicture.latest2.title - #fanarthandler.movingpicture.latest2.genre - #fanarthandler.movingpicture.latest2.runtime - #fanarthandler.movingpicture.latest2.year  (#fanarthandler.movingpicture.latest2.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Moving Pictures updates</description>
@@ -239,90 +239,90 @@
       <width>800</width>
       <label>#fanarthandler.movingpicture.latest3.title - #fanarthandler.movingpicture.latest3.genre - #fanarthandler.movingpicture.latest3.runtime - #fanarthandler.movingpicture.latest3.year  (#fanarthandler.movingpicture.latest3.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Cover1</description>
       <type>image</type>
       <id>1</id>
       <posX>60</posX>
-      <posY>120</posY>
+      <posY>115</posY>
       <width>75</width>
       <height>105</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture mask="Picturethumbmask.png">#fanarthandler.movingpicture.latest1.thumb</texture>
       <shouldCache>true</shouldCache>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Overlay Cover 1</description>
       <type>image</type>
       <id>0</id>
-      <posX>58</posX>
-      <posY>120</posY>
+      <posX>60</posX>
+      <posY>115</posY>
       <width>75</width>
       <height>105</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Cover2</description>
       <type>image</type>
       <id>1</id>
       <posX>142</posX>
-      <posY>120</posY>
+      <posY>115</posY>
       <width>75</width>
       <height>105</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture mask="Picturethumbmask.png">#fanarthandler.movingpicture.latest2.thumb</texture>
       <shouldCache>true</shouldCache>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Overlay Cover 2</description>
       <type>image</type>
       <id>0</id>
-      <posX>140</posX>
-      <posY>120</posY>
+      <posX>142</posX>
+      <posY>115</posY>
       <width>75</width>
       <height>105</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Cover3</description>
       <type>image</type>
       <id>1</id>
       <posX>224</posX>
-      <posY>120</posY>
+      <posY>115</posY>
       <width>75</width>
       <height>105</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture mask="Picturethumbmask.png">#fanarthandler.movingpicture.latest3.thumb</texture>
       <shouldCache>true</shouldCache>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Overlay Cover 3</description>
       <type>image</type>
       <id>0</id>
-      <posX>222</posX>
-      <posY>120</posY>
+      <posX>224</posX>
+      <posY>115</posY>
       <width>75</width>
       <height>105</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>plugin.isenabled(Moving Pictures)+control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.movingpicture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************   RECENTLY ADDED - TV RECORDINGS  *******************************  -->
@@ -337,7 +337,7 @@
       <height>140</height>
       <texture>list_sub_focus.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Updates label</description>
@@ -348,9 +348,9 @@
       <width>800</width>
       <label>4558</label>
       <align>left</align>
-      <font>font11</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font12</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>divider horizontal</description>
@@ -360,9 +360,9 @@
       <posY>144</posY>
       <width>600</width>
       <height>1</height>
-      <texture>hbar1gainsboro.png</texture>
+      <texture>hbar1white.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings updates</description>
@@ -373,9 +373,9 @@
       <width>760</width>
       <label>#fanarthandler.tvrecordings.latest1.title - #fanarthandler.tvrecordings.latest1.genre  (#fanarthandler.tvrecordings.latest1.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings updates</description>
@@ -386,9 +386,9 @@
       <width>760</width>
       <label>#fanarthandler.tvrecordings.latest2.title - #fanarthandler.tvrecordings.latest2.genre  (#fanarthandler.tvrecordings.latest2.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings updates</description>
@@ -399,9 +399,9 @@
       <width>760</width>
       <label>#fanarthandler.tvrecordings.latest3.title - #fanarthandler.tvrecordings.latest3.genre  (#fanarthandler.tvrecordings.latest3.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings Updates</description>
@@ -414,23 +414,23 @@
       <texture mask="picturethumbmask.png">#fanarthandler.tvrecordings.latest1.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>61</posX>
+      <posX>63</posX>
       <posY>128</posY>
       <width>120</width>
       <height>80</height>
       <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings Updates</description>
@@ -443,22 +443,22 @@
       <texture mask="picturethumbmask.png">#fanarthandler.tvrecordings.latest2.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>189</posX>
+      <posX>191</posX>
       <posY>128</posY>
       <width>120</width>
       <height>80</height>
       <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings Updates</description>
@@ -471,21 +471,21 @@
       <texture mask="picturethumbmask.png">#fanarthandler.tvrecordings.latest3.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>TVRecordings Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>317</posX>
+      <posX>319</posX>
       <posY>128</posY>
       <width>120</width>
       <height>80</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************   RECENTLY ADDED - MUSIC   **************************************  -->
@@ -500,7 +500,7 @@
       <height>140</height>
       <texture>list_sub_focus.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Updates label</description>
@@ -509,11 +509,11 @@
       <posX>380</posX>
       <posY>118</posY>
       <width>800</width>
-      <label>4558</label>
+      <label>1231</label>
       <align>left</align>
-      <font>font11</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font12</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>divider horizontal</description>
@@ -523,9 +523,9 @@
       <posY>144</posY>
       <width>600</width>
       <height>1</height>
-      <texture>hbar1gainsboro.png</texture>
+      <texture>hbar1white.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Music updates</description>
@@ -536,9 +536,9 @@
       <width>800</width>
       <label>#fanarthandler.music.latest1.artist - #fanarthandler.music.latest1.album - (#fanarthandler.music.latest1.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Music updates</description>
@@ -549,9 +549,9 @@
       <width>800</width>
       <label>#fanarthandler.music.latest2.artist - #fanarthandler.music.latest2.album - (#fanarthandler.music.latest2.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Music updates</description>
@@ -562,93 +562,93 @@
       <width>800</width>
       <label>#fanarthandler.music.latest3.artist - #fanarthandler.music.latest3.album - (#fanarthandler.music.latest3.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Music Updates</description>
       <type>image</type>
       <id>0</id>
       <posX>63</posX>
-      <posY>123</posY>
+      <posY>120</posY>
       <width>95</width>
       <height>95</height>
       <texture mask="Picturethumbmask.png">#fanarthandler.music.latest1.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Music Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>61</posX>
-      <posY>123</posY>
+      <posX>63</posX>
+      <posY>120</posY>
       <width>95</width>
       <height>95</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Music Updates</description>
       <type>image</type>
       <id>0</id>
       <posX>166</posX>
-      <posY>123</posY>
+      <posY>120</posY>
       <width>95</width>
       <height>95</height>
       <texture mask="Picturethumbmask.png">#fanarthandler.music.latest2.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Music Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>164</posX>
-      <posY>123</posY>
+      <posX>166</posX>
+      <posY>120</posY>
       <width>95</width>
       <height>95</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Music Updates</description>
       <type>image</type>
       <id>0</id>
       <posX>269</posX>
-      <posY>123</posY>
+      <posY>120</posY>
       <width>95</width>
       <height>95</height>
       <texture mask="Picturethumbmask.png">#fanarthandler.music.latest3.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Music Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>266</posX>
-      <posY>123</posY>
+      <posX>269</posX>
+      <posY>120</posY>
       <width>95</width>
       <height>95</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(6)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(5)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.music.latest.enabled,true)</visible>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************   RECENTLY ADDED - PICTURES   ***********************************  -->
@@ -663,7 +663,7 @@
       <height>140</height>
       <texture>list_sub_focus.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Updates label</description>
@@ -674,9 +674,9 @@
       <width>800</width>
       <label>4558</label>
       <align>left</align>
-      <font>font11</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font12</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>divider horizontal</description>
@@ -686,9 +686,9 @@
       <posY>144</posY>
       <width>600</width>
       <height>1</height>
-      <texture>hbar1gainsboro.png</texture>
+      <texture>hbar1white.png</texture>
       <colordiffuse>50ffffff</colordiffuse>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures updates</description>
@@ -699,9 +699,9 @@
       <width>760</width>
       <label>#fanarthandler.picture.latest1.title  (#fanarthandler.picture.latest1.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures updates</description>
@@ -712,9 +712,9 @@
       <width>760</width>
       <label>#fanarthandler.picture.latest2.title  (#fanarthandler.picture.latest2.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures updates</description>
@@ -725,9 +725,9 @@
       <width>760</width>
       <label>#fanarthandler.picture.latest3.title  (#fanarthandler.picture.latest3.dateAdded)</label>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures Updates</description>
@@ -740,23 +740,23 @@
       <texture mask="picturethumbmask.png">#fanarthandler.picture.latest1.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>61</posX>
+      <posX>63</posX>
       <posY>128</posY>
       <width>120</width>
       <height>80</height>
       <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures Updates</description>
@@ -769,22 +769,22 @@
       <texture mask="picturethumbmask.png">#fanarthandler.picture.latest2.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <textcolor>ivory</textcolor>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>189</posX>
+      <posX>191</posX>
       <posY>128</posY>
       <width>120</width>
       <height>80</height>
       <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures Updates</description>
@@ -797,21 +797,21 @@
       <texture mask="picturethumbmask.png">#fanarthandler.picture.latest3.thumb</texture>
       <shouldCache>true</shouldCache>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Pictures Updates cover</description>
       <type>image</type>
       <id>0</id>
-      <posX>317</posX>
+      <posX>319</posX>
       <posY>128</posY>
       <width>120</width>
       <height>80</height>
       <texture>Picturethumbframe.png</texture>
       <align>left</align>
-      <font>font10</font>
-      <visible>control.hasfocus(3)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
+      <font>font11</font>
+      <visible>control.hasfocus(2)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.picture.latest.enabled,true)</visible>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************   WEATHER INFO ON BASIC HOME   **********************************  -->
@@ -826,7 +826,7 @@
       <width>90</width>
       <height>90</height>
       <texture>#WorldWeather.TodayIconImage</texture>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -836,10 +836,10 @@
       <posX>260</posX>
       <posY>25</posY>
       <align>left</align>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
       <label>#WorldWeather.Location</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -849,10 +849,10 @@
       <posX>260</posX>
       <posY>48</posY>
       <align>left</align>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
       <label>#WorldWeather.TodayCondition | #WorldWeather.TodayTemperature</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Overlay for Weather image</description>
@@ -864,7 +864,7 @@
       <height>115</height>
       <texture>list_sub_focus.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -874,8 +874,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#WorldWeather.ForecastDay0IconImage</texture>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay1IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -884,10 +884,10 @@
       <posX>145</posX>
       <posY>140</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay0Day, #WorldWeather.ForecastDay0Date</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay1Day</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -896,10 +896,10 @@
       <posX>145</posX>
       <posY>165</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay0Low - #WorldWeather.ForecastDay0High</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay1Low | #WorldWeather.ForecastDay1High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -908,10 +908,10 @@
       <posX>145</posX>
       <posY>190</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay0Condition</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay1Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -921,8 +921,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#WorldWeather.ForecastDay1IconImage</texture>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay2IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -931,10 +931,10 @@
       <posX>445</posX>
       <posY>140</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay1Day</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay2Day</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -943,10 +943,10 @@
       <posX>445</posX>
       <posY>165</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay1Low - #WorldWeather.ForecastDay1High</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay2Low | #WorldWeather.ForecastDay2High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -955,10 +955,10 @@
       <posX>445</posX>
       <posY>190</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay1Condition</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay2Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -968,8 +968,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#WorldWeather.ForecastDay2IconImage</texture>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay3IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -978,10 +978,10 @@
       <posX>755</posX>
       <posY>140</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay2Day</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay3Day</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -990,10 +990,10 @@
       <posX>755</posX>
       <posY>165</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay2Low - #WorldWeather.ForecastDay2High</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay3Low | #WorldWeather.ForecastDay3High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -1002,10 +1002,10 @@
       <posX>755</posX>
       <posY>190</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay2Condition</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay3Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Weather image</description>
@@ -1015,8 +1015,8 @@
       <posY>140</posY>
       <width>64</width>
       <height>64</height>
-      <texture>#WorldWeather.ForecastDay3IconImage</texture>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <texture>#WorldWeather.ForecastDay4IconImage</texture>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Location</description>
@@ -1025,10 +1025,10 @@
       <posX>1065</posX>
       <posY>140</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay3Day</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay4Day</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Temperature</description>
@@ -1037,10 +1037,10 @@
       <posX>1065</posX>
       <posY>165</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay3Low - #WorldWeather.ForecastDay3High</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay4Low | #WorldWeather.ForecastDay4High</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <control Style="BasicHomeFade">
       <description>Condition</description>
@@ -1049,10 +1049,10 @@
       <posX>1065</posX>
       <posY>190</posY>
       <width>220</width>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
-      <label>#WorldWeather.ForecastDay3Condition</label>
-      <visible>plugin.isenabled(World Weather)+control.hasfocus(7)</visible>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <label>#WorldWeather.ForecastDay4Condition</label>
+      <visible>plugin.isenabled(World Weather)+control.hasfocus(6)</visible>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************   RSS-FEED ON BASIC HOME   **************************************  -->
@@ -1076,8 +1076,8 @@
       <posY>640</posY>
       <width>1060</width>
       <align>left</align>
-      <font>font10</font>
-      <textcolor>gainsboro</textcolor>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
       <label>#infoservice.feed.titles</label>
       <wrapString> *** </wrapString>
       <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>

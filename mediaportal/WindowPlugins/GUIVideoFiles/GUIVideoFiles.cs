@@ -394,7 +394,7 @@ namespace MediaPortal.GUI.Video
       {
         _playClicked = true;
       }
-      
+
       base.OnAction(action);
     }
 
@@ -1401,13 +1401,13 @@ namespace MediaPortal.GUI.Video
 
       if ((pItem.IsFolder) && (!Util.Utils.IsDVD(pItem.Path)))
       {
-        if (pItem.Label == "..")
+        ISelectDVDHandler selectDVDHandler = GetSelectDvdHandler();
+
+        if (pItem.Label == ".." || !selectDVDHandler.IsDvdDirectory(strFile))
         {
           return;
         }
-
-        ISelectDVDHandler selectDVDHandler = GetSelectDvdHandler();
-
+        
         strFile = selectDVDHandler.GetFolderVideoFile(pItem.Path);
 
         if (strFile == string.Empty)
@@ -1829,6 +1829,9 @@ namespace MediaPortal.GUI.Video
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
+      GUIPropertyManager.SetProperty("#groupmovielist", string.Empty);
+      string strMovies = string.Empty;
+
       _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       string filename = string.Empty;
 

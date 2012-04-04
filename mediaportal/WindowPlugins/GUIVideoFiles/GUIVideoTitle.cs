@@ -577,18 +577,6 @@ namespace MediaPortal.GUI.Video
       }
     }
     
-    /*
-    protected override void SetLabels()
-    {
-      base.SetLabels();
-      for (int i = 0; i < facadeLayout.Count; ++i)
-      {
-        GUIListItem item = facadeLayout[i];
-        ((VideoViewHandler)handler).SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
-      }
-    }
-    */
-
     protected override void OnQueueItem(int itemIndex)
     {
       // add item 2 playlist
@@ -758,6 +746,7 @@ namespace MediaPortal.GUI.Video
           if (string.IsNullOrEmpty(movie.Title) && handler.CurrentLevel + 1 < handler.MaxLevels)
           {
             item.IsFolder = true;
+            item.IsRemote = true;
           }
           else
           {
@@ -795,14 +784,7 @@ namespace MediaPortal.GUI.Video
       }
       
       int itemIndex = 0;
-
-      //foreach (GUIListItem item in itemlist)
-      //{
-      //  facadeLayout.Add(item);
-      //}
-      // Set selected item history
       string viewFolder = SetItemViewHistory();
-
       string selectedItemLabel = m_history.Get(viewFolder);
 
       // Sort
@@ -1456,6 +1438,8 @@ namespace MediaPortal.GUI.Video
     
     private void OnItemSelected(GUIListItem item, GUIControl parent)
     {
+      GUIPropertyManager.SetProperty("#groupmovielist", string.Empty);
+      
       if (item.Label == "..")
       {
         IMDBMovie notMovie = new IMDBMovie();
@@ -1464,6 +1448,7 @@ namespace MediaPortal.GUI.Video
         notActor.SetProperties();
         return;
       }
+      
       // Set current item if thumb thread is working (thread can still update thumbs while user changed
       // item) thus preventing sudden jump to initial selected item before thread start
       if (_setThumbs != null && _setThumbs.IsAlive)
@@ -1493,6 +1478,7 @@ namespace MediaPortal.GUI.Video
         if (!string.IsNullOrEmpty(item.Label))
         {
           GUIPropertyManager.SetProperty("#title", item.Label);
+          GUIPropertyManager.SetProperty("#groupmovielist", SetMovieListGroupedBy(item));
         }
       }
 
@@ -1518,21 +1504,63 @@ namespace MediaPortal.GUI.Video
           facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
         }
       }
+      
       if (movie.Actor != string.Empty)
       {
         GUIPropertyManager.SetProperty("#title", movie.Actor);
         string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, movie.ActorID.ToString());
+        
         if (Util.Utils.FileExistsInCache(coverArtImage))
         {
           facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
         }
       }
+      
       // Random movieId by view (for FA) for selected groups
       string view = handler.CurrentLevelWhere;
       ArrayList mList = new ArrayList();
       GetItemViewHistory(view, mList);
     }
-    
+
+    private string SetMovieListGroupedBy(GUIListItem item)
+    {
+      ArrayList movies = new ArrayList();
+      string strMovies = string.Empty;
+
+      // Set coverflow info property for groups (folder type item)
+      if (handler.CurrentLevelWhere.ToLower() == "genre")
+      {
+        VideoDatabase.GetMoviesByGenre(item.Label, ref movies);
+      }
+      else if (handler.CurrentLevelWhere == "user groups")
+      {
+        VideoDatabase.GetMoviesByUserGroup(item.Label, ref movies);
+      }
+      else if (handler.CurrentLevelWhere.ToLower() == "actor" || handler.CurrentLevelWhere.ToLower() == "director")
+      {
+        VideoDatabase.GetMoviesByActor(item.Label, ref movies);
+      }
+      else if (handler.CurrentLevelWhere.ToLower() == "year")
+      {
+        VideoDatabase.GetMoviesByYear(item.Label, ref movies);
+      }
+
+      if (movies.Count > 0)
+      {
+        foreach (IMDBMovie movieInGroup in movies)
+        {
+          if (strMovies.Length > 0)
+          {
+            strMovies += "\n";
+          }
+          strMovies += movieInGroup.Title;
+        }
+        return strMovies;
+      }
+
+      return string.Empty;
+    }
+
     // Show or hide protected content
     private void OnContentLock()
     {
