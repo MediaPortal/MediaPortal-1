@@ -209,16 +209,16 @@ STDMETHODIMP CMPAudioRenderer::GetState(DWORD dwMSecs, FILTER_STATE* State)
 {
   CheckPointer(State, E_POINTER);
 
-  if (m_pRenderer->BufferredDataDuration() <= 10000000 &&       // 1 s
+  if (m_pRenderer->BufferredDataDuration() <= 2500000 &&        // 250 ms
       GetCurrentTimestamp() - m_lastSampleArrivalTime < 500000) // 50 ms
   {
     NotifyEvent(EC_STARVATION, 0, 0);
-    *State = m_State;
+    *State = State_Paused;
     
     return VFW_S_STATE_INTERMEDIATE;
   }
 
-  return __super::GetState(dwMSecs, State);
+  return CBaseRenderer::GetState(dwMSecs, State);
 }
 
 HRESULT CMPAudioRenderer::CheckInputType(const CMediaType* pmt)
