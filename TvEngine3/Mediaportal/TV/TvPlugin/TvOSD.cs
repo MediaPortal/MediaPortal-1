@@ -119,9 +119,7 @@ namespace Mediaportal.TV.TvPlugin
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
     private int m_subtitleDelay = 0;
-    private int m_delayInterval = 0;
-
-    private IList listTvChannels;
+    private int m_delayInterval = 0;    
 
     public TvOsd()
     {
@@ -378,8 +376,7 @@ namespace Mediaportal.TV.TvPlugin
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT: // fired when OSD is shown
           {
             // following line should stay. Problems with OSD not
-            // appearing are already fixed elsewhere
-            listTvChannels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(MediaTypeEnum.TV).ToList();            
+            // appearing are already fixed elsewhere            
 
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
             previousProgram = null;
