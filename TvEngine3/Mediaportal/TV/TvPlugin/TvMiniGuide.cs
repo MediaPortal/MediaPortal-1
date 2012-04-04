@@ -399,8 +399,11 @@ namespace Mediaportal.TV.TvPlugin
         return channels;
       }
       else //not in cache, fetch it and update cache, then return.
-      {        
-        List<Server.TVDatabase.Entities.Channel> tvChannelList = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.idGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.TuningDetails).ToList();
+      {
+        List<Server.TVDatabase.Entities.Channel> tvChannelList =
+          ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(
+            TVHome.Navigator.CurrentGroup.idGroup, MediaTypeEnum.TV, ChannelIncludeRelationEnum.TuningDetails).ToList();
+
         if (tvChannelList != null)
         {
           Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");

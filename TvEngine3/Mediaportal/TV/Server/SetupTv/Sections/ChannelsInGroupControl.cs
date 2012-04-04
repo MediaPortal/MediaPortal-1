@@ -105,15 +105,18 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         include |= ChannelIncludeRelationEnum.TuningDetails;
         include |= ChannelIncludeRelationEnum.GroupMaps;
         include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
-        IOrderedEnumerable<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(_channelGroup.idGroup, _mediaTypeEnum, include).OrderBy(c=>
-                                                                                                                                                                                        {
-                                                                                                                                                                                          var firstOrDefault = c.GroupMaps.FirstOrDefault();
-                                                                                                                                                                                          return firstOrDefault != null ? firstOrDefault.SortOrder : 0;
-                                                                                                                                                                                        });
+        IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(_channelGroup.idGroup, _mediaTypeEnum, include);
 
         foreach (var channel in channels)
         {
-          listView1.Items.Add(CreateItemForChannel(channel, channel.GroupMaps.FirstOrDefault()));
+          foreach (var groupMap in channel.GroupMaps)
+          {
+            if (groupMap.idGroup == _channelGroup.idGroup)
+            {
+              listView1.Items.Add(CreateItemForChannel(channel, groupMap));
+              break;
+            }
+          }          
         }
 
         bool isAllChannelsGroup = (_channelGroup.groupName == _allChannelsGroupName);
