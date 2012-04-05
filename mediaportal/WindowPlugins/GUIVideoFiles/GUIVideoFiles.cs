@@ -1423,7 +1423,7 @@ namespace MediaPortal.GUI.Video
         ISelectDVDHandler selectDVDHandler = GetSelectDvdHandler();
         ISelectBDHandler selectBDHandler = GetSelectBDHandler();
 				
-        if (pItem.Label == ".." || !selectDVDHandler.IsDvdDirectory(strFile) || !selectBDHandler.IsBDDirectory(strFile))
+        if (pItem.Label == ".." || (!selectDVDHandler.IsDvdDirectory(strFile) && !selectBDHandler.IsBDDirectory(strFile)))
         {
           return;
         }

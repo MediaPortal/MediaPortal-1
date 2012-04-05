@@ -410,11 +410,10 @@ namespace MediaPortal.GUI.Video
         
         IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
         
-        //if (actor != null)
-        //{
-          dlg.AddLocalizedString(368); //IMDB
-        //}
-        
+        dlg.AddLocalizedString(368); //IMDB
+
+        dlg.AddLocalizedString(926); //add to playlist
+
         if (_protectedShares.Count > 0)
         {
           if (_ageConfirmed)
@@ -449,6 +448,9 @@ namespace MediaPortal.GUI.Video
         {
           case 368: // IMDB
             OnVideoArtistInfo(actor);
+            break;
+          case 926: //add to playlist
+            OnQueueItem(itemNo);
             break;
           case 1240: // Protected content
           case 1241: // Protected content
@@ -581,8 +583,11 @@ namespace MediaPortal.GUI.Video
     {
       // add item 2 playlist
       GUIListItem listItem = facadeLayout[itemIndex];
+
+      IMDBMovie movieCheck = listItem.AlbumInfoTag as IMDBMovie;
       ArrayList files = new ArrayList();
-      if (handler.CurrentLevel < handler.MaxLevels - 1)
+      
+      if (handler.CurrentLevel < handler.MaxLevels - 1 && (movieCheck == null || movieCheck.IsEmpty))
       {
         //queue
         ((VideoViewHandler)handler).Select(listItem.AlbumInfoTag as IMDBMovie);
@@ -746,6 +751,7 @@ namespace MediaPortal.GUI.Video
           if (string.IsNullOrEmpty(movie.Title) && handler.CurrentLevel + 1 < handler.MaxLevels)
           {
             item.IsFolder = true;
+            item.IsRemote = true;
           }
           else
           {
@@ -1029,6 +1035,8 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      dlg.AddLocalizedString(926); //add to playlist
+
       if (handler.CurrentLevelWhere == "actor" && facadeLayout.Count > 1)
       {
         dlg.AddLocalizedString(1252); //Search actor
@@ -1064,6 +1072,9 @@ namespace MediaPortal.GUI.Video
 
       switch (dlg.SelectedId)
       {
+        case 926: //add to playlist
+          OnQueueItem(facadeLayout.SelectedListItemIndex);
+          break;
         case 1240: //Lock content
         case 1241: //Unlock content
           OnContentLock();
@@ -1129,12 +1140,30 @@ namespace MediaPortal.GUI.Video
       foreach (GUIListItem item in itemlist)
       {
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        
         if (movie != null)
         {
           if (movie.Title == string.Empty)
           {
             string usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieUserGroups, movie.SingleUserGroup);
-            SetItemThumb(item, usergroupCover);
+
+            if (File.Exists(usergroupCover))
+            {
+              SetItemThumb(item, usergroupCover);
+            }
+            else
+            {
+              ArrayList mList = new ArrayList();
+              VideoDatabase.GetMoviesByUserGroup(movie.SingleUserGroup, ref mList);
+              IMDBMovie cMovie = GetRandomMovie(mList);
+
+              if ( cMovie != null)
+              {
+                string titleExt = cMovie.Title + "{" + cMovie.ID + "}";
+                usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
+                SetItemThumb(item, usergroupCover);
+              }
+            }
           }
           else
           {
@@ -1142,6 +1171,7 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
+      
       if (movies.Count > 0)
       {
         SetIMDBThumbs(movies);
@@ -1230,6 +1260,7 @@ namespace MediaPortal.GUI.Video
             {
               string titleExt = movie.Title + "{" + movie.ID + "}";
               coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
+              
               if (Util.Utils.FileExistsInCache(coverArtImage))
               {
                 listItem.ThumbnailImage = coverArtImage;
@@ -1271,6 +1302,7 @@ namespace MediaPortal.GUI.Video
 
           // check whether there is some larger cover art
           string largeCover = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+          
           if (Util.Utils.FileExistsInCache(largeCover))
           {
             aItem.ThumbnailImage = largeCover;
@@ -1911,7 +1943,7 @@ namespace MediaPortal.GUI.Video
     }
 
     // Set movieID skin property (locked movies will be discarded)
-    private void GetRandomMovieId(ArrayList mList)
+    private void SetRandomMovieId(ArrayList mList)
     {
       try
       {
@@ -1993,6 +2025,88 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    private IMDBMovie GetRandomMovie(ArrayList mList)
+    {
+      try
+      {
+        ArrayList movies = new ArrayList(mList);
+        ArrayList pShares = new ArrayList();
+
+        foreach (string p in _protectedShares)
+        {
+          char[] splitter = { '|' };
+          string[] pin = p.Split(splitter);
+          // Only add shares which are unlocked
+          if (Convert.ToInt32(pin[0]) == _currentPin)
+            pShares.Add(pin[1]);
+        }
+
+        // Do not show fanart for unlocked protected movies
+        foreach (IMDBMovie m in movies)
+        {
+          ArrayList files = new ArrayList();
+          VideoDatabase.GetFilesForMovie(m.ID, ref files);
+
+          if (string.IsNullOrEmpty(files[0].ToString()))
+          {
+            continue;
+          }
+
+          string directory = Path.GetDirectoryName(files[0].ToString());
+
+          if (string.IsNullOrEmpty(directory))
+            continue;
+
+          VirtualDirectory vDir = new VirtualDirectory();
+          vDir.LoadSettings("movies");
+          int pincode = 0;
+          bool folderPinProtected = vDir.IsProtectedShare(directory, out pincode);
+
+          // No PIN entered, remove all protected conetnt
+          if (folderPinProtected && !_ageConfirmed)
+          {
+            mList.Remove(m);
+            continue;
+          }
+
+          // PIN entered, check for corresponding shares
+          if (folderPinProtected && _ageConfirmed)
+          {
+            bool found = false;
+
+            foreach (string share in pShares)
+            {
+              if (directory.ToLower().Contains(share.ToLower()))
+              {
+                // Movie belongs to unlocked share
+                found = true;
+                break;
+              }
+            }
+            // If movie is not from unlocked shares, don't show fanart
+            if (!found)
+              mList.Remove(m);
+          }
+        }
+
+        if (mList.Count > 0)
+        {
+          Random rnd = new Random();
+          int r = rnd.Next(mList.Count);
+          IMDBMovie movieDetails = (IMDBMovie)mList[r];
+          return movieDetails;
+        }
+        else
+        {
+          return  null;
+        }
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+    }
+
     // Set selected item position in history of current view 
     // (when user switch view and get back item position will berestored)
     private string SetItemViewHistory()
@@ -2013,7 +2127,7 @@ namespace MediaPortal.GUI.Video
             case "genre":
               m_history.Set(facadeLayout.SelectedListItem.Label, view);
               VideoDatabase.GetMoviesByGenre(facadeLayout.SelectedListItem.Label, ref mList);
-              GetRandomMovieId(mList);
+              SetRandomMovieId(mList);
               break;
 
             case "user groups":
@@ -2022,7 +2136,7 @@ namespace MediaPortal.GUI.Video
               if (movie == null || movie.ID == -1)
               {
                 VideoDatabase.GetMoviesByUserGroup(facadeLayout.SelectedListItem.Label, ref mList);
-                GetRandomMovieId(mList);
+                SetRandomMovieId(mList);
               }
               break;
 
@@ -2030,13 +2144,13 @@ namespace MediaPortal.GUI.Video
             case "director":
               m_history.Set(facadeLayout.SelectedListItem.Label, view);
               VideoDatabase.GetMoviesByActor(facadeLayout.SelectedListItem.Label, ref mList);
-              GetRandomMovieId(mList);
+              SetRandomMovieId(mList);
               break;
 
             case "year":
               m_history.Set(facadeLayout.SelectedListItem.Label, view);
               VideoDatabase.GetMoviesByYear(facadeLayout.SelectedListItem.Label, ref mList);
-              GetRandomMovieId(mList);
+              SetRandomMovieId(mList);
               break;
 
             case "recently added":

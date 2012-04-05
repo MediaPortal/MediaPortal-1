@@ -402,7 +402,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#tagline", TagLine);
       Int32 votes = 0;
       string strVotes = string.Empty;
-      if (Int32.TryParse(Votes, out votes))
+      if (Int32.TryParse(Votes.Replace(".", string.Empty).Replace(",", string.Empty), out votes))
       {
         strVotes = String.Format("{0:N0}", votes);
       }
@@ -496,7 +496,8 @@ namespace MediaPortal.Video.Database
         VideoDatabase.GetMovieInfoById(movieId, ref movie);
         RunTime = movie.RunTime;
       }
-      GUIPropertyManager.SetProperty("#runtime", RunTime +
+      GUIPropertyManager.SetProperty("#runtime", RunTime + 
+                              " " +
                               GUILocalizeStrings.Get(2998) +
                               " (" + Util.Utils.SecondsToHMString(RunTime * 60) + ")");
 

@@ -162,6 +162,7 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      
       currentLayout = Layout.Playlist;
       facadeLayout.CurrentLayout = currentLayout;
 
@@ -177,6 +178,8 @@ namespace MediaPortal.GUI.Video
       if (facadeLayout.Count <= 0)
       {
         GUIControl.FocusControl(GetID, btnLayouts.GetID);
+        IMDBMovie movie = new IMDBMovie();
+        movie.SetProperties(false, string.Empty);
       }
 
 
@@ -432,6 +435,15 @@ namespace MediaPortal.GUI.Video
           if (currentSelectedItem >= 0)
           {
             GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+          }
+          else if (itemlist.Count > 0)
+          {
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
+          }
+          else
+          {
+            IMDBMovie movie = new IMDBMovie();
+            movie.SetProperties(false, string.Empty);
           }
           UpdateButtonStates();
           GUIWaitCursor.Hide();
