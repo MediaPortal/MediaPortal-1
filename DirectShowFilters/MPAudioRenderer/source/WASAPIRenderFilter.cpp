@@ -44,7 +44,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_rtNextSampleTime(0),
   m_rtHwStart(0),
   m_nSampleOffset(0),
-  m_nDataLeftInSample(0)
+  m_nDataLeftInSample(0),
+  m_bBufferredSamples(false)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -310,7 +311,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtDuration = 0;
 
-  bool discontinuityDetected = false;
+  bool resync = false;
 
   HRESULT hr = pSample->GetTime(&rtStart, &rtStop);
   if (FAILED(hr))
@@ -341,10 +342,10 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
       rtHWTime / 10000000.0, rtRefClock / 10000000.0, (rtStart - rtHWTime) / 10000000.0, m_inputQueue.size(), BufferredDataDuration() / 10000000.0);
 
   // Try to keep the A/V sync when data has been dropped
-  if ((abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum > 0)
+  if (abs(rtStart - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR)
   {
-    discontinuityDetected = true;
-    Log("   Dropped audio data detected: diff: %7.3f ms MAX_SAMPLE_TIME_ERROR: %7.3f ms", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
+    resync = true;
+    Log("   Discontinuity detected: diff: %7.3f ms MAX_SAMPLE_TIME_ERROR: %7.3f ms resync: %d", ((double)rtStart - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0, resync);
   }
 
   m_rtNextSampleTime = rtStop;
@@ -363,7 +364,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
     return MPAR_S_DROP_SAMPLE;
   }
-  else if ((m_nSampleNum == 0 && *pDueTime > rtHWTime - Latency()) || discontinuityDetected)
+  else if ((m_nSampleNum == 0 && *pDueTime > rtHWTime - Latency() ) || resync)
   {
     m_nSampleNum++;
 
@@ -500,6 +501,14 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
   else
     Log("CWASAPIRenderFilter::Run - error (0x%08x)", hr);
 
+  if (!m_bBufferredSamples)
+  {
+    Log("CWASAPIRenderFilter::Run - no buffering was done, discard old samples");
+    BeginFlush();
+    EndFlush();
+  }
+
+  m_bBufferredSamples = false;
   m_filterState = State_Running;
   return CQueuedAudioSink::Run(rtStart);
 }
@@ -522,7 +531,10 @@ HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
  HRESULT hr = CQueuedAudioSink::PutSample(pSample);
 
   if (m_filterState != State_Running)
+  {
+    m_bBufferredSamples = true;
     Log("Buffering...%6.3f", BufferredDataDuration() / 10000000.0);
+  }
 
   return hr;
 }
@@ -549,8 +561,6 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   REFERENCE_TIME maxSampleWaitTime = Latency() / 20000;
 
   HRESULT hr = S_FALSE;
-
-  m_nSampleNum = 0;
 
   m_csResources.Lock();
 
@@ -669,10 +679,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               break;
             }
             else if (command == ASC_Pause)
-            {
-              m_nSampleNum = 0;
               m_state = StatePaused;
-            }
             else if (command == ASC_Resume)
             {
               sampleProcessed = false;
