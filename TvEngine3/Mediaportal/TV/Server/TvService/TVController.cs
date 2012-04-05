@@ -3656,7 +3656,7 @@ namespace Mediaportal.TV.Server.TVService
       //System.Diagnostics.Debugger.Launch();
       // this section makes sure that all users are updated in regards to channel states.            
       
-      IList<ChannelGroup> groups = ChannelGroupManagement.ListAllChannelGroups();
+      IList<ChannelGroup> groups = ChannelGroupManagement.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
 
       // populating _tvChannelListGroups is only done once as is therefor cached.
       if (_tvChannelListGroups == null)
