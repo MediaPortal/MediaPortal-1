@@ -202,7 +202,7 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
   pSample->GetTime(&rtStart, &rtStop);
 
   // Detect discontinuity in stream timeline
-  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR))
+  if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR) && m_nSampleNum != 0)
   {
     Log("CChannelMixer - stream discontinuity: %6.3f", (rtStart - m_rtNextIncomingSampleTime) / 10000000.0);
 
