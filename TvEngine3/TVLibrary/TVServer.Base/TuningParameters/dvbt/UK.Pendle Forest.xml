@@ -30,9 +30,4 @@
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>546000</Frequency>
-    <BandWidth>8</BandWidth>
-    <Offset>167</Offset>
-  </DVBTTuning>
 </ArrayOfDVBTTuning>
