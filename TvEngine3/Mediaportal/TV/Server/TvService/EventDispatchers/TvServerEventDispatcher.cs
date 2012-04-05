@@ -14,29 +14,28 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
       var tvEvent = eventArgs as TvServerEventArgs;
       if (tvEvent != null)
       {
-        lock (_usersLock)
+        IDictionary<string, DateTime> usersCopy = GetUsersCopy();
+                        
+        if (tvEvent.EventType == TvServerEventType.ChannelStatesChanged)
         {
-          if (tvEvent.EventType == TvServerEventType.ChannelStatesChanged)
-          {            
-            foreach (string username in _users.Keys)
-            {
-              //todo channel states for idle users should ideally only be pushed out to idle users and not all users.
-              if (tvEvent.User.Name.Equals(username) || tvEvent.User.Name.Equals("idle"))
-              {
-                EventService.CallbackTvServerEvent(username, tvEvent); 
-              }              
-            } 
-          }
-          else
+          foreach (string username in usersCopy.Keys)
           {
-            foreach (string username in _users.Keys)
+            //todo channel states for idle users should ideally only be pushed out to idle users and not all users.
+            if (tvEvent.User.Name.Equals(username) || tvEvent.User.Name.Equals("idle"))
             {
-              EventService.CallbackTvServerEvent(username, tvEvent);
-            }
-          }          
+              EventService.CallbackTvServerEvent(username, tvEvent); 
+            }              
+          } 
         }
+        else
+        {
+          foreach (string username in usersCopy.Keys)
+          {
+            EventService.CallbackTvServerEvent(username, tvEvent);
+          }
+        }          
       }
-    }
+    }    
 
     #region Overrides of EventDispatcher
 

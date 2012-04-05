@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -64,17 +65,16 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
             return;
           }
 
-          lock (_usersLock)
+          IDictionary<string, DateTime> usersCopy = GetUsersCopy();                    
+          if (usersCopy.Count > 0)
           {
-            if (_users.Count > 0)
+            foreach (var user in usersCopy.Keys)
             {
-              foreach (var user in _users.Keys)
-              {
-                EventService.CallbackCiMenuEvent(user, _curMenu);
-              }
-              return;
+              EventService.CallbackCiMenuEvent(user, _curMenu);
             }
+            return;
           }
+          
           Log.Debug("CI menu received but no listeners available");
         }
       }

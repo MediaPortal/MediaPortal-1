@@ -37,5 +37,16 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
 
     public abstract void Start();
     public abstract void Stop();
+
+    protected IDictionary<string, DateTime> GetUsersCopy()
+    {
+      IDictionary<string, DateTime> usersCopy;
+      lock (_usersLock)
+      {
+        usersCopy = new Dictionary<string, DateTime>(_users);
+      }
+      return usersCopy;
+    }
+
   }
 }

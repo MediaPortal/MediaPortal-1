@@ -162,17 +162,15 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
       {
         IList<string> updateUsers = new List<string>();
         try
-        {        
-          lock (_usersLock)
-          {             
-            foreach (KeyValuePair<string, DateTime> heartbeatuser in _users)
+        {
+          IDictionary<string, DateTime> usersCopy = GetUsersCopy();
+          foreach (KeyValuePair<string, DateTime> heartbeatuser in usersCopy)
+          {
+            if (EventService.CallbackRequestHeartbeat(heartbeatuser.Key))
             {
-              if (EventService.CallbackRequestHeartbeat(heartbeatuser.Key))
-              {
-                updateUsers.Add(heartbeatuser.Key);              
-              }              
-            }          
-          }
+              updateUsers.Add(heartbeatuser.Key);              
+            }              
+          }                    
         }
         catch(Exception ex)
         {
