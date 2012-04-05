@@ -37,34 +37,18 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     {
       trackingItem.StopTracking();
 
-      /*FieldInfo[] fields = trackingItem.GetType().GetFields(BindingFlags.NonPublic);
-      foreach (FieldInfo field in from fieldInfo in fields let type = fieldInfo.FieldType let found = IsAssignableToGenericType(type, typeof(TrackableCollection<>)) where found select fieldInfo)
-      {
-        field.SetValue(trackingItem, null);
-      }*/
-
       PropertyInfo[] properties = trackingItem.GetType().GetProperties();
       foreach (PropertyInfo propertyInfo in from oPropertyInfo in properties let type = oPropertyInfo.PropertyType let found = IsAssignableToGenericType(type, typeof(TrackableCollection<>)) where found select oPropertyInfo)
-      {
-        //(TrackableCollection<T>) Activator.CreateInstance(typeof (TrackableCollection<>).MakeGenericType(typeof (GroupMap);
-        //var abc =  
-        //Type t = propertyInfo.PropertyType.GetGenericTypeDefinition();
-        IList changeTrackers = propertyInfo.GetValue(trackingItem, null) as IList;
-        bool changeDetected = false;
-
-        var deleteChangeTrackers = new List<int>();
-
-        //Type d1 = typeof(TrackableCollection<>);
-        //Type[] typeArgs = { t };
-        //Type constructed = d1.MakeGenericType(typeArgs);
-        //object o = Activator.CreateInstance(constructed);
+      {        
+        var changeTrackers = propertyInfo.GetValue(trackingItem, null) as IList;
+        bool changeDetected = false;        
 
         if (changeTrackers != null)
         {
-          int i = 0;
-          foreach (object changeTracker in changeTrackers)
+          for (int i = changeTrackers.Count - 1; i >= 0; i--)
           {
-            IObjectWithChangeTracker objectWithChangeTracker = changeTracker as IObjectWithChangeTracker;
+            var changeTracker = changeTrackers[i];          
+            var objectWithChangeTracker = changeTracker as IObjectWithChangeTracker;
             if (objectWithChangeTracker != null && objectWithChangeTracker.ChangeTracker.State != ObjectState.Unchanged)
             {
               changeDetected = true;
@@ -72,36 +56,29 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
             else
             {
-              deleteChangeTrackers.Add(i);
-            }
-            i++;
+              changeTrackers.RemoveAt(i);
+            }            
           }
         }                  
 
         if (!changeDetected)
         {
           propertyInfo.SetValue(trackingItem, null, null); 
-        }
-        else
-        {
-          for (int i = deleteChangeTrackers.Count - 1; i >= 0; i--)
-          {
-            changeTrackers.RemoveAt(deleteChangeTrackers[i]);
-          }          
-        }
-      }    
-                          
-
-      foreach (PropertyInfo propertyInfo in properties)
-      {
-        var objectWithChangeTracker = propertyInfo.GetValue(trackingItem, null) as IObjectWithChangeTracker;
-        
-        if (objectWithChangeTracker != null && objectWithChangeTracker.ChangeTracker.State == ObjectState.Unchanged)
-        {
-          propertyInfo.SetValue(trackingItem, null, null);
-        }
+        }      
       }
 
+      if (trackingItem.ChangeTracker.State != ObjectState.Added)
+      {
+        foreach (PropertyInfo propertyInfo in properties)
+        {
+          var objectWithChangeTracker = propertyInfo.GetValue(trackingItem, null) as IObjectWithChangeTracker;
+
+          if (objectWithChangeTracker != null && objectWithChangeTracker.ChangeTracker.State == ObjectState.Unchanged)
+          {
+            propertyInfo.SetValue(trackingItem, null, null);
+          }
+        } 
+      }      
 
       trackingItem.StartTracking();
     }
