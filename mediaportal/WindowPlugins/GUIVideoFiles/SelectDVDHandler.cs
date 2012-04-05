@@ -343,7 +343,7 @@ namespace MediaPortal.GUI.Video
               }
             }
             // Set watched status for list item
-            if (!pItem.IsFolder || IsDvdDirectory(pItem.Path) || selectBdHandler.IsBDDirectory(pItem.Path))// && foundWatched))
+            if (!pItem.IsFolder || IsDvdDirectory(pItem.Path) || selectBdHandler.IsBDDirectory(pItem.Path))
             {
               pItem.IsPlayed = foundWatched;
               pItem.Label3 = percentWatched + "% #" + timesWatched;
