@@ -398,7 +398,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#plotoutline", PlotOutline);
       GUIPropertyManager.SetProperty("#userreview", UserReview); // Added
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
-      GUIPropertyManager.SetProperty("#strrating", "(" + Rating.ToString(CultureInfo.CurrentCulture) + "/10)");
+      GUIPropertyManager.SetProperty("#strrating", Rating.ToString(CultureInfo.CurrentCulture) + "/10");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
       Int32 votes = 0;
       string strVotes = string.Empty;

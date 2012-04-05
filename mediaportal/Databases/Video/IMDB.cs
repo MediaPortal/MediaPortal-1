@@ -723,7 +723,7 @@ namespace MediaPortal.Video.Database
 
       string[] vdbParserStr = VdbParserStringActorDetails();
 
-      if (vdbParserStr == null || vdbParserStr.Length != 45)
+      if (vdbParserStr == null || vdbParserStr.Length != 46)
       {
         return false;
       }
@@ -803,7 +803,7 @@ namespace MediaPortal.Video.Database
         #region Actor birth date
 
         // Birth date
-        if ((parser.skipToEndOf(vdbParserStr[6])) &&          // Born:
+        if ((parser.skipToEndOf(vdbParserStr[6])) &&          // >Born:</h4>
             (parser.skipToEndOf(vdbParserStr[7])) &&          // birth_monthday=
             (parser.skipToEndOf(vdbParserStr[8])) &&          // >
             (parser.extractTo(vdbParserStr[9], ref value)) && // <
@@ -820,7 +820,7 @@ namespace MediaPortal.Video.Database
 
         // Death date
         if ((parser.skipToEndOf(vdbParserStr[12])) &&           // >Died:</h4>
-            (parser.skipToEndOf(vdbParserStr[13])) &&           // deaths\"
+            (parser.skipToEndOf(vdbParserStr[13])) &&           // death_monthday="
             (parser.skipToEndOf(vdbParserStr[14])) &&           // >
             (parser.extractTo(vdbParserStr[15], ref value)) &&  // <
             (parser.skipToEndOf(vdbParserStr[16])) &&           // death_date="
@@ -868,7 +868,7 @@ namespace MediaPortal.Video.Database
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           actor.MiniBiography = Util.Utils.stripHTMLtags(value);
-          actor.MiniBiography = actor.MiniBiography.Replace("See full bio »", string.Empty).Trim();
+          actor.MiniBiography = actor.MiniBiography.Replace(vdbParserStr[45], string.Empty).Trim(); // See full bio »
           actor.MiniBiography = HttpUtility.HtmlDecode(actor.MiniBiography); // Remove HTML entities like &#189;
           
           if (actor.MiniBiography != string.Empty)

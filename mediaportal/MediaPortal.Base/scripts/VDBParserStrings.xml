@@ -269,7 +269,7 @@
 			<![CDATA["]]>
 		</string>
 		<string><!--6 skip to end of-->
-			<![CDATA[Born:]]>
+			<![CDATA[>Born:</h4>]]>
 		</string>
 		<string><!--7 skip to end of-->
 			<![CDATA[birth_monthday=]]>
@@ -290,7 +290,7 @@
 			<![CDATA[>Died:</h4>]]>
 		</string>
 		<string><!--13 skip to end of-->
-			<![CDATA[deaths"]]>
+			<![CDATA[death_monthday=]]>
 		</string>
 		<string><!--14 skip o end of-->
 			<![CDATA[>]]>
@@ -384,6 +384,9 @@
 		</string>
 		<string><!--44 skip to end of (director movies)-->
 			<![CDATA[</div>]]>
+		</string>
+		<string><!--45 replace (See full bio »)-->
+			<![CDATA[<See full bio »]]>
 		</string>
 	</IMDBActorInfoDetails>
 	
