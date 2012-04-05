@@ -40,6 +40,7 @@ public:
   HRESULT PutSample(IMediaSample* pSample);
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
+  HRESULT Run(REFERENCE_TIME rtStart);
 
 public: 
 
@@ -104,17 +105,11 @@ public:
   // \return 'TRUE' if the setting was succesfully changed
   BOOL setSetting(int settingId, int value);
 
-  //HRESULT CheckFormat(WAVEFORMATEX *pwf);
-  //HRESULT CheckFormat(WAVEFORMATEXTENSIBLE *pwfe);
-  //HRESULT SetFormat(WAVEFORMATEX *pwf);
   HRESULT SetFormat(const WAVEFORMATEXTENSIBLE *pwfe);
   HRESULT CheckSample(IMediaSample* pSample);
 
   bool putSamples(const short *inBuffer, long inSamples);
   uint receiveSamples(short **outBuffer, uint maxSamples);
-
-  //bool ProcessSamples(const short *inBuffer, long inSamples, short *outBuffer, long *outSamples, long maxOutSamples);
-  //bool processSample(IMediaSample *pMediaSample);
 
 protected:
   // Processing
@@ -151,4 +146,8 @@ private:
   CSyncClock* m_pClock;
 
   bool m_bResamplingRequested;
+  bool m_bResetFirstSample;
+
+  REFERENCE_TIME m_rtFirstSample;
+  REFERENCE_TIME m_rtOffset;
 };
