@@ -191,8 +191,8 @@
           <foreground>-</foreground>
           <showForeground>no</showForeground>
           <showFrame>yes</showFrame>
-          <frame>Picture_cover2.png</frame>
-          <frameFocus>Picture_cover2.png</frameFocus>
+          <frame>videothumbframe.png</frame>
+          <frameFocus>videothumbframe.png</frameFocus>
           <frameWidth>250</frameWidth>
           <frameHeight>360</frameHeight>
           <spinSpeed>8</spinSpeed>
@@ -204,7 +204,7 @@
           <label1>#title</label1>
           <label2>#genre</label2>
           <textColor>FFFFFFFF</textColor>
-          <remoteColor>FFFF0000</remoteColor>
+          <remoteColor>ffcc9900</remoteColor>
           <playedColor>ff6FAFE1</playedColor>
           <downloadColor>ff6FAFE1</downloadColor>
           <selectedColor>ff6FAFE1</selectedColor>
@@ -220,7 +220,7 @@
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
           <scrollbarYOff>455</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards mask="videothumbmask.png">videothumbmask.png</cards>
+          <cards mask="videothumbmask.png">videothumbframe.png</cards>
           <folderPrefix />
           <folderSuffix />
           <subitems>
@@ -242,11 +242,26 @@
                 <posY>10</posY>
                 <width>230</width>
                 <label>#title</label>
-                <font>font10</font>
+                <font>font11</font>
                 <textcolor>ivory</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, true)</visible>
+              </control>
+              <control>
+                <description>User group movie list</description>
+                <type>textboxscrollup</type>
+                <posX>20</posX>
+                <posY>40</posY>
+                <width>230</width>
+                <height>205</height>
+                <label>#groupmovielist</label>
+                <font>font9</font>
+                <lineSpacing>2</lineSpacing>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+                <visible>string.equals(#hideinfo, True)</visible>
               </control>
               <control>
                 <description>Movie Details</description>
@@ -358,9 +373,9 @@
         <posY>200</posY>
         <width>642</width>
         <height>500</height>
-        <upBtnXOffset>489</upBtnXOffset>
-        <downBtnXOffset>542</downBtnXOffset>
-        <deleteBtnXOffset>595</deleteBtnXOffset>
+        <upBtnXOffset>510</upBtnXOffset>
+        <downBtnXOffset>550</downBtnXOffset>
+        <deleteBtnXOffset>590</deleteBtnXOffset>
         <onleft>2</onleft>
         <onright>2</onright>
         <scrollOffset>2</scrollOffset>

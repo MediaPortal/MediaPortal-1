@@ -20,7 +20,7 @@
       <description>album/artist/genre etc info label</description>
       <type>fadelabel</type>
       <posX>0</posX>
-      <posY>100</posY>
+      <posY>85</posY>
       <width>1280</width>
       <font>font17</font>
       <align>center</align>
