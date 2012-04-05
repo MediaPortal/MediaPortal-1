@@ -313,7 +313,7 @@ HRESULT CTimeStretchFilter::Run(REFERENCE_TIME rtStart)
   if (SUCCEEDED(hr))
     m_rtOffset = rtStart - rtTime;
 
-  return CBaseAudioSink::Run(rtStart);
+  return CQueuedAudioSink::Run(rtStart);
 }
 
 // Processing
