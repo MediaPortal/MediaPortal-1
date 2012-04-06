@@ -141,7 +141,7 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
 
   if (bApplyChanges)
   {
-    LogWaveFormat(pwfx, "TS  - applying ");
+    LogWaveFormat(pwfx, "TS   - applying ");
 
     SetInputFormat(pwfx);
     SetOutputFormat(pwfx);

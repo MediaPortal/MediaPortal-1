@@ -328,8 +328,8 @@ void CBitDepthAdapter::ResetDithering()
 HRESULT CBitDepthAdapter::SetupConversion()
 {
   Log("CBitDepthAdapter::SetupConversion");
-  LogWaveFormat(m_pInputFormat, "Input format ");
-  LogWaveFormat(m_pOutputFormat, "Output format");
+  LogWaveFormat(m_pInputFormat, "Input format    ");
+  LogWaveFormat(m_pOutputFormat, "Output format   ");
   m_bInFloatSamples = IS_WAVEFORMAT_FLOAT(m_pInputFormat);
   m_nInFrameSize = m_pInputFormat->Format.nBlockAlign;
   m_nInBytesPerSample = m_pInputFormat->Format.wBitsPerSample / 8;

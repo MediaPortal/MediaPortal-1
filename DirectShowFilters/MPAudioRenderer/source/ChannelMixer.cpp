@@ -274,8 +274,8 @@ HRESULT CChannelMixer::SetupConversion(ChannelOrder chOrder)
   m_bPassThrough = m_AEInput == m_AEOutput;
 
   Log("CChannelMixer::SetupConversion");
-  LogWaveFormat(m_pInputFormat, "Input format ");
-  LogWaveFormat(m_pOutputFormat, "Output format");
+  LogWaveFormat(m_pInputFormat, "Input format    ");
+  LogWaveFormat(m_pOutputFormat, "Output format   ");
 
   return S_OK;
 }

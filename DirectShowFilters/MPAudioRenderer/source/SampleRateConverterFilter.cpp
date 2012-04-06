@@ -302,8 +302,8 @@ HRESULT CSampleRateConverter::SetupConversion()
     return S_FALSE;
 
   Log("CSampleRateConverter::SetupConversion");
-  LogWaveFormat(m_pInputFormat, "Input format ");
-  LogWaveFormat(m_pOutputFormat, "Output format");
+  LogWaveFormat(m_pInputFormat, "Input format    ");
+  LogWaveFormat(m_pOutputFormat, "Output format   ");
 
   return S_OK;
 }
