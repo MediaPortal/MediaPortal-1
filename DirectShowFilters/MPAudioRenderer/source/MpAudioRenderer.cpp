@@ -144,7 +144,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
 
   m_pPipeline->DisconnectAll();
   if (FAILED(hr))
-    Log("Pipeline DisconnectAll failed with: (0x%08x)");
+    Log("Pipeline DisconnectAll failed with: (0x%08x)", hr);
 
   delete m_pWASAPIRenderer;
   delete m_pAC3Encoder;
@@ -411,7 +411,18 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
     if (SUCCEEDED(hr))
     {
       hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
-      delete wfe;
+      if (SUCCEEDED(hr))
+      {
+        AM_MEDIA_TYPE tmp;
+        if (SUCCEEDED(CreateAudioMediaType((WAVEFORMATEX*)wfe, &tmp, true)))
+        {
+          if (m_pMediaType)
+            DeleteMediaType(m_pMediaType);
+          m_pMediaType = CreateMediaType(&tmp);
+        }
+        else
+          Log("CMPAudioRenderer::SetMediaType - failed to create media type: (0x%08x)", hr);
+      }
     }
     else
       return hr;
