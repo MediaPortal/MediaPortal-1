@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -14,8 +15,19 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
       var tvEvent = eventArgs as TvServerEventArgs;
       if (tvEvent != null)
       {
+        ThreadPool.QueueUserWorkItem(delegate
+                                       {
+                                         DoOnTvServerEventAsynch(tvEvent);
+                                       });        
+      }
+    }
+
+    private void DoOnTvServerEventAsynch(TvServerEventArgs tvEvent)
+    {
+      try
+      {
         IDictionary<string, DateTime> usersCopy = GetUsersCopy();
-                        
+
         if (tvEvent.EventType == TvServerEventType.ChannelStatesChanged)
         {
           foreach (string username in usersCopy.Keys)
@@ -23,9 +35,9 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
             //todo channel states for idle users should ideally only be pushed out to idle users and not all users.
             if (tvEvent.User.Name.Equals(username) || tvEvent.User.Name.Equals("idle"))
             {
-              EventService.CallbackTvServerEvent(username, tvEvent); 
-            }              
-          } 
+              EventService.CallbackTvServerEvent(username, tvEvent);
+            }
+          }
         }
         else
         {
@@ -33,9 +45,13 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
           {
             EventService.CallbackTvServerEvent(username, tvEvent);
           }
-        }          
+        }
       }
-    }    
+      catch (Exception ex)
+      {
+        Log.Debug("DoOnTvServerEventAsynch failed : {0}", ex);        
+      }
+    }
 
     #region Overrides of EventDispatcher
 
