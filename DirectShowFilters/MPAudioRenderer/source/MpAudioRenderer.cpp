@@ -414,14 +414,15 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
       if (SUCCEEDED(hr))
       {
         AM_MEDIA_TYPE tmp;
-        if (SUCCEEDED(CreateAudioMediaType((WAVEFORMATEX*)wfe, &tmp, true)))
+        HRESULT result = CreateAudioMediaType((WAVEFORMATEX*)wfe, &tmp, true);
+        if (SUCCEEDED(result))
         {
           if (m_pMediaType)
             DeleteMediaType(m_pMediaType);
           m_pMediaType = CreateMediaType(&tmp);
         }
         else
-          Log("CMPAudioRenderer::SetMediaType - failed to create media type: (0x%08x)", hr);
+          Log("CMPAudioRenderer::SetMediaType - failed to create media type: (0x%08x)", result);
       }
     }
     else
