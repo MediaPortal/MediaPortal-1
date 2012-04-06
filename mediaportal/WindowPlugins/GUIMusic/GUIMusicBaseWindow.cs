@@ -295,6 +295,8 @@ namespace MediaPortal.GUI.Music
           return MusicSort.SortMethod.DiscID;
         case "composer":
           return MusicSort.SortMethod.Composer;
+        case "timesplayed":
+          return MusicSort.SortMethod.TimesPlayed;
       }
       if (!string.IsNullOrEmpty(s))
       {
@@ -454,6 +456,10 @@ namespace MediaPortal.GUI.Music
           break;
         case MusicSort.SortMethod.Composer:
           strLine = GUILocalizeStrings.Get(1208);
+          break;
+        case MusicSort.SortMethod.TimesPlayed:
+          //TODO need string
+          strLine = GUILocalizeStrings.Get(0);
           break;
       }
 
@@ -746,6 +752,7 @@ namespace MediaPortal.GUI.Music
       string rating = tag.Rating.ToString();
       string discID = tag.DiscID > 0 ? tag.DiscID.ToString() : string.Empty;
       string date = tag.DateTimeModified.ToShortDateString();
+      string timesPlayed = tag.TimesPlayed.ToString(); // 0 is ok here as it is possible song never played
 
       string line1, line2;
       if (CurrentSortMethod == MusicSort.SortMethod.AlbumArtist)
@@ -782,8 +789,10 @@ namespace MediaPortal.GUI.Music
       line2 = Util.Utils.ReplaceTag(line2, "%date%", date);
       line1 = Util.Utils.ReplaceTag(line1, "%disc#%", discID);
       line2 = Util.Utils.ReplaceTag(line2, "%disc#%", discID);
-      line1 = Util.Utils.ReplaceTag(line1, "%composer%", tag.Composer);
-      line2 = Util.Utils.ReplaceTag(line2, "%composer%", tag.Composer);
+      line1 = Util.Utils.ReplaceTag(line1, "%timesplayed%", timesPlayed);
+      line2 = Util.Utils.ReplaceTag(line2, "%timesplayed%", timesPlayed);
+      line1 = Util.Utils.ReplaceTag(line1, "%timesplayed%", timesPlayed);
+      line2 = Util.Utils.ReplaceTag(line2, "%timesplayed%", timesPlayed);
       item.Label = line1;
       item.Label2 = line2;
 
@@ -953,6 +962,10 @@ namespace MediaPortal.GUI.Music
           break;
         case 1208:
           CurrentSortMethod = MusicSort.SortMethod.Composer;
+          break;
+          //TODO need string
+        case 0:
+          CurrentSortMethod = MusicSort.SortMethod.TimesPlayed;
           break;
         default:
           CurrentSortMethod = MusicSort.SortMethod.Name;
