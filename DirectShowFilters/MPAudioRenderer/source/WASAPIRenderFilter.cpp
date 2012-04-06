@@ -500,12 +500,14 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
   else
     Log("CWASAPIRenderFilter::Run - error (0x%08x)", hr);
 
+  /*
   if (!m_bBufferredSamples)
   {
     Log("CWASAPIRenderFilter::Run - no buffering was done, discard old samples");
     BeginFlush();
     EndFlush();
   }
+  */
 
   m_bBufferredSamples = false;
   m_filterState = State_Running;
