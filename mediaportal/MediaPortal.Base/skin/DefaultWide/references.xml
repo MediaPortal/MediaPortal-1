@@ -642,7 +642,7 @@
     <textalign>left</textalign>
     <font>font13</font>
     <textcolor>ivory</textcolor>
-    <scrollStartDelaySec>8</scrollStartDelaySec>
+    <scrollStartDelaySec>10</scrollStartDelaySec>
     <spaceBetweenItems>2</spaceBetweenItems>
     <shadowAngle>0</shadowAngle>
     <shadowDistance>0</shadowDistance>

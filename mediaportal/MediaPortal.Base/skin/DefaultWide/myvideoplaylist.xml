@@ -214,7 +214,7 @@
       <id>1</id>
       <posX>270</posX>
       <posY>160</posY>
-      <label>#(L(205)) #votes  #strrating</label>
+      <label>#strrating (#(L(205)) #votes)</label>
       <font>font11</font>
       <align>left</align>
       <textcolor>ivory</textcolor>
@@ -228,7 +228,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="videothumbmask.png">missing_Coverart_video.png</texture>
-      <visible>[facadeview.playlist|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
+      <visible>[facadeview.playlist|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <id>500</id>
@@ -238,7 +238,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="videothumbmask.png">#selectedthumb</texture>
-      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <type>image</type>
@@ -248,7 +248,7 @@
       <width>180</width>
       <height>250</height>
       <texture>Videothumbframe.png</texture>
-      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
+      <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Watched Logo</description>

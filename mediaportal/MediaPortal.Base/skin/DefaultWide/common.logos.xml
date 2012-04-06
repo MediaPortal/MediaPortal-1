@@ -74,7 +74,7 @@
         <id>0</id>
         <width>69</width>
         <height>37</height>
-        <texture>logos\#Play.Current.Rating.png</texture>
+        <texture>logos\#Play.Current.MPAARating.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
     </control>

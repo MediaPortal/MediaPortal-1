@@ -239,7 +239,7 @@
       <id>1</id>
       <posX>270</posX>
       <posY>160</posY>
-      <label>#(L(205)) #votes  #strrating</label>
+      <label>#strrating (#(L(205)) #votes)</label>
       <font>font11</font>
       <align>left</align>
       <textcolor>ivory</textcolor>
@@ -264,6 +264,16 @@
       <height>250</height>
       <texture mask="videothumbmask.png">#selectedthumb</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
+    </control>
+    <control>
+      <id>500</id>
+      <type>image</type>
+      <posX>137</posX>
+      <posY>195</posY>
+      <width>122</width>
+      <height>122</height>
+      <texture>collection.png</texture>
+      <visible>facadeview.list+Control.HasFocus(50)+string.equals(#hideinfo, true)</visible>
     </control>
     <control>
       <type>image</type>
@@ -452,7 +462,7 @@
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideinfo, False)</visible>
+      <visible>facadeview.list+control.hasfocus(50)</visible>
     </control>
     <control Style="NoShadow">
       <description>Plot value</description>
@@ -478,6 +488,19 @@
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
+      <description>usergroup list value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>72</posX>
+      <posY>470</posY>
+      <width>490</width>
+      <height>215</height>
+      <label>#groupmovielist</label>
+      <font>font11</font>
+      <textcolor>ivory</textcolor>
+      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, true)</visible>
     </control>
     <!-- ********** Media Info Logos (List View) ********** -->
     <control>

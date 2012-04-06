@@ -409,6 +409,9 @@
         <id>50</id>
         <posY>170</posY>
         <height>530</height>
+        <upBtnXOffset>660</upBtnXOffset>
+        <downBtnXOffset>700</downBtnXOffset>
+        <deleteBtnXOffset>740</deleteBtnXOffset>
         <onleft>2</onleft>
         <onright>2</onright>
         <scrollOffset>2</scrollOffset>

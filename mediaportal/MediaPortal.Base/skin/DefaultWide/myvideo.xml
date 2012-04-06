@@ -239,7 +239,7 @@
     <id>1</id>
     <posX>270</posX>
     <posY>160</posY>
-    <label>#(L(205)) #votes  #strrating</label>
+    <label>#strrating (#(L(205)) #votes)</label>
     <font>font11</font>
     <align>left</align>
     <textcolor>ivory</textcolor>
@@ -300,148 +300,148 @@
     <visible>facadeview.list + control.hasfocus(50) + string.equals(#iswatched,no) + string.equals(#hideinfo, False)</visible>
   </control>
   <control>
-      <description>Genre txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>187</posY>
-      <label>174</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Genre value</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>206</posY>
-      <width>270</width>
-      <label>#genre</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Director txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>231</posY>
-      <label>199</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Director value</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>250</posY>
-      <label>#director</label>
-      <font>font12</font>
-      <width>270</width>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Year txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>275</posY>
-      <label>201</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Year value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>294</posY>
-      <width>270</width>
-      <label>#year</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Runtime txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>319</posY>
-      <label>299</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Runtime value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>338</posY>
-      <width>270</width>
-      <label>#runtime</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Video Runtime Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>363</posY>
-      <label>#(L(291))-#(L(299))</label>
-      <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>Video Runtime Value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>382</posY>
-      <label>#videoruntime</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>MPAA txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>407</posY>
-      <label>173</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
-    <control>
-      <description>MPAA Rating</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>305</posX>
-      <posY>426</posY>
-      <width>270</width>
-      <label>#mpaarating</label>
-      <font>font12</font>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
-    </control>
+    <description>Genre txt</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>187</posY>
+    <label>174</label>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff6FAFE1</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Genre value</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>206</posY>
+    <width>270</width>
+    <label>#genre</label>
+    <font>font12</font>
+    <textcolor>ivory</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Director txt</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>231</posY>
+    <label>199</label>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff6FAFE1</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Director value</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>250</posY>
+    <label>#director</label>
+    <font>font12</font>
+    <width>270</width>
+    <textcolor>ivory</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Year txt</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>275</posY>
+    <label>201</label>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff6FAFE1</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Year value</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>294</posY>
+    <width>270</width>
+    <label>#year</label>
+    <font>font12</font>
+    <textcolor>ivory</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Runtime txt</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>319</posY>
+    <label>299</label>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff6FAFE1</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Runtime value</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>338</posY>
+    <width>270</width>
+    <label>#runtime</label>
+    <font>font12</font>
+    <textcolor>ivory</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Video Runtime Label</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>363</posY>
+    <label>#(L(291))-#(L(299))</label>
+    <font>font11</font>
+    <textcolor>ff6FAFE1</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>Video Runtime Value</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>382</posY>
+    <label>#videoruntime</label>
+    <font>font12</font>
+    <textcolor>ivory</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>MPAA txt</description>
+    <type>label</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>407</posY>
+    <label>173</label>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff6FAFE1</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <description>MPAA Rating</description>
+    <type>fadelabel</type>
+    <id>1</id>
+    <posX>305</posX>
+    <posY>426</posY>
+    <width>270</width>
+    <label>#mpaarating</label>
+    <font>font12</font>
+    <align>left</align>
+    <textcolor>ivory</textcolor>
+    <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, False)</visible>
+  </control>
   <control>
     <description>Separator Line</description>
     <type>image</type>

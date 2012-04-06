@@ -82,16 +82,16 @@
       <numberOfButtons>5</numberOfButtons>
       <textureButtonFocus>hp_selectionbar_focus.png</textureButtonFocus>
       <textureButtonNoFocus>-</textureButtonNoFocus>
-      <hoverX>141</hoverX>
-      <hoverY>155</hoverY>
-      <hoverWidth>380</hoverWidth>
-      <hoverHeight>454</hoverHeight>
+      <hoverX>120</hoverX>
+      <hoverY>135</hoverY>
+      <hoverWidth>420</hoverWidth>
+      <hoverHeight>420</hoverHeight>
       <hoverKeepAspectratio>yes</hoverKeepAspectratio>
       <scrollTime>120</scrollTime>
       <scrollTimeMin>50</scrollTimeMin>
       <textureBackground>emtpy.png</textureBackground>
-      <onright>10</onright>
-      <onleft>12</onleft>
+      <onright>13</onright>
+      <onleft>10</onleft>
     </control>
     <!-- TOPBAR Buttons -->
     <control>
