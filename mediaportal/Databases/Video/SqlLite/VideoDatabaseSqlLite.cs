@@ -5127,7 +5127,7 @@ namespace MediaPortal.Video.Database
                 string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
                 availableFiles.Add(strFile);
               }
-              if (item.Path.ToLower().IndexOf("bdmv", StringComparison.InvariantCultureIgnoreCase) >= 0)
+              else if (item.Path.ToLower().IndexOf("bdmv", StringComparison.InvariantCultureIgnoreCase) >= 0)
               {
                 string strFile = String.Format(@"{0}\index.bdmv", item.Path);
                 availableFiles.Add(strFile);
