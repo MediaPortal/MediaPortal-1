@@ -137,6 +137,8 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
 
   if (bApplyChanges)
   {
+    LogWaveFormat(pwfx, "AC3  - applying ");
+    
     m_bPassThrough = false;
     SAFE_DELETE_ARRAY(m_pRemainingInput);
     SetInputFormat(pwfx);
@@ -150,6 +152,8 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
 
     OpenAC3Encoder(m_nBitRate, m_pInputFormat->Format.nChannels, m_pInputFormat->Format.nSamplesPerSec);
   }
+  else
+    LogWaveFormat(pwfx, "AC3  -          ");
 
   *pChOrder = AC3_ORDER;
 

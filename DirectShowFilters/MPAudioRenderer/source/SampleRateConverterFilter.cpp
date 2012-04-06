@@ -148,6 +148,8 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
   }
   if (bApplyChanges)
   {
+    LogWaveFormat(pwfx, "SRC  - applying ");
+
     m_bPassThrough = false;
     SetInputFormat(pwfx);
     SetOutputFormat(pOutWfx, true);
@@ -156,7 +158,10 @@ HRESULT CSampleRateConverter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, 
     //if (FAILED(hr))
   }
   else
+  {
+    LogWaveFormat(pwfx, "SRC  -          ");
     SAFE_DELETE_WAVEFORMATEX(pOutWfx);
+  }
 
   m_chOrder = *pChOrder;
 
@@ -169,7 +174,7 @@ HRESULT CSampleRateConverter::PutSample(IMediaSample *pSample)
   if (!pSample)
     return S_OK;
 
-  AM_MEDIA_TYPE *pmt = NULL;
+  AM_MEDIA_TYPE* pmt = NULL;
   bool bFormatChanged = false;
   
   HRESULT hr = S_OK;
@@ -295,6 +300,10 @@ HRESULT CSampleRateConverter::SetupConversion()
   // TODO better error handling
   if (error != 0)
     return S_FALSE;
+
+  Log("CSampleRateConverter::SetupConversion");
+  LogWaveFormat(m_pInputFormat, "Input format ");
+  LogWaveFormat(m_pOutputFormat, "Output format");
 
   return S_OK;
 }

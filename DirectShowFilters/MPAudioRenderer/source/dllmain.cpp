@@ -256,7 +256,7 @@ void LogWaveFormat(const WAVEFORMATEXTENSIBLE* pwfx, const char* text)
       else if (pwfx->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
         type = 'f';
 
-      Log("EXTENSIBLE - %s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->Format.nSamplesPerSec, 
+      Log("%s: %6dHz %2d%c (%2d)bits %2dch -- ch mask: %4d align: %2d avgbytes: %8d", text, pwfx->Format.nSamplesPerSec, 
         pwfx->Format.wBitsPerSample, type, pwfx->Samples.wValidBitsPerSample, pwfx->Format.nChannels, pwfx->dwChannelMask, pwfx->Format.nBlockAlign, pwfx->Format.nAvgBytesPerSec);
     }
   }

@@ -24,6 +24,7 @@
 #include <propkey.h>
 #include <FunctionDiscoveryKeys_devpkey.h>
 
+#include "Globals.h"
 #include "MpAudioRenderer.h"
 #include "FilterApp.h"
 #include "TimeSource.h"
@@ -47,7 +48,6 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
 
 // for logging
 extern void Log(const char* fmt, ...);
-extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char* text);
 extern void StopLogger();
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
@@ -248,13 +248,17 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
   ChannelOrder chOrder(DS_ORDER);
 
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
+  {
+    LogWaveFormat((WAVEFORMATEXTENSIBLE*)pwfx, "CheckMediaType  ");
     return m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)(pwfx), 0, &chOrder);
+  }
   else
   {
     WAVEFORMATEXTENSIBLE* wfe = NULL;
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
+      LogWaveFormat(wfe, "CheckMediaType  ");
       hr = m_pPipeline->NegotiateFormat(wfe, 0, &chOrder);
       delete wfe;
     }
@@ -390,8 +394,6 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
   if (!pmt) return E_POINTER;
   
   HRESULT hr = S_OK;
-
-  Log("SetMediaType - filter state: %d", m_State);
 
   WAVEFORMATEXTENSIBLE* wfe = NULL;
   WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->Format();

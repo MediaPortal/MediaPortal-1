@@ -165,16 +165,11 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
 
   if (FormatsEqual(pwfx, m_pInputFormat))
   {
-    Log("CWASAPIRenderFilter::NegotiateFormat - new format same as earlier");
-    LogWaveFormat(m_pInputFormat, "CWASAPIRenderFilter::NegotiateFormat");
     *pChOrder = m_chOrder;
-
     return S_OK;
   }
 
   bool bApplyChanges = nApplyChangesDepth != 0;
-
-  LogWaveFormat(pwfx, "CWASAPIRenderFilter::NegotiateFormat");
 
   bool bitDepthForced = (m_pSettings->m_nForceBitDepth != 0 && m_pSettings->m_nForceBitDepth != pwfx->Format.wBitsPerSample);
   bool sampleRateForced = (m_pSettings->m_nForceSamplingRate != 0 && m_pSettings->m_nForceSamplingRate != pwfx->Format.nSamplesPerSec);
@@ -227,10 +222,10 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   else
     pwfxAccepted = pwfx;
   
-  Log("CWASAPIRenderFilter::NegotiateFormat WASAPI client accepted the format");
-
   if (bApplyChanges)
   {
+    LogWaveFormat(pwfx, "REN - applying ");
+
     // Stop and discard audio client
     StopAudioClient();
     SAFE_RELEASE(m_pRenderClient);
@@ -241,6 +236,10 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
     // Reinitialize audio client
     hr = CreateAudioClient(true);
   }
+  else
+    LogWaveFormat(pwfx, "REN -          ");
+
+
   SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
 
   m_chOrder = *pChOrder = DS_ORDER;

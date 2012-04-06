@@ -88,7 +88,7 @@ static BitDepthConversionDescriptor gValidConversions[] =
 BitDepthDescriptor* FindConversion(const BitDepthDescriptor& source);
 
 
-CBitDepthAdapter::CBitDepthAdapter(void) : 
+CBitDepthAdapter::CBitDepthAdapter() : 
   CBaseAudioSink(true),  
   m_bPassThrough(false),
   m_rtInSampleTime(0),
@@ -98,7 +98,7 @@ CBitDepthAdapter::CBitDepthAdapter(void) :
   ResetDithering();
 }
 
-CBitDepthAdapter::~CBitDepthAdapter(void)
+CBitDepthAdapter::~CBitDepthAdapter()
 {
 }
 
@@ -192,6 +192,8 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
   }
   if (bApplyChanges)
   {
+    LogWaveFormat(pwfx, "BDA  - applying ");
+
     m_bPassThrough = false;
     SetInputFormat(pwfx);
     SetOutputFormat(pOutWfx, true);
@@ -201,7 +203,10 @@ HRESULT CBitDepthAdapter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int 
       m_pfnConvert = NULL;
   }
   else
+  {
+    LogWaveFormat(pwfx, "BDA  -          ");
     SAFE_DELETE_WAVEFORMATEX(pOutWfx);
+  }
 
   m_chOrder = *pChOrder;
 

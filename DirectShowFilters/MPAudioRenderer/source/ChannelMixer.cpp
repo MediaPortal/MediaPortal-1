@@ -132,13 +132,18 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
 
   if (bApplyChanges)
   {
+    LogWaveFormat(pwfx, "MIX  - applying ");
+
     m_bPassThrough = false;
     SetInputFormat(pwfx);
     SetOutputFormat(pOutWfx, true);
     hr = SetupConversion(*pChOrder);
   }
   else
+  {
+    LogWaveFormat(pwfx, "MIX  -          ");
     SAFE_DELETE_WAVEFORMATEX(pOutWfx);
+  }
 
   return hr;
 }
@@ -178,7 +183,7 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
     if (FAILED(hr))
     {
       DeleteMediaType(pmt);
-      Log("SampleRateConverter: PutSample failed to change format: 0x%08x", hr);
+      Log("CChannelMixer: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
     m_chOrder = chOrder;
@@ -267,6 +272,10 @@ HRESULT CChannelMixer::SetupConversion(ChannelOrder chOrder)
   }
 
   m_bPassThrough = m_AEInput == m_AEOutput;
+
+  Log("CChannelMixer::SetupConversion");
+  LogWaveFormat(m_pInputFormat, "Input format ");
+  LogWaveFormat(m_pOutputFormat, "Output format");
 
   return S_OK;
 }

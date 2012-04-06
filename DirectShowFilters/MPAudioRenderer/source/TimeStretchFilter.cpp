@@ -134,8 +134,6 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (FAILED(hr))
     return hr;
 
-  LogWaveFormat(pwfx, "CTimeStretchFilter::NegotiateFormat");
-
   hr = VFW_E_CANNOT_CONNECT;
   
   if (!pwfx)
@@ -143,10 +141,14 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
 
   if (bApplyChanges)
   {
+    LogWaveFormat(pwfx, "TS  - applying ");
+
     SetInputFormat(pwfx);
     SetOutputFormat(pwfx);
     SetFormat(pwfx);
   }
+  else
+    LogWaveFormat(pwfx, "TS   -          ");
 
   m_chOrder = *pChOrder;
 
