@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Music
     private static readonly string[] _sortModes = {
                                                     "Name", "Date", "Size", "Track", "Duration", "Title", "Artist",
                                                     "Album", "Filename",
-                                                    "Rating", "Album Artist", "Year", "DiscID", "Composer"
+                                                    "Rating", "Album Artist", "Year", "DiscID", "Composer", "Times Played"
                                                   };
 
     private static readonly string[] _defaultSortTags1 = {
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Music
                                                            defaultTrackTag,
                                                            defaultTrackTag, defaultTrackTag, defaultTrackTag,
                                                            defaultTrackTag,
-                                                           defaultTrackTag, defaultTrackTag
+                                                           defaultTrackTag, defaultTrackTag, defaultTrackTag
                                                          };
 
     private static readonly string[] _defaultSortTags2 = {
@@ -96,7 +96,7 @@ namespace MediaPortal.GUI.Music
                                                            "%duration%",
                                                            "%duration%", "%duration%", "%duration%", "%filesize%",
                                                            "%rating%",
-                                                           "%duration%", "%year%", "%disc#%", "%duration%"
+                                                           "%duration%", "%year%", "%disc#%", "%duration%", "%timesplayed%"
                                                          };
 
     private static string[] _sortTags1 = new string[20];
@@ -458,8 +458,7 @@ namespace MediaPortal.GUI.Music
           strLine = GUILocalizeStrings.Get(1208);
           break;
         case MusicSort.SortMethod.TimesPlayed:
-          //TODO need string
-          strLine = GUILocalizeStrings.Get(0);
+          strLine = GUILocalizeStrings.Get(1209);
           break;
       }
 
@@ -908,6 +907,7 @@ namespace MediaPortal.GUI.Music
       dlg.AddLocalizedString(104); // date
       dlg.AddLocalizedString(1205); // disc#
       dlg.AddLocalizedString(1208); // composer
+      dlg.AddLocalizedString(1209); // times played
 
       // !!! this does not work yet, because we need to change
       //       the order of MusicSort.SortMethod items OR
@@ -963,8 +963,7 @@ namespace MediaPortal.GUI.Music
         case 1208:
           CurrentSortMethod = MusicSort.SortMethod.Composer;
           break;
-          //TODO need string
-        case 0:
+        case 1209:
           CurrentSortMethod = MusicSort.SortMethod.TimesPlayed;
           break;
         default:

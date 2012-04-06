@@ -996,6 +996,7 @@
     <String id="1206">Programme is now running for {0} minutes</String>
     <String id="1207">Switch to {0} now?</String>
     <String id="1208">Sort by: Composer</String>
+	<String id="1209">Sort by: Times Played</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1212">Cancel reminder</String>
     <String id="1213">Listen to this Station</String>
