@@ -363,7 +363,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
     return MPAR_S_DROP_SAMPLE;
   }
-  else if ((m_nSampleNum == 0 && *pDueTime > rtHWTime - Latency() ) || resync)
+  else if ((m_nSampleNum == 0 && *pDueTime > rtHWTime) || resync)
   {
     m_nSampleNum++;
 
