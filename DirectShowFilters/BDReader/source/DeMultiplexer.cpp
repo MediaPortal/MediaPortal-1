@@ -498,7 +498,7 @@ Packet* CDeMultiplexer::GetAudio()
   }
 
   Packet* packet = m_playlistManager->GetNextAudioPacket();
-  if (packet->rtTitleDuration == 0)
+  if (packet && packet->rtTitleDuration == 0)
     packet->rtTitleDuration = m_rtTitleDuration; // for fake audio
 
   return packet;
