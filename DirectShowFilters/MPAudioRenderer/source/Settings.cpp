@@ -207,7 +207,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ResamplingQuality:        %s", ResamplingQualityAsString(resamplingQualityData));
     Log("   SpeakerConfig:            %d", speakerConfigData);
     Log("   ForceChannelMixing:       %d", forceChannelMixingData);
-    Log("   DoCleanupOnStop:          %d", releaseDeviceOnStopData);
+    Log("   ReleaseDeviceOnStop:      %d", releaseDeviceOnStopData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
