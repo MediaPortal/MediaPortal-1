@@ -114,7 +114,7 @@ namespace Mediaportal.TV.TvPlugin
     private int m_iActiveMenuButtonID = 0;
     private bool m_bNeedRefresh = false;
     private DateTime m_dateTime = DateTime.Now;
-    private DateTime _RecIconLastCheck = DateTime.Now;
+    private DateTime _recIconLastCheck = DateTime.Now;
     private Program previousProgram = null;
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
@@ -1482,11 +1482,9 @@ namespace Mediaportal.TV.TvPlugin
         Recording rec = TvRecorded.ActiveRecording();
         return new ChannelBLL(rec.Channel);
       }
-      else
-      {
-        return new ChannelBLL(TVHome.Navigator.ZapChannel);
-      }
+      return new ChannelBLL(TVHome.Navigator.ZapChannel);
     }
+
     private string GetChannelName()
     {
       if (g_Player.IsTVRecording)
@@ -1668,29 +1666,33 @@ namespace Mediaportal.TV.TvPlugin
     {
       if (imgRecIcon != null)
       {
-        TimeSpan ts = DateTime.Now - _RecIconLastCheck;
+        TimeSpan ts = DateTime.Now - _recIconLastCheck;
         if (ts.TotalSeconds > 15 || forced)
         {
           bool isRecording = false;
           IVirtualCard card;
-          if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(GetChannel().Entity.idChannel, out card))
+          ChannelBLL channelBll = GetChannel();
+          if (channelBll != null && channelBll.Entity != null)
           {
-            if (g_Player.IsTVRecording)
+            if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(channelBll.Entity.idChannel, out card))
             {
-              Recording rec = TvRecorded.ActiveRecording();
-              if (rec != null)
+              if (g_Player.IsTVRecording)
               {
-                isRecording = TvRecorded.IsLiveRecording();
+                Recording rec = TvRecorded.ActiveRecording();
+                if (rec != null)
+                {
+                  isRecording = TvRecorded.IsLiveRecording();
+                }
               }
-            }
-            else
-            {
-              isRecording = true;
-            }
-          }
+              else
+              {
+                isRecording = true;
+              }
+            } 
+          }          
 
           imgRecIcon.Visible = isRecording;
-          _RecIconLastCheck = DateTime.Now;
+          _recIconLastCheck = DateTime.Now;
           Log.Info("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
         }
       }

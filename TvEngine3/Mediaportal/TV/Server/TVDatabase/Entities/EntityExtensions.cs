@@ -69,13 +69,14 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
       if (trackingItem.ChangeTracker.State != ObjectState.Added)
       {
-        foreach (PropertyInfo propertyInfo in properties)
+        FieldInfo[] fieldInfos = trackingItem.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        foreach (FieldInfo fieldInfo in fieldInfos)
         {
-          var objectWithChangeTracker = propertyInfo.GetValue(trackingItem, null) as IObjectWithChangeTracker;
+          var objectWithChangeTracker = fieldInfo.GetValue(trackingItem) as IObjectWithChangeTracker;
 
           if (objectWithChangeTracker != null && objectWithChangeTracker.ChangeTracker.State == ObjectState.Unchanged)
           {
-            propertyInfo.SetValue(trackingItem, null, null);
+            fieldInfo.SetValue(trackingItem, null);
           }
         } 
       }      
