@@ -146,7 +146,7 @@ namespace Mediaportal.TV.TvPlugin
 
     private SortMethod _currentSortMethod = SortMethod.Date;
     private DBView _currentDbView = DBView.Recordings;
-    private static Recording _oActiveRecording = null;
+    private static Recording _activeRecording = null;
     private static bool _bIsLiveRecording = false;
     private static bool _thumbCreationActive = false;
     private static bool _createRecordedThumbs = true;
@@ -640,12 +640,12 @@ namespace Mediaportal.TV.TvPlugin
 
     public static Recording ActiveRecording()
     {
-      return _oActiveRecording;
+      return _activeRecording;
     }
 
     public static void SetActiveRecording(Recording rec)
     {
-      _oActiveRecording = rec;
+      _activeRecording = rec;
       _bIsLiveRecording = IsRecordingActual(rec);
     }
 
@@ -1067,7 +1067,7 @@ namespace Mediaportal.TV.TvPlugin
       Recording rec = (Recording)pItem.TVTag;
       IEnumerable<Recording> itemlist = ServiceAgents.Instance.RecordingServiceAgent.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
 
-      _oActiveRecording = rec;
+      _activeRecording = rec;
       _bIsLiveRecording = false;      
       foreach (Recording recItem in itemlist)
       {
