@@ -927,7 +927,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         ProgramCategory category =  ServiceAgents.Instance.ProgramServiceAgent.GetProgramCategoryByName(aTag.genre);
 
-        tagRec = RecordingFactory.CreateRecording(GetChannelIdByDisplayName(aTag.channelName),
+        Channel channel = GetChannelByDisplayName(aTag.channelName);
+        int channelId = -1;
+
+        if (channel != null)
+        {
+          channelId = channel.idChannel;
+        }
+
+        tagRec = RecordingFactory.CreateRecording(channelId,
                                null,
                                false,
                                aTag.startTime,
@@ -945,6 +953,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
                                aTag.episodePart);                               
 
         tagRec.mediaType = Convert.ToInt32(aTag.mediaType);
+        tagRec.Channel = channel;
       }
       catch (Exception ex)
       {
@@ -1003,26 +1012,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       return recordingFile;
     }
 
-    private static int GetChannelIdByDisplayName(string aChannelName)
+    private static Channel GetChannelByDisplayName(string aChannelName)
     {
-      int channelId = -1;
+      Channel channel = null;
       if (string.IsNullOrEmpty(aChannelName))
       {
-        return channelId;
+        return channel;
       }
       try
       {       
-        Channel channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannelByName(aChannelName, ChannelIncludeRelationEnum.None);
-        if (channel != null)
-        {
-          channelId = channel.idChannel;
-        }
+        channel = ServiceAgents.Instance.ChannelServiceAgent.GetChannelByName(aChannelName, ChannelIncludeRelationEnum.None);        
       }
       catch (Exception ex)
       {
         MessageBox.Show(string.Format("Could not get ChannelID for DisplayName: {0}\n{1}", aChannelName, ex.Message));
       }
-      return channelId;
+      return channel;
     }
 
     #endregion
