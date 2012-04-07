@@ -279,7 +279,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
         sampleRateAllowed = false;
       }
     }
-    else if (AC3EncodingData == AUTO && (forceSamplingRateData != 48000 && forceSamplingRateData != 44100))
+    else if (AC3EncodingData == AUTO && (forceSamplingRateData != 48000 && forceSamplingRateData != 44100 && forceSamplingRateData != 0))
       Log("   Warning: Using other than 48000 hz or 44100 hz sampling rates will disable AC3 encoding!");
 
     if (sampleRateAllowed || forceSamplingRateData == 0)
