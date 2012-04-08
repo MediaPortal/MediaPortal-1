@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Video.Database
@@ -67,6 +68,7 @@ namespace MediaPortal.Video.Database
     private string _dateOfDeath = string.Empty; // New
     private string _miniBiography = string.Empty;
     private string _biography = string.Empty;
+    private string _lastUpdate = string.Empty;
     private ArrayList _movies = new ArrayList();
     
     public IMDBActor() {}
@@ -134,6 +136,12 @@ namespace MediaPortal.Video.Database
       set { _biography = value; }
     }
 
+    public string LastUpdate
+    {
+      get { return _lastUpdate; }
+      set { _lastUpdate = value; }
+    }
+
     public int Count
     {
       get { return _movies.Count; }
@@ -166,6 +174,7 @@ namespace MediaPortal.Video.Database
       _dateOfDeath = string.Empty; // New
       _miniBiography = string.Empty;
       _biography = string.Empty;
+      _lastUpdate = string.Empty;
     }
 
     public void SetProperties()
@@ -173,6 +182,10 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#Actor.Name", Name);
       GUIPropertyManager.SetProperty("#Actor.DateOfBirth", DateOfBirth);
       GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", PlaceOfBirth);
+      DateTime lastUpdate;
+      DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
+      string x = lastUpdate.ToShortDateString();
+      GUIPropertyManager.SetProperty("#Actor.LastUpdate", lastUpdate.ToShortDateString());
 
       if (DateOfDeath != Strings.Unknown)
       {

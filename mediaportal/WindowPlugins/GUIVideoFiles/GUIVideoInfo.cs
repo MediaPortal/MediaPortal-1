@@ -980,7 +980,7 @@ namespace MediaPortal.GUI.Video
           item.Label = temp[1] + " - " + temp[3]; // Actor name + role
           item.Label2 = temp[1]; // Actor name
           item.Label3 = temp[2]; // Actor IMDB Id
-
+          
           string largeThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, item.ItemId.ToString()); // Actor thumb filename
           item.IconImage = largeThumb;
           item.ThumbnailImage = largeThumb;
@@ -1005,6 +1005,25 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
+
+      if (actor != null)
+      {
+        string restriction = "7"; // Refresh every week actor info and movies
+
+        TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
+        DateTime searchDate = DateTime.Today - ts;
+        DateTime lastUpdate;
+
+        if (DateTime.TryParse(actor.LastUpdate, out lastUpdate))
+        {
+          if (searchDate > lastUpdate)
+          {
+            refresh = true;
+          }
+        }
+      }
+
+
       // Scan if no actor record or actor movies are unknown or refresh
       if (actor == null || actor.Count == 0 || refresh)
       {

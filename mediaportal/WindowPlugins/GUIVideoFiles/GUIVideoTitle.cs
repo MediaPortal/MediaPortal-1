@@ -659,6 +659,27 @@ namespace MediaPortal.GUI.Video
 
         if (actor != null)
         {
+          string restriction = "7"; // Refresh every week actor info and movies
+
+          TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
+          DateTime searchDate = DateTime.Today - ts;
+          DateTime lastUpdate;
+
+          if (DateTime.TryParse(actor.LastUpdate, out lastUpdate))
+          {
+            if (searchDate > lastUpdate)
+            {
+              if (VideoDatabase.CheckActorImdbId(actor.IMDBActorID))
+              {
+                actor = IMDBFetcher.FetchMovieActor(this, movie, actor.IMDBActorID, movie.ActorID);
+              }
+              else
+              {
+                actor = IMDBFetcher.FetchMovieActor(this, movie, actor.Name, movie.ActorID);
+              }
+            }
+          }
+
           OnVideoArtistInfo(actor);
         }
         else

@@ -35,12 +35,24 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>0</posX>
-      <posY>70</posY>
+      <posY>60</posY>
       <width>1280</width>
       <label>#Actor.Name</label>
       <font>font17</font>
       <align>center</align>
       <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Last update Value Actor data</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>90</posY>
+      <width>1280</width>
+      <label>#(L(1279))  #Actor.LastUpdate</label>
+      <font>font10</font>
+      <align>center</align>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Born Label</description>

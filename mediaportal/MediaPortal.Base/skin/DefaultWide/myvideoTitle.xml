@@ -246,7 +246,8 @@
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
-      <id>1</id>
+      <description>Default image</description>
+      <id>0</id>
       <type>image</type>
       <posX>79</posX>
       <posY>193</posY>
@@ -256,6 +257,7 @@
       <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
     </control>
     <control>
+    <description>Actual cover/image</description>
       <id>500</id>
       <type>image</type>
       <posX>79</posX>
@@ -266,14 +268,15 @@
       <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
-      <id>500</id>
+      <description>Collection banner</description>
+      <id>0</id>
       <type>image</type>
       <posX>137</posX>
       <posY>195</posY>
       <width>122</width>
       <height>122</height>
       <texture>collection.png</texture>
-      <visible>facadeview.list+Control.HasFocus(50)+string.equals(#hideinfo, true)</visible>
+      <visible>facadeview.list+Control.HasFocus(50)+string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)</visible>
     </control>
     <control>
       <type>image</type>
@@ -500,7 +503,7 @@
       <label>#groupmovielist</label>
       <font>font11</font>
       <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, true)</visible>
+      <visible>facadeview.list+control.hasfocus(50)+ string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)</visible>
     </control>
     <!-- ********** Media Info Logos (List View) ********** -->
     <control>
@@ -585,8 +588,8 @@
       <description>Born Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>195</posY>
+      <posX>285</posX>
+      <posY>187</posY>
       <label>686</label>
       <font>font10</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -596,15 +599,15 @@
       <description>Date of Birth Value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>217</posY>
-      <width>255</width>
-      <label>#Actor.DateOfBirth</label>
-      <font>font11</font>
+      <posX>285</posX>
+      <posY>206</posY>
+      <width>290</width>
+      <label>#Actor.DateOfBirth  #Actor.PlaceOfBirth</label>
+      <font>font12</font>
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
-    <control Style="NoShadow">
+    <!--control Style="NoShadow">
       <description>Place of Birth Value</description>
       <type>textboxscrollup</type>
       <id>1</id>
@@ -616,13 +619,13 @@
       <font>font11</font>
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
-    </control>
+    </control-->
     <control>
       <description>Died Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>332</posY>
+      <posX>285</posX>
+      <posY>231</posY>
       <label>1277</label>
       <font>font10</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -632,15 +635,15 @@
       <description>Date of Death Value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>354</posY>
-      <width>255</width>
-      <label>#Actor.DateOfDeath</label>
-      <font>font11</font>
+      <posX>285</posX>
+      <posY>250</posY>
+      <width>290</width>
+      <label>#Actor.DateOfDeath  #Actor.PlaceOfDeath</label>
+      <font>font12</font>
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
-    <control Style="NoShadow">
+    <!--control Style="NoShadow">
       <description>Place of Death Value</description>
       <type>textboxscrollup</type>
       <id>1</id>
@@ -652,7 +655,33 @@
       <font>font11</font>
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
+    </control-->
+    <control>
+      <description>Movies Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>285</posX>
+      <posY>275</posY>
+      <label>#(L(342)):</label>
+      <font>font10</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
+    <control>
+      <description>usergroup list value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>285</posX>
+      <posY>300</posY>
+      <width>290</width>
+      <height>150</height>
+      <label>#groupmovielist</label>
+      <font>font10</font>
+      <textcolor>ivory</textcolor>
+      <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideinfo, true)+string.equals(#hideActorinfo, False)</visible>
+    </control>
+    
+    
     <control>
       <description>Separator Line</description>
       <type>image</type>
@@ -668,7 +697,7 @@
     <control Style="NoShadow">
       <description>Actor Biography value</description>
       <type>textboxscrollup</type>
-      <id>1</id>
+      <id>777</id>
       <posX>73</posX>
       <posY>475</posY>
       <width>475</width>

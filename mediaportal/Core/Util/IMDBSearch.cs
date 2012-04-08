@@ -26,6 +26,7 @@ using System.IO;
 using System.Net;
 using MediaPortal.GUI.Library;
 using System.Web;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Util
 {
@@ -158,6 +159,15 @@ namespace MediaPortal.Util
         return;
       }
 
+      bool shortActorsListSize = true;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        if (xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short") != "Short")
+        {
+          shortActorsListSize = false;
+        }
+      }
       actorList.Clear();
 
       //string movieURL = "http://www.imdb.com/title/" + imdbMovieID + @"/fullcredits#cast";
@@ -270,6 +280,8 @@ namespace MediaPortal.Util
 
         if (mc.Count != 0)
         {
+          int actorsCount = 0;
+
           foreach (Match m in mc)
           {
             string strActorID = string.Empty;
@@ -319,6 +331,16 @@ namespace MediaPortal.Util
             if (!found && strActorID != string.Empty)
             {
               actorList.Add(strActorName + "|" + strActorID + "|" + strRole);
+            }
+
+            actorsCount++;
+            
+            if (shortActorsListSize)
+            {
+              if (actorsCount >= 15)
+              {
+                return;
+              }
             }
           }
         }

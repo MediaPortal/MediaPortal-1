@@ -1889,9 +1889,11 @@ namespace MediaPortal.Configuration.Sections
         tbTitlePrefixes.Text = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die");
 
         // Load activated databases-Changed 
-        skipCheckBox.Checked = true; // xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
-        //actorsCheckBox.Checked = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
+        skipCheckBox.Checked = true;
 
+        // Actors list fetch size
+        cbActorsListFetchSize.SelectedItem= xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short");
+        
         int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
         if (iNumber > 0)
         {
@@ -1950,6 +1952,9 @@ namespace MediaPortal.Configuration.Sections
         // Database
         xmlwriter.SetValueAsBool("moviedatabase", "scanskipexisting", skipCheckBox.Checked);
         xmlwriter.SetValueAsBool("moviedatabase", "getactors", true);
+
+        // Actors list size
+        xmlwriter.SetValue("moviedatabase", "actorslistsize", cbActorsListFetchSize.SelectedItem);
 
         xmlwriter.SetValue("moviedatabase", "number", lvDatabase.Items.Count);
         for (int i = 0; i < lvDatabase.Items.Count; i++)
@@ -4725,8 +4730,13 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private void cbActorsListFetchSize_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      SaveSettings();
+    }
+
     #endregion
-    
+
     #endregion
   }
 }
