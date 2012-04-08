@@ -194,10 +194,46 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
     return VFW_E_CANNOT_CONNECT;
   }
 
+  WAVEFORMATEXTENSIBLE* pwfxAccepted = NULL;
+  hr = IsFormatSupported(pwfx, &pwfxAccepted);
+  if (FAILED(hr))
+  {
+    SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
+    return hr;
+  }
+
+  if (bApplyChanges)
+  {
+    LogWaveFormat(pwfx, "REN - applying  ");
+
+    // Stop and discard audio client
+    StopAudioClient();
+    SAFE_RELEASE(m_pRenderClient);
+    SAFE_RELEASE(m_pAudioClock);
+    SAFE_RELEASE(m_pAudioClient);
+
+    // We must use incoming format so the WAVEFORMATEXTENSIBLE to WAVEFORMATEXT difference
+    // that some audio drivers require is not causing an infonite loop of format changes
+    SetInputFormat(pwfx);
+
+    // Reinitialize audio client
+    hr = CreateAudioClient(true);
+  }
+  else
+    LogWaveFormat(pwfx, "Input format    ");
+
+  m_chOrder = *pChOrder = DS_ORDER;
+  SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
+
+  return hr;
+}
+
+HRESULT CWASAPIRenderFilter::IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx, WAVEFORMATEXTENSIBLE** pwfxAccepted)
+{
   WAVEFORMATEXTENSIBLE* pwfxCM = NULL;
-  const WAVEFORMATEXTENSIBLE* pwfxAccepted = NULL;
-  WAVEFORMATEX* tmpPwfx = NULL; 
-  hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, (WAVEFORMATEX*)pwfx, (WAVEFORMATEX**)&pwfxCM);
+  WAVEFORMATEX* tmpPwfx = NULL;
+  
+  HRESULT hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, (WAVEFORMATEX*)pwfx, (WAVEFORMATEX**)&pwfxCM);
   if (hr != S_OK)
   {
     CopyWaveFormatEx((WAVEFORMATEXTENSIBLE**)&tmpPwfx, pwfx);
@@ -214,35 +250,14 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
 
-    WAVEFORMATEXTENSIBLE* wfe;
-    ToWaveFormatExtensible(&wfe, tmpPwfx);
+    ToWaveFormatExtensible(pwfxAccepted, tmpPwfx);
+    (*pwfxAccepted)->Format.cbSize = 0;
+    (*pwfxAccepted)->Format.wFormatTag = WAVE_FORMAT_PCM;
 
-    pwfxAccepted = wfe;
+    SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
   }
   else
-    pwfxAccepted = pwfx;
-  
-  if (bApplyChanges)
-  {
-    LogWaveFormat(pwfx, "REN - applying ");
-
-    // Stop and discard audio client
-    StopAudioClient();
-    SAFE_RELEASE(m_pRenderClient);
-    SAFE_RELEASE(m_pAudioClock); // locking might be needed
-    SAFE_RELEASE(m_pAudioClient);
-
-    SetInputFormat(pwfxAccepted);
-    // Reinitialize audio client
-    hr = CreateAudioClient(true);
-  }
-  else
-    LogWaveFormat(pwfx, "REN -          ");
-
-
-  SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
-
-  m_chOrder = *pChOrder = DS_ORDER;
+    CopyWaveFormatEx(pwfxAccepted, pwfx);
 
   return hr;
 }
@@ -1272,22 +1287,24 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
     }
   }
 
-  WAVEFORMATEX *pwfxCM = NULL;
-  hr = m_pAudioClient->IsFormatSupported(m_pSettings->m_WASAPIShareMode, (WAVEFORMATEX*)m_pInputFormat, &pwfxCM);    
+  WAVEFORMATEXTENSIBLE* pwfxAccepted = NULL;
+  hr = IsFormatSupported(m_pInputFormat, &pwfxAccepted);
   if (FAILED(hr))
-    Log("WASAPIRenderFilter::InitAudioClient not supported (0x%08x)", hr);
-  else
-    Log("WASAPIRenderFilter::InitAudioClient format supported");
+  {
+    SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
+    return hr;
+  }
 
-  GetBufferSize((WAVEFORMATEX*)m_pInputFormat, &m_pSettings->m_hnsPeriod);
+  GetBufferSize((WAVEFORMATEX*)pwfxAccepted, &m_pSettings->m_hnsPeriod);
 
   if (SUCCEEDED(hr))
     hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags,
-	                                m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)m_pInputFormat, NULL);
+	                                m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)pwfxAccepted, NULL);
 
   if (FAILED(hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
   {
     Log("WASAPIRenderFilter::InitAudioClient Initialize failed (0x%08x)", hr);
+    SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
     return hr;
   }
 
@@ -1329,11 +1346,12 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
 
     if (SUCCEEDED (hr)) 
       hr = m_pAudioClient->Initialize(m_pSettings->m_WASAPIShareMode, m_dwStreamFlags, 
-	                                    m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)m_pInputFormat, NULL);
+	                                    m_pSettings->m_hnsPeriod, m_pSettings->m_hnsPeriod, (WAVEFORMATEX*)pwfxAccepted, NULL);
  
     if (FAILED(hr))
     {
       Log("WASAPIRenderFilter::InitAudioClient Failed to reinitialize the audio client");
+      SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
       return hr;
     }
     else
@@ -1366,6 +1384,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
     if (FAILED(hr))
     {
       Log("WASAPIRenderFilter::InitAudioClient SetEventHandle failed (0x%08x)", hr);
+      SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
       return hr;
     }
   }
@@ -1382,6 +1401,7 @@ HRESULT CWASAPIRenderFilter::InitAudioClient()
 
   m_bDeviceInitialized = true;
 
+  SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
   return hr;
 }
 

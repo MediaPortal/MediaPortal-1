@@ -260,8 +260,9 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
     {
       LogWaveFormat(wfe, "CheckMediaType  ");
       hr = m_pPipeline->NegotiateFormat(wfe, 0, &chOrder);
-      delete wfe;
     }
+    
+    SAFE_DELETE_WAVEFORMATEX(wfe);
     return hr;
   }
 }
@@ -343,7 +344,8 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
       pmt->pbFormat = (BYTE*)CoTaskMemAlloc(sizeof(WAVEFORMATEXTENSIBLE));
       memcpy(pmt->pbFormat, wfe, sizeof(WAVEFORMATEXTENSIBLE));
       pSample->SetMediaType(pmt);
-      delete wfe;
+
+      SAFE_DELETE_WAVEFORMATEX(wfe);
     }
   }
 
@@ -424,6 +426,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
         else
           Log("CMPAudioRenderer::SetMediaType - failed to create media type: (0x%08x)", result);
       }
+      SAFE_DELETE_WAVEFORMATEX(wfe);
     }
     else
       return hr;

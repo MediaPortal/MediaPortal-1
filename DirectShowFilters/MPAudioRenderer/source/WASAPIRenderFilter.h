@@ -92,7 +92,7 @@ private:
   void ResetClockData();
   void UpdateAudioClock();
 
-  HRESULT CheckAudioClient(WAVEFORMATEX* pWaveFormatEx);
+  HRESULT IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx, WAVEFORMATEXTENSIBLE** pwfxAccepted);
   HRESULT CheckSample(IMediaSample* pSample, UINT32 framesToFlush);
   HRESULT CheckStreamTimeline(IMediaSample* pSample, REFERENCE_TIME* pDueTime, UINT32 sampleOffset);
   HRESULT GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, REFERENCE_TIME* pHnsBufferPeriod);
