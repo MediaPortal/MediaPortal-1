@@ -85,6 +85,8 @@ namespace MediaPortal.GUI.Music
 
       BTN_LASTFM_LOVE = 30,
       BTN_LASTFM_BAN = 31,
+      BTN_SHUFFLE = 32,
+      BTN_REPEAT = 33,
 
       LIST_TAG_INFO = 155,
       LIST_ALBUM_INFO = 166,
@@ -153,6 +155,9 @@ namespace MediaPortal.GUI.Music
     [SkinControl((int)ControlIDs.LBL_FORCE_FOCUS)] protected GUILabelControl lblForceFocus = null;
     [SkinControl((int)ControlIDs.BTN_LASTFM_LOVE)] protected GUIButtonControl btnLastFMLove = null;
     [SkinControl((int)ControlIDs.BTN_LASTFM_BAN)] protected GUIButtonControl btnLastFMBan = null;
+    [SkinControl((int)ControlIDs.BTN_SHUFFLE)] protected GUIButtonControl BtnShuffle = null;
+    [SkinControl((int)ControlIDs.BTN_REPEAT)] protected GUIButtonControl BtnRepeat = null;
+
 
     #endregion
 
@@ -681,6 +686,16 @@ namespace MediaPortal.GUI.Music
       if (control == btnLastFMBan)
       {
         DoLastFMBan();
+      }
+      if (control == BtnRepeat)
+      {
+        GUIMusicBaseWindow.TogglePlayListRepeat();
+      }
+      if (control == BtnShuffle)
+      {
+        Log.Info("ShufflePlaylist: Now Playing");
+        _MusicWindow = (MediaPortal.GUI.Music.GUIMusicBaseWindow) GUIWindowManager.GetWindow(504);
+        _MusicWindow.ShufflePlaylist(PlayListType.PLAYLIST_MUSIC);
       }
     }
 

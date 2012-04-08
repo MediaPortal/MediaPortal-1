@@ -402,11 +402,6 @@ namespace MediaPortal.GUI.Music
       }
       _showArtist = string.Empty;
 
-      using (Profile.Settings settings = new Profile.MPSettings())
-      {
-        playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
-      }
-
       // When we return from Fullscreen Music (the Visualisation screen), the page is reloaded again
       // The currently playing item will not be focused.
       // So we check here, if we have something playing and will focus the item

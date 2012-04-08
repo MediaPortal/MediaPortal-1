@@ -68,6 +68,7 @@ namespace MediaPortal.GUI.Music
     protected MusicSort.SortMethod currentSortMethod = MusicSort.SortMethod.Name;
     protected string m_strPlayListPath = string.Empty;
     private bool _autoShuffleOnLoad = false;
+    protected static bool RepeatPlaylist = false;
 
     protected MusicDatabase m_database;
 
@@ -101,7 +102,7 @@ namespace MediaPortal.GUI.Music
 
     private static string[] _sortTags1 = new string[20];
     private static string[] _sortTags2 = new string[20];
-    protected PlayListPlayer playlistPlayer;
+    protected static PlayListPlayer playlistPlayer;
 
     protected PlayNowJumpToType PlayNowJumpTo = PlayNowJumpToType.None;
     protected bool UsingInternalMusicPlayer = false;
@@ -369,6 +370,16 @@ namespace MediaPortal.GUI.Music
       if (action.wID == Action.ActionType.ACTION_ADD_TO_PLAYLIST)
       {
         AddSelectionToPlaylist();
+        return;
+      }
+      if (action.wID == Action.ActionType.ACTION_SHUFFLE_PLAYLIST)
+      {
+        ShufflePlaylist(GetPlayListType());
+        return;
+      }
+      if (action.wID == Action.ActionType.ACTION_TOGGLE_PLAYLIST_REPEAT)
+      {
+        TogglePlayListRepeat();
         return;
       }
       base.OnAction(action);
@@ -2112,6 +2123,58 @@ namespace MediaPortal.GUI.Music
       }
 
       DoPlayNowJumpTo(pItems.Count);
+    }
+
+    public virtual void ShufflePlaylist(PlayListType playListType)
+    {
+      Log.Info("ShufflePlaylist: GUIMusicBase");
+      //TODO:  need to be able to call this from now playing code which does not inherit from here
+      PlayList playlist = playlistPlayer.GetPlaylist(playListType);
+
+      if (playlist.Count <= 0)
+      {
+        return;
+      }
+      string strFileName = string.Empty;
+      if (playlistPlayer.CurrentSong >= 0)
+      {
+        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == playListType)
+        {
+          PlayListItem item = playlist[playlistPlayer.CurrentSong];
+          strFileName = item.FileName;
+        }
+      }
+      playlist.Shuffle();
+      if (playlistPlayer.CurrentPlaylistType == playListType)
+      {
+        playlistPlayer.Reset();
+      }
+
+      if (strFileName.Length > 0)
+      {
+        for (int i = 0; i < playlist.Count; i++)
+        {
+          PlayListItem item = playlist[i];
+          if (item.FileName == strFileName)
+          {
+            // Swap the current playing item with item #0
+            // So that the current playing song is always the first song on the first page and we don#t loose any songs
+            PlayListItem item0 = playlist[0];
+            playlist[0] = item;
+            playlist[i] = item0;
+            playlistPlayer.CurrentSong = 0;
+          }
+        }
+      }      
+    }
+
+    /// <summary>
+    /// Toggle whether playlist is to be repeated or not
+    /// </summary>
+    public static void TogglePlayListRepeat()
+    {
+      RepeatPlaylist = !RepeatPlaylist;
+      playlistPlayer.RepeatPlaylist = RepeatPlaylist;
     }
 
     void playlistPlayer_PlaylistChanged(PlayListType nPlayList, PlayList playlist)

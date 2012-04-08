@@ -117,7 +117,6 @@ namespace MediaPortal.GUI.Music
         _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
         _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
         _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
-        playlistPlayer.RepeatPlaylist = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
       }
 
       if (_resumePlaylistOnEnter)
@@ -332,7 +331,7 @@ namespace MediaPortal.GUI.Music
 
       if (btnRepeatPlaylist != null)
       {
-        btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
+        btnRepeatPlaylist.Selected = RepeatPlaylist;
       }
 
       SelectCurrentPlayingSong();
@@ -346,7 +345,7 @@ namespace MediaPortal.GUI.Music
       m_iItemSelected = facadeLayout.SelectedListItemIndex;
       using (Profile.Settings settings = new Profile.MPSettings())
       {
-        settings.SetValueAsBool("musicfiles", "repeat", playlistPlayer.RepeatPlaylist);
+        settings.SetValueAsBool("musicfiles", "repeat", RepeatPlaylist);
       }
       HideWaitCursor();
       base.OnPageDestroy(newWindowId);
@@ -488,7 +487,7 @@ namespace MediaPortal.GUI.Music
 
       if (control == btnShuffle)
       {
-        ShufflePlayList();
+        ShufflePlaylist(GetPlayListType());
       }
       else if (control == btnSave)
       {
@@ -518,7 +517,7 @@ namespace MediaPortal.GUI.Music
       }
       else if ((btnRepeatPlaylist != null) && (control == btnRepeatPlaylist))
       {
-        playlistPlayer.RepeatPlaylist = btnRepeatPlaylist.Selected;
+        RepeatPlaylist = btnRepeatPlaylist.Selected;
       }
     }
 
@@ -870,46 +869,10 @@ namespace MediaPortal.GUI.Music
       SelectCurrentPlayingSong();
     }
 
-    private void ShufflePlayList()
+    public override void ShufflePlaylist(PlayListType playListType)
     {
       ClearFileItems();
-      PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-
-      if (playlist.Count <= 0)
-      {
-        return;
-      }
-      string strFileName = string.Empty;
-      if (playlistPlayer.CurrentSong >= 0)
-      {
-        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-        {
-          PlayListItem item = playlist[playlistPlayer.CurrentSong];
-          strFileName = item.FileName;
-        }
-      }
-      playlist.Shuffle();
-      if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
-      {
-        playlistPlayer.Reset();
-      }
-
-      if (strFileName.Length > 0)
-      {
-        for (int i = 0; i < playlist.Count; i++)
-        {
-          PlayListItem item = playlist[i];
-          if (item.FileName == strFileName)
-          {
-            // Swap the current playing item with item #0
-            // So that the current playing song is always the first song on the first page and we don#t loose any songs
-            PlayListItem item0 = playlist[0];
-            playlist[0] = item;
-            playlist[i] = item0;
-            playlistPlayer.CurrentSong = 0;
-          }
-        }
-      }
+      base.ShufflePlaylist(playListType);
       LoadFacade();
       SelectCurrentPlayingSong();
     }
