@@ -183,11 +183,9 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
        (sampleRateForced && m_pSettings->m_nForceSamplingRate != pwfx->Format.nSamplesPerSec)))
     return VFW_E_TYPE_NOT_ACCEPTED;
 
-  HRESULT hr = VFW_E_CANNOT_CONNECT;
-
   CAutoLock lock(&m_csResources);
 
-  hr = CreateAudioClient();
+  HRESULT hr = CreateAudioClient();
   if (FAILED(hr))
   {
     Log("CWASAPIRenderFilter::NegotiateFormat Error, audio client not initialized: (0x%08x)", hr);
@@ -811,7 +809,7 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
   {
     it->Sample->GetTime(&rtStart, &rtStop);
     rtDuration += rtStop - rtStart;
-    it++;
+    ++it;
   }
 
   if (m_pCurrentSample.p)
