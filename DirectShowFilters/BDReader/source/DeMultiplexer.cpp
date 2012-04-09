@@ -1698,9 +1698,9 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
     {
       m_bUpdateSubtitleOffset = false;
 
-      CRefTime refTime = -m_rtOffset * 1000 / 9;
+      CRefTime refTime = -CONVERT_90KHz_DS(m_rtOffset);
         
-      LogDebug("demux: Set subtitle compensation %03.3f", refTime.Millisecs() / 1000.0f);
+      LogDebug("demux: Set subtitle compensation %6.3f", refTime.Millisecs() / 1000.0f);
       pDVBSubtitleFilter->SetTimeCompensation(refTime);
     }    
   }
