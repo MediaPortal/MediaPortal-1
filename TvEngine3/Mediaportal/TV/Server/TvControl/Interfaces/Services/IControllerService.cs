@@ -24,7 +24,9 @@ using System.IO;
 using System.ServiceModel;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.VideoStream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -46,6 +48,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   [ServiceKnownType(typeof(ATSCChannel))]
   [ServiceKnownType(typeof(DVBIPChannel))]
   [ServiceKnownType(typeof(AnalogChannel))]
+  [ServiceKnownType(typeof(DVBAudioStream))]
+  [ServiceKnownType(typeof(VideoStream))]
   public interface IControllerService
   {
     #region internal interface
@@ -652,7 +656,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="user">The user.</param>
     /// <returns>List containing all audio streams</returns>
     [OperationContract]
-    IEnumerable<IAudioStream> AvailableAudioStreams(IUser user);
+    IList<IAudioStream> AvailableAudioStreams(IUser user);
 
     #endregion
 

@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.ServiceAgents;
 
 namespace Mediaportal.TV.TvPlugin
 {
@@ -49,7 +50,7 @@ namespace Mediaportal.TV.TvPlugin
       base.OnPageLoad();
       GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelName", TVHome.Card.ChannelName);
       GUIPropertyManager.SetProperty("#TV.TuningDetails.RTSPURL", TVHome.Card.RTSPUrl);
-      Channel chan = TVHome.Navigator.Channel.Entity;
+      Channel chan = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(TVHome.Navigator.Channel.Entity.idChannel);
       if (chan != null)
       {
         try
@@ -132,12 +133,15 @@ namespace Mediaportal.TV.TvPlugin
           IEnumerable<IAudioStream> audioStreams = TVHome.Card.AvailableAudioStreams;
 
           String audioPids = String.Empty;
-          String videoPid = String.Empty;		  
+          String videoPid = String.Empty;
 
-          foreach (IAudioStream stream in audioStreams)
+          if (audioStreams != null)
           {
-            audioPids += stream.Pid + " (" + stream.StreamType + ") ";
-          }
+            foreach (IAudioStream stream in audioStreams)
+            {
+              audioPids += stream.Pid + " (" + stream.StreamType + ") ";
+            } 
+          }          
 		  
           videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
 

@@ -2141,7 +2141,7 @@ namespace Mediaportal.TV.Server.TVService
 
     #region audio streams
 
-    public IEnumerable<IAudioStream> AvailableAudioStreams(IUser user)
+    public IList<IAudioStream> AvailableAudioStreams(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return null;

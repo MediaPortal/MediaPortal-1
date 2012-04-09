@@ -779,7 +779,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>List containing all audio streams</returns>
-    public IEnumerable<IAudioStream> AvailableAudioStreams(IUser user)
+    public IList<IAudioStream> AvailableAudioStreams(IUser user)
     {
       return Service.AvailableAudioStreams(user);
     }
