@@ -46,6 +46,7 @@ public:
   bool m_bUseWASAPI;
   bool m_bWASAPIUseEventMode;
   bool m_bUseTimeStretching;
+  bool m_bExpandMonoToStereo;
   int  m_lAC3Encoding;
   
   bool m_bQuality_USE_QUICKSEEK;

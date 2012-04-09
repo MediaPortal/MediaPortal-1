@@ -56,10 +56,11 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lSpeakerCount(2),
   m_lSpeakerConfig(SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT),
   m_bForceChannelMixing(false),
-  m_bReleaseDeviceOnStop(false)
+  m_bReleaseDeviceOnStop(false),
+  m_bExpandMonoToStereo(true)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.997");
+  Log("MP Audio Renderer - v0.998");
 
   LoadSettingsFromRegistry();
 }
@@ -108,6 +109,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR speakerConfig = TEXT("SpeakerConfig");
   LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
   LPCTSTR releaseDeviceOnStop = TEXT("ReleaseDeviceOnStop");
+  LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
@@ -130,6 +132,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD speakerConfigData = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
   DWORD forceChannelMixingData = 0;
   DWORD releaseDeviceOnStopData = 0;
+  DWORD expandMonoToStereoData = 1;
   DWORD quality_USE_QUICKSEEKData = 0;
   DWORD quality_USE_AA_FILTERData = 0;
   DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
@@ -178,6 +181,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
     ReadRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
     ReadRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
+    ReadRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
 
     // SoundTouch quality settings
     ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
@@ -208,6 +212,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   SpeakerConfig:            %d", speakerConfigData);
     Log("   ForceChannelMixing:       %d", forceChannelMixingData);
     Log("   ReleaseDeviceOnStop:      %d", releaseDeviceOnStopData);
+    Log("   ExpandMonoToStereo:       %d", expandMonoToStereoData);
     Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
     Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
     Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
@@ -236,6 +241,11 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_bWASAPIUseEventMode = true;
     else
       m_bWASAPIUseEventMode = false;
+
+    if (expandMonoToStereoData > 0)
+      m_bExpandMonoToStereo = true;
+    else
+      m_bExpandMonoToStereo = false;
 
     if (AC3EncodingData == DISABLED || AC3EncodingData == AUTO || AC3EncodingData == FORCED)
       m_lAC3Encoding = AC3EncodingData;
@@ -393,6 +403,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
       WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
       WriteRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
+      WriteRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
       WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
       WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
       WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);

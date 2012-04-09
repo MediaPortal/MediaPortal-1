@@ -72,8 +72,9 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
     return VFW_E_TYPE_NOT_ACCEPTED;
 
   HRESULT hr = S_OK;
+  bool expandToStereo = pwfx->Format.nChannels == 1 && m_pSettings->m_bExpandMonoToStereo;
 
-  if (!m_pSettings->m_bForceChannelMixing)
+  if (!m_pSettings->m_bForceChannelMixing && !expandToStereo)
   {
     // try the format directly
     hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth, pChOrder);
@@ -95,9 +96,18 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
 
-  pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
-  pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
-  pOutWfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+  if (!expandToStereo || m_pSettings->m_bForceChannelMixing)
+  {
+    pOutWfx->dwChannelMask = m_pSettings->m_lSpeakerConfig;
+    pOutWfx->Format.nChannels = m_pSettings->m_lSpeakerCount;
+  }
+  else // Expand mono to stereo
+  {
+    pOutWfx->dwChannelMask = KSAUDIO_SPEAKER_STEREO;
+    pOutWfx->Format.nChannels = 2;
+  }
+
+  pOutWfx->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;  
   pOutWfx->Format.nBlockAlign = pOutWfx->Format.wBitsPerSample / 8 * pOutWfx->Format.nChannels;
   pOutWfx->Format.nAvgBytesPerSec = pOutWfx->Format.nBlockAlign * pOutWfx->Format.nSamplesPerSec;
   
