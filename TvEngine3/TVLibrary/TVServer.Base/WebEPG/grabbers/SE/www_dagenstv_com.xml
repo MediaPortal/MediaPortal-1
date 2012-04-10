@@ -117,7 +117,6 @@
     <Channel id="DisneyXD.tv" siteId="224" />
     <Channel id="eentertainment.com" siteId="225" />
     <Channel id="action@canalplus.no" siteId="227" />
-    <Channel id="hd@canalplus.no" siteId="229" />
     <Channel id="fakta@tv4.se" siteId="230" />
     <Channel id="di.tv" siteId="231" />
     <Channel id="silver.no" siteId="241" />
@@ -151,7 +150,7 @@
     <Channel id="series@canalplus.se" siteId="298" />
     <Channel id="sportextra@canalplus.se" siteId="299" />
     <Channel id="fotbollhd@viasatsport.se" siteId="300" />
-    <Channel id="hd@tv1000.se" siteId="301" />
+    <!--<Channel id="hd@tv1000.se" siteId="301" /> Empty channel -->
     <Channel id="eurosport.co.uk" siteId="302" />
     <Channel id="thehistorychannel.co.uk" siteId="303" />
     <Channel id="scifi@tv4.se" siteId="305" />
@@ -187,6 +186,9 @@
     <Channel id="wildtv.ca" siteId="401" />
     <Channel id="wildhd@natgeotv.com" siteId="403" />
     <Channel id="family@canalplus.se" siteId="405" />
+    <!--<Channel id="firsthd@canalplus.se" siteId="406" /> Empty channel -->
+    <!--<Channel id="hitshd@canalplus.se" siteId="407" /> Empty channel -->
+    <Channel id="news@tv4.se" siteId="410" />
     <Channel id="tv2charlie@tv2.dk" siteId="906" />
     <Channel id="dk4.dk" siteId="908" />
     <!--<Channel id="nick.co.uk" siteId="909" /> Conflicting name -->
