@@ -80,7 +80,7 @@
       StrCpy $R0 0
       ${Do}
         ${If} $R0 > 0
-          ${LOG_TEXT} "INFO" "StopService: sleeping 20ms and recheking service status..."
+          ${LOG_TEXT} "INFO" "StopService: sleeping 20ms and rechecking service status..."
           Sleep 20
         ${EndIF}
 
