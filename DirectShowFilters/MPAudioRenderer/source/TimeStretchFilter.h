@@ -128,7 +128,7 @@ private:
   vector<HANDLE> m_hSampleEvents;
   vector<DWORD>  m_dwSampleWaitObjects;
 
-  AM_MEDIA_TYPE* m_pPMT;
+  AM_MEDIA_TYPE* m_pMediaType;
   REFERENCE_TIME m_rtInSampleTime;
   REFERENCE_TIME m_rtNextIncomingSampleTime;
 
@@ -139,7 +139,6 @@ private:
   double m_fCurrentAdjustment;
   double m_fNewTempo;
   double m_fNewAdjustment;
-  int m_nFramesCarriedOver;
 
   CCritSec m_allocatorLock;
 

@@ -38,11 +38,10 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_fNewAdjustment(1.0),
   m_fCurrentAdjustment(1.0),
   m_fNewTempo(1.0),
-  m_pPMT(NULL),
+  m_pMediaType(NULL),
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
   m_pClock(pClock),
-  m_nFramesCarriedOver(0),
   m_bResamplingRequested(false),
   m_bResetFirstSample(true)
 {
@@ -57,7 +56,7 @@ CTimeStretchFilter::~CTimeStretchFilter(void)
 
   CAutoLock lock(&m_csResources);
   SetFormat(NULL);
-  DeleteMediaType(m_pPMT);
+  DeleteMediaType(m_pMediaType);
 
   Log("CTimeStretchFilter - destructor - instance 0x%x - end", this);
 }
@@ -142,6 +141,15 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   if (bApplyChanges)
   {
     LogWaveFormat(pwfx, "TS   - applying ");
+
+    AM_MEDIA_TYPE tmp;
+    HRESULT result = CreateAudioMediaType((WAVEFORMATEX*)pwfx, &tmp, true);
+    if (SUCCEEDED(result))
+    {
+      if (m_pMediaType)
+        DeleteMediaType(m_pMediaType);
+      m_pMediaType = CreateMediaType(&tmp);
+    }
 
     SetInputFormat(pwfx);
     SetOutputFormat(pwfx);
@@ -367,8 +375,8 @@ DWORD CTimeStretchFilter::ThreadProc()
 
         if (CheckSample(sample) == S_FALSE)
         {
-          DeleteMediaType(m_pPMT);
-          sample->GetMediaType(&m_pPMT);
+          DeleteMediaType(m_pMediaType);
+          sample->GetMediaType(&m_pMediaType);
           initStreamTime = true;
         }
 
@@ -401,6 +409,12 @@ DWORD CTimeStretchFilter::ThreadProc()
             m_rtNextIncomingSampleTime = rtStart;
 
             flush();
+            if (m_pNextOutSample)
+            {
+              hr = OutputNextSample();
+              if (FAILED(hr))
+                Log("CTimeStretchFilter - flushing - failed to output next sample: 0x%08x", hr);
+            }
           }
 
           UINT nFrames = size / m_pInputFormat->Format.nBlockAlign;
@@ -427,50 +441,61 @@ DWORD CTimeStretchFilter::ThreadProc()
           unprocessedSamplesAfter = numUnprocessedSamples();
 
           UINT32 nOutFrames = numSamples();
+          UINT32 nOutFramesTotal = 0;
+          int maxBufferFrames = DEFAULT_OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
+          int maxBuffer = DEFAULT_OUT_BUFFER_SIZE;
 
-          if (nOutFrames > 0)
+          while (nOutFrames > 0)
           {
             // try to get an output buffer if none available
             if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer(m_rtInSampleTime)))
-              Log("CTimeStretchFilter::timestretch thread - Failed to get next output sample!");
-
-            if (m_pNextOutSample)
             {
-              BYTE *pMediaBufferOut = NULL;
-              m_pNextOutSample->GetPointer(&pMediaBufferOut);
+              Log("CTimeStretchFilter::timestretch thread - Failed to get next output sample!");
+              break;
+            }
+
+            BYTE* pOutData = NULL;
+            m_pNextOutSample->GetPointer(&pOutData);
               
-              if (pMediaBufferOut)
+            if (pOutData)
+            {
+              UINT32 nOffset = m_pNextOutSample->GetActualDataLength();
+              UINT32 nOffsetInFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+                
+              if (nOutFrames > maxBufferFrames - nOffsetInFrames)
+                nOutFrames = maxBufferFrames - nOffsetInFrames;
+
+              m_pNextOutSample->SetActualDataLength(nOffset + nOutFrames * m_pOutputFormat->Format.nBlockAlign);
+              pOutData += nOffset;
+              receiveSamplesInternal((short*)pOutData, nOutFrames);
+              nOutFramesTotal += nOutFrames;
+
+              if (m_pMediaType)
+                m_pNextOutSample->SetMediaType(m_pMediaType);
+
+              //Log(m_pClock->DebugData());
+
+              UINT32 sampleLen = m_pNextOutSample->GetActualDataLength();
+              if (sampleLen + m_pOutputFormat->Format.nBlockAlign > maxBuffer)
               {
-                int extraFrames = 0;
-                int maxBufferSamples = DEFAULT_OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
-                if (nOutFrames > maxBufferSamples)
-                {
-                  extraFrames = nOutFrames - maxBufferSamples;
-                  nOutFrames = maxBufferSamples;
-                }
-                m_pNextOutSample->SetActualDataLength(nOutFrames * m_pOutputFormat->Format.nBlockAlign);
-                receiveSamplesInternal((short*)pMediaBufferOut, nOutFrames);
-                //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
-
-                if (m_pPMT)
-                  m_pNextOutSample->SetMediaType(m_pPMT);
-
-                UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
-                double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-                double rtProcessedSampleDuration = (double)(nOutFrames + extraFrames - m_nFramesCarriedOver) * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
-
-                m_nFramesCarriedOver = extraFrames;
-
-                m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
-                //Log(m_pClock->DebugData());
-
                 hr = OutputNextSample();
-                m_rtInSampleTime += nOutFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+                m_rtInSampleTime += sampleLen / m_pOutputFormat->Format.nBlockAlign * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
 
                 if (FAILED(hr))
                   Log("CTimeStretchFilter::timestretch thread OutputNextSample failed with: 0x%08x", hr);
               }
+
+              nOutFrames = numSamples();
             }
+          }
+
+          if (nOutFramesTotal > 0)
+          {
+            UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
+            double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+            double rtProcessedSampleDuration = (double)(nOutFramesTotal) * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
+
+            m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
           }
         }
       }
@@ -498,7 +523,6 @@ void CTimeStretchFilter::clear()
     for(int i = 0; i < m_Streams->size(); i++) 
       m_Streams->at(i)->clear(); 
   } 
-  m_nFramesCarriedOver = 0;
 }
 
 // flush requires a specific handling since we need to be able to use the CAutoLock
@@ -510,7 +534,6 @@ void CTimeStretchFilter::flush()
     for(int i = 0; i < m_Streams->size(); i++) 
       m_Streams->at(i)->flush(); 
   }
-  m_nFramesCarriedOver = 0;
 }
 
 void CTimeStretchFilter::setTempo(float newTempo, float newAdjustment)
