@@ -1056,12 +1056,12 @@ namespace MediaPortal.GUI.Music
         case MusicSort.SortMethod.Year:
           if (CurrentLevelWhere != "year")
           {
-            item.Label2 = tag.Year.ToString();
+            item.Label2 = tag.Year >= 1900 ? tag.Year.ToString() : string.Empty;
           }
           break;
         case MusicSort.SortMethod.DiscID:
           item.Label = tag.Album;
-          item.Label2 = tag.DiscID.ToString();
+          item.Label2 = tag.DiscID > 0 ? tag.DiscID.ToString() : string.Empty;
           break;
         default:
           item.Label2 = string.Empty;

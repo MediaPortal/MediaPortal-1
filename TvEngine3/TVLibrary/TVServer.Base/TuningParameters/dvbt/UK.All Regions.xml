@@ -1,247 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
-    <Frequency>474000</Frequency>
+    <Frequency>474000</Frequency><!-- C21 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>482000</Frequency>
+    <Frequency>482000</Frequency><!-- C22 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>490000</Frequency>
+    <Frequency>490000</Frequency><!-- C23 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>498000</Frequency>
+    <Frequency>498000</Frequency><!-- C24 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>506000</Frequency>
+    <Frequency>506000</Frequency><!-- C25 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>514000</Frequency>
+    <Frequency>514000</Frequency><!-- C26 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>522000</Frequency>
+    <Frequency>522000</Frequency><!-- C27 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>530000</Frequency>
+    <Frequency>530000</Frequency><!-- C28 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>538000</Frequency>
+    <Frequency>538000</Frequency><!-- C29 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>546000</Frequency>
+    <Frequency>546000</Frequency><!-- C30 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>554000</Frequency>
+    <Frequency>554000</Frequency><!-- C31 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>562000</Frequency>
+    <Frequency>562000</Frequency><!-- C32 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>570000</Frequency>
+    <Frequency>570000</Frequency><!-- C33 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>578000</Frequency>
+    <Frequency>578000</Frequency><!-- C34 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>586000</Frequency>
+    <Frequency>586000</Frequency><!-- C35 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>594000</Frequency>
+    <Frequency>594000</Frequency><!-- C36 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>602000</Frequency>
+    <Frequency>602000</Frequency><!-- C37 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>610000</Frequency>
+    <Frequency>610000</Frequency><!-- C38 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>618000</Frequency>
+    <Frequency>618000</Frequency><!-- C39 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>626000</Frequency>
+    <Frequency>626000</Frequency><!-- C40 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>634000</Frequency>
+    <Frequency>634000</Frequency><!-- C41 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>642000</Frequency>
+    <Frequency>642000</Frequency><!-- C42 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>650000</Frequency>
+    <Frequency>650000</Frequency><!-- C43 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>658000</Frequency>
+    <Frequency>658000</Frequency><!-- C44 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>666000</Frequency>
+    <Frequency>666000</Frequency><!-- C45 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>674000</Frequency>
+    <Frequency>674000</Frequency><!-- C46 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>682000</Frequency>
+    <Frequency>682000</Frequency><!-- C47 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>690000</Frequency>
+    <Frequency>690000</Frequency><!-- C48 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>698000</Frequency>
+    <Frequency>698000</Frequency><!-- C49 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>706000</Frequency>
+    <Frequency>706000</Frequency><!-- C50 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>714000</Frequency>
+    <Frequency>714000</Frequency><!-- C51 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>722000</Frequency>
+    <Frequency>722000</Frequency><!-- C52 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>730000</Frequency>
+    <Frequency>730000</Frequency><!-- C53 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>738000</Frequency>
+    <Frequency>738000</Frequency><!-- C54 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>746000</Frequency>
+    <Frequency>746000</Frequency><!-- C55 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>754000</Frequency>
+    <Frequency>754000</Frequency><!-- C56 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>762000</Frequency>
+    <Frequency>762000</Frequency><!-- C57 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>770000</Frequency>
+    <Frequency>770000</Frequency><!-- C58 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>778000</Frequency>
+    <Frequency>778000</Frequency><!-- C59 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>786000</Frequency>
+    <Frequency>786000</Frequency><!-- C60 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>794000</Frequency>
+    <Frequency>794000</Frequency><!-- C61 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>802000</Frequency>
+    <Frequency>802000</Frequency><!-- C62 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>810000</Frequency>
+    <Frequency>810000</Frequency><!-- C63 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>818000</Frequency>
+    <Frequency>818000</Frequency><!-- C64 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>826000</Frequency>
+    <Frequency>826000</Frequency><!-- C65 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>834000</Frequency>
+    <Frequency>834000</Frequency><!-- C66 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>842000</Frequency>
+    <Frequency>842000</Frequency><!-- C67 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>850000</Frequency>
+    <Frequency>850000</Frequency><!-- C68 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>858000</Frequency>
+    <Frequency>858000</Frequency><!-- C69 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>

@@ -19,16 +19,12 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Drawing;
-using System.IO;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
-using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -78,6 +74,7 @@ namespace MediaPortal.GUI.Music
     private bool _visualisationEnabled = true;
     private bool _stripArtistPrefixes = false;
     private bool _settingVisEnabled = true;
+    protected bool _playlistIsCurrent;
     private PlayListPlayer playlistPlayer;
 
     #endregion
@@ -100,10 +97,13 @@ namespace MediaPortal.GUI.Music
         _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", false) && _useBassEngine;
         _visualisationEnabled = _settingVisEnabled;
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        _playlistIsCurrent = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
       }
 
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackEnded += OnPlayBackEnded;
+
+      playlistPlayer.PlaylistChanged += OnPlaylistChanged;
     }
 
     #endregion
@@ -692,6 +692,28 @@ namespace MediaPortal.GUI.Music
       GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
     }
 
+    private void OnPlaylistChanged(PlayListType nPlayList, PlayList playlist)
+    {
+      // changes to the current track are dealt with by g_player events
+      // but user can udpate the playlist without firing g_player events
+      // make sure the next track details shown are correct
+      if ((_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC) ||
+          (!_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC_TEMP))
+      {
+        var nextFilename = playlistPlayer.GetNext();
+        if (!string.IsNullOrEmpty(nextFilename))
+        {
+          var tag = GetTag(nextFilename);
+          SetNextSkinProperties(tag, nextFilename);
+        }
+        else
+        {
+          SetNextSkinProperties(null, string.Empty);
+        }
+      }
+    }
+
+
     private void DoOnStarted(g_Player.MediaType type, string filename)
     {
       var isInternetStream = Util.Utils.IsAVStream(filename);
@@ -735,6 +757,7 @@ namespace MediaPortal.GUI.Music
       string nextFilename = playlistPlayer.GetNext();
       if (nextFilename == string.Empty)
       {
+        SetNextSkinProperties(null, string.Empty);
         return;
       }
       tag = GetTag(nextFilename);
