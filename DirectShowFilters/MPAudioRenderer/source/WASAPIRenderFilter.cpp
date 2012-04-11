@@ -521,7 +521,7 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
     EndFlush();
   }
   */
-
+  m_nSampleNum = 0;
   m_bBufferredSamples = false;
   m_filterState = State_Running;
   return CQueuedAudioSink::Run(rtStart);
