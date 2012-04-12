@@ -1045,6 +1045,7 @@
 		<String id="1277">Died:</String>
 		<String id="1278">Watched count:</String>
 		<String id="1279">Last update:</String>
+		<String id="1280">Scan using nfo files</String>
 		<String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>

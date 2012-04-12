@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
@@ -1459,7 +1460,7 @@ namespace MediaPortal.GUI.Video
         }
       }
       // Use DVD label as movie name
-      if (Util.Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != string.Empty))
+      else if (Util.Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != string.Empty))
       {
         if (File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
         {
@@ -1477,50 +1478,58 @@ namespace MediaPortal.GUI.Video
       if ((VideoDatabase.GetMovieInfo(strFile, ref movieDetails) == -1) ||
           (movieDetails.IsEmpty))
       {
-        // Check Internet connection
-        if (!Win32API.IsConnectedToInternet())
-        {
-          GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
-          dlgOk.SetHeading(257);
-          dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
-          dlgOk.DoModal(GUIWindowManager.ActiveWindow);
-          return;
-        }
+        FetchMovieNfo(pItem.Path, strFile, ref movieDetails);
 
-        // Movie is not in the database
-        if (bFoundFile)
+        if (movieDetails != null)
         {
-          AddFileToDatabase(strFile);
-        }
-
-        if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
-        {
-          movieDetails.SearchString = Path.GetFileName(Path.GetDirectoryName(strMovie));
+          VideoDatabase.ImportNfo(movieDetails.File);
         }
         else
         {
-          movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
-        }
-        
-        movieDetails.File = Path.GetFileName(strFile);
-        
-        if (movieDetails.File == string.Empty)
-        {
-          movieDetails.Path = strFile;
-        }
-        else
-        {
-          movieDetails.Path = strFile.Substring(0, strFile.IndexOf(movieDetails.File) - 1);
-        }
+          // Check Internet connection
+          if (!Win32API.IsConnectedToInternet())
+          {
+            GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+            dlgOk.SetHeading(257);
+            dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
+            dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+            return;
+          }
 
-        Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
-                 movieDetails.Path);
-        
-        if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
-        {
-          return;
-        }
+          // Movie is not in the database
+          if (bFoundFile)
+          {
+            AddFileToDatabase(strFile);
+          }
 
+          if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
+          {
+            movieDetails.SearchString = Path.GetFileName(Path.GetDirectoryName(strMovie));
+          }
+          else
+          {
+            movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
+          }
+
+          movieDetails.File = Path.GetFileName(strFile);
+
+          if (movieDetails.File == string.Empty)
+          {
+            movieDetails.Path = strFile;
+          }
+          else
+          {
+            movieDetails.Path = strFile.Substring(0, strFile.IndexOf(movieDetails.File) - 1);
+          }
+
+          Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
+                   movieDetails.Path);
+
+          if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
+          {
+            return;
+          }
+        }
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
@@ -1841,6 +1850,383 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    private void FetchMovieNfo(string path, string filename, ref IMDBMovie movie)
+    {
+      try
+      {
+        string nfoFile = string.Empty;
+
+        if (filename.Contains("VIDEO_TS.IFO") || filename.Contains("index.bdmv"))
+        {
+          nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(filename) + ".nfo";
+        }
+        else
+        {
+          nfoFile = Path.ChangeExtension(filename, ".nfo");  
+        }
+        
+        if (!File.Exists(nfoFile))
+        {
+          return;
+        }
+
+        XmlDocument doc = new XmlDocument();
+
+        try
+        {
+          doc.Load(nfoFile);
+        }
+        catch (Exception)
+        {
+          Log.Info("GUIVideoFiles.Load nfo file error: {0} is not a valid XML document", nfoFile);
+          return;
+        }
+        
+        if (doc.DocumentElement != null)
+        {
+          XmlNodeList movieList = doc.DocumentElement.SelectNodes("/movie");
+
+          if (movieList == null)
+          {
+            return;
+          }
+
+          foreach (XmlNode nodeMovie in movieList)
+          {
+            string genre = string.Empty;
+            
+            #region nodes
+
+            XmlNode nodeTitle = nodeMovie.SelectSingleNode("title");
+            XmlNode nodeRating = nodeMovie.SelectSingleNode("rating");
+            XmlNode nodeYear = nodeMovie.SelectSingleNode("year");
+            XmlNode nodeDuration = nodeMovie.SelectSingleNode("runtime");
+            XmlNode nodePlotShort = nodeMovie.SelectSingleNode("outline");
+            XmlNode nodePlot = nodeMovie.SelectSingleNode("plot");
+            XmlNode nodeTagline = nodeMovie.SelectSingleNode("tagline");
+            XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
+            XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
+            XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
+            XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
+            XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
+            XmlNode nodeStudio = nodeMovie.SelectSingleNode("studio");
+            XmlNode nodePoster = nodeMovie.SelectSingleNode("thumb");
+            XmlNode nodeLanguage = nodeMovie.SelectSingleNode("language");
+            XmlNode nodeCountry = nodeMovie.SelectSingleNode("country");
+            XmlNode nodeReview = nodeMovie.SelectSingleNode("review");
+            XmlNode nodeCredits = nodeMovie.SelectSingleNode("credits");
+
+
+            #endregion
+
+            #region Genre
+
+            XmlNodeList genres = nodeMovie.SelectNodes("genres/genre");
+
+            foreach (XmlNode nodeGenre in genres)
+            {
+              if (nodeGenre.InnerText != null)
+              {
+                if (genre.Length > 0)
+                {
+                  genre += " / ";
+                }
+                genre += nodeGenre.InnerText;
+              }
+            }
+
+            if (string.IsNullOrEmpty(genre))
+            {
+              XmlNode nodeGenre = nodeMovie.SelectSingleNode("genre");
+              genre = nodeGenre.InnerText;
+            }
+
+            // Genre
+            movie.Genre = genre;
+
+            #endregion
+
+            #region Credits (Writers)
+
+            // Writers
+            if (nodeCredits != null)
+            {
+              movie.WritingCredits = nodeCredits.InnerText;
+            }
+            #endregion
+
+            #region Moviefiles
+
+            // Get path from *.nfo file)
+            string fileName = string.Empty;
+            Util.Utils.Split(nfoFile, out path, out fileName);
+            // Movie filename to search from gathered files from nfo path
+            fileName = Util.Utils.GetFilename(fileName, true);
+            // Get all video files from nfo path
+            ArrayList files = new ArrayList();
+            VideoDatabase.GetVideoFiles(path, ref files);
+
+            foreach (String file in files)
+            {
+              string tmpFile = string.Empty;
+              string tmpPath = string.Empty;
+              // Read filename
+              Util.Utils.Split(file, out tmpPath, out tmpFile);
+              // Remove extension
+              tmpFile = Util.Utils.GetFilename(tmpFile, true);
+              // Remove stack endings (CD1...)
+              Util.Utils.RemoveStackEndings(ref tmpFile);
+              // Check and add to vdb and get movieId
+              if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+              {
+                int id = VideoDatabase.AddMovie(file, true);
+                movie.ID = id;
+                movie.Path = path;
+                movie.File = nfoFile;
+              }
+            }
+
+            #endregion
+
+            #region Title
+
+            // Title
+            if (nodeTitle != null)
+            {
+              movie.Title = nodeTitle.InnerText;
+            }
+
+            #endregion
+
+            #region Language
+
+            // Title
+            if (nodeLanguage != null)
+            {
+              movie.Language = nodeLanguage.InnerText;
+            }
+
+            #endregion
+
+            #region Country
+
+            // Title
+            if (nodeCountry != null)
+            {
+              movie.Country = nodeCountry.InnerText;
+            }
+
+            #endregion
+
+            #region IMDB number
+
+            // IMDB number
+            if (nodeImdbNumber != null)
+            {
+              if (VideoDatabase.CheckMovieImdbId(nodeImdbNumber.InnerText))
+              {
+                movie.IMDBNumber = nodeImdbNumber.InnerText;
+              }
+            }
+
+            #endregion
+
+            #region Director
+
+            // Director
+            if (nodeDirector != null)
+            {
+              movie.Director = nodeDirector.InnerText;
+            }
+            #endregion
+
+            #region Studio
+
+            // Studio
+            if (nodeStudio != null)
+            {
+              movie.Studios = nodeStudio.InnerText;
+            }
+
+            #endregion
+
+            #region MPAA
+
+            // MPAA
+            if (nodeMpaa != null)
+            {
+              movie.MPARating = nodeMpaa.InnerText;
+            }
+            else
+            {
+              movie.MPARating = "NR";
+            }
+
+            #endregion
+
+            #region Plot/Short plot
+
+            // Plot
+            if (nodePlot != null)
+            {
+              movie.Plot = nodePlot.InnerText;
+            }
+            else
+            {
+              movie.Plot = string.Empty;
+            }
+            // Short plot
+            if (nodePlotShort != null)
+            {
+              movie.PlotOutline = nodePlotShort.InnerText;
+            }
+            else
+            {
+              movie.PlotOutline = string.Empty;
+            }
+
+            #endregion
+
+            #region Review
+
+            // Title
+            if (nodeReview != null)
+            {
+              movie.UserReview = nodeReview.InnerText;
+            }
+
+            #endregion
+
+            #region Rating (n.n/10)
+
+            // Rating
+            if (nodeRating != null)
+            {
+              double rating = 0;
+              if (Double.TryParse(nodeRating.InnerText, out rating))
+              {
+                movie.Rating = (float)rating;
+
+                if (movie.Rating > 10.0f)
+                {
+                  movie.Rating /= 10.0f;
+                }
+              }
+            }
+
+            #endregion
+
+            #region Duration
+
+            // Duration
+            if (nodeDuration != null)
+            {
+              int runtime = 0;
+              if (Int32.TryParse(nodeDuration.InnerText, out runtime))
+              {
+                movie.RunTime = runtime;
+              }
+              else
+              {
+                string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
+                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
+                if (mc.Count > 0)
+                {
+                  foreach (Match m in mc)
+                  {
+                    int hours = 0;
+                    Int32.TryParse(m.Groups["h"].Value, out hours);
+                    int minutes = 0;
+                    Int32.TryParse(m.Groups["m"].Value, out minutes);
+                    hours = hours * 60;
+                    minutes = hours + minutes;
+                    movie.RunTime = minutes;
+                  }
+                }
+              }
+            }
+            else
+            {
+              movie.RunTime = 0;
+            }
+
+            #endregion
+
+            #region Tagline
+
+            // Tagline
+            if (nodeTagline != null)
+            {
+              movie.TagLine = nodeTagline.InnerText;
+            }
+
+            #endregion
+
+            #region TOP250
+
+            // Top250
+            if (nodeTop250 != null)
+            {
+              int top250 = 0;
+              Int32.TryParse(nodeTop250.InnerText, out top250);
+              movie.Top250 = top250;
+            }
+            else
+            {
+              movie.Top250 = 0;
+            }
+
+
+            #endregion
+
+            #region votes
+
+            // Votes
+            if (nodeVotes != null)
+            {
+              movie.Votes = nodeVotes.InnerText;
+            }
+
+            #endregion
+
+            #region Year
+
+            // Year
+            if (nodeYear != null)
+            {
+              int year = 0;
+              Int32.TryParse(nodeYear.InnerText, out year);
+              movie.Year = year;
+            }
+
+            #endregion
+
+            #region poster
+
+            // Poster
+            if (nodePoster != null)
+            {
+              string thumbJpgFile = path + @"\" + nodePoster.InnerText;
+              string thumbTbnFile = path + @"\" + nodePoster.InnerText;
+              
+              if (File.Exists(thumbJpgFile))
+              {
+                movie.ThumbURL = thumbJpgFile;
+              }
+              else if (File.Exists(thumbTbnFile))
+              {
+                movie.ThumbURL = thumbTbnFile;
+              }
+            }
+
+            #endregion
+
+          }
+        }
+      }
+      catch (Exception){}
+    }
+
     private void SetMovieProperties(string path, string filename)
     {
       IMDBMovie info = new IMDBMovie();
@@ -1862,10 +2248,15 @@ namespace MediaPortal.GUI.Video
       {
         VideoDatabase.GetMovieInfo(filename, ref info);
         
-        // Get recording xml
+        // Get recording/nfo xml
         if (info.IsEmpty)
         {
           FetchMatroskaInfo(path, false, ref info);
+
+          if (info.IsEmpty)
+          {
+            FetchMovieNfo(path, filename, ref info);
+          }
         }
         
         info.SetProperties(false, filename);
@@ -1878,8 +2269,7 @@ namespace MediaPortal.GUI.Video
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       GUIPropertyManager.SetProperty("#groupmovielist", string.Empty);
-      string strMovies = string.Empty;
-
+      
       _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       string filename = string.Empty;
 
@@ -2591,6 +2981,7 @@ namespace MediaPortal.GUI.Video
                   dlg.AddLocalizedString(1204); // Play All in selected folder
                   dlg.AddLocalizedString(926); //Queue
                   dlg.AddLocalizedString(102); //Scan 
+                  dlg.AddLocalizedString(1280); // Scan using nfo files
                 }
                   // DVD folder
                 else if (checkIfIsDvd.IsDvdDirectory(item.Path) || checkIfIsBD.IsBDDirectory(item.Path))
@@ -2744,6 +3135,41 @@ namespace MediaPortal.GUI.Video
           ArrayList availablePaths = new ArrayList();
           availablePaths.Add(item.Path);
           IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+          // Send global message that movie is refreshed/scanned
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
+          LoadDirectory(_currentFolder);
+          break;
+
+        case 1280: //Scan using nfo files
+          if (facadeLayout.Focus)
+          {
+            if (item.IsFolder)
+            {
+              if (item.Label == "..")
+              {
+                return;
+              }
+              if (item.IsRemote)
+              {
+                return;
+              }
+            }
+          }
+          
+          if (!_virtualDirectory.RequestPin(item.Path))
+          {
+            return;
+          }
+
+          ArrayList nfoFiles= new ArrayList();
+          GetNfoFiles(item.Path, ref nfoFiles);
+
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles);
+          // Send global message that movie is refreshed/scanned
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
           LoadDirectory(_currentFolder);
           break;
 
@@ -3771,6 +4197,16 @@ namespace MediaPortal.GUI.Video
         }
       }
       return false;
+    }
+
+    private void GetNfoFiles(string path, ref ArrayList nfoFiles)
+    {
+      string[] files = Directory.GetFiles(path, "*.nfo", SearchOption.AllDirectories);
+
+      foreach (string file in files)
+      {
+        nfoFiles.Add(file);
+      }
     }
 
     #region IMDB.IProgress

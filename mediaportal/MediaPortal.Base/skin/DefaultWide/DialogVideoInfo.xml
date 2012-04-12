@@ -197,7 +197,7 @@
       <id>1</id>
       <posX>870</posX>
       <posY>104</posY>
-      <label>#(L(205)) #votes  #strrating</label>
+      <label>#strrating (#(L(205)) #votes)</label>
       <font>font11</font>
       <align>left</align>
       <textcolor>ivory</textcolor>
@@ -706,7 +706,7 @@
         <height>37</height>
         <texture>logos\subtitles.png</texture>
         <keepaspectratio>yes</keepaspectratio>
-        <visible>string.equals(#Play.Current.HasSubtitles, True)</visible>
+        <visible>string.equals(#HasSubtitles, True)</visible>
       </control>
     </control>
   </controls>

@@ -50,6 +50,7 @@ namespace MediaPortal.Video.Database
     private int _actorId;
     private int _actorIndex;
     private static bool _foldercheck = true;
+    private ArrayList _nfoFiles;
     
     public IMDBFetcher(IMDB.IProgress progress)
     {
@@ -100,6 +101,55 @@ namespace MediaPortal.Video.Database
         _imdb.Find(_movieName);
       }
       catch (ThreadAbortException) {}
+      finally
+      {
+        OnSearchEnd(this);
+        _disableCancel = false;
+        _movieThread = null;
+      }
+    }
+
+    #endregion
+
+    #region NfoFetch
+
+    public void FetchNfo(ArrayList nfoFiles)
+    {
+      if (nfoFiles == null || nfoFiles.Count == 0)
+      {
+        return;
+      }
+
+      if (!OnSearchStarting(this))
+      {
+        return;
+      }
+
+      _nfoFiles = nfoFiles;
+      _movieThread = new Thread(FetchNfoThread);
+      _movieThread.Name = "NfoFetcher";
+      _movieThread.IsBackground = true;
+      _movieThread.Start();
+
+      if (!OnSearchStarted(this))
+      {
+        CancelFetch();
+      }
+    }
+
+    private void FetchNfoThread()
+    {
+      try
+      {
+        _disableCancel = false;
+
+        foreach (string nfoFile in _nfoFiles)
+        {
+          OnProgress(nfoFile, string.Empty, string.Empty, 0);
+          VideoDatabase.ImportNfo(nfoFile);
+        }
+      }
+      catch (ThreadAbortException) { }
       finally
       {
         OnSearchEnd(this);

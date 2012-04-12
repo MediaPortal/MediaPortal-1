@@ -257,7 +257,7 @@
       <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
     </control>
     <control>
-    <description>Actual cover/image</description>
+      <description>Actual cover/image</description>
       <id>500</id>
       <type>image</type>
       <posX>79</posX>
@@ -607,19 +607,6 @@
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
-    <!--control Style="NoShadow">
-      <description>Place of Birth Value</description>
-      <type>textboxscrollup</type>
-      <id>1</id>
-      <posX>300</posX>
-      <posY>245</posY>
-      <width>255</width>
-      <height>90</height>
-      <label>#Actor.PlaceOfBirth</label>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
-    </control-->
     <control>
       <description>Died Label</description>
       <type>label</type>
@@ -643,19 +630,6 @@
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
-    <!--control Style="NoShadow">
-      <description>Place of Death Value</description>
-      <type>textboxscrollup</type>
-      <id>1</id>
-      <posX>300</posX>
-      <posY>382</posY>
-      <width>255</width>
-      <height>90</height>
-      <label>#Actor.PlaceOfDeath</label>
-      <font>font11</font>
-      <textcolor>ivory</textcolor>
-      <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
-    </control-->
     <control>
       <description>Movies Label</description>
       <type>label</type>
@@ -668,7 +642,7 @@
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
     <control>
-      <description>usergroup list value</description>
+      <description>Actors Movies value</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>285</posX>
@@ -679,20 +653,6 @@
       <font>font10</font>
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideinfo, true)+string.equals(#hideActorinfo, False)</visible>
-    </control>
-    
-    
-    <control>
-      <description>Separator Line</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>71</posX>
-      <posY>462</posY>
-      <width>475</width>
-      <height>1</height>
-      <texture>hbar1white.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
-      <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
     <control Style="NoShadow">
       <description>Actor Biography value</description>
@@ -707,53 +667,29 @@
       <textcolor>ivory</textcolor>
       <visible>facadeview.list+control.hasfocus(50)+string.equals(#hideActorinfo, False)</visible>
     </control>
-    <!--control>
-    <description>Content locked</description>
-    <type>label</type>
-    <id>1</id>
-    <posX>100</posX>
-    <posY>480</posY>
-    <label>Content locked</label>
-    <font>font10</font>
-    <align>left</align>
-    <textcolor>ff6FAFE1</textcolor>
-    <visible>string.equals(#MyVideos.PinLocked, True)</visible>
-  </control>
-  <control>
-    <description>Content unlock</description>
-    <type>label</type>
-    <id>1</id>
-    <posX>100</posX>
-    <posY>480</posY>
-    <label>Content unlocked</label>
-    <font>font10</font>
-    <align>left</align>
-    <textcolor>ff6FAFE1</textcolor>
-    <visible>string.equals(#MyVideos.PinLocked, False)</visible>
-  </control-->
-  <control>
-    <description>Content locked</description>
-    <type>image</type>
-    <id>1</id>
-    <posX>1165</posX>
-    <posY>80</posY>
-    <width>80</width>
-    <height>80</height>
-    <visible>string.equals(#MyVideos.PinLocked, True)</visible>
-    <texture>lock.png</texture>
-    <keepaspectratio>yes</keepaspectratio>
-  </control>
-  <control>
-    <description>Content unlock</description>
-    <type>image</type>
-    <id>1</id>
-    <posX>1165</posX>
-    <posY>80</posY>
-    <width>80</width>
-    <height>80</height>
-    <visible>string.equals(#MyVideos.PinLocked, False)</visible>
-    <texture>unlock.png</texture>
-    <keepaspectratio>yes</keepaspectratio>
-  </control>
-</controls>
+    <control>
+      <description>Content locked</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1165</posX>
+      <posY>80</posY>
+      <width>80</width>
+      <height>80</height>
+      <visible>string.equals(#MyVideos.PinLocked, True)</visible>
+      <texture>lock.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>Content unlock</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1165</posX>
+      <posY>80</posY>
+      <width>80</width>
+      <height>80</height>
+      <visible>string.equals(#MyVideos.PinLocked, False)</visible>
+      <texture>unlock.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+  </controls>
 </window>
