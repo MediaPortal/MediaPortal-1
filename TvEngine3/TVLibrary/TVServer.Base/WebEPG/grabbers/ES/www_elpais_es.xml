@@ -1,175 +1,190 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info availableDays="7" timezone="W. Europe Standard Time" />
+  <Info availableDays="3" timezone="W. Europe Standard Time" />
   <Channels>
-	<Channel id="24 Horas" siteId="24-horas" />
-	<Channel id="40 Latino" siteId="40-latino" />
-	<Channel id="40 TV" siteId="40-tv" />
-	<Channel id="Al Jazeera English" siteId="al-jazeera-english" />
-	<Channel id="Andalucía TV" siteId="andalucia-tv" />
-	<Channel id="Animax" siteId="animax" />
+	<Channel id="La 1" siteId="tve-1" />
+	<Channel id="La 2" siteId="la-2" />
 	<Channel id="Antena 3" siteId="antena-3" />
-	<Channel id="AXN HD" siteId="axn-hd" />
-	<Channel id="AXN" siteId="axn" />
-	<Channel id="Baby First" siteId="baby-first" />
-	<Channel id="Barça TV" siteId="barça-tv" />
-	<Channel id="BBC World" siteId="bbc-world" />
-	<Channel id="BIO" siteId="bio" />
-	<Channel id="Bloomberg" siteId="bloomberg" />
-	<Channel id="Boomerang" siteId="boomerang" />
-	<Channel id="Calle 13 HD" siteId="calle-13-hd" />
-	<Channel id="Calle 13" siteId="calle-13" />
-	<Channel id="CANAL 2 ANDALUCIA" siteId="canal-2-andalucia" />
-	<Channel id="Canal 33" siteId="canal-33" />
-	<Channel id="CANAL 9" siteId="canal9-aut" />
-	<Channel id="Canal Club (Canal 88)" siteId="canal-club-(canal-88)" />
-	<Channel id="Canal Cocina" siteId="canal-cocina" />
-	<Channel id="Canal de las Estrellas" siteId="canal-de-las-estrellas" />
-	<Channel id="Canal Feria" siteId="canal-feria" />
-	<Channel id="CANAL SUR" siteId="canal-sur" />
-	<Channel id="Canal+ ...30" siteId="canalplus-...30" />
-	<Channel id="Canal+ 3D" siteId="canalplus-3d" />
-	<Channel id="Canal+ Acción 30" siteId="canalplus-accion-30" />
-	<Channel id="Canal+ Acción HD" siteId="canalplus-accion-hd" />
-	<Channel id="Canal+ Acción" siteId="canalplus-accion" />
-	<Channel id="Canal+ Comedia HD" siteId="canalplus-comedia-hd" />
-	<Channel id="Canal+ Comedia" siteId="canalplus-comedia" />
-	<Channel id="Canal+ DCine HD" siteId="canalplus-dcine-hd" />
-	<Channel id="Canal+ DCine" siteId="canalplus-dcine" />
-	<Channel id="Canal+ Deportes HD" siteId="canalplus-deportes-hd" />
-	<Channel id="Canal+ Deportes" siteId="canalplus-deportes" />
-	<Channel id="Canal+ DOS" siteId="canalplus-dos" />
-	<Channel id="Canal+ Fútbol HD" siteId="canalplus-futbol-hd" />
-	<Channel id="Canal+ Fútbol" siteId="canalplus-futbol" />
-	<Channel id="Canal+ Golf" siteId="canalplus-golf" />
-	<Channel id="Canal+ HD" siteId="canalplus-hd" />
-	<Channel id="Canal+ Liga HD" siteId="canalplus-liga-hd" />
-	<Channel id="Canal+ Liga" siteId="canalplus-liga" />
-	<Channel id="Canal+ Xtra HD" siteId="canalplus-xtra-hd" />
-	<Channel id="Canal+ Xtra" siteId="canalplus-xtra" />
-	<Channel id="Canal+" siteId="canalplus" />
-	<Channel id="Cartoon Network" siteId="cartoon-network" />
-	<Channel id="castilla la mancha televisión" siteId="castilla-la-mancha" />
-	<Channel id="Caza y Pesca" siteId="caza-y-pesca" />
-	<Channel id="Clan TVE" siteId="clan-tve" />
-	<Channel id="CNBC" siteId="cnbc" />
-	<Channel id="CNN Int" siteId="cnn-int" />
-	<Channel id="CNN+" siteId="cnnplus" />
-	<Channel id="Cosmopolitan" siteId="cosmopolitan" />
 	<Channel id="Cuatro" siteId="cuatro" />
+	<Channel id="Telecinco" siteId="telecinco" />
+	<Channel id="La Sexta" siteId="la-sexta" />
+	<Channel id="Andalucia TV" siteId="andalucia-tv" />
+	<Channel id="Aragón TV" siteId="aragon-television" />
+	<Channel id="Canal 9" siteId="canal-9" />
+	<Channel id="Canal Extremadura" siteId="canal-extremadura" />
+	<Channel id="Canal Sur" siteId="canal-sur" />
+	<Channel id="Canal Sur 2" siteId="canal-sur-2" />
+	<Channel id="Castilla la Mancha TV" siteId="castilla-la-mancha-tv" />
+	<Channel id="ETB1" siteId="etb1" />
+	<Channel id="ETB2" siteId="etb2" />
+	<Channel id="IB3 TV" siteId="ib3-televisio" />
+	<Channel id="RTV Murcia" siteId="radiotelevision-de-murcia" />
+	<Channel id="TV3.CAT" siteId="tv3-cat" />
+	<Channel id="TeleMadrid" siteId="telemadrid" />
+	<Channel id="TeleMadrid SAT" siteId="telemadrid-sat" />
+	<Channel id="T. Canarias" siteId="television-canaria" />
+	<Channel id="TV de Galicia" siteId="television-de-galicia" />
+	<Channel id="24horas" siteId="24-horas" />
+	<Channel id="40 TV" siteId="40-tv" />
+	<Channel id="Arirang TV" siteId="arirang-tv" />
+	<Channel id="AXN" siteId="axn" />
+	<Channel id="AXN HD" siteId="axn-hd" />
+	<Channel id="Al Jazeera English" siteId="al-jazeera-english" />
+	<Channel id="Animax" siteId="animax" />
+	<Channel id="BBC World" siteId="bbc-world" />
+	<Channel id="Bio" siteId="bio" />
+	<Channel id="Biography" siteId="bio" />
+	<Channel id="Baby TV" siteId="baby-tv" />
+	<Channel id="Barça TV" siteId="barca-tv" />
+	<Channel id="Bloomberg" siteId="bloomberg" />
+	<Channel id="Boing" siteId="boing" />
+	<Channel id="Multicine" siteId="cplus-multicine" />
+	<Channel id="Multideporte" siteId="cplus-multidep." />
+	<Channel id="Canal+ Radios" siteId="cplus-radios" />
+	<Channel id="CNBC" siteId="cnbc" />
+	<Channel id="CNN Int." siteId="cnn-int" />
+	<Channel id="Calle 13" siteId="calle-13" />
+	<Channel id="Calle 13 HD" siteId="calle-13-hd" />
+	<Channel id="Canal 33" siteId="canal-33" />
+	<Channel id="Canal Club" siteId="canal-club" />
+	<Channel id="Canal Cocina" siteId="canal-cocina" />
+	<Channel id="C.Estrellas" siteId="canal-de-las-estrellas" />
+	<Channel id="Canal+" siteId="canalplus-1" />
+	<Channel id="Canal+...30" siteId="canalplus-1-...30" />
+	<Channel id="Canal+ HD" siteId="canalplus-1-hd" />
+	<Channel id="Canal+ Dos" siteId="canalplus-2" />
+	<Channel id="Canal+ 3D" siteId="canalplus-3d" />
+	<Channel id="C+ Acción" siteId="canalplus-accion" />
+	<Channel id="C+ Acción 30" siteId="canalplus-accion-30" />
+	<Channel id="C+ Acción HD" siteId="canalplus-accion-hd" />
+	<Channel id="C+ Comedia" siteId="canalplus-comedia" />
+	<Channel id="C+ Comedia HD" siteId="canalplus-comedia-hd" />
+	<Channel id="C+ DCine" siteId="canalplus-dcine" />
+	<Channel id="C+ DCine HD" siteId="canalplus-dcine-hd" />
+	<Channel id="C+ Deportes" siteId="canalplus-deportes" />
+	<Channel id="C+ Dep2 HD" siteId="canalplus-deportes-2-hd" />
+	<Channel id="C+ Deport HD" siteId="canalplus-deportes-hd" />
+	<Channel id="C+ Fútbol" siteId="canalplus-futbol" />
+	<Channel id="C+ Fútbol HD" siteId="canalplus-futbol-hd" />
+	<Channel id="Canal+ Golf" siteId="canalplus-golf" />
+	<Channel id="Canal+ Liga" siteId="canalplus-liga" />
+	<Channel id="C+ Liga 2" siteId="canalplus-liga-2--" />
+	<Channel id="C+ Liga HD" siteId="canalplus-liga-hd" />
+	<Channel id="C+ Toros" siteId="canalplus-toros" />
+	<Channel id="Canal+ Xtra" siteId="canalplus-xtra" />
+	<Channel id="C+ Xtra HD" siteId="canalplus-xtra-hd" />
+	<Channel id="Cartoon Net." siteId="cartoon-network" />
+	<Channel id="Cartoonito" siteId="cartoonito" />
+	<Channel id="Caza y pesca" siteId="caza-y-pesca" />
+	<Channel id="Clan TVE" siteId="clan-tve" />
+	<Channel id="Cosmopolitan" siteId="cosmopolitan" />
+	<Channel id="Cosmo HD" siteId="cosmopolitan-hd" />
 	<Channel id="Cubavisión" siteId="cubavision" />
 	<Channel id="DCine Español" siteId="dcine-espanol" />
 	<Channel id="Decasa" siteId="decasa" />
 	<Channel id="Discovery Channel" siteId="discovery-channel" />
 	<Channel id="Disney Channel" siteId="disney-channel" />
-	<Channel id="Disney Cinemagic HD" siteId="disney-cinemagic-hd" />
+	<Channel id="Disney Channel HD" siteId="disney-channel-hd" />
+	<Channel id="Cinemagic" siteId="disney-cinemagic" />
 	<Channel id="Disney Cinemagic" siteId="disney-cinemagic" />
+	<Channel id="Disney Cinemagic HD" siteId="disney-cinemagic-hd" />
 	<Channel id="Disney Junior" siteId="disney-junior" />
 	<Channel id="Disney XD" siteId="disney-xd" />
-	<Channel id="EHS" siteId="ehs" />
-	<Channel id="ETB 1" siteId="etb-1" />
-	<Channel id="ETB 2" siteId="etb-2" />
+	<Channel id="Divinity" siteId="divinity" />
+	<Channel id="El Garaje TV" siteId="el-garage-tv" />
+	<Channel id="Energy" siteId="energy" />
 	<Channel id="Euronews" siteId="euronews" />
-	<Channel id="Eurosport HD" siteId="eurosport-hd" />
 	<Channel id="Eurosport" siteId="eurosport" />
-	<Channel id="Factoría de Ficción" siteId="factoria-de-ficcion" />
+	<Channel id="Eurosport HD" siteId="eurosport-hd" />
+	<Channel id="France 24" siteId="france-24" />
+	<Channel id="FDF" siteId="factoria-de-ficcion" />
+	<Channel id="Fox" siteId="fox" />
 	<Channel id="Fox Crime" siteId="fox-crime" />
 	<Channel id="Fox HD" siteId="fox-hd" />
 	<Channel id="Fox News" siteId="fox-news" />
-	<Channel id="Fox" siteId="fox" />
-	<Channel id="FRANCE 24" siteId="france-24" />
-	<Channel id="Historia" siteId="historia" />
-	<Channel id="Hogarutil" siteId="hogarutil" />
+	<Channel id="Canal Historia" siteId="historia" />
 	<Channel id="Hollywood" siteId="hollywood" />
-	<Channel id="InfoMeteo" siteId="infometeo" />
-	<Channel id="LA 2" siteId="la-2" />
-	<Channel id="La Sexta" siteId="la-sexta" />
-	<Channel id="LA SEXTA" siteId="la-sexta-a" />
-	<Channel id="La Siete" siteId="la-siete" />
-	<Channel id="Mezzo Live HD" siteId="mezzo-live-hd" />
+	<Channel id="HollywoodHD" siteId="hollywood-hd" />
+	<Channel id="Intereconomía" siteId="intereconomia" />
+	<Channel id="La siete" siteId="la-siete" />
+	<Channel id="MTV España" siteId="mtv-esp" />
+	<Channel id="MTV Live HD" siteId="mtv-live-hd" />
+	<Channel id="MTV Rocks" siteId="mtv-rocks" />
 	<Channel id="Mezzo" siteId="mezzo" />
-	<Channel id="MTV ROCKS" siteId="mtv-rocks" />
-	<Channel id="MTVNHD" siteId="mtvnhd" />
-	<Channel id="Multicine" siteId="multicine" />
-	<Channel id="Multideporte" siteId="multideporte" />
-	<Channel id="Nat Geographic HD" siteId="nat-geographic-hd" />
-	<Channel id="Nat Geographic" siteId="nat-geographic" />
+	<Channel id="Mezzo Live HD" siteId="mezzo-live-hd" />
+	<Channel id="Multideporte 1" siteId="multideporte-1" />
+	<Channel id="Multideporte 2" siteId="multideporte-2" />
+	<Channel id="Multideporte 3" siteId="multideporte-3" />
+	<Channel id="Multideporte 4" siteId="multideporte-4" />
+	<Channel id="Multideporte 5" siteId="multideporte-5" />
+	<Channel id="Multideporte 6" siteId="multideporte-6" />
+	<Channel id="Multideporte 7" siteId="multideporte-7" />
+	<Channel id="NHK World" siteId="nhk-world" />
+	<Channel id="Nick Jr." siteId="nick-jr" />
+	<Channel id="Nickelodeon" siteId="nickelodeon" />
+	<Channel id="Nat Geo Wild" siteId="nat-geo-wild" />
+	<Channel id="Nat Geo Wild HD" siteId="nat-geo-wild-hd" />
+	<Channel id="Nat Geograph" siteId="nat-geographic" />
+	<Channel id="Nat Geo HD" siteId="nat-geographic-hd" />
 	<Channel id="Neox" siteId="neox" />
-	<Channel id="NICKELODEON" siteId="nickelodeon" />
+	<Channel id="Nitro" siteId="nitro" />
 	<Channel id="Nova" siteId="nova" />
-	<Channel id="Odisea" siteId="odisea" />
+	<Channel id="Canal Odisea" siteId="odisea" />
 	<Channel id="Panda" siteId="panda" />
-	<Channel id="Paramount Comedy" siteId="paramount-comedy" />
+	<Channel id="Par. Comedy" siteId="paramount-comedy" />
 	<Channel id="Playboy TV" siteId="playboy-tv" />
-	<Channel id="Punto 2" siteId="punto-2" />
-	<Channel id="Radios." siteId="radios." />
-	<Channel id="Real Madrid TV" siteId="real-madrid-tv" />
-	<Channel id="Sony Entertainment TV" siteId="sony-entertainment-tv" />
-	<Channel id="Sportmanía" siteId="sportmania" />
-	<Channel id="SYFY" siteId="syfy" />
-	<Channel id="Taquilla 1" siteId="taquilla-1" />
-	<Channel id="Taquilla 140" siteId="taquilla-140" />
-	<Channel id="Taquilla 141" siteId="taquilla-141" />
-	<Channel id="Taquilla 2" siteId="taquilla-2" />
-	<Channel id="Taquilla 3" siteId="taquilla-3" />
-	<Channel id="Taquilla 4" siteId="taquilla-4" />
-	<Channel id="Taquilla 5" siteId="taquilla-5" />
-	<Channel id="Taquilla 6" siteId="taquilla-6" />
-	<Channel id="Taquilla 7" siteId="taquilla-7" />
-	<Channel id="Taquilla 8" siteId="taquilla-8" />
-	<Channel id="Taquilla HD" siteId="taquilla-hd" />
-	<Channel id="TCM Clásico" siteId="tcm-clasico" />
+	<Channel id="Punt 2" siteId="punt-2" />
+	<Channel id="Russia Today" siteId="rt" />
+	<Channel id="Russia Today Español" siteId="rt-en-espanol" />
+	<Channel id="R. Madrid TV" siteId="real-madrid-tv" />
+	<Channel id="SyFy" siteId="syfy" />
+	<Channel id="SyFy HD" siteId="syfy-hd" />
+	<Channel id="La Sexta 2" siteId="sexta-2" />
+	<Channel id="La Sexta 3" siteId="sexta-3" />
+	<Channel id="Sony TV" siteId="sony-entertainment-tv" />
+	<Channel id="Sportmania" siteId="sportmania" />
+	<Channel id="Super 3" siteId="super-3" />
 	<Channel id="TCM" siteId="tcm" />
-	<Channel id="Telecinco" siteId="telecinco" />
-	<Channel id="Teledeporte" siteId="teledeporte" />
-	<Channel id="Telemadrid SAT" siteId="telemadrid-sat" />
-	<Channel id="TELEMADRID" siteId="telemadrid" />
-	<Channel id="Telesur" siteId="telesur" />
-	<Channel id="Televisión Galicia" siteId="tvg-aut" />
+	<Channel id="TCM Autor" siteId="tcm-autor" />
 	<Channel id="TNT" siteId="tnt" />
-	<Channel id="TV CANARIA" siteId="tccanaria-aut" />
-	<Channel id="TV Canaria" siteId="tv-canaria" />
-	<Channel id="TV RECORD" siteId="tv-record" />
-	<Channel id="TV3 Cat" siteId="tv3-cat" />
-	<Channel id="tv3" siteId="tv3" />
-	<Channel id="TV5MONDE" siteId="tv5monde" />
-	<Channel id="TVE 1" siteId="tve-1" />
+	<Channel id="TNT HD" siteId="tnt-hd" />
+	<Channel id="TV Record" siteId="tv-record" />
+	<Channel id="TV5 Monde" siteId="tv5monde" />
+	<Channel id="Taquilla 1" siteId="taquilla--1" />
+	<Channel id="Taquilla 2" siteId="taquilla--2" />
+	<Channel id="Taquilla 3" siteId="taquilla--3" />
+	<Channel id="Taquilla 4" siteId="taquilla--4" />
+	<Channel id="Taquilla 5" siteId="taquilla--5" />
+	<Channel id="Taquilla 6" siteId="taquilla--6" />
+	<Channel id="Taquilla 7" siteId="taquilla--7" />
+	<Channel id="Taquilla 8" siteId="taquilla--8" />
+	<Channel id="Taquilla HD" siteId="taquilla-hd" />
+	<Channel id="Teledeporte" siteId="teledeporte" />
+	<Channel id="TeleSur" siteId="telesur" />
 	<Channel id="VH1" siteId="vh1" />
 	<Channel id="Viajar" siteId="viajar" />
+	<Channel id="Viajar HD" siteId="viajar-hd" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.elpais.es/parrillatv/[ID]/[WEEKDAY]/" post="" external="false" encoding="" />
-    <Search startOffset="-1" maxlistings="0" startPage="0" endPage="0" language="es-ES">
-      <WeekDayNames>
-        <WeekDay>lunes</WeekDay>
-        <WeekDay>martes</WeekDay>
-        <WeekDay>miercoles</WeekDay>
-        <WeekDay>jueves</WeekDay>
-        <WeekDay>viernes</WeekDay>
-        <WeekDay>sabado</WeekDay>
-        <WeekDay>domingo</WeekDay>
-      </WeekDayNames>
-    </Search>
-    <Html>
-      <Template name="default" start="&lt;tbody>" end="&lt;/tbody>">
-        <SectionTemplate tags="TDHS">
+    <Site url="http://servicios.elpais.com/programacion-tv/canal/[ID]/" post="" external="false" encoding="" />
+      <Html>
+      <Template name="default" start="rejilla-canal" end="iframe_publicidad_robapaginas">
+        <SectionTemplate tags="SPL">
           <TemplateText>
-&lt;tr&gt;
-&lt;td class="hora"&gt; &lt;#START&gt;&lt;/td&gt;
-&lt;td class="descripcion"&gt;
-&lt;div&gt;
-&lt;h4&gt;
-&lt;a href="/parrillatv/antena-3/el-marco/21-09-2010/01:00" title="El Marco: En directo"&gt;&lt;#TITLE&gt;&lt;/a&gt;
-&lt;/h4&gt;
-&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/td&gt;
-&lt;td class="minutos"&gt; 105"&lt;/td&gt;
-
-&lt;td class="tipo"&gt;
-&lt;span class="opcionocho"&gt;&lt;#GENRE&gt;&lt;/span&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
+		&lt;tr&gt;
+		&lt;td class="hora"&gt;&lt;strong&gt;&lt;#START&gt;&lt;/strong&gt;&lt;/td&gt;
+		&lt;td&gt;
+		&lt;h4&gt;
+		&lt;a name="enlace_pase" href="javascript:void(0);" onclick="ventanaPase(this,'a65d147d9dca7ad7dd67c6efa3d9e8be');"&gt;&lt;#TITLE&gt;&lt;/a&gt;
+		&lt;/h4&gt;
+		&lt;p&gt;&lt;#DESCRIPTION&gt;
+		&lt;/p&gt;
+		&lt;/td&gt;
+		&lt;td class="masinfo"&gt;
+		&lt;ul&gt;
+		&lt;z(&gt;
+		&lt;li&gt;&lt;#GENRE&gt;&lt;/li&gt;
+		&lt;/z)?&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>

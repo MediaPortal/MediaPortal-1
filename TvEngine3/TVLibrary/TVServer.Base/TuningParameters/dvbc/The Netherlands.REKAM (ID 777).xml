@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning>
-  <!--Created on 2011-11-27 17:14-->
+  <!--Created on 2011-12-29 11:30-->
   <DVBCTuning>
     <!--Transponder ID 1 with channels Nederland 1,Nederland 2,Nederland 3,RTL 8,NGC,RTL 4-->
     <Frequency>155000</Frequency>
@@ -14,7 +14,7 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 3 with channels Kindernet/Comedy Central,MTV,CNE,RTL 7,SBS 6,NET 5-->
+    <!--Transponder ID 3 with channels Kindernet/Comedy Central,MTV,RTL 7,SBS 6,NET 5-->
     <Frequency>234000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
@@ -32,7 +32,7 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 7 with channels Gouwestad 2,RTV Bodegraven,Vrolek,Zeezicht,SupremeMasterTV,CNN,Neue Zeiten TV,RTV Drenthe,Omroep Brabant-->
+    <!--Transponder ID 7 with channels Gouwestad 2,RTV Bodegraven,Vrolek,Zeezicht,CNN,RTV Drenthe,Omroep Brabant,Krant van Gouda-->
     <Frequency>698000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
