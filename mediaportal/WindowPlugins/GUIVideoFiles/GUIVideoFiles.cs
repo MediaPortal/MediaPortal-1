@@ -1480,9 +1480,10 @@ namespace MediaPortal.GUI.Video
       {
         FetchMovieNfo(pItem.Path, strFile, ref movieDetails);
 
-        if (movieDetails != null)
+        if (!movieDetails.IsEmpty)
         {
           VideoDatabase.ImportNfo(movieDetails.File);
+          VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
         }
         else
         {
@@ -1957,35 +1958,35 @@ namespace MediaPortal.GUI.Video
 
             #region Moviefiles
 
-            // Get path from *.nfo file)
-            string fileName = string.Empty;
-            Util.Utils.Split(nfoFile, out path, out fileName);
-            // Movie filename to search from gathered files from nfo path
-            fileName = Util.Utils.GetFilename(fileName, true);
-            // Get all video files from nfo path
-            ArrayList files = new ArrayList();
-            VideoDatabase.GetVideoFiles(path, ref files);
+            //// Get path from *.nfo file)
+            //string fileName = string.Empty;
+            //Util.Utils.Split(nfoFile, out path, out fileName);
+            //// Movie filename to search from gathered files from nfo path
+            //fileName = Util.Utils.GetFilename(fileName, true);
+            //// Get all video files from nfo path
+            //ArrayList files = new ArrayList();
+            //VideoDatabase.GetVideoFiles(path, ref files);
 
-            foreach (String file in files)
-            {
-              string tmpFile = string.Empty;
-              string tmpPath = string.Empty;
-              // Read filename
-              Util.Utils.Split(file, out tmpPath, out tmpFile);
-              // Remove extension
-              tmpFile = Util.Utils.GetFilename(tmpFile, true);
-              // Remove stack endings (CD1...)
-              Util.Utils.RemoveStackEndings(ref tmpFile);
-              // Check and add to vdb and get movieId
-              if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
-              {
-                int id = VideoDatabase.AddMovie(file, true);
-                movie.ID = id;
-                movie.Path = path;
-                movie.File = nfoFile;
-              }
-            }
-
+            //foreach (String file in files)
+            //{
+            //  string tmpFile = string.Empty;
+            //  string tmpPath = string.Empty;
+            //  // Read filename
+            //  Util.Utils.Split(file, out tmpPath, out tmpFile);
+            //  // Remove extension
+            //  tmpFile = Util.Utils.GetFilename(tmpFile, true);
+            //  // Remove stack endings (CD1...)
+            //  Util.Utils.RemoveStackEndings(ref tmpFile);
+            //  // Check and add to vdb and get movieId
+            //  if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+            //  {
+            //    int id = VideoDatabase.AddMovie(file, true);
+            //    movie.ID = id;
+            movie.Path = path;
+            movie.File = nfoFile;
+            //  }
+            //}
+            movie.ID = 0;
             #endregion
 
             #region Title
@@ -3128,10 +3129,13 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
+
           if (!_virtualDirectory.RequestPin(item.Path))
           {
             return;
           }
+
+          int currentIndex = facadeLayout.SelectedListItemIndex;
           ArrayList availablePaths = new ArrayList();
           availablePaths.Add(item.Path);
           IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
@@ -3139,6 +3143,7 @@ namespace MediaPortal.GUI.Video
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
           LoadDirectory(_currentFolder);
+          facadeLayout.SelectedListItemIndex = currentIndex;
           break;
 
         case 1280: //Scan using nfo files
@@ -3162,6 +3167,8 @@ namespace MediaPortal.GUI.Video
             return;
           }
 
+          currentIndex = facadeLayout.SelectedListItemIndex;
+
           ArrayList nfoFiles= new ArrayList();
           GetNfoFiles(item.Path, ref nfoFiles);
 
@@ -3171,6 +3178,8 @@ namespace MediaPortal.GUI.Video
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
           LoadDirectory(_currentFolder);
+          facadeLayout.SelectedListItemIndex = currentIndex;
+          
           break;
 
         case 830: // Reset watched status
