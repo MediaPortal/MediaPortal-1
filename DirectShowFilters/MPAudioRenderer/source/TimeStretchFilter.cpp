@@ -315,8 +315,6 @@ HRESULT CTimeStretchFilter::EndOfStream()
 }
 HRESULT CTimeStretchFilter::Run(REFERENCE_TIME rtStart)
 {
-  m_bResetFirstSample = true;
-
   REFERENCE_TIME rtTime = 0;
   HRESULT hr = m_pClock->GetTime(&rtTime);
 
@@ -356,6 +354,7 @@ DWORD CTimeStretchFilter::ThreadProc()
       {
         sample.Release();
         SetEvent(m_hCurrentSampleReleased);
+        m_bResetFirstSample = true;
       }
       else if (command == ASC_Pause || command == ASC_Resume)
         continue;
@@ -390,6 +389,7 @@ DWORD CTimeStretchFilter::ThreadProc()
           {
             m_rtFirstSample = rtStart + m_rtOffset;
             m_bResetFirstSample = false;
+            initStreamTime = true;
           }
 
           // Detect discontinuity in stream timeline

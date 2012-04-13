@@ -115,7 +115,6 @@ private:
 
   bool                m_bIsAudioClientStarted;
   bool                m_bDeviceInitialized;
-  bool                m_bBufferredSamples;
 
   HANDLE              m_hDataEvent;
   HANDLE              m_hTimerEvent;
@@ -129,6 +128,8 @@ private:
 
   REFERENCE_TIME      m_rtNextSampleTime;
   REFERENCE_TIME      m_rtHwStart;
+
+  bool                m_bResyncHwClock;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;

@@ -45,7 +45,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_rtHwStart(0),
   m_nSampleOffset(0),
   m_nDataLeftInSample(0),
-  m_bBufferredSamples(false)
+  m_bResyncHwClock(false)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -507,23 +507,23 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
 
   if (SUCCEEDED(hr))
   {
-    m_rtHwStart = rtStart + (rtHwTime - rtTime);
-    Log("CWASAPIRenderFilter::Run - ref clock: %6.3f HW clock: %6.3f", rtStart / 10000000.0, m_rtHwStart / 10000000.0 );
+    if (m_bResyncHwClock)
+    {
+      m_rtHwStart = rtStart + (rtHwTime - rtTime);
+      m_bResyncHwClock = false;
+    }
+    else
+      m_rtHwStart = rtStart / m_pClock->GetBias();
+
+    Log("CWASAPIRenderFilter::Run - rtTime: %6.3f HW clock: %6.3f rtStart: %6.3f rtHwTime: %6.3f", 
+      rtTime / 10000000.0, m_rtHwStart / 10000000.0, rtStart / 10000000.0, rtHwTime / 10000000.0);
   }
   else
     Log("CWASAPIRenderFilter::Run - error (0x%08x)", hr);
 
-  /*
-  if (!m_bBufferredSamples)
-  {
-    Log("CWASAPIRenderFilter::Run - no buffering was done, discard old samples");
-    BeginFlush();
-    EndFlush();
-  }
-  */
   m_nSampleNum = 0;
-  m_bBufferredSamples = false;
   m_filterState = State_Running;
+
   return CQueuedAudioSink::Run(rtStart);
 }
 
@@ -545,10 +545,7 @@ HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
  HRESULT hr = CQueuedAudioSink::PutSample(pSample);
 
   if (m_filterState != State_Running)
-  {
-    m_bBufferredSamples = true;
     Log("Buffering...%6.3f", BufferredDataDuration() / 10000000.0);
-  }
 
   return hr;
 }
@@ -618,6 +615,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     if (flush)
     {
       HandleFlush();
+      m_bResyncHwClock = true;
       flush = false;
     }
     
@@ -693,7 +691,10 @@ DWORD CWASAPIRenderFilter::ThreadProc()
               break;
             }
             else if (command == ASC_Pause)
+            {
+              m_pCurrentSample.Release();
               m_state = StatePaused;
+            }
             else if (command == ASC_Resume)
             {
               sampleProcessed = false;
