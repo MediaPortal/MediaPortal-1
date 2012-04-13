@@ -221,7 +221,7 @@ namespace TvPlugin
     {
       string genre;
       List<string> programGenres;
-      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genrenames");
+      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
 
       // Each genre map entry is a csv list of "program" genre names (those that may be compared with the genre from the program listings).
       // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
