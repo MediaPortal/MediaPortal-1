@@ -1,114 +1,145 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
   <Info availableDays="7" timezone="" version="2.0" />
   <Channels>
-    <Channel id="TVP 1" siteId="1" />
-    <Channel id="TVP 2" siteId="2" />
-    <Channel id="Polsat" siteId="3" />
-    <Channel id="TVN" siteId="4" />
-    <Channel id="Puls" siteId="8" />
-    <Channel id="TVP Info" siteId="9" />
-    <Channel id="TV 4" siteId="6" />
-    <Channel id="TVN 7" siteId="7" />
-    <Channel id="Tele 5" siteId="72" />
-    <Channel id="TVP Polonia" siteId="10" />
-    <Channel id="TVP Kultura" siteId="5" />
-    <Channel id="Polsat 2" siteId="11" />
-    <Channel id="Polonia 1" siteId="103" />
-    <Channel id="Ale Kino!" siteId="14" />
-    <Channel id="AXN" siteId="18" />
-    <Channel id="AXN Crime" siteId="81" />
-    <Channel id="AXN Sci-Fi" siteId="82" />
-    <Channel id="Canal+" siteId="16" />
-    <Channel id="Canal+ Film" siteId="20" />
-    <Channel id="Cinemax" siteId="41" />
-    <Channel id="Cinemax 2" siteId="73" />
-    <Channel id="Comedy Central" siteId="80" />
-    <Channel id="Filmbox" siteId="74" />
-    <Channel id="Filmbox Extra" siteId="116" />
-    <Channel id="Filmbox HD" siteId="75" />
-    <Channel id="Fox Life" siteId="79" />
-    <Channel id="Hallmark" siteId="19" />
-    <Channel id="HBO" siteId="17" />
-    <Channel id="HBO 2" siteId="21" />
-    <Channel id="HBO Comedy" siteId="43" />
-    <Channel id="Kino Polska" siteId="15" />
-    <Channel id="MGM HD" siteId="85" />
-    <Channel id="Movies 24" siteId="76" />
-    <Channel id="Sci-Fi Channel" siteId="83" />
-    <Channel id="TCM" siteId="38" />
-    <Channel id="TV 1000" siteId="78" />
-    <Channel id="Universal Channel" siteId="77" />
-    <Channel id="Wojna i Pokj" siteId="84" />
-    <Channel id="Zone Europa" siteId="13" />
-    <Channel id="Zone Romantica" siteId="99" />
-    <Channel id="Superstacja" siteId="108" />
-    <Channel id="TV Biznes" siteId="120" />
-    <Channel id="TVN 24" siteId="12" />
-    <Channel id="TV CNBC Biznes" siteId="58" />
-    <Channel id="Canal+ Sport" siteId="31" />
-    <Channel id="ESPN" siteId="52" />
-    <Channel id="Eurosport" siteId="29" />
-    <Channel id="Eurosport 2" siteId="32" />
-    <Channel id="nSport" siteId="89" />
-    <Channel id="Polsat Sport" siteId="71" />
-    <Channel id="Polsat Sport Extra" siteId="45" />
-    <Channel id="SportKlub" siteId="87" />
-    <Channel id="SportKlub+" siteId="121" />
-    <Channel id="TVN Turbo" siteId="30" />
-    <Channel id="TVP Sport" siteId="86" />
-    <Channel id="Animal Planet" siteId="25" />
-    <Channel id="BBC Knowledge" siteId="110" />
-    <Channel id="Discovery Channel" siteId="24" />
-    <Channel id="Discovery HD" siteId="97" />
-    <Channel id="Discovery Historia" siteId="96" />
-    <Channel id="Discovery Science" siteId="26" />
-    <Channel id="Discovery Travel &amp; Living" siteId="27" />
-    <Channel id="Discovery World" siteId="28" />
-    <Channel id="History" siteId="101" />
-    <Channel id="History HD" siteId="111" />
-    <Channel id="National Geographic" siteId="22" />
-    <Channel id="National Geographic Wild" siteId="56" />
-    <Channel id="Planete" siteId="23" />
-    <Channel id="TVP Historia" siteId="95" />
-    <Channel id="Viasat Explorer" siteId="93" />
-    <Channel id="Viasat History" siteId="94" />
-    <Channel id="Zone Reality" siteId="49" />
-    <Channel id="BBC Entertainment" siteId="40" />
-    <Channel id="BBC Lifestyle" siteId="33" />
-    <Channel id="kuchnia.tv" siteId="98" />
-    <Channel id="Mezzo" siteId="44" />
-    <Channel id="MTV Polska" siteId="37" />
-    <Channel id="nTalk" siteId="91" />
-    <Channel id="Polsat Cafe" siteId="122" />
-    <Channel id="TVN Style" siteId="39" />
-    <Channel id="VH 1 Polska" siteId="109" />
-    <Channel id="VIVA Polska" siteId="46" />
-    <Channel id="Zone Club" siteId="48" />
-    <Channel id="Edusat" siteId="113" />
-    <Channel id="BBC Cbeebies" siteId="55" />
-    <Channel id="Boomerang" siteId="102" />
-    <Channel id="Cartoon Network" siteId="34" />
-    <Channel id="Disney Channel" siteId="42" />
-    <Channel id="Disney XD" siteId="35" />
-    <Channel id="Jetix Play" siteId="100" />
-    <Channel id="Mini Mini" siteId="36" />
-    <Channel id="ZigZap" siteId="47" />
+    <Channel id="TVP 1" siteId="TVP-1" />
+    <Channel id="TVP 2" siteId="TVP-2" />
+    <Channel id="Polsat" siteId="Polsat" />
+    <Channel id="TVN" siteId="TVN" />
+    <Channel id="BBC HD" siteId="BBC-HD" />
+    <Channel id="Puls" siteId="Puls" />
+    <Channel id="TVP Info" siteId="TVP-Info" />
+    <Channel id="TV4" siteId="TV4" />
+    <Channel id="TVN Siedem" siteId="TVN-Siedem" />
+    <Channel id="Tele 5" siteId="Tele-5" />
+    <Channel id="TVP Polonia" siteId="TVP-Polonia" />
+    <Channel id="TVP Kultura" siteId="TVP-Kultura" />
+    <Channel id="Polsat 2" siteId="Polsat-2" />
+    <Channel id="Polonia 1" siteId="Polonia-1" />
+    <Channel id="TVP HD" siteId="TVP-HD" />
+    <Channel id="TV5" siteId="TV5-Monde" />
+    <Channel id="Ale Kino!" siteId="Ale-Kino" />
+    <Channel id="AXN" siteId="AXN" />
+    <Channel id="AXN Crime" siteId="AXN-Crime" />
+    <Channel id="AXN Sci-Fi" siteId="AXN-SciFi" />
+    <Channel id="Canal+" siteId="CanalPlus" />
+    <Channel id="Canal+ Film" siteId="CanalPlus-Film" />
+    <Channel id="Cinemax" siteId="Cinemax" />
+    <Channel id="Cinemax 2" siteId="Cinemax2" />
+    <Channel id="Comedy Central" siteId="Comedy-Central" />
+    <Channel id="Comedy Central Family" siteId="Comedy-Central-Family" />
+    <Channel id="Filmbox" siteId="Filmbox" />
+    <Channel id="Filmbox Extra" siteId="Filmbox-Extra" />
+    <Channel id="Filmbox Family" siteId="Filmbox-Family" />
+    <Channel id="Filmbox HD" siteId="Filmbox-HD" />
+    <Channel id="FOX" siteId="FOX" />
+    <Channel id="Fox Life" siteId="Foxlife" />
+    <Channel id="13th Street Universal" siteId="13th-Street-Universal" />
+    <Channel id="HBO" siteId="HBO" />
+    <Channel id="HBO 2" siteId="HBO2" />
+    <Channel id="HBO Comedy" siteId="HBO-Comedy" />
+    <Channel id="Kino Polska" siteId="Kino-Polska" />
+    <Channel id="MGM HD" siteId="MGM-HD" />
+    <Channel id="Movies 24" siteId="Movies-24" />
+    <Channel id="nFilmHD" siteId="nFilmHD" />
+    <Channel id="nFilmHD2" siteId="nFilmHD2" />
+    <Channel id="Polsat Film" siteId="Polsat-Film" />
+    <Channel id="Sci-Fi Channel" siteId="SciFi-Channel" />
+    <Channel id="TCM" siteId="TCM" />
+    <Channel id="TV 1000" siteId="TV1000" />
+    <Channel id="TVP Seriale" siteId="TVP-Seriale" />
+    <Channel id="Universal Channel" siteId="Universal-Channel" />
+    <Channel id="Wojna i Pok&#243;j" siteId="Wojna-i-Pokoj" />
+    <Channel id="Zone Europa" siteId="Zone-Europa" />
+    <Channel id="Zone Romantica" siteId="Zone-Romantica" />
+    <Channel id="Polsat News" siteId="Polsat-News" />
+    <Channel id="Superstacja" siteId="Superstacja" />
+    <Channel id="TV Biznes" siteId="TV-Biznes" />
+    <Channel id="TVN 24" siteId="TVN24" />
+    <Channel id="TV CNBC Biznes" siteId="TVN-CNBC" />
+    <Channel id="Canal+ Gol" siteId="CanalPlus-Gol" />
+    <Channel id="Canal+ Sport" siteId="CanalPlus-Sport" />
+    <Channel id="Canal+ Weekend" siteId="CanalPlus-Weekend" />
+    <Channel id="ESPN America" siteId="ESPN-America" />
+    <Channel id="ESPN" siteId="ESPN-Classic" />
+    <Channel id="Eurosport" siteId="Eurosport" />
+    <Channel id="Eurosport 2" siteId="Eurosport-2" />
+    <Channel id="Extreme" siteId="Extreme" />
+    <Channel id="nSport" siteId="nSport" />
+    <Channel id="Orange Sport" siteId="Orange-Sport" />
+    <Channel id="Polsat Futbol" siteId="Polsat-Futbol" />
+    <Channel id="Polsat Sport" siteId="Polsat-Sport" />
+    <Channel id="Polsat Sport Extra" siteId="Polsat-Sport-Extra" />
+    <Channel id="Polsat Sport HD" siteId="Polsat-Sport-HD" />
+    <Channel id="SportKlub" siteId="SportKlub" />
+    <Channel id="SportKlub+" siteId="SportKlub-Plus" />
+    <Channel id="TVN Turbo" siteId="TVN-Turbo" />
+    <Channel id="TVP Sport" siteId="TVP-Sport" />
+    <Channel id="Animal Planet" siteId="Animal-Planet" />
+    <Channel id="Animal Planet HD" siteId="Animal-Planet-HD" />
+    <Channel id="BBC Knowledge" siteId="BBC-Knowledge" />
+    <Channel id="C&#38;I Network" siteId="Crime-Investigation-Network" />
+    <Channel id="Discovery Channel" siteId="Discovery-Channel" />
+    <Channel id="Discovery HD Showcase" siteId="Discovery-HD-Showcase" />
+    <Channel id="Discovery Historia" siteId="Discovery-Historia" />
+    <Channel id="Discovery Science" siteId="Discovery-Science" />
+    <Channel id="Discovery World" siteId="Discovery-World" />
+    <Channel id="TLC" siteId="TLC" />
+    <Channel id="History" siteId="History" />
+    <Channel id="History HD" siteId="History-HD" />
+    <Channel id="Investigation Dicovery" siteId="Investigation-Discovery" />
+    <Channel id="National Geographic" siteId="National-Geographic" />
+    <Channel id="National Geographic Wild" siteId="Nat-Geo-Wild" />
+    <Channel id="Planete" siteId="Planete" />
+    <Channel id="TVP Historia" siteId="TVP-Historia" />
+    <Channel id="Podr&#243;&#0380;e TV" siteId="Podroze-TV" />
+    <Channel id="Viasat Explorer" siteId="Viasat-Explorer" />
+    <Channel id="Viasat History" siteId="Viasat-History" />
+    <Channel id="Zone Reality" siteId="Zone-Reality" />
+    <Channel id="4fun TV" siteId="4fun-TV" />
+    <Channel id="BBC Entertainment" siteId="BBC-Entertainment" />
+    <Channel id="Eska TV" siteId="Eska-TV" />
+    <Channel id="BBC Lifestyle" siteId="BBC-Lifestyle" />
+    <Channel id="Domo" siteId="Domo" />
+    <Channel id="kuchnia.tv" siteId="Kuchnia-TV" />
+    <Channel id="Mezzo" siteId="Mezzo" />
+    <Channel id="MTV Polska" siteId="MTV-Polska" />
+    <Channel id="Wedding TV" siteId="Wedding-TV" />
+    <Channel id="Polsat Cafe" siteId="Polsat-Cafe" />
+    <Channel id="Polsat Play" siteId="Polsat-Play" />
+    <Channel id="TVN Style" siteId="TVN-Style" />
+    <Channel id="religia.tv" siteId="Religia-TV" />
+    <Channel id="VIVA Polska" siteId="VIVA-Polska" />
+    <Channel id="Club TV" siteId="Club-TV" />
+    <Channel id="Edusat" siteId="Edusat" />
+    <Channel id="BBC Cbeebies" siteId="BBC-Cbeebies" />
+    <Channel id="Boomerang" siteId="Boomerang" />
+    <Channel id="Cartoon Network" siteId="Cartoon-Network" />
+    <Channel id="Disney Channel" siteId="Disney-Channel" />
+    <Channel id="Disney Junior" siteId="Disney-Junior" />
+    <Channel id="Disney XD" siteId="Disney-XD" />
+    <Channel id="Jim Jam" siteId="Jim-Jam" />
+    <Channel id="KidsCo" siteId="KidsCo" />
+    <Channel id="Mini Mini" siteId="MiniMini" />
+    <Channel id="Nickelodeon" siteId="Nickelodeon" />
+    <Channel id="ZigZap" siteId="ZigZap" />
+    <Channel id="TVS" siteId="TVS" />
+    <Channel id="WTK" siteId="WTK" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.teleman.pl/station.html&#63;id=[ID]&#38;day=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Site url="http://www.teleman.pl/program-tv/stacje/[ID]&#63;day=[DAY_OFFSET]" post="" external="false" encoding="utf-8" />
     <Html>
-      <Template name="default" start="programmes" end="sidebar">
+      <Template name="default" start="programmes" end="">
         <SectionTemplate tags="P T A">
           <TemplateText>
             &lt;tr&gt;&lt;th&gt;&lt;#START&gt;TRWA&lt;/th&gt;&lt;td&gt;&lt;a href="" title=""&gt;&lt;#TITLE&gt;: &lt;#SUBTITLE&gt;&lt;/a&gt;&lt;z(&gt;&lt;div&gt;&lt;span class=""&gt;&lt;#GENRE&gt;,&lt;/span&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;&lt;/z)?&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details" start="&lt;div class=&#34;desc&#34;&gt;" end="also">
-        <SectionTemplate tags="D">
+      <Template name="Details" start="&lt;p itemprop&#0061;&#0034;description&#0034;&gt;" end="programmes">
+        <SectionTemplate tags="P">
           <TemplateText>
-            &lt;div class="desc"&gt;&lt;#DESCRIPTION&gt;&lt;br class="clear" /&gt;&lt;/div&gt;&lt;z(&gt;&lt;/div&gt;&lt;div class="desc"&gt;&lt;div class=""&gt;&lt;strong&gt;&lt;/strong&gt;&lt;span class="" title=""&gt;&lt;/span&gt;&lt;span class=""&gt;&lt;/span&gt;&lt;span class=""&gt;&lt;/span&gt;&lt;a href="" title=""&gt;&lt;img src="" width="" height="" alt="" /&gt;&lt;/a&gt;&lt;/div&gt;&lt;div class=""&gt;&lt;/z)?&gt;
+            &lt;p itemprop="description"&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
@@ -116,14 +147,37 @@
 <Preference template="Details" title="0" subtitle="0" genre="0" description="0" />
 </DataPreference>
       <Sublinks>
-        <Sublink search="/prog-" template="Details">
-          <Link url="http://www.teleman.pl/[1]" post="" external="false" encoding="" />
+        <Sublink search="/tv/" template="Details">
+          <Link url="http://www.teleman.pl/[1]" post="" external="false" encoding="utf-8" />
         </Sublink>
       </Sublinks>
 <Searches>
 <Search match="\([0-9]{1,4}[,][0-9]{0,4}\)" field="#EPISODE" remove="true" /> 
 <Search match="\([0-9]{1,4}\)" field="#EPISODE" remove="true" /> 
 <Search match="\([0-9]{1,4}[/][0-9]{0,4}\)" field="#EPISODE" remove="true" />
+<Search match="Premiera: " field="#PREMIERE" remove="true" />
+<Search match="Hit: " field="#PREMIERE" remove="true" />
+<Search match="Czas na mi&#322;o&#347;&#263;: " field="#PREMIERE" remove="true" />
+<Search match="Weekendowe kino Dw&#243;jki: " field="#PREMIERE" remove="true" />
+<Search match="Dw&#243;jka w akcji: " field="#PREMIERE" remove="true" />
+<Search match="Alibi na poniedzia&#322;ek: " field="#PREMIERE" remove="true" />
+<Search match="Dw&#243;jka Dzieciom: " field="#PREMIERE" remove="true" />
+<Search match="Megakomedie: " field="#PREMIERE" remove="true" />
+<Search match="Wiecz&#243;r filmowy. Kocham kino: " field="#PREMIERE" remove="true" />
+<Search match="Kocham kino na bis: " field="#PREMIERE" remove="true" />
+<Search match="Kino nocnych mark&#243;w: " field="#PREMIERE" remove="true" />
+<Search match="Wieczorynka: " field="#PREMIERE" remove="true" />
+<Search match="M&#281;ska rzecz: " field="#PREMIERE" remove="true" />
+<Search match="Hit na sobot&#281;: " field="#PREMIERE" remove="true" />
+<Search match="Zakochana Jedynka: " field="#PREMIERE" remove="true" />
+<Search match="Kolekcja kinomana: " field="#PREMIERE" remove="true" />
+<Search match="James Bond w Jedynce: " field="#PREMIERE" remove="true" />
+<Search match="Wiesz co dobre: " field="#PREMIERE" remove="true" />
+<Search match="Okruchy &#380;ycia: " field="#PREMIERE" remove="true" />
+<Search match="Megahit: " field="#PREMIERE" remove="true" />
+<Search match="Superkino: " field="#PREMIERE" remove="true" />
+<Search match="Pi&#322;ka no&#380;na: " field="#PREMIERE" remove="true" />
+<Search match="True story: " field="#PREMIERE" remove="true" />
 </Searches>
     </Html>
   </Listing>
