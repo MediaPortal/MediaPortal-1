@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning>
-  <!--Created on 2011-11-27 16:48-->
+  <!--Created on 2011-12-29 12:01-->
   <DVBCTuning>
     <!--Transponder ID 101 with channels Nederland 1,Nederland 2,Nederland 3-->
     <Frequency>538000</Frequency>
@@ -74,7 +74,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 113 with channels CNN Turk,Motors TV,Euro D,Yacht & Sail,Fashion TV,Fine Living Network,Zone Reality,Extreme Sports-->
+    <!--Transponder ID 113 with channels CNN Turk,Motors TV,Euro D,Nautical Channel,Fashion TV,Fine Living Network,Zone Reality,Extreme Sports-->
     <Frequency>786000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>

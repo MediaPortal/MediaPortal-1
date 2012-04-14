@@ -91,11 +91,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.56 BD mod ----------- instance 0x%x", this);
+      Log("---------- v1.4.57 BD mod ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.56 BD mod ----------- instance 0x%x", this);
+      Log("---------- v0.0.57 BD mod ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -721,6 +721,30 @@ HRESULT MPEVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* p
       *piARX = vheader->dwPictAspectRatioX;
       *piARY = vheader->dwPictAspectRatioY;
       pType->FreeRepresentation(FORMAT_VideoInfo2, (void*)pAMMediaType);
+      
+      //Make sure values do not exceed 16 bit signed maximum....(Mantis 3738)
+      if ((*piARX > 32767) || (*piARY > 32767))
+      {
+        Log("Large ARX/ARY: %d:%d", *piARX, *piARY);
+        if ((*piARX > *piARY) && (*piARX != 0))
+        {
+          *piARY = (int)(((double)*piARY * 32767.0) / (double)*piARX);
+          *piARY = min(32767, *piARY);          
+          *piARX = 32767;
+        }
+        else if ((*piARX < *piARY) && (*piARY != 0))
+        {
+          *piARX = (int)(((double)*piARX * 32767.0) / (double)*piARY);
+          *piARX = min(32767, *piARX);          
+          *piARY = 32767;
+        }
+        else
+        {
+          *piARX = 32767;
+          *piARY = 32767;
+        }        
+        Log("Adjusted ARX/ARY: %d:%d", *piARX, *piARY);
+      }
     }
     else
     {

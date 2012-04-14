@@ -246,7 +246,7 @@ namespace MediaPortal.Player.Subtitles
         for (int i = 0; i < count; i++)
         {
           Log.Debug("Bitmap index " + i);
-          SUBTITLESTREAM bOpt = (SUBTITLESTREAM)Marshal.PtrToStructure(current, typeof (SUBTITLESTREAM));
+          SUBTITLESTREAM bOpt = (SUBTITLESTREAM)Marshal.PtrToStructure(current, typeof(SUBTITLESTREAM));
           SubtitleOption opt = new SubtitleOption();
           opt.bitmapIndex = i;
           opt.type = SubtitleType.Bitmap;
@@ -330,14 +330,33 @@ namespace MediaPortal.Player.Subtitles
       SubtitleOption prefered = null;
       int priority = int.MaxValue;
       int prefOptIndex = -1;
-
+      int prefPage = 0;
+      try
+      {
+        using (MPSettings xmlreader = new MPSettings())
+        {
+          // get the currently found active subtitle page set by TeletextReceiver
+          string defSub = xmlreader.GetValueAsString("tvservice", "dvbdefttxtsubtitles", "999;999");
+          prefPage = Convert.ToInt16(defSub.Split(';')[0]);
+        }
+      }
+      catch { }
       for (int optIndex = 1; optIndex < options.Count; optIndex++)
       {
         SubtitleOption opt = options[optIndex];
         int index = preferedLanguages.IndexOf(opt.language);
         Log.Debug(opt + " Pref index " + index);
 
-        if (index >= 0 && index < priority)
+        bool pref = false;
+        if (opt.type == SubtitleType.Bitmap)
+        {
+          if (index >= 0 && index < priority) pref = true;
+        }
+        else
+        {
+          if (prefPage == opt.entry.page) pref = true;
+        }
+        if (pref)
         {
           Log.Debug("Setting as pref");
           prefered = opt;

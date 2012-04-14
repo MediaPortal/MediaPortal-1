@@ -163,6 +163,8 @@ public:
   CSubtitlePin*   GetSubtitlePin();
   IDVBSubtitle*   GetSubtitleFilter();
   bool            IsTimeShifting();
+  bool            IsRTSP();
+  bool            IsLiveTV();
   CTsDuration&    GetDuration();
   FILTER_STATE    State() {return m_State;};
   CRefTime        Compensation;

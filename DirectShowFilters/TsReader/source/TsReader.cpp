@@ -170,7 +170,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("--------------- v0.4.14 -------------------");
+  LogDebug("--------------- v0.4.17a -------------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -506,6 +506,16 @@ STDMETHODIMP CTsReaderFilter::Stop()
 bool CTsReaderFilter::IsTimeShifting()
 {
   return m_bTimeShifting;
+}
+
+bool CTsReaderFilter::IsRTSP()
+{
+  return (m_fileDuration == NULL);
+}
+
+bool CTsReaderFilter::IsLiveTV()
+{
+  return m_bLiveTv;
 }
 
 
