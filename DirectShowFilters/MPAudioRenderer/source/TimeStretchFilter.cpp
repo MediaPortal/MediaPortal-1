@@ -340,11 +340,7 @@ void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample, bool initS
     {
       flush();
       if (m_pNextOutSample)
-      {
-        hr = OutputNextSample();
-        if (FAILED(hr))
-          Log("CTimeStretchFilter - flushing - failed to output next sample: 0x%08x", hr);
-      }
+        m_pNextOutSample.Release();
 
       m_rtNextIncomingSampleTime = rtStart;
 
@@ -397,6 +393,9 @@ DWORD CTimeStretchFilter::ThreadProc()
         sample.Release();
         SetEvent(m_hCurrentSampleReleased);
         m_rtInSampleTime = m_rtNextIncomingSampleTime = 0;
+
+        if (m_pNextOutSample)
+          m_pNextOutSample.Release();
       }
       else if (command == ASC_Pause || command == ASC_Resume)
         continue;
