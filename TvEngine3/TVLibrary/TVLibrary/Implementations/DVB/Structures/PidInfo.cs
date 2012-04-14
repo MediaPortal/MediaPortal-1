@@ -42,7 +42,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// pid
     /// </summary>
-    public int pid;
+    public UInt16 pid;
 
     /// <summary>
     /// reserved
@@ -99,7 +99,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     /// <param name="audioPid">The audio pid.</param>
     /// <param name="audioLanguage">The audio language.</param>
-    public void AudioPid(int audioPid, string audioLanguage)
+    public void AudioPid(UInt16 audioPid, string audioLanguage)
     {
       if (audioLanguage == null)
         audioLanguage = "";
@@ -165,7 +165,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary> 
     /// <param name="ac3Pid">The ac3 pid.</param>
     /// <param name="audioLanguage">The audio language.</param>
-    public void Ac3Pid(int ac3Pid, string audioLanguage)
+    public void Ac3Pid(UInt16 ac3Pid, string audioLanguage)
     {
       if (audioLanguage == null)
         audioLanguage = "";
@@ -180,7 +180,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     /// <param name="videoPid">The video pid.</param>
     /// <param name="streamType">the stream Type.</param>
-    public void VideoPid(int videoPid, int streamType)
+    public void VideoPid(UInt16 videoPid, int streamType)
     {
       pid = videoPid;
       language = "";
@@ -192,7 +192,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// ctor for a teletext pid
     /// </summary>
     /// <param name="teletextPid">The teletext pid.</param>
-    public void TeletextPid(int teletextPid)
+    public void TeletextPid(UInt16 teletextPid)
     {
       pid = teletextPid;
       language = "";
@@ -204,7 +204,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// ctor for a subtitle pid
     /// </summary>
     /// <param name="subtitlePid">The subtitle pid.</param>
-    public void SubtitlePid(int subtitlePid)
+    public void SubtitlePid(UInt16 subtitlePid)
     {
       pid = subtitlePid;
       language = "";

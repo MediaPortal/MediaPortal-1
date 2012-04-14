@@ -90,7 +90,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// Pid
     /// </summary>
-    public int Pid;
+    public UInt16 Pid;
 
     /// <summary>
     /// CA Id
@@ -274,7 +274,7 @@ namespace TvLibrary.Implementations.DVB.Structures
             Add(newEcms, ecm);
           ecm = new ECMEMM();
           int caId = ecm.CaId = ((descriptor[off + 2]) << 8) + descriptor[off + 3];
-          ecm.Pid = ((descriptor[off + 4] & 0x1f) << 8) + descriptor[off + 5];
+          ecm.Pid = (UInt16)(((descriptor[off + 4] & 0x1f) << 8) + descriptor[off + 5]);
           if (ecm.CaId == 0x100 && len >= 17)
           {
             if (descriptor[off + 8] == 0xff)
@@ -293,7 +293,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                   break;
                 ecm = new ECMEMM();
                 ecm.CaId = caId;
-                ecm.Pid = ((descriptor[offset + 4] & 0x1f) << 8) + descriptor[offset + 5];
+                ecm.Pid = (UInt16)(((descriptor[offset + 4] & 0x1f) << 8) + descriptor[offset + 5]);
                 ecm.ProviderId = ((descriptor[offset + 6]) << 8) + descriptor[offset + 7];
                 Add(newEcms, ecm);
                 ecm = new ECMEMM();

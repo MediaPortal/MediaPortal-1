@@ -912,7 +912,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (info.network_pmt_PID >= 0 && info.serviceID >= 0)
         {
-          hwPids.Add((ushort)info.network_pmt_PID);
+          hwPids.Add(info.network_pmt_PID);
         }
 
         if (info.pids != null)
@@ -929,7 +929,7 @@ namespace TvLibrary.Implementations.DVB
               {
                 _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, pidInfo.pid);
               }
-              hwPids.Add((ushort)pidInfo.pid);
+              hwPids.Add(pidInfo.pid);
               _hasTeletext = true;
             }
             if (pidInfo.isAC3Audio || pidInfo.isEAC3Audio || pidInfo.isAudio)
@@ -958,24 +958,24 @@ namespace TvLibrary.Implementations.DVB
                 Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
                 _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex, pidInfo.pid);
               }
-              hwPids.Add((ushort)pidInfo.pid);
+              hwPids.Add(pidInfo.pid);
             }
 
             if (pidInfo.isVideo)
             {
               Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
-              hwPids.Add((ushort)pidInfo.pid);
+              hwPids.Add(pidInfo.pid);
               _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex, pidInfo.pid);
               if (info.pcrPid > 0 && info.pcrPid != pidInfo.pid)
               {
-                hwPids.Add((ushort)info.pcrPid);
+                hwPids.Add(info.pcrPid);
               }
             }
 
             if (pidInfo.isDVBSubtitle)
             {
               Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
-              hwPids.Add((ushort)pidInfo.pid);
+              hwPids.Add(pidInfo.pid);
             }
           }
         }
@@ -990,17 +990,17 @@ namespace TvLibrary.Implementations.DVB
           // ECM Pids
           foreach (ECMEMM ecmValue in _channelInfo.caPMT.GetECM())
           {
-            if (ecmValue.Pid != 0 && !hwPids.Contains((ushort)ecmValue.Pid))
+            if (ecmValue.Pid != 0 && !hwPids.Contains(ecmValue.Pid))
             {
-              hwPids.Add((ushort)ecmValue.Pid);
+              hwPids.Add(ecmValue.Pid);
             }
           }
           //EMM Pids
           foreach (ECMEMM emmValue in _channelInfo.caPMT.GetEMM())
           {
-            if (emmValue.Pid != 0 && !hwPids.Contains((ushort)emmValue.Pid))
+            if (emmValue.Pid != 0 && !hwPids.Contains(emmValue.Pid))
             {
-              hwPids.Add((ushort)emmValue.Pid);
+              hwPids.Add(emmValue.Pid);
             }
           }
           Log.Log.WriteFile("Number of HWPIDS that needs to be sent to tuner :{0} ", hwPids.Count);
@@ -1175,7 +1175,7 @@ namespace TvLibrary.Implementations.DVB
 
               _channelInfo = new ChannelInfo();
               _channelInfo.DecodePmt(_pmtData);
-              _channelInfo.network_pmt_PID = channel.PmtPid;
+              _channelInfo.network_pmt_PID = (UInt16)channel.PmtPid;
               _channelInfo.serviceID = channel.ServiceId;
 
               // update any service scrambled / unscambled changes
@@ -1194,7 +1194,7 @@ namespace TvLibrary.Implementations.DVB
                   {
                     byte[] cat = new byte[catLength];
                     Marshal.Copy(catMem, cat, 0, catLength);
-                    _channelInfo.DecodeCat(cat, catLength);
+                    _channelInfo.DecodeCat(cat);
                   }
                 }
                 catch (Exception ex)

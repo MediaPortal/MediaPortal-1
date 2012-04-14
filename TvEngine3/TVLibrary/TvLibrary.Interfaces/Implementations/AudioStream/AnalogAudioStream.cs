@@ -35,7 +35,7 @@ namespace TvLibrary.Implementations.DVB
     private string _language;
     private AudioStreamType _streamType;
     private TVAudioMode _audioMode;
-    private int _audioPid;
+    private UInt16 _audioPid;
 
     #endregion
 
@@ -49,7 +49,7 @@ namespace TvLibrary.Implementations.DVB
       _language = "";
       _streamType = AudioStreamType.Mpeg2;
       _audioMode = TVAudioMode.Stereo;
-      _audioPid = -1;
+      _audioPid = 0;
     }
 
     #endregion
@@ -88,7 +88,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the audio stream PID.
     /// </summary>
     /// <value>Audio PID.</value>
-    public int Pid
+    public UInt16 Pid
     {
       get { return _audioPid; }
       set { _audioPid = value; }
