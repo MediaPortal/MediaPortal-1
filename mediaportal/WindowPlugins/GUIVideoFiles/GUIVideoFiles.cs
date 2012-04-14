@@ -1958,35 +1958,11 @@ namespace MediaPortal.GUI.Video
 
             #region Moviefiles
 
-            //// Get path from *.nfo file)
-            //string fileName = string.Empty;
-            //Util.Utils.Split(nfoFile, out path, out fileName);
-            //// Movie filename to search from gathered files from nfo path
-            //fileName = Util.Utils.GetFilename(fileName, true);
-            //// Get all video files from nfo path
-            //ArrayList files = new ArrayList();
-            //VideoDatabase.GetVideoFiles(path, ref files);
-
-            //foreach (String file in files)
-            //{
-            //  string tmpFile = string.Empty;
-            //  string tmpPath = string.Empty;
-            //  // Read filename
-            //  Util.Utils.Split(file, out tmpPath, out tmpFile);
-            //  // Remove extension
-            //  tmpFile = Util.Utils.GetFilename(tmpFile, true);
-            //  // Remove stack endings (CD1...)
-            //  Util.Utils.RemoveStackEndings(ref tmpFile);
-            //  // Check and add to vdb and get movieId
-            //  if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
-            //  {
-            //    int id = VideoDatabase.AddMovie(file, true);
-            //    movie.ID = id;
+            // Need to fake movie to see it's properties (id = 0 is not used in vdb for movies)
             movie.Path = path;
             movie.File = nfoFile;
-            //  }
-            //}
             movie.ID = 0;
+
             #endregion
 
             #region Title

@@ -3348,56 +3348,61 @@ namespace MediaPortal.Configuration.Sections
       {
         if (Int32.Parse(cbActor.SelectedValue.ToString()) > 0)
         {
-          IMDBActor imdbActor = new IMDBActor();
-          imdbActor.ID = Int32.Parse(cbActor.SelectedValue.ToString());
-          imdbActor.Name = cbActor.Text.Replace(" - Director", ""); // Remove director suffix from the name
-          imdbActor.MiniBiography = tbMiniBiography.Text;
-          imdbActor.Biography = tbBiography.Text;
-          imdbActor.DateOfBirth = tbBirthDate.Text;
-          imdbActor.PlaceOfBirth = tbBirthPlace.Text;
-          imdbActor.DateOfDeath = tbDeathDate.Text;
-          imdbActor.PlaceOfDeath = tbDeathPlace.Text;
-
-          if (tbThumbLoc.Text != string.Empty && tbThumbLoc.Text.Length >= 7)
-          {
-            bool isUrl = (tbThumbLoc.Text.Substring(0, 7) == @"http://");
-            if (isUrl)
-            {
-              imdbActor.ThumbnailUrl = tbThumbLoc.Text;
-            }
-          }
-          else
-          {
-            imdbActor.ThumbnailUrl = string.Empty;
-            tbThumbLoc.Text = string.Empty;
-          }
-          // Update actor info
-          VideoDatabase.SetActorInfo(imdbActor.ID, imdbActor);
-          // Update actor thumb
-          if (imdbActor.ThumbnailUrl != string.Empty)
-          {
-            string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
-            string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
-            // Delete old thumbs
-            Util.Utils.FileDelete(largeCoverArt);
-            Util.Utils.FileDelete(coverArt);
-            // Save new thumbs
-            IMDBFetcher.DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.ID.ToString());
-            // Clear old image from picture box
-            if (pictureBoxActor.Image != null)
-            {
-              pictureBoxActor.Image.Dispose();
-              pictureBoxActor.Image = null;
-            }
-            // Set new image into pbox
-            pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
-          }
+          SaveActorInfo();
           MessageBox.Show("Actor info saved.");
         }
       }
       catch (Exception)
       {
         MessageBox.Show("Save failed.");
+      }
+    }
+
+    private void SaveActorInfo()
+    {
+      IMDBActor imdbActor = new IMDBActor();
+      imdbActor.ID = Int32.Parse(cbActor.SelectedValue.ToString());
+      imdbActor.Name = cbActor.Text.Replace(" - Director", ""); // Remove director suffix from the name
+      imdbActor.MiniBiography = tbMiniBiography.Text;
+      imdbActor.Biography = tbBiography.Text;
+      imdbActor.DateOfBirth = tbBirthDate.Text;
+      imdbActor.PlaceOfBirth = tbBirthPlace.Text;
+      imdbActor.DateOfDeath = tbDeathDate.Text;
+      imdbActor.PlaceOfDeath = tbDeathPlace.Text;
+
+      if (tbThumbLoc.Text != string.Empty && tbThumbLoc.Text.Length >= 7)
+      {
+        bool isUrl = (tbThumbLoc.Text.Substring(0, 7) == @"http://" || tbThumbLoc.Text.Substring(0, 7) == @"file://");
+        if (isUrl)
+        {
+          imdbActor.ThumbnailUrl = tbThumbLoc.Text;
+        }
+      }
+      else
+      {
+        imdbActor.ThumbnailUrl = string.Empty;
+        tbThumbLoc.Text = string.Empty;
+      }
+      // Update actor info
+      VideoDatabase.SetActorInfo(imdbActor.ID, imdbActor);
+      // Update actor thumb
+      if (imdbActor.ThumbnailUrl != string.Empty)
+      {
+        string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
+        string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
+        // Delete old thumbs
+        Util.Utils.FileDelete(largeCoverArt);
+        Util.Utils.FileDelete(coverArt);
+        // Save new thumbs
+        IMDBFetcher.DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.ID.ToString());
+        // Clear old image from picture box
+        if (pictureBoxActor.Image != null)
+        {
+          pictureBoxActor.Image.Dispose();
+          pictureBoxActor.Image = null;
+        }
+        // Set new image into pbox
+        pictureBoxActor.ImageLocation = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.ID.ToString());
       }
     }
 
@@ -3697,13 +3702,12 @@ namespace MediaPortal.Configuration.Sections
     {
       string actorId = cbActorMovies.SelectedValue.ToString();
       IMDBActor actor = VideoDatabase.GetActorInfo(Convert.ToInt32(actorId));
-      //if (actor != null)
-      //{
       OpenFileDialog dlg = new OpenFileDialog();
       dlg.AddExtension = true;
       dlg.Filter = "JPEG Image (*.jpg,*.jpeg)|*.jpg;*.jpeg|All files (*.*)|*.*";
       dlg.RestoreDirectory = false;
       string fileName = string.Empty;
+      
       // open dialog
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
@@ -3711,25 +3715,17 @@ namespace MediaPortal.Configuration.Sections
 
         if (!string.IsNullOrEmpty(fileName))
         {
-          string lThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, actorId);
-          string sThumb = Util.Utils.GetCoverArtName(Thumbs.MovieActors, actorId);
-          // Copy
-          if (Util.Picture.CreateThumbnail(fileName, sThumb, (int)Thumbs.ThumbResolution,
-                                           (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-          {
-            Util.Picture.CreateThumbnail(fileName, lThumb, (int)Thumbs.ThumbLargeResolution,
-                                         (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
-          }
+          tbThumbLoc.Text = "file://" + fileName;
+          SaveActorInfo();
+          
           if (actor != null)
           {
             int index = cbActor.SelectedIndex;
             ActorsTableRefresh(CurrentMovie.ID);
             cbActor.SelectedIndex = index;
           }
-          pictureBoxActor.ImageLocation = lThumb;
         }
       }
-      //}
     }
 
     #endregion

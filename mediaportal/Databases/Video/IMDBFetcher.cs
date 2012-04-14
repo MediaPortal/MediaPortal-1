@@ -841,7 +841,11 @@ namespace MediaPortal.Video.Database
         
         if (actorMovieId == _movieDetails.IMDBNumber)
         {
-          VideoDatabase.AddActorToMovie(_movieDetails.ID, _actorId, actorRole);
+          if (!string.IsNullOrEmpty(actorRole))
+          {
+            VideoDatabase.AddActorToMovie(_movieDetails.ID, _actorId, actorRole);
+          }
+
           break;
         }
       }
@@ -852,10 +856,22 @@ namespace MediaPortal.Video.Database
                                   _actorId);
       bool error = false;
       VideoDatabase.ExecuteSql(sql, out error);
+
+      // Keep user actor image
+      bool userActorImage = false;
+      IMDBActor tmpActor = new IMDBActor();
+      tmpActor = VideoDatabase.GetActorInfo(_actorId);
+
+      if (tmpActor.ThumbnailUrl.StartsWith("file://"))
+      {
+        _imdbActor.ThumbnailUrl = tmpActor.ThumbnailUrl;
+        userActorImage = true;
+      }
+
       VideoDatabase.SetActorInfo(_actorId, _imdbActor);
       
       // Actor thumbs
-      if (!string.IsNullOrEmpty(_imdbActor.ThumbnailUrl))
+      if (!string.IsNullOrEmpty(_imdbActor.ThumbnailUrl) && !userActorImage)
       {
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
         string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
@@ -867,14 +883,14 @@ namespace MediaPortal.Video.Database
         OnProgress(line1, line2, line3, -1);
         DownloadCoverArt(Thumbs.MovieActors, _imdbActor.ThumbnailUrl, _actorId.ToString());
       }
-      else
-      {
-        // Sometimes we can have wrong actor pic (wrong actor selected in list before) so delete it
-        string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
-        string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
-        Util.Utils.FileDelete(largeCoverArtImage);
-        Util.Utils.FileDelete(coverArtImage);
-      }
+      //else
+      //{
+      //  // Sometimes we can have wrong actor pic (wrong actor selected in list before) so delete it
+      //  string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+      //  string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+      //  Util.Utils.FileDelete(largeCoverArtImage);
+      //  Util.Utils.FileDelete(coverArtImage);
+      //}
       _imdbActor = VideoDatabase.GetActorInfo(_actorId);
     }
 
