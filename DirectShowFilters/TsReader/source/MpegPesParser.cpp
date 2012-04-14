@@ -48,7 +48,7 @@ CMpegPesParser::CMpegPesParser()
 
 }
 
-bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
+bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 {
 	bool parsed=false;
 	__int64 framesize=hdrParser.GetSize();
@@ -56,7 +56,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
 	if (isMpeg2)
 	{
 		seqhdr seq;
-		if (hdrParser.Read(seq,framesize,&pmt))
+		if (hdrParser.Read(seq,framesize,&pmt,reset))
 		{
 			//hdrParser.DumpSequenceHeader(seq);
 			basicVideoInfo.width=seq.width;
@@ -76,8 +76,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
 	}
 	else 
 	{
-		avchdr avc;
-		if (hdrParser.Read(avc,framesize,&pmt))
+		if (hdrParser.Read(avc,framesize,&pmt,reset))
 		{
 			//hdrParser.DumpAvcHeader(avc);
 			basicVideoInfo.width=avc.width;
@@ -98,11 +97,12 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
 	return parsed;
 }
 
-bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,bool isMpeg2)
+bool CMpegPesParser::OnTsPacket(byte *Frame,int Length,bool isMpeg2,bool reset)
 {
 	//LogDebug("Framesize: %i",Length);
 	//if (Length<=100) return false ; // arbitrary for safety.
+  CAutoLock lock (&m_sectionVideoPmt);
 	hdrParser.Reset(Frame,Length);
-	return ParseVideo(Frame,isMpeg2);
+	return ParseVideo(Frame,isMpeg2,reset);
 }
 

@@ -42,8 +42,6 @@ extern void LogDebug(const char *fmt, ...) ;
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 #define DNew new
 
-#define MAX_SPS			256			// Max size for a SPS packet
-
 int CFrameHeaderParser::MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
 {
 	int srate_idx;
@@ -300,8 +298,15 @@ bool CFrameHeaderParser::Read(peshdr& h, BYTE code)
 	return(true);
 }
 
-bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt)
+bool CFrameHeaderParser::Read(seqhdr& h, int len, CMediaType* pmt, bool reset)
 {
+  if (reset)
+  {
+    h.ifps=0;
+    h.height=0;
+    h.width=0;
+  }
+
 	__int64 endpos = GetPos() + len; // - sequence header length
 
 	BYTE id = 0;
@@ -1185,8 +1190,17 @@ void CFrameHeaderParser::RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length)
 }
 
 
-bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
+bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 {
+  if (reset)
+  {
+    h.spslen=0;
+    h.ppslen=0;
+    h.height=0;
+    h.width=0;
+    h.AvgTimePerFrame=0;
+  }
+  
 	while(GetRemaining()>4 && (h.spslen==0 || h.ppslen==0 || h.height<100 || h.width<100 || h.AvgTimePerFrame<=0))
 	{
 		//// check for NALU startcode
@@ -1226,19 +1240,28 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		{
 			//LogDebug("SPS found");
 
-			BYTE			SPSTemp[MAX_SPS];
-			BYTE			SPSBuff[MAX_SPS];
-			CGolombBuffer	gb (SPSBuff, MAX_SPS);
 			__int64			num_units_in_tick;
 			__int64			time_scale;
+			__int64			pos;
 			long			fixed_frame_rate_flag;
 
-			h.spspos = GetPos() - 5;
-			h.spslen = next_nal - h.spspos;
+			// Copy the full SPS packet in case the PPS is not found in the same packet,
+			// but make sure we don't change the current position in the buffer.
+			pos = GetPos() - 5;
+			if (h.spslen != 0)
+			{
+				free(h.sps);
+			}
+			h.spslen = next_nal - pos;
+			h.sps = (BYTE*) malloc(h.spslen - 4);
+			ByteRead(h.sps, h.spslen - 4);
+			Seek(pos + 5);
 
 			// Manage H264 escape codes (see "remove escapes (very rare 1:2^22)" in ffmpeg h264.c file)
-			ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
-			RemoveMpegEscapeCode (SPSBuff, SPSTemp, MAX_SPS);
+			//ByteRead((BYTE*)SPSTemp, min(MAX_SPS, GetRemaining()));
+			BYTE* buff = (BYTE*) malloc(h.spslen - 4);
+			CGolombBuffer	gb (buff, h.spslen - 4);
+			RemoveMpegEscapeCode (buff, h.sps, h.spslen - 4);
 
 			h.profile = (BYTE)gb.BitRead(8);
 			gb.BitRead(8);
@@ -1367,12 +1390,19 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 				}
 			}
 
-			Seek(h.spspos+gb.GetPos());
+			Seek(pos + gb.GetPos());
+			free(buff);
 		}
 		else if(nal_type==0x8)
 		{
-			h.ppspos = GetPos() - 5;
-			h.ppslen = next_nal - h.ppspos;
+			__int64 pos = GetPos() - 5;
+			if (h.ppslen != 0)
+			{
+				free(h.pps);
+			}
+			h.ppslen = next_nal - pos;
+			h.pps = (BYTE*) malloc(h.ppslen - 4);
+			ByteRead(h.pps, h.ppslen - 4);
 		}
 
 		BitByteAlign();
@@ -1445,16 +1475,15 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 		vi->dwLevel = h.level;
 		vi->cbSequenceHeader = extra;
 		vi->dwStartTimeCode=0;
+		
 		BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
 		*p++ = (h.spslen-4) >> 8;
 		*p++ = (h.spslen-4) & 0xff;
-		Seek(h.spspos+4);
-		ByteRead(p, h.spslen-4);
+		memcpy(p, h.sps, h.spslen-4);
 		p += h.spslen-4;
 		*p++ = (h.ppslen-4) >> 8;
 		*p++ = (h.ppslen-4) & 0xff;
-		Seek(h.ppspos+4);
-		ByteRead(p, h.ppslen-4);
+		memcpy(p, h.pps, h.ppslen-4);
 		p += h.ppslen-4;
 		pmt->SetFormat((BYTE*)vi, len);
 	}
@@ -1638,9 +1667,7 @@ void CFrameHeaderParser::DumpAvcHeader(avchdr h)
 	LogDebug("height: %i",h.height);
 	LogDebug("level: %i",h.level);
 	LogDebug("profile: %i",h.profile);
-	LogDebug("PPS pos: %i ",h.ppspos);
 	LogDebug("PPS len: %i",h.ppslen);
-	LogDebug("SPS pos: %i",h.spspos);
 	LogDebug("SPS len: %i",h.spslen);
 	LogDebug("=================================");
 }

@@ -638,7 +638,7 @@ namespace MediaPortal.Util
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower())))
       {
-        if (IsPicture(item.Path))
+        if (!IsVideo(item.Path))
         {
           Log.Debug("SetThumbnails: nothing to do.");
           return;
@@ -1469,6 +1469,8 @@ namespace MediaPortal.Util
         // Set to hidden to avoid losing focus.
         procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
         procInfo.CreateNoWindow = true;
+        procInfo.FileName = strProgram;
+        procInfo.UseShellExecute = false;
       }
       return StartProcess(procInfo, bWaitForExit);
     }
@@ -2518,13 +2520,19 @@ namespace MediaPortal.Util
     private static object _watchersLock = new object();
     private static object _fileExistsCacheLock = new object();
 
-    public static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
+    private static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
     {
       lock (_fileLookUpCacheLock)
       {
         //Log.Debug("UpdateLookUpCacheItem : {0}", key);
         _fileLookUpCache[key] = fileLookUpItem; // we never remove anything, so this is safe
       }
+    }
+
+    private static void UpdateFileNameForCache(ref string filename)
+    {
+      if (string.IsNullOrEmpty(filename)) return;
+      filename = filename.ToLower();
     }
 
     private static IEnumerable<string> DirSearch(string sDir)
@@ -2666,10 +2674,7 @@ namespace MediaPortal.Util
         if (watcher != null)
         {
           Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
-          FileLookUpItem fileLookUpItem = new FileLookUpItem();
-          fileLookUpItem.Exists = true;
-          fileLookUpItem.Filename = e.FullPath;
-          UpdateLookUpCacheItem(fileLookUpItem, e.FullPath);
+          DoInsertExistingFileIntoCache(e.FullPath);
         }
       }
     }
@@ -3070,7 +3075,7 @@ namespace MediaPortal.Util
     private static void RemoveFoldersFromCache(string dir)
     {
       Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;
-      lock (_fileLookUpCache)
+      lock (_fileLookUpCacheLock)
       {
         fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);
       }
@@ -3080,7 +3085,7 @@ namespace MediaPortal.Util
 
       foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
       {
-        lock (_fileLookUpCache)
+        lock (_fileLookUpCacheLock)
         {
           _fileLookUpCache.Remove(fli.Key);
         }
@@ -3148,8 +3153,9 @@ namespace MediaPortal.Util
 
     public static void DoInsertExistingFileIntoCache(string file)
     {
-      FileLookUpItem fileLookUpItem = new FileLookUpItem();
+      UpdateFileNameForCache(ref file);
 
+      FileLookUpItem fileLookUpItem = new FileLookUpItem();
       fileLookUpItem.Exists = true;
       fileLookUpItem.Filename = file;
       UpdateLookUpCacheItem(fileLookUpItem, file);
@@ -3157,6 +3163,8 @@ namespace MediaPortal.Util
 
     public static void DoInsertNonExistingFileIntoCache(string file)
     {
+      UpdateFileNameForCache(ref file);
+
       FileLookUpItem fileLookUpItem = new FileLookUpItem();
       fileLookUpItem.Exists = false;
       fileLookUpItem.Filename = file;
@@ -3169,13 +3177,15 @@ namespace MediaPortal.Util
 
       if (!string.IsNullOrEmpty(filename))
       {
+        UpdateFileNameForCache(ref filename);
         FileLookUpItem fileLookUpItem = new FileLookUpItem();
         if (!_fileLookUpCache.TryGetValue(filename, out fileLookUpItem))
         {
           found = File.Exists(filename);
-          fileLookUpItem.Filename = filename;
-          fileLookUpItem.Exists = found;
-          UpdateLookUpCacheItem(fileLookUpItem, filename);
+          if (found)
+            DoInsertExistingFileIntoCache(filename);
+          else
+            DoInsertNonExistingFileIntoCache(filename);
         }
         else
         {

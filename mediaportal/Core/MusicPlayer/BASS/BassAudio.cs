@@ -2825,7 +2825,6 @@ namespace MediaPortal.Player
         }
         else
         {
-          FilePath = "";
           _State = PlayState.Ended;
         }
       }
