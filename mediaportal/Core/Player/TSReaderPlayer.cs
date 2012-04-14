@@ -490,6 +490,12 @@ namespace MediaPortal.Player
               Log.Error("TSReaderPlayer: Unable to get ITeletextSource interface");
             }
             Log.Debug("TSReaderPlayer: Creating Teletext Receiver");
+            try
+            {
+                using (MPSettings xmlreader = new MPSettings())
+                    xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", "999;999");
+            }
+            catch { }
             TeletextSubtitleDecoder ttxtDecoder = new TeletextSubtitleDecoder(_dvbSubRenderer);
             _ttxtReceiver = new TeletextReceiver(_teletextSource, ttxtDecoder);
             // regardless of whether dvb subs are enabled, the following call is okay
@@ -1002,6 +1008,14 @@ namespace MediaPortal.Player
         {
           Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
         }
+
+        try
+        {
+            using (MPSettings xmlreader = new MPSettings())
+                xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", "999;999");
+        }
+        catch { }
+
         //switch back to directx windowed mode
         //Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode Cleanup");
         //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
@@ -1351,6 +1365,12 @@ namespace MediaPortal.Player
         _ireader.OnZapping(info);
       }
       Log.Info("TSReaderPlayer: OnZapping :{0}", info);
+      try
+      {
+          using (MPSettings xmlreader = new MPSettings())
+              xmlreader.SetValue("tvservice", "dvbdefttxtsubtitles", "999;999");
+      }
+      catch { }
     }
   }
 }

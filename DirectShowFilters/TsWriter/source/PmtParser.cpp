@@ -104,7 +104,7 @@ bool CPmtParser::DecodePmt(CSection sections, int& pcr_pid, bool& hasCaDescripto
 		elementary_PID = ((section[pointer+1]&0x1F)<<8)+section[pointer+2];
 		ES_info_length = ((section[pointer+3] & 0xF)<<8)+section[pointer+4];
 
-		if (pointer+ES_info_length>=sectionLen) 
+		if ((pointer+ES_info_length>=sectionLen) || (ES_info_length > 1023))
 		{
 			LogDebug("pmt parser check 1");
 			return false;
