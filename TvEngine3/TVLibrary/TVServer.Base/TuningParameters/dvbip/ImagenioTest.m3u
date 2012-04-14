@@ -1,0 +1,7 @@
+#EXTM3U
+#EXTINF:000,Canal Promocional
+rtp://239.0.0.77:8208
+#EXTINF:001,La 1
+rtp://239.0.0.76:8208
+#EXTINF:002,La 2
+rtp://239.0.0.2:8208
