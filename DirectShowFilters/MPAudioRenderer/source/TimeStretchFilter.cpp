@@ -42,8 +42,7 @@ CTimeStretchFilter::CTimeStretchFilter(AudioRendererSettings* pSettings, CSyncCl
   m_rtInSampleTime(0),
   m_rtNextIncomingSampleTime(0),
   m_pClock(pClock),
-  m_bResamplingRequested(false),
-  m_bResetFirstSample(true)
+  m_bResamplingRequested(false)
 {
 }
 
@@ -313,15 +312,58 @@ HRESULT CTimeStretchFilter::EndOfStream()
   //  WaitForSingleObject(m_hInputQueueEmptyEvent, END_OF_STREAM_FLUSH_TIMEOUT); // TODO make this depend on the amount of data in the queue
   return S_OK;
 }
+
+HRESULT CTimeStretchFilter::Pause()
+{
+  m_filterState = State_Paused;
+  return CQueuedAudioSink::Pause();
+}
+
 HRESULT CTimeStretchFilter::Run(REFERENCE_TIME rtStart)
 {
-  REFERENCE_TIME rtTime = 0;
-  HRESULT hr = m_pClock->GetTime(&rtTime);
-
-  if (SUCCEEDED(hr))
-    m_rtOffset = rtStart - rtTime;
+  Log("CTimeStretchFilter::Run - rtTime: %6.3f", rtStart / 10000000.0);
+  m_filterState = State_Running;
 
   return CQueuedAudioSink::Run(rtStart);
+}
+
+void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample, bool initStreamTime)
+{
+  REFERENCE_TIME rtStart = 0;
+  REFERENCE_TIME rtStop = 0;
+  HRESULT hr = pSample->GetTime(&rtStart, &rtStop);
+
+  if (SUCCEEDED(hr))
+  {
+    // Detect discontinuity in stream timeline
+    if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR) || initStreamTime)
+    {
+      flush();
+      if (m_pNextOutSample)
+      {
+        hr = OutputNextSample();
+        if (FAILED(hr))
+          Log("CTimeStretchFilter - flushing - failed to output next sample: 0x%08x", hr);
+      }
+
+      m_rtNextIncomingSampleTime = rtStart;
+
+      if (m_filterState == State_Running) 
+      {
+        double currentBias = m_pClock->GetBias();
+        m_rtInSampleTime = rtStart / currentBias;
+
+        Log("CTimeStretchFilter - resyncing - m_rtStart: %6.3f rtStart: %6.3f m_rtInSampleTime: %6.3f bias: %6.3f", 
+          m_rtStart / 10000000.0, rtStart / 10000000.0, m_rtInSampleTime / 10000000.0, currentBias);
+      }
+      else
+        Log("CTimeStretchFilter - resyncing in start of stream - m_rtStart: %6.3f rtStart: %6.3f m_rtInSampleTime: %6.3f", 
+          m_rtStart / 10000000.0, rtStart / 10000000.0, m_rtInSampleTime / 10000000.0);
+    }
+
+    UINT nFrames = pSample->GetActualDataLength() / m_pInputFormat->Format.nBlockAlign;
+    m_rtNextIncomingSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
+  }
 }
 
 // Processing
@@ -354,7 +396,7 @@ DWORD CTimeStretchFilter::ThreadProc()
       {
         sample.Release();
         SetEvent(m_hCurrentSampleReleased);
-        m_bResetFirstSample = true;
+        m_rtInSampleTime = m_rtNextIncomingSampleTime = 0;
       }
       else if (command == ASC_Pause || command == ASC_Resume)
         continue;
@@ -379,49 +421,10 @@ DWORD CTimeStretchFilter::ThreadProc()
           initStreamTime = true;
         }
 
-        REFERENCE_TIME rtStart = 0;
-        REFERENCE_TIME rtStop = 0;
-        hr = sample->GetTime(&rtStart, &rtStop);
+        CheckStreamContinuity(sample, initStreamTime);
+        m_nSampleNum++;
 
-        if (SUCCEEDED(hr))
-        {
-          if (m_bResetFirstSample)
-          {
-            m_rtFirstSample = rtStart + m_rtOffset;
-            m_bResetFirstSample = false;
-            initStreamTime = true;
-          }
-
-          // Detect discontinuity in stream timeline
-          if ((abs(m_rtNextIncomingSampleTime - rtStart) > MAX_SAMPLE_TIME_ERROR) || initStreamTime)
-          {
-            REFERENCE_TIME rtPlayDuration = rtStart - m_rtFirstSample;
-            double currentBias = m_pClock->GetBias();
-            double dStretchFactor = m_pClock->SuggestedAudioMultiplier(abs(rtPlayDuration), currentBias, 1.0);
-            double rtStretchedPlayDuration = rtPlayDuration * dStretchFactor;
-
-            m_pClock->AudioResampled((double)rtPlayDuration, rtStretchedPlayDuration, currentBias, 1.0, dStretchFactor);
-            m_rtInSampleTime = rtStart - rtStretchedPlayDuration + rtPlayDuration;
-
-            Log("CTimeStretchFilter - resyncing - m_rtStart: %6.3f m_rtOffset: %6.3f m_rtFirstSample: %6.3f rtStart: %6.3f m_rtInSampleTime: %6.3f rtStretchedPlayDuration: %6.3f rtPlayDuration: %6.3f bias: %6.3f dStretchFactor: %6.3f", 
-              m_rtStart / 10000000.0, m_rtOffset / 10000000.0, m_rtFirstSample / 10000000.0, rtStart / 10000000.0, m_rtInSampleTime / 10000000.0, rtStretchedPlayDuration / 10000000.0, rtPlayDuration / 10000000.0, currentBias, dStretchFactor);
-
-            m_rtNextIncomingSampleTime = rtStart;
-
-            flush();
-            if (m_pNextOutSample)
-            {
-              hr = OutputNextSample();
-              if (FAILED(hr))
-                Log("CTimeStretchFilter - flushing - failed to output next sample: 0x%08x", hr);
-            }
-          }
-
-          UINT nFrames = size / m_pInputFormat->Format.nBlockAlign;
-          m_rtNextIncomingSampleTime += nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
-        }
-
-        hr = sample->GetPointer(&pMediaBuffer);
+        HRESULT hr = sample->GetPointer(&pMediaBuffer);
 
         if ((hr == S_OK) && m_pMemAllocator)
         {

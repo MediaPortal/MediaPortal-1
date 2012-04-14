@@ -41,6 +41,7 @@ public:
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
   HRESULT Run(REFERENCE_TIME rtStart);
+  HRESULT Pause();
 
 public: 
 
@@ -120,6 +121,8 @@ protected:
 
   void setTempoInternal(float newTempo, float newAdjustment);
 
+  void CheckStreamContinuity(IMediaSample* pSample, bool initStreamTime);
+
 // Internal implementation
 private:
 
@@ -145,8 +148,6 @@ private:
   CSyncClock* m_pClock;
 
   bool m_bResamplingRequested;
-  bool m_bResetFirstSample;
 
-  REFERENCE_TIME m_rtFirstSample;
-  REFERENCE_TIME m_rtOffset;
+  FILTER_STATE m_filterState;
 };
