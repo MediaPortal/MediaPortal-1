@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
-    <Frequency>682000</Frequency>
+    <Frequency>666000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>634000</Frequency>
+    <Frequency>698000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>658000</Frequency>
+    <Frequency>642000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
@@ -21,12 +21,12 @@
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>618000</Frequency>
+    <Frequency>722000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>738000</Frequency>
+    <Frequency>690000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>

@@ -361,6 +361,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
   m_id=0;
 
   LogDebug("CMpTs::ctor()");
+  LogDebug("--------------- BUG-3782 fix v2 -------------------");
 		
 	b_dumpRawPakets=false;
   m_pFilter = new CMpTsFilter(this, GetOwner(), &m_Lock, phr);
