@@ -30,7 +30,7 @@ using namespace std;
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 
 //Disables MP audio renderer functions if true
-#define NO_MP_AUD_REND true
+#define NO_MP_AUD_REND false
 
 #define NUM_SURFACES 5
 #define NB_JITTER 125
