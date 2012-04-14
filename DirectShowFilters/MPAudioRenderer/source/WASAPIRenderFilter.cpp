@@ -45,7 +45,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_rtHwStart(0),
   m_nSampleOffset(0),
   m_nDataLeftInSample(0),
-  m_bResyncHwClock(false)
+  m_bResyncHwClock(true)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
