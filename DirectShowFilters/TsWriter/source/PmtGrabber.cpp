@@ -124,7 +124,10 @@ void CPmtGrabber::OnNewSection(CSection& section)
 			return;
 		}
 
-		m_iPmtLength=section.section_length;
+		// The + 3 is because the PMT data includes the table ID, section
+		// syntax indicator, and section length bytes on the front - we're
+		// literally passing the *whole* PMT...
+		m_iPmtLength=section.section_length + 3;
 
     // copy pmt data for passing it to tvserver
 		memcpy(m_pmtData,section.Data,m_iPmtLength);

@@ -1,122 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
   <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
-  <Channels>
-    <!-- Haupt -->
-    <Channel id="ard.de" siteId="ARD" />
-    <Channel id="zdf.de" siteId="ZDF" />
-    <Channel id="rtl.de" siteId="RTL" />
-    <Channel id="sat1.de" siteId="SAT1" />
-    <Channel id="pro-sieben.de" siteId="PRO7" />
-    <Channel id="kabel1.de" siteId="K1" />
-    <Channel id="rtl2.de" siteId="RTL2" />
-    <Channel id="super-rtl.de" siteId="SUPER" />
-    <Channel id="vox.de" siteId="VOX" />
-    <Channel id="arte-tv.com" siteId="ARTE" />
-    <Channel id="tele5.de" siteId="TELE5" />
-    <Channel id="3sat.de" siteId="3SAT" />
-    <Channel id="das-vierte.de" siteId="DVIER" />
-    <!-- Dritte -->
-    <Channel id="br-online.de" siteId="BR" />
-    <Channel id="hr-online.de" siteId="HR" />
-    <Channel id="mdr.de" siteId="MDR" />
-    <Channel id="ndrtv.de" siteId="N3" />
-    <Channel id="rbb-online.de" siteId="RBB" />
-    <Channel id="swr.de" siteId="SWR" />
-    <Channel id="wdr.de" siteId="WDR" />
-    <!-- Regional -->
-    <Channel id="alpha@br-online.de" siteId="BRALP" />
-    <Channel id="tvb.de" siteId="TVB" />
-    <Channel id="hamburg1.de" siteId="HH1" />
-    <!-- Ausland (deutschspr.) -->
-    <Channel id="orf1@orf.at" siteId="ORF1" />
-    <Channel id="orf2@orf.at" siteId="ORF2" />
-    <Channel id="atvplus.at" siteId="ATV" />
-    <Channel id="sf1@sfdrs.ch" siteId="SF1" />
-    <Channel id="sf2@sfdrs.ch" siteId="SF2" />
-    <!-- Premiere -->
-    <Channel id="premiere.de" siteId="PRS" />
-    <!-- Digital -->
-    <Channel id="dw-world.de" siteId="DWTV" />
-    <Channel id="exrta@ard-digital.de" siteId="EXTRA" />
-    <Channel id="fest@ard-digital.de" siteId="FES" />
-    <Channel id="plus@ard-digital.de" siteId="MUX" />
-    <Channel id="zdftheater@zdf.de" siteId="ZTK" />
-    <Channel id="zdfdoku@zdf.de" siteId="ZDOKU" />
-    <Channel id="zdfinfo@zdf.de" siteId="ZINFO" />
-    <!-- Sport -->
-    <Channel id="dsf.de" siteId="DSF" />
-    <Channel id="eurosport@eurosport.com" siteId="EURO" />
-    <!-- Musik -->
-    <Channel id="mtv.de" siteId="MTV" />
-    <Channel id="viva.tv" siteId="VIVA" />
-    <!-- Sparten -->
-    <Channel id="nick.de" siteId="NICK" />
-    <Channel id="kika.de" siteId="KIKA" />
-    <Channel id="neunlive.de" siteId="NLIVE" />
-    <Channel id="qvc.de" siteId="QVC" />
-    <Channel id="tw1.at" siteId="TW1" />
-    <Channel id="comedycentral.de" siteId="CC" />
-    <!-- News -->
-    <Channel id="bbcworld.com" siteId="BBC" />
-    <Channel id="cnni-emea@cnn.com" siteId="CNN" />
-    <Channel id="euronews.net" siteId="EURON" />
-    <Channel id="n24.de" siteId="N24" />
-    <Channel id="n-tv.de" siteId="NTV" />
-    <Channel id="phoenix.de" siteId="PHOEN" />
-    <Channel id="bloomberg.co.uk" siteId="BLM" />
-    <Channel id="dmax.de" siteId="DMAX" />
-    <!-- Ausland -->
-    <Channel id="1@betv.be" siteId="BE1" />
-    <Channel id="ned1@omroep.nl" siteId="NL1" />
-    <Channel id="ned2@omroep.nl" siteId="NL2" />
-    <Channel id="ned3@omroep.nl" siteId="NL3" />
-    <!-- Premiere Sport -->
-    <Channel id="sport1@premiere.de" siteId="PSPO1" />
-    <!-- Premiere Direkt -->
-    <Channel id="dir1@premiere.de" siteId="DIR1" />
-    <!-- Premiere Thema -->
-    <Channel id="goldstar-tv.de" siteId="GOLD" />
-    <Channel id="heimatkanal.de" siteId="HEIMA" />
-    <Channel id="animalplanet.de" siteId="APLAN" />
-    <Channel id="beate-uhse.tv" siteId="BUTV" />
-    <Channel id="classic@premiere.de" siteId="CLASS" />
-    <Channel id="discovery.de" siteId="DISCO" />
-    <Channel id="junior.tv" siteId="JUNIO" />
-    <Channel id="mgm.com" siteId="MGM" />
-    <Channel id="planet@premiere.de" siteId="PLANE" />
-    <Channel id="scifi@premiere.de" siteId="SCIFI" />
-    <Channel id="13thstreet.de" siteId="113TH" />
-    <Channel id="hit24.tv" siteId="HIT24" />
-    <Channel id="history@discovery.de" siteId="DISGE" />
-    <Channel id="focusgesundheit.tv" siteId="FOGE" />
-    <!-- Blue Movie -->
-    <Channel id="bluemovie.cc" siteId="BLUM" />
-    <Channel id="extra@bluemovie.cc" siteId="BLUME" />
-    <!-- Arena -->
-    <Channel id="arena.tv" siteId="ARENA" />
-    <!-- Kabel/Satellit -->
-    <Channel id="axntv.de" siteId="AXN" />
-    <Channel id="kinowelt.de" siteId="KINOW" />
-    <Channel id="sat1comedy.de" siteId="SAT1C" />
-    <Channel id="silverlinetv.de" siteId="SILVE" />
-    <Channel id="thehistorychannel.co.uk" siteId="HISTO" />
-    <Channel id="nasn.com" siteId="NASN" />
-    <Channel id="toon@disney.de" siteId="TOON" />
-    <!-- Premiere Blockbuster -->
-    <Channel id="prem1@premiere.de" siteId="PR1" />
-    <Channel id="prem2@premiere.de" siteId="PR2" />
-    <Channel id="prem3@premiere.de" siteId="PR3" />
-    <Channel id="prem4@premiere.de" siteId="PR4" />
-    <Channel id="disney.de" siteId="DISNE" />
-    <!-- Premiere Entertainment -->
-    <Channel id="class@premiere.de" siteId="PRFC" />
-    <Channel id="fest@premiere.de" siteId="PRFF" />
-    <Channel id="nost@premiere.de" siteId="PRN" />
-    <Channel id="serie@premiere.de" siteId="PRSER" />
-    <Channel id="krimi@premiere.de" siteId="KRIMI" />
-  </Channels>
-  <Listing type="Html">
+	<Channels>
+		<Channel id="13TH STREET Universal" siteId="13TH"/>
+		<Channel id="3+" siteId="3PLUS" />
+		<Channel id="3sat" siteId="3SAT" />
+		<Channel id="ANIXE" siteId="ANIXE" />
+		<Channel id="ARTE" siteId="ARTE" />
+		<Channel id="ATV II" siteId="ATV2" />
+		<Channel id="ATV" siteId="ATV" />
+		<Channel id="AXN" siteId="AXN" />
+		<Channel id="Adult Channel" siteId="ADULT" />
+		<Channel id="Animal Planet" siteId="APLAN" />
+		<Channel id="Animax" siteId="AMAX" />
+		<Channel id="Austria 9" siteId="AUST9" />
+		<Channel id="BBC Entertainm." siteId="BBC-E" />
+		<Channel id="BBC World News" siteId="BBC" />
+		<Channel id="BR" siteId="BR" />
+		<Channel id="BR-alpha" siteId="BRALP" />
+		<Channel id="Beate-Uhse.TV" siteId="BUTV" />
+		<Channel id="Belgien 1" siteId="BE1" />
+		<Channel id="Bibel TV" siteId="BIBEL" />
+		<Channel id="Bloomberg TV" siteId="BLM" />
+		<Channel id="Blue Movie 2" siteId="BLUM2" />
+		<Channel id="Blue Movie 3" siteId="BLUM3" />
+		<Channel id="Blue Movie" siteId="BLUM" />
+		<Channel id="Bon Gusto" siteId="GUSTO" />
+		<Channel id="Boomerang" siteId="BOOM" />
+		<Channel id="CNN International" siteId="CNN" />
+		<Channel id="COMEDY CENTRAL" siteId="CC" />
+		<Channel id="Cartoon Network" siteId="C-NET" />
+		<Channel id="Classica" siteId="CLASS" />
+		<Channel id="DAS VIERTE" siteId="DVIER" />
+		<Channel id="DELUXE MUSIC" siteId="DMC" />
+		<Channel id="DMAX" siteId="DMAX" />
+		<Channel id="DR1" siteId="DR1" />
+		<Channel id="DW-TV" siteId="DWTV" />
+		<Channel id="Das Erste" siteId="ARD" />
+		<Channel id="Deutsches Wetter F." siteId="DWF"/>
+		<Channel id="Discovery Channel" siteId="DISCO" />
+		<Channel id="Discovery HD" siteId="HDDIS" />
+		<Channel id="Disney Channel" siteId="DISNE" />
+		<Channel id="Disney Cinemagic" siteId="DCM" />
+		<Channel id="Disney Junior" siteId="DJUN" />
+		<Channel id="Disney XD" siteId="DXD" />
+		<Channel id="E! Entertainm." siteId="E!" />
+		<Channel id="ESPN America" siteId="NASN" />
+		<Channel id="ESPN Classic" siteId="ESPN" />
+		<Channel id="EXTREME SPORTS" siteId="EX-SP" />
+		<Channel id="EinsExtra" siteId="EXTRA" />
+		<Channel id="EinsPlus" siteId="MUX" />
+		<Channel id="Einsfestival" siteId="FES" />
+		<Channel id="Eurosport 2" siteId="EURO2" />
+		<Channel id="Eurosport" siteId="EURO" />
+		<Channel id="FOX" siteId="FOX" />
+		<Channel id="Fashion TV" siteId="FATV" />
+		<Channel id="GoldStar TV" siteId="GOLD" />
+		<Channel id="Gute Laune TV" siteId="LAUNE" />
+		<Channel id="HD Suisse" siteId="HDS" />
+		<Channel id="HISTORY HD" siteId="HISHD" />
+		<Channel id="HISTORY" siteId="HISTO" />
+		<Channel id="HR" siteId="HR" />
+		<Channel id="HSE24" siteId="HSE" />
+		<Channel id="Hamburg 1" siteId="HH1" />
+		<Channel id="Heimatkanal" siteId="HEIMA" />
+		<Channel id="Jukebox" siteId="JUKE" />
+		<Channel id="Junior" siteId="JUNIO" />
+		<Channel id="KiKA" siteId="KIKA" />
+		<Channel id="KinoweltTV" siteId="KINOW" />
+		<Channel id="Kirchen TV" siteId="KTV" />
+		<Channel id="LUST PUR" siteId="LUSTP" />
+		<Channel id="Liga total!" siteId="LIGA" />
+		<Channel id="MDR" siteId="MDR" />
+		<Channel id="MGM" siteId="MGM" />
+		<Channel id="MTV Base" siteId="MTV-B" />
+		<Channel id="MTV Dance" siteId="MTV-D" />
+		<Channel id="MTV Hits" siteId="MTV-H" />
+		<Channel id="MTV" siteId="MTV" />
+		<Channel id="Mezzo" siteId="MEZZO" />
+		<Channel id="Motors TV" siteId="MOTOR" />
+		<Channel id="Motorvision TV" siteId="MOVTV" />
+		<Channel id="N24" siteId="N24" />
+		<Channel id="NAT GEO WILD" siteId="N-GW" />
+		<Channel id="NDR" siteId="N3" />
+		<Channel id="NL 1" siteId="NL1" />
+		<Channel id="NL 2" siteId="NL2" />
+		<Channel id="NL 3" siteId="NL3" />
+		<Channel id="Nat Geo HD" siteId="N-GHD" />
+		<Channel id="National Geographic" siteId="N-GEO"/>
+		<Channel id="Nautical Channel" siteId="NAUCH" />
+		<Channel id="Nickelodeon" siteId="NICK" />
+		<Channel id="Nicktoons" siteId="NICKT" />
+		<Channel id="ORF 2" siteId="ORF2" />
+		<Channel id="ORF III" siteId="ORF3" />
+		<Channel id="ORF SPORT +" siteId="ORFSP" />
+		<Channel id="ORF eins" siteId="ORF1" />
+		<Channel id="PHOENIX" siteId="PHOEN" />
+		<Channel id="PLANET" siteId="PLANE" />
+		<Channel id="PULS 4" siteId="PULS4" />
+		<Channel id="Passion" siteId="PASS" />
+		<Channel id="Pay TV" siteId="CIN" />
+		<Channel id="Playboy TV" siteId="PBOY" />
+		<Channel id="ProSieben" siteId="PRO7" />
+		<Channel id="QVC" siteId="QVC" />
+		<Channel id="RBB" siteId="RBB" />
+		<Channel id="RCK TV" siteId="RCK" />
+		<Channel id="RTL Crime" siteId="RTL-C" />
+		<Channel id="RTL II" siteId="RTL2" />
+		<Channel id="RTL Living" siteId="RTL-L" />
+		<Channel id="RTL NITRO" siteId="RTL-N" />
+		<Channel id="RTL" siteId="RTL" />
+		<Channel id="Romance TV" siteId="ROM" />
+		<Channel id="SAT.1" siteId="SAT1" />
+		<Channel id="SF 1" siteId="SF1" />
+		<Channel id="SF zwei" siteId="SF2" />
+		<Channel id="SKY HD-3D" siteId="SKY3D" />
+		<Channel id="SPIEGEL Geschichte" siteId="SP-GE" />
+		<Channel id="SPIEGEL TV WISSEN" siteId="SPTVW" />
+		<Channel id="SPORT1" siteId="SPORT" />
+		<Channel id="SPORT1+" siteId="S1PLU" />
+		<Channel id="SUPER RTL" siteId="SUPER" />
+		<Channel id="SWR/SR" siteId="SWR" />
+		<Channel id="Sat.1 Comedy" siteId="SAT1C" />
+		<Channel id="ServusTV" siteId="SERVU" />
+		<Channel id="Silverline" siteId="SILVE" />
+		<Channel id="Sky Action" siteId="SKY-A" />
+		<Channel id="Sky Cinema" siteId="CIN" />
+		<Channel id="Sky Cinema+1" siteId="CIN1" />
+		<Channel id="Sky Cinema+24" siteId="CIN24" />
+		<Channel id="Sky Comedy" siteId="SKY-C" />
+		<Channel id="Sky Emotion" siteId="SKY-E" />
+		<Channel id="Sky Fußball Bundesliga" siteId="BULI"/>
+		<Channel id="Sky Hits" siteId="SKY-H" />
+		<Channel id="Sky Krimi" siteId="SKY-K" />
+		<Channel id="Sky Nostalgie" siteId="SKY-N" />
+		<Channel id="Sky Select" siteId="SKY-S" />
+		<Channel id="Sky Sport 1" siteId="SPO1" />
+		<Channel id="Sky Sport 2" siteId="SPO2" />
+		<Channel id="Sky Sport Austria" siteId="SPO-A" />
+		<Channel id="Sky Sport HD 1" siteId="HDSPO" />
+		<Channel id="Sky Sport HD 2" siteId="SHD2" />
+		<Channel id="Sky Sport HD Extra" siteId="SHDE" />
+		<Channel id="Sky Sport News HD" siteId="SNHD" />
+		<Channel id="Syfy" siteId="SCIFI" />
+		<Channel id="TELE 5" siteId="TELE5" />
+		<Channel id="TIMM" siteId="TIMM" />
+		<Channel id="TNT Film" siteId="TNT-F" />
+		<Channel id="TNT Serie" siteId="TNT-S" />
+		<Channel id="TV 5" siteId="TV5" />
+		<Channel id="TV2" siteId="TV2" />
+		<Channel id="The Biogr. Channel" siteId="BIO" />
+		<Channel id="Trace TV" siteId="TRACE" />
+		<Channel id="VH1 Classic" siteId="VH1" />
+		<Channel id="VIVA" siteId="VIVA" />
+		<Channel id="VOX" siteId="VOX" />
+		<Channel id="WDR" siteId="WDR" />
+		<Channel id="ZDF" siteId="ZDF" />
+		<Channel id="ZDFinfo" siteId="ZINFO" />
+		<Channel id="ZDFkultur" siteId="2KULT" />
+		<Channel id="ZDFneo" siteId="2NEO" />
+		<Channel id="euronews" siteId="EURON" />
+		<Channel id="iMusic1" siteId="IMT" />
+		<Channel id="kabel eins CLASSICS" siteId="K1CLA"/>
+		<Channel id="kabel eins" siteId="K1" />
+		<Channel id="münchen.tv" siteId="TVM" />
+		<Channel id="münchen2" siteId="MUE2" />
+		<Channel id="n-tv" siteId="NTV" />
+		<Channel id="sixx" siteId="SIXX" />
+		<Channel id="sonnenklar.TV" siteId="SKLAR" />
+		<Channel id="sportdigital" siteId="SPO-D" />
+		<Channel id="tv.berlin" siteId="TVB" />
+	</Channels>
+<Listing type="Html">
     <Site url="http://www.tvtoday.de/programm/?format=list&amp;offset=[PAGE_OFFSET]&amp;date=[DD].[MM].[YYYY]&amp;slotIndex=all&amp;channel=[ID]&amp;tips=&amp;oder=time" post="" external="false" encoding="" />
     <Search maxlistings="30" />
     <Html>
