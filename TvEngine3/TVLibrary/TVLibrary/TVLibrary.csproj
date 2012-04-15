@@ -104,6 +104,7 @@
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
     <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
+    <Compile Include="Implementations\DVB\ConditionalAccess\Anysee\Anysee.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\DigitalDevices\DigitalDevices.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\Turbosight\Turbosight.cs" />

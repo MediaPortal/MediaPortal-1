@@ -418,7 +418,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Free unmanaged memory buffers and release COM objects.
     /// </summary>
-    public void Dispose()
+    public virtual void Dispose()
     {
       if (_propertySet != null)
       {

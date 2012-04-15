@@ -163,7 +163,7 @@ namespace TvLibrary.Implementations.DVB
       }
       hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower,
         _instanceBuffer, InstanceSize,
-        _paramBuffer, sizeof(Int32),
+        _paramBuffer, sizeof(Int32)
       );
       if (hr == 0)
       {
@@ -246,7 +246,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Turn off power.
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
       SetPowerState(false);
       base.Dispose();

@@ -69,6 +69,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly NetUp _netUp;
     private readonly Geniatech _geniatech;
     private readonly DvbSky _dvbSky;
+    private readonly Anysee _anysee;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -91,8 +92,6 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return _HWProvider; }
     }
-
-    //anysee _anysee = null;
 
     #endregion
 
@@ -215,10 +214,11 @@ namespace TvLibrary.Implementations.DVB
           if (_geniatech.IsGeniatech)
           {
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvUsbCiFilter != null)
+            if (winTvCi != null)
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+              _winTvCiModule = winTvCi;
+              _ciMenu = winTvCi;
             }
             return;
           }
@@ -230,23 +230,26 @@ namespace TvLibrary.Implementations.DVB
           if (_dvbSky.IsDvbSky)
           {
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvUsbCiFilter != null)
+            if (winTvCi != null)
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+              _winTvCiModule = winTvCi;
+              _ciMenu = winTvCi;
             }
             return;
           }
           Release.DisposeToNull(ref _dvbSky);
           Release.DisposeToNull(ref _winTvCiModule);
 
-          /*Log.Log.Info("Check for anysee");
-          _anysee = new anysee(tunerFilter, analyzerFilter);
-          if (_anysee.Isanysee)
+          Log.Log.WriteFile("Check for Anysee");
+          _anysee = new Anysee(tunerFilter, card.DevicePath);
+          if (_anysee.IsAnysee)
           {
-            Log.Log.Info("anysee device detected");
+            _ciMenu = _anysee;
+            _diSEqCMotor = new DiSEqCMotor(_anysee);
             return;
-          }*/
+          }
+          Release.DisposeToNull(ref _anysee);
 
           Log.Log.WriteFile("Check for Turbosight");
           _turbosight = new Turbosight(tunerFilter);
@@ -810,6 +813,10 @@ namespace TvLibrary.Implementations.DVB
           }
           return true;
         }
+        if (_anysee != null)
+        {
+          return _anysee.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+        }
       }
       catch (Exception ex)
       {
@@ -910,6 +917,11 @@ namespace TvLibrary.Implementations.DVB
         if (_netUp != null)
         {
           _netUp.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_anysee != null)
+        {
+          _anysee.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
       }
@@ -1123,6 +1135,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_TeVii);
       Release.Dispose(_omicom);
       Release.Dispose(_netUp);
+      Release.Dispose(_anysee);
     }
 
     #endregion
