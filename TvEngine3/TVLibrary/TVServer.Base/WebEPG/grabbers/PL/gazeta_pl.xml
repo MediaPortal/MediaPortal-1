@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="7" timezone="" version="2.0" />
+  <Channels>
+    <Channel id="Polsat Film" siteId="477,Polsat_Film.html" />
+    <Channel id="TVP Seriale" siteId="497,TVP_Seriale.html" />
+    <Channel id="TVP 1" siteId="1,TVP_1.html" />
+    <Channel id="TVP 2" siteId="2,TVP_2.html" />
+    <Channel id="Polsat" siteId="5,Polsat.html" />
+    <Channel id="TVN" siteId="17,TVN.html" />
+    <Channel id="TVN 7" siteId="7,TVN_7.html" />
+    <Channel id="TV 4" siteId="18,TV_4.html" />
+    <Channel id="TVP Kultura" siteId="343,TVP_Kultura.html" />
+    <Channel id="Ale Kino" siteId="85,Ale_Kino.html" />
+    <Channel id="HBO" siteId="14,HBO.html" />
+    <Channel id="TVN Style" siteId="333,TVN_Style.html" />
+    <Channel id="Europsport" siteId="42,Eurosport.html" />
+    <Channel id="Polsat Sport" siteId="120,Polsat_SPORT.html" />
+    <Channel id="TVP Polonia" siteId="3,TVP_Polonia.html" />
+    <Channel id="Tele 5" siteId="16,Tele_5.html" />
+    <Channel id="Zone Europa" siteId="80,Zone_Europa.html" />
+    <Channel id="TV Puls" siteId="11,TV_Puls.html" />
+    <Channel id="TVP Info" siteId="31,TVP_Info.html" />
+    <Channel id="TVN 24" siteId="151,TVN_24.html" />
+    <Channel id="Disney Channel" siteId="346,Disney_Channel.html" />
+    <Channel id="Polsat 2" siteId="6,Polsat_2.html" />
+    <Channel id="AXN" siteId="147,AXN.html" />
+    <Channel id="Mini mini" siteId="81,Minimini.html" />
+    <Channel id="VIVA Polska" siteId="92,VIVA_Polska.html" />
+    <Channel id="Discovery Channel" siteId="67,Discovery_Channel.html" />
+    <Channel id="Discovery World" siteId="97,Discovery_World.html" />
+    <Channel id="BBC CBeebies" siteId="408,BBC_CBeebies.html" />
+    <Channel id="TVN Turbo" siteId="145,TVN_Turbo.html" />
+    <Channel id="MTV Polska" siteId="10,MTV_Polska.html" />
+    <Channel id="Kino Polska" siteId="4,Kino_Polska.html" />
+    <Channel id="Comedy Central" siteId="370,Comedy_Central.html" />
+    <Channel id="National Geographic" siteId="76,National_Geographic.html" />
+    <Channel id="Animal Planet" siteId="63,Animal_Planet.html" />
+    <Channel id="4fun TV" siteId="337,4fun_TV.html" />
+    <Channel id="Superstacja" siteId="381,Superstacja.html" />
+    <Channel id="Polsat News" siteId="431,Polsat_News.html" />
+    <Channel id="Discovery Science" siteId="96,Discovery_Science.html" />
+    <Channel id="Polsat Cafe" siteId="443,Polsat_Caf.html" />
+    <Channel id="TLC" siteId="95,TLC.html" />
+    <Channel id="Planete" siteId="15,Planete.html" />
+    <Channel id="Zone Reality" siteId="84,Zone_Reality.html" />
+    <Channel id="AXN SciFi" siteId="367,AXN_SciFi.html" />
+    <Channel id="Canal+" siteId="13,Canal.html" />
+    <Channel id="Canal+ Film" siteId="86,Canal_Film.html" />
+    <Channel id="Boomerang" siteId="356,Boomerang.html" />
+    <Channel id="HBO 2" siteId="12,HBO2.html" />
+    <Channel id="Eurosport 2" siteId="39,Eurosport_2.html" />
+    <Channel id="VH 1 Polska" siteId="359,VH_1_Polska.html" />
+    <Channel id="Disney XD" siteId="74,Disney_XD.html" />
+    <Channel id="Polonia 1" siteId="8,Polonia_1.html" />
+    <Channel id="Canal+ Sport" siteId="87,Canal_Sport.html" />
+    <Channel id="Cartoon Network" siteId="386,Cartoon_Network.html" />
+    <Channel id="Polsat Sport Extra" siteId="357,Polsat_Sport_Extra.html" />
+    <Channel id="TVP Sport" siteId="374,TVP_Sport.html" />
+    <Channel id="AXN Crime" siteId="366,AXN_Crime.html" />
+    <Channel id="Kuchnia TV" siteId="369,Kuchniatv.html" />
+    <Channel id="iTV" siteId="41,iTV.html" />
+    <Channel id="Travel Channel" siteId="66,Travel_Channel.html" />
+    <Channel id="Viasat Explorer" siteId="40,Viasat_Explorer.html" />
+    <Channel id="Mezzo" siteId="89,Mezzo.html" />
+    <Channel id="Toya" siteId="32,Toya.html" />
+    <Channel id="Fashion TV" siteId="90,Fashion_TV.html" />
+    <Channel id="Extreme" siteId="79,Extreme.html" />
+    <Channel id="Cinemax" siteId="36,Cinemax.html" />
+    <Channel id="Zone Romantica" siteId="78,Zone_Romantica.html" />
+    <Channel id="13th Street Universal" siteId="75,13th_Street_Universal.html" />
+    <Channel id="ZigZap/Hyper" siteId="88,ZigZapHyper.html" />
+    <Channel id="Cinemax 2" siteId="358,Cinemax_2.html" />
+    <Channel id="Viasat History" siteId="38,Viasat_History.html" />
+    <Channel id="MGM HD" siteId="379,MGM_HD.html" />
+    <Channel id="Religia TV" siteId="404,Religiatv.html" />
+    <Channel id="Investigation Discovery" siteId="466,Investigation_Discovery.html" />
+    <Channel id="BBC HD" siteId="236,BBC_HD.html" />
+    <Channel id="BBC Knowledge" siteId="409,BBC_Knowledge.html" />
+    <Channel id="Da Vinci Learning" siteId="400,Da_Vinci_Learning.html" />
+    <Channel id="FOX" siteId="495,FOX.html" />
+    <Channel id="Domo" siteId="440,Domo.html" />
+    <Channel id="ESPN Classic" siteId="345,ESPN_Classic.html" />
+    <Channel id="FOX Life" siteId="382,Fox_Life.html" />
+    <Channel id="nFilm HD 2" siteId="468,nFilmHD2.html" />
+    <Channel id="Edusat" siteId="338,Edusat.html" />
+    <Channel id="ESPN America" siteId="380,ESPN_America.html" />
+    <Channel id="HBO Comedy" siteId="385,HBO_Comedy.html" />
+    <Channel id="Filmbox Extra" siteId="405,Filmbox_Extra.html" />
+    <Channel id="Polsat Futbol" siteId="475,Polsat_Futbol.html" />
+    <Channel id="Wedding TV" siteId="398,Wedding_TV.html" />
+    <Channel id="Canal+ Gol" siteId="178,Canal_Gol.html" />
+    <Channel id="Orange Sport" siteId="436,Orange_Sport.html" />
+    <Channel id="SportKlub+" siteId="393,SportKlub.html" />
+    <Channel id="TCM" siteId="387,TCM.html" />
+    <Channel id="TVP HD" siteId="435,TVP_HD.html" />
+    <Channel id="TVP Historia" siteId="390,TVP_Historia.html" />
+    <Channel id="TV Silesia" siteId="417,TV_Silesia.html" />
+    <Channel id="Universal Channel" siteId="411,Universal_Channel.html" />
+    <Channel id="SciFi Universal" siteId="412,Scifi_Universal.html" />
+    <Channel id="TVN CNBC" siteId="397,TVN_CNBC.html" />
+    <Channel id="nFilm HD" siteId="467,nFilmHD.html" />
+    <Channel id="SportKlub" siteId="368,SportKlub.html" />
+    <Channel id="Nickelodeon" siteId="433,Nickelodeon.html" />
+    <Channel id="nSport" siteId="378,nSport.html" />
+    <Channel id="Polsat Play" siteId="442,Polsat_Play.html" />
+    <Channel id="Movies 24" siteId="413,Movies_24.html" />
+    <Channel id="Filmbox" siteId="403,Filmbox.html" />
+    <Channel id="Filmbox Family" siteId="438,Filmbox_Family.html" />
+    <Channel id="Canal+ Sport 2" siteId="335,Canal_Sport_2.html" />
+    <Channel id="TV 1000" siteId="389,TV_1000.html" />
+    <Channel id="VH 1 European" siteId="470,VH1_European.html" />
+    <Channel id="BBC Entertainment" siteId="407,BBC_Entertainment.html" />
+    <Channel id="Nat Geo Wild" siteId="392,National_Geographic_Wild.html" />
+    <Channel id="Wojna i Pokój" siteId="377,Wojna_i_Pokoj.html" />
+    <Channel id="CSB TV" siteId="494,CSB_TV.html" />
+    <Channel id="Discovery HD Showcase" siteId="375,Discovery_HD_Showcase.html" />
+    <Channel id="Discovery Historia" siteId="376,Discovery_Historia.html" />
+    <Channel id="Filmbox HD" siteId="406,Filmbox_HD.html" />
+    <Channel id="BBC Lifestyle" siteId="410,BBC_Lifestyle.html" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://tv.gazeta.pl/program_tv/0,110298,8700474,,,[YYYY]-[MM]-[DD],3,[ID]" post="" external="false" encoding="iso-8859-2" />
+    <Html>
+      <Template name="default" start="mod mod_channel" end="mod mod_channels_nav channels_nav_bottom">
+        <SectionTemplate tags="DAP">
+          <TemplateText>
+		&lt;div&gt;&lt;#START&gt;&lt;/div&gt;&lt;div&gt;&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;p&gt;&lt;#GENRE&gt;&lt;/p&gt;&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+<Searches>
+</Searches>
+    </Html>
+  </Listing>
+</Grabber>
