@@ -100,7 +100,7 @@
     </control>
     <!--  **********  Cast / Movie Actor Image **********  -->
     <control>
-      <description>Cast Image Missing Art</description>
+      <description>Actor Image Missing Art</description>
       <id>1</id>
       <type>image</type>
       <posX>50</posX>
@@ -111,7 +111,7 @@
       <texture mask="videothumbmask.png">defaultActorBig.png</texture>
     </control>
     <control>
-      <description>Cast Image</description>
+      <description>Actor Image</description>
       <type>image</type>
       <id>21</id>
       <posX>50</posX>
@@ -122,19 +122,7 @@
       <texture mask="videothumbmask.png">#thumb</texture>
     </control>
     <control>
-      <description>Actor Movie Image</description>
-      <type>image</type>
-      <id>25</id>
-      <posX>50</posX>
-      <posY>190</posY>
-      <width>190</width>
-      <height>270</height>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="videothumbmask.png">#Actor.MovieImage</texture>
-      <visible>control.isvisible(24)</visible>
-    </control>
-    <control>
-      <description>Actor Movie Image</description>
+      <description>Actor Image Cover</description>
       <type>image</type>
       <id>1</id>
       <posX>50</posX>
@@ -143,6 +131,30 @@
       <height>270</height>
       <texture>Videothumbframe.png</texture>
     </control>
+    <control>
+      <description>Actor Movie Image</description>
+      <type>image</type>
+      <id>25</id>
+      <posX>1050</posX>
+      <posY>190</posY>
+      <width>190</width>
+      <height>270</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="videothumbmask.png">#Actor.MovieImage</texture>
+      <visible>control.isvisible(24)</visible>
+    </control>
+    <control>
+      <description>Actor Movie Image Cover</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1050</posX>
+      <posY>190</posY>
+      <width>190</width>
+      <height>270</height>
+      <texture>Videothumbframe.png</texture>
+      <visible>control.isvisible(24)+control.hasthumb(25)</visible>
+    </control>
+    
     <!--  **********  Button Group **********  -->
     <control>
       <description>group element</description>
@@ -214,12 +226,12 @@
       <id>24</id>
       <posX>285</posX>
       <posY>175</posY>
-      <width>960</width>
+      <width>730</width>
       <height>393</height>
       <onleft>4</onleft>
       <onright>4</onright>
       <scrollOffset>4</scrollOffset>
-      <spinPosX>1180</spinPosX>
+      <spinPosX>950</spinPosX>
       <spinPosY>495</spinPosY>
       <spinCanFocus>no</spinCanFocus>
       <unfocusedAlpha>160</unfocusedAlpha>

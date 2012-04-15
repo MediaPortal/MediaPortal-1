@@ -982,6 +982,12 @@ namespace MediaPortal.GUI.Video
           item.Label3 = temp[2]; // Actor IMDB Id
           
           string largeThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, item.ItemId.ToString()); // Actor thumb filename
+          
+          if (!File.Exists(largeThumb))
+          {
+            largeThumb = "defaultActor.png";
+          }
+          
           item.IconImage = largeThumb;
           item.ThumbnailImage = largeThumb;
           item.OnItemSelected += OnItemSelected;
