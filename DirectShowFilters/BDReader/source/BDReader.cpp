@@ -294,21 +294,22 @@ void CBDReaderFilter::TriggerOnMediaChanged()
 
 void CBDReaderFilter::OnPlaybackPositionChange()
 {
-  if (m_pCallback && m_pClock)
+  if (m_pClock)
   {
+    CAutoLock lock(&m_csClock);
+
     REFERENCE_TIME time = 0;
     m_pClock->GetTime(&time);
 
+    if (m_rtPlaybackOffset == _I64_MIN)
+      m_rtPlaybackOffset = time;
+
+    if (m_State == State_Running && m_pCallback)
     {
-      CAutoLock lock(&m_csClock);
-
-      if (m_rtPlaybackOffset == _I64_MIN)
-        m_rtPlaybackOffset = time;
-
-      m_rtCurrentTime = time - m_rtPlaybackOffset + m_rtSeekPosition;
+      m_rtCurrentTime = time - m_rtPlaybackOffset + m_rtSeekPosition - m_rtRun + m_rtRunOffset;
 
       m_pCallback->OnClockChange(m_rtTitleDuration, m_rtCurrentTime);
-      //LogDebug("dur: %6.3f pos: %6.3f", m_rtTitleDuration / 10000000.0, (time - m_rtPlaybackOffset + m_rtSeekPosition) / 10000000.0);
+      //LogDebug("dur: %6.3f pos: %6.3f run delay: %6.3f", m_rtTitleDuration / 10000000.0, m_rtCurrentTime / 10000000.0, (m_rtRun - m_rtRunOffset) / 10000000.0);
     }
   }
 }
@@ -328,6 +329,10 @@ void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pSeekPosition)
   CAutoLock lock(&m_csClock);
   m_rtSeekPosition = pSeekPosition;
   m_rtPlaybackOffset = _I64_MIN;
+
+  if (m_pClock)
+    m_pClock->GetTime(&m_rtRunOffset);
+
   m_rtLastStart = 0;
 }
 
@@ -625,25 +630,20 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
 
 STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
 {
-  tStart=0LL;
-  CRefTime runTime = m_rtStart = tStart;
-  double msec = (double)runTime.Millisecs();
-  msec /= 1000.0;
-  LogDebug("CBDReaderFilter::Run(%05.2f) state %d", msec / 1000.0, m_State);
+  LogDebug("CBDReaderFilter::Run(%05.2f) state %d", tStart / 10000000.0, m_State);
   
+  m_rtRun = tStart;
+
   CAutoLock cObjectLock(m_pLock);
   lib.SetState(State_Running);  
   
   if (m_pSubtitlePin) 
     m_pSubtitlePin->SetRunningStatus(true);
 	
-  if (m_pVideoPin)
-    m_pVideoPin->SetRunningStatus(true);
-  // Set our StreamTime Reference offset to zero
   HRESULT hr = CSource::Run(tStart);
 
   FindSubtitleFilter();
-  LogDebug("CBDReaderFilter::Run(%05.2f) state %d -->done", msec / 1000.0, m_State);
+  LogDebug("CBDReaderFilter::Run(%05.2f) state %d -->done", tStart / 10000000.0, m_State);
 
   if (!m_hCommandThread)
     m_hCommandThread = CreateThread(NULL, 0, CBDReaderFilter::CommandThreadEntryPoint, (LPVOID)this, 0, &m_dwThreadId);
@@ -1125,11 +1125,6 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     m_lastSeekers.insert(caller);
     return S_OK;
   }
-
-  if (fakeSeek)
-    ResetPlaybackOffset(m_rtSeekPosition);
-  else
-    ResetPlaybackOffset(m_rtSeekPosition + rtCurrent - m_rtLastStart);
 
   m_rtLastStart = rtCurrent;
   m_rtLastStop = rtStop;

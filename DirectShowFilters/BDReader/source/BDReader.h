@@ -262,6 +262,8 @@ private:
   REFERENCE_TIME m_rtSeekPosition;
   REFERENCE_TIME m_rtTitleDuration;
   REFERENCE_TIME m_rtCurrentTime;
+  REFERENCE_TIME m_rtRunOffset;
+  REFERENCE_TIME m_rtRun;
   CCritSec       m_csClock;
 
   // Times

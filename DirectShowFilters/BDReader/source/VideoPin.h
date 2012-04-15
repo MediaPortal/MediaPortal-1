@@ -67,7 +67,6 @@ public:
   void SetInitialMediaType(const CMediaType* pmt);
   void SetVideoDecoder(int format, GUID* decoder);
   void SetVC1Override(GUID* subtype);
-  void SetRunningStatus(bool bOnOff);
 
 protected:
   DWORD ThreadProc();

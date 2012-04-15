@@ -651,7 +651,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           if (m_bInitDuration)
           {
             m_pFilter->SetTitleDuration(m_rtTitleDuration);
-            m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime);
+            m_pFilter->ResetPlaybackOffset(buffer->rtPlaylistTime - rtCorrectedStartTime);
             m_bInitDuration = false;
           }
 
@@ -853,8 +853,3 @@ void CVideoPin::LogMediaType(AM_MEDIA_TYPE* pmt)
   }
 }
 
-void CVideoPin::SetRunningStatus(bool bOnOff)
-{
-  if (bOnOff)
-    m_bInitDuration = true;
-}
