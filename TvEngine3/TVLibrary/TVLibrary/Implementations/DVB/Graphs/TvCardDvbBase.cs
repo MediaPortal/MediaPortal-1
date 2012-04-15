@@ -62,26 +62,6 @@ namespace TvLibrary.Implementations.DVB
     KSPROPERTY_BDA_ROLL_OFF = 0x21
   } ;
 
-  internal enum DisEqcVersion
-  {
-    DISEQC_VER_1X = 1,
-    DISEQC_VER_2X,
-  } ;
-
-  internal enum RxMode
-  {
-    RXMODE_INTERROGATION = 1, // Expecting multiple devices attached
-    RXMODE_QUICKREPLY, // Expecting 1 rx (rx is suspended after 1st rx received)
-    RXMODE_NOREPLY, // Expecting to receive no Rx message(s)
-    RXMODE_DEFAULT = 0 // use current register setting
-  } ;
-
-  internal enum BurstModulationType
-  {
-    TONE_BURST_UNMODULATED = 0,
-    TONE_BURST_MODULATED
-  } ;
-
   #endregion;
 
   /// <summary>
@@ -838,12 +818,6 @@ namespace TvLibrary.Implementations.DVB
       return isLocked;
     }
 
-    protected virtual bool ShouldWaitForSignal()
-    {
-      return true;
-      //default behaviour is nothing
-    }
-
     //protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     /// <summary>
     /// Methods which starts the graph
@@ -877,11 +851,6 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
-      }
-
-      if (!ShouldWaitForSignal())
-      {
-        return;
       }
 
       //GetTunerSignalStatistics();

@@ -411,18 +411,6 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
-    protected override bool ShouldWaitForSignal()
-    {
-      bool shouldWait = true;
-
-      if (_diseqCretries == 0 && !_diseqCsucceded && _conditionalAccess != null)
-      {
-        shouldWait = false;
-      }
-
-      return shouldWait;
-    }
-
     #endregion
 
     #region epg & scanning

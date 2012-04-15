@@ -112,6 +112,8 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\NetUP\NetUP.cs" />
     <Compile Include="Implementations\DVB\DisEqC\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\DisEqC\Omicom.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\DVBSky.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\Geniatech.cs" />
     <Compile Include="Implementations\DVB\DisEqC\TeVii.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
