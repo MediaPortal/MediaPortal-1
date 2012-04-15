@@ -166,19 +166,23 @@ namespace TvPlugin
       LoadSkinSettings();
 
       // Load genre colors.
-      // If guide colors are not loaded from skin settings then attempt to load guide colors from the MP settings.
-      using (Settings xmlreader = new SKSettings())
-      {
-        _guideColorsLoaded = LoadGuideColors(xmlreader);
-      }
-
+      // If guide colors have not been loadedthen attempt to load guide colors.
       if (!_guideColorsLoaded)
       {
-        using (Settings xmlreader = new MPSettings())
+        // If guide colors are not loaded from skin settings then attempt to load guide colors from the MP settings.
+        using (Settings xmlreader = new SKSettings())
         {
           _guideColorsLoaded = LoadGuideColors(xmlreader);
         }
-      }
+
+        if (!_guideColorsLoaded)
+        {
+          using (Settings xmlreader = new MPSettings())
+          {
+            _guideColorsLoaded = LoadGuideColors(xmlreader);
+          }
+        }
+    }
 
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_recButton_Focus_middle.png"));
