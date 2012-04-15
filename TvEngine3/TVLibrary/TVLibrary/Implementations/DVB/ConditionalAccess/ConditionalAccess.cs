@@ -51,7 +51,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly Twinhan _twinhan;
     private readonly KNCAPI _knc;
     private readonly Hauppauge _hauppauge;
-    private readonly ProfRed _profred;
+    private readonly Turbosight _turbosight;
     private readonly DiSEqCMotor _diSEqCMotor;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     private readonly GenericBDAS _genericbdas;
@@ -205,15 +205,15 @@ namespace TvLibrary.Implementations.DVB
             return;
           }*/
 
-          Log.Log.WriteFile("Check for ProfRed");
-          _profred = new ProfRed(tunerFilter);
-          if (_profred.IsProfRed)
+          Log.Log.WriteFile("Check for Turbosight");
+          _turbosight = new Turbosight(tunerFilter);
+          if (_turbosight.IsTurbosight)
           {
-            Log.Log.WriteFile("ProfRed card detected");
-            _diSEqCMotor = new DiSEqCMotor(_profred);
+            _diSEqCMotor = new DiSEqCMotor(_turbosight);
+            _ciMenu = _turbosight;
             return;
           }
-          Release.DisposeToNull(ref _profred);
+          Release.DisposeToNull(ref _turbosight);
 
           // TeVii support
           _TeVii = new TeVii();
@@ -336,9 +336,9 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Create a new conditional access sub channel.
+    /// Adds the sub channel.
     /// </summary>
-    /// <param name="id">The subchannel ID.</param>
+    /// <param name="id">The id.</param>
     public void AddSubChannel(int id)
     {
       if (!_mapSubChannels.ContainsKey(id))
@@ -348,9 +348,9 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Free a conditional access sub channel.
+    /// Frees the sub channel.
     /// </summary>
-    /// <param name="id">The subchannel ID.</param>
+    /// <param name="id">The id.</param>
     public void FreeSubChannel(int id)
     {
       if (_mapSubChannels.ContainsKey(id))
@@ -361,6 +361,7 @@ namespace TvLibrary.Implementations.DVB
       else
       {
         Log.Log.WriteFile("FreeSubChannel CA: tried to free non existing sub channel : {0}", id);
+        return;
       }
     }
 
@@ -441,6 +442,10 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("WinTVCI:  CAM initialized");
           return true;
         }
+        if (_turbosight != null)
+        {
+          return _turbosight.IsCamReady();
+        }
       }
       catch (Exception ex)
       {
@@ -469,6 +474,11 @@ namespace TvLibrary.Implementations.DVB
         if (_knc != null)
         {
           _knc.ResetCI();
+        }
+        if (_turbosight != null)
+        {
+          bool rebuildGraph;
+          _turbosight.ResetCi(out rebuildGraph);
         }
       }
       catch (Exception ex)
@@ -637,7 +647,7 @@ namespace TvLibrary.Implementations.DVB
           return true;
         }
 
-        // Now add this sub-channel to the map.
+        // Add this sub-channel to the map.
         AddSubChannel(subChannel);
         ConditionalAccessContext context = _mapSubChannels[subChannel];
         context.CamType = _camType;
@@ -696,6 +706,10 @@ namespace TvLibrary.Implementations.DVB
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _twinhan.SendPMT(caPmt, caPmtLen);
         }
+        if (_turbosight != null)
+        {
+          return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+        }
       }
       catch (Exception ex)
       {
@@ -749,9 +763,9 @@ namespace TvLibrary.Implementations.DVB
           _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
-        if (_profred != null)
+        if (_turbosight != null)
         {
-          _profred.SendDiseqCommand(parameters, channel);
+          _turbosight.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_genpix != null)
@@ -915,23 +929,9 @@ namespace TvLibrary.Implementations.DVB
           }
           return channel;
         }
-        if (_profred != null)
+        if (_turbosight != null)
         {
-          //Set ProfRed pilot, roll-off settings
-          if (channel.ModulationType == ModulationType.ModNotSet)
-          {
-            channel.ModulationType = ModulationType.ModNotDefined;
-          }
-          if (channel.ModulationType == ModulationType.Mod8Psk)
-          {
-            channel.ModulationType = ModulationType.ModBpsk;
-          }
-          Log.Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          //}
-          return channel;
+          return (DVBSChannel)_turbosight.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_technoTrend != null)
         {
@@ -1114,7 +1114,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_genpix);
       Release.Dispose(_winTvCiModule);
       Release.Dispose(_twinhan);
-      Release.Dispose(_profred);
+      Release.Dispose(_turbosight);
       Release.Dispose(_TeVii);
     }
 
