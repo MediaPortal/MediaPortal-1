@@ -862,7 +862,7 @@ namespace MediaPortal.Video.Database
       IMDBActor tmpActor = new IMDBActor();
       tmpActor = VideoDatabase.GetActorInfo(_actorId);
 
-      if (tmpActor.ThumbnailUrl.StartsWith("file://"))
+      if (tmpActor != null && tmpActor.ThumbnailUrl.StartsWith("file://"))
       {
         _imdbActor.ThumbnailUrl = tmpActor.ThumbnailUrl;
         userActorImage = true;
