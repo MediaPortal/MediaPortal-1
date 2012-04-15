@@ -102,7 +102,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="card">Determines the type of TV card</param>
     /// <param name="winTvCi">The WinTV-CI module handler (if any).</param>
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, TvCardBase card, WinTvCiModule winTvCi)
+    /// <param name="digitalDevices">A Digital Device CI handler (if present).</param>
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, TvCardBase card, WinTvCiModule winTvCi, DigitalDevices digitalDevices)
     {
       try
       {
@@ -261,17 +262,12 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _TeVii);
 
           // DigitalDevices support
-          _DigitalDevices = new DigitalDevices(tunerFilter);
-          if (_DigitalDevices.IsGenericBDAS)
+          if (digitalDevices != null && digitalDevices.IsDigitalDevices)
           {
-            _genericbdas = _DigitalDevices;
-            if (_DigitalDevices.IsSupported)
-            {
-              _ciMenu = _DigitalDevices;
-            }
+            _DigitalDevices = digitalDevices;
+            _ciMenu = _DigitalDevices;
             return; // detected
           }
-          Release.DisposeToNull(ref _DigitalDevices);
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
@@ -513,6 +509,10 @@ namespace TvLibrary.Implementations.DVB
           bool rebuildGraph;
           _turbosight.ResetCi(out rebuildGraph);
         }
+        if (_DigitalDevices != null)
+        {
+          _DigitalDevices.ResetCi();
+        }
       }
       catch (Exception ex)
       {
@@ -708,7 +708,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_DigitalDevices != null)
         {
-          return _DigitalDevices.SendServiceIdToCam(channel.ServiceId);
+          return _DigitalDevices.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
         if (_digitalEveryWhere != null)
         {

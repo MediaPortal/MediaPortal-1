@@ -200,7 +200,7 @@ namespace TvLibrary.Implementations.DVB
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
       }
-      _conditionalAccess = new ConditionalAccess(null, null, this, null);
+      _conditionalAccess = new ConditionalAccess(null, null, this, null, null);
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
       _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
