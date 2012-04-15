@@ -110,6 +110,7 @@
     <Compile Include="Implementations\DVB\ConditionalAccess\Prof\Prof.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\Prof\ProfUsb.cs" />
     <Compile Include="Implementations\DVB\DisEqC\ConexantBDA.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\Omicom.cs" />
     <Compile Include="Implementations\DVB\DisEqC\TeVii.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
