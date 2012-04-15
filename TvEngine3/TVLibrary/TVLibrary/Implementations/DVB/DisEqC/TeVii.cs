@@ -32,575 +32,610 @@ using TvLibrary.Implementations.DVB;
 namespace TvLibrary.Hardware
 {
   /// <summary>
-  /// TeVii hw control class
+  /// A class for handling DiSEqC and tuning for TeVii tuners.
   /// </summary>
-  public class TeVii : IDisposable, IHardwareProvider, IDiSEqCController, ICustomTuning
+  public class TeVii : ICustomTuning, IDiSEqCController, IHardwareProvider, IDisposable
   {
-    #region Dll Imports
+    #region enums
+
+    private enum TeViiPolarisation
+    {
+      None = 0,
+      Vertical,     // also use for circular right
+      Horizontal    // also use for circular left
+    }
+
+    private enum TeViiModulation
+    {
+      Auto = 0,
+      Qpsk,
+      Bpsk,
+      Qam16,
+      Qam32,
+      Qam64,
+      Qam128,
+      Qam256,
+      Vsb8,
+      Dvbs2_Qpsk,
+      Dvbs2_8Psk,
+      Dvbs2_16Apsk,
+      Dvbs2_32Apsk,
+      TurboQPsk,
+      Turbo8Psk,
+      Turbo16Psk
+    }
+
+    private enum TeViiFecRate
+    {
+      Auto = 0,
+      Rate1_2,
+      Rate1_3,
+      Rate1_4,
+      Rate2_3,
+      Rate2_5,
+      Rate3_4,
+      Rate3_5,
+      Rate4_5,
+      Rate5_6,
+      Rate5_11,
+      Rate6_7,
+      Rate7_8,
+      Rate8_9,
+      Rate9_10
+    }
+
+    #endregion
+
+    #region Dll imports
 
     //////////////////////////////////////////////////////////////////////////
     // Information functions
     // these functions don't require opening of device
 
     /// <summary>
-    /// get version of SDK API
-    /// This is optional.
-    /// Can be used to check if API is not lower than originally used.
+    /// Get the SDK API version number.
     /// </summary>
-    /// <returns>API Version</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetAPIVersion", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern int GetAPIVersion();
+    /// <returns>the API Version number</returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern Int32 GetAPIVersion();
 
     /// <summary>
-    /// Enumerate devices in system.
-    /// This function should be called before any other.
-    /// Only first call will really enumerate. All subsequent 
-    /// calls will just return number of previously found devices.
+    /// Enumerate the TeVii-compatible devices in the system. This function should be
+    /// called before any other functions are called. Only the first call will really
+    /// enumerate. Subsequent calls will just return the result from the first call.
     /// </summary>
-    /// <returns>number of found devices</returns>
-    [DllImport("TeVii.dll", EntryPoint = "FindDevices", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern int FindDevices();
+    /// <returns>the number of TeVii-compatible devices connected to the system</returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern Int32 FindDevices();
 
     /// <summary>
-    /// Get name of device
+    /// Get the friendly name for a specific TeVii device. Note: do not modify or free
+    /// the memory associated with the returned pointer!
     /// </summary>
-    /// <param name="idx">idx - device index (0 &lt;= idx &lt; FindDevices())</param>
-    /// <returns>string with device name or NULL (on failure). Do not modify or free memory used by this string!</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetDeviceName", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr GetDeviceName(int idx);
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <returns>a pointer to a NULL terminated buffer containing the device name, otherwise <c>IntPtr.Zero</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [return: MarshalAs(UnmanagedType.LPStr)]
+    private static extern String GetDeviceName(Int32 idx);
 
     /// <summary>
-    /// Get device path
+    /// Get the device path for a specific TeVii device. Note: do not modify or free
+    /// the memory associated with the returned pointer!
     /// </summary>
-    /// <param name="idx">idx - device index (0 lt;= idx &lt; FindDevices())</param>
-    /// <returns>string with device path or NULL (on failure). Do not modify or free memory used by this string!</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetDevicePath", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr GetDevicePath(int idx);
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <returns>a pointer to a NULL terminated buffer containing the device path, otherwise <c>IntPtr.Zero</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [return: MarshalAs(UnmanagedType.LPStr)]
+    private static extern String GetDevicePath(Int32 idx);
 
     //////////////////////////////////////////////////////////////////////////
     // Following functions work only after call OpenDevice()
     //
 
     /// <summary>
-    /// Open device. Application may open several devices simultaneously. 
-    /// They will be distinguished by idx parameter.
+    /// Open access to a specific TeVii device. The idx parameter specifies which device will be opened.
+    /// It is possible to have access to multiple devices simultaneously.
     /// </summary>
-    /// <param name="idx">idx - device index (0 &lt;= idx &lt; FindDevices())</param>
-    /// <param name="func">func - capture function which will receive stream.</param>
-    /// <param name="lParam">lParam - application defined parameter which will be passed to capture function</param>
-    /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "OpenDevice", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 OpenDevice(int idx, IntPtr func, IntPtr lParam);
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="captureCallback">An optional pointer to a function that will be executed when raw stream packets are received.</param>
+    /// <param name="context">An optional pointer that will be passed as a paramter to the capture callback.</param>
+    /// <returns><c>true</c> if the device access is successfully established, otherwise <c>false</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool OpenDevice(Int32 idx, IntPtr captureCallback, IntPtr context);
 
     /// <summary>
-    /// Close Device
+    /// Close access to a specific TeVii device.
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
-    /// <returns> non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "CloseDevice", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 CloseDevice(int idx);
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <returns><c>true</c> if the device access is successfully closed, otherwise <c>false</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool CloseDevice(Int32 idx);
 
     /// <summary>
-    /// Tune to transponder
+    /// Tune a TeVii DVB-S/S2 tuner to a specific satellite transponder.
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
-    /// <param name="Freq">Freq - frequency in kHz, for example: 12450000 (12.45 GHz)</param>
-    /// <param name="SymbRate">SymbRate - Symbol rate in sps, for example: 27500000 (27500 Ksps)</param>
-    /// <param name="LOF"></param>
-    /// <param name="Pol">Pol - polarization, see TPolarization above</param>
-    /// <param name="F22KHz">F22KHz - 22KHz tone on/off</param>
-    /// <param name="MOD">MOD - modulation, see TMOD above. Note: it's better to avoid use AUTO for DVBS2 signal, otherwise locking time will be long</param>
-    /// <param name="FEC">FEC - see TFEC above. Note: it's better to avoid use AUTO for DVBS2 signal, otherwise locking time will be long</param>
-    /// <returns>non-zero if signal is locked</returns>
-    [DllImport("TeVii.dll", EntryPoint = "TuneTransponder", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 TuneTransponder(int idx, Int32 Freq, Int32 SymbRate, Int32 LOF, TPolarization Pol,
-                                               Int32 F22KHz, TMOD MOD, TFEC FEC);
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="frequency">The transponder frequency in kHz (eg. 12450000).</param>
+    /// <param name="symbolRate">The transponder symbol rate in sps (eg. 27500000).</param>
+    /// <param name="lnbLof">The LNB local oscillator frequency offset in kHz (eg. 9570000).</param>
+    /// <param name="polarisation">The transponder polarisation.</param>
+    /// <param name="toneOn"><c>True</c> to turn the 22 kHz oscillator on (to force the LNB to high band mode or switch to port 2).</param>
+    /// <param name="modulation">The transponder modulation. Note that it's better to avoid using <c>TeViiModulation.Auto</c> for DVB-S2 transponders to minimise lock time.</param>
+    /// <param name="fecRate">The transponder FEC rate. Note that it's better to avoid using <c>TeViiFecRate.Auto</c> for DVB-S2 transponders to minimise lock time.</param>
+    /// <returns><c>true</c> if the tuner successfully locks on the transponder, otherwise <c>false</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool TuneTransponder(Int32 idx, Int32 frequency, Int32 symbolRate, Int32 lnbLof, TeViiPolarisation polarisation,
+                                               bool toneOn, TeViiModulation modulation, TeViiFecRate fecRate);
 
     /// <summary>
-    /// Get signal status
+    /// Get the current signal status for a specific TeVii tuner device.
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
-    /// <param name="IsLocked">isLocked - non-zero if signal is present</param>
-    /// <param name="Strength">Strength - 0..100 signal strength</param>
-    /// <param name="Quality">Quality - 0..100 signal quality</param>
-    /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetSignalStatus", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 GetSignalStatus(int idx, out bool IsLocked, out Int32 Strength, out Int32 Quality);
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="isLocked"><c>True</c> if the tuner/demodulator are locked onto a transponder.</param>
+    /// <param name="strength">A signal strength rating ranging between 0 (low strength) and 100 (high strength).</param>
+    /// <param name="quality">A signal quality rating ranging between 0 (low quality) and 100 (high quality).</param>
+    /// <returns><c>true</c> if the signal status is successfully retrieved, otherwise <c>false</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool GetSignalStatus(Int32 idx, out bool isLocked, out Int32 strength, out Int32 quality);
 
     /// <summary>
-    /// Send DiSEqC message
+    /// Send an arbitrary DiSEqC message.
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
-    /// <param name="Data"></param>
-    /// <param name="Len">Data,Len - buffer with DiSEqC command</param>
-    /// <param name="Repeats">Repeats - repeat DiSEqC message n times. 0 means send one time</param>
-    /// <param name="Flg">Flg - non-zero means replace first byte (0xE0) of DiSEqC message with 0xE1 on second and following repeats.</param>
-    /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "SendDiSEqC", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 SendDiSEqC(int idx, byte[] Data, Int32 Len, Int32 Repeats, Int32 Flg);
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="message">The DiSEqC message bytes.</param>
+    /// <param name="length">The message length in bytes.</param>
+    /// <param name="repeatCount">The number of times to resend the message. Zero means send the message once.</param>
+    /// <param name="repeatFlag"><c>True</c> to set the first byte in the message to 0xe1 if/when the message is resent.</param>
+    /// <returns><c>true</c> if the message is successfully sent, otherwise <c>false</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool SendDiSEqC(Int32 idx, byte[] message, Int32 length, Int32 repeatCount, bool repeatFlag);
 
     /// <summary>
-    /// Set the remote control
+    /// Set the remote control receiver callback function.
     /// </summary>
-    /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
-    /// <param name="lpCallback">lpCallback - application defined procedure to receive keys. NULL to disable RC.</param>
-    /// <param name="lParam">lParam - application defined parameter which will be passed to callback function</param>
-    /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "SetRemoteControl", CharSet = CharSet.Auto,
-      CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 SetRemoteControl(int idx, IntPtr lpCallback, IntPtr lParam);
-
-    #endregion
-
-    #region enums
-
-#pragma warning disable 1591
-
-    /// <summary>
-    /// Enum for FEC values
-    /// </summary>
-    public enum TFEC
-    {
-      TFEC_AUTO,
-      TFEC_1_2,
-      TFEC_1_3,
-      TFEC_1_4,
-      TFEC_2_3,
-      TFEC_2_5,
-      TFEC_3_4,
-      TFEC_3_5,
-      TFEC_4_5,
-      TFEC_5_6,
-      TFEC_5_11,
-      TFEC_6_7,
-      TFEC_7_8,
-      TFEC_8_9,
-      TFEC_9_10
-    } ;
-
-    /// <summary>
-    /// Enum for modulations
-    /// </summary>
-    public enum TMOD
-    {
-      TMOD_AUTO,
-      TMOD_QPSK,
-      TMOD_BPSK,
-      TMOD_16QAM,
-      TMOD_32QAM,
-      TMOD_64QAM,
-      TMOD_128QAM,
-      TMOD_256QAM,
-      TMOD_8VSB,
-      TMOD_DVBS2_QPSK,
-      TMOD_DVBS2_8PSK,
-      TMOD_DVBS2_16PSK,
-      TMOD_DVBS2_32PSK,
-      TMOD_TURBO_QPSK,
-      TMOD_TURBO_8PSK,
-      TMOD_TURBO_16PSK
-    } ;
-
-    /// <summary>
-    /// Enum for Polarization
-    /// </summary>
-    public enum TPolarization
-    {
-      TPol_None,
-      TPol_Vertical,
-      TPol_Horizontal
-    } ;
-
-#pragma warning restore 1591
+    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="remoteKeyCallback">An optional pointer to a function that will be called when remote keypress events are detected.</param>
+    /// <param name="context">An optional pointer that will be passed as a paramter to the remote key callback.</param>
+    /// <returns><c>true</c> if the callback function is successfully set, otherwise <c>false</c></returns>
+    [DllImport("TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern Int32 SetRemoteControl(Int32 idx, IntPtr remoteKeyCallback, IntPtr context);
 
     #endregion
 
     #region variables
 
-    private int m_iDeviceIndex;
-    private bool m_bIsTeVii = false;
-    private string m_devicePath;
+    private int _deviceIndex = -1;
+    private bool _isTeVii = false;
+    private CardType _tunerType = CardType.Unknown;
+    private Tone22k _toneState = Tone22k.Auto;
 
     #endregion
 
     /// <summary>
-    ///  Initializes a new instance of the <see cref="TeVii"/> class.
-    /// </summary>
-    public TeVii() {}
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TeVii"/> class.
+    /// Initialises a new instance of the <see cref="TeVii"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    public TeVii(IBaseFilter tunerFilter) {}
-
-    /// <summary>
-    /// Helper function to get managed string from return value
-    /// </summary>
-    /// <param name="ConstCharPtr">IntPtr to unmanaged string</param>
-    /// <returns>String</returns>
-    public String GetUnmanagedString(IntPtr ConstCharPtr)
+    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
+    /// <param name="tunerDevicePath">The tuner device path.</param>
+    public TeVii(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      return Marshal.PtrToStringAnsi(ConstCharPtr);
-    }
-
-    /// <summary>
-    /// Close HW 
-    /// </summary>
-    private void Close()
-    {
-      Log.Log.Debug("TeVii: Closing card {0} ", m_iDeviceIndex);
-      CloseDevice(m_iDeviceIndex);
-    }
-
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
-    {
-      if (m_bIsTeVii)
+      Int32 deviceCount = FindDevices();
+      Log.Log.Debug("TeVii: number of devices = {0}, tuner device path = {1}", deviceCount, tunerDevicePath);
+      if (deviceCount == 0)
       {
-        Close();
-      }
-    }
-
-    #region IHardwareProvider Member
-
-    /// <summary>
-    /// Init Hardware Provider
-    /// </summary>
-    /// <param name="tunerFilter"></param>
-    public void Init(IBaseFilter tunerFilter)
-    {
-      // TeVii doesn't care about tunerFilters
-    }
-
-    /// <summary>
-    /// GET or SET the DeviceIndex for/after detection 
-    /// </summary>
-    public int DeviceIndex
-    {
-      get { return (int)m_iDeviceIndex; }
-      set { m_iDeviceIndex = value; }
-    }
-
-    /// <summary>
-    /// Provider Name
-    /// </summary>
-    public String Provider
-    {
-      get { return "TeVii"; }
-    }
-
-    /// <summary>
-    /// GET or SET the DevicePath for detection 
-    /// </summary>
-    public String DevicePath
-    {
-      get { return m_devicePath; }
-      set { m_devicePath = value; }
-    }
-
-    /// <summary>
-    /// Loading Priority
-    /// </summary>
-    public int Priority
-    {
-      get { return 10; }
-    }
-
-    /// <summary>
-    /// Checks for suitable hardware and opens it
-    /// </summary>
-    public void CheckAndOpen()
-    {
-      Int32 numberDevices = FindDevices();
-
-      // no devices found
-      if (numberDevices == 0)
-      {
-        m_bIsTeVii = false;
         return;
       }
-      Log.Log.Debug("TeVii: number of devices: {0}", numberDevices);
 
       String deviceName = String.Empty;
       String devicePath = String.Empty;
-
-      //Log.Log.Debug("TeVii: DevicePath of active card: {0}", m_devicePath);
-      for (int deviceIdx = 0; deviceIdx < numberDevices; deviceIdx++)
+      for (int deviceIdx = 0; deviceIdx < deviceCount; deviceIdx++)
       {
-        deviceName = GetUnmanagedString(GetDeviceName(deviceIdx));
-        devicePath = GetUnmanagedString(GetDevicePath(deviceIdx));
+        deviceName = GetDeviceName(deviceIdx);
+        devicePath = GetDevicePath(deviceIdx);
 
         //Log.Log.Debug("TeVii: compare to {0} {1}", deviceName, devicePath);
-        if (devicePath == m_devicePath)
+        if (devicePath.Equals(tunerDevicePath))
         {
-          m_iDeviceIndex = deviceIdx;
-          m_bIsTeVii = true;
+          Log.Log.Debug("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", _deviceIndex, deviceName, GetAPIVersion());
+          _deviceIndex = deviceIdx;
           break;
         }
       }
 
-      if (!m_bIsTeVii) return;
-
-      Log.Log.Debug("TeVii: card {0} detected: {1} (API v{2})", m_iDeviceIndex, deviceName, GetAPIVersion());
-      if (OpenDevice(m_iDeviceIndex, IntPtr.Zero, IntPtr.Zero) == 0)
+      if (_deviceIndex != -1)
       {
-        Log.Log.Debug("TeVii: card {0} open failed !", m_iDeviceIndex);
-        m_bIsTeVii = false;
         return;
       }
-      Log.Log.Debug("TeVii: card {0} successful opened", m_iDeviceIndex);
-    }
 
-    /// <summary>
-    /// return true if hardware supported
-    /// </summary>
-    public bool IsSupported
-    {
-      get { return m_bIsTeVii; }
-    }
-
-    /// <summary>
-    /// Returns the Capabilities
-    /// </summary>
-    public CapabilitiesType Capabilities
-    {
-      get { return CapabilitiesType.None; }
-    }
-
-    /// <summary>
-    /// Instructs the cam/ci module to use hardware filter and only send the pids listed in pids to the pc
-    /// </summary>
-    /// <param name="subChannel">The sub channel id</param>
-    /// <param name="channel">The current tv/radio channel.</param>
-    /// <param name="HwPids">The pids.</param>
-    /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(int subChannel, TvLibrary.Channels.DVBBaseChannel channel, List<ushort> HwPids) {}
-
-    /// <summary>
-    /// Set parameter to null when stopping the Graph.
-    /// </summary>
-    public void OnStopGraph() {}
-
-    #endregion
-
-    #region IDiSEqCController Member
-
-    /// <summary>
-    /// Sets the DVB s2 modulation.
-    /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="channel">The channel.</param>
-    public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
-    {
-      return channel;
-    }
-
-    /// <summary>
-    /// Sends the diseq command.
-    /// </summary>
-    /// <param name="channel">The channel.</param>
-    /// <param name="parameters">The scanparameters.</param>
-    public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
-    {
-      if (m_bIsTeVii == false)
-        return;
-      Log.Log.Debug("TeVii: SendDiseqc: {0},{1}", parameters.ToString(), channel.ToString());
-
-      //bit 0	(1)	: 0=low band, 1 = hi band
-      //bit 1 (2) : 0=vertical, 1 = horizontal
-      //bit 3 (4) : 0=satellite position A, 1=satellite position B
-      //bit 4 (8) : 0=switch option A, 1=switch option  B
-      // LNB    option  position
-      // 1        A         A
-      // 2        A         B
-      // 3        B         A
-      // 4        B         B
-      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-      bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
-                           (channel.Polarisation == Polarisation.CircularL));
-      byte cmd = 0xf0;
-      cmd |= (byte)(hiBand ? 1 : 0);
-      cmd |= (byte)((isHorizontal) ? 2 : 0);
-      cmd |= (byte)((antennaNr - 1) << 2);
-
-      byte[] ucMessage = new byte[4];
-      ucMessage[0] = 0xE0; //framing byte
-      ucMessage[1] = 0x10; //address byte
-      ucMessage[2] = 0x38; //command byte
-      ucMessage[3] = cmd; //data byte (port group 0)
-      //byte[] ucMessage = DiSEqC_Helper.ChannelToDiSEqC(parameters, channel);
-      SendDiSEqCCommand(ucMessage);
-    }
-
-    /// <summary>
-    /// Send DiSEqC Command
-    /// </summary>
-    /// <param name="diSEqC">byte[] with commands</param>
-    /// <returns>true if successful</returns>
-    public bool SendDiSEqCCommand(byte[] diSEqC)
-    {
-      int res = SendDiSEqC(m_iDeviceIndex, diSEqC, diSEqC.Length, 0, 0);
-      if (res == 0)
+      if (!OpenDevice(_deviceIndex, IntPtr.Zero, IntPtr.Zero))
       {
-        Log.Log.Debug("TeVii: Send DiSEqC failed");
-        return false;
+        return;
       }
+      Log.Log.Debug("TeVii: supported tuner detected");
+      _isTeVii = true;
+      _tunerType = tunerType;
+    }
 
-      Log.Log.Debug("TeVii: Send DiSEqC successful.");
+    /// <summary>
+    /// Gets a value indicating whether this tuner is a TeVii-compatible tuner.
+    /// </summary>
+    /// <value><c>true</c> if this tuner is a TeVii-compatible tuner, otherwise <c>false</c></value>
+    public bool IsTeVii
+    {
+      get
+      {
+        return _isTeVii;
+      }
+    }
+
+    /// <summary>
+    /// Control whether tone/data burst and 22 kHz legacy tone are used.
+    /// </summary>
+    /// <param name="toneBurstState">The tone/data burst state.</param>
+    /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    {
+      Log.Log.Debug("TeVii: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+
+      // We don't have the ability to send burst commands, and for the continuous
+      // tone we just set a variable here that will be passed as part of the next
+      // tune request.
+      _toneState = tone22kState;
+      Log.Log.Debug("TeVii: result = success");
       return true;
     }
 
-    /// <summary>
-    /// Read command
-    /// </summary>
-    /// <param name="reply"></param>
-    /// <returns></returns>
-    public bool ReadDiSEqCCommand(out byte[] reply)
-    {
-      Log.Log.Debug("ReadDiSEqCCommand not supported");
-      reply = new byte[0];
-      return true;
-    }
-
-    #endregion
-
-    #region ICustomTuning Member
+    #region ICustomTuning members
 
     /// <summary>
-    /// Check if the custom tune method is supported for given channel type.
+    /// Check if the custom tune method supports tuning for a given channel.
     /// </summary>
-    /// <param name="channel">Channel</param>
-    /// <returns>true if supported</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the custom tune method supports tuning the channel, otherwise <c>false</c></returns>
     public bool SupportsTuningForChannel(IChannel channel)
     {
-      return (channel is DVBSChannel);
+      // Tuning of DVB-S/S2 channels is supported with an appropriate tuner.
+      if (channel is DVBSChannel && _tunerType == CardType.DvbS)
+      {
+        return true;
+      }
+      return false;
     }
 
     /// <summary>
-    /// Tunes to channel using custom tune method.
+    /// Tune to a channel using the custom tune method.
     /// </summary>
-    /// <param name="channel">Channel</param>
-    /// <param name="Parameters">ScanParameters</param>
-    /// <returns>true if successful</returns>
-    public bool CustomTune(IChannel channel, ScanParameters Parameters)
+    /// <param name="channel">The channel.</param>
+    /// <param name="parameters">The scan parameters.</param>
+    /// <returns><c>true</c> if tuning is successful, otherwise <c>false</c></returns>
+    public bool CustomTune(IChannel channel, ScanParameters parameters)
     {
-      if (!SupportsTuningForChannel(channel))
+      Log.Log.Debug("TeVii: tune to channel");
+
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
+      {
         return false;
+      }
 
-      DVBSChannel satelliteChannel = channel as DVBSChannel;
+      int lowLof;
+      int highLof;
+      int switchFrequency;
+      BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out lowLof, out highLof, out switchFrequency);
 
-      bool hiBand = BandTypeConverter.IsHiBand(satelliteChannel, Parameters);
-      int lof1, lof2, sw;
-      BandTypeConverter.GetDefaultLnbSetup(Parameters, satelliteChannel.BandType, out lof1, out lof2, out sw);
-      int lnbFrequency;
-      if (hiBand)
-        lnbFrequency = lof2 * 1000;
+      int lnbLof;
+      bool toneOn = false;
+      if (BandTypeConverter.IsHiBand(ch, parameters))
+      {
+        lnbLof = highLof * 1000;
+        toneOn = true;
+      }
       else
-        lnbFrequency = lof1 * 1000;
+      {
+        lnbLof = lowLof * 1000;
+      }
 
-      Log.Log.Debug("TeVii: Start CustomTune F:{0} SR:{1} LOF:{6} P:{2} HI:{3} M:{4} FEC:{5}",
-                    (int)satelliteChannel.Frequency,
-                    satelliteChannel.SymbolRate * 1000,
-                    Translate(satelliteChannel.Polarisation),
-                    hiBand,
-                    Translate(satelliteChannel.ModulationType),
-                    Translate(satelliteChannel.InnerFecRate),
-                    lnbFrequency
-        );
+      // Override the default tone state with the state set in SetToneState().
+      if (_toneState == Tone22k.Off)
+      {
+        toneOn = false;
+      }
+      else if (_toneState == Tone22k.On)
+      {
+        toneOn = true;
+      }
 
-      int res = TuneTransponder(m_iDeviceIndex,
-                                (int)satelliteChannel.Frequency,
-                                satelliteChannel.SymbolRate * 1000,
-                                lnbFrequency,
-                                Translate(satelliteChannel.Polarisation),
-                                hiBand ? 1 : 0,
-                                Translate(satelliteChannel.ModulationType),
-                                Translate(satelliteChannel.InnerFecRate)
-        );
-      Log.Log.Debug("TeVii: Send CustomTune: {0}", res);
-      return (res == 1);
+      bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, lnbLof,
+        Translate(ch.Polarisation), toneOn, Translate(ch.ModulationType), Translate(ch.InnerFecRate));
+      if (result)
+      {
+        Log.Log.Debug("TeVii: result = success");
+      }
+      else
+      {
+        Log.Log.Debug("TeVii: result = failure");
+      }
+
+      // Reset the tone state to auto. SetToneState() must be called again to override
+      // the default logic.
+      _toneState = Tone22k.Auto;
+      return result;
     }
 
-    private TPolarization Translate(Polarisation pol)
+    private TeViiPolarisation Translate(Polarisation pol)
     {
       switch (pol)
       {
         case Polarisation.CircularL:
         case Polarisation.LinearH:
-          return TPolarization.TPol_Horizontal;
+          return TeViiPolarisation.Horizontal;
         case Polarisation.CircularR:
         case Polarisation.LinearV:
-          return TPolarization.TPol_Vertical;
+          return TeViiPolarisation.Vertical;
         default:
-          return TPolarization.TPol_None;
+          return TeViiPolarisation.None;
       }
     }
 
-    private TFEC Translate(BinaryConvolutionCodeRate fec)
+    private TeViiModulation Translate(ModulationType mod)
+    {
+      switch (mod)
+      {
+        // DVB-C, DVB-T and North American cable
+        case ModulationType.Mod16Qam:
+          return TeViiModulation.Qam16;
+        case ModulationType.Mod32Qam:
+          return TeViiModulation.Qam32;
+        case ModulationType.Mod64Qam:
+          return TeViiModulation.Qam64;
+        case ModulationType.Mod128Qam:
+          return TeViiModulation.Qam128;
+        case ModulationType.Mod256Qam:
+          return TeViiModulation.Qam256;
+
+        // ATSC
+        case ModulationType.Mod8Vsb:
+          return TeViiModulation.Vsb8;
+
+        // DVB-S/S2
+        case ModulationType.ModQpsk:
+          return TeViiModulation.TurboQPsk;
+        case ModulationType.ModBpsk:
+          return TeViiModulation.Bpsk;
+        case ModulationType.Mod8Psk:
+          return TeViiModulation.Turbo8Psk;
+        case ModulationType.Mod16Apsk:
+          return TeViiModulation.Turbo16Psk;
+        case ModulationType.ModNbcQpsk:
+          return TeViiModulation.Dvbs2_Qpsk;
+        case ModulationType.ModNbc8Psk:
+          return TeViiModulation.Dvbs2_8Psk;
+
+        default:
+          return TeViiModulation.Auto;
+      }
+    }
+
+    private TeViiFecRate Translate(BinaryConvolutionCodeRate fec)
     {
       switch (fec)
       {
         case BinaryConvolutionCodeRate.Rate1_2:
-          return TFEC.TFEC_1_2;
+          return TeViiFecRate.Rate1_2;
         case BinaryConvolutionCodeRate.Rate2_3:
-          return TFEC.TFEC_2_3;
+          return TeViiFecRate.Rate2_3;
         case BinaryConvolutionCodeRate.Rate3_4:
-          return TFEC.TFEC_3_4;
+          return TeViiFecRate.Rate3_4;
         case BinaryConvolutionCodeRate.Rate3_5:
-          return TFEC.TFEC_3_5;
+          return TeViiFecRate.Rate3_5;
         case BinaryConvolutionCodeRate.Rate4_5:
-          return TFEC.TFEC_4_5;
+          return TeViiFecRate.Rate4_5;
         case BinaryConvolutionCodeRate.Rate5_6:
-          return TFEC.TFEC_5_6;
+          return TeViiFecRate.Rate5_6;
         case BinaryConvolutionCodeRate.Rate5_11:
-          return TFEC.TFEC_5_11;
+          return TeViiFecRate.Rate5_11;
         case BinaryConvolutionCodeRate.Rate7_8:
-          return TFEC.TFEC_7_8;
+          return TeViiFecRate.Rate7_8;
         case BinaryConvolutionCodeRate.Rate1_4:
-          return TFEC.TFEC_1_4;
+          return TeViiFecRate.Rate1_4;
         case BinaryConvolutionCodeRate.Rate1_3:
-          return TFEC.TFEC_1_3;
+          return TeViiFecRate.Rate1_3;
         case BinaryConvolutionCodeRate.Rate2_5:
-          return TFEC.TFEC_2_5;
+          return TeViiFecRate.Rate2_5;
         case BinaryConvolutionCodeRate.Rate6_7:
-          return TFEC.TFEC_6_7;
+          return TeViiFecRate.Rate6_7;
         case BinaryConvolutionCodeRate.Rate8_9:
-          return TFEC.TFEC_8_9;
+          return TeViiFecRate.Rate8_9;
         case BinaryConvolutionCodeRate.Rate9_10:
-          return TFEC.TFEC_9_10;
+          return TeViiFecRate.Rate9_10;
         case BinaryConvolutionCodeRate.RateMax:
         default:
-          return TFEC.TFEC_AUTO;
+          return TeViiFecRate.Auto;
       }
     }
 
-    private TMOD Translate(ModulationType mod)
+    #endregion
+
+    #region IDiSEqCController members
+
+    /// <summary>
+    /// Send the appropriate DiSEqC 1.0 switch command to switch to a given channel.
+    /// </summary>
+    /// <param name="parameters">The scan parameters.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      switch (mod)
+      bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
+      ToneBurst toneBurst = ToneBurst.Off;
+      bool successDiseqc = true;
+      if (channel.DisEqc == DisEqcType.SimpleA)
       {
-        case ModulationType.Mod8Psk:
-          return TMOD.TMOD_TURBO_8PSK;
-          //return TMOD.TMOD_DVBS2_8PSK;
-        case ModulationType.ModQpsk:
-          return TMOD.TMOD_TURBO_QPSK;
-          //return TMOD.TMOD_DVBS2_QPSK;
-        case ModulationType.Mod8Vsb:
-          return TMOD.TMOD_8VSB;
-        default:
-          return TMOD.TMOD_AUTO;
+        toneBurst = ToneBurst.ToneBurst;
+      }
+      else if (channel.DisEqc == DisEqcType.SimpleB)
+      {
+        toneBurst = ToneBurst.DataBurst;
+      }
+      else if (channel.DisEqc != DisEqcType.None)
+      {
+        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+        bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                              (channel.Polarisation == Polarisation.CircularL));
+        byte command = 0xf0;
+        command |= (byte)(isHighBand ? 1 : 0);
+        command |= (byte)((isHorizontal) ? 2 : 0);
+        command |= (byte)((antennaNr - 1) << 2);
+        successDiseqc = SendDiSEqCCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
+      }
+
+      Tone22k tone22k = Tone22k.Off;
+      if (isHighBand)
+      {
+        tone22k = Tone22k.On;
+      }
+      bool successTone = SetToneState(toneBurst, tone22k);
+
+      return (successDiseqc && successTone);
+    }
+
+    /// <summary>
+    /// Send a DiSEqC command.
+    /// </summary>
+    /// <param name="command">The DiSEqC command to send.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendDiSEqCCommand(byte[] command)
+    {
+      Log.Log.Debug("TeVii: send DiSEqC command");
+      bool result = SendDiSEqC(_deviceIndex, command, command.Length, 0, false);
+      if (result)
+      {
+        Log.Log.Debug("TeVii: result = success");
+        return true;
+      }
+
+      Log.Log.Debug("TeVii: result = failure");
+      return false;
+    }
+
+    /// <summary>
+    /// Get a reply to a previously sent DiSEqC command.
+    /// </summary>
+    /// <param name="reply">The reply message.</param>
+    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
+    public bool ReadDiSEqCCommand(out byte[] reply)
+    {
+      // (Not implemented...)
+      reply = null;
+      return false;
+    }
+
+    #endregion
+
+    #region IHardwareProvider members
+
+    /// <summary>
+    /// Initialise the hardware provider.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter.</param>
+    public void Init(IBaseFilter tunerFilter)
+    {
+      // Not implemented.
+    }
+
+    /// <summary>
+    /// Get or set a custom device index.
+    /// </summary>
+    public int DeviceIndex
+    {
+      get
+      {
+        return _deviceIndex;
+      }
+      set
+      {
+      }
+    }
+
+    /// <summary>
+    /// Get or set the tuner device path.
+    /// </summary>
+    public String DevicePath
+    {
+      get
+      {
+        return String.Empty;
+      }
+      set
+      {
+      }
+    }
+
+    /// <summary>
+    /// Get the provider loading priority.
+    /// </summary>
+    public int Priority
+    {
+      get
+      {
+        return 10;
+      }
+    }
+
+    /// <summary>
+    /// Checks if hardware is supported and open the device.
+    /// </summary>
+    public void CheckAndOpen()
+    {
+      // Not implemented.
+    }
+
+    /// <summary>
+    /// Returns the name of the provider.
+    /// </summary>
+    public String Provider
+    {
+      get
+      {
+        return "TeVii";
+      }
+    }
+
+    /// <summary>
+    /// Returns the result of detection. If <c>false</c> the provider should be disposed.
+    /// </summary>
+    public bool IsSupported
+    {
+      get
+      {
+        return _isTeVii;
+      }
+    }
+
+    /// <summary>
+    /// Returns the provider capabilities.
+    /// </summary>
+    public CapabilitiesType Capabilities
+    {
+      get
+      {
+        return CapabilitiesType.None;
+      }
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Close the hardware access interface.
+    /// </summary>
+    public void Dispose()
+    {
+      if (_isTeVii)
+      {
+        CloseDevice(_deviceIndex);
       }
     }
 

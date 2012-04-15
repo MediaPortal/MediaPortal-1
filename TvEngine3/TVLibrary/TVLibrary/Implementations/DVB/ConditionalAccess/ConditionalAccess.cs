@@ -215,12 +215,8 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _turbosight);
 
           // TeVii support
-          _TeVii = new TeVii();
-          _TeVii.Init(tunerFilter);
-          _TeVii.DevicePath = card.DevicePath;
-          Log.Log.WriteFile("Check for {0}", _TeVii.Provider);
-          _TeVii.CheckAndOpen();
-          if (_TeVii.IsSupported)
+          _TeVii = new TeVii(tunerFilter, card.CardType, card.DevicePath);
+          if (_TeVii.IsTeVii)
           {
             _diSEqCMotor = new DiSEqCMotor(_TeVii);
             _HWProvider = _TeVii;
@@ -753,7 +749,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_TeVii != null)
         {
-          _TeVii.SendDiseqCommand(parameters, channel);
+          _TeVii.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
       }
