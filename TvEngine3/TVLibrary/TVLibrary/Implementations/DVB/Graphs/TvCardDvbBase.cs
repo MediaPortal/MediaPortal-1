@@ -1000,14 +1000,14 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        int hr = ((IMediaControl)_graphBuilder).Stop();
+        //int hr = ((IMediaControl)_graphBuilder).Stop();
         Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
-        if (hr < 0 || hr > 1)
+        /*if (hr < 0 || hr > 1)
         {
           Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
-        _graphState = GraphState.Created;
+        _graphState = GraphState.Created;*/
       }
     }
 
@@ -1456,6 +1456,17 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the tuner filter must be connected to a capture filter, otherwise <c>false</c></returns>
     private bool UseCaptureFilter()
     {
+      //TODO: hack for testing; should be removed before final merge.
+      if (
+        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-c ctuner") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-t vtuner") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-c)") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-t)")
+      )
+      {
+        return true;
+      }
+
       // First: check the media types and formats on the tuner output
       // pin. The WDK specifies (http://msdn.microsoft.com/en-us/library/ff557729%28v=vs.85%29.aspx)
       // a set of formats that the tuner and capture filter output pins should set

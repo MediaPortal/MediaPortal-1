@@ -155,11 +155,12 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _digitalEveryWhere);
 
           Log.Log.WriteFile("Check for Twinhan");
-          _twinhan = new Twinhan(tunerFilter);
+          _twinhan = new Twinhan(tunerFilter, card.CardType);
           if (_twinhan.IsTwinhan)
           {
             Log.Log.WriteFile("Twinhan card detected");
             _diSEqCMotor = new DiSEqCMotor(_twinhan);
+            _HWProvider = _twinhan;
             Log.Log.WriteFile("Twinhan registering CI menu capabilities");
             _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
@@ -381,7 +382,7 @@ namespace TvLibrary.Implementations.DVB
         //}
         if (_twinhan != null)
         {
-          if (_twinhan.IsCamPresent())
+          //if (_twinhan.IsCamPresent())
             return false;
         }
 
@@ -699,12 +700,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_twinhan != null)
         {
-          ChannelInfo info = new ChannelInfo();
-          info.DecodePmt(pmt);
-
-          int caPmtLen;
-          byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
-          return _twinhan.SendPMT(caPmt, caPmtLen);
+          return _twinhan.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
         if (_turbosight != null)
         {
@@ -745,7 +741,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_twinhan != null)
         {
-          _twinhan.SendDiseqCommand(parameters, channel);
+          _twinhan.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_hauppauge != null)
@@ -868,28 +864,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_twinhan != null)
         {
-          //DVB-S2 modulation parameters for Twinhan
-          if (channel.ModulationType == ModulationType.ModQpsk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod8Psk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod16Apsk)
-          {
-            channel.ModulationType = ModulationType.Mod16Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod32Apsk)
-          {
-            channel.ModulationType = ModulationType.ModOqpsk;
-          }
-          Log.Log.WriteFile("Twinhan DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("Twinhan DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("Twinhan DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("Twinhan DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          return channel;
+          return (DVBSChannel)_twinhan.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_hauppauge != null)
         {
