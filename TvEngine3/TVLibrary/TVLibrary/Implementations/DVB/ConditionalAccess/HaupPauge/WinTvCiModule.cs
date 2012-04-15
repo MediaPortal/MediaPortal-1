@@ -202,6 +202,7 @@ namespace TvLibrary.Implementations.DVB
 
       Log.Log.Debug("WinTV-CI: supported tuner detected");
       _isWinTvCi = true;
+      _isCiSlotPresent = true;
       _mmiHandler = new DVB_MMI_Handler("WinTV-CI");
     }
 
@@ -374,8 +375,8 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("WinTV-CI: is CI slot present");
 
       // The WinTV-CI is a CI slot - of course a CI slot is present!
-      Log.Log.Debug("WinTV-CI: result = {0}", true);
-      return true;
+      Log.Log.Debug("WinTV-CI: result = {0}", _isCiSlotPresent);
+      return _isCiSlotPresent;
     }
 
     /// <summary>

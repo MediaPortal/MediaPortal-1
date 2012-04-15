@@ -52,6 +52,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly KNCAPI _knc;
     private readonly Hauppauge _hauppauge;
     private readonly Turbosight _turbosight;
+    private readonly Prof _prof;
+    private readonly ProfUsb _profUsb;
     private readonly DiSEqCMotor _diSEqCMotor;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
     private readonly GenericBDAS _genericbdas;
@@ -213,6 +215,24 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           Release.DisposeToNull(ref _turbosight);
+
+          Log.Log.WriteFile("Check for Prof USB");
+          _profUsb = new ProfUsb(tunerFilter);
+          if (_profUsb.IsProfUsb)
+          {
+            _diSEqCMotor = new DiSEqCMotor(_profUsb);
+            return;
+          }
+          Release.DisposeToNull(ref _profUsb);
+
+          Log.Log.WriteFile("Check for Prof");
+          _prof = new Prof(tunerFilter);
+          if (_prof.IsProf)
+          {
+            _diSEqCMotor = new DiSEqCMotor(_prof);
+            return;
+          }
+          Release.DisposeToNull(ref _prof);
 
           // TeVii support
           _TeVii = new TeVii(tunerFilter, card.CardType, card.DevicePath);
@@ -742,6 +762,16 @@ namespace TvLibrary.Implementations.DVB
           _turbosight.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
+        if (_profUsb != null)
+        {
+          _profUsb.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_prof != null)
+        {
+          _prof.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
         if (_genpix != null)
         {
           _genpix.SendDiseqCommand(parameters, channel);
@@ -885,6 +915,14 @@ namespace TvLibrary.Implementations.DVB
         if (_turbosight != null)
         {
           return (DVBSChannel)_turbosight.SetTuningParameters(channel as DVBBaseChannel);
+        }
+        if (_profUsb != null)
+        {
+          return (DVBSChannel)_profUsb.SetTuningParameters(channel as DVBBaseChannel);
+        }
+        if (_prof != null)
+        {
+          return (DVBSChannel)_prof.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_technoTrend != null)
         {
@@ -1045,7 +1083,8 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_isvixsatsc);
       Release.Dispose(_genpix);
       Release.Dispose(_twinhan);
-      Release.Dispose(_turbosight);
+      Release.Dispose(_prof);
+      Release.Dispose(_profUsb);
       Release.Dispose(_TeVii);
     }
 

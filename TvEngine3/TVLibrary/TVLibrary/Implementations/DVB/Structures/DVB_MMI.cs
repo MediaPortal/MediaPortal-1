@@ -269,7 +269,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates a "CloseMMI" data set
     /// </summary>
-    /// <returns>a CloseMmi APDU</param>
+    /// <returns>a CloseMmi APDU</returns>
     public static byte[] CreateMMIClose()
     {
       // MMI tag
@@ -286,7 +286,7 @@ namespace TvLibrary.Implementations.DVB
     /// Creates a "SelectMenuChoice" data set
     /// </summary>
     /// <param name="choice">selected index (0 means back)</param>
-    /// <returns>a MenuAnswer APDU</return>
+    /// <returns>a MenuAnswer APDU</returns>
     public static byte[] CreateMMISelect(byte choice)
     {
       // MMI tag
@@ -302,11 +302,8 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates an CI Menu Answer package
     /// </summary>
-    /// <param name="cancel">true to cancel</param>
+    /// <param name="responseType">The DVB MMI response type.</param>
     /// <param name="answer">answer string</param>
-    /// <param name="uData">target buffer</param>
-    /// <param name="uLength1">length byte1</param>
-    /// <param name="uLength2">length byte2</param>
     /// <returns>an Answer APDU</returns>
     public static byte[] CreateMMIAnswer(ResponseType responseType, String answer)
     {

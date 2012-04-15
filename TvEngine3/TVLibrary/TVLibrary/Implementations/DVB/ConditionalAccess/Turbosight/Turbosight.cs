@@ -702,7 +702,7 @@ namespace TvLibrary.Implementations.DVB
       {
         On_Exit_CI(_ciHandle);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         // On_Exit_CI() can throw an access violation exception.
       }
