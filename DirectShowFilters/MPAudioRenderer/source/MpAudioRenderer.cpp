@@ -417,12 +417,17 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
   WAVEFORMATEXTENSIBLE* wfe = NULL;
   WAVEFORMATEX* pwfx = (WAVEFORMATEX*)pmt->Format();
   
+  bool freeWaveFormat = false;
+
   // Dynamic format changes are handled in the pipeline on sample basis  
   int depth = m_State != State_Stopped ? 0 : INFINITE;
   ChannelOrder chOrder(DS_ORDER);
 
   if (IS_WAVEFORMATEXTENSIBLE(pwfx))
-    hr = m_pPipeline->NegotiateFormat((WAVEFORMATEXTENSIBLE*)pwfx, depth, &chOrder);
+  {
+    wfe = (WAVEFORMATEXTENSIBLE*)pwfx;
+    hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
+  }
   else
   {
     WAVEFORMATEXTENSIBLE* wfe = NULL;
@@ -430,24 +435,28 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
     if (SUCCEEDED(hr))
     {
       hr = m_pPipeline->NegotiateFormat(wfe, depth, &chOrder);
-      if (SUCCEEDED(hr))
-      {
-        AM_MEDIA_TYPE tmp;
-        HRESULT result = CreateAudioMediaType((WAVEFORMATEX*)wfe, &tmp, true);
-        if (SUCCEEDED(result))
-        {
-          if (m_pMediaType)
-            DeleteMediaType(m_pMediaType);
-          m_pMediaType = CreateMediaType(&tmp);
-        }
-        else
-          Log("CMPAudioRenderer::SetMediaType - failed to create media type: (0x%08x)", result);
-      }
-      SAFE_DELETE_WAVEFORMATEX(wfe);
+      freeWaveFormat = true;
     }
     else
       return hr;
   }
+
+  if (SUCCEEDED(hr))
+  {
+    AM_MEDIA_TYPE tmp;
+    HRESULT result = CreateAudioMediaType((WAVEFORMATEX*)wfe, &tmp, true);
+    if (SUCCEEDED(result))
+    {
+      if (m_pMediaType)
+        DeleteMediaType(m_pMediaType);
+      m_pMediaType = CreateMediaType(&tmp);
+    }
+    else
+      Log("CMPAudioRenderer::SetMediaType - failed to create media type: (0x%08x)", result);
+  }
+
+  if (freeWaveFormat)
+    SAFE_DELETE_WAVEFORMATEX(wfe);
 
   return hr;
 }
