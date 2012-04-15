@@ -128,14 +128,11 @@ namespace TvLibrary.Implementations.DVB
         if (isDVBC || isDVBS || isDVBT)
         {
           Log.Log.WriteFile("Check for KNC");
-          // Lookup device index of current card. only counting KNC cards by device path
-          int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
-          _knc = new KNCAPI(tunerFilter, (uint)DeviceIndex);
-          if (_knc.IsKNC)
+          _knc = new KNCAPI(tunerFilter, card.DevicePath);
+          if (_knc.IsKnc)
           {
-            //if (_knc.IsCamReady()) 
-            _ciMenu = _knc; // Register KNC CI Menu capabilities when CAM detected and ready
-            Log.Log.WriteFile("KNC card detected");
+            _ciMenu = _knc;
+            _diSEqCMotor = new DiSEqCMotor(_knc);
             return;
           }
           Release.DisposeToNull(ref _knc);
@@ -505,7 +502,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_knc != null)
         {
-          _knc.ResetCI();
+          _knc.ResetCi();
         }
         if (_turbosight != null)
         {
@@ -703,11 +700,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_knc != null)
         {
-          ChannelInfo info = new ChannelInfo();
-          info.DecodePmt(pmt);
-          int caPmtLen;
-          byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
-          return _knc.SendPMT(caPmt, caPmtLen);
+          return _knc.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
         if (_DigitalDevices != null)
         {
@@ -801,7 +794,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_knc != null)
         {
-          _knc.SendDiseqCommand(parameters, channel);
+          _knc.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_digitalEveryWhere != null)
@@ -1016,28 +1009,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_knc != null)
         {
-          //Set KNC modulation tuning settings
-          if (channel.ModulationType == ModulationType.ModQpsk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod8Psk)
-          {
-            channel.ModulationType = ModulationType.Mod8Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod16Apsk)
-          {
-            channel.ModulationType = ModulationType.Mod16Vsb;
-          }
-          if (channel.ModulationType == ModulationType.Mod32Apsk)
-          {
-            channel.ModulationType = ModulationType.ModOqpsk;
-          }
-          Log.Log.WriteFile("KNC DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("KNC DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("KNC DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("KNC DVB-S2 fec set to:{0}", channel.InnerFecRate);
-          return channel;
+          return (DVBSChannel)_knc.SetTuningParameters(channel as DVBBaseChannel);
         }
         if (_digitalEveryWhere != null)
         {
