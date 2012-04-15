@@ -163,11 +163,6 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterTIF;
 
     /// <summary>
-    /// WinTV CI filter
-    /// </summary>
-    protected IBaseFilter _filterWinTvUsb;
-
-    /// <summary>
     /// DigitalDevices CI filter
     /// </summary>
     protected IBaseFilter _filterDigitalDevicesCI;
@@ -176,11 +171,6 @@ namespace TvLibrary.Implementations.DVB
     /// Capture device
     /// </summary>
     protected DsDevice _captureDevice;
-
-    /// <summary>
-    /// WinTV CI device
-    /// </summary>
-    protected DsDevice _deviceWinTvUsb;
 
     /// <summary>
     /// DigitalDevices CI device
@@ -258,7 +248,6 @@ namespace TvLibrary.Implementations.DVB
     protected bool matchDevicePath;
 
     private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
-    private WinTvCiModule winTvCiHandler;
 
     /// <summary>
     /// The previous channel
@@ -1104,6 +1093,8 @@ namespace TvLibrary.Implementations.DVB
                                                                    NetworkProviderName);
     }
 
+    private WinTvCiModule _winTvCiModule;
+
     /// <summary>
     /// Checks if the WinTV USB CI module is installed
     /// if so it adds it to the directshow graph
@@ -1113,101 +1104,16 @@ namespace TvLibrary.Implementations.DVB
     /// [Network Provider]->[Tuner Filter]->[WinTvCI Filter]
     /// </summary>
     /// <param name="lastFilter">A reference to the last filter.</param>
-    protected void AddWinTvCIModule(ref IBaseFilter lastFilter)
+    /// <returns><c>true</c> if a WinTV-CI device is detected, linked to this tuner, and successfully added to the graph, otherwise <c>false</c></returns>
+    protected bool AddWinTvCIModule(ref IBaseFilter lastFilter)
     {
-      //check if the hauppauge wintv usb CI module is installed
-      DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
-      DsDevice usbWinTvDevice = null;
-      int hr;
-      //Log.Log.WriteFile("AddWinTvCIModule: capDevices {0}", capDevices.Length);
-      for (int capIndex = 0; capIndex < capDevices.Length; capIndex++)
+      _winTvCiModule = new WinTvCiModule(_filterTuner, _devicePath);
+      if (_winTvCiModule.IsWinTvCi)
       {
-        if (capDevices[capIndex].Name != null)
-        {
-          //Log.Log.WriteFile("AddWinTvCIModule: {0}", capDevices[capIndex].Name.ToLower());
-          if (capDevices[capIndex].Name.ToUpperInvariant() == "WINTVCIUSBBDA SOURCE")
-          {
-            if (false == DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
-            {
-              usbWinTvDevice = capDevices[capIndex];
-              break;
-            }
-          }
-        }
+        return _winTvCiModule.AddToGraph(ref _capBuilder, ref lastFilter);
       }
-      if (usbWinTvDevice == null)
-      {
-        Log.Log.Info("dvb:  WinTv CI module not detected.");
-        return;
-      }
-      //wintv ci usb module found
-      Log.Log.Info("dvb:  WinTv CI module detected");
-
-      //add logic to check if WinTV device should be built with this DVB graph.
-      TvBusinessLayer layer = new TvBusinessLayer();
-      int winTvTunerCardId = Int32.Parse(layer.GetSetting("winTvCiTuner", "-1").Value);
-      if (winTvTunerCardId != this._cardId)
-      {
-        Log.Log.Info("dvb:  WinTv CI module not assigned to card: {0}", _tunerDevice.Name);
-        return;
-      }
-      Log.Log.Info("dvb:  Adding WinTv CI to graph");
-
-      //add filter to graph
-      IBaseFilter tmpCiFilter;
-      try
-      {
-        hr = _graphBuilder.AddSourceFilterForMoniker(usbWinTvDevice.Mon, null, usbWinTvDevice.Name, out tmpCiFilter);
-      }
-      catch (Exception)
-      {
-        Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
-        return;
-      }
-      if (hr != 0)
-      {
-        //cannot add filter to graph...
-        Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
-        if (tmpCiFilter != null)
-        {
-          //release WinTV CI resources& remove filter & render graph without it.
-          winTvCiHandler.Shutdown();
-          _graphBuilder.RemoveFilter(tmpCiFilter);
-          Release.ComObject("WintvUsbCI module", tmpCiFilter);
-        }
-        return;
-      }
-      //Check if WinTV CI is plugged in to USB port if not remove filter from graph.
-      winTvCiHandler = new WinTvCiModule(tmpCiFilter);
-      int winTVCIStatus = winTvCiHandler.Init();
-      //Log.Log.Info("WinTVCI: Init() returned: {0}", winTVCIStatus);
-      if (winTVCIStatus != (int)HResult.Serverity.Success)
-      {
-        //release WinTV CI resources& remove filter & render graph without it.
-        winTvCiHandler.Shutdown();
-        _graphBuilder.RemoveFilter(tmpCiFilter);
-        Release.ComObject("WintvUsbCI module", tmpCiFilter);
-        Log.Log.Info("dvb:  WinTv CI not plugged in or driver not installed correctly!");
-        return;
-      }
-      //WinTV-CI tray icon no longer required as it is now fully native supported
-      //now render ..->[WinTv USB]
-      Log.Log.Info("dvb:  Render ...->[WinTvUSB]");
-      hr = _capBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter);
-      if (hr != 0)
-      {
-        Log.Log.Error("dvb:  Render ...->[WinTvUSB] failed");
-        winTvCiHandler.Shutdown();
-        _graphBuilder.RemoveFilter(tmpCiFilter);
-        Release.ComObject("WintvUsbCI module", tmpCiFilter);
-        return;
-      }
-      _filterWinTvUsb = tmpCiFilter;
-      _deviceWinTvUsb = usbWinTvDevice;
-      DevicesInUse.Instance.Add(usbWinTvDevice);
-      Log.Log.WriteFile("dvb:  Setting lastFilter to WinTV CI");
-      lastFilter = _filterWinTvUsb;
-      return;
+      _winTvCiModule.Dispose();
+      return false;
     }
 
     /// <summary>
@@ -1446,7 +1352,7 @@ namespace TvLibrary.Implementations.DVB
         throw new TvExceptionGraphBuildingFailed("Graph building of DVB card failed");
       }
       Log.Log.WriteFile("dvb: Checking for hardware specific extensions");
-      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
+      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, this, _winTvCiModule);
     }
 
     /// <summary>
@@ -1997,13 +1903,10 @@ namespace TvLibrary.Implementations.DVB
           ;
         _filterCapture = null;
       }
-      if (_filterWinTvUsb != null)
+      if (_winTvCiModule != null)
       {
-        Log.Log.Info("  Stopping WinTVCI module");
-        winTvCiHandler.Shutdown();
-        while (Release.ComObject(_filterWinTvUsb) > 0)
-          ;
-        _filterWinTvUsb = null;
+        _winTvCiModule.Dispose();
+        _winTvCiModule = null;
       }
       if (_filterTIF != null)
       {
@@ -2043,11 +1946,6 @@ namespace TvLibrary.Implementations.DVB
         _graphBuilder = null;
       }
       Log.Log.WriteFile("  free devices...");
-      if (_deviceWinTvUsb != null)
-      {
-        DevicesInUse.Instance.Remove(_deviceWinTvUsb);
-        _deviceWinTvUsb = null;
-      }
       if (_tunerDevice != null)
       {
         DevicesInUse.Instance.Remove(_tunerDevice);

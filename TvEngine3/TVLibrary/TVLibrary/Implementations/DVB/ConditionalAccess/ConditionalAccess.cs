@@ -95,10 +95,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
-    /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
-    /// <param name="card">Determines the type of TV card</param>    
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
-                             TvCardBase card)
+    /// <param name="card">Determines the type of TV card</param>
+    /// <param name="winTvCi">The WinTV-CI module handler (if any).</param>
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, TvCardBase card, WinTvCiModule winTvCi)
     {
       try
       {
@@ -184,19 +183,16 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Hauppauge card detected");
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvUsbCiFilter != null)
+            if (winTvCi != null)
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
-
-              Log.Log.WriteFile("WinTV CI registering CI menu capabilities");
-              _ciMenu = _winTvCiModule; // WinTv CI Menu capabilities 
+              _winTvCiModule = winTvCi;
+              _ciMenu = winTvCi;
             }
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
             return;
           }
           Release.DisposeToNull(ref _hauppauge);
-          Release.DisposeToNull(ref _winTvCiModule);
 
           /*Log.Log.Info("Check for anysee");
           _anysee = new anysee(tunerFilter, analyzerFilter);
@@ -227,10 +223,11 @@ namespace TvLibrary.Implementations.DVB
             _diSEqCMotor = new DiSEqCMotor(_TeVii);
             _HWProvider = _TeVii;
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvUsbCiFilter != null)
+            if (winTvCi != null)
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+              _winTvCiModule = winTvCi;
+              _ciMenu = winTvCi;
             }
             return;
           }
@@ -255,15 +252,15 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Conexant BDA card detected");
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvUsbCiFilter != null)
+            if (winTvCi != null)
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+              _winTvCiModule = winTvCi;
+              _ciMenu = winTvCi;
             }
             return;
           }
           Release.DisposeToNull(ref _conexant);
-          Release.DisposeToNull(ref _winTvCiModule);
 
           Log.Log.WriteFile("Check for GenPix BDA based card");
           _genpix = new GenPixBDA(tunerFilter);
@@ -271,15 +268,15 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("GenPix BDA card detected");
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvUsbCiFilter != null)
+            if (winTvCi != null)
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+              _winTvCiModule = winTvCi;
+              _ciMenu = winTvCi;
             }
             return;
           }
           Release.DisposeToNull(ref _genpix);
-          Release.DisposeToNull(ref _winTvCiModule);
 
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter);
@@ -287,10 +284,11 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Generic BDA card detected");
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvUsbCiFilter != null)
+            if (winTvCi != null)
             {
               Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+              _winTvCiModule = winTvCi;
+              _ciMenu = winTvCi;
             }
             return;
           }
@@ -298,13 +296,13 @@ namespace TvLibrary.Implementations.DVB
 
           //Final WinTV-CI check for DVB-T hybrid cards
           Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-          if (winTvUsbCiFilter != null)
+          if (winTvCi != null)
           {
             Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-            _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
+            _winTvCiModule = winTvCi;
+            _ciMenu = winTvCi;
             return;
           }
-          Release.DisposeToNull(ref _winTvCiModule);
         }
 
         //ATSC checks
@@ -437,11 +435,7 @@ namespace TvLibrary.Implementations.DVB
         }*/
         if (_winTvCiModule != null)
         {
-          int hr = _winTvCiModule.Init();
-          if (hr != 0)
-            return false;
-          Log.Log.Info("WinTVCI:  CAM initialized");
-          return true;
+          return _winTvCiModule.IsCamReady();
         }
         if (_turbosight != null)
         {
@@ -668,14 +662,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (_winTvCiModule != null)
         {
-          int hr = _winTvCiModule.SendPMT(pmt, pmtLength);
-          if (hr != 0)
-          {
-            Log.Log.Info("Conditional Access:  sendPMT to WinTVCI failed");
-            return false;
-          }
-          Log.Log.Info("Conditional Access:  sendPMT to WinTVCI succeeded");
-          return true;
+          return _winTvCiModule.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
         }
         if (_knc != null)
         {
@@ -1087,7 +1074,6 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_isgenericatsc);
       Release.Dispose(_isvixsatsc);
       Release.Dispose(_genpix);
-      Release.Dispose(_winTvCiModule);
       Release.Dispose(_twinhan);
       Release.Dispose(_turbosight);
       Release.Dispose(_TeVii);

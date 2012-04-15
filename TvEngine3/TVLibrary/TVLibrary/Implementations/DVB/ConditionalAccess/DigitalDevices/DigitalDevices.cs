@@ -591,7 +591,7 @@ namespace TvLibrary.Implementations.DVB
           ciMenuCallbacks.OnCiRequest(false, (uint)CiMenu.NumChoices, CiMenu.Title);
           break;
         default:
-          Log.Log.Debug("Unknown MMI Type {0}", CiMenu.Type);
+          Log.Log.Debug("Unknown _mmiHandler Type {0}", CiMenu.Type);
           break;
       }
       return true;
