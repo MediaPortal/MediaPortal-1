@@ -115,7 +115,8 @@
     <Compile Include="Implementations\DVB\DisEqC\TeVii.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
-    <Compile Include="Implementations\DVB\DisEqC\GenPixBDA.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\Genpix.cs" />
+    <Compile Include="Implementations\DVB\DisEqC\GenpixOpenSource.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\Hauppauge.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\HaupPauge\WinTvCiModule.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\KNC\KNCAPI.cs" />

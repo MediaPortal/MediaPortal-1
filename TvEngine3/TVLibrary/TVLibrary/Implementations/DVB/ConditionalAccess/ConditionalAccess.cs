@@ -61,7 +61,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenericATSC _isgenericatsc;
     private readonly ViXSATSC _isvixsatsc;
     private readonly ConexantBDA _conexant;
-    private readonly GenPixBDA _genpix;
+    private readonly Genpix _genpix;
+    private readonly GenpixOpenSource _genpixOpenSource;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
     private readonly Omicom _omicom;
@@ -288,21 +289,24 @@ namespace TvLibrary.Implementations.DVB
           }
           Release.DisposeToNull(ref _conexant);
 
-          Log.Log.WriteFile("Check for GenPix BDA based card");
-          _genpix = new GenPixBDA(tunerFilter);
-          if (_genpix.IsGenPix)
+          Log.Log.WriteFile("Check for Genpix with standard BDA driver");
+          _genpix = new Genpix(tunerFilter);
+          if (_genpix.IsGenpix)
           {
-            Log.Log.WriteFile("GenPix BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvCi != null)
-            {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = winTvCi;
-              _ciMenu = winTvCi;
-            }
+            _HWProvider = _genpix;
+            _diSEqCMotor = new DiSEqCMotor(_genpix);
             return;
           }
           Release.DisposeToNull(ref _genpix);
+
+          Log.Log.WriteFile("Check for Genpix with open source driver");
+          _genpixOpenSource = new GenpixOpenSource(tunerFilter);
+          if (_genpixOpenSource.IsGenpixOpenSource)
+          {
+            _diSEqCMotor = new DiSEqCMotor(_genpixOpenSource);
+            return;
+          }
+          Release.DisposeToNull(ref _genpixOpenSource);
 
           Log.Log.WriteFile("Check for NetUP tuner");
           _netUp = new NetUp(tunerFilter);
@@ -844,7 +848,12 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_genpix != null)
         {
-          _genpix.SendDiseqCommand(parameters, channel);
+          _genpix.SendDiseqcCommand(parameters, channel);
+          System.Threading.Thread.Sleep(100);
+        }
+        if (_genpixOpenSource != null)
+        {
+          _genpixOpenSource.SendDiseqcCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_TeVii != null)
@@ -949,6 +958,10 @@ namespace TvLibrary.Implementations.DVB
       //Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
       try
       {
+        if (_genpix != null)
+        {
+          return (DVBSChannel)_genpix.SetTuningParameters(channel as DVBSChannel);
+        }
         if (_twinhan != null)
         {
           return (DVBSChannel)_twinhan.SetTuningParameters(channel as DVBBaseChannel);
@@ -1144,6 +1157,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_isgenericatsc);
       Release.Dispose(_isvixsatsc);
       Release.Dispose(_genpix);
+      Release.Dispose(_genpixOpenSource);
       Release.Dispose(_twinhan);
       Release.Dispose(_prof);
       Release.Dispose(_profUsb);
