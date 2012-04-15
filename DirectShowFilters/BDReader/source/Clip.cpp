@@ -49,6 +49,8 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   videoPlaybackPosition = playlistFirstPacketTime;
 
   earliestPacketAccepted = _I64_MAX;
+  firstVideoPosition = _I64_MAX;
+  firstAudioPosition = _I64_MAX;
 
   clipDuration=duration;
   clipPlaylistOffset = totalStreamOffset;
@@ -123,9 +125,10 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   {
     if (firstAudio)
     {
+      firstAudioPosition = ret->rtStart;
       ret->nNewSegment = NS_STREAM_RESET;
-      ret->bDiscontinuity=true;
-      firstAudio=false;
+      ret->bDiscontinuity = clipInterrupted | bSeekTarget | clipReset;
+      firstAudio = false;
       if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
       if (clipInterrupted) ret->nNewSegment |= NS_INTERRUPTED;
     }
@@ -166,7 +169,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
     {
       if (firstVideo)
       {
-        ret->bDiscontinuity = true;
+        ret->bDiscontinuity = clipInterrupted | bSeekTarget | clipReset;
         ret->nNewSegment = NS_STREAM_RESET;
         if (bSeekTarget) ret->nNewSegment |= NS_SEEK_TARGET; 
         if (!clipReset) ret->nNewSegment |= NS_NEW_CLIP;
@@ -468,6 +471,7 @@ REFERENCE_TIME CClip::PlayedDuration()
   if (abs(clipDuration - playDuration) < HALF_SECOND) 
   {
     LogDebug("CClip::PlayedDuration %I64d - clip played to end", clipDuration - earliestPacketAccepted + playlistFirstPacketTime);
+    if (!noAudio) return lastAudioPosition - firstAudioPosition;
     return clipDuration - earliestPacketAccepted + playlistFirstPacketTime;
   }
   if (earliestPacketAccepted>finish)
@@ -475,6 +479,7 @@ REFERENCE_TIME CClip::PlayedDuration()
     return 0LL;
   }
   LogDebug("CClip::PlayedDuration %I64d - clip (%d,%d) partially played finish %I64d start %I64d", finish - earliestPacketAccepted, nPlaylist, nClip, finish, earliestPacketAccepted);
+  if (!noAudio) return lastAudioPosition - firstAudioPosition;
   return finish - earliestPacketAccepted;
 }
 

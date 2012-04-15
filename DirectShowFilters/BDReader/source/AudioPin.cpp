@@ -450,12 +450,21 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         if (hasTimestamp && m_dRateSeeking == 1.0)
         {
-          if (m_bDiscontinuity || buffer->bDiscontinuity || buffer->pmt)
+          bool setPMT = false;
+
+          if (m_bDiscontinuity || buffer->bDiscontinuity)
           {
             LogDebug("aud: set discontinuity");
             pSample->SetDiscontinuity(true);
-            pSample->SetMediaType(buffer->pmt);
+            setPMT = true;
             m_bDiscontinuity = false;
+          }
+
+          if (buffer->pmt || setPMT)
+          {
+            LogDebug("aud: set PMT");
+            pSample->SetMediaType(buffer->pmt);
+            m_bDiscontinuity = false;          
           }
 
           if (hasTimestamp)
