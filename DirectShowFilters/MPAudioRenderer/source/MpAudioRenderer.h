@@ -125,6 +125,8 @@ private:
 
   UINT64          m_lastSampleArrivalTime;
 
+  REFERENCE_TIME  m_rtNextSample;
+
   CSyncClock*     m_pClock;
   CVolumeHandler* m_pVolumeHandler;
   double          m_dBias;

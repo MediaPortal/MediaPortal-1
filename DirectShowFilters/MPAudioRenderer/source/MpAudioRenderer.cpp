@@ -65,7 +65,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
   m_pRenderer(NULL),
   m_pTimeStretch(NULL),
   m_pMediaType(NULL),
-  m_lastSampleArrivalTime(0)
+  m_lastSampleArrivalTime(0),
+  m_rtNextSample(0)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -357,6 +358,22 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
   }
   else if (m_pMediaType)
     pSample->SetMediaType(m_pMediaType);
+
+  if (m_Settings.m_bLogSampleTimes)
+  {
+    REFERENCE_TIME rtStart = 0;
+    REFERENCE_TIME rtStop = 0;
+
+    pSample->GetTime(&rtStart, &rtStop);
+
+    if (abs(m_rtNextSample - rtStart) > MAX_SAMPLE_TIME_ERROR)
+      Log("Stream discontinuity detected in incoming samples: %6.3f", (m_rtNextSample - rtStart) / 10000000.0);
+   
+    m_rtNextSample = rtStop;
+
+    if (pSample->IsDiscontinuity() == S_OK)
+      Log("Discontinuity flag set on in the incoming sample: %6.3f", rtStart / 10000000.0);
+  }
 
   return  m_pPipeline->PutSample(pSample) == S_OK ? true : false;
 }
