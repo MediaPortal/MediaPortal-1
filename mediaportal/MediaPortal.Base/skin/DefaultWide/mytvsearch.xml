@@ -24,7 +24,7 @@
       <label>#itemcount</label>
       <align>right</align>
       <font>font10</font>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -202,7 +202,7 @@
       <width>742</width>
       <label>#TV.Search.Time</label>
       <font>font11</font>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -228,7 +228,7 @@
       <width>742</width>
       <label>#TV.Search.Genre</label>
       <font>font10</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -240,7 +240,7 @@
       <label>#TV.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

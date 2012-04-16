@@ -11,7 +11,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>1280</width>
       <height>720</height>
     </control>
@@ -122,8 +122,8 @@
       <spinPosY>445</spinPosY>
       <itemWidth>55</itemWidth>
       <itemHeight>55</itemHeight>
-      <textureFocus>album_background_focus.png</textureFocus>
-      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>0</spaceBetweenItems>
       <keepaspectratio>yes</keepaspectratio>
       <textureHeight>65</textureHeight>
@@ -164,7 +164,7 @@
       <posY>510</posY>
       <align>left</align>
       <width>680</width>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <font>font12</font>
     </control>
     <control>
@@ -176,7 +176,7 @@
       <width>280</width>
       <align>left</align>
       <font>font12</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Current program genre</description>

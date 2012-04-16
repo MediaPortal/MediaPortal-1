@@ -13,8 +13,6 @@
       <width>542</width>
       <height>27</height>
       <texture>osd_progress_background.png</texture>
-      
-      
     </control>
     <control>
       <description>progress bar</description>
@@ -47,8 +45,6 @@
       <onright>10</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
   </controls>
 </window>

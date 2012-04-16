@@ -53,9 +53,9 @@
       <texture>#fanarthandler.music.backdrop2.selected</texture>
       <visible>control.isvisible(91919292)+control.isvisible(91919293)</visible>
       <animation effect="fade" time="300">visible</animation>
-      <animation effect="fade" time="300" delay="300">hidden</animation>
+      <animation effect="fade" time="300">hidden</animation>
     </control>
-    <control>
+    <!--control>
       <description>Overlay for FanArt</description>
       <id>0</id>
       <type>image</type>
@@ -63,12 +63,12 @@
       <posy>0</posy>
       <width>1280</width>
       <height>720</height>
-      <texture>backgroundtop.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
-      <visible>control.isvisible(91919292)|control.isvisible(91919293)</visible>
+      <texture>black.png</texture>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>control.isvisible(91919293)</visible>
       <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="70" delay="300">hidden</animation>
-    </control>
+      <animation effect="fade" time="300" delay="500">hidden</animation>
+    </control-->
     <control>
       <description>Overlay for FanArt</description>
       <id>0</id>
@@ -79,9 +79,10 @@
       <height>720</height>
       <texture>backgroundthumbsview.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
-      <visible>control.isvisible(91919292)|control.isvisible(91919293)</visible>
+      <visible>control.isvisible(91919293)</visible>
       <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="70" delay="300">hidden</animation>
+      <animation effect="fade" time="300" delay="500">hidden</animation>
     </control>
+    
   </controls>
 </window>

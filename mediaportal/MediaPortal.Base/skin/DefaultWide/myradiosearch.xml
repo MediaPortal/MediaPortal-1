@@ -199,7 +199,7 @@
       <label>#Radio.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       
       
     </control>
@@ -212,7 +212,7 @@
       <label>#Radio.Search.Time</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       
       
     </control>
@@ -239,7 +239,7 @@
       <label>#Radio.Search.Genre</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       
       
     </control>

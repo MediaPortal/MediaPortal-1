@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1000</id>
+  <defaultcontrol>43</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6022</define>
+  <define>#header.hover:hover_my videos.png</define>
+  <controls>
+    <import>common.settings.xml</import>
+			
+			<control>
+				<description>BGLeft group</description>
+				<type>image</type>
+				<id>1</id>
+				<texture>context_background.png</texture>
+				<posX>0</posX>
+				<posY>100</posY>
+				<width>1280</width>
+				<height>310</height>
+			</control>
+			<control>
+        <description>Folder info label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>500</posX>
+        <posY>113</posY>
+				<width>500</width>
+        <label>1279</label>
+				<font>font13</font>
+      </control>
+			<control>
+        <description>Share Name label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>260</posX>
+        <posY>160</posY>
+				<width>500</width>
+        <label>#folderName</label>
+				<font>font11</font>
+      </control>
+      <control>
+        <description>Edit/Add share name button</description>
+        <type>button</type>
+        <id>3</id>
+        <label>Name</label>
+        <posX>50</posX>
+        <posY>150</posY>
+        <width>200</width>
+        <height>40</height>
+				<onleft>8</onleft>
+        <onright>8</onright>
+        <onup>7</onup>
+        <ondown>4</ondown>
+      </control>
+			
+			<control>
+        <description>Share folder label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>260</posX>
+        <posY>210</posY>
+				<width>500</width>
+        <label>#folder</label>
+				<font>font11</font>
+      </control>
+			<control>
+        <description>Edit/Add share folder button</description>
+        <type>button</type>
+        <id>4</id>
+        <label>Folder</label>
+        <posX>50</posX>
+        <posY>200</posY>
+        <width>200</width>
+        <height>40</height>
+				<onleft>8</onleft>
+        <onright>8</onright>
+        <onup>3</onup>
+        <ondown>5</ondown>
+      </control>
+			
+			<control>
+        <description>Default layout label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>260</posX>
+        <posY>255</posY>
+				<width>500</width>
+        <label>#layout</label>
+				<font>font11</font>
+      </control>
+			<control>
+        <description>Default layout button</description>
+        <type>button</type>
+        <id>5</id>
+        <label>Layout</label>
+        <posX>50</posX>
+        <posY>250</posY>
+        <width>200</width>
+        <height>40</height>
+				<onleft>8</onleft>
+        <onright>8</onright>
+        <onup>4</onup>
+        <ondown>6</ondown>
+      </control>
+			
+			<control>
+        <description>Pincode label</description>
+        <type>label</type>
+        <id>1</id>
+        <posX>260</posX>
+        <posY>310</posY>
+				<width>500</width>
+        <label>#pinCode</label>
+				<font>font11</font>
+      </control>
+      <control>
+        <description>Pincode button</description>
+        <type>button</type>
+        <id>6</id>
+        <label>Pin</label>
+        <posX>50</posX>
+        <posY>300</posY>
+        <width>200</width>
+        <height>40</height>
+				<onleft>8</onleft>
+        <onright>8</onright>
+        <onup>5</onup>
+        <ondown>8</ondown>
+      </control>
+			
+			<!--Save/Cancel buttons-->
+			<control>
+        <description>Save button</description>
+        <type>button</type>
+        <id>8</id>
+        <label>190</label>
+        <posX>50</posX>
+        <posY>350</posY>
+        <width>200</width>
+        <height>40</height>
+				<textalign>center</textalign>
+				<onleft>9</onleft>
+        <onright>9</onright>
+				<onup>6</onup>
+        <ondown>7</ondown>
+      </control>
+			<control>
+        <description>Cancel button</description>
+        <type>button</type>
+        <id>9</id>
+        <label>222</label>
+        <posX>280</posX>
+        <posY>350</posY>
+        <width>200</width>
+        <height>40</height>
+				<textalign>center</textalign>
+				<onleft>8</onleft>
+        <onright>8</onright>
+				<onup>6</onup>
+				<ondown>7</ondown>
+      </control>
+				
+				
+				<!--Folder browser list-->
+				<control>
+				  <description>Folder browser</description>
+          <type>listcontrol</type>
+          <id>7</id>
+          <posX>50</posX>
+          <posY>400</posY>
+          <width>700</width>
+          <height>310</height>
+          <scrollOffset>2</scrollOffset>
+          <textXOff>-30</textXOff>
+          <textYOff>2</textYOff>
+          <textXOff2>600</textXOff2>
+          <textYOff2>2</textYOff2>
+          <PinIconWidth>35</PinIconWidth>
+          <PinIconHeight>25</PinIconHeight>
+          <PinIconXOff>747</PinIconXOff>
+          <PinIconYOff>6</PinIconYOff>
+          <textureHeight>40</textureHeight>
+          <itemWidth>32</itemWidth>
+          <itemHeight>32</itemHeight>
+          <IconXOff>10</IconXOff>
+          <IconYOff>4</IconYOff>
+          <keepaspectratio>yes</keepaspectratio>
+          <font>font11</font>
+          <font2>font11</font2>
+          <textcolor>ffffffff</textcolor>
+          <textcolor2>ffffffff</textcolor2>
+          <textcolor3>ffffffff</textcolor3>
+          <selectedColor>80000000</selectedColor>
+          <selectedColor2>ffffffff</selectedColor2>
+          <spinWidth>46</spinWidth>
+          <spinHeight>33</spinHeight>
+          <spinPosX>650</spinPosX>
+          <spinPosY>650</spinPosY>
+					<!--onup>8</onup>
+					<ondown>3</ondown-->
+          <onleft>8</onleft>
+          <onright>8</onright>
+					<spaceBetweenItems>0</spaceBetweenItems>
+          <unfocusedAlpha>160</unfocusedAlpha>
+        </control>
+				
+				<!-- Folder options-->
+				<control>
+					<description>BGLeft group</description>
+					<type>image</type>
+					<id>1</id>
+					<texture>context_background.png</texture>
+					<posX>745</posX>
+					<posY>400</posY>
+					<width>510</width>
+					<height>280</height>
+				</control>
+				<control>
+					<description>Options group label</description>
+					<type>label</type>
+					<id>1</id>
+					<posX>920</posX>
+					<posY>410</posY>
+					<width>500</width>
+					<label>496</label>
+					<font>font13</font>
+				</control>
+				<control>
+					<description>Remeber last folder On/Off</description>
+					<type>togglebutton</type>
+					<id>40</id>
+					<label>Remember last folder</label>
+					<posX>775</posX>
+					<posY>450</posY>
+					<width>445</width>
+					<height>45</height>
+					<onleft>43</onleft>
+          <onright>43</onright>
+					<onup>43</onup>
+					<ondown>41</ondown>
+				</control>
+				<control>
+					<description>Add  optical drives On/Off</description>
+					<type>togglebutton</type>
+					<id>41</id>
+					<label>Add optical drives</label>
+					<posX>775</posX>
+					<posY>500</posY>
+					<width>445</width>
+					<height>45</height>
+					<onleft>43</onleft>
+          <onright>43</onright>
+					<onup>40</onup>
+					<ondown>42</ondown>
+				</control>
+				<control>
+					<description>Auto switch removables On/Off</description>
+					<type>togglebutton</type>
+					<id>42</id>
+					<label>Switch to removables</label>
+					<posX>775</posX>
+					<posY>550</posY>
+					<width>445</width>
+					<height>45</height>
+					<onleft>43</onleft>
+          <onright>43</onright>
+					<onup>41</onup>
+					<ondown>43</ondown>
+				</control>
+			
+			<!--Share Folder list-->
+			<control>
+				<description>Share folders listcontrol</description>
+				<type>listcontrol</type>
+				<id>43</id>
+				<posX>880</posX>
+				<posY>150</posY>
+				<width>350</width>
+				<height>300</height>
+				<scrollOffset>2</scrollOffset>
+				<textXOff>-30</textXOff>
+				<textYOff>2</textYOff>
+				<textXOff2>700</textXOff2>
+				<textYOff2>2</textYOff2>
+				<textXOff3>710</textXOff3>
+				<textYOff3>4</textYOff3>
+				<PinIconWidth>35</PinIconWidth>
+				<PinIconHeight>25</PinIconHeight>
+				<PinIconXOff>747</PinIconXOff>
+				<PinIconYOff>6</PinIconYOff>
+				<textureHeight>40</textureHeight>
+				<itemWidth>32</itemWidth>
+				<itemHeight>32</itemHeight>
+				<IconXOff>10</IconXOff>
+				<IconYOff>4</IconYOff>
+				<keepaspectratio>yes</keepaspectratio>
+				<font>font13</font>
+				<font2>font11</font2>
+				<font3>font11</font3>
+				<textcolor>ffffffff</textcolor>
+				<textcolor2>ffffffff</textcolor2>
+				<textcolor3>ffffffff</textcolor3>
+				<selectedColor>80000000</selectedColor>
+				<selectedColor2>ffffffff</selectedColor2>
+				<spinWidth>46</spinWidth>
+				<spinHeight>33</spinHeight>
+				<spinPosX>1120</spinPosX>
+				<spinPosY>450</spinPosY>
+				<onleft>42</onleft>
+        <onright>42</onright>
+				<onup>42</onup>
+				<ondown>40</ondown>
+				<spaceBetweenItems>0</spaceBetweenItems>
+				<unfocusedAlpha>160</unfocusedAlpha>
+			</control>
+								
+  </controls>
+</window>
