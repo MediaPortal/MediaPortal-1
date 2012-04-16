@@ -28,6 +28,7 @@ namespace MediaPortal.Video.Database
   public class VideoDatabase
   {
     private static IVideoDatabase _database = DatabaseFactory.GetVideoDatabase();
+    public static readonly VideoDatabase Instance = new VideoDatabase();
 
     public static void ReOpen()
     {

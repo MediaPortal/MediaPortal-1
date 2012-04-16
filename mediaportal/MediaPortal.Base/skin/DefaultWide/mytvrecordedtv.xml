@@ -21,7 +21,7 @@
       <posY>333</posY>
       <width>245</width>
       <height>138</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
     </control>
@@ -32,7 +32,7 @@
       <posY>333</posY>
       <width>245</width>
       <height>138</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbframe.png</texture>
+      <texture>Picturethumbframe.png</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
     </control>
     <control>

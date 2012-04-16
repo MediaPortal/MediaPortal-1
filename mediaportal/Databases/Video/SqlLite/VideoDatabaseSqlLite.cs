@@ -84,6 +84,8 @@ namespace MediaPortal.Video.Database
         UpgradeDatabase();
         // Clean trash from tables
         CleanUpDatabase();
+        // Update latest movies
+        SetLatestMovieProperties();
       }
       catch (Exception ex)
       {
@@ -2220,6 +2222,8 @@ namespace MediaPortal.Video.Database
 
           //			Log.Error("dbs:{0}", strSQL);
           SQLiteResultSet result = m_db.Execute(strSQL);
+          // Update latest movies
+          SetLatestMovieProperties();
         }
         else
         {
@@ -2328,6 +2332,9 @@ namespace MediaPortal.Video.Database
 
         strSQL = String.Format("delete from movie where idMovie={0}", lMovieId);
         m_db.Execute(strSQL);
+
+        // Update latest movies
+        SetLatestMovieProperties();
       }
       catch (Exception ex)
       {
@@ -5174,6 +5181,94 @@ namespace MediaPortal.Video.Database
         using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
+        }
+      }
+    }
+
+    private void SetLatestMovieProperties()
+    {
+      string strSQL = "SELECT * FROM movieinfo ORDER BY dateAdded DESC LIMIT 3";
+      ArrayList movies = new ArrayList();
+      GetMoviesByFilter(strSQL, out movies, false, true, false, false);
+      
+      IMDBMovie movie1 = new IMDBMovie();
+      IMDBMovie movie2 = new IMDBMovie();
+      IMDBMovie movie3 = new IMDBMovie();
+
+      GUIPropertyManager.SetProperty("#myvideos.latest1.enabled", "false");
+      GUIPropertyManager.SetProperty("#myvideos.latest2.enabled", "false");
+      GUIPropertyManager.SetProperty("#myvideos.latest3.enabled", "false");
+
+      if (movies.Count > 0)
+      {
+        movie1 = (IMDBMovie) movies[0];
+        // Movie 1
+        GUIPropertyManager.SetProperty("#myvideos.latest1.genre", movie1.Genre.Replace(" /", ","));
+        //
+        string poster = string.Empty;
+        string titleExt = movie1.Title + "{" + movie1.ID + "}";
+        poster = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+        GUIPropertyManager.SetProperty("#myvideos.latest1.thumb", poster);
+        //
+        GUIPropertyManager.SetProperty("#myvideos.latest1.title", movie1.Title);
+        GUIPropertyManager.SetProperty("#myvideos.latest1.year", movie1.Year.ToString());
+        //
+        DateTime dateAdded;
+        DateTime.TryParseExact(movie1.DateAdded, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out dateAdded);
+        GUIPropertyManager.SetProperty("#myvideos.latest1.dateAdded", dateAdded.ToShortDateString());
+        //
+        GUIPropertyManager.SetProperty("#myvideos.latest1.runtime", movie1.RunTime +
+                                " " +
+                                GUILocalizeStrings.Get(2998) +
+                                " (" + Util.Utils.SecondsToHMString(movie1.RunTime * 60) + ")");
+        GUIPropertyManager.SetProperty("#myvideos.latest1.enabled", "true");
+
+        if (movies.Count > 1)
+        {
+          movie2 = (IMDBMovie) movies[1];
+          // Movie 2
+          GUIPropertyManager.SetProperty("#myvideos.latest2.genre", movie2.Genre.Replace(" /", ","));
+          //
+          poster = string.Empty;
+          titleExt = movie2.Title + "{" + movie2.ID + "}";
+          poster = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+          GUIPropertyManager.SetProperty("#myvideos.latest2.thumb", poster);
+          //
+          GUIPropertyManager.SetProperty("#myvideos.latest2.title", movie2.Title);
+          GUIPropertyManager.SetProperty("#myvideos.latest2.year", movie2.Year.ToString());
+          //
+          DateTime.TryParseExact(movie2.DateAdded, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out dateAdded);
+          GUIPropertyManager.SetProperty("#myvideos.latest2.dateAdded", dateAdded.ToShortDateString());
+          //
+          GUIPropertyManager.SetProperty("#myvideos.latest2.runtime", movie2.RunTime +
+                                  " " +
+                                  GUILocalizeStrings.Get(2998) +
+                                  " (" + Util.Utils.SecondsToHMString(movie2.RunTime * 60) + ")");
+          GUIPropertyManager.SetProperty("#myvideos.latest2.enabled", "true");
+        }
+
+        if (movies.Count > 2)
+        {
+          movie3 = (IMDBMovie) movies[2];
+          // Movie 3
+          GUIPropertyManager.SetProperty("#myvideos.latest3.genre", movie3.Genre.Replace(" /", ","));
+          //
+          poster = string.Empty;
+          titleExt = movie3.Title + "{" + movie3.ID + "}";
+          poster = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+          GUIPropertyManager.SetProperty("#myvideos.latest3.thumb", poster);
+          //
+          GUIPropertyManager.SetProperty("#myvideos.latest3.title", movie3.Title);
+          GUIPropertyManager.SetProperty("#myvideos.latest3.year", movie3.Year.ToString());
+          //
+          DateTime.TryParseExact(movie3.DateAdded, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out dateAdded);
+          GUIPropertyManager.SetProperty("#myvideos.latest3.dateAdded", dateAdded.ToShortDateString());
+          //
+          GUIPropertyManager.SetProperty("#myvideos.latest3.runtime", movie3.RunTime +
+                                  " " +
+                                  GUILocalizeStrings.Get(2998) +
+                                  " (" + Util.Utils.SecondsToHMString(movie3.RunTime * 60) + ")");
+          GUIPropertyManager.SetProperty("#myvideos.latest3.enabled", "true");
         }
       }
     }

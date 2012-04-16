@@ -240,94 +240,13 @@
       <texture>logos\watched_no.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <visible>string.equals(#iswatched,no)</visible>
-    </control>
-    <control>
-      <description>Year Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>680</posX>
-      <posY>130</posY>
-      <label>201</label>
-      <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Year Value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>680</posX>
-      <posY>150</posY>
-      <label>#year</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>MPAA Rating Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>850</posX>
-      <posY>130</posY>
-      <label>173</label>
-      <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>MPAA Rating Value</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>850</posX>
-      <posY>150</posY>
-      <width>200</width>
-      <label>#mpaarating</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>Language txt</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>680</posX>
-      <posY>176</posY>
-      <label>1275</label>
-      <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Language value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>680</posX>
-      <posY>196</posY>
-      <label>#language</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>Country Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>850</posX>
-      <posY>176</posY>
-      <label>1276</label>
-      <font>font11</font>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Country Value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>850</posX>
-      <posY>196</posY>
-      <label>#country</label>
-      <font>font12</font>
-      <textcolor>ivory</textcolor>
-    </control>
+    </control>   
     <control>
       <description>Genre Label</description>
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>227</posY>
+      <posY>130</posY>
       <label>174</label>
       <font>font11</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -337,7 +256,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>247</posY>
+      <posY>150</posY>
       <width>580</width>
       <label>#genre</label>
       <font>font12</font>
@@ -348,7 +267,7 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>273</posY>
+      <posY>176</posY>
       <label>199</label>
       <font>font11</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -358,7 +277,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>293</posY>
+      <posY>196</posY>
       <width>580</width>
       <label>#director</label>
       <font>font12</font>
@@ -369,7 +288,7 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>319</posY>
+      <posY>222</posY>
       <label>200</label>
       <font>font11</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -379,7 +298,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>339</posY>
+      <posY>242</posY>
       <width>580</width>
       <label>#credits</label>
       <font>font12</font>
@@ -390,7 +309,7 @@
       <type>label</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>365</posY>
+      <posY>268</posY>
       <label>1274</label>
       <font>font11</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -400,9 +319,90 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>680</posX>
-      <posY>385</posY>
+      <posY>288</posY>
       <width>560</width>
       <label>#studios</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Year Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>680</posX>
+      <posY>319</posY>
+      <label>201</label>
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Year Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>680</posX>
+      <posY>339</posY>
+      <label>#year</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>MPAA Rating Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>920</posX>
+      <posY>319</posY>
+      <label>173</label>
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>MPAA Rating Value</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>920</posX>
+      <posY>339</posY>
+      <width>200</width>
+      <label>#mpaarating</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Language txt</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>680</posX>
+      <posY>365</posY>
+      <label>1275</label>
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Language value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>680</posX>
+      <posY>385</posY>
+      <label>#language</label>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
+    </control>
+    <control>
+      <description>Country Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>920</posX>
+      <posY>365</posY>
+      <label>1276</label>
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Country Value</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>920</posX>
+      <posY>385</posY>
+      <label>#country</label>
       <font>font12</font>
       <textcolor>ivory</textcolor>
     </control>

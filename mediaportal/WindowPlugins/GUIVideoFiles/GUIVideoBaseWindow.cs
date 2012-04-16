@@ -54,6 +54,7 @@ namespace MediaPortal.GUI.Video
     protected string _lastFolder = string.Empty;
     protected bool m_bPlaylistsLayout = false;
     protected PlayListPlayer playlistPlayer;
+    protected VideoDatabase m_database;
 
     #endregion
 
@@ -75,6 +76,11 @@ namespace MediaPortal.GUI.Video
       if (handler == null)
       {
         handler = new VideoViewHandler();
+      }
+
+      if (m_database == null)
+      {
+        m_database = VideoDatabase.Instance;
       }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
