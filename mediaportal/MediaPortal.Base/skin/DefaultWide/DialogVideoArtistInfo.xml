@@ -41,25 +41,13 @@
       <font>font17</font>
       <align>center</align>
       <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Last update Value Actor data</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>0</posX>
-      <posY>90</posY>
-      <width>1280</width>
-      <label>#(L(1279))  #Actor.LastUpdate</label>
-      <font>font10</font>
-      <align>center</align>
-      <textcolor>ivory</textcolor>
-    </control>
+    </control>    
     <control>
       <description>Born Label</description>
       <type>label</type>
       <id>1</id>
       <posX>250</posX>
-      <posY>102</posY>
+      <posY>92</posY>
       <label>686</label>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -70,7 +58,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>285</posX>
-      <posY>102</posY>
+      <posY>92</posY>
       <width>960</width>
       <label>#Actor.DateOfBirth - #Actor.PlaceOfBirth</label>
       <font>font13</font>
@@ -81,7 +69,7 @@
       <type>label</type>
       <id>1</id>
       <posX>250</posX>
-      <posY>130</posY>
+      <posY>120</posY>
       <label>1277</label>
       <font>font13</font>
       <textcolor>ff6FAFE1</textcolor>
@@ -92,10 +80,32 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>285</posX>
-      <posY>130</posY>
+      <posY>120</posY>
       <width>960</width>
       <label>#Actor.DateOfDeath - #Actor.PlaceOfDeath</label>
       <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+    </control>
+    <control>
+      <description>Last update Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>250</posX>
+      <posY>148</posY>      
+      <label>1279</label>
+      <font>font10</font>
+      <align>right</align>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <description>Last update Value Actor data</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>285</posX>
+      <posY>148</posY>
+      <width>1000</width>
+      <label>#Actor.LastUpdate</label>
+      <font>font10</font>      
       <textcolor>ffffffff</textcolor>
     </control>
     <!--  **********  Cast / Movie Actor Image **********  -->
