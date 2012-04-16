@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Objects;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
@@ -12,6 +13,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       static ObjectContextManager ()
       {
         var model = new Model();
+
+        if (!model.DatabaseExists())
+        {
+          Log.Info("DataBase does not exist. Creating database...");
+          model.CreateDatabase();
+        }
+
         DropConstraint(model, "Recordings", "FK_ChannelRecording");
         DropConstraint(model, "Recordings", "FK_RecordingProgramCategory");
         DropConstraint(model, "Recordings", "FK_ScheduleRecording");          
