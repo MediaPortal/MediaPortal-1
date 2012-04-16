@@ -430,7 +430,6 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
   }
   else
   {
-    WAVEFORMATEXTENSIBLE* wfe = NULL;
     hr = ToWaveFormatExtensible(&wfe, pwfx);
     if (SUCCEEDED(hr))
     {
