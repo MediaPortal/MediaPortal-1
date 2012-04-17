@@ -377,7 +377,13 @@ HRESULT CBitDepthAdapter::ProcessData(const BYTE* pData, long cbData, long* pcbD
   {
     if (m_pNextOutSample)
     {
-      if (FAILED(OutputNextSample()))
+      long nOffset = m_pNextOutSample->GetActualDataLength();
+      hr = OutputNextSample();
+
+      UINT nFrames = nOffset / m_pOutputFormat->Format.nBlockAlign;
+      m_rtInSampleTime += nFrames * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
+
+      if (FAILED(hr))
       {
         Log("CBitDepthAdapter::ProcessData OutputNextSample failed with: 0x%08x", hr);
         return hr;
