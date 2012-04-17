@@ -24,6 +24,7 @@
 
 #include "Globals.h"
 #include "MpAudioRenderer.h"
+#include "Settings.h"
 
 #include "alloctracing.h"
 
@@ -54,7 +55,7 @@ const AMOVIESETUP_PIN sudpPins[] =
 
 const AMOVIESETUP_FILTER sudFilter[] =
 {
-	{&__uuidof(CMPAudioRenderer), 
+  {&__uuidof(CMPAudioRenderer), 
   L"MediaPortal - Audio Renderer", 
   0x30000000, 
   NULL,
@@ -74,12 +75,14 @@ int g_cTemplates = 1;
 
 STDAPI DllRegisterServer()
 {
-	return AMovieDllRegisterServer2(TRUE);
+  // Create the initial settings
+  AudioRendererSettings settings; 
+  return AMovieDllRegisterServer2(TRUE);
 }
 
 STDAPI DllUnregisterServer()
 {
-	return AMovieDllRegisterServer2(FALSE);
+  return AMovieDllRegisterServer2(FALSE);
 }
 
 
@@ -107,7 +110,6 @@ void LogRotate()
   (void)rename(fileName, bakFileName);
 }
 
-
 CCritSec m_qLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
@@ -123,7 +125,6 @@ string GetLogLine()
   m_logQueue.pop();
   return ret;
 }
-
 
 UINT CALLBACK LogThread(void* param)
 {
@@ -152,14 +153,12 @@ UINT CALLBACK LogThread(void* param)
   return 0;
 }
 
-
 void StartLogger()
 {
   UINT id;
   m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
   SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
 }
-
 
 void StopLogger()
 {
@@ -170,7 +169,6 @@ void StopLogger()
     m_hLogger = NULL;
   }
 }
-
 
 void Log(const char *fmt, ...) 
 {
@@ -204,7 +202,7 @@ void Log(const char *fmt, ...)
     buffer);
   CAutoLock l(&m_qLock);
   m_logQueue.push((string)msg);
-};
+}
 
 HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
 {
