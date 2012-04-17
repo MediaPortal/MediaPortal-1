@@ -120,6 +120,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet)
   if (!m_vecClips.size()) return false;
   if ((*m_itCurrentAudioSubmissionClip)->nClip == packet->nClipNumber)
   {
+    if (!firstAudioPESPacketSeen) packet->nNewSegment |= NS_NEW_PLAYLIST;
     ret = (*m_itCurrentAudioSubmissionClip)->AcceptAudioPacket(packet);
   }
   else 
@@ -150,6 +151,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet)
   }
   if ((*m_itCurrentVideoSubmissionClip)->nClip==packet->nClipNumber)
   {
+    if (!firstVideoPESPacketSeen) packet->nNewSegment |= NS_NEW_PLAYLIST;
     prevVideoPosition = (*m_itCurrentVideoSubmissionClip)->lastVideoPosition; 
     ret=(*m_itCurrentVideoSubmissionClip)->AcceptVideoPacket(packet);
   }

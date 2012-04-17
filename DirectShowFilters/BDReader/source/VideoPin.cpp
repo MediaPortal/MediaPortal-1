@@ -538,7 +538,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               // LAV video decoder requires an end of stream notification to be able to provide complete video frames
               // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as
               // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
-              if (m_currentDecoder == CLSID_LAVVideo && (buffer->nNewSegment & NS_SEEK_TARGET) != NS_SEEK_TARGET)
+              if (m_currentDecoder == CLSID_LAVVideo && (buffer->nNewSegment & NS_NEW_PLAYLIST))
               {
                 LogDebug("DeliverEndOFStream LAV Only for audio pin wait (%d,%d)", buffer->nPlaylist, buffer->nClipNumber);
                 DeliverEndOfStream();
