@@ -2294,7 +2294,7 @@ namespace MediaPortal.GUI.Video
       set { _searchActor = value; }
     }
 
-    public static string MovieSearchDbString
+    public static string MovieSearchDbFieldString
     {
       get { return _searchMovieDbField; }
       set { _searchMovieDbField = value; }

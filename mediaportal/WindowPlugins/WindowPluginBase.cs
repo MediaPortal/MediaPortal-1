@@ -394,6 +394,7 @@ namespace WindowPlugins
                 GUIVideoTitle.IsMovieSearch = false;
                 GUIVideoTitle.ActorSearchString = string.Empty;
                 GUIVideoTitle.MovieSearchString = string.Empty;
+                GUIVideoTitle.MovieSearchDbFieldString = string.Empty;
               }
             }
             else

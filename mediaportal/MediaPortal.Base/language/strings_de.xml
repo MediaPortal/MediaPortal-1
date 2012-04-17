@@ -1037,6 +1037,13 @@
 		<String id="1277">Gestorben:</String>
 		<String id="1278">Angesehen:</String>
 		<String id="1279">Aktualisiert:</String>
+		<String id="1280">Scannen mit NFO-Datei(en)</String>
+		<String id="1281">nach Filmtitel</String>
+		<String id="1282">nach Regisseur</String>
+		<String id="1283">nach Schauspieler</String>
+		<String id="1284">nach Rolle des Schauspielers</String>
+		<String id="1285">nach Jahr</String>
+		<String id="1286">nach Altersfreigabe</String>
     <String id="1300" prefix="Meine ">TV-Serien</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
