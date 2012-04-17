@@ -1046,6 +1046,12 @@
 		<String id="1278">Watched count:</String>
 		<String id="1279">Last update:</String>
 		<String id="1280">Scan using nfo files</String>
+		<String id="1281">By Movie Title</String>
+		<String id="1282">By Director Name</String>
+		<String id="1283">By Actor Name</String>
+		<String id="1284">By Actor Role</String>
+		<String id="1285">By Year</String>
+		<String id="1286">By Certification (MPAA rating)</String>
 		<String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>

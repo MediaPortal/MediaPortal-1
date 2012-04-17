@@ -64,6 +64,7 @@ namespace MediaPortal.GUI.Video
     // Search movie/actor
     private static bool _searchMovie = false;
     private static bool _searchActor = false;
+    private static string _searchMovieDbField = string.Empty;
     private static string _searchMovieString = string.Empty;
     private static string _searchActorString = string.Empty;
     private static string _currentView = string.Empty;
@@ -264,6 +265,7 @@ namespace MediaPortal.GUI.Video
         _ageConfirmed = false;
         _currentPin = 0;
         _currentProtectedShare.Clear();
+        _searchMovieDbField = string.Empty;
         _searchMovieString = string.Empty;
         _searchActorString = string.Empty;
         _searchMovie = false;
@@ -716,7 +718,39 @@ namespace MediaPortal.GUI.Video
 
       if (_searchMovie)
       {
-        string sql = "SELECT * FROM movieinfo WHERE strTitle LIKE '%" + _searchMovieString + "%' ORDER BY strTitle ASC";
+        string sql = "SELECT DISTINCT " +
+              "movieinfo.idMovie," +
+              "movieinfo.idDirector," +
+              "movieinfo.strDirector," +
+              "movieinfo.strPlotOutline," +
+              "movieinfo.strPlot," +
+              "movieinfo.strTagLine," +
+              "movieinfo.strVotes," +
+              "movieinfo.fRating," +
+              "movieinfo.strCast," +
+              "movieinfo.strCredits," +
+              "movieinfo.iYear," +
+              "movieinfo.strGenre," +
+              "movieinfo.strPictureURL," +
+              "movieinfo.strTitle," +
+              "movieinfo.IMDBID," +
+              "movieinfo.mpaa," +
+              "movieinfo.runtime," +
+              "movieinfo.iswatched," +
+              "movieinfo.strUserReview," +
+              "movieinfo.strFanartURL," +
+              "movieinfo.dateAdded," +
+              "movieinfo.dateWatched," +
+              "movieinfo.studios," +
+              "movieinfo.country," +
+              "movieinfo.language," +
+              "movieinfo.lastupdate " +
+              "FROM movieinfo " +
+              "INNER JOIN actorlinkmovie ON actorlinkmovie.idMovie = movieinfo.idMovie " +
+              "INNER JOIN actors ON actors.idActor = actorlinkmovie.idActor " +
+              "WHERE "+ _searchMovieDbField + " LIKE '%" + _searchMovieString + "%' " +
+              "ORDER BY movieinfo.strTitle ASC";
+
         VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
       }
       else if (_searchActor && handler.CurrentLevelWhere != "title")
@@ -1634,6 +1668,49 @@ namespace MediaPortal.GUI.Video
 
     private void OnSearchMovie()
     {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null)
+      {
+        return;
+      }
+      // Context menu on movie title
+      dlg.Reset();
+      dlg.SetHeading(498); // menu
+
+      dlg.AddLocalizedString(1281);// Add("By Movie Title");
+      dlg.AddLocalizedString(1282);// Add("By Director Name");
+      dlg.AddLocalizedString(1283);// Add("By Actor Name");
+      dlg.AddLocalizedString(1284);// Add("By Actor Role");
+      dlg.AddLocalizedString(1285);// Add("By Year");
+      dlg.AddLocalizedString(1286);// Add("By Certification (MPAA rating)");
+        
+      dlg.DoModal(GetID);
+      if (dlg.SelectedLabel == -1)
+      {
+        return;
+      }
+      switch (dlg.SelectedLabel)
+      {
+        case 0:
+          _searchMovieDbField = "movieInfo.strTitle";
+          break;
+        case 1:
+          _searchMovieDbField = "movieInfo.strDirector";
+          break;
+        case 2:
+          _searchMovieDbField = "actors.strActor";
+          break;
+        case 3:
+          _searchMovieDbField = "actorlinkmovie.strRole";
+          break;
+        case 4:
+          _searchMovieDbField = "movieInfo.iYear";
+          break;
+        case 5:
+          _searchMovieDbField = "movieInfo.mpaa";
+          break;
+      }
       GetKeyboard(ref _searchMovieString);
       _searchMovie = true;
       LoadDirectory(currentFolder);
@@ -1648,6 +1725,7 @@ namespace MediaPortal.GUI.Video
 
     private void OnResetSearch()
     {
+      _searchMovieDbField = string.Empty;
       _searchMovieString = string.Empty;
       _searchActorString = string.Empty;
       _searchMovie = false;
@@ -2214,6 +2292,12 @@ namespace MediaPortal.GUI.Video
     {
       get { return _searchActor; }
       set { _searchActor = value; }
+    }
+
+    public static string MovieSearchDbString
+    {
+      get { return _searchMovieDbField; }
+      set { _searchMovieDbField = value; }
     }
 
     public static string MovieSearchString
