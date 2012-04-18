@@ -491,18 +491,12 @@ namespace MediaPortal.Configuration.Sections
               _allProgramGenres = methodInfo.Invoke(genreObject, null) as List<String>;
 
               // Load the genre map from MP settings.
-              using (Settings xmlreader = new MPSettings())
+              if (_genreMap.Count == 0)
               {
-                if (_genreMap.Count == 0)
+                using (Settings xmlreader = new MPSettings())
                 {
                   LoadGenreMap(xmlreader);
                 }
-              }
-
-              // If guide colors are not loaded from skin settings then attempt to load guide colors from the MP settings.
-              using (Settings xmlreader = new SKSettings())
-              {
-                _guideColorsLoaded = LoadGuideColors(xmlreader);
               }
 
               if (!_guideColorsLoaded)

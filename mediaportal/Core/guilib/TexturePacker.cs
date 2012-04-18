@@ -296,6 +296,7 @@ namespace MediaPortal.GUI.Library
 
     private bool LoadPackedSkin(string skinName)
     {
+      bool loadedPacked = false;
       Log.Debug("Skin Folder : {0}", GUIGraphicsContext.Skin);
       Log.Debug("Cache Folder: {0}", GUIGraphicsContext.SkinCacheFolder);
       string notPackedXml = string.Format(@"{0}\notpackedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
@@ -341,9 +342,10 @@ namespace MediaPortal.GUI.Library
             }
             catch { }
           }
+          loadedPacked = true;
         }
       }
-      return false;
+      return loadedPacked;
     }
 
     public void PackSkinGraphics(string skinName)
