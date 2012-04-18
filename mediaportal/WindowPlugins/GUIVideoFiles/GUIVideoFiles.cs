@@ -805,13 +805,6 @@ namespace MediaPortal.GUI.Video
         ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
         SetImdbThumbs(itemlist, selectDvdHandler);
 
-        //foreach (GUIListItem item in itemlist)
-        //{
-        //  SetLabel(item);
-        //  item.OnItemSelected += item_OnItemSelected;
-        //  facadeLayout.Add(item);
-        //}
-
         _cachedItems = itemlist;
         _cachedDir = _currentFolder;
       } // End non cache items
@@ -822,8 +815,9 @@ namespace MediaPortal.GUI.Video
 
       int selectedIndex = -1;
       Int32.TryParse(_history.Get(_currentFolder), out selectedIndex);
+      int maxIndex = itemlist.Count - 1;
 
-      if (itemlist.Count >= selectedIndex)
+      if (maxIndex >= selectedIndex)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedIndex);
       }
@@ -1851,7 +1845,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void FetchMovieNfo(string path, string filename, ref IMDBMovie movie)
+    public static void FetchMovieNfo(string path, string filename, ref IMDBMovie movie)
     {
       try
       {

@@ -447,6 +447,11 @@ namespace MediaPortal.Video.Database
       _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable);
     }
 
+    public static void GetIndexByFilter(string sql, out ArrayList movieList)
+    {
+      _database.GetIndexByFilter(sql, out movieList);
+    }
+
     public static void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
     {
       _database.UpdateCDLabel(movieDetails, CDlabel);

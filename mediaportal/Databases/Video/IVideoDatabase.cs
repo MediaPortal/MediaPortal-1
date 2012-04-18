@@ -129,7 +129,8 @@ namespace MediaPortal.Video.Database
     void GetMoviesByYear(string strYear, ref ArrayList movies);
     void GetMoviesByPath(string strPath1, ref ArrayList movies);
     void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable);
-    
+    void GetIndexByFilter(string sql, out ArrayList movieList);
+
     // CD/DVD label
     void SetDVDLabel(int lMovieId, string strDVDLabel1);
     void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel);

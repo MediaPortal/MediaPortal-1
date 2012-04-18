@@ -515,8 +515,22 @@ namespace MediaPortal.Video.Database
 
     public void SetPlayProperties()
     {
+      SetPlayProperties(false);
+    }
+
+    public void SetPlayProperties(bool useNfo)
+    {
       // Title suffix for problem with covers and movie with the same name
-      string strThumb = GetStrThumb();
+      string strThumb = string.Empty;
+      
+      if (!useNfo)
+      {
+        strThumb = GetStrThumb();
+      }
+      else
+      {
+        strThumb = ThumbURL;
+      }
 
       GUIPropertyManager.SetProperty("#Play.Current.Director", Director);
       GUIPropertyManager.SetProperty("#Play.Current.Genre", Genre);

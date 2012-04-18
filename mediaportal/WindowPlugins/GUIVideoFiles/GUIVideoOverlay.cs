@@ -395,9 +395,36 @@ namespace MediaPortal.GUI.Video
           _thumbLogo = logo;
           bMovieInfoFound = true;
         }
+        else // Nfo support
+        {
+          string path = string.Empty;
+          int pathIndex = 0;
+          
+          if (fileName.ToUpperInvariant().Contains(@"\BDMV"))
+          {
+            pathIndex = fileName.ToUpperInvariant().LastIndexOf(@"\BDMV");
+            path = fileName.Remove(pathIndex);
+          }
+          else if (fileName.ToUpperInvariant().Contains(@"\VIDEO_TS\"))
+          {
+            pathIndex = fileName.ToUpperInvariant().LastIndexOf(@"\VIDEO_TS\");
+            path = fileName.Remove(pathIndex);
+          }
+          else
+          {
+            path = Path.GetDirectoryName(fileName);
+          }
+          
+          GUIVideoFiles.FetchMovieNfo(path, fileName, ref movieDetails);
+
+          if (!movieDetails.IsEmpty)
+          {
+            bMovieInfoFound = true;
+          }
+        }
         if (bMovieInfoFound)
         {
-          movieDetails.SetPlayProperties();
+          movieDetails.SetPlayProperties(true);
         }
         else
         {

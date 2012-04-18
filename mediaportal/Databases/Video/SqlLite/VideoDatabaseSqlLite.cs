@@ -3731,6 +3731,36 @@ namespace MediaPortal.Video.Database
       return;
     }
 
+    public void GetIndexByFilter(string sql, out ArrayList movieList)
+    {
+      movieList = new ArrayList();
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+        SQLiteResultSet results = GetResults(sql);
+
+        for (int i = 0; i < results.Rows.Count; i++)
+        {
+          IMDBMovie movie = new IMDBMovie();
+          SQLiteResultSet.Row fields = results.Rows[i];
+          movie.Title = fields.fields[0];
+          movieList.Add(movie);
+        }
+
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return;
+    }
+
     public void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
     {
       if (movieDetails == null)
@@ -4769,21 +4799,39 @@ namespace MediaPortal.Video.Database
             XmlNodeList fanartNodeList = nodeMovie.SelectNodes("fanart/thumb");
 
             int faIndex = 0;
+            bool faFound = false;
+            string faFile = string.Empty;
+            FanArt fa = new FanArt();
 
             foreach (XmlNode fanartNode in fanartNodeList)
             {
               if (fanartNode != null)
               {
-                string faFile = path + @"\" + fanartNode.InnerText;
-                FanArt fa = new FanArt();
+                faFile = path + @"\" + fanartNode.InnerText;
                 
                 if (File.Exists(faFile))
                 {
                   fa.GetLocalFanart(id, "file://" + faFile, faIndex);
                   movie.FanartURL = faFile;
+                  faFound = true;
                 }
               }
               faIndex ++;
+            }
+
+            if (!faFound)
+            {
+              faFile = path + @"\" + Path.GetFileNameWithoutExtension(fileName) + "-fanart.jpg";
+              
+              if (File.Exists(faFile))
+              {
+                fa.GetLocalFanart(id, "file://" + faFile, faIndex);
+                movie.FanartURL = faFile;
+              }
+              else
+              {
+                fa.GetTmdbFanartByApi(movie.ID, movie.IMDBNumber, string.Empty, false, 1, string.Empty);
+              }
             }
 
             #endregion

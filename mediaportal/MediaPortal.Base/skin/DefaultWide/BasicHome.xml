@@ -188,6 +188,22 @@
         <visible>!plugin.isenabled(World Weather)</visible>
       </control>
     </control>
+    <control>
+      <type>multiimage</type>
+      <id>0</id>
+      <posX>528</posX>
+      <posY>338</posY>
+      <width>210</width>
+      <height>118</height>
+      <imagepath>BasicHome TV</imagepath>
+      <timeperimage>3000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>false</randomize>
+      <keepaspectratio>yes</keepaspectratio>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
+      <visible>!player.hasvideo</visible>
+    </control>
     <import>common.time.xml</import>
     <!--     *******************************************************************************************  -->
     <!--     *************************             ACTION MENU          ********************************  -->
@@ -421,6 +437,7 @@
       <ondown>4</ondown>
       <textureFocus>tv_green_border.png</textureFocus>
       <visible>player.hasvideo|player.hasaudio</visible>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
     </control>
     <!--control>
     <description>TV preview window</description>

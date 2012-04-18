@@ -37,6 +37,9 @@ namespace MediaPortal.Configuration.Sections
                                       "recently added",
                                       "recently watched",
                                       "user groups",
+                                      "actorindex",
+                                      "directorindex",
+                                      "titleindex",
                                     };
 
     private string[] sqloperators = new string[]

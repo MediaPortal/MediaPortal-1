@@ -217,8 +217,9 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem pItem;
         IMDBMovie movieDetails = new IMDBMovie();
-		bool eachMovieHasDedicatedFolder = false;
+		    bool eachMovieHasDedicatedFolder = false;
         ISelectBDHandler selectBdHandler;
+        
         if (GlobalServiceProvider.IsRegistered<ISelectBDHandler>())
         {
           selectBdHandler = GlobalServiceProvider.Get<ISelectBDHandler>();
@@ -235,6 +236,7 @@ namespace MediaPortal.GUI.Video
           pItem = (GUIListItem)items[x];
           string file = string.Empty;
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
+          
           // Skip DVD & BD backup folder
           if (pItem.IsFolder && !IsDvdDirectory(pItem.Path) && !selectBdHandler.IsBDDirectory(pItem.Path))
           {
@@ -251,48 +253,47 @@ namespace MediaPortal.GUI.Video
             }
 
             // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
-            else
+            if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
             {
-              if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
-              {
-                eachMovieHasDedicatedFolder = true;
-                string[] strFiles = null;
-                try
-                {
-                  strFiles = Directory.GetFiles(pItem.Path);
-                }
-                catch (Exception) { }
+              eachMovieHasDedicatedFolder = true;
+              string[] strFiles = null;
                 
-                if (strFiles != null)
+              try
+              {
+                strFiles = Directory.GetFiles(pItem.Path);
+              }
+              catch (Exception) { }
+                
+              if (strFiles != null)
+              {
+                for (int i = 0; i < strFiles.Length; ++i)
                 {
-                  for (int i = 0; i < strFiles.Length; ++i)
+                  string extensionension = Path.GetExtension(strFiles[i]);
+                    
+                  if (VirtualDirectory.IsImageFile(extensionension))
                   {
-                    string extensionension = Path.GetExtension(strFiles[i]);
-                    if (VirtualDirectory.IsImageFile(extensionension))
+                    if (DaemonTools.IsEnabled)
                     {
-                      if (DaemonTools.IsEnabled)
-                      {
-                        file = strFiles[i];
-                        break;
-                      }
-                      continue;
-                    }
-                    if (VirtualDirectory.IsValidExtension(strFiles[i], Util.Utils.VideoExtensions, false))
-                    {
-                      // Skip hidden files
-                      if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
-                      {
-                        continue;
-                      }
-                      file =  strFiles[i];
+                      file = strFiles[i];
                       break;
                     }
+                    continue;
+                  }
+                  if (VirtualDirectory.IsValidExtension(strFiles[i], Util.Utils.VideoExtensions, false))
+                  {
+                    // Skip hidden files
+                    if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+                    {
+                      continue;
+                    }
+                    file =  strFiles[i];
+                    break;
                   }
                 }
               }
             }
           }
-            // If folder is DVD backup folder then take it for watched status
+          // If folder is DVD backup folder then take it for watched status
           else if (pItem.IsFolder && IsDvdDirectory(pItem.Path))
           {
             file = GetFolderVideoFile(pItem.Path);
@@ -302,13 +303,11 @@ namespace MediaPortal.GUI.Video
           {
             file = selectBdHandler.GetFolderVideoFile(pItem.Path);
           }
-
           else if (!pItem.IsFolder ||
                    (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
           {
             file = pItem.Path;
           }
-
           else
           {
             continue;
@@ -319,6 +318,7 @@ namespace MediaPortal.GUI.Video
             int fileId = VideoDatabase.GetFileId(file);
             int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
             bool foundWatched = false;
+            
             // Set thumb for movies
             if (id >= 0)
             {
@@ -353,9 +353,11 @@ namespace MediaPortal.GUI.Video
             {
               strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
                                        Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
+              
               if (!Util.Utils.FileExistsInCache(strThumb))
               {
                 string fPic = Path.ChangeExtension(file, ".jpg");
+                string fPicTbn = Path.ChangeExtension(file, ".tbn");
 
                 if (File.Exists(fPic) && (eachMovieHasDedicatedFolder))
                 {
@@ -363,6 +365,14 @@ namespace MediaPortal.GUI.Video
                   pItem.IconImageBig = fPic;
                   pItem.IconImage = fPic;
                 }
+
+                if (File.Exists(fPicTbn) && (eachMovieHasDedicatedFolder))
+                {
+                  pItem.ThumbnailImage = fPicTbn;
+                  pItem.IconImageBig = fPicTbn;
+                  pItem.IconImage = fPicTbn;
+                }
+
                 continue;
               }
             }

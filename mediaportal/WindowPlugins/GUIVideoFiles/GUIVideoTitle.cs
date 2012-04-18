@@ -887,7 +887,7 @@ namespace MediaPortal.GUI.Video
       SwitchLayout();
       UpdateButtonStates();
 
-      if (handler.CurrentLevel == 0)
+      if (handler.CurrentLevel < handler.MaxLevels)
       {
         for (int i = 0; i < facadeLayout.Count; ++i)
         {
@@ -909,21 +909,30 @@ namespace MediaPortal.GUI.Video
           SetGenreThumbs(itemlist);
           SelectItem();
         }
-
         else if (handler.CurrentLevelWhere.ToLower() == "user groups")
         {
           SetUserGroupsThumbs(itemlist);
           SelectItem();
         }
-
         else if (handler.CurrentLevelWhere.ToLower() == "actor" || handler.CurrentLevelWhere.ToLower() == "director")
         {
           SetActorThumbs(itemlist);
         }
-
         else if (handler.CurrentLevelWhere.ToLower() == "year")
         {
           SetYearThumbs(itemlist);
+          SelectItem();
+        }
+        else if (handler.CurrentLevelWhere.ToLower() == "actorindex" ||
+                 handler.CurrentLevelWhere.ToLower() == "directorindex" ||
+                 handler.CurrentLevelWhere.ToLower() == "titleindex")
+        {
+          foreach (GUIListItem itemAbc in itemlist)
+          {
+            itemAbc.IconImageBig = @"alpha\" + itemAbc.Label + ".png";
+            itemAbc.IconImage = @"alpha\" + itemAbc.Label + ".png";
+            itemAbc.ThumbnailImage = @"alpha\" + itemAbc.Label + ".png";
+          }
           SelectItem();
         }
         else
@@ -1629,6 +1638,24 @@ namespace MediaPortal.GUI.Video
       else if (handler.CurrentLevelWhere.ToLower() == "year")
       {
         VideoDatabase.GetMoviesByYear(item.Label, ref movies);
+      }
+      else if (handler.CurrentLevelWhere.ToLower() == "actorindex")
+      {
+        string sql = "SELECT strActor FROM actors WHERE SUBSTR(strActor,1,1) = '" + item.Label +
+                     "'  ORDER BY strActor ASC";
+        VideoDatabase.GetIndexByFilter(sql, out movies);
+      }
+      else if (handler.CurrentLevelWhere.ToLower() == "directorindex")
+      {
+        string sql = "SELECT strActor FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor WHERE SUBSTR(strActor,1,1) = '" + item.Label + 
+                     "' ORDER BY strActor ASC";
+        VideoDatabase.GetIndexByFilter(sql, out movies);
+      }
+      else if (handler.CurrentLevelWhere.ToLower() == "titleindex")
+      {
+        string sql = "SELECT strTitle FROM movieinfo WHERE SUBSTR(strTitle,1,1) = '" + item.Label +
+                     "'  ORDER BY strTitle ASC";
+        VideoDatabase.GetIndexByFilter(sql, out movies);
       }
 
       if (movies.Count > 0)
