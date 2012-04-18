@@ -289,6 +289,8 @@ namespace TvPlugin
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
       // If only one value is provided then that value is used for both.
       long color0;
+      long color1;
+      int propertyIndex = 0;
 
       foreach (string genre in _genreList)
       {
@@ -297,17 +299,24 @@ namespace TvPlugin
         if (temp.Count > 0)
         {
           color0 = GetColorFromString(temp[0]);
+          color1 = color0;
           if (temp.Count == 2)
           {
+            color1 = GetColorFromString(temp[1]);
             _genreColorsOnNow.Add(genre, color0);
-            _genreColorsOnLater.Add(genre, GetColorFromString(temp[1]));
+            _genreColorsOnLater.Add(genre, color1);
           }
           else if (temp.Count == 1)
           {
             _genreColorsOnNow.Add(genre, color0);
-            _genreColorsOnLater.Add(genre, color0);
+            _genreColorsOnLater.Add(genre, color1);
           }
+
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre." + propertyIndex + ".Name", genre);
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre." + propertyIndex + ".Color", String.Format("{0:X}", color0));
+          propertyIndex++;
         }
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre.Count", propertyIndex.ToString());
       }
 
       return _genreColorsOnNow.Count > 0;
