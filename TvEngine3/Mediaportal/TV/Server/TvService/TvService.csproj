@@ -247,6 +247,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>rem "$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>rem "$(ProjectDir)PostBuild.bat" "$(SolutionDir)" $(ConfigurationName)
+xcopy "$(SolutionDir)\..\ExternalBinaries\mysql*"  /s /i /y</PostBuildEvent>
   </PropertyGroup>
 </Project>
