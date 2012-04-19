@@ -235,6 +235,7 @@ namespace MediaPortal.GUI.Video
           string strThumb = string.Empty;
           pItem = (GUIListItem)items[x];
           string file = string.Empty;
+          bool isDvdBdDirectory = false;
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
           
           // Skip DVD & BD backup folder
@@ -297,11 +298,13 @@ namespace MediaPortal.GUI.Video
           else if (pItem.IsFolder && IsDvdDirectory(pItem.Path))
           {
             file = GetFolderVideoFile(pItem.Path);
+            isDvdBdDirectory = true;
           }
             // Check for BD folder
           else if (pItem.IsFolder && selectBdHandler.IsBDDirectory(pItem.Path))
           {
             file = selectBdHandler.GetFolderVideoFile(pItem.Path);
+            isDvdBdDirectory = true;
           }
           else if (!pItem.IsFolder ||
                    (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
@@ -354,19 +357,31 @@ namespace MediaPortal.GUI.Video
               strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
                                        Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
               
+              // Try images per filename in videofile folder
               if (!Util.Utils.FileExistsInCache(strThumb))
               {
-                string fPic = Path.ChangeExtension(file, ".jpg");
-                string fPicTbn = Path.ChangeExtension(file, ".tbn");
-
-                if (File.Exists(fPic) && (eachMovieHasDedicatedFolder))
+                string fPic = string.Empty;
+                string fPicTbn = string.Empty;
+                
+                if (isDvdBdDirectory)
+                {
+                  fPic = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(pItem.Path)+ ".jpg";
+                  fPicTbn = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(pItem.Path) + ".tbn";
+                }
+                else
+                {
+                  fPic = Path.ChangeExtension(file, ".jpg");
+                  fPicTbn = Path.ChangeExtension(file, ".tbn");
+                }
+                
+                if (File.Exists(fPic))
                 {
                   pItem.ThumbnailImage = fPic;
                   pItem.IconImageBig = fPic;
                   pItem.IconImage = fPic;
                 }
 
-                if (File.Exists(fPicTbn) && (eachMovieHasDedicatedFolder))
+                if (File.Exists(fPicTbn))
                 {
                   pItem.ThumbnailImage = fPicTbn;
                   pItem.IconImageBig = fPicTbn;

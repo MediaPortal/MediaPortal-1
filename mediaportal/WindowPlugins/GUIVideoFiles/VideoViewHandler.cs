@@ -113,17 +113,17 @@ namespace MediaPortal.GUI.Video
 
         if (string.IsNullOrEmpty(table) && defRoot.Where == "actorindex")
         {
-          sql = String.Format("SELECT DISTINCT UPPER(SUBSTR(strActor,1,1)) as IX FROM actors ");
+          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) as IX FROM actors WHERE idActor NOT IN (SELECT idDirector from movieinfo) GROUP BY IX");
           VideoDatabase.GetIndexByFilter(sql, out movies);
         }
         else if (string.IsNullOrEmpty(table) && defRoot.Where == "directorindex")
         {
-          sql = String.Format("SELECT DISTINCT UPPER(SUBSTR(strActor,1,1)) as IX FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor ");
+          sql = String.Format("SELECT UPPER(SUBSTR(strActor,1,1)) as IX FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor GROUP BY IX ");
           VideoDatabase.GetIndexByFilter(sql, out movies);
         }
         else if (string.IsNullOrEmpty(table) && defRoot.Where == "titleindex")
         {
-          sql = String.Format("SELECT DISTINCT UPPER(SUBSTR(strTitle,1,1)) as IX FROM movieinfo ");
+          sql = String.Format("SELECT UPPER(SUBSTR(strTitle,1,1)) as IX FROM movieinfo GROUP BY IX");
           VideoDatabase.GetIndexByFilter(sql, out movies);
         }
         else if (table == "actors")
@@ -281,9 +281,20 @@ namespace MediaPortal.GUI.Video
           }
         }
 
+        if (defCurrent.Where == "actor")
+        {
+          if (whereClause != string.Empty)
+          {
+            whereClause = whereClause + " AND idActor NOT IN (SELECT idDirector from movieinfo)";
+          }
+          else
+          {
+            whereClause = " WHERE idActor NOT IN (SELECT idDirector from movieinfo)";
+          }
+        }
+       
         sql = String.Format("SELECT DISTINCT {0} FROM {1} {2} {3} {4}",
                             fields, table, join, whereClause, orderClause);
-        
         VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable, useUserGroupsTable);
       }
       else
@@ -334,7 +345,8 @@ namespace MediaPortal.GUI.Video
         whereClause += " AND ";
       }
 
-      whereClause += String.Format(" {0}='{1}'", GetFieldId(filter.Where), filter.SelectedValue);
+      string cleanValue = DatabaseUtility.RemoveInvalidChars(filter.SelectedValue);
+      whereClause += String.Format(" {0}='{1}'", GetFieldId(filter.Where), cleanValue);
       
       bool useMovieInfoTable = false;
       bool useAlbumTable = false;
@@ -349,12 +361,14 @@ namespace MediaPortal.GUI.Video
         whereClause += " AND genre.idGenre=genrelinkMovie.idGenre AND genrelinkMovie.idMovie=movieinfo.idMovie";
         return;
       }
+
       if (useUserGroupsTable)
       {
         fromClause += String.Format(",usergroup,usergrouplinkmovie");
         whereClause += " AND usergroup.idGroup=usergrouplinkmovie.idGroup AND usergrouplinkMovie.idMovie=movieinfo.idMovie";
         return;
       }
+
       if (useActorsTable)
       {
         fromClause += String.Format(",actors ,actorlinkmovie");
@@ -371,12 +385,15 @@ namespace MediaPortal.GUI.Video
         {
           whereClause += " AND ";
         }
+        
         string restriction = filter.Restriction;
         restriction = restriction.Replace("*", "%");
         DatabaseUtility.RemoveInvalidChars(ref restriction);
+        
         if (filter.SqlOperator == "=")
         {
           bool isascii = false;
+          
           for (int x = 0; x < restriction.Length; ++x)
           {
             if (!Char.IsDigit(restriction[x]))
@@ -385,11 +402,13 @@ namespace MediaPortal.GUI.Video
               break;
             }
           }
+          
           if (isascii)
           {
             filter.SqlOperator = "LIKE";
           }
         }
+        
         whereClause += String.Format(" {0} {1} '{2}'", GetFieldName(filter.Where), filter.SqlOperator, restriction);
       }
     }
@@ -409,6 +428,7 @@ namespace MediaPortal.GUI.Video
     private void BuildOrder(FilterDefinition filter, ref string orderClause)
     {
       orderClause = " ORDER BY " + GetField(filter.Where) + " ";
+      
       if (!filter.SortAscending)
       {
         orderClause += "DESC";
@@ -417,6 +437,7 @@ namespace MediaPortal.GUI.Video
       {
         orderClause += "ASC";
       }
+      
       if (filter.Limit > 0)
       {
         orderClause += String.Format(" Limit {0}", filter.Limit);

@@ -23,6 +23,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
@@ -1641,20 +1642,23 @@ namespace MediaPortal.GUI.Video
       }
       else if (handler.CurrentLevelWhere.ToLower() == "actorindex")
       {
-        string sql = "SELECT strActor FROM actors WHERE SUBSTR(strActor,1,1) = '" + item.Label +
-                     "'  ORDER BY strActor ASC";
+        string value = DatabaseUtility.RemoveInvalidChars(item.Label);
+        string sql = "SELECT strActor FROM actors WHERE SUBSTR(strActor,1,1) = '" + value +
+                     "' AND idActor NOT IN (SELECT idDirector from movieinfo) ORDER BY strActor ASC";
         VideoDatabase.GetIndexByFilter(sql, out movies);
       }
       else if (handler.CurrentLevelWhere.ToLower() == "directorindex")
       {
-        string sql = "SELECT strActor FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor WHERE SUBSTR(strActor,1,1) = '" + item.Label + 
+        string value = DatabaseUtility.RemoveInvalidChars(item.Label);
+        string sql = "SELECT strActor FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor WHERE SUBSTR(strActor,1,1) = '" + value + 
                      "' ORDER BY strActor ASC";
         VideoDatabase.GetIndexByFilter(sql, out movies);
       }
       else if (handler.CurrentLevelWhere.ToLower() == "titleindex")
       {
-        string sql = "SELECT strTitle FROM movieinfo WHERE SUBSTR(strTitle,1,1) = '" + item.Label +
-                     "'  ORDER BY strTitle ASC";
+        string value = DatabaseUtility.RemoveInvalidChars(item.Label);
+        string sql = "SELECT strTitle FROM movieinfo WHERE SUBSTR(strTitle,1,1) = '" + value +
+                     "' ORDER BY strTitle ASC";
         VideoDatabase.GetIndexByFilter(sql, out movies);
       }
 

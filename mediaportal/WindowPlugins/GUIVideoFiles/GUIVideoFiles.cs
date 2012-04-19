@@ -1851,9 +1851,14 @@ namespace MediaPortal.GUI.Video
       {
         string nfoFile = string.Empty;
 
-        if (filename.Contains("VIDEO_TS.IFO") || filename.Contains("index.bdmv"))
+        if (filename.ToUpperInvariant().Contains("VIDEO_TS.IFO") || filename.ToUpperInvariant().Contains("INDEX.BDMV"))
         {
           nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(filename) + ".nfo";
+
+          if (!File.Exists(nfoFile))
+          {
+            nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".nfo";
+          }
         }
         else
         {
@@ -2195,7 +2200,10 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-      catch (Exception){}
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoFiles. Error in nfo xml document: {0}", ex.Message);
+      }
     }
 
     private void SetMovieProperties(string path, string filename)

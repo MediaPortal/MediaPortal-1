@@ -3636,6 +3636,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
+
         SQLiteResultSet results = GetResults(sql);
         IMDBMovie movie;
 
@@ -3740,6 +3741,7 @@ namespace MediaPortal.Video.Database
         {
           return;
         }
+
         SQLiteResultSet results = GetResults(sql);
 
         for (int i = 0; i < results.Rows.Count; i++)
@@ -4425,22 +4427,33 @@ namespace MediaPortal.Video.Database
             // Get all video files from nfo path
             ArrayList files = new ArrayList();
             GetVideoFiles(path, ref files);
+            bool isDvdBdFolder = false;
 
             foreach (String file in files)
             {
-              string tmpFile = string.Empty;
-              string tmpPath = string.Empty;
-              // Read filename
-              Util.Utils.Split(file, out tmpPath, out tmpFile);
-              // Remove extension
-              tmpFile = Util.Utils.GetFilename(tmpFile, true);
-              // Remove stack endings (CD1...)
-              Util.Utils.RemoveStackEndings(ref tmpFile);
-              // Check and add to vdb and get movieId
-              if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+              if ((file.ToUpperInvariant().Contains("VIDEO_TS.IFO") ||
+                  file.ToUpperInvariant().Contains("INDEX.BDMV")) && files.Count == 1)
               {
                 id = VideoDatabase.AddMovie(file, true);
                 movie.ID = id;
+                isDvdBdFolder = true;
+              }
+              else
+              {
+                string tmpFile = string.Empty;
+                string tmpPath = string.Empty;
+                // Read filename
+                Util.Utils.Split(file, out tmpPath, out tmpFile);
+                // Remove extension
+                tmpFile = Util.Utils.GetFilename(tmpFile, true);
+                // Remove stack endings (CD1...)
+                Util.Utils.RemoveStackEndings(ref tmpFile);
+                // Check and add to vdb and get movieId
+                if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                  id = VideoDatabase.AddMovie(file, true);
+                  movie.ID = id;
+                }
               }
             }
 
@@ -4717,8 +4730,29 @@ namespace MediaPortal.Video.Database
             // Poster
             if (nodePoster != null)
             {
-              string thumbJpgFile = path + @"\" + nodePoster.InnerText;
-              string thumbTbnFile = path + @"\" + nodePoster.InnerText;
+              string thumbJpgFile = string.Empty;
+              string thumbTbnFile = string.Empty;
+              
+              if (nodePoster.InnerText == string.Empty)
+              {
+                if (isDvdBdFolder)
+                {
+                  thumbJpgFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
+                  thumbTbnFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
+                }
+                else
+                {
+                  thumbJpgFile = path + @"\" + fileName + ".jpg";
+                  thumbTbnFile = path + @"\" + fileName + ".tbn";
+                }
+                
+              }
+              else
+              {
+                thumbJpgFile = path + @"\" + nodePoster.InnerText;
+                thumbTbnFile = path + @"\" + nodePoster.InnerText;
+              }
+              
               string titleExt = movie.Title + "{" + id + "}";
               
               if (File.Exists(thumbJpgFile))
@@ -4974,6 +5008,7 @@ namespace MediaPortal.Video.Database
         if (Directory.Exists(directoryDVD))
         {
           moviePath = directoryDVD;
+          movieFile = directoryDVD;
         }
       }
       // remove stack endings (CDx..) form filename
