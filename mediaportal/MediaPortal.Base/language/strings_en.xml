@@ -1014,9 +1014,48 @@
     <String id="1226">Queue all items</String>
     <String id="1230">Date added:</String>
     <String id="1231">Last played:</String>
-		<String id="1240">Lock content</String>
-		<String id="1241">Unlock content</String>
-    <String id="1300" prefix="My ">TV Shows</String>
+    <String id="1240">Lock content</String>
+    <String id="1241">Unlock content</String>
+    <String id="1250">Search movie</String>
+    <String id="1251">Reset search</String>
+    <String id="1252">Search actor</String>
+    <String id="1253">Refresh all actor movies</String>
+    <String id="1254">Refresh selected actor info</String>
+    <String id="1255">Refresh fanart</String>
+    <String id="1256">Refresh current directory</String>
+    <String id="1257">Downloading movie actors and roles</String>
+    <String id="1258">Downloading actor info</String>
+    <String id="1260">Set watched status</String>
+    <String id="1261">No GrabberIndexFile found.</String>
+    <String id="1262">Update Grabber scripts</String>
+    <String id="1263">Set default Grabber script</String>
+    <String id="1264">Update Media info</String>
+		<String id="1265">User groups</String>
+		<String id="1266">Watched</String>
+		<String id="1267">Unwatched</String>
+		<String id="1268">Search director</String>
+		<String id="1269">Directors</String>
+		<String id="1270">Add Movie to User group</String>
+		<String id="1271">Remove selected movie from User group</String>
+		<String id="1272">Add New User group</String>
+		<String id="1273">Remove Selected User group</String>
+		<String id="1274">Studio:</String>
+		<String id="1275">Language:</String>
+		<String id="1276">Country:</String>
+		<String id="1277">Died:</String>
+		<String id="1278">Watched count:</String>
+		<String id="1279">Last update:</String>
+		<String id="1280">Scan using nfo files</String>
+		<String id="1281">By Movie Title</String>
+		<String id="1282">By Director Name</String>
+		<String id="1283">By Actor Name</String>
+		<String id="1284">By Actor Role</String>
+		<String id="1285">By Year</String>
+		<String id="1286">By Certification (MPAA rating)</String>
+		<String id="1287">Title index</String>
+		<String id="1288">Actors index</String>
+		<String id="1289">Directors index</String>
+		<String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1368,6 +1407,7 @@
     <String id="4555">Current Playlist</String>
     <String id="4557">Add all to playlist</String>
     <String id="4558">Recently Added</String>
+    <String id="4559">Recently watched</String>
     <String id="5900" prefix="My ">Trailers</String>
     <String id="5901">Show Movies</String>
     <String id="5902">Show which movies?</String>
