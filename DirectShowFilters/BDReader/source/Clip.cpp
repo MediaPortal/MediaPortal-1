@@ -202,9 +202,14 @@ bool CClip::FakeAudioAvailable()
 
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
-  if (rtStart + FAKE_AUDIO_DURATION -1 >playlistFirstPacketTime+clipDuration)superceeded|=SUPERCEEDED_AUDIO_RETURN;
-  if (superceeded&SUPERCEEDED_AUDIO_RETURN) return NULL;
-  if (!FakeAudioAvailable()) return NULL;
+  if (rtStart + FAKE_AUDIO_DURATION - 1 > playlistFirstPacketTime + clipDuration) 
+    superceeded |= SUPERCEEDED_AUDIO_RETURN;
+  
+  if (superceeded&SUPERCEEDED_AUDIO_RETURN) 
+    return NULL;
+  
+  if (!FakeAudioAvailable()) 
+    return NULL;
 
   Packet* packet = new Packet();
   packet->nClipNumber = nClip;
@@ -214,23 +219,28 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   packet->rtStart = rtStart;
   packet->rtStop = packet->rtStart + 1;
 
-  CMediaType pmt;
-  pmt.InitMediaType();
-  pmt.SetType(&MEDIATYPE_Audio);
-  pmt.SetSubtype(&MEDIASUBTYPE_DOLBY_AC3);
-  pmt.SetSampleSize(1);
-  pmt.SetTemporalCompression(FALSE);
-  pmt.SetVariableSize();
-  pmt.SetFormatType(&FORMAT_WaveFormatEx);
-  pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
-  WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pmt.pbFormat;
-  wfe->Format.nChannels=6;
-  wfe->Format.nSamplesPerSec=48000;
-  wfe->Format.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
+  if (firstAudio)
+  {
+    CMediaType pmt;
+    pmt.InitMediaType();
+    pmt.SetType(&MEDIATYPE_Audio);
+    pmt.SetSubtype(&MEDIASUBTYPE_DOLBY_AC3);
+    pmt.SetSampleSize(1);
+    pmt.SetTemporalCompression(FALSE);
+    pmt.SetVariableSize();
+    pmt.SetFormatType(&FORMAT_WaveFormatEx);
+    pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
+    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pmt.pbFormat;
+    wfe->Format.nChannels = 6;
+    wfe->Format.nSamplesPerSec = 48000;
+    wfe->Format.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
 
-  packet->pmt = CreateMediaType(&pmt);
-  audioPlaybackPosition+=FAKE_AUDIO_DURATION;
-  lastAudioPosition+=FAKE_AUDIO_DURATION;
+    packet->pmt = CreateMediaType(&pmt);
+  }
+  
+  audioPlaybackPosition += FAKE_AUDIO_DURATION;
+  lastAudioPosition += FAKE_AUDIO_DURATION;
+
   return packet;
 }
 
