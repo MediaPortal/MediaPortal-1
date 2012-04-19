@@ -9,7 +9,7 @@
   <style Name="NoShadow">
     <shadowAngle>0</shadowAngle>
     <shadowDistance>0</shadowDistance>
-    <shadowColor>00000000</shadowColor>
+    <shadowColor>ff000000</shadowColor>
   </style>
   <style Name="BasicHomeButton">
     <font>font16</font>
