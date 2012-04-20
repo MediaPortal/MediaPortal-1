@@ -1623,8 +1623,8 @@ namespace MediaPortal.GUI.Library
         {
           if (message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
           {
-            int iPages = _listItems.Count / _itemsPerPage;
-            if ((_listItems.Count % _itemsPerPage) != 0)
+            int iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+            if (_itemsPerPage != 0 && (_listItems.Count % _itemsPerPage) != 0)
             {
               iPages++;
             }
@@ -2290,8 +2290,8 @@ namespace MediaPortal.GUI.Library
       int iPages = 1;
       if (_listItems.Count > 0)
       {
-        iPages = _listItems.Count / _itemsPerPage;
-        if ((_listItems.Count % _itemsPerPage) != 0)
+        iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+        if (_itemsPerPage != 0 && (_listItems.Count % _itemsPerPage) != 0)
         {
           iPages++;
         }
@@ -2602,8 +2602,8 @@ namespace MediaPortal.GUI.Library
       int iPage = _upDownControl.Value;
       if (iPage > 1)
       {
-        int iPages = _listItems.Count / _itemsPerPage;
-        int itemsOnLastPage = _listItems.Count % _itemsPerPage;
+        int iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+        int itemsOnLastPage = _itemsPerPage == 0 ? 0 : _listItems.Count % _itemsPerPage;
         if (itemsOnLastPage != 0)
         {
           iPages++;
@@ -2632,8 +2632,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected void OnPageDown()
     {
-      int iPages = _listItems.Count / _itemsPerPage;
-      int itemsOnLastPage = _listItems.Count % _itemsPerPage;
+      int iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+      int itemsOnLastPage = _itemsPerPage == 0 ? 0 : _listItems.Count % _itemsPerPage;
       if (itemsOnLastPage != 0)
       {
         iPages++;
@@ -3341,8 +3341,8 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Add(item);
       }
-      int iPages = _listItems.Count / _itemsPerPage;
-      if ((_listItems.Count % _itemsPerPage) != 0)
+      int iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+      if (_itemsPerPage != 0 && (_listItems.Count % _itemsPerPage) != 0)
       {
         iPages++;
       }
@@ -3373,8 +3373,8 @@ namespace MediaPortal.GUI.Library
       {
         _listItems.Insert(index, item);
       }
-      int iPages = _listItems.Count / _itemsPerPage;
-      if ((_listItems.Count % _itemsPerPage) != 0)
+      int iPages = _itemsPerPage == 0 ? 0 : _listItems.Count / _itemsPerPage;
+      if (_itemsPerPage != 0 && (_listItems.Count % _itemsPerPage) != 0)
       {
         iPages++;
       }
