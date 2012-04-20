@@ -1464,6 +1464,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (_asioHandler != null)
       {
+        Log.Debug("BASS: Disposing existing Asio Handler");
         _asioHandler.Stop();
         _asioHandler.Dispose();
       }
@@ -1496,6 +1497,7 @@ namespace MediaPortal.MusicPlayer.BASS
         case AudioPlayer.Asio:
 
           // setup ASIO manually
+          Log.Debug("BASS: Creating new Asio Handler");
           _asioHandler = new BassAsioHandler();
           _asioHandler.AssignOutputChannel(_mixer);
           _asioHandler.Pan = Config.AsioBalance;
@@ -1504,11 +1506,13 @@ namespace MediaPortal.MusicPlayer.BASS
           _asioProc = new ASIOPROC(AsioCallback);
 
           // enable 1st output channel...(0=first)
+          Log.Debug("BASS: Joining Asio Channel #{0}", "0");
           BassAsio.BASS_ASIO_ChannelEnable(false, 0, _asioProc, new IntPtr(_mixer));
 
           // and join the next channels to it
           for (int i = 1; i < stream.ChannelInfo.chans; i++)
           {
+            Log.Debug("BASS: Joining Asio Channel #{0}", i);
             BassAsio.BASS_ASIO_ChannelJoin(false, i, 0);
           }
 
@@ -1518,9 +1522,19 @@ namespace MediaPortal.MusicPlayer.BASS
           BassAsio.BASS_ASIO_ChannelSetFormat(false, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT);
 
           // set the source rate
+          Log.Debug("BASS: Set sample rate to {0}", stream.ChannelInfo.freq);
           BassAsio.BASS_ASIO_ChannelSetRate(false, 0, (double)stream.ChannelInfo.freq);
+          _asioHandler.SampleRate = (double)stream.ChannelInfo.freq;
           // try to set the device rate too (saves resampling)
           BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq);
+
+          Log.Debug("BASS: Asio Handler Information");
+          Log.Debug("BASS: ---------------------------------------------");
+          Log.Debug("BASS: Number of Chanels: {0}", _asioHandler.ChannelNumChans);
+          Log.Debug("BASS: Format: {0}", _asioHandler.Format.ToString());
+          Log.Debug("BASS: IsResampling: {0}", _asioHandler.IsResampling.ToString());
+          Log.Debug("BASS: Sample Rate: {0}", _asioHandler.SampleRate);
+          Log.Debug("BASS: ---------------------------------------------");
 
           // and start playing it...start output using default buffer/latency
           _asioHandler.Start(0);
