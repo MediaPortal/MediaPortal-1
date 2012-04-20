@@ -350,7 +350,7 @@
       <description>MPAA Rating Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>517</posX>
+      <posX>550</posX>
       <posY>255</posY>
       <label>173</label>
       <font>font11</font>
@@ -360,7 +360,7 @@
       <description>MPAA Rating Value</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>517</posX>
+      <posX>550</posX>
       <posY>271</posY>
       <width>112</width>
       <label>#mpaarating</label>
@@ -391,7 +391,7 @@
       <description>Country Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>517</posX>
+      <posX>550</posX>
       <posY>292</posY>
       <label>1276</label>
       <font>font11</font>
@@ -401,7 +401,7 @@
       <description>Country Value</description>
       <type>label</type>
       <id>1</id>
-      <posX>517</posX>
+      <posX>550</posX>
       <posY>308</posY>
       <label>#country</label>
       <font>font12</font>
@@ -431,7 +431,7 @@
       <description>Video Runtime Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>517</posX>
+      <posX>550</posX>
       <posY>328</posY>
       <label>#(L(291))-#(L(299))</label>
       <font>font11</font>
@@ -441,7 +441,7 @@
       <description>Video Runtime Value</description>
       <type>label</type>
       <id>1</id>
-      <posX>517</posX>
+      <posX>550</posX>
       <posY>344</posY>
       <label>#videoruntime</label>
       <font>font12</font>
@@ -522,18 +522,18 @@
       <description>Last update Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>213</posX>
+      <posX>260</posX>
       <posY>370</posY>
       <label>1279</label>
       <font>font10</font>
-      <align>left</align>
+      <align>right</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Last update Value Movie</description>
       <type>label</type>
       <id>1</id>
-      <posX>298</posX>
+      <posX>270</posX>
       <posY>370</posY>
       <label>#lastupdate</label>
       <font>font10</font>
@@ -544,18 +544,18 @@
       <description>Watched Count Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>213</posX>
+      <posX>260</posX>
       <posY>388</posY>
       <label>1278</label>
       <font>font10</font>
-      <align>left</align>
+      <align>right</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Watched Count Value</description>
       <type>label</type>
       <id>1</id>
-      <posX>298</posX>
+      <posX>270</posX>
       <posY>388</posY>
       <label>#watchedcount</label>
       <font>font10</font>
@@ -644,7 +644,7 @@
       <type>group</type>
       <posX>382</posX>
       <posY>374</posY>
-      <layout>StackLayout(0, Horizontal, true)</layout>
+      <layout>StackLayout(2, Horizontal, true)</layout>
       <control>
         <description>Certification (MPAA) Logo</description>
         <type>image</type>

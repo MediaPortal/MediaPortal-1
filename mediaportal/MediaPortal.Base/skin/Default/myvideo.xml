@@ -486,12 +486,12 @@
       <type>group</type>
       <posX>39</posX>
       <posY>524</posY>
-      <layout>StackLayout(0, Horizontal, true)</layout>
+      <layout>StackLayout(2, Horizontal, true)</layout>
       <control>
         <description>Video codec</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
+        <width>36</width>
         <height>29</height>
         <texture>logos\#VideoCodec.png</texture>
         <keepaspectratio>yes</keepaspectratio>
@@ -501,7 +501,7 @@
         <description>Video resolution</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
+        <width>36</width>
         <height>29</height>
         <texture>logos\#VideoResolution.png</texture>
         <keepaspectratio>yes</keepaspectratio>
@@ -511,7 +511,7 @@
         <description>Aspect ratio</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
+        <width>36</width>
         <height>29</height>
         <texture>logos\#AspectRatio.png</texture>
         <keepaspectratio>yes</keepaspectratio>
@@ -521,7 +521,7 @@
         <description>Audio codec</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
+        <width>36</width>
         <height>29</height>
         <texture>logos\#AudioCodec.png</texture>
         <keepaspectratio>yes</keepaspectratio>
@@ -531,7 +531,7 @@
         <description>Audio channels</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
+        <width>36</width>
         <height>29</height>
         <texture>logos\#AudioChannels.png</texture>
         <keepaspectratio>yes</keepaspectratio>
@@ -541,7 +541,7 @@
         <description>Subtitles</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
+        <width>36</width>
         <height>29</height>
         <texture>logos\subtitles.png</texture>
         <keepaspectratio>yes</keepaspectratio>
@@ -551,7 +551,7 @@
         <description>Certification (MPAA) Logo</description>
         <type>image</type>
         <id>0</id>
-        <width>38</width>
+        <width>36</width>
         <height>29</height>
         <texture>logos\#mpaarating.png</texture>
         <keepaspectratio>yes</keepaspectratio>

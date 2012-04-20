@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
@@ -7,7 +7,7 @@
       <type>group</type>
       <posX>39</posX>
       <posY>524</posY>
-      <layout>StackLayout(0, Horizontal, true)</layout>
+      <layout>StackLayout(2, Horizontal, true)</layout>
       <control>
         <description>Video codec (normal osd)</description>
         <type>image</type>
