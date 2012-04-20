@@ -418,7 +418,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${EXTBIN}\MySql.Data.Entity.dll"
   File "${EXTBIN}\EntityFramework.dll"
   File "${EXTBIN}\EntityFramework.xml"
-  File "${EXTBIN}\EF_JUNE_2011_CTP.msi"
   File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
   File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
   File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
@@ -470,7 +469,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   # SERVICE INSTALLATION
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "Installing TVService"
-  ExecWait '"msiexec" /qn /i "$INSTDIR\EF_JUNE_2011_CTP.msi" /msicl ACCEPTEFJUNE2011CTPEULA=1'
   ExecWait '"$INSTDIR\TVService.exe" /install'
   ${LOG_TEXT} "INFO" "Finished Installing TVService"
 
@@ -576,7 +574,6 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\log4net.dll"
   Delete "$INSTDIR\MySql.Data.dll"
   Delete "$INSTDIR\MySql.Data.Entity.dll"
-  Delete "$INSTDIR\EF_JUNE_2011_CTP.msi"
   Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.TVLibrary.dll"
@@ -640,7 +637,6 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${EXTBIN}\MySql.Data.Entity.dll"
   File "${EXTBIN}\EntityFramework.dll"
   File "${EXTBIN}\EntityFramework.xml" 
-  File "${EXTBIN}\EF_JUNE_2011_CTP.msi"
 
   ;Gentle.Config
 ;  SetOutPath "$MPdir.Config"
@@ -703,7 +699,6 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\MySql.Data.Entity.dll"
   Delete "$MPdir.Base\EntityFramework.dll"
   Delete "$MPdir.Base\EntityFramework.xml"
-  Delete "$MPdir.Base\EF_JUNE_2011_CTP.msi"
 !macroend
 
 ${MementoSectionDone}

@@ -113,7 +113,8 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      const string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
+      /*const string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";*/
+      const string XmlUrl = "http://dl.dropbox.com/u/10536084/mp/TVE35/ApplicationLocations.xml";
 
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))

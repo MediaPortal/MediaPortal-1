@@ -83,4 +83,12 @@
     <TYPE>Automatic</TYPE>
   </VCRedist2005>
 
+  <!-- Section used by 1.2.0 TVE35 installer -->
+  
+  <CTP2011>
+    <URL>http://dl.dropbox.com/u/10536084/mp/TVE35/EntityCTP/</URL>
+    <FILE>EF_JUNE_2011_CTP.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </CTP2011>
+
 </Applications>

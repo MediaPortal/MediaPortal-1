@@ -175,6 +175,7 @@ namespace MediaPortal.DeployTool.Sections
       AddPackageToListView(new VCRedistChecker());
       AddPackageToListView(new VCRedistCheckerOld());
       AddPackageToListView(new WindowsMediaPlayerChecker());
+      AddPackageToListView(new CTP2011Checker());
       switch (InstallationProperties.Instance["InstallType"])
       {
         case "singleseat":
