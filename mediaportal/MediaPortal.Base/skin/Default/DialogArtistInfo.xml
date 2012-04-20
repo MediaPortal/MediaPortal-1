@@ -183,7 +183,7 @@
     </control>
     <control Style="NoShadow">
       <description>Instruments value</description>
-      <type>fadelabel</type>
+      <type>label</type>
       <id>27</id>
       <posX>186</posX>
       <posY>234</posY>
