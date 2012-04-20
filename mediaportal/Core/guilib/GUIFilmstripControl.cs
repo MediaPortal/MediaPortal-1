@@ -1341,7 +1341,7 @@ namespace MediaPortal.GUI.Library
             _listItems.Add(newItem);
             int iItemsPerPage = _columns;
             int iPages = _listItems.Count / iItemsPerPage;
-            if ((_listItems.Count % iItemsPerPage) != 0)
+            if (iItemsPerPage != 0 && (_listItems.Count % iItemsPerPage) != 0)
             {
               iPages++;
             }
@@ -1907,7 +1907,7 @@ namespace MediaPortal.GUI.Library
 
       int iItemsPerPage = _columns;
       int iPages = _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0 && (_listItems.Count % iItemsPerPage) != 0)
       {
         iPages++;
       }
@@ -2227,7 +2227,7 @@ namespace MediaPortal.GUI.Library
       }
       int iItemsPerPage = _columns;
       int iPages = _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0 && (_listItems.Count % iItemsPerPage) != 0)
       {
         iPages++;
       }
@@ -2897,7 +2897,7 @@ namespace MediaPortal.GUI.Library
       _listItems.Add(item);
       int iItemsPerPage = _columns;
       int iPages = _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0 && (_listItems.Count % iItemsPerPage) != 0)
       {
         iPages++;
       }
@@ -2918,7 +2918,7 @@ namespace MediaPortal.GUI.Library
       _listItems.Insert(index, item);
       int iItemsPerPage = _columns;
       int iPages = _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0 && (_listItems.Count % iItemsPerPage) != 0)
       {
         iPages++;
       }

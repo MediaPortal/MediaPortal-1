@@ -53,7 +53,7 @@ namespace MediaPortal.Video.Database
 
     private bool _currentCreateVideoThumbs;
 
-    #region helper funcs
+    #region Database init/deinit
 
     // Changed - added column check for actorinfo thumbURL column
     private void Open()

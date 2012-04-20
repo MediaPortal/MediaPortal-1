@@ -397,8 +397,6 @@ internal class Grabber : IIMDBScriptGrabber
 
       // Actors
       regexBlockPattern = @"<table class=""cast"">.*?</table>|<table class=""cast_list"">.*?</table>";
-      //regexPattern = 
-      //  ";\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\"><a href=\"/character/ch[0-9]*/\">(?<role>.*?)<|;\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\">(?<role>.*?)<|<td[^<]*<a\\s+href=\"/name/nm\\d{7}/\"[^>]*>(?<actor>[^<]*)</a>.*?<div[^<]*<a\\s+href=\"/character/ch\\d{7}/\"[^>]*>(?<role>[^<]*)</a>";
       string others = @"td class=""nm""><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=""char"">(?<role>.*?)<";
       regexPattern =
             @"href=""/name/nm\d{7}/"".*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
@@ -544,7 +542,7 @@ internal class Grabber : IIMDBScriptGrabber
           if (mpaRating.Contains(land) | mpaRating.Contains(landcode))
           {
             if (mpaRating.Contains("("))
-              mpaRating = mpaRating.Substring(0, mpaRating.LastIndexOf("("));
+              mpaRating = mpaRating.Substring(0, mpaRating.IndexOf("("));
             movieDetails.MPARating = mpaRating.Substring(mpaRating.IndexOf(":") + 1).Trim();
             break;
           }

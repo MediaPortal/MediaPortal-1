@@ -521,7 +521,7 @@ internal class Grabber : IIMDBScriptGrabber
           if (mpaRating.Contains(land) | mpaRating.Contains(landcode))
           {
             if (mpaRating.Contains("("))
-              mpaRating = mpaRating.Substring(0, mpaRating.LastIndexOf("("));
+              mpaRating = mpaRating.Substring(0, mpaRating.IndexOf("("));
             movieDetails.MPARating = mpaRating.Substring(mpaRating.IndexOf(":") + 1).Trim();
             break;
           }
