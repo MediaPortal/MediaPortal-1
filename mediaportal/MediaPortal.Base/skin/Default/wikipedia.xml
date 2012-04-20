@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>4711</id>
   <defaultcontrol>10</defaultcontrol>
@@ -9,7 +9,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>720</width>
       <height>576</height>
     </control>
@@ -18,10 +18,8 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
-      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="150" end="0,-300">WindowClose</animation>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="0,-300">WindowClose</animation>
       <layout>StackLayout</layout>
       <posX>39</posX>
       <posY>96</posY>
@@ -60,8 +58,6 @@
       </control>
     </control>
     <control>
-      
-      
       <description>Article title/searchterm</description>
       <type>label</type>
       <id>4</id>
@@ -71,11 +67,9 @@
       <label>Article title/searchterm</label>
       <font>font14</font>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
-      
-      
       <description>Image description</description>
       <type>label</type>
       <id>5</id>
@@ -85,11 +79,9 @@
       <label>Image description</label>
       <font>font16</font>
       <align>left</align>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control style="NoShadow">
-      
-      
       <description>Here is the article text displayed</description>
       <type>textbox</type>
       <id>20</id>
@@ -100,8 +92,6 @@
       <height>444</height>
     </control>
     <control>
-      
-      
       <description>Article Image</description>
       <type>image</type>
       <id>25</id>
@@ -112,7 +102,7 @@
       <height>465</height>
       <texture />
       <colorkey>0</colorkey>
-      <colordiffuse>White</colordiffuse>
+      <colordiffuse>ivory</colordiffuse>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>
     </control>

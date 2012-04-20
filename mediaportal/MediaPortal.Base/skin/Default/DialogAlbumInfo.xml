@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2001</id>
   <defaultcontrol>5</defaultcontrol>
@@ -24,80 +24,66 @@
       <font>font16</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Artist</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>100</posY>
       <label>171</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Date of Release</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>120</posY>
       <label>201</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Rating</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>140</posY>
       <label>173</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Genre</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>160</posY>
       <label>174</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Tones</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>180</posY>
       <label>175</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Styles</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>200</posY>
       <label>176</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Artist value</description>
@@ -108,8 +94,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Date of Release value</description>
@@ -120,8 +104,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Rating value</description>
@@ -132,8 +114,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Genre value</description>
@@ -144,8 +124,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Tones value</description>
@@ -157,8 +135,6 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Styles value</description>
@@ -170,23 +146,19 @@
       <label>-</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Album Art</description>
       <type>image</type>
       <id>3</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>249</posY>
-      <width>140</width>
-      <height>140</height>
+      <width>112</width>
+      <height>160</height>
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>no</keepaspectratio>
-      
-      
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
@@ -198,39 +170,33 @@
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font11</font>
-      
-      
     </control>
     <control>
       <description>Tracks/Review</description>
       <type>button</type>
       <id>5</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>420</posY>
-      <width>130</width>
+      <width>90</width>
       <label>182</label>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>6</onup>
       <ondown>6</ondown>
-      
-      
     </control>
     <control>
       <description>Refresh</description>
       <type>button</type>
       <id>6</id>
-      <posX>60</posX>
+      <posX>99</posX>
       <posY>456</posY>
-      <width>130</width>
+      <width>90</width>
       <label>184</label>
       <font>font13</font>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      
-      
     </control>
   </controls>
 </window>

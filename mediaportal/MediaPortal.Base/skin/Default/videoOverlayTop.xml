@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <defaultcontrol>4</defaultcontrol>
   <id>3008</id>
@@ -9,7 +9,7 @@
       <type>image</type>
       <id>4</id>
       <posX>169</posX>
-      <posY>472</posY>
+      <posY>456</posY>
       <width>29</width>
       <height>41</height>
       <texture>pause_enabled.png</texture>
@@ -20,7 +20,7 @@
       <type>image</type>
       <id>5</id>
       <posX>169</posX>
-      <posY>472</posY>
+      <posY>456</posY>
       <width>29</width>
       <height>41</height>
       <texture>fastforward_enabled.png</texture>
@@ -31,7 +31,7 @@
       <type>image</type>
       <id>6</id>
       <posX>169</posX>
-      <posY>472</posY>
+      <posY>456</posY>
       <width>29</width>
       <height>41</height>
       <texture>rew_enabled.png</texture>

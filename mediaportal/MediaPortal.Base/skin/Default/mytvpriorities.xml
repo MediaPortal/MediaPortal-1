@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>607</id>
   <defaultcontrol>10</defaultcontrol>
@@ -23,8 +23,6 @@
       <posX>59</posX>
       <posY>9</posY>
       <texture>television_logo.png</texture>
-      
-      
     </control>
     <!--     <control>
       <type>image</type>
@@ -112,8 +110,6 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
       <control>
         <description>scheduler recordings listcontrol</description>
         <type>updownlistcontrol</type>
@@ -132,8 +128,8 @@
         <spinPosY>417</spinPosY>
         <itemWidth>34</itemWidth>
         <itemHeight>34</itemHeight>
-        <textureFocus>album_background_focus.png</textureFocus>
-        <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+        <textureFocus>list_sub_focus.png</textureFocus>
+        <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
         <spaceBetweenItems>4</spaceBetweenItems>
         <textureHeight>49</textureHeight>
         <keepaspectratio>no</keepaspectratio>
@@ -155,8 +151,6 @@
       <label>#TV.Scheduled.Title</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Current program time</description>
@@ -167,9 +161,7 @@
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Description1</description>
@@ -182,8 +174,6 @@
       <label>#TV.Scheduled.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>genre</description>
@@ -194,9 +184,7 @@
       <label>#TV.Scheduled.Genre</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>
 </window>

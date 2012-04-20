@@ -58,7 +58,7 @@
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <posX>288</posX>
       <posY>149</posY>
-      <layout>StackLayout(25)</layout>
+      <layout>StackLayout(35)</layout>
       <control>
         <type>label</type>
         <description>skip steps seconds</description>
@@ -118,7 +118,7 @@
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <posX>432</posX>
       <posY>149</posY>
-      <layout>StackLayout(25)</layout>
+      <layout>StackLayout(35)</layout>
       <control>
         <description>skip steps minutes</description>
         <type>label</type>
@@ -221,7 +221,7 @@
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <posX>576</posX>
       <posY>149</posY>
-      <layout>StackLayout(25)</layout>
+      <layout>StackLayout(35)</layout>
       <control>
         <description>skip steps hours</description>
         <type>label</type>
@@ -243,7 +243,7 @@
         <description>Step 14</description>
         <type>checkmark</type>
         <id>15</id>
-        <label> 1.5</label>
+        <label>  1.5</label>
         <align>right</align>
         <onleft>7</onleft>
         <onright>15</onright>

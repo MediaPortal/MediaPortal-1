@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>7701</id>
   <defaultcontrol>500</defaultcontrol>
@@ -14,6 +14,7 @@
       <width>540</width>
       <height>576</height>
       <texture>-</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
     <control>
       <description>tele-text rendering image 2</description>
@@ -24,6 +25,7 @@
       <width>540</width>
       <height>576</height>
       <texture>-</texture>
+      <colordiffuse>ddffffff</colordiffuse>
     </control>
     <control>
       <description>Current channel</description>
