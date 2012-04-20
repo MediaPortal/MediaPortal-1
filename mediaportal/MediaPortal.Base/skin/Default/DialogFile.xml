@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>758</id>
   <defaultcontrol>14</defaultcontrol>
@@ -15,8 +15,6 @@
       <width>403</width>
       <height>241</height>
       <texture>dialog_background.png</texture>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -33,8 +31,6 @@
       <posX>194</posX>
       <posY>294</posY>
       <width>299</width>
-      
-      
     </control>
     <control>
       <description>Yes button</description>
@@ -52,8 +48,6 @@
       <onright>10</onright>
       <onup>12</onup>
       <ondown>12</ondown>
-      
-      
     </control>
     <control>
       <description>No button</description>
@@ -71,8 +65,6 @@
       <onright>14</onright>
       <onup>13</onup>
       <ondown>13</ondown>
-      
-      
     </control>
     <control>
       <description>Always</description>
@@ -90,8 +82,6 @@
       <onright>13</onright>
       <onup>11</onup>
       <ondown>11</ondown>
-      
-      
     </control>
     <control>
       <description>Never</description>
@@ -109,8 +99,6 @@
       <onright>12</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      
-      
     </control>
     <control>
       <description>Cancel button</description>
@@ -128,8 +116,6 @@
       <onright>11</onright>
       <onup>14</onup>
       <ondown>14</ondown>
-      
-      
     </control>
   </controls>
 </window>

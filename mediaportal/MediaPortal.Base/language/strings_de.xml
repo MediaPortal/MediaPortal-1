@@ -1044,6 +1044,9 @@
 		<String id="1284">nach Rolle des Schauspielers</String>
 		<String id="1285">nach Jahr</String>
 		<String id="1286">nach Altersfreigabe</String>
+		<String id="1287">Titel (Index)</String>
+		<String id="1288">Schauspieler (Index)</String>
+		<String id="1289">Regisseure (Index)</String>
     <String id="1300" prefix="Meine ">TV-Serien</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
@@ -1388,11 +1391,12 @@
     <String id="4555">Aktuelle Wiedergabeliste</String>
     <String id="4557">Alle zur Wiedergabeliste hinzufügen</String>
     <String id="4558">Neu hinzugefügt</String>
+    <String id="4559">Kürzlich angesehen</String>
     <String id="5900" prefix="Meine ">Kinotrailer</String>
     <String id="5901">Suche Filme</String>
     <String id="5902">Welche Filme zeigen?</String>
     <String id="5903">Neu hinzugefügte Filme</String>
-    <String id="5904">Häufig gesehene Filme</String>
+    <String id="5904">Häufig angesehene Filme</String>
     <String id="5905">Alle Filme</String>
     <String id="5906">Kinotrailer</String>
     <String id="5907">Ausschnitte</String>

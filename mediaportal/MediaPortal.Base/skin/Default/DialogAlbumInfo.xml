@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2001</id>
   <defaultcontrol>5</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#selecteditem:</define>
   <controls>
     <control>
       <description>background image</description>
@@ -14,223 +15,211 @@
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <control>
+    <control Style="NoShadow">
       <description>Album value</description>
       <type>label</type>
       <id>20</id>
-      <posX>219</posX>
-      <posY>49</posY>
+      <posX>0</posX>
+      <posY>80</posY>
+      <width>720</width>
+      <align>center</align>
       <label>-</label>
       <font>font16</font>
-      <align>left</align>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Artist</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>100</posY>
+      <posX>168</posX>
+      <posY>106</posY>
       <label>171</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <align>right</align>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Date of Release</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>120</posY>
+      <posX>168</posX>
+      <posY>127</posY>
       <label>201</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <align>right</align>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Rating</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>140</posY>
+      <posX>168</posX>
+      <posY>148</posY>
       <label>173</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <align>right</align>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Genre</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>160</posY>
+      <posX>168</posX>
+      <posY>170</posY>
       <label>174</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <align>right</align>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Tones</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>180</posY>
+      <posX>168</posX>
+      <posY>192</posY>
       <label>175</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <align>right</align>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Styles</description>
       <type>label</type>
       <id>1</id>
-      <posX>60</posX>
-      <posY>200</posY>
+      <posX>168</posX>
+      <posY>212</posY>
       <label>176</label>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <align>right</align>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Artist value</description>
       <type>label</type>
       <id>21</id>
-      <posX>219</posX>
-      <posY>100</posY>
+      <posX>186</posX>
+      <posY>106</posY>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
+      <textcolor>ivory</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Date of Release value</description>
       <type>label</type>
       <id>22</id>
-      <posX>219</posX>
-      <posY>120</posY>
+      <posX>186</posX>
+      <posY>128</posY>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
+      <textcolor>ivory</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Rating value</description>
       <type>label</type>
       <id>23</id>
-      <posX>219</posX>
-      <posY>140</posY>
+      <posX>186</posX>
+      <posY>148</posY>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
+      <textcolor>ivory</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Genre value</description>
       <type>label</type>
       <id>24</id>
-      <posX>219</posX>
-      <posY>160</posY>
+      <posX>186</posX>
+      <posY>170</posY>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
+      <textcolor>ivory</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Tones value</description>
       <type>fadelabel</type>
       <id>25</id>
-      <posX>219</posX>
-      <posY>180</posY>
-      <width>399</width>
+      <posX>186</posX>
+      <posY>192</posY>
+      <width>506</width>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
+      <textcolor>ivory</textcolor>
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Styles value</description>
       <type>fadelabel</type>
       <id>26</id>
-      <posX>219</posX>
-      <posY>200</posY>
-      <width>399</width>
+      <posX>186</posX>
+      <posY>212</posY>
+      <width>506</width>
       <label>-</label>
       <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      
-      
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Album Art</description>
       <type>image</type>
       <id>3</id>
-      <posX>60</posX>
-      <posY>249</posY>
-      <width>140</width>
-      <height>140</height>
-      <texture>-</texture>
-      <colorkey>FFFF00FF</colorkey>
-      <colordiffuse>FFFFFFFF</colordiffuse>
+      <posX>28</posX>
+      <posY>250</posY>
+      <width>147</width>
+      <height>147</height>
+      <texture mask="picturethumbmask.png">#selectedthumb</texture>
+      <colorkey>FFFFFFFF</colorkey>
       <keepaspectratio>no</keepaspectratio>
-      
-      
+    </control>
+    <control>
+      <description>CD-Case</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>28</posX>
+      <posY>250</posY>
+      <width>147</width>
+      <height>147</height>
+      <texture>picturethumbframe.png</texture>
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
       <type>textbox</type>
       <id>4</id>
-      <posY>229</posY>
+      <posX>186</posX>
+      <posY>250</posY>
+      <width>506</width>
+      <height>280</height>
+      <textcolor>ivory</textcolor>
+      <spinPosX>618</spinPosX>
+      <spinPosY>536</spinPosY>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      <font>font11</font>
-      
-      
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Tracks/Review</description>
       <type>button</type>
       <id>5</id>
-      <posX>60</posX>
-      <posY>420</posY>
-      <width>130</width>
+      <posX>28</posX>
+      <posY>484</posY>
+      <width>123</width>
       <label>182</label>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>6</onup>
       <ondown>6</ondown>
-      
-      
     </control>
-    <control>
+    <control Style="NoShadow">
       <description>Refresh</description>
       <type>button</type>
       <id>6</id>
-      <posX>60</posX>
-      <posY>456</posY>
-      <width>130</width>
+      <posX>28</posX>
+      <posY>523</posY>
+      <width>123</width>
+      <label>182</label>
       <label>184</label>
       <font>font13</font>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-      
-      
     </control>
   </controls>
 </window>

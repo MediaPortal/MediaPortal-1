@@ -1,28 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>601</id>
   <defaultcontrol>10</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>720</width>
       <height>576</height>
     </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <type>group</type>
       <description>group element</description>
       <posX>39</posX>
       <posY>96</posY>
       <layout>StackLayout</layout>
-      
-      
       <control>
         <type>sortbutton</type>
         <id>2</id>
@@ -100,18 +98,18 @@
       <textXOff3>99</textXOff3>
       <textYOff3>25</textYOff3>
       <IconXOff>5</IconXOff>
-      <PinIconXOff>398</PinIconXOff>
-      <PinIconYOff>6</PinIconYOff>
-      <PinIconWidth>20</PinIconWidth>
-      <PinIconHeight>20</PinIconHeight>
+      <PinIconXOff>720</PinIconXOff>
+      <PinIconYOff>10</PinIconYOff>
+      <PinIconWidth>35</PinIconWidth>
+      <PinIconHeight>25</PinIconHeight>
       <spinWidth>25</spinWidth>
       <spinHeight>26</spinHeight>
       <spinPosX>630</spinPosX>
       <spinPosY>356</spinPosY>
       <itemWidth>30</itemWidth>
       <itemHeight>44</itemHeight>
-      <textureFocus>album_background_focus.png</textureFocus>
-      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <textureFocus>list_sub_focus.png</textureFocus>
+      <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
       <spaceBetweenItems>0</spaceBetweenItems>
       <keepaspectratio>yes</keepaspectratio>
       <textureHeight>52</textureHeight>
@@ -121,8 +119,6 @@
       <onright>2</onright>
       <onup>2</onup>
       <ondown>2</ondown>
-      
-      
     </control>
     <control>
       <description>Seperator</description>
@@ -134,8 +130,6 @@
       <height>0</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -157,9 +151,7 @@
       <width>382</width>
       <label>#TV.Scheduled.Channel   #TV.Scheduled.Time</label>
       <font>font12</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Program Title</description>
@@ -169,11 +161,9 @@
       <posY>427</posY>
       <align>left</align>
       <width>382</width>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
       <label>#TV.Scheduled.Title</label>
       <font>font14</font>
-      
-      
     </control>
     <control>
       <description>Current program genre</description>
@@ -185,9 +175,7 @@
       <label>#TV.Scheduled.Genre</label>
       <align>left</align>
       <font>font10</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Description1</description>
@@ -200,8 +188,6 @@
       <label>#TV.Scheduled.Description</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
   </controls>
 </window>

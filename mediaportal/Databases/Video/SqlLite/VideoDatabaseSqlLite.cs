@@ -1218,6 +1218,34 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    public string GetGenreById(int genreId)
+    {
+      if (m_db == null)
+      {
+        return string.Empty;
+      }
+
+      string strGenre = string.Empty;
+
+      try
+      {
+        string sql = string.Format("SELECT * FROM genre WHERE idGenre = {0}", genreId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        
+        if (results.Rows.Count == 0)
+        {
+          return string.Empty;
+        }
+        strGenre = DatabaseUtility.Get(results, 0, "strGenre");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return strGenre;
+    }
+
     public void AddGenreToMovie(int lMovieId, int lGenreId)
     {
       try
@@ -1400,6 +1428,30 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+    }
+
+    public string GetUserGroupById(int groupId)
+    {
+      if (m_db == null)
+      {
+        return string.Empty;
+      }
+
+      string strGroup = string.Empty;
+
+      try
+      {
+        string sql = string.Format("SELECT strGroup FROM usergroup WHERE idGroup = {0}", groupId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        
+        strGroup =  DatabaseUtility.Get(results, 0, "strGroup");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return strGroup;
     }
     
     public void GetMovieUserGroups(int movieId, ArrayList userGroups)
@@ -1677,6 +1729,35 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    public string GetActorNameById(int actorId)
+    {
+      if (m_db == null)
+      {
+        return string.Empty;
+      }
+
+      string strActor = string.Empty;
+
+      try
+      {
+        string sql = string.Format("SELECT strActor FROM actors WHERE idActor = {0}", actorId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        
+        if (results.Rows.Count == 0)
+        {
+          return string.Empty;
+        }
+        
+        strActor =  DatabaseUtility.Get(results, 0, "strActor");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return strActor;
+    }
+
     public void GetActorByName(string strActorName, ArrayList actors)
     {
       strActorName = DatabaseUtility.RemoveInvalidChars(strActorName);
@@ -1715,7 +1796,7 @@ namespace MediaPortal.Video.Database
       }
       try
       {
-        SQLiteResultSet results = m_db.Execute("select * from Actors where strActor like '%" + strActorName + "%'");
+        SQLiteResultSet results = m_db.Execute("SELECT * FROM actors WHERE strActor LIKE '%" + strActorName + "%'");
         if (results.Rows.Count == 0)
         {
           return -1;
@@ -3732,7 +3813,7 @@ namespace MediaPortal.Video.Database
       return;
     }
 
-    public void GetIndexByFilter(string sql, out ArrayList movieList)
+    public void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList)
     {
       movieList = new ArrayList();
       try
@@ -3743,24 +3824,55 @@ namespace MediaPortal.Video.Database
         }
 
         SQLiteResultSet results = GetResults(sql);
+        bool nonWordCharFound = false;
+        int nwCount = 0;
+
+        // Count nowWord items
+        if (filterNonWordChar)
+        {
+          for (int i = 0; i < results.Rows.Count; i++)
+          {
+            SQLiteResultSet.Row fields = results.Rows[i];
+
+            if (Regex.Match(fields.fields[0], @"\W|\d").Success)
+            {
+              int iCount = Convert.ToInt32(fields.fields[1]);
+              nwCount = nwCount + iCount;
+            }
+          }
+        }
 
         for (int i = 0; i < results.Rows.Count; i++)
         {
           IMDBMovie movie = new IMDBMovie();
           SQLiteResultSet.Row fields = results.Rows[i];
-          movie.Title = fields.fields[0];
+          string value = fields.fields[0];
+          int countN = Convert.ToInt32(fields.fields[1]);
+
+          if (filterNonWordChar && Regex.Match(fields.fields[0], @"\W|\d").Success)
+          {
+            if (!nonWordCharFound)
+            {
+              value = "#";
+              nonWordCharFound = true;
+              countN = nwCount;
+            }
+            else
+            {
+              continue;
+            }
+          }
+
+          movie.Title = value;
+          movie.RunTime = countN;
           movieList.Add(movie);
         }
-
-        return;
       }
       catch (Exception ex)
       {
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
-
-      return;
     }
 
     public void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
@@ -4601,7 +4713,7 @@ namespace MediaPortal.Video.Database
             if (nodeRating != null)
             {
               double rating = 0;
-              if (Double.TryParse(nodeRating.InnerText, out rating))
+              if (Double.TryParse(nodeRating.InnerText.Replace(".", ","), out rating))
               {
                 movie.Rating = (float) rating;
                 
@@ -4690,25 +4802,36 @@ namespace MediaPortal.Video.Database
             #region Watched/watched count
 
             // Watched
-            if (nodeWatched != null)
+            int percent = 0;
+            int watchedCount = 0;
+            GetMovieWatchedStatus(movie.ID, out percent, out watchedCount);
+
+            if (watchedCount < 1)
             {
-              if (nodeWatched.InnerText == "true" || nodeWatched.InnerText == "1")
+              if (nodeWatched != null)
               {
-                movie.Watched = 1;
-                VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
+                if (nodeWatched.InnerText == "true" || nodeWatched.InnerText == "1")
+                {
+                  movie.Watched = 1;
+                  VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
+                }
+                else
+                {
+                  movie.Watched = 0;
+                  VideoDatabase.SetMovieWatchedStatus(movie.ID, false, 0);
+                }
               }
-              else
+              // Watched count
+              if (nodePlayCount != null)
               {
-                movie.Watched = 0;
-                VideoDatabase.SetMovieWatchedStatus(movie.ID, false, 0);
+                watchedCount = 0;
+                Int32.TryParse(nodePlayCount.InnerText, out watchedCount);
+                SetMovieWatchedCount(movie.ID, watchedCount);
               }
             }
-            // Watched count
-            if (nodePlayCount != null)
+            else
             {
-              int watchedCount = 0;
-              Int32.TryParse(nodePlayCount.InnerText, out watchedCount);
-              SetMovieWatchedCount(movie.ID, watchedCount);
+              movie.Watched = 1;
             }
 
             #endregion

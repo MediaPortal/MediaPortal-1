@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>762</id>
   <defaultcontrol>2</defaultcontrol>
@@ -32,8 +32,6 @@
       <align>right</align>
       <font>font13</font>
       <textcolor>ffa9d0f7</textcolor>
-      
-      
     </control>
     <control>
       <description>Guide Group Label</description>
@@ -63,7 +61,7 @@
       <description>Single Channel Label</description>
       <type>label</type>
       <id>32</id>
-      <posX>240</posX>
+      <posX>225</posX>
       <posY>32</posY>
       <font>font14</font>
       <align>left</align>
@@ -73,10 +71,10 @@
       <description>Single Channel Image</description>
       <type>image</type>
       <id>33</id>
-      <posX>200</posX>
-      <posY>25</posY>
-      <width>30</width>
-      <height>30</height>
+      <posX>196</posX>
+      <posY>24</posY>
+      <width>22</width>
+      <height>32</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>defaultVideoBig.png</texture>
     </control>

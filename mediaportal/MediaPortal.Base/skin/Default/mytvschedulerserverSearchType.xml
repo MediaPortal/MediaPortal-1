@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>746</id>
   <defaultcontrol>2</defaultcontrol>
@@ -9,7 +9,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>720</width>
       <height>576</height>
     </control>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>602</id>
@@ -61,7 +61,7 @@
       <fillbgxoff>0</fillbgxoff>
       <fillbgyoff>0</fillbgyoff>
       <filltexture1>osd_progress_mid_red.png</filltexture1>
-      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture2>osd_progress_mid_green.png</filltexture2>
       <filltexture3>osd_progress_mid_orange.png</filltexture3>
       <fillheight>16</fillheight>
       <label>#TV.Record.percent1</label>
@@ -107,7 +107,7 @@
       <width>168</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0">visible</animation>
     </control>
@@ -120,7 +120,7 @@
       <width>168</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0">visible</animation>
     </control>
@@ -133,7 +133,7 @@
       <width>168</width>
       <label>-</label>
       <font>font14</font>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
       <animation effect="zoom" start="100,100" end="120,120" time="0">visible</animation>
     </control>
@@ -350,6 +350,18 @@
       <imageHeight>3</imageHeight>
       <texture>volume.states.png</texture>
       <visible>no</visible>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>9999</id>
+      <posX>703</posX>
+      <posY>508</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
     </control>
   </controls>
 </window>

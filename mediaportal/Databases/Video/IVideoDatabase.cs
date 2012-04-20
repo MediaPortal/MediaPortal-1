@@ -42,6 +42,7 @@ namespace MediaPortal.Video.Database
     // Genre
     int AddGenre(string strGenre1);
     void GetGenres(ArrayList genres);
+    string GetGenreById(int genreId);
     void AddGenreToMovie(int lMovieId, int lGenreId);
     void DeleteGenre(string genre);
     void RemoveGenresForMovie(int lMovieId);
@@ -49,6 +50,7 @@ namespace MediaPortal.Video.Database
     // User groups
     int AddUserGroup(string strUserGroup1);
     void GetUserGroups(ArrayList userGroups);
+    string GetUserGroupById(int groupId);
     void GetMovieUserGroups(int movieId, ArrayList userGroups);
     string GetUserGroupRule(string group);
     void AddUserGroupRuleByGroupId(int groupId, string rule);
@@ -62,6 +64,7 @@ namespace MediaPortal.Video.Database
     // Actors
     int AddActor(string strActorImdbId, string strActorName);
     void GetActors(ArrayList actors);
+    string GetActorNameById(int actorId);
     void GetActorByName(string actorName, ArrayList actors);
     void GetActorsByMovieID(int idMovie, ref ArrayList actors);
     string GetRoleByMovieAndActorId(int lMovieId, int lActorId);
@@ -129,7 +132,7 @@ namespace MediaPortal.Video.Database
     void GetMoviesByYear(string strYear, ref ArrayList movies);
     void GetMoviesByPath(string strPath1, ref ArrayList movies);
     void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable, bool genreTable, bool usergroupTable);
-    void GetIndexByFilter(string sql, out ArrayList movieList);
+    void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList);
 
     // CD/DVD label
     void SetDVDLabel(int lMovieId, string strDVDLabel1);

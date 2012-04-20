@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -122,6 +122,11 @@ namespace MediaPortal.Video.Database
       _database.GetGenres(genres);
     }
 
+    public static string GetGenreById(int genreId)
+    {
+      return _database.GetGenreById(genreId);
+    }
+
     public static void AddGenreToMovie(int lMovieId, int lGenreId)
     {
       _database.AddGenreToMovie(lMovieId, lGenreId);
@@ -145,6 +150,11 @@ namespace MediaPortal.Video.Database
     public static void GetUserGroups(ArrayList userGroups)
     {
       _database.GetUserGroups(userGroups);
+    }
+
+    public static string GetUserGroupById(int groupId)
+    {
+      return _database.GetUserGroupById(groupId);
     }
 
     public static void GetMovieUserGroups(int movieId, ArrayList userGroups)
@@ -200,6 +210,11 @@ namespace MediaPortal.Video.Database
     public static void GetActors(ArrayList actors)
     {
       _database.GetActors(actors);
+    }
+
+    public static string GetActorNameById(int actorId)
+    {
+      return _database.GetActorNameById(actorId);
     }
 
     // Get actor by name
@@ -447,9 +462,9 @@ namespace MediaPortal.Video.Database
       _database.GetMoviesByFilter(sql, out movies, actorTable, movieinfoTable, genreTable, usergroupTable);
     }
 
-    public static void GetIndexByFilter(string sql, out ArrayList movieList)
+    public static void GetIndexByFilter(string sql, bool filterNonWordChar, out ArrayList movieList)
     {
-      _database.GetIndexByFilter(sql, out movieList);
+      _database.GetIndexByFilter(sql, filterNonWordChar, out movieList);
     }
 
     public static void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
@@ -560,6 +575,17 @@ namespace MediaPortal.Video.Database
     public static void GetVideoFiles(string path, ref ArrayList availableFiles)
     {
       _database.GetVideoFiles(path, ref availableFiles);
+    }
+
+    /// <summary>
+    /// Returns common non word characters including numbers
+    /// </summary>
+    /// <returns></returns>
+    public static string NonwordCharacters()
+    {
+      string characters =
+        @"'1','2','3','4','5','6','7','8','9','''','(',')','[',']','{','}','""','!','#','$','%','&','/','+','-','<','>','.',',',':',';','§','|','_','\','@','€','~','^','ˇ','½','*'";
+      return characters;
     }
   }
 }

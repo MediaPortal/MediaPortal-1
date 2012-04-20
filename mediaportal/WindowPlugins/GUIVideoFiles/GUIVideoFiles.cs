@@ -1960,7 +1960,29 @@ namespace MediaPortal.GUI.Video
             // Need to fake movie to see it's properties (id = 0 is not used in vdb for movies)
             movie.Path = path;
             movie.File = nfoFile;
-            movie.ID = 0;
+            int movieId = VideoDatabase.GetMovieId(filename);
+            
+            if (movieId < 0)
+            {
+              movie.ID = 0;
+            }
+            else
+            {
+              movie.ID = movieId;
+
+              #region Watched status
+
+              int percent = 0;
+              int watchedCount = 0;
+              VideoDatabase.GetmovieWatchedStatus(movieId, out percent, out watchedCount);
+
+              if (watchedCount > 0)
+              {
+                movie.Watched = 1;
+              }
+
+              #endregion
+            }
 
             #endregion
 
@@ -2079,7 +2101,7 @@ namespace MediaPortal.GUI.Video
             if (nodeRating != null)
             {
               double rating = 0;
-              if (Double.TryParse(nodeRating.InnerText, out rating))
+              if (Double.TryParse(nodeRating.InnerText.Replace(".", ","), out rating))
               {
                 movie.Rating = (float)rating;
 

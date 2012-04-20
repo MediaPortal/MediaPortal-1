@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>709</id>
   <defaultcontrol>24</defaultcontrol>
@@ -10,8 +10,6 @@
     <import>common.settings.xml</import>
     <control>
       <type>group</type>
-      
-      
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <posX>55</posX>
       <posY>150</posY>
@@ -23,8 +21,6 @@
     </control>
     <control>
       <type>group</type>
-      
-      
       <layout>GridLayout(2, 6, 52, 8, 1)</layout>
       <posX>55</posX>
       <posY>190</posY>
