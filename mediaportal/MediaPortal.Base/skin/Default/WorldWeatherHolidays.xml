@@ -7,11 +7,11 @@
       <description>Location label</description>
       <type>label</type>
       <id>0</id>
-      <posX>33</posX>
-      <posY>21</posY>
+      <posX>16</posX>
+      <posY>8</posY>
       <width>337</width>
       <label>#(L(8))  #WorldWeather.TranslationHoliday/#WorldWeather.TranslationSeason</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>left</align>
       <textcolor>white</textcolor>
       <visible>string.equals(#WorldWeather.View,Calendar)</visible>
