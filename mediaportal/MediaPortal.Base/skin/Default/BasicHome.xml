@@ -189,7 +189,7 @@
         <visible>!plugin.isenabled(World Weather)</visible>
       </control>
     </control>
-    <!--control>
+    <control>
       <type>multiimage</type>
       <id>0</id>
       <posX>297</posX>
@@ -204,7 +204,7 @@
       <keepaspectratio>yes</keepaspectratio>
       <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
       <visible>!player.hasvideo</visible>
-    </control-->
+    </control>
     <import>common.time.xml</import>
     <!--     *******************************************************************************************  -->
     <!--     *************************             ACTION MENU          ********************************  -->
