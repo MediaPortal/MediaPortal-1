@@ -92,6 +92,64 @@ namespace TvPlugin
       }
     }
 
+    protected void RenderGenreKey()
+    {
+      GUIImage imgGenreColor = (GUIImage)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR);
+      GUILabelControl labelGenreName = (GUILabelControl)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
+
+      // Do not render the key if the template controls are not present or are specified as not visible.
+      if (imgGenreColor == null || labelGenreName == null || !imgGenreColor.Visible)
+      {
+        return;
+      }
+
+      int xpos, i = 0;
+      int xoffset = 0;
+
+      var genreKeys = _genreColorsOnLater.Keys.ToList();
+      genreKeys.Sort();
+
+      // Loop through genre names.
+      foreach (var genreName in genreKeys)
+	    {
+        xpos = imgGenreColor.XPosition + xoffset;
+
+        GUIImage img = GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + (2 * i)) as GUIImage;
+        if (img == null)
+        {
+          img = new GUIImage(GetID, (int)Controls.GENRE_COLOR_KEY_PAIR + (2 * i), xpos, imgGenreColor.YPosition, imgGenreColor.Width,
+                             imgGenreColor.Height, imgGenreColor.FileName, 0x0);
+          img.AllocResources();
+          GUIControl cntl = (GUIControl)img;
+          Add(ref cntl);
+        }
+        img.IsVisible = true;
+        img.ColourDiffuse = _genreColorsOnLater[genreName];
+        img.OverlayFileName = imgGenreColor.OverlayFileName;
+        img.SetPosition(xpos, imgGenreColor.YPosition);
+        img.DoUpdate();
+
+        GUILabelControl label = GetControl(((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i)) as GUILabelControl;
+        if (label == null)
+        {
+          label = new GUILabelControl(GetID, ((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i), 0, 0, labelGenreName.Width,
+                                      labelGenreName.Height, labelGenreName.FontName, String.Empty,
+                                      labelGenreName.TextColor, labelGenreName.TextAlignment, labelGenreName.TextVAlignment, false,
+                                      labelGenreName.ShadowAngle, labelGenreName.ShadowDistance, labelGenreName.ShadowColor);
+          label.AllocResources();
+          GUIControl cntl = (GUIControl)label;
+          this.Add(ref cntl);
+        }
+        label.Label = genreName;
+        label.SetPosition(xpos + imgGenreColor.Width + 10, labelGenreName.YPosition);
+        label.IsVisible = true;
+
+        // Compute position of the next key.
+        xoffset += imgGenreColor.Width * 3 + label.TextWidth;
+        i++;
+      }
+    }
+
     protected void Update(bool selectCurrentShow)
     {
       lock (this)
@@ -487,6 +545,7 @@ namespace TvPlugin
           }
         }
         UpdateVerticalScrollbar();
+        RenderGenreKey();
       }
     }
 
@@ -551,7 +610,8 @@ namespace TvPlugin
       BUTTON_PROGRAM_RECORD = 38,
       BUTTON_PROGRAM_PARTIAL_RECORD = 39,
 
-      CHANNEL_GROUP_BUTTON = 100
+      CHANNEL_GROUP_BUTTON = 100,
+      GENRE_COLOR_KEY_PAIR = 110 // first of collection of pairs; image=110, label=111, ...
     } ;
 
     #endregion

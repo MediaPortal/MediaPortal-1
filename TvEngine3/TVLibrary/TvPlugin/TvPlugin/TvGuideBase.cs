@@ -182,7 +182,7 @@ namespace TvPlugin
             _guideColorsLoaded = LoadGuideColors(xmlreader);
           }
         }
-    }
+      }
 
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\media\tvguide_recButton_Focus_middle.png"));
@@ -290,7 +290,6 @@ namespace TvPlugin
       // If only one value is provided then that value is used for both.
       long color0;
       long color1;
-      int propertyIndex = 0;
 
       foreach (string genre in _genreList)
       {
@@ -311,12 +310,7 @@ namespace TvPlugin
             _genreColorsOnNow.Add(genre, color0);
             _genreColorsOnLater.Add(genre, color1);
           }
-
-          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre." + propertyIndex + ".Name", genre);
-          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre." + propertyIndex + ".Color", String.Format("{0:X}", color0));
-          propertyIndex++;
         }
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre.Count", propertyIndex.ToString());
       }
 
       return _genreColorsOnNow.Count > 0;

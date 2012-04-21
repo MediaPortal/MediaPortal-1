@@ -149,6 +149,7 @@ namespace MediaPortal.Configuration.Sections
     protected long _guideColorBorderHighlight = 0;
     protected IList<string> _allProgramGenres;
     protected List<string> _genreList = new List<string>();
+    protected List<string> _genresToBeRemoved = new List<string>();
     protected IDictionary<string, string> _genreMap = new Dictionary<string, string>();
     protected IDictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     private TabPage tabGuideOptions;
@@ -222,6 +223,12 @@ namespace MediaPortal.Configuration.Sections
 
     private void SaveGenreMap(Settings xmlwriter)
     {
+      // Remove deleted genre names.
+      foreach (var genre in _genresToBeRemoved)
+      {
+        xmlwriter.RemoveEntry("genremap", genre);
+      }
+
       // Each genre map entry is a csv list of "program" genre names (those that may be compared with the genre from the program listings).
       string programGenreCsv;
       foreach (var genre in _genreList)
@@ -308,6 +315,12 @@ namespace MediaPortal.Configuration.Sections
       xmlwriter.SetValue("tvguidecolors", "guidecolorprogramended", String.Format("{0:X8}", (uint)_guideColorProgramEnded));
       xmlwriter.SetValue("tvguidecolors", "guidecolorborderhighlight", String.Format("{0:X8}", (uint)_guideColorBorderHighlight));
       xmlwriter.SetValue("tvguidecolors", "defaultgenre", String.Format("{0:X8}", (uint)_guideColorProgramOnNow) + "," + String.Format("{0:X8}", (uint)_guideColorProgramOnLater));
+
+      // Remove colors associated with deleted genre names.
+      foreach (var genre in _genresToBeRemoved)
+      {
+        xmlwriter.RemoveEntry("tvguidecolors", genre);
+      }
 
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
       // If only one value is provided then that value is used for both.
@@ -2400,6 +2413,9 @@ namespace MediaPortal.Configuration.Sections
         {
           _genreList.Remove(genre.Text);
           listViewGuideGenres.Items.Remove(genre);
+
+          // Queue this genre and it's colors to be removed during save.
+          _genresToBeRemoved.Add(genre.Text);
 
           // Remove entries from the genre map.
           foreach (var genreMapEntry in _genreMap)
