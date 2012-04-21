@@ -177,7 +177,7 @@
         <height>112</height>
         <texture>list_sub_focus.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>Updates label</description>
@@ -189,7 +189,7 @@
         <label>#(L(4558)):</label>
         <align>left</align>
         <font>font12</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ff6FAFE1</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -202,7 +202,7 @@
         <height>0</height>
         <texture>hbar1white.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>TVRecordings updates</description>
@@ -214,7 +214,7 @@
         <label>#fanarthandler.tvrecordings.latest1.title - #fanarthandler.tvrecordings.latest1.genre  (#fanarthandler.tvrecordings.latest1.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -227,7 +227,7 @@
         <label>#fanarthandler.tvrecordings.latest2.title - #fanarthandler.tvrecordings.latest2.genre  (#fanarthandler.tvrecordings.latest2.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -240,7 +240,7 @@
         <label>#fanarthandler.tvrecordings.latest3.title - #fanarthandler.tvrecordings.latest3.genre  (#fanarthandler.tvrecordings.latest3.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -254,7 +254,7 @@
         <texture mask="picturethumbmask.png">#fanarthandler.tvrecordings.latest1.thumb</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -268,7 +268,7 @@
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -282,7 +282,7 @@
         <texture mask="picturethumbmask.png">#fanarthandler.tvrecordings.latest2.thumb</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -296,7 +296,7 @@
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>TVRecordings Updates</description>
@@ -309,7 +309,7 @@
         <texture mask="picturethumbmask.png">#fanarthandler.tvrecordings.latest3.thumb</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>TVRecordings Updates cover</description>
@@ -322,7 +322,7 @@
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Fanart Handler)+string.equals(#fanarthandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <!--     *******************************************************************************************  -->
       <!--     *************************   RECENTLY ADDED - MUSIC   **************************************  -->
