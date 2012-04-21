@@ -37,8 +37,8 @@
       <height>58</height>
       <texture>mplogo1.png</texture>
       <colordiffuse>90ffffff</colordiffuse>
-      <animation effect="zoom" start="20,20" end="100,100" center="640,360" time="70">WindowOpen</animation>
-      <animation effect="zoom" start="100,100" end="1,1" center="640,360" time="70">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
     </control>
     <!--     *******************************************************************************************  -->
     <!--     *************************     Horizontal 3D-Menu Buttons     ******************************  -->
@@ -202,6 +202,8 @@
       <randomize>false</randomize>
       <keepaspectratio>yes</keepaspectratio>
       <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <visible>!player.hasvideo</visible>
     </control>
     <import>common.time.xml</import>
