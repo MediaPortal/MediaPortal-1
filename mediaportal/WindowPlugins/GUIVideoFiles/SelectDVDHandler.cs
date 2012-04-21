@@ -362,11 +362,14 @@ namespace MediaPortal.GUI.Video
               {
                 string fPic = string.Empty;
                 string fPicTbn = string.Empty;
+                string path = pItem.Path;
+                Util.Utils.RemoveStackEndings(ref path);
+                Util.Utils.RemoveStackEndings(ref file);
                 
                 if (isDvdBdDirectory)
                 {
-                  fPic = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(pItem.Path)+ ".jpg";
-                  fPicTbn = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(pItem.Path) + ".tbn";
+                  fPic = path + @"\" + Path.GetFileNameWithoutExtension(path)+ ".jpg";
+                  fPicTbn = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
                 }
                 else
                 {

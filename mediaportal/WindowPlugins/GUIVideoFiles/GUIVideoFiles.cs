@@ -1850,6 +1850,7 @@ namespace MediaPortal.GUI.Video
       try
       {
         string nfoFile = string.Empty;
+        bool isDvdBdFolder = false;
 
         if (filename.ToUpperInvariant().Contains("VIDEO_TS.IFO") || filename.ToUpperInvariant().Contains("INDEX.BDMV"))
         {
@@ -1859,12 +1860,16 @@ namespace MediaPortal.GUI.Video
           {
             nfoFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".nfo";
           }
+
+          isDvdBdFolder = true;
         }
         else
         {
           nfoFile = Path.ChangeExtension(filename, ".nfo");  
         }
         
+        Util.Utils.RemoveStackEndings(ref nfoFile);
+
         if (!File.Exists(nfoFile))
         {
           return;
@@ -2204,8 +2209,17 @@ namespace MediaPortal.GUI.Video
             // Poster
             if (nodePoster != null)
             {
-              string thumbJpgFile = path + @"\" + nodePoster.InnerText;
-              string thumbTbnFile = path + @"\" + nodePoster.InnerText;
+              string thumbJpgFile = string.Empty;
+              string thumbTbnFile = string.Empty;
+              string thumbJpgFileLocal = string.Empty;
+              string thumbTbnFileLocal = string.Empty;
+              filename = Path.GetFileNameWithoutExtension(filename);
+              Util.Utils.RemoveStackEndings(ref filename);
+
+              thumbJpgFile = path + @"\" + nodePoster.InnerText;
+              thumbTbnFile = path + @"\" + nodePoster.InnerText;
+              thumbJpgFileLocal = path + @"\" + filename + ".jpg";
+              thumbTbnFileLocal = path + @"\" + filename + ".tbn";
               
               if (File.Exists(thumbJpgFile))
               {
@@ -2214,6 +2228,14 @@ namespace MediaPortal.GUI.Video
               else if (File.Exists(thumbTbnFile))
               {
                 movie.ThumbURL = thumbTbnFile;
+              }
+              else if (File.Exists(thumbJpgFileLocal))
+              {
+                movie.ThumbURL = thumbJpgFileLocal;
+              }
+              else if (File.Exists(thumbTbnFileLocal))
+              {
+                movie.ThumbURL = thumbTbnFileLocal;
               }
             }
 
@@ -2272,22 +2294,32 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#groupmovielist", string.Empty);
       
       _currentSelectedItem = facadeLayout.SelectedListItemIndex;
-      string filename = string.Empty;
+      string path = string.Empty;
+      string fileName = string.Empty;
 
-      if (item.Path != ".." && File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+      if (Util.Utils.IsVideo(item.Path))
       {
-        filename = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
-      }
-      else if (item.Path != ".." && File.Exists(item.Path + @"\BDMV\index.bdmv"))
-      {
-        filename = item.Path + @"\BDMV\index.bdmv";
+        Util.Utils.Split(item.Path, out path, out fileName);
       }
       else
       {
-        filename = item.Path;
+        path = item.Path;
+      }
+      
+      if (item.Path != ".." && File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+      {
+        fileName = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
+      }
+      else if (item.Path != ".." && File.Exists(item.Path + @"\BDMV\index.bdmv"))
+      {
+        fileName = item.Path + @"\BDMV\index.bdmv";
+      }
+      else
+      {
+        fileName = item.Path;
       }
 
-      SetMovieProperties(item.Path, filename);
+      SetMovieProperties(path, fileName);
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
 
       if (filmstrip != null)

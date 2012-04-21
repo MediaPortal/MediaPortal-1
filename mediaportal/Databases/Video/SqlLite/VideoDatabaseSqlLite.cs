@@ -4904,46 +4904,99 @@ namespace MediaPortal.Video.Database
                                                 (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
                 }
               }
-              else
+              else if (nodePoster.InnerText.StartsWith("http:"))
               {
-                if (nodePoster.InnerText.StartsWith("http:"))
+                try
                 {
-                  try
+                  string imageUrl = nodePoster.InnerText;
+                  if (imageUrl.Length > 0)
                   {
-                    string imageUrl = nodePoster.InnerText;
-                    if (imageUrl.Length > 0)
+                    string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+                    string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+                    if (!File.Exists(coverArtImage))
                     {
-                      string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-                      string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
-                      if (!File.Exists(coverArtImage))
+                      string imageExtension = Path.GetExtension(imageUrl);
+                      if (imageExtension == string.Empty)
                       {
-                        string imageExtension = Path.GetExtension(imageUrl);
-                        if (imageExtension == string.Empty)
-                        {
-                          imageExtension = ".jpg";
-                        }
-                        string temporaryFilename = "temp";
-                        temporaryFilename += imageExtension;
-                        Util.Utils.FileDelete(temporaryFilename);
-
-                        Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
-                        
-                        if (File.Exists(temporaryFilename))
-                        {
-                          if (Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution,
-                                                           (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
-                          {
-                            Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
-                                                         (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
-                          }
-                        }
-
-                        Util.Utils.FileDelete(temporaryFilename);
+                        imageExtension = ".jpg";
                       }
+                      string temporaryFilename = "temp";
+                      temporaryFilename += imageExtension;
+                      Util.Utils.FileDelete(temporaryFilename);
+
+                      Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
+                        
+                      if (File.Exists(temporaryFilename))
+                      {
+                        if (Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution,
+                                                          (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+                        {
+                          Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
+                                                        (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+                        }
+                      }
+
+                      Util.Utils.FileDelete(temporaryFilename);
                     }
                   }
-                  catch (Exception) { }
-                  movie.ThumbURL = nodePoster.InnerText;
+                }
+                catch (Exception) { }
+                movie.ThumbURL = nodePoster.InnerText;
+              }
+              else
+              {
+                if (movie.ThumbURL == string.Empty)
+                {
+                  // IMPAwards
+                  IMPAwardsSearch impSearch = new IMPAwardsSearch();
+                  impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+
+                  if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+                  {
+                    movie.ThumbURL = impSearch[0];
+                  }
+
+                  // If no IMPAwards lets try TMDB 
+                  TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
+
+                  if (impSearch.Count == 0)
+                  {
+                    tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+
+                    if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
+                    {
+                      movie.ThumbURL = tmdbSearch[0];
+                    }
+                  }
+                  // All fail, last try IMDB
+                  if (impSearch.Count == 0 && tmdbSearch.Count == 0)
+                  {
+                    IMDBSearch imdbSearch = new IMDBSearch();
+                    imdbSearch.SearchCovers(movie.IMDBNumber, true);
+
+                    if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+                    {
+                      movie.ThumbURL = imdbSearch[0];
+                    }
+                  }
+                }
+
+                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+
+                if (movie.ID >= 0)
+                {
+                  if (!string.IsNullOrEmpty(movie.ThumbURL))
+                  {
+                    Util.Utils.FileDelete(largeCoverArt);
+                    Util.Utils.FileDelete(coverArt);
+                  }
+                  
+                  // Save cover thumbs
+                  if (!string.IsNullOrEmpty(movie.ThumbURL))
+                  {
+                    IMDBFetcher.DownloadCoverArt(Thumbs.MovieTitle, movie.ThumbURL, titleExt);
+                  }
                 }
               }
             }
