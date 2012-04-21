@@ -1004,6 +1004,11 @@
   	<String id="1216">Disks</String>
     <String id="1220">Sortieren: Erstellungsdatum</String>
     <String id="1221">Sortieren: Änderungsdatum</String>
+    <String id="1222">Gruppen</String>
+    <String id="1223">Vorhandene Wiedergabeliste gefunden</String>
+    <String id="1224">Wollen Sie die aktuelle Wiedergabeliste leeren?</String>
+    <String id="1225">An Wiedergabeliste anhängen</String>
+    <String id="1226">Alles an Wiedergabeliste anhängen</String>
     <String id="1230">Hinzugefügt am:</String>
     <String id="1231">Zuletzt gespielt:</String>
     <String id="1240">Inhalt sperren</String>
