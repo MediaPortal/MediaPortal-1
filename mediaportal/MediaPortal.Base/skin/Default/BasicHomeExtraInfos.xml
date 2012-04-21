@@ -913,6 +913,6 @@
         <wrapString>***</wrapString>
         <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
       </control>
-    </cpntrol>
+    </control>
   </controls>
 </window>
