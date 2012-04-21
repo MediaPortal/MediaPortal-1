@@ -15,13 +15,11 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
       <control>
         <type>image</type>
         <id>0</id>
-        <posX>568</posX>
-        <posY>500</posY>
+        <posX>368</posX>
+        <posY>300</posY>
         <width>622</width>
         <height>212</height>
         <texture>dialog_background.png</texture>
@@ -30,18 +28,18 @@
         <description>Heading text label</description>
         <type>label</type>
         <id>3</id>
-        <posX>640</posX>
-        <posY>531</posY>
+        <posX>420</posX>
+        <posY>322</posY>
         <label>181</label>
-        <font>font10</font>
+        <font>font12</font>
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>
         <description>OK button</description>
         <type>button</type>
         <id>4</id>
-        <posX>1093</posX>
-        <posY>522</posY>
+        <posX>893</posX>
+        <posY>322</posY>
         <width>50</width>
         <height>40</height>
         <textureFocus>dialogue_ok_focus.png</textureFocus>
@@ -56,8 +54,8 @@
         <description>logo</description>
         <type>image</type>
         <id>5</id>
-        <posX>622</posX>
-        <posY>562</posY>
+        <posX>422</posX>
+        <posY>362</posY>
         <width>124</width>
         <height>87</height>
         <texture>#thumb</texture>
@@ -69,8 +67,8 @@
         <description>textarea</description>
         <type>textbox</type>
         <id>6</id>
-        <posX>755</posX>
-        <posY>556</posY>
+        <posX>525</posX>
+        <posY>356</posY>
         <width>391</width>
         <height>112</height>
         <spinPosX>1031</spinPosX>
