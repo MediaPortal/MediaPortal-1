@@ -76,7 +76,7 @@
         <fadetime>1000</fadetime>
         <loop>yes</loop>
         <randomize>false</randomize>
-        <keepaspectratio>yes</keepaspectratio>
+        <keepaspectratio>no</keepaspectratio>
         <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
         <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
         <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
@@ -93,7 +93,7 @@
         <fadetime>1000</fadetime>
         <loop>yes</loop>
         <randomize>false</randomize>
-        <keepaspectratio>yes</keepaspectratio>
+        <keepaspectratio>no</keepaspectratio>
         <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
         <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
         <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
@@ -243,7 +243,7 @@
       <fadetime>1000</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
@@ -261,7 +261,7 @@
       <fadetime>1000</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
@@ -279,7 +279,7 @@
       <fadetime>1000</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
