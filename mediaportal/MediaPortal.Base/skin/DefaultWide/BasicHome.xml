@@ -41,13 +41,16 @@
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
     </control>
     <!--     *******************************************************************************************  -->
-    <!--     *************************     Horizontal 3D-Menu Buttons     ******************************  -->
+    <!--     *************************     Horizontal 3D-Menu      *************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
       <description>group element</description>
       <type>group</type>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <!--     *******************************************************************************************  -->
+      <!--     *************************     MUSIC COVERS     ********************************************  -->
+      <!--     *******************************************************************************************  -->
       <control>
         <description>music logo</description>
         <type>image</type>
@@ -60,6 +63,40 @@
         <centered>yes</centered>
         <texture mask="picturethumbmask.png">missing_coverart.png</texture>
         <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
+      </control>
+      <control>
+        <type>multiimage</type>
+        <id>0</id>
+        <posX>847</posX>
+        <posY>342</posY>
+        <width>118</width>
+        <height>118</height>
+        <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Music\Albums</imagepath>
+        <timeperimage>3000</timeperimage>
+        <fadetime>1000</fadetime>
+        <loop>yes</loop>
+        <randomize>false</randomize>
+        <keepaspectratio>yes</keepaspectratio>
+        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+        <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      </control>
+      <control>
+        <type>multiimage</type>
+        <id>0</id>
+        <posX>847</posX>
+        <posY>342</posY>
+        <width>118</width>
+        <height>118</height>
+        <imagepath>C:\Documents and Settings\All Users\Team MediaPortal\MediaPortal\thumbs\Music\Albums</imagepath>
+        <timeperimage>3000</timeperimage>
+        <fadetime>1000</fadetime>
+        <loop>yes</loop>
+        <randomize>false</randomize>
+        <keepaspectratio>yes</keepaspectratio>
+        <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
+        <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+        <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       </control>
       <control>
         <description>music logo</description>
@@ -89,6 +126,9 @@
         <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
         <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(31)</visible>
       </control>
+      <!--     *******************************************************************************************  -->
+      <!--     *************************     Horizontal 3D-Menu Buttons     ******************************  -->
+      <!--     *******************************************************************************************  -->
       <control Style="BasicHomeButton">
         <description>BasicHome Pictures</description>
         <type>button</type>
@@ -188,6 +228,9 @@
         <visible>!plugin.isenabled(World Weather)</visible>
       </control>
     </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************  MULTIIMAGES SHOWN IN TV BUTTON  ********************************  -->
+    <!--     *******************************************************************************************  -->
     <control>
       <type>multiimage</type>
       <id>0</id>
@@ -196,6 +239,42 @@
       <width>210</width>
       <height>118</height>
       <imagepath>BasicHome TV</imagepath>
+      <timeperimage>3000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>false</randomize>
+      <keepaspectratio>yes</keepaspectratio>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <visible>!player.hasvideo</visible>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>0</id>
+      <posX>528</posX>
+      <posY>338</posY>
+      <width>210</width>
+      <height>118</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\tv\Recorded</imagepath>
+      <timeperimage>3000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>false</randomize>
+      <keepaspectratio>yes</keepaspectratio>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <visible>!player.hasvideo</visible>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>0</id>
+      <posX>528</posX>
+      <posY>338</posY>
+      <width>210</width>
+      <height>118</height>
+      <imagepath>C:\Documents and Settings\All Users\Team MediaPortal\MediaPortal\thumbs\tv\Recorded</imagepath>
       <timeperimage>3000</timeperimage>
       <fadetime>1000</fadetime>
       <loop>yes</loop>
