@@ -136,6 +136,9 @@ private:
   UINT64              m_ullHwClock[CLOCK_DATA_SIZE];
   UINT64              m_ullHwQpc[CLOCK_DATA_SIZE];
   UINT64              m_dClockDataCollectionCount;
+  UINT64              m_ullPrevPos;
+  UINT64              m_ullPrevQpc;
+  INT64               m_llPosError;
   int                 m_dClockPosIn;
   int                 m_dClockPosOut;
 
