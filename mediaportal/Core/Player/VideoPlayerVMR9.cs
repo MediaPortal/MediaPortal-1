@@ -495,7 +495,7 @@ namespace MediaPortal.Player
         string extension = Path.GetExtension(m_strCurrentFile).ToLowerInvariant();
 
         //Get video/audio Info
-        //_mediaInfo = new MediaInfoWrapper(m_strCurrentFile);
+        _mediaInfo = new MediaInfoWrapper(m_strCurrentFile);
 
         //Manually add codecs based on file extension if not in auto-settings
         // switch back to directx fullscreen mode
@@ -1146,12 +1146,12 @@ namespace MediaPortal.Player
 
     protected string MatchFilters(string format)
     {
-      //string AACCodec = "AAC";
-      //string VC1Codec = "VC-1";
-      
+      string AACCodec = "AAC";
+      string VC1Codec = "VC-1";
+
       //Set codec bool to false
       ResetCodecBool();
-      
+
       IPin pPin = FileSync ? DirectShowUtil.FindPin(Splitter, PinDirection.Output, format) : DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, format);
 
       if (pPin != null)
@@ -1160,11 +1160,14 @@ namespace MediaPortal.Player
         DirectShowUtil.ReleaseComObject(pPin); pPin = null;
       }
 
-      /*//Detection of Interlaced Video, true for all type except .bdmv .mpls
+      //Detection of Interlaced Video, true for all type except .bdmv .mpls
       if (_mediaInfo.IsInterlaced && (string.Equals(_mediaInfo.VideoCodec, VC1Codec)))
+      {
         vc1ICodec = true;
+        vc1Codec = false;
+      }
       //Detection of VC1 Video if Splitter detection Failed, true for all type except .bdmv .mpls
-      if (string.Equals(_mediaInfo.VideoCodec, VC1Codec))
+      else if (string.Equals(_mediaInfo.VideoCodec, VC1Codec))
         vc1Codec = true;
       //Detection of AAC Audio
       if (_mediaInfo.AudioCodec.Contains(AACCodec))
@@ -1172,7 +1175,7 @@ namespace MediaPortal.Player
       if (_mediaInfo.VideoCodec.Equals("AVC"))
         h264Codec = true;
       if (_mediaInfo.VideoCodec.Equals("XVID") || _mediaInfo.VideoCodec.Equals("DIVX") || _mediaInfo.VideoCodec.Equals("DX50"))
-        xvidCodec = true;*/
+        xvidCodec = true;
 
       //Video Part
       if (format == "Video")
@@ -1181,13 +1184,13 @@ namespace MediaPortal.Player
         {
           return filterConfig.VideoH264;
         }
-        else if (vc1Codec)
-        {
-          return filterConfig.VideoVC1;
-        }
         else if (vc1ICodec)
         {
           return filterConfig.VideoVC1I;
+        }
+        else if (vc1Codec)
+        {
+          return filterConfig.VideoVC1;
         }
         else if (xvidCodec)
         {
