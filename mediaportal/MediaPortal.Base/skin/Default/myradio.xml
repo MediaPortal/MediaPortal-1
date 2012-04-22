@@ -35,7 +35,7 @@
         <type>image</type>
         <posX>14</posX>
         <posY>62</posY>
-        <width>206</width>
+        <width>230</width>
         <height>472</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>

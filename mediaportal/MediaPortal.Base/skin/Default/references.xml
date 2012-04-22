@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <controls>
   <skin>
     <width>720</width>
     <height>576</height>
     <version>1.2.0.0</version>
-    <author>The Fantastic Four (MP Design Team: Harley, cul8er, Tgx, catavolt)</author>
+    <author>The Fantastic Four (cul8er, Tgx, ysmp, catavolt)</author>
   </skin>
   <style Name="NoShadow">
     <shadowAngle>0</shadowAngle>
@@ -71,9 +71,9 @@
     <id>0</id>
     <posX>299</posX>
     <posY>200</posY>
-    <width>146</width>
+    <width>170</width>
     <height>32</height>
-    <textXOff>5</textXOff>
+    <textXOff>8</textXOff>
     <textYOff>3</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
@@ -95,9 +95,9 @@
     <id>0</id>
     <posX>299</posX>
     <posY>200</posY>
-    <width>146</width>
+    <width>170</width>
     <height>32</height>
-    <textXOff>5</textXOff>
+    <textXOff>8</textXOff>
     <textYOff>3</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
@@ -119,7 +119,7 @@
     <id>0</id>
     <posX>54</posX>
     <posY>229</posY>
-    <width>146</width>
+    <width>170</width>
     <height>32</height>
     <label>457</label>
     <textXOff>14</textXOff>
@@ -149,9 +149,9 @@
     <id>0</id>
     <posX>299</posX>
     <posY>200</posY>
-    <width>146</width>
+    <width>170</width>
     <height>32</height>
-    <textXOff>5</textXOff>
+    <textXOff>8</textXOff>
     <textYOff>3</textYOff>
     <textureFocus>togglebutton-on-focus.png</textureFocus>
     <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
@@ -174,9 +174,9 @@
     <description>sort button</description>
     <type>sortbutton</type>
     <id>0</id>
-    <width>146</width>
+    <width>170</width>
     <height>32</height>
-    <textXOff>5</textXOff>
+    <textXOff>8</textXOff>
     <textYOff>3</textYOff>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
@@ -184,10 +184,10 @@
     <textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
     <textureDescending>arrow_round_down_nofocus.png</textureDescending>
     <textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
-    <offsetSortButtonX>123</offsetSortButtonX>
-    <offsetSortButtonY>5</offsetSortButtonY>
-    <offsetSortButtonWidth>30</offsetSortButtonWidth>
-    <offsetSortButtonHeight>30</offsetSortButtonHeight>
+    <offsetSortButtonX>143</offsetSortButtonX>
+    <offsetSortButtonY>3</offsetSortButtonY>
+    <offsetSortButtonWidth>25</offsetSortButtonWidth>
+    <offsetSortButtonHeight>25</offsetSortButtonHeight>
     <font>font12</font>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
@@ -722,7 +722,7 @@
     <description>default check button</description>
     <type>checkbutton</type>
     <id>1</id>
-    <width>146</width>
+    <width>170</width>
     <height>36</height>
     <textXOff>9</textXOff>
     <textYOff>4</textYOff>
