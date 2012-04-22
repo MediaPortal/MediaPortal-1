@@ -176,7 +176,7 @@
         <height>140</height>
         <texture>list_sub_focus.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
-        <visible>control.hasfocus(4)|control.hasfocus(99)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>Updates label</description>
@@ -188,7 +188,7 @@
         <label>#(L(4558)):</label>
         <align>left</align>
         <font>font12</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ff6FAFE1</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -201,7 +201,7 @@
         <height>1</height>
         <texture>hbar1white.png</texture>
         <colordiffuse>80ffffff</colordiffuse>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>TVRecordings updates</description>
@@ -213,7 +213,7 @@
         <label>#latestMediaHandler.tvrecordings.latest1.title - #latestMediaHandler.tvrecordings.latest1.genre  (#latestMediaHandler.tvrecordings.latest1.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -226,7 +226,7 @@
         <label>#latestMediaHandler.tvrecordings.latest2.title - #latestMediaHandler.tvrecordings.latest2.genre  (#latestMediaHandler.tvrecordings.latest2.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -239,7 +239,7 @@
         <label>#latestMediaHandler.tvrecordings.latest3.title - #latestMediaHandler.tvrecordings.latest3.genre  (#latestMediaHandler.tvrecordings.latest3.dateAdded)</label>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -253,7 +253,7 @@
         <texture mask="picturethumbmask.png">#latestMediaHandler.tvrecordings.latest1.thumb</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -267,7 +267,7 @@
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -281,7 +281,7 @@
         <texture mask="picturethumbmask.png">#latestMediaHandler.tvrecordings.latest2.thumb</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
         <textcolor>ivory</textcolor>
       </control>
       <control Style="BasicHomeFade">
@@ -295,7 +295,7 @@
         <texture mask="picturethumbmask.png">Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>TVRecordings Updates</description>
@@ -308,7 +308,7 @@
         <texture mask="picturethumbmask.png">#latestMediaHandler.tvrecordings.latest3.thumb</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <control Style="BasicHomeFade">
         <description>TVRecordings Updates cover</description>
@@ -321,7 +321,7 @@
         <texture>Picturethumbframe.png</texture>
         <align>left</align>
         <font>font11</font>
-        <visible>control.hasfocus(4)|control.hasfocus(99)+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
+        <visible>[control.hasfocus(4)|control.hasfocus(99)]+plugin.isenabled(Latest Media Handler)+string.equals(#latestMediaHandler.tvrecordings.latest.enabled,true)</visible>
       </control>
       <!--     *******************************************************************************************  -->
       <!--     *************************   RECENTLY ADDED - MUSIC   **************************************  -->
