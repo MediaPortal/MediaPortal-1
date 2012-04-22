@@ -353,8 +353,11 @@ void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample, bool initS
           m_rtStart / 10000000.0, rtStart / 10000000.0, m_rtInSampleTime / 10000000.0, currentBias);
       }
       else
+      {
+        m_rtInSampleTime = rtStart;
         Log("CTimeStretchFilter - resyncing in start of stream - m_rtStart: %6.3f rtStart: %6.3f m_rtInSampleTime: %6.3f", 
           m_rtStart / 10000000.0, rtStart / 10000000.0, m_rtInSampleTime / 10000000.0);
+      }
     }
 
     UINT nFrames = pSample->GetActualDataLength() / m_pInputFormat->Format.nBlockAlign;
@@ -498,6 +501,8 @@ DWORD CTimeStretchFilter::ThreadProc()
             double rtProcessedSampleDuration = (double)(nOutFramesTotal) * (double)UNITS / (double)m_pOutputFormat->Format.nSamplesPerSec;
 
             m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
+
+            //Log(m_pClock->DebugData());
           }
         }
       }
