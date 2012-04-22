@@ -82,9 +82,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configAudioRenderer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAudioRenderer.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configAudioRenderer.Location = new System.Drawing.Point(403, 154);
+      this.configAudioRenderer.Location = new System.Drawing.Point(422, 154);
       this.configAudioRenderer.Name = "configAudioRenderer";
-      this.configAudioRenderer.Size = new System.Drawing.Size(54, 21);
+      this.configAudioRenderer.Size = new System.Drawing.Size(35, 21);
       this.configAudioRenderer.TabIndex = 75;
       this.configAudioRenderer.UseVisualStyleBackColor = true;
       this.configAudioRenderer.Click += new System.EventHandler(this.configAudioRenderer_Click);
@@ -93,9 +93,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configDDPlus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDDPlus.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configDDPlus.Location = new System.Drawing.Point(403, 130);
+      this.configDDPlus.Location = new System.Drawing.Point(422, 130);
       this.configDDPlus.Name = "configDDPlus";
-      this.configDDPlus.Size = new System.Drawing.Size(54, 21);
+      this.configDDPlus.Size = new System.Drawing.Size(35, 21);
       this.configDDPlus.TabIndex = 74;
       this.configDDPlus.UseVisualStyleBackColor = true;
       this.configDDPlus.Click += new System.EventHandler(this.configDDPlus_Click);
@@ -104,9 +104,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configAACAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAACAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configAACAudio.Location = new System.Drawing.Point(403, 106);
+      this.configAACAudio.Location = new System.Drawing.Point(422, 106);
       this.configAACAudio.Name = "configAACAudio";
-      this.configAACAudio.Size = new System.Drawing.Size(54, 21);
+      this.configAACAudio.Size = new System.Drawing.Size(35, 21);
       this.configAACAudio.TabIndex = 73;
       this.configAACAudio.UseVisualStyleBackColor = true;
       this.configAACAudio.Click += new System.EventHandler(this.configAACAudio_Click);
@@ -115,9 +115,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configMPEGAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configMPEGAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configMPEGAudio.Location = new System.Drawing.Point(403, 83);
+      this.configMPEGAudio.Location = new System.Drawing.Point(422, 82);
       this.configMPEGAudio.Name = "configMPEGAudio";
-      this.configMPEGAudio.Size = new System.Drawing.Size(54, 21);
+      this.configMPEGAudio.Size = new System.Drawing.Size(35, 21);
       this.configMPEGAudio.TabIndex = 72;
       this.configMPEGAudio.UseVisualStyleBackColor = true;
       this.configMPEGAudio.Click += new System.EventHandler(this.configMPEGAudio_Click);
@@ -126,9 +126,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configH264.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configH264.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configH264.Location = new System.Drawing.Point(403, 48);
+      this.configH264.Location = new System.Drawing.Point(422, 48);
       this.configH264.Name = "configH264";
-      this.configH264.Size = new System.Drawing.Size(54, 21);
+      this.configH264.Size = new System.Drawing.Size(35, 21);
       this.configH264.TabIndex = 71;
       this.configH264.UseVisualStyleBackColor = true;
       this.configH264.Click += new System.EventHandler(this.configH264_Click);
@@ -137,9 +137,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configMPEG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configMPEG.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configMPEG.Location = new System.Drawing.Point(403, 24);
+      this.configMPEG.Location = new System.Drawing.Point(422, 24);
       this.configMPEG.Name = "configMPEG";
-      this.configMPEG.Size = new System.Drawing.Size(54, 21);
+      this.configMPEG.Size = new System.Drawing.Size(35, 21);
       this.configMPEG.TabIndex = 70;
       this.configMPEG.UseVisualStyleBackColor = true;
       this.configMPEG.Click += new System.EventHandler(this.configMPEG_Click);
@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
       this.ddplusAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ddplusAudioCodecComboBox.Location = new System.Drawing.Point(122, 130);
       this.ddplusAudioCodecComboBox.Name = "ddplusAudioCodecComboBox";
-      this.ddplusAudioCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.ddplusAudioCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.ddplusAudioCodecComboBox.Sorted = true;
       this.ddplusAudioCodecComboBox.TabIndex = 5;
       // 
@@ -172,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(122, 82);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
-      this.audioCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.audioCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.audioCodecComboBox.Sorted = true;
       this.audioCodecComboBox.TabIndex = 3;
       // 
@@ -192,7 +192,7 @@ namespace MediaPortal.Configuration.Sections
       this.aacAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.aacAudioCodecComboBox.Location = new System.Drawing.Point(122, 106);
       this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
-      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.aacAudioCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.aacAudioCodecComboBox.Sorted = true;
       this.aacAudioCodecComboBox.TabIndex = 4;
       // 
@@ -204,7 +204,7 @@ namespace MediaPortal.Configuration.Sections
       this.h264videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.h264videoCodecComboBox.Location = new System.Drawing.Point(122, 48);
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
-      this.h264videoCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.h264videoCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.h264videoCodecComboBox.Sorted = true;
       this.h264videoCodecComboBox.TabIndex = 2;
       this.h264videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.h264videoCodecComboBox_SelectedIndexChanged);
@@ -225,7 +225,7 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(122, 24);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
-      this.videoCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.videoCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.videoCodecComboBox.Sorted = true;
       this.videoCodecComboBox.TabIndex = 1;
       this.videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.videoCodecComboBox_SelectedIndexChanged);
@@ -262,7 +262,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(122, 154);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
-      this.audioRendererComboBox.Size = new System.Drawing.Size(278, 21);
+      this.audioRendererComboBox.Size = new System.Drawing.Size(295, 21);
       this.audioRendererComboBox.Sorted = true;
       this.audioRendererComboBox.TabIndex = 6;
       // 

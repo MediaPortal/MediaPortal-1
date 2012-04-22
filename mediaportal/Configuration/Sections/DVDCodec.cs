@@ -154,23 +154,23 @@ namespace MediaPortal.Configuration.Sections
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
           if (availableAudioFilters.Count > 0)
           {
-            bool Mpeg2DecFilterFound = true;
+            bool LAVAudioDecoderFound = true;
             bool DScalerFilterFound = true;
             audioCodec = (string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
-              if (filter.Equals("MPC - MPA Decoder Filter"))
+              if (filter.Equals("LAV Audio Decoder"))
               {
-                Mpeg2DecFilterFound = true;
+                LAVAudioDecoderFound = true;
               }
               if (filter.Equals("DScaler Audio Decoder"))
               {
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound)
+            if (LAVAudioDecoderFound)
             {
-              audioCodec = "MPC - MPA Decoder Filter";
+              audioCodec = "LAV Audio Decoder";
             }
             else if (DScalerFilterFound)
             {
@@ -181,25 +181,25 @@ namespace MediaPortal.Configuration.Sections
         if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool Mpeg2DecFilterFound = false;
+          bool LAVVideoDecoderFound = false;
           bool DScalerFilterFound = false;
           if (availableVideoFilters.Count > 0)
           {
             videoCodec = (string)availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
-              if (filter.Equals("MPC - MPEG-2 Video Decoder (Gabest)"))
+              if (filter.Equals("LAV Video Decoder"))
               {
-                Mpeg2DecFilterFound = true;
+                LAVVideoDecoderFound = true;
               }
               if (filter.Equals("DScaler Mpeg2 Video Decoder"))
               {
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound)
+            if (LAVVideoDecoderFound)
             {
-              videoCodec = "MPC - MPEG-2 Video Decoder (Gabest)";
+              videoCodec = "LAV Video Decoder";
             }
             else if (DScalerFilterFound)
             {
@@ -306,9 +306,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configAudioRenderer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configAudioRenderer.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configAudioRenderer.Location = new System.Drawing.Point(403, 120);
+      this.configAudioRenderer.Location = new System.Drawing.Point(422, 120);
       this.configAudioRenderer.Name = "configAudioRenderer";
-      this.configAudioRenderer.Size = new System.Drawing.Size(54, 21);
+      this.configAudioRenderer.Size = new System.Drawing.Size(35, 21);
       this.configAudioRenderer.TabIndex = 73;
       this.configAudioRenderer.UseVisualStyleBackColor = true;
       this.configAudioRenderer.Click += new System.EventHandler(this.configAudioRenderer_Click);
@@ -317,9 +317,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configDVDAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDVDAudio.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configDVDAudio.Location = new System.Drawing.Point(403, 96);
+      this.configDVDAudio.Location = new System.Drawing.Point(422, 96);
       this.configDVDAudio.Name = "configDVDAudio";
-      this.configDVDAudio.Size = new System.Drawing.Size(54, 21);
+      this.configDVDAudio.Size = new System.Drawing.Size(35, 21);
       this.configDVDAudio.TabIndex = 72;
       this.configDVDAudio.UseVisualStyleBackColor = true;
       this.configDVDAudio.Click += new System.EventHandler(this.configDVDAudio_Click);
@@ -328,9 +328,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configDVDVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDVDVideo.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configDVDVideo.Location = new System.Drawing.Point(403, 72);
+      this.configDVDVideo.Location = new System.Drawing.Point(422, 72);
       this.configDVDVideo.Name = "configDVDVideo";
-      this.configDVDVideo.Size = new System.Drawing.Size(54, 21);
+      this.configDVDVideo.Size = new System.Drawing.Size(35, 21);
       this.configDVDVideo.TabIndex = 71;
       this.configDVDVideo.UseVisualStyleBackColor = true;
       this.configDVDVideo.Click += new System.EventHandler(this.configDVDVideo_Click);
@@ -339,9 +339,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.configDVDNav.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.configDVDNav.Image = global::MediaPortal.Configuration.Properties.Resources.codec_screwdriver;
-      this.configDVDNav.Location = new System.Drawing.Point(403, 24);
+      this.configDVDNav.Location = new System.Drawing.Point(422, 24);
       this.configDVDNav.Name = "configDVDNav";
-      this.configDVDNav.Size = new System.Drawing.Size(54, 21);
+      this.configDVDNav.Size = new System.Drawing.Size(35, 21);
       this.configDVDNav.TabIndex = 70;
       this.configDVDNav.UseVisualStyleBackColor = true;
       this.configDVDNav.Click += new System.EventHandler(this.configDVDNav_Click);
@@ -382,7 +382,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(122, 120);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
-      this.audioRendererComboBox.Size = new System.Drawing.Size(278, 21);
+      this.audioRendererComboBox.Size = new System.Drawing.Size(295, 21);
       this.audioRendererComboBox.Sorted = true;
       this.audioRendererComboBox.TabIndex = 4;
       // 
@@ -402,7 +402,7 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(122, 72);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
-      this.videoCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.videoCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.videoCodecComboBox.Sorted = true;
       this.videoCodecComboBox.TabIndex = 2;
       // 
@@ -425,7 +425,7 @@ namespace MediaPortal.Configuration.Sections
       this.dvdNavigatorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.dvdNavigatorComboBox.Location = new System.Drawing.Point(122, 24);
       this.dvdNavigatorComboBox.Name = "dvdNavigatorComboBox";
-      this.dvdNavigatorComboBox.Size = new System.Drawing.Size(278, 21);
+      this.dvdNavigatorComboBox.Size = new System.Drawing.Size(295, 21);
       this.dvdNavigatorComboBox.Sorted = true;
       this.dvdNavigatorComboBox.TabIndex = 1;
       // 
@@ -437,7 +437,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(122, 96);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
-      this.audioCodecComboBox.Size = new System.Drawing.Size(278, 21);
+      this.audioCodecComboBox.Size = new System.Drawing.Size(295, 21);
       this.audioCodecComboBox.Sorted = true;
       this.audioCodecComboBox.TabIndex = 3;
       // 
