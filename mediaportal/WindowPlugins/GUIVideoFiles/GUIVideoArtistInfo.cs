@@ -566,7 +566,11 @@ namespace MediaPortal.GUI.Video
       {
         xmlwriter.SetValue("VideoArtistInfo", "lastview", _viewmode);
         xmlwriter.SetValue("VideoArtistInfo", "actorid", _currentActor.ID);
-        xmlwriter.SetValue("VideoArtistInfo", "itemid", listActorMovies.SelectedListItemIndex);
+
+        if (listActorMovies != null)
+        {
+          xmlwriter.SetValue("VideoArtistInfo", "itemid", listActorMovies.SelectedListItemIndex);
+        }
       }
     }
 
