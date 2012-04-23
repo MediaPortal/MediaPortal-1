@@ -1060,6 +1060,7 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         if (_asioHandler != null)
         {
+          _asioHandler.Stop();
           _asioHandler.Dispose();
         }
         BassAsio.BASS_ASIO_Stop();
@@ -1464,9 +1465,9 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (_asioHandler != null)
       {
-        Log.Debug("BASS: Disposing existing Asio Handler");
-        _asioHandler.Stop();
-        _asioHandler.Dispose();
+        //Log.Debug("BASS: Disposing existing Asio Handler");
+        //_asioHandler.Stop();
+        //_asioHandler.Dispose();
       }
       else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
@@ -1496,10 +1497,17 @@ namespace MediaPortal.MusicPlayer.BASS
 
         case AudioPlayer.Asio:
 
+          // Unjoin all the channels
+          BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_JOIN);
+
           // setup ASIO manually
-          Log.Debug("BASS: Creating new Asio Handler");
-          _asioHandler = new BassAsioHandler();
-          _asioHandler.AssignOutputChannel(_mixer);
+          if (_asioHandler == null)
+          {
+            Log.Debug("BASS: Creating new Asio Handler");
+            _asioHandler = new BassAsioHandler();
+          }
+
+          //_asioHandler.AssignOutputChannel(_mixer);
           _asioHandler.Pan = Config.AsioBalance;
           _asioHandler.Volume = (float)Config.StreamVolume / 100f;
 
