@@ -831,7 +831,7 @@ namespace MediaPortal.GUI.Video
             }
             catch (Exception ex1)
             {
-              Log.Error("GUIVideoInfo: Error creating folder thumb {0}", ex1.Message);
+              Log.Info("GUIVideoInfo: Creating folder thumb {0}", ex1.Message);
             }
           }
         }

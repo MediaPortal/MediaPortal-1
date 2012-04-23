@@ -1055,6 +1055,9 @@
 		<String id="1287">Title index</String>
 		<String id="1288">Actors index</String>
 		<String id="1289">Directors index</String>
+		<String id="1290">Refresh selected movie</String>
+		<String id="1291">Auto-Refreshing is active.</String>
+		<String id="1292">Please wait to finish it first.</String>
 		<String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>

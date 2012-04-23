@@ -29,7 +29,7 @@
 			<![CDATA[<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>]]>
 		</string>
 		<string><!--8-->
-			<![CDATA[<div\sclass="label">\s+<div\sclass="title">\s+<a\shref=".*?>(?<actor>.*?)<]]>
+			<![CDATA[<div\sclass="label">\s+<div\sclass="title">\s+<a\shref="/name/.*?>(?<actor>.*?)<]]>
 		</string>
 		<string><!--9-->
 			<![CDATA[<div\sclass="poster">\s+<a\shref="(?<poster>.*?)"]]>

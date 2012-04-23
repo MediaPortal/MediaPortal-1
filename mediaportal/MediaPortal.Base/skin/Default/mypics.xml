@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2</id>
@@ -60,7 +60,7 @@
         <type>image</type>
         <posX>14</posX>
         <posY>62</posY>
-        <width>206</width>
+        <width>230</width>
         <height>472</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>

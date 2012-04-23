@@ -431,7 +431,8 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#hideinfo", "false");
       }
       
-      // Movie id property
+      // Movie id property (to set random movieId property for movies not in the database -> not scanned)
+      // movieId is independant and it is related to videofile
       if (!string.IsNullOrEmpty(file))
       {
         SetMovieIDProperty(file, isFolder);

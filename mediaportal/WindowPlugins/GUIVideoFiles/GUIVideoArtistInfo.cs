@@ -219,6 +219,7 @@ namespace MediaPortal.GUI.Video
       dlg.SetHeading(498); // menu
 
       dlg.AddLocalizedString(1253); // Refresh all actor movies
+      dlg.AddLocalizedString(1290); // Refresh selected movie
 
       if (item.IsPlayed) // Movie in MP database
       {
@@ -237,6 +238,10 @@ namespace MediaPortal.GUI.Video
         case 1253: // Refresh All actor movies
           _forceRefreshAll = true;
           OnRefreshMovie();
+          break;
+        case 1290: // Refresh selected movie
+          _forceRefreshAll = true;
+          OnRefreshSingleMovie();
           break;
         case 208: // Play
           try 
@@ -481,6 +486,25 @@ namespace MediaPortal.GUI.Video
     }
 
     // Manual refresh
+    private void OnRefreshSingleMovie()
+    {
+      if ((_scanThread != null) && (_scanThread.IsAlive))
+      {
+        var dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK); ;
+        if (dlg == null)
+        {
+          return;
+        }
+        dlg.SetHeading(GUILocalizeStrings.Get(1020));
+        dlg.SetLine(1, GUILocalizeStrings.Get(1291));
+        dlg.SetLine(2, GUILocalizeStrings.Get(1292));
+        dlg.DoModal(GetID);
+        return;
+      }
+
+      GetSingleMovieDetails();
+    }
+
     private void OnRefreshMovie()
     {
       if ((_scanThread != null) && (_scanThread.IsAlive))
@@ -525,7 +549,6 @@ namespace MediaPortal.GUI.Video
           else
           {
             GetMovieDetails();
-            return;
           }
         }
         else
@@ -563,6 +586,13 @@ namespace MediaPortal.GUI.Video
 
     #region Thread MovieDetails
 
+    private void GetSingleMovieDetails()
+    {
+      _scanThread = new Thread(ThreadMainGetSingleMovieDetails);
+      _scanThread.IsBackground = true;
+      _scanThread.Start();
+    }
+
     private void GetMovieDetails()
     {
       _scanThread = new Thread(ThreadMainGetDetails);
@@ -571,6 +601,53 @@ namespace MediaPortal.GUI.Video
     }
 
     #region Thread get movie info details
+
+    private void ThreadMainGetSingleMovieDetails()
+    {
+      try
+      {
+        if (Win32API.IsConnectedToInternet())
+        {
+          int count = 1;
+          int countCurrent = 1;
+          GUIListItem item = listActorMovies.SelectedListItem;
+
+          if (item != null)
+          {
+            // Show visible progress
+            if (count > 0)
+            {
+              int percCount = (100 * countCurrent) / count;
+              countCurrent += 1;
+              GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + percCount + @"%)");
+            }
+            //
+            _strBody = string.Empty;
+            GetDetails(item);
+
+            // Refresh item data if it's selected
+            if (listActorMovies.SelectedListItem == item)
+            {
+              OnItemSelected(item, listActorMovies);
+            }
+          }
+
+          // Reset variables and save state
+          GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name);
+          _forceRefreshAll = false;
+          SaveState();
+        }
+        else
+        {
+          Log.Info("VideoArtistInfo: Refreshing not possible. No Internet connection.");
+          _forceRefreshAll = false;
+        }
+      }
+      catch (ThreadAbortException)
+      {
+
+      }
+    }
 
     private void ThreadMainGetDetails()
     {
@@ -651,7 +728,7 @@ namespace MediaPortal.GUI.Video
       
       // Save cover url into db
       if (cover.StartsWith("http://"))
-        SetThumb(item, cover);
+        SetThumb(ref item, cover);
 
       // Update/Set back original item label (Downloading... -> Movie title)
       string line = String.Format("{0}. {1} ({2})",
@@ -673,7 +750,7 @@ namespace MediaPortal.GUI.Video
       
     }
 
-    private void SetThumb(GUIListItem item, string thumb)
+    private void SetThumb(ref GUIListItem item, string thumb)
     {
       // Save image (large and small)
       string filenameL = string.Empty;

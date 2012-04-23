@@ -117,7 +117,7 @@
         <id>4755</id>
         <label>5906</label>
         <hyperlink>4755</hyperlink>
-        <hyperlinkParameter>site:YouTube|search:#selecteditem Trailer|return:Locked</hyperlinkParameter>
+        <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
         <onup>6</onup>
         <ondown>10</ondown>
         <visible>plugin.isenabled(OnlineVideos)</visible>
