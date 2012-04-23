@@ -683,7 +683,7 @@ namespace MediaPortal.GUI.Video
 
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
-      if (useCache && _cachedDir == _currentFolder)
+      if (useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
       {
         itemlist = _cachedItems;
         ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
@@ -824,7 +824,7 @@ namespace MediaPortal.GUI.Video
       
       int totalItems = itemlist.Count;
 
-      if (itemlist.Count > 0)
+      if (totalItems > 0)
       {
         GUIListItem rootItem = itemlist[0];
         if (rootItem.Label == "..")
@@ -838,7 +838,15 @@ namespace MediaPortal.GUI.Video
         {
           _resetCount++;
           ResetShares();
-          LoadDirectory(_virtualDirectory.DefaultShare.Path, false);
+
+          if (_virtualDirectory.DefaultShare != null && _virtualDirectory.DefaultShare.Path != string.Empty)
+          {
+            LoadDirectory(_virtualDirectory.DefaultShare.Path, false);
+          }
+          else
+          {
+            LoadDirectory(string.Empty,false);
+          }
           GUIWaitCursor.Hide();
           return;
         }
@@ -3291,7 +3299,15 @@ namespace MediaPortal.GUI.Video
         case 868: // Reset V.directory
           {
             ResetShares();
-            LoadDirectory(_virtualDirectory.DefaultShare.Path, false);
+
+            if (_virtualDirectory.DefaultShare != null && _virtualDirectory.DefaultShare.Path != string.Empty)
+            {
+              LoadDirectory(_virtualDirectory.DefaultShare.Path, false);
+            }
+            else
+            {
+              LoadDirectory(string.Empty, false);
+            }
           }
           break;
 
