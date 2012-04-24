@@ -72,7 +72,7 @@ namespace TvLibrary.Implementations.DVB
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
     private struct ApplicationInfo    // NETUP_CAM_APPLICATION_INFO
     {
-      public DVB_MMI.ApplicationType ApplicationType;
+      public MmiApplicationType ApplicationType;
       public UInt16 Manufacturer;
       public UInt16 ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
@@ -632,7 +632,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmt">The PMT.</param>
     /// <param name="length">The length of the PMT in bytes.</param>
     /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    public bool SendPmt(CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, int length)
     {
       Log.Log.Debug("NetUP: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
       if (!_isCamPresent)
@@ -645,12 +645,12 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("NetUP: no PMT");
         return true;
       }
-      if (listAction == ListManagementType.Add || listAction == ListManagementType.Update)
+      if (listAction == CaPmtListManagementAction.Add || listAction == CaPmtListManagementAction.Update)
       {
         Log.Log.Debug("NetUP: list action not supported");
         return true;
       }
-      if (command == CommandIdType.NotSelected)
+      if (command == CaPmtCommand.NotSelected)
       {
         Log.Log.Debug("NetUP: command not supported");
         return true;
@@ -902,10 +902,10 @@ namespace TvLibrary.Implementations.DVB
       MmiAnswer mmi = new MmiAnswer();
       mmi.AnswerLength = (byte)answer.Length;
       mmi.Answer = answer;
-      DVB_MMI.ResponseType responseType = DVB_MMI.ResponseType.Answer;
+      MmiResponseType responseType = MmiResponseType.Answer;
       if (cancel)
       {
-        responseType = DVB_MMI.ResponseType.Cancel;
+        responseType = MmiResponseType.Cancel;
       }
 
       int hr;

@@ -31,139 +31,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public static class DVB_MMI
   {
-    #region enums
-
-    /// <summary>
-    /// MMI application information application type.
-    /// </summary>
-    public enum ApplicationType : byte
-    {
-      /// Conditional access application.
-      ConditionalAccess = 1,
-      /// Electronic programme guide application.
-      ElectronicProgrammeGuide
-    }
-
-    /// <summary>
-    /// MMI enquiry answer response type.
-    /// </summary>
-    public enum ResponseType : byte
-    {
-      /// The response is a cancel request.
-      Cancel = 0,
-      /// The response contains an answer from the user.
-      Answer
-    }
-
-    /// <summary>
-    /// MMI message tag.
-    /// </summary>
-    public enum MmiTag
-    {
-      /// Profile enquiry.
-      ProfileEnquiry = 0x9f8010,
-      /// Profile.
-      Profile,
-      /// Profile change.
-      ProfileChange,
-
-      /// Application information enquiry.
-      ApplicationInfoEnquiry = 0x9f8020,
-      /// Application information.
-      ApplicationInfo,
-      /// Enter menu.
-      EnterMenu,
-
-      /// Conditional access information enquiry.
-      ConditionalAccessInfoEnquiry = 0x9f8030,
-      /// Conditional access information.
-      ConditionalAccessInfo,
-      /// Conditional access information programme map table.
-      ConditionalAccessPmt,
-      /// Conditional access information programme map table response.
-      ConditionalAccessPmtResponse,
-
-      /// Tune.
-      Tune = 0x9f8400,
-      /// Replace.
-      Replace,
-      /// Clear replace.
-      ClearReplace,
-      /// Ask release.
-      AskRelease,
-
-      /// Date/time enquiry.
-      DateTimeEnquiry = 0x9f8440,
-      /// Date/time.
-      DateTime,
-
-      /// Close man-machine interface.
-      CloseMmi = 0x9F8800,
-      /// Display control.
-      DisplayControl,
-      /// Display reply.
-      DisplayReply,
-      /// Text - last.
-      TextLast,
-      /// Text - more.
-      TextMore,
-      /// Keypad control.
-      KeypadControl,
-      /// Key press.
-      KeyPress,
-      /// Enquiry.
-      Enquiry,
-      /// Answer.
-      Answer,
-      /// Menu - last.
-      MenuLast,
-      /// Menu - more.
-      MenuMore,
-      /// Menu answer.
-      MenuAnswer,
-      /// List - last.
-      ListLast,
-      /// List - more.
-      ListMore,
-      /// Subtitle segment - last.
-      SubtitleSegmentLast,
-      /// Subtitle segment - more.
-      SubtitleSegmentMore,
-      /// Display message.
-      DisplayMessage,
-      /// Scene end mark.
-      SceneEndMark,
-      /// Scene done.
-      SceneDone,
-      /// Scene control.
-      SceneControl,
-      /// Subtitle download - last.
-      SubtitleDownloadLast,
-      /// Subtitle download - more.
-      SubtitleDownloadMore,
-      /// Flush download.
-      FlushDownload,
-      /// Download reply.
-      DownloadReply,
-
-      /// Communication command.
-      CommsCommand = 0x9f8c00,
-      /// Connection descriptor.
-      ConnectionDescriptor,
-      /// Communication reply.
-      CommsReply,
-      /// Communication send - last.
-      CommsSendLast,
-      /// Communication send - more.
-      CommsSendMore,
-      /// Communication receive - last.
-      CommsReceiveLast,
-      /// Communication receive - more.
-      CommsReceiveMore
-    }
-
-    #endregion
-
     /// <summary>
     /// interpretes parts of an byte[] as status int
     /// </summary>
@@ -305,7 +172,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="responseType">The DVB MMI response type.</param>
     /// <param name="answer">answer string</param>
     /// <returns>an Answer APDU</returns>
-    public static byte[] CreateMMIAnswer(ResponseType responseType, String answer)
+    public static byte[] CreateMMIAnswer(MmiResponseType responseType, String answer)
     {
       char[] answerChars = answer.ToCharArray();
 
@@ -468,7 +335,7 @@ namespace TvLibrary.Implementations.DVB
     public void HandleMMI(byte[] MMI, int MMI_length)
     {
       // parse starting 3 bytes == tag
-      DVB_MMI.MmiTag uMMITag = DVB_MMI.ToMMITag(MMI, 0);
+      MmiTag uMMITag = DVB_MMI.ToMMITag(MMI, 0);
 
       // dumping binary APDU
 #if DEBUG
@@ -485,7 +352,7 @@ namespace TvLibrary.Implementations.DVB
                     mmiOffset);
 #endif
       int offset = 0; // starting with 0; reading whole struct from start
-      if (uMMITag == DVB_MMI.MmiTag.CloseMmi)
+      if (uMMITag == MmiTag.CloseMmi)
       {
         // Close menu
         byte nDelay = 0;
@@ -504,7 +371,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("{0}: OnCiCloseDisplay: cannot do callback!", m_cardName);
         }
       }
-      if (uMMITag == DVB_MMI.MmiTag.Enquiry)
+      if (uMMITag == MmiTag.Enquiry)
       {
         // request input
         bool bPasswordMode = false;
@@ -530,8 +397,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("{0}: OnCiRequest: cannot do callback!", m_cardName);
         }
       }
-      if (uMMITag == DVB_MMI.MmiTag.ListLast || uMMITag == DVB_MMI.MmiTag.MenuLast ||
-          uMMITag == DVB_MMI.MmiTag.MenuMore || uMMITag == DVB_MMI.MmiTag.ListMore)
+      if (uMMITag == MmiTag.ListLast || uMMITag == MmiTag.MenuLast ||
+          uMMITag == MmiTag.MenuMore || uMMITag == MmiTag.ListMore)
       {
         // step forward; begin with offset+1; stop when 0x9F reached
         // should be modified to offset + mmioffset+1 ?

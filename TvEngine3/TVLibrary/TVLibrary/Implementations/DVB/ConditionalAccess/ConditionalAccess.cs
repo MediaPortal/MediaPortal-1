@@ -735,31 +735,31 @@ namespace TvLibrary.Implementations.DVB
 
         if (_winTvCiModule != null)
         {
-          return _winTvCiModule.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _winTvCiModule.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
         if (_knc != null)
         {
-          return _knc.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _knc.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
         if (_DigitalDevices != null)
         {
-          return _DigitalDevices.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _DigitalDevices.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
         if (_digitalEveryWhere != null)
         {
-          return _digitalEveryWhere.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _digitalEveryWhere.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
         if (_technoTrend != null)
         {
-          return _technoTrend.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _technoTrend.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
         if (_twinhan != null)
         {
-          return _twinhan.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _twinhan.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
         if (_turbosight != null)
         {
-          return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _turbosight.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
         if (_netUp != null)
         {
@@ -791,7 +791,7 @@ namespace TvLibrary.Implementations.DVB
           // Now send PMT as required.
           if (distinctChannels.Count == 1)
           {
-            return _netUp.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, pmt, pmtLength);
+            return _netUp.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, pmt, pmtLength);
           }
           else
           {
@@ -799,15 +799,15 @@ namespace TvLibrary.Implementations.DVB
             {
               if (i == 0)
               {
-                _netUp.SendPmt(ListManagementType.First, CommandIdType.Descrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
+                _netUp.SendPmt(CaPmtListManagementAction.First, CaPmtCommand.OkDescrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
               }
               else if (i == distinctChannels.Count - 1)
               {
-                _netUp.SendPmt(ListManagementType.Last, CommandIdType.Descrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
+                _netUp.SendPmt(CaPmtListManagementAction.Last, CaPmtCommand.OkDescrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
               }
               else
               {
-                _netUp.SendPmt(ListManagementType.More, CommandIdType.Descrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
+                _netUp.SendPmt(CaPmtListManagementAction.More, CaPmtCommand.OkDescrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
               }
             }
           }
@@ -815,7 +815,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_anysee != null)
         {
-          return _anysee.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.Pmt, context.PmtLength);
+          return _anysee.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
         }
       }
       catch (Exception ex)
@@ -826,110 +826,153 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// sends the diseqc command to the card
+    /// Send the appropriate DiSEqC 1.0 switch command to switch to a given channel.
     /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="channel">The current tv/radio channel</param>
+    /// <param name="parameters">The scan parameters.</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      bool succeeded = true;
+      if (_anysee == null)
+      {
+        return false;
+      }
+
+      bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
+      ToneBurst toneBurst = ToneBurst.Off;
+      bool successDiseqc = true;
+      bool successTone = true;
+      if (channel.DisEqc == DisEqcType.SimpleA)
+      {
+        toneBurst = ToneBurst.ToneBurst;
+      }
+      else if (channel.DisEqc == DisEqcType.SimpleB)
+      {
+        toneBurst = ToneBurst.DataBurst;
+      }
+      else if (channel.DisEqc != DisEqcType.None)
+      {
+        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+        bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                              (channel.Polarisation == Polarisation.CircularL));
+        byte command = 0xf0;
+        command |= (byte)(isHighBand ? 1 : 0);
+        command |= (byte)((isHorizontal) ? 2 : 0);
+        command |= (byte)((antennaNr - 1) << 2);
+        try
+        {
+          successDiseqc = _anysee.SendCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
+        }
+        catch (Exception ex)
+        {
+          Log.Log.Write(ex);
+        }
+      }
+
+      Tone22k tone22k = Tone22k.Off;
+      if (isHighBand)
+      {
+        tone22k = Tone22k.On;
+      }
       try
       {
-        if (_knc != null)
-        {
-          _knc.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_digitalEveryWhere != null)
-        {
-          _digitalEveryWhere.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_technoTrend != null)
-        {
-          _technoTrend.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_twinhan != null)
-        {
-          _twinhan.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_hauppauge != null)
-        {
-          succeeded = _hauppauge.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_genericbdas != null)
-        {
-          _genericbdas.SendDiseqCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_geniatech != null)
-        {
-          _geniatech.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_dvbSky != null)
-        {
-          _dvbSky.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_conexant != null)
-        {
-          _conexant.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_turbosight != null)
-        {
-          _turbosight.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_profUsb != null)
-        {
-          _profUsb.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_prof != null)
-        {
-          _prof.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_genpix != null)
-        {
-          _genpix.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_genpixOpenSource != null)
-        {
-          _genpixOpenSource.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_TeVii != null)
-        {
-          _TeVii.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_omicom != null)
-        {
-          _omicom.SendDiseqcCommand(parameters, channel);
-        }
-        if (_netUp != null)
-        {
-          _netUp.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
-        if (_anysee != null)
-        {
-          _anysee.SendDiseqcCommand(parameters, channel);
-          System.Threading.Thread.Sleep(100);
-        }
+        successTone = _anysee.SetToneState(toneBurst, tone22k);
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
-      return succeeded;
+      return (successDiseqc && successTone);
+
+      /*if (_knc != null)
+      {
+        _knc.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_digitalEveryWhere != null)
+      {
+        _digitalEveryWhere.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_technoTrend != null)
+      {
+        _technoTrend.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_twinhan != null)
+      {
+        _twinhan.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_hauppauge != null)
+      {
+        succeeded = _hauppauge.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_genericbdas != null)
+      {
+        _genericbdas.SendDiseqCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_geniatech != null)
+      {
+        _geniatech.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_dvbSky != null)
+      {
+        _dvbSky.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_conexant != null)
+      {
+        _conexant.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_turbosight != null)
+      {
+        _turbosight.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_profUsb != null)
+      {
+        _profUsb.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_prof != null)
+      {
+        _prof.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_genpix != null)
+      {
+        _genpix.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_genpixOpenSource != null)
+      {
+        _genpixOpenSource.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_TeVii != null)
+      {
+        _TeVii.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_omicom != null)
+      {
+        _omicom.SendDiseqcCommand(parameters, channel);
+      }
+      if (_netUp != null)
+      {
+        _netUp.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }
+      if (_anysee != null)
+      {
+        _anysee.SendDiseqcCommand(parameters, channel);
+        System.Threading.Thread.Sleep(100);
+      }*/
     }
 
     /// <summary>

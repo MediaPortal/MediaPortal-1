@@ -74,6 +74,7 @@
     <Compile Include="CardType.cs" />
     <Compile Include="ChannelLinkage\LinkedChannel.cs" />
     <Compile Include="ChannelLinkage\PortalChannel.cs" />
+    <Compile Include="DvbConditionalAccess.cs" />
     <Compile Include="DvbTextConverter.cs" />
     <Compile Include="HardwareProviders\IHardwareProvider.cs" />
     <Compile Include="Implementations\Analog\Configuration.cs" />
@@ -86,6 +87,13 @@
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
     <Compile Include="Implementations\VideoStream\VideoStream.cs" />
+    <Compile Include="Interfaces\Device\IAddOnDevice.cs" />
+    <Compile Include="Interfaces\Device\IConditionalAccessProvider.cs" />
+    <Compile Include="Interfaces\Device\ICustomDevice.cs" />
+    <Compile Include="Interfaces\Device\ICustomTuner.cs" />
+    <Compile Include="Interfaces\Device\IDiseqcController.cs" />
+    <Compile Include="Interfaces\Device\IPidFilterController.cs" />
+    <Compile Include="Interfaces\Device\IPowerDevice.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />
@@ -141,6 +149,7 @@
       <Name>DirectShowLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

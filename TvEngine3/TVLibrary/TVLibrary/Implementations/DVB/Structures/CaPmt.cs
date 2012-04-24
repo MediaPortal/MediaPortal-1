@@ -20,63 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB.Structures
 {
-  /// <summary>
-  /// List management type
-  /// </summary>
-  public enum ListManagementType : byte
-  {
-    /// <summary>
-    /// More
-    /// </summary>
-    More = 0,
-    /// <summary>
-    /// First
-    /// </summary>
-    First = 1,
-    /// <summary>
-    /// Last
-    /// </summary>
-    Last = 2,
-    /// <summary>
-    /// Only
-    /// </summary>
-    Only = 3,
-    /// <summary>
-    /// Add
-    /// </summary>
-    Add = 4,
-    /// <summary>
-    /// Update
-    /// </summary>
-    Update = 5
-  } ;
-
-  /// <summary>
-  /// Command Id Type enum
-  /// </summary>
-  public enum CommandIdType : byte
-  {
-    /// <summary>
-    /// Descrambling
-    /// </summary>
-    Descrambling = 1,
-    /// <summary>
-    /// MMI
-    /// </summary>
-    MMI = 2,
-    /// <summary>
-    /// Query
-    /// </summary>
-    Query = 3,
-    /// <summary>
-    /// Not selected
-    /// </summary>
-    NotSelected = 4
-  } ;
-
   /// <summary>
   /// ECMEMM
   /// </summary>
@@ -136,7 +83,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// CA PMT ES command id
     /// </summary>
-    public CommandIdType CommandId; // 8 bit
+    public CaPmtCommand CommandId; // 8 bit
 
     /// <summary>
     /// CA PMT ES descriptors
@@ -160,7 +107,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// CA PMT listmanagement
     /// </summary>
-    public ListManagementType CAPmt_Listmanagement; //  8 bit   0
+    public CaPmtListManagementAction CAPmt_Listmanagement; //  8 bit   0
 
     /// <summary>
     /// CA PMT program number
@@ -195,7 +142,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// CA PMT  command id
     /// </summary>
-    public CommandIdType CommandId; // 8  bit   6
+    public CaPmtCommand CommandId; // 8  bit   6
 
     /// <summary>
     /// CA PMT descriptors

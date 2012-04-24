@@ -19,23 +19,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
-using DirectShowLib.BDA;
+using TvLibrary;
 using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
+using TvLibrary.Log;
 
-namespace TvLibrary.Implementations.DVB
+namespace TvEngine
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Anysee tuners.
   /// Smart card slots are not supported.
   /// </summary>
-  public class Anysee : IDiSEqCController, ICiMenuActions, IDisposable
+  public class Anysee : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcController 
   {
     #region enums
 
@@ -352,6 +352,7 @@ namespace TvLibrary.Implementations.DVB
       private const int ApiInstanceSize = 76;
       private const int MaxDeviceCount = 32;
       private const int CiDeviceInfoSize = MaxDeviceCount * (MaxApiStringLength + 12);
+      private const int ApiAccessThreadSleepTime = 500;   // unit = ms
 
       #endregion
 
@@ -373,6 +374,7 @@ namespace TvLibrary.Implementations.DVB
 
       private IntPtr _ciApiInstance = IntPtr.Zero;
       private IntPtr _windowHandle = IntPtr.Zero;
+      private IntPtr _libHandle = IntPtr.Zero;
 
       private Thread _apiAccessThread = null;
       private bool _stopApiAccessThread = false;
@@ -386,7 +388,7 @@ namespace TvLibrary.Implementations.DVB
       {
         _apiCount++;
         _apiIndex = _apiCount;
-        Log.Log.Debug("Anysee: loading API, API index = {0}", _apiIndex);
+        Log.Debug("Anysee: loading API, API index = {0}", _apiIndex);
         if (!File.Exists("CIAPI" + _apiIndex + ".dll"))
         {
           try
@@ -395,98 +397,109 @@ namespace TvLibrary.Implementations.DVB
           }
           catch (Exception ex)
           {
-            Log.Log.Debug("Anysee: failed to copy CIAPI.dll: {0}", ex.ToString());
+            Log.Debug("Anysee: failed to copy CIAPI.dll\r\n{0}", ex.ToString());
             return;
           }
         }
-        IntPtr lib = LoadLibrary("CIAPI" + _apiIndex + ".dll");
-        if (lib == IntPtr.Zero || lib == null)
+        _libHandle = LoadLibrary("CIAPI" + _apiIndex + ".dll");
+        if (_libHandle == IntPtr.Zero || _libHandle == null)
         {
-          Log.Log.Debug("Anysee: failed to load the DLL");
+          Log.Debug("Anysee: failed to load the DLL");
           return;
         }
 
-        IntPtr function = GetProcAddress(lib, "CreateDtvCIAPI");
-        if (function == IntPtr.Zero)
-        {
-          Log.Log.Debug("Anysee: failed to locate the CreateDtvCIAPI function");
-          return;
-        }
         try
         {
-          _createApi = (CreateDtvCIAPI)Marshal.GetDelegateForFunctionPointer(function, typeof(CreateDtvCIAPI));
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Debug("Anysee: failed to load the CreateDtvCIAPI function: {0}", ex.ToString());
-          return;
-        }
+          IntPtr function = GetProcAddress(_libHandle, "CreateDtvCIAPI");
+          if (function == IntPtr.Zero)
+          {
+            Log.Debug("Anysee: failed to locate the CreateDtvCIAPI function");
+            return;
+          }
+          try
+          {
+            _createApi = (CreateDtvCIAPI)Marshal.GetDelegateForFunctionPointer(function, typeof(CreateDtvCIAPI));
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("Anysee: failed to load the CreateDtvCIAPI function\r\n{0}", ex.ToString());
+            return;
+          }
 
-        function = GetProcAddress(lib, "DestroyDtvCIAPI");
-        if (function == IntPtr.Zero)
-        {
-          Log.Log.Debug("Anysee: failed to locate the DestroyDtvCIAPI function");
-          return;
-        }
-        try
-        {
-          _destroyApi = (DestroyDtvCIAPI)Marshal.GetDelegateForFunctionPointer(function, typeof(DestroyDtvCIAPI));
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Debug("Anysee: failed to load the DestroyDtvCIAPI function: {0}", ex.ToString());
-          return;
-        }
+          function = GetProcAddress(_libHandle, "DestroyDtvCIAPI");
+          if (function == IntPtr.Zero)
+          {
+            Log.Debug("Anysee: failed to locate the DestroyDtvCIAPI function");
+            return;
+          }
+          try
+          {
+            _destroyApi = (DestroyDtvCIAPI)Marshal.GetDelegateForFunctionPointer(function, typeof(DestroyDtvCIAPI));
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("Anysee: failed to load the DestroyDtvCIAPI function\r\n{0}", ex.ToString());
+            return;
+          }
 
-        function = GetProcAddress(lib, "GetanyseeNumberofDevicesEx");
-        if (function == IntPtr.Zero)
-        {
-          Log.Log.Debug("Anysee: failed to locate the GetanyseeNumberofDevicesEx function");
-          return;
-        }
-        try
-        {
-          _getAnyseeDeviceCount = (GetanyseeNumberofDevicesEx)Marshal.GetDelegateForFunctionPointer(function, typeof(GetanyseeNumberofDevicesEx));
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Debug("Anysee: failed to load the GetanyseeNumberofDevicesEx function: {0}", ex.ToString());
-          return;
-        }
+          function = GetProcAddress(_libHandle, "GetanyseeNumberofDevicesEx");
+          if (function == IntPtr.Zero)
+          {
+            Log.Debug("Anysee: failed to locate the GetanyseeNumberofDevicesEx function");
+            return;
+          }
+          try
+          {
+            _getAnyseeDeviceCount = (GetanyseeNumberofDevicesEx)Marshal.GetDelegateForFunctionPointer(function, typeof(GetanyseeNumberofDevicesEx));
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("Anysee: failed to load the GetanyseeNumberofDevicesEx function\r\n", ex.ToString());
+            return;
+          }
 
-        function = GetProcAddress(lib, "?OpenCILib@CCIAPI@@UAGJPAUHWND__@@H@Z");
-        if (function == IntPtr.Zero)
-        {
-          Log.Log.Debug("Anysee: failed to locate the OpenCILib function");
-          return;
-        }
-        try
-        {
-          _openApi = (OpenCILib)Marshal.GetDelegateForFunctionPointer(function, typeof(OpenCILib));
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Debug("Anysee: failed to load the OpenCILib function: {0}", ex.ToString());
-          return;
-        }
+          function = GetProcAddress(_libHandle, "?OpenCILib@CCIAPI@@UAGJPAUHWND__@@H@Z");
+          if (function == IntPtr.Zero)
+          {
+            Log.Debug("Anysee: failed to locate the OpenCILib function");
+            return;
+          }
+          try
+          {
+            _openApi = (OpenCILib)Marshal.GetDelegateForFunctionPointer(function, typeof(OpenCILib));
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("Anysee: failed to load the OpenCILib function\r\n{0}", ex.ToString());
+            return;
+          }
 
-        function = GetProcAddress(lib, "?CI_Control@CCIAPI@@UAGJKPAJ0@Z");
-        if (function == IntPtr.Zero)
-        {
-          Log.Log.Debug("Anysee: failed to locate the CI_Control function");
-          return;
-        }
-        try
-        {
-          _ciControl = (CI_Control)Marshal.GetDelegateForFunctionPointer(function, typeof(CI_Control));
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Debug("Anysee: failed to load the CI_Control function: {0}", ex.ToString());
-          return;
-        }
+          function = GetProcAddress(_libHandle, "?CI_Control@CCIAPI@@UAGJKPAJ0@Z");
+          if (function == IntPtr.Zero)
+          {
+            Log.Debug("Anysee: failed to locate the CI_Control function");
+            return;
+          }
+          try
+          {
+            _ciControl = (CI_Control)Marshal.GetDelegateForFunctionPointer(function, typeof(CI_Control));
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("Anysee: failed to load the CI_Control function\r\n{0}", ex.ToString());
+            return;
+          }
 
-        _dllLoaded = true;
+          _dllLoaded = true;
+        }
+        finally
+        {
+          if (!_dllLoaded)
+          {
+            FreeLibrary(_libHandle);
+            _libHandle = IntPtr.Zero;
+          }
+        }
       }
 
       /// <summary>
@@ -496,16 +509,16 @@ namespace TvLibrary.Implementations.DVB
       /// <returns><c>true</c> if the API is successfully opened, otherwise <c>false</c></returns>
       public bool OpenApi(String tunerDevicePath)
       {
-        Log.Log.Debug("Anysee: opening API, API index = {0}", _apiIndex);
+        Log.Debug("Anysee: opening API, API index = {0}", _apiIndex);
 
         if (!_dllLoaded)
         {
-          Log.Log.Debug("Anysee: the CIAPI.dll functions were not successfully loaded");
+          Log.Debug("Anysee: the CIAPI.dll functions were not successfully loaded");
           return false;
         }
         if (_apiAccessThread != null && _apiAccessThread.IsAlive)
         {
-          Log.Log.Debug("Anysee: API access thread is already running");
+          Log.Debug("Anysee: API access thread is already running");
           return false;
         }
 
@@ -529,7 +542,7 @@ namespace TvLibrary.Implementations.DVB
         // functions from an STA thread. That effectively means that we
         // only need an STA thread to open the API and hold it open until
         // it is no longer needed.
-        Log.Log.Debug("Anysee: starting API access thread");
+        Log.Debug("Anysee: starting API access thread");
         _stopApiAccessThread = false;
         _apiAccessThread = new Thread(new ThreadStart(AccessThread));
         _apiAccessThread.Name = String.Format("Anysee API {0} Access", _apiCount);
@@ -544,10 +557,10 @@ namespace TvLibrary.Implementations.DVB
         // everything should be okay.
         if (_apiAccessThread.IsAlive)
         {
-          Log.Log.Debug("Anysee: API access thread running");
+          Log.Debug("Anysee: API access thread running");
           return true;
         }
-        Log.Log.Debug("Anysee: API access thread self-terminated");
+        Log.Debug("Anysee: API access thread self-terminated");
         return false;
       }
 
@@ -558,24 +571,24 @@ namespace TvLibrary.Implementations.DVB
       /// </summary>
       private void AccessThread()
       {
-        Log.Log.Debug("Anysee: creating new CI API instance");
+        Log.Debug("Anysee: creating new CI API instance");
         int result = _createApi(_ciApiInstance);
         if (result != 1)
         {
-          Log.Log.Debug("Anysee: failed to create instance, result = {0}", result);
+          Log.Debug("Anysee: failed to create instance, result = {0}", result);
           return;
         }
-        Log.Log.Debug("Anysee: created instance successfully");
+        Log.Debug("Anysee: created instance successfully");
 
         // We have an API instance, but now we need to open it by linking it with hardware.
-        Log.Log.Debug("Anysee: determining instance index");
+        Log.Debug("Anysee: determining instance index");
         IntPtr infoBuffer = Marshal.AllocCoTaskMem(CiDeviceInfoSize);
         for (int i = 0; i < CiDeviceInfoSize; i++)
         {
           Marshal.WriteByte(infoBuffer, i, 0);
         }
         int numDevices = _getAnyseeDeviceCount(infoBuffer);
-        Log.Log.Debug("Anysee: number of devices = {0}", numDevices);
+        Log.Debug("Anysee: number of devices = {0}", numDevices);
         if (numDevices == 0)
         {
           Marshal.FreeCoTaskMem(infoBuffer);
@@ -589,14 +602,14 @@ namespace TvLibrary.Implementations.DVB
         for (int i = 0; i < numDevices; i++)
         {
           captureDevicePath = deviceInfo.DevicePaths[i].Text.Substring(0, deviceInfo.DevicePathLengths[i]);
-          Log.Log.Debug("Anysee: device {0}", i + 1);
-          Log.Log.Debug("  device path  = {0}", captureDevicePath);
-          Log.Log.Debug("  index        = {0}", deviceInfo.DevicePathIndices[i]);
-          Log.Log.Debug("  Anysee index = {0}", deviceInfo.DeviceIndices[i]);
+          Log.Debug("Anysee: device {0}", i + 1);
+          Log.Debug("  device path  = {0}", captureDevicePath);
+          Log.Debug("  index        = {0}", deviceInfo.DevicePathIndices[i]);
+          Log.Debug("  Anysee index = {0}", deviceInfo.DeviceIndices[i]);
 
           if (captureDevicePath.StartsWith(_devicePath))
           {
-            Log.Log.Debug("Anysee: found correct instance");
+            Log.Debug("Anysee: found correct instance");
             index = deviceInfo.DeviceIndices[i];
             break;
           }
@@ -605,27 +618,27 @@ namespace TvLibrary.Implementations.DVB
         // If we have a valid device index then we can attempt to open the CI API.
         if (index != -1)
         {
-          Log.Log.Debug("Anysee: opening CI API");
+          Log.Debug("Anysee: opening CI API");
           result = _openApi(_ciApiInstance, _windowHandle, index);
           if (result == 0)
           {
-            Log.Log.Debug("Anysee: result = success");
+            Log.Debug("Anysee: result = success");
             // Hold the API open until it is no longer needed.
             while (!_stopApiAccessThread)
             {
-              Thread.Sleep(500);
+              Thread.Sleep(ApiAccessThreadSleepTime);
             }
           }
           else
           {
-            Log.Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", result, HResult.GetDXErrorString(result));
+            Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", result, HResult.GetDXErrorString(result));
           }
         }
 
-
-        Log.Log.Debug("Anysee: destroying CI API instance");
+        // When this thread is stopped, we automatically destroy the API instance.
+        Log.Debug("Anysee: destroying CI API instance");
         result = _destroyApi(_ciApiInstance);
-        Log.Log.Debug("Anysee: result = {0}", result);
+        Log.Debug("Anysee: result = {0}", result);
       }
 
       /// <summary>
@@ -634,16 +647,44 @@ namespace TvLibrary.Implementations.DVB
       /// <returns><c>true</c> if the API is successfully closed, otherwise <c>false</c></returns>
       public bool CloseApi()
       {
-        Log.Log.Debug("Anysee: closing API");
+        Log.Debug("Anysee: closing API");
 
+        if (!_dllLoaded)
+        {
+          Log.Debug("Anysee: the CIAPI.dll functions have not been loaded");
+          return true;
+        }
+
+        // Stop the API access thread.
+        if (_apiAccessThread == null)
+        {
+          Log.Debug("Anysee: API access thread is null");
+        }
+        else
+        {
+          Log.Debug("Anysee: API access thread state = {0}", _apiAccessThread.ThreadState);
+        }
         _stopApiAccessThread = true;
-        // The access thread wakes every 500 ms, so in the worst case
-        // scenario it would take approximately 1 second to cleanly
-        // stop the thread.
-        Thread.Sleep(1000);
+        // In the worst case scenario it should take approximately
+        // twice the thread sleep time to cleanly stop the thread.
+        Thread.Sleep(ApiAccessThreadSleepTime * 2);
 
-        Marshal.FreeCoTaskMem(_ciApiInstance);
-        Marshal.FreeCoTaskMem(_windowHandle);
+        // Free memory and close the library.
+        if (_ciApiInstance != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(_ciApiInstance);
+          _ciApiInstance = IntPtr.Zero;
+        }
+        if (_windowHandle != IntPtr.Zero)
+        {
+          Marshal.FreeCoTaskMem(_windowHandle);
+          _windowHandle = IntPtr.Zero;
+        }
+        if (_libHandle != IntPtr.Zero)
+        {
+          FreeLibrary(_libHandle);
+          _libHandle = IntPtr.Zero;
+        }
         return true;
       }
 
@@ -656,12 +697,19 @@ namespace TvLibrary.Implementations.DVB
       /// <returns><c>true</c> if the command is successfully executed, otherwise <c>false</c></returns>
       public bool ExecuteCommand(AnyseeCiCommand command, IntPtr inputParams, IntPtr outputParams)
       {
-        Log.Log.Debug("Anysee: execute API command");
-        if (!_apiAccessThread.IsAlive)
+        Log.Debug("Anysee: execute API command");
+
+        if (_apiAccessThread == null)
         {
-          Log.Log.Debug("Anysee: the API is not open");
+          Log.Debug("Anysee: API access thread is null");
           return false;
         }
+        if (!_apiAccessThread.IsAlive)
+        {
+          Log.Debug("Anysee: the API is not open");
+          return false;
+        }
+
         int hr;
         lock (this)
         {
@@ -669,11 +717,11 @@ namespace TvLibrary.Implementations.DVB
         }
         if (hr == 0)
         {
-          Log.Log.Debug("Anysee: result = success");
+          Log.Debug("Anysee: result = success");
           return true;
         }
 
-        Log.Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
     }
@@ -714,6 +762,7 @@ namespace TvLibrary.Implementations.DVB
     private const int CiStateInfoSize = 8 + MaxApiStringLength;
     private const int MmiMenuSize = (MaxCamMenuEntries * MaxApiStringLength) + 8;
     private const int MmiMessageSize = 32 + MaxApiStringLength;
+    private const int ApiCallbackSize = 8;
     private const int MaxDescriptorDataLength = 256;
     private const int MaxPmtElementaryStreams = 50;
     private const int EsPmtDataSize = 260;
@@ -733,6 +782,8 @@ namespace TvLibrary.Implementations.DVB
     private AnyseeCiApi _ciApi = null;
 
     private IntPtr _generalBuffer = IntPtr.Zero;
+    private IntPtr _callbackBuffer = IntPtr.Zero;
+    private IntPtr _pmtBuffer = IntPtr.Zero;
 
     private String _tunerDevicePath = String.Empty;
     private ApiCallbacks _apiCallbacks;
@@ -741,74 +792,11 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Anysee"/> class.
-    /// </summary>
-    /// <param name="tunerFilter">The tuner filter.</param>
-    /// <param name="tunerDevicePath">The tuner device path.</param>
-    public Anysee(IBaseFilter tunerFilter, String tunerDevicePath)
-    {
-      if (tunerFilter == null)
-      {
-        return;
-      }
-
-      // We need a reference to the capture filter.
-      IPin tunerOutputPin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
-      IPin captureInputPin;
-      int hr = tunerOutputPin.ConnectedTo(out captureInputPin);
-      Release.ComObject(tunerOutputPin);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Anysee: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-
-      PinInfo captureInfo;
-      hr = captureInputPin.QueryPinInfo(out captureInfo);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Anysee: failed to get the capture filter input pin info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-
-      // Check if the filter supports the property set.
-      _propertySet = captureInfo.filter as IKsPropertySet;
-      if (_propertySet == null)
-      {
-        return;
-      }
-
-      KSPropertySupport support;
-      hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Ir, out support);
-      if (hr != 0)
-      {
-        Log.Log.Debug("Anysee: failed to query property support, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-
-      Log.Log.Debug("Anysee: supported tuner detected");
-      _isAnysee = true;
-      _tunerDevicePath = tunerDevicePath;
-      _generalBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
-      ReadDeviceInfo();
-      _isCiSlotPresent = IsCiSlotPresent();
-      // The OnCiState() callback will update these states very quickly
-      // after the conditional access interface is opened.
-      _isCamPresent = false;
-      _isCamReady = false;
-
-      if (_isCiSlotPresent)
-      {
-        OpenCi();
-      }
-    }
-
-    /// <summary>
     /// Attempt to read the device information from the tuner.
     /// </summary>
     private void ReadDeviceInfo()
     {
-      Log.Log.Debug("Anysee: read device information");
+      Log.Debug("Anysee: read device information");
 
       for (int i = 0; i < PlatformInfoSize; i++)
       {
@@ -823,12 +811,12 @@ namespace TvLibrary.Implementations.DVB
       );
       if (hr != 0 || returnedByteCount != PlatformInfoSize)
       {
-        Log.Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
       }
 
       PlatformInfo info = (PlatformInfo)Marshal.PtrToStructure(_generalBuffer, typeof(PlatformInfo));
-      Log.Log.Debug("  platform = {0}", info.Platform);
+      Log.Debug("  platform = {0}", info.Platform);
 
       if (info.Platform == AnyseePlatform.Pcb508S2 ||
         info.Platform == AnyseePlatform.Pcb508TC ||
@@ -842,73 +830,319 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Gets a value indicating whether this tuner is an Anysee-compatible tuner.
+    /// Send key press event information to the CAM. This is the mechanism that
+    /// is used for interaction within the CAM menu.
     /// </summary>
-    /// <value><c>true</c> if this tuner is an Anysee-compatible tuner, otherwise <c>false</c></value>
-    public bool IsAnysee
+    /// <param name="key">The key that was pressed.</param>
+    /// <returns><c>true</c> if the key code is passed to the CAM successfully, otherwise <c>false</c></returns>
+    private bool SendKey(AnyseeCamMenuKey key)
     {
-      get
+      Log.Debug("Anysee: send key, key = {0}", key);
+      if (_ciApi == null)
       {
-        return _isAnysee;
+        Log.Debug("Anysee: the conditional access interface is not open");
+        return false;
       }
-    }
-
-    /// <summary>
-    /// Control whether tone/data burst and 22 kHz legacy tone are used.
-    /// </summary>
-    /// <param name="toneBurstState">The tone/data burst state.</param>
-    /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
-    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
-    {
-      if (toneBurstState == ToneBurst.Off)
+      if (_isCamReady == false)
       {
-        return true;
-      }
-      Log.Log.Debug("Anysee: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
-
-      DiseqcMessage message = new DiseqcMessage();
-      message.MessageLength = 0;
-      message.ToneBurst = AnyseeToneBurst.ToneBurst;
-      if (toneBurstState == ToneBurst.DataBurst)
-      {
-        message.ToneBurst = AnyseeToneBurst.DataBurst;
-      }
-
-      Marshal.StructureToPtr(message, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
-
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
-        _generalBuffer, DiseqcMessageSize,
-        _generalBuffer, DiseqcMessageSize
-      );
-      if (hr == 0)
-      {
-        Log.Log.Debug("Anysee: result = success");
-        return true;
-      }
-
-      Log.Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
-    }
-
-    #region conditional access
-
-    /// <summary>
-    /// Open the conditional access interface.
-    /// </summary>
-    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenCi()
-    {
-      Log.Log.Debug("Anysee: open conditional access interface");
-      _ciApi = new AnyseeCiApi();
-      if (!_ciApi.OpenApi(_tunerDevicePath))
-      {
-        Log.Log.Debug("Anysee: open API failed");
+        Log.Debug("Anysee: the CAM is not ready");
         return false;
       }
 
-      Log.Log.Debug("Anysee: setting callbacks");
+      lock (this)
+      {
+        Marshal.WriteInt32(_generalBuffer, (Int32)key);
+        if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetKey, _generalBuffer, IntPtr.Zero))
+        {
+          Log.Debug("Anysee: result = success");
+          return true;
+        }
+      }
+
+      Log.Debug("Anysee: result = failure");
+      return false;
+    }
+
+    #region callback handlers
+
+    /// <summary>
+    /// Called by the tuner driver when the common interface slot state changes.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot.</param>
+    /// <param name="state">The new CI state.</param>
+    /// <param name="message">A short description of the CI state.</param>
+    /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
+    private Int32 OnCiState(Int32 slotIndex, AnyseeCiState state, String message)
+    {
+      // If a CAM is inserted the API seems to only invoke this callback when the CAM state
+      // changes. However, if a CAM is *not* inserted then this callback is invoked every
+      // time the API polls the CI state. We don't want to log the polling - it would swamp
+      // the logs.
+      if (state == _ciState)
+      {
+        return 0;
+      }
+
+      Log.Debug("Anysee: CI state change callback, slot = {0}", slotIndex);
+
+      // Update the CI state variables.
+      lock (this)
+      {
+        Log.Debug("  old state = {0}", _ciState);
+        Log.Debug("  new state = {0}", state);
+        _ciState = state;
+        if (state == AnyseeCiState.CamInserted || state == AnyseeCiState.CamOkay)
+        {
+          _isCamPresent = true;
+          _isCamReady = false;
+        }
+        else if (state == AnyseeCiState.CamReady || state == AnyseeCiState.SendPmtComplete || state == AnyseeCiState.Clear)
+        {
+          _isCamPresent = true;
+          _isCamReady = true;
+        }
+        else
+        {
+          _isCamPresent = false;
+          _isCamReady = false;
+        }
+      }
+
+      if (String.IsNullOrEmpty(message))
+      {
+        message = "(no message)";
+      }
+      Log.Debug("  message   = {0}", message);
+
+      return 0;
+    }
+
+    /// <summary>
+    /// Called by the tuner driver when MMI information is ready to be processed.
+    /// </summary>
+    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
+    /// <param name="message">The message from the CAM.</param>
+    /// <returns>an HRESULT to indicate whether the message was successfully processed</returns>
+    private Int32 OnMmiMessage(Int32 slotIndex, IntPtr message)
+    {
+      Log.Debug("Anysee: MMI message callback, slot = {0}", slotIndex);
+
+      MmiMessage msg = (MmiMessage)Marshal.PtrToStructure(message, typeof(MmiMessage));
+      Log.Debug("  device index  = {0}", msg.DeviceIndex);
+      Log.Debug("  slot index    = {0}", msg.SlotIndex);
+      Log.Debug("  menu title    = {0}", msg.RootMenuTitle.Text);
+      Log.Debug("  message type  = {0}", msg.Type);
+      MmiMenu menu = (MmiMenu)Marshal.PtrToStructure(msg.Menu, typeof(MmiMenu));
+      Log.Debug("  string count  = {0}", menu.StringCount);
+      Log.Debug("  menu index    = {0}", menu.MenuIndex);
+
+
+      // Enquiry
+      if (msg.Type == AnyseeMmiMessageType.InputRequest)
+      {
+        Log.Debug("Anysee: enquiry");
+        if (msg.HeaderCount != 1)
+        {
+          Log.Debug("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
+          return 1;
+        }
+        String prompt = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
+        Log.Debug("  prompt    = {0}", prompt);
+        Log.Debug("  length    = {0}", msg.ExpectedAnswerLength);
+        Log.Debug("  key count = {0}", msg.KeyCount);
+        try
+        {
+          if (_ciMenuCallbacks != null)
+          {
+            _ciMenuCallbacks.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
+          }
+          else
+          {
+            Log.Debug("Anysee: menu callbacks are not set");
+          }
+          return 0;
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("Anysee: MMI callback enquiry exception\r\n{0}", ex.ToString());
+          return 1;
+        }
+      }
+
+      // Menu or list
+      Log.Debug("Anysee: menu");
+      if (msg.HeaderCount != 3)
+      {
+        Log.Debug("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
+        return 1;
+      }
+
+      String title = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
+      String subTitle = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 4));
+      String footer = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 8));
+      Log.Debug("  title     = {0}", title);
+      Log.Debug("  sub-title = {0}", subTitle);
+      Log.Debug("  footer    = {0}", footer);
+      Log.Debug("  # entries = {0}", msg.EntryCount);
+      try
+      {
+        if (_ciMenuCallbacks != null)
+        {
+          _ciMenuCallbacks.OnCiMenu(title, subTitle, footer, msg.EntryCount);
+        }
+        else
+        {
+          Log.Debug("Anysee: menu callbacks are not set");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("Anysee: MMI callback header exception\r\n{0}", ex.ToString());
+      }
+
+      try
+      {
+        String entry;
+        int offset = 4 * msg.HeaderCount;
+        for (int i = 0; i < msg.EntryCount; i++)
+        {
+          entry = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, offset + (i * 4)));
+          Log.Debug("  entry {0,-2}  = {1}", i + 1, entry);
+          if (_ciMenuCallbacks != null)
+          {
+            _ciMenuCallbacks.OnCiMenuChoice(i, entry);
+          }
+          else
+          {
+            Log.Debug("Anysee: menu callbacks are not set");
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("Anysee: MMI callback entry exception\r\n{0}", ex.ToString());
+      }
+
+      return 0;
+    }
+
+    #endregion
+
+    #region ICustomDevice members
+
+    /// <summary>
+    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
+    /// the ICustomDevice instance should be disposed.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
+    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
+    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    {
+      Log.Debug("Anysee: initialising device");
+
+      if (tunerFilter == null)
+      {
+        Log.Debug("Anysee: tuner filter is null");
+        return false;
+      }
+      if (tunerDevicePath == null || tunerDevicePath.Equals(String.Empty))
+      {
+        Log.Debug("Anysee: tuner device path is not set");
+        return false;
+      }
+      if (_isAnysee)
+      {
+        Log.Debug("Anysee: device is already initialised");
+        return true;
+      }
+
+      // We need a reference to the capture filter because that is the filter which
+      // actually implements the important property sets.
+      IPin captureInputPin;
+      IPin tunerOutputPin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
+      if (tunerOutputPin == null)
+      {
+        Log.Debug("Anysee: failed to find the tuner filter output pin");
+        return false;
+      }
+      int hr = tunerOutputPin.ConnectedTo(out captureInputPin);
+      DsUtils.ReleaseComObject(tunerOutputPin);
+      if (hr != 0 || captureInputPin == null)
+      {
+        Log.Debug("Anysee: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      PinInfo captureInfo;
+      hr = captureInputPin.QueryPinInfo(out captureInfo);
+      DsUtils.ReleaseComObject(captureInputPin);
+      if (hr != 0)
+      {
+        Log.Debug("Anysee: failed to get the capture filter input pin info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      // Check if the filter supports the property set.
+      _propertySet = captureInfo.filter as IKsPropertySet;
+      if (_propertySet == null)
+      {
+        Log.Debug("Anysee: capture filter is not a property set");
+        return false;
+      }
+
+      KSPropertySupport support;
+      hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Ir, out support);
+      if (hr != 0)
+      {
+        Log.Debug("Anysee: property set does not support Anysee property sets, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        _propertySet = null;
+        return false;
+      }
+
+      Log.Debug("Anysee: supported tuner detected");
+      _isAnysee = true;
+      _tunerDevicePath = tunerDevicePath;
+      _generalBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
+      _callbackBuffer = Marshal.AllocCoTaskMem(ApiCallbackSize);
+      _pmtBuffer = Marshal.AllocCoTaskMem(PmtDataSize);
+      ReadDeviceInfo();
+      return true;
+    }
+
+    #endregion
+
+    #region IConditionalAccessProvider members
+
+    /// <summary>
+    /// Open the conditional access interface. For the interface to be opened successfully it is expected
+    /// that any necessary hardware (such as a CI slot) is connected.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenInterface()
+    {
+      Log.Debug("Anysee: open conditional access interface");
+
+      if (!_isAnysee)
+      {
+        Log.Debug("Anysee: device not initialised or interface not supported");
+        return false;
+      }
+      if (_ciApi != null)
+      {
+        Log.Debug("Anysee: previous interface instance is still open");
+        return false;
+      }
+
+      _ciApi = new AnyseeCiApi();
+      if (!_ciApi.OpenApi(_tunerDevicePath))
+      {
+        Log.Debug("Anysee: open API failed");
+        return false;
+      }
+
+      Log.Debug("Anysee: setting callbacks");
       // We need to pass the addresses of our callback functions to
       // the API but C# makes that awkward. The workaround is to set
       // up a callback structure instance, marshal the instance into
@@ -918,15 +1152,15 @@ namespace TvLibrary.Implementations.DVB
       _apiCallbacks.OnMmiMessage = OnMmiMessage;
       lock (this)
       {
-        Marshal.StructureToPtr(_apiCallbacks, _generalBuffer, true);
-        if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallbacks, (IntPtr)Marshal.ReadInt32(_generalBuffer, 0), (IntPtr)Marshal.ReadInt32(_generalBuffer, 4)))
+        Marshal.StructureToPtr(_apiCallbacks, _callbackBuffer, true);
+        if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallbacks, (IntPtr)Marshal.ReadInt32(_callbackBuffer, 0), (IntPtr)Marshal.ReadInt32(_callbackBuffer, 4)))
         {
-          Log.Log.Debug("Anysee: result = success");
+          Log.Debug("Anysee: result = success");
           return true;
         }
       }
 
-      Log.Log.Debug("Anysee: result = failure");
+      Log.Debug("Anysee: result = failure");
       return false;
     }
 
@@ -934,115 +1168,98 @@ namespace TvLibrary.Implementations.DVB
     /// Close the conditional access interface.
     /// </summary>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseCi()
+    public bool CloseInterface()
     {
-      if (_ciApi == null)
+      Log.Debug("Anysee: close conditional access interface");
+
+      bool result = true;
+      if (_ciApi != null)
       {
-        return true;
+        result = _ciApi.CloseApi();
+        _ciApi = null;
       }
-      Log.Log.Debug("Anysee: close conditional access interface");
       _isCamPresent = false;
       _isCamReady = false;
-      if (_ciApi.CloseApi())
+      if (result)
       {
-        Log.Log.Debug("Anysee: result = success");
+        Log.Debug("Anysee: result = success");
         return true;
       }
 
-      Log.Log.Debug("Anysee: result = failure");
+      Log.Debug("Anysee: result = failure");
       return false;
     }
 
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="rebuildGraph"><c>True</c> if the DirectShow filter graph should be rebuilt after calling this function.</param>
-    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetCi(out bool rebuildGraph)
+    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    ///   for the interface to be completely and successfully reset.</param>
+    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
+    public bool ResetInterface(out bool rebuildGraph)
     {
       rebuildGraph = false;
-      return CloseCi() && OpenCi();
+      return CloseInterface() && OpenInterface();
     }
 
     /// <summary>
-    /// Determines whether a CI slot is present or not.
+    /// Determine whether the conditional access interface is ready to receive commands.
     /// </summary>
-    /// <returns><c>true</c> if a CI slot is present, otherwise <c>false</c></returns>
-    public bool IsCiSlotPresent()
+    /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
+    public bool IsInterfaceReady()
     {
-      Log.Log.Debug("Anysee: is CI slot present");
-
-      // Whether a CI slot is present is actually determined in ReadDeviceInfo().
-      Log.Log.Debug("Anysee: result = {0}", _isCiSlotPresent);
-      return _isCiSlotPresent;
-    }
-
-    /// <summary>
-    /// Determines whether a CAM is present or not.
-    /// </summary>
-    /// <returns><c>true</c> if a CAM is present, otherwise <c>false</c></returns>
-    public bool IsCamPresent()
-    {
-      Log.Log.Debug("Anysee: is CAM present");
+      Log.Debug("Anysee: is conditional access interface ready");
       if (!_isCiSlotPresent)
       {
-        Log.Log.Debug("Anysee: CI slot not present");
+        Log.Debug("Anysee: CI slot not present");
         return false;
       }
 
       // The CAM state is automatically updated in the OnCiState() callback.
-      Log.Log.Debug("Anysee: result = {0}", _isCamPresent);
-      return _isCamPresent;
-    }
-
-    /// <summary>
-    /// Determines whether a CAM is present and ready for interaction.
-    /// </summary>
-    /// <returns><c>true</c> if a CAM is present and ready, otherwise <c>false</c></returns>
-    public bool IsCamReady()
-    {
-      Log.Log.Debug("Anysee: is CAM ready");
-      if (!_isCiSlotPresent)
-      {
-        Log.Log.Debug("Anysee: CI slot not present");
-        return false;
-      }
-
-      // The CAM state is automatically updated in the OnCiState() callback.
-      Log.Log.Debug("Anysee: result = {0}", _isCamReady);
+      Log.Debug("Anysee: result = {0}", _isCamReady);
       return _isCamReady;
     }
 
     /// <summary>
-    /// Send PMT to the CAM to request that a service be descrambled.
+    /// Send a command to to the conditional access interface.
     /// </summary>
-    /// <param name="listAction">A list management action for communication with the CAM.</param>
-    /// <param name="command">A decryption command directed to the CAM.</param>
-    /// <param name="pmt">The PMT.</param>
-    /// <param name="length">The length of the PMT in bytes.</param>
-    /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    /// <param name="channel">The channel information associated with the service which the command relates to.</param>
+    /// <param name="listAction">It is assumed that the interface may be able to decrypt one or more services
+    ///   simultaneously. This parameter gives the interface an indication of the number of services that it
+    ///   will be expected to manage.</param>
+    /// <param name="command">The type of command.</param>
+    /// <param name="pmt">The programme map table entry for the service.</param>
+    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
     {
-      Log.Log.Debug("Anysee: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
-      if (!_isCamPresent)
+      Log.Debug("Anysee: send conditional access command, list action = {0}, command = {1}", listAction, command);
+
+      if (_ciApi == null)
       {
-        Log.Log.Debug("Anysee: CAM not available");
-        return true;
+        Log.Debug("Anysee: the conditional access interface is not open");
+        return false;
       }
-      if (command == CommandIdType.MMI || command == CommandIdType.Query)
+      if (!_isCamReady)
       {
-        Log.Log.Debug("Anysee: command type {0} is not supported", command);
+        Log.Debug("Anysee: the CAM is not ready");
+        return false;
+      }
+      if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
+      {
+        Log.Debug("Anysee: command type {0} is not supported", command);
         return false;
       }
       if (pmt == null || pmt.Length == 0)
       {
-        Log.Log.Debug("Anysee: no PMT");
+        Log.Debug("Anysee: PMT not supplied");
         return true;
       }
 
       // "Not selected" commands do nothing.
-      if (command == CommandIdType.NotSelected)
+      if (command == CaPmtCommand.NotSelected)
       {
+        Log.Debug("Anysee: result = success");
         return true;
       }
 
@@ -1060,7 +1277,7 @@ namespace TvLibrary.Implementations.DVB
       int caDataLength = (UInt16)(((pmt[10] & 0x0f) << 8) + pmt[11]);
       if (caDataLength > MaxDescriptorDataLength - 2)
       {
-        Log.Log.Debug("Anysee: program CA data is too long, length = {0}", caDataLength);
+        Log.Debug("Anysee: program CA data is too long, length = {0}", caDataLength);
         return false;
       }
       pmtData.ProgramDescriptorData = new byte[MaxDescriptorDataLength];
@@ -1077,7 +1294,7 @@ namespace TvLibrary.Implementations.DVB
       // Elementary streams
       int esCount = 0;
       pmtData.EsPmt = new EsPmtData[MaxPmtElementaryStreams];
-      while (offset < length - 4)
+      while (offset < pmt.Length - 4)
       {
         pmtData.EsPmt[esCount].StreamType = pmt[offset];
         offset++;
@@ -1117,7 +1334,7 @@ namespace TvLibrary.Implementations.DVB
         caDataLength = (UInt16)(((pmt[offset] & 0x0f) << 8) + pmt[offset + 1]);
         if (caDataLength > MaxDescriptorDataLength - 2)
         {
-          Log.Log.Debug("Anysee: elementary stream {0} CA data is too long, length = {1}", esCount + 1, caDataLength);
+          Log.Debug("Anysee: elementary stream {0} CA data is too long, length = {1}", esCount + 1, caDataLength);
           return false;
         }
         pmtData.EsPmt[esCount].DescriptorData = new byte[MaxDescriptorDataLength];
@@ -1136,175 +1353,16 @@ namespace TvLibrary.Implementations.DVB
       pmtData.EsCount = (UInt16)esCount;
 
       // Pass the PMT structure to the API.
-      IntPtr buffer = Marshal.AllocCoTaskMem(PmtDataSize);
-      try
+      Marshal.StructureToPtr(pmtData, _pmtBuffer, true);
+      //DVB_MMI.DumpBinary(_pmtBuffer, 0, PmtDataSize);
+      if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetPmt, _pmtBuffer, IntPtr.Zero))
       {
-        Marshal.StructureToPtr(pmtData, buffer, true);
-        //DVB_MMI.DumpBinary(_mmiMessageBuffer, 0, PmtDataSize);
-
-        if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetPmt, buffer, IntPtr.Zero))
-        {
-          Log.Log.Debug("Anysee: result = success");
-          return true;
-        }
-
-        Log.Log.Debug("Anysee: result = failure");
-        return false;
-      }
-      finally
-      {
-        Marshal.FreeCoTaskMem(buffer);
-      }
-    }
-
-    #endregion
-
-    #region callback handlers
-
-    /// <summary>
-    /// Called by the tuner driver when the common interface slot state changes.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot.</param>
-    /// <param name="state">The new CI state.</param>
-    /// <param name="message">A short description of the CI state.</param>
-    /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
-    private Int32 OnCiState(Int32 slotIndex, AnyseeCiState state, String message)
-    {
-      // If a CAM is inserted the API seems to only invoke this callback when the CAM state
-      // changes. However, if a CAM is *not* inserted then this callback is invoked every
-      // time the API polls the CI state. We don't want to log the polling - it would swamp
-      // the logs.
-      if (state == _ciState)
-      {
-        return 0;
+        Log.Debug("Anysee: result = success");
+        return true;
       }
 
-      lock (this)
-      {
-        Log.Log.Debug("Anysee: CI state change callback, slot = {0}", slotIndex);
-
-        if (state == AnyseeCiState.CamInserted || state == AnyseeCiState.CamOkay)
-        {
-          _isCamPresent = true;
-          _isCamReady = false;
-        }
-        else if (state == AnyseeCiState.CamReady || state == AnyseeCiState.SendPmtComplete || state == AnyseeCiState.Clear)
-        {
-          _isCamPresent = true;
-          _isCamReady = true;
-        }
-        else
-        {
-          _isCamPresent = false;
-          _isCamReady = false;
-        }
-        Log.Log.Debug("  old state = {0}", _ciState);
-        Log.Log.Debug("  new state = {0}", state);
-        if (String.IsNullOrEmpty(message))
-        {
-          message = "(no message)";
-        }
-        Log.Log.Debug("  message   = {0}", message);
-        _ciState = state;
-      }
-      return 0;
-    }
-
-    /// <summary>
-    /// Called by the tuner driver when MMI information is ready to be processed.
-    /// </summary>
-    /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="message">The message from the CAM.</param>
-    /// <returns>an HRESULT to indicate whether the message was successfully processed</returns>
-    private Int32 OnMmiMessage(Int32 slotIndex, IntPtr message)
-    {
-      Log.Log.Debug("Anysee: MMI message callback, slot = {0}", slotIndex);
-
-      MmiMessage msg = (MmiMessage)Marshal.PtrToStructure(message, typeof(MmiMessage));
-      Log.Log.Debug("  device index  = {0}", msg.DeviceIndex);
-      Log.Log.Debug("  slot index    = {0}", msg.SlotIndex);
-      Log.Log.Debug("  menu title    = {0}", msg.RootMenuTitle.Text);
-      Log.Log.Debug("  message type  = {0}", msg.Type);
-      MmiMenu menu = (MmiMenu)Marshal.PtrToStructure(msg.Menu, typeof(MmiMenu));
-      Log.Log.Debug("  string count  = {0}", menu.StringCount);
-      Log.Log.Debug("  menu index    = {0}", menu.MenuIndex);
-
-
-      // Enquiry
-      if (msg.Type == AnyseeMmiMessageType.InputRequest)
-      {
-        Log.Log.Debug("Anysee: enquiry");
-        if (msg.HeaderCount != 1)
-        {
-          Log.Log.Debug("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
-          return 1;
-        }
-        String prompt = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
-        Log.Log.Debug("  prompt    = {0}", prompt);
-        Log.Log.Debug("  length    = {0}", msg.ExpectedAnswerLength);
-        Log.Log.Debug("  key count = {0}", msg.KeyCount);
-        try
-        {
-          if (_ciMenuCallbacks != null)
-          {
-            _ciMenuCallbacks.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
-          }
-          return 0;
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Debug("Anysee: MMI callback enquiry exception: {0}", ex.ToString());
-          return 1;
-        }
-      }
-
-      // Menu or list
-      Log.Log.Debug("Anysee: menu");
-      if (msg.HeaderCount != 3)
-      {
-        Log.Log.Debug("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
-        return 1;
-      }
-
-      String title = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
-      String subTitle = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 4));
-      String footer = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 8));
-      Log.Log.Debug("  title     = {0}", title);
-      Log.Log.Debug("  sub-title = {0}", subTitle);
-      Log.Log.Debug("  footer    = {0}", footer);
-      Log.Log.Debug("  # entries = {0}", msg.EntryCount);
-      try
-      {
-        if (_ciMenuCallbacks != null)
-        {
-          _ciMenuCallbacks.OnCiMenu(title, subTitle, footer, msg.EntryCount);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Debug("Anysee: MMI callback header exception: {0}", ex.ToString());
-      }
-
-      try
-      {
-        String entry;
-        int offset = 4 * msg.HeaderCount;
-        for (int i = 0; i < msg.EntryCount; i++)
-        {
-          entry = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, offset + (i * 4)));
-          Log.Log.Debug("  entry {0,-2}  = {1}", i + 1, entry);
-          if (_ciMenuCallbacks != null)
-          {
-            _ciMenuCallbacks.OnCiMenuChoice(i, entry);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Debug("Anysee: MMI callback entry exception: {0}", ex.ToString());
-      }
-
-      return 0;
+      Log.Debug("Anysee: result = failure");
+      return false;
     }
 
     #endregion
@@ -1312,7 +1370,7 @@ namespace TvLibrary.Implementations.DVB
     #region ICiMenuActions members
 
     /// <summary>
-    /// Sets the CAM callback handler functions.
+    /// Set the CAM menu callback handler functions.
     /// </summary>
     /// <param name="ciMenuHandler">A set of callback handler functions.</param>
     /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
@@ -1327,75 +1385,34 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Send key press event information to the CAM. This is the mechanism that
-    /// is used for interaction within the CAM menu.
-    /// </summary>
-    /// <param name="key">The key that was pressed.</param>
-    /// <returns><c>true</c> if the key code is passed to the CAM successfully, otherwise <c>false</c></returns>
-    private bool SendKey(AnyseeCamMenuKey key)
-    {
-      Log.Log.Debug("Anysee: send key, key = {0}", key);
-      if (_ciApi == null)
-      {
-        Log.Log.Debug("Anysee: the conditional access interface is not open");
-        return false;
-      }
-
-      lock (this)
-      {
-        Marshal.WriteInt32(_generalBuffer, (Int32)key);
-        if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetKey, _generalBuffer, IntPtr.Zero))
-        {
-          Log.Log.Debug("Anysee: result = success");
-          return true;
-        }
-      }
-
-      Log.Log.Debug("Anysee: result = failure");
-      return false;
-    }
-
-    /// <summary>
-    /// Sends a request from the user to the CAM to open the menu.
+    /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
     {
-      if (!_isCamPresent)
-      {
-        return false;
-      }
-      Log.Log.Debug("Anysee: enter menu");
+      Log.Debug("Anysee: enter menu");
       bool result = SendKey(AnyseeCamMenuKey.Exit);
       return result && SendKey(AnyseeCamMenuKey.Menu);
     }
 
     /// <summary>
-    /// Sends a request from the user to the CAM to close the menu.
+    /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
     {
-      if (!_isCamPresent)
-      {
-        return false;
-      }
-      Log.Log.Debug("Anysee: close menu");
+      Log.Debug("Anysee: close menu");
       return SendKey(AnyseeCamMenuKey.Exit);
     }
 
     /// <summary>
-    /// Sends a menu entry selection from the user to the CAM.
+    /// Send a menu entry selection from the user to the CAM.
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SelectMenu(byte choice)
     {
-      if (!_isCamPresent)
-      {
-        return false;
-      }
-      Log.Log.Debug("Anysee: select menu entry, choice = {0}", choice);
+      Log.Debug("Anysee: select menu entry, choice = {0}", choice);
       if (choice == 0)
       {
         // Going back to the previous menu is not supported.
@@ -1413,33 +1430,29 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Sends a response from the user to the CAM.
+    /// Send a response from the user to the CAM.
     /// </summary>
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="answer">The user's response.</param>
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool SendMenuAnswer(bool cancel, String answer)
     {
-      if (!_isCamPresent)
-      {
-        return false;
-      }
       if (answer == null)
       {
         answer = String.Empty;
       }
-      Log.Log.Debug("Anysee: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+      Log.Debug("Anysee: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
       for (int i = 0; i < answer.Length; i++)
       {
         // We can't send anything other than numbers through the Anysee interface.
-        int test;
-        if (!Int32.TryParse(answer[i].ToString(), out test))
+        int digit;
+        if (!Int32.TryParse(answer[i].ToString(), out digit))
         {
-          Log.Log.Debug("Anysee: answer must only contain numeric digits");
+          Log.Debug("Anysee: answer may only contain numeric digits");
           return false;
         }
-        if (!SendKey((AnyseeCamMenuKey)test + 1))
+        if (!SendKey((AnyseeCamMenuKey)(digit + 1)))
         {
           return false;
         }
@@ -1449,61 +1462,78 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region IDiSEqCController members
+    #region IDiseqcController members
 
     /// <summary>
-    /// Send the appropriate DiSEqC 1.0 switch command to switch to a given channel.
+    /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
     /// </summary>
-    /// <param name="parameters">The scan parameters.</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
+    /// <remarks>The Anysee interface does not support directly setting the 22 kHz tone state. The tuning
+    /// request LNB frequency parameters can be used to manipulate the tone state appropriately.
+    /// </remarks>
+    /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
+    /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
-      ToneBurst toneBurst = ToneBurst.Off;
-      bool successDiseqc = true;
-      if (channel.DisEqc == DisEqcType.SimpleA)
+      Log.Debug("Anysee: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+
+      if (!_isAnysee || _propertySet == null)
       {
-        toneBurst = ToneBurst.ToneBurst;
-      }
-      else if (channel.DisEqc == DisEqcType.SimpleB)
-      {
-        toneBurst = ToneBurst.DataBurst;
-      }
-      else if (channel.DisEqc != DisEqcType.None)
-      {
-        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-        bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
-                              (channel.Polarisation == Polarisation.CircularL));
-        byte command = 0xf0;
-        command |= (byte)(isHighBand ? 1 : 0);
-        command |= (byte)((isHorizontal) ? 2 : 0);
-        command |= (byte)((antennaNr - 1) << 2);
-        successDiseqc = SendDiSEqCCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
+        Log.Debug("Anysee: device not initialised or interface not supported");
+        return false;
       }
 
-      Tone22k tone22k = Tone22k.Off;
-      if (isHighBand)
+      DiseqcMessage message = new DiseqcMessage();
+      message.MessageLength = 0;
+      message.ToneBurst = AnyseeToneBurst.Off;
+      if (toneBurstState == ToneBurst.ToneBurst)
       {
-        tone22k = Tone22k.On;
+        message.ToneBurst = AnyseeToneBurst.ToneBurst;
       }
-      bool successTone = SetToneState(toneBurst, tone22k);
+      else if (toneBurstState == ToneBurst.DataBurst)
+      {
+        message.ToneBurst = AnyseeToneBurst.DataBurst;
+      }
 
-      return (successDiseqc && successTone);
+      Marshal.StructureToPtr(message, _generalBuffer, true);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
+
+      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
+        _generalBuffer, DiseqcMessageSize,
+        _generalBuffer, DiseqcMessageSize
+      );
+      if (hr == 0)
+      {
+        Log.Debug("Anysee: result = success");
+        return true;
+      }
+
+      Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
     }
 
     /// <summary>
-    /// Send a DiSEqC command.
+    /// Send an arbitrary DiSEqC command.
     /// </summary>
-    /// <param name="command">The DiSEqC command to send.</param>
-    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendDiSEqCCommand(byte[] command)
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    public bool SendCommand(byte[] command)
     {
-      Log.Log.Debug("Anysee: send DiSEqC command");
+      Log.Debug("Anysee: send DiSEqC command");
 
+      if (!_isAnysee || _propertySet == null)
+      {
+        Log.Debug("Anysee: interface not supported");
+        return false;
+      }
+      if (command == null || command.Length == 0)
+      {
+        Log.Debug("Anysee: no command to send");
+        return true;
+      }
       if (command.Length > MaxDiseqcMessageLength)
       {
-        Log.Log.Debug("Anysee: command too long, length = {0}", command.Length);
+        Log.Debug("Anysee: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1529,40 +1559,58 @@ namespace TvLibrary.Implementations.DVB
       }
       if (hr == 0)
       {
-        Log.Log.Debug("Anysee: result = success");
+        Log.Debug("Anysee: result = success");
         return true;
       }
 
-      Log.Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
     /// <summary>
-    /// Get a reply to a previously sent DiSEqC command. This function is untested.
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
     /// </summary>
-    /// <param name="reply">The reply message.</param>
-    /// <returns><c>true</c> if a reply is successfully received, otherwise <c>false</c></returns>
-    public bool ReadDiSEqCCommand(out byte[] reply)
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadResponse(out byte[] response)
     {
-      // Not implemented.
-      reply = null;
+      // Not supported.
+      response = null;
       return false;
     }
 
     #endregion
 
-    #region IDisposable Member
+    #region IDisposable member
 
     /// <summary>
-    /// Close the conditional access interface and free unmanaged memory buffers.
+    /// Close interfaces, free memory and release COM object references.
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
-      if (_isAnysee)
+      if (_ciApi != null)
+      {
+        CloseInterface();
+        _ciApi = null;
+      }
+      _propertySet = null;
+      if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);
-        CloseCi();
+        _generalBuffer = IntPtr.Zero;
       }
+      if (_callbackBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_callbackBuffer);
+        _callbackBuffer = IntPtr.Zero;
+      }
+      if (_pmtBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_pmtBuffer);
+        _pmtBuffer = IntPtr.Zero;
+      }
+      _isAnysee = false;
     }
 
     #endregion

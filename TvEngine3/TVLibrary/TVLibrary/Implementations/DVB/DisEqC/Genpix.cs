@@ -388,7 +388,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       BdaExtensionParams message = new BdaExtensionParams();
-      message.DiseqcMessageLength = 0;
+      message.DiseqcMessageLength = (uint)command.Length;
       message.DiseqcRepeats = 0;
       message.DiseqcForceHighVoltage = false;
       message.DiseqcMessage = new byte[MaxDiseqcMessageLength];

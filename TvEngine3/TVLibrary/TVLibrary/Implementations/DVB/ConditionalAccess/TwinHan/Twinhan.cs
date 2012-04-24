@@ -1343,7 +1343,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Set the PIDs for hardware PID filtering. This function is untested. As far as
+    /// Set the PID filter PIDs. This function is untested. As far as
     /// I'm aware PID filtering is only supported by the VP-7021 (Starbox) and
     /// VP-7041 (Magicbox) models.
     /// </summary>
@@ -1351,7 +1351,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the filter is successfully configured, otherwise <c>false</c></returns>
     public bool SetHardwareFilterPids(List<ushort> pids)
     {
-      Log.Log.Debug("Twinhan: set hardware filter PIDs");
+      Log.Log.Debug("Twinhan: set PID filter PIDs");
       if (!_isPidFilterSupported)
       {
         Log.Log.Debug("Twinhan: PID filtering not supported");
@@ -1424,24 +1424,7 @@ namespace TvLibrary.Implementations.DVB
       //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
       DeviceInfo deviceInfo = (DeviceInfo)Marshal.PtrToStructure(_generalBuffer, typeof(DeviceInfo));
       Log.Log.Debug("  name                        = {0}", deviceInfo.Name);
-
-      // Separate the device type flags into a comma separated string.
-      Array deviceTypes = Enum.GetValues(typeof(TwinhanDeviceType));
-      String supportedModes = "";
-      for (int i = 0; i < deviceTypes.Length; i++)
-      {
-        if (((int)deviceInfo.Type & (UInt32)deviceTypes.GetValue(i)) != 0)
-        {
-          if (supportedModes.Length != 0)
-          {
-            supportedModes += ", ";
-          }
-          String typeName = Enum.GetName(typeof(TwinhanDeviceType), deviceTypes.GetValue(i));
-          supportedModes += typeName;
-        }
-      }
-
-      Log.Log.Debug("  supported modes             = {0}", supportedModes);
+      Log.Log.Debug("  supported modes             = {0}", deviceInfo.Type.ToString());
       Log.Log.Debug("  speed/interface             = {0}", deviceInfo.Speed);
       Log.Log.Debug("  MAC address                 = {0}", BitConverter.ToString(deviceInfo.MacAddress));
       Log.Log.Debug("  CI support                  = {0}", deviceInfo.CiSupport);
@@ -1671,7 +1654,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmt">The PMT.</param>
     /// <param name="length">The length of the PMT in bytes.</param>
     /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    public bool SendPmt(CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, int length)
     {
       Log.Log.Debug("Twinhan: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
       if (!_isCamPresent)
@@ -2008,7 +1991,7 @@ namespace TvLibrary.Implementations.DVB
         }
 
         ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
-        Log.Log.Debug("  type         = {0}", (DVB_MMI.ApplicationType)info.ApplicationType);
+        Log.Log.Debug("  type         = {0}", (MmiApplicationType)info.ApplicationType);
         Log.Log.Debug("  manufacturer = 0x{0:x}", info.Manufacturer);
         Log.Log.Debug("  code         = 0x{0:x}", info.ManufacturerCode);
         Log.Log.Debug("  menu title   = {0}", info.RootMenuTitle);

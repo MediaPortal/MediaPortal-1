@@ -811,7 +811,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmt">The PMT.</param>
     /// <param name="length">The length of the PMT in bytes.</param>
     /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    public bool SendPmt(CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, int length)
     {
       Log.Log.Debug("Turbosight: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
       if (!_isCamPresent)
@@ -1109,7 +1109,7 @@ namespace TvLibrary.Implementations.DVB
         DVB_MMI.DumpBinary(content, 0, length);
         return;
       }
-      DVB_MMI.ApplicationType type = (DVB_MMI.ApplicationType)content[0];
+      MmiApplicationType type = (MmiApplicationType)content[0];
       int manufacturer = (content[1] << 8) | content[2];
       int code = (content[3] << 8) | content[4];
       String title = DVB_MMI.BytesToString(content, 5, length - 5);
@@ -1383,10 +1383,10 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      byte responseType = (byte)DVB_MMI.ResponseType.Answer;
+      byte responseType = (byte)MmiResponseType.Answer;
       if (cancel)
       {
-        responseType = (byte)DVB_MMI.ResponseType.Cancel;
+        responseType = (byte)MmiResponseType.Cancel;
       }
       lock (this)
       {

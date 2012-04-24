@@ -732,25 +732,25 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Set the PIDs for hardware PID filtering.
+    /// Set the PIDs for PID filtering.
     /// </summary>
     /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
     /// <param name="pids">The PIDs to allow through the filter.</param>
     /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
     public bool SetHardwareFilterPids(ModulationType modulation, List<ushort> pids)
     {
-      Log.Log.Debug("Digital Everywhere: set hardware filter PIDs, modulation = {0}", modulation);
+      Log.Log.Debug("Digital Everywhere: set PID filter PIDs, modulation = {0}", modulation);
       if (_tunerType != CardType.DvbS && _tunerType != CardType.DvbT && _tunerType != CardType.DvbC)
       {
         Log.Log.Debug("Digital Everywhere: PID filtering not supported");
         return true;
       }
 
-      // It is not ideal to have to enable hardware PID filtering because
-      // doing so can limit the number of channels that can be viewed/recorded
-      // simultaneously. However, it does seem that there is a need for filtering
-      // on satellite transponders with high data rates. Problems have been observed with
-      // transponders on Thor 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
+      // It is not ideal to have to enable PID filtering because doing so can limit
+      // the number of channels that can be viewed/recorded simultaneously. However,
+      // it does seem that there is a need for filtering on satellite transponders
+      // with high data rates. Problems have been observed with transponders on Thor
+      // 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
       //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
       //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
       bool fullTransponder = true;
@@ -1028,34 +1028,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Convert a CI state into a comma separated list of the flags that are set.
-    /// </summary>
-    /// <param name="ciState">The CI state.</param>
-    /// <returns>a comma separated list of the flags that are set</returns>
-    private String CiStateFlagsToString(DeCiState ciState)
-    {
-      if (ciState == DeCiState.Empty)
-      {
-        return Enum.GetName(typeof(DeCiState), DeCiState.Empty);
-      }
-      Array ciStates = Enum.GetValues(typeof(DeCiState));
-      String ciFlagsSet = "";
-      for (int i = 0; i < ciStates.Length; i++)
-      {
-        if (((ushort)ciState & (UInt16)ciStates.GetValue(i)) != 0)
-        {
-          if (ciFlagsSet.Length != 0)
-          {
-            ciFlagsSet += ", ";
-          }
-          String typeName = Enum.GetName(typeof(DeCiState), ciStates.GetValue(i));
-          ciFlagsSet += typeName;
-        }
-      }
-      return ciFlagsSet;
-    }
-
-    /// <summary>
     /// Determines whether a CI slot is present or not.
     /// </summary>
     /// <returns><c>true</c> if a CI slot is present, otherwise <c>false</c></returns>
@@ -1088,7 +1060,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      Log.Log.Debug("Digital Everywhere: CI state = {0}", CiStateFlagsToString(ciState));
+      Log.Log.Debug("Digital Everywhere: CI state = {0}", ciState.ToString());
       bool camPresent = false;
       if ((ciState & DeCiState.CamError) == 0 &&
         (ciState & DeCiState.CamIsDvb) != 0 &&
@@ -1121,7 +1093,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       }
 
-      Log.Log.Debug("Digital Everywhere: CI state = {0}", CiStateFlagsToString(ciState));
+      Log.Log.Debug("Digital Everywhere: CI state = {0}", ciState.ToString());
       bool camReady = false;
       if ((ciState & DeCiState.CamPresent) != 0 &&
         (ciState & DeCiState.CamIsDvb) != 0 &&
@@ -1143,7 +1115,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmt">The PMT.</param>
     /// <param name="length">The length of the PMT in bytes.</param>
     /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    public bool SendPmt(CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, int length)
     {
       Log.Log.Debug("Digital Everywhere: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
       if (!_isCamPresent)
@@ -1245,8 +1217,8 @@ namespace TvLibrary.Implementations.DVB
           if (ciState != prevCiState)
           {
             Log.Log.Debug("Digital Everywhere: CI state change");
-            Log.Log.Debug("  old state = {0}", CiStateFlagsToString(prevCiState));
-            Log.Log.Debug("  new state = {0}", CiStateFlagsToString(ciState));
+            Log.Log.Debug("  old state = {0}", prevCiState.ToString());
+            Log.Log.Debug("  new state = {0}", ciState.ToString());
             prevCiState = ciState;
 
             if ((ciState & DeCiState.CamError) == 0 &&
@@ -1444,10 +1416,10 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("Digital Everywhere: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
       CaData data = new CaData(DeCiMessageTag.Mmi);
-      DVB_MMI.ResponseType responseType = DVB_MMI.ResponseType.Answer;
+      MmiResponseType responseType = MmiResponseType.Answer;
       if (cancel)
       {
-        responseType = DVB_MMI.ResponseType.Cancel;
+        responseType = MmiResponseType.Cancel;
       }
       byte[] apdu = DVB_MMI.CreateMMIAnswer(responseType, answer);
       data.DataLength = (UInt16)apdu.Length;

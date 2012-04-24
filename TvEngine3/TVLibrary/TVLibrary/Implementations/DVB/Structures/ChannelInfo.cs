@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB.Structures
 {
@@ -214,7 +215,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       caPMT.ProgramNumber = program_number;
       caPMT.CurrentNextIndicator = current_next_indicator;
       caPMT.VersionNumber = version_number;
-      caPMT.CAPmt_Listmanagement = ListManagementType.Only;
+      caPMT.CAPmt_Listmanagement = CaPmtListManagementAction.Only;
 
       //if (pat.program_number != program_number)
       //{
@@ -266,7 +267,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       }
       if (caPMT.ProgramInfoLength > 0)
       {
-        caPMT.CommandId = CommandIdType.Descrambling;
+        caPMT.CommandId = CaPmtCommand.OkDescrambling;
         caPMT.ProgramInfoLength += 1;
       }
       //byte[] b = new byte[6];
@@ -337,7 +338,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         CaPmtEs pmtEs = new CaPmtEs();
         pmtEs.StreamType = pidInfo.stream_type;
         pmtEs.ElementaryStreamPID = pidInfo.pid;
-        pmtEs.CommandId = CommandIdType.Descrambling;
+        pmtEs.CommandId = CaPmtCommand.OkDescrambling;
 
         if (len1 > 0)
         {
@@ -455,7 +456,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         {
           if (pmtEs.ElementaryStreamInfoLength > 0)
           {
-            pmtEs.CommandId = CommandIdType.Descrambling;
+            pmtEs.CommandId = CaPmtCommand.OkDescrambling;
             pmtEs.ElementaryStreamInfoLength += 1;
           }
           caPMT.CaPmtEsList.Add(pmtEs);

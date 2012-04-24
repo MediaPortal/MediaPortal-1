@@ -1494,7 +1494,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmt">The PMT.</param>
     /// <param name="length">The length of the PMT in bytes.</param>
     /// <returns><c>true</c> if the service is successfully descrambled, otherwise <c>false</c></returns>
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    public bool SendPmt(CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, int length)
     {
       Log.Log.Debug("TechnoTrend: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
       if (!_isCamPresent)
@@ -1502,7 +1502,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("TechnoTrend: CAM not available");
         return true;
       }
-      if (command == CommandIdType.MMI || command == CommandIdType.Query)
+      if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
         Log.Log.Debug("TechnoTrend: command type {0} is not supported", command);
         return false;
@@ -1520,7 +1520,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("TechnoTrend: service ID 0 cannot be descrambled");
       }
 
-      if (command == CommandIdType.NotSelected)
+      if (command == CaPmtCommand.NotSelected)
       {
         _descrambledServices.Remove(serviceId);
         return true;
@@ -1528,10 +1528,10 @@ namespace TvLibrary.Implementations.DVB
 
       // We're dealing with a "descrambling" command. Search our list and ensure
       // that the SID is present; add it if it is not present.
-      if (listAction == ListManagementType.Add ||
-        listAction == ListManagementType.Update ||
-        listAction == ListManagementType.More ||
-        listAction == ListManagementType.Last)
+      if (listAction == CaPmtListManagementAction.Add ||
+        listAction == CaPmtListManagementAction.Update ||
+        listAction == CaPmtListManagementAction.More ||
+        listAction == CaPmtListManagementAction.Last)
       {
         List<ushort>.Enumerator en = _descrambledServices.GetEnumerator();
         bool found = false;
@@ -1548,15 +1548,15 @@ namespace TvLibrary.Implementations.DVB
           _descrambledServices.Add(serviceId);
         }
       }
-      else if (listAction == ListManagementType.Only ||
-        listAction == ListManagementType.First)
+      else if (listAction == CaPmtListManagementAction.Only ||
+        listAction == CaPmtListManagementAction.First)
       {
         _descrambledServices = new List<ushort>();
         _descrambledServices.Add(serviceId);
       }
 
       // Wait until we have the full list before we send any commands to the CAM.
-      if (listAction == ListManagementType.First || listAction == ListManagementType.More)
+      if (listAction == CaPmtListManagementAction.First || listAction == CaPmtListManagementAction.More)
       {
         return true;
       }

@@ -1069,7 +1069,7 @@ namespace TvLibrary.Implementations.DVB
       _winTvCiModule = new WinTvCiModule(_filterTuner, _devicePath);
       if (_winTvCiModule.IsWinTvCi)
       {
-        return _winTvCiModule.AddToGraph(ref _capBuilder, ref lastFilter);
+        return _winTvCiModule.AddToGraph(_capBuilder, ref lastFilter);
       }
       _winTvCiModule.Dispose();
       return false;
@@ -1094,7 +1094,7 @@ namespace TvLibrary.Implementations.DVB
       _digitalDevices = new DigitalDevices(_filterTuner, _devicePath);
       if (_digitalDevices.IsDigitalDevices)
       {
-        return _digitalDevices.AddToGraph(ref _capBuilder, ref lastFilter);
+        return _digitalDevices.AddToGraph(_capBuilder, ref lastFilter);
       }
       _digitalDevices.Dispose();
       return false;

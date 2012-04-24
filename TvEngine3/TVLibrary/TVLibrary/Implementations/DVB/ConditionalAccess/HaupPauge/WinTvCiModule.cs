@@ -133,7 +133,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>an HRESULT indicating whether the application information was successfully processed</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private delegate Int32 OnWinTvCiCamInfo(
-      IntPtr context, DVB_MMI.ApplicationType applicationType, UInt16 manufacturer, UInt16 code,
+      IntPtr context, MmiApplicationType applicationType, UInt16 manufacturer, UInt16 code,
       [MarshalAs(UnmanagedType.LPStr)] String menuTitle);
 
     /// <summary>
@@ -156,6 +156,8 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    #region variables
+
     private bool _isWinTvCi = false;
     private bool _isCiSlotPresent = false;
     private bool _isCamPresent = false;
@@ -174,6 +176,8 @@ namespace TvLibrary.Implementations.DVB
 
     private ICiMenuCallbacks _ciMenuCallbacks;
     private DVB_MMI_Handler _mmiHandler;
+
+    #endregion
 
     ///<summary>
     /// Initialises a new instance of the <see cref="WinTvCiModule"/> class.
@@ -212,7 +216,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="graphBuilder">The graph builder to use to insert the device.</param>
     /// <param name="lastFilter">The source filter (usually either a tuner or capture filter) to connect the device to.</param>
     /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    public bool AddToGraph(ref ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
+    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
     {
       Log.Log.Debug("WinTV-CI: add filter to graph");
       if (graphBuilder == null)
@@ -413,7 +417,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmt">The PMT.</param>
     /// <param name="length">The length of the PMT in bytes.</param>
     /// <returns><c>true</c> if the request is sent successfully, otherwise <c>false</c></returns>
-    public bool SendPmt(ListManagementType listAction, CommandIdType command, byte[] pmt, int length)
+    public bool SendPmt(CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, int length)
     {
       Log.Log.Debug("WinTV-CI: send PMT to CAM, list action = {0}, command = {1}", listAction, command);
       if (!_isCamPresent)
@@ -421,7 +425,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("WinTV-CI: CAM not available");
         return true;    // Don't retry.
       }
-      if (command == CommandIdType.MMI || command == CommandIdType.Query)
+      if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
         Log.Log.Debug("WinTV-CI: command type {0} is not supported", command);
         return false;
@@ -433,7 +437,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       // "Not selected" commands do nothing.
-      if (command == CommandIdType.NotSelected)
+      if (command == CaPmtCommand.NotSelected)
       {
         return true;
       }
@@ -493,7 +497,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="menuTitle">The CAM root menu title.</param>
     /// <returns>an HRESULT indicating whether the application information was successfully processed</returns>
     private Int32 OnCamInfo(
-      IntPtr context, DVB_MMI.ApplicationType applicationType, UInt16 manufacturer, UInt16 code,
+      IntPtr context, MmiApplicationType applicationType, UInt16 manufacturer, UInt16 code,
       [MarshalAs(UnmanagedType.LPStr)] String menuTitle)
     {
       Log.Log.Debug("WinTV-CI: CAM info callback");
@@ -656,10 +660,10 @@ namespace TvLibrary.Implementations.DVB
         answer = String.Empty;
       }
       Log.Log.Debug("WinTV-CI: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
-      DVB_MMI.ResponseType responseType = DVB_MMI.ResponseType.Answer;
+      MmiResponseType responseType = MmiResponseType.Answer;
       if (cancel)
       {
-        responseType = DVB_MMI.ResponseType.Cancel;
+        responseType = MmiResponseType.Cancel;
       }
       byte[] apdu = DVB_MMI.CreateMMIAnswer(responseType, answer);
       int hr = WinTVCI_SendAPDU(_winTvCiFilter, apdu, apdu.Length);
