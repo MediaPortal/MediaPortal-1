@@ -17,7 +17,7 @@
 			<![CDATA[<section\sclass="plot".*?<p>(?<moviePlot>.*?)</p>]]>
 		</string>
 		<string><!--4-->
-			<![CDATA[<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})]]>
+			<![CDATA[title"\scontent="(?<movieTitle>.*?)[(](?<movieYear>.{4})[)]]]>
 		</string>
 		<string><!--5-->
 			<![CDATA[(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref=".*?>(?<director>.*?)</a>]]>

@@ -1142,10 +1142,10 @@ namespace MediaPortal.Video.Database
             }
 
             int year = 0;
-
+            // Set near future for movies without year (99% it's a future project)
             if (!Int32.TryParse(strYear, out year))
             {
-             year = 1900;
+             year = DateTime.Today.Year + 3;
             }
             
             IMDBActor.IMDBActorMovie actorMovie = new IMDBActor.IMDBActorMovie();

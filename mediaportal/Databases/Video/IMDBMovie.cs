@@ -432,6 +432,7 @@ namespace MediaPortal.Video.Database
       }
       
       // Movie id property (to set random movieId property for movies not in the database -> not scanned)
+      // FA handler use this property
       // movieId is independant and it is related to videofile
       if (!string.IsNullOrEmpty(file))
       {

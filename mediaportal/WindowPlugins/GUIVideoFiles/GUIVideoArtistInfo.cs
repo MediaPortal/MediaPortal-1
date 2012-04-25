@@ -317,7 +317,7 @@ namespace MediaPortal.GUI.Video
           int.TryParse(ttFolder, out i_ttFolder);
           i_ttFolder = i_ttFolder / 25000; // 25000 thumbs in one folder
           ttFolder = i_ttFolder.ToString();
-          path = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\ActorsMovies\" + ttFolder + @"\";
+          path = string.Format(@"{0}\Videos\Actors\ActorsMovies\{1}\", Config.GetFolder(Config.Dir.Thumbs), ttFolder);
           filenameL = _currentActor[i].MovieImdbID + ".jpg";
 
           if (File.Exists(path + filenameL))
@@ -334,7 +334,7 @@ namespace MediaPortal.GUI.Video
         
         // Show in list if user have that movie in collection (played property = true)
         ArrayList movies = new ArrayList();
-        string sql = "SELECT * FROM movieinfo WHERE IMDBID = '" + _currentActor[i].MovieImdbID + "'";
+        string sql = string.Format("SELECT * FROM movieinfo WHERE IMDBID = '{0}'", _currentActor[i].MovieImdbID);
         VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
 
         if (movies.Count > 0) // We have a movie, color normal or color played for watched
@@ -796,6 +796,7 @@ namespace MediaPortal.GUI.Video
 
           // Update database
           ExecuteSql("strPictureURL", thumb, item);
+          item.RefreshCoverArt();
           item.IconImage = filenameL;
           item.ThumbnailImage = filenameL;
         }
@@ -1004,11 +1005,10 @@ namespace MediaPortal.GUI.Video
     private void GetExtraDataImdb(GUIListItem item)
     {
       //Update title/Year
-      //string regex = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+      //regex = title"\scontent="(?<movieTitle>.*?)[(](?<movieYear>.{4})[)]
       string regex = _vdbParserStr[4];
       string title = Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieTitle"].Value.Trim();
-      int year = 1900;
-      
+      int year = 0;
       int.TryParse(Regex.Match(_strBody, regex, RegexOptions.Singleline).Groups["movieYear"].Value.Trim(), out year);
       
       if (title != string.Empty)
@@ -1017,11 +1017,13 @@ namespace MediaPortal.GUI.Video
         ListItemMovieInfo(item).MovieTitle = title;
       }
 
-      if (year > 0)
+      if (year == 0)
       {
-        ExecuteSql("iYear", year.ToString(), item);
-        ListItemMovieInfo(item).Year = year;
+        year = DateTime.Today.Year + 3;
       }
+      
+      ExecuteSql("iYear", year.ToString(), item);
+      ListItemMovieInfo(item).Year = year;
       
       // Director
       //regex = @"(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref="".*?>(?<director>.*?)</a>";
@@ -1067,9 +1069,11 @@ namespace MediaPortal.GUI.Video
       {
         string tmpActor = actor.Groups["actor"].Value;
         tmpActor = HttpUtility.HtmlDecode(tmpActor);
-        
+
         if (tmpActor != string.Empty)
+        {
           strActor += tmpActor + " / ";
+        }
       }
       int index = strActor.LastIndexOf(" /");
       
@@ -1113,34 +1117,47 @@ namespace MediaPortal.GUI.Video
     {
       string absoluteUri;
       strBody = HttpUtility.HtmlDecode(GetPage(strUrl, "utf-8", out absoluteUri));
-      string shortPlot = Regex.Match(strBody, regex, RegexOptions.Singleline).Groups["moviePlot"].Value.
-        Replace("&amp;", "&").
-        Replace("&lt;", "<").
-        Replace("&gt;", ">").
-        Replace("&quot;", "\"").
-        Replace("&apos;", "'").
-        Replace("No overview found.", string.Empty).Trim();
-
-
-      shortPlot = Util.Utils.stripHTMLtags(shortPlot);
-      // extra cleanup
-      if (!string.IsNullOrEmpty(shortPlot))
+      
+      if (strBody != null)
       {
-        int index = shortPlot.LastIndexOf(@"See full summary");
-        if (index > 0)
+        string shortPlot = Regex.Match(strBody, regex, RegexOptions.Singleline).Groups["moviePlot"].Value.
+          Replace("&amp;", "&").
+          Replace("&lt;", "<").
+          Replace("&gt;", ">").
+          Replace("&quot;", "\"").
+          Replace("&apos;", "'").
+          Replace("No overview found.", string.Empty).Trim();
+
+
+        shortPlot = Util.Utils.stripHTMLtags(shortPlot);
+        
+        // extra cleanup
+        if (!string.IsNullOrEmpty(shortPlot))
         {
-          shortPlot = shortPlot.Remove(index);
+          int index = shortPlot.LastIndexOf(@"See full summary");
+          
+          if (index > 0)
+          {
+            shortPlot = shortPlot.Remove(index);
+          }
+          
+          index = shortPlot.LastIndexOf(@"See full synopsis");
+          
+          if (index > 0)
+          {
+            shortPlot = shortPlot.Remove(index);
+          }
+          
+          index = shortPlot.LastIndexOf("\n");
+
+          if (index > 0)
+          {
+            shortPlot = shortPlot.Remove(index);
+          }
         }
-        index = shortPlot.LastIndexOf(@"See full synopsis");
-        if (index > 0)
-        {
-          shortPlot = shortPlot.Remove(index);
-        }
-        index = shortPlot.LastIndexOf("\n");
-        if (index > 0)
-          shortPlot = shortPlot.Remove(index);
+        return shortPlot;
       }
-      return shortPlot;
+      return string.Empty;
     }
 
     // Download helper
@@ -1162,6 +1179,7 @@ namespace MediaPortal.GUI.Video
           req.Headers.Add("Accept-Language", "en-US");
           req.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          req.Timeout = 10000;
         }
         catch (Exception) { }
         result = req.GetResponse();
