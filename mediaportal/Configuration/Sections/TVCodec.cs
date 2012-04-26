@@ -134,126 +134,30 @@ namespace MediaPortal.Configuration.Sections
         string ddplusaudioCodec = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
         string audioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
 
-        if (audioCodec == string.Empty)
-        {
-          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-          if (availableAudioFilters.Count > 0)
-          {
-            bool LAVAudioDecoderFound = false;
-            bool DScalerFilterFound = false;
-            audioCodec = (string)availableAudioFilters[0];
-            foreach (string filter in availableAudioFilters)
-            {
-              if (filter.Equals("LAV Audio Decoder"))
-              {
-                LAVAudioDecoderFound = true;
-              }
-              if (filter.Equals("DScaler Audio Decoder"))
-              {
-                DScalerFilterFound = true;
-              }
-            }
-            if (LAVAudioDecoderFound)
-            {
-              audioCodec = "LAV Audio Decoder";
-            }
-            else if (DScalerFilterFound)
-            {
-              audioCodec = "DScaler Audio Decoder";
-            }
-          }
-        }
         if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool LAVVideoDecoderFound = false;
-          bool DScalerFilterFound = false;
-          if (availableVideoFilters.Count > 0)
-          {
-            videoCodec = (string)availableVideoFilters[0];
-            foreach (string filter in availableVideoFilters)
-            {
-              if (filter.Equals("LAV Video Decoder"))
-              {
-                LAVVideoDecoderFound = true;
-              }
-              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
-              {
-                DScalerFilterFound = true;
-              }
-            }
-            if (LAVVideoDecoderFound)
-            {
-              videoCodec = "LAV Video Decoder";
-            }
-            else if (DScalerFilterFound)
-            {
-              videoCodec = "DScaler Mpeg2 Video Decoder";
-            }
-          }
+          videoCodec = SetCodecBox(availableVideoFilters, "LAV Video Decoder", "DScaler Mpeg2 Video Decoder", "");
         }
-
         if (h264videoCodec == string.Empty)
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
-          bool h264DecFilterFound = false;
-          if (availableH264VideoFilters.Count > 0)
-          {
-            h264videoCodec = (string)availableH264VideoFilters[0];
-            foreach (string filter in availableH264VideoFilters)
-            {
-              if (filter.Equals("CoreAVC Video Decoder"))
-              {
-                h264DecFilterFound = true;
-              }
-            }
-            if (h264DecFilterFound)
-            {
-              h264videoCodec = "CoreAVC Video Decoder";
-            }
-          }
+          h264videoCodec = SetCodecBox(availableH264VideoFilters, "LAV Video Decoder", "CoreAVC Video Decoder", "");
         }
-
+        if (audioCodec == string.Empty)
+        {
+          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+          audioCodec = SetCodecBox(availableAudioFilters, "LAV Audio Decoder", "DScaler Audio Decoder", "ffdshow Audio Decoder");
+        }
         if (aacaudioCodec == string.Empty)
         {
-          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
-          if (availableAACAudioFilters.Count > 0)
-          {
-            bool MonogramAACFound = false;
-            aacaudioCodec = (string)availableAACAudioFilters[0];
-            foreach (string filter in availableAACAudioFilters)
-            {
-              if (filter.Equals("MONOGRAM AAC Decoder"))
-              {
-                MonogramAACFound = true;
-              }
-            }
-            if (MonogramAACFound)
-            {
-              aacaudioCodec = "MONOGRAM AAC Decoder";
-            }
-          }
+          ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.AAC);
+          aacaudioCodec = SetCodecBox(availableAACAudioFilters, "LAV Audio Decoder", "MONOGRAM ACC Decoder", "ffdshow Audio Decoder");
         }
-
         if (ddplusaudioCodec == string.Empty)
         {
           ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);
-          if (availableDDPLUSAudioFilters.Count > 0)
-          {
-            bool ffdshowFound = false;
-            ddplusaudioCodec = (string)availableDDPLUSAudioFilters[0];
-            foreach (string filter in availableDDPLUSAudioFilters)
-            {
-              if (filter.Equals("ffdshow Audio Decoder"))
-              {
-                ffdshowFound = true;
-              }
-            }
-            if (ffdshowFound)
-            {
-              ddplusaudioCodec = "ffdshow Audio Decoder";
-            }
-          }
+          ddplusaudioCodec =SetCodecBox(availableDDPLUSAudioFilters, "LAV Audio Decoder", "ffdshow Audio Decoder", "");
         }
 
         audioCodecComboBox.Text = audioCodec;
@@ -269,6 +173,47 @@ namespace MediaPortal.Configuration.Sections
         CheckBoxValid(aacAudioCodecComboBox);
         CheckBoxValid(ddplusAudioCodecComboBox);
       }
+    }
+
+    private string SetCodecBox(ArrayList availableFilters, String FilterCodec1, String FilterCodec2, String FilterCodec3)
+    {
+      bool filterCodec1 = false;
+      bool filterCodec2 = false;
+      bool filterCodec3 = false;
+      string Codec = "";
+
+      if (availableFilters.Count > 0)
+      {
+        Codec = (string)availableFilters[0];
+        foreach (string filter in availableFilters)
+        {
+          if (filter.Equals(FilterCodec1))
+          {
+            filterCodec1 = true;
+          }
+          else if (filter.Equals(FilterCodec2))
+          {
+            filterCodec2 = true;
+          }
+          else if (filter.Equals(FilterCodec3))
+          {
+            filterCodec3 = true;
+          }
+        }
+        if (filterCodec1)
+        {
+          return FilterCodec1;
+        }
+        else if (filterCodec2)
+        {
+          return FilterCodec2;
+        }
+        else if (filterCodec3)
+        {
+          return FilterCodec3;
+        }
+      }
+      return Codec;
     }
 
     /// <summary>

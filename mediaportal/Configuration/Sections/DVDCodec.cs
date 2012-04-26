@@ -149,64 +149,18 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDXVA.Checked = xmlreader.GetValueAsBool("dvdplayer", "turnoffdxva", false);
         audioRendererComboBox.SelectedItem = audioRenderer;
         dvdNavigatorComboBox.SelectedItem = dvdNavigator;
-        if (audioCodec == string.Empty)
-        {
-          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-          if (availableAudioFilters.Count > 0)
-          {
-            bool LAVAudioDecoderFound = false;
-            bool DScalerFilterFound = false;
-            audioCodec = (string)availableAudioFilters[0];
-            foreach (string filter in availableAudioFilters)
-            {
-              if (filter.Equals("LAV Audio Decoder"))
-              {
-                LAVAudioDecoderFound = true;
-              }
-              if (filter.Equals("DScaler Audio Decoder"))
-              {
-                DScalerFilterFound = true;
-              }
-            }
-            if (LAVAudioDecoderFound)
-            {
-              audioCodec = "LAV Audio Decoder";
-            }
-            else if (DScalerFilterFound)
-            {
-              audioCodec = "DScaler Audio Decoder";
-            }
-          }
-        }
+
         if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool LAVVideoDecoderFound = false;
-          bool DScalerFilterFound = false;
-          if (availableVideoFilters.Count > 0)
-          {
-            videoCodec = (string)availableVideoFilters[0];
-            foreach (string filter in availableVideoFilters)
-            {
-              if (filter.Equals("LAV Video Decoder"))
-              {
-                LAVVideoDecoderFound = true;
-              }
-              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
-              {
-                DScalerFilterFound = true;
-              }
-            }
-            if (LAVVideoDecoderFound)
-            {
-              videoCodec = "LAV Video Decoder";
-            }
-            else if (DScalerFilterFound)
-            {
-              videoCodec = "DScaler Mpeg2 Video Decoder";
-            }
-          }
+          videoCodec = SetCodecBox(availableVideoFilters, "LAV Video Decoder", "DScaler Mpeg2 Video Decoder", "");
         }
+        if (audioCodec == string.Empty)
+        {
+          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+          audioCodec = SetCodecBox(availableAudioFilters, "LAV Audio Decoder", "DScaler Audio Decoder", "ffdshow Audio Decoder");
+        }
+
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
         CheckBoxValid(audioCodecComboBox);
@@ -215,6 +169,47 @@ namespace MediaPortal.Configuration.Sections
         CheckBoxValid(audioRendererComboBox);
       }
       Log.Info("load dvd done");
+    }
+
+    private string SetCodecBox(ArrayList availableFilters, String FilterCodec1, String FilterCodec2, String FilterCodec3)
+    {
+      bool filterCodec1 = false;
+      bool filterCodec2 = false;
+      bool filterCodec3 = false;
+      string Codec = "";
+
+      if (availableFilters.Count > 0)
+      {
+        Codec = (string)availableFilters[0];
+        foreach (string filter in availableFilters)
+        {
+          if (filter.Equals(FilterCodec1))
+          {
+            filterCodec1 = true;
+          }
+          else if (filter.Equals(FilterCodec2))
+          {
+            filterCodec2 = true;
+          }
+          else if (filter.Equals(FilterCodec3))
+          {
+            filterCodec3 = true;
+          }
+        }
+        if (filterCodec1)
+        {
+          return FilterCodec1;
+        }
+        else if (filterCodec2)
+        {
+          return FilterCodec2;
+        }
+        else if (filterCodec3)
+        {
+          return FilterCodec3;
+        }
+      }
+      return Codec;
     }
 
     /// <summary>
