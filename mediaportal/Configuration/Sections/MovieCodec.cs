@@ -27,8 +27,8 @@ using DShowNET;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
-using System.Linq;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -135,9 +135,6 @@ namespace MediaPortal.Configuration.Sections
           break;
         }
 
-        //IList<list> FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-        //list.Remove(item => item == null);
-
         availableVC1IVideoFilters.Sort();
         availableFileSyncFilters.Sort();
         availableSourcesFilters.Sort();
@@ -156,7 +153,7 @@ namespace MediaPortal.Configuration.Sections
       }
       // Do always
       autoDecoderSettings.Visible = SettingsForm.AdvancedMode;
-      ForceSourceSplitter.Visible = true;//SettingsForm..AdvancedMode;
+      ForceSourceSplitter.Visible = true;
     }
 
     /// <summary>
@@ -356,6 +353,27 @@ namespace MediaPortal.Configuration.Sections
         aacAudioCodecComboBox.Text = aacaudioCodec;
         SplitterComboBox.Text = splitterFilter;
         SplitterFileComboBox.Text = splitterFileFilter;
+        CheckBoxValid(audioCodecComboBox);
+        CheckBoxValid(videoCodecComboBox);
+        CheckBoxValid(h264videoCodecComboBox);
+        CheckBoxValid(vc1videoCodecComboBox);
+        CheckBoxValid(vc1ivideoCodecComboBox);
+        CheckBoxValid(xvidvideoCodecComboBox);
+        CheckBoxValid(aacAudioCodecComboBox);
+        CheckBoxValid(audioRendererComboBox);
+        CheckBoxValid(SplitterComboBox);
+        CheckBoxValid(SplitterFileComboBox);
+      }
+    }
+
+    /// <summary>
+    /// Check Combobox count
+    /// </summary>
+    public override void CheckBoxValid(MPComboBox ComboBox)
+    {
+      if (ComboBox.Items.Count == 1)
+      {
+        ComboBox.Enabled = false;
       }
     }
 

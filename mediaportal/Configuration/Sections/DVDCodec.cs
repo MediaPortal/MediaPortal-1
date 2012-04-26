@@ -154,8 +154,8 @@ namespace MediaPortal.Configuration.Sections
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
           if (availableAudioFilters.Count > 0)
           {
-            bool LAVAudioDecoderFound = true;
-            bool DScalerFilterFound = true;
+            bool LAVAudioDecoderFound = false;
+            bool DScalerFilterFound = false;
             audioCodec = (string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
@@ -209,8 +209,23 @@ namespace MediaPortal.Configuration.Sections
         }
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
+        CheckBoxValid(audioCodecComboBox);
+        CheckBoxValid(videoCodecComboBox);
+        CheckBoxValid(dvdNavigatorComboBox);
+        CheckBoxValid(audioRendererComboBox);
       }
       Log.Info("load dvd done");
+    }
+
+    /// <summary>
+    /// Check Combobox count
+    /// </summary>
+    public override void CheckBoxValid(MPComboBox ComboBox)
+    {
+      if (ComboBox.Items.Count == 1)
+      {
+        ComboBox.Enabled = false;
+      }
     }
 
     /// <summary>

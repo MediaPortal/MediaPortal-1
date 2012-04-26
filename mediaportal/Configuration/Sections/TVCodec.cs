@@ -25,6 +25,7 @@ using DirectShowLib;
 using DShowNET;
 using DShowNET.Helper;
 using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
 using Microsoft.Win32;
 
 namespace MediaPortal.Configuration.Sections
@@ -261,6 +262,23 @@ namespace MediaPortal.Configuration.Sections
         audioRendererComboBox.Text = audioRenderer;
         aacAudioCodecComboBox.Text = aacaudioCodec;
         ddplusAudioCodecComboBox.Text = ddplusaudioCodec;
+        CheckBoxValid(audioCodecComboBox);
+        CheckBoxValid(videoCodecComboBox);
+        CheckBoxValid(h264videoCodecComboBox);
+        CheckBoxValid(audioRendererComboBox);
+        CheckBoxValid(aacAudioCodecComboBox);
+        CheckBoxValid(ddplusAudioCodecComboBox);
+      }
+    }
+
+    /// <summary>
+    /// Check Combobox count
+    /// </summary>
+    public override void CheckBoxValid(MPComboBox ComboBox)
+    {
+      if (ComboBox.Items.Count == 1)
+      {
+        ComboBox.Enabled = false;
       }
     }
 
