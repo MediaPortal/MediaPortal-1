@@ -18,10 +18,13 @@
 
 #endregion
 
+using MediaPortal.Profile;
+using MediaPortal.Common.Utils;
 using System;
 using System.Collections;
 using System.IO;
 using System.Threading;
+using System.Xml;
 
 namespace MediaPortal.GUI.Library
 {
@@ -141,8 +144,56 @@ namespace MediaPortal.GUI.Library
     /// <param name="name"></param>
     public static void SetTheme(string name)
     {
+      CheckThemeVersion(ref name);
       GUIGraphicsContext.Theme = name;
       GUIPropertyManager.SetProperty("#skin.currenttheme", name);
+    }
+
+    /// <summary>
+    /// Validates that the specified theme is version compatible with the base skin.
+    /// </summary>
+    /// <param name="name"></param>
+    private static void CheckThemeVersion(ref string name)
+    {
+      if (THEME_SKIN_DEFAULT.Equals(name))
+      {
+        return;  // The default theme is the skin itself.
+      }
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        bool ignoreErrors = false;
+        ignoreErrors = xmlreader.GetValueAsBool("general", "dontshowskinversion", false);
+        if (ignoreErrors)
+        {
+          return;
+        }
+      }
+
+      Version versionTheme = null;
+      string filename = GUIGraphicsContext.Skin + @"\Themes\" + name + @"\theme.xml";
+
+      if (File.Exists(filename))
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filename);
+        XmlNode node = doc.SelectSingleNode("/controls/theme/version");
+        if (node != null && node.InnerText != null)
+        {
+          versionTheme = new Version(node.InnerText);
+        }
+      }
+
+      // Theme is compatible with the skin if the versions are the same.
+      if (CompatibilityManager.SkinVersion.Equals(versionTheme))
+      {
+        return;
+      }
+
+      // Theme is incompatible, force to default theme
+      Log.Info("GUIThemeManager: User skin theme is not compatable with base skin, skin={0}({1}) theme={2}({3}).  Using skin default (no theme). ",
+        GUIGraphicsContext.SkinName, CompatibilityManager.SkinVersion, name, versionTheme);
+      name = THEME_SKIN_DEFAULT;
     }
 
     /// <summary>
