@@ -1253,7 +1253,7 @@ namespace MediaPortal.GUI.Video
       }
 
       _threadGUIItems.Clear();
-      _threadGUIItems = itemlist;
+      _threadGUIItems.AddRange(itemlist);
       _setThumbs = new Thread(ThreadSetActorsThumbs);
       _setThumbs.Priority = ThreadPriority.Lowest;
       _setThumbs.IsBackground = true;
@@ -1304,7 +1304,7 @@ namespace MediaPortal.GUI.Video
       }
 
       _threadGUIItems.Clear();
-      _threadGUIItems = items;
+      _threadGUIItems.AddRange(items);
       _setThumbs = new Thread(ThreadSetIMDBThumbs);
       _setThumbs.Priority = ThreadPriority.Lowest;
       _setThumbs.IsBackground = true;

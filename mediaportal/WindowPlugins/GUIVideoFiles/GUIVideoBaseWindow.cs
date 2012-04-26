@@ -478,6 +478,9 @@ namespace MediaPortal.GUI.Video
         else
         {
           string strSize1 = string.Empty, strDate = string.Empty;
+          ISelectDVDHandler sDvd = GUIVideoFiles.GetSelectDvdHandler();
+          ISelectBDHandler sBd = GUIVideoFiles.GetSelectBDHandler();
+
           if (item.FileInfo != null && !item.IsFolder)
           {
             strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
@@ -493,7 +496,21 @@ namespace MediaPortal.GUI.Video
           }
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
           {
-            item.Label2 = strSize1;
+            if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
+            {
+              if (sDvd.IsDvdDirectory(item.Path))
+              {
+                item.Label2 = "DVD";
+              }
+              else
+              {
+                item.Label2 = "BD";
+              }
+            }
+            else
+            {
+              item.Label2 = strSize1;
+            }
           }
           else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
           {
@@ -501,7 +518,21 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            item.Label2 = strSize1;
+            if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
+            {
+              if (sDvd.IsDvdDirectory(item.Path))
+              {
+                item.Label2 = "DVD";
+              }
+              else
+              {
+                item.Label2 = "BD";
+              }
+            }
+            else
+            {
+              item.Label2 = strSize1;
+            }
           }
         }
       }
@@ -517,13 +548,22 @@ namespace MediaPortal.GUI.Video
       dlg.Reset();
       dlg.SetHeading(495); // Sort options
 
-      // Watch for enums in VideoSort.cs
+      // Watch for enums in VideoSort.cs - must be exactly as the enum order
       dlg.AddLocalizedString(365); // name
       dlg.AddLocalizedString(104); // date created (date)
       dlg.AddLocalizedString(105); // size
-      dlg.AddLocalizedString(366); // year
-      dlg.AddLocalizedString(367); // rating
-      dlg.AddLocalizedString(430); // label
+      
+      if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_VIDEOS)
+      {
+        dlg.AddLocalizedString(366); // year
+        dlg.AddLocalizedString(367); // rating
+      }
+
+      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
+      {
+        dlg.AddLocalizedString(430); // CD label
+      }
+
       dlg.AddLocalizedString(527); // unwatched
       
       if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)

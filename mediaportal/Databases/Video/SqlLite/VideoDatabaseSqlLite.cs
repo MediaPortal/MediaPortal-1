@@ -2587,8 +2587,9 @@ namespace MediaPortal.Video.Database
           return;
         }
         
-        string strSQL = String.Format("UPDATE movieinfo SET iswatched={0} WHERE idMovie={1}", 
+        string strSQL = String.Format("UPDATE movieinfo SET iswatched={0}, datewatched = '{1}' WHERE idMovie={2}", 
                                       details.Watched,
+                                      DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                                       details.ID);
         m_db.Execute(strSQL);
       }
@@ -4328,7 +4329,11 @@ namespace MediaPortal.Video.Database
             if (string.IsNullOrEmpty(genre))
             {
               XmlNode nodeGenre = nodeMovie.SelectSingleNode("genre");
-              genre = nodeGenre.InnerText;
+              
+              if (nodeGenre != null)
+              {
+                genre = nodeGenre.InnerText;
+              }
             }
 
             // Genre
@@ -4807,6 +4812,104 @@ namespace MediaPortal.Video.Database
                     Util.Utils.FileDelete(coverArt);
                   }
                   
+                  // Save cover thumbs
+                  if (!string.IsNullOrEmpty(movie.ThumbURL))
+                  {
+                    IMDBFetcher.DownloadCoverArt(Thumbs.MovieTitle, movie.ThumbURL, titleExt);
+                  }
+                }
+              }
+            }
+            else
+            {
+              string thumbJpgFile = string.Empty;
+              string thumbTbnFile = string.Empty;
+
+              if (isDvdBdFolder)
+              {
+                thumbJpgFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
+                thumbTbnFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
+              }
+              else
+              {
+                thumbJpgFile = path + @"\" + fileName + ".jpg";
+                thumbTbnFile = path + @"\" + fileName + ".tbn";
+              }
+              
+              string titleExt = movie.Title + "{" + id + "}";
+
+              if (File.Exists(thumbJpgFile))
+              {
+                movie.ThumbURL = thumbJpgFile;
+                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+
+                if (Util.Picture.CreateThumbnail(thumbJpgFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
+                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+                {
+                  Util.Picture.CreateThumbnail(thumbJpgFile, coverArt, (int)Thumbs.ThumbResolution,
+                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+                }
+              }
+              else if (File.Exists(thumbTbnFile))
+              {
+                movie.ThumbURL = thumbTbnFile;
+                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+
+                if (Util.Picture.CreateThumbnail(thumbTbnFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
+                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+                {
+                  Util.Picture.CreateThumbnail(thumbTbnFile, coverArt, (int)Thumbs.ThumbResolution,
+                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+                }
+              }
+              else if (movie.ThumbURL == string.Empty)
+              {
+                // IMPAwards
+                IMPAwardsSearch impSearch = new IMPAwardsSearch();
+                impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+
+                if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+                {
+                  movie.ThumbURL = impSearch[0];
+                }
+
+                // If no IMPAwards lets try TMDB 
+                TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
+
+                if (impSearch.Count == 0)
+                {
+                  tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+
+                  if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
+                  {
+                    movie.ThumbURL = tmdbSearch[0];
+                  }
+                }
+                // All fail, last try IMDB
+                if (impSearch.Count == 0 && tmdbSearch.Count == 0)
+                {
+                  IMDBSearch imdbSearch = new IMDBSearch();
+                  imdbSearch.SearchCovers(movie.IMDBNumber, true);
+
+                  if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+                  {
+                    movie.ThumbURL = imdbSearch[0];
+                  }
+                }
+                
+                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+
+                if (movie.ID >= 0)
+                {
+                  if (!string.IsNullOrEmpty(movie.ThumbURL))
+                  {
+                    Util.Utils.FileDelete(largeCoverArt);
+                    Util.Utils.FileDelete(coverArt);
+                  }
+
                   // Save cover thumbs
                   if (!string.IsNullOrEmpty(movie.ThumbURL))
                   {

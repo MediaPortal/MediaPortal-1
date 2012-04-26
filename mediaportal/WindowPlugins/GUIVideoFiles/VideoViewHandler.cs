@@ -85,7 +85,7 @@ namespace MediaPortal.GUI.Video
       
       if (CurrentLevel == MaxLevels - 1)
       {
-        whereClause = "where movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
+        whereClause = "WHERE movieinfo.idmovie=movie.idmovie AND movie.idpath=path.idpath";
         fromClause = "movie,movieinfo,path";
       }
 
@@ -287,11 +287,11 @@ namespace MediaPortal.GUI.Video
         {
           if (whereClause != string.Empty)
           {
-            whereClause = whereClause + " AND idActor NOT IN (SELECT idDirector from movieinfo)";
+            whereClause = whereClause + " AND idActor NOT IN (SELECT idDirector FROM movieinfo)";
           }
           else
           {
-            whereClause = " WHERE idActor NOT IN (SELECT idDirector from movieinfo)";
+            whereClause = " WHERE idActor NOT IN (SELECT idDirector FROM movieinfo)";
           }
         }
        
@@ -466,7 +466,7 @@ namespace MediaPortal.GUI.Video
       
       if (filter.Limit > 0)
       {
-        orderClause += String.Format(" Limit {0}", filter.Limit);
+        orderClause += String.Format(" LIMIT {0}", filter.Limit);
       }
     }
 
@@ -792,9 +792,24 @@ namespace MediaPortal.GUI.Video
           localizedLevelName = GUILocalizeStrings.Get(987);
           break;      
         case "watched":
+        case "unwatched":
         case "title":
         case "rating":
+        case "recently added":
+        case "recently watched":
           localizedLevelName = GUILocalizeStrings.Get(342);
+          break;
+        case "actorindex":
+          localizedLevelName = GUILocalizeStrings.Get(1288);
+          break;
+        case "directorindex":
+          localizedLevelName = GUILocalizeStrings.Get(1289);
+          break;
+        case "titleindex":
+          localizedLevelName = GUILocalizeStrings.Get(1287);
+          break;
+        case "user groups":
+          localizedLevelName = GUILocalizeStrings.Get(1265);
           break;
         default:
           localizedLevelName = lvlName;

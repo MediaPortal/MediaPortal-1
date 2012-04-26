@@ -148,10 +148,10 @@ namespace MediaPortal.GUI.Video
     private bool _videoInfoInShare;
     private bool _playClicked;
 
-	// external player
-	private static bool _useInternalVideoPlayer = true;
-	private static bool _useInternalDVDVideoPlayer = true;
-	private static string _externalPlayerExtensions = string.Empty;
+    // external player
+    private static bool _useInternalVideoPlayer = true;
+    private static bool _useInternalDVDVideoPlayer = true;
+    private static string _externalPlayerExtensions = string.Empty;
 	
     private int _watchedPercentage = 95;
     public static GUIListItem CurrentSelectedGUIItem;
@@ -637,11 +637,6 @@ namespace MediaPortal.GUI.Video
 
     private void LoadDirectory(string newFolderName, bool useCache)
     {
-      this.LoadDirectory(newFolderName, useCache, null);
-    }
-
-    private void LoadDirectory(string newFolderName, bool useCache, HashSet<string> watchedFiles)
-    {
       if (newFolderName == null)
       {
         Log.Warn("GUIVideoFiles::LoadDirectory called with invalid argument. newFolderName is null!");
@@ -669,7 +664,9 @@ namespace MediaPortal.GUI.Video
       if (VirtualDirectory.IsImageFile(Path.GetExtension(newFolderName)))
       {
         if (!MountImageFile(GetID, newFolderName, true))
+        {
           return;
+        }
 
         _currentFolder = DaemonTools.GetVirtualDrive();
       }
@@ -695,15 +692,11 @@ namespace MediaPortal.GUI.Video
           SetLabel(item);
           
           // Set watched status and label 3
-          if (watchedFiles != null && watchedFiles.Contains(item.Path))
+          if (item.IsFolder && 
+                    (selectDvdHandler.IsDvdDirectory(item.Path) || selectBDHandler.IsBDDirectory(item.Path)) ||
+                    Util.Utils.IsVideo(item.Path))
           {
-            item.IsPlayed = true;
-          }
-          else if (_markWatchedFiles &&
-                   (item.IsFolder && selectDvdHandler.IsDvdDirectory(item.Path) ||
-                    item.IsFolder && selectBDHandler.IsBDDirectory(item.Path) ||
-                    Util.Utils.IsVideo(item.Path)))
-          {
+            // Check db for watched status for played movie or changed status in movie info window
             string file = item.Path;
 
             if (item.IsFolder)
@@ -711,14 +704,21 @@ namespace MediaPortal.GUI.Video
               file = selectDvdHandler.GetFolderVideoFile(item.Path);
 
               if (file == string.Empty)
+              {
                 file = selectBDHandler.GetFolderVideoFile(item.Path);
+              }
             }
 
-            // Check db for watched status for played movie or changed status in movie info window
             int percentWatched = 0;
             int timesWatched = 0;
             int movieId = VideoDatabase.GetMovieId(file);
-            item.IsPlayed = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+            bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+
+            if (_markWatchedFiles)
+            {
+              item.IsPlayed = played;
+            }
+
             item.Label3 = percentWatched + "% #" + timesWatched;
           }
           //Do NOT add OnItemSelected event handler here, because its still there...
@@ -783,6 +783,8 @@ namespace MediaPortal.GUI.Video
           foreach (KeyValuePair<string, List<GUIListItem>> pair in stackings)
           {
             List<GUIListItem> innerList = pair.Value;
+            ISelectDVDHandler sDvd = GetSelectDvdHandler();
+            ISelectBDHandler sBd = GetSelectBDHandler();
 
             for (int i = 0; i < innerList.Count; i++)
             {
@@ -793,6 +795,50 @@ namespace MediaPortal.GUI.Video
                 item.Label = pair.Key;
               }
               SetLabel(item);
+
+              // Check db for watched status for played movie or changed status in movie info window
+              string file = item.Path;
+              
+              if (item.IsFolder)
+              {
+                file = sDvd.GetFolderVideoFile(item.Path);
+
+                if (file == string.Empty)
+                {
+                  file = sBd.GetFolderVideoFile(item.Path);
+                }
+              }
+              if (!item.IsFolder || sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path))
+              {
+                int percentWatched = 0;
+                int timesWatched = 0;
+                int movieId = VideoDatabase.GetMovieId(file);
+                bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+                
+                if (IsMovieFolder(item.Path))
+                {
+                  string fPic = string.Empty;
+                  if (sDvd.IsDvdDirectory(item.Path))
+                  {
+                    fPic = @"logos\DVD.png";
+                  }
+                  else
+                  {
+                    fPic = @"logos\Bluray.png";
+                  }
+                  item.ThumbnailImage = fPic;
+                  item.IconImageBig = fPic;
+                  item.IconImage = fPic;
+                }
+
+                if (_markWatchedFiles)
+                {
+                  item.IsPlayed = played;
+                }
+
+                item.Label3 = percentWatched + "% #" + timesWatched;
+              }
+
               item.OnItemSelected += item_OnItemSelected;
               facadeLayout.Add(item);
               itemfiltered.Add(item);
@@ -801,15 +847,14 @@ namespace MediaPortal.GUI.Video
           itemlist = itemfiltered;
         }
 
-        // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
-        ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
-        SetImdbThumbs(itemlist, selectDvdHandler);
-
         _cachedItems = itemlist;
         _cachedDir = _currentFolder;
       } // End non cache items
 
-      
+      // Update thumbs for all items (cached also - > cover can be changed in VideoInfoScreen and if we do
+      // not update cover, old one will be visible)
+      ISelectDVDHandler setThumbs = GetSelectDvdHandler();
+      SetImdbThumbs(itemlist, setThumbs);
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
 
@@ -1572,7 +1617,6 @@ namespace MediaPortal.GUI.Video
         if (Util.Utils.FileExistsInCache(thumbPath))
         {
           pItem.RefreshCoverArt();
-
           pItem.IconImage = thumbPath;
           pItem.IconImageBig = thumbPath;
           string thumbLargePath = Util.Utils.ConvertToLargeCoverArt(thumbPath);
@@ -1606,23 +1650,46 @@ namespace MediaPortal.GUI.Video
 
     private void SetLabel(GUIListItem item)
     {
+      ISelectDVDHandler sDvd = GUIVideoFiles.GetSelectDvdHandler();
+      ISelectBDHandler sBd = GUIVideoFiles.GetSelectBDHandler();
       string strSize1 = string.Empty, strDate = string.Empty;
+      
       if (item.FileInfo != null && !item.IsFolder)
       {
         strSize1 = Util.Utils.GetSize(item.FileInfo.Length);
       }
+      
       if (item.FileInfo != null && !item.IsFolder)
       {
         if (CurrentSortMethod == VideoSort.SortMethod.Modified)
+        {
           strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
                     item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        }
         else
+        {
           strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
                     item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        }
       }
+      
       if (CurrentSortMethod == VideoSort.SortMethod.Name)
       {
-        item.Label2 = strSize1;
+        if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
+        {
+          if (sDvd.IsDvdDirectory(item.Path))
+          {
+            item.Label2 = "DVD";
+          }
+          else
+          {
+            item.Label2 = "BD";
+          }
+        }
+        else
+        {
+          item.Label2 = strSize1;
+        }
       }
       else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
       {
@@ -1630,7 +1697,21 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        item.Label2 = strSize1;
+        if (item.IsFolder && (sDvd.IsDvdDirectory(item.Path) || sBd.IsBDDirectory(item.Path)))
+        {
+          if (sDvd.IsDvdDirectory(item.Path))
+          {
+            item.Label2 = "DVD";
+          }
+          else
+          {
+            item.Label2 = "BD";
+          }
+        }
+        else
+        {
+          item.Label2 = strSize1;
+        }
       }
     }
 
@@ -1686,16 +1767,24 @@ namespace MediaPortal.GUI.Video
 
     private void SetMovieWatchStatus(string movieFileName, bool isFolder, bool watched)
     {
-      SelectDVDHandler isDvdFolder = new SelectDVDHandler();
+      ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
+      ISelectBDHandler selectBDHandler = GetSelectBDHandler();
 
-      if (isFolder && isDvdFolder.IsDvdDirectory(movieFileName))
-        movieFileName = isDvdFolder.GetFolderVideoFile(movieFileName);
+      if (isFolder && selectDvdHandler.IsDvdDirectory(movieFileName))
+      {
+        movieFileName = selectDvdHandler.GetFolderVideoFile(movieFileName);
+      }
+      if (isFolder && selectBDHandler.IsBDDirectory(movieFileName))
+      {
+        movieFileName = selectBDHandler.GetFolderVideoFile(movieFileName);
+      }
 
       VideoDatabase.AddMovieFile(movieFileName);
 
       if (VideoDatabase.HasMovieInfo(movieFileName))
       {
         IMDBMovie movieDetails = new IMDBMovie();
+        VideoDatabase.GetMovieInfo(movieFileName, ref movieDetails);
 
         if (!watched)
         {
@@ -1951,7 +2040,11 @@ namespace MediaPortal.GUI.Video
             if (string.IsNullOrEmpty(genre))
             {
               XmlNode nodeGenre = nodeMovie.SelectSingleNode("genre");
-              genre = nodeGenre.InnerText;
+
+              if (nodeGenre != null)
+              {
+                genre = nodeGenre.InnerText;
+              }
             }
 
             // Genre
@@ -2215,12 +2308,13 @@ namespace MediaPortal.GUI.Video
             #region poster
 
             // Poster
+            string thumbJpgFile = string.Empty;
+            string thumbTbnFile = string.Empty;
+            string thumbJpgFileLocal = string.Empty;
+            string thumbTbnFileLocal = string.Empty;
+            
             if (nodePoster != null)
             {
-              string thumbJpgFile = string.Empty;
-              string thumbTbnFile = string.Empty;
-              string thumbJpgFileLocal = string.Empty;
-              string thumbTbnFileLocal = string.Empty;
               filename = Path.GetFileNameWithoutExtension(filename);
               Util.Utils.RemoveStackEndings(ref filename);
 
@@ -2246,7 +2340,24 @@ namespace MediaPortal.GUI.Video
                 movie.ThumbURL = thumbTbnFileLocal;
               }
             }
+            else
+            {
+              filename = Path.GetFileNameWithoutExtension(filename);
+              Util.Utils.RemoveStackEndings(ref filename);
 
+              thumbJpgFileLocal = path + @"\" + filename + ".jpg";
+              thumbTbnFileLocal = path + @"\" + filename + ".tbn";
+
+              if (File.Exists(thumbJpgFileLocal))
+              {
+                movie.ThumbURL = thumbJpgFileLocal;
+              }
+              else if (File.Exists(thumbTbnFileLocal))
+              {
+                movie.ThumbURL = thumbTbnFileLocal;
+              }
+            }
+            
             #endregion
 
           }
@@ -2789,7 +2900,6 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetMovieWatchedStatus(idMovie, true, playTimePercentage);
           VideoDatabase.MovieWatchedCountIncrease(idMovie);
           // Set date watched
-          details.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
           VideoDatabase.SetDateWatched(details);
         }
         else
@@ -3232,17 +3342,6 @@ namespace MediaPortal.GUI.Video
 
         case 1260: // Set watched status
           SetMovieWatchStatus(item.Path, item.IsFolder, true);
-          int mId= VideoDatabase.GetMovieId(item.Path);
-          IMDBMovie movie= new IMDBMovie();
-          VideoDatabase.GetMovieInfoById(mId, ref movie);
-          
-          if (movie.ID > 0)
-          {
-            movie.Watched = 1;
-            movie.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            VideoDatabase.SetWatched(movie);
-          }
-
           selectedIndex = facadeLayout.SelectedListItemIndex;
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
@@ -3880,7 +3979,7 @@ namespace MediaPortal.GUI.Video
       PlayMovieFromPlayList(askForResumeMovie, requestPin);
     }
 
-    private bool IsMovieFolder(string path)
+    public static bool IsMovieFolder(string path)
     {
       ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
       ISelectBDHandler selectBdHandler = GetSelectBDHandler();
@@ -3895,7 +3994,7 @@ namespace MediaPortal.GUI.Video
     /// Get/Set BDHandler interface from/to registered services.
     /// </summary>
     /// <returns>BDHandler interface</returns>
-    private static ISelectBDHandler GetSelectBDHandler()
+    public static ISelectBDHandler GetSelectBDHandler()
     {
       ISelectBDHandler selectBDHandler;
       if (GlobalServiceProvider.IsRegistered<ISelectBDHandler>())
@@ -3914,7 +4013,7 @@ namespace MediaPortal.GUI.Video
     /// Get/Set DVDHandler interface from/to registered services.
     /// </summary>
     /// <returns>DVDHandler interface</returns>
-    private static ISelectDVDHandler GetSelectDvdHandler()
+    public static ISelectDVDHandler GetSelectDvdHandler()
     {
       ISelectDVDHandler selectDVDHandler;
       
@@ -3952,10 +4051,26 @@ namespace MediaPortal.GUI.Video
       progressDialog.ShowProgressBar(true);
       progressDialog.SetLine(1, "Downloading the index file...");
       progressDialog.SetLine(2, "Downloading...");
+      progressDialog.SetPercentage(50);
+      progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+      string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
+      string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
+      
+      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      {
+        progressDialog.Close();
+        return;
+      }
+
+      progressDialog.SetHeading("Updating VDBparser file......");
+      progressDialog.ShowProgressBar(true);
+      progressDialog.SetLine(1, "Downloading VDBparser file...");
+      progressDialog.SetLine(2, "Downloading...");
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
       {
         progressDialog.Close();
         return;
@@ -4188,7 +4303,7 @@ namespace MediaPortal.GUI.Video
       _setThumbsThreadAborted = false;
 
       _threadGUIItems.Clear();
-      _threadGUIItems = itemlist;
+      _threadGUIItems.AddRange(itemlist);
       _threadISelectDVDHandler = selectDVDHandler;
 
       _setThumbs = new Thread(ThreadSetIMDBThumbs);
