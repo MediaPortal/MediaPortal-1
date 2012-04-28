@@ -42,8 +42,7 @@ namespace MediaPortal.Configuration.Sections
   {
     private FolderBrowserDialog folderBrowserDialog;
     private FontDialog fontDialog;
-    private readonly string m_strDefaultSubtitleLanguageISO = "English";
-    private readonly string m_strDefaultAudioLanguageISO = "English";
+    private string m_strDefaultRegionLanguage = "English";
     private MPTabPage mpTabPage1;
     private MPGroupBox mpGroupBox4;
     private MPLabel mpLabel7;
@@ -76,13 +75,13 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Populate combo boxes with languages
-      string curCultureName = CultureInfo.CurrentCulture.EnglishName;
+      string curCultureTwoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+      m_strDefaultRegionLanguage = CultureInfo.CurrentCulture.IsNeutralCulture
+                                     ? CultureInfo.CurrentCulture.EnglishName
+                                     : CultureInfo.CurrentCulture.Parent.EnglishName;
 
-      m_strDefaultSubtitleLanguageISO = curCultureName;
-      m_strDefaultAudioLanguageISO = curCultureName;
-
-      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureName);
-      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureName);
+      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
+      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
       string[] regions = { "A", "B", "C" };
       RegionCodeComboBox.Items.AddRange(regions);
       string[] audioType = { "AC3", "AC3+", "DTS", "DTS-HD", "DTS-HD Master", "LPCM", "TrueHD" };
@@ -93,27 +92,10 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        try
-        {
-          defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", m_strDefaultSubtitleLanguageISO);
-        }
-        catch (Exception ex)
-        {
-          CultureInfo ci = new CultureInfo(m_strDefaultSubtitleLanguageISO);
-          Log.Error("LoadSettings - failed to load default subtitle language, using {0} - {1} ", ci.EnglishName, ex);
-          defaultSubtitleLanguageComboBox.SelectedItem = ci.EnglishName;
-        }
-
-        try
-        {
-          defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "audiolanguage", m_strDefaultAudioLanguageISO);
-        }
-        catch (Exception ex)
-        {
-          CultureInfo ci = new CultureInfo(m_strDefaultAudioLanguageISO);
-          Log.Error("LoadSettings - failed to load default audio language, using {0} - {1} ", ci.EnglishName, ex);
-          defaultAudioLanguageComboBox.SelectedItem = ci.EnglishName;
-        }
+        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "audiolanguage",
+                                                                               m_strDefaultRegionLanguage);
+        defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage",
+                                                                                  m_strDefaultRegionLanguage);
 
         RegionCodeComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "regioncode", "B");
         preferredAudioTypeComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "audiotype", "AC3");
@@ -126,8 +108,8 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("bdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
         xmlwriter.SetValue("bdplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
+        xmlwriter.SetValue("bdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
         xmlwriter.SetValue("bdplayer", "audiotype", preferredAudioTypeComboBox.Text);
         xmlwriter.SetValue("bdplayer", "regioncode", RegionCodeComboBox.SelectedItem);
         xmlwriter.SetValue("bdplayer", "parentalcontrol", ParentalControlUpDown.Value.ToString());
