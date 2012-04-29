@@ -833,7 +833,7 @@ namespace MediaPortal.GUI.Library
 
           if (pItem.IsBdDvdFolder)
           {
-            dwColor = _remoteColor;
+            dwColor = _bdDvdDirectoryColor;
           }
 
           int xpos = dwPosX;
@@ -896,7 +896,7 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.IsBdDvdFolder)
         {
-          dwColor = _remoteColor;
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (!gotFocus)
@@ -928,7 +928,7 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.IsBdDvdFolder)
         {
-          dwColor = _remoteColor;
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (0 == _textOffsetX2)
@@ -991,7 +991,7 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.IsBdDvdFolder)
         {
-          dwColor = _remoteColor;
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (0 == _textOffsetX3)

@@ -334,43 +334,33 @@ namespace MediaPortal.GUI.Video
             
             if (!Util.Utils.FileExistsInCache(strThumb) || string.IsNullOrEmpty(strThumb))
             {
-              strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-                                       Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
-              
-              // Try images per filename in videofile folder
-              if (!Util.Utils.FileExistsInCache(strThumb))
+              string fPic = string.Empty;
+              string fPicTbn = string.Empty;
+              string path = pItem.Path;
+              Util.Utils.RemoveStackEndings(ref path);
+              Util.Utils.RemoveStackEndings(ref file);
+                
+              if (pItem.IsBdDvdFolder)
               {
-                string fPic = string.Empty;
-                string fPicTbn = string.Empty;
-                string path = pItem.Path;
-                Util.Utils.RemoveStackEndings(ref path);
-                Util.Utils.RemoveStackEndings(ref file);
+                fPic = path + @"\" + Path.GetFileNameWithoutExtension(path)+ ".jpg";
+                fPicTbn = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
+              }
+              else
+              {
+                fPic = Path.ChangeExtension(file, ".jpg");
+                fPicTbn = Path.ChangeExtension(file, ".tbn");
+              }
                 
-                if (isDvdBdDirectory)
-                {
-                  fPic = path + @"\" + Path.GetFileNameWithoutExtension(path)+ ".jpg";
-                  fPicTbn = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
-                }
-                else
-                {
-                  fPic = Path.ChangeExtension(file, ".jpg");
-                  fPicTbn = Path.ChangeExtension(file, ".tbn");
-                }
-                
-                if (File.Exists(fPic))
-                {
-                  pItem.ThumbnailImage = fPic;
-                  pItem.IconImageBig = fPic;
-                  pItem.IconImage = fPic;
-                }
-
-                if (File.Exists(fPicTbn))
-                {
-                  pItem.ThumbnailImage = fPicTbn;
-                  pItem.IconImageBig = fPicTbn;
-                  pItem.IconImage = fPicTbn;
-                }
-
+              if (File.Exists(fPic))
+              {
+                strThumb = fPic;
+              }
+              else if (File.Exists(fPicTbn))
+              {
+                strThumb = fPicTbn;
+              }
+              else
+              {
                 continue;
               }
             }

@@ -134,6 +134,8 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("textureMask")] protected string _textureMask = "";
 
+    [XMLSkinElement("bdDvdDirectoryColor")] protected long _bdDvdDirectoryColor = 0xFFFFFFFF;
+
     #endregion
 
     protected int _lowItemHeight;
@@ -433,7 +435,7 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.IsBdDvdFolder)
       {
-        dwColor = _remoteColor;
+        dwColor = _bdDvdDirectoryColor;
       }
 
       if (!Focus)

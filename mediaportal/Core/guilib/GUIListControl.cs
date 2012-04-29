@@ -169,6 +169,8 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("explicitlyEnableScrollLabel")] protected bool _explicitlyEnableScrollLabel = false;
 
+    [XMLSkinElement("bdDvdDirectoryColor")] protected long _bdDvdDirectoryColor = 0xFFFFFFFF;
+
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
     protected GUIFont _font3 = null;
@@ -655,7 +657,7 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.IsBdDvdFolder)
         {
-          dwColor = _remoteColor;
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (!Focus)
@@ -727,7 +729,7 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.IsBdDvdFolder)
         {
-          dwColor = _remoteColor;
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (!pItem.Selected && !gotFocus)
@@ -769,7 +771,7 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.IsBdDvdFolder)
         {
-          dwColor = _remoteColor;
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (!Focus)
@@ -839,7 +841,7 @@ namespace MediaPortal.GUI.Library
 
         if (pItem.IsBdDvdFolder)
         {
-          dwColor = _remoteColor;
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (!Focus)
@@ -3841,6 +3843,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _downloadColor; }
       set { _downloadColor = value; }
+    }
+
+    public long BdDvdDirectoryColor
+    {
+      get { return _bdDvdDirectoryColor; }
+      set { _bdDvdDirectoryColor = value; }
     }
 
     public string Text3Content

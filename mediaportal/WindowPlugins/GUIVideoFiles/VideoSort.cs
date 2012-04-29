@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Video.Database;
 using System.Collections;
@@ -48,11 +49,17 @@ namespace MediaPortal.GUI.Video
 
     protected SortMethod CurrentSortMethod;
     protected bool SortAscending;
+    protected bool KeepFoldersTogether;
     
     public VideoSort(SortMethod sortMethod, bool ascending)
     {
       CurrentSortMethod = sortMethod;
       SortAscending = ascending;
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        KeepFoldersTogether = xmlreader.GetValueAsBool("movies", "keepfolderstogether", false);
+      }
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -85,15 +92,18 @@ namespace MediaPortal.GUI.Video
       {
         return 1;
       }
-      if (item1.IsBdDvdFolder && !item2.IsBdDvdFolder)
+      if (KeepFoldersTogether)
       {
-        return 1;
+        if (item1.IsBdDvdFolder && !item2.IsBdDvdFolder)
+        {
+          return 1;
+        }
+        if (!item1.IsBdDvdFolder && item2.IsBdDvdFolder)
+        {
+          return -1;
+        }
       }
-      if (!item1.IsBdDvdFolder && item2.IsBdDvdFolder)
-      {
-        return -1;
-      }
-      
+
       switch (CurrentSortMethod)
       {
         case SortMethod.Year:

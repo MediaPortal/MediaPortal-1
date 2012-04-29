@@ -103,6 +103,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("cards", "flipY")] protected bool _flipY = false;
     [XMLSkin("cards", "diffuse")] protected string _diffuseFilename = "";
     [XMLSkin("cards", "mask")] protected string _maskFilename = "";
+    [XMLSkinElement("bdDvdDirectoryColor")] protected long _bdDvdDirectoryColor = 0xFFFFFFFF;
 
     #endregion
 
@@ -1363,7 +1364,7 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.IsBdDvdFolder)
       {
-        dwColor = _remoteColor;
+        dwColor = _bdDvdDirectoryColor;
       }
 
       _label1.TextColor = dwColor;
@@ -1413,7 +1414,7 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.IsBdDvdFolder)
       {
-        dwColor = _remoteColor;
+        dwColor = _bdDvdDirectoryColor;
       }
 
       _label2.Label = _labelText2;

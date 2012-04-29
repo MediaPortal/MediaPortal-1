@@ -692,9 +692,7 @@ namespace MediaPortal.GUI.Video
           SetLabel(item);
           
           // Set watched status and label 3
-          if (item.IsFolder && 
-                    (selectDvdHandler.IsDvdDirectory(item.Path) || selectBDHandler.IsBDDirectory(item.Path)) ||
-                    Util.Utils.IsVideo(item.Path))
+          if (item.IsBdDvdFolder || Util.Utils.IsVideo(item.Path))
           {
             // Check db for watched status for played movie or changed status in movie info window
             string file = item.Path;
@@ -1480,7 +1478,7 @@ namespace MediaPortal.GUI.Video
         ISelectDVDHandler selectDVDHandler = GetSelectDvdHandler();
         ISelectBDHandler selectBDHandler = GetSelectBDHandler();
 				
-        if (pItem.Label == ".." || (!selectDVDHandler.IsDvdDirectory(strFile) && !selectBDHandler.IsBDDirectory(strFile)))
+        if (pItem.Label == ".." || !pItem.IsBdDvdFolder)
         {
           return;
         }
@@ -3132,11 +3130,8 @@ namespace MediaPortal.GUI.Video
 
               if (!VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
               {
-                SelectDVDHandler checkIfIsDvd = new SelectDVDHandler();
-                SelectBDHandler checkIfIsBD = new SelectBDHandler();
-
                 // Simple folder
-                if (!checkIfIsDvd.IsDvdDirectory(item.Path) && !checkIfIsBD.IsBDDirectory(item.Path))
+                if (!item.IsBdDvdFolder)
                 {
                   dlg.AddLocalizedString(1204); // Play All in selected folder
                   dlg.AddLocalizedString(926); //Queue
@@ -3144,7 +3139,7 @@ namespace MediaPortal.GUI.Video
                   dlg.AddLocalizedString(1280); // Scan using nfo files
                 }
                   // DVD folder
-                else if (checkIfIsDvd.IsDvdDirectory(item.Path) || checkIfIsBD.IsBDDirectory(item.Path))
+                else if (item.IsBdDvdFolder)
                 {
                   useMediaInfo = true;
                   dlg.AddLocalizedString(208); //play             
