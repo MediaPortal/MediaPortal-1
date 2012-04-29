@@ -27,6 +27,7 @@ using System.Configuration;
 using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
+using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -51,18 +52,20 @@ namespace Mediaportal.TV.Server.SetupTV
   /// </summary>
   public class Startup
   {
-    private static StartupMode startupMode = StartupMode.Normal;
-    private static bool debugOptions = false;
-    private static ServerMonitor _serverMonitor = new ServerMonitor();
+    private const string TypeValidHostnameForTvServerOrExitApplication = "Type valid hostname for tv server (or exit application):";
+    private const string TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService = "TvService not found (maybe you lack user rights to access/control remote windows service).";
+    private static StartupMode _startupMode = StartupMode.Normal;
+    private static bool _debugOptions;
+    private static readonly ServerMonitor _serverMonitor = new ServerMonitor();
 
-    private readonly string sectionsConfiguration = String.Empty;
+    private readonly string _sectionsConfiguration = String.Empty;
 
     /// <summary>
     /// 
     /// </summary>
     public Startup()
     {
-      startupMode = StartupMode.Normal;
+      _startupMode = StartupMode.Normal;
     }
 
     /// <summary>
@@ -72,18 +75,18 @@ namespace Mediaportal.TV.Server.SetupTV
     {      
       Form applicationForm = null;
 
-      switch (startupMode)
+      switch (_startupMode)
       {
         case StartupMode.Normal:
-          applicationForm = new SetupTvSettingsForm(debugOptions);
+          applicationForm = new SetupTvSettingsForm(_debugOptions);
           break;
 
         case StartupMode.Wizard:
-          applicationForm = new WizardForm(sectionsConfiguration);
+          applicationForm = new WizardForm(_sectionsConfiguration);
           break;
 
         case StartupMode.DbCleanup:
-          applicationForm = new SetupTvSettingsForm(debugOptions);
+          applicationForm = new SetupTvSettingsForm(_debugOptions);
           break;
       }
 
@@ -103,10 +106,13 @@ namespace Mediaportal.TV.Server.SetupTV
     [STAThread]
     public static void Main(string[] arguments)
     {
-      Thread.CurrentThread.Name = "SetupTv";
-      Application.SetCompatibleTextRenderingDefault(false);
+      if (System.IO.File.Exists("debug_setuptv.txt"))
+      {
+        System.Diagnostics.Debugger.Launch();
+      }      
 
-      //System.Diagnostics.Debugger.Launch();
+      Thread.CurrentThread.Name = "SetupTv";
+      Application.SetCompatibleTextRenderingDefault(false);      
 
       if (ConfigurationManager.AppSettings.Count > 0)
       {
@@ -117,30 +123,14 @@ namespace Mediaportal.TV.Server.SetupTV
         }
       }
 
-      bool tvserviceInstalled = false;
-      while (!tvserviceInstalled)
-      {
-        tvserviceInstalled = ServiceHelper.IsInstalled(@"TvService", ServiceAgents.Instance.Hostname);
-        if (!tvserviceInstalled)
-        {
-          if (!String.IsNullOrEmpty(ServiceAgents.Instance.Hostname))
-          {
-            ConnectionLostPrompt("Type valid hostname for tv server:", "TvService not found.");
-          }
-          else
-          {
-            return;
-          }
-        }
-        else
-        {
-          Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-          config.AppSettings.Settings.Remove("tvserver");
-          config.AppSettings.Settings.Add("tvserver", ServiceAgents.Instance.Hostname);
-          config.Save(ConfigurationSaveMode.Modified);
-          ConfigurationManager.RefreshSection("appSettings");
-        }
-      }
+      bool tvserviceInstalled = tvserviceInstalled = WaitAndQueryForTvserviceUntilFound();
+
+
+      Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+      config.AppSettings.Settings.Remove("tvserver");
+      config.AppSettings.Settings.Add("tvserver", ServiceAgents.Instance.Hostname);
+      config.Save(ConfigurationSaveMode.Modified);
+      ConfigurationManager.RefreshSection("appSettings");
 
       _serverMonitor.OnServerConnected += new ServerMonitor.ServerConnectedDelegate(_serverMonitor_OnServerConnected);
       _serverMonitor.OnServerDisconnected += new ServerMonitor.ServerDisconnectedDelegate(_serverMonitor_OnServerDisconnected);
@@ -160,15 +150,15 @@ namespace Mediaportal.TV.Server.SetupTV
         switch (param.ToLowerInvariant())
         {
           case "/delete-db":
-            startupMode = StartupMode.DbCleanup;
+            _startupMode = StartupMode.DbCleanup;
             break;
 
           case "/configure-db":
-            startupMode = StartupMode.DbConfig;
+            _startupMode = StartupMode.DbConfig;
             break;
 
           case "/debugoptions":
-            debugOptions = true;
+            _debugOptions = true;
             break;
         }
 
@@ -178,7 +168,7 @@ namespace Mediaportal.TV.Server.SetupTV
           {
             case "--DeployMode":
               Log.Debug("---- started in Deploy mode ----");
-              startupMode = StartupMode.DeployMode;
+              _startupMode = StartupMode.DeployMode;
               break;
 
             case "--DeploySql:":
@@ -239,44 +229,28 @@ namespace Mediaportal.TV.Server.SetupTV
         return;
       }
       */
-      Log.Info("---- check if tvservice is running ----");
-      if (!ServiceHelper.IsRunning)
-      {
-        Log.Info("---- tvservice is not running ----");
-        if (startupMode != StartupMode.DeployMode)
-        {
-          DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?",
-                                                "Mediaportal TV service", MessageBoxButtons.YesNo);
-          if (result != DialogResult.Yes) return;
-        }
-        Log.Info("---- start tvservice----");
-        ServiceHelper.Start();
-      }
+      
 
-      ServiceHelper.WaitInitialized();
-      int cards = 0;
-      try
+      if (tvserviceInstalled)
       {
-        cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-      }
-      catch (Exception)
-      {
-        Log.Info("---- restart tvservice----");
-        ServiceHelper.Restart();
+        Log.Info("---- check if tvservice is running ----");
+        if (!ServiceHelper.IsRunning)
+        {
+          Log.Info("---- tvservice is not running ----");
+          if (_startupMode != StartupMode.DeployMode)
+          {
+            DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?",
+                                                  "Mediaportal TV service", MessageBoxButtons.YesNo);
+            if (result != DialogResult.Yes) return;
+          }
+          Log.Info("---- start tvservice----");
+          ServiceHelper.Start();
+        }
+
         ServiceHelper.WaitInitialized();
-        try
-        {
-          RemoteControl.HostName = Dns.GetHostName();
-          cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-        }
-        catch (Exception ex)
-        {
-          Log.Info("---- Unable to restart tv service----");
-          Log.Write(ex);
-          MessageBox.Show("Failed to startup tvservice" + ex);
-          return;
-        }
       }
+            
+      
 
       // Mantis #0001991: disable mpg recording  (part I: force TS recording format)
       IList<Card> TvCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
@@ -294,7 +268,7 @@ namespace Mediaportal.TV.Server.SetupTV
       ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels);
 
       // Avoid the visual part of SetupTv if in DeployMode
-      if (startupMode == StartupMode.DeployMode)
+      if (_startupMode == StartupMode.DeployMode)
       {
         return;
       }
@@ -314,20 +288,107 @@ namespace Mediaportal.TV.Server.SetupTV
       _serverMonitor.Stop();
     }
 
-    static void _serverMonitor_OnServerDisconnected()
+    private static bool WaitAndQueryForTvserviceUntilFound()
     {
-      //ConnectionLostPrompt("Type valid hostname for tv server:", "Connection lost.");
+      bool tvserviceInstalled = false;
+      while (!tvserviceInstalled)
+      {
+        tvserviceInstalled = ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname);
+        if (!tvserviceInstalled)
+        {
+          if (ServiceHelper.IsRestrictedMode)
+          {
+            break;
+          }
+          if (!String.IsNullOrEmpty(ServiceAgents.Instance.Hostname))
+          {
+            string newHostName;
+            bool inputNewHost = ConnectionLostPrompt(TypeValidHostnameForTvServerOrExitApplication,
+                                                     TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService,
+                                                     out newHostName);
+
+            if (inputNewHost)
+            {
+              UpdateTvServerConfiguration(newHostName);
+            }
+            else
+            {
+              Environment.Exit(0);
+            }
+          }
+        }
+      }
+
+      int cards = -1;
+      while (cards == -1)
+      {
+        try
+        {
+          cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
+        }
+        catch (Exception)
+        {
+          if (tvserviceInstalled)
+          {
+            Log.Info("---- restart tvservice----");
+            ServiceHelper.Restart();
+            ServiceHelper.WaitInitialized();
+            try
+            {
+              RemoteControl.HostName = Dns.GetHostName();
+              cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
+            }
+            catch (Exception ex)
+            {
+              Log.Info("---- Unable to restart tv service----");
+              Log.Write(ex);
+              MessageBox.Show("Failed to startup tvservice..exiting application" + ex);
+              Application.Exit();
+            }
+          }
+          else
+          {
+            Log.Info(
+              "---- unable to restart tvservice, possible multiseat setup with no access to remote windows service ----");
+            string newHostName;
+            bool inputNewHost = ConnectionLostPrompt(TypeValidHostnameForTvServerOrExitApplication,
+                                                     TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService,
+                                                     out newHostName);
+            if (inputNewHost)
+            {
+              UpdateTvServerConfiguration(newHostName);
+            }
+            else
+            {
+              Environment.Exit(0);
+            }
+          }
+        }
+      }
+      return tvserviceInstalled;
     }
 
-    private static void ConnectionLostPrompt(string prompt, string title)
+    private static void UpdateTvServerConfiguration(string newHostName)
     {
+      Log.Info("UpdateTvServerConfiguration newHostName = {0}", newHostName);
       Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-      InputBoxResult result = InputBox.Show(prompt, title,
-                                            ConfigurationManager.AppSettings["tvserver"]);
-      ServiceAgents.Instance.Hostname = result.Text;
-      ConfigurationManager.AppSettings["tvserver"] = result.Text;
+      ServiceAgents.Instance.Hostname = newHostName;
+      ConfigurationManager.AppSettings["tvserver"] = newHostName;
       config.Save(ConfigurationSaveMode.Modified);
       ConfigurationManager.RefreshSection("appSettings");
+    }
+
+    static void _serverMonitor_OnServerDisconnected()
+    {
+      WaitAndQueryForTvserviceUntilFound();      
+    }
+
+    private static bool ConnectionLostPrompt(string prompt, string title, out string newHostName)
+    {      
+      InputBoxResult result = InputBox.Show(prompt, title, ConfigurationManager.AppSettings["tvserver"]);
+      newHostName = result.Text;
+      bool connectionLostPrompt = (result.ReturnCode == DialogResult.OK);
+      return connectionLostPrompt;
     }
 
     static void _serverMonitor_OnServerConnected()

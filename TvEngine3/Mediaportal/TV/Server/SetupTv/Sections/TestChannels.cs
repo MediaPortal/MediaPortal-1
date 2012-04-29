@@ -247,7 +247,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
     {
-      if (ServiceHelper.IsStopped) return;
+      if (ServiceHelper.IsRestrictedMode || ServiceHelper.IsStopped) return;
 
       _running = !_running;
 
@@ -572,7 +572,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRunning)
+      if (!ServiceHelper.IsRestrictedMode && !ServiceHelper.IsRunning)
       {
         mpListView1.Items.Clear();
         _running = false;
@@ -580,8 +580,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       UpdateButtonCaption();
 
-      mpButtonTimeShift.Enabled = ServiceHelper.IsRunning;
-      comboBoxGroups.Enabled = ServiceHelper.IsRunning;
+      mpButtonTimeShift.Enabled = ServiceHelper.IsRestrictedMode || ServiceHelper.IsRunning;
+      comboBoxGroups.Enabled = ServiceHelper.IsRestrictedMode || ServiceHelper.IsRunning;      
 
       UpdateCardStatus();
     }
@@ -611,7 +611,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void UpdateCardStatus()
     {
-      if (ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
       if (_cards == null) return;
       if (_cards.Count == 0) return;
       try

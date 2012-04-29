@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
     {
-      if (ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
       
@@ -329,7 +329,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void mpButtonRec_Click(object sender, EventArgs e)
     {
-      if (ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
@@ -354,37 +354,45 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void timer1_Tick(object sender, EventArgs e)
     {
-      if (!ServiceHelper.IsRunning)
-      {
-        buttonRestart.Text = "Start Service";
-        mpButtonReGrabEpg.Enabled = false;
-        mpButtonTimeShift.Text = "Start TimeShift";
-        mpButtonTimeShift.Enabled = false;
-        mpButtonRec.Text = "Record";
-        mpButtonRec.Enabled = false;
-        mpGroupBox1.Visible = false;
-        comboBoxGroups.Enabled = false;
-        mpComboBoxChannels.Enabled = false;
-        mpListView1.Items.Clear();
-        return;
-      }
-      buttonRestart.Text = "Stop Service";
-      if (!ServiceHelper.IsInitialized)
-      {
-        mpButtonReGrabEpg.Enabled = false;
-        mpButtonTimeShift.Text = "Start TimeShift";
-        mpButtonTimeShift.Enabled = false;
-        mpButtonRec.Text = "Record";
-        mpButtonRec.Enabled = false;
-        mpGroupBox1.Visible = false;
-        comboBoxGroups.Enabled = false;
-        mpComboBoxChannels.Enabled = false;
-        mpListView1.Items.Clear();
-        return;
-      }
+      buttonRestart.Visible = !ServiceHelper.IsRestrictedMode;
 
-      if (!buttonRestart.Visible)
-        buttonRestart.Visible = true;
+      if (!ServiceHelper.IsRestrictedMode)
+      {
+        if (!ServiceHelper.IsRunning)
+        {
+          buttonRestart.Text = "Start Service";
+          mpButtonReGrabEpg.Enabled = false;
+          mpButtonTimeShift.Text = "Start TimeShift";
+          mpButtonTimeShift.Enabled = false;
+          mpButtonRec.Text = "Record";
+          mpButtonRec.Enabled = false;
+          mpGroupBox1.Visible = false;
+          comboBoxGroups.Enabled = false;
+          mpComboBoxChannels.Enabled = false;
+          mpListView1.Items.Clear();
+          return;
+        }
+        buttonRestart.Text = "Stop Service";
+        if (!ServiceHelper.IsInitialized)
+        {
+          mpButtonReGrabEpg.Enabled = false;
+          mpButtonTimeShift.Text = "Start TimeShift";
+          mpButtonTimeShift.Enabled = false;
+          mpButtonRec.Text = "Record";
+          mpButtonRec.Enabled = false;
+          mpGroupBox1.Visible = false;
+          comboBoxGroups.Enabled = false;
+          mpComboBoxChannels.Enabled = false;
+          mpListView1.Items.Clear();
+          return;
+        }
+
+        if (!buttonRestart.Visible)
+        {
+          buttonRestart.Visible = true;
+        }
+      }      
+      
       mpButtonReGrabEpg.Enabled = true;
       comboBoxGroups.Enabled = true;
       mpComboBoxChannels.Enabled = true;
@@ -436,7 +444,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void UpdateCardStatus()
     {
-      if (ServiceHelper.IsStopped) return;
+      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
       if (_cards == null) return;
       if (_cards.Count == 0) return;
       try
@@ -637,18 +645,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         buttonRestart.Enabled = false;
         timer1.Enabled = false;
-        
-        if (ServiceHelper.IsStopped)
+
+        if (!ServiceHelper.IsRestrictedMode)
         {
-          if (ServiceHelper.Start())
+          if (ServiceHelper.IsStopped)
           {
-            ServiceHelper.WaitInitialized();
+            if (ServiceHelper.Start())
+            {
+              ServiceHelper.WaitInitialized();
+            }
           }
+          else if (ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname) && ServiceHelper.IsRunning)
+          {
+            if (ServiceHelper.Stop()) { }
+          }  
         }
-        else if (ServiceHelper.IsRunning)
-        {
-          if (ServiceHelper.Stop()) {}
-        }
+                
        
         timer1.Enabled = true;
       }

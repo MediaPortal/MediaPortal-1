@@ -41,7 +41,7 @@ namespace Mediaportal.TV.Server.SetupTV
   /// <summary>
   /// Summary description for Settings.
   /// </summary>
-  public class SetupTvSettingsForm : SetupControls.SettingsForm
+  public class SetupTvSettingsForm : SettingsForm
   {
     private readonly PluginLoader _pluginLoader = new PluginLoader();
     private Sections.Plugins pluginsRoot;
@@ -50,9 +50,13 @@ namespace Mediaportal.TV.Server.SetupTV
     private bool showAdvancedSettings;
 
     public SetupTvSettingsForm()
-      : this(false) {}
+      : this(false)
+    {
+      
+    }
 
     public SetupTvSettingsForm(bool ShowAdvancedSettings)
+      : base(ServiceHelper.IsRestrictedMode)
     {
       showAdvancedSettings = ShowAdvancedSettings;
       InitializeComponent();
@@ -117,7 +121,7 @@ namespace Mediaportal.TV.Server.SetupTV
             if (localHostname != RemoteControl.HostName)
             {
               DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
-                                                                "Do you want to try the current comupter name ({1}) instead?",
+                                                                "Do you want to try the current computer name ({1}) instead?",
                                                                 RemoteControl.HostName, localHostname),
                                                   "Wrong config detected",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
@@ -125,8 +129,11 @@ namespace Mediaportal.TV.Server.SetupTV
               {
                 Log.Info("Controller: server {0} changed to {1}", RemoteControl.HostName, localHostname);                      
                 ServiceAgents.Instance.SettingServiceAgent.SaveSetting("hostname", localHostname);
-                ServiceHelper.Restart();
-                ServiceHelper.WaitInitialized();
+                if (!ServiceHelper.IsRestrictedMode)
+                {
+                  ServiceHelper.Restart();
+                  ServiceHelper.WaitInitialized(); 
+                }                
               }
               else
               {
@@ -496,11 +503,13 @@ namespace Mediaportal.TV.Server.SetupTV
       base.sectionTree_BeforeSelect(sender, e);
 
       if (!e.Cancel)
-        if (!ServiceHelper.IsRunning)
+      {
+        if (!ServiceHelper.IsRestrictedMode && !ServiceHelper.IsRunning)
         {
           MessageBox.Show("TvService not started.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           e.Cancel = true;
-        }
+        } 
+      }        
     }
 
     public override bool ActivateSection(SectionSettings section)

@@ -23,6 +23,8 @@ using System.Net;
 using System.Security.AccessControl;
 using System.ServiceProcess;
 using System.Threading;
+using MediaPortal.Common.Utils;
+using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -34,8 +36,16 @@ namespace Mediaportal.TV.Server.SetupTV
   /// <summary>
   /// Offers basic control functions for services
   /// </summary>
-  public class ServiceHelper
+  public static class ServiceHelper
   {
+    public const string SERVICENAME_TVSERVICE = @"TvService";
+    private static bool _isRestrictedMode;  
+
+    public static bool IsRestrictedMode
+    {
+      get { return _isRestrictedMode; }
+    }
+
     /// <summary>
     /// Read from DB card detection delay 
     /// </summary>
@@ -43,7 +53,7 @@ namespace Mediaportal.TV.Server.SetupTV
     public static int DefaultInitTimeOut()
     {
       
-      return Convert.ToInt16(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").value) + 10;
+      return Convert.ToInt16(Singleton<ServiceAgents>.Instance.SettingServiceAgent.GetSettingWithDefaultValue("delayCardDetect", "0").value) + 10;
     }
 
     /// <summary>
@@ -56,9 +66,16 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
+        Log.Error("serviceToFind ={0}, hostname={1}", serviceToFind, hostname);
+
         ServiceController[] services = ServiceController.GetServices(hostname);
+
+        Log.Error("services count = {0}", services.Length);
+        
+
         foreach (ServiceController service in services)
         {
+          Log.Error("services name= {0}", service.ServiceName);
           if (String.Compare(service.ServiceName, serviceToFind, true) == 0)
           {
             return true;
@@ -68,8 +85,10 @@ namespace Mediaportal.TV.Server.SetupTV
       }
       catch (Exception ex)
       {
+        _isRestrictedMode = !Network.IsSingleSeat();
+        
         Log.Error(
-          "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname.");
+          "ServiceHelper: Check hostname the tvservice is running failed. Try another hostname. {0}", ex);
         return false;
       }
     }
@@ -93,7 +112,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
+          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Running;
           }
@@ -136,7 +155,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
+        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
         {
           sc.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 0, 0, millisecondsTimeout));
           return (sc.Status == ServiceControllerStatus.Running);
@@ -196,7 +215,7 @@ namespace Mediaportal.TV.Server.SetupTV
       {
         try
         {
-          using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
+          using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
           {
             return sc.Status == ServiceControllerStatus.Stopped; // should we consider Stopping as stopped?
           }
@@ -219,7 +238,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController("TvService", ServiceAgents.Instance.Hostname))
+        using (ServiceController sc = new ServiceController("TvService", Singleton<ServiceAgents>.Instance.Hostname))
         {
           switch (sc.Status)
           {
@@ -259,7 +278,7 @@ namespace Mediaportal.TV.Server.SetupTV
     {
       try
       {
-        using (ServiceController sc = new ServiceController(aServiceName, ServiceAgents.Instance.Hostname))
+        using (ServiceController sc = new ServiceController(aServiceName, Singleton<ServiceAgents>.Instance.Hostname))
         {
           switch (sc.Status)
           {
@@ -292,7 +311,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      if (!IsInstalled(@"TvService", ServiceAgents.Instance.Hostname))
+      if (!IsInstalled(SERVICENAME_TVSERVICE, Singleton<ServiceAgents>.Instance.Hostname))
       {
         return false;
       }
@@ -307,7 +326,7 @@ namespace Mediaportal.TV.Server.SetupTV
     /// <returns>true when search was successfull - modifies the search pattern to return the correct full name</returns>
     public static bool GetDBServiceName(ref string partOfSvcNameToComplete)
     {
-      ServiceController[] services = ServiceController.GetServices(ServiceAgents.Instance.Hostname);
+      ServiceController[] services = ServiceController.GetServices(Singleton<ServiceAgents>.Instance.Hostname);
       foreach (ServiceController service in services)
       {
         if (service.ServiceName.Contains(partOfSvcNameToComplete))
