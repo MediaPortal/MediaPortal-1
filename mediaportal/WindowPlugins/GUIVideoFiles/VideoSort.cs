@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Video
 
     protected SortMethod CurrentSortMethod;
     protected bool SortAscending;
-
+    
     public VideoSort(SortMethod sortMethod, bool ascending)
     {
       CurrentSortMethod = sortMethod;
@@ -85,23 +85,15 @@ namespace MediaPortal.GUI.Video
       {
         return 1;
       }
-
-      // For sorting folders by type (normal and special ->DVD/BD)
-      bool isSpecial1 = GUIVideoFiles.IsMovieFolder(item1.Path);
-      bool isSpecial2 = GUIVideoFiles.IsMovieFolder(item2.Path);
-
-      if (item1.IsFolder && item2.IsFolder)
+      if (item1.IsBdDvdFolder && !item2.IsBdDvdFolder)
       {
-        if (isSpecial1 && !isSpecial2)
-        {
-          return 1;
-        }
-        if (!isSpecial1 && isSpecial2)
-        {
-          return -1;
-        }
+        return 1;
       }
-
+      if (!item1.IsBdDvdFolder && item2.IsBdDvdFolder)
+      {
+        return -1;
+      }
+      
       switch (CurrentSortMethod)
       {
         case SortMethod.Year:

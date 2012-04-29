@@ -808,7 +808,6 @@ namespace MediaPortal.GUI.Video
           if (string.IsNullOrEmpty(movie.Title) && handler.CurrentLevel + 1 < handler.MaxLevels)
           {
             item.IsFolder = true;
-            item.IsRemote = true;
           }
           else
           {

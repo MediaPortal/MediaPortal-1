@@ -430,6 +430,12 @@ namespace MediaPortal.GUI.Library
           dwColor = _downloadColor;
         }
       }
+
+      if (pItem.IsBdDvdFolder)
+      {
+        dwColor = _remoteColor;
+      }
+
       if (!Focus)
       {
         dwColor &= DimColor;

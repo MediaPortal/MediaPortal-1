@@ -814,23 +814,24 @@ namespace MediaPortal.GUI.Video
                 int timesWatched = 0;
                 int movieId = VideoDatabase.GetMovieId(file);
                 bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
-                
+                //string fPic = string.Empty;
+
                 if (IsMovieFolder(item.Path))
                 {
-                  string fPic = string.Empty;
-                  if (sDvd.IsDvdDirectory(item.Path))
-                  {
-                    fPic = @"logos\DVD.png";
-                  }
-                  else
-                  {
-                    fPic = @"logos\Bluray.png";
-                  }
-                  item.ThumbnailImage = fPic;
-                  item.IconImageBig = fPic;
-                  item.IconImage = fPic;
+                  //if (sDvd.IsDvdDirectory(item.Path))
+                  //{
+                  //  fPic = @"logos\DVD.png";
+                  //}
+                  //else
+                  //{
+                  //  fPic = @"logos\Bluray.png";
+                  //}
+                  //item.ThumbnailImage = fPic;
+                  //item.IconImageBig = fPic;
+                  //item.IconImage = fPic;
+                  item.IsBdDvdFolder = true;
                 }
-
+                
                 if (_markWatchedFiles)
                 {
                   item.IsPlayed = played;
@@ -854,9 +855,17 @@ namespace MediaPortal.GUI.Video
       // Update thumbs for all items (cached also - > cover can be changed in VideoInfoScreen and if we do
       // not update cover, old one will be visible)
       ISelectDVDHandler setThumbs = GetSelectDvdHandler();
-      SetImdbThumbs(itemlist, setThumbs);
+
+      //TimeSpan x;
+      //DateTime start = DateTime.Now;
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
+      //x = DateTime.Now - start;
+      //Log.Error("Sort time {0}s:{1}ms", x.Seconds, x.Milliseconds);
+      
+      
       UpdateButtonStates();
+
+      SetImdbThumbs(itemlist, setThumbs);
 
       int selectedIndex = -1;
       Int32.TryParse(_history.Get(_currentFolder), out selectedIndex);
@@ -3680,12 +3689,12 @@ namespace MediaPortal.GUI.Video
           {
             if (item.Label != "..")
             {
-              if (item.Path.ToLower().IndexOf("video_ts") >= 0)
+              if (item.Path.ToUpperInvariant().IndexOf("VIDEO_TS") >= 0)
               {
                 string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
                 availableFiles.Add(strFile);
               }
-              if (item.Path.ToLower().IndexOf("bdmv") >= 0)
+              if (item.Path.ToUpperInvariant().IndexOf("BDMV") >= 0)
               {
                 string strFile = String.Format(@"{0}\index.bdmv", item.Path);
                 availableFiles.Add(strFile);
