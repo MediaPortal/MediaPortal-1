@@ -655,9 +655,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
               ServiceHelper.WaitInitialized();
             }
           }
-          else if (ServiceHelper.IsInstalled(ServiceHelper.SERVICENAME_TVSERVICE, ServiceAgents.Instance.Hostname) && ServiceHelper.IsRunning)
+          else if (ServiceHelper.IsRunning)
           {
-            if (ServiceHelper.Stop()) { }
+            try
+            {
+              ServiceHelper.Stop();
+            }
+            finally
+            {
+              ServiceHelper.IgnoreDisconnections = true;
+            }            
           }  
         }
                 

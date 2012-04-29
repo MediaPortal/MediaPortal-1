@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.SetupTV
     [STAThread]
     public static void Main(string[] arguments)
     {
-      if (System.IO.File.Exists("debug_setuptv.txt"))
+      if (System.IO.File.Exists("c:\\debug_setuptv.txt"))
       {
         System.Diagnostics.Debugger.Launch();
       }      
@@ -123,7 +123,27 @@ namespace Mediaportal.TV.Server.SetupTV
         }
       }
 
-      bool tvserviceInstalled = tvserviceInstalled = WaitAndQueryForTvserviceUntilFound();
+      bool tvserviceInstalled = WaitAndQueryForTvserviceUntilFound();
+
+      if (tvserviceInstalled)
+      {
+        Log.Info("---- check if tvservice is running ----");
+        if (!ServiceHelper.IsRunning)
+        {
+          Log.Info("---- tvservice is not running ----");
+          if (_startupMode != StartupMode.DeployMode)
+          {
+            DialogResult result = ShowStartTvServiceDialog();
+            if (result != DialogResult.Yes)
+            {
+              Environment.Exit(0);
+            }
+          }
+          Log.Info("---- start tvservice----");
+          ServiceHelper.Start();
+        }
+        ServiceHelper.WaitInitialized();
+      }
 
 
       Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -231,26 +251,7 @@ namespace Mediaportal.TV.Server.SetupTV
       */
       
 
-      if (tvserviceInstalled)
-      {
-        Log.Info("---- check if tvservice is running ----");
-        if (!ServiceHelper.IsRunning)
-        {
-          Log.Info("---- tvservice is not running ----");
-          if (_startupMode != StartupMode.DeployMode)
-          {
-            DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?",
-                                                  "Mediaportal TV service", MessageBoxButtons.YesNo);
-            if (result != DialogResult.Yes) return;
-          }
-          Log.Info("---- start tvservice----");
-          ServiceHelper.Start();
-        }
-
-        ServiceHelper.WaitInitialized();
-      }
-            
-      
+     
 
       // Mantis #0001991: disable mpg recording  (part I: force TS recording format)
       IList<Card> TvCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
@@ -286,6 +287,13 @@ namespace Mediaportal.TV.Server.SetupTV
         Log.Write(ex);
       }
       _serverMonitor.Stop();
+    }
+
+    private static DialogResult ShowStartTvServiceDialog()
+    {
+      DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?",
+                                            "Mediaportal TV service", MessageBoxButtons.YesNo);
+      return result;
     }
 
     private static bool WaitAndQueryForTvserviceUntilFound()
@@ -331,41 +339,50 @@ namespace Mediaportal.TV.Server.SetupTV
           if (tvserviceInstalled)
           {
             Log.Info("---- restart tvservice----");
-            ServiceHelper.Restart();
-            ServiceHelper.WaitInitialized();
-            try
+            DialogResult result = ShowStartTvServiceDialog();
+            if (result == DialogResult.Yes)
             {
-              RemoteControl.HostName = Dns.GetHostName();
-              cards = ServiceAgents.Instance.ControllerServiceAgent.Cards;
-            }
-            catch (Exception ex)
-            {
-              Log.Info("---- Unable to restart tv service----");
-              Log.Write(ex);
-              MessageBox.Show("Failed to startup tvservice..exiting application" + ex);
-              Application.Exit();
-            }
-          }
-          else
-          {
-            Log.Info(
-              "---- unable to restart tvservice, possible multiseat setup with no access to remote windows service ----");
-            string newHostName;
-            bool inputNewHost = ConnectionLostPrompt(TypeValidHostnameForTvServerOrExitApplication,
-                                                     TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService,
-                                                     out newHostName);
-            if (inputNewHost)
-            {
-              UpdateTvServerConfiguration(newHostName);
+              try
+              {
+                ServiceHelper.Restart();
+                ServiceHelper.WaitInitialized();                         
+              }
+              catch (Exception ex)
+              {
+                Log.Error("SetupTV: failed to start tvservice : {0}", ex);
+              }              
             }
             else
             {
+              MessageBox.Show("Chose not to start tvservice..exiting application");
               Environment.Exit(0);
-            }
+            }                        
+          }
+          else
+          {
+            HandleRestrictiveMode();
           }
         }
       }
       return tvserviceInstalled;
+    }
+
+    private static void HandleRestrictiveMode()
+    {
+      Log.Info(
+        "---- unable to restart tvservice, possible multiseat setup with no access to remote windows service ----");
+      string newHostName;
+      bool inputNewHost = ConnectionLostPrompt(TypeValidHostnameForTvServerOrExitApplication,
+                                               TvserviceNotFoundMaybeYouLackUserRightsToAccessControlRemoteWindowsService,
+                                               out newHostName);
+      if (inputNewHost)
+      {
+        UpdateTvServerConfiguration(newHostName);
+      }
+      else
+      {
+        Environment.Exit(0);
+      }
     }
 
     private static void UpdateTvServerConfiguration(string newHostName)
@@ -380,7 +397,10 @@ namespace Mediaportal.TV.Server.SetupTV
 
     static void _serverMonitor_OnServerDisconnected()
     {
-      WaitAndQueryForTvserviceUntilFound();      
+      if (!ServiceHelper.IgnoreDisconnections)
+      {
+        WaitAndQueryForTvserviceUntilFound();       
+      }      
     }
 
     private static bool ConnectionLostPrompt(string prompt, string title, out string newHostName)

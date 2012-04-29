@@ -39,7 +39,8 @@ namespace Mediaportal.TV.Server.SetupTV
   public static class ServiceHelper
   {
     public const string SERVICENAME_TVSERVICE = @"TvService";
-    private static bool _isRestrictedMode;  
+    private static bool _isRestrictedMode;
+    private static bool _ignoreDisconnections;
 
     public static bool IsRestrictedMode
     {
@@ -230,6 +231,12 @@ namespace Mediaportal.TV.Server.SetupTV
       }
     }
 
+    public static bool IgnoreDisconnections
+    {
+      get { return _ignoreDisconnections; }
+      set { _ignoreDisconnections = value; }
+    }
+
     /// <summary>
     /// Stop the TvService
     /// </summary>
@@ -284,6 +291,7 @@ namespace Mediaportal.TV.Server.SetupTV
           {
             case ServiceControllerStatus.Stopped:
               sc.Start();
+              _ignoreDisconnections = false;
               break;
             case ServiceControllerStatus.StartPending:
               break;
