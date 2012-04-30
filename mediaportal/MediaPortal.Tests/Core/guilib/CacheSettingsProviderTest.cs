@@ -62,12 +62,17 @@ namespace MediaPortal.Tests.Core.Profile
       return getValueReturns;
     }
 
-    public IDictionary<string,T> GetSection<T>(string section)
+    public bool HasSection<T>(string section)
+    {
+      return true;
+    }
+
+    public IDictionary<string, T> GetSection<T>(string section)
     {
       this.section = section;
       this.entry = "";
       getValueHits++;
-      return (IDictionary<string,T>)getSectionValueReturns;
+      return (IDictionary<string, T>)getSectionValueReturns;
     }
 
     public void RemoveEntry(string section, string entry)

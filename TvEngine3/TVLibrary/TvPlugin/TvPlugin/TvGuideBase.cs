@@ -219,7 +219,7 @@ namespace TvPlugin
       List<string> programGenres;
       IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
 
-      // Each genre map entry is a csv list of "program" genre names (those that may be compared with the genre from the program listings).
+      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
       // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
       var enumerator = allGenres.GetEnumerator();
       if (enumerator != null)
@@ -228,7 +228,7 @@ namespace TvPlugin
         {
           genre = enumerator.Current.Key;
           _genreList.Add(genre);
-          programGenres = new List<string>(enumerator.Current.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+          programGenres = new List<string>(enumerator.Current.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
 
           foreach (string programGenre in programGenres)
           {

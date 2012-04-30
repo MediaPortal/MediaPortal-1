@@ -197,13 +197,13 @@ namespace MediaPortal.Configuration.Sections
       List<string> programGenres;
       IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
 
-      // Each genre map entry is a csv list of "program" genre names (those that may be compared with the genre from the program listings).
+      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
       // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
       foreach (var genreMapEntry in allGenres)
       {
         genre = genreMapEntry.Key;
         _genreList.Add(genre);
-        programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
 
         foreach (string programGenre in programGenres)
         {
@@ -229,20 +229,20 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.RemoveEntry("genremap", genre);
       }
 
-      // Each genre map entry is a csv list of "program" genre names (those that may be compared with the genre from the program listings).
-      string programGenreCsv;
+      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
+      string programGenreList;
       foreach (var genre in _genreList)
       {
-        programGenreCsv = "";
+        programGenreList = "";
         foreach (var genreMapEntry in _genreMap)
         {
           if (genreMapEntry.Value.Equals(genre))
           {
-            programGenreCsv += genreMapEntry.Key + ",";
+            programGenreList += genreMapEntry.Key + "{";
           }
         }
 
-        xmlwriter.SetValue("genremap", genre, programGenreCsv.TrimEnd(','));
+        xmlwriter.SetValue("genremap", genre, programGenreList.TrimEnd('{'));
       }
     }
 
@@ -449,6 +449,27 @@ namespace MediaPortal.Configuration.Sections
       listViewProgramGenres.EndUpdate();
     }
 
+    private void CreateDefaultGenresAndColors(Settings settings)
+    {
+      // Insert a default collection of TV guide genres; up to 7 are defined.
+      List<string> defaultColors = new List<string>()
+	    {
+       "FFD2691E,FFD2691E",
+       "FF00FFFF,FF00FFFF",
+       "FF800080,FF800080",
+       "FF800000,FF800000",
+       "FF90EE90,FF90EE90",
+       "FFFFD700,FFFFD700",
+       "FF006400,FF006400"
+      };
+
+      for (int i = 0; i < 7; i++)
+      {
+        settings.SetValue("genremap", GUILocalizeStrings.Get(1250 + i), String.Empty);           // Genre not mapped..
+        settings.SetValue("tvguidecolors", GUILocalizeStrings.Get(1250 + i), defaultColors[i]);  // but has default colors
+      }
+    }
+
     public override void LoadSettings()
     {
       //Load parameters from XML File
@@ -474,7 +495,7 @@ namespace MediaPortal.Configuration.Sections
                                                                              true);
         mpTextBoxMacAddress.Text = xmlreader.GetValueAsString("tvservice", "macAddress", "00:00:00:00:00:00");
 
-        mpCheckBoxRatingAsMovie.Checked = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", false);
+        mpCheckBoxRatingAsMovie.Checked = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", true);
         chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
         txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
@@ -503,18 +524,21 @@ namespace MediaPortal.Configuration.Sections
               MethodInfo methodInfo = exportedType.GetMethod("GetGenres", BindingFlags.Public | BindingFlags.Instance);
               _allProgramGenres = methodInfo.Invoke(genreObject, null) as List<String>;
 
-              // Load the genre map from MP settings.
-              if (_genreMap.Count == 0)
+              using (Settings xmlreader = new MPSettings())
               {
-                using (Settings xmlreader = new MPSettings())
+                // If the genre map does not contain any entries then we'll create an initial default map and colors.
+                if (!xmlreader.HasSection<string>("genremap"))
+                {
+                  CreateDefaultGenresAndColors(xmlreader);
+                }
+
+                // Load the genre map from MP settings.
+                if (_genreMap.Count == 0)
                 {
                   LoadGenreMap(xmlreader);
                 }
-              }
 
-              if (!_guideColorsLoaded)
-              {
-                using (Settings xmlreader = new MPSettings())
+                if (!_guideColorsLoaded)
                 {
                   _guideColorsLoaded = LoadGuideColors(xmlreader);
                 }

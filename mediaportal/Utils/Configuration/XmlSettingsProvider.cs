@@ -94,6 +94,31 @@ namespace MediaPortal.Profile
     }
 
     /// <summary>
+    /// Returns true if the specified settings section exists.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="section"></param>
+    /// <returns></returns>
+    public bool HasSection<T>(string section)
+    {
+      if (document == null)
+      {
+        return false;
+      }
+
+      XmlElement root = document.DocumentElement;
+      if (root == null)
+      {
+        return false;
+      }
+
+      //  Select the section node.
+      XmlNode node = root.SelectSingleNode(GetSectionsPath(section));
+
+      return (node != null);
+    }
+
+    /// <summary>
     /// Get all of the settings entries in the specified section.
     /// </summary>
     /// <param name="section">Specified the name of the section to retrieve.</param>

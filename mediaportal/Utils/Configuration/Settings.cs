@@ -141,7 +141,12 @@ namespace MediaPortal.Profile
       }
     }
 
-    public IDictionary<string,T> GetSection<T>(string section)
+    public bool HasSection<T>(string section)
+    {
+      return xmlDoc.HasSection<T>(section);
+    }
+
+    public IDictionary<string, T> GetSection<T>(string section)
     {
       return xmlDoc.GetSection<T>(section);
     }

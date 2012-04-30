@@ -117,6 +117,24 @@ namespace MediaPortal.Profile
     }
 
     /// <summary>
+    /// Will return true if the specified settings section exists.
+    /// </summary>
+    /// <param name="section"></param>
+    /// <returns></returns>
+    public bool HasSection<T>(string section)
+    {
+      bool result = true;
+      SettingKey key = new SettingKey(section, "");
+
+      object obj;
+      if (!cache.TryGetValue(key, out obj))
+      {
+        result = provider.HasSection<T>(section);
+      }
+      return result;
+    }
+
+    /// <summary>
     /// Will return a cached dictionary of all settings in the specified section.
     /// </summary>
     /// <param name="section"></param>

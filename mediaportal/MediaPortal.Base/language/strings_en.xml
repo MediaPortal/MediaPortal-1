@@ -1019,8 +1019,15 @@
     <String id="1226">Queue all items</String>
     <String id="1230">Date added:</String>
     <String id="1231">Last played:</String>
-		<String id="1240">Lock content</String>
-		<String id="1241">Unlock content</String>
+    <String id="1240">Lock content</String>
+    <String id="1241">Unlock content</String>
+    <String id="1250">Documentary</String>
+    <String id="1251">Kids</String>
+    <String id="1252">Movie</String>
+    <String id="1253">Music</String>
+    <String id="1254">News</String>
+    <String id="1255">Special</String>
+    <String id="1256">Sports</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>

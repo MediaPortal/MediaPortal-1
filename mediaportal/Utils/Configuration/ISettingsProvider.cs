@@ -27,6 +27,7 @@ namespace MediaPortal.Profile
     string FileName { get; }
     object GetValue(string section, string entry);
     IDictionary<string, T> GetSection<T>(string section);
+    bool HasSection<T>(string section);
     void RemoveEntry(string section, string entry);
     void Save();
     void SetValue(string section, string entry, object value);
