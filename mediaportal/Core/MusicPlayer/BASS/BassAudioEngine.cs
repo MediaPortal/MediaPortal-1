@@ -100,7 +100,6 @@ namespace MediaPortal.MusicPlayer.BASS
     private List<MusicStream> _streams = new List<MusicStream>(Maxstreams);
     private int _currentStreamIndex = 0;
 
-    private BassAsioHandler _asioHandler = null;
     private ASIOPROC _asioProc = null;
     private int _asioDeviceNumber = -1;
 
@@ -1058,11 +1057,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
-        if (_asioHandler != null)
-        {
-          _asioHandler.Stop();
-          _asioHandler.Dispose();
-        }
         BassAsio.BASS_ASIO_Stop();
         BassAsio.BASS_ASIO_Free();
       }
@@ -1112,10 +1106,7 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Info("BASS: Freeing BASS. Non-audio media playback requested.");
         if (Config.MusicPlayer == AudioPlayer.Asio)
         {
-          if (_asioHandler != null)
-          {
-            _asioHandler.Dispose();
-          }
+          BassAsio.BASS_ASIO_Free();
         }
 
         if (Config.MusicPlayer == AudioPlayer.WasApi)
@@ -1463,13 +1454,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       bool result = false;
 
-      if (_asioHandler != null)
-      {
-        //Log.Debug("BASS: Disposing existing Asio Handler");
-        //_asioHandler.Stop();
-        //_asioHandler.Dispose();
-      }
-      else if (Config.MusicPlayer == AudioPlayer.WasApi)
+      if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
         BassWasapi.BASS_WASAPI_Free();
       }
@@ -1483,6 +1468,13 @@ namespace MediaPortal.MusicPlayer.BASS
 
       Log.Debug("BASS: Creating {0} channel mixer for frequency {1}", stream.ChannelInfo.chans, stream.ChannelInfo.freq);
 
+      if (_mixer != 0)
+      {
+        if (!Bass.BASS_StreamFree(_mixer))
+        {
+          Log.Error("BASS: Error stopping Asio Device: {0}", Bass.BASS_ErrorGetCode());
+        }
+      }
       _mixer = BassMix.BASS_Mixer_StreamCreate(stream.ChannelInfo.freq, stream.ChannelInfo.chans, mixerFlags);
       Bass.BASS_ChannelPlay(_mixer, false);
 
@@ -1497,21 +1489,28 @@ namespace MediaPortal.MusicPlayer.BASS
 
         case AudioPlayer.Asio:
 
-          // Unjoin all the channels
-          BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_JOIN);
-
-          // setup ASIO manually
-          if (_asioHandler == null)
+          if (BassAsio.BASS_ASIO_IsStarted() && !BassAsio.BASS_ASIO_Stop())
           {
-            Log.Debug("BASS: Creating new Asio Handler");
-            _asioHandler = new BassAsioHandler();
+            Log.Error("BASS: Error stopping Asio Device: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
           }
 
-          //_asioHandler.AssignOutputChannel(_mixer);
-          _asioHandler.Pan = Config.AsioBalance;
-          _asioHandler.Volume = (float)Config.StreamVolume / 100f;
+          // Disable and Unjoin all the channels
+          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_ENABLE))
+          {
+            Log.Error("BASS: Error unjoining Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
 
-          _asioProc = new ASIOPROC(AsioCallback);
+          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_JOIN))
+          {
+            Log.Error("BASS: Error unjoining Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
+
+          if (_asioProc == null)
+          {
+            _asioProc = new ASIOPROC(AsioCallback);
+          }
+
+          BassAsio.BASS_ASIO_ChannelSetVolume(false, -1, (float)Config.StreamVolume / 100f);
 
           // enable 1st output channel...(0=first)
           Log.Debug("BASS: Joining Asio Channel #{0}", "0");
@@ -1527,25 +1526,29 @@ namespace MediaPortal.MusicPlayer.BASS
           // since we joined the channels, the next commands will apply to all channles joined
           // so setting the values to the first channels changes them all automatically
           // set the source format (float, as the decoding channel is)
-          BassAsio.BASS_ASIO_ChannelSetFormat(false, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT);
+          if (!BassAsio.BASS_ASIO_ChannelSetFormat(false, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT))
+          {
+            Log.Error("BASS: Error setting Asio Sample Format: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
 
           // set the source rate
           Log.Debug("BASS: Set sample rate to {0}", stream.ChannelInfo.freq);
-          BassAsio.BASS_ASIO_ChannelSetRate(false, 0, (double)stream.ChannelInfo.freq);
-          _asioHandler.SampleRate = (double)stream.ChannelInfo.freq;
-          // try to set the device rate too (saves resampling)
-          BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq);
+          if (!BassAsio.BASS_ASIO_ChannelSetRate(false, 0, (double)stream.ChannelInfo.freq))
+          {
+            Log.Error("BASS: Error setting Asio Channel Samplerate: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
 
-          Log.Debug("BASS: Asio Handler Information");
-          Log.Debug("BASS: ---------------------------------------------");
-          Log.Debug("BASS: Number of Chanels: {0}", _asioHandler.ChannelNumChans);
-          Log.Debug("BASS: Format: {0}", _asioHandler.Format.ToString());
-          Log.Debug("BASS: IsResampling: {0}", _asioHandler.IsResampling.ToString());
-          Log.Debug("BASS: Sample Rate: {0}", _asioHandler.SampleRate);
-          Log.Debug("BASS: ---------------------------------------------");
+          // try to set the device rate too (saves resampling)
+          if (!BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq))
+          {
+            Log.Error("BASS: Error setting Asio Samplerate: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
 
           // and start playing it...start output using default buffer/latency
-          _asioHandler.Start(0);
+          if (!BassAsio.BASS_ASIO_Start(0))
+          {
+            Log.Error("BASS: Error starting Asio playback: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
           result = true;
 
           break;
@@ -1654,9 +1657,9 @@ namespace MediaPortal.MusicPlayer.BASS
 
             result = Bass.BASS_Start();
 
-            if (Config.MusicPlayer == AudioPlayer.Asio && _asioHandler != null)
+            if (Config.MusicPlayer == AudioPlayer.Asio)
             {
-              result = _asioHandler.Pause(false);   // Continue playback of Paused stream
+              result = BassAsio.BASS_ASIO_ChannelReset(false, 0, BASSASIOReset.BASS_ASIO_RESET_PAUSE);   // Continue playback of Paused stream
             }
             else if (Config.MusicPlayer == AudioPlayer.WasApi)
             {
@@ -1877,9 +1880,8 @@ namespace MediaPortal.MusicPlayer.BASS
           BassMix.BASS_Mixer_ChannelPlay(_mixer);
           Bass.BASS_Start();
 
-          if (Config.MusicPlayer == AudioPlayer.Asio && _asioHandler != null)
+          if (Config.MusicPlayer == AudioPlayer.Asio)
           {
-            _asioHandler.Pause(false);
             BassAsio.BASS_ASIO_ChannelReset(false, 0, BASSASIOReset.BASS_ASIO_RESET_PAUSE);
           }
           else if (Config.MusicPlayer == AudioPlayer.WasApi)
@@ -1905,9 +1907,8 @@ namespace MediaPortal.MusicPlayer.BASS
           BassMix.BASS_Mixer_ChannelPause(_mixer);
           Bass.BASS_Pause();
 
-          if (Config.MusicPlayer == AudioPlayer.Asio && _asioHandler != null)
+          if (Config.MusicPlayer == AudioPlayer.Asio)
           {
-            _asioHandler.Pause(true);
             BassAsio.BASS_ASIO_ChannelPause(false, 0);
           }
           else if (Config.MusicPlayer == AudioPlayer.WasApi)
@@ -1956,12 +1957,9 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
 
-        if (_asioHandler != null)
+        if (Config.MusicPlayer == AudioPlayer.Asio && BassAsio.BASS_ASIO_IsStarted())
         {
-          _asioHandler.Stop();
-          _asioHandler.Dispose();
           BassAsio.BASS_ASIO_Stop();
-          _asioHandler = null;
         }
 
         // hwahrmann: The WASAPI Free never returns on my system. Leave it commented until the root cause is found
