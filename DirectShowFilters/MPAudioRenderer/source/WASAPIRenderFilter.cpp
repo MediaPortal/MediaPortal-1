@@ -45,10 +45,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_rtHwStart(0),
   m_nSampleOffset(0),
   m_nDataLeftInSample(0),
-  m_bResyncHwClock(true),
-  m_llPosError(0),
-  m_ullPrevQpc(0),
-  m_ullPrevPos(0)
+  m_bResyncHwClock(true)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -446,6 +443,8 @@ HRESULT CWASAPIRenderFilter::AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc)
   return S_OK;
 }
 
+static UINT64 prevPos = 0; // for debugging only, remove later
+
 void CWASAPIRenderFilter::UpdateAudioClock()
 {
   if (m_pAudioClock)
@@ -456,45 +455,14 @@ void CWASAPIRenderFilter::UpdateAudioClock()
     UINT64 qpc = 0;
     HRESULT hr = m_pAudioClock->GetPosition(&timestamp, &qpc);
     if (hr != S_OK)
-    {
-      Log("UpdateAudioClock - error reading the position(1): (0x%08x)", hr);
-    
-      if (hr != S_FALSE)
-        return;
-
-      UINT32 loop = 0;
-
-      do
-      {
-        hr = m_pAudioClock->GetPosition(&timestamp, &qpc);
-        Log("UpdateAudioClock - error reading the position(2): (0x%08x)", hr);
-        Sleep(1);
-      } while (hr == S_FALSE && loop < 5);
-      
-      if (hr != S_OK)
-      {
-        Log("UpdateAudioClock - error reading the position(3): (0x%08x)", hr);
-        return;
-      }
-    }
+      return; // no point in adding the data into collection when we cannot get real data
 
     UINT64 ullHwClock = cMulDiv64(timestamp, 10000000, m_nHWfreq);
     
-    if (m_ullPrevPos > ullHwClock)
-    {
-      UINT64 correction = m_ullPrevPos - ullHwClock + qpc - m_ullPrevQpc;
-      m_llPosError += correction;
-      Log("UpdateAudioClock: prevPos: %6.3f > ullHwClock: %6.3f diff: %6.3f QPC diff: %6.3f m_llPosError: %6.3f correction: %6.3f", 
-        m_ullPrevPos / 10000000.0, ullHwClock / 10000000.0, (m_ullPrevPos - ullHwClock) / 10000000.0, (qpc - m_ullPrevQpc) / 10000000.0, 
-        m_llPosError / 10000000.0, correction / 10000000.0);
-    }
+    if (prevPos > ullHwClock)
+      Log("UpdateAudioClock: prevPos: %I64u > ullHwClock: %I64u diff: %I64u ", prevPos, ullHwClock, prevPos - ullHwClock);
 
-    m_ullPrevPos = ullHwClock;
-    m_ullPrevQpc = qpc;
-
-    ullHwClock += m_llPosError;
-
-    //Log("HW clock: %6.3f", ullHwClock / 10000000.0);
+    prevPos = ullHwClock;
 
     if (m_dClockPosIn == m_dClockPosOut)
     {
@@ -520,9 +488,6 @@ void CWASAPIRenderFilter::ResetClockData()
   m_dClockPosIn = 0;
   m_dClockPosOut = 0;
   m_dClockDataCollectionCount = 0;
-  m_llPosError = 0;
-  m_ullPrevPos = 0;
-  m_ullPrevQpc = 0;
   ZeroMemory((void*)&m_ullHwClock, sizeof(UINT64) * CLOCK_DATA_SIZE);
   ZeroMemory((void*)&m_ullHwQpc, sizeof(UINT64) * CLOCK_DATA_SIZE);
 }

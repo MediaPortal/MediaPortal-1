@@ -153,6 +153,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pOutBitDepthAdapter;
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
+  delete m_pStreamSanitizer;
   delete m_pChannelMixer;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
@@ -189,10 +190,15 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pSampleRateConverter)
     return E_OUTOFMEMORY;
 
+  m_pStreamSanitizer = new CStreamSanitizer(&m_Settings);
+  if (!m_pStreamSanitizer)
+    return E_OUTOFMEMORY;
+
   m_pChannelMixer = new CChannelMixer(&m_Settings);
   if (!m_pChannelMixer)
     return E_OUTOFMEMORY;
 
+  m_pStreamSanitizer->ConnectTo(m_pInBitDepthAdapter);
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
   m_pSampleRateConverter->ConnectTo(m_pChannelMixer);
   m_pChannelMixer->ConnectTo(m_pTimestretchFilter);
@@ -201,7 +207,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
-  m_pPipeline = m_pInBitDepthAdapter;
+  m_pPipeline = m_pStreamSanitizer;
 
   return S_OK;
 }

@@ -583,6 +583,7 @@
     <ClCompile Include="source\SampleRateConverterFilter.cpp" />
     <ClCompile Include="source\Settings.cpp" />
     <ClCompile Include="source\SoundTouchEx.cpp" />
+    <ClCompile Include="source\StreamSanitizerFilter.cpp" />
     <ClCompile Include="source\SyncClock.cpp" />
     <ClCompile Include="source\ThreadDecouplingFilter.cpp" />
     <ClCompile Include="source\TimeSource.cpp" />
@@ -666,6 +667,7 @@
     <ClInclude Include="source\SharedInclude.h" />
     <ClInclude Include="source\SoundTouchEx.h" />
     <ClInclude Include="source\stdafx.h" />
+    <ClInclude Include="source\StreamSanitizerFilter.h" />
     <ClInclude Include="source\SyncClock.h" />
     <ClInclude Include="source\ThreadDecouplingFilter.h" />
     <ClInclude Include="source\TimeSource.h" />
