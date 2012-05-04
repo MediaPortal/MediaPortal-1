@@ -370,6 +370,31 @@ void SoundTouch::flush()
 }
 
 
+uint SoundTouch::flushEx()
+{
+    int i;
+    uint nOut;
+    uint nZerosInjected = 0;
+    SAMPLETYPE buff[128];
+
+    nOut = numSamples();
+
+    memset(buff, 0, 128 * sizeof(SAMPLETYPE));
+    // "Push" the last active samples out from the processing pipeline by
+    // feeding blank samples into the processing pipeline until new, 
+    // processed samples appear in the output (not however, more than 
+    // 8ksamples in any case)
+    for (i = 0; i < 128; i ++) 
+    {
+        putSamples(buff, 64);
+        nZerosInjected += 64;
+        if (numSamples() != nOut) break;  // new samples have appeared in the output!
+    }
+
+    return nZerosInjected;
+}
+
+
 // Changes a setting controlling the processing system behaviour. See the
 // 'SETTING_...' defines for available setting ID's.
 BOOL SoundTouch::setSetting(int settingId, int value)

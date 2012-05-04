@@ -205,6 +205,9 @@ public:
     /// in the middle of a sound stream.
     void flush();
 
+    /// Extended flush to 
+    uint flushEx();
+
     /// Adds 'numSamples' pcs of samples from the 'samples' memory position into
     /// the input of the object. Notice that sample rate _has_to_ be set before
     /// calling this function, otherwise throws a runtime_error exception.

@@ -37,7 +37,6 @@ public:
   // IAudioSink implementation
   HRESULT Init();
   HRESULT Cleanup();
-  HRESULT PutSample(IMediaSample* pSample);
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
   HRESULT Run(REFERENCE_TIME rtStart);
@@ -82,6 +81,8 @@ public:
   /// in the middle of a sound stream.
   void flush();
 
+  uint flushEx();
+
   /// Clears all the samples.
   void clear();
 
@@ -121,7 +122,9 @@ protected:
 
   void setTempoInternal(float newTempo, float newAdjustment);
 
-  void CheckStreamContinuity(IMediaSample* pSample, bool initStreamTime);
+  void CheckStreamContinuity(IMediaSample* pSample);
+  void CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, double dBias, double dAdjustment, double dAVMult, bool bFlushPartialSample);
+  void OutputSample(bool bForce);
 
 // Internal implementation
 private:
@@ -146,8 +149,6 @@ private:
   CCritSec m_allocatorLock;
 
   CSyncClock* m_pClock;
-
-  bool m_bResamplingRequested;
 
   FILTER_STATE m_filterState;
 };

@@ -120,6 +120,8 @@ HRESULT CStreamSanitizer::PutSample(IMediaSample *pSample)
   REFERENCE_TIME rtStart = 0;
   hr = pSample->GetTime(&rtStart, &rtStop);
 
+  //Log("SAN:  rtStart: %6.3f m_rtNextIncomingSampleTime: %6.3f", rtStart / 10000000.0, m_rtNextIncomingSampleTime / 10000000.0);
+
   if (SUCCEEDED(hr))
   {
     if (m_nSampleNum == 0)

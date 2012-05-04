@@ -187,11 +187,10 @@ HRESULT CBaseAudioSink::EndFlush()
 {
   CAutoLock lock (&m_csOutputSample);
 
+  m_nSampleNum = 0;
+
   if (m_bHandleSampleRelease)
-  {
-    m_nSampleNum = 0;
     m_pNextOutSample.Release();
-  }
   
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
