@@ -713,6 +713,18 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Info("BASS: Initializing BASS audio engine...");
         bool initOK = false;
 
+        if (_bassFreed)
+        {
+          Log.Debug("BASS: BASS audio engine was previously freed. Re-Init");
+          if (!Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty))
+          {
+            if (Bass.BASS_ErrorGetCode() != BASSError.BASS_ERROR_ALREADY)
+            {
+              HandleBassError("Initialze");
+            }
+          }
+        }
+
         switch (Config.MusicPlayer)
         {
           case AudioPlayer.Bass:
@@ -1081,6 +1093,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       Bass.BASS_Stop();
       Bass.BASS_Free();
+      _bassFreed = true;
 
       foreach (int pluginHandle in DecoderPluginHandles)
       {
