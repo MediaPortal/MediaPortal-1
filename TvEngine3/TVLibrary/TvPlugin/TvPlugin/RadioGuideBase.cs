@@ -110,7 +110,7 @@ namespace TvPlugin
       get
       {
         // show/hide channel group button
-        GUIButtonControl btnChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButtonControl;
+        GUIControl btnChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIControl;
 
         // visible only if more than one group? and not in single channel, and button exists in skin!
         return (Radio.AllRadioGroups.Count > 1 && !_singleChannelView && btnChannelGroup != null);
