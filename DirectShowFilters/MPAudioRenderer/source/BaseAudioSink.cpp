@@ -127,7 +127,9 @@ HRESULT CBaseAudioSink::BeginStop()
 HRESULT CBaseAudioSink::EndStop()
 {
   CAutoLock lock (&m_csOutputSample);
-  m_pNextOutSample.Release();
+  
+  if (m_pNextOutSample)
+    m_pNextOutSample.Release();
 
   if (m_pNextSink)
     return m_pNextSink->EndStop();
