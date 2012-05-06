@@ -86,11 +86,6 @@ HRESULT CTimeStretchFilter::Init()
   return CQueuedAudioSink::Init();
 }
 
-HRESULT CTimeStretchFilter::Cleanup()
-{
-  return CQueuedAudioSink::Cleanup();
-}
-
 // Format negotiation
 HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
@@ -324,20 +319,6 @@ HRESULT CTimeStretchFilter::EndOfStream()
   return S_OK;
 }
 
-HRESULT CTimeStretchFilter::Pause()
-{
-  m_filterState = State_Paused;
-  return CQueuedAudioSink::Pause();
-}
-
-HRESULT CTimeStretchFilter::Run(REFERENCE_TIME rtStart)
-{
-  Log("CTimeStretchFilter::Run - rtTime: %6.3f", rtStart / 10000000.0);
-  m_filterState = State_Running;
-
-  return CQueuedAudioSink::Run(rtStart);
-}
-
 void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample)
 {
   REFERENCE_TIME rtStart = 0;
@@ -405,12 +386,16 @@ DWORD CTimeStretchFilter::ThreadProc()
     {
       if (command == ASC_Flush)
       {
-        sample.Release();
-        SetEvent(m_hCurrentSampleReleased);
+      	Log("CTimeStretchFilter::timestretch thread - flushing");
         m_rtInSampleTime = m_rtNextIncomingSampleTime = 0;
 
         if (m_pNextOutSample)
           m_pNextOutSample.Release();
+
+        flush();
+
+        sample.Release();
+        SetEvent(m_hCurrentSampleReleased);
       }
       else if (command == ASC_Pause || command == ASC_Resume)
         continue;

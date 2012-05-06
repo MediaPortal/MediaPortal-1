@@ -23,7 +23,6 @@
 
 #include <FunctionDiscoveryKeys_devpkey.h>
 
-
 CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
   m_pSettings(pSettings),
   m_pClock(pClock),
@@ -543,15 +542,14 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
   if (SUCCEEDED(hr))
   {
     if (m_bResyncHwClock)
-    {
       m_rtHwStart = rtStart + (rtHwTime - rtTime);
-      m_bResyncHwClock = false;
-    }
     else
       m_rtHwStart = rtStart / m_pClock->GetBias();
 
-    Log("CWASAPIRenderFilter::Run - rtTime: %6.3f HW clock: %6.3f rtStart: %6.3f rtHwTime: %6.3f", 
-      rtTime / 10000000.0, m_rtHwStart / 10000000.0, rtStart / 10000000.0, rtHwTime / 10000000.0);
+    Log("CWASAPIRenderFilter::Run - rtTime: %6.3f HW clock: %6.3f rtStart: %6.3f rtHwTime: %6.3f m_bResyncHwClock: %d", 
+      rtTime / 10000000.0, m_rtHwStart / 10000000.0, rtStart / 10000000.0, rtHwTime / 10000000.0, m_bResyncHwClock);
+
+    m_bResyncHwClock = false;
   }
   else
     Log("CWASAPIRenderFilter::Run - error (0x%08x)", hr);
@@ -570,11 +568,23 @@ HRESULT CWASAPIRenderFilter::Pause()
 
 HRESULT CWASAPIRenderFilter::BeginStop()
 {
+  m_bResyncHwClock = true;
   m_filterState = State_Stopped;
   return CQueuedAudioSink::BeginStop();
 }
 
 // Processing
+HRESULT CWASAPIRenderFilter::BeginFlush()
+{
+  m_bResyncHwClock = true;
+  return CQueuedAudioSink::BeginFlush();
+}
+
+HRESULT CWASAPIRenderFilter::EndFlush()
+{
+  return CQueuedAudioSink::EndFlush();
+}
+
 HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
 {
  HRESULT hr = CQueuedAudioSink::PutSample(pSample);
@@ -649,8 +659,8 @@ DWORD CWASAPIRenderFilter::ThreadProc()
   {
     if (flush)
     {
+      Log("CWASAPIRenderFilter::Render thread flushing buffers");
       HandleFlush();
-      m_bResyncHwClock = true;
       flush = false;
     }
     

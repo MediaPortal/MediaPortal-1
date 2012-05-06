@@ -55,6 +55,8 @@ protected:
   // Processing
   DWORD ThreadProc();
   HRESULT PutSample(IMediaSample* pSample);
+  HRESULT BeginFlush();
+  HRESULT EndFlush();
 
 // Internal implementation
 private:

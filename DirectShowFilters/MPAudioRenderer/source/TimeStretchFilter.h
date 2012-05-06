@@ -36,11 +36,8 @@ public:
 
   // IAudioSink implementation
   HRESULT Init();
-  HRESULT Cleanup();
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
   HRESULT EndOfStream();
-  HRESULT Run(REFERENCE_TIME rtStart);
-  HRESULT Pause();
 
 public: 
 
@@ -149,6 +146,4 @@ private:
   CCritSec m_allocatorLock;
 
   CSyncClock* m_pClock;
-
-  FILTER_STATE m_filterState;
 };
