@@ -86,6 +86,16 @@ HRESULT CTimeStretchFilter::Init()
   return CQueuedAudioSink::Init();
 }
 
+HRESULT CTimeStretchFilter::PutSample(IMediaSample* pSample)
+{
+  if (m_pSettings->m_bUseTimeStretching)
+    CQueuedAudioSink::PutSample(pSample);
+  else if (m_pNextSink)
+    return m_pNextSink->PutSample(pSample);
+
+  return S_OK;
+}
+
 // Format negotiation
 HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder)
 {
