@@ -50,6 +50,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private static AudioPlayer _audioPlayer;
     private static string _soundDevice;
+    private static string _soundDeviceID;
 
     private static int _streamVolume;
     private static int _bufferingMs;
@@ -93,6 +94,11 @@ namespace MediaPortal.MusicPlayer.BASS
     public static string SoundDevice
     {
       get { return _soundDevice; }
+    }
+
+    public static string SoundDeviceID
+    {
+      get { return _soundDeviceID; }
     }
 
     public static AudioPlayer MusicPlayer
@@ -195,6 +201,7 @@ namespace MediaPortal.MusicPlayer.BASS
         string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0");
         _audioPlayer = (AudioPlayer)Enum.Parse(typeof (AudioPlayer), strAudioPlayer);
         _soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "Default Sound Device");
+        _soundDeviceID = xmlreader.GetValueAsString("audioplayer", "sounddeviceid", "");
         _streamVolume = xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
         _bufferingMs = xmlreader.GetValueAsInt("audioplayer", "buffering", 5000);
 

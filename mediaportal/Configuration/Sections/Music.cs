@@ -119,6 +119,7 @@ namespace MediaPortal.Configuration.Sections
     private BASSVIS_PARAM _visParam = null;
 
     private string _soundDevice = null;
+    private string _soundDeviceID = "";
 
     #endregion
 
@@ -175,6 +176,7 @@ namespace MediaPortal.Configuration.Sections
         // Player Settings
         // Get first the sound device, so that it is available, when updating the combo
         _soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "None");
+        _soundDeviceID = xmlreader.GetValueAsString("audioplayer", "sounddeviceid", "");
 
         string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0");
         int audioPlayer = (int)AudioPlayer.Bass; // Default to BASS Player
@@ -401,7 +403,8 @@ namespace MediaPortal.Configuration.Sections
       {
         #region Player Settings
         xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.SelectedIndex);
-        xmlwriter.SetValue("audioplayer", "sounddevice", soundDeviceComboBox.Text);
+        xmlwriter.SetValue("audioplayer", "sounddevice", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).Name);
+        xmlwriter.SetValue("audioplayer", "sounddeviceid", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).ID);
 
         xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
         xmlwriter.SetValue("audioplayer", "buffering", hScrollBarBuffering.Value);
@@ -680,7 +683,13 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          soundDeviceComboBox.SelectedItem = _soundDevice;
+          foreach (SoundDeviceItem item in soundDeviceComboBox.Items)
+          {
+            if (item.Name == _soundDevice && item.ID == _soundDeviceID)
+            {
+              soundDeviceComboBox.SelectedItem = item;
+            }
+          }
         }
 
         // Change the Text of Item 0 in the Sound device box for Bass Player or DirectShow Player
@@ -727,7 +736,7 @@ namespace MediaPortal.Configuration.Sections
           // Fill the combo box, starting at 1 to skip the "No Sound" device
           for (int i = 1; i < soundDevices.Length; i++)
           {
-            soundDeviceComboBox.Items.Add(soundDevices[i].name);
+            soundDeviceComboBox.Items.Add(new SoundDeviceItem(soundDevices[i].name, soundDevices[i].id));
           }
 
           break;
@@ -748,7 +757,7 @@ namespace MediaPortal.Configuration.Sections
           {
             foreach (BASS_ASIO_DEVICEINFO deviceInfo in asioDevices)
             {
-              soundDeviceComboBox.Items.Add(deviceInfo.name);  
+              soundDeviceComboBox.Items.Add(new SoundDeviceItem(deviceInfo.name, deviceInfo.driver));  
             }
           }
 
@@ -772,7 +781,7 @@ namespace MediaPortal.Configuration.Sections
               // Only add enabled and output devices to the list
               if (deviceInfo.IsEnabled && !deviceInfo.IsInput)
               {
-                soundDeviceComboBox.Items.Add(deviceInfo.name);
+                soundDeviceComboBox.Items.Add(new SoundDeviceItem(deviceInfo.name, deviceInfo.id));
               }
             }
           }
@@ -1010,5 +1019,26 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
+  }
+
+  /// <summary>
+  /// Class used to display the Sound Device Information in the Combo Box 
+  /// </summary>
+  public class SoundDeviceItem
+  {
+    public string Name;
+    public string ID;
+
+    public SoundDeviceItem(string name, string id)
+    {
+      Name = name;
+      ID = id;
+    }
+
+    public override string ToString()
+    {
+      // Generates the text shown in the combo box
+      return Name;
+    }
   }
 }

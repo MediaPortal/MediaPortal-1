@@ -809,7 +809,7 @@ namespace MediaPortal.MusicPlayer.BASS
       // Check if the ASIO device read is amongst the one retrieved
       for (int i = 0; i < asioDevices.Length; i++)
       {
-        if (asioDevices[i].name == Config.SoundDevice)
+        if (asioDevices[i].name == Config.SoundDevice && asioDevices[i].driver == Config.SoundDeviceID)
         {
           _asioDeviceNumber = i;
           break;
@@ -888,7 +888,7 @@ namespace MediaPortal.MusicPlayer.BASS
       // Check if the WASAPI device read is amongst the one retrieved
       for (i = 0; i < wasapiDevices.Length; i++)
       {
-        if (wasapiDevices[i].name == Config.SoundDevice)
+        if (wasapiDevices[i].name == Config.SoundDevice && wasapiDevices[i].id == Config.SoundDeviceID)
         {
           _wasapiDeviceNumber = i;
           break;
