@@ -321,6 +321,7 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
     return S_FALSE;
 
   REFERENCE_TIME rtHWTime = 0;
+  REFERENCE_TIME rtRefClock = 0;
   REFERENCE_TIME rtStop = 0;
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtDuration = 0;
@@ -343,12 +344,16 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
   UINT nFrames = sampleLength / m_pInputFormat->Format.nBlockAlign;
   rtDuration = nFrames * UNITS / m_pInputFormat->Format.nSamplesPerSec;
 
-  // Get media time
-  REFERENCE_TIME rtRefClock = 0;
-  
-  m_pClock->GetTime(&rtRefClock);
-  rtRefClock -= m_rtStart;
-  rtHWTime = m_pClock->GetHWTime() - m_rtHwStart;
+  if (SUCCEEDED(m_pClock->GetHWTime(&rtRefClock, &rtHWTime)))
+  {
+    rtRefClock -= m_rtStart;
+    rtHWTime -= m_rtHwStart;
+  }
+  else
+  {
+    m_nSampleNum++;
+    return MPAR_S_RENDER_SAMPLE;
+  }
 
   if (m_pSettings->m_bLogSampleTimes)
     Log("   sample start: %6.3f  stop: %6.3f dur: %6.3f diff: %6.3f rtHWTime: %6.3f rtRefClock: %6.3f early: %6.3f queue: %d %6.3f", 
@@ -395,7 +400,13 @@ HRESULT CWASAPIRenderFilter::CheckStreamTimeline(IMediaSample* pSample, REFERENC
 
 void CWASAPIRenderFilter::CalculateSilence(REFERENCE_TIME* pDueTime, LONGLONG* pBytesOfSilence)
 {
-  REFERENCE_TIME rtHWTime = m_pClock->GetHWTime() - m_rtHwStart;
+  REFERENCE_TIME rtHWTime = 0;
+  
+  if (FAILED(m_pClock->GetHWTime(NULL, &rtHWTime)))
+    return;
+
+  rtHWTime -= m_rtHwStart;
+
   REFERENCE_TIME rtSilenceDuration = *pDueTime - rtHWTime;
 
   if (m_pSettings->m_bLogSampleTimes)
@@ -536,18 +547,23 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
   REFERENCE_TIME rtTime = 0;
   REFERENCE_TIME rtHwTime = 0;
 
-  HRESULT hr = m_pClock->GetTime(&rtTime);
-  rtHwTime = m_pClock->GetHWTime();
+  HRESULT hr = m_pClock->GetHWTime(&rtTime, &rtHwTime);
 
   if (SUCCEEDED(hr))
   {
     if (m_bResyncHwClock)
       m_rtHwStart = rtStart + (rtHwTime - rtTime);
     else
-      m_rtHwStart = rtStart / m_pClock->GetBias();
+    {
+      double currentBias = m_pClock->GetBias();
+      REFERENCE_TIME biasBasedHwStart = rtStart / currentBias;
 
-    Log("CWASAPIRenderFilter::Run - rtTime: %6.3f HW clock: %6.3f rtStart: %6.3f rtHwTime: %6.3f m_bResyncHwClock: %d", 
-      rtTime / 10000000.0, m_rtHwStart / 10000000.0, rtStart / 10000000.0, rtHwTime / 10000000.0, m_bResyncHwClock);
+      double multiplier = (double)(rtTime - m_rtPauseTime) / (double)(rtHwTime - m_rtHwPauseTime);
+      m_rtHwStart = rtStart / multiplier;
+
+      Log("CWASAPIRenderFilter::Run - TEST: currentBias: %10.8f multiplier: %10.8f m_rtHwStart: %10.8f biasBasedHwStart: %10.8f diff: %10.8f",
+        currentBias, multiplier, m_rtHwStart / 10000000.0, biasBasedHwStart / 10000000.0, (biasBasedHwStart - m_rtHwStart) / 10000000.0);
+    }
 
     m_bResyncHwClock = false;
   }
@@ -563,6 +579,8 @@ HRESULT CWASAPIRenderFilter::Run(REFERENCE_TIME rtStart)
 HRESULT CWASAPIRenderFilter::Pause()
 {
   m_filterState = State_Paused;
+  m_pClock->GetHWTime(&m_rtPauseTime, &m_rtHwPauseTime);
+
   return CQueuedAudioSink::Pause();
 }
 

@@ -212,15 +212,27 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   return m_ullPrivateTime;
 }
 
-REFERENCE_TIME CSyncClock::GetHWTime()
+HRESULT CSyncClock::GetHWTime(REFERENCE_TIME* rtTime, REFERENCE_TIME* rtHwTime)
 {
-  REFERENCE_TIME rtTime;
+  HRESULT hr = S_FALSE;
+  REFERENCE_TIME* rtDsTime = 0;
+  REFERENCE_TIME rtTmp = 0;
+
+  if (rtTime)
+    rtDsTime = rtTime;
+  else
+    rtDsTime = &rtTmp;
+
   CAutoLock cObjectLock(this);
 
   // Update the HW clock information
-  CBaseReferenceClock::GetTime(&rtTime);
+  hr = CBaseReferenceClock::GetTime(rtDsTime);
+  if (FAILED(hr))
+    return hr;
 
   // Log("rtTime: %6.3f m_ullRealPrivateTime: %6.3f", rtTime / 10000000.0, m_ullRealPrivateTime/ 10000000.0);
 
-  return m_ullHWPrivateTime;
+  *rtHwTime = m_ullHWPrivateTime;
+
+  return S_OK;
 }

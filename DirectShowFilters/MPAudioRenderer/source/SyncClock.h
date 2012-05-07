@@ -29,7 +29,7 @@ public:
   CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock);
 
   REFERENCE_TIME GetPrivateTime();
-  REFERENCE_TIME GetHWTime();
+  HRESULT GetHWTime(REFERENCE_TIME* rtTime, REFERENCE_TIME* rtHwTimme);
 
   void SetBias(double pBias);
   void SetAdjustment(double pAdjustment);

@@ -130,6 +130,8 @@ private:
 
   REFERENCE_TIME      m_rtNextSampleTime;
   REFERENCE_TIME      m_rtHwStart;
+  REFERENCE_TIME      m_rtHwPauseTime;
+  REFERENCE_TIME      m_rtPauseTime;
 
   bool                m_bResyncHwClock;
 
