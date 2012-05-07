@@ -695,11 +695,11 @@ namespace MediaPortal.Configuration.Sections
         // Change the Text of Item 0 in the Sound device box for Bass Player or DirectShow Player
         if (audioPlayerComboBox.SelectedIndex == 0)
         {
-          soundDeviceComboBox.Items[0] = "Default Sound Device";
+          soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default DirectSound Device", "");
         }
         else if (audioPlayerComboBox.SelectedIndex == 3)
         {
-          soundDeviceComboBox.Items[0] = "Default DirectSound Device";
+          soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default Sound Device", "");
         }
       }
     }
@@ -726,11 +726,11 @@ namespace MediaPortal.Configuration.Sections
           // For Directshow player, we need to have the exact wording here
           if (audioPlayerComboBox.SelectedIndex == 1)
           {
-            soundDeviceComboBox.Items.Add("Default DirectSound Device");
+            soundDeviceComboBox.Items.Add(new SoundDeviceItem("Default DirectSound Device", ""));
           }
           else
           {
-            soundDeviceComboBox.Items.Add("Default Sound Device");
+            soundDeviceComboBox.Items.Add(new SoundDeviceItem("Default Sound Device", ""));
           }
 
           // Fill the combo box, starting at 1 to skip the "No Sound" device
