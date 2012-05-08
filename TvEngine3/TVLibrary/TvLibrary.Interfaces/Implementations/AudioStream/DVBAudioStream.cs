@@ -33,7 +33,7 @@ namespace TvLibrary.Implementations.DVB
 
     private string _language;
     private AudioStreamType _streamType;
-    private int _pid;
+    private UInt16 _pid;
 
     #endregion
 
@@ -74,7 +74,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// gets/sets the audio pid for this stream
     /// </summary>
-    public int Pid
+    public UInt16 Pid
     {
       get { return _pid; }
       set { _pid = value; }

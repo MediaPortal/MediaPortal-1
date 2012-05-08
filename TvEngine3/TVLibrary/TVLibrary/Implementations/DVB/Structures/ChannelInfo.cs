@@ -43,7 +43,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// pid of the PMT
     /// </summary>
-    public int network_pmt_PID;
+    public UInt16 network_pmt_PID;
 
     /// <summary>
     /// transport stream id
@@ -118,7 +118,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// pid of the PCR
     /// </summary>
-    public int pcrPid;
+    public UInt16 pcrPid;
 
     /// <summary>
     /// ArrayList of PidInfo containing all pids
@@ -282,7 +282,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         {
           pidInfo.stream_type = buf[pointer];
           pidInfo.reserved_1 = (buf[pointer + 1] >> 5) & 7;
-          pidInfo.pid = ((buf[pointer + 1] & 0x1F) << 8) + buf[pointer + 2];
+          pidInfo.pid = (UInt16)(((buf[pointer + 1] & 0x1F) << 8) + buf[pointer + 2]);
           pidInfo.reserved_2 = (buf[pointer + 3] >> 4) & 0xF;
           pidInfo.ES_info_length = ((buf[pointer + 3] & 0xF) << 8) + buf[pointer + 4];
         }
@@ -317,7 +317,7 @@ namespace TvLibrary.Implementations.DVB.Structures
             pidInfo.isEAC3Audio = false;
             break;
           case 0x81: //AC3 AUDIO
-            pidInfo.isAudio = false;
+            pidInfo.isAudio = true;
             pidInfo.isAC3Audio = true;
             break;
           case 0x0f: //AAC AUDIO
@@ -394,7 +394,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.AddDescriptorData(data);
                     break;
                   case 0x6A: //AC3									
-                    pidInfo.isAudio = false;
+                    pidInfo.isAudio = true;
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = false;
                     pidInfo.isDVBSubtitle = false;
@@ -403,7 +403,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.stream_type = 0x81;
                     break;
                   case 0x7A: //E-AC3									
-                    pidInfo.isAudio = false;
+                    pidInfo.isAudio = true;
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = false;
                     pidInfo.isDVBSubtitle = false;
@@ -552,13 +552,12 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Decodes the conditional access table
     /// </summary>
     /// <param name="cat">The conditional access table.</param>
-    /// <param name="catLen">The length of the conditional access table.</param>
-    public void DecodeCat(byte[] cat, int catLen)
+    public void DecodeCat(byte[] cat)
     {
-      if (catLen < 7)
+      if (cat.Length < 7)
         return;
       int pos = 8;
-      while (pos + 2 < catLen)
+      while (pos + 2 < cat.Length)
       {
         byte descriptorTag = cat[pos];
         byte descriptorLen = cat[pos + 1];

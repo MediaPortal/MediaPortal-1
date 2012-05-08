@@ -74,7 +74,6 @@ namespace TvLibrary.Implementations.Analog
       _pmtLength = 0;
 
       _grabTeletext = false;
-      _mdplugs = null;
     }
 
     /// <summary>
@@ -239,7 +238,7 @@ namespace TvLibrary.Implementations.Analog
         _channelInfo = new ChannelInfo();
         _channelInfo.DecodePmt(_pmtData);
         _channelInfo.serviceID = pmtProgramNumber;
-        _channelInfo.network_pmt_PID = _pmtPid;
+        _channelInfo.network_pmt_PID = (UInt16)_pmtPid;
         SetMpegPidMapping(_channelInfo);
         return true;
       }

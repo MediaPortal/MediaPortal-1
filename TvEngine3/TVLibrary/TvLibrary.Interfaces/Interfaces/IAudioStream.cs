@@ -18,6 +18,8 @@
 
 #endregion
 
+using System;
+
 namespace TvLibrary.Interfaces
 {
   /// <summary>
@@ -73,6 +75,6 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// gets/sets the audio stream PID
     /// </summary>
-    int Pid { get; set; }
+    UInt16 Pid { get; set; }
   }
 }
