@@ -96,6 +96,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
+    private bool _disposed = false;
+
     #endregion
 
     #region Properties
@@ -115,6 +117,10 @@ namespace MediaPortal.MusicPlayer.BASS
       get { return _channelInfo; }
     }
 
+    public bool IsDisposed
+    {
+      get { return _disposed; }
+    }
 
 
     #region Playback Related Properties
@@ -851,6 +857,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public void Dispose()
     {
+      _disposed = true;
+
       Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
       UnregisterPlaybackEvents();
 

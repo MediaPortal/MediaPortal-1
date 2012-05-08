@@ -952,8 +952,15 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return 0;
       }
-
-      return Bass.BASS_ChannelGetData(_mixer, buffer, length);
+      try
+      {
+        return Bass.BASS_ChannelGetData(_mixer, buffer, length);
+      }
+      catch (AccessViolationException)
+      {
+        // we get Exactly 1 exception, when last song of a playlist has ended
+      }
+      return 0;
     }
 
     /// <summary>
@@ -1947,11 +1954,19 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override void Stop()
     {
+      // We might have performed the Stop already, because the end of the playback list was reached
+      // g_Player is calling the Stop a second time. Don't execute the commands in this case
+      if (_mixer == 0)
+      {
+        Log.Debug("BASS: Already stopped. Don't execute Stop a second time");
+        return;
+      }
+
       MusicStream stream = GetCurrentStream();
       Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
       try
       {
-        if (Config.SoftStop)
+        if (Config.SoftStop && !stream.IsDisposed)
         {
           Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
           Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
@@ -1968,22 +1983,28 @@ namespace MediaPortal.MusicPlayer.BASS
               break;
             }
           }
-        }
+        }      
 
         if (Config.MusicPlayer == AudioPlayer.Asio && BassAsio.BASS_ASIO_IsStarted())
         {
-          BassAsio.BASS_ASIO_Stop();
+          if (!BassAsio.BASS_ASIO_Stop())
+          {
+            Log.Error("BASS: Error freeing ASIO: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
         }
 
-        // hwahrmann: The WASAPI Free never returns on my system. Leave it commented until the root cause is found
-        /*
         if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
         {
-          BassWasapi.BASS_WASAPI_Free();
+          if (!BassWasapi.BASS_WASAPI_Stop(true))
+          {
+            Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+          }
         }
-        */
 
-        Bass.BASS_ChannelStop(_mixer);
+        if (!Bass.BASS_StreamFree(_mixer))
+        {
+          Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
+        }
         _mixer = 0;
 
         // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
@@ -1995,8 +2016,6 @@ namespace MediaPortal.MusicPlayer.BASS
             BassCd.BASS_CD_Release(i);
           }
         }
-
-        stream.Dispose();
 
         if (PlaybackStop != null)
         {
