@@ -338,7 +338,7 @@ void CTimeStretchFilter::CheckStreamContinuity(IMediaSample* pSample)
   if (SUCCEEDED(hr))
   {
     if (m_nSampleNum == 0)
-      m_rtNextIncomingSampleTime = rtStart;
+      m_rtNextIncomingSampleTime = m_rtInSampleTime = rtStart;
 
     //Log("Ts:   rtStart: %6.3f m_rtNextIncomingSampleTime: %6.3f", rtStart / 10000000.0, m_rtNextIncomingSampleTime / 10000000.0);
 
