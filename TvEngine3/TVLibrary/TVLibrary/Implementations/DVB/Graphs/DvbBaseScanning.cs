@@ -353,7 +353,7 @@ namespace TvLibrary.Implementations.DVB
               info.service_provider_name = DvbTextConverter.Convert(providerName, "");
               info.service_name = DvbTextConverter.Convert(serviceName, "");
               info.scrambled = (freeCAMode != 0 || hasCaDescriptor != 0);
-              info.network_pmt_PID = pmtPid;
+              info.network_pmt_PID = (UInt16)pmtPid;
 
               if (IsValidChannel(info, hasAudio, hasVideo))
               {

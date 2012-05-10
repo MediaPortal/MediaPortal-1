@@ -26,7 +26,6 @@ using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
-using TvLibrary.Hardware;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -34,7 +33,7 @@ namespace TvLibrary.Implementations.DVB
   /// Class which handles the conditional access modules for a tv card
   /// (CI and CAM)
   /// </summary>
-  public class ConditionalAccess : IDisposable
+  public class ConditionalAccess
   {
     #region variables
 
@@ -46,32 +45,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly int _decryptLimit;
 
     private readonly CamType _camType = CamType.Default;
-    private readonly DigitalEverywhere _digitalEveryWhere;
-    private readonly TechnoTrendAPI _technoTrend;
-    private readonly Twinhan _twinhan;
-    private readonly KNCAPI _knc;
-    private readonly Hauppauge _hauppauge;
-    private readonly Turbosight _turbosight;
-    private readonly Prof _prof;
-    private readonly ProfUsb _profUsb;
     private readonly DiSEqCMotor _diSEqCMotor;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
-    private readonly GenericBDAS _genericbdas;
-    private readonly WinTvCiModule _winTvCiModule;
-    private readonly GenericATSC _isgenericatsc;
-    private readonly ViXSATSC _isvixsatsc;
-    private readonly ConexantBDA _conexant;
-    private readonly Genpix _genpix;
-    private readonly GenpixOpenSource _genpixOpenSource;
-    private readonly TeVii _TeVii;
-    private readonly DigitalDevices _DigitalDevices;
-    private readonly Omicom _omicom;
-    private readonly NetUp _netUp;
-    private readonly Geniatech _geniatech;
-    private readonly DvbSky _dvbSky;
-    private readonly Anysee _anysee;
-
-    private readonly IHardwareProvider _HWProvider;
 
     private readonly ICiMenuActions _ciMenu;
 
@@ -84,15 +59,6 @@ namespace TvLibrary.Implementations.DVB
       get { return _ciMenu; }
     }
 
-    /// <summary>
-    /// Accessor for hardware providers.
-    /// Used only for non-standard methods (i.e. vendor APIs)
-    /// </summary>
-    public IHardwareProvider HWProvider
-    {
-      get { return _HWProvider; }
-    }
-
     #endregion
 
     //ctor
@@ -102,306 +68,18 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="card">Determines the type of TV card</param>
-    /// <param name="winTvCi">The WinTV-CI module handler (if any).</param>
-    /// <param name="digitalDevices">A Digital Device CI handler (if present).</param>
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, TvCardBase card, WinTvCiModule winTvCi, DigitalDevices digitalDevices)
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, TvCardBase card)
     {
-      try
+      //System.Diagnostics.Debugger.Launch();        
+      if (card != null && card.DevicePath != null)
       {
-        //System.Diagnostics.Debugger.Launch();        
-        if (card != null && card.DevicePath != null)
-        {
-          //fetch decrypt limit from DB and apply it.
-          TvBusinessLayer layer = new TvBusinessLayer();
-          Card c = layer.GetCardByDevicePath(card.DevicePath);
-          _decryptLimit = c.DecryptLimit;
-          _useCam = c.CAM;
-          _camType = (CamType)c.CamType;
-          Log.Log.WriteFile("CAM is {0} model", _camType);
-        }
-
-        _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
-        if (tunerFilter == null && analyzerFilter == null)
-          return;
-        //DVB checks. Conditional Access & DiSEqC etc.
-        bool isDVBS = (card is TvCardDVBS);
-        bool isDVBT = (card is TvCardDVBT);
-        bool isDVBC = (card is TvCardDVBC);
-
-        if (isDVBC || isDVBS || isDVBT)
-        {
-          Log.Log.WriteFile("Check for KNC");
-          _knc = new KNCAPI(tunerFilter, card.DevicePath);
-          if (_knc.IsKnc)
-          {
-            _ciMenu = _knc;
-            _diSEqCMotor = new DiSEqCMotor(_knc);
-            return;
-          }
-          Release.DisposeToNull(ref _knc);
-
-          Log.Log.WriteFile("Check for Omicom");
-          _omicom = new Omicom(tunerFilter);
-          if (_omicom.IsOmicom)
-          {
-            _diSEqCMotor = new DiSEqCMotor(_omicom);
-            return;
-          }
-          Release.DisposeToNull(ref _omicom);
-
-          Log.Log.WriteFile("Check for Digital Everywhere");
-          _digitalEveryWhere = new DigitalEverywhere(tunerFilter, card.CardType);
-          if (_digitalEveryWhere.IsDigitalEverywhere)
-          {
-            Log.Log.WriteFile("Digital Everywhere card detected");
-            _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
-
-            if (_digitalEveryWhere.IsCamReady())
-            {
-              Log.Log.WriteFile("Digital Everywhere registering CI menu capabilities");
-              _ciMenu = _digitalEveryWhere; // Register FireDTV CI Menu capabilities when CAM detected and ready
-            }
-            //_digitalEveryWhere.ResetCAM();
-            return;
-          }
-          Release.DisposeToNull(ref _digitalEveryWhere);
-
-          Log.Log.WriteFile("Check for Twinhan");
-          _twinhan = new Twinhan(tunerFilter, card.CardType);
-          if (_twinhan.IsTwinhan)
-          {
-            Log.Log.WriteFile("Twinhan card detected");
-            _diSEqCMotor = new DiSEqCMotor(_twinhan);
-            _HWProvider = _twinhan;
-            Log.Log.WriteFile("Twinhan registering CI menu capabilities");
-            _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
-            return;
-          }
-          Release.DisposeToNull(ref _twinhan);
-
-          Log.Log.WriteFile("Check for TechnoTrend");
-          _technoTrend = new TechnoTrendAPI(tunerFilter, card.CardType);
-          if (_technoTrend.IsTechnoTrend)
-          {
-            ////if (_technoTrend.IsCamPresent()) 
-            _ciMenu = _technoTrend; // Register Technotrend CI Menu capabilities
-            _diSEqCMotor = new DiSEqCMotor(_technoTrend);
-            _HWProvider = _technoTrend;
-            Log.Log.WriteFile("TechnoTrend card detected");
-            return;
-          }
-          Release.DisposeToNull(ref _technoTrend);
-
-          Log.Log.WriteFile("Check for Hauppauge");
-          _hauppauge = new Hauppauge(tunerFilter);
-          if (_hauppauge.IsHauppauge)
-          {
-            Log.Log.WriteFile("Hauppauge card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvCi != null)
-            {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = winTvCi;
-              _ciMenu = winTvCi;
-            }
-            _diSEqCMotor = new DiSEqCMotor(_hauppauge);
-            return;
-          }
-          Release.DisposeToNull(ref _hauppauge);
-
-          Log.Log.WriteFile("Check for Geniatech tuner");
-          _geniatech = new Geniatech(tunerFilter);
-          if (_geniatech.IsGeniatech)
-          {
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvCi != null)
-            {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = winTvCi;
-              _ciMenu = winTvCi;
-            }
-            return;
-          }
-          Release.DisposeToNull(ref _geniatech);
-          Release.DisposeToNull(ref _winTvCiModule);
-
-          Log.Log.WriteFile("Check for DVBSky tuner");
-          _dvbSky = new DvbSky(tunerFilter);
-          if (_dvbSky.IsDvbSky)
-          {
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvCi != null)
-            {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = winTvCi;
-              _ciMenu = winTvCi;
-            }
-            return;
-          }
-          Release.DisposeToNull(ref _dvbSky);
-          Release.DisposeToNull(ref _winTvCiModule);
-
-          Log.Log.WriteFile("Check for Anysee");
-          _anysee = new Anysee(tunerFilter, card.DevicePath);
-          if (_anysee.IsAnysee)
-          {
-            _ciMenu = _anysee;
-            _diSEqCMotor = new DiSEqCMotor(_anysee);
-            return;
-          }
-          Release.DisposeToNull(ref _anysee);
-
-          Log.Log.WriteFile("Check for Turbosight");
-          _turbosight = new Turbosight(tunerFilter);
-          if (_turbosight.IsTurbosight)
-          {
-            _diSEqCMotor = new DiSEqCMotor(_turbosight);
-            _ciMenu = _turbosight;
-            return;
-          }
-          Release.DisposeToNull(ref _turbosight);
-
-          Log.Log.WriteFile("Check for Prof USB");
-          _profUsb = new ProfUsb(tunerFilter);
-          if (_profUsb.IsProfUsb)
-          {
-            _diSEqCMotor = new DiSEqCMotor(_profUsb);
-            return;
-          }
-          Release.DisposeToNull(ref _profUsb);
-
-          Log.Log.WriteFile("Check for Prof");
-          _prof = new Prof(tunerFilter);
-          if (_prof.IsProf)
-          {
-            _diSEqCMotor = new DiSEqCMotor(_prof);
-            return;
-          }
-          Release.DisposeToNull(ref _prof);
-
-          // TeVii support
-          _TeVii = new TeVii(tunerFilter, card.CardType, card.DevicePath);
-          if (_TeVii.IsTeVii)
-          {
-            _diSEqCMotor = new DiSEqCMotor(_TeVii);
-            _HWProvider = _TeVii;
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvCi != null)
-            {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = winTvCi;
-              _ciMenu = winTvCi;
-            }
-            return;
-          }
-          Release.DisposeToNull(ref _TeVii);
-
-          // DigitalDevices support
-          if (digitalDevices != null && digitalDevices.IsDigitalDevices)
-          {
-            _DigitalDevices = digitalDevices;
-            _ciMenu = _DigitalDevices;
-            return; // detected
-          }
-
-          Log.Log.WriteFile("Check for Conexant based card");
-          _conexant = new ConexantBDA(tunerFilter);
-          if (_conexant.IsConexant)
-          {
-            Log.Log.WriteFile("Conexant BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvCi != null)
-            {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = winTvCi;
-              _ciMenu = winTvCi;
-            }
-            return;
-          }
-          Release.DisposeToNull(ref _conexant);
-
-          Log.Log.WriteFile("Check for Genpix with standard BDA driver");
-          _genpix = new Genpix(tunerFilter);
-          if (_genpix.IsGenpix)
-          {
-            _HWProvider = _genpix;
-            _diSEqCMotor = new DiSEqCMotor(_genpix);
-            return;
-          }
-          Release.DisposeToNull(ref _genpix);
-
-          Log.Log.WriteFile("Check for Genpix with open source driver");
-          _genpixOpenSource = new GenpixOpenSource(tunerFilter);
-          if (_genpixOpenSource.IsGenpixOpenSource)
-          {
-            _diSEqCMotor = new DiSEqCMotor(_genpixOpenSource);
-            return;
-          }
-          Release.DisposeToNull(ref _genpixOpenSource);
-
-          Log.Log.WriteFile("Check for NetUP tuner");
-          _netUp = new NetUp(tunerFilter);
-          if (_netUp.IsNetUp)
-          {
-            _ciMenu = _netUp;
-            _diSEqCMotor = new DiSEqCMotor(_netUp);
-            return;
-          }
-          Release.DisposeToNull(ref _netUp);
-
-          Log.Log.WriteFile("Check for Generic DVB-S card");
-          _genericbdas = new GenericBDAS(tunerFilter);
-          if (_genericbdas.IsGenericBDAS)
-          {
-            Log.Log.WriteFile("Generic BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-            if (winTvCi != null)
-            {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-              _winTvCiModule = winTvCi;
-              _ciMenu = winTvCi;
-            }
-            return;
-          }
-          Release.DisposeToNull(ref _genericbdas);
-
-          //Final WinTV-CI check for DVB-T hybrid cards
-          Log.Log.WriteFile("Check for Hauppauge WinTV CI");
-          if (winTvCi != null)
-          {
-            Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
-            _winTvCiModule = winTvCi;
-            _ciMenu = winTvCi;
-            return;
-          }
-        }
-
-        //ATSC checks
-        bool isATSC = (card is TvCardATSC);
-        if (isATSC)
-        {
-          Log.Log.WriteFile("Check for ViXS ATSC QAM card");
-          _isvixsatsc = new ViXSATSC(tunerFilter);
-          if (_isvixsatsc.IsViXSATSC)
-          {
-            Log.Log.WriteFile("ViXS ATSC QAM card detected");
-            return;
-          }
-          Release.DisposeToNull(ref _isvixsatsc);
-
-          Log.Log.WriteFile("Check for Generic ATSC QAM card");
-          _isgenericatsc = new GenericATSC(tunerFilter);
-          if (_isgenericatsc.IsGenericATSC)
-          {
-            Log.Log.WriteFile("Generic ATSC QAM card detected");
-            return;
-          }
-          Release.DisposeToNull(ref _isgenericatsc);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
+        //fetch decrypt limit from DB and apply it.
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card c = layer.GetCardByDevicePath(card.DevicePath);
+        _decryptLimit = c.DecryptLimit;
+        _useCam = c.CAM;
+        _camType = (CamType)c.CamType;
+        Log.Log.WriteFile("CAM is {0} model", _camType);
       }
     }
 
@@ -449,11 +127,11 @@ namespace TvLibrary.Implementations.DVB
         //{
         //  return false;
         //}
-        if (_twinhan != null)
+        /*if (_twinhan != null)
         {
           //if (_twinhan.IsCamPresent())
             return false;
-        }
+        }*/
 
         return true;
       }
@@ -473,86 +151,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public bool IsCamReady()
     {
-      try
-      {
-        if (!_useCam)
-          return true;
-        if (_knc != null)
-        {
-          //Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
-          return _knc.IsCamReady();
-        }
-        if (_digitalEveryWhere != null)
-        {
-          _digitalEveryWhere.IsCamReady();
-        }
-        if (_twinhan != null)
-        {
-          return _twinhan.IsCamReady();
-        }
-        if (_technoTrend != null)
-        {
-          return _technoTrend.IsCamReady();
-        }
-        /*if (_anysee != null)
-        {
-          return _anysee.IsCamReady();
-        }*/
-        if (_winTvCiModule != null)
-        {
-          return _winTvCiModule.IsCamReady();
-        }
-        if (_turbosight != null)
-        {
-          return _turbosight.IsCamReady();
-        }
-        if (_netUp != null)
-        {
-          return _netUp.IsCamReady();
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
       return true;
-    }
-
-    /// <summary>
-    /// resets the CAM
-    /// </summary>
-    public void ResetCAM()
-    {
-      try
-      {
-        if (!_useCam)
-          return;
-        if (_digitalEveryWhere != null)
-        {
-          _digitalEveryWhere.ResetCi();
-        }
-        if (_technoTrend != null)
-        {
-          _technoTrend.ResetCi();
-        }
-        if (_knc != null)
-        {
-          _knc.ResetCi();
-        }
-        if (_turbosight != null)
-        {
-          bool rebuildGraph;
-          _turbosight.ResetCi(out rebuildGraph);
-        }
-        if (_DigitalDevices != null)
-        {
-          _DigitalDevices.ResetCi();
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
     }
 
     ///<summary>
@@ -651,44 +250,59 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Patches the PMT to force standard AC3 header.
     /// </summary>
-    /// <param name="PMT">byte array containing the PMT</param>
-    /// <param name="pmtLength">length of the pmt array</param>
-    /// <param name="newPmtLength">The new PMT length</param>
+    /// <param name="pmt">byte array containing the PMT</param>
     /// <returns></returns>
-    private static byte[] PatchPMT_AstonCrypt2(byte[] PMT, int pmtLength, out int newPmtLength)
+    private static byte[] PatchPmtForAstonCrypt2(byte[] pmt)
     {
-      byte[] newPMT = new byte[pmtLength]; // create a new array.
-
-      Log.Log.Info("Conditional Access:  PatchPMT_AstonCrypt2 : pmtLength {0}", pmtLength);
-
-      int ps = 0;
-      int pd = 0;
-
-      for (int i = 0; i < 12; ++i)
-        newPMT[pd++] = PMT[ps++];
-      for (int i = 0; i < PMT[11]; ++i)
-        newPMT[pd++] = PMT[ps++];
-
-      // Need to patch audio AC3 channels 0x06, , , , ,0x6A in real AC3 descriptor 0x81, .... for ( at least !) ASTONCRYPT CAM module
-      while ((ps + 5 < pmtLength) && (pd < pmtLength))
+      if (pmt == null || pmt.Length < 12)
       {
-        int len = PMT[ps + 4] + 5;
-        for (int i = 0; i < len; ++i)
+        return pmt;
+      }
+
+      // This function doesn't change the length of the PMT data.
+      byte[] outputPmt = new byte[pmt.Length];
+
+      // Directly copy the input PMT data into the output PMT.
+      Buffer.BlockCopy(pmt, 0, outputPmt, 0, pmt.Length);
+
+      // Skip to the elementary streams data.
+      int offset = 12 + ((pmt[10] & 0x0f) << 8) + pmt[11];
+      if (offset > pmt.Length - 4)
+      {
+        return outputPmt;
+      }
+
+      // Patch the stream type on AC3 streams.
+      while (offset + 4 < pmt.Length - 4)
+      {
+        byte streamType = pmt[offset];
+        int esInfoLength = ((pmt[offset + 3] & 0x0f) << 8) + pmt[offset + 4];
+        if (streamType == (byte)StreamType.Mpeg2Part1PrivateData)
         {
-          if (pd >= pmtLength)
-            break;
-          if ((i == 0) && (PMT[ps] == 0x06) && (PMT[ps + 5] == 0x6A))
+          int streamTypeOffset = offset;
+          offset += 5;
+          int length = esInfoLength;
+          while (length > 0)
           {
-            newPMT[pd++] = 0x81;
-            ps++;
+            byte descriptorTag = pmt[offset];
+            byte descriptorLength = pmt[offset + 1];
+            if (descriptorTag == (byte)DescriptorType.Ac3)
+            {
+              outputPmt[streamTypeOffset] = (byte)StreamType.Ac3Audio;
+              offset = streamTypeOffset + 5 + esInfoLength;
+              break;
+            }
+            length -= (descriptorLength + 2);
+            offset += descriptorLength + 2;
           }
-          else
-            newPMT[pd++] = PMT[ps++];
+        }
+        else
+        {
+          offset += 5 + esInfoLength;
         }
       }
 
-      newPmtLength = pd;
-      return newPMT;
+      return outputPmt;
     }
 
     /// <summary>
@@ -701,127 +315,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pmtLength">The number of data bytes in the PMT array.</param>
     /// <param name="audioPid">The PID of the current audio stream.</param>
     /// <returns><c>true</c> if the conditional access interface successfully starts decrypting the channel, otherwise <c>false</c></returns>
-    public bool SendPmt(int subChannel, DVBBaseChannel channel, byte[] pmt, int pmtLength, int audioPid)
+    public bool SendPmt(int subChannel, DVBBaseChannel channel, byte[] pmt, int audioPid)
     {
-      try
-      {
-        if (!_useCam)
-        {
-          return true;
-        }
-        // No need to descramble FTA channels.
-        if (channel.FreeToAir)
-        {
-          return true;
-        }
-
-        // Add this sub-channel to the map.
-        AddSubChannel(subChannel);
-        ConditionalAccessContext context = _mapSubChannels[subChannel];
-        context.CamType = _camType;
-        context.Channel = channel;
-        if (_camType == CamType.Astoncrypt2)
-        {
-          int newLength;
-          context.Pmt = PatchPMT_AstonCrypt2(pmt, pmtLength, out newLength);
-          context.PmtLength = newLength;
-        }
-        else
-        {
-          context.Pmt = pmt;
-          context.PmtLength = pmtLength;
-        }
-        context.AudioPid = audioPid;
-
-        if (_winTvCiModule != null)
-        {
-          return _winTvCiModule.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-        if (_knc != null)
-        {
-          return _knc.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-        if (_DigitalDevices != null)
-        {
-          return _DigitalDevices.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-        if (_digitalEveryWhere != null)
-        {
-          return _digitalEveryWhere.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-        if (_technoTrend != null)
-        {
-          return _technoTrend.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-        if (_twinhan != null)
-        {
-          return _twinhan.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-        if (_turbosight != null)
-        {
-          return _turbosight.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-        if (_netUp != null)
-        {
-          // We need to reset descrambling on all channels explicitly.
-          // First build a list of the conditional access contexts for the distinct
-          // set of channels that have to be decrypted.
-          List<ConditionalAccessContext> distinctChannels = new List<ConditionalAccessContext>();
-          Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
-          while (en.MoveNext())
-          {
-            bool exists = false;
-            ConditionalAccessContext ctx = en.Current.Value;
-            foreach (ConditionalAccessContext c in distinctChannels)
-            {
-              if (c.Channel.ServiceId == ctx.Channel.ServiceId &&
-                c.Channel.NetworkId == ctx.Channel.NetworkId &&
-                c.Channel.TransportId == ctx.Channel.NetworkId)
-              {
-                exists = true;
-                break;
-              }
-            }
-            if (!exists)
-            {
-              distinctChannels.Add(ctx);
-            }
-          }
-
-          // Now send PMT as required.
-          if (distinctChannels.Count == 1)
-          {
-            return _netUp.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, pmt, pmtLength);
-          }
-          else
-          {
-            for (int i = 0; i < distinctChannels.Count; i++)
-            {
-              if (i == 0)
-              {
-                _netUp.SendPmt(CaPmtListManagementAction.First, CaPmtCommand.OkDescrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
-              }
-              else if (i == distinctChannels.Count - 1)
-              {
-                _netUp.SendPmt(CaPmtListManagementAction.Last, CaPmtCommand.OkDescrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
-              }
-              else
-              {
-                _netUp.SendPmt(CaPmtListManagementAction.More, CaPmtCommand.OkDescrambling, distinctChannels[i].Pmt, distinctChannels[i].PmtLength);
-              }
-            }
-          }
-          return true;
-        }
-        if (_anysee != null)
-        {
-          return _anysee.SendPmt(CaPmtListManagementAction.Only, CaPmtCommand.OkDescrambling, context.Pmt, context.PmtLength);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
       return true;
     }
 
@@ -833,11 +328,6 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      if (_anysee == null)
-      {
-        return false;
-      }
-
       bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
       ToneBurst toneBurst = ToneBurst.Off;
       bool successDiseqc = true;
@@ -861,7 +351,7 @@ namespace TvLibrary.Implementations.DVB
         command |= (byte)((antennaNr - 1) << 2);
         try
         {
-          successDiseqc = _anysee.SendCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
+          //successDiseqc = _anysee.SendCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
         }
         catch (Exception ex)
         {
@@ -876,103 +366,13 @@ namespace TvLibrary.Implementations.DVB
       }
       try
       {
-        successTone = _anysee.SetToneState(toneBurst, tone22k);
+        //successTone = _anysee.SetToneState(toneBurst, tone22k);
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
       return (successDiseqc && successTone);
-
-      /*if (_knc != null)
-      {
-        _knc.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_digitalEveryWhere != null)
-      {
-        _digitalEveryWhere.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_technoTrend != null)
-      {
-        _technoTrend.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_twinhan != null)
-      {
-        _twinhan.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_hauppauge != null)
-      {
-        succeeded = _hauppauge.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_genericbdas != null)
-      {
-        _genericbdas.SendDiseqCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_geniatech != null)
-      {
-        _geniatech.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_dvbSky != null)
-      {
-        _dvbSky.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_conexant != null)
-      {
-        _conexant.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_turbosight != null)
-      {
-        _turbosight.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_profUsb != null)
-      {
-        _profUsb.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_prof != null)
-      {
-        _prof.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_genpix != null)
-      {
-        _genpix.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_genpixOpenSource != null)
-      {
-        _genpixOpenSource.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_TeVii != null)
-      {
-        _TeVii.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_omicom != null)
-      {
-        _omicom.SendDiseqcCommand(parameters, channel);
-      }
-      if (_netUp != null)
-      {
-        _netUp.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }
-      if (_anysee != null)
-      {
-        _anysee.SendDiseqcCommand(parameters, channel);
-        System.Threading.Thread.Sleep(100);
-      }*/
     }
 
     /// <summary>
@@ -1016,10 +416,10 @@ namespace TvLibrary.Implementations.DVB
           modulation = (channel as DVBCChannel).ModulationType;
         }
 
-        if (_digitalEveryWhere != null)
+        /*if (_digitalEveryWhere != null)
         {
           return _digitalEveryWhere.SetHardwareFilterPids(modulation, HwPids);
-        }
+        }*/
       }
       catch (Exception ex)
       {
@@ -1036,106 +436,6 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>The channel with DVB-S2 parameters set.</returns>
     public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
     {
-      //Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
-      try
-      {
-        if (_genpix != null)
-        {
-          return (DVBSChannel)_genpix.SetTuningParameters(channel as DVBSChannel);
-        }
-        if (_twinhan != null)
-        {
-          return (DVBSChannel)_twinhan.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_hauppauge != null)
-        {
-          return (DVBSChannel)_hauppauge.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_geniatech != null)
-        {
-          return (DVBSChannel)_geniatech.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_turbosight != null)
-        {
-          return (DVBSChannel)_turbosight.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_profUsb != null)
-        {
-          return (DVBSChannel)_profUsb.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_prof != null)
-        {
-          return (DVBSChannel)_prof.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_technoTrend != null)
-        {
-          return (DVBSChannel)_technoTrend.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_knc != null)
-        {
-          return (DVBSChannel)_knc.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_digitalEveryWhere != null)
-        {
-          return (DVBSChannel)_digitalEveryWhere.SetTuningParameters(channel as DVBBaseChannel);
-        }
-        if (_omicom != null)
-        {
-          return (DVBSChannel)_omicom.SetTuningParameters(channel as DVBBaseChannel);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
-      return channel;
-    }
-
-    /// <summary>
-    /// check if the card are ATSC QAM capable cards.
-    /// If so sets the QAM modulation for those specific ATSC cards.
-    /// </summary>
-    public ATSCChannel CheckATSCQAM(ATSCChannel channel)
-    {
-      try
-      {
-        if (channel.ModulationType == ModulationType.Mod64Qam || channel.ModulationType == ModulationType.Mod256Qam)
-        {
-          if (_isgenericatsc != null)
-          {
-            Log.Log.Info("Setting Generic ATSC modulation to {0}", channel.ModulationType);
-            _isgenericatsc.SetXPATSCQam(channel);
-          }
-          if (_isvixsatsc != null)
-          {
-            Log.Log.Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
-            _isvixsatsc.SetViXSQam(channel);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
-      return channel;
-    }
-
-    /// <summary>
-    /// gets the QAM modulation for ViXS ATSC cards under XP
-    /// </summary>
-    public ATSCChannel CheckVIXSQAM(ATSCChannel channel)
-    {
-      try
-      {
-        if (_isvixsatsc != null)
-        {
-          _isvixsatsc.GetViXSQam(channel);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
       return channel;
     }
 
@@ -1152,35 +452,5 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
-
-    #region IDisposable Member
-
-    /// <summary>
-    /// Disposing CI and API resources
-    /// </summary>
-    public void Dispose()
-    {
-      Release.Dispose(_knc);
-      Release.Dispose(_technoTrend);
-      Release.Dispose(_digitalEveryWhere);
-      Release.Dispose(_hauppauge);
-      Release.Dispose(_geniatech);
-      Release.Dispose(_dvbSky);
-      Release.Dispose(_conexant);
-      Release.Dispose(_genericbdas);
-      Release.Dispose(_isgenericatsc);
-      Release.Dispose(_isvixsatsc);
-      Release.Dispose(_genpix);
-      Release.Dispose(_genpixOpenSource);
-      Release.Dispose(_twinhan);
-      Release.Dispose(_prof);
-      Release.Dispose(_profUsb);
-      Release.Dispose(_TeVii);
-      Release.Dispose(_omicom);
-      Release.Dispose(_netUp);
-      Release.Dispose(_anysee);
-    }
-
-    #endregion
   }
 }

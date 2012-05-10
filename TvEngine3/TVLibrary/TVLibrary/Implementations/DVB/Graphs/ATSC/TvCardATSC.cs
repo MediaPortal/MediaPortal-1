@@ -288,8 +288,8 @@ namespace TvLibrary.Implementations.DVB
         hr = _tuneRequest.put_Locator(locator);
         if (hr != 0)
           Log.Log.WriteFile("atsc: Failed - put_Locator");
-        //set QAM paramters if necessary...
-        _conditionalAccess.CheckATSCQAM(atscChannel);
+
+        //TODO: call ICustomDevice.SetTuningParameters()
       }
       else
       {

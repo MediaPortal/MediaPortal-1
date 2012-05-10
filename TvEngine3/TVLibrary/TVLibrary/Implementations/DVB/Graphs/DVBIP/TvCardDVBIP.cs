@@ -82,8 +82,8 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
 
-        _infTeeMain = (IBaseFilter)new InfTee();
-        int hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
+        _infTee = (IBaseFilter)new InfTee();
+        int hr = _graphBuilder.AddFilter(_infTee, "Inf Tee");
         if (hr != 0)
         {
           Log.Log.Error("dvbip:Add main InfTee returns:0x{0:X}", hr);
@@ -93,13 +93,15 @@ namespace TvLibrary.Implementations.DVB
         AddTsWriterFilterToGraph();
         AddStreamSourceFilter(_defaultUrl);
         IBaseFilter lastFilter = _filterStreamSource;
-        AddMdPlugs(ref lastFilter);
+
+        // TODO: custom device handling here.
+
         if (!ConnectTsWriter(lastFilter))
         {
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
 
-        _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, this, null, null);
+        _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, this);
         _graphState = GraphState.Created;
       }
       catch (Exception ex)

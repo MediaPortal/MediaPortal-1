@@ -18,21 +18,21 @@
 
 #endregion
 
-using TvLibrary.Interfaces.Device;
-using TvLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DirectShowLib;
-using TvLibrary.Log;
 using System.Threading;
+using DirectShowLib;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
+using TvLibrary.Log;
 
 namespace TvEngine
 {
   /// <summary>
-  /// A class for handling conditional access for Digital Devices tuners.
+  /// A class for handling conditional access for Digital Devices devices.
   /// </summary>
-  public class DigitalDevices : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions
+  public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions
   {
     #region enums
 
@@ -63,6 +63,7 @@ namespace TvEngine
 
     #region structs
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct MenuData   // DD_CAM_MENU_DATA
     {
       public Int32 Id;
@@ -78,13 +79,14 @@ namespace TvEngine
       public List<String> Entries;
     }
 
-    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential)]
     private struct MenuChoice   // DD_CAM_MENU_REPLY
     {
       public Int32 Id;
       public Int32 Choice;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct MenuAnswer   // DD_CAM_TEXT_DATA
     {
       #pragma warning disable 0649
@@ -97,6 +99,7 @@ namespace TvEngine
       #pragma warning restore 0649
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct MenuTitle    // DD_CAM_MENU_TITLE
     {
       // The following string is passed back as an inline variable
@@ -119,9 +122,25 @@ namespace TvEngine
       {
         PropertySet = filter as IKsPropertySet;
         Device = device;
-        FilterName = FilterGraphTools.GetFilterName(filter);
-        CamMenuTitle = FilterName;
         CamMenuId = 0;
+
+        // Get the filter name.
+        FilterInfo filterInfo;
+        int hr = filter.QueryFilterInfo(out filterInfo);
+        if (filterInfo.pGraph != null)
+        {
+          DsUtils.ReleaseComObject(filterInfo.pGraph);
+          filterInfo.pGraph = null;
+        }
+        if (hr == 0 && filterInfo.achName != null)
+        {
+          FilterName = filterInfo.achName;
+        }
+        else
+        {
+          FilterName = String.Empty;
+        }
+        CamMenuTitle = FilterName;
       }
     }
 
@@ -129,7 +148,7 @@ namespace TvEngine
 
     #region constants
 
-    private static readonly string[] ValidTunerNamePrefixes = new string[]
+    private static readonly string[] ValidDeviceNamePrefixes = new string[]
     {
       "Digital Devices",
       "Mystique SaTiX-S2 Dual"
@@ -141,10 +160,15 @@ namespace TvEngine
     private const String CommonDevicePathSection = "fbca-11de-b16f-000000004d56";
     private const int MenuDataSize = 2048;  // This is arbitrary - an estimate of the buffer size needed to hold the largest menu.
     private const int MenuChoiceSize = 8;
+    private const int MmiHandlerThreadSleepTime = 500;   // unit = ms
 
     #endregion
 
     #region variables
+
+    // We use this list to keep track of common interface filters that are already in use across all
+    // DigitalDevices instances.
+    private static List<String> _devicesInUse = new List<String>();
 
     private bool _isDigitalDevices = false;
     private String _name = "Digital Devices";
@@ -308,7 +332,7 @@ namespace TvEngine
               }
             }
           }
-          Thread.Sleep(500);
+          Thread.Sleep(MmiHandlerThreadSleepTime);
         }
       }
       catch (ThreadAbortException)
@@ -316,7 +340,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Debug("Digital Devices: error in MMI handler thread\r\n{0}", ex.ToString());
+        Log.Debug("Digital Devices: exception in MMI handler thread\r\n{0}", ex.ToString());
         return;
       }
     }
@@ -417,7 +441,7 @@ namespace TvEngine
       Log.Debug("Digital Devices: initialising device");
 
       // Digital Devices components have a common section in their device path.
-      if (tunerDevicePath == null || tunerDevicePath.Equals(String.Empty))
+      if (String.IsNullOrEmpty(tunerDevicePath))
       {
         Log.Debug("Digital Devices: tuner device path is not set");
         return false;
@@ -434,17 +458,29 @@ namespace TvEngine
         return false;
       }
 
-      Log.Debug("Digital Devices: supported tuner detected");
+      Log.Debug("Digital Devices: supported device detected");
       _isDigitalDevices = true;
-      _ciContexts = new List<CiContext>();
-      _mmiBuffer = Marshal.AllocCoTaskMem(MenuDataSize);
-
-      String tunerFilterName = FilterGraphTools.GetFilterName(tunerFilter);
-      foreach (String prefix in ValidTunerNamePrefixes)
+      FilterInfo tunerFilterInfo;
+      int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
+      if (tunerFilterInfo.pGraph != null)
       {
-        if (tunerFilterName.StartsWith(prefix))
+        DsUtils.ReleaseComObject(tunerFilterInfo.pGraph);
+        tunerFilterInfo.pGraph = null;
+      }
+      if (hr != 0 || String.IsNullOrEmpty(tunerFilterInfo.achName))
+      {
+        Log.Debug("Digital Devices: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        foreach (String prefix in ValidDeviceNamePrefixes)
         {
-          _name = prefix;
+          if (tunerFilterInfo.achName.StartsWith(prefix))
+          {
+            Log.Debug("Digital Devices: \"{0}\", {1} variant", tunerFilterInfo.achName, prefix);
+            _name = prefix;
+            break;
+          }
         }
       }
       return true;
@@ -466,6 +502,8 @@ namespace TvEngine
       {
         StartMmiHandlerThread();
       }
+
+      base.OnGraphStarted(tuner, currentChannel);
     }
 
     /// <summary>
@@ -482,6 +520,8 @@ namespace TvEngine
       {
         StartMmiHandlerThread();
       }
+
+      base.OnGraphStart(tuner, currentChannel);
     }
 
     #endregion
@@ -517,19 +557,24 @@ namespace TvEngine
         Log.Debug("Digital Devices: upstream filter is null");
         return false;
       }
+      if (_ciContexts != null && _ciContexts.Count > 0)
+      {
+        Log.Debug("Digital Devices: {0} device filter(s) already in graph", _ciContexts.Count);
+        return true;
+      }
 
       // We need a reference to the graph builder's graph.
       IGraphBuilder tmpGraph = null;
       int hr = graphBuilder.GetFiltergraph(out tmpGraph);
       if (hr != 0)
       {
-        Log.Debug("Digital Devices: couldn't get graph reference, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("Digital Devices: failed to get graph reference, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       _graph = tmpGraph as IFilterGraph2;
       if (_graph == null)
       {
-        Log.Debug("Digital Devices: couldn't get graph reference");
+        Log.Debug("Digital Devices: failed to get graph reference");
         return false;
       }
 
@@ -546,9 +591,10 @@ namespace TvEngine
       IPin demuxInputPin = DsFindPin.ByDirection(tmpDemux, PinDirection.Input, 0);
       if (demuxInputPin == null)
       {
-        Log.Debug("Digital Devices: couldn't find the demux input pin");
+        Log.Debug("Digital Devices: failed to find the demux input pin");
         _graph.RemoveFilter(tmpDemux);
         DsUtils.ReleaseComObject(tmpDemux);
+        tmpDemux = null;
         return false;
       }
 
@@ -561,10 +607,14 @@ namespace TvEngine
         DsUtils.ReleaseComObject(demuxInputPin);
         _graph.RemoveFilter(tmpDemux);
         DsUtils.ReleaseComObject(tmpDemux);
+        tmpDemux = null;
         return false;
       }
-      DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
 
+      // This will be our list of CI contexts.
+      _ciContexts = new List<CiContext>();
+
+      DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
       while (true)
       {
         // Stage 1: if connection to a demux is possible then no [further] CI slots are configured
@@ -581,53 +631,86 @@ namespace TvEngine
         // over all capture devices because the CI filters have to be connected in a specific order
         // which is not guaranteed to be the same as the capture device array order.
         bool addedFilter = false;
-        for (int i = 0; i < captureDevices.Length; i++)
+        foreach (DsDevice captureDevice in captureDevices)
         {
           // We're looking for a Digital Devices common interface device that is not
           // already in the graph.
-          if (!captureDevices[i].DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) ||
-            !captureDevices[i].Name.ToLowerInvariant().Contains("common interface") ||
-            DevicesInUse.Instance.IsUsed(captureDevices[i]))
+          if (captureDevice.DevicePath == null ||
+            captureDevice.Name == null ||
+            !captureDevice.DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) ||
+            !captureDevice.Name.ToLowerInvariant().Contains("common interface"))
           {
             continue;
           }
+          lock (_devicesInUse)
+          {
+            List<String>.Enumerator en = _devicesInUse.GetEnumerator();
+            bool found = false;
+            while (en.MoveNext())
+            {
+              if (en.Current.Equals(captureDevice.DevicePath))
+              {
+                found = true;
+                break;
+              }
+            }
+            if (found)
+            {
+              continue;
+            }
+            _devicesInUse.Add(captureDevice.DevicePath);
+          }
 
-          // Okay, we've got a device. Let's try and connect it into the graph.
-          Log.Debug("Digital Devices: adding filter for device \"{0}\"", captureDevices[i].Name);
+          // Stage 3: okay, we've got a CI filter device. Let's try and connect it into the graph.
+          Log.Debug("Digital Devices: adding filter for device \"{0}\"", captureDevice.Name);
           IBaseFilter tmpCiFilter = null;
-          hr = _graph.AddSourceFilterForMoniker(captureDevices[i].Mon, null, captureDevices[i].Name, out tmpCiFilter);
-          if (hr != 0 || tmpCiFilter == null)
+          try
           {
-            Log.Debug("Digital Devices: failed to add filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            continue;
-          }
+            hr = _graph.AddSourceFilterForMoniker(captureDevice.Mon, null, captureDevice.Name, out tmpCiFilter);
+            if (hr != 0 || tmpCiFilter == null)
+            {
+              Log.Debug("Digital Devices: failed to add filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              continue;
+            }
 
-          // Now we've got a filter in the graph. Let's see if it will connect.
-          hr = graphBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter);
-          if (hr != 0)
-          {
-            Log.Debug("Digital Devices: failed to render stream through filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            _graph.RemoveFilter(tmpCiFilter);
-            DsUtils.ReleaseComObject(tmpCiFilter);
-            continue;
-          }
+            // Now we've got a filter in the graph. Let's see if it will connect.
+            hr = graphBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter);
+            if (hr != 0)
+            {
+              Log.Debug("Digital Devices: failed to render stream through filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              _graph.RemoveFilter(tmpCiFilter);
+              DsUtils.ReleaseComObject(tmpCiFilter);
+              tmpCiFilter = null;
+              continue;
+            }
 
-          // Ensure that the filter has an output pin.
-          IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
-          if (tmpFilterOutputPin == null)
-          {
-            Log.Debug("Digital Devices: filter doesn't have an output pin");
-            _graph.RemoveFilter(tmpCiFilter);
-            DsUtils.ReleaseComObject(tmpCiFilter);
-            continue;
+            // Ensure that the filter has an output pin.
+            IPin tmpFilterOutputPin = DsFindPin.ByDirection(tmpCiFilter, PinDirection.Output, 0);
+            if (tmpFilterOutputPin == null)
+            {
+              Log.Debug("Digital Devices: filter doesn't have an output pin");
+              _graph.RemoveFilter(tmpCiFilter);
+              DsUtils.ReleaseComObject(tmpCiFilter);
+              tmpCiFilter = null;
+              continue;
+            }
+            DsUtils.ReleaseComObject(lastFilterOutputPin);
+            lastFilterOutputPin = tmpFilterOutputPin;
           }
-          DsUtils.ReleaseComObject(lastFilterOutputPin);
-          lastFilterOutputPin = tmpFilterOutputPin;
+          finally
+          {
+            if (tmpCiFilter == null)
+            {
+              lock (_devicesInUse)
+              {
+                _devicesInUse.Remove(captureDevice.DevicePath);
+              }
+            }
+          }
 
           // Excellent - CI filter successfully added!
-          _ciContexts.Add(new CiContext(tmpCiFilter, captureDevices[i]));
+          _ciContexts.Add(new CiContext(tmpCiFilter, captureDevice));
           Log.Debug("Digital Devices: total of {0} CI filter(s) in the graph", _ciContexts.Count);
-          DevicesInUse.Instance.Add(captureDevices[i]);
           lastFilter = tmpCiFilter;
           addedFilter = true;
           _isCiSlotPresent = true;
@@ -641,9 +724,12 @@ namespace TvEngine
       }
 
       DsUtils.ReleaseComObject(lastFilterOutputPin);
+      lastFilterOutputPin = null;
       DsUtils.ReleaseComObject(demuxInputPin);
+      demuxInputPin = null;
       _graph.RemoveFilter(tmpDemux);
       DsUtils.ReleaseComObject(tmpDemux);
+      tmpDemux = null;
       return _isCiSlotPresent;
     }
 
@@ -667,7 +753,7 @@ namespace TvEngine
       }
       if (_ciContexts == null)
       {
-        Log.Debug("Digital Devices: device filters not added to the BDA filter graph");
+        Log.Debug("Digital Devices: device filter(s) not added to the BDA filter graph");
         return false;
       }
       if (!_isCiSlotPresent)
@@ -675,6 +761,13 @@ namespace TvEngine
         Log.Debug("Digital Devices: CI slot not present");
         return false;
       }
+      if (_mmiBuffer != IntPtr.Zero)
+      {
+        Log.Debug("Digital Devices: interface is already open");
+        return false;
+      }
+
+      _mmiBuffer = Marshal.AllocCoTaskMem(MenuDataSize);
 
       // Fill in the menu title for each CI context if possible.
       String menuTitle;
@@ -702,8 +795,25 @@ namespace TvEngine
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
     public bool CloseInterface()
     {
-      // Nothing needs to be done to close the interface. We reserve the removal of the filters
-      // from the graph for when the device is disposed, otherwise the interface cannot be re-opened.
+      Log.Debug("Digital Devices: close conditional access interface");
+      if (_mmiHandlerThread != null && _mmiHandlerThread.IsAlive)
+      {
+        _stopMmiHandlerThread = true;
+        // In the worst case scenario it should take approximately
+        // twice the thread sleep time to cleanly stop the thread.
+        Thread.Sleep(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread = null;
+      }
+
+      if (_mmiBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_mmiBuffer);
+        _mmiBuffer = IntPtr.Zero;
+      }
+
+      // We reserve the removal of the filters from the graph for when the device is disposed, otherwise
+      // the interface cannot easily be re-opened.
+      Log.Debug("Digital Devices: result = true");
       return true;
     }
 
@@ -719,7 +829,7 @@ namespace TvEngine
 
       rebuildGraph = false;
 
-      if (_ciContexts == null)
+      if (!_isDigitalDevices || _ciContexts == null)
       {
         Log.Debug("Digital Devices: device not initialised or interface not supported");
         return false;
@@ -730,12 +840,13 @@ namespace TvEngine
         return false;
       }
 
+      bool success = CloseInterface();
+
       // Reset the slot selection for menu browsing.
       _menuContext = -1;
 
       // We reset all the CI filters in the graph.
       int returnedByteCount;
-      bool success = true;
       for (int i = 0; i < _ciContexts.Count; i++)
       {
         Log.Debug("Digital Devices: reset slot {0} \"{1}\"", i + 1, _ciContexts[i].FilterName);
@@ -756,7 +867,7 @@ namespace TvEngine
           success = false;
         }
       }
-      return success;
+      return success && OpenInterface();
     }
 
     /// <summary>
@@ -862,7 +973,7 @@ namespace TvEngine
     #region ICiMenuActions members
 
     /// <summary>
-    /// Sets the CAM menu callback handler functions.
+    /// Set the CAM menu callback handler functions.
     /// </summary>
     /// <param name="ciMenuHandler">A set of callback handler functions.</param>
     /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
@@ -879,7 +990,7 @@ namespace TvEngine
     }
 
     /// <summary>
-    /// Sends a request from the user to the CAM to open the menu.
+    /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool EnterCIMenu()
@@ -976,7 +1087,7 @@ namespace TvEngine
     }
 
     /// <summary>
-    /// Sends a request from the user to the CAM to close the menu.
+    /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
     public bool CloseCIMenu()
@@ -1012,7 +1123,7 @@ namespace TvEngine
     }
 
     /// <summary>
-    /// Sends a menu entry selection from the user to the CAM.
+    /// Send a menu entry selection from the user to the CAM.
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
@@ -1084,7 +1195,7 @@ namespace TvEngine
     }
 
     /// <summary>
-    /// Sends a response from the user to the CAM.
+    /// Send a response from the user to the CAM.
     /// </summary>
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="answer">The user's response.</param>
@@ -1145,21 +1256,19 @@ namespace TvEngine
     /// <summary>
     /// Close interfaces, free memory and release COM object references.
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
-      if (_mmiHandlerThread != null && _mmiHandlerThread.IsAlive)
-      {
-        _stopMmiHandlerThread = true;
-        Thread.Sleep(1000);
-        _mmiHandlerThread = null;
-      }
+      CloseInterface();
       if (_ciContexts != null)
       {
         foreach (CiContext context in _ciContexts)
         {
           if (context.Device != null)
           {
-            DevicesInUse.Instance.Remove(context.Device);
+            lock (_devicesInUse)
+            {
+              _devicesInUse.Remove(context.Device.DevicePath);
+            }
             context.Device = null;
           }
           if (context.PropertySet != null)
@@ -1171,11 +1280,6 @@ namespace TvEngine
         }
       }
       _graph = null;
-      if (_mmiBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_mmiBuffer);
-        _mmiBuffer = IntPtr.Zero;
-      }
       _isDigitalDevices = false;
     }
 

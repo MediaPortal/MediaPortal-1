@@ -29,10 +29,14 @@ namespace TvLibrary.Interfaces.Device
   public interface ICustomDevice : IDisposable
   {
     /// <summary>
-    /// The loading priority for this device type. Custom device loading/detection is done in order of
-    /// ascending priority. This approach allows certain driver interface conflicts to be avoided. Priority
-    /// ranges from 1 (highest priority) to 100 (lowest priority).
+    /// The loading priority for this device type.
     /// </summary>
+    /// <remarks>
+    /// Custom device loading/detection is done in order of descending priority, and custom devices that
+    /// implement the IAddOnDevice interface are loaded before other devices. This approach allows certain
+    /// driver interface conflicts to be avoided. Priority ranges from 100 (highest priority) to 1 (lowest
+    /// priority).
+    /// </remarks>
     byte Priority { get; }
 
     /// <summary>
@@ -102,9 +106,10 @@ namespace TvLibrary.Interfaces.Device
     /// The loading priority for this device type.
     /// </summary>
     /// <remarks>
-    /// Custom device loading/detection is done in order of ascending priority. This approach allows
-    /// certain driver interface conflicts to be avoided. Priority ranges from 1 (highest priority) to
-    /// 100 (lowest priority).
+    /// Custom device loading/detection is done in order of descending priority, and custom devices that
+    /// implement the IAddOnDevice interface are loaded before other devices. This approach allows certain
+    /// driver interface conflicts to be avoided. Priority ranges from 100 (highest priority) to 1 (lowest
+    /// priority).
     /// </remarks>
     public virtual byte Priority
     {
@@ -122,7 +127,7 @@ namespace TvLibrary.Interfaces.Device
     {
       get
       {
-        return this.GetType().ToString();
+        return this.GetType().Name;
       }
     }
 
@@ -160,6 +165,11 @@ namespace TvLibrary.Interfaces.Device
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
     public virtual void OnGraphStarted(ITVCard tuner, IChannel currentChannel)
     {
+      IPowerDevice device = this as IPowerDevice;
+      if (device != null)
+      {
+        device.SetPowerState(true);
+      }
     }
 
     /// <summary>
@@ -179,6 +189,11 @@ namespace TvLibrary.Interfaces.Device
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     public virtual void OnGraphStop(ITVCard tuner)
     {
+      IPowerDevice device = this as IPowerDevice;
+      if (device != null)
+      {
+        device.SetPowerState(false);
+      }
     }
 
     /// <summary>
@@ -187,6 +202,11 @@ namespace TvLibrary.Interfaces.Device
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     public virtual void OnGraphPause(ITVCard tuner)
     {
+      IPowerDevice device = this as IPowerDevice;
+      if (device != null)
+      {
+        device.SetPowerState(false);
+      }
     }
 
     #endregion

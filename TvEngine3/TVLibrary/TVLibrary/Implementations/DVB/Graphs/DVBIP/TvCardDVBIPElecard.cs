@@ -69,7 +69,7 @@ namespace TvLibrary.Implementations.DVB
       ((IFileSourceFilter)_filterStreamSource).Load(url, mpeg2ProgramStream);
       //connect the [stream source] -> [inf tee]
       Log.Log.WriteFile("dvb:  Render [source]->[inftee]");
-      int hr = _capBuilder.RenderStream(null, null, _filterStreamSource, null, _infTeeMain);
+      int hr = _capBuilder.RenderStream(null, null, _filterStreamSource, null, _infTee);
       if (hr != 0)
       {
         Log.Log.Error("dvb:Add source returns:0x{0:X}", hr);

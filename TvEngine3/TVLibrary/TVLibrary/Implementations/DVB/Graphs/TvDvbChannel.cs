@@ -93,11 +93,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected DVBAudioStream _currentAudioStream;
 
-    /// <summary>
-    /// MD Plugs
-    /// </summary>
-    protected MDPlugs _mdplugs;
-
     /// set to true to enable PAT lookup of PMT
     private bool alwaysUsePATLookup = DebugSettings.UsePATLookup;
 
@@ -159,12 +154,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="graphBuilder">The graph builder.</param>
     /// <param name="ca">The ca.</param>
-    /// <param name="mdplugs">The mdplugs class.</param>
     /// <param name="tif">The tif filter.</param>
     /// <param name="tsWriter">The ts writer filter.</param>
     /// <param name="subChannelId">The subchannel id</param>
     /// <param name="channel">The corresponding channel</param>
-    public TvDvbChannel(IFilterGraph2 graphBuilder, ConditionalAccess ca, MDPlugs mdplugs, IBaseFilter tif,
+    public TvDvbChannel(IFilterGraph2 graphBuilder, ConditionalAccess ca, IBaseFilter tif,
                         IBaseFilter tsWriter, int subChannelId, IChannel channel)
     {
       _listenCA = false;
@@ -173,7 +167,6 @@ namespace TvLibrary.Implementations.DVB
       _graphState = GraphState.Created;
       _graphBuilder = graphBuilder;
       _conditionalAccess = ca;
-      _mdplugs = mdplugs;
       _filterTIF = tif;
       _teletextDecoder = new DVBTeletext();
       _packetHeader = new TSHelperTools.TSHeader();
@@ -322,10 +315,10 @@ namespace TvLibrary.Implementations.DVB
                       if (_channelInfo != null)
                       {
                         SetMpegPidMapping(_channelInfo);
-                        if (_mdplugs != null && _channelInfo.scrambled)
+                        /*if (_mdplugs != null && _channelInfo.scrambled)
                         {
                           _mdplugs.SetChannel(_currentChannel, _channelInfo, false);
-                        }
+                        }*/
                       }
                       Log.Log.Info("subch:{0} stop tif", _subChannelId);
                       if (_filterTIF != null)
@@ -876,13 +869,13 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
-      if (_mdplugs != null)
+      /*if (_mdplugs != null)
       {
         Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
         _listenCA = true;
         _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.CaReset(_subChannelIndex);
-      }
+      }*/
 
       OnAfterTuneEvent();
       return true;
@@ -980,7 +973,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
-        if (_mdplugs != null)
+        /*if (_mdplugs != null)
         {
           // MDPlugins Active.. 
           // It's important that the ECM pids are not blocked by the HWPID Filter in the Tuner.
@@ -1004,7 +997,7 @@ namespace TvLibrary.Implementations.DVB
             }
           }
           Log.Log.WriteFile("Number of HWPIDS that needs to be sent to tuner :{0} ", hwPids.Count);
-        }
+        }*/
 
         if (_conditionalAccess != null && info.network_pmt_PID >= 0 && info.serviceID >= 0)
         {
@@ -1122,7 +1115,7 @@ namespace TvLibrary.Implementations.DVB
         updatePids = false;
         waitInterval = 100;
         bool foundCA = false;
-        if (_mdplugs != null)
+        /*if (_mdplugs != null)
         {
           if (channel != null)
           {
@@ -1146,7 +1139,7 @@ namespace TvLibrary.Implementations.DVB
               }
             }
           }
-        }
+        }*/
 
         if (channel == null)
         {
@@ -1185,7 +1178,7 @@ namespace TvLibrary.Implementations.DVB
                 Log.Log.Info("subch:{0} SendPMT: Channel FTA information changed to {1} according to CAIDs in PMT.",
                              _subChannelId, channel.FreeToAir);
               }
-              if ((_mdplugs != null) && (foundCA))
+              /*if ((_mdplugs != null) && (foundCA))
               {
                 try
                 {
@@ -1201,7 +1194,7 @@ namespace TvLibrary.Implementations.DVB
                 {
                   Log.Log.Write(ex);
                 }
-              }
+              }*/
 
               updatePids = true;
 
@@ -1216,7 +1209,7 @@ namespace TvLibrary.Implementations.DVB
                 return true;
               }
               Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, _pmtLength,
-                                _channelInfo.caPMT.ProgramNumber);
+                                channel.ServiceId);
 
               int audioPid = -1;
               if (_currentAudioStream != null)
@@ -1224,8 +1217,7 @@ namespace TvLibrary.Implementations.DVB
                 audioPid = _currentAudioStream.Pid;
               }
 
-              if (_conditionalAccess.SendPmt(_subChannelId, channel, _pmtData, _pmtLength,
-                                             audioPid))
+              if (_conditionalAccess.SendPmt(_subChannelId, channel, _pmtData, audioPid))
               {
                 Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
                 return true;
@@ -1350,10 +1342,10 @@ namespace TvLibrary.Implementations.DVB
               if (_channelInfo != null)
               {
                 SetMpegPidMapping(_channelInfo);
-                if (_mdplugs != null && _channelInfo.scrambled)
+                /*if (_mdplugs != null && _channelInfo.scrambled)
                 {
                   _mdplugs.SetChannel(_currentChannel, _channelInfo, true);
-                }
+                }*/
               }
             }
           }

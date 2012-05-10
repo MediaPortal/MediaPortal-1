@@ -32,12 +32,15 @@ namespace TvLibrary.Interfaces.Device
   public interface IPidFilterController : ICustomDevice
   {
     /// <summary>
-    /// Configure the PID filter. The controller is expected to enable or disable the filter automatically
-    /// based on the modulation scheme, number of PIDs or other device information. TV Server can also force
-    /// the controller to disable or enable the filter if necessary.
+    /// Configure the PID filter.
+    /// </summary>
+    /// <remarks>
+    /// The controller is expected to enable or disable the filter automatically based on the modulation
+    /// scheme, number of PIDs or other device information. TV Server can also force the controller to
+    /// disable or enable the filter if necessary.
     /// To force the controller to disable the filter, call the function with an empty or null PID list.
     /// To force the controller to enable the filter, call the function with the forceEnable parameter set to <c>true</c>.
-    /// </summary>
+    /// </remarks>
     /// <param name="pids">The PIDs to allow through the filter.</param>
     /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
     /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>

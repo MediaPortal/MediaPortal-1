@@ -1,0 +1,308 @@
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
+using DirectShowLib;
+using DirectShowLib.BDA;
+using TvLibrary.Channels;
+using TvLibrary.Interfaces.Device;
+using TvLibrary.Log;
+using TvLibrary.Interfaces;
+
+namespace TvEngine
+{
+  /// <summary>
+  /// A class for handling DiSEqC for Omicom devices.
+  /// </summary>
+  public class Omicom : BaseCustomDevice, IDiseqcController
+  {
+    #region enums
+
+    private enum BdaExtensionProperty
+    {
+      DiseqcWrite = 0,
+      DiseqcRead,
+      Tone22k
+    }
+
+    #endregion
+
+    #region structs
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    private struct DiseqcMessage
+    {
+      public Int32 MessageLength;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      public byte[] Message;
+      public Int32 RepeatCount;       // Set to zero to send the message once, one => twice, two => three times... etc.
+    }
+
+    #endregion
+
+    #region constants
+
+    private static readonly Guid BdaExtensionPropertySet = new Guid(0x7db2deea, 0x42b4, 0x423d, 0xa2, 0xf7, 0x19, 0xc3, 0x2e, 0x51, 0xcc, 0xc1);
+
+    private const int DiseqcMessageSize = 72;
+    private const int MaxDiseqcMessageLength = 64;
+
+    #endregion
+
+    #region variables
+
+    private IntPtr _diseqcBuffer = IntPtr.Zero;
+    private IKsPropertySet _propertySet = null;
+    private bool _isOmicom = false;
+
+    #endregion
+
+    #region ICustomDevice members
+
+    /// <summary>
+    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
+    /// the ICustomDevice instance should be disposed.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
+    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
+    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    {
+      Log.Debug("Omicom: initialising device");
+
+      if (tunerFilter == null)
+      {
+        Log.Debug("Omicom: tuner filter is null");
+        return false;
+      }
+      if (_isOmicom)
+      {
+        Log.Debug("Omicom: device is already initialised");
+        return true;
+      }
+
+      _propertySet = tunerFilter as IKsPropertySet;
+      if (_propertySet == null)
+      {
+        Log.Debug("Omicom: tuner filter is not a property set");
+        return false;
+      }
+
+      KSPropertySupport support;
+      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcWrite, out support);
+      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      {
+        Log.Debug("Omicom: device does not support the Omicom property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      Log.Debug("Omicom: supported device detected");
+      _isOmicom = true;
+      _diseqcBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
+      return true;
+    }
+
+    /// <summary>
+    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
+    /// to be tweaked in order for the standard BDA tuning process to succeed.
+    /// </summary>
+    /// <param name="channel">The channel that will be tuned.</param>
+    public override void SetTuningParameters(ref IChannel channel)
+    {
+      Log.Debug("Omicom: set tuning parameters");
+
+      if (!_isOmicom)
+      {
+        Log.Debug("Omicom: device not initialised or interface not supported");
+        return;
+      }
+
+      // We only need to tweak the modulation for DVB-S2 channels.
+      DVBSChannel ch = channel as DVBSChannel;
+      if (ch == null)
+      {
+        return;
+      }
+
+      if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
+      {
+        // Note: using 8 VSB forces the driver to auto-detect the correct modulation. It may be better to
+        // use 8 PSK or the NBC modulations.
+        ch.ModulationType = ModulationType.Mod8Vsb;
+      }
+      Log.Debug("  modulation = {0}", ch.ModulationType);
+    }
+
+    #endregion
+
+    #region IDiseqcController members
+
+    /// <summary>
+    /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
+    /// </summary>
+    /// <remarks>
+    /// The Omicom interface does not support sending tone burst commands.
+    /// </remarks>
+    /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
+    /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    {
+      Log.Debug("Omicom: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+
+      if (!_isOmicom || _propertySet == null)
+      {
+        Log.Debug("Omicom: device not initialised or interface not supported");
+        return false;
+      }
+
+      Marshal.WriteInt32(_diseqcBuffer, 0, (Int32)tone22kState);
+
+      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tone22k, _diseqcBuffer, sizeof(Int32), _diseqcBuffer, sizeof(Int32));
+      if (hr == 0)
+      {
+        Log.Debug("Omicom: result = success");
+        return true;
+      }
+
+      Log.Debug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    /// <summary>
+    /// Send an arbitrary DiSEqC command.
+    /// </summary>
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    public bool SendCommand(byte[] command)
+    {
+      Log.Debug("Omicom: send DiSEqC command");
+
+      if (!_isOmicom || _propertySet == null)
+      {
+        Log.Debug("Omicom: device not initialised or interface not supported");
+        return false;
+      }
+      if (command == null || command.Length == 0)
+      {
+        Log.Debug("Omicom: command not supplied");
+        return true;
+      }
+      if (command.Length > MaxDiseqcMessageLength)
+      {
+        Log.Debug("Omicom: command too long, length = {0}", command.Length);
+        return false;
+      }
+
+      DiseqcMessage message = new DiseqcMessage();
+      message.Message = new byte[MaxDiseqcMessageLength];
+      Buffer.BlockCopy(command, 0, message.Message, 0, command.Length);
+      message.MessageLength = (byte)command.Length;
+      message.RepeatCount = 0;
+
+      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DiseqcMessageSize);
+
+      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcWrite,
+        _diseqcBuffer, DiseqcMessageSize,
+        _diseqcBuffer, DiseqcMessageSize
+      );
+      if (hr == 0)
+      {
+        Log.Debug("Omicom: result = success");
+        return true;
+      }
+
+      Log.Debug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      return false;
+    }
+
+    /// <summary>
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
+    /// </summary>
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadResponse(out byte[] response)
+    {
+      Log.Debug("Omicom: read DiSEqC response");
+      response = null;
+
+      if (!_isOmicom || _propertySet == null)
+      {
+        Log.Debug("Omicom: device not initialised or interface not supported");
+        return false;
+      }
+
+      for (int i = 0; i < DiseqcMessageSize; i++)
+      {
+        Marshal.WriteByte(_diseqcBuffer, i, 0);
+      }
+      int returnedByteCount;
+      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcRead,
+        _diseqcBuffer, DiseqcMessageSize,
+        _diseqcBuffer, DiseqcMessageSize,
+        out returnedByteCount
+      );
+      if (hr != 0 || returnedByteCount != DiseqcMessageSize)
+      {
+        Log.Debug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DiseqcMessageSize);
+      DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_diseqcBuffer, typeof(DiseqcMessage));
+      if (message.MessageLength > MaxDiseqcMessageLength)
+      {
+        Log.Debug("Omicom: reply too long, length = {0}", message.MessageLength);
+        return false;
+      }
+      Log.Debug("Omicom: result = success");
+      response = new byte[message.MessageLength];
+      Buffer.BlockCopy(message.Message, 0, response, 0, message.MessageLength);
+      return true;
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Close interfaces, free memory and release COM object references.
+    /// </summary>
+    public override void Dispose()
+    {
+      if (_diseqcBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_diseqcBuffer);
+        _diseqcBuffer = IntPtr.Zero;
+      }
+      _propertySet = null;
+      _isOmicom = false;
+    }
+
+    #endregion
+  }
+}
+

@@ -27,6 +27,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
 using TvDatabase;
+using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -69,7 +70,7 @@ namespace TvLibrary.Implementations.DVB
     MHz_8 = 8,
   }
 
-  internal enum SS2DisEqcType
+  internal enum Ss2DiseqcType
   {
     None = 0,
     Simple_A,
@@ -109,7 +110,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the SkyStar 2 DVB-S card
   /// </summary>
-  public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard, IDiSEqCController
+  public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard, IDiseqcController
   {
     #region private consts
 
@@ -200,7 +201,7 @@ namespace TvLibrary.Implementations.DVB
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
       }
-      _conditionalAccess = new ConditionalAccess(null, null, this, null, null);
+      _conditionalAccess = new ConditionalAccess(null, null, this);
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
       _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
@@ -365,7 +366,7 @@ namespace TvLibrary.Implementations.DVB
       const int lnbKhzTone = 22;
       const int fec = (int)FecType.Fec_Auto;
       int polarity = 0;
-      SS2DisEqcType disType = SS2DisEqcType.None;
+      Ss2DiseqcType disType = Ss2DiseqcType.None;
       int switchFreq = 0;
       pmtPid = 0;
       int satelliteIndex = 0;
@@ -433,25 +434,25 @@ namespace TvLibrary.Implementations.DVB
           switch (dvbsChannel.DisEqc)
           {
             case DisEqcType.None: // none
-              disType = SS2DisEqcType.None;
+              disType = Ss2DiseqcType.None;
               break;
             case DisEqcType.SimpleA: // Simple A
-              disType = SS2DisEqcType.Simple_A;
+              disType = Ss2DiseqcType.Simple_A;
               break;
             case DisEqcType.SimpleB: // Simple B
-              disType = SS2DisEqcType.Simple_B;
+              disType = Ss2DiseqcType.Simple_B;
               break;
             case DisEqcType.Level1AA: // Level 1 A/A
-              disType = SS2DisEqcType.Level_1_A_A;
+              disType = Ss2DiseqcType.Level_1_A_A;
               break;
             case DisEqcType.Level1BA: // Level 1 B/A
-              disType = SS2DisEqcType.Level_1_B_A;
+              disType = Ss2DiseqcType.Level_1_B_A;
               break;
             case DisEqcType.Level1AB: // Level 1 A/B
-              disType = SS2DisEqcType.Level_1_A_B;
+              disType = Ss2DiseqcType.Level_1_A_B;
               break;
             case DisEqcType.Level1BB: // Level 1 B/B
-              disType = SS2DisEqcType.Level_1_B_B;
+              disType = Ss2DiseqcType.Level_1_B_B;
               break;
           }
           switchFreq = lnbFrequency / 1000; //in MHz
@@ -897,7 +898,9 @@ namespace TvLibrary.Implementations.DVB
         AddTsWriterFilterToGraph();
         IBaseFilter lastFilter;
         ConnectInfTeeToSS2(out lastFilter);
-        AddMdPlugs(ref lastFilter);
+
+        // TODO: ICustomDevice loading goes here.
+
         if (!ConnectTsWriter(lastFilter))
         {
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
@@ -1162,8 +1165,6 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region IDiSEqCController Members
-
     private void DisEqcGotoPosition(byte position)
     {
       _disEqcMotor.GotoPosition(position);
@@ -1177,32 +1178,156 @@ namespace TvLibrary.Implementations.DVB
       get { return _disEqcMotor; }
     }
 
+    #region ICustomDevice members
+
     /// <summary>
-    /// Send the DiSEqC Command to the tuner filter
+    /// The loading priority for this device type.
     /// </summary>
-    /// <param name="diSEqC">DiSEqC command</param>
-    /// <returns></returns>
-    public bool SendDiSEqCCommand(byte[] diSEqC)
+    public byte Priority
     {
-      DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4 tuner4 = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4;
-      if (tuner4 == null)
-        return false;
-      for (int i = 0; i < diSEqC.Length; ++i)
+      get
       {
-        Marshal.WriteByte(_ptrDisEqc, i, diSEqC[i]);
+        return 50;
       }
-      tuner4.SendDiSEqCCommand(diSEqC.Length, _ptrDisEqc);
+    }
+
+    /// <summary>
+    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
+    /// the ICustomDevice instance should be disposed.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
+    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
+    public bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    {
+      // This base class is not intended to be instantiated.
+      return false;
+    }
+
+    /// <summary>
+    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
+    /// to be tweaked in order for the standard BDA tuning process to succeed.
+    /// </summary>
+    /// <param name="channel">The channel that will be tuned.</param>
+    public void SetTuningParameters(ref IChannel channel)
+    {
+    }
+
+    #region graph state change callbacks
+
+    /// <summary>
+    /// This callback is invoked after a tune request is submitted and the BDA graph is started, but before
+    /// signal lock is checked.
+    /// Process: submit tune request -> (graph not running) -> start graph -> callback -> lock check
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
+    public void OnGraphStarted(ITVCard tuner, IChannel currentChannel)
+    {
+    }
+
+    /// <summary>
+    /// This callback is invoked after a tune request is submitted but before signal lock is checked when
+    /// the BDA graph is already running.
+    /// Process: submit tune request -> (graph already running) -> callback -> lock check
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
+    public void OnGraphStart(ITVCard tuner, IChannel currentChannel)
+    {
+    }
+
+    /// <summary>
+    /// This callback is invoked after the BDA graph is stopped.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    public void OnGraphStop(ITVCard tuner)
+    {
+    }
+
+    /// <summary>
+    /// This callback is invoked after the BDA graph is paused.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    public void OnGraphPause(ITVCard tuner)
+    {
+    }
+
+    #endregion
+
+    #endregion
+
+    #region IDiseqcController members
+
+    /// <summary>
+    /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
+    /// </summary>
+    /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
+    /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
+    /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
+    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    {
+      Log.Log.Debug("SS2: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+
+      Ss2DiseqcType burst = Ss2DiseqcType.None;
+      if (toneBurstState == ToneBurst.ToneBurst)
+      {
+        burst = Ss2DiseqcType.Simple_A;
+      }
+      else if (toneBurstState == ToneBurst.DataBurst)
+      {
+        burst = Ss2DiseqcType.Simple_B;
+      }
+      int hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)burst);
+      if (hr != 0)
+      {
+        Log.Log.Error("SS2: set burst failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+
+      LNBSelectionType tone = LNBSelectionType.Lnb0;
+      if (tone22kState == Tone22k.On)
+      {
+        tone = LNBSelectionType.Lnb22kHz;
+      }
+      hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)tone);
+      if (hr != 0)
+      {
+        Log.Log.Error("SS2: set 22k failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
       return true;
     }
 
     /// <summary>
-    /// Reads the DiSEqC Command from the tuner filter
+    /// Send an arbitrary DiSEqC command.
     /// </summary>
-    /// <param name="reply">gets the DiSEqC command</param>
-    /// <returns></returns>
-    public bool ReadDiSEqCCommand(out byte[] reply)
+    /// <param name="command">The command to send.</param>
+    /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
+    public bool SendCommand(byte[] command)
     {
-      reply = new byte[1];
+      DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4 tuner4 = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4;
+      if (tuner4 == null)
+        return false;
+      for (int i = 0; i < command.Length; ++i)
+      {
+        Marshal.WriteByte(_ptrDisEqc, i, command[i]);
+      }
+      tuner4.SendDiSEqCCommand(command.Length, _ptrDisEqc);
+      return true;
+    }
+
+    /// <summary>
+    /// Retrieve the response to a previously sent DiSEqC command (or alternatively, check for a command
+    /// intended for this tuner).
+    /// </summary>
+    /// <param name="response">The response (or command).</param>
+    /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
+    public bool ReadResponse(out byte[] response)
+    {
+      // Not supported.
+      response = null;
       return false;
     }
 

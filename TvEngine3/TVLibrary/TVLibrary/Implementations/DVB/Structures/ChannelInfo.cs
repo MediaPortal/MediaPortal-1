@@ -86,36 +86,6 @@ namespace TvLibrary.Implementations.DVB.Structures
     public int freq; // 12188
 
     /// <summary>
-    /// symbol rate
-    /// </summary>
-    public int symb; // 27500
-
-    /// <summary>
-    /// fec
-    /// </summary>
-    public int fec; // 6
-
-    /// <summary>
-    /// diseqc type
-    /// </summary>
-    public int diseqc; // 1
-
-    /// <summary>
-    /// LNB low oscilator frequency
-    /// </summary>
-    public int lnb01; // 10600
-
-    /// <summary>
-    /// LNB frequency
-    /// </summary>
-    public int lnbkhz; // 1 = 22
-
-    /// <summary>
-    /// Polarisation
-    /// </summary>
-    public int pol; // 0 - h
-
-    /// <summary>
     /// pid of the PCR
     /// </summary>
     public UInt16 pcrPid;
@@ -207,7 +177,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       program_number = (buf[3] << 8) + buf[4];
       int version_number = ((buf[5] >> 1) & 0x1F);
       int current_next_indicator = buf[5] & 1;
-      pcrPid = ((buf[8] & 0x1F) << 8) + buf[9]; // ! really set pcr pid ! ( ambass )
+      pcrPid = (UInt16)(((buf[8] & 0x1F) << 8) + buf[9]); // ! really set pcr pid ! ( ambass )
       int program_info_length = ((buf[10] & 0xF) << 8) + buf[11];
 
 

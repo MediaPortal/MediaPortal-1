@@ -32,8 +32,8 @@ using TvLibrary.Log;
 namespace TvEngine
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for Anysee tuners.
-  /// Smart card slots are not supported.
+  /// A class for handling conditional access and DiSEqC for Anysee tuners. Smart card slots are not
+  /// supported.
   /// </summary>
   public class Anysee : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcController 
   {
@@ -105,6 +105,7 @@ namespace TvEngine
       IsOpen = 1104,            // CI_CONTROL_IS_OPEN - check whether the CI API is open
       SetKey = 1105,            // CI_CONTROL_SET_KEY - send a key press to the CAM
       SetTdt = 1106,            // CI_CONTROL_SET_TDT - send TDT to the CAM
+      ResetHardware = 1107,
       SetPmt = 1110,            // CI_CONTROL_SET_PMT - send PMT to the CAM
       IsOpenSetCallbacks = 2000 // CI_CONTROL_IS_PLUG_OPEN - check whether the CI API is open and set callback functions
     }
@@ -129,7 +130,7 @@ namespace TvEngine
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential)]
     private struct IrData
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
@@ -138,7 +139,7 @@ namespace TvEngine
       public Int32 Key;         // bit 8 = repeat flag (0 = repeat), bits 7-0 = key code
     }
 
-    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential)]
     private struct DiseqcMessage
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
@@ -151,7 +152,7 @@ namespace TvEngine
       public byte[] Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential)]
     private struct PlatformInfo
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
@@ -161,7 +162,7 @@ namespace TvEngine
       public Int32 Padding2;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct ApiString
     {
       #pragma warning disable 0649
@@ -170,7 +171,7 @@ namespace TvEngine
       #pragma warning restore 0649
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct CiStateInfo    // tagCIStatus
     {
       public Int32 Size;
@@ -178,7 +179,7 @@ namespace TvEngine
       public ApiString Message;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct MmiMenu  // MMIStrsBlock
     {
       public Int32 StringCount;
@@ -186,7 +187,7 @@ namespace TvEngine
       public IntPtr Entries;                // This is a pointer to an array of pointers.
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct MmiMessage   // tagCIMsgs
     {
       public Int32 DeviceIndex;
@@ -200,7 +201,7 @@ namespace TvEngine
       public IntPtr Menu;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct ApiCallbacks
     {
       [MarshalAs(UnmanagedType.FunctionPtr)]
@@ -209,22 +210,22 @@ namespace TvEngine
       public OnAnyseeMmiMessage OnMmiMessage;
     }
 
-    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential)]
     private struct PmtData    // DTVCIPMT
     {
-      public byte PmtByte6;                   // Byte 6 from the PMT section (PMT version, current next indicator). 
+      public byte PmtByte6;                     // Byte 6 from the PMT section (PMT version, current next indicator). 
       private byte Padding1;
       public UInt16 PcrPid;
       public UInt16 ServiceId;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDescriptorDataLength)]
-      public byte[] ProgramDescriptorData;    // The first two bytes should specify the length of the descriptor data.
+      public byte[] ProgramCaDescriptorData;    // The first two bytes should specify the length of the descriptor data.
       private UInt16 Padding2;
       public UInt32 EsCount;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPmtElementaryStreams)]
       public EsPmtData[] EsPmt;
     }
 
-    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential)]
     private struct EsPmtData
     {
       public UInt16 Pid;
@@ -245,7 +246,7 @@ namespace TvEngine
     {
       #region structs
 
-      [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+      [StructLayout(LayoutKind.Sequential)]
       private struct CiDeviceInfo   // ANYSEECIDEVICESINFO
       {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDeviceCount)]
@@ -389,11 +390,11 @@ namespace TvEngine
         _apiCount++;
         _apiIndex = _apiCount;
         Log.Debug("Anysee: loading API, API index = {0}", _apiIndex);
-        if (!File.Exists("CIAPI" + _apiIndex + ".dll"))
+        if (!File.Exists("Resources\\CIAPI" + _apiIndex + ".dll"))
         {
           try
           {
-            File.Copy("CIAPI.dll", "CIAPI" + _apiIndex + ".dll");
+            File.Copy("Resources\\CIAPI.dll", "Resources\\CIAPI" + _apiIndex + ".dll");
           }
           catch (Exception ex)
           {
@@ -401,7 +402,7 @@ namespace TvEngine
             return;
           }
         }
-        _libHandle = LoadLibrary("CIAPI" + _apiIndex + ".dll");
+        _libHandle = LoadLibrary("Resources\\CIAPI" + _apiIndex + ".dll");
         if (_libHandle == IntPtr.Zero || _libHandle == null)
         {
           Log.Debug("Anysee: failed to load the DLL");
@@ -726,7 +727,7 @@ namespace TvEngine
       }
     }
 
-    #region callbacks
+    #region callback definitions
 
     /// <summary>
     /// Called by the tuner driver when the common interface slot state changes.
@@ -946,27 +947,28 @@ namespace TvEngine
           Log.Debug("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
           return 1;
         }
+        if (_ciMenuCallbacks == null)
+        {
+          Log.Debug("Anysee: menu callbacks are not set");
+        }
+
         String prompt = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
         Log.Debug("  prompt    = {0}", prompt);
         Log.Debug("  length    = {0}", msg.ExpectedAnswerLength);
         Log.Debug("  key count = {0}", msg.KeyCount);
-        try
+        if (_ciMenuCallbacks != null)
         {
-          if (_ciMenuCallbacks != null)
+          try
           {
             _ciMenuCallbacks.OnCiRequest(false, (uint)msg.ExpectedAnswerLength, prompt);
           }
-          else
+          catch (Exception ex)
           {
-            Log.Debug("Anysee: menu callbacks are not set");
+            Log.Debug("Anysee: MMI callback enquiry exception\r\n{0}", ex.ToString());
+            return 1;
           }
-          return 0;
         }
-        catch (Exception ex)
-        {
-          Log.Debug("Anysee: MMI callback enquiry exception\r\n{0}", ex.ToString());
-          return 1;
-        }
+        return 0;
       }
 
       // Menu or list
@@ -976,6 +978,10 @@ namespace TvEngine
         Log.Debug("Anysee: unexpected header count, count = {0}", msg.HeaderCount);
         return 1;
       }
+      if (_ciMenuCallbacks == null)
+      {
+        Log.Debug("Anysee: menu callbacks are not set");
+      }
 
       String title = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
       String subTitle = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 4));
@@ -984,45 +990,38 @@ namespace TvEngine
       Log.Debug("  sub-title = {0}", subTitle);
       Log.Debug("  footer    = {0}", footer);
       Log.Debug("  # entries = {0}", msg.EntryCount);
-      try
+      if (_ciMenuCallbacks != null)
       {
-        if (_ciMenuCallbacks != null)
+        try
         {
           _ciMenuCallbacks.OnCiMenu(title, subTitle, footer, msg.EntryCount);
         }
-        else
+        catch (Exception ex)
         {
-          Log.Debug("Anysee: menu callbacks are not set");
+          Log.Debug("Anysee: MMI callback header exception\r\n{0}", ex.ToString());
+          return 1;
         }
       }
-      catch (Exception ex)
-      {
-        Log.Debug("Anysee: MMI callback header exception\r\n{0}", ex.ToString());
-      }
 
-      try
+      String entry;
+      int offset = 4 * msg.HeaderCount;
+      for (int i = 0; i < msg.EntryCount; i++)
       {
-        String entry;
-        int offset = 4 * msg.HeaderCount;
-        for (int i = 0; i < msg.EntryCount; i++)
+        entry = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, offset + (i * 4)));
+        Log.Debug("  entry {0,-2}  = {1}", i + 1, entry);
+        if (_ciMenuCallbacks != null)
         {
-          entry = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, offset + (i * 4)));
-          Log.Debug("  entry {0,-2}  = {1}", i + 1, entry);
-          if (_ciMenuCallbacks != null)
+          try
           {
             _ciMenuCallbacks.OnCiMenuChoice(i, entry);
           }
-          else
+          catch (Exception ex)
           {
-            Log.Debug("Anysee: menu callbacks are not set");
+            Log.Debug("Anysee: MMI callback entry exception\r\n{0}", ex.ToString());
+            return 1;
           }
         }
       }
-      catch (Exception ex)
-      {
-        Log.Debug("Anysee: MMI callback entry exception\r\n{0}", ex.ToString());
-      }
-
       return 0;
     }
 
@@ -1047,7 +1046,7 @@ namespace TvEngine
         Log.Debug("Anysee: tuner filter is null");
         return false;
       }
-      if (tunerDevicePath == null || tunerDevicePath.Equals(String.Empty))
+      if (String.IsNullOrEmpty(tunerDevicePath))
       {
         Log.Debug("Anysee: tuner device path is not set");
         return false;
@@ -1069,6 +1068,7 @@ namespace TvEngine
       }
       int hr = tunerOutputPin.ConnectedTo(out captureInputPin);
       DsUtils.ReleaseComObject(tunerOutputPin);
+      tunerOutputPin = null;
       if (hr != 0 || captureInputPin == null)
       {
         Log.Debug("Anysee: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1078,6 +1078,7 @@ namespace TvEngine
       PinInfo captureInfo;
       hr = captureInputPin.QueryPinInfo(out captureInfo);
       DsUtils.ReleaseComObject(captureInputPin);
+      captureInputPin = null;
       if (hr != 0)
       {
         Log.Debug("Anysee: failed to get the capture filter input pin info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1094,20 +1095,19 @@ namespace TvEngine
 
       KSPropertySupport support;
       hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Ir, out support);
-      if (hr != 0)
+      if (hr != 0 || support == 0)
       {
-        Log.Debug("Anysee: property set does not support Anysee property sets, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        Log.Debug("Anysee: device does not support the Anysee property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        DsUtils.ReleaseComObject(captureInfo.filter);
+        captureInfo.filter = null;
         _propertySet = null;
         return false;
       }
 
-      Log.Debug("Anysee: supported tuner detected");
+      Log.Debug("Anysee: supported device detected");
       _isAnysee = true;
       _tunerDevicePath = tunerDevicePath;
       _generalBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
-      _callbackBuffer = Marshal.AllocCoTaskMem(ApiCallbackSize);
-      _pmtBuffer = Marshal.AllocCoTaskMem(PmtDataSize);
-      ReadDeviceInfo();
       return true;
     }
 
@@ -1135,12 +1135,24 @@ namespace TvEngine
         return false;
       }
 
+      // Is a CI slot present? If not, there is no point in opening the interface.
+      ReadDeviceInfo();
+      if (!_isCiSlotPresent)
+      {
+        Log.Debug("Anysee: CI slot not present");
+        return false;
+      }
+
       _ciApi = new AnyseeCiApi();
       if (!_ciApi.OpenApi(_tunerDevicePath))
       {
         Log.Debug("Anysee: open API failed");
+        _ciApi.CloseApi();
+        _ciApi = null;
         return false;
       }
+
+      _pmtBuffer = Marshal.AllocCoTaskMem(PmtDataSize);
 
       Log.Debug("Anysee: setting callbacks");
       // We need to pass the addresses of our callback functions to
@@ -1152,6 +1164,7 @@ namespace TvEngine
       _apiCallbacks.OnMmiMessage = OnMmiMessage;
       lock (this)
       {
+        _callbackBuffer = Marshal.AllocCoTaskMem(ApiCallbackSize);
         Marshal.StructureToPtr(_apiCallbacks, _callbackBuffer, true);
         if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallbacks, (IntPtr)Marshal.ReadInt32(_callbackBuffer, 0), (IntPtr)Marshal.ReadInt32(_callbackBuffer, 4)))
         {
@@ -1178,8 +1191,21 @@ namespace TvEngine
         result = _ciApi.CloseApi();
         _ciApi = null;
       }
+      _isCiSlotPresent = false;
       _isCamPresent = false;
       _isCamReady = false;
+
+      if (_pmtBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_pmtBuffer);
+        _pmtBuffer = IntPtr.Zero;
+      }
+      if (_callbackBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_callbackBuffer);
+        _callbackBuffer = IntPtr.Zero;
+      }
+
       if (result)
       {
         Log.Debug("Anysee: result = success");
@@ -1250,9 +1276,9 @@ namespace TvEngine
         Log.Debug("Anysee: command type {0} is not supported", command);
         return false;
       }
-      if (pmt == null || pmt.Length == 0)
+      if (pmt == null || pmt.Length < 12)
       {
-        Log.Debug("Anysee: PMT not supplied");
+        Log.Debug("Anysee: PMT not supplied or too short");
         return true;
       }
 
@@ -1265,100 +1291,189 @@ namespace TvEngine
 
       // Anysee tuners only support decrypting one channel at a time. We'll
       // just send this PMT to the CAM regardless of the list management action.
-      ChannelInfo info = new ChannelInfo();
-      info.DecodePmt(pmt);
-
       PmtData pmtData = new PmtData();
       pmtData.PmtByte6 = pmt[5];
-      pmtData.PcrPid = (UInt16)info.pcrPid;
-      pmtData.ServiceId = (UInt16)info.program_number;
+      pmtData.PcrPid = (UInt16)((pmt[8] & 0x1f << 8) + pmt[9]);
+      pmtData.ServiceId = (UInt16)((pmt[3] << 8) + pmt[4]);
 
-      // Descriptor data
-      int caDataLength = (UInt16)(((pmt[10] & 0x0f) << 8) + pmt[11]);
-      if (caDataLength > MaxDescriptorDataLength - 2)
+      // Program CA descriptor data
+      int programCaDescriptorDataOffset = 2;  // 2 bytes reserved for the data length
+      int pmtOffset = 12;
+      int pmtProgramInfoEnd = ((pmt[10] & 0x0f) << 8) + pmt[11] + pmtOffset;
+      if (pmtProgramInfoEnd > pmt.Length - 4)
       {
-        Log.Debug("Anysee: program CA data is too long, length = {0}", caDataLength);
+        Log.Debug("Anysee: PMT program info length is invalid");
         return false;
       }
-      pmtData.ProgramDescriptorData = new byte[MaxDescriptorDataLength];
-      pmtData.ProgramDescriptorData[0] = pmt[11];
-      pmtData.ProgramDescriptorData[1] = (byte)(pmt[10] & 0x0f);
-      caDataLength += 2;
-      int offset = 12;
-      for (int i = 2; i < caDataLength; i++)
+      while (pmtOffset + 1 <= pmtProgramInfoEnd)
       {
-        pmtData.ProgramDescriptorData[i] = pmt[offset];
-        offset++;
+        int descriptorTag = pmt[pmtOffset];
+        int descriptorLength = pmt[pmtOffset + 1];
+        if (pmtOffset + 2 + descriptorLength > pmtProgramInfoEnd)
+        {
+          Log.Debug("Anysee: PMT program descriptor {0} ({1:x}) length is invalid", descriptorTag, descriptorTag);
+          return false;
+        }
+        // We only pass the conditional access descriptors to the interface.
+        if (descriptorTag == (byte)DescriptorType.ConditionalAccess)
+        {
+          if (programCaDescriptorDataOffset + descriptorLength + 2 > MaxDescriptorDataLength)
+          {
+            Log.Debug("Anysee: PMT program CA data is too long");
+            return false;
+          }
+          Buffer.BlockCopy(pmt, pmtOffset, pmtData.ProgramCaDescriptorData, programCaDescriptorDataOffset, descriptorLength + 2);
+          programCaDescriptorDataOffset += descriptorLength + 2;
+        }
+        pmtOffset += descriptorLength + 2;
+      }
+      if (pmtOffset != pmtProgramInfoEnd)
+      {
+        Log.Debug("Anysee: PMT corruption detected");
+        return false;
       }
 
+      pmtData.ProgramCaDescriptorData[0] = (byte)((programCaDescriptorDataOffset - 2) & 0xff);
+      pmtData.ProgramCaDescriptorData[1] = (byte)(((programCaDescriptorDataOffset - 2) >> 8) & 0xff);
+
       // Elementary streams
-      int esCount = 0;
+      Log.Debug("Anysee: elementary streams");
       pmtData.EsPmt = new EsPmtData[MaxPmtElementaryStreams];
-      while (offset < pmt.Length - 4)
+      int esCount = 0;
+      int pmtEnd = ((pmt[1] & 0x0f) << 8) + pmt[2] + 3 - 4;   // = section length + first 3 bytes - CRC length
+      if (pmtEnd > pmt.Length - 4)
       {
-        pmtData.EsPmt[esCount].StreamType = pmt[offset];
-        offset++;
-        pmtData.EsPmt[esCount].Pid = (UInt16)(((pmt[offset] & 0x1f) << 8) + pmt[offset + 1]);
-        offset += 2;
-        foreach (PidInfo pid in info.pids)
+        Log.Debug("Anysee: PMT section length is invalid");
+        return false;
+      }
+      while (pmtOffset + 4 <= pmtEnd)
+      {
+        // We want to add each video, audio, subtitle and teletext stream with their corresponding
+        // conditional access descriptors. To start with, we don't know what kind of stream this is. If we
+        // finish processing the stream type and descriptors and still don't know what type of stream it is
+        // then we exclude it.
+        pmtData.EsPmt[esCount].EsType = AnyseeEsType.Unknown;
+        byte streamType = pmt[pmtOffset];
+        int streamPid = ((pmt[pmtOffset + 1] & 0x1f) << 8) + pmt[pmtOffset + 2];
+        int esInfoLength = ((pmt[pmtOffset + 3] & 0x0f) << 8) + pmt[pmtOffset + 4];
+        pmtOffset += 5;
+        if (pmtOffset + esInfoLength > pmtEnd)
         {
-          if (pid.pid == pmtData.EsPmt[esCount].Pid)
+          Log.Debug("Anysee: PMT elementary stream info length for PID {0} ({1:x}) is invalid", streamPid, streamPid);
+          return false;
+        }
+
+        // Can we determine the stream type from the PMT stream type?
+        pmtData.EsPmt[esCount].StreamType = streamType;
+        if (streamType == (byte)StreamType.Mpeg1Part2Video ||
+          streamType == (byte)StreamType.Mpeg2Part2Video ||
+          streamType == (byte)StreamType.Mpeg4Part2Video ||
+          streamType == (byte)StreamType.Mpeg4Part10Video)
+        {
+          pmtData.EsPmt[esCount].EsType = AnyseeEsType.Video;
+        }
+        else if (streamType == (byte)StreamType.Mpeg1Part3Audio ||
+          streamType == (byte)StreamType.Mpeg2Part3Audio ||
+          streamType == (byte)StreamType.Mpeg2Part7Audio ||
+          streamType == (byte)StreamType.Mpeg4Part3Audio ||
+          streamType == (byte)StreamType.Ac3Audio ||
+          streamType == (byte)StreamType.EnhancedAc3Audio)
+        {
+          pmtData.EsPmt[esCount].EsType = AnyseeEsType.Audio;
+        }
+
+        // Process the elementary stream descriptors.
+        pmtData.EsPmt[esCount].DescriptorData = new byte[MaxDescriptorDataLength];
+        int esCaDescriptorDataOffset = 2;   // 2 bytes reserved for the data length
+        while (esInfoLength >= 2)
+        {
+          byte descriptorTag = pmt[pmtOffset];
+          byte descriptorLength = pmt[pmtOffset + 1];
+          if (pmtOffset + descriptorLength + 2 > pmtEnd)
           {
-            if (pid.isVideo)
+            Log.Debug("Anysee: PMT elementary stream descriptor {0} ({1:x}) length for PID {2} ({3:x}) is invalid", descriptorTag, descriptorTag, streamPid, streamPid);
+            return false;
+          }
+
+          // If we don't yet know what type of stream this is, check the descriptor type.
+          if (pmtData.EsPmt[esCount].EsType == AnyseeEsType.Unknown)
+          {
+            if (descriptorTag == (byte)DescriptorType.VideoStream ||
+              descriptorTag == (byte)DescriptorType.Mpeg4Video ||
+              descriptorTag == (byte)DescriptorType.AvcVideo)
             {
               pmtData.EsPmt[esCount].EsType = AnyseeEsType.Video;
             }
-            else if (pid.isAudio || pid.isAC3Audio || pid.isEAC3Audio)
+            else if (descriptorTag == (byte)DescriptorType.AudioStream ||
+              descriptorTag == (byte)DescriptorType.Mpeg4Audio ||
+              descriptorTag == (byte)DescriptorType.Mpeg2AacAudio ||
+              descriptorTag == (byte)DescriptorType.Aac ||
+              descriptorTag == (byte)DescriptorType.Ac3 ||        // DVB
+              descriptorTag == (byte)DescriptorType.Ac3Audio ||   // ATSC
+              descriptorTag == (byte)DescriptorType.EnhancedAc3 ||
+              descriptorTag == (byte)DescriptorType.Dts)
             {
               pmtData.EsPmt[esCount].EsType = AnyseeEsType.Audio;
             }
-            else if (pid.isDVBSubtitle)
+            else if (descriptorTag == (byte)DescriptorType.Subtitling)
             {
               pmtData.EsPmt[esCount].EsType = AnyseeEsType.Subtitle;
             }
-            else if (pid.isTeletext)
+            else if (descriptorTag == (byte)DescriptorType.Teletext)
             {
               pmtData.EsPmt[esCount].EsType = AnyseeEsType.Teletext;
             }
-            else
+          }
+
+          // We only pass the conditional access descriptors to the interface.
+          if (descriptorTag == (byte)DescriptorType.ConditionalAccess)
+          {
+            if (esCaDescriptorDataOffset + descriptorLength + 2 > MaxDescriptorDataLength)
             {
-              // We don't differentiate between private and unknown ES types - could
-              // this cause problems???
-              pmtData.EsPmt[esCount].EsType = AnyseeEsType.Unknown;
+              Log.Debug("Anysee: PMT elementary stream {0} (0x{1:x}) CA data is too long", streamPid, streamPid);
+              return false;
             }
+            Buffer.BlockCopy(pmt, pmtOffset, pmtData.EsPmt[esCount].DescriptorData, esCaDescriptorDataOffset, descriptorLength + 2);
+            esCaDescriptorDataOffset += descriptorLength + 2;
+          }
+          esInfoLength -= (descriptorLength + 2);
+          pmtOffset += descriptorLength + 2;
+        }
+
+        // We finished processing this stream, but do we actually want to keep it?
+        if (pmtData.EsPmt[esCount].EsType != AnyseeEsType.Unknown)
+        {
+          // Yes!
+          pmtData.EsPmt[esCount].DescriptorData[0] = (byte)((esCaDescriptorDataOffset - 2) & 0xff);
+          pmtData.EsPmt[esCount].DescriptorData[1] = (byte)(((esCaDescriptorDataOffset - 2) >> 8) & 0xff);
+          Log.Debug("  including PID {0} (0x{1:x}), stream type = {2} (0x{3:x}), category = {4}", streamPid, streamPid, streamType, streamType, pmtData.EsPmt[esCount].EsType);
+          esCount++;
+          if (esCount == MaxPmtElementaryStreams)
+          {
+            Log.Debug("Anysee: reached maximum number of included PIDs");
             break;
           }
         }
-
-        // Descriptor data
-        caDataLength = (UInt16)(((pmt[offset] & 0x0f) << 8) + pmt[offset + 1]);
-        if (caDataLength > MaxDescriptorDataLength - 2)
+        else
         {
-          Log.Debug("Anysee: elementary stream {0} CA data is too long, length = {1}", esCount + 1, caDataLength);
-          return false;
+          // Nope.
+          Log.Debug("  excluding PID {0} (0x{1:x}), stream type = {2} (0x{3:x})", streamPid, streamPid, streamType, streamType);
         }
-        pmtData.EsPmt[esCount].DescriptorData = new byte[MaxDescriptorDataLength];
-        pmtData.EsPmt[esCount].DescriptorData[0] = pmt[offset + 1];
-        pmtData.EsPmt[esCount].DescriptorData[1] = (byte)(pmt[offset] & 0x0f);
-        offset += 2;
-        caDataLength += 2;
-        for (int i = 2; i < caDataLength; i++)
-        {
-          pmtData.EsPmt[esCount].DescriptorData[i] = pmt[offset];
-          offset++;
-        }
-
-        esCount++;
       }
+
+      Log.Debug("Anysee: total included PIDs = {0}", esCount);
       pmtData.EsCount = (UInt16)esCount;
 
-      // Pass the PMT structure to the API.
-      Marshal.StructureToPtr(pmtData, _pmtBuffer, true);
-      //DVB_MMI.DumpBinary(_pmtBuffer, 0, PmtDataSize);
-      if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetPmt, _pmtBuffer, IntPtr.Zero))
+      lock (this)
       {
-        Log.Debug("Anysee: result = success");
-        return true;
+        // Pass the PMT structure to the API.
+        Marshal.StructureToPtr(pmtData, _pmtBuffer, true);
+        //DVB_MMI.DumpBinary(_pmtBuffer, 0, PmtDataSize);
+        if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetPmt, _pmtBuffer, IntPtr.Zero))
+        {
+          Log.Debug("Anysee: result = success");
+          return true;
+        }
       }
 
       Log.Debug("Anysee: result = failure");
@@ -1467,8 +1582,9 @@ namespace TvEngine
     /// <summary>
     /// Send a tone/data burst command, and then set the 22 kHz continuous tone state.
     /// </summary>
-    /// <remarks>The Anysee interface does not support directly setting the 22 kHz tone state. The tuning
-    /// request LNB frequency parameters can be used to manipulate the tone state appropriately.
+    /// <remarks>
+    /// The Anysee interface does not support directly setting the 22 kHz tone state. The tuning request
+    /// LNB frequency parameters can be used to manipulate the tone state appropriately.
     /// </remarks>
     /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
     /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
@@ -1528,7 +1644,7 @@ namespace TvEngine
       }
       if (command == null || command.Length == 0)
       {
-        Log.Debug("Anysee: no command to send");
+        Log.Debug("Anysee: command not supplied");
         return true;
       }
       if (command.Length > MaxDiseqcMessageLength)
@@ -1539,10 +1655,7 @@ namespace TvEngine
 
       DiseqcMessage message = new DiseqcMessage();
       message.Message = new byte[MaxDiseqcMessageLength];
-      for (int i = 0; i < command.Length; i++)
-      {
-        message.Message[i] = command[i];
-      }
+      Buffer.BlockCopy(command, 0, message.Message, 0, command.Length);
       message.MessageLength = command.Length;
       message.ToneBurst = AnyseeToneBurst.Off;
 
@@ -1589,26 +1702,16 @@ namespace TvEngine
     /// </summary>
     public override void Dispose()
     {
-      if (_ciApi != null)
+      CloseInterface();
+      if (_propertySet != null)
       {
-        CloseInterface();
-        _ciApi = null;
+        DsUtils.ReleaseComObject(_propertySet);
+        _propertySet = null;
       }
-      _propertySet = null;
       if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);
         _generalBuffer = IntPtr.Zero;
-      }
-      if (_callbackBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_callbackBuffer);
-        _callbackBuffer = IntPtr.Zero;
-      }
-      if (_pmtBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_pmtBuffer);
-        _pmtBuffer = IntPtr.Zero;
       }
       _isAnysee = false;
     }

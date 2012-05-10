@@ -214,7 +214,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       {
         byte tag = descriptor[off];
         byte len = descriptor[off + 1];
-        if (tag == 0x9)
+        if (tag == (byte)DescriptorType.ConditionalAccess)
         {
           int offset;
           if (ecm.Pid != 0)
@@ -226,12 +226,9 @@ namespace TvLibrary.Implementations.DVB.Structures
           {
             if (descriptor[off + 8] == 0xff)
             {
-              //0  1 2 3  4  5 6  7  8 9 10
-              //9 11 1 0 E6 43 0 6A FF 0  0 0 0 0 0 2 14 21 8C 
-              //
-              //
-              //0  1  2 3  4  5  6  7  8 9 10
-              //9 11  1 0 E6  1C 41 1 FF FF FF FF FF FF FF FF FF 21 8C 
+              //  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
+              // 09 11 01 00 E6 43 00 6A FF 00 00 00 00 00 00 02 14 21 8C
+              // 09 11 01 00 E6 1C 41 01 FF FF FF FF FF FF FF FF FF 21 8C
               int count = (len - 2) / 15;
               for (int i = 0; i < count; ++i)
               {
@@ -252,9 +249,9 @@ namespace TvLibrary.Implementations.DVB.Structures
           {
             if (descriptor[off + 7] == 0xe0 && descriptor[8] != 0xff)
             {
-              //0  1 2 3  4  5 6  7 8  9  10
-              //9 11 1 0 E0 C1 3 E0 92 41  1 E0 93 40 1 E0 C4 0 64 
-              //9  D 1 0 E0 B6 2 E0 B7  0 6A E0 B9 0  6C 
+              //  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
+              // 09 0D 01 00 E0 B6 02 E0 B7 00 6A E0 B9 00 6C
+              // 09 11 01 00 E0 C1 03 E0 92 41 01 E0 93 40 01 E0 C4 00 64
               if (descriptor[off + 6] > 0 || descriptor[off + 6] <= 9)
               {
                 ecm.ProviderId = ((descriptor[off + 9]) << 8) + descriptor[off + 10];

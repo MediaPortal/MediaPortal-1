@@ -26,13 +26,19 @@ using TvLibrary.Log;
 namespace TvEngine
 {
   /// <summary>
-  /// This class provides clear QAM tuning support for ViXS/Asus ATSC/QAM tuners.
+  /// This class provides clear QAM tuning support for ViXS/Asus ATSC/QAM devices.
   /// </summary>
   public class ViXS : Microsoft
   {
     #region constants
 
     private static readonly Guid BdaExtensionPropertySet = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
+
+    #endregion
+
+    #region variables
+
+    private bool _isVixs = false;
 
     #endregion
 
@@ -85,12 +91,41 @@ namespace TvEngine
     public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
       Log.Debug("ViXS: initialising device");
+
+      if (_isVixs)
+      {
+        Log.Debug("ViXS: device is already initialised");
+        return true;
+      }
+
       if (tunerType != CardType.Atsc)
       {
         Log.Debug("ViXS: tuner type {0} is not supported", tunerType);
         return false;
       }
-      return base.Initialise(tunerFilter, tunerType, tunerDevicePath);
+      bool result = base.Initialise(tunerFilter, tunerType, tunerDevicePath);
+      if (!result)
+      {
+        Log.Debug("ViXS: base Microsoft interface not supported");
+        return false;
+      }
+
+      Log.Debug("ViXS: supported device detected");
+      _isVixs = true;
+      return true;
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Close interfaces, free memory and release COM object references.
+    /// </summary>
+    public override void Dispose()
+    {
+      base.Dispose();
+      _isVixs = false;
     }
 
     #endregion

@@ -30,8 +30,8 @@ using TvLibrary.Log;
 namespace TvEngine
 {
   /// <summary>
-  /// This class provides a base implementation of DiSEqC and clear QAM tuning support
-  /// for tuners that support Microsoft BDA interfaces and de-facto standards.
+  /// This class provides a base implementation of DiSEqC and clear QAM tuning support for devices that
+  /// support Microsoft BDA interfaces and de-facto standards.
   /// </summary>
   public class Microsoft : BaseCustomDevice, IDiseqcController
   {
@@ -40,7 +40,7 @@ namespace TvEngine
     [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
     Guid("F84E2AB0-3C6B-45E3-A0FC-8669D4B81F11"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IBDA_DiseqCommand
+    private interface IBDA_DiseqCommand
     {
       [PreserveSig]
       int put_EnableDiseqCommands([In] byte bEnable);
@@ -65,7 +65,7 @@ namespace TvEngine
 
     #region constants
 
-    private const int InstanceSize = 32;
+    private const int InstanceSize = 32;    // The size of a property instance (KspNode) parameter.
     private const int ParamSize = 4;
 
     #endregion
@@ -222,7 +222,7 @@ namespace TvEngine
       {
         // This is the most generic ICustomDevice implementation. It should only be used as a last resort
         // when more specialised interfaces are not suitable.
-        return 100;
+        return 1;
       }
     }
 
@@ -282,7 +282,7 @@ namespace TvEngine
           _w7Interface = (IBDA_DiseqCommand)CheckBdaDiseqcInterface(tunerFilter);
           if (_w7Interface != null)
           {
-            Log.Debug("Microsoft: supported tuner detected (IBDA_DiseqCommand interface)");
+            Log.Debug("Microsoft: supported device detected (IBDA_DiseqCommand interface)");
             _isMicrosoft = true;
             hr = _w7Interface.put_EnableDiseqCommands(1);
             if (hr != 0)
@@ -327,7 +327,7 @@ namespace TvEngine
       // No further checks required for ATSC tuners.
       if (tunerType == CardType.Atsc)
       {
-        Log.Debug("Microsoft: supported tuner detected (ATSC/QAM)");
+        Log.Debug("Microsoft: supported device detected (ATSC/QAM)");
         _isMicrosoft = true;
         _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
         _paramBuffer = Marshal.AllocCoTaskMem(ParamSize);
@@ -338,7 +338,7 @@ namespace TvEngine
       _oldInterface = (IBDA_FrequencyFilter)CheckFrequencyFilterInterface(tunerFilter);
       if (_oldInterface != null)
       {
-        Log.Debug("Microsoft: supported tuner detected (IBDA_FrequencyFilter interface)");
+        Log.Debug("Microsoft: supported device detected (IBDA_FrequencyFilter interface)");
         _isMicrosoft = true;
         _deviceControl = tunerFilter as IBDA_DeviceControl;
         return true;
@@ -487,7 +487,7 @@ namespace TvEngine
       }
       if (command == null || command.Length == 0)
       {
-        Log.Debug("Microsoft: no command to send");
+        Log.Debug("Microsoft: command not supplied");
         return true;
       }
 
@@ -588,10 +588,7 @@ namespace TvEngine
         Log.Debug("Microsoft: result = success");
         // Copy the response into the return array.
         response = new byte[responseLength];
-        for (byte i = 0; i < responseLength; i++)
-        {
-          response[i] = tempResponse[i];
-        }
+        Buffer.BlockCopy(tempResponse, 0, response, 0, responseLength);
         return true;
       }
 

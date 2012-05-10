@@ -20,6 +20,7 @@
 
 using System;
 using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -207,7 +208,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region variables
 
-    private readonly IDiSEqCController _controller;
+    private readonly IDiseqcController _controller;
     private int _currentPosition = -1;
     private int _currentStepsAzimuth;
     private int _currentStepsElevation;
@@ -218,7 +219,7 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="DiSEqCMotor"/> class.
     /// </summary>
     /// <param name="controller">The controller.</param>
-    public DiSEqCMotor(IDiSEqCController controller)
+    public DiSEqCMotor(IDiseqcController controller)
     {
       _controller = controller;
     }
@@ -233,35 +234,35 @@ namespace TvLibrary.Implementations.DVB
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.ClearReset;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: PowerOn");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.PowerOn;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: reset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.Reset;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: clear reset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.ClearReset;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
       Log.Log.Write("DiSEqC: PowerOn");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.PowerOn;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
     }
 
     /// <summary>
@@ -274,7 +275,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
       cmd[2] = (byte)DiSEqCCommands.Halt;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
     }
 
@@ -288,7 +289,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
       cmd[2] = (byte)DiSEqCCommands.SetEastLimit;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
     }
 
@@ -302,7 +303,7 @@ namespace TvLibrary.Implementations.DVB
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
       cmd[2] = (byte)DiSEqCCommands.SetWestLimit;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
     }
 
@@ -322,7 +323,7 @@ namespace TvLibrary.Implementations.DVB
           cmd[1] = (byte)DiSEqCMovement.Azimutal;
           cmd[2] = (byte)DiSEqCCommands.StorePositions;
           cmd[3] = 0;
-          _controller.SendDiSEqCCommand(cmd);
+          _controller.SendCommand(cmd);
           System.Threading.Thread.Sleep(100);
         }
         else
@@ -332,7 +333,7 @@ namespace TvLibrary.Implementations.DVB
           cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
           cmd[1] = (byte)DiSEqCMovement.Azimutal;
           cmd[2] = (byte)DiSEqCCommands.LimitsOff;
-          _controller.SendDiSEqCCommand(cmd);
+          _controller.SendCommand(cmd);
           System.Threading.Thread.Sleep(100);
         }
       }
@@ -376,7 +377,7 @@ namespace TvLibrary.Implementations.DVB
         _currentStepsElevation += steps;
       }
       cmd[3] = (byte)(0x100 - steps);
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
       //System.Threading.Thread.Sleep(1000*steps);
       //StopMotor();
@@ -395,10 +396,10 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
       cmd[2] = (byte)DiSEqCCommands.StorePositions;
       cmd[3] = position;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
       cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
       _currentPosition = position;
       _currentStepsAzimuth = 0;
@@ -416,10 +417,10 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
       cmd[2] = (byte)DiSEqCCommands.GotoPosition;
       cmd[3] = 0;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
       cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
       _currentPosition = 0;
       _currentStepsAzimuth = 0;
@@ -441,10 +442,10 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
       cmd[2] = (byte)DiSEqCCommands.GotoPosition;
       cmd[3] = position;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
       cmd[0] = (byte)DiSEqCFraming.RepeatedTransmission;
-      _controller.SendDiSEqCCommand(cmd);
+      _controller.SendCommand(cmd);
       System.Threading.Thread.Sleep(100);
       _currentPosition = position;
       _currentStepsAzimuth = 0;
