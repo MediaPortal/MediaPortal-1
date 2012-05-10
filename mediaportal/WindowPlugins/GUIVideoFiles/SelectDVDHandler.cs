@@ -217,7 +217,7 @@ namespace MediaPortal.GUI.Video
       {
         GUIListItem pItem;
         IMDBMovie movieDetails = new IMDBMovie();
-		    bool eachMovieHasDedicatedFolder = false;
+		    //bool eachMovieHasDedicatedFolder = false;
         ISelectBDHandler selectBdHandler;
         
         if (GlobalServiceProvider.IsRegistered<ISelectBDHandler>())
@@ -235,11 +235,10 @@ namespace MediaPortal.GUI.Video
           string strThumb = string.Empty;
           pItem = (GUIListItem)items[x];
           string file = string.Empty;
-          bool isDvdBdDirectory = false;
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
           
           // Skip DVD & BD backup folder
-          if (pItem.IsFolder && !IsDvdDirectory(pItem.Path) && !selectBdHandler.IsBDDirectory(pItem.Path))
+          if (pItem.IsFolder && !pItem.IsBdDvdFolder)
           {
             if (pItem.Label == "..")
             {
@@ -256,7 +255,6 @@ namespace MediaPortal.GUI.Video
             // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
             if (!pItem.IsRemote && Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path))
             {
-              eachMovieHasDedicatedFolder = true;
               string[] strFiles = null;
                 
               try
@@ -298,13 +296,11 @@ namespace MediaPortal.GUI.Video
           else if (pItem.IsFolder && IsDvdDirectory(pItem.Path))
           {
             file = GetFolderVideoFile(pItem.Path);
-            isDvdBdDirectory = true;
           }
             // Check for BD folder
           else if (pItem.IsFolder && selectBdHandler.IsBDDirectory(pItem.Path))
           {
             file = selectBdHandler.GetFolderVideoFile(pItem.Path);
-            isDvdBdDirectory = true;
           }
           else if (!pItem.IsFolder ||
                    (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
