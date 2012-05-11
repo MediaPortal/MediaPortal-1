@@ -283,7 +283,7 @@ namespace MediaPortal.MusicImport
       strName += ".mp3";
 
       trackInfo.TargetDir = mp3ImportDir + "\\" + strDirectory;
-      trackInfo.TempFileName = strName;
+      trackInfo.TempFileName = mp3ImportDir + "\\temp\\" + strName;
       trackInfo.TargetFileName = mp3ImportDir + "\\" + strDirectory + "\\" + strName;
 
       importQueue.Enqueue(trackInfo);
@@ -343,8 +343,8 @@ namespace MediaPortal.MusicImport
             dlgProgress.SetHeading(GUILocalizeStrings.Get(1103));
           }
 
-          //dlgProgress.SetLine(2, string.Format("{0:00}. {1} - {2}", trackInfo.MusicTag.Track, trackInfo.MusicTag.Artist, trackInfo.MusicTag.Title));
-          dlgProgress.SetLine(2, trackInfo.TempFileName);
+          dlgProgress.SetLine(2, string.Format("{0:00}. {1} - {2}", trackInfo.MusicTag.Track, trackInfo.MusicTag.Artist, trackInfo.MusicTag.Title));
+          //dlgProgress.SetLine(2, trackInfo.TempFileName);
           if (dlgProgress.IsCanceled)
           {
             m_CancelRipping = true;
@@ -435,9 +435,11 @@ namespace MediaPortal.MusicImport
     private static void SaveTrack(TrackInfo trackInfo)
     {
       string targetFileName = trackInfo.MusicTag.Title;
-      if (!Directory.Exists("temp"))
+      string tempPath = Path.GetDirectoryName(trackInfo.TempFileName);
+      if (!Directory.Exists(tempPath))
       {
-        Directory.CreateDirectory("temp");
+        DirectoryInfo tempDir =  Directory.CreateDirectory(tempPath);
+        tempDir.Attributes |= FileAttributes.Hidden;
       }
 
       if (m_Drive.Open(trackInfo.Item.Path[0]))
