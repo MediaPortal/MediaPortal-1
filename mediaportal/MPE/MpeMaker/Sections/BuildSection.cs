@@ -103,8 +103,12 @@ namespace MpeMaker.Sections
         ProjectSettings.UpdateFiles(Package, folderGroup);
       }
 
-      if (string.IsNullOrEmpty(txt_outfile.Text))
-        list_error.Items.Add("No out file is specified");
+      String fileName = txt_outfile.Text;
+      if (string.IsNullOrEmpty(fileName))
+        list_error.Items.Add("No output file is specified");
+
+      if (!Path.IsPathRooted(fileName))
+          fileName = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Package.ProjectSettings.ProjectFilename), fileName));
 
       foreach (string s in Package.ValidatePackage())
       {
@@ -123,7 +127,7 @@ namespace MpeMaker.Sections
       list_message.Items.Add("Creating package started at : " + DateTime.Now.ToLongTimeString());
       list_message.Refresh();
       Refresh();
-      string file = Package.ReplaceInfo(txt_outfile.Text);
+      string file = Package.ReplaceInfo(fileName);
       MpeInstaller.ZipProvider.Save(Package, file);
       list_message.Items.Add("Ended at : " + DateTime.Now.ToLongTimeString());
       if (run && File.Exists(file))

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="no" availableDays="12" timezone="W. Europe Standard Time" version="2.0.1" />
+  <Channels>
+    <Channel id="nrkp1@nrk.no" siteId="nrkp1" />
+    <Channel id="nrkp2@nrk.no" siteId="nrkp2" />
+    <Channel id="nrkp3@nrk.no" siteId="nrkp3" />
+    <Channel id="nrkmpetre@nrk.no" siteId="nrkmpetre" />
+    <Channel id="nrkbarn@nrk.no" siteId="nrkbarn" />
+    <Channel id="nrkalltidnyheter@nrk.no" siteId="nrkalltidnyheter" />
+    <Channel id="nrkklassisk@nrk.no" siteId="nrkklassisk" />
+    <Channel id="folkemusikk@nrk.no" siteId="folkemusikk" />
+    <Channel id="nrkgull@nrk.no" siteId="nrkgull" />
+    <Channel id="nrkjazz@nrk.no" siteId="nrkjazz" />
+    <Channel id="samifm@nrk.no" siteId="samifm" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://m.nrk.no/m/epg/epg.jsp?c=[ID]&amp;d=[YYYY][MM][DD]" post="" external="false" delay="300" encoding="utf-8" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="TDA">
+          <TemplateText>
+		&lt;div class="epg-entry"&gt;
+		&lt;div class="epg-time"&gt;&lt;#START&gt;&lt;/div&gt;
+		&lt;a href="javascript:;" class="epg-title" id="epg-"&gt;&lt;#TITLE&gt;&lt;/a&gt;
+		&lt;z(&gt;&lt;div class="epg-summary" id="epg-summary-epg-8"&gt;&lt;#DISCRIPTION&gt;&lt;/div&gt;&lt;/z)?&gt;
+		&lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>
