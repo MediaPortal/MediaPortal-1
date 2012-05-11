@@ -43,15 +43,6 @@ namespace MediaPortal.MusicPlayer.BASS
     CROSSFADE = 2
   }
 
-  public enum StreamContentType
-  {
-    PCM,
-    IEC61937,
-    DD,
-    DTS,
-    DTS14Bit
-  }
-
   public enum BassDSPDynAmpPreset
   {
     None = 0,
@@ -120,19 +111,5 @@ namespace MediaPortal.MusicPlayer.BASS
     None = 0,
     FiveDotOne = 1,
     SevenDotOne = 2
-  }
-
-  public enum ErrorCode
-  {
-    OK = 0,
-    FileError = 1,
-    DeviceError = 2,
-    MiscError = 3
-  }
-
-  public enum VisualizationType
-  {
-    None = 0,
-    WMP = 1
   }
 }
