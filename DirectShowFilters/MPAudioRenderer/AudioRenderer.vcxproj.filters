@@ -89,6 +89,7 @@
       <Filter>AC3_encoder</Filter>
     </ClCompile>
     <ClCompile Include="source\StreamSanitizerFilter.cpp" />
+    <ClCompile Include="source\SettingsProp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AC3EncoderFilter.h" />
@@ -182,6 +183,7 @@
       <Filter>AC3_encoder</Filter>
     </ClInclude>
     <ClInclude Include="source\StreamSanitizerFilter.h" />
+    <ClInclude Include="source\SettingsProp.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="source\MpAudioRenderer.rc" />
