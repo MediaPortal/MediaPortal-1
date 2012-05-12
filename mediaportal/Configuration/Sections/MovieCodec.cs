@@ -436,6 +436,29 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private void ConfigAudioRendererCodecSection(object sender, EventArgs e, string selection)
+    {
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.AudioRendererCategory))
+      {
+        try
+        {
+          if (device.Name != null)
+          {
+            {
+              if (selection.Equals(device.Name))
+              {
+                DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)device);
+                page.Show(this);
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+
     private void configMPEG_Click(object sender, EventArgs e)
     {
       ConfigCodecSection(sender, e, videoCodecComboBox.Text);
@@ -471,9 +494,9 @@ namespace MediaPortal.Configuration.Sections
       ConfigCodecSection(sender, e, aacAudioCodecComboBox.Text);
     }
 
-    private void configAudioRendere_Click(object sender, EventArgs e)
+    private void configAudioRenderer_Click(object sender, EventArgs e)
     {
-      ConfigCodecSection(sender, e, audioRendererComboBox.Text);
+      ConfigAudioRendererCodecSection(sender, e, audioRendererComboBox.Text);
     }
 
     private void configSplitterSource_Click(object sender, EventArgs e)

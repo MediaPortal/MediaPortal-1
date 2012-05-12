@@ -160,7 +160,7 @@ namespace MediaPortal.Configuration.Sections
       this.configAudioRenderer.Size = new System.Drawing.Size(35, 21);
       this.configAudioRenderer.TabIndex = 76;
       this.configAudioRenderer.UseVisualStyleBackColor = true;
-      this.configAudioRenderer.Click += new System.EventHandler(this.configAudioRendere_Click);
+      this.configAudioRenderer.Click += new System.EventHandler(this.configAudioRenderer_Click);
       // 
       // configAACAudio
       // 
