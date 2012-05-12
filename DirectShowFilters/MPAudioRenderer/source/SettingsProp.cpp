@@ -323,13 +323,24 @@ INT_PTR CSettingsProp::OnReceiveMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
             LOWORD(wParam) == IDC_SAMPLERATE ||
             LOWORD(wParam) == IDC_RESAMPLING_QUALITY ||
             LOWORD(wParam) == IDC_BITDEPTH ||
-            LOWORD(wParam) == IDC_AUDIO_DELAY ||
-            LOWORD(wParam) == IDC_LOG_SAMPLE_TIMES) && HIWORD(wParam) == BN_CLICKED ||  HIWORD(wParam) == CBN_SELCHANGE)
+            LOWORD(wParam) == IDC_LOG_SAMPLE_TIMES) && 
+            HIWORD(wParam) == BN_CLICKED || HIWORD(wParam) == CBN_SELCHANGE)
       {
         // TODO: check if any of the setting has really changed
         m_bDirty = TRUE;
         if (m_pPageSite)
           m_pPageSite->OnStatusChange(PROPPAGESTATUS_DIRTY);
+      }
+      else if (LOWORD(wParam) == IDC_AUDIO_DELAY && HIWORD(wParam) == EN_CHANGE)
+      {
+        CHAR delay[50];
+        SendDlgItemMessage(m_Dlg, IDC_AUDIO_DELAY, WM_GETTEXT, 50, (LPARAM)&delay);
+        if (atoi(delay) != m_pSettings->GetAudioDelay())
+        {  
+          m_bDirty = TRUE;
+          if (m_pPageSite)
+            m_pPageSite->OnStatusChange(PROPPAGESTATUS_DIRTY);
+        }
       }
     }
   }

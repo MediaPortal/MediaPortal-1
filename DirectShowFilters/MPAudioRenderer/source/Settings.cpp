@@ -431,7 +431,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   enableTimestretchingData = m_bUseTimeStretching ? 1 : 0;
   WASAPIExclusiveData = m_WASAPIShareMode == AUDCLNT_SHAREMODE_EXCLUSIVE ? 1 : 0;
   WASAPIUseEventModeData = m_bWASAPIUseEventMode ? 1 : 0;
-  devicePeriodData = m_hnsPeriod;
+  //devicePeriodData = m_hnsPeriod;
   AC3EncodingData = m_lAC3Encoding;
   AC3bitrateData = m_AC3bitrate / 1000;
   maxBiasData = m_dMaxBias * 10000;
@@ -460,7 +460,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
   WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
   WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
-  WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+  //WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
   WriteRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
   WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
   WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
