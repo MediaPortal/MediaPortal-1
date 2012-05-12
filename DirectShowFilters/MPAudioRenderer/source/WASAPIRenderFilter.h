@@ -82,8 +82,6 @@ private:
 
   HMODULE m_hLibAVRT;
 
-  HRESULT GetAudioDevice(IMMDevice** ppMMDevice);
-  HRESULT GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, bool pLog); // caller must release ppMMDevices!
   HRESULT CreateAudioClient(bool init = false);
   HRESULT InitAudioClient();
   HRESULT StartAudioClient();

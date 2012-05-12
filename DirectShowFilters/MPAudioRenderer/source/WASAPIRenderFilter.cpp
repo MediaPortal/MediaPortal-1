@@ -21,8 +21,6 @@
 
 #include "alloctracing.h"
 
-#include <FunctionDiscoveryKeys_devpkey.h>
-
 CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
   m_pSettings(pSettings),
   m_pClock(pClock),
@@ -72,7 +70,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   if (pSettings->m_bUseWASAPI)
   {
     IMMDeviceCollection* devices = NULL;
-    GetAvailableAudioDevices(&devices, true);
+    pSettings->GetAvailableAudioDevices(&devices, NULL, true);
     SAFE_RELEASE(devices); // currently only log available devices
   }
 }
@@ -978,185 +976,6 @@ HRESULT CWASAPIRenderFilter::RevertMMCSS()
   return S_FALSE; // failed since no thread had been boosted
 }
 
-HRESULT CWASAPIRenderFilter::GetAudioDevice(IMMDevice** ppMMDevice)
-{
-  Log("CWASAPIRenderFilter::GetAudioDevice");
-
-  CComPtr<IMMDeviceEnumerator> enumerator;
-  IMMDeviceCollection* devices;
-  HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
-
-  if (hr != S_OK)
-  {
-    Log("  failed to create MMDeviceEnumerator!");
-    return hr;
-  }
-
-  Log("Target end point: %S", m_pSettings->m_wWASAPIPreferredDeviceId);
-
-  if (GetAvailableAudioDevices(&devices, false) == S_OK)
-  {
-    UINT count(0);
-    hr = devices->GetCount(&count);
-    if (hr != S_OK)
-    {
-      Log("  devices->GetCount failed: (0x%08x)", hr);
-      return hr;
-    }
-    
-    for (UINT i = 0; i < count; i++)
-    {
-      LPWSTR pwszID = NULL;
-      IMMDevice *endpoint = NULL;
-      hr = devices->Item(i, &endpoint);
-      if (hr == S_OK)
-      {
-        hr = endpoint->GetId(&pwszID);
-        if (hr == S_OK)
-        {
-          // Found the configured audio endpoint
-          if (wcscmp(pwszID, m_pSettings->m_wWASAPIPreferredDeviceId) == 0)
-          {
-            enumerator->GetDevice(m_pSettings->m_wWASAPIPreferredDeviceId, ppMMDevice); 
-            SAFE_RELEASE(devices);
-            *(ppMMDevice) = endpoint;
-            CoTaskMemFree(pwszID);
-            pwszID = NULL;
-            return S_OK;
-          }
-          else
-          {
-            SAFE_RELEASE(endpoint);
-            CoTaskMemFree(pwszID);
-            pwszID = NULL;
-          }
-        }
-        else
-          Log("  devices->GetId failed: (0x%08x)", hr);     
-      }
-      else
-        Log("  devices->Item failed: (0x%08x)", hr);  
-
-      CoTaskMemFree(pwszID);
-      pwszID = NULL;
-    }
-  }
-
-  Log("Unable to find selected audio device, using the default end point!");
-  hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, ppMMDevice);
-
-  IPropertyStore* pProps = NULL;
-
-  if (SUCCEEDED((*ppMMDevice)->OpenPropertyStore(STGM_READ, &pProps)))
-  {
-    LPWSTR pwszID = NULL;
-    
-    PROPVARIANT varName;
-    PropVariantInit(&varName);
-
-    PROPVARIANT eventDriven;
-    PropVariantInit(&eventDriven);
-
-    PROPVARIANT speakerMask;
-    PropVariantInit(&speakerMask);
-
-    if (SUCCEEDED(pProps->GetValue(PKEY_Device_FriendlyName, &varName)) &&
-        SUCCEEDED(pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven)) &&
-        SUCCEEDED((*ppMMDevice)->GetId(&pwszID)))
-    {
-      pProps->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &speakerMask);
-      Log("Default audio endpoint: \"%S\" (%S) - pull mode: %d sprk mask: %d" ,varName.pwszVal, pwszID, eventDriven.intVal, speakerMask.uintVal);
-    }
-
-    CoTaskMemFree(pwszID);
-    pwszID = NULL;
-    PropVariantClear(&varName);
-    PropVariantClear(&eventDriven);
-    PropVariantClear(&speakerMask);
-    SAFE_RELEASE(pProps)
-  }
-
-  SAFE_RELEASE(devices);
-
-  return hr;
-}
-
-HRESULT CWASAPIRenderFilter::GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, bool pLog)
-{
-  HRESULT hr;
-
-  CComPtr<IMMDeviceEnumerator> enumerator;
-  Log("CWASAPIRenderFilter::GetAvailableAudioDevices");
-  hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
-
-  if (FAILED(hr))
-  {
-    Log("   failed to get MMDeviceEnumerator");
-    return S_FALSE;
-  }
-
-  IMMDevice* pEndpoint = NULL;
-  IPropertyStore* pProps = NULL;
-  LPWSTR pwszID = NULL;
-
-  enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, ppMMDevices);
-  UINT count(0);
-  hr = (*ppMMDevices)->GetCount(&count);
-
-  if (pLog)
-  {
-    for (UINT i = 0; i < count; i++)
-    {
-      if ((*ppMMDevices)->Item(i, &pEndpoint) != S_OK)
-        break;
-
-      if (pEndpoint->GetId(&pwszID) != S_OK)
-        break;
-
-      if (pEndpoint->OpenPropertyStore(STGM_READ, &pProps) != S_OK)
-        break;
-
-      PROPVARIANT varName;
-      PropVariantInit(&varName);
-
-      PROPVARIANT eventDriven;
-      PropVariantInit(&eventDriven);
-
-      PROPVARIANT speakerMask;
-      PropVariantInit(&speakerMask);
-
-      if (pProps->GetValue(PKEY_Device_FriendlyName, &varName) != S_OK)
-        break;
-
-      Log(" ");
-      Log("Audio endpoint %d:", i);
-      Log("  %S", varName.pwszVal);
-      Log("  %S",  pwszID);
-
-      if (pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven) == S_OK)
-        Log("  supports pull mode: %d", eventDriven.intVal);
-      else
-        Log("  pull mode query failed!");
-
-      if (pProps->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &speakerMask) == S_OK)
-        Log("  speaker mask: %d", speakerMask.uintVal);
-      else
-        Log("  PhysicalSpeakers query failed!");
-
-      CoTaskMemFree(pwszID);
-      pwszID = NULL;
-      PropVariantClear(&varName);
-      PropVariantClear(&eventDriven);
-      PropVariantClear(&speakerMask);
-      SAFE_RELEASE(pProps)
-      SAFE_RELEASE(pEndpoint)
-    }
-    Log(" ");
-  }
-
-  return hr;
-}
-
 HRESULT CWASAPIRenderFilter::GetBufferSize(const WAVEFORMATEX* pWaveFormatEx, REFERENCE_TIME* pHnsBufferPeriod)
 { 
   if (!pWaveFormatEx) 
@@ -1206,7 +1025,7 @@ HRESULT CWASAPIRenderFilter::CreateAudioClient(bool init)
 
   if (!m_pMMDevice)
   {
-    hr = GetAudioDevice(&m_pMMDevice);
+    hr = m_pSettings->GetAudioDevice(&m_pMMDevice);
 
     if (FAILED(hr))
     {

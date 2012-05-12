@@ -25,6 +25,7 @@
 #include "Globals.h"
 #include "MpAudioRenderer.h"
 #include "Settings.h"
+#include "SettingsProp.h"
 
 #include "alloctracing.h"
 
@@ -42,36 +43,49 @@ const AMOVIESETUP_MEDIATYPE sudPinTypesIn[] =
 
 const AMOVIESETUP_PIN sudpPins[] =
 {
-  {L"Input", 
-  TRUE, 
-  FALSE, 
-  FALSE, 
-  FALSE, 
-  &CLSID_NULL, 
-  NULL, 
-  4, 
-  sudPinTypesIn},
+  {
+    L"Input",
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    &CLSID_NULL,
+    NULL,
+    4,
+    sudPinTypesIn
+  }
 };
 
 const AMOVIESETUP_FILTER sudFilter[] =
 {
-  {&__uuidof(CMPAudioRenderer), 
-  L"MediaPortal - Audio Renderer", 
-  0x30000000, 
-  NULL,
-  sudpPins},
+  {
+    &__uuidof(CMPAudioRenderer),
+    L"MediaPortal - Audio Renderer",
+    0x30000000,
+    NULL,
+    sudpPins
+  }
 };
 
 CFactoryTemplate g_Templates[] =
 {
-  {sudFilter[0].strName, 
-  &__uuidof(CMPAudioRenderer), 
-  CMPAudioRenderer::CreateInstance, 
-  NULL, 
-  &sudFilter[0]},
+  {
+    sudFilter[0].strName,
+    &__uuidof(CMPAudioRenderer),
+    CMPAudioRenderer::CreateInstance,
+    NULL,
+    &sudFilter[0]
+  },
+  {
+    L"MediaPortal Audio Renderer Properties",
+    &CLSID_MPARSettingsProp,
+    CSettingsProp::CreateInstance,
+    NULL,
+    NULL
+  }
 };
 
-int g_cTemplates = 1;
+int g_cTemplates = sizeof(g_Templates) / sizeof(g_Templates[0]);
 
 STDAPI DllRegisterServer()
 {
@@ -85,7 +99,6 @@ STDAPI DllUnregisterServer()
   return AMovieDllRegisterServer2(FALSE);
 }
 
-
 //
 // TODO: this logging code is borrowed from dshowhelper.dll
 // To be replaced when MP2 has generic C++ log framework available
@@ -97,7 +110,6 @@ void LogPath(char* dest, char* name)
   SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
   sprintf(dest,"%s\\Team Mediaportal\\MediaPortal\\log\\AudioRenderer.%s",folder,name);
 }
-
 
 void LogRotate()
 {
@@ -132,8 +144,10 @@ UINT CALLBACK LogThread(void* param)
 
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, "log");
-  while ( m_bLoggerRunning ) {
-    if ( m_logQueue.size() > 0 ) {
+  while (m_bLoggerRunning) 
+  {
+    if (m_logQueue.size() > 0) 
+    {
       FILE* fp = fopen(fileName,"a+");
       if (fp != NULL)
       {

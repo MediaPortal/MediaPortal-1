@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -16,7 +16,10 @@
 
 #include "stdafx.h"
 #include "Settings.h"
+#include "resource.h"
 #include "..\libresample\src\samplerate.h"
+
+#include <FunctionDiscoveryKeys_devpkey.h>
 
 #include "alloctracing.h"
 
@@ -27,8 +30,69 @@ unsigned int gAllowedAC3bitrates[9]         = {192, 224, 256, 320, 384, 448, 512
 unsigned int gAllowedSampleRates[7]         = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
 unsigned int gAllowedBitDepths[4]           = {8, 16, 24, 32};
 unsigned int gAllowedResamplingQualities[5] = {0, 1, 2, 3, 4};
+unsigned int speakerConfigs[7]              = {4, 3, 51, 263, 63, 1551, 1599};
+
+LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
+
+// Registry setting names
+LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
+LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
+LPCTSTR WASAPIUseEventMode = TEXT("WASAPIUseEventMode");
+LPCTSTR devicePeriod = TEXT("DevicePeriod");
+LPCTSTR AC3Encoding = TEXT("AC3Encoding");
+LPCTSTR AC3bitrate = TEXT("AC3bitrate");
+LPCTSTR maxBias = TEXT("MaxBias");
+LPCTSTR minBias = TEXT("MinBias");
+LPCTSTR audioDelay = TEXT("AudioDelay");
+LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
+LPCTSTR logDebug = TEXT("LogDebug");
+LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
+LPCTSTR HWBasedRefClock = TEXT("HWBasedRefClock");
+LPCTSTR enableSyncAdjustment = TEXT("EnableSyncAdjustment");
+LPCTSTR forceSamplingRate = TEXT("ForceSamplingRate");
+LPCTSTR forceBitDepth = TEXT("ForceBitDepth");
+LPCTSTR resamplingQuality = TEXT("ResamplingQuality");
+LPCTSTR quality_USE_QUICKSEEK = TEXT("Quality_USE_QUICKSEEK");
+LPCTSTR quality_USE_AA_FILTER = TEXT("Quality_USE_AA_FILTER");
+LPCTSTR quality_AA_FILTER_LENGTH = TEXT("Quality_AA_FILTER_LENGTH");
+LPCTSTR quality_SEQUENCE_MS = TEXT("Quality_SEQUENCE_MS");
+LPCTSTR quality_SEEKWINDOW_MS = TEXT("Quality_SEEKWINDOW_MS");
+LPCTSTR quality_OVERLAP_MS = TEXT("Quality_OVERLAP_MS");
+LPCTSTR speakerConfig = TEXT("SpeakerConfig");
+LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
+LPCTSTR releaseDeviceOnStop = TEXT("ReleaseDeviceOnStop");
+LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
+  
+// Default values for the settings in registry
+DWORD enableTimestretchingData = 1;
+DWORD WASAPIExclusiveData = 1;
+DWORD WASAPIUseEventModeData = 1;
+DWORD devicePeriodData = 500000;  // 50 ms
+DWORD AC3EncodingData = 0;        // 0 = disabled, 1 = auto, 2 = forced
+DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
+DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
+DWORD minBiasData = 9000;         // divide with 10000 to get real double value
+DWORD audioDelayData = 0;         // in ms
+DWORD logSampleTimesData = 0;
+DWORD logDebugData = 0;
+DWORD HWBasedRefClockData = 1;
+DWORD enableSyncAdjustmentData = 1;
+DWORD forceSamplingRateData = 0;
+DWORD forceBitDepthData = 0;
+DWORD resamplingQualityData = 4;
+DWORD speakerConfigData = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+DWORD forceChannelMixingData = 0;
+DWORD releaseDeviceOnStopData = 0;
+DWORD expandMonoToStereoData = 1;
+DWORD quality_USE_QUICKSEEKData = 0;
+DWORD quality_USE_AA_FILTERData = 0;
+DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
+DWORD quality_SEQUENCE_MSData = 82;       // in ms (same as soundtouch default)
+DWORD quality_SEEKWINDOW_MSData = 28;     // in ms (same as soundtouch default)
+DWORD quality_OVERLAP_MSData = 28;        // in ms (same as soundtouch default)
 
 AudioRendererSettings::AudioRendererSettings() :
+  CUnknown(_T("MPAR_Settings"), NULL),
   m_bLogSampleTimes(false),
   m_bLogDebug(false),
   m_bHWBasedRefClock(true),
@@ -60,7 +124,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bExpandMonoToStereo(true)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.998");
+  Log("MP Audio Renderer - v0.999");
 
   LoadSettingsFromRegistry();
 }
@@ -76,70 +140,9 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   
   Log("Loading settings from registry");
 
-  LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
-
   HKEY hKey;
   char* lpData = new char[MAX_REG_LENGTH];
 
-  // Registry setting names
-  LPCTSTR forceDirectSound = TEXT("ForceDirectSound");
-  LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
-  LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
-  LPCTSTR WASAPIUseEventMode = TEXT("WASAPIUseEventMode");
-  LPCTSTR devicePeriod = TEXT("DevicePeriod");
-  LPCTSTR AC3Encoding = TEXT("AC3Encoding");
-  LPCTSTR AC3bitrate = TEXT("AC3bitrate");
-  LPCTSTR maxBias = TEXT("MaxBias");
-  LPCTSTR minBias = TEXT("MinBias");
-  LPCTSTR audioDelay = TEXT("AudioDelay");
-  LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
-  LPCTSTR logDebug = TEXT("LogDebug");
-  LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
-  LPCTSTR HWBasedRefClock = TEXT("HWBasedRefClock");
-  LPCTSTR enableSyncAdjustment = TEXT("EnableSyncAdjustment");
-  LPCTSTR forceSamplingRate = TEXT("ForceSamplingRate");
-  LPCTSTR forceBitDepth = TEXT("ForceBitDepth");
-  LPCTSTR resamplingQuality = TEXT("ResamplingQuality");
-  LPCTSTR quality_USE_QUICKSEEK = TEXT("Quality_USE_QUICKSEEK");
-  LPCTSTR quality_USE_AA_FILTER = TEXT("Quality_USE_AA_FILTER");
-  LPCTSTR quality_AA_FILTER_LENGTH = TEXT("Quality_AA_FILTER_LENGTH");
-  LPCTSTR quality_SEQUENCE_MS = TEXT("Quality_SEQUENCE_MS");
-  LPCTSTR quality_SEEKWINDOW_MS = TEXT("Quality_SEEKWINDOW_MS");
-  LPCTSTR quality_OVERLAP_MS = TEXT("Quality_OVERLAP_MS");
-  LPCTSTR speakerConfig = TEXT("SpeakerConfig");
-  LPCTSTR forceChannelMixing = TEXT("ForceChannelMixing");
-  LPCTSTR releaseDeviceOnStop = TEXT("ReleaseDeviceOnStop");
-  LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
-  
-  // Default values for the settings in registry
-  DWORD forceDirectSoundData = 0;
-  DWORD enableTimestretchingData = 1;
-  DWORD WASAPIExclusiveData = 1;
-  DWORD WASAPIUseEventModeData = 1;
-  DWORD devicePeriodData = 500000;  // 50 ms
-  DWORD AC3EncodingData = 0;        // 0 = disabled, 1 = auto, 2 = forced
-  DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
-  DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
-  DWORD minBiasData = 9000;         // divide with 10000 to get real double value
-  DWORD audioDelayData = 0;         // in ms
-  DWORD logSampleTimesData = 0;
-  DWORD logDebugData = 0;
-  DWORD HWBasedRefClockData = 1;
-  DWORD enableSyncAdjustmentData = 1;
-  DWORD forceSamplingRateData = 0;
-  DWORD forceBitDepthData = 0;
-  DWORD resamplingQualityData = 4;
-  DWORD speakerConfigData = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
-  DWORD forceChannelMixingData = 0;
-  DWORD releaseDeviceOnStopData = 0;
-  DWORD expandMonoToStereoData = 1;
-  DWORD quality_USE_QUICKSEEKData = 0;
-  DWORD quality_USE_AA_FILTERData = 0;
-  DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
-  DWORD quality_SEQUENCE_MSData = 82;       // in ms (same as soundtouch default)
-  DWORD quality_SEEKWINDOW_MSData = 28;     // in ms (same as soundtouch default)
-  DWORD quality_OVERLAP_MSData = 28;        // in ms (same as soundtouch default)
-  
   // settings from Reclock - watch CPU usage when enabling these!
   /*bool usequickseek = false;
   bool useaafilter = false; //seems clearer without it
@@ -161,7 +164,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
   if (hKey)
   {
-    ReadRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
     ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
@@ -193,7 +195,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
-    Log("   ForceDirectSound:         %d", forceDirectSoundData);
     Log("   EnableTimestrecthing:     %d", enableTimestretchingData);
     Log("   WASAPIExclusive:          %d", WASAPIExclusiveData);
     Log("   WASAPIUseEventMode:       %d", WASAPIUseEventModeData);
@@ -222,10 +223,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   DevicePeriod:             %d (1 = minimal, 0 = driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:    %s", WASAPIPreferredDeviceData);
 
-    if (forceDirectSoundData > 0)
-      m_bUseWASAPI = false;
-    else
-      m_bUseWASAPI = true;
+    m_bUseWASAPI = true;
 
     if (enableTimestretchingData > 0)
       m_bUseTimeStretching = true;
@@ -383,7 +381,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     if (result == ERROR_SUCCESS) 
     {
       Log("Success creating master key");
-      WriteRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
       WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
       WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
@@ -411,7 +408,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, quality_SEEKWINDOW_MS, quality_SEEKWINDOW_MSData);
       WriteRegistryKeyDword(hKey, quality_OVERLAP_MS, quality_OVERLAP_MSData);
 
-      ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
+      WriteRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
     else 
       Log("Error creating master key %d", result);
@@ -419,6 +416,75 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   
   delete[] lpData;
   RegCloseKey (hKey);
+}
+
+void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
+{
+  USES_CONVERSION;
+
+  if (!hKey)
+  {
+    // Try to access the setting root "Software\Team MediaPortal\Audio Renderer"
+    RegOpenKeyEx(HKEY_CURRENT_USER, folder, NULL, KEY_ALL_ACCESS, &hKey);
+  }
+
+  enableTimestretchingData = m_bUseTimeStretching ? 1 : 0;
+  WASAPIExclusiveData = m_WASAPIShareMode == AUDCLNT_SHAREMODE_EXCLUSIVE ? 1 : 0;
+  WASAPIUseEventModeData = m_bWASAPIUseEventMode ? 1 : 0;
+  devicePeriodData = m_hnsPeriod;
+  AC3EncodingData = m_lAC3Encoding;
+  AC3bitrateData = m_AC3bitrate / 1000;
+  maxBiasData = m_dMaxBias * 10000;
+  minBiasData = m_dMinBias * 10000;
+  audioDelayData = m_lAudioDelay;
+  logSampleTimesData = m_bLogSampleTimes ? 1 : 0;
+  logDebugData = m_bLogDebug ? 1: 0;
+  HWBasedRefClockData = m_bHWBasedRefClock ? 1 : 0;
+  enableSyncAdjustmentData = m_bEnableSyncAdjustment ? 1 : 0;
+  forceSamplingRateData = m_nForceSamplingRate;
+  forceBitDepthData = m_nForceBitDepth;
+  resamplingQualityData = m_nResamplingQuality;
+  speakerConfigData = m_lSpeakerConfig;
+  forceChannelMixingData = m_bForceChannelMixing ? 1 : 0;
+  releaseDeviceOnStopData = m_bReleaseDeviceOnStop ? 1 : 0;
+  expandMonoToStereoData = m_bExpandMonoToStereo ? 1 : 0;
+  quality_USE_QUICKSEEKData = m_bQuality_USE_QUICKSEEK;
+  quality_USE_AA_FILTERData = m_bQuality_USE_AA_FILTER;
+  quality_AA_FILTER_LENGTHData = m_lQuality_AA_FILTER_LENGTH;
+  quality_SEQUENCE_MSData = m_lQuality_SEQUENCE_MS;
+  quality_SEEKWINDOW_MSData = m_lQuality_SEEKWINDOW_MS;
+  quality_OVERLAP_MSData = m_lQuality_OVERLAP_MS;
+  
+  LPCTSTR WASAPIPreferredDeviceData = W2T(m_wWASAPIPreferredDeviceId);
+
+  WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
+  WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
+  WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
+  WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+  WriteRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
+  WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
+  WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
+  WriteRegistryKeyDword(hKey, minBias, minBiasData);
+  WriteRegistryKeyDword(hKey, audioDelay, audioDelayData);
+  WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
+  WriteRegistryKeyDword(hKey, logDebug, logDebugData);
+  WriteRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
+  WriteRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
+  WriteRegistryKeyDword(hKey, forceSamplingRate, forceSamplingRateData);
+  WriteRegistryKeyDword(hKey, forceBitDepth, forceBitDepthData);
+  WriteRegistryKeyDword(hKey, resamplingQuality, resamplingQualityData);
+  WriteRegistryKeyDword(hKey, speakerConfig, speakerConfigData);
+  WriteRegistryKeyDword(hKey, forceChannelMixing, forceChannelMixingData);
+  WriteRegistryKeyDword(hKey, releaseDeviceOnStop, releaseDeviceOnStopData);
+  WriteRegistryKeyDword(hKey, expandMonoToStereo, expandMonoToStereoData);
+  WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
+  WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
+  WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
+  WriteRegistryKeyDword(hKey, quality_SEQUENCE_MS, quality_SEQUENCE_MSData);
+  WriteRegistryKeyDword(hKey, quality_SEEKWINDOW_MS, quality_SEEKWINDOW_MSData);
+  WriteRegistryKeyDword(hKey, quality_OVERLAP_MS, quality_OVERLAP_MSData);
+
+  WriteRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 }
 
 void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
@@ -494,18 +560,41 @@ bool AudioRendererSettings::AllowedValue(unsigned int allowedRates[], unsigned i
 
 LPCTSTR AudioRendererSettings::ResamplingQualityAsString(int setting)
 {
-	switch (setting)
-	{
-	  case SRC_SINC_BEST_QUALITY:
-		  return _T("SRC_SINC_BEST_QUALITY");
-	  case SRC_SINC_MEDIUM_QUALITY:
-		  return _T("SRC_SINC_MEDIUM_QUALITY");
-	  case SRC_SINC_FASTEST:
-		  return _T("SRC_SINC_FASTEST");
-	  case SRC_ZERO_ORDER_HOLD:
-		  return _T("SRC_ZERO_ORDER_HOLD");
-	  case SRC_LINEAR:
-		  return _T("SRC_LINEAR");
+  switch (setting)
+  {
+    case SRC_SINC_BEST_QUALITY:
+      return _T("SRC_SINC_BEST_QUALITY");
+    case SRC_SINC_MEDIUM_QUALITY:
+      return _T("SRC_SINC_MEDIUM_QUALITY");
+    case SRC_SINC_FASTEST:
+      return _T("SRC_SINC_FASTEST");
+    case SRC_ZERO_ORDER_HOLD:
+      return _T("SRC_ZERO_ORDER_HOLD");
+    case SRC_LINEAR:
+      return _T("SRC_LINEAR");
+    default:
+      return _T("UNKNOWN");
+  }
+}
+
+LPCTSTR AudioRendererSettings::SpeakerConfigAsString(int setting)
+{
+  switch (setting)
+  {
+    case 4:
+      return _T("Mono");
+    case 3:
+      return _T("Stereo");
+    case 51:
+      return _T("Quad");
+    case 263:
+      return _T("Surround");
+    case 63:
+      return _T("5.1");
+    case 1551:
+      return _T("5.1 Surround");
+    case 1599:
+      return _T("7.1 Surround");
     default:
       return _T("UNKNOWN");
   }
@@ -520,4 +609,392 @@ unsigned int AudioRendererSettings::ChannelCount(unsigned int channelMask)
   } 
 
   return channelCount;
-} 
+}
+
+HRESULT AudioRendererSettings::GetAudioDevice(IMMDevice** ppMMDevice)
+{
+  Log("CWASAPIRenderFilter::GetAudioDevice");
+
+  CComPtr<IMMDeviceEnumerator> enumerator;
+  IMMDeviceCollection* devices;
+  HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+
+  if (FAILED(hr))
+  {
+    Log("  failed to create MMDeviceEnumerator!");
+    return hr;
+  }
+
+  Log("Target end point: %S", m_wWASAPIPreferredDeviceId);
+
+  if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
+  {
+    UINT count = 0;
+    hr = devices->GetCount(&count);
+    if (FAILED(hr))
+    {
+      Log("  devices->GetCount failed: (0x%08x)", hr);
+      return hr;
+    }
+    
+    for (UINT i = 0; i < count; i++)
+    {
+      LPWSTR pwszID = NULL;
+      IMMDevice* endpoint = NULL;
+      hr = devices->Item(i, &endpoint);
+      if (SUCCEEDED(hr))
+      {
+        hr = endpoint->GetId(&pwszID);
+        if (SUCCEEDED(hr))
+        {
+          // Found the configured audio endpoint
+          if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+          {
+            enumerator->GetDevice(m_wWASAPIPreferredDeviceId, ppMMDevice);
+            SAFE_RELEASE(devices);
+            *ppMMDevice = endpoint;
+            CoTaskMemFree(pwszID);
+            pwszID = NULL;
+            return S_OK;
+          }
+          else
+          {
+            SAFE_RELEASE(endpoint);
+            CoTaskMemFree(pwszID);
+            pwszID = NULL;
+          }
+        }
+        else
+          Log("  devices->GetId failed: (0x%08x)", hr);
+      }
+      else
+        Log("  devices->Item failed: (0x%08x)", hr);
+
+      CoTaskMemFree(pwszID);
+      pwszID = NULL;
+    }
+  }
+
+  Log("Unable to find selected audio device, using the default end point!");
+  hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, ppMMDevice);
+
+  IPropertyStore* pProps = NULL;
+
+  if (SUCCEEDED((*ppMMDevice)->OpenPropertyStore(STGM_READ, &pProps)))
+  {
+    LPWSTR pwszID = NULL;
+    
+    PROPVARIANT varName;
+    PropVariantInit(&varName);
+
+    PROPVARIANT eventDriven;
+    PropVariantInit(&eventDriven);
+
+    PROPVARIANT speakerMask;
+    PropVariantInit(&speakerMask);
+
+    if (SUCCEEDED(pProps->GetValue(PKEY_Device_FriendlyName, &varName)) &&
+        SUCCEEDED(pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven)) &&
+        SUCCEEDED((*ppMMDevice)->GetId(&pwszID)))
+    {
+      pProps->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &speakerMask);
+      Log("Default audio endpoint: \"%S\" (%S) - pull mode: %d sprk mask: %d" ,varName.pwszVal, pwszID, eventDriven.intVal, speakerMask.uintVal);
+    }
+
+    CoTaskMemFree(pwszID);
+    pwszID = NULL;
+    PropVariantClear(&varName);
+    PropVariantClear(&eventDriven);
+    PropVariantClear(&speakerMask);
+    SAFE_RELEASE(pProps)
+  }
+
+  SAFE_RELEASE(devices);
+
+  return hr;
+}
+
+HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, HWND hDialog, bool pLog)
+{
+  USES_CONVERSION;
+
+  HRESULT hr = S_OK;
+
+  CComPtr<IMMDeviceEnumerator> enumerator;
+  Log("CWASAPIRenderFilter::GetAvailableAudioDevices");
+  hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+
+  if (FAILED(hr))
+  {
+    Log("   failed to get MMDeviceEnumerator");
+    return S_FALSE;
+  }
+
+  IMMDevice* pEndpoint = NULL;
+  IPropertyStore* pProps = NULL;
+  LPWSTR pwszID = NULL;
+
+  enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, ppMMDevices);
+  UINT count = 0;
+  hr = (*ppMMDevices)->GetCount(&count);
+
+  if (pLog || hDialog)
+  {
+    for (UINT i = 0; i < count; i++)
+    {
+      if ((*ppMMDevices)->Item(i, &pEndpoint) != S_OK)
+        break;
+
+      if (pEndpoint->GetId(&pwszID) != S_OK)
+        break;
+
+      if (pEndpoint->OpenPropertyStore(STGM_READ, &pProps) != S_OK)
+        break;
+
+      PROPVARIANT varName;
+      PropVariantInit(&varName);
+
+      PROPVARIANT eventDriven;
+      PropVariantInit(&eventDriven);
+
+      PROPVARIANT speakerMask;
+      PropVariantInit(&speakerMask);
+
+      if (pProps->GetValue(PKEY_Device_FriendlyName, &varName) != S_OK)
+        break;
+      
+      if (hDialog)
+      {
+        SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)W2T(varName.pwszVal));
+        if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+          SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, i, 0);
+      }
+
+      if (pLog)
+      {
+        Log(" ");
+        Log("Audio endpoint %d:", i);
+        Log("  %S", varName.pwszVal);
+        Log("  %S",  pwszID);
+
+        if (pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven) == S_OK)
+          Log("  supports pull mode: %d", eventDriven.intVal);
+        else
+          Log("  pull mode query failed!");
+
+        if (pProps->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &speakerMask) == S_OK)
+          Log("  speaker mask: %d", speakerMask.uintVal);
+        else
+          Log("  PhysicalSpeakers query failed!");
+      }
+
+      CoTaskMemFree(pwszID);
+      pwszID = NULL;
+      PropVariantClear(&varName);
+      PropVariantClear(&eventDriven);
+      PropVariantClear(&speakerMask);
+      SAFE_RELEASE(pProps)
+      SAFE_RELEASE(pEndpoint)
+    }
+    Log(" ");
+  }
+
+  return hr;
+}
+
+void AudioRendererSettings::SetAudioDevice(int setting)
+{
+  CComPtr<IMMDeviceEnumerator> enumerator;
+  IMMDeviceCollection* devices;
+  HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+
+  if (FAILED(hr))
+  {
+    Log("SetAudioDevice failed (0x%08x)", hr);
+    return;
+  }
+
+  if (GetAvailableAudioDevices(&devices, NULL, false) == S_OK)
+  {
+    UINT count = 0;
+    hr = devices->GetCount(&count);
+
+    IMMDevice* pEndpoint = NULL;
+    IPropertyStore* pProps = NULL;
+    LPWSTR pwszID = NULL;
+
+    hr = devices->Item(setting, &pEndpoint);
+    if (SUCCEEDED(hr))
+    {
+      hr = pEndpoint->GetId(&pwszID);
+      if (SUCCEEDED(hr))
+      {
+        // Found the selectde audio endpoint
+        wcsncpy(m_wWASAPIPreferredDeviceId, pwszID, MAX_REG_LENGTH);
+        
+        SAFE_RELEASE(devices);
+        SAFE_RELEASE(pEndpoint);
+        CoTaskMemFree(pwszID);
+        pwszID = NULL;
+      }
+      else
+        Log("  devices->GetId failed: (0x%08x)", hr);
+    }
+  }
+}
+
+HRESULT AudioRendererSettings::GetPages(CAUUID* pPages)
+{
+  if (!pPages) 
+    return E_POINTER;
+
+  pPages->cElems = 1;
+  pPages->pElems = (GUID*)CoTaskMemAlloc(sizeof(GUID));
+
+  if (!pPages->pElems) 
+    return E_OUTOFMEMORY;
+
+  pPages->pElems[0] = CLSID_MPARSettingsProp;
+
+  return S_OK;
+}
+
+int AudioRendererSettings::GetAC3EncodingMode()
+{
+  return m_lAC3Encoding;
+}
+
+void AudioRendererSettings::SetAC3EncodingMode(int mode)
+{
+  m_lAC3Encoding = mode;
+}
+
+bool AudioRendererSettings::GetLogSampleTimes()
+{
+  return m_bLogSampleTimes;
+}
+
+void AudioRendererSettings::SetLogSampleTimes(bool setting)
+{
+  m_bLogSampleTimes = setting;
+}
+
+bool AudioRendererSettings::GetEnableSyncAdjustment()
+{
+  return m_bEnableSyncAdjustment;
+}
+
+void AudioRendererSettings::SetEnableSyncAdjustment(bool setting)
+{
+  m_bEnableSyncAdjustment = setting;
+}
+
+AUDCLNT_SHAREMODE AudioRendererSettings::GetWASAPIMode()
+{
+  return m_WASAPIShareMode; 
+}
+
+void AudioRendererSettings::SetWASAPIMode(AUDCLNT_SHAREMODE setting)
+{
+  m_WASAPIShareMode = setting;
+}
+
+bool AudioRendererSettings::GetUseWASAPIEventMode()
+{
+  return m_bWASAPIUseEventMode;
+}
+
+void AudioRendererSettings::SetUseWASAPIEventMode(bool setting)
+{
+  m_bWASAPIUseEventMode = setting;
+}
+
+bool AudioRendererSettings::GetUseTimeStretching()
+{
+  return m_bUseTimeStretching;
+}
+
+void AudioRendererSettings::SetUseTimeStretching(bool setting)
+{
+  m_bUseTimeStretching = setting;
+}
+
+bool AudioRendererSettings::GetExpandMonoToStereo()
+{
+  return m_bExpandMonoToStereo;
+}
+
+void AudioRendererSettings::SetExpandMonoToStereo(bool setting)
+{
+  m_bExpandMonoToStereo = setting;
+}
+
+int AudioRendererSettings::GetAC3Bitrate()
+{
+  return m_AC3bitrate / 1000;
+}
+
+void AudioRendererSettings::SetAC3Bitrate(int setting)
+{
+  m_AC3bitrate = setting * 1000;
+}
+
+int AudioRendererSettings::GetSpeakerConfig()
+{
+  return m_lSpeakerConfig;
+}
+
+void AudioRendererSettings::SetSpeakerConfig(int setting)
+{
+  m_lSpeakerConfig = setting;
+}
+
+bool AudioRendererSettings::GetForceChannelMixing()
+{
+  return m_bForceChannelMixing;
+}
+
+void AudioRendererSettings::SetForceChannelMixing(bool setting)
+{
+  m_bForceChannelMixing = setting;
+}
+
+int AudioRendererSettings::GetAudioDelay()
+{
+  return m_lAudioDelay;
+}
+
+void AudioRendererSettings::SetAudioDelay(int setting)
+{
+  m_lAudioDelay = setting;
+}
+
+int AudioRendererSettings::GetSampleRate()
+{
+  return m_nForceSamplingRate;
+}
+
+void AudioRendererSettings::SetSampleRate(int setting)
+{
+  m_nForceSamplingRate = setting;
+}
+
+int AudioRendererSettings::GetBitDepth()
+{
+  return m_nForceBitDepth;
+}
+
+void AudioRendererSettings::SetBitDepth(int setting)
+{
+  m_nForceBitDepth = setting;
+}
+
+int AudioRendererSettings::GetResamplingQuality()
+{
+  return m_nResamplingQuality;
+}
+
+void AudioRendererSettings::SetResamplingQuality(int setting)
+{
+  m_nResamplingQuality = setting;
+}

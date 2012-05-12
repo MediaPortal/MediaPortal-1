@@ -70,6 +70,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
+  m_Settings.AddRef();
+
   m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_Settings.m_bHWBasedRefClock);
 
   if (!m_pClock)
@@ -394,24 +396,24 @@ STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void** p
 {
   if (riid == IID_IReferenceClock)
     return GetInterface(static_cast<IReferenceClock*>(m_pClock), ppv);
-
-  if (riid == IID_IAVSyncClock) 
+  else if (riid == IID_IAVSyncClock) 
     return GetInterface(static_cast<IAVSyncClock*>(this), ppv);
-
-  if (riid == IID_IMediaSeeking) 
+  else if (riid == IID_IMediaSeeking) 
     return GetInterface(static_cast<IMediaSeeking*>(this), ppv);
-
-  if (riid == IID_IBasicAudio)
+  else if (riid == IID_IBasicAudio)
     return GetInterface(static_cast<IBasicAudio*>(m_pVolumeHandler), ppv);
-
-  if (riid == IID_IAMFilterMiscFlags)
+  else if (riid == IID_ISpecifyPropertyPages)
+    return GetInterface(static_cast<ISpecifyPropertyPages*>(&m_Settings), ppv);
+  else if (riid == IID_IMPARSettings)
+    return GetInterface(static_cast<IMPARSettings*>(&m_Settings), ppv);
+  else if (riid == IID_IAMFilterMiscFlags)
   {
     *ppv = static_cast<IAMFilterMiscFlags*>(this);
     AddRef();
     return S_OK;
   }
 
-	return CBaseRenderer::NonDelegatingQueryInterface (riid, ppv);
+  return CBaseRenderer::NonDelegatingQueryInterface(riid, ppv);
 }
 
 HRESULT CMPAudioRenderer::SetMediaType(const CMediaType* pmt)
