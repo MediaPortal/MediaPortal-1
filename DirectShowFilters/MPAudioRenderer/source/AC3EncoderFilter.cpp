@@ -512,7 +512,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE* pData)
   }
 
   ASSERT(pOutData);
-  BYTE* buf = (BYTE*)alloca(m_nMaxCompressedAC3FrameSize); // temporary buffer
+  BYTE* buf = (BYTE*)malloc(m_nMaxCompressedAC3FrameSize); // temporary buffer
 
   int AC3length = ac3_encoder_frame(m_pEncoder, (short*)pData, buf, m_nMaxCompressedAC3FrameSize);
   nOffset += CreateAC3Bitstream(buf, AC3length, pOutData + nOffset);

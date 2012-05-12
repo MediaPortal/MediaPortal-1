@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "stdafx.h"
+
 #include "IAVSyncClock.h"
 #include "SynchCorrection.h"
 

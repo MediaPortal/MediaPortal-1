@@ -22,10 +22,6 @@
 #include "queuedaudiosink.h"
 #include "SyncClock.h"
 
-#define MPAR_S_NEED_DATA        ((HRESULT)0x00040201)
-#define MPAR_S_DROP_SAMPLE      ((HRESULT)0x00040202)
-#define MPAR_S_RENDER_SAMPLE    ((HRESULT)0x00040203)
-#define MPAR_S_WAIT_RENDER_TIME ((HRESULT)0x00040204)
 #define CLOCK_DATA_SIZE 10
 
 using namespace std;

@@ -15,7 +15,6 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
-#include <streams.h>  // CAutolock
 
 #include "alloctracing.h"
 
@@ -36,24 +35,26 @@ static CCritSec lock;  // lock for timer initialization (multiple threads are us
 #pragma warning(disable: 4723)
 __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
 {
-	// Declare 128bit storage
-	union {
-		unsigned long DW[4];
-    struct {
+  // Declare 128bit storage
+  union 
+  {
+    unsigned long DW[4];
+    struct 
+    {
       unsigned __int64 LowQW;
       unsigned __int64 HighQW;
     };
-	} var128, quotient;
-	// Change semantics for intermediate results for Full Div by renaming the vars
-	#define REMAINDER quotient
-	#define QUOTIENT var128
+  } var128, quotient;
+  // Change semantics for intermediate results for Full Div by renaming the vars
+  #define REMAINDER quotient
+  #define QUOTIENT var128
 
   bool negative = ((operant ^ multiplier ^ divider) & 0x8000000000000000LL) != 0;
 
-	// Take absolute values because algorithm is for unsigned only
-	operant		 = ABS64(operant);
-	multiplier = ABS64(multiplier);
-	divider		 = ABS64(divider);
+  // Take absolute values because algorithm is for unsigned only
+  operant     = ABS64(operant);
+  multiplier  = ABS64(multiplier);
+  divider     = ABS64(divider);
 
   // integer division by zero needs to be handled in the calling method
   if (divider == 0)
@@ -64,16 +65,12 @@ __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
   
   // Multiply
   if (multiplier == 0)
-  {
     return 0;
-  }
 
   var128.HighQW = 0;
 
   if (multiplier == 1)
-  {
     var128.LowQW = operant;
-  }
   else if (((multiplier | operant) & 0xFFFFFFFF00000000LL) == 0)
   {
     // 32*32 multiply
@@ -85,10 +82,9 @@ __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
     var128.LowQW = LowDW(operant) * LowDW(multiplier);
     unsigned __int64 tmp = var128.DW[1] + LowDW(operant) * HighDW(multiplier);
     unsigned __int64 tmp2 = tmp + HighDW(operant) * LowDW(multiplier);
-    if(tmp2 < tmp)
-    {
+    if (tmp2 < tmp)
       var128.DW[3]++;
-    }
+
     var128.DW[1] = LowDW(tmp2);
     var128.DW[2] = HighDW(tmp2);
     var128.HighQW += HighDW(operant) * HighDW(multiplier);
@@ -143,13 +139,9 @@ __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider)
 
   // Apply Sign
   if (negative)
-  {
-	  return -(__int64)var128.LowQW;
-  }
+    return -(__int64)var128.LowQW;
   else
-  {
     return (__int64)var128.LowQW;
-  }
 }
 
 
@@ -158,11 +150,12 @@ LONGLONG GetCurrentTimestamp()
   LONGLONG result;
   if (!g_bTimerInitializer)
   {
-    CAutoLock lock(&lock);
+    CAutoLock timestmapLock(&lock);
     DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 1);
     g_bQPCAvail = QueryPerformanceFrequency((LARGE_INTEGER*)&g_lPerfFrequency);
     SetThreadAffinityMask(GetCurrentThread(), oldmask);
     g_bTimerInitializer = true;
+
     if( g_lPerfFrequency.QuadPart == 0)
     {
       // Bug in HW? Frequency cannot be zero
@@ -180,9 +173,8 @@ LONGLONG GetCurrentTimestamp()
     result = cMulDiv64(tics.QuadPart, 10000000, g_lPerfFrequency.QuadPart); // to keep accuracy
   }
   else
-  {
     result = timeGetTime() * 10000; // ms to 100ns units
-  }
+
   return result;
 }
 

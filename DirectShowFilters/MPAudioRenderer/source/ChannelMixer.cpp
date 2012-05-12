@@ -17,7 +17,6 @@
 #include "stdafx.h"
 #include "Globals.h"
 #include "ChannelMixer.h"
-#include "..\AE_mixer\AEChannelInfo.h"
 
 #include "alloctracing.h"
 
@@ -26,7 +25,7 @@ CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings) :
   m_bPassThrough(false),
   m_rtInSampleTime(0),
   m_pSettings(pSettings),
-  m_rtNextIncomingSampleTime(0)  
+  m_rtNextIncomingSampleTime(0)
 {
   m_pRemap = new CAERemap();
 }

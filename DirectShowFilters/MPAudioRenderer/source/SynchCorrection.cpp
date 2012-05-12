@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdafx.h"
+
 #include "SynchCorrection.h"
 #include "AudioClockTracker.h"
-#include <stddef.h>
-#include <stdarg.h>
 
 #include "alloctracing.h"
 

@@ -18,14 +18,11 @@
 
 #include "stdafx.h"
 
-#include <atlbase.h>
-#include <shlobj.h>
-#include <queue>
-
-#include "Globals.h"
 #include "MpAudioRenderer.h"
 #include "Settings.h"
 #include "SettingsProp.h"
+
+#include <shlobj.h>
 
 #include "alloctracing.h"
 
@@ -141,7 +138,7 @@ string GetLogLine()
 
 UINT CALLBACK LogThread(void* param)
 {
-  SetThreadName(-1, "LoggerThread");
+  SetThreadName(0, "LoggerThread");
 
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, "log");

@@ -200,11 +200,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">.\obj\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">.\bin\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|Win32'">.\obj\Debug\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug Unicode|x64'">$(Platform)\$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">.\obj\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">.\bin\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">.\obj\Release\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release Unicode|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">$(Platform)\$(Configuration)\</OutDir>
@@ -636,7 +636,6 @@
     <ClInclude Include="AE_mixer\AEAudioFormat.h" />
     <ClInclude Include="AE_mixer\AEChannelInfo.h" />
     <ClInclude Include="AE_mixer\AERemap.h" />
-    <ClInclude Include="AE_mixer\AEUtil.h" />
     <ClInclude Include="AE_mixer\StdString.h" />
     <ClInclude Include="source\AC3EncoderFilter.h" />
     <ClInclude Include="source\BaseAudioSink.h" />

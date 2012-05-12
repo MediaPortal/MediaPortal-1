@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ThreadDecouplingFilter.h"
+#include "Globals.h"
 
 #include "alloctracing.h"
 

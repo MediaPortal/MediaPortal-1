@@ -15,14 +15,12 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
 #include "stdafx.h"
-#include <MMReg.h>  //must be before other Wasapi headers
-#include <ks.h>
-#include <ksmedia.h>
 #include "BaseAudioSink.h"
 #include "Settings.h"
-#include "IRenderFilter.h"
 #include "..\AE_mixer\AERemap.h"
+#include "..\AE_mixer\AEChannelInfo.h"
 
 class CChannelMixer : public CBaseAudioSink
 {
@@ -66,6 +64,4 @@ protected:
   REFERENCE_TIME m_rtInSampleTime;
 
   AudioRendererSettings* m_pSettings;
-  IRenderFilter* m_pRenderer;
 };
-

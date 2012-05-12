@@ -543,10 +543,10 @@ void AudioRendererSettings::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey,
     Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
 }
 
-bool AudioRendererSettings::AllowedValue(unsigned int allowedRates[], unsigned int size, int rate)
+bool AudioRendererSettings::AllowedValue(unsigned int allowedRates[], unsigned int size, unsigned int rate)
 {
   bool rateOk = false;
-  for (int i = 0; i < size; i++)
+  for (unsigned int i = 0; i < size; i++)
   {
     if (allowedRates[i] == rate)
     {
@@ -820,7 +820,6 @@ void AudioRendererSettings::SetAudioDevice(int setting)
     hr = devices->GetCount(&count);
 
     IMMDevice* pEndpoint = NULL;
-    IPropertyStore* pProps = NULL;
     LPWSTR pwszID = NULL;
 
     hr = devices->Item(setting, &pEndpoint);

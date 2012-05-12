@@ -20,6 +20,7 @@
  *
  */
 
+#include "..\source\stdafx.h"
 #include "AEAudioFormat.h"
 
 class CAERemap {

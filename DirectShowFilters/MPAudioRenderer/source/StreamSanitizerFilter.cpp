@@ -113,8 +113,6 @@ HRESULT CStreamSanitizer::PutSample(IMediaSample *pSample)
   }
 
   bool bNextSampleTimeCalculated = false;
-  long nOffset = 0;
-  long cbSampleData = pSample->GetActualDataLength();
   BYTE *pData = NULL;
   REFERENCE_TIME rtStop = 0;
   REFERENCE_TIME rtStart = 0;
@@ -158,13 +156,13 @@ HRESULT CStreamSanitizer::PutSample(IMediaSample *pSample)
             UINT32 bytesSilence = min(gapInBytes, m_pNextOutSample->GetSize());
             bytesSilence -= bytesSilence % m_pInputFormat->Format.nBlockAlign;
 
-            BYTE* pData = NULL;
-            hr = m_pNextOutSample->GetPointer(&pData);
+            BYTE* pSampleData = NULL;
+            hr = m_pNextOutSample->GetPointer(&pSampleData);
 
             if (FAILED(hr))
               break;
 
-            ZeroMemory(pData, bytesSilence);
+            ZeroMemory(pSampleData, bytesSilence);
             m_pNextOutSample->SetActualDataLength(bytesSilence);
 
             gapInBytes -= bytesSilence;
@@ -178,8 +176,8 @@ HRESULT CStreamSanitizer::PutSample(IMediaSample *pSample)
         }
         else
         {
-          BYTE* pData = NULL;
-          pSample->GetPointer(&pData);
+          BYTE* pSampleData = NULL;
+          pSample->GetPointer(&pSampleData);
           UINT32 nLength = pSample->GetActualDataLength();
           
           if (gapInBytes >= nLength)
@@ -196,7 +194,7 @@ HRESULT CStreamSanitizer::PutSample(IMediaSample *pSample)
           pSample->SetTime(&rtStart, &rtStop);
           pSample->SetActualDataLength(nNewLength);
 
-          memmove(pData, pData + gapInBytes, nNewLength);
+          memmove(pSampleData, pSampleData + gapInBytes, nNewLength);
 
           m_rtNextIncomingSampleTime = rtStop;
           bNextSampleTimeCalculated = true;

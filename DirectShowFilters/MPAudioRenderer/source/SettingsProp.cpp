@@ -106,9 +106,9 @@ HRESULT CSettingsProp::OnActivate()
   // AC3 bitrate
   SendDlgItemMessage(m_Dlg, IDC_AC3_BITRATE, CB_RESETCONTENT, 0, 0);
   int numOfBitrates = sizeof(gAllowedAC3bitrates) / sizeof(int);
-  int AC3Bitrate = m_pSettings->GetAC3Bitrate();
+  unsigned int AC3Bitrate = m_pSettings->GetAC3Bitrate();
 
-  for (int i = 0; i < numOfBitrates; i++) 
+  for (unsigned int i = 0; i < numOfBitrates; i++) 
   {
     sprintf_s(settingString, "%d", gAllowedAC3bitrates[i]);
     SendDlgItemMessage(m_Dlg, IDC_AC3_BITRATE, CB_ADDSTRING, 0, (LPARAM)settingString);
@@ -156,10 +156,10 @@ HRESULT CSettingsProp::OnActivate()
   SendDlgItemMessage(m_Dlg, IDC_SAMPLERATE, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(m_Dlg, IDC_SAMPLERATE, CB_ADDSTRING, 0, (LPARAM)stringAuto);
   
-  int nNumOfSampleRates = sizeof(gAllowedSampleRates) / sizeof(int);
-  int nSampleRate = m_pSettings->GetSampleRate();
+  unsigned int nNumOfSampleRates = sizeof(gAllowedSampleRates) / sizeof(int);
+  unsigned int nSampleRate = m_pSettings->GetSampleRate();
 
-  for (int i = 0; i < nNumOfSampleRates; i++)
+  for (unsigned int i = 0; i < nNumOfSampleRates; i++)
   {
     sprintf_s(settingString, "%d", gAllowedSampleRates[i]);
     SendDlgItemMessage(m_Dlg, IDC_SAMPLERATE, CB_ADDSTRING, 0, (LPARAM)settingString);
@@ -186,9 +186,9 @@ HRESULT CSettingsProp::OnActivate()
   SendDlgItemMessage(m_Dlg, IDC_SPEAKER_SETUP, CB_RESETCONTENT, 0, 0);
   
   int nNumOfSpeakerConfigs = sizeof(speakerConfigs) / sizeof(int);
-  int nSpeakerSetup = m_pSettings->GetSpeakerConfig();
+  unsigned int nSpeakerSetup = m_pSettings->GetSpeakerConfig();
 
-  for (int i = 0; i < nNumOfSpeakerConfigs; i++)
+  for (unsigned int i = 0; i < nNumOfSpeakerConfigs; i++)
   {
     int nConfig = speakerConfigs[i];
     sprintf_s(settingString, "%d", nConfig);
@@ -303,9 +303,6 @@ HRESULT CSettingsProp::OnApplyChanges()
 
 INT_PTR CSettingsProp::OnReceiveMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  LRESULT lValue = 0;
-  BOOL bValue = 0;
-
   switch (uMsg)
   {
     case WM_COMMAND:

@@ -197,7 +197,7 @@ HRESULT CQueuedAudioSink::WaitForEvents(DWORD dwTimeout, vector<HANDLE>* pEvents
   HRESULT hr = S_FALSE;
 
   if (result == WAIT_TIMEOUT)
-    hr = WAIT_TIMEOUT;
+    hr = MPAR_S_WAIT_TIMED_OUT;
   else if (result != WAIT_FAILED)
     hr = (*waitObjects)[result];
 
@@ -214,7 +214,7 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
 {
   HRESULT hr = WaitForEvents(dwTimeout, pHandles, pWaitObjects);
 
-  if (hr == WAIT_TIMEOUT || hr == S_FALSE)
+  if (hr == MPAR_S_WAIT_TIMED_OUT || hr == S_FALSE)
   {
     if (pSample && *pSample && !handleOOBOnly)
     {
@@ -234,7 +234,7 @@ HRESULT CQueuedAudioSink::GetNextSampleOrCommand(AudioSinkCommand* pCommand, IMe
       if (pCommand)
         *pCommand = entry.Command;
       
-      m_OOBInputQueue.pop();      
+      m_OOBInputQueue.pop();
 
       if (m_OOBInputQueue.empty())
         ResetEvent(m_hOOBCommandAvailableEvent);

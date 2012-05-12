@@ -13,6 +13,9 @@
 #pragma warning(disable:4101)
 #pragma warning(disable:4267)
 
+// http://connect.microsoft.com/VisualStudio/feedback/details/621653/including-stdint-after-intsafe-generates-warnings
+#pragma warning(disable:4005)
+
 #ifdef _DEBUG
    #define _CRTDBG_MAP_ALLOC // include Microsoft memory leak detection procedures
 

@@ -172,9 +172,7 @@ HRESULT CTimeStretchFilter::CheckSample(IMediaSample* pSample)
   if (bFormatChanged)
   {
     uint unprocessedSamplesBefore = numUnprocessedSamples();
-    UINT32 outFrames = numSamples();
-    
-    uint zeros = flushEx();
+     uint zeros = flushEx();
 
     uint unprocessedSamplesAfter = numUnprocessedSamples();
     UINT32 outFramesAfter = numSamples();
@@ -256,7 +254,6 @@ HRESULT CTimeStretchFilter::SetFormat(const WAVEFORMATEXTENSIBLE *pwfe)
     // for syncing mono channels like LFE and Center
     
     // Now start adding channels
-    bool isFloat = (pwfe->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
     // First try all speaker pairs
     for (SpeakerPair *pPair = PairedSpeakers; pPair->dwLeft; pPair++)
     {
@@ -373,7 +370,7 @@ DWORD CTimeStretchFilter::ThreadProc()
 {
   Log("CTimeStretchFilter::timestretch thread - starting up - thread ID: %d", m_ThreadId);
   
-  SetThreadName(-1, "TimeStretchFilter");
+  SetThreadName(0, "TimeStretchFilter");
 
   AudioSinkCommand command;
   CComPtr<IMediaSample> sample;
@@ -429,7 +426,7 @@ DWORD CTimeStretchFilter::ThreadProc()
         CheckStreamContinuity(sample);
         m_nSampleNum++;
 
-        HRESULT hr = sample->GetPointer(&pMediaBuffer);
+        hr = sample->GetPointer(&pMediaBuffer);
 
         if ((hr == S_OK) && m_pMemAllocator)
         {
@@ -450,7 +447,6 @@ DWORD CTimeStretchFilter::ThreadProc()
 
           UINT32 nInFrames = (size / m_pOutputFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
           UINT32 nOutFrames = numSamples();
-          UINT32 nOutFramesTotal = 0;
           
           CreateOutput(nInFrames, nOutFrames, bias, adjustment, AVMult, false);
         }

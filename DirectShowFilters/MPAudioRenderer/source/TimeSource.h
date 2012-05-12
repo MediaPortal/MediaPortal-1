@@ -16,5 +16,7 @@
 //
 // cMulDiv64 based on Richard van der Wal's ASM version (R.vdWal@xs4all.nl)
 
+#pragma once
+
 LONGLONG GetCurrentTimestamp();
  __int64 _stdcall cMulDiv64(__int64 operant, __int64 multiplier, __int64 divider);

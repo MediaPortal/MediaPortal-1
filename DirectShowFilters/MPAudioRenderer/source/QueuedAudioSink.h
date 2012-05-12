@@ -20,9 +20,6 @@
 #include <vector>
 #include "BaseAudioSink.h"
 
-#define MPAR_S_THREAD_STOPPING ((HRESULT)0x00040200)
-#define MPAR_S_OOB_COMMAND_AVAILABLE ((HRESULT)0x00040201)
-
 using namespace std;
 
 class CQueuedAudioSink : public CBaseAudioSink

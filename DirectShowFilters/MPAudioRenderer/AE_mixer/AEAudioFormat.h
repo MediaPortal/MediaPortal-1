@@ -20,6 +20,8 @@
  *
  */
 
+#include "..\source\stdafx.h"
+
 #include "AEChannelInfo.h"
 
 /**

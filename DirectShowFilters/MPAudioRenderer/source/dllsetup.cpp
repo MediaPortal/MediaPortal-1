@@ -126,6 +126,10 @@ AMovieSetupRegisterServer( CLSID   clsServer
   HRESULT hr = StringFromGUID2( clsServer
                               , szCLSID
                               , CHARS_IN_GUID );
+
+  if (FAILED(hr))
+    return hr;
+
   //ASSERT( SUCCEEDED(hr) );
 
   // create key

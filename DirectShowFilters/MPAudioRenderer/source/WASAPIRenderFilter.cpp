@@ -615,7 +615,7 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 {
   Log("CWASAPIRenderFilter::Render thread - starting up - thread ID: %d", m_ThreadId);
   
-  SetThreadName(-1, "WASAPI-renderer");
+  SetThreadName(0, "WASAPI-renderer");
 
   // Polling delay
   LARGE_INTEGER liDueTime; 
@@ -1108,9 +1108,12 @@ void CWASAPIRenderFilter::CancelDataEvent()
 {
   if (!m_pSettings->m_bWASAPIUseEventMode)
   {
-    HRESULT hr = CancelWaitableTimer(m_hDataEvent);
-    if (FAILED(hr))
-      Log("WASAPIRenderFilter::CancelDataEvent - CancelWaitableTimer failed: (0x%08x)", hr);
+    CancelWaitableTimer(m_hDataEvent);
+    if (CancelWaitableTimer(m_hDataEvent) == 0)
+    {
+      DWORD error = GetLastError();
+      Log("WASAPIRenderFilter::CancelDataEvent - CancelWaitableTimer failed: %d", error);
+    }
   }
 }
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include <stdint.h>
+#include "..\source\stdafx.h"
 #include "StdString.h"
 
 /**

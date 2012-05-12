@@ -16,9 +16,8 @@
 
 #pragma once
 
-#include <dsound.h>
-#include <MMReg.h>  //must be before other Wasapi headers
-#include <strsafe.h>
+#include "stdafx.h"
+
 #include <mmdeviceapi.h>
 #include <Avrt.h>
 #include <audioclient.h>
@@ -188,8 +187,8 @@ public:
 
   int m_nResamplingQuality;
 
-  int m_nForceSamplingRate;
-  int m_nForceBitDepth;
+  DWORD m_nForceSamplingRate;
+  DWORD m_nForceBitDepth;
 
   bool m_bReleaseDeviceOnStop;
   
@@ -207,7 +206,7 @@ private:
   void ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   void WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
 
-  bool AllowedValue(unsigned int allowedRates[], unsigned int size, int rate);
+  bool AllowedValue(unsigned int allowedRates[], unsigned int size, unsigned int rate);
   unsigned int ChannelCount(unsigned int channelMask);
 
   // TODO lock against this for dynamic setting changes

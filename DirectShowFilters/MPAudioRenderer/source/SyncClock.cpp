@@ -19,8 +19,8 @@
 #pragma once
 
 #include "stdafx.h"
-#include "SyncClock.h"
 #include "MpAudioRenderer.h"
+#include "SyncClock.h"
 #include "TimeSource.h"
 
 #include "alloctracing.h"
@@ -137,9 +137,6 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   UINT64 hwClock(0);
   UINT64 hwQpc(0);
-
-  UINT64 hwClockEnd(0);
-  UINT64 hwQpcEnd(0);
 
   HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
 

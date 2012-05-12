@@ -1,4 +1,7 @@
 #pragma once
+
+#include "..\source\stdafx.h"
+
 #include <string>
 #include <stdint.h>
 #include <vector>

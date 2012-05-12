@@ -50,3 +50,13 @@ extern HRESULT CopyWaveFormatEx(WAVEFORMATEXTENSIBLE** dst, const WAVEFORMATEXTE
 extern HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src);
 
 extern void SetThreadName(DWORD dwThreadID, char* threadName);
+
+#define MPAR_S_THREAD_STOPPING        ((HRESULT)0x00040200)
+#define MPAR_S_OOB_COMMAND_AVAILABLE  ((HRESULT)0x00040201)
+
+#define MPAR_S_NEED_DATA              ((HRESULT)0x00040301)
+#define MPAR_S_DROP_SAMPLE            ((HRESULT)0x00040302)
+#define MPAR_S_RENDER_SAMPLE          ((HRESULT)0x00040303)
+#define MPAR_S_WAIT_RENDER_TIME       ((HRESULT)0x00040304)
+
+#define MPAR_S_WAIT_TIMED_OUT         ((HRESULT)0x00040400)
