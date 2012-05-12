@@ -43,12 +43,9 @@ public:
 
   virtual void putBuffer(const BYTE *pInBuffer, int numSamples);
   virtual void putMediaSample(IMediaSample *pMediaSample);
-  virtual void queueMediaSample(IMediaSample *pMediaSample);
 
   virtual int getBuffer(BYTE *pOutBuffer, int maxSamples);
-  //virtual void queueOutputBuffer(IMediaSample *pSample, DWORD dwSeqNo);
 
-  //bool SetFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
   bool SetInputFormat(int frameSize, int bytesPerSample);
   void SetInputChannels(int leftOffset, int rightOffset = 0);
   bool SetOutputFormat(int frameSize, int bytesPerSample);
@@ -56,7 +53,6 @@ public:
   bool SetupFormats();
 
   uint numChannels()  { return channels; };
-
 
 protected:
   typedef void (CSoundTouchEx::*DeInterleaveFunc)(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
@@ -87,16 +83,6 @@ protected:
   // Temporary input buffer
   static const uint BATCH_LEN = 0x4000;
   soundtouch::SAMPLETYPE m_tempBuffer[2*BATCH_LEN];
-
-  // Threading 
-  //static DWORD WINAPI ResampleThreadEntryPoint(LPVOID lpParameter);
-  //DWORD ResampleThread();
-  DWORD m_dwResampleThreadId;
-  HANDLE m_hResampleThread;
-
-  HANDLE m_hInSampleArrivedEvent;
-  HANDLE m_hStopResampleThreadEvent;
-  //HANDLE m_hWaitResampleThreadToExitEvent;
 
   // internal functions to separate/merge streams out of sample buffers
   virtual void StereoDeInterleave(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);

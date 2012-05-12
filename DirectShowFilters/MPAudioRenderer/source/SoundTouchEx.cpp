@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,12 +25,6 @@
 
 
 CSoundTouchEx::CSoundTouchEx()
-: m_hResampleThread(NULL)
-, m_dwResampleThreadId(0)
-, m_hInSampleArrivedEvent(NULL)
-, m_hStopResampleThreadEvent(NULL)
-//, m_hWaitResampleThreadToExitEvent(NULL)
-
 {
   // default to stereo
   m_nInFrameSize = 4;
@@ -44,165 +38,13 @@ CSoundTouchEx::CSoundTouchEx()
   m_nOutLeftOffset = 0;
   m_nOutRightOffset = 2;
   m_pfnInterleave = &CSoundTouchEx::StereoInterleave;
-
-  m_hInSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
-  m_hStopResampleThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
-  //m_hWaitResampleThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
-
 }
 
 CSoundTouchEx::~CSoundTouchEx() 
 {
 }
 
-// Resampling thread support
-
-bool CSoundTouchEx::StartResampling()
-{
-//  m_hResampleThread = CreateThread(0, 0, CSoundTouchEx::ResampleThreadEntryPoint, (LPVOID)this, 0, &m_dwResampleThreadId);
-  return m_hResampleThread != NULL;
-}
-
-bool CSoundTouchEx::StopResampling()
-{
-  if (m_hResampleThread == NULL)
-    return false;
-
-  SetEvent(m_hStopResampleThreadEvent);
-  WaitForSingleObject(m_hResampleThread, INFINITE);
-  CloseHandle(m_hResampleThread);
-  m_hResampleThread = NULL;
-
-  return true;
-}
-
-/*
-DWORD WINAPI CSoundTouchEx::ResampleThreadEntryPoint(LPVOID lpParameter)
-{
-  return ((CSoundTouchEx *)lpParameter)->ResampleThread();
-}
-
-DWORD CSoundTouchEx::ResampleThread()
-{
-  Log("Resampler thread - starting up - thread ID: %d", m_dwResampleThreadId);
-  
-  HRESULT hr = S_OK;
-
-  // These are wait handles for the thread stopping and new sample arrival
-  HANDLE handles[2];
-  handles[0] = m_hStopResampleThreadEvent;
-  handles[1] = m_hInSampleArrivedEvent;
-
-  CComPtr<IMediaSample> outSample = NULL;
-  UINT nOutSampleOffset = 0;
-  DWORD dwOutSampleSeqNo = 0;
-
-  while(true)
-  {
-    // Check event for stop thread
-    if (WaitForSingleObject(m_hStopResampleThreadEvent, 0) == WAIT_OBJECT_0)
-    {
-      Log("Resampler thread - closing down - thread ID: %d", m_dwResampleThreadId);
-      //SetEvent(m_hWaitThreadToExitEvent);
-      return 0;
-    }
-
-    CComPtr<IMediaSample> sample = NULL;
-    {
-      bool waitForData = false;
-      {
-        CAutoLock sampleQueueLock(&m_InSampleQueueLock);
-        if (m_InSampleQueue.empty())
-        {
-          // Make sure that we wont fall thru with the previous sample's 
-          // arrival event in the WaitForMultipleObjects stage 
-          ResetEvent(m_hInSampleArrivedEvent);
-
-          // Actual waiting beeds to be done outside the scope of sampleQueueLock 
-          // since we would be creating a deadlock otherwise 
-          waitForData = true;
-        }
-      }
-
-      if (waitForData)
-      {
-        // 1) No data was available, waiting until at least one sample is present
-        // 2) Exit requested for the thread
-        DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
-        if (result == WAIT_OBJECT_0)
-        {
-          Log("Resampler thread - closing down - thread ID: %d", m_dwResampleThreadId);
-          //SetEvent(m_hWaitThreadToExitEvent);
-          return 0;
-        }
-        else if (result == WAIT_OBJECT_0 + 1)
-        {
-          // new sample ready
-        }
-        else
-        {
-          DWORD error = GetLastError();
-          Log("Resampler thread - WaitForMultipleObjects failed: %d", error);
-        }
-      }
-
-      { // Fetch one sample
-        CAutoLock sampleQueueLock(&m_InSampleQueueLock);
-        if (!m_InSampleQueue.empty())
-        {
-          sample = m_InSampleQueue.front();
-          m_InSampleQueue.erase(m_InSampleQueue.begin());
-        }
-      }
-    }
-
-    if (sample)
-    {
-      BYTE *pMediaBuffer = NULL;
-      long size = sample->GetActualDataLength();
-      hr = sample->GetPointer(&pMediaBuffer);
-      
-      if (hr == S_OK)
-      {
-        // Process the sample 
-        putBuffer(pMediaBuffer, size / m_nInFrameSize);
-        
-
-        m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
-        if (outSample)
-        {
-          BYTE *pMediaBufferOut = NULL;
-          outSample->GetPointer(&pMediaBufferOut);
-          
-          if (pMediaBufferOut)
-          {
-            unsigned int sampleLength = numSamples();
-            int maxBufferSamples = OUT_BUFFER_SIZE/m_nOutFrameSize;
-            if (sampleLength > maxBufferSamples)
-              sampleLength = maxBufferSamples;
-            outSample->SetActualDataLength(sampleLength * m_nOutFrameSize);
-            receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
-
-            { // lock that the playback thread wont access the queue at the same time
-              CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
-              m_sampleOutQueue.push_back(outSample);
-            }
-          }
-        }
-      }
-      
-      // We aren't using the sample anymore (AddRef() is done when sample arrives)
-      //sample->Release();
-    }
-  }
-  
-  Log("Resampler thread - closing down - thread ID: %d", m_dwResampleThreadId);
-  return 0;
-}
-*/
-
 // Queue Handling
-
 void CSoundTouchEx::putBuffer(const BYTE *pInBuffer, int numSamples)
 {
   int inSamplesRemaining = numSamples;
@@ -226,19 +68,6 @@ void CSoundTouchEx::putMediaSample(IMediaSample *pMediaSample)
 
   if (hr == S_OK)
     putBuffer(pMediaBuffer, size / m_nInFrameSize);
-}
-
-void CSoundTouchEx::queueMediaSample(IMediaSample *pMediaSample)
-{
-  // TODO: code to handle queued media samples
-  CAutoLock cQueueLock(&m_InSampleQueueLock);
-  
-  //pMediaSample->AddRef();
-  m_InSampleQueue.push_back(pMediaSample);
-
-  // Signal to the thread that there is new sample available
-  SetEvent(m_hInSampleArrivedEvent);
-  //return true;
 }
 
 int CSoundTouchEx::getBuffer(BYTE *pOutBuffer, int maxSamples)
