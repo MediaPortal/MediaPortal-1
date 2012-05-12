@@ -126,11 +126,12 @@ CCritSec m_qLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
 HANDLE m_hLogger = NULL;
+CAMEvent m_eLog;
 
 string GetLogLine()
 {
   CAutoLock lock(&m_qLock);
-  if ( m_logQueue.size() == 0 )
+  if (m_logQueue.size() == 0)
     return "";
 
   string ret = m_logQueue.front();
@@ -144,26 +145,33 @@ UINT CALLBACK LogThread(void* param)
 
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, "log");
-  while (m_bLoggerRunning) 
+
+  HANDLE handles[2];
+  handles[0] = &m_eLog;
+  handles[1] = m_hLogger;
+
+  while (m_bLoggerRunning)
   {
-    if (m_logQueue.size() > 0) 
+    if (m_logQueue.size() > 0)
     {
-      FILE* fp = fopen(fileName,"a+");
-      if (fp != NULL)
+      FILE* pFile = fopen(fileName, "a+");
+      if (pFile)
       {
         SYSTEMTIME systemTime;
         GetLocalTime(&systemTime);
         string line = GetLogLine();
         while (!line.empty())
         {
-          fprintf(fp, "%s", line.c_str());
+          fprintf(pFile, "%s", line.c_str());
           line = GetLogLine();
         }
-        fclose(fp);
+        fclose(pFile);
       }
     }
-    Sleep(1000); // TODO use event & timer so the graph stop wont have 0 to 1 second delay
+    m_eLog.Reset();
+    WaitForMultipleObjects(2, handles, false, INFINITE);
   }
+
   return 0;
 }
 
@@ -179,12 +187,12 @@ void StopLogger()
   if (m_hLogger)
   {
     m_bLoggerRunning = FALSE;
-    WaitForSingleObject(m_hLogger, INFINITE);	
+    WaitForSingleObject(m_hLogger, INFINITE);
     m_hLogger = NULL;
   }
 }
 
-void Log(const char *fmt, ...) 
+void Log(const char *fmt, ...)
 {
   static CCritSec lock;
   va_list ap;
@@ -214,8 +222,11 @@ void Log(const char *fmt, ...)
     systemTime.wMilliseconds,
     GetCurrentThreadId(),
     buffer);
+
   CAutoLock l(&m_qLock);
+
   m_logQueue.push((string)msg);
+  m_eLog.Set();
 }
 
 HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
@@ -382,7 +393,6 @@ HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE** dst, WAVEFORMATEX* src)
 
   return S_OK;
 }
-
 
 // http://blogs.msdn.com/b/stevejs/archive/2005/12/19/505815.aspx
 
