@@ -35,6 +35,24 @@ namespace TvLibrary.Channels
     #endregion
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="DVBIPChannel"/> class.
+    /// </summary>
+    public DVBIPChannel()
+      : base()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVBIPChannel"/> class using an existing instance.
+    /// </summary>
+    /// <param name="channel">The chan</param>
+    public DVBIPChannel(DVBIPChannel channel)
+      : base(channel)
+    {
+      _url = channel.Url;
+    }
+
+    /// <summary>
     /// URL of channel
     /// </summary>
     public string Url

@@ -45,7 +45,6 @@ namespace TvLibrary.Implementations.DVB
     private readonly int _decryptLimit;
 
     private readonly CamType _camType = CamType.Default;
-    private readonly DiSEqCMotor _diSEqCMotor;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
 
     private readonly ICiMenuActions _ciMenu;
@@ -89,10 +88,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="id">The id.</param>
     public void AddSubChannel(int id)
     {
-      if (!_mapSubChannels.ContainsKey(id))
+      /*if (!_mapSubChannels.ContainsKey(id))
       {
         _mapSubChannels[id] = new ConditionalAccessContext();
-      }
+      }*/
     }
 
     /// <summary>
@@ -101,7 +100,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="id">The id.</param>
     public void FreeSubChannel(int id)
     {
-      if (_mapSubChannels.ContainsKey(id))
+      /*if (_mapSubChannels.ContainsKey(id))
       {
         Log.Log.WriteFile("FreeSubChannel CA: freeing sub channel : {0}", id);
         _mapSubChannels.Remove(id);
@@ -110,40 +109,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("FreeSubChannel CA: tried to free non existing sub channel : {0}", id);
         return;
-      }
-    }
-
-    /// <summary>
-    /// Gets a value indicating whether we are allowed to stop the graph
-    /// Some devices like the technotrend cards have a very long start up time
-    /// Stopping/starting graphs would mean using these cards is not very userfriendly
-    /// </summary>
-    /// <value><c>true</c> if allowed to stop graph; otherwise, <c>false</c>.</value>
-    public bool AllowedToStopGraph
-    {
-      get
-      {
-        //if (_technoTrend != null)
-        //{
-        //  return false;
-        //}
-        /*if (_twinhan != null)
-        {
-          //if (_twinhan.IsCamPresent())
-            return false;
-        }*/
-
-        return true;
-      }
-    }
-
-    /// <summary>
-    /// Gets the interface for controlling the DiSeQC motor.
-    /// </summary>
-    /// <value>IDiSEqCMotor.</value>
-    public IDiSEqCMotor DiSEqCMotor
-    {
-      get { return _diSEqCMotor; }
+      }*/
     }
 
     /// <summary>
@@ -153,32 +119,6 @@ namespace TvLibrary.Implementations.DVB
     {
       return true;
     }
-
-    ///<summary>
-    /// Called when the graph is started
-    ///</summary>
-    ///<param name="servicedId">The service id</param>
-    ///<returns></returns>
-    public bool OnRunGraph(int servicedId)
-    {
-      /*if (_digitalEveryWhere != null)
-      {
-        _digitalEveryWhere.OnStartGraph();
-      }*/
-      return true;
-    }
-
-    /// <summary>
-    /// Called when the graph is stopped
-    /// </summary>
-    public void OnStopGraph()
-    {
-      /*if (_digitalEveryWhere != null)
-      {
-        _digitalEveryWhere.OnStopGraph();
-      }*/
-    }
-
 
     /// <summary>
     /// CA enabled or disabled ?
@@ -321,61 +261,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Send the appropriate DiSEqC 1.0 switch command to switch to a given channel.
-    /// </summary>
-    /// <param name="parameters">The scan parameters.</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
-    {
-      bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
-      ToneBurst toneBurst = ToneBurst.Off;
-      bool successDiseqc = true;
-      bool successTone = true;
-      if (channel.DisEqc == DisEqcType.SimpleA)
-      {
-        toneBurst = ToneBurst.ToneBurst;
-      }
-      else if (channel.DisEqc == DisEqcType.SimpleB)
-      {
-        toneBurst = ToneBurst.DataBurst;
-      }
-      else if (channel.DisEqc != DisEqcType.None)
-      {
-        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-        bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
-                              (channel.Polarisation == Polarisation.CircularL));
-        byte command = 0xf0;
-        command |= (byte)(isHighBand ? 1 : 0);
-        command |= (byte)((isHorizontal) ? 2 : 0);
-        command |= (byte)((antennaNr - 1) << 2);
-        try
-        {
-          //successDiseqc = _anysee.SendCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
-        }
-        catch (Exception ex)
-        {
-          Log.Log.Write(ex);
-        }
-      }
-
-      Tone22k tone22k = Tone22k.Off;
-      if (isHighBand)
-      {
-        tone22k = Tone22k.On;
-      }
-      try
-      {
-        //successTone = _anysee.SetToneState(toneBurst, tone22k);
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
-      return (successDiseqc && successTone);
-    }
-
-    /// <summary>
     /// Instructs the cam/ci module to use hardware filter and only send the pids listed in pids to the pc
     /// </summary>
     /// <param name="subChannel">The sub channel id</param>
@@ -384,7 +269,7 @@ namespace TvLibrary.Implementations.DVB
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
     public bool SendPids(int subChannel, DVBBaseChannel channel, List<ushort> pids)
     {
-      try
+      /*try
       {
         List<ushort> HwPids = new List<ushort>();
 
@@ -419,24 +304,13 @@ namespace TvLibrary.Implementations.DVB
         /*if (_digitalEveryWhere != null)
         {
           return _digitalEveryWhere.SetHardwareFilterPids(modulation, HwPids);
-        }*/
+        }
       }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
-      }
+      }*/
       return true;
-    }
-
-    /// <summary>
-    /// Sets the DVB-S2 parameters such as modulation, roll-off, pilot etc.
-    /// </summary>
-    /// <param name="parameters">The LNB parameters.</param>
-    /// <param name="channel">The channel to tune.</param>
-    /// <returns>The channel with DVB-S2 parameters set.</returns>
-    public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
-    {
-      return channel;
     }
 
     /// <summary>

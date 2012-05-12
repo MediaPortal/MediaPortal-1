@@ -55,44 +55,78 @@ namespace TvLibrary.Interfaces.Device
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath);
 
-    /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
-    /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    void SetTuningParameters(ref IChannel channel);
-
     #region graph state change callbacks
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted and the BDA graph is started, but before
-    /// signal lock is checked.
-    /// Process: submit tune request -> (graph not running) -> start graph -> callback -> lock check
+    /// This callback is invoked when the device BDA graph construction is complete.
     /// </summary>
+    /// <remarks>
+    /// It provides an opportunity for the BDA graph to be started immediately or reconfigured.
+    /// </remarks>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="startGraphImmediately">Ensure that the tuner's BDA graph is started immediately.</param>
+    void OnGraphBuilt(ITVCard tuner, out bool startGraphImmediately);
+
+    /// <summary>
+    /// This callback is invoked before a tune request is assembled.
+    /// </summary>
+    /// <remarks>
+    /// It provides an opportunity for tuning parameters to be tweaked and for the device's BDA graph to be
+    /// forced into a particular state before the tune request is submitted.
+    /// Process: [this callback] -> assemble and submit tune request -> OnAfterTune() -> run graph -> OnGraphRunning() -> lock check
+    /// </remarks>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart);
+
+    /// <summary>
+    /// This callback is invoked after a tune request is submitted but before the device's BDA graph is started.
+    /// </summary>
+    /// <remarks>
+    /// It provides an opportunity for functions to be called at this specific stage in the tuning process
+    /// when tuning process/order is important.
+    /// Process: OnBeforeTune() -> assemble and submit tune request -> [this callback] -> run graph -> OnGraphRunning() -> lock check
+    /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    void OnGraphStarted(ITVCard tuner, IChannel currentChannel);
+    void OnAfterTune(ITVCard tuner, IChannel currentChannel);
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted but before signal lock is checked when
-    /// the BDA graph is already running.
-    /// Process: submit tune request -> (graph already running) -> callback -> lock check
+    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
+    /// but before signal lock is checked.
     /// </summary>
+    /// <remarks>
+    /// It provides an opportunity for functions to be called at this specific stage in the tuning process
+    /// when tuning process/order is important. 
+    /// Process: OnBeforeTune() -> assemble and submit tune request -> OnAfterTune() -> run graph -> [this callback] -> lock check
+    /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    void OnGraphStart(ITVCard tuner, IChannel currentChannel);
+    /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
+    void OnGraphRunning(ITVCard tuner, IChannel currentChannel);
 
     /// <summary>
-    /// This callback is invoked after the BDA graph is stopped.
+    /// This callback is invoked before the device's BDA graph is stopped.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    void OnGraphStop(ITVCard tuner);
+    /// <remarks>
+    /// It provides an opportunity to control the graph state to ensure optimal device operation.
+    /// </remarks>
+    /// <param name="tuner">The device instance that this device instance is associated with.</param>
+    /// <param name="preventGraphStop">Prevent the device's BDA graph from being stopped.</param>
+    /// <param name="restartGraph">Allow the device's BDA graph to be stopped, but then restart it immediately.</param>
+    void OnGraphStop(ITVCard tuner, out bool preventGraphStop, out bool restartGraph);
 
     /// <summary>
-    /// This callback is invoked after the BDA graph is paused.
+    /// This callback is invoked before the device's BDA graph is paused.
     /// </summary>
+    /// <remarks>
+    /// It provides an opportunity to control the graph state to ensure optimal device operation.
+    /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    void OnGraphPause(ITVCard tuner);
+    /// <param name="preventGraphPause">Prevent the device's BDA graph from being paused.</param>
+    /// <param name="restartGraph">Stop the device's BDA graph, and then restart it immediately.</param>
+    void OnGraphPause(ITVCard tuner, out bool preventGraphPause, out bool restartGraph);
 
     #endregion
   }
@@ -105,12 +139,6 @@ namespace TvLibrary.Interfaces.Device
     /// <summary>
     /// The loading priority for this device type.
     /// </summary>
-    /// <remarks>
-    /// Custom device loading/detection is done in order of descending priority, and custom devices that
-    /// implement the IAddOnDevice interface are loaded before other devices. This approach allows certain
-    /// driver interface conflicts to be avoided. Priority ranges from 100 (highest priority) to 1 (lowest
-    /// priority).
-    /// </remarks>
     public virtual byte Priority
     {
       get
@@ -145,68 +173,71 @@ namespace TvLibrary.Interfaces.Device
       return false;
     }
 
-    /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
-    /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    public virtual void SetTuningParameters(ref IChannel channel)
-    {
-    }
-
     #region graph state change callbacks
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted and the BDA graph is started, but before
-    /// signal lock is checked.
-    /// Process: submit tune request -> (graph not running) -> start graph -> callback -> lock check
+    /// This callback is invoked when the device BDA graph construction is complete.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="startGraphImmediately">Ensure that the tuner's BDA graph is started immediately.</param>
+    public virtual void OnGraphBuilt(ITVCard tuner, out bool startGraphImmediately)
+    {
+      startGraphImmediately = false;
+    }
+
+    /// <summary>
+    /// This callback is invoked before a tune request is assembled.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    public virtual void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
+    {
+      forceGraphStart = false;
+    }
+
+    /// <summary>
+    /// This callback is invoked after a tune request is submitted but before the device's BDA graph is started.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public virtual void OnGraphStarted(ITVCard tuner, IChannel currentChannel)
-    {
-      IPowerDevice device = this as IPowerDevice;
-      if (device != null)
-      {
-        device.SetPowerState(true);
-      }
-    }
-
-    /// <summary>
-    /// This callback is invoked after a tune request is submitted but before signal lock is checked when
-    /// the BDA graph is already running.
-    /// Process: submit tune request -> (graph already running) -> callback -> lock check
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public virtual void OnGraphStart(ITVCard tuner, IChannel currentChannel)
+    public virtual void OnAfterTune(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked after the BDA graph is stopped.
+    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
+    /// but before signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    public virtual void OnGraphStop(ITVCard tuner)
+    /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
+    public virtual void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
     {
-      IPowerDevice device = this as IPowerDevice;
-      if (device != null)
-      {
-        device.SetPowerState(false);
-      }
     }
 
     /// <summary>
-    /// This callback is invoked after the BDA graph is paused.
+    /// This callback is invoked before the device's BDA graph is stopped.
+    /// </summary>
+    /// <param name="tuner">The device instance that this device instance is associated with.</param>
+    /// <param name="preventGraphStop">Prevent the device's BDA graph from being stopped.</param>
+    /// <param name="restartGraph">Allow the device's BDA graph to be stopped, but then restart it immediately.</param>
+    public virtual void OnGraphStop(ITVCard tuner, out bool preventGraphStop, out bool restartGraph)
+    {
+      preventGraphStop = false;
+      restartGraph = false;
+    }
+
+    /// <summary>
+    /// This callback is invoked before the device's BDA graph is paused.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    public virtual void OnGraphPause(ITVCard tuner)
+    /// <param name="preventGraphPause">Prevent the device's BDA graph from being paused.</param>
+    /// <param name="restartGraph">Stop the device's BDA graph, and then restart it immediately.</param>
+    public virtual void OnGraphPause(ITVCard tuner, out bool preventGraphPause, out bool restartGraph)
     {
-      IPowerDevice device = this as IPowerDevice;
-      if (device != null)
-      {
-        device.SetPowerState(false);
-      }
+      preventGraphPause = false;
+      restartGraph = false;
     }
 
     #endregion

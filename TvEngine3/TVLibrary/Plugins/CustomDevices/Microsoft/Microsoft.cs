@@ -347,14 +347,19 @@ namespace TvEngine
       return false;
     }
 
+    #region graph state change callbacks
+
     /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
+    /// This callback is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    public override void SetTuningParameters(ref IChannel channel)
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
     {
-      Log.Debug("Microsoft: set tuning parameters");
+      Log.Debug("Microsoft: on before tune callback");
+      forceGraphStart = false;
 
       if (!_isMicrosoft)
       {
@@ -400,6 +405,8 @@ namespace TvEngine
         }
       }
     }
+
+    #endregion
 
     #endregion
 

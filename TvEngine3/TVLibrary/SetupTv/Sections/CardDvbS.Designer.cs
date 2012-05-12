@@ -50,10 +50,10 @@ namespace SetupTv.Sections
       this.mpTransponder3 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpTransponder2 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpTransponder1 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpDisEqc4 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpDisEqc3 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpDisEqc2 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpDisEqc1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboDiseqc4 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboDiseqc3 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboDiseqc2 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboDiseqc1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBand4 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBand3 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBand2 = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -275,10 +275,10 @@ namespace SetupTv.Sections
       this.tabPage1.Controls.Add(this.mpTransponder3);
       this.tabPage1.Controls.Add(this.mpTransponder2);
       this.tabPage1.Controls.Add(this.mpTransponder1);
-      this.tabPage1.Controls.Add(this.mpDisEqc4);
-      this.tabPage1.Controls.Add(this.mpDisEqc3);
-      this.tabPage1.Controls.Add(this.mpDisEqc2);
-      this.tabPage1.Controls.Add(this.mpDisEqc1);
+      this.tabPage1.Controls.Add(this.mpComboDiseqc4);
+      this.tabPage1.Controls.Add(this.mpComboDiseqc3);
+      this.tabPage1.Controls.Add(this.mpComboDiseqc2);
+      this.tabPage1.Controls.Add(this.mpComboDiseqc1);
       this.tabPage1.Controls.Add(this.mpBand4);
       this.tabPage1.Controls.Add(this.mpBand3);
       this.tabPage1.Controls.Add(this.mpBand2);
@@ -395,39 +395,39 @@ namespace SetupTv.Sections
       // 
       // mpDisEqc4
       // 
-      this.mpDisEqc4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpDisEqc4.FormattingEnabled = true;
-      this.mpDisEqc4.Location = new System.Drawing.Point(47, 87);
-      this.mpDisEqc4.Name = "mpDisEqc4";
-      this.mpDisEqc4.Size = new System.Drawing.Size(77, 21);
-      this.mpDisEqc4.TabIndex = 18;
+      this.mpComboDiseqc4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboDiseqc4.FormattingEnabled = true;
+      this.mpComboDiseqc4.Location = new System.Drawing.Point(47, 87);
+      this.mpComboDiseqc4.Name = "mpDisEqc4";
+      this.mpComboDiseqc4.Size = new System.Drawing.Size(77, 21);
+      this.mpComboDiseqc4.TabIndex = 18;
       // 
       // mpDisEqc3
       // 
-      this.mpDisEqc3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpDisEqc3.FormattingEnabled = true;
-      this.mpDisEqc3.Location = new System.Drawing.Point(47, 64);
-      this.mpDisEqc3.Name = "mpDisEqc3";
-      this.mpDisEqc3.Size = new System.Drawing.Size(77, 21);
-      this.mpDisEqc3.TabIndex = 14;
+      this.mpComboDiseqc3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboDiseqc3.FormattingEnabled = true;
+      this.mpComboDiseqc3.Location = new System.Drawing.Point(47, 64);
+      this.mpComboDiseqc3.Name = "mpDisEqc3";
+      this.mpComboDiseqc3.Size = new System.Drawing.Size(77, 21);
+      this.mpComboDiseqc3.TabIndex = 14;
       // 
       // mpDisEqc2
       // 
-      this.mpDisEqc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpDisEqc2.FormattingEnabled = true;
-      this.mpDisEqc2.Location = new System.Drawing.Point(47, 41);
-      this.mpDisEqc2.Name = "mpDisEqc2";
-      this.mpDisEqc2.Size = new System.Drawing.Size(77, 21);
-      this.mpDisEqc2.TabIndex = 10;
+      this.mpComboDiseqc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboDiseqc2.FormattingEnabled = true;
+      this.mpComboDiseqc2.Location = new System.Drawing.Point(47, 41);
+      this.mpComboDiseqc2.Name = "mpDisEqc2";
+      this.mpComboDiseqc2.Size = new System.Drawing.Size(77, 21);
+      this.mpComboDiseqc2.TabIndex = 10;
       // 
       // mpDisEqc1
       // 
-      this.mpDisEqc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpDisEqc1.FormattingEnabled = true;
-      this.mpDisEqc1.Location = new System.Drawing.Point(47, 18);
-      this.mpDisEqc1.Name = "mpDisEqc1";
-      this.mpDisEqc1.Size = new System.Drawing.Size(77, 21);
-      this.mpDisEqc1.TabIndex = 6;
+      this.mpComboDiseqc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboDiseqc1.FormattingEnabled = true;
+      this.mpComboDiseqc1.Location = new System.Drawing.Point(47, 18);
+      this.mpComboDiseqc1.Name = "mpDisEqc1";
+      this.mpComboDiseqc1.Size = new System.Drawing.Size(77, 21);
+      this.mpComboDiseqc1.TabIndex = 6;
       // 
       // mpBand4
       // 
@@ -1517,10 +1517,10 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpTransponder3;
     private MediaPortal.UserInterface.Controls.MPComboBox mpTransponder2;
     private MediaPortal.UserInterface.Controls.MPComboBox mpTransponder1;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpDisEqc4;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpDisEqc3;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpDisEqc2;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpDisEqc1;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboDiseqc4;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboDiseqc3;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboDiseqc2;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboDiseqc1;
     private MediaPortal.UserInterface.Controls.MPComboBox mpBand4;
     private MediaPortal.UserInterface.Controls.MPComboBox mpBand3;
     private MediaPortal.UserInterface.Controls.MPComboBox mpBand2;

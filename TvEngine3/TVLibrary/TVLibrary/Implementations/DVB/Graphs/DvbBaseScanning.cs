@@ -493,7 +493,7 @@ namespace TvLibrary.Implementations.DVB
               ch.SymbolRate = symbolrate;
               ch.InnerFecRate = (BinaryConvolutionCodeRate)innerfec;
               ch.Polarisation = (Polarisation)pol;
-              ch.Rolloff = (RollOff)rollOff;
+              ch.RollOff = (RollOff)rollOff;
               channelsFound.Add(ch);
             }
             else if (chType == 1)

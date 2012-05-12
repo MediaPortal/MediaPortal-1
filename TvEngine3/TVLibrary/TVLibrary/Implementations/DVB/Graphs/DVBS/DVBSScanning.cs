@@ -53,7 +53,6 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.Provider = info.service_provider_name;
       dvbsChannel.SymbolRate = tuningChannel.SymbolRate;
       dvbsChannel.Polarisation = tuningChannel.Polarisation;
-      dvbsChannel.SwitchingFrequency = tuningChannel.SwitchingFrequency;
       dvbsChannel.Frequency = tuningChannel.Frequency;
       dvbsChannel.IsTv = IsTvService(info.serviceType);
       dvbsChannel.IsRadio = IsRadioService(info.serviceType);
@@ -61,14 +60,14 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.ServiceId = info.serviceID;
       dvbsChannel.TransportId = info.transportStreamID;
       dvbsChannel.PmtPid = info.network_pmt_PID;
-      dvbsChannel.DisEqc = tuningChannel.DisEqc;
+      dvbsChannel.Diseqc = tuningChannel.Diseqc;
       dvbsChannel.BandType = tuningChannel.BandType;
       dvbsChannel.FreeToAir = !info.scrambled;
       dvbsChannel.SatelliteIndex = tuningChannel.SatelliteIndex;
       dvbsChannel.ModulationType = tuningChannel.ModulationType;
       dvbsChannel.InnerFecRate = tuningChannel.InnerFecRate;
       dvbsChannel.Pilot = tuningChannel.Pilot;
-      dvbsChannel.Rolloff = tuningChannel.Rolloff;
+      dvbsChannel.RollOff = tuningChannel.RollOff;
       Log.Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }

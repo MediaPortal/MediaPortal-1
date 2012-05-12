@@ -271,14 +271,19 @@ namespace TvEngine
       return true;
     }
 
+    #region graph state change callbacks
+
     /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
+    /// This callback is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    public override void SetTuningParameters(ref IChannel channel)
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
     {
-      Log.Debug("Prof: set tuning parameters");
+      Log.Debug("Prof: on before tune callback");
+      forceGraphStart = false;
 
       if (!_isProf || _propertySet == null)
       {
@@ -328,15 +333,15 @@ namespace TvEngine
       Log.Debug("  pilot          = {0}", command.Pilot);
 
       // Roll-off
-      if (ch.Rolloff == RollOff.Twenty)
+      if (ch.RollOff == RollOff.Twenty)
       {
         command.RollOff = ProfRollOff.Twenty;
       }
-      else if (ch.Rolloff == RollOff.TwentyFive)
+      else if (ch.RollOff == RollOff.TwentyFive)
       {
         command.RollOff = ProfRollOff.TwentyFive;
       }
-      else if (ch.Rolloff == RollOff.ThirtyFive)
+      else if (ch.RollOff == RollOff.ThirtyFive)
       {
         command.RollOff = ProfRollOff.ThirtyFive;
       }
@@ -370,6 +375,8 @@ namespace TvEngine
         Log.Debug("Prof: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
+
+    #endregion
 
     #endregion
 
@@ -505,10 +512,10 @@ namespace TvEngine
       propertyParams.DiseqcTransmitMessage = new byte[MaxDiseqcTxMessageLength];
       Buffer.BlockCopy(command, 0, propertyParams.DiseqcTransmitMessage, 0, command.Length);
       propertyParams.DiseqcTransmitMessageLength = (byte)command.Length;
+      propertyParams.ReceiveMode = ProfDiseqcReceiveMode.NoReply;
       propertyParams.Command = BdaExtensionCommand.Diseqc;
       propertyParams.IsLastMessage = true;
       propertyParams.LnbPower = ProfLnbPower.On;
-      propertyParams.ReceiveMode = ProfDiseqcReceiveMode.NoReply;
 
       Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
       //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);

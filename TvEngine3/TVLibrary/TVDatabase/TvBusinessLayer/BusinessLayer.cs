@@ -655,9 +655,8 @@ namespace TvDatabase
           return dvbcChannel;
         case 3: //DVBSChannel
           DVBSChannel dvbsChannel = new DVBSChannel();
-          dvbsChannel.DisEqc = (DisEqcType)detail.Diseqc;
+          dvbsChannel.Diseqc = (DiseqcSwitchCommand)detail.Diseqc;
           dvbsChannel.Polarisation = (Polarisation)detail.Polarisation;
-          dvbsChannel.SwitchingFrequency = detail.SwitchingFrequency;
           dvbsChannel.FreeToAir = detail.FreeToAir;
           dvbsChannel.Frequency = detail.Frequency;
           dvbsChannel.IsRadio = detail.IsRadio;
@@ -674,7 +673,7 @@ namespace TvDatabase
           dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
           dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
           dvbsChannel.Pilot = (Pilot)detail.Pilot;
-          dvbsChannel.Rolloff = (RollOff)detail.RollOff;
+          dvbsChannel.RollOff = (RollOff)detail.RollOff;
           dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
           return dvbsChannel;
         case 4: //DVBTChannel
@@ -833,8 +832,6 @@ namespace TvDatabase
         majorChannel = atscChannel.MajorChannel;
         minorChannel = atscChannel.MinorChannel;
         channelNumber = atscChannel.PhysicalChannel;
-        //videoPid = atscChannel.VideoPid;
-        //audioPid = atscChannel.AudioPid;
         modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }
@@ -853,14 +850,13 @@ namespace TvDatabase
       {
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
-        switchFrequency = dvbsChannel.SwitchingFrequency;
-        diseqc = (int)dvbsChannel.DisEqc;
+        diseqc = (int)dvbsChannel.Diseqc;
         band = (int)dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.Rolloff;
+        rollOff = (int)dvbsChannel.RollOff;
         channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }
@@ -963,8 +959,6 @@ namespace TvDatabase
         majorChannel = atscChannel.MajorChannel;
         minorChannel = atscChannel.MinorChannel;
         channelNumber = atscChannel.PhysicalChannel;
-        //videoPid = atscChannel.VideoPid;
-        //audioPid = atscChannel.AudioPid;
         modulation = (int)atscChannel.ModulationType;
         channelType = 1;
       }
@@ -983,14 +977,13 @@ namespace TvDatabase
       {
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
-        switchFrequency = dvbsChannel.SwitchingFrequency;
-        diseqc = (int)dvbsChannel.DisEqc;
+        diseqc = (int)dvbsChannel.Diseqc;
         band = (int)dvbsChannel.BandType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
         pilot = (int)dvbsChannel.Pilot;
-        rollOff = (int)dvbsChannel.Rolloff;
+        rollOff = (int)dvbsChannel.RollOff;
         channelNumber = dvbsChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbsChannel.LogicalChannelNumber;
         channelType = 3;
       }

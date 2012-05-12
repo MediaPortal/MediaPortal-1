@@ -489,39 +489,15 @@ namespace TvEngine
     #region graph state change callbacks
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted and the BDA graph is started, but before
-    /// signal lock is checked.
-    /// Process: submit tune request -> (graph not running) -> start graph -> callback -> lock check
+    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
+    /// but before signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public override void OnGraphStarted(ITVCard tuner, IChannel currentChannel)
+    /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
+    public override void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
-      {
-        StartMmiHandlerThread();
-      }
-
-      base.OnGraphStarted(tuner, currentChannel);
-    }
-
-    /// <summary>
-    /// This callback is invoked after a tune request is submitted but before signal lock is checked when
-    /// the BDA graph is already running.
-    /// Process: submit tune request -> (graph already running) -> callback -> lock check
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public override void OnGraphStart(ITVCard tuner, IChannel currentChannel)
-    {
-      // Ensure the MMI handler thread is always running when the graph is running.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
-      {
-        StartMmiHandlerThread();
-      }
-
-      base.OnGraphStart(tuner, currentChannel);
+      StartMmiHandlerThread();
     }
 
     #endregion

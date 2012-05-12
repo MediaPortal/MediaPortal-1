@@ -370,6 +370,17 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
+    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// </returns>
+    public override string ToString()
+    {
+      return _name;
+    }
+
+    /// <summary>
     /// Does the card have a CA module.
     /// </summary>
     /// <value>Does the card have a CA module..</value>
@@ -412,16 +423,17 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Gets the interface for controlling the diseqc motor
+    /// Gets the interface for controlling the DiSEqC satellite dish motor.
     /// </summary>
-    /// <value>Theinterface for controlling the diseqc motor.</value>
+    /// <value>
+    /// <c>null</c> if the tuner is not a satellite tuner or the tuner doesn't support controlling a motor,
+    /// otherwise the interface for controlling the motor
+    /// </value>
     public virtual IDiSEqCMotor DiSEqCMotor
     {
       get
       {
-        if (_conditionalAccess == null)
-          return null;
-        return _conditionalAccess.DiSEqCMotor;
+        return null;
       }
     }
 

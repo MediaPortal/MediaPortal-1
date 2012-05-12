@@ -1155,6 +1155,17 @@ namespace TvEngine
       }
     }
 
+      //TODO: hack for testing; should be removed before final merge.
+      /*if (
+        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-c ctuner") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-t vtuner") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-c)") ||
+        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-t)")
+      )
+      {
+        return true;
+      }*/
+
     #region hardware/software information
 
     /// <summary>
@@ -1649,14 +1660,32 @@ namespace TvEngine
       return true;
     }
 
+    #region graph state change callbacks
+
     /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
+    /// This callback is invoked when the device BDA graph construction is complete.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    public override void SetTuningParameters(ref IChannel channel)
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="startGraphImmediately">Ensure that the tuner's BDA graph is started immediately.</param>
+    public override void OnGraphBuilt(ITVCard tuner, out bool startGraphImmediately)
     {
-      Log.Debug("Twinhan: set tuning parameters");
+      // The TerraTec H7 and TechniSat CableStar Combo HD CI require the graph to be started as soon as it
+      // is built. The graph should not be stopped under any circumstances except when it is about to be
+      // dismantled.
+      startGraphImmediately = true;
+    }
+
+    /// <summary>
+    /// This callback is invoked before a tune request is assembled.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
+    {
+      Log.Debug("Twinhan: on before tune callback");
+      forceGraphStart = false;
 
       if (!_isTwinhan)
       {
@@ -1674,8 +1703,8 @@ namespace TvEngine
       {
         ch.ModulationType = ModulationType.Mod8Vsb;
       }
-      // I don't think any Twinhan tuners or clones support demodulating anything
-      // higher than 8 PSK. Nevertheless...
+      // I don't think any Twinhan tuners or clones support demodulating modulation schemes more complex than
+      // 8 PSK. Nevertheless...
       else if (ch.ModulationType == ModulationType.Mod16Apsk)
       {
         ch.ModulationType = ModulationType.Mod16Vsb;
@@ -1687,42 +1716,31 @@ namespace TvEngine
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }
 
-    #region graph state change callbacks
-
     /// <summary>
-    /// This callback is invoked after a tune request is submitted and the BDA graph is started, but before
-    /// signal lock is checked.
-    /// Process: submit tune request -> (graph not running) -> start graph -> callback -> lock check
+    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
+    /// but before signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public override void OnGraphStarted(ITVCard tuner, IChannel currentChannel)
+    /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
+    public override void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
-      {
-        StartMmiHandlerThread();
-      }
-
-      base.OnGraphStarted(tuner, currentChannel);
+      StartMmiHandlerThread();
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted but before signal lock is checked when
-    /// the BDA graph is already running.
-    /// Process: submit tune request -> (graph already running) -> callback -> lock check
+    /// This callback is invoked before the device's BDA graph is stopped.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public override void OnGraphStart(ITVCard tuner, IChannel currentChannel)
+    /// <param name="tuner">The device instance that this device instance is associated with.</param>
+    /// <param name="preventGraphStop">Prevent the device's BDA graph from being stopped.</param>
+    /// <param name="restartGraph">Allow the device's BDA graph to be stopped, but then restart it immediately.</param>
+    public override void OnGraphStop(ITVCard tuner, out bool preventGraphStop, out bool restartGraph)
     {
-      // Ensure the MMI handler thread is always running when the graph is running.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
-      {
-        StartMmiHandlerThread();
-      }
-
-      base.OnGraphStart(tuner, currentChannel);
+      // The TerraTec H7 and TechniSat CableStar Combo HD CI require the graph to be started as soon as it
+      // is built. The graph should not be stopped under any circumstances except when it is about to be
+      // dismantled.
+      preventGraphStop = true;
+      restartGraph = false;
     }
 
     #endregion
@@ -1859,7 +1877,7 @@ namespace TvEngine
         int highLof;
         int switchFrequency;
         BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out lowLof, out highLof, out switchFrequency);
-        if (BandTypeConverter.IsHiBand(ch, parameters))
+        if (BandTypeConverter.IsHighBand(ch, parameters))
         {
           tuningParams.Frequency = (UInt32)(ch.Frequency - (highLof * 1000));
         }

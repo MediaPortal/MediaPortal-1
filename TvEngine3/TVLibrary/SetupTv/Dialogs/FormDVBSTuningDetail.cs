@@ -50,7 +50,7 @@ namespace SetupTv.Dialogs
         comboBoxInnerFecRate.SelectedIndex = TuningDetail.InnerFecRate + 1;
         comboBoxPilot.SelectedIndex = TuningDetail.Pilot + 1;
         comboBoxRollOff.SelectedIndex = TuningDetail.RollOff + 1;
-        comboBoxDisEqc.SelectedIndex = TuningDetail.Diseqc;
+        comboBoxDiseqc.SelectedIndex = TuningDetail.Diseqc;
       }
       else
       {
@@ -68,7 +68,7 @@ namespace SetupTv.Dialogs
         comboBoxInnerFecRate.SelectedIndex = -1;
         comboBoxPilot.SelectedIndex = -1;
         comboBoxRollOff.SelectedIndex = -1;
-        comboBoxDisEqc.SelectedIndex = -1;
+        comboBoxDiseqc.SelectedIndex = -1;
       }
     }
 
@@ -103,7 +103,7 @@ namespace SetupTv.Dialogs
       TuningDetail.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
       TuningDetail.Provider = textBoxDVBSProvider.Text;
       TuningDetail.FreeToAir = checkBoxDVBSfta.Checked;
-      TuningDetail.Diseqc = comboBoxDisEqc.SelectedIndex;
+      TuningDetail.Diseqc = comboBoxDiseqc.SelectedIndex;
     }
 
     private bool ValidateInput()
@@ -119,7 +119,7 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
         return false;
       }
-      if (comboBoxDisEqc.SelectedIndex < 0)
+      if (comboBoxDiseqc.SelectedIndex < 0)
       {
         MessageBox.Show(this, "Please select a valid DiSEqC port!", "Incorrect input");
         return false;

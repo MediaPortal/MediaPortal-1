@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using DirectShowLib;
 using TvDatabase;
 using TvLibrary.Implementations.DVB;
 
@@ -88,10 +89,8 @@ namespace SetupTv.Sections
       if (_cardType == "DvbC") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.DVBC));
       if (_cardType == "Atsc") comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.ATSC));
 
-      // Guid for generic network provider
-      Guid genProviderClsId = new Guid("{B2F3A67C-29DA-4C78-8831-091ED509A475}");
       // First test if the Generic Network Provider is available (only on Xp MCE 2005 + Update Rollup 2 & Vista Home Premium and Ultimate & Windows 7 Home Premium, Ultimate, Professional, and Enterprise)
-      if (FilterGraphTools.IsThisComObjectInstalled(genProviderClsId))
+      if (FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
       {
         // Generic Network provider is available, so add it to selection box.
         comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.Generic));

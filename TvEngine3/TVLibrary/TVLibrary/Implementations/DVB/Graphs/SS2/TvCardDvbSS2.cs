@@ -160,7 +160,7 @@ namespace TvLibrary.Implementations.DVB
     private DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl;
     private DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
     private readonly IntPtr _ptrDisEqc;
-    private readonly DiSEqCMotor _disEqcMotor;
+    private readonly DiSEqCMotor _diseqcMotor;
     private readonly bool _useDISEqCMotor;
     private IBaseFilter _infTeeMain;
 
@@ -203,7 +203,7 @@ namespace TvLibrary.Implementations.DVB
       }
       _conditionalAccess = new ConditionalAccess(null, null, this);
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
-      _disEqcMotor = new DiSEqCMotor(this);
+      _diseqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
     }
 
@@ -363,7 +363,6 @@ namespace TvLibrary.Implementations.DVB
       int modulation = (int)eModulationTAG.QAM_64;
       int bandWidth = 0;
       LNBSelectionType lnbSelection = LNBSelectionType.Lnb0;
-      const int lnbKhzTone = 22;
       const int fec = (int)FecType.Fec_Auto;
       int polarity = 0;
       Ss2DiseqcType disType = Ss2DiseqcType.None;
@@ -401,11 +400,11 @@ namespace TvLibrary.Implementations.DVB
           frequency = (int)dvbsChannel.Frequency;
           symbolRate = dvbsChannel.SymbolRate;
           satelliteIndex = dvbsChannel.SatelliteIndex;
-          bool hiBand = BandTypeConverter.IsHiBand(dvbsChannel, Parameters);
+          bool hiBand = BandTypeConverter.IsHighBand(dvbsChannel, Parameters);
           int lof1, lof2, sw;
           BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lof1, out lof2, out sw);
           int lnbFrequency;
-          if (BandTypeConverter.IsHiBand(dvbsChannel, Parameters))
+          if (BandTypeConverter.IsHighBand(dvbsChannel, Parameters))
             lnbFrequency = lof2 * 1000;
           else
             lnbFrequency = lof1 * 1000;
@@ -416,42 +415,27 @@ namespace TvLibrary.Implementations.DVB
           if (dvbsChannel.Polarisation == Polarisation.CircularR)
             polarity = 1;
           Log.Log.WriteFile("ss2:  Polarity:{0} {1}", dvbsChannel.Polarisation, polarity);
-          lnbSelection = LNBSelectionType.Lnb0;
-          if (dvbsChannel.BandType == BandType.Universal)
+          switch (dvbsChannel.Diseqc)
           {
-            //only set the LNB (22,33,44) Khz tone when we use ku-band and are in hi-band
-            switch (lnbKhzTone)
-            {
-              case 22:
-                lnbSelection = LNBSelectionType.Lnb22kHz;
-                break;
-            }
-            if (hiBand == false)
-            {
-              lnbSelection = LNBSelectionType.Lnb0;
-            }
-          }
-          switch (dvbsChannel.DisEqc)
-          {
-            case DisEqcType.None: // none
+            case DiseqcSwitchCommand.None: // none
               disType = Ss2DiseqcType.None;
               break;
-            case DisEqcType.SimpleA: // Simple A
+            case DiseqcSwitchCommand.SimpleA: // Simple A
               disType = Ss2DiseqcType.Simple_A;
               break;
-            case DisEqcType.SimpleB: // Simple B
+            case DiseqcSwitchCommand.SimpleB: // Simple B
               disType = Ss2DiseqcType.Simple_B;
               break;
-            case DisEqcType.Level1AA: // Level 1 A/A
+            case DiseqcSwitchCommand.PortA: // Level 1 A/A
               disType = Ss2DiseqcType.Level_1_A_A;
               break;
-            case DisEqcType.Level1BA: // Level 1 B/A
+            case DiseqcSwitchCommand.PortC: // Level 1 B/A
               disType = Ss2DiseqcType.Level_1_B_A;
               break;
-            case DisEqcType.Level1AB: // Level 1 A/B
+            case DiseqcSwitchCommand.PortB: // Level 1 A/B
               disType = Ss2DiseqcType.Level_1_A_B;
               break;
-            case DisEqcType.Level1BB: // Level 1 B/B
+            case DiseqcSwitchCommand.PortD: // Level 1 B/B
               disType = Ss2DiseqcType.Level_1_B_B;
               break;
           }
@@ -643,13 +627,26 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Error("ss2:SetPolarity() failed:0x{0:X}", hr);
             return false;
           }
-          Log.Log.WriteFile("ss2:  Lnb:{0}", lnbSelection);
-          hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
-          if (hr != 0)
+
+          DVBSChannel dvbsChannel = channel as DVBSChannel;
+          ToneBurst toneBurst = ToneBurst.Off;
+          if (dvbsChannel.Diseqc == DiseqcSwitchCommand.SimpleA)
           {
-            Log.Log.Error("ss2:SetLnbKHz() failed:0x{0:X}", hr);
-            return false;
+            toneBurst = ToneBurst.ToneBurst;
           }
+          else if (dvbsChannel.Diseqc == DiseqcSwitchCommand.SimpleB)
+          {
+            toneBurst = ToneBurst.DataBurst;
+          }
+          Tone22k tone22k = Tone22k.Off;
+          if (BandTypeConverter.IsHighBand(dvbsChannel, _parameters))
+          {
+            tone22k = Tone22k.On;
+          }
+
+          //SendCommand();
+          SetToneState(toneBurst, tone22k);
+
           Log.Log.WriteFile("ss2:  Diseqc:{0} {1}", disType, disType);
           hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)disType);
           if (hr != 0)
@@ -1167,7 +1164,7 @@ namespace TvLibrary.Implementations.DVB
 
     private void DisEqcGotoPosition(byte position)
     {
-      _disEqcMotor.GotoPosition(position);
+      _diseqcMotor.GotoPosition(position);
     }
 
     /// <summary>
@@ -1175,7 +1172,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override IDiSEqCMotor DiSEqCMotor
     {
-      get { return _disEqcMotor; }
+      get { return _diseqcMotor; }
     }
 
     #region ICustomDevice members
@@ -1201,57 +1198,74 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
     {
-      // This base class is not intended to be instantiated.
       return false;
-    }
-
-    /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
-    /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    public void SetTuningParameters(ref IChannel channel)
-    {
     }
 
     #region graph state change callbacks
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted and the BDA graph is started, but before
-    /// signal lock is checked.
-    /// Process: submit tune request -> (graph not running) -> start graph -> callback -> lock check
+    /// This callback is invoked when the device BDA graph construction is complete.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="startGraphImmediately">Ensure that the tuner's BDA graph is started immediately.</param>
+    public virtual void OnGraphBuilt(ITVCard tuner, out bool startGraphImmediately)
+    {
+      startGraphImmediately = false;
+    }
+
+    /// <summary>
+    /// This callback is invoked before a tune request is assembled.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    public virtual void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
+    {
+      forceGraphStart = false;
+    }
+
+    /// <summary>
+    /// This callback is invoked after a tune request is submitted but before the device's BDA graph is started.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public void OnGraphStarted(ITVCard tuner, IChannel currentChannel)
+    public virtual void OnAfterTune(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted but before signal lock is checked when
-    /// the BDA graph is already running.
-    /// Process: submit tune request -> (graph already running) -> callback -> lock check
+    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
+    /// but before signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public void OnGraphStart(ITVCard tuner, IChannel currentChannel)
+    /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
+    public virtual void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked after the BDA graph is stopped.
+    /// This callback is invoked before the device's BDA graph is stopped.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    public void OnGraphStop(ITVCard tuner)
+    /// <param name="tuner">The device instance that this device instance is associated with.</param>
+    /// <param name="preventGraphStop">Prevent the device's BDA graph from being stopped.</param>
+    /// <param name="restartGraph">Allow the device's BDA graph to be stopped, but then restart it immediately.</param>
+    public virtual void OnGraphStop(ITVCard tuner, out bool preventGraphStop, out bool restartGraph)
     {
+      preventGraphStop = false;
+      restartGraph = false;
     }
 
     /// <summary>
-    /// This callback is invoked after the BDA graph is paused.
+    /// This callback is invoked before the device's BDA graph is paused.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    public void OnGraphPause(ITVCard tuner)
+    /// <param name="preventGraphPause">Prevent the device's BDA graph from being paused.</param>
+    /// <param name="restartGraph">Stop the device's BDA graph, and then restart it immediately.</param>
+    public virtual void OnGraphPause(ITVCard tuner, out bool preventGraphPause, out bool restartGraph)
     {
+      preventGraphPause = false;
+      restartGraph = false;
     }
 
     #endregion
@@ -1269,6 +1283,8 @@ namespace TvLibrary.Implementations.DVB
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       Log.Log.Debug("SS2: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      bool success = true;
+      int hr;
 
       Ss2DiseqcType burst = Ss2DiseqcType.None;
       if (toneBurstState == ToneBurst.ToneBurst)
@@ -1279,11 +1295,14 @@ namespace TvLibrary.Implementations.DVB
       {
         burst = Ss2DiseqcType.Simple_B;
       }
-      int hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)burst);
-      if (hr != 0)
+      if (burst != Ss2DiseqcType.None)
       {
-        Log.Log.Error("SS2: set burst failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
+        hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)burst);
+        if (hr != 0)
+        {
+          Log.Log.Error("SS2: set burst failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
+        }
       }
 
       LNBSelectionType tone = LNBSelectionType.Lnb0;
@@ -1295,9 +1314,9 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         Log.Log.Error("SS2: set 22k failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
+        success = false;
       }
-      return true;
+      return success;
     }
 
     /// <summary>
@@ -1308,8 +1327,10 @@ namespace TvLibrary.Implementations.DVB
     public bool SendCommand(byte[] command)
     {
       DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4 tuner4 = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl4;
-      if (tuner4 == null)
+      if (tuner4 == null || command == null)
+      {
         return false;
+      }
       for (int i = 0; i < command.Length; ++i)
       {
         Marshal.WriteByte(_ptrDisEqc, i, command[i]);

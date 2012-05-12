@@ -449,7 +449,7 @@ namespace TvEngine
 
       int lnbLof;
       bool toneOn = false;
-      if (BandTypeConverter.IsHiBand(ch, parameters))
+      if (BandTypeConverter.IsHighBand(ch, parameters))
       {
         lnbLof = highLof * 1000;
         toneOn = true;

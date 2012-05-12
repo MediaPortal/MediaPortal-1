@@ -105,7 +105,7 @@ namespace SetupTv.Sections
           tuneChannel.InnerFecRate = this.InnerFecRate;
           //Grab the Pilot & Roll-off settings
           tuneChannel.Pilot = this.Pilot;
-          tuneChannel.Rolloff = this.Rolloff;
+          tuneChannel.RollOff = this.Rolloff;
           return tuneChannel;
         }
       }
@@ -638,7 +638,7 @@ namespace SetupTv.Sections
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
       List<SatelliteContext> satellites = LoadSatellites();
       MPComboBox[] mpTrans = new MPComboBox[] {mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4};
-      MPComboBox[] mpDisEqc = new MPComboBox[] {mpDisEqc1, mpDisEqc2, mpDisEqc3, mpDisEqc4};
+      MPComboBox[] mpComboDiseqc = new MPComboBox[] {mpComboDiseqc1, mpComboDiseqc2, mpComboDiseqc3, mpComboDiseqc4};
       MPComboBox[] mpBands = new MPComboBox[] {mpBand1, mpBand2, mpBand3, mpBand4};
       MPCheckBox[] mpLNBs = new MPCheckBox[] {mpLNB1, mpLNB2, mpLNB3, mpLNB4};
       MPComboBox curBox;
@@ -662,15 +662,35 @@ namespace SetupTv.Sections
           }
         }
 
-        curBox = mpDisEqc[ctlIndex];
+        curBox = mpComboDiseqc[ctlIndex];
         curBox.Items.Clear();
-        curBox.Items.Add(DisEqcType.None);
-        curBox.Items.Add(DisEqcType.SimpleA);
-        curBox.Items.Add(DisEqcType.SimpleB);
-        curBox.Items.Add(DisEqcType.Level1AA);
-        curBox.Items.Add(DisEqcType.Level1AB);
-        curBox.Items.Add(DisEqcType.Level1BA);
-        curBox.Items.Add(DisEqcType.Level1BB);
+        curBox.Items.AddRange(new object[] {
+            "None",
+            // Simple DiSEqC (burst)
+            "Simple A (tone burst)",
+            "Simple B (data burst)",
+            // DiSEqC 1.0
+            "Port A (option A, position A)",
+            "Port B (option A, position B)",
+            "Port C (option B, position A)",
+            "Port D (option B, position B)",
+            // DiSEqC 1.1+
+            "Port 1",
+            "Port 2",
+            "Port 3",
+            "Port 4",
+            "Port 5",
+            "Port 6",
+            "Port 7",
+            "Port 8",
+            "Port 9",
+            "Port 10",
+            "Port 11",
+            "Port 12",
+            "Port 13",
+            "Port 14",
+            "Port 15",
+            "Port 16"});
         curBox.SelectedIndex =
           Int32.Parse(layer.GetSetting(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), "0").Value);
 
@@ -754,16 +774,16 @@ namespace SetupTv.Sections
       setting.Persist();
 
       setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc1", "0");
-      setting.Value = mpDisEqc1.SelectedIndex.ToString();
+      setting.Value = mpComboDiseqc1.SelectedIndex.ToString();
       setting.Persist();
       setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc2", "0");
-      setting.Value = mpDisEqc2.SelectedIndex.ToString();
+      setting.Value = mpComboDiseqc2.SelectedIndex.ToString();
       setting.Persist();
       setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc3", "0");
-      setting.Value = mpDisEqc3.SelectedIndex.ToString();
+      setting.Value = mpComboDiseqc3.SelectedIndex.ToString();
       setting.Persist();
       setting = layer.GetSetting("dvbs" + _cardNumber + "DisEqc4", "0");
-      setting.Value = mpDisEqc4.SelectedIndex.ToString();
+      setting.Value = mpComboDiseqc4.SelectedIndex.ToString();
       setting.Persist();
 
       setting = layer.GetSetting("dvbs" + _cardNumber + "band1", "0");
@@ -922,25 +942,25 @@ namespace SetupTv.Sections
         _radioChannelsUpdated = 0;
 
         if (mpLNB1.Checked)
-          Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex,
+          Scan(1, (BandType)mpBand1.SelectedIndex, (DiseqcSwitchCommand)mpComboDiseqc1.SelectedIndex,
                (SatelliteContext)mpTransponder1.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB2.Checked)
-          Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex,
+          Scan(2, (BandType)mpBand2.SelectedIndex, (DiseqcSwitchCommand)mpComboDiseqc2.SelectedIndex,
                (SatelliteContext)mpTransponder2.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB3.Checked)
-          Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex,
+          Scan(3, (BandType)mpBand3.SelectedIndex, (DiseqcSwitchCommand)mpComboDiseqc3.SelectedIndex,
                (SatelliteContext)mpTransponder3.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB4.Checked)
-          Scan(4, (BandType)mpBand4.SelectedIndex, (DisEqcType)mpDisEqc4.SelectedIndex,
+          Scan(4, (BandType)mpBand4.SelectedIndex, (DiseqcSwitchCommand)mpComboDiseqc4.SelectedIndex,
                (SatelliteContext)mpTransponder4.SelectedItem);
 
         listViewStatus.Items.Add(
@@ -967,7 +987,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void Scan(int lnb, BandType bandType, DisEqcType diseqc, SatelliteContext context)
+    private void Scan(int lnb, BandType bandType, DiseqcSwitchCommand diseqc, SatelliteContext context)
     {
       // all transponders to scan
       List<DVBSChannel> _channels = new List<DVBSChannel>();
@@ -1006,7 +1026,7 @@ namespace SetupTv.Sections
         case ScanTypes.NIT:
           _transponders.Clear();
           DVBSChannel tuneChannel = GetManualTuning();
-          tuneChannel.DisEqc = diseqc;
+          tuneChannel.Diseqc = diseqc;
           tuneChannel.BandType = bandType;
           tuneChannel.SatelliteIndex = position;
 
@@ -1063,8 +1083,8 @@ namespace SetupTv.Sections
         // scanning is not enabled then skip it. Note that
         // a roll-off of .35 is the default for standard
         // DVB-S.
-        if ((tuneChannel.Rolloff == RollOff.Twenty ||
-             tuneChannel.Rolloff == RollOff.TwentyFive ||
+        if ((tuneChannel.RollOff == RollOff.Twenty ||
+             tuneChannel.RollOff == RollOff.TwentyFive ||
              tuneChannel.Pilot == Pilot.On) &&
             !checkBoxEnableDVBS2.Checked)
         {
@@ -1073,7 +1093,7 @@ namespace SetupTv.Sections
 
         scanIndex++;
 
-        tuneChannel.DisEqc = diseqc;
+        tuneChannel.Diseqc = diseqc;
         tuneChannel.BandType = bandType;
         tuneChannel.SatelliteIndex = position;
         if (bandType == BandType.Circular)
@@ -1497,14 +1517,14 @@ namespace SetupTv.Sections
       tuneChannel.SymbolRate = transponder.SymbolRate;
       tuneChannel.ModulationType = transponder.Modulation;
       tuneChannel.Pilot = transponder.Pilot;
-      tuneChannel.Rolloff = transponder.Rolloff;
+      tuneChannel.RollOff = transponder.Rolloff;
       tuneChannel.InnerFecRate = transponder.InnerFecRate;
       tuneChannel.BandType = BandType.Universal;
-      tuneChannel.DisEqc = DisEqcType.None;
+      tuneChannel.Diseqc = DiseqcSwitchCommand.None;
       if (mpBand1.SelectedIndex >= 0)
         tuneChannel.BandType = (BandType)mpBand1.SelectedIndex;
-      if (mpDisEqc1.SelectedIndex >= 0)
-        tuneChannel.DisEqc = (DisEqcType)mpDisEqc1.SelectedIndex;
+      if (mpComboDiseqc1.SelectedIndex >= 0)
+        tuneChannel.Diseqc = (DiseqcSwitchCommand)mpComboDiseqc1.SelectedIndex;
       _user.CardId = _cardNumber;
       RemoteControl.Instance.StopCard(_user);
       _user.CardId = _cardNumber;
@@ -1688,22 +1708,22 @@ namespace SetupTv.Sections
 
     private void mpLNB1_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder1.Visible = mpBand1.Visible = mpDisEqc1.Visible = mpLNB1.Checked;
+      mpTransponder1.Visible = mpBand1.Visible = mpComboDiseqc1.Visible = mpLNB1.Checked;
     }
 
     private void mpLNB2_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder2.Visible = mpBand2.Visible = mpDisEqc2.Visible = mpLNB2.Checked;
+      mpTransponder2.Visible = mpBand2.Visible = mpComboDiseqc2.Visible = mpLNB2.Checked;
     }
 
     private void mpLNB3_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder3.Visible = mpBand3.Visible = mpDisEqc3.Visible = mpLNB3.Checked;
+      mpTransponder3.Visible = mpBand3.Visible = mpComboDiseqc3.Visible = mpLNB3.Checked;
     }
 
     private void mpLNB4_CheckedChanged(object sender, EventArgs e)
     {
-      mpTransponder4.Visible = mpBand4.Visible = mpDisEqc4.Visible = mpLNB4.Checked;
+      mpTransponder4.Visible = mpBand4.Visible = mpComboDiseqc4.Visible = mpLNB4.Checked;
     }
 
     private void mpBand1_SelectedIndexChanged(object sender, EventArgs e)
@@ -1816,7 +1836,7 @@ namespace SetupTv.Sections
       Control[] scanControls = new Control[]
                                  {
                                    mpLNB1, mpLNB2, mpLNB3, mpLNB4,
-                                   mpDisEqc1, mpDisEqc2, mpDisEqc3, mpDisEqc4,
+                                   mpComboDiseqc1, mpComboDiseqc2, mpComboDiseqc3, mpComboDiseqc4,
                                    mpBand1, mpBand2, mpBand3, mpBand4,
                                    mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4,
                                    checkBoxCreateGroupsSat, checkBoxCreateGroups, checkBoxCreateSignalGroup,
@@ -1908,7 +1928,7 @@ namespace SetupTv.Sections
       t.InnerFecRate = ch.InnerFecRate;
       t.Modulation = ch.ModulationType;
       t.Pilot = ch.Pilot;
-      t.Rolloff = ch.Rolloff;
+      t.Rolloff = ch.RollOff;
       t.SymbolRate = ch.SymbolRate;
       t.Polarisation = ch.Polarisation;
       return t;
@@ -1925,12 +1945,12 @@ namespace SetupTv.Sections
       if (checkBoxEnableDVBS2.Checked)
       {
         tuneChannel.Pilot = (Pilot)mpComboBoxPilot.SelectedIndex - 1;
-        tuneChannel.Rolloff = (RollOff)mpComboBoxRollOff.SelectedIndex - 1;
+        tuneChannel.RollOff = (RollOff)mpComboBoxRollOff.SelectedIndex - 1;
       }
       else
       {
         tuneChannel.Pilot = Pilot.NotSet;
-        tuneChannel.Rolloff = RollOff.NotSet;
+        tuneChannel.RollOff = RollOff.NotSet;
       }
       return tuneChannel;
     }

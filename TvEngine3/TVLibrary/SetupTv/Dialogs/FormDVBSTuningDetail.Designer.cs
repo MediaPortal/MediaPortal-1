@@ -48,7 +48,7 @@ namespace SetupTv.Dialogs
       this.label33 = new System.Windows.Forms.Label();
       this.comboBoxModulation = new System.Windows.Forms.ComboBox();
       this.label32 = new System.Windows.Forms.Label();
-      this.comboBoxDisEqc = new System.Windows.Forms.ComboBox();
+      this.comboBoxDiseqc = new System.Windows.Forms.ComboBox();
       this.label10 = new System.Windows.Forms.Label();
       this.comboBoxPol = new System.Windows.Forms.ComboBox();
       this.label11 = new System.Windows.Forms.Label();
@@ -310,20 +310,39 @@ namespace SetupTv.Dialogs
       // 
       // comboBoxDisEqc
       // 
-      this.comboBoxDisEqc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDisEqc.FormattingEnabled = true;
-      this.comboBoxDisEqc.Items.AddRange(new object[] {
+      this.comboBoxDiseqc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxDiseqc.FormattingEnabled = true;
+      this.comboBoxDiseqc.Items.AddRange(new object[] {
             "None",
-            "Simple A",
-            "Simple B",
-            "Level 1 A/A",
-            "Level 1 A/B",
-            "Level 1 B/A",
-            "Level 1 B/B"});
-      this.comboBoxDisEqc.Location = new System.Drawing.Point(93, 38);
-      this.comboBoxDisEqc.Name = "comboBoxDisEqc";
-      this.comboBoxDisEqc.Size = new System.Drawing.Size(129, 21);
-      this.comboBoxDisEqc.TabIndex = 1;
+            // Simple DiSEqC (burst)
+            "Simple A (tone burst)",
+            "Simple B (data burst)",
+            // DiSEqC 1.0
+            "Port A (option A, position A)",
+            "Port B (option A, position B)",
+            "Port C (option B, position A)",
+            "Port D (option B, position B)",
+            // DiSEqC 1.1+
+            "Port 1",
+            "Port 2",
+            "Port 3",
+            "Port 4",
+            "Port 5",
+            "Port 6",
+            "Port 7",
+            "Port 8",
+            "Port 9",
+            "Port 10",
+            "Port 11",
+            "Port 12",
+            "Port 13",
+            "Port 14",
+            "Port 15",
+            "Port 16"});
+      this.comboBoxDiseqc.Location = new System.Drawing.Point(93, 38);
+      this.comboBoxDiseqc.Name = "comboBoxDisEqc";
+      this.comboBoxDiseqc.Size = new System.Drawing.Size(129, 21);
+      this.comboBoxDiseqc.TabIndex = 1;
       // 
       // label10
       // 
@@ -438,7 +457,7 @@ namespace SetupTv.Dialogs
       this.Controls.Add(this.label33);
       this.Controls.Add(this.comboBoxModulation);
       this.Controls.Add(this.label32);
-      this.Controls.Add(this.comboBoxDisEqc);
+      this.Controls.Add(this.comboBoxDiseqc);
       this.Controls.Add(this.label10);
       this.Controls.Add(this.comboBoxPol);
       this.Controls.Add(this.label11);
@@ -460,7 +479,7 @@ namespace SetupTv.Dialogs
       this.Controls.SetChildIndex(this.label11, 0);
       this.Controls.SetChildIndex(this.comboBoxPol, 0);
       this.Controls.SetChildIndex(this.label10, 0);
-      this.Controls.SetChildIndex(this.comboBoxDisEqc, 0);
+      this.Controls.SetChildIndex(this.comboBoxDiseqc, 0);
       this.Controls.SetChildIndex(this.label32, 0);
       this.Controls.SetChildIndex(this.comboBoxModulation, 0);
       this.Controls.SetChildIndex(this.label33, 0);
@@ -509,7 +528,7 @@ namespace SetupTv.Dialogs
     private System.Windows.Forms.Label label33;
     private System.Windows.Forms.ComboBox comboBoxModulation;
     private System.Windows.Forms.Label label32;
-    private System.Windows.Forms.ComboBox comboBoxDisEqc;
+    private System.Windows.Forms.ComboBox comboBoxDiseqc;
     private System.Windows.Forms.Label label10;
     private System.Windows.Forms.ComboBox comboBoxPol;
     private System.Windows.Forms.Label label11;

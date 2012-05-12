@@ -87,7 +87,106 @@ namespace TvLibrary.Channels
   }
 
   /// <summary>
-  /// Enum describing tone burst (simple DiSEqC) states.
+  /// Enum listing DiSEqC switch commands for DiSEqC 1.0 and 1.1.
+  /// </summary>
+  public enum DiseqcSwitchCommand
+  {
+    /// <summary>
+    /// DiSEqC not used.
+    /// </summary>
+    None = 0,
+    /// <summary>
+    /// Simple A (tone burst).
+    /// </summary>
+    SimpleA = 1,
+    /// <summary>
+    /// Simple B (data burst).
+    /// </summary>
+    SimpleB = 2,
+    /// <summary>
+    /// DiSEqC 1.0 port A (option A, position A)
+    /// </summary>
+    PortA = 3,
+    /// <summary>
+    /// DiSEqC 1.0 port B (option A, position B)
+    /// </summary>
+    PortB = 4,
+    /// <summary>
+    /// DiSEqC 1.0 port C (option B, position A)
+    /// </summary>
+    PortC = 5,
+    /// <summary>
+    /// DiSEqC 1.0 port D (option B, position B)
+    /// </summary>
+    PortD = 6,
+    /// <summary>
+    /// DiSEqC 1.1 port 1
+    /// </summary>
+    Port1 = 7,
+    /// <summary>
+    /// DiSEqC 1.1 port 2
+    /// </summary>
+    Port2 = 8,
+    /// <summary>
+    /// DiSEqC 1.1 port 3
+    /// </summary>
+    Port3 = 9,
+    /// <summary>
+    /// DiSEqC 1.1 port 4
+    /// </summary>
+    Port4 = 10,
+    /// <summary>
+    /// DiSEqC 1.1 port 5
+    /// </summary>
+    Port5 = 11,
+    /// <summary>
+    /// DiSEqC 1.1 port 6
+    /// </summary>
+    Port6 = 12,
+    /// <summary>
+    /// DiSEqC 1.1 port 7
+    /// </summary>
+    Port7 = 13,
+    /// <summary>
+    /// DiSEqC 1.1 port 8
+    /// </summary>
+    Port8 = 14,
+    /// <summary>
+    /// DiSEqC 1.1 port 9
+    /// </summary>
+    Port9 = 15,
+    /// <summary>
+    /// DiSEqC 1.1 port 10
+    /// </summary>
+    Port10 = 16,
+    /// <summary>
+    /// DiSEqC 1.1 port 11
+    /// </summary>
+    Port11 = 17,
+    /// <summary>
+    /// DiSEqC 1.1 port 12
+    /// </summary>
+    Port12 = 18,
+    /// <summary>
+    /// DiSEqC 1.1 port 13
+    /// </summary>
+    Port13 = 19,
+    /// <summary>
+    /// DiSEqC 1.1 port 14
+    /// </summary>
+    Port14 = 20,
+    /// <summary>
+    /// DiSEqC 1.1 port 15
+    /// </summary>
+    Port15 = 21,
+    /// <summary>
+    /// DiSEqC 1.1 port 16
+    /// </summary>
+    Port16 = 22
+  }
+
+  /// <summary>
+  /// Enum listing tone burst (simple DiSEqC) states.
   /// </summary>
   public enum ToneBurst
   {
@@ -100,7 +199,7 @@ namespace TvLibrary.Channels
   }
 
   /// <summary>
-  /// Enum describing 22 kHz oscillator logical states.
+  /// Enum listing 22 kHz oscillator logical states.
   /// </summary>
   public enum Tone22k
   {
@@ -122,48 +221,40 @@ namespace TvLibrary.Channels
   public class BandTypeConverter
   {
     /// <summary>
-    /// Gets the Antenna Number (or LNB number)
+    /// Get the switch port number (or LNB number) for a given DiSEqC switch command.
     /// </summary>
-    /// <param name="channel">holds tuning details for DVB-S</param>
-    /// <returns></returns>
-    public static int GetAntennaNr(DVBSChannel channel)
+    /// <param name="command">The DiSEqC switch command.</param>
+    /// <returns>the switch port number associated with the command</returns>
+    public static int GetPortNumber(DiseqcSwitchCommand command)
     {
-      byte disEqcPort = 0;
-
-      switch (channel.DisEqc)
+      switch (command)
       {
-        case DisEqcType.None:
-          disEqcPort = 0; //no diseqc
-          break;
-        case DisEqcType.SimpleA: //simple A
-          disEqcPort = 1;
-          break;
-        case DisEqcType.SimpleB: //simple B
-          disEqcPort = 2;
-          break;
-        case DisEqcType.Level1AA: //Level 1 A/A
-          disEqcPort = 1;
-          break;
-        case DisEqcType.Level1AB: //Level 1 A/B
-          disEqcPort = 2;
-          break;
-        case DisEqcType.Level1BA: //Level 1 B/A
-          disEqcPort = 3;
-          break;
-        case DisEqcType.Level1BB: //Level 1 B/B
-          disEqcPort = 4;
-          break;
+        case DiseqcSwitchCommand.None:
+          return 0;   // no DiSEqC
+        case DiseqcSwitchCommand.SimpleA:
+          return 1;
+        case DiseqcSwitchCommand.SimpleB:
+          return 2;
+        case DiseqcSwitchCommand.PortA:
+          return 1;
+        case DiseqcSwitchCommand.PortB:
+          return 2;
+        case DiseqcSwitchCommand.PortC:
+          return 3;
+        case DiseqcSwitchCommand.PortD:
+          return 4;
       }
-      return disEqcPort;
+      // DiSEqC 1.1 commands...
+      return ((int)command - 6);
     }
 
     /// <summary>
-    /// Determins if the tuning paramter is HiBand and if so involke the 22Khz switch.
+    /// Determine if the channel is received when the LNB is in low (22 kHz off) or high (22 kHz on) band mode.
     /// </summary>
-    /// <param name="channel">tuning details for specific channel / frequency</param>
-    /// <param name="parameters">holds the parameters needed for tuning channel </param>
-    /// <returns></returns>
-    public static bool IsHiBand(DVBSChannel channel, ScanParameters parameters)
+    /// <param name="channel">Tuning details for a satellite channel.</param>
+    /// <param name="parameters">LNB oscillator frequency parameters.</param>
+    /// <returns><c>true</c> if the channel is broadcast from a high band transponder, otherwise <c>false</c></returns>
+    public static bool IsHighBand(DVBSChannel channel, ScanParameters parameters)
     {
       int lof1, lof2, sw;
       GetDefaultLnbSetup(parameters, channel.BandType, out lof1, out lof2, out sw);
@@ -256,41 +347,6 @@ namespace TvLibrary.Channels
   }
 
   /// <summary>
-  /// enum describing the different DisEqc type
-  /// </summary>
-  public enum DisEqcType
-  {
-    /// <summary>
-    /// diseqc not used
-    /// </summary>
-    None = 0,
-    /// <summary>
-    /// Simple A
-    /// </summary>
-    SimpleA = 1,
-    /// <summary>
-    /// Simple B
-    /// </summary>
-    SimpleB = 2,
-    /// <summary>
-    /// Level 1 A/A
-    /// </summary>
-    Level1AA = 3,
-    /// <summary>
-    /// Level 1 A/B
-    /// </summary>
-    Level1AB = 4,
-    /// <summary>
-    /// Level 1 B/A
-    /// </summary>
-    Level1BA = 5,
-    /// <summary>
-    /// Level 1 B/B
-    /// </summary>
-    Level1BB = 6,
-  } ;
-
-  /// <summary>
   /// class holding all tuning details for DVBS
   /// </summary>
   [Serializable]
@@ -300,8 +356,7 @@ namespace TvLibrary.Channels
 
     private Polarisation _polarisation;
     private int _symbolRate;
-    private int _switchingFrequency;
-    private DisEqcType _disEqc;
+    private DiseqcSwitchCommand _diseqc;
     private BandType _bandType;
     private ModulationType _modulation = ModulationType.ModQpsk;
     private BinaryConvolutionCodeRate _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
@@ -314,35 +369,34 @@ namespace TvLibrary.Channels
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBSChannel"/> class.
     /// </summary>
-    /// <param name="chan">The chan.</param>
-    public DVBSChannel(DVBSChannel chan)
-      : base(chan)
-    {
-      _polarisation = chan.Polarisation;
-      _symbolRate = chan.SymbolRate;
-      _switchingFrequency = chan.SwitchingFrequency;
-      DisEqc = chan.DisEqc;
-      _bandType = chan.BandType;
-      _modulation = chan.ModulationType;
-      _innerFecRate = chan.InnerFecRate;
-      _pilot = chan.Pilot;
-      _rollOff = chan.Rolloff;
-      _satelliteIndex = chan.SatelliteIndex;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DVBSChannel"/> class.
-    /// </summary>
     public DVBSChannel()
+      : base()
     {
-      SwitchingFrequency = 0;
-      DisEqc = DisEqcType.SimpleA;
+      _diseqc = DiseqcSwitchCommand.SimpleA;
       _bandType = BandType.Universal;
       _satelliteIndex = -1;
       _modulation = ModulationType.ModQpsk;
       _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
       _pilot = Pilot.NotSet;
       _rollOff = RollOff.NotSet;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVBSChannel"/> class using an existing instance.
+    /// </summary>
+    /// <param name="channel">The existing channel instance.</param>
+    public DVBSChannel(DVBSChannel channel)
+      : base(channel)
+    {
+      _diseqc = channel.Diseqc;
+      _bandType = channel.BandType;
+      _satelliteIndex = channel.SatelliteIndex;
+      _polarisation = channel.Polarisation;
+      _symbolRate = channel.SymbolRate;
+      _modulation = channel.ModulationType;
+      _innerFecRate = channel.InnerFecRate;
+      _pilot = channel.Pilot;
+      _rollOff = channel.RollOff;
     }
 
     #region properties
@@ -402,21 +456,12 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// gets/sets the LNB Switch frequency for this channel
+    /// gets/sets the DiSEqC switch setting for this channel
     /// </summary>
-    public int SwitchingFrequency
+    public DiseqcSwitchCommand Diseqc
     {
-      get { return _switchingFrequency; }
-      set { _switchingFrequency = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the DiSEqC setting for this channel
-    /// </summary>
-    public DisEqcType DisEqc
-    {
-      get { return _disEqc; }
-      set { _disEqc = value; }
+      get { return _diseqc; }
+      set { _diseqc = value; }
     }
 
     /// <summary>
@@ -431,7 +476,7 @@ namespace TvLibrary.Channels
     /// <summary>
     /// gets/sets the Roll-Off setting for this channel
     /// </summary>
-    public RollOff Rolloff
+    public RollOff RollOff
     {
       get { return _rollOff; }
       set { _rollOff = value; }
@@ -450,7 +495,7 @@ namespace TvLibrary.Channels
       string line =
         String.Format(
           "DVBS:{0} SymbolRate:{1} Modulation:{2} Polarisation:{3} InnerFecRate:{4} DisEqc:{5} band:{6} Pilot:{7} RollOff:{8}",
-          base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, DisEqc, BandType, Pilot, Rolloff);
+          base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, Diseqc, BandType, Pilot, RollOff);
       return line;
     }
 
@@ -484,11 +529,7 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      if (ch.SwitchingFrequency != SwitchingFrequency)
-      {
-        return false;
-      }
-      if (ch.DisEqc != DisEqc)
+      if (ch.Diseqc != Diseqc)
       {
         return false;
       }
@@ -508,7 +549,7 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      if (ch.Rolloff != Rolloff)
+      if (ch.RollOff != RollOff)
       {
         return false;
       }
@@ -525,9 +566,9 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _polarisation.GetHashCode() ^ _symbolRate.GetHashCode() ^
-             _switchingFrequency.GetHashCode() ^ _disEqc.GetHashCode() ^ _bandType.GetHashCode()
-             ^ SatelliteIndex.GetHashCode() ^ _modulation.GetHashCode() ^ _innerFecRate.GetHashCode() ^
-             _pilot.GetHashCode() ^ _rollOff.GetHashCode();
+             _diseqc.GetHashCode() ^ _bandType.GetHashCode() ^ SatelliteIndex.GetHashCode() ^
+             _modulation.GetHashCode() ^ _innerFecRate.GetHashCode() ^ _pilot.GetHashCode() ^
+             _rollOff.GetHashCode();
     }
 
     /// <summary>
@@ -548,8 +589,8 @@ namespace TvLibrary.Channels
              dvbsChannel.SatelliteIndex != SatelliteIndex ||
              dvbsChannel.InnerFecRate != InnerFecRate ||
              dvbsChannel.Pilot != Pilot ||
-             dvbsChannel.Rolloff != Rolloff ||
-             dvbsChannel.DisEqc != DisEqc;
+             dvbsChannel.RollOff != RollOff ||
+             dvbsChannel.Diseqc != Diseqc;
     }
   }
 }

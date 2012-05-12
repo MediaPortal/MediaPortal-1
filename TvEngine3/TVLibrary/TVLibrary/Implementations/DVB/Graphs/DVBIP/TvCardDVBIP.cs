@@ -136,13 +136,16 @@ namespace TvLibrary.Implementations.DVB
     #region Implementation of ITVCard
 
     /// <summary>
-    /// Checks if channel can be tuned by IPTV
+    /// Check if the tuner can tune to a given channel.
     /// </summary>
-    /// <param name="channel">channel</param>
-    /// <returns>true if DVBIPChannel</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if ((channel as DVBIPChannel) == null) return false;
+      if ((channel as DVBIPChannel) == null)
+      {
+        return false;
+      }
       return true;
     }
 
@@ -314,15 +317,6 @@ namespace TvLibrary.Implementations.DVB
         RemoveStreamSourceFilter();
         AddStreamSourceFilter(_defaultUrl);
       }
-    }
-
-    /// <summary>
-    /// ToString
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-      return _name;
     }
 
     /// <summary>

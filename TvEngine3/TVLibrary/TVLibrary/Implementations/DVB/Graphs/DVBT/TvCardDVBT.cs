@@ -21,11 +21,12 @@
 using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.Helper;
 using TvDatabase;
+using TvLibrary.Channels;
 using TvLibrary.Epg;
+using TvLibrary.Implementations.Helper;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -34,10 +35,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class TvCardDVBT : TvCardDvbBase
   {
-    #region variables
-
-    #endregion
-
     #region ctor
 
     /// <summary>
@@ -56,48 +53,9 @@ namespace TvLibrary.Implementations.DVB
     #region graphbuilding
 
     /// <summary>
-    /// Builds the graph.
+    /// Create the BDA tuning space for the tuner. This will be used for BDA tuning.
     /// </summary>
-    public override void BuildGraph()
-    {
-      try
-      {
-        if (_graphState != GraphState.Idle)
-        {
-          Log.Log.Error("dvbt:Graph already built");
-          throw new TvException("Graph already build");
-        }
-        Log.Log.WriteFile("dvbt:BuildGraph");
-        _graphBuilder = (IFilterGraph2)new FilterGraph();
-        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-        _capBuilder.SetFiltergraph(_graphBuilder);
-        _rotEntry = new DsROTEntry(_graphBuilder);
-        AddNetworkProviderFilter(typeof (DVBTNetworkProvider).GUID);
-        AddTsWriterFilterToGraph();
-        if (!useInternalNetworkProvider)
-        {
-          CreateTuningSpace();
-          AddMpeg2DemuxerToGraph();
-        }
-        AddAndConnectBDABoardFilters(_device);
-        string graphName = _device.Name + " - DVBT Graph.grf";
-        FilterGraphTools.SaveGraphFile(_graphBuilder, graphName);
-        GetTunerSignalStatistics();
-        _graphState = GraphState.Created;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        Dispose();
-        _graphState = GraphState.Idle;
-        throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
-      }
-    }
-
-    /// <summary>
-    /// Creates the tuning space.
-    /// </summary>
-    protected void CreateTuningSpace()
+    protected override void CreateTuningSpace()
     {
       Log.Log.WriteFile("dvbt:CreateTuningSpace()");
       ITuner tuner = (ITuner)_filterNetworkProvider;
@@ -157,126 +115,35 @@ namespace TvLibrary.Implementations.DVB
       _tuneRequest = request;
     }
 
-    /// <summary>
-    /// Methods which stops the graph
-    /// </summary>
-    public override void StopGraph()
-    {
-      base.StopGraph();
-      _previousChannel = null;
-    }
-
     #endregion
 
     #region tuning & recording
 
     /// <summary>
-    /// Tunes the specified channel.
+    /// Assemble a BDA tune request for a given channel.
     /// </summary>
-    /// <param name="subChannelId">The sub channel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns></returns>
-    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
-    {
-      Log.Log.WriteFile("dvbt: Scan:{0}", channel);
-      try
-      {
-        if (!BeforeTune(channel, ref subChannelId))
-        {
-          return null;
-        }
-
-        ITvSubChannel ch = base.Scan(subChannelId, channel);
-
-        Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
-        return ch;
-      }
-      catch (TvExceptionNoSignal)
-      {
-        throw;
-      }
-      catch (TvExceptionNoPMT)
-      {
-        throw;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw;
-      }
-    }
-
-    /// <summary>
-    /// Tunes the specified channel.
-    /// </summary>
-    /// <param name="subChannelId">The sub channel id</param>
-    /// <param name="channel">The channel.</param>
-    /// <returns></returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
-    {
-      Log.Log.WriteFile("dvbt: Tune:{0}", channel);
-      try
-      {
-        if (!BeforeTune(channel, ref subChannelId))
-        {
-          return null;
-        }
-
-        ITvSubChannel ch = base.Tune(subChannelId, channel);
-
-        Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
-        return ch;
-      }
-      catch (TvExceptionNoSignal)
-      {
-        throw;
-      }
-      catch (TvExceptionNoPMT)
-      {
-        throw;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw;
-      }
-    }
-
-    private bool BeforeTune(IChannel channel, ref int subChannelId)
+    /// <param name="channel">The channel that will be tuned.</param>
+    /// <returns><c>true</c> if the tune request is created successfully, otherwise <c>false</c></returns>
+    protected override bool AssembleTuneRequest(IChannel channel)
     {
       DVBTChannel dvbtChannel = channel as DVBTChannel;
       if (dvbtChannel == null)
       {
-        Log.Log.WriteFile("dvbt:Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
+        Log.Log.WriteFile("TvCardDvbT: channel is not a DVB-T channel!!! {0}", channel.GetType().ToString());
         return false;
       }
-      if (_graphState == GraphState.Idle)
-      {
-        BuildGraph();
-        if (_mapSubChannels.ContainsKey(subChannelId) == false)
-        {
-          subChannelId = GetNewSubChannel(channel);
-        }
-      }
-      if (useInternalNetworkProvider)
-      {
-        return true;
-      }
 
-      if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbtChannel))
-      {
-        //_pmtPid = -1;
-        ILocator locator;
-        _tuningSpace.get_DefaultLocator(out locator);
-        IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
-        dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
-        IDVBTuneRequest tuneRequest = (IDVBTuneRequest)_tuneRequest;
-        tuneRequest.put_ONID(dvbtChannel.NetworkId);
-        tuneRequest.put_SID(dvbtChannel.ServiceId);
-        tuneRequest.put_TSID(dvbtChannel.TransportId);
-        locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
-        _tuneRequest.put_Locator(locator);
-      }
+      ILocator locator;
+      _tuningSpace.get_DefaultLocator(out locator);
+      IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
+      dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
+      IDVBTuneRequest tuneRequest = (IDVBTuneRequest)_tuneRequest;
+      tuneRequest.put_ONID(dvbtChannel.NetworkId);
+      tuneRequest.put_SID(dvbtChannel.ServiceId);
+      tuneRequest.put_TSID(dvbtChannel.TransportId);
+      locator.put_CarrierFrequency((int)dvbtChannel.Frequency);
+      _tuneRequest.put_Locator(locator);
+
       return true;
     }
 
@@ -332,27 +199,16 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     /// <summary>
-    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// Check if the tuner can tune to a given channel.
     /// </summary>
-    /// <returns>
-    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
-    /// </returns>
-    public override string ToString()
-    {
-      return _name;
-    }
-
-    /// <summary>
-    /// Method to check if card can tune to the channel specified
-    /// </summary>
-    /// <param name="channel"></param>
-    /// <returns>
-    /// true if card can tune to the channel otherwise false
-    /// </returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
       if ((channel as DVBTChannel) == null)
+      {
         return false;
+      }
       return true;
     }
 

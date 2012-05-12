@@ -42,25 +42,25 @@ namespace TvLibrary.Channels
     /// <summary>
     /// Initializes a new instance of the <see cref="ATSCChannel"/> class.
     /// </summary>
-    /// <param name="chan">The chan.</param>
-    public ATSCChannel(ATSCChannel chan)
-      : base(chan)
-    {
-      _majorChannel = chan.MajorChannel;
-      _minorChannel = chan.MinorChannel;
-      _physicalChannel = chan.PhysicalChannel;
-      _modulation = chan.ModulationType;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ATSCChannel"/> class.
-    /// </summary>
     public ATSCChannel()
     {
       _majorChannel = -1;
       _minorChannel = -1;
       _physicalChannel = -1;
       _modulation = ModulationType.Mod8Vsb;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ATSCChannel"/> class using an existing instance.
+    /// </summary>
+    /// <param name="channel">The existing channel instance.</param>
+    public ATSCChannel(ATSCChannel channel)
+      : base(channel)
+    {
+      _majorChannel = channel.MajorChannel;
+      _minorChannel = channel.MinorChannel;
+      _physicalChannel = channel.PhysicalChannel;
+      _modulation = channel.ModulationType;
     }
 
     #region properties

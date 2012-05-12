@@ -420,11 +420,11 @@ namespace TvEngine
       }
 
       ProfToneBurst toneBurst = ProfToneBurst.Off;
-      if (dvbsChannel.DisEqc == DisEqcType.SimpleA)
+      if (dvbsChannel.Diseqc == DiseqcSwitchCommand.SimpleA)
       {
         toneBurst = ProfToneBurst.ToneBurst;
       }
-      else if (dvbsChannel.DisEqc == DisEqcType.SimpleB)
+      else if (dvbsChannel.Diseqc == DiseqcSwitchCommand.SimpleB)
       {
         toneBurst = ProfToneBurst.DataBurst;
       }

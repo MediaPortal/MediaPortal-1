@@ -84,8 +84,20 @@ namespace TvLibrary.Channels
     /// Initializes a new instance of the <see cref="DVBTChannel"/> class.
     /// </summary>
     public DVBTChannel()
+      : base()
     {
-      BandWidth = 8;
+      _bandWidth = 8;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVBTChannel"/> class using an existing instance.
+    /// </summary>
+    /// <param name="channel">The existing channel instance.</param>
+    public DVBTChannel(DVBTChannel channel)
+      : base(channel)
+    {
+      _bandWidth = channel.BandWidth;
+      _offset = channel.Offset;
     }
 
     /// <summary>

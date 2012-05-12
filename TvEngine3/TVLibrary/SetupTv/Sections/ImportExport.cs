@@ -505,9 +505,8 @@ namespace SetupTv.Sections
                     break;
                   case 3: //DVBSChannel
                     DVBSChannel dvbsChannel = new DVBSChannel();
-                    dvbsChannel.DisEqc = (DisEqcType)diseqc;
+                    dvbsChannel.Diseqc = (DiseqcSwitchCommand)diseqc;
                     dvbsChannel.Polarisation = (Polarisation)polarisation;
-                    dvbsChannel.SwitchingFrequency = switchingFrequency;
                     dvbsChannel.FreeToAir = fta;
                     dvbsChannel.Frequency = frequency;
                     dvbsChannel.IsRadio = isRadio;
@@ -524,7 +523,7 @@ namespace SetupTv.Sections
                     dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)InnerFecRate;
                     dvbsChannel.BandType = (BandType)band;
                     dvbsChannel.Pilot = (Pilot)pilot;
-                    dvbsChannel.Rolloff = (RollOff)rollOff;
+                    dvbsChannel.RollOff = (RollOff)rollOff;
                     dvbsChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbsChannel);
                     Log.Info("TvChannels: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);

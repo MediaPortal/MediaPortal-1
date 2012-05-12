@@ -292,7 +292,7 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.Debug("WaitForPMT: Waiting for PMT {0:X}", _pmtPid);
             }
-
+            _pmtRequested = true;
             if (_eventPMT.WaitOne(timeoutPMT, true))
             {
               TimeSpan ts = DateTime.Now - dtNow;
@@ -862,9 +862,6 @@ namespace TvLibrary.Implementations.DVB
         return false;
       _pmtVersion = -1;
       _pmtPid = pmtPid;
-      _pmtRequested = true; // requested      
-      if (_conditionalAccess != null)
-        _conditionalAccess.OnRunGraph(serviceId);
 
       Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
@@ -878,6 +875,10 @@ namespace TvLibrary.Implementations.DVB
       }*/
 
       OnAfterTuneEvent();
+
+      // Do this as late as possible. Any PMT that arrives between when the PMT callback was set and
+      // when we start waiting for PMT (after returning from this function) *MUST NOT* unset this flag.
+      _pmtRequested = true;
       return true;
     }
 

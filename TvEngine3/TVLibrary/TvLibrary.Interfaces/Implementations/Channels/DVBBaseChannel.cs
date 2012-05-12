@@ -45,36 +45,38 @@ namespace TvLibrary.Channels
 
     #endregion
 
-    /// <summary>
-    /// ctor
-    /// </summary>
-    public DVBBaseChannel(DVBBaseChannel chan)
-    {
-      _channelName = chan._channelName;
-      _providerName = chan._providerName;
-      _channelFrequency = chan._channelFrequency;
-      _networkId = chan._networkId;
-      _serviceId = chan._serviceId;
-      _transportId = chan._transportId;
-      _pmtPid = chan._pmtPid;
-      _lcn = chan._lcn;
-      _isRadio = chan._isRadio;
-      _isTv = chan._isTv;
-      _freeToAir = chan._freeToAir;
-    }
-
     ///<summary>
-    /// Base constructor
+    /// Base <see cref="DVBBaseChannel"/> constructor.
     ///</summary>
     public DVBBaseChannel()
     {
-      _channelName = "";
-      _providerName = "";
+      _channelName = String.Empty;
+      _providerName = String.Empty;
       _pmtPid = -1;
       _networkId = -1;
-      _serviceId = -1;
       _transportId = -1;
+      _serviceId = -1;
       _lcn = 10000;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of a <see cref="DVBBaseChannel"/> derived class instance using an
+    /// existing instance.
+    /// </summary>
+    /// <param name="channel">The existing channel instance.</param>
+    public DVBBaseChannel(DVBBaseChannel channel)
+    {
+      _channelName = channel.Name;
+      _providerName = channel.Provider;
+      _channelFrequency = channel.Frequency;
+      _networkId = channel.NetworkId;
+      _transportId = channel.TransportId;
+      _serviceId = channel.ServiceId;
+      _pmtPid = channel.PmtPid;
+      _lcn = channel.LogicalChannelNumber;
+      _isRadio = channel.IsRadio;
+      _isTv = channel.IsTv;
+      _freeToAir = channel.FreeToAir;
     }
 
     #region properties

@@ -910,14 +910,19 @@ namespace TvEngine
       return true;
     }
 
+    #region graph state change callbacks
+
     /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
+    /// This callback is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    public override void SetTuningParameters(ref IChannel channel)
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
     {
-      Log.Debug("Turbosight: set tuning parameters");
+      Log.Debug("Turbosight: on before tune callback");
+      forceGraphStart = false;
 
       if (!_isTurbosight)
       {
@@ -971,15 +976,15 @@ namespace TvEngine
       Log.Debug("  pilot          = {0}", command.Pilot);
 
       // Roll-off
-      if (ch.Rolloff == RollOff.Twenty)
+      if (ch.RollOff == RollOff.Twenty)
       {
         command.RollOff = TbsRollOff.Twenty;
       }
-      else if (ch.Rolloff == RollOff.TwentyFive)
+      else if (ch.RollOff == RollOff.TwentyFive)
       {
         command.RollOff = TbsRollOff.TwentyFive;
       }
-      else if (ch.Rolloff == RollOff.ThirtyFive)
+      else if (ch.RollOff == RollOff.ThirtyFive)
       {
         command.RollOff = TbsRollOff.ThirtyFive;
       }
@@ -1014,42 +1019,16 @@ namespace TvEngine
       }
     }
 
-    #region graph state change callbacks
-
     /// <summary>
-    /// This callback is invoked after a tune request is submitted and the BDA graph is started, but before
-    /// signal lock is checked.
-    /// Process: submit tune request -> (graph not running) -> start graph -> callback -> lock check
+    /// This callback is invoked after a tune request is submitted, when the device's BDA graph is running
+    /// but before signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public override void OnGraphStarted(ITVCard tuner, IChannel currentChannel)
+    /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
+    public override void OnGraphRunning(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
-      {
-        StartMmiHandlerThread();
-      }
-
-      base.OnGraphStarted(tuner, currentChannel);
-    }
-
-    /// <summary>
-    /// This callback is invoked after a tune request is submitted but before signal lock is checked when
-    /// the BDA graph is already running.
-    /// Process: submit tune request -> (graph already running) -> callback -> lock check
-    /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
-    /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
-    public override void OnGraphStart(ITVCard tuner, IChannel currentChannel)
-    {
-      // Ensure the MMI handler thread is always running when the graph is running.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
-      {
-        StartMmiHandlerThread();
-      }
-
-      base.OnGraphStart(tuner, currentChannel);
+      StartMmiHandlerThread();
     }
 
     #endregion

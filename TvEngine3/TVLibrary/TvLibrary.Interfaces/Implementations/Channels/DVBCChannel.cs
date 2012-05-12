@@ -99,9 +99,21 @@ namespace TvLibrary.Channels
     /// Initializes a new instance of the <see cref="DVBCChannel"/> class.
     /// </summary>
     public DVBCChannel()
+      : base()
     {
-      ModulationType = ModulationType.Mod64Qam;
-      SymbolRate = 6875;
+      _modulation = ModulationType.Mod64Qam;
+      _symbolRate = 6875;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DVBCChannel"/> class using an existing instance.
+    /// </summary>
+    /// <param name="channel">The existing channel instance.</param>
+    public DVBCChannel(DVBCChannel channel)
+      : base(channel)
+    {
+      _modulation = channel.ModulationType;
+      _symbolRate = channel.SymbolRate;
     }
 
     /// <summary>

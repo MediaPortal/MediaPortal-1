@@ -160,14 +160,19 @@ namespace TvEngine
       return true;
     }
 
+    #region graph state change callbacks
+
     /// <summary>
-    /// Set tuning parameters that can or could not previously be set through BDA interfaces, or that need
-    /// to be tweaked in order for the standard BDA tuning process to succeed.
+    /// This callback is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    public override void SetTuningParameters(ref IChannel channel)
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
+    /// <param name="channel">The channel that the tuner will been tuned to.</param>
+    /// <param name="forceGraphStart">Ensure that the tuner's BDA graph is running when the tune request is submitted.</param>
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out bool forceGraphStart)
     {
-      Log.Debug("Geniatech: set tuning parameters");
+      Log.Debug("Geniatech: on before tune callback");
+      forceGraphStart = false;
 
       if (!_isGeniatech || _propertySet == null)
       {
@@ -203,15 +208,15 @@ namespace TvEngine
       }
       Log.Debug("  pilot      = {0}", nbcParams.Pilot);
 
-      if (ch.Rolloff == RollOff.Twenty)
+      if (ch.RollOff == RollOff.Twenty)
       {
         nbcParams.RollOff = GtRollOff.Twenty;
       }
-      else if (ch.Rolloff == RollOff.TwentyFive)
+      else if (ch.RollOff == RollOff.TwentyFive)
       {
         nbcParams.RollOff = GtRollOff.TwentyFive;
       }
-      else if (ch.Rolloff == RollOff.ThirtyFive)
+      else if (ch.RollOff == RollOff.ThirtyFive)
       {
         nbcParams.RollOff = GtRollOff.ThirtyFive;
       }
@@ -231,6 +236,8 @@ namespace TvEngine
         Log.Debug("Geniatech: failed to set pilot and roll-off, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
+
+    #endregion
 
     #endregion
 
