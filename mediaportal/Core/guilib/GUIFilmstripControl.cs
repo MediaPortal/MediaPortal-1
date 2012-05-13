@@ -140,6 +140,7 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("textXOff")] protected int _textXOff = 0;
     [XMLSkinElement("textYOff")] protected int _textYOff = 0;
+    [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
 
     #endregion
 
@@ -2096,9 +2097,15 @@ namespace MediaPortal.GUI.Library
           {
             iPage++;
           }
-          if (_upDownControl != null)
+          if (_upDownControl != null && _spinCanFocus)
           {
-            _upDownControl.Value = iPage + 1;
+            _upDownControl.Focus = true;
+          }
+          else
+          {
+            _listType = GUIListControl.ListType.CONTROL_LIST;
+            this.Focus = true;
+            base.OnAction(action);
           }
         }
 
