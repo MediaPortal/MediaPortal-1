@@ -184,6 +184,16 @@ namespace TvLibrary.Implementations.DVB
     #region tuning & recording
 
     /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    protected override void Tune(IChannel channel)
+    {
+      base.Tune(channel);
+      SendDiseqcCommands(channel as DVBSChannel);
+    }
+
+    /// <summary>
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
     /// <param name="channel">The channel that will be tuned.</param>
@@ -246,10 +256,6 @@ namespace TvLibrary.Implementations.DVB
       tuneRequest.put_TSID(dvbsChannel.TransportId);
       tuneRequest.put_SID(dvbsChannel.ServiceId);
       tuneRequest.put_Locator(locator);
-
-      // TODO: this shouldn't be here. We also need a way to send DiSEqC commands in the internal network
-      // provider tuning process.
-      SendDiseqcCommands(dvbsChannel);
 
       return tuneRequest;
     }

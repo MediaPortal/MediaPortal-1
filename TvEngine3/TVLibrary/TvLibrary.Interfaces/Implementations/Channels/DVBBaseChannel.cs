@@ -24,26 +24,28 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Channels
 {
   /// <summary>
-  /// base class for DVB channels
+  /// A base class for holding DVB (and ATSC) channel tuning details.
   /// </summary>
   [Serializable]
   public abstract class DVBBaseChannel : IChannel
   {
     #region variables
 
-    private string _channelName;
-    private string _providerName;
-    private long _channelFrequency;
-    private int _networkId;
-    private int _serviceId;
-    private int _transportId;
-    private int _pmtPid;
-    private int _lcn;
-    private bool _isRadio;
-    private bool _isTv;
-    private bool _freeToAir;
+    private string _channelName = String.Empty;
+    private string _providerName = String.Empty;
+    private long _channelFrequency = -1;
+    private int _networkId = -1;
+    private int _transportId = -1;
+    private int _serviceId = -1;
+    private int _pmtPid = -1;
+    private int _lcn = 10000;
+    private bool _isTv = true;
+    private bool _isRadio = false;
+    private bool _freeToAir = true;
 
     #endregion
+
+    #region constructors
 
     ///<summary>
     /// Base <see cref="DVBBaseChannel"/> constructor.
@@ -52,11 +54,15 @@ namespace TvLibrary.Channels
     {
       _channelName = String.Empty;
       _providerName = String.Empty;
-      _pmtPid = -1;
+      _channelFrequency = -1;
       _networkId = -1;
       _transportId = -1;
       _serviceId = -1;
+      _pmtPid = -1;
       _lcn = 10000;
+      _isTv = true;
+      _isRadio = false;
+      _freeToAir = true;
     }
 
     /// <summary>
@@ -74,60 +80,17 @@ namespace TvLibrary.Channels
       _serviceId = channel.ServiceId;
       _pmtPid = channel.PmtPid;
       _lcn = channel.LogicalChannelNumber;
-      _isRadio = channel.IsRadio;
       _isTv = channel.IsTv;
+      _isRadio = channel.IsRadio;
       _freeToAir = channel.FreeToAir;
     }
+
+    #endregion
 
     #region properties
 
     /// <summary>
-    /// gets/set the LCN of the channel
-    /// </summary>
-    public int LogicalChannelNumber
-    {
-      get { return _lcn; }
-      set { _lcn = value; }
-    }
-
-    /// <summary>
-    /// gets/set the pid of the Program management table for the channel
-    /// </summary>
-    public int PmtPid
-    {
-      get { return _pmtPid; }
-      set { _pmtPid = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the network id of the channel
-    /// </summary>
-    public int NetworkId
-    {
-      get { return _networkId; }
-      set { _networkId = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the service id of the channel
-    /// </summary>
-    public int ServiceId
-    {
-      get { return _serviceId; }
-      set { _serviceId = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the transport id of the channel
-    /// </summary>
-    public int TransportId
-    {
-      get { return _transportId; }
-      set { _transportId = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the channel name
+    /// Get/set the channel's name.
     /// </summary>
     public string Name
     {
@@ -136,7 +99,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// gets/sets the channel provider name
+    /// Get/set the channel provider's name.
     /// </summary>
     public string Provider
     {
@@ -145,7 +108,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// gets/sets the carrier frequency of the channel
+    /// Get/set the carrier frequency for the channel.
     /// </summary>
     public long Frequency
     {
@@ -154,16 +117,52 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// boolean indication if this is a radio channel
+    /// Get/set the network ID for the channel.
     /// </summary>
-    public bool IsRadio
+    public int NetworkId
     {
-      get { return _isRadio; }
-      set { _isRadio = value; }
+      get { return _networkId; }
+      set { _networkId = value; }
     }
 
     /// <summary>
-    /// boolean indication if this is a tv channel
+    /// Get/set the transport stream ID for the channel.
+    /// </summary>
+    public int TransportId
+    {
+      get { return _transportId; }
+      set { _transportId = value; }
+    }
+
+    /// <summary>
+    /// Get/set the service ID for the channel.
+    /// </summary>
+    public int ServiceId
+    {
+      get { return _serviceId; }
+      set { _serviceId = value; }
+    }
+
+    /// <summary>
+    /// Get/set the PID of the program map table for this channel
+    /// </summary>
+    public int PmtPid
+    {
+      get { return _pmtPid; }
+      set { _pmtPid = value; }
+    }
+
+    /// <summary>
+    /// Get/set the logical channel number for the channel.
+    /// </summary>
+    public int LogicalChannelNumber
+    {
+      get { return _lcn; }
+      set { _lcn = value; }
+    }
+
+    /// <summary>
+    /// Get/set whether the channel is a television channel.
     /// </summary>
     public bool IsTv
     {
@@ -172,7 +171,16 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// boolean indicating if this is a FreeToAir channel or an encrypted channel
+    /// Get/set whether the channel is a radio channel.
+    /// </summary>
+    public bool IsRadio
+    {
+      get { return _isRadio; }
+      set { _isRadio = value; }
+    }
+
+    /// <summary>
+    /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
     public bool FreeToAir
     {
@@ -183,10 +191,10 @@ namespace TvLibrary.Channels
     #endregion
 
     /// <summary>
-    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <returns>
-    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>
     /// </returns>
     public override string ToString()
     {
@@ -197,86 +205,86 @@ namespace TvLibrary.Channels
       return line;
     }
 
-
     /// <summary>
-    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// Determine whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
     /// <returns>
-    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// <c>true</c> if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>, otherwise <c>false</c>
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBBaseChannel) == null)
-      {
-        return false;
-      }
       DVBBaseChannel ch = obj as DVBBaseChannel;
-      if (ch.FreeToAir != FreeToAir)
+      if (ch == null)
       {
         return false;
       }
-      if (ch.Frequency != Frequency)
+
+      if (!ch.Name.Equals(_channelName))
       {
         return false;
       }
-      if (ch.IsRadio != IsRadio)
+      if (!ch.Provider.Equals(_providerName))
       {
         return false;
       }
-      if (ch.IsTv != IsTv)
+      if (ch.Frequency != _channelFrequency)
       {
         return false;
       }
-      if (ch.Name != Name)
+      if (ch.NetworkId != _networkId)
       {
         return false;
       }
-      if (ch.NetworkId != NetworkId)
+      if (ch.TransportId != _transportId)
       {
         return false;
       }
-      if (ch.PmtPid != PmtPid)
+      if (ch.ServiceId != _serviceId)
       {
         return false;
       }
-      if (ch.Provider != Provider)
+      if (ch.PmtPid != _pmtPid)
       {
         return false;
       }
-      if (ch.ServiceId != ServiceId)
+      if (ch.LogicalChannelNumber != _lcn)
       {
         return false;
       }
-      if (ch.TransportId != TransportId)
+      if (ch.IsTv != _isTv)
       {
         return false;
       }
-      if (ch.LogicalChannelNumber != LogicalChannelNumber)
+      if (ch.IsRadio != _isRadio)
       {
         return false;
       }
+      if (ch.FreeToAir != _freeToAir)
+      {
+        return false;
+      }
+
       return true;
     }
 
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
-    /// <returns>
-    /// A hash code for the current <see cref="T:System.Object"></see>.
-    /// </returns>
+    /// <returns>a hash code for the current <see cref="T:System.Object"></see></returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^ _pmtPid.GetHashCode() ^
-             _networkId.GetHashCode() ^ _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^
-             _lcn.GetHashCode();
+      return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^
+            _channelFrequency.GetHashCode() ^ _networkId.GetHashCode() ^ _transportId.GetHashCode() ^
+            _serviceId.GetHashCode() ^ _pmtPid.GetHashCode() ^ _lcn.GetHashCode() ^ _isTv.GetHashCode() ^
+            _isRadio.GetHashCode() ^ _freeToAir.GetHashCode();
     }
 
     /// <summary>
-    /// Checks if the given channel and this instance are on the different transponder
+    /// Check if the given channel and this instance are on different transponders.
     /// </summary>
-    /// <param name="channel">Channel to check</param>
-    /// <returns>true, if the channels are on the same transponder</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>false</c> if the channels are on the same transponder, otherwise <c>true</c></returns>
     public virtual bool IsDifferentTransponder(IChannel channel)
     {
       return true;

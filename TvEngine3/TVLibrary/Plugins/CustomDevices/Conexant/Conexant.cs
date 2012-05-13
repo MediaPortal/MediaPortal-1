@@ -194,7 +194,7 @@ namespace TvEngine
     /// </summary>
     protected IKsPropertySet _propertySet = null;
 
-    private Guid _propertySetGuid;
+    private Guid _propertySetGuid = Guid.Empty;
 
     #endregion
 

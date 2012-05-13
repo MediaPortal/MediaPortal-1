@@ -461,7 +461,7 @@ namespace TvLibrary.Implementations.DVB
             }
           }
           frequency = (int)dvbtChannel.Frequency;
-          bandWidth = dvbtChannel.BandWidth;
+          bandWidth = dvbtChannel.Bandwidth;
           pmtPid = dvbtChannel.PmtPid;
           break;
         case CardType.DvbC:

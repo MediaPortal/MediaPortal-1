@@ -530,7 +530,7 @@ namespace SetupTv.Sections
                     break;
                   case 4: //DVBTChannel
                     DVBTChannel dvbtChannel = new DVBTChannel();
-                    dvbtChannel.BandWidth = bandwidth;
+                    dvbtChannel.Bandwidth = bandwidth;
                     dvbtChannel.FreeToAir = fta;
                     dvbtChannel.Frequency = frequency;
                     dvbtChannel.IsRadio = isRadio;

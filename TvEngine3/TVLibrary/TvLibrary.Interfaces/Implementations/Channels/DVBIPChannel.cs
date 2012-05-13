@@ -19,20 +19,23 @@
 #endregion
 
 using System;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Channels
 {
   /// <summary>
-  /// class holding all tuning details for DVBIP
+  /// A class capable of holding the tuning parameter details required to tune a DVB-IP channel.
   /// </summary>
   [Serializable]
   public class DVBIPChannel : DVBBaseChannel
   {
     #region variables
 
-    private string _url;
+    private string _url = String.Empty;
 
     #endregion
+
+    #region constructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBIPChannel"/> class.
@@ -52,8 +55,12 @@ namespace TvLibrary.Channels
       _url = channel.Url;
     }
 
+    #endregion
+
+    #region properties
+
     /// <summary>
-    /// URL of channel
+    /// Get/set the channel's URL.
     /// </summary>
     public string Url
     {
@@ -61,37 +68,68 @@ namespace TvLibrary.Channels
       set { _url = value; }
     }
 
+    #endregion
+
     /// <summary>
-    /// ToString
+    /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>
+    /// </returns>
     public override string ToString()
     {
       return String.Format("DVBIP:{0} Url:{1}", base.ToString(), Url);
     }
 
     /// <summary>
-    /// Comparision of channels
+    /// Determine whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
     /// </summary>
-    /// <param name="obj">other channel to compare</param>
-    /// <returns>true if equal</returns>
+    /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
+    /// <returns>
+    /// <c>true</c> if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>, otherwise <c>false</c>
+    /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBIPChannel) == null) return false;
-      if (!base.Equals(obj)) return false;
       DVBIPChannel ch = obj as DVBIPChannel;
-      if (ch.Url != Url) return false;
+      if (ch == null)
+      {
+        return false;
+      }
+      if (!base.Equals(obj))
+      {
+        return false;
+      }
+
+      if (!ch.Url.Equals(_url))
+      {
+        return false;
+      }
 
       return true;
     }
 
     /// <summary>
-    /// returns hashcode
+    /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>a hash code for the current <see cref="T:System.Object"></see></returns>
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _url.GetHashCode();
+    }
+
+    /// <summary>
+    /// Check if the given channel and this instance are on different transponders.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>false</c> if the channels are on the same transponder, otherwise <c>true</c></returns>
+    public override bool IsDifferentTransponder(IChannel channel)
+    {
+      DVBIPChannel dvbipChannel = channel as DVBIPChannel;
+      if (dvbipChannel == null)
+      {
+        return true;
+      }
+      return dvbipChannel.Url != _url;
     }
   }
 }

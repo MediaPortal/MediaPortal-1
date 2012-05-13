@@ -26,116 +26,21 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// DVB IP class based on Elecard
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles Elecard DVB-IP sources.
   /// </summary>
   public class TvCardDVBIPElecard : TvCardDVBIP
   {
     /// <summary>
-    /// CLSID_ElecardNWSourcePlus
+    /// Initializes a new instance of the <see cref="TvCardDVBIPElecard"/> class.
     /// </summary>
-    [ComImport, Guid("62341545-9318-4671-9D62-9CAACDD5D20A")]
-    public class ElecardNWSourcePlus {}
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="epgEvents"></param>
-    /// <param name="device"></param>
-    /// <param name="sequence"></param>
-    public TvCardDVBIPElecard(IEpgEvents epgEvents, DsDevice device, int sequence) : base(epgEvents, device, sequence)
+    /// <param name="epgEvents">The EPG events interface.</param>
+    /// <param name="device">The device.</param>
+    /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
+    public TvCardDVBIPElecard(IEpgEvents epgEvents, DsDevice device, int sequence)
+      : base(epgEvents, device, sequence)
     {
       _defaultUrl = "elecard://0.0.0.0:1234:t=m2t/udp";
-    }
-
-    /// <summary>
-    /// AddStreamSourceFilter
-    /// </summary>
-    /// <param name="url"></param>
-    protected override void AddStreamSourceFilter(string url)
-    {
-      Log.Log.WriteFile("dvbip:Add NWSource-Plus");
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof (ElecardNWSourcePlus).GUID,
-                                                                "Elecard NWSource-Plus");
-      AMMediaType mpeg2ProgramStream = new AMMediaType();
-      mpeg2ProgramStream.majorType = MediaType.Stream;
-      mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;
-      mpeg2ProgramStream.unkPtr = IntPtr.Zero;
-      mpeg2ProgramStream.sampleSize = 0;
-      mpeg2ProgramStream.temporalCompression = false;
-      mpeg2ProgramStream.fixedSizeSamples = true;
-      mpeg2ProgramStream.formatType = FormatType.None;
-      mpeg2ProgramStream.formatSize = 0;
-      mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-      ((IFileSourceFilter)_filterStreamSource).Load(url, mpeg2ProgramStream);
-      //connect the [stream source] -> [inf tee]
-      Log.Log.WriteFile("dvb:  Render [source]->[inftee]");
-      int hr = _capBuilder.RenderStream(null, null, _filterStreamSource, null, _infTee);
-      if (hr != 0)
-      {
-        Log.Log.Error("dvb:Add source returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  source filter");
-      }
-    }
-
-    /// <summary>
-    /// RemoveStreamSourceFilter
-    /// </summary>
-    protected override void RemoveStreamSourceFilter()
-    {
-      if (_filterStreamSource != null)
-      {
-        _graphBuilder.RemoveFilter(_filterStreamSource);
-        Release.ComObject("Elecard NWSource-Plus", _filterStreamSource);
-        _filterStreamSource = null;
-      }
-    }
-
-    /// <summary>
-    /// RunGraph
-    /// </summary>
-    /// <param name="subChannel"></param>
-    /// <param name="url"></param>
-    protected override void RunGraph(int subChannel, string url)
-    {
-      int hr;
-      FilterState state;
-      (_graphBuilder as IMediaControl).GetState(10, out state);
-      if (state == FilterState.Running)
-      {
-        hr = (_graphBuilder as IMediaControl).StopWhenReady();
-        if (hr < 0 || hr > 1)
-        {
-          Log.Log.WriteFile("dvb:  StopGraph returns: 0x{0:X}", hr);
-          throw new TvException("Unable to stop graph");
-        }
-        if (_mapSubChannels.ContainsKey(subChannel))
-        {
-          _mapSubChannels[subChannel].OnGraphStopped();
-        }
-      }
-      if (_mapSubChannels.ContainsKey(subChannel))
-      {
-        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].OnGraphStart();
-      }
-      RemoveStreamSourceFilter();
-      AddStreamSourceFilter(url);
-      Log.Log.Info("dvb:  RunGraph");
-      hr = (_graphBuilder as IMediaControl).Run();
-      if (hr < 0 || hr > 1)
-      {
-        Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
-        throw new TvException("Unable to start graph");
-      }
-      //GetTunerSignalStatistics();
-      _epgGrabbing = false;
-      if (_mapSubChannels.ContainsKey(subChannel))
-      {
-        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].OnGraphStarted();
-      }
+      _sourceFilterGuid = new Guid(0x62341545, 0x9318, 0x4671, 0x9d, 0x62, 0x9c, 0xaa, 0xcd, 0xd5, 0xd2, 0x0a);
     }
   }
 }

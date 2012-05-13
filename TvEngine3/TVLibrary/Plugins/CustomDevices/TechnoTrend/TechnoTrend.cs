@@ -1800,7 +1800,7 @@ namespace TvEngine
         // Frequency is already specified in kHz (the base unit) so the
         // multiplier is set to 1.
         tuneRequest.FrequencyMultiplier = 1;
-        tuneRequest.Bandwidth = (uint)(1000 * ch.BandWidth);
+        tuneRequest.Bandwidth = (uint)(1000 * ch.Bandwidth);
         tuneRequest.Modulation = ModulationType.ModNotSet;
         tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 

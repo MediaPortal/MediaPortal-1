@@ -501,7 +501,7 @@ namespace TvLibrary.Implementations.DVB
               DVBTChannel ch = new DVBTChannel();
               ch.Name = name;
               ch.Frequency = freq;
-              ch.BandWidth = bandwidth;
+              ch.Bandwidth = bandwidth;
               channelsFound.Add(ch);
             }
           }

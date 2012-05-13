@@ -167,7 +167,7 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBTLocator dvbtLocator = (IDVBTLocator)locator;
       dvbtLocator.put_CarrierFrequency((int)dvbtChannel.Frequency);
-      dvbtLocator.put_Bandwidth(dvbtChannel.BandWidth);
+      dvbtLocator.put_Bandwidth(dvbtChannel.Bandwidth);
 
       _tuneRequest.put_ONID(dvbtChannel.NetworkId);
       _tuneRequest.put_TSID(dvbtChannel.TransportId);
@@ -202,7 +202,7 @@ namespace TvLibrary.Implementations.DVB
           if (detail.ChannelType == 4)
           {
             dvbtchannel.Frequency = detail.Frequency;
-            dvbtchannel.BandWidth = detail.Bandwidth;
+            dvbtchannel.Bandwidth = detail.Bandwidth;
           }
         }
         return this.CurrentChannel.IsDifferentTransponder(dvbtchannel);

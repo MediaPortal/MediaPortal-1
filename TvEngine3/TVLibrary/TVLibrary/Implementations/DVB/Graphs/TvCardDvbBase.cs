@@ -140,11 +140,6 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected ITsChannelLinkageScanner _interfaceChannelLinkageScanner;
 
-    /// <summary>
-    /// Device paths are matching indicator
-    /// </summary>
-    protected bool matchDevicePath;
-
     private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
 
     /// <summary>
@@ -162,7 +157,6 @@ namespace TvLibrary.Implementations.DVB
     public TvCardDvbBase(IEpgEvents epgEvents, DsDevice device)
       : base(device)
     {
-      matchDevicePath = true;
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _parameters = new ScanParameters();
@@ -178,8 +172,6 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region tuning
-
-    protected virtual void OnAfterTune(IChannel channel) {}
 
     /// <summary>
     /// Scan a specific channel.
@@ -206,23 +198,13 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Assemble a BDA tune request for a given channel.
-    /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns>the assembled tune request</returns>
-    protected virtual ITuneRequest AssembleTuneRequest(IChannel channel)
-    {
-      return null;
-    }
-
-    /// <summary>
     /// Tune to a specific channel.
     /// </summary>
     /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
     /// <param name="ignorePmt">Don't throw an exception if PMT is not received.</param>
     /// <returns>the subchannel associated with the tuned channel</returns>
-    protected ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePmt)
+    protected virtual ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePmt)
     {
       Log.Log.Debug("TvCardDvbBase: tune channel, {0}", channel);
       bool newSubChannel = false;
@@ -233,6 +215,7 @@ namespace TvLibrary.Implementations.DVB
           BuildGraph();
         }
 
+        // Get a subchannel.
         if (!_mapSubChannels.ContainsKey(subChannelId))
         {
           Log.Log.Debug("TvCardDvbBase: getting new subchannel");
@@ -251,10 +234,12 @@ namespace TvLibrary.Implementations.DVB
           _interfaceEpgGrabber.Reset();
         }
 
+        // Do we need to tune?
         if (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel))
         {
-          // Call ICustomDevice.OnBeforeTune(). The original channel object *must not* be modified otherwise
-          // IsDifferentTransponder() will sometimes returns true when it shouldn't. See mantis 0002979.
+          // When we call ICustomDevice.OnBeforeTune(), the ICustomDevice may modify the tuning parameters.
+          // However, the original channel object *must not* be modified otherwise IsDifferentTransponder()
+          // will sometimes returns true when it shouldn't. See mantis 0002979.
           IChannel tuneChannel = channel;
           DVBSChannel dvbsChannel = channel as DVBSChannel;
           if (dvbsChannel != null)
@@ -282,9 +267,19 @@ namespace TvLibrary.Implementations.DVB
                 {
                   tuneChannel = new ATSCChannel(atscChannel);
                 }
+                else
+                {
+                  DVBIPChannel dvbipChannel = channel as DVBIPChannel;
+                  if (dvbipChannel != null)
+                  {
+                    tuneChannel = new DVBIPChannel(dvbipChannel);
+                  }
+                }
               }
             }            
           }
+
+          // OnBeforeTune() callback.
           bool graphStarted = false;
           foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
           {
@@ -298,51 +293,9 @@ namespace TvLibrary.Implementations.DVB
           }
 
           // Assemble the tune request and/or perform tuning.
-          if (_useInternalNetworkProvider)
-          {
-            Log.Log.Debug("TvCardDvbBase: using internal network provider tuning");
-            PerformInternalNetworkProviderTuning(tuneChannel);
-            //TODO: DiSEqC
-          }
-          else
-          {
-            bool tuned = false;
-            foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-            {
-              ICustomTuner customTuner = deviceInterface as ICustomTuner;
-              if (customTuner != null && customTuner.CanTuneChannel(tuneChannel))
-              {
-                Log.Log.Debug("TvCardDvbBase: using custom tuning");
-                tuned = true;
-                if (!customTuner.Tune(tuneChannel, _parameters))
-                {
-                  throw new TvException("TvCardDvbBase: unable to tune to channel");
-                }
-                break;
-              }
-            }
+          Tune(tuneChannel);
 
-            if (!tuned)
-            {
-              Log.Log.Debug("TvCardDvbBase: using BDA tuning");
-              ITuneRequest tuneRequest = AssembleTuneRequest(tuneChannel);
-              if (tuneRequest == null)
-              {
-                throw new TvException("TvCardDvbBase: unable to assemble tune request");
-              }
-              Log.Log.Debug("TvCardDvbBase: calling put_TuneRequest");
-              int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
-              Log.Log.Debug("TvCardDvbBase: put_TuneRequest returned, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-
-              // TerraTec tuners return a positive HRESULT value when already tuned with the required
-              // parameters. See mantis 3469 for more details.
-              if (hr < 0)
-              {
-                throw new TvException("TvCardDvbBase: unable to tune to channel");
-              }
-            }
-          }
-
+          // OnAfterTune() callback.
           foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
           {
             deviceInterface.OnAfterTune(this, channel);
@@ -377,7 +330,6 @@ namespace TvLibrary.Implementations.DVB
             throw;
           }
         }
-        OnAfterTune(channel);
         return _mapSubChannels[subChannelId];
       }
       catch (Exception)
@@ -388,6 +340,67 @@ namespace TvLibrary.Implementations.DVB
         }
         throw;
       }
+    }
+
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    protected virtual void Tune(IChannel channel)
+    {
+      if (_useInternalNetworkProvider)
+      {
+        Log.Log.Debug("TvCardDvbBase: using internal network provider tuning");
+        PerformInternalNetworkProviderTuning(channel);
+      }
+      else
+      {
+        bool tuned = false;
+        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
+        {
+          ICustomTuner customTuner = deviceInterface as ICustomTuner;
+          if (customTuner != null && customTuner.CanTuneChannel(channel))
+          {
+            Log.Log.Debug("TvCardDvbBase: using custom tuning");
+            tuned = true;
+            if (!customTuner.Tune(channel, _parameters))
+            {
+              throw new TvException("TvCardDvbBase: failed to tune to channel");
+            }
+            break;
+          }
+        }
+
+        if (!tuned)
+        {
+          Log.Log.Debug("TvCardDvbBase: using BDA tuning");
+          ITuneRequest tuneRequest = AssembleTuneRequest(channel);
+          if (tuneRequest == null)
+          {
+            throw new TvException("TvCardDvbBase: failed to assemble tune request");
+          }
+          Log.Log.Debug("TvCardDvbBase: calling put_TuneRequest");
+          int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
+          Log.Log.Debug("TvCardDvbBase: put_TuneRequest returned, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+
+          // TerraTec tuners return a positive HRESULT value when already tuned with the required
+          // parameters. See mantis 3469 for more details.
+          if (hr < 0)
+          {
+            throw new TvException("TvCardDvbBase: failed to tune to channel");
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Assemble a BDA tune request for a given channel.
+    /// </summary>
+    /// <param name="channel">The channel that will be tuned.</param>
+    /// <returns>the assembled tune request</returns>
+    protected virtual ITuneRequest AssembleTuneRequest(IChannel channel)
+    {
+      return null;
     }
 
     #endregion
@@ -539,7 +552,7 @@ namespace TvLibrary.Implementations.DVB
                                         {
                                           Multiplier = 1000,
                                           Frequency = (uint)(dvbtChannel.Frequency),
-                                          Bandwidth = (uint)dvbtChannel.BandWidth,
+                                          Bandwidth = (uint)dvbtChannel.Bandwidth,
                                           Polarity = Polarisation.NotSet,
                                           Range = (uint)undefinedValue
                                         };
@@ -807,12 +820,12 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Run the BDA filter graph (subject to a few conditions).
+    /// Start the BDA filter graph (subject to a few conditions).
     /// </summary>
     /// <param name="subChannelId">The subchannel ID for the channel that is being started.</param>
     public override void RunGraph(int subChannelId)
     {
-      Log.Log.Info("RunGraph");
+      Log.Log.Debug("TvCardDvbBase: RunGraph()");
       bool graphRunning = GraphRunning();
 
       if (_mapSubChannels.ContainsKey(subChannelId))
@@ -830,7 +843,7 @@ namespace TvLibrary.Implementations.DVB
           }
           if (!LockedInOnSignal())
           {
-            throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+            throw new TvExceptionNoSignal("TvCardDvbBase: failed to lock in on signal");
           }
         }
         _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
@@ -840,14 +853,15 @@ namespace TvLibrary.Implementations.DVB
 
       if (graphRunning)
       {
+        Log.Log.Debug("TvCardDvbBase: graph already running");
         return;
       }
-      Log.Log.Info("dvb:  RunGraph");
+      Log.Log.Debug("TvCardDvbBase: start graph");
       int hr = ((IMediaControl)_graphBuilder).Run();
       if (hr < 0 || hr > 1)
       {
-        Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
-        throw new TvException("Unable to start graph");
+        Log.Log.Debug("TvCardDvbBase: failed to start graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvException("TvCardDvbBase: failed to start graph");
       }
 
       //GetTunerSignalStatistics();
@@ -866,7 +880,7 @@ namespace TvLibrary.Implementations.DVB
         if (!LockedInOnSignal())
         {
           //Log.Log.WriteFile("Unable to tune to channel - no signal");
-          throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
+          throw new TvExceptionNoSignal("TvCardDvbBase: failed to lock in on signal");
         }
         _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannelId].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
@@ -886,7 +900,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void PauseGraph()
     {
-      Log.Log.Debug("TvCardDvbBase: PauseGraph() called");
+      Log.Log.Debug("TvCardDvbBase: PauseGraph()");
       if (!CheckThreadId())
       {
         return;
@@ -936,8 +950,8 @@ namespace TvLibrary.Implementations.DVB
         int hr = ((IMediaControl)_graphBuilder).Pause();
         if (hr < 0 || hr > 1)
         {
-          Log.Log.Error("TvCardDvbBase: unable to pause graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          throw new TvException("Unable to pause graph");
+          Log.Log.Error("TvCardDvbBase: failed to pause graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          throw new TvException("TvCardDvbBase: failed to pause graph");
         }
       }
 
@@ -964,7 +978,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void StopGraph()
     {
-      Log.Log.Debug("TvCardDvbBase: StopGraph() called");
+      Log.Log.Debug("TvCardDvbBase: StopGraph()");
       try
       {
         if (!CheckThreadId())
@@ -1016,8 +1030,8 @@ namespace TvLibrary.Implementations.DVB
           int hr = ((IMediaControl)_graphBuilder).Stop();
           if (hr < 0 || hr > 1)
           {
-            Log.Log.Error("TvCardDvbBase: unable to stop graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            throw new TvException("Unable to stop graph");
+            Log.Log.Error("TvCardDvbBase: failed to stop graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            throw new TvException("TvCardDvbBase: failed to stop graph");
           }
         }
         // *** this should be removed when solution for graph start problem exists
@@ -1133,7 +1147,7 @@ namespace TvLibrary.Implementations.DVB
         default:
           // Tuning Space can also describe Analog TV but this application don't support them
           Log.Log.Error("TvCardDvbBase: unrecognised tuner network provider setting {0}", c.netProvider);
-          throw new TvException("Unrecognised tuner network provider setting.");
+          throw new TvException("TvCardDvbBase: unrecognised tuner network provider setting");
       }
       Log.Log.Debug("TvCardDvbBase:   add {0}", networkProviderName);
       _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId,
@@ -1218,13 +1232,12 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.WriteFile("dvb:  Find BDA receiver");
         Log.Log.WriteFile("dvb:  match Capture by Tuner device path");
-        AddBDARendererToGraph(device, ref lastFilter);
+        AddBDARendererToGraph(device, ref lastFilter, true);
         if (_filterCapture == null)
         {
           Log.Log.WriteFile("dvb:  Match by device path failed - trying alternative method");
-          matchDevicePath = false;
           Log.Log.WriteFile("dvb:  match Capture filter by Tuner device connection");
-          AddBDARendererToGraph(device, ref lastFilter);
+          AddBDARendererToGraph(device, ref lastFilter, false);
         }
       }
 
@@ -1345,7 +1358,8 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="device">Tuner device</param>
     /// <param name="currentLastFilter">The current last filter if we add multiple captures</param>
-    protected void AddBDARendererToGraph(DsDevice device, ref IBaseFilter currentLastFilter)
+    /// <param name="matchDevicePath">If <c>true</c> only attempt to use renderer filters on the same physical device as the tuner device.</param>
+    protected void AddBDARendererToGraph(DsDevice device, ref IBaseFilter currentLastFilter, bool matchDevicePath)
     {
       if (!CheckThreadId())
         return;
@@ -1449,8 +1463,8 @@ namespace TvLibrary.Implementations.DVB
       int hr = _graphBuilder.AddFilter(_infTee, "Inf Tee");
       if (hr != 0)
       {
-        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  mainInfTee");
+        Log.Log.Error("dvb:Add Inf Tee returns:0x{0:X}", hr);
+        throw new TvException("Unable to add InfTee");
       }
       Log.Log.WriteFile("dvb:  Render ...->[inftee]");
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTee);

@@ -678,7 +678,7 @@ namespace TvDatabase
           return dvbsChannel;
         case 4: //DVBTChannel
           DVBTChannel dvbtChannel = new DVBTChannel();
-          dvbtChannel.BandWidth = detail.Bandwidth;
+          dvbtChannel.Bandwidth = detail.Bandwidth;
           dvbtChannel.FreeToAir = detail.FreeToAir;
           dvbtChannel.Frequency = detail.Frequency;
           dvbtChannel.IsRadio = detail.IsRadio;
@@ -864,7 +864,7 @@ namespace TvDatabase
       DVBTChannel dvbtChannel = tvChannel as DVBTChannel;
       if (dvbtChannel != null)
       {
-        bandwidth = dvbtChannel.BandWidth;
+        bandwidth = dvbtChannel.Bandwidth;
         channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
       }
@@ -991,7 +991,7 @@ namespace TvDatabase
       DVBTChannel dvbtChannel = tvChannel as DVBTChannel;
       if (dvbtChannel != null)
       {
-        bandwidth = dvbtChannel.BandWidth;
+        bandwidth = dvbtChannel.Bandwidth;
         channelNumber = dvbtChannel.LogicalChannelNumber;
         channelType = 4;
       }

@@ -51,7 +51,7 @@ namespace TvLibrary.Implementations.DVB
       dvbtChannel.Name = info.service_name;
       dvbtChannel.LogicalChannelNumber = info.LCN;
       dvbtChannel.Provider = info.service_provider_name;
-      dvbtChannel.BandWidth = tuningChannel.BandWidth;
+      dvbtChannel.Bandwidth = tuningChannel.Bandwidth;
       dvbtChannel.Frequency = tuningChannel.Frequency;
       dvbtChannel.IsTv = IsTvService(info.serviceType);
       dvbtChannel.IsRadio = IsRadioService(info.serviceType);

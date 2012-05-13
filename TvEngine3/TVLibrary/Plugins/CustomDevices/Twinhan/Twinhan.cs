@@ -1892,7 +1892,7 @@ namespace TvEngine
       {
         DVBTChannel ch = channel as DVBTChannel;
         tuningParams.Frequency = (UInt32)ch.Frequency;
-        tuningParams.Bandwidth = (UInt32)(ch.BandWidth * 1000);
+        tuningParams.Bandwidth = (UInt32)(ch.Bandwidth * 1000);
         tuningParams.Modulation = 0;  // ???
       }
       else

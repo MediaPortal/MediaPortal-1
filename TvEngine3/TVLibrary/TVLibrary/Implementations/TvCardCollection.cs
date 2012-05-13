@@ -101,7 +101,7 @@ namespace TvLibrary.Implementations
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            Log.Log.WriteFile("Detected IP TV Card " + cardNum);
+            Log.Log.WriteFile("Detected Elecard IP TV Card " + cardNum);
             TvCardDVBIP card = new TvCardDVBIPElecard(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
@@ -114,8 +114,8 @@ namespace TvLibrary.Implementations
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            Log.Log.WriteFile("Detected IP TV Card " + cardNum);
-            TvCardDVBIP card = new TvCardDVBIPBuiltIn(_epgEvents, devices[i], cardNum);
+            Log.Log.WriteFile("Detected MediaPortal IP TV Card " + cardNum);
+            TvCardDVBIP card = new TvCardDVBIP(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
         }

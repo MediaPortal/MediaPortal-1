@@ -87,7 +87,7 @@ namespace TvLibrary.Channels
   }
 
   /// <summary>
-  /// Enum listing DiSEqC switch commands for DiSEqC 1.0 and 1.1.
+  /// Enum listing DiSEqC switch commands for DiSEqC 1.0 and 1.1 compatible switches.
   /// </summary>
   public enum DiseqcSwitchCommand
   {
@@ -347,24 +347,26 @@ namespace TvLibrary.Channels
   }
 
   /// <summary>
-  /// class holding all tuning details for DVBS
+  /// A class capable of holding the tuning parameter details required to tune a DVB-S or DVB-S2 channel.
   /// </summary>
   [Serializable]
   public class DVBSChannel : DVBBaseChannel
   {
     #region variables
 
-    private Polarisation _polarisation;
-    private int _symbolRate;
-    private DiseqcSwitchCommand _diseqc;
-    private BandType _bandType;
+    private DiseqcSwitchCommand _diseqc = DiseqcSwitchCommand.None;
+    private BandType _bandType = BandType.Universal;
+    private int _satelliteIndex = -1;
+    private Polarisation _polarisation = Polarisation.NotSet;
+    private int _symbolRate = -1;
     private ModulationType _modulation = ModulationType.ModQpsk;
     private BinaryConvolutionCodeRate _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
     private Pilot _pilot = Pilot.NotSet;
     private RollOff _rollOff = RollOff.NotSet;
-    private int _satelliteIndex;
 
     #endregion
+
+    #region constructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBSChannel"/> class.
@@ -372,9 +374,11 @@ namespace TvLibrary.Channels
     public DVBSChannel()
       : base()
     {
-      _diseqc = DiseqcSwitchCommand.SimpleA;
+      _diseqc = DiseqcSwitchCommand.None;
       _bandType = BandType.Universal;
       _satelliteIndex = -1;
+      _polarisation = DirectShowLib.BDA.Polarisation.NotSet;
+      _symbolRate = -1;
       _modulation = ModulationType.ModQpsk;
       _innerFecRate = BinaryConvolutionCodeRate.RateNotSet;
       _pilot = Pilot.NotSet;
@@ -399,64 +403,12 @@ namespace TvLibrary.Channels
       _rollOff = channel.RollOff;
     }
 
+    #endregion
+
     #region properties
 
     /// <summary>
-    /// gets/sets the InnerFEC Rate for this channel
-    /// </summary>
-    public BinaryConvolutionCodeRate InnerFecRate
-    {
-      get { return _innerFecRate; }
-      set { _innerFecRate = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the Modulation type for this channel
-    /// </summary>
-    public ModulationType ModulationType
-    {
-      get { return _modulation; }
-      set { _modulation = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the Satellite Index for this channel
-    /// </summary>
-    public int SatelliteIndex
-    {
-      get { return _satelliteIndex; }
-      set { _satelliteIndex = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the BandType for this channel
-    /// </summary>
-    public BandType BandType
-    {
-      get { return _bandType; }
-      set { _bandType = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the Polarisation for this channel
-    /// </summary>
-    public Polarisation Polarisation
-    {
-      get { return _polarisation; }
-      set { _polarisation = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the SymbolRate for this channel
-    /// </summary>
-    public int SymbolRate
-    {
-      get { return _symbolRate; }
-      set { _symbolRate = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the DiSEqC switch setting for this channel
+    /// Get/set the DiSEqC switch setting used to receive the channel.
     /// </summary>
     public DiseqcSwitchCommand Diseqc
     {
@@ -465,7 +417,61 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// gets/sets the Pilot setting for this channel
+    /// Get/set the band (LNB) type for LNB used to receive the channel.
+    /// </summary>
+    public BandType BandType
+    {
+      get { return _bandType; }
+      set { _bandType = value; }
+    }
+
+    /// <summary>
+    /// Get/set the index for the channel's satellite.
+    /// </summary>
+    public int SatelliteIndex
+    {
+      get { return _satelliteIndex; }
+      set { _satelliteIndex = value; }
+    }
+
+    /// <summary>
+    /// Get/set the polarisation for the channel's transponder.
+    /// </summary>
+    public Polarisation Polarisation
+    {
+      get { return _polarisation; }
+      set { _polarisation = value; }
+    }
+
+    /// <summary>
+    /// Get/set the symbol rate for the channel's transponder.
+    /// </summary>
+    public int SymbolRate
+    {
+      get { return _symbolRate; }
+      set { _symbolRate = value; }
+    }
+
+    /// <summary>
+    /// Get/set the modulation scheme for the channel's transponder.
+    /// </summary>
+    public ModulationType ModulationType
+    {
+      get { return _modulation; }
+      set { _modulation = value; }
+    }
+
+    /// <summary>
+    /// Get/set the inner FEC rate for the channel's transponder.
+    /// </summary>
+    public BinaryConvolutionCodeRate InnerFecRate
+    {
+      get { return _innerFecRate; }
+      set { _innerFecRate = value; }
+    }
+
+    /// <summary>
+    /// Get/set the DVB-S2 pilot signal setting for the channel's transponder.
     /// </summary>
     public Pilot Pilot
     {
@@ -474,7 +480,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// gets/sets the Roll-Off setting for this channel
+    /// Get/set the DVB-S2 roll-off setting for the channel's transponder.
     /// </summary>
     public RollOff RollOff
     {
@@ -485,30 +491,31 @@ namespace TvLibrary.Channels
     #endregion
 
     /// <summary>
-    /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// Get a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <returns>
-    /// A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+    /// a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>
     /// </returns>
     public override string ToString()
     {
       string line =
         String.Format(
-          "DVBS:{0} SymbolRate:{1} Modulation:{2} Polarisation:{3} InnerFecRate:{4} DisEqc:{5} band:{6} Pilot:{7} RollOff:{8}",
+          "DVBS:{0} SymbolRate:{1} Modulation:{2} Polarisation:{3} InnerFecRate:{4} DiSEqC:{5} band:{6} Pilot:{7} RollOff:{8}",
           base.ToString(), SymbolRate, ModulationType, Polarisation, InnerFecRate, Diseqc, BandType, Pilot, RollOff);
       return line;
     }
 
     /// <summary>
-    /// Determines whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
+    /// Determine whether the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>.
     /// </summary>
     /// <param name="obj">The <see cref="T:System.Object"></see> to compare with the current <see cref="T:System.Object"></see>.</param>
     /// <returns>
-    /// true if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>; otherwise, false.
+    /// <c>true</c> if the specified <see cref="T:System.Object"></see> is equal to the current <see cref="T:System.Object"></see>, otherwise <c>false</c>
     /// </returns>
     public override bool Equals(object obj)
     {
-      if ((obj as DVBSChannel) == null)
+      DVBSChannel ch = obj as DVBSChannel;
+      if (ch == null)
       {
         return false;
       }
@@ -516,40 +523,40 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      DVBSChannel ch = obj as DVBSChannel;
-      if (ch.Polarisation != Polarisation)
+
+      if (ch.Diseqc != _diseqc)
       {
         return false;
       }
-      if (ch.SatelliteIndex != SatelliteIndex)
+      if (ch.BandType != _bandType)
       {
         return false;
       }
-      if (ch.SymbolRate != SymbolRate)
+      if (ch.SatelliteIndex != _satelliteIndex)
       {
         return false;
       }
-      if (ch.Diseqc != Diseqc)
+      if (ch.Polarisation != _polarisation)
       {
         return false;
       }
-      if (ch.BandType != BandType)
+      if (ch.SymbolRate != _symbolRate)
       {
         return false;
       }
-      if (ch.ModulationType != ModulationType)
+      if (ch.ModulationType != _modulation)
       {
         return false;
       }
-      if (ch.InnerFecRate != InnerFecRate)
+      if (ch.InnerFecRate != _innerFecRate)
       {
         return false;
       }
-      if (ch.Pilot != Pilot)
+      if (ch.Pilot != _pilot)
       {
         return false;
       }
-      if (ch.RollOff != RollOff)
+      if (ch.RollOff != _rollOff)
       {
         return false;
       }
@@ -560,22 +567,20 @@ namespace TvLibrary.Channels
     /// <summary>
     /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
     /// </summary>
-    /// <returns>
-    /// A hash code for the current <see cref="T:System.Object"></see>.
-    /// </returns>
+    /// <returns>a hash code for the current <see cref="T:System.Object"></see></returns>
     public override int GetHashCode()
     {
-      return base.GetHashCode() ^ _polarisation.GetHashCode() ^ _symbolRate.GetHashCode() ^
-             _diseqc.GetHashCode() ^ _bandType.GetHashCode() ^ SatelliteIndex.GetHashCode() ^
-             _modulation.GetHashCode() ^ _innerFecRate.GetHashCode() ^ _pilot.GetHashCode() ^
-             _rollOff.GetHashCode();
+      return base.GetHashCode() ^ _diseqc.GetHashCode() ^ _bandType.GetHashCode() ^
+            _satelliteIndex.GetHashCode() ^ _polarisation.GetHashCode() ^ _symbolRate.GetHashCode() ^
+            _modulation.GetHashCode() ^ _innerFecRate.GetHashCode() ^ _pilot.GetHashCode() ^
+            _rollOff.GetHashCode();
     }
 
     /// <summary>
-    /// Checks if the given channel and this instance are on the different transponder
+    /// Check if the given channel and this instance are on different transponders.
     /// </summary>
-    /// <param name="channel">Channel to check</param>
-    /// <returns>true, if the channels are on the same transponder</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>false</c> if the channels are on the same transponder, otherwise <c>true</c></returns>
     public override bool IsDifferentTransponder(IChannel channel)
     {
       DVBSChannel dvbsChannel = channel as DVBSChannel;
@@ -583,14 +588,15 @@ namespace TvLibrary.Channels
       {
         return true;
       }
-      return dvbsChannel.Frequency != Frequency ||
-             dvbsChannel.Polarisation != Polarisation ||
-             dvbsChannel.ModulationType != ModulationType ||
-             dvbsChannel.SatelliteIndex != SatelliteIndex ||
-             dvbsChannel.InnerFecRate != InnerFecRate ||
-             dvbsChannel.Pilot != Pilot ||
-             dvbsChannel.RollOff != RollOff ||
-             dvbsChannel.Diseqc != Diseqc;
+      return dvbsChannel.Diseqc != _diseqc ||
+             dvbsChannel.SatelliteIndex != _satelliteIndex ||
+             dvbsChannel.Frequency != Frequency ||
+             dvbsChannel.Polarisation != _polarisation ||
+             dvbsChannel.SymbolRate != _symbolRate ||
+             dvbsChannel.ModulationType != _modulation ||
+             dvbsChannel.InnerFecRate != _innerFecRate ||
+             dvbsChannel.Pilot != _pilot ||
+             dvbsChannel.RollOff != _rollOff;             
     }
   }
 }
