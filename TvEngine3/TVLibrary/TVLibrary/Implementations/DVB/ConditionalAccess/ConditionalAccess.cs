@@ -37,14 +37,6 @@ namespace TvLibrary.Implementations.DVB
   {
     #region variables
 
-    private readonly bool _useCam;
-
-    /// <summary>
-    /// CA decryption limit, 0 for disable CA
-    /// </summary>
-    private readonly int _decryptLimit;
-
-    private readonly CamType _camType = CamType.Default;
     private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
 
     private readonly ICiMenuActions _ciMenu;
@@ -69,17 +61,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="card">Determines the type of TV card</param>
     public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, TvCardBase card)
     {
-      //System.Diagnostics.Debugger.Launch();        
-      if (card != null && card.DevicePath != null)
-      {
-        //fetch decrypt limit from DB and apply it.
-        TvBusinessLayer layer = new TvBusinessLayer();
-        Card c = layer.GetCardByDevicePath(card.DevicePath);
-        _decryptLimit = c.DecryptLimit;
-        _useCam = c.CAM;
-        _camType = (CamType)c.CamType;
-        Log.Log.WriteFile("CAM is {0} model", _camType);
-      }
     }
 
     /// <summary>
@@ -121,24 +102,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// CA enabled or disabled ?
-    /// </summary>
-    /// <value>Is CA enabled or disabled</value>
-    public bool UseCA
-    {
-      get { return _useCam; }
-    }
-
-    /// <summary>
-    /// CA decryption limit, 0 for unlimited
-    /// </summary>
-    /// <value>The number of channels decrypting that are able to decrypt.</value>
-    public int DecryptLimit
-    {
-      get { return _decryptLimit; }
-    }
-
-    /// <summary>
     /// Gets the number of channels the card is currently decrypting.
     /// </summary>
     /// <value>The number of channels decrypting.</value>
@@ -150,7 +113,7 @@ namespace TvLibrary.Implementations.DVB
           return 0;
         if (_mapSubChannels.Count == 0)
           return 0;
-        if (_decryptLimit == 0)
+        //if (_decryptLimit == 0)
           return 0; //CA disabled, so no channels are decrypting.
 
         List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();

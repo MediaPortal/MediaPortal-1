@@ -80,8 +80,6 @@ namespace TvLibrary.Implementations.Analog
       _supportsSubChannels = true;
       _minChannel = 0;
       _maxChannel = 128;
-      _camType = CamType.Default;
-      _conditionalAccess = null;
       _cardType = CardType.Analog;
       _epgGrabbing = false;
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
@@ -93,13 +91,16 @@ namespace TvLibrary.Implementations.Analog
     #region public methods
 
     /// <summary>
-    /// Method to check if card can tune to the channel specified
+    /// Check if the tuner can tune to a given channel.
     /// </summary>
-    /// <returns>true if card can tune to the channel otherwise false</returns>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public bool CanTune(IChannel channel)
     {
       if ((channel as AnalogChannel) == null)
+      {
         return false;
+      }
       if (channel.IsRadio)
       {
         if (string.IsNullOrEmpty(_configuration.Graph.Tuner.Name))
@@ -548,7 +549,6 @@ namespace TvLibrary.Implementations.Analog
     {
       if (_cardId == 0)
       {
-        GetPreloadBitAndCardId();
         _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
         Configuration.writeConfiguration(_configuration);
       }

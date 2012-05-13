@@ -109,10 +109,10 @@ namespace TvService
       }
       ITVCard unknownCard = _cards[cardId].Card;
 
-      if (unknownCard is TvCardBase)
+      TvCardBase card = unknownCard as TvCardBase;
+      if (card != null)
       {
-        TvCardBase card = (TvCardBase)unknownCard;
-        if (card.ConditionalAccess == null)
+        if (card.CaInterface == null)
         {
           card.BuildGraph();
         }

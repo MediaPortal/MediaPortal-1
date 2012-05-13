@@ -94,14 +94,14 @@ namespace TvLibrary.Implementations.DVB
         AddStreamSourceFilter(_defaultUrl);
         IBaseFilter lastFilter = _filterStreamSource;
 
-        // TODO: custom device handling here.
+        // Check for and load plugins, adding any additional device filters to the graph.
+        LoadPlugins(_filterStreamSource, _capBuilder, ref lastFilter);
 
         if (!ConnectTsWriter(lastFilter))
         {
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
 
-        _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, this);
         _graphState = GraphState.Created;
       }
       catch (Exception ex)

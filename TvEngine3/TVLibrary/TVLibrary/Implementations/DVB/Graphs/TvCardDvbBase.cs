@@ -20,8 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml;
 using DirectShowLib;
@@ -51,16 +49,6 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region variables
-
-    /// <summary>
-    /// holds the the DVB tuning space
-    /// </summary>
-    protected ITuningSpace _tuningSpace;
-
-    /// <summary>
-    /// holds the current DVB tuning request
-    /// </summary>
-    protected ITuneRequest _tuneRequest;
 
     /// <summary>
     /// Capture graph builder
@@ -153,12 +141,6 @@ namespace TvLibrary.Implementations.DVB
     protected ITsChannelLinkageScanner _interfaceChannelLinkageScanner;
 
     /// <summary>
-    /// A list containing the custom device interfaces supported by this tuner. The list is ordered by
-    /// interface priority.
-    /// </summary>
-    protected List<ICustomDevice> _customDeviceInterfaces;
-
-    /// <summary>
     /// Device paths are matching indicator
     /// </summary>
     protected bool matchDevicePath;
@@ -227,10 +209,10 @@ namespace TvLibrary.Implementations.DVB
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
     /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns><c>true</c> if the tune request is created successfully, otherwise <c>false</c></returns>
-    protected virtual bool AssembleTuneRequest(IChannel channel)
+    /// <returns>the assembled tune request</returns>
+    protected virtual ITuneRequest AssembleTuneRequest(IChannel channel)
     {
-      return false;
+      return null;
     }
 
     /// <summary>
@@ -343,12 +325,13 @@ namespace TvLibrary.Implementations.DVB
             if (!tuned)
             {
               Log.Log.Debug("TvCardDvbBase: using BDA tuning");
-              if (!AssembleTuneRequest(tuneChannel))
+              ITuneRequest tuneRequest = AssembleTuneRequest(tuneChannel);
+              if (tuneRequest == null)
               {
-                throw new TvException("TvCardDvbBase: unable to tune to assemble tune request");
+                throw new TvException("TvCardDvbBase: unable to assemble tune request");
               }
               Log.Log.Debug("TvCardDvbBase: calling put_TuneRequest");
-              int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(_tuneRequest);
+              int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
               Log.Log.Debug("TvCardDvbBase: put_TuneRequest returned, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
 
               // TerraTec tuners return a positive HRESULT value when already tuned with the required
@@ -1245,111 +1228,8 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-      // Load custom plugins.
-      Log.Log.Debug("TvCardDvbBase: loading custom device plugins");
-      if (!Directory.Exists("plugins") || !Directory.Exists("plugins\\CustomDevices"))
-      {
-        Log.Log.Debug("TvCardDvbBase: plugin directory doesn't exist or is not accessible");
-      }
-      else
-      {
-        List<ICustomDevice> plugins = new List<ICustomDevice>();
-        String[] dllNames = Directory.GetFiles("plugins\\CustomDevices", "*.dll");
-        foreach (String dllName in dllNames)
-        {
-          Assembly dll = Assembly.LoadFrom(dllName);
-          Type[] pluginTypes = dll.GetExportedTypes();
-          foreach (Type type in pluginTypes)
-          {
-            if (type.IsClass && !type.IsAbstract)
-            {
-              Type cdInterface = type.GetInterface("ICustomDevice");
-              if (cdInterface != null)
-              {
-                ICustomDevice plugin = (ICustomDevice)Activator.CreateInstance(type);
-                plugins.Add(plugin);
-              }
-            }
-          }
-        }
-        plugins.Sort(
-          delegate(ICustomDevice cd1, ICustomDevice cd2)
-          {
-            bool cd1IsAddOn = cd1 is IAddOnDevice;
-            bool cd2IsAddOn = cd2 is IAddOnDevice;
-            if (cd1IsAddOn && !cd2IsAddOn)
-            {
-              return -1;
-            }
-            if (cd2IsAddOn && !cd1IsAddOn)
-            {
-              return 1;
-            }
-            int priorityCompare = cd2.Priority.CompareTo(cd1.Priority);
-            if (priorityCompare != 0)
-            {
-              return priorityCompare;
-            }
-            return cd1.Name.CompareTo(cd2.Name);
-          }
-        );
-        foreach (ICustomDevice d in plugins)
-        {
-          Type[] interfaces = d.GetType().GetInterfaces();
-          String[] interfaceNames = new String[interfaces.Length];
-          for (int i = 0; i < interfaces.Length; i++)
-          {
-            interfaceNames[i] = interfaces[i].Name;
-          }
-          Array.Sort(interfaceNames);
-          Log.Log.Debug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, String.Join(", ", interfaceNames));
-        }
-
-        Log.Log.Debug("TvCardDvbBase: checking for supported plugins");
-        _customDeviceInterfaces = new List<ICustomDevice>();
-        foreach (ICustomDevice d in plugins)
-        {
-          if (!d.Initialise(_filterTuner, _cardType, _tunerDevice.DevicePath))
-          {
-            d.Dispose();
-            continue;
-          }
-
-          // The plugin is supported. If the plugin is an add on plugin, we attempt to add it to the graph.
-          IAddOnDevice addOn = d as IAddOnDevice;
-          if (addOn != null)
-          {
-            Log.Log.Debug("TvCardDvbBase: add-on plugin found");
-            if (!addOn.AddToGraph(_capBuilder, ref lastFilter))
-            {
-              Log.Log.Debug("TvCardDvbBase: failed to add device filters to graph");
-              addOn.Dispose();
-              continue;
-            }
-          }
-          try
-          {
-            if (addOn == null)
-            {
-              Log.Log.Debug("TvCardDvbBase: primary plugin found");
-              break;
-            }
-          }
-          finally
-          {
-            _customDeviceInterfaces.Add(d);
-            IConditionalAccessProvider caProvider = d as IConditionalAccessProvider;
-            if (caProvider != null)
-            {
-              caProvider.OpenInterface();
-            }
-          }
-        }
-        if (_customDeviceInterfaces.Count == 0)
-        {
-          Log.Log.Debug("TvCardDvbBase: no plugins supported");
-        }
-      }
+      // Check for and load plugins, adding any additional device filters to the graph.
+      LoadPlugins(_filterTuner, _capBuilder, ref lastFilter);
 
       // Now connect the required filters if not using the internal network provider
       if (!_useInternalNetworkProvider)
@@ -1364,9 +1244,6 @@ namespace TvLibrary.Implementations.DVB
       {
         throw new TvExceptionGraphBuildingFailed("Graph building of DVB card failed");
       }
-      Log.Log.WriteFile("dvb: Checking for hardware specific extensions");
-
-      _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, this);
     }
 
     /// <summary>
@@ -1458,7 +1335,6 @@ namespace TvLibrary.Implementations.DVB
     {
       int hr;
       Log.Log.Info("dvb:  Render ..->[TsWriter]");
-      //no wintv ci usb module found. Render [Tuner] or [Capture]->[InfTee]
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _filterTsWriter);
       return (hr == 0);
     }
@@ -1752,22 +1628,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// Sends the hw pids.
-    /// </summary>
-    /// <param name="pids">The pids.</param>
-    public virtual void SendHwPids(List<ushort> pids)
-    {
-      //if (System.IO.File.Exists("usehwpids.txt"))
-      {
-        if (_conditionalAccess != null)
-        {
-          //  _conditionalAccess.SendPids((DVBBaseChannel)_currentChannel, pids);
-        }
-        return;
-      }
-    }
-
     #region IDisposable
 
     /// <summary>
@@ -1817,6 +1677,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
+      // Dispose plugins.
       if (_customDeviceInterfaces != null)
       {
         foreach (ICustomDevice device in _customDeviceInterfaces)
@@ -1824,11 +1685,6 @@ namespace TvLibrary.Implementations.DVB
           device.Dispose();
         }
         _customDeviceInterfaces = null;
-      }
-      if (_conditionalAccess != null)
-      {
-        Log.Log.Info("  Disposing ConditionalAccess");
-        _conditionalAccess = null;
       }
 
       Log.Log.WriteFile("  free...");
@@ -2084,8 +1940,6 @@ namespace TvLibrary.Implementations.DVB
     {
       UpdateSignalQuality(false);
     }
-
-    //public bool SignalPresent()
 
     #endregion
 

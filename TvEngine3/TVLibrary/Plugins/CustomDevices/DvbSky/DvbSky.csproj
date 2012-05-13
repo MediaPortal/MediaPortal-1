@@ -52,6 +52,10 @@
       <Project>{C2D16A07-744D-41DA-8030-778407BE83DF}</Project>
       <Name>Conexant</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NetUp\NetUp.csproj">
+      <Project>{567A537B-255B-4BC1-AAB8-FA30BD6DE5B3}</Project>
+      <Name>NetUp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

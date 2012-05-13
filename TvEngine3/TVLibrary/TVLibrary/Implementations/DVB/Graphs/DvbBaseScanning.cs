@@ -232,15 +232,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Sets the hw pids.
-    /// </summary>
-    /// <param name="pids">The pids.</param>
-    protected virtual void SetHwPids(List<ushort> pids)
-    {
-      _card.SendHwPids(pids);
-    }
-
-    /// <summary>
     /// Resets the signal update.
     /// </summary>
     protected virtual void ResetSignalUpdate()

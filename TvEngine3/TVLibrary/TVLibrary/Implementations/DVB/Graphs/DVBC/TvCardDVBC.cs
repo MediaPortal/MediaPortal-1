@@ -26,15 +26,30 @@ using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-C BDA cards
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-C tuners with BDA drivers.
   /// </summary>
   public class TvCardDVBC : TvCardDvbBase
   {
+    #region variables
+
+    /// <summary>
+    /// A pre-configured tuning space, used to speed up the tuning process. 
+    /// </summary>
+    private IDVBTuningSpace _tuningSpace = null;
+
+    /// <summary>
+    /// A tune request template, used to speed up the tuning process.
+    /// </summary>
+    private IDVBTuneRequest _tuneRequest = null;
+
+    #endregion
+
+    #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDVBC"/> class.
     /// </summary>
@@ -46,6 +61,8 @@ namespace TvLibrary.Implementations.DVB
       _cardType = CardType.DvbC;
     }
 
+    #endregion
+
     #region graphbuilding
 
     /// <summary>
@@ -53,70 +70,77 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Log.WriteFile("dvbc:CreateTuningSpace()");
-      ITuner tuner = (ITuner)_filterNetworkProvider;
+      Log.Log.Debug("TvCardDvbC: CreateTuningSpace()");
+
+      // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        Log.Log.Error("TvCardDvbC: failed to get the tuning space container");
         return;
       }
-      IEnumTuningSpaces enumTuning;
-      ITuningSpace[] spaces = new ITuningSpace[2];
+
+      ITuner tuner = (ITuner)_filterNetworkProvider;
       ITuneRequest request;
+
+      IEnumTuningSpaces enumTuning;
       container.get_EnumTuningSpaces(out enumTuning);
-      if (enumTuning != null)
+      try
       {
+        ITuningSpace[] spaces = new ITuningSpace[2];
         while (true)
         {
           int fetched;
-          if (enumTuning.Next(1, spaces, out fetched) != 0)
+          enumTuning.Next(1, spaces, out fetched);
+          if (fetched != 1)
           {
             break;
           }
-          if (fetched != 1)
-            break;
-          if (spaces[0] == null)
-            break;
           string name;
           spaces[0].get_UniqueName(out name);
-          if (name != null)
+          if (name.Equals("MediaPortal DVBC TuningSpace"))
           {
-            if (name == "MediaPortal DVBC TuningSpace")
-            {
-              Log.Log.WriteFile("dvbc:Found correct tuningspace {0}", name);
-              _tuningSpace = (IDVBTuningSpace)spaces[0];
-              tuner.put_TuningSpace(_tuningSpace);
-              _tuningSpace.CreateTuneRequest(out request);
-              _tuneRequest = (IDVBTuneRequest)request;
-              return;
-            }
+            Log.Log.Debug("TvCardDvbC: found correct tuningspace");
+            _tuningSpace = (IDVBTuningSpace)spaces[0];
+            tuner.put_TuningSpace(_tuningSpace);
+            _tuningSpace.CreateTuneRequest(out request);
+            _tuneRequest = (IDVBTuneRequest)request;
+            Release.ComObject("TuningSpaceContainer", container);
+            return;
           }
           Release.ComObject("ITuningSpace", spaces[0]);
         }
+      }
+      finally
+      {
         Release.ComObject("IEnumTuningSpaces", enumTuning);
       }
-      Log.Log.WriteFile("dvbc:Create new tuningspace");
+
+      // We didn't find our tuning space registered in the system, so create a new one.
+      Log.Log.Debug("TvCardDvbC: create new tuningspace");
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
-      IDVBTuningSpace tuningSpace = (IDVBTuningSpace)_tuningSpace;
-      tuningSpace.put_UniqueName("MediaPortal DVBC TuningSpace");
-      tuningSpace.put_FriendlyName("MediaPortal DVBC TuningSpace");
-      tuningSpace.put__NetworkType(typeof (DVBCNetworkProvider).GUID);
-      tuningSpace.put_SystemType(DVBSystemType.Cable);
+      _tuningSpace.put_UniqueName("MediaPortal DVBC TuningSpace");
+      _tuningSpace.put_FriendlyName("MediaPortal DVBC TuningSpace");
+      _tuningSpace.put__NetworkType(typeof(DVBCNetworkProvider).GUID);
+      _tuningSpace.put_SystemType(DVBSystemType.Cable);
+
       IDVBCLocator locator = (IDVBCLocator)new DVBCLocator();
       locator.put_CarrierFrequency(-1);
+      locator.put_SymbolRate(-1);
+      locator.put_Modulation(ModulationType.ModNotSet);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
       locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_Modulation(ModulationType.ModNotSet);
       locator.put_OuterFEC(FECMethod.MethodNotSet);
       locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_SymbolRate(-1);
-      object newIndex;
+
       _tuningSpace.put_DefaultLocator(locator);
+
+      object newIndex;
       container.Add(_tuningSpace, out newIndex);
-      tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("TuningSpaceContainer", container);
+
+      tuner.put_TuningSpace(_tuningSpace);
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IDVBTuneRequest)request;
     }
@@ -129,34 +153,29 @@ namespace TvLibrary.Implementations.DVB
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
     /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns><c>true</c> if the tune request is created successfully, otherwise <c>false</c></returns>
-    protected override bool AssembleTuneRequest(IChannel channel)
+    /// <returns>the assembled tune request</returns>
+    protected override ITuneRequest AssembleTuneRequest(IChannel channel)
     {
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
       {
-        Log.Log.WriteFile("TvCardDvbC: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
-        return false;
+        Log.Log.Debug("TvCardDvbC: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
+        return null;
       }
 
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBCLocator dvbcLocator = (IDVBCLocator)locator;
-      dvbcLocator.put_InnerFEC(FECMethod.MethodNotSet);
-      dvbcLocator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      dvbcLocator.put_OuterFEC(FECMethod.MethodNotSet);
-      dvbcLocator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      dvbcLocator.put_Modulation(dvbcChannel.ModulationType);
+      dvbcLocator.put_CarrierFrequency((int)dvbcChannel.Frequency);
       dvbcLocator.put_SymbolRate(dvbcChannel.SymbolRate);
-      IDVBTuneRequest tuneRequest = (IDVBTuneRequest)_tuneRequest;
-      tuneRequest.put_ONID(dvbcChannel.NetworkId);
-      tuneRequest.put_SID(dvbcChannel.ServiceId);
-      tuneRequest.put_TSID(dvbcChannel.TransportId);
-      locator.put_CarrierFrequency((int)dvbcChannel.Frequency);
-      _tuneRequest.put_Locator(locator);
-      _tuneRequest = tuneRequest;
+      dvbcLocator.put_Modulation(dvbcChannel.ModulationType);
 
-      return true;
+      _tuneRequest.put_ONID(dvbcChannel.NetworkId);
+      _tuneRequest.put_TSID(dvbcChannel.TransportId);
+      _tuneRequest.put_SID(dvbcChannel.ServiceId);
+      _tuneRequest.put_Locator(locator);
+
+      return _tuneRequest;
     }
 
     #endregion

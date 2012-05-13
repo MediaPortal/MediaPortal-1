@@ -259,10 +259,11 @@ namespace TvEngine
       /// <summary>
       /// Execute a set operation on a property set.
       /// </summary>
+      /// <param name="psGuid">The property set GUID.</param>
       /// <param name="ps">The property set to operate on.</param>
       /// <param name="returnedByteCount">The number of bytes returned by the operation.</param>
       /// <returns>an HRESULT indicating whether the operation was successful</returns>
-      public int Execute(IKsPropertySet ps, out int returnedByteCount)
+      public int Execute(Guid psGuid, IKsPropertySet ps, out int returnedByteCount)
       {
         returnedByteCount = 0;
         int hr = 1; // fail
@@ -322,7 +323,7 @@ namespace TvEngine
             Marshal.WriteInt32(commandBuffer, 44, 0);
           }
 
-          hr = ps.Set(BdaExtensionPropertySet, 0, instanceBuffer, InstanceSize, commandBuffer, CommandSize);
+          hr = ps.Set(psGuid, 0, instanceBuffer, InstanceSize, commandBuffer, CommandSize);
           if (hr == 0)
           {
             returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
@@ -340,7 +341,7 @@ namespace TvEngine
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
+    private static readonly Guid NetUpBdaExtensionPropertySet = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
 
     private const int InstanceSize = 32;    // The size of a property instance (KspNode) parameter.
     private const int CommandSize = 48;
@@ -382,6 +383,19 @@ namespace TvEngine
     #endregion
 
     /// <summary>
+    /// Accessor for the property set GUID. This allows other classes with identical structs but different
+    /// GUIDs to easily inherit the methods defined in this class.
+    /// </summary>
+    /// <value>the GUID for the driver's custom property set</value>
+    protected virtual Guid BdaExtensionPropertySet
+    {
+      get
+      {
+        return NetUpBdaExtensionPropertySet;
+      }
+    }
+
+    /// <summary>
     /// Read the conditional access application information.
     /// </summary>
     /// <returns>an HRESULT indicating whether the application information was successfully retrieved</returns>
@@ -395,7 +409,7 @@ namespace TvEngine
       }
       NetUpCommand command = new NetUpCommand(NetUpIoControl.ApplicationInfo, IntPtr.Zero, 0, _mmiBuffer, ApplicationInfoSize);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
 
       if (hr == 0 && returnedByteCount == ApplicationInfoSize)
       {
@@ -427,7 +441,7 @@ namespace TvEngine
       }
       NetUpCommand command = new NetUpCommand(NetUpIoControl.ConditionalAccessInfo, IntPtr.Zero, 0, _mmiBuffer, CaInfoSize);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       if (hr == 0 && returnedByteCount == CaInfoSize)
       {
         CaInfo info = (CaInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(CaInfo));
@@ -463,7 +477,7 @@ namespace TvEngine
       }
       NetUpCommand command = new NetUpCommand(NetUpIoControl.CiStatus, IntPtr.Zero, 0, buffer, CiStateInfoSize);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       if (hr == 0 && returnedByteCount == CiStateInfoSize)
       {
         ciState = (CiStateInfo)Marshal.PtrToStructure(buffer, typeof(CiStateInfo));
@@ -583,7 +597,7 @@ namespace TvEngine
 
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MmiMenuSize);
         int returnedByteCount;
-        int hr = command.Execute(_propertySet, out returnedByteCount);
+        int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
         if (hr != 0 || returnedByteCount != MmiMenuSize)
         {
           Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -652,7 +666,7 @@ namespace TvEngine
 
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetEnquiry, IntPtr.Zero, 0, _mmiBuffer, MmiEnquirySize);
         int returnedByteCount;
-        int hr = command.Execute(_propertySet, out returnedByteCount);
+        int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
         if (hr != 0 || returnedByteCount != MmiEnquirySize)
         {
           Log.Debug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -851,7 +865,7 @@ namespace TvEngine
 
       NetUpCommand command = new NetUpCommand(NetUpIoControl.CiReset, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Debug("NetUP: result = success");
@@ -946,7 +960,7 @@ namespace TvEngine
       //DVB_MMI.DumpBinary(buffer, 0, pmt.Length);
       NetUpCommand ncommand = new NetUpCommand(code, buffer, pmt.Length, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = ncommand.Execute(_propertySet, out returnedByteCount);
+      int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       Marshal.FreeCoTaskMem(buffer);
       if (hr == 0)
       {
@@ -1005,7 +1019,7 @@ namespace TvEngine
 
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiEnterMenu, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
       if (hr == 0)
       {
@@ -1041,7 +1055,7 @@ namespace TvEngine
       {
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiClose, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
       if (hr == 0)
       {
@@ -1079,7 +1093,7 @@ namespace TvEngine
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiAnswerMenu | choice << 8);
         NetUpCommand command = new NetUpCommand(code, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
       if (hr == 0)
       {
@@ -1140,7 +1154,7 @@ namespace TvEngine
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiPutAnswer | ((byte)responseType << 8));
         NetUpCommand command = new NetUpCommand(code, _mmiBuffer, MmiAnswerSize, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(_propertySet, out returnedByteCount);
+        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
       if (hr == 0)
       {
@@ -1166,7 +1180,7 @@ namespace TvEngine
     /// <param name="toneBurstState">The tone/data burst command to send, if any.</param>
     /// <param name="tone22kState">The 22 kHz continuous tone state to set.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
-    public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
+    public virtual bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
       // Not supported.
       return false;
@@ -1177,7 +1191,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="command">The command to send.</param>
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
-    public bool SendCommand(byte[] command)
+    public virtual bool SendCommand(byte[] command)
     {
       Log.Debug("NetUP: send DiSEqC command");
 
@@ -1204,7 +1218,7 @@ namespace TvEngine
 
       NetUpCommand ncommand = new NetUpCommand(NetUpIoControl.Diseqc, _generalBuffer, command.Length, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = ncommand.Execute(_propertySet, out returnedByteCount);
+      int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Debug("NetUP: result = success");
@@ -1221,7 +1235,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="response">The response (or command).</param>
     /// <returns><c>true</c> if the response is read successfully, otherwise <c>false</c></returns>
-    public bool ReadResponse(out byte[] response)
+    public virtual bool ReadResponse(out byte[] response)
     {
       // Not supported.
       response = null;

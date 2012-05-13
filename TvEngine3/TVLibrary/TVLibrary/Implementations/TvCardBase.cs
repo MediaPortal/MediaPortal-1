@@ -20,11 +20,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using DirectShowLib;
-using TvLibrary.Interfaces;
+using TvDatabase;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Helper;
-using TvDatabase;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations
 {
@@ -72,11 +75,19 @@ namespace TvLibrary.Implementations
       _name = device.Name;
       _devicePath = device.DevicePath;
 
-      //get preload card value
       if (_devicePath != null)
       {
-        GetPreloadBitAndCardId();
-        GetSupportsPauseGraph();
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Card c = layer.GetCardByDevicePath(_devicePath);
+        if (c != null)
+        {
+          _cardId = c.IdCard;
+          _preloadCard = c.PreloadCard;
+          _stopGraph = c.StopGraph;
+          _useConditionalAccessInterace = c.CAM;
+          _camType = (CamType)c.CamType;
+          _decryptLimit = c.DecryptLimit;
+        }
       }
     }
 
@@ -121,14 +132,6 @@ namespace TvLibrary.Implementations
     /// Instance of the conditional access
     /// </summary>
     protected ConditionalAccess _conditionalAccess;
-
-    /// <summary>
-    /// Instance of the conditional access
-    /// </summary>
-    public ConditionalAccess ConditionalAccess
-    {
-      get { return _conditionalAccess; }
-    }
 
     /// <summary>
     /// Dictionary of the corresponding sub channels
@@ -191,11 +194,6 @@ namespace TvLibrary.Implementations
     protected IFilterGraph2 _graphBuilder;
 
     /// <summary>
-    /// Type of the cam
-    /// </summary>
-    protected CamType _camType;
-
-    /// <summary>
     /// Indicates, if the card sub channels
     /// </summary>
     protected bool _supportsSubChannels;
@@ -249,6 +247,33 @@ namespace TvLibrary.Implementations
     /// The db card id
     /// </summary>
     protected int _cardId;
+
+    /// <summary>
+    /// A list containing the custom device interfaces supported by this device. The list is ordered by
+    /// interface priority.
+    /// </summary>
+    protected List<ICustomDevice> _customDeviceInterfaces;
+
+    /// <summary>
+    /// The device's conditional access interface.
+    /// </summary>
+    protected IConditionalAccessProvider _conditionalAccessInterface = null;
+
+    /// <summary>
+    /// Enable or disable the use of the conditional access interface (assuming an interface is available).
+    /// </summary>
+    protected bool _useConditionalAccessInterace = true;
+
+    /// <summary>
+    /// The type of conditional access module available to the conditional access interface.
+    /// </summary>
+    protected CamType _camType = CamType.Default;
+
+    /// <summary>
+    /// The numer of channels that the device is capable of or allowed to decrypt simultaneously. Zero means
+    /// there is no limit.
+    /// </summary>
+    protected int _decryptLimit = 0;
 
     #endregion
 
@@ -352,17 +377,7 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Gets or sets the type of the cam.
-    /// </summary>
-    /// <value>The type of the cam.</value>
-    public CamType CamType
-    {
-      get { return _camType; }
-      set { _camType = value; }
-    }
-
-    /// <summary>
-    /// Gets/sets the card cardType
+    /// Gets the device tuner type.
     /// </summary>
     public virtual CardType CardType
     {
@@ -381,30 +396,53 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Does the card have a CA module.
+    /// Does the device have a conditional access interface?
     /// </summary>
-    /// <value>Does the card have a CA module..</value>
     public bool HasCA
     {
       get
       {
-        if (_conditionalAccess == null)
-          return false;
-        return (_conditionalAccess.UseCA);
+        return _conditionalAccessInterface != null && _useConditionalAccessInterace;
       }
     }
 
     /// <summary>
-    /// CA decryption limit, 0 for disable CA
+    /// Get the device's conditional access interface.
     /// </summary>
-    /// <value>The number of channels decrypting that are able to decrypt.</value>
+    public IConditionalAccessProvider CaInterface
+    {
+      get
+      {
+        return _conditionalAccessInterface;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the type of conditional access module available to the conditional access interface.
+    /// </summary>
+    /// <value>The type of the cam.</value>
+    public CamType CamType
+    {
+      get
+      {
+        return _camType;
+      }
+      set
+      {
+        _camType = value;
+      }
+    }
+
+    /// <summary>
+    /// Get the device's conditional access interface decrypt limit. This is usually the number of channels
+    /// that the interface is able to decrypt simultaneously. A value of zero indicates that there is no
+    /// limit.
+    /// </summary>
     public int DecryptLimit
     {
       get
       {
-        if (_conditionalAccess == null)
-          return 0;
-        return _conditionalAccess.DecryptLimit;
+        return _decryptLimit;
       }
     }
 
@@ -540,39 +578,148 @@ namespace TvLibrary.Implementations
 
     #endregion
 
-    #region HelperMethods
-
     /// <summary>
-    /// Reads the preload bit and card id from the db
+    /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice"/> plugins for this device.
     /// </summary>
-    protected void GetPreloadBitAndCardId()
+    /// <remarks>
+    /// It is expected that this function will be called at some stage during the BDA graph building process.
+    /// This function may update the lastFilter reference parameter to insert filters for IAddOnDevice
+    /// plugins.
+    /// </remarks>
+    /// <param name="mainFilter">The main device source filter. Usually a tuner filter.</param>
+    /// <param name="graphBuilder">The graph builder to use to insert any additional device filter(s).</param>
+    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
+    ///   connect the [first] device filter to.</param>
+    protected void LoadPlugins(IBaseFilter mainFilter, ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
     {
-      //fetch preload value from db and apply it.
-      IList<Card> cardsInDbs = Card.ListAll();
-      foreach (Card dbsCard in cardsInDbs)
+      Log.Log.Debug("TvCardBase: loading custom device plugins");
+
+      if (mainFilter == null)
       {
-        if (dbsCard.DevicePath.Equals(_devicePath))
+        Log.Log.Debug("TvCardBase: the main filter is null");
+        return;
+      }
+      if (!Directory.Exists("plugins") || !Directory.Exists("plugins\\CustomDevices"))
+      {
+        Log.Log.Debug("TvCardBase: plugin directory doesn't exist or is not accessible");
+        return;
+      }
+
+      // Load all available plugins.
+      List<ICustomDevice> plugins = new List<ICustomDevice>();
+      String[] dllNames = Directory.GetFiles("plugins\\CustomDevices", "*.dll");
+      foreach (String dllName in dllNames)
+      {
+        Assembly dll = Assembly.LoadFrom(dllName);
+        Type[] pluginTypes = dll.GetExportedTypes();
+        foreach (Type type in pluginTypes)
         {
-          _preloadCard = dbsCard.PreloadCard;
-          _cardId = dbsCard.IdCard;
-          break;
+          if (type.IsClass && !type.IsAbstract)
+          {
+            Type cdInterface = type.GetInterface("ICustomDevice");
+            if (cdInterface != null)
+            {
+              ICustomDevice plugin = (ICustomDevice)Activator.CreateInstance(type);
+              plugins.Add(plugin);
+            }
+          }
         }
+      }
+
+      // There is a well defined loading/checking order for plugins: add-ons, priority, name.
+      plugins.Sort(
+        delegate(ICustomDevice cd1, ICustomDevice cd2)
+        {
+          bool cd1IsAddOn = cd1 is IAddOnDevice;
+          bool cd2IsAddOn = cd2 is IAddOnDevice;
+          if (cd1IsAddOn && !cd2IsAddOn)
+          {
+            return -1;
+          }
+          if (cd2IsAddOn && !cd1IsAddOn)
+          {
+            return 1;
+          }
+          int priorityCompare = cd2.Priority.CompareTo(cd1.Priority);
+          if (priorityCompare != 0)
+          {
+            return priorityCompare;
+          }
+          return cd1.Name.CompareTo(cd2.Name);
+        }
+      );
+
+      // Log the name, priority and capabilities for each plugin, in priority order.
+      foreach (ICustomDevice d in plugins)
+      {
+        Type[] interfaces = d.GetType().GetInterfaces();
+        String[] interfaceNames = new String[interfaces.Length];
+        for (int i = 0; i < interfaces.Length; i++)
+        {
+          interfaceNames[i] = interfaces[i].Name;
+        }
+        Array.Sort(interfaceNames);
+        Log.Log.Debug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, String.Join(", ", interfaceNames));
+      }
+
+      Log.Log.Debug("TvCardBase: checking for supported plugins");
+      _customDeviceInterfaces = new List<ICustomDevice>();
+      foreach (ICustomDevice d in plugins)
+      {
+        if (!d.Initialise(mainFilter, _cardType, _devicePath))
+        {
+          d.Dispose();
+          continue;
+        }
+
+        // The plugin is supported. If the plugin is an add on plugin, we attempt to add it to the graph.
+        bool isAddOn = false;
+        if (graphBuilder != null && lastFilter != null)
+        {
+          IAddOnDevice addOn = d as IAddOnDevice;
+          if (addOn != null)
+          {
+            Log.Log.Debug("TvCardBase: add-on plugin found");
+            if (!addOn.AddToGraph(graphBuilder, ref lastFilter))
+            {
+              Log.Log.Debug("TvCardBase: failed to add device filters to graph");
+              addOn.Dispose();
+              continue;
+            }
+            isAddOn = true;
+          }
+        }
+
+        try
+        {
+          // When we find the main plugin, then we stop searching... but we still need to open the
+          // conditional access interface for the add-on *and* the main plugin.
+          if (!isAddOn)
+          {
+            Log.Log.Debug("TvCardBase: primary plugin found");
+            break;
+          }
+        }
+        finally
+        {
+          _customDeviceInterfaces.Add(d);
+          if (_useConditionalAccessInterace)
+          {
+            IConditionalAccessProvider caProvider = d as IConditionalAccessProvider;
+            if (caProvider != null)
+            {
+              caProvider.OpenInterface();
+            }
+          }
+        }
+      }
+      if (_customDeviceInterfaces.Count == 0)
+      {
+        Log.Log.Debug("TvCardBase: no plugins supported");
       }
     }
 
-    private void GetSupportsPauseGraph()
-    {
-      //fetch stopgraph value from db and apply it.
-      IList<Card> cardsInDbs = Card.ListAll();
-      foreach (Card dbsCard in cardsInDbs)
-      {
-        if (dbsCard.DevicePath.Equals(_devicePath))
-        {
-          _stopGraph = dbsCard.StopGraph;
-          break;
-        }
-      }
-    }
+    #region HelperMethods
 
     /// <summary>
     /// Gets the first subchannel being used.

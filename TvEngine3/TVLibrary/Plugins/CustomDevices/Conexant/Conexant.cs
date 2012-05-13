@@ -194,6 +194,30 @@ namespace TvEngine
     /// </summary>
     protected IKsPropertySet _propertySet = null;
 
+    private Guid _propertySetGuid;
+
+    #endregion
+
+    #region constructors
+
+    /// <summary>
+    /// Regular constructor for Conexant instances.
+    /// </summary>
+    public Conexant()
+    {
+      _propertySetGuid = ConexantBdaExtensionPropertySet;
+    }
+
+    /// <summary>
+    /// Alternate constructor for Conexant instances. This constructor provides an additional way to use
+    /// the functionality defined in this class without directly inheriting from the class.
+    /// </summary>
+    /// <param name="propertySetGuid">The BDA extension property set GUID to use when setting properties.</param>
+    public Conexant(Guid propertySetGuid)
+    {
+      _propertySetGuid = propertySetGuid;
+    }
+
     #endregion
 
     /// <summary>
@@ -205,7 +229,10 @@ namespace TvEngine
     {
       get
       {
-        return ConexantBdaExtensionPropertySet;
+        // When the default constructor is used, the GUID returned will be the default Conexant GUID. The
+        // GUID may be overriden via inheritence (overriding this property) or changed without inheritance
+        // using the alternate constructor.
+        return _propertySetGuid;
       }
     }
 

@@ -118,8 +118,6 @@ namespace TvLibrary.Implementations.Analog
       _supportsSubChannels = true;
       _minChannel = 0;
       _maxChannel = 128;
-      _camType = CamType.Default;
-      _conditionalAccess = null;
       _cardType = CardType.Analog;
       _epgGrabbing = false;
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
@@ -517,7 +515,6 @@ namespace TvLibrary.Implementations.Analog
     {
       if (_cardId == 0)
       {
-        GetPreloadBitAndCardId();
         _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
         Configuration.writeConfiguration(_configuration);
       }

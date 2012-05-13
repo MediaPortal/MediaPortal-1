@@ -201,7 +201,8 @@ namespace TvLibrary.Implementations.DVB
         if (setting.Value == "yes")
           _useDISEqCMotor = true;
       }
-      _conditionalAccess = new ConditionalAccess(null, null, this);
+
+
       _ptrDisEqc = Marshal.AllocCoTaskMem(20);
       _diseqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
@@ -956,7 +957,7 @@ namespace TvLibrary.Implementations.DVB
     /// Sends the HW pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    public override void SendHwPids(List<ushort> pids)
+    private void SendHwPids(List<ushort> pids)
     {
       const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;
       //Enables reception of all PIDs in the transport stream including the NULL PID

@@ -20,12 +20,13 @@
 
 using System;
 using System.Net;
-using TvLibrary;
-using TvLibrary.Interfaces;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Log;
 using TvControl;
 using TvDatabase;
+using TvLibrary;
+using TvLibrary.Log;
+using TvLibrary.Implementations;
+using TvLibrary.Implementations.DVB;
+using TvLibrary.Interfaces;
 
 namespace TvService
 {
@@ -78,16 +79,12 @@ namespace TvService
     {
       get
       {
-        // is card a dvb card? then expose it's ConditionalAccess here
-        TvCardDvbBase dvbCard = _card as TvCardDvbBase;
-        if (dvbCard != null)
+        TvCardBase device = _card as TvCardBase;
+        ICiMenuActions menuSupport = device.CaInterface as ICiMenuActions;
+        if (menuSupport != null && device.CaInterface.IsInterfaceReady())
         {
-          if (dvbCard.HasCA && dvbCard.ConditionalAccess.CiMenu != null && dvbCard.ConditionalAccess.IsCamReady())
-            // only if cam is ready
-          {
-            _ciMenu = dvbCard.ConditionalAccess.CiMenu;
-            return true;
-          }
+          _ciMenu = menuSupport;
+          return true;
         }
         return false;
       }

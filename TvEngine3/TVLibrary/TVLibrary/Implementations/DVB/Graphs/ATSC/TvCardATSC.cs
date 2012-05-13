@@ -26,15 +26,30 @@ using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Device;
 
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC BDA cards
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC/QAM tuners with BDA drivers.
   /// </summary>
   public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
   {
+    #region variables
+
+    /// <summary>
+    /// A pre-configured tuning space, used to speed up the tuning process. 
+    /// </summary>
+    private IATSCTuningSpace _tuningSpace = null;
+
+    /// <summary>
+    /// A tune request template, used to speed up the tuning process.
+    /// </summary>
+    private IATSCChannelTuneRequest _tuneRequest = null;
+
+    #endregion
+
+    #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardATSC"/> class.
     /// </summary>
@@ -46,6 +61,8 @@ namespace TvLibrary.Implementations.DVB
       _cardType = CardType.Atsc;
     }
 
+    #endregion
+
     #region graphbuilding
 
     /// <summary>
@@ -53,70 +70,86 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Log.WriteFile("atsc:CreateTuningSpace()");
-      ITuner tuner = (ITuner)_filterNetworkProvider;
+      Log.Log.Debug("TvCardAtsc: CreateTuningSpace()");
+
+      // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        Log.Log.Error("TvCardAtsc: failed to get the tuning space container");
         return;
       }
-      IEnumTuningSpaces enumTuning;
-      ITuningSpace[] spaces = new ITuningSpace[2];
-      ITuneRequest request;
-      container.get_EnumTuningSpaces(out enumTuning);
-      while (true)
-      {
-        int fetched;
-        enumTuning.Next(1, spaces, out fetched);
-        if (fetched != 1)
-          break;
-        string name;
-        spaces[0].get_UniqueName(out name);
-        if (name == "MediaPortal ATSC TuningSpace")
-        {
-          Log.Log.WriteFile("atsc:found correct tuningspace {0}", name);
-          _tuningSpace = (IATSCTuningSpace)spaces[0];
-          tuner.put_TuningSpace(_tuningSpace);
-          _tuningSpace.CreateTuneRequest(out request);
-          _tuneRequest = (IATSCChannelTuneRequest)request;
-          return;
-        }
-        Release.ComObject("ITuningSpace", spaces[0]);
-      }
-      Release.ComObject("IEnumTuningSpaces", enumTuning);
-      Log.Log.WriteFile("atsc:Create new tuningspace");
-      _tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
-      IATSCTuningSpace tuningSpace = (IATSCTuningSpace)_tuningSpace;
 
-      tuningSpace.put_UniqueName("MediaPortal ATSC TuningSpace");
-      tuningSpace.put_FriendlyName("MediaPortal ATSC TuningSpace");
-      tuningSpace.put__NetworkType(typeof (ATSCNetworkProvider).GUID);
-      tuningSpace.put_CountryCode(0);
-      tuningSpace.put_InputType(TunerInputType.Antenna);
-      tuningSpace.put_MaxMinorChannel(999); //minor channels per major
-      tuningSpace.put_MaxPhysicalChannel(158); //69 for OTA 158 for QAM
-      tuningSpace.put_MaxChannel(99); //major channels
-      tuningSpace.put_MinMinorChannel(0);
-      tuningSpace.put_MinPhysicalChannel(1); //OTA 1, QAM 2
-      tuningSpace.put_MinChannel(1);
+      ITuner tuner = (ITuner)_filterNetworkProvider;
+      ITuneRequest request;
+
+      IEnumTuningSpaces enumTuning;
+      container.get_EnumTuningSpaces(out enumTuning);
+      try
+      {
+        ITuningSpace[] spaces = new ITuningSpace[2];
+        while (true)
+        {
+          int fetched;
+          enumTuning.Next(1, spaces, out fetched);
+          if (fetched != 1)
+          {
+            break;
+          }
+          string name;
+          spaces[0].get_UniqueName(out name);
+          if (name.Equals("MediaPortal ATSC TuningSpace"))
+          {
+            Log.Log.Debug("TvCardAtsc: found correct tuningspace");
+            _tuningSpace = (IATSCTuningSpace)spaces[0];
+            tuner.put_TuningSpace(_tuningSpace);
+            _tuningSpace.CreateTuneRequest(out request);
+            _tuneRequest = (IATSCChannelTuneRequest)request;
+            Release.ComObject("TuningSpaceContainer", container);
+            return;
+          }
+          Release.ComObject("ITuningSpace", spaces[0]);
+        }
+      }
+      finally
+      {
+        Release.ComObject("IEnumTuningSpaces", enumTuning);
+      }
+
+      // We didn't find our tuning space registered in the system, so create a new one.
+      Log.Log.Debug("TvCardAtsc: create new tuningspace");
+      _tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
+      _tuningSpace.put_UniqueName("MediaPortal ATSC TuningSpace");
+      _tuningSpace.put_FriendlyName("MediaPortal ATSC TuningSpace");
+      _tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
+      _tuningSpace.put_CountryCode(0);
+      _tuningSpace.put_InputType(TunerInputType.Antenna);
+      _tuningSpace.put_MaxMinorChannel(999);     // the number of minor channels per major channel
+      _tuningSpace.put_MaxPhysicalChannel(158);  // 69 for ATSC, 158 for cable (QAM)
+      _tuningSpace.put_MaxChannel(99);           // the number of scannable major channels
+      _tuningSpace.put_MinMinorChannel(0);
+      _tuningSpace.put_MinPhysicalChannel(1);    // 1 for ATSC, 2 for cable (QAM)
+      _tuningSpace.put_MinChannel(1);
 
       IATSCLocator locator = (IATSCLocator)new ATSCLocator();
       locator.put_CarrierFrequency(-1);
-      locator.put_InnerFEC(FECMethod.MethodNotSet);
-      locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_Modulation(ModulationType.Mod8Vsb); //OTA modultation, QAM = .Mod256Qam
-      locator.put_OuterFEC(FECMethod.MethodNotSet);
-      locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
       locator.put_PhysicalChannel(-1);
       locator.put_SymbolRate(-1);
+      locator.put_Modulation(ModulationType.Mod8Vsb); // 8 VSB is ATSC, 256 QAM is cable
+      locator.put_InnerFEC(FECMethod.MethodNotSet);
+      locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+      locator.put_OuterFEC(FECMethod.MethodNotSet);
+      locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
       locator.put_TSID(-1);
-      object newIndex;
+
       _tuningSpace.put_DefaultLocator(locator);
+
+      object newIndex;
       container.Add(_tuningSpace, out newIndex);
-      tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("TuningSpaceContainer", container);
+
+      tuner.put_TuningSpace(_tuningSpace);
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IATSCChannelTuneRequest)request;
     }
@@ -129,33 +162,28 @@ namespace TvLibrary.Implementations.DVB
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
     /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns><c>true</c> if the tune request is created successfully, otherwise <c>false</c></returns>
-    protected override bool AssembleTuneRequest(IChannel channel)
+    /// <returns>the assembled tune request</returns>
+    protected override ITuneRequest AssembleTuneRequest(IChannel channel)
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel == null)
       {
-        Log.Log.WriteFile("TvCardAtsc: channel is not an ATSC/QAM channel!!! {0}", channel.GetType().ToString());
-        return false;
+        Log.Log.Debug("TvCardAtsc: channel is not an ATSC/QAM channel!!! {0}", channel.GetType().ToString());
+        return null;
       }
 
-      ITuneRequest request;
-      _tuningSpace.CreateTuneRequest(out request);
-      _tuneRequest = request;
-      IATSCChannelTuneRequest tuneRequest = (IATSCChannelTuneRequest)_tuneRequest;
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
       IATSCLocator atscLocator = (IATSCLocator)locator;
-      atscLocator.put_SymbolRate(-1);
-      atscLocator.put_TSID(-1);
       atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
-      atscLocator.put_Modulation(atscChannel.ModulationType);
-      tuneRequest.put_Channel(atscChannel.MajorChannel);
-      tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
       atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
+      atscLocator.put_Modulation(atscChannel.ModulationType);
+
+      _tuneRequest.put_Channel(atscChannel.MajorChannel);
+      _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
       _tuneRequest.put_Locator(locator);
 
-      return true;
+      return _tuneRequest;
     }
 
     #endregion

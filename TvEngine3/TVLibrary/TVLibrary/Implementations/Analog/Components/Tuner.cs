@@ -421,25 +421,15 @@ namespace TvLibrary.Implementations.Analog.Components
     /// </summary>
     public void UpdateSignalQuality()
     {
-      _tunerLocked = false;
-      _signalLevel = 0;
-      _signalQuality = 0;
-      try
-      {
-        AMTunerSignalStrength signalStrength;
-        _tuner.SignalPresent(out signalStrength);
-        // Some tuners (in particular, cards based on the Philips/NXP
-        // SAA713x and SAA716x PCI-e bridge chipsets such as the Hauppauge
-        // HVR2200) report values outside the range specified by the DirectShow
-        // interface when they are locked. This means it is best to assume the
-        // tuner is locked unless the tuner reports no signal.
-        // See Mantis #0002445.
-        _tunerLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
-      }
-      catch (TvExceptionSWEncoderMissing)
-      {
-        Log.Log.Error("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
-      }
+      AMTunerSignalStrength signalStrength;
+      _tuner.SignalPresent(out signalStrength);
+      // Some tuners (in particular, cards based on the Philips/NXP
+      // SAA713x and SAA716x PCI-e bridge chipsets such as the Hauppauge
+      // HVR2200) report values outside the range specified by the DirectShow
+      // interface when they are locked. This means it is best to assume the
+      // tuner is locked unless the tuner reports no signal.
+      // See Mantis #0002445.
+      _tunerLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
 
       if (_tunerLocked)
       {

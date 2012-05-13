@@ -31,13 +31,25 @@ using TvLibrary.Interfaces.Device;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-S BDA cards
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-S/S2 tuners with BDA drivers.
   /// </summary>
   public class TvCardDVBS : TvCardDvbBase
   {
     #region variables
 
+    /// <summary>
+    /// A pre-configured tuning space, used to speed up the tuning process. 
+    /// </summary>
+    private IDVBSTuningSpace _tuningSpace = null;
+
+    /// <summary>
+    /// The DiSEqC command interface for the tuner.
+    /// </summary>
     private IDiseqcController _diseqcController = null;
+
+    /// <summary>
+    /// The DiSEqC motor control interface for the tuner.
+    /// </summary>
     private IDiSEqCMotor _diseqcMotor = null;
 
     #endregion
@@ -60,7 +72,7 @@ namespace TvLibrary.Implementations.DVB
     #region graphbuilding
 
     /// <summary>
-    /// Builds the graph.
+    /// Build the BDA filter graph.
     /// </summary>
     public override void BuildGraph()
     {
@@ -85,86 +97,86 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected override void CreateTuningSpace()
     {
-      Log.Log.WriteFile("dvbs:CreateTuningSpace()");
-      ITuner tuner = (ITuner)_filterNetworkProvider;
+      Log.Log.Debug("TvCardDvbS: CreateTuningSpace()");
+
+      // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        Log.Log.Error("TvCardDvbS: failed to get the tuning space container");
         return;
       }
-      IEnumTuningSpaces enumTuning;
-      ITuningSpace[] spaces = new ITuningSpace[2];
-      int lowOsc;
-      int hiOsc;
-      int lnbSwitch;
-      if (_parameters.UseDefaultLnbFrequencies)
-      {
-        lowOsc = 9750;
-        hiOsc = 10600;
-        lnbSwitch = 11700;
-      }
-      else
-      {
-        lowOsc = _parameters.LnbLowFrequency;
-        hiOsc = _parameters.LnbHighFrequency;
-        lnbSwitch = _parameters.LnbSwitchFrequency;
-      }
-      ITuneRequest request;
-      container.get_EnumTuningSpaces(out enumTuning);
-      IDVBSTuningSpace tuningSpace;
-      while (true)
-      {
-        int fetched;
-        enumTuning.Next(1, spaces, out fetched);
-        if (fetched != 1)
-          break;
-        string name;
-        spaces[0].get_UniqueName(out name);
-        if (name == "MediaPortal DVBS TuningSpace")
-        {
-          Log.Log.WriteFile("dvbs:found correct tuningspace {0}", name);
 
-          _tuningSpace = (IDVBSTuningSpace)spaces[0];
-          tuningSpace = (IDVBSTuningSpace)_tuningSpace;
-          tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-          tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
-          tuningSpace.put_LowOscillator(lowOsc * 1000);
-          tuningSpace.put_HighOscillator(hiOsc * 1000);
-          tuner.put_TuningSpace(tuningSpace);
-          tuningSpace.CreateTuneRequest(out request);
-          _tuneRequest = (IDVBTuneRequest)request;
-          return;
+      ITuner tuner = (ITuner)_filterNetworkProvider;
+
+      // Defaults: Ku linear "universal" LNB settings.
+      int lowOsc = 9750000;
+      int hiOsc = 10600000;
+      int switchFrequency = 11700000;
+
+      IEnumTuningSpaces enumTuning;
+      container.get_EnumTuningSpaces(out enumTuning);
+      try
+      {
+        ITuningSpace[] spaces = new ITuningSpace[2];
+        while (true)
+        {
+          int fetched;
+          enumTuning.Next(1, spaces, out fetched);
+          if (fetched != 1)
+          {
+            break;
+          }
+          string name;
+          spaces[0].get_UniqueName(out name);
+          if (name.Equals("MediaPortal DVBS TuningSpace"))
+          {
+            Log.Log.Debug("TvCardDvbS: found correct tuningspace");
+            _tuningSpace = (IDVBSTuningSpace)spaces[0];
+            _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
+            _tuningSpace.put_LowOscillator(lowOsc);
+            _tuningSpace.put_HighOscillator(hiOsc);
+            _tuningSpace.put_LNBSwitch(switchFrequency);
+            tuner.put_TuningSpace(_tuningSpace);
+            Release.ComObject("TuningSpaceContainer", container);
+            return;
+          }
+          Release.ComObject("ITuningSpace", spaces[0]);
         }
-        Release.ComObject("ITuningSpace", spaces[0]);
       }
-      Release.ComObject("IEnumTuningSpaces", enumTuning);
-      Log.Log.WriteFile("dvbs:Create new tuningspace");
+      finally
+      {
+        Release.ComObject("IEnumTuningSpaces", enumTuning);
+      }
+
+      // We didn't find our tuning space registered in the system, so create a new one.
+      Log.Log.Debug("TvCardDvbS: create new tuningspace");
       _tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
-      tuningSpace = (IDVBSTuningSpace)_tuningSpace;
-      tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
-      tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
-      tuningSpace.put__NetworkType(typeof (DVBSNetworkProvider).GUID);
-      tuningSpace.put_SystemType(DVBSystemType.Satellite);
-      tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-      tuningSpace.put_LowOscillator(lowOsc * 1000);
-      tuningSpace.put_HighOscillator(hiOsc * 1000);
+      _tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
+      _tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
+      _tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
+      _tuningSpace.put_SystemType(DVBSystemType.Satellite);
+      _tuningSpace.put_LowOscillator(lowOsc);
+      _tuningSpace.put_HighOscillator(hiOsc);
+      _tuningSpace.put_LNBSwitch(switchFrequency);
+
       IDVBSLocator locator = (IDVBSLocator)new DVBSLocator();
       locator.put_CarrierFrequency(-1);
+      locator.put_SymbolRate(-1);
+      locator.put_Modulation(ModulationType.ModNotSet);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
       locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_Modulation(ModulationType.ModNotSet);
       locator.put_OuterFEC(FECMethod.MethodNotSet);
       locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_SymbolRate(-1);
-      object newIndex;
+
       _tuningSpace.put_DefaultLocator(locator);
+
+      object newIndex;
       container.Add(_tuningSpace, out newIndex);
-      tuner.put_TuningSpace(_tuningSpace);
       Release.ComObject("TuningSpaceContainer", container);
-      _tuningSpace.CreateTuneRequest(out request);
-      _tuneRequest = (IDVBTuneRequest)request;
+
+      tuner.put_TuningSpace(_tuningSpace);
     }
 
     #endregion
@@ -175,20 +187,17 @@ namespace TvLibrary.Implementations.DVB
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
     /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns><c>true</c> if the tune request is created successfully, otherwise <c>false</c></returns>
-    protected override bool AssembleTuneRequest(IChannel channel)
+    /// <returns>the assembled tune request</returns>
+    protected override ITuneRequest AssembleTuneRequest(IChannel channel)
     {
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null)
       {
-        Log.Log.WriteFile("TvCardDvbS: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
-        return false;
+        Log.Log.Debug("TvCardDvbS: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
+        return null;
       }
-      /*
-        SendDiseqcCommands(dvbsChannel);
-        return true;
-      }*/
 
+      // LNB frequency manipulation.
       int lowOsc;
       int highOsc;
       int switchFrequency;
@@ -197,7 +206,7 @@ namespace TvLibrary.Implementations.DVB
       lowOsc *= 1000;
       highOsc *= 1000;
       switchFrequency *= 1000;
-      Log.Log.Info("LNB settings: low = {0}, high = {1}, switch = {2}", lowOsc, highOsc, switchFrequency);
+      Log.Log.Info("TvCardDvbS: LNB settings, low = {0}, high = {1}, switch = {2}", lowOsc, highOsc, switchFrequency);
 
       // Setting the switch frequency to zero is the equivalent of saying that the switch frequency is
       // irrelevant - that the 22 kHz tone state shouldn't depend on the transponder frequency.
@@ -216,32 +225,33 @@ namespace TvLibrary.Implementations.DVB
       {
         lof = lowOsc;
       }
-      Log.Log.Info("LNB translated settings: oscillator = {0}, switch = {1}", lof, switchFrequency);
-      IDVBSTuningSpace tuningSpace = (IDVBSTuningSpace)_tuningSpace;
-      tuningSpace.put_LowOscillator(lof);
-      tuningSpace.put_HighOscillator(lof);
-      tuningSpace.put_LNBSwitch(switchFrequency);
+      Log.Log.Info("TvCardDvbS: LNB translated settings, oscillator = {0}, switch = {1}", lof, switchFrequency);
+      _tuningSpace.put_LowOscillator(lof);
+      _tuningSpace.put_HighOscillator(lof);
+      _tuningSpace.put_LNBSwitch(switchFrequency);
 
-      ITuneRequest request;
-      _tuningSpace.CreateTuneRequest(out request);
-      _tuneRequest = (IDVBTuneRequest)request;
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-      IDVBTuneRequest tuneRequest = (IDVBTuneRequest)_tuneRequest;
-      tuneRequest.put_ONID(dvbsChannel.NetworkId);
-      tuneRequest.put_SID(dvbsChannel.ServiceId);
-      tuneRequest.put_TSID(dvbsChannel.TransportId);
-      locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
+      dvbsLocator.put_CarrierFrequency((int)dvbsChannel.Frequency);
       dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
       dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
       dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
       dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
-      _tuneRequest.put_Locator(locator);
 
+      ITuneRequest request;
+      _tuningSpace.CreateTuneRequest(out request);
+      IDVBTuneRequest tuneRequest = (IDVBTuneRequest)request;
+      tuneRequest.put_ONID(dvbsChannel.NetworkId);
+      tuneRequest.put_TSID(dvbsChannel.TransportId);
+      tuneRequest.put_SID(dvbsChannel.ServiceId);
+      tuneRequest.put_Locator(locator);
+
+      // TODO: this shouldn't be here. We also need a way to send DiSEqC commands in the internal network
+      // provider tuning process.
       SendDiseqcCommands(dvbsChannel);
 
-      return true;
+      return tuneRequest;
     }
 
     /// <summary>
