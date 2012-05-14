@@ -683,13 +683,22 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
+          bool found = false;
           foreach (SoundDeviceItem item in soundDeviceComboBox.Items)
           {
             if (item.Name == _soundDevice && item.ID == _soundDeviceID)
             {
               soundDeviceComboBox.SelectedItem = item;
+              found = true;
+              break;
             }
           }
+
+          if (!found)
+          {
+            soundDeviceComboBox.SelectedIndex = 0;
+          }
+
         }
 
         // Change the Text of Item 0 in the Sound device box for Bass Player or DirectShow Player

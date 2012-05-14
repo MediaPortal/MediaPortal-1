@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -257,6 +257,9 @@
     <Compile Include="Sections\FiltersPowerDVDDecoder10.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\Music.Designer.cs">
+      <DependentUpon>Music.cs</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
@@ -486,12 +489,6 @@
     </Compile>
     <Compile Include="Sections\General.Designer.cs">
       <DependentUpon>General.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.Designer.cs">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MusicDSP.cs">
       <SubType>UserControl</SubType>
@@ -850,10 +847,6 @@
     <EmbeddedResource Include="Sections\General.resx">
       <SubType>Designer</SubType>
       <DependentUpon>General.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MusicASIO.resx">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicDSP.resx">
       <DependentUpon>MusicDSP.cs</DependentUpon>
