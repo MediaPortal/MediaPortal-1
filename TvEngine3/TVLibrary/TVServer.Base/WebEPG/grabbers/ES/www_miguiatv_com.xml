@@ -2,79 +2,123 @@
 <Grabber>
   <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
-    <Channel id="24h@tve.es" siteId="24-horas" />
-    <Channel id="40Tv@sogecable.es" siteId="los40" />
-    <Channel id="40latino@sogecable.es" siteId="40-latino" />
-    <Channel id="andaluciatv@andaluciatv.es" siteId="andalucia-tv" />
-    <Channel id="antena3tv.es" siteId="antena3" />
-    <Channel id="axn@sogecable.es" siteId="axn" />
-    <Channel id="boomerang@sogecable.es" siteId="boomerang" />
-    <Channel id="calle13@sogecable.es" siteId="calle-13" />
-    <Channel id="canal9@rtvv.es" siteId="canal-9" />
-    <Channel id="canalbarca@sogecable.es" siteId="canal-barca" />
-    <Channel id="canalclasico@sogecable.es" siteId="canal-clasico" />
-    <Channel id="canalcocina@sogecable.es" siteId="canal-cocina" />
-    <Channel id="canalsur@canalsur.es" siteId="canal-sur" />
-    <Channel id="canalsur2@canalsur.es" siteId="canal-sur-2" />
-    <Channel id="canal+@sogecable.es" siteId="canal-plus" />
-    <Channel id="canal+30@sogecable.es" siteId="canal-plus-30" />
-    <Channel id="canal+2@sogecable.es" siteId="canal-plus-2" />
-    <Channel id="canal+accion@sogecable.es" siteId="canal-plus-accion" />
-    <Channel id="canal+comedia@sogecable.es" siteId="canal-plus-comedia" />
-    <Channel id="canal+dcine@sogecable.es" siteId="canal-plus-decine" />
-    <Channel id="canal+deporte@sogecable.es" siteId="canal-plus-deporte" />
-    <Channel id="canal+eventos@sogecable.es" siteId="canal-plus-eventos" />
-    <Channel id="canal+futbol@sogecable.es" siteId="canal-plus-futbol" />
-    <Channel id="canal+golf@sogecable.es" siteId="golf-plus" />
-    <Channel id="canal33@tv3.cat" siteId="canal33" />
-    <Channel id="cartoon-network@sogecable.es" siteId="cartoon-network" />
-    <Channel id="castilla-la-mancha@rtvcm.es" siteId="castilla-la-mancha" />
-    <Channel id="caza-y-pesca@sogecable.es" siteId="caza-y-pesca" />
-    <Channel id="clan-tv@rtve.es" siteId="clan-tve-50" />
-    <Channel id="cnbc@sogecable.es" siteId="cnbc" />
-    <Channel id="cnn-plus@sogecable.es" siteId="cnn-plus" />
-    <Channel id="cosmopolitan@sogecable.es" siteId="cosmopolitan" />
-    <Channel id="cuatro@cuatro.com" siteId="cuatro" />
-    <Channel id="dcine-espanol@sogecable.es" siteId="dcine-espanol" />
-    <Channel id="discovery-channel@sogecable.es" siteId="discovery-channel" />
-    <Channel id="disney-channel@sogecable.es" siteId="disney-channel" />
-    <Channel id="disney-channel+1@sogecable.es" siteId="disney-channel-1" />
-    <Channel id="docutve@sogecable.es" siteId="doc-tve" />
-    <Channel id="etb1@eitb.com" siteId="etb1" />
-    <Channel id="etb2@eitb.com" siteId="etb2" />
-    <Channel id="eurosport@sogecable.es" siteId="eurosport" />
-    <Channel id="fox@sogecable.es" siteId="fox" />
-    <Channel id="fox-news@sogecable.es" siteId="fox-news" />
-    <Channel id="galavision@sogecable.es" siteId="galavision" />
-    <Channel id="historia@sogecable.es" siteId="historia" />
-    <Channel id="hollywood@sogecable.es" siteId="hollywood" />
-    <Channel id="la1@rtve.es" siteId="tve1" />
-    <Channel id="la2@rtve.es" siteId="la2" />
-    <Channel id="lasexta@lasexta.com" siteId="la-sexta" />
-    <Channel id="meteo@sogecable.es" siteId="meteo" />
-    <Channel id="mezzo@sogecable.es" siteId="mezzo" />
-    <Channel id="mtv-españa@mtv.es" siteId="mtv" />
-    <Channel id="national-geographic@sogecable.es" siteId="national-geographic" />
-    <Channel id="nickelodeon@sogecable.es" siteId="nickelodeon" />
-    <Channel id="paramount@sogecable.es" siteId="paramount" />
-    <Channel id="playboy-tv@sogecable.es" siteId="playboy-tv" />
-    <Channel id="playhouse-disney@sogecable.es" siteId="playhouse-disney" />
-    <Channel id="punt-2@rtvv.es" siteId="punt-2" />
-    <Channel id="real-madrid-tv@sogecable.es" siteId="real-madrid-tv" />
-    <Channel id="sci-fi@scifi.es" siteId="sci-fi" />
-    <Channel id="sportmania@sogecable.es" siteId="sportmania" />
-    <Channel id="tcm@sogecable.es" siteId="tcm" />
-    <Channel id="tcm-clasico@sogecable.es" siteId="tcm-clasico" />
-    <Channel id="telecinco@telecinco.es" siteId="telecinco" />
-    <Channel id="teledeporte@tve.es" siteId="teledeporte" />
-    <Channel id="telemadrid@telemadrid.es" siteId="telemadrid" />
-    <Channel id="telemadrid-sat@sogecable.es" siteId="telemadrid-sat" />
-    <Channel id="television-canaria@sogecable.es" siteId="television-canaria" />
-    <Channel id="tv3@tv3.cat" siteId="tv3" />
-    <Channel id="tvc-internacional@sogecable.es" siteId="tvc-internacional" />
-    <Channel id="tvg@crtvg.es" siteId="tvg" />
-    <Channel id="vh1@vh1.com" siteId="vh1" />
-    <Channel id="viajar@sogecable.es" siteId="viajar" />
+	<Channel id="40 Latino" siteId="40-latino" />
+	<Channel id="40 TV" siteId="los40" />
+	<Channel id="Al Jazeera English" siteId="al-jazeera-english" />
+	<Channel id="Andalucia TV" siteId="andalucia-tv" />
+	<Channel id="Animax" siteId="animax" />
+	<Channel id="Antena 3" siteId="antena3" />
+	<Channel id="AXN" siteId="axn" />
+	<Channel id="AXN HD" siteId="axn-hd" />
+	<Channel id="Baby First" siteId="baby-first" />
+	<Channel id="BBC World" siteId="bbc-world" />
+	<Channel id="Bio" siteId="bio" />
+	<Channel id="Biography" siteId="bio" />
+	<Channel id="Calle 13" siteId="calle-13" />
+	<Channel id="Calle 13 HD" siteId="calle-13-hd" />
+	<Channel id="Canal 9" siteId="canal-9" />
+	<Channel id="Canal Club" siteId="canal-club" />
+	<Channel id="Canal Cocina" siteId="canal-cocina" />
+	<Channel id="Canal Sur" siteId="canal-sur" />
+	<Channel id="Canal Sur 2" siteId="canal-sur-2" />
+	<Channel id="Canal+" siteId="canal-plus" />
+	<Channel id="Canal+...30" siteId="canal-plus-30" />
+	<Channel id="Canal+ Dos" siteId="canal-plus-2" />
+	<Channel id="Canal+ 3D" siteId="canal-plus-3d" />
+	<Channel id="C+ Acción ...30" siteId="canal-plus-accion-30" />
+	<Channel id="C+ Acción HD" siteId="canal-plus-accion-hd" />
+	<Channel id="C+ Acción" siteId="canal-plus-accion" />
+	<Channel id="C+ COMEDIA" siteId="canal-plus-comedia" />
+	<Channel id="C+ COMEDIA HD" siteId="canal-plus-comedia-hd" />
+	<Channel id="C+ DCine HD" siteId="canal-plus-dcine-hd" />
+	<Channel id="C+ DCine" siteId="canal-plus-decine" />
+	<Channel id="C+ Deportes" siteId="canal-plus-deporte" />
+	<Channel id="C+ Dep2 HD" siteId="canal-plus-deportes-2-hd" />
+	<Channel id="C+ Deport HD" siteId="canal-plus-deportes-hd" />
+	<Channel id="C+ Fútbol HD" siteId="canal-plus-futbol-hd" />
+	<Channel id="C+ Fútbol" siteId="canal-plus-futbol" />
+	<Channel id="Canal+ HD" siteId="canal-plus-hd" />
+	<Channel id="C+ Xtra HD" siteId="canal-plus-xtra-xd" />
+	<Channel id="Canal 33" siteId="canal33" />
+	<Channel id="Cartoon Net." siteId="cartoon-network" />
+	<Channel id="Castilla la Mancha" siteId="castilla-la-mancha" />
+	<Channel id="Caza y pesca" siteId="caza-y-pesca" />
+	<Channel id="Clan TVE" siteId="clan-tve-50" />
+	<Channel id="CNBC" siteId="cnbc" />
+	<Channel id="CNN Int." siteId="cnn-international" />
+	<Channel id="Cosmopolitan" siteId="cosmopolitan" />
+	<Channel id="Cosmo HD" siteId="cosmopolitan-hd" />
+	<Channel id="Cuatro" siteId="cuatro" />
+	<Channel id="Dcine Español" siteId="dcine-espanol" />
+	<Channel id="Decasa" siteId="decasa" />
+	<Channel id="Discovery Channel" siteId="discovery-channel" />
+	<Channel id="Disney Channel" siteId="disney-channel" />
+	<Channel id="Cinemagic" siteId="disney-cinemagic" />
+	<Channel id="Disney Cinemagic" siteId="disney-cinemagic" />
+	<Channel id="Disney Cinemagic HD" siteId="disney-cinemagic-hd" />
+	<Channel id="Disney XD" siteId="disney-xd" />
+	<Channel id="EHS" siteId="ehs" />
+	<Channel id="ETB1" siteId="etb1" />
+	<Channel id="ETB2" siteId="etb2" />
+	<Channel id="Euronews" siteId="euronews" />
+	<Channel id="Eurosport" siteId="eurosport" />
+	<Channel id="Eurosport HD" siteId="eurosport-hd" />
+	<Channel id="FDF" siteId="factoria-de-ficcion" />
+	<Channel id="Fox" siteId="fox" />
+	<Channel id="Fox Crime" siteId="fox-crime" />
+	<Channel id="Fox HD" siteId="fox-hd" />
+	<Channel id="Fox News" siteId="fox-news" />
+	<Channel id="France 24" siteId="france-24" />
+	<Channel id="Canal+ Golf" siteId="golf-plus" />
+	<Channel id="Gol TV" siteId="goltv" />
+	<Channel id="Gol Televisión" siteId="goltv" />
+	<Channel id="Canal Historia" siteId="historia" />
+	<Channel id="Hollywood" siteId="hollywood" />
+	<Channel id="HollywoodHD" siteId="hollywood-hd" />
+	<Channel id="La Sexta" siteId="la-sexta" />
+	<Channel id="La Siete" siteId="la-siete" />
+	<Channel id="La 2" siteId="la2" />
+	<Channel id="Mezzo" siteId="mezzo" />
+	<Channel id="Mezzo LiveHD" siteId="mezzo-live-hd" />
+	<Channel id="MTV España" siteId="mtv" />
+	<Channel id="MTV Live HD" siteId="mtv-live-hd" />
+	<Channel id="MTV Rocks" siteId="mtv-rocks" />
+	<Channel id="Multicine" siteId="multicine" />
+	<Channel id="Nat Geograph" siteId="national-geographic" />
+	<Channel id="Nat Geo HD" siteId="national-geographic-hd" />
+	<Channel id="Neox" siteId="neox" />
+	<Channel id="Nick jr." siteId="nick-jr" />
+	<Channel id="Nickelodeon" siteId="nickelodeon" />
+	<Channel id="Nitro" siteId="nitro" />
+	<Channel id="Nova" siteId="nova" />
+	<Channel id="Canal Odisea" siteId="odisea" />
+	<Channel id="Panda" siteId="panda" />
+	<Channel id="Par. Comedy" siteId="paramount" />
+	<Channel id="Playboy TV" siteId="playboy-tv" />
+	<Channel id="Disney Junior" siteId="playhouse-disney" />
+	<Channel id="Punt 2" siteId="punt-2" />
+	<Channel id="R. Madrid TV" siteId="real-madrid-tv" />
+	<Channel id="Russia Today Español" siteId="rt-espanol" />
+	<Channel id="SyFy" siteId="sci-fi" />
+	<Channel id="SONY TV" siteId="sony-entertainment" />
+	<Channel id="Sportmanía" siteId="sportmania" />
+	<Channel id="TCM" siteId="tcm" />
+	<Channel id="TCM Clásico" siteId="tcm-clasico" />
+	<Channel id="Telecinco" siteId="telecinco" />
+	<Channel id="Teledeporte" siteId="teledeporte" />
+	<Channel id="TeleMadrid" siteId="telemadrid" />
+	<Channel id="TeleMadrid SAT" siteId="telemadrid-sat" />
+	<Channel id="T. Canarias" siteId="television-canaria" />
+	<Channel id="TNT" siteId="tnt" />
+	<Channel id="TV3" siteId="tv3" />
+	<Channel id="TVC Internacional" siteId="tvc-internacional" />
+	<Channel id="TV3CAT" siteId="tvc-internacional" />
+	<Channel id="La 1" siteId="tve1" />
+	<Channel id="Tve1" siteId="tve1" />
+	<Channel id="TV Galicia" siteId="tvg" />
+	<Channel id="VH1" siteId="vh1" />
+	<Channel id="Viajar" siteId="viajar" />
+	<Channel id="Viajar HD" siteId="viajar-hd" />
   </Channels>
   <Listing type="Html">
     <Site url="http://www.miguiatv.com/[YYYY][MM][DD]/[ID]" post="" external="false" encoding="" />

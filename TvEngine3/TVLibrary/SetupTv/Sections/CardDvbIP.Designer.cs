@@ -44,7 +44,6 @@
       // 
       // checkBoxCreateGroups
       // 
-      this.checkBoxCreateGroups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxCreateGroups.AutoSize = true;
       this.checkBoxCreateGroups.Location = new System.Drawing.Point(24, 52);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
@@ -119,7 +118,6 @@
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonScanTv.Location = new System.Drawing.Point(319, 48);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
