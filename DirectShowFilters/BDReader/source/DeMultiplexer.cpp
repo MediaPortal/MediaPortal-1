@@ -357,11 +357,6 @@ void CDeMultiplexer::FlushSubtitle()
   m_pCurrentSubtitleBuffer->nPlaylist = -1;
   m_pCurrentSubtitleBuffer->nClipNumber = -1;
   m_pCurrentSubtitleBuffer->rtTitleDuration = 0;
-
-  /*
-  IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-  if (pDVBSubtitleFilter)
-    pDVBSubtitleFilter->NotifyChannelChange();*/
 }
 
 HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
@@ -377,26 +372,27 @@ HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
   // Make sure data isn't being processed
   CAutoLock lockRead(&m_sectionRead);
 
-
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
   CAutoLock lockSub(&m_sectionSubtitle);
 
   m_playlistManager->ClearAllButCurrentClip();
-  hr = m_filter.lib.SetChapter(nChapter);
-  if (hr)
+
+  if (m_filter.lib.SetChapter(nChapter))
   {
     FlushPESBuffers(true);
     FlushAudio();
     FlushVideo();
     FlushSubtitle();
+    hr = S_OK;
   }
+
   SetHoldAudio(false);
   SetHoldVideo(false);
   SetHoldSubtitle(false);
+
   return hr;
 }
-
 
 void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSeekTime)
 {
@@ -416,6 +412,13 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSe
   CAutoLock lockSub(&m_sectionSubtitle);
 
   m_playlistManager->ClearAllButCurrentClip();
+
+  if (pDiscardData)
+  {
+    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+    if (pDVBSubtitleFilter)
+      pDVBSubtitleFilter->NotifyChannelChange();
+  }
 
   FlushAudio();
   FlushVideo();
@@ -1233,7 +1236,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
       if (*(DWORD*)next == 0x0D010000) 
       {
         if (bSeqFound) 
-	        break;
+          break;
         
         bSeqFound = true;
       } 
@@ -1278,7 +1281,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
       m_loopLastSearch = 1;
     }
   }
-	
+
   if (m_p && start > m_p->GetData())
   {
     m_loopLastSearch = 1;
