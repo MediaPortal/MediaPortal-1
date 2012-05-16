@@ -120,7 +120,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_rtLastStop(0),
   m_bFlushing(false),
   m_bRebuildOngoing(false),
-  m_bChapterChangeRequested(false)
+  m_bChapterChangeRequested(false),
+  m_bFirstSeek(true)
 {
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
@@ -319,6 +320,7 @@ void CBDReaderFilter::SetTitleDuration(REFERENCE_TIME pTitleDuration)
   LogDebug("CBDReaderFilter: SetTitleDuration duration: %6.3f", pTitleDuration / 10000000.0);
   
   CAutoLock lock(&m_csClock);
+  m_bFirstSeek = true;
   m_rtTitleDuration = pTitleDuration;
 }
 
@@ -1103,8 +1105,9 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
   }
 
   // Allow consecutive fake seeks to be done to the zero position
-  bool alreadySeekedPos = m_rtCurrent == rtCurrent && m_rtStop == rtStop && !resetStreamPosition;
-
+  bool alreadySeekedPos = m_rtCurrent == rtCurrent && m_rtStop == rtStop && !resetStreamPosition && !m_bFirstSeek;
+  m_bFirstSeek = false;
+  
   if (alreadySeekedPos)
   {
 #ifdef LOG_SEEK_INFORMATION   
