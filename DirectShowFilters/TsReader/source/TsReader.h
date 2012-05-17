@@ -33,10 +33,25 @@
 #include "ITeletextSource.h"
 #include <map>
 
-#define INIT_SHOWBUFFERVIDEO 20
-#define INIT_SHOWBUFFERAUDIO 5
+#define AUDIO_CHANGE 0x1
+#define VIDEO_CHANGE 0x2
+
+#define INIT_SHOWBUFFERVIDEO 3
+#define INIT_SHOWBUFFERAUDIO 3
+
+//Buffer control and start-of-play timing control constants
+#define FS_TIM_LIM (2000*10000) //2 seconds in hns units
+#define FS_ADDON_LIM (1000*10000) //1 second in hns units (must not be zero)
+#define INITIAL_BUFF_DELAY 0      // ms units
+#define AV_READY_DELAY 0     // ms units
+#define PRESENT_DELAY (300*10000) // hns units - timestamp compensation offset
 
 using namespace std;
+
+//Macro for replacing timeGetTime()
+//The macro is used to avoid having to handle timeGetTime() rollover issues in the body of the code
+//m_tGTStartTime is initialised in CTsReaderFilter::CTsReaderFilter() when filter is loaded
+#define GET_TIME_NOW() (timeGetTime() - m_tGTStartTime)
 
 class CSubtitlePin;
 class CAudioPin;
@@ -55,6 +70,10 @@ DEFINE_GUID(CLSID_FFDSHOWVIDEO, 0x04fe9017, 0xf873, 0x410e, 0x87, 0x1e, 0xab, 0x
 DEFINE_GUID(CLSID_FFDSHOWDXVA, 0xb0eff97, 0xc750, 0x462c, 0x94, 0x88, 0xb1, 0xe, 0x7d, 0x87, 0xf1, 0xa6);
 // {DBF9000E-F08C-4858-B769-C914A0FBB1D7}
 DEFINE_GUID(CLSID_FFDSHOWSUBTITLES, 0xdbf9000e, 0xf08c, 0x4858, 0xb7, 0x69, 0xc9, 0x14, 0xa0, 0xfb, 0xb1, 0xd7);
+// {[uuid("62D767FE-4F1B-478B-B350-8ACE9E4DB00E")]}
+DEFINE_GUID(CLSID_LAVCUVID, 0x62D767FE, 0x4F1B, 0x478B, 0xB3, 0x50, 0x8A, 0xCE, 0x9E, 0x4D, 0xB0, 0x0E);
+// [uuid("EE30215D-164F-4A92-A4EB-9D4C13390F9F")]
+DEFINE_GUID(CLSID_LAVVIDEO, 0xEE30215D, 0x164F, 0x4A92, 0xA4, 0xEB, 0x9D, 0x4C, 0x13, 0x39, 0x0F, 0x9F);
 
 
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
@@ -110,6 +129,8 @@ public:
   STDMETHODIMP Run(REFERENCE_TIME tStart);
   STDMETHODIMP Pause();
   STDMETHODIMP Stop();
+  STDMETHODIMP GetState(DWORD dwMilliSecsTimeout, FILTER_STATE *pState);
+
 private:
   // IAMFilterMiscFlags
   virtual ULONG STDMETHODCALLTYPE		GetMiscFlags();
@@ -154,9 +175,11 @@ public:
   bool            IsFilterRunning();
   CDeMultiplexer& GetDemultiplexer();
   void            Seek(CRefTime&  seekTime, bool seekInFile);
-  void            SeekDone(CRefTime& refTime);
-  void            SeekStart();
-  void            SeekPreStart(CRefTime& rtSeek);
+//  void            SeekDone(CRefTime& refTime);
+//  void            SeekStart();
+  HRESULT         SeekPreStart(CRefTime& rtSeek);
+  bool            SetSeeking(bool onOff);
+  void            SetWaitDataAfterSeek(bool onOff);
   double          UpdateDuration();
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
@@ -164,9 +187,13 @@ public:
   IDVBSubtitle*   GetSubtitleFilter();
   bool            IsTimeShifting();
   bool            IsRTSP();
+  bool            IsUNCfile();
   bool            IsLiveTV();
   CTsDuration&    GetDuration();
   FILTER_STATE    State() {return m_State;};
+  void            DeltaCompensation(REFERENCE_TIME deltaComp);
+  void            SetCompensation(CRefTime newComp);
+  CRefTime        GetCompensation();
   CRefTime        Compensation;
   CRefTime        AddVideoComp;
   void            OnMediaTypeChanged(int mediaTypes);
@@ -177,11 +204,12 @@ public:
   bool            IsSeeking();
   int             SeekingDone();
   bool            IsStopping();
-  //bool            IsSeekingToEof();
+  bool            IsWaitDataAfterSeek();
 
   DWORD           m_lastPause;
   bool            m_bStreamCompensated;
   CRefTime        m_ClockOnStart;
+  bool            m_bForcePosnUpdate;
 
   REFERENCE_TIME  m_RandomCompensation;
   REFERENCE_TIME  m_MediaPos;
@@ -190,7 +218,7 @@ public:
   
   bool            m_bLiveTv;
   bool            m_bStopping;
-  int             m_WaitForSeekToEof;
+  bool            m_bWaitForSeek;
 	
   void GetTime(REFERENCE_TIME *Time);
   void GetMediaPosition(REFERENCE_TIME *pMediaTime);
@@ -206,9 +234,18 @@ public:
 
   CLSID           m_videoDecoderCLSID;
   bool            m_bFastSyncFFDShow;
+  bool            m_EnableSlowMotionOnZapping;
+  bool            m_bDisableVidSizeRebuildMPEG2;
+  bool            m_bDisableVidSizeRebuildH264;
+  bool            m_bDisableAddPMT;
 
   CLSID           GetCLSIDFromPin(IPin* pPin);
-
+  
+  void            SetErrorAbort();
+  bool            CheckAudioCallback();
+  bool            CheckCallback();
+  void            CheckForMPAR();
+  bool            m_bMPARinGraph;
 protected:
   void ThreadProc();
 
@@ -217,7 +254,11 @@ private:
   HRESULT AddGraphToRot(IUnknown *pUnkGraph);
   HRESULT FindSubtitleFilter();
   void    RemoveGraphFromRot();
-
+  void    SetMediaPosnUpdate(REFERENCE_TIME MediaPos);
+  void    BufferingPause(bool longPause);
+  void    ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void    WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+    
   CAudioPin*	    m_pAudioPin;
   CVideoPin*	    m_pVideoPin;
   CSubtitlePin*	  m_pSubtitlePin;
@@ -225,12 +266,12 @@ private:
   CCritSec        m_section;
   CCritSec        m_CritSecDuration;
   CCritSec        m_GetTimeLock;
+  CCritSec        m_GetCompLock;
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
   CTsDuration     m_duration;
   CBaseReferenceClock* m_referenceClock;
   CDeMultiplexer  m_demultiplexer;
-  //bool            m_bSeeking;
   DWORD           m_dwGraphRegister;
 
   CRTSPClient     m_rtspClient;
@@ -248,5 +289,8 @@ private:
   bool            m_bStoppedForUnexpectedSeek ;
   bool            m_bPauseOnClockTooFast;
   DWORD           m_MPmainThreadID;
+  bool            m_isUNCfile;
+  CCritSec        m_sectionSeeking;
+
 };
 

@@ -399,7 +399,7 @@ void CTeletextPin::UpdateFromSeek()
   //directly after eachother
   //for a single seek operation. To 'fix' this we only perform the seeking operation
   //if we didnt do a seek in the last 5 seconds...
-  if (GetTickCount()-m_seekTimer<5000)
+  if (GET_TIME_NOW()-m_seekTimer<5000)
   {
     if (m_lastSeek==m_rtStart)
     {
@@ -412,7 +412,7 @@ void CTeletextPin::UpdateFromSeek()
   //Note that the seek timestamp (m_rtStart) is done in the range
   //from earliest - latest from GetAvailable()
   //We however would like the seek timestamp to be in the range 0-fileduration
-  m_seekTimer=GetTickCount();
+  m_seekTimer=GET_TIME_NOW();
   m_lastSeek=m_rtStart;
 
   CRefTime rtSeek=m_rtStart;
