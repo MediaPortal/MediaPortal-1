@@ -2950,7 +2950,7 @@ namespace MediaPortal.Video.Database
         
         if (results.Rows.Count != 0)
         {
-          sql = String.Format("UPDATE movieSET timeswatched = {0} WHERE idMovie={1}",
+          sql = String.Format("UPDATE movie SET timeswatched = {0} WHERE idMovie={1}",
                               watchedCount, movieId);
           m_db.Execute(sql);
         }
