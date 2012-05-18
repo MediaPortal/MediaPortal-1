@@ -34,6 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DSUtil", "..\mediaportal\Co
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system", "..\mediaportal\Core.cpp\mpc-hc_subs\src\thirdparty\VirtualDub\system\system.vcxproj", "{C2082189-3ECB-4079-91FA-89D3C8A305C0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioRenderer", "MPAudioRenderer\AudioRenderer.vcxproj", "{D0620EF4-1313-40D5-9069-A82F6FE26994}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -140,6 +142,12 @@ Global
 		{C2082189-3ECB-4079-91FA-89D3C8A305C0}.Release|Win32.Build.0 = Release|Win32
 		{C2082189-3ECB-4079-91FA-89D3C8A305C0}.Release|x64.ActiveCfg = Release|x64
 		{C2082189-3ECB-4079-91FA-89D3C8A305C0}.Release|x64.Build.0 = Release|x64
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Debug|Win32.Build.0 = Debug|Win32
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Debug|x64.ActiveCfg = Debug|Win32
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release|Win32.ActiveCfg = Release|Win32
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release|Win32.Build.0 = Release|Win32
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
