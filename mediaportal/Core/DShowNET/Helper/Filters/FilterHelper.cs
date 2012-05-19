@@ -198,6 +198,18 @@ namespace DShowNET.Helper
       }
     }
 
+    public static ArrayList GetVideoCodec()
+    {
+      ArrayList list = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
+      return list;
+    }
+
+    public static ArrayList GetAudioCodec()
+    {
+      ArrayList list = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
+      return list;
+    }
+
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
     {
       return GetFilters(mediaType, mediaSubType, (Merit)0x080001);

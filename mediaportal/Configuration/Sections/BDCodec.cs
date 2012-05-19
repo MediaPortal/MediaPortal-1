@@ -25,6 +25,8 @@ using DShowNET;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.UserInterface.Controls;
+using Microsoft.Win32;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -60,6 +62,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
         ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
         ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
+        ArrayList availableVC1CyberlinkVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.CyberlinkVC1);
         ArrayList availableFileSyncFilters = FilterHelper.GetFilters(MediaType.Stream, MediaSubType.Null);
         //Remove Cyberlink Muxer from the list to avoid newbie user confusion.
         while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
@@ -96,27 +99,17 @@ namespace MediaPortal.Configuration.Sections
         {
           availableAudioFilters.Remove("Nero Mpeg2 Encoder");
         }
-        //Add Cyberlink PDVD10 Filter
-        while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD10)"))
-        {
-          availableVC1VideoFilters.Add("CyberLink Video Decoder (PDVD10)");
-          break;
-        }
-        while (availableH264VideoFilters.Contains("CyberLink Video Decoder (PDVD11)"))
-        {
-          availableVC1VideoFilters.Add("CyberLink Video Decoder (PDVD11)");
-          break;
-        }
-        while (availableVC1VideoFilters.Contains("WMVideo Decoder DMO"))
+        /*while (availableVC1VideoFilters.Contains("WMVideo Decoder DMO"))
         {
           availableVC1VideoFilters.Remove("WMVideo Decoder DMO");
-        }
+        }*/
         availableVC1VideoFilters.Sort();
         availableAudioFilters.Sort();
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         availableFileSyncFilters.Sort();
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
         vc1videoCodecComboBox.Items.AddRange(availableVC1VideoFilters.ToArray());
+        vc1videoCodecComboBox.Items.AddRange(availableVC1CyberlinkVideoFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
         _init = true;
         LoadSettings();
@@ -140,93 +133,91 @@ namespace MediaPortal.Configuration.Sections
         string videoCodec = xmlreader.GetValueAsString("bdplayer", "mpeg2videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("bdplayer", "h264videocodec", "");
         string vc1videoCodec = xmlreader.GetValueAsString("bdplayer", "vc1videocodec", "");
-        string audioCodec = xmlreader.GetValueAsString("bdplayer", "mpeg2audiocodec", "");        
-        if (audioCodec == string.Empty)
-        {
-          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-          if (availableAudioFilters.Count > 0)
-          {
-            bool Mpeg2DecFilterFound = false;
-            bool DScalerFilterFound = false;
-            audioCodec = (string)availableAudioFilters[0];
-            foreach (string filter in availableAudioFilters)
-            {
-              if (filter.Equals("MPC - MPA Decoder Filter"))
-              {
-                Mpeg2DecFilterFound = true;
-              }
-              if (filter.Equals("DScaler Audio Decoder"))
-              {
-                DScalerFilterFound = true;
-              }
-            }
-            if (Mpeg2DecFilterFound)
-            {
-              audioCodec = "MPC - MPA Decoder Filter";
-            }
-            else if (DScalerFilterFound)
-            {
-              audioCodec = "DScaler Audio Decoder";
-            }
-          }
-        }
-        Log.Info("  - videoCodec =(" + videoCodec + ")");
+        string audioCodec = xmlreader.GetValueAsString("bdplayer", "mpeg2audiocodec", "");
+        //string aacaudioCodec = xmlreader.GetValueAsString("bdplayer", "aacaudiocodec", "");
+
         if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool Mpeg2DecFilterFound = false;
-          bool DScalerFilterFound = false;
-          Log.Info(" - availableVideoFilters.Count = " + availableVideoFilters.Count.ToString());
-          if (availableVideoFilters.Count > 0)
-          {
-            videoCodec = (string)availableVideoFilters[0];
-            foreach (string filter in availableVideoFilters)
-            {
-              Log.Info(" - filter = (" + filter + ")");
-              if (filter.Equals("MPC - MPEG-2 Video Decoder (Gabest)"))
-              {
-                Log.Info(" - MPC - MPEG-2 Video Decoder (Gabest)");
-                Mpeg2DecFilterFound = true;
-              }
-              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
-              {
-                DScalerFilterFound = true;
-              }
-            }
-            if (Mpeg2DecFilterFound)
-            {
-              videoCodec = "MPC - MPEG-2 Video Decoder (Gabest)";
-            }
-            else if (DScalerFilterFound)
-            {
-              videoCodec = "DScaler Mpeg2 Video Decoder";
-            }
-          }
+          videoCodec = SetCodecBox(availableVideoFilters, "LAV Video Decoder", "DScaler Mpeg2 Video Decoder", "");
         }
         if (h264videoCodec == string.Empty)
         {
           ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
-          bool H264DecFilterFound = false;
-          if (availableH264VideoFilters.Count > 0)
-          {
-            h264videoCodec = (string)availableH264VideoFilters[0];
-            foreach (string filter in availableH264VideoFilters)
-            {
-              if (filter.Equals("CoreAVC Video Decoder"))
-              {
-                H264DecFilterFound = true;
-              }
-            }
-            if (H264DecFilterFound)
-            {
-              h264videoCodec = "CoreAVC Video Decoder";
-            }
-          }
+          h264videoCodec = SetCodecBox(availableH264VideoFilters, "LAV Video Decoder", "CoreAVC Video Decoder", "");
         }
+        if (vc1videoCodec == string.Empty)
+        {
+          ArrayList availableVC1VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.VC1);
+          vc1videoCodec = SetCodecBox(availableVC1VideoFilters, "LAV Video Decoder", "", "");
+        }
+        if (audioCodec == string.Empty)
+        {
+          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+          audioCodec = SetCodecBox(availableAudioFilters, "LAV Audio Decoder", "DScaler Audio Decoder", "ffdshow Audio Decoder");
+        }
+
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
         h264videoCodecComboBox.Text = h264videoCodec;
         vc1videoCodecComboBox.Text = vc1videoCodec;
+        CheckBoxValid(audioCodecComboBox);
+        CheckBoxValid(videoCodecComboBox);
+        CheckBoxValid(h264videoCodecComboBox);
+        CheckBoxValid(vc1videoCodecComboBox);
+        CheckBoxValid(audioRendererComboBox);
+      }
+    }
+
+    private string SetCodecBox(ArrayList availableFilters, String FilterCodec1, String FilterCodec2, String FilterCodec3)
+    {
+      bool filterCodec1 = false;
+      bool filterCodec2 = false;
+      bool filterCodec3 = false;
+      string Codec = "";
+
+      if (availableFilters.Count > 0)
+      {
+        Codec = (string)availableFilters[0];
+        foreach (string filter in availableFilters)
+        {
+          if (filter.Equals(FilterCodec1))
+          {
+            filterCodec1 = true;
+          }
+          else if (filter.Equals(FilterCodec2))
+          {
+            filterCodec2 = true;
+          }
+          else if (filter.Equals(FilterCodec3))
+          {
+            filterCodec3 = true;
+          }
+        }
+        if (filterCodec1)
+        {
+          return FilterCodec1;
+        }
+        else if (filterCodec2)
+        {
+          return FilterCodec2;
+        }
+        else if (filterCodec3)
+        {
+          return FilterCodec3;
+        }
+      }
+      return Codec;
+    }
+
+    /// <summary>
+    /// Check Combobox count
+    /// </summary>
+    public override void CheckBoxValid(MPComboBox ComboBox)
+    {
+      if (ComboBox.Items.Count == 1)
+      {
+        ComboBox.Enabled = false;
       }
     }
 
@@ -323,6 +314,122 @@ namespace MediaPortal.Configuration.Sections
       }
       videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
     */
+    }
+
+    private void RegMPtoConfig(string subkeysource)
+    {
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
+      {
+        if (subkey != null)
+        {
+          RegistryUtilities.RenameSubKey(subkey, @"MediaPortal",
+                                         @"Configuration");
+        }
+      }
+    }
+
+    private void RegConfigtoMP(string subkeysource)
+    {
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
+      {
+        if (subkey != null)
+        {
+          RegistryUtilities.RenameSubKey(subkey, @"Configuration",
+                                         @"MediaPortal");
+        }
+      }
+    }
+
+    private void ConfigCodecSection(object sender, EventArgs e, string selection)
+    {
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.LegacyAmFilterCategory))
+      {
+        try
+        {
+          if (device.Name != null)
+          {
+            {
+              if (selection.Equals(device.Name))
+              {
+                if (selection.Contains("CyberLink"))
+                {
+                  // Rename MediaPortal subkey to Configuration for Cyberlink take setting
+                  RegMPtoConfig(@"Software\Cyberlink\Common\clcvd");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\cl264dec");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\CLVSD");
+                  RegMPtoConfig(@"Software\Cyberlink\Common\CLAud");
+
+                  // Show Codec page Setting
+                  DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)device);
+                  page.Show(this);
+
+                  // Rename Configuration subkey to MediaPortal to apply Cyberlink setting
+                  RegConfigtoMP(@"Software\Cyberlink\Common\clcvd");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\cl264dec");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\CLVSD");
+                  RegConfigtoMP(@"Software\Cyberlink\Common\CLAud");
+                }
+                else
+                {
+                  DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)device);
+                  page.Show(this);
+                }
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+
+    private void ConfigAudioRendererCodecSection(object sender, EventArgs e, string selection)
+    {
+      foreach (DsDevice device in DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.AudioRendererCategory))
+      {
+        try
+        {
+          if (device.Name != null)
+          {
+            {
+              if (selection.Equals(device.Name))
+              {
+                DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)device);
+                page.Show(this);
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+
+    private void configMPEG_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, videoCodecComboBox.Text);
+    }
+
+    private void configH264_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, h264videoCodecComboBox.Text);
+    }
+
+    private void configVC1_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, vc1videoCodecComboBox.Text);
+    }
+
+    private void configAUDIO_Click(object sender, EventArgs e)
+    {
+      ConfigCodecSection(sender, e, audioCodecComboBox.Text);
+    }
+
+    private void configAudioRenderer_Click(object sender, EventArgs e)
+    {
+      ConfigAudioRendererCodecSection(sender, e, audioRendererComboBox.Text);
     }
   }
 }
