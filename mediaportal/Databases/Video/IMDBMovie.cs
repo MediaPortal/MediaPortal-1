@@ -422,8 +422,16 @@ namespace MediaPortal.Video.Database
 
       if (ID == -1)
       {
+        if (IsEmpty)
+        {
+          GUIPropertyManager.SetProperty("#hideinfo", "true");
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#hideinfo", "false");
+        }
+        
         SetDurationProperty(VideoDatabase.GetMovieId(file));
-        GUIPropertyManager.SetProperty("#hideinfo", "true");
       }
       else
       {

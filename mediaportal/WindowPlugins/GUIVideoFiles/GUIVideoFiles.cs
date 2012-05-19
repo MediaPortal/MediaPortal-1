@@ -4039,7 +4039,7 @@ namespace MediaPortal.GUI.Video
         // Get recording/nfo xml
         if (info.IsEmpty)
         {
-          FetchMatroskaInfo(path, false, ref info);
+          FetchMatroskaInfo(filename, false, ref info);
 
           if (info.IsEmpty)
           {
