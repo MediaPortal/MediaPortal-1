@@ -86,8 +86,9 @@ int g_cTemplates = sizeof(g_Templates) / sizeof(g_Templates[0]);
 
 STDAPI DllRegisterServer()
 {
-  // Create the initial settings
-  AudioRendererSettings settings; 
+  // Create the initial settings - currently disabeld as it is breaking installer for some reason
+
+  // AudioRendererSettings settings;
   return AMovieDllRegisterServer2(TRUE);
 }
 
