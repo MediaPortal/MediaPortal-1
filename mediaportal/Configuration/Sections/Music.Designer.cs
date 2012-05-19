@@ -124,6 +124,16 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
+      this.tabPagePlayerUpmixSettings = new System.Windows.Forms.TabPage();
+      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbUpmixMono = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbUpmixStereo = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbUpmixQuadro = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel10 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbUpmixFiveDotOne = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -145,6 +155,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.SuspendLayout();
       this.groupBoxWinampVis.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
+      this.tabPagePlayerUpmixSettings.SuspendLayout();
+      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -178,6 +190,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlPlayerSettings.Controls.Add(this.tabPageBassPlayerSettings);
       this.tabControlPlayerSettings.Controls.Add(this.tabPageASIOPlayerSettings);
       this.tabControlPlayerSettings.Controls.Add(this.tabPageWASAPIPLayerSettings);
+      this.tabControlPlayerSettings.Controls.Add(this.tabPagePlayerUpmixSettings);
       this.tabControlPlayerSettings.Location = new System.Drawing.Point(16, 109);
       this.tabControlPlayerSettings.Name = "tabControlPlayerSettings";
       this.tabControlPlayerSettings.SelectedIndex = 0;
@@ -1007,6 +1020,111 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
       // 
+      // tabPagePlayerUpmixSettings
+      // 
+      this.tabPagePlayerUpmixSettings.Controls.Add(this.mpGroupBox2);
+      this.tabPagePlayerUpmixSettings.Location = new System.Drawing.Point(4, 22);
+      this.tabPagePlayerUpmixSettings.Name = "tabPagePlayerUpmixSettings";
+      this.tabPagePlayerUpmixSettings.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPagePlayerUpmixSettings.Size = new System.Drawing.Size(424, 280);
+      this.tabPagePlayerUpmixSettings.TabIndex = 3;
+      this.tabPagePlayerUpmixSettings.Text = "Upmixing";
+      this.tabPagePlayerUpmixSettings.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox2
+      // 
+      this.mpGroupBox2.Controls.Add(this.cbUpmixFiveDotOne);
+      this.mpGroupBox2.Controls.Add(this.mpLabel11);
+      this.mpGroupBox2.Controls.Add(this.cbUpmixQuadro);
+      this.mpGroupBox2.Controls.Add(this.mpLabel10);
+      this.mpGroupBox2.Controls.Add(this.cbUpmixStereo);
+      this.mpGroupBox2.Controls.Add(this.mpLabel9);
+      this.mpGroupBox2.Controls.Add(this.cbUpmixMono);
+      this.mpGroupBox2.Controls.Add(this.mpLabel8);
+      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox2.Location = new System.Drawing.Point(6, 17);
+      this.mpGroupBox2.Name = "mpGroupBox2";
+      this.mpGroupBox2.Size = new System.Drawing.Size(412, 242);
+      this.mpGroupBox2.TabIndex = 0;
+      this.mpGroupBox2.TabStop = false;
+      this.mpGroupBox2.Text = "Upmix source to ...";
+      // 
+      // mpLabel8
+      // 
+      this.mpLabel8.AutoSize = true;
+      this.mpLabel8.Location = new System.Drawing.Point(14, 43);
+      this.mpLabel8.Name = "mpLabel8";
+      this.mpLabel8.Size = new System.Drawing.Size(81, 13);
+      this.mpLabel8.TabIndex = 0;
+      this.mpLabel8.Text = "Upmix Mono to:";
+      // 
+      // cbUpmixMono
+      // 
+      this.cbUpmixMono.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixMono.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixMono.FormattingEnabled = true;
+      this.cbUpmixMono.Location = new System.Drawing.Point(167, 40);
+      this.cbUpmixMono.Name = "cbUpmixMono";
+      this.cbUpmixMono.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixMono.TabIndex = 1;
+      // 
+      // cbUpmixStereo
+      // 
+      this.cbUpmixStereo.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixStereo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixStereo.FormattingEnabled = true;
+      this.cbUpmixStereo.Location = new System.Drawing.Point(167, 85);
+      this.cbUpmixStereo.Name = "cbUpmixStereo";
+      this.cbUpmixStereo.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixStereo.TabIndex = 3;
+      // 
+      // mpLabel9
+      // 
+      this.mpLabel9.AutoSize = true;
+      this.mpLabel9.Location = new System.Drawing.Point(14, 88);
+      this.mpLabel9.Name = "mpLabel9";
+      this.mpLabel9.Size = new System.Drawing.Size(85, 13);
+      this.mpLabel9.TabIndex = 2;
+      this.mpLabel9.Text = "Upmix Stereo to:";
+      // 
+      // cbUpmixQuadro
+      // 
+      this.cbUpmixQuadro.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixQuadro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixQuadro.FormattingEnabled = true;
+      this.cbUpmixQuadro.Location = new System.Drawing.Point(167, 131);
+      this.cbUpmixQuadro.Name = "cbUpmixQuadro";
+      this.cbUpmixQuadro.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixQuadro.TabIndex = 5;
+      // 
+      // mpLabel10
+      // 
+      this.mpLabel10.AutoSize = true;
+      this.mpLabel10.Location = new System.Drawing.Point(14, 134);
+      this.mpLabel10.Name = "mpLabel10";
+      this.mpLabel10.Size = new System.Drawing.Size(69, 13);
+      this.mpLabel10.TabIndex = 4;
+      this.mpLabel10.Text = "Upmix 4.0 to:";
+      // 
+      // cbUpmixFiveDotOne
+      // 
+      this.cbUpmixFiveDotOne.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixFiveDotOne.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixFiveDotOne.FormattingEnabled = true;
+      this.cbUpmixFiveDotOne.Location = new System.Drawing.Point(167, 174);
+      this.cbUpmixFiveDotOne.Name = "cbUpmixFiveDotOne";
+      this.cbUpmixFiveDotOne.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixFiveDotOne.TabIndex = 7;
+      // 
+      // mpLabel11
+      // 
+      this.mpLabel11.AutoSize = true;
+      this.mpLabel11.Location = new System.Drawing.Point(14, 177);
+      this.mpLabel11.Name = "mpLabel11";
+      this.mpLabel11.Size = new System.Drawing.Size(69, 13);
+      this.mpLabel11.TabIndex = 6;
+      this.mpLabel11.Text = "Upmix 5.1 to:";
+      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1044,6 +1162,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.PerformLayout();
       this.groupBoxWinampVis.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
+      this.tabPagePlayerUpmixSettings.ResumeLayout(false);
+      this.mpGroupBox2.ResumeLayout(false);
+      this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1127,5 +1248,15 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel6;
     private MPLabel mpLabel7;
     private CheckBox WasapiExclusiveModeCkBox;
+    private TabPage tabPagePlayerUpmixSettings;
+    private MPGroupBox mpGroupBox2;
+    private MPComboBox cbUpmixFiveDotOne;
+    private MPLabel mpLabel11;
+    private MPComboBox cbUpmixQuadro;
+    private MPLabel mpLabel10;
+    private MPComboBox cbUpmixStereo;
+    private MPLabel mpLabel9;
+    private MPComboBox cbUpmixMono;
+    private MPLabel mpLabel8;
   }
 }

@@ -143,6 +143,27 @@ namespace MediaPortal.Configuration.Sections
 
       ShowLyricsCmbBox.Items.Clear();
       ShowLyricsCmbBox.Items.AddRange(ShowLyricsOptions);
+
+      // Fill the Upmix Combos
+      foreach (string str in Enum.GetNames(typeof(MonoUpMix)))
+      {
+        cbUpmixMono.Items.Add(str);
+      }
+
+      foreach (string str in Enum.GetNames(typeof(StereoUpMix)))
+      {
+        cbUpmixStereo.Items.Add(str);
+      }
+
+      foreach (string str in Enum.GetNames(typeof(QuadraphonicUpMix)))
+      {
+        cbUpmixQuadro.Items.Add(str);
+      }
+
+      foreach (string str in Enum.GetNames(typeof(FiveDotOneUpMix)))
+      {
+        cbUpmixFiveDotOne.Items.Add(str);
+      }
     }
 
     #endregion
@@ -222,6 +243,11 @@ namespace MediaPortal.Configuration.Sections
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
         StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
+
+        cbUpmixMono.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixMono", 0);
+        cbUpmixStereo.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixStereo", 0);
+        cbUpmixQuadro.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixQuadro", 0);
+        cbUpmixFiveDotOne.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixFiveDotOne", 0);
 
         #endregion
 
@@ -415,6 +441,12 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "asiobalance", hScrollBarBalance.Value);
 
         xmlwriter.SetValueAsBool("audioplayer", "wasapiExclusive", WasapiExclusiveModeCkBox.Checked);
+
+        xmlwriter.SetValue("audioplayer", "upMixMono", cbUpmixMono.SelectedIndex);
+        xmlwriter.SetValue("audioplayer", "upMixStereo", cbUpmixStereo.SelectedIndex);
+        xmlwriter.SetValue("audioplayer", "upMixQuadro", cbUpmixQuadro.SelectedIndex );
+        xmlwriter.SetValue("audioplayer", "upMixFiveDotOne", cbUpmixFiveDotOne.SelectedIndex);
+
         #endregion
 
         #region Visualization Settings);
@@ -645,6 +677,7 @@ namespace MediaPortal.Configuration.Sections
       // Check if we have selected either BASS; ASIO or WasAPI and only enable Playersettings and Vis then
       bool useBassEngine = audioPlayerComboBox.SelectedIndex < 3;
       tabControlPlayerSettings.Enabled = useBassEngine;
+      tabPagePlayerUpmixSettings.Enabled = useBassEngine;
       groupBoxVizOptions.Enabled = useBassEngine;
 
       switch (audioPlayerComboBox.SelectedIndex)
@@ -653,6 +686,7 @@ namespace MediaPortal.Configuration.Sections
           tabPageBassPlayerSettings.Enabled = true;
           tabPageASIOPlayerSettings.Enabled = false;
           tabPageWASAPIPLayerSettings.Enabled = false;
+          tabPagePlayerUpmixSettings.Enabled = true;
           tabControlPlayerSettings.SelectedTab = tabPageBassPlayerSettings;
           break;
 
@@ -660,6 +694,7 @@ namespace MediaPortal.Configuration.Sections
           tabPageBassPlayerSettings.Enabled = true;
           tabPageASIOPlayerSettings.Enabled = true;
           tabPageWASAPIPLayerSettings.Enabled = false;
+          tabPagePlayerUpmixSettings.Enabled = true;
           tabControlPlayerSettings.SelectedTab = tabPageBassPlayerSettings;
           break;
 
@@ -667,6 +702,7 @@ namespace MediaPortal.Configuration.Sections
           tabPageBassPlayerSettings.Enabled = true;
           tabPageASIOPlayerSettings.Enabled = false;
           tabPageWASAPIPLayerSettings.Enabled = true;
+          tabPagePlayerUpmixSettings.Enabled = true;
           tabControlPlayerSettings.SelectedTab = tabPageBassPlayerSettings;
           break;
       }
