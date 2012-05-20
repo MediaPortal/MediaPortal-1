@@ -96,9 +96,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Variables
 
-    private const int Maxstreams = 2;
-    private List<MusicStream> _streams = new List<MusicStream>(Maxstreams);
-    private int _currentStreamIndex = 0;
+    private const int Maxstreams = 10;
+    private List<MusicStream> _streams = new List<MusicStream>(10);
 
     private ASIOPROC _asioProc = null;
     private int _asioDeviceNumber = -1;
@@ -607,6 +606,13 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case MusicStream.StreamAction.Freed:
+          lock (_streams)
+          {
+            if (_streams.Contains(musicStream))
+            {
+              _streams.Remove(musicStream);
+            }
+          }
           musicStream.Dispose();
           break;
       }
@@ -671,10 +677,6 @@ namespace MediaPortal.MusicPlayer.BASS
           // PreBuffer() takes care of this.
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PREBUF, 0);
         }
-
-        // Initialise the Stream and Asdio HandlerIndexes with null values
-        _streams.Add(null);
-        _streams.Add(null);
 
         InitializeControls();
         Config.LoadAudioDecoderPlugins();
@@ -1350,44 +1352,7 @@ namespace MediaPortal.MusicPlayer.BASS
         return null;
       }
 
-      if (_currentStreamIndex < 0)
-      {
-        _currentStreamIndex = 0;
-      }
-      else if (_currentStreamIndex >= _streams.Count)
-      {
-        _currentStreamIndex = _streams.Count - 1;
-      }
-
-      return _streams[_currentStreamIndex];
-    }
-
-    /// <summary>
-    /// Returns the Next Stream
-    /// </summary>
-    /// <returns></returns>
-    private int GetNextStream()
-    {
-      MusicStream currentStream = GetCurrentStream();
-
-      if (currentStream == null)
-      {
-        return 0;
-      }
-
-      if (currentStream.BassStream == 0 || Bass.BASS_ChannelIsActive(currentStream.BassStream) == BASSActive.BASS_ACTIVE_STOPPED)
-      {
-        return _currentStreamIndex;
-      }
-
-      _currentStreamIndex++;
-
-      if (_currentStreamIndex >= _streams.Count)
-      {
-        _currentStreamIndex = 0;
-      }
-
-      return _currentStreamIndex;
+      return _streams[0];
     }
 
     /// <summary>
@@ -2013,7 +1978,7 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
-        _streams[GetNextStream()] = stream;
+        _streams.Insert(0, stream);
 
         // Enable events, for various Playback Actions to be handled
         stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
