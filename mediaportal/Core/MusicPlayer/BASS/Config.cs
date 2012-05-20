@@ -52,6 +52,11 @@ namespace MediaPortal.MusicPlayer.BASS
     private static string _soundDevice;
     private static string _soundDeviceID;
 
+    private static int _upMixMono;
+    private static int _upMixStereo;
+    private static int _upMixQuadro;
+    private static int _upMixFiveDotOne;
+
     private static int _streamVolume;
     private static int _bufferingMs;
     private static int _crossFadeIntervalMs;
@@ -172,6 +177,27 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       get { return _soundFonts; }
     }
+
+    public static MonoUpMix UpmixMono
+    {
+      get { return (MonoUpMix)_upMixMono; }
+    }
+
+    public static StereoUpMix UpmixStereo
+    {
+      get { return (StereoUpMix)_upMixStereo; }
+    }
+
+    public static QuadraphonicUpMix UpmixQuadro
+    {
+      get { return (QuadraphonicUpMix)_upMixQuadro; }
+    }
+
+    public static FiveDotOneUpMix UpmixFiveDotOne
+    {
+      get { return (FiveDotOneUpMix)_upMixFiveDotOne; }
+    }
+
     #endregion
 
     #region Constructor
@@ -248,6 +274,11 @@ namespace MediaPortal.MusicPlayer.BASS
             _playBackType = PlayBackType.CROSSFADE;
           }
         }
+
+        _upMixMono = xmlreader.GetValueAsInt("audioplayer", "upMixMono", 0);
+        _upMixStereo = xmlreader.GetValueAsInt("audioplayer", "upMixStereo", 0);
+        _upMixQuadro = xmlreader.GetValueAsInt("audioplayer", "upMixQuadro", 0);
+        _upMixFiveDotOne = xmlreader.GetValueAsInt("audioplayer", "upMixFiveDotOne", 0);
       }
     }
 

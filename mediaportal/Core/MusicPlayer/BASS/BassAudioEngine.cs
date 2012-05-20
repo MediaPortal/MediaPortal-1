@@ -111,6 +111,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _wasapiMixedChans = 0;
     private int _wasapiMixedFreq = 0;
 
+    private int _deviceOutputChannels = 2;
+
     private List<int> DecoderPluginHandles = new List<int>();
 
     private PlayState _state = PlayState.Init;
@@ -142,18 +144,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private DateTime _seekUpdate = DateTime.Now;
 
     private int _mixer = 0;
-    // Mixing Matrix
-    private float[,] _MixingMatrix = new float[8, 2]
-                                       {
-                                         {1, 0}, // left front out = left in
-                                         {0, 1}, // right front out = right in
-                                         {1, 0}, // centre out = left in
-                                         {0, 1}, // LFE out = right in
-                                         {1, 0}, // left rear/side out = left in
-                                         {0, 1}, // right rear/side out = right in
-                                         {1, 0}, // left-rear center out = left in
-                                         {0, 1} // right-rear center out = right in
-                                       };
+    private float[,] _mixingMatrix = null; 
 
     private StreamCopy _streamcopy; // For Asio Channels
 
@@ -772,7 +763,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
 
     /// <summary>
-    /// Initialise the DirectSOund Device
+    /// Initialise the DirectSound Device
     /// </summary>
     /// <returns></returns>
     private bool InitDirectSoundDevice()
@@ -783,6 +774,23 @@ namespace MediaPortal.MusicPlayer.BASS
 
       result =
         Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero);
+
+      BASS_INFO info = Bass.BASS_GetInfo();
+      if (info != null)
+      {
+        _deviceOutputChannels = info.speakers;
+
+        Log.Info("BASS: Device Information");
+        Log.Info("BASS: ---------------------------------------------");
+        Log.Info("BASS: Name: {0}", info.ToString());
+        Log.Info("BASS: Directsound version: {0}", info.dsver);
+        Log.Info("BASS: # Output Channels: {0}", info.speakers);
+        Log.Info("BASS: Minimum Buffer Samples: {0}", info.minbuf);
+        Log.Info("BASS: Current Sample rate: {0}", info.freq);
+        Log.Info("BASS: Maximum Sample rate: {0}", info.maxrate);
+        Log.Info("BASS: Minimum Sample rate: {0}", info.minrate);
+        Log.Info("BASS: ---------------------------------------------");
+      }
 
       // Bass will maximize the value to 100 ms
       Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 80);
@@ -829,6 +837,8 @@ namespace MediaPortal.MusicPlayer.BASS
           BASS_ASIO_INFO info = BassAsio.BASS_ASIO_GetInfo();
           if (info != null)
           {
+            _deviceOutputChannels = info.outputs;
+
             Log.Info("BASS: Device Information");
             Log.Info("BASS: ---------------------------------------------");
             Log.Info("BASS: Name: {0} {1}", info.name, info.version);
@@ -901,6 +911,9 @@ namespace MediaPortal.MusicPlayer.BASS
         _wasapiDeviceInfo = wasapiDevices[i];
         if (_wasapiDeviceInfo != null)
         {
+          // Assume 8 channels, we only know, the number of channels supported, once the device is initialised
+          _deviceOutputChannels = 8;
+
           Log.Info("BASS: Device Information");
           Log.Info("BASS: ---------------------------------------------");
           Log.Info("BASS: Name: {0}", _wasapiDeviceInfo.name);
@@ -1486,8 +1499,6 @@ namespace MediaPortal.MusicPlayer.BASS
         mixerFlags |= BASSFlag.BASS_STREAM_DECODE;
       }
 
-      Log.Debug("BASS: Creating {0} channel mixer for frequency {1}", stream.ChannelInfo.chans, stream.ChannelInfo.freq);
-
       if (_mixer != 0)
       {
         if (!Bass.BASS_StreamFree(_mixer))
@@ -1495,7 +1506,35 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Error("BASS: Error stopping Asio Device: {0}", Bass.BASS_ErrorGetCode());
         }
       }
-      _mixer = BassMix.BASS_Mixer_StreamCreate(stream.ChannelInfo.freq, stream.ChannelInfo.chans, mixerFlags);
+
+      int outputChannels = _deviceOutputChannels;
+      _mixingMatrix = null;
+
+      // See, if we need Upmixing
+      if (outputChannels > stream.ChannelInfo.chans)
+      {
+        Log.Info("BASS: Found more output channels than input channels. Check for upmixing.");
+        _mixingMatrix = CreateMixingMatrix(stream.ChannelInfo.chans);
+        if (_mixingMatrix !=null)
+        {
+          outputChannels = Math.Min(_mixingMatrix.GetLength(0), outputChannels);
+        }
+        else 
+        {
+          outputChannels = stream.ChannelInfo.chans;
+        }
+      }
+      else if (outputChannels < stream.ChannelInfo.chans)
+      {
+        // Downmix to Stereo
+        Log.Info("BASS: Found more input channels than output channels. Downmix.");
+        outputChannels = Math.Min(outputChannels, 2);
+      }
+
+      Log.Debug("BASS: Creating {0} channel mixer with sample rate of {1}", outputChannels, stream.ChannelInfo.freq);
+      
+      _mixer = BassMix.BASS_Mixer_StreamCreate(stream.ChannelInfo.freq, outputChannels, mixerFlags);
+      
       Bass.BASS_ChannelPlay(_mixer, false);
 
       switch (Config.MusicPlayer)
@@ -1644,6 +1683,247 @@ namespace MediaPortal.MusicPlayer.BASS
       return result;
     }
 
+    /// <summary>
+    /// Check, which Mixing Matrix to be used
+    /// Thanks to Symphy, author of PureAudio, for this code
+    /// </summary>
+    /// <param name="inputChannels"></param>
+    /// <returns></returns>
+    private float[,] CreateMixingMatrix(int inputChannels)
+    {
+      Log.Debug("BASS: Creating mixing matrix...");
+      switch (inputChannels)
+      {
+        case 1:
+          return CreateMonoUpMixMatrix();
+        case 2:
+          return CreateStereoUpMixMatrix();
+        case 4:
+          return CreateQuadraphonicUpMixMatrix();
+        case 6:
+          return CreateFiveDotOneUpMixMatrix();
+        default:
+          return null;
+      }
+    }
+
+    private float[,] CreateMonoUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      switch (Config.UpmixMono)
+      {
+        case MonoUpMix.None:
+          break;
+
+        case MonoUpMix.Stereo:
+          // Channel 1: left front out = in
+          // Channel 2: right front out = in
+          mixMatrix = new float[2, 1];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 0] = 1;
+
+          break;
+
+        case MonoUpMix.QuadraphonicPhonic:
+          // Channel 1: left front out = in
+          // Channel 2: right front out = in
+          // Channel 3: left rear out = in
+          // Channel 4: right rear out = in
+          mixMatrix = new float[4, 1];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 0] = 1;
+          mixMatrix[2, 0] = 1;
+          mixMatrix[3, 0] = 1;
+
+          break;
+
+        case MonoUpMix.FiveDotOne:
+          // Channel 1: left front out = in
+          // Channel 2: right front out = in
+          // Channel 3: centre out = in
+          // Channel 4: LFE out = in
+          // Channel 5: left rear/side out = in
+          // Channel 6: right rear/side out = in
+          mixMatrix = new float[6, 1];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 0] = 1;
+          mixMatrix[2, 0] = 1;
+          mixMatrix[3, 0] = 1;
+          mixMatrix[4, 0] = 1;
+          mixMatrix[5, 0] = 1;
+
+          break;
+
+        case MonoUpMix.SevenDotOne:
+          // Channel 1: left front out = in
+          // Channel 2: right front out = in
+          // Channel 3: centre out = in
+          // Channel 4: LFE out = in
+          // Channel 5: left rear/side out = in
+          // Channel 6: right rear/side out = in
+          // Channel 7: left-rear center out = in
+          // Channel 8: right-rear center out = in
+          mixMatrix = new float[8, 1];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 0] = 1;
+          mixMatrix[2, 0] = 1;
+          mixMatrix[3, 0] = 1;
+          mixMatrix[4, 0] = 1;
+          mixMatrix[5, 0] = 1;
+          mixMatrix[6, 0] = 1;
+          mixMatrix[7, 0] = 1;
+
+          break;
+      }
+      return mixMatrix;
+    }
+
+    private float[,] CreateStereoUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      switch (Config.UpmixStereo)
+      {
+        case StereoUpMix.None:
+          break;
+
+        case StereoUpMix.QuadraphonicPhonic:
+          // Channel 1: left front out = left in
+          // Channel 2: right front out = right in
+          // Channel 3: left rear out = left in
+          // Channel 4: right rear out = right in
+          mixMatrix = new float[4, 2];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 0] = 1;
+          mixMatrix[3, 1] = 1;
+
+          break;
+
+        case StereoUpMix.FiveDotOne:
+          // Channel 1: left front out = left in
+          // Channel 2: right front out = right in
+          // Channel 3: centre out = left/right in
+          // Channel 4: LFE out = left/right in
+          // Channel 5: left rear/side out = left in
+          // Channel 6: right rear/side out = right in
+          mixMatrix = new float[6, 2];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 0] = 0.5f;
+          mixMatrix[2, 1] = 0.5f;
+          mixMatrix[3, 0] = 0.5f;
+          mixMatrix[3, 1] = 0.5f;
+          mixMatrix[4, 0] = 1;
+          mixMatrix[5, 1] = 1;
+
+          break;
+
+        case StereoUpMix.SevenDotOne:
+          // Channel 1: left front out = left in
+          // Channel 2: right front out = right in
+          // Channel 3: centre out = left/right in
+          // Channel 4: LFE out = left/right in
+          // Channel 5: left rear/side out = left in
+          // Channel 6: right rear/side out = right in
+          // Channel 7: left-rear center out = left in
+          // Channel 8: right-rear center out = right in
+          mixMatrix = new float[8, 2];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 0] = 0.5f;
+          mixMatrix[2, 1] = 0.5f;
+          mixMatrix[3, 0] = 0.5f;
+          mixMatrix[3, 1] = 0.5f;
+          mixMatrix[4, 0] = 1;
+          mixMatrix[5, 1] = 1;
+          mixMatrix[6, 0] = 1;
+          mixMatrix[7, 1] = 1;
+
+          break;
+      }
+      return mixMatrix;
+    }
+
+    private float[,] CreateQuadraphonicUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+
+      switch (Config.UpmixQuadro)
+      {
+        case QuadraphonicUpMix.None:
+          break;
+
+        case QuadraphonicUpMix.FiveDotOne:
+          // Channel 1: left front out = left front in
+          // Channel 2: right front out = right front in
+          // Channel 3: centre out = left/right front in
+          // Channel 4: LFE out = left/right front in
+          // Channel 5: left surround out = left surround in
+          // Channel 6: right surround out = right surround in
+          mixMatrix = new float[6, 4];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 0] = 0.5f;
+          mixMatrix[2, 1] = 0.5f;
+          mixMatrix[3, 0] = 0.5f;
+          mixMatrix[3, 1] = 0.5f;
+          mixMatrix[4, 2] = 1;
+          mixMatrix[5, 3] = 1;
+
+          break;
+
+        case QuadraphonicUpMix.SevenDotOne:
+          // Channel 1: left front out = left front in
+          // Channel 2: right front out = right front in
+          // Channel 3: center out = left/right front in
+          // Channel 4: LFE out = left/right front in
+          // Channel 5: left surround out = left surround in
+          // Channel 6: right surround out = right surround in
+          // Channel 7: left back out = left surround in
+          // Channel 8: right back out = right surround in
+          mixMatrix = new float[8, 4];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 0] = 0.5f;
+          mixMatrix[2, 1] = 0.5f;
+          mixMatrix[3, 0] = 0.5f;
+          mixMatrix[3, 1] = 0.5f;
+          mixMatrix[4, 2] = 1;
+          mixMatrix[5, 3] = 1;
+          mixMatrix[6, 2] = 1;
+          mixMatrix[7, 3] = 1;
+
+          break;
+      }
+      return mixMatrix;
+    }
+
+    private float[,] CreateFiveDotOneUpMixMatrix()
+    {
+      float[,] mixMatrix = null;
+      switch (Config.UpmixFiveDotOne)
+      {
+        case FiveDotOneUpMix.None:
+          break;
+
+        case FiveDotOneUpMix.SevenDotOne:
+          mixMatrix = new float[8, 6];
+          mixMatrix[0, 0] = 1;
+          mixMatrix[1, 1] = 1;
+          mixMatrix[2, 2] = 1;
+          mixMatrix[3, 3] = 1;
+          mixMatrix[4, 4] = 1;
+          mixMatrix[5, 5] = 1;
+          mixMatrix[6, 4] = 1;
+          mixMatrix[7, 5] = 1;
+
+          break;
+      }
+      return mixMatrix;
+    }
+
     #endregion
 
     #region IPlayer Implementation
@@ -1786,9 +2066,20 @@ namespace MediaPortal.MusicPlayer.BASS
         SetCueTrackEndPosition(stream);
 
         // Plugin the stream into the Mixer
-        BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
+        result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
                                                 BASSFlag.BASS_STREAM_AUTOFREE |
-                                                BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER);
+                                                BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
+                                                BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
+        
+        if (result && _mixingMatrix != null)
+        {
+          Log.Debug("BASS: Setting mixing matrix...");
+          result = BassMix.BASS_Mixer_ChannelSetMatrix(stream.BassStream, _mixingMatrix);
+          if (!result)
+          {
+            Log.Error("BASS: Error attaching Mixing Matrix. {0}", Bass.BASS_ErrorGetCode());
+          }
+        }
 
         if (Config.MusicPlayer == AudioPlayer.Asio && !BassAsio.BASS_ASIO_IsStarted())
         {
