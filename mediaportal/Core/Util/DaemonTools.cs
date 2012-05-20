@@ -48,7 +48,7 @@ namespace MediaPortal.Util
         _Path = xmlreader.GetValueAsString("daemon", "path", "");
         _Drive = xmlreader.GetValueAsString("daemon", "drive", "E:");
         _DriveNo = xmlreader.GetValueAsInt("daemon", "driveNo", 0);
-        _DriveType = xmlreader.GetValueAsString("daemon", "driveType", "dt");
+        _DriveType = xmlreader.GetValueAsString("daemon", "driveType", "");
         /*
          * DAEMON Tools supports the following image files:
          * cue/bin

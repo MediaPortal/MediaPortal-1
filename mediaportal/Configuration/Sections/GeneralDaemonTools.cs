@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration.Sections
         textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions", Util.Utils.ImageExtensionsDefault);
         comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
         comboDriveNo.SelectedItem = xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
-        comboDriveType.SelectedItem = xmlreader.GetValueAsString("daemon", "driveType", "dt");
+        comboDriveType.SelectedItem = xmlreader.GetValueAsString("daemon", "driveType", "");
         checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
       }
       checkBoxDaemonTools_CheckedChanged(null, null);
@@ -112,6 +112,10 @@ namespace MediaPortal.Configuration.Sections
       if (textBoxDaemonTools.Text.Length == 0)
       {
         textBoxDaemonTools.Text = GetInstalledSoftware("daemon tools", false);
+      }
+      if ((comboDriveType.SelectedItem == null || comboDriveType.SelectedItem == string.Empty) && textBoxDaemonTools.Text.ToLower().Contains("virtualclonedrive"))
+      {
+        comboDriveType.SelectedItem = "vcd";
       }
     }
 
@@ -133,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
           {
             if (skName.ToLower().Contains(Search.ToLower()))
             {
-              SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
+              SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");              
 
               //Old versions of DaemonTools and VirtualCloneDrive
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
@@ -147,9 +151,8 @@ namespace MediaPortal.Configuration.Sections
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\DTAgent.exe";
               break;
             }
-
-            rk.Close();
           }
+          rk.Close();
         }
         catch (Exception) {}
       }
