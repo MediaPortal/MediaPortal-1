@@ -306,23 +306,29 @@
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>
-     <control>
+    <control>
       <description>TvGroup button</description>
-      <type>button</type>
+      <type>button3part</type>
       <id>100</id>
       <posX>32</posX>
       <posY>83</posY>
       <width>45</width>
       <height>425</height>
-      <textureFocus>small_vbutton_focus.png</textureFocus>
-      <textureNoFocus>small_vbutton_nofocus.png</textureNoFocus>
+      <textureFocusedLeft>small_vbutton_lr_colorize.png</textureFocusedLeft>
+      <textureNonFocusedLeft>small_vbutton_lr_colorize.png</textureNonFocusedLeft>
+      <textureFocusedMid>small_vbutton_focus.png</textureFocusedMid>
+      <textureNonFocusedMid>small_vbutton_nofocus.png</textureNonFocusedMid>
+      <textureFocusedRight>small_vbutton_lr_colorize.png</textureFocusedRight>
+      <textureNonFocusedRight>small_vbutton_lr_colorize.png</textureNonFocusedRight>
+      <textureIcon>-</textureIcon>
+      <textureIcon2>-</textureIcon2>
       <label></label>
       <onleft>60</onleft>
       <onright>6</onright>
       <onup>6</onup>
       <ondown>6</ondown>
-     <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
-     <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
+      <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
+      <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
     </control>
     <control>
       <description>TvGroup button label</description>

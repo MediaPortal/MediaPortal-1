@@ -10,8 +10,6 @@
     <control>
       <description>buttons</description>
       <type>group</type>
-      
-      
       <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
       <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
       <posX>497</posX>
