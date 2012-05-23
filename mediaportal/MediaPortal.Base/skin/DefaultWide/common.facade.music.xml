@@ -177,8 +177,8 @@
           <foreground>coverflow_foreground.png</foreground>
           <showForeground>no</showForeground>
           <showFrame>yes</showFrame>
-          <frame>Picture_cover2.png</frame>
-          <frameFocus>Picture_cover2.png</frameFocus>
+          <frame>Picturethumbframe.png</frame>
+          <frameFocus>Picturethumbframe.png</frameFocus>
           <frameWidth>360</frameWidth>
           <frameHeight>360</frameHeight>
           <spinSpeed>8</spinSpeed>

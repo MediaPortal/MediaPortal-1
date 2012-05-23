@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="booleansettings">
+    <entry name="#skin.tvguide.usecolorsforbuttons">True</entry>
+    <entry name="#skin.tvguide.usecolorsforgenre">True</entry>
+    <entry name="#skin.tvguide.useborderhighlight">True</entry>
+    <entry name="#skin.tvguide.showgenrekey">True</entry>
+  </section>
+  <section name="theme">
+    <entry name="name">Skin default</entry>
+    <entry name="name">No Animation on BasicHome</entry>
+  </section>
+</profile>

@@ -149,12 +149,12 @@
         <description>BasicHome Videos</description>
         <type>button</type>
         <id>3</id>
-        <posX>270</posX>
-        <posY>340</posY>
-        <width>170</width>
-        <height>150</height>
-        <textureFocus>BH_videos.png</textureFocus>
-        <textureNoFocus>BH_videos.png</textureNoFocus>
+        <posX>310</posX>
+        <posY>320</posY>
+        <width>110</width>
+        <height>158</height>
+        <textureFocus></textureFocus>
+        <textureNoFocus></textureNoFocus>
         <hyperlink>6</hyperlink>
         <label>3</label>
         <textYOff>-100</textYOff>
@@ -284,6 +284,73 @@
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <visible>!player.hasvideo</visible>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     *************************  MULTIIMAGES SHOWN VIDEOS BUTTON  *******************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>Video logo</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>310</posX>
+      <posY>320</posY>
+      <width>110</width>
+      <height>158</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="videothumbmask.png">missing_coverart_video.png</texture>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>0</id>
+      <posX>310</posX>
+      <posY>320</posY>
+      <width>110</width>
+      <height>158</height>
+      <imagepath>C:\ProgramData\Team MediaPortal\MediaPortal\thumbs\Videos\Title</imagepath>
+      <timeperimage>3000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>false</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <type>multiimage</type>
+      <id>0</id>
+      <posX>310</posX>
+      <posY>320</posY>
+      <width>110</width>
+      <height>158</height>
+      <imagepath>C:\Documents and Settings\All Users\Team MediaPortal\MediaPortal\thumbs\Videos\Title</imagepath>
+      <timeperimage>3000</timeperimage>
+      <fadetime>1000</fadetime>
+      <loop>yes</loop>
+      <randomize>false</randomize>
+      <keepaspectratio>no</keepaspectratio>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+    </control>
+    <control>
+      <description>Video logo cover</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>308</posX>
+      <posY>318</posY>
+      <width>114</width>
+      <height>162</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture>videothumbframe.png</texture>
+      <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(3)">conditional</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
     </control>
     <import>common.time.xml</import>
     <!--     *******************************************************************************************  -->
