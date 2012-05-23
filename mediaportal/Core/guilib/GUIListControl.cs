@@ -479,11 +479,11 @@ namespace MediaPortal.GUI.Library
           {
             if (gotFocus || !Focus)
             {
-              btn.ColourDiffuse = 0xffffffff;
+              btn.ColourDiffuse = Color.FromArgb((int)_diffuseColor).ToArgb();
             }
             else
             {
-              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+              btn.ColourDiffuse = Color.FromArgb((int)_diffuseColor).ToArgb();
             }
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
