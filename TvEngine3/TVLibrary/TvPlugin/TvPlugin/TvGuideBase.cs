@@ -167,10 +167,9 @@ namespace TvPlugin
 
       // Load genre colors.
       // If guide colors have not been loaded then attempt to load guide colors.
-      // Note: removed capability to have skin settings override MP settings for colors.
       if (!_guideColorsLoaded)
       {
-        using (Settings xmlreader = new MPSettings())
+        using (Settings xmlreader = new SKSettings())
         {
           _guideColorsLoaded = LoadGuideColors(xmlreader);
         }
