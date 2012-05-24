@@ -15,7 +15,7 @@
       <posY>150</posY>
       <width>830</width>
       <height>380</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
+      <texture>backslide2.png</texture>
       <colordiffuse>eeffffff</colordiffuse>
     </control>
     <control>

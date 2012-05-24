@@ -267,7 +267,7 @@
         <id>166</id>
         <posX>40</posX>
         <posY>450</posY>
-        <width>405</width>
+        <width>505</width>
         <height>180</height>
         <onright>9876</onright>
         <ondown>155</ondown>
@@ -291,7 +291,7 @@
         <id>155</id>
         <posX>40</posX>
         <posY>595</posY>
-        <width>495</width>
+        <width>505</width>
         <height>180</height>
         <onup>166</onup>
         <onleft>333</onleft>

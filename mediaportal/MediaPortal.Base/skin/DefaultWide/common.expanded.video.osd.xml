@@ -33,9 +33,9 @@
       <type>image</type>
       <id>1</id>
       <posX>190</posX>
-      <posY>376</posY>
+      <posY>379</posY>
       <width>595</width>
-      <height>27</height>
+      <height>22</height>
       <texture>osd_progress_background.png</texture>
       <visible>control.hasfocus(1237)</visible>
     </control>
@@ -44,11 +44,11 @@
       <type>progress</type>
       <id>1</id>
       <posX>193</posX>
-      <posY>380</posY>
+      <posY>383</posY>
       <width>595</width>
       <offset>0</offset>
-      <height>18</height>
-      <innerheight>18</innerheight>
+      <height>16</height>
+      <innerheight>16</innerheight>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>-</righttexture>
@@ -152,8 +152,8 @@
       <posY>324</posY>
       <label>#time</label>
       <align>right</align>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
   </controls>

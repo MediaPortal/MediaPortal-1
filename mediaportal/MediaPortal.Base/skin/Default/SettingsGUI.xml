@@ -16,8 +16,8 @@
       <posY>120</posY>
       <width>478</width>
       <height>336</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <description>group element</description>
@@ -107,7 +107,7 @@
         <id>25</id>
         <posX>143</posX>
         <posY>240</posY>
-        <width>299</width>
+        <width>421</width>
         <label>-</label>
         <font>font13</font>
         <textcolor>ff6FAFE1</textcolor>
@@ -118,7 +118,7 @@
         <id>26</id>
         <posX>143</posX>
         <posY>288</posY>
-        <width>356</width>
+        <width>421</width>
         <height>132</height>
         <label>-</label>
         <font>font13</font>

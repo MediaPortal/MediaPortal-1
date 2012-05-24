@@ -69,7 +69,7 @@
       <animation effect="fade" time="70">visible</animation>
       <animation effect="fade" time="300" delay="500">hidden</animation>
     </control>
-    <control>
+    <!--control>
       <description>Overlay for FanArt</description>
       <id>0</id>
       <type>image</type>
@@ -82,7 +82,7 @@
       <visible>control.isvisible(91919294)+player.hasaudio</visible>
       <animation effect="fade" time="70">visible</animation>
       <animation effect="fade" time="300" delay="500">hidden</animation>
-    </control>
+    </control-->
     
   </controls>
 </window>

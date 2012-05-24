@@ -8,13 +8,24 @@
   <controls>
     <import>common.settings.xml</import>
     <control>
+      <description>background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>435</posX>
+      <posY>120</posY>
+      <height>520</height>
+      <width>535</width>
+      <texture>backslide.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
-      <posX>99</posX>
-      <posY>188</posY>
-      <layout>GridLayout(2, 6, 52, 2, 1)</layout>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <posX>465</posX>
+      <posY>160</posY>
+      <layout>StackLayout(0, Vertical, true)</layout>
       <control>
         <description>Automatically turn TV on</description>
         <type>button</type>

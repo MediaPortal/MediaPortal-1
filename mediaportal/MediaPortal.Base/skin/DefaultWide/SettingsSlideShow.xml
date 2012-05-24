@@ -15,8 +15,8 @@
       <posY>150</posY>
       <width>850</width>
       <height>420</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <description>group element</description>
@@ -88,7 +88,7 @@
       </control>
       <control>
         <description>X-fade transitions</description>
-        <type>checkmark</type>
+        <type>checkbutton</type>
         <id>5</id>
         <posX>255</posX>
         <posY>307</posY>
@@ -98,10 +98,11 @@
         <onup>4</onup>
         <ondown>6</ondown>
         <align>right</align>
+        <width>450</width>
       </control>
       <control>
         <description>Ken Buns transitions</description>
-        <type>checkmark</type>
+        <type>checkbutton</type>
         <id>6</id>
         <posX>255</posX>
         <posY>350</posY>
@@ -111,10 +112,11 @@
         <onup>5</onup>
         <ondown>7</ondown>
         <align>right</align>
+        <width>450</width>
       </control>
       <control>
         <description>Random transitions</description>
-        <type>checkmark</type>
+        <type>checkbutton</type>
         <id>7</id>
         <posX>255</posX>
         <posY>392</posY>
@@ -124,10 +126,11 @@
         <onup>6</onup>
         <ondown>8</ondown>
         <align>right</align>
+        <width>450</width>
       </control>
       <control>
         <description>Repeat/loop slideshows</description>
-        <type>checkmark</type>
+        <type>checkbutton</type>
         <id>8</id>
         <posX>255</posX>
         <posY>445</posY>
@@ -137,10 +140,11 @@
         <onup>7</onup>
         <ondown>9</ondown>
         <align>right</align>
+        <width>450</width>
       </control>
       <control>
         <description>Auto shuffle slideshow</description>
-        <type>checkmark</type>
+        <type>checkbutton</type>
         <id>9</id>
         <posX>255</posX>
         <posY>487</posY>
@@ -150,6 +154,7 @@
         <onup>8</onup>
         <ondown>99</ondown>
         <align>right</align>
+        <width>450</width>
       </control>
     </control>
   </controls>
