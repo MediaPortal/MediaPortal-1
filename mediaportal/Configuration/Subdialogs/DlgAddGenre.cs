@@ -113,7 +113,9 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this._textBoxGenreName);
       this.Controls.Add(this._labelName);
       this.Controls.Add(this._buttonCancel);
+      this.MaximizeBox = false;
       this.MaximumSize = new System.Drawing.Size(390, 115);
+      this.MinimizeBox = false;
       this.MinimumSize = new System.Drawing.Size(390, 115);
       this.Name = "DlgAddGenre";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

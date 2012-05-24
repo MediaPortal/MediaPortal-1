@@ -242,22 +242,38 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     private static ArrayList GetSkinThemes()
     {
+      return GetSkinThemesForSkin(GUIGraphicsContext.Skin);
+    }
+
+    /// <summary>
+    /// Return a list of available themes for the specified skin folder path.  The first entry in the list is always the skin default.
+    /// </summary>
+    /// <returns></returns>
+    public static ArrayList GetSkinThemesForSkin(string skinPath)
+    {
       ArrayList themes = new ArrayList();
 
       // Add the skin default (no theme selected).
       themes.Add(THEME_SKIN_DEFAULT);
       try
       {
-        string[] themesArray = Directory.GetDirectories(String.Format(@"{0}\Themes", GUIGraphicsContext.Skin), "*", SearchOption.TopDirectoryOnly);
-        for (int i = 0; i < themesArray.Length; i++)
+        ArrayList themeCandidates = new ArrayList(Directory.GetDirectories(String.Format(@"{0}\Themes", skinPath), "*", SearchOption.TopDirectoryOnly));
+        string themeCandidate;
+        string themeFile;
+        for (int i = 0; i < themeCandidates.Count; i++)
         {
-          themesArray[i] = themesArray[i].Substring(themesArray[i].LastIndexOf(@"\") + 1);
+          // Validate the theme by checking for a "theme.xml" file in the directory.
+          themeCandidate = (string)themeCandidates[i];
+          themeFile = Path.Combine(themeCandidate, @"theme.xml");
+          if (File.Exists(themeFile))
+          {
+            themes.Add(themeCandidate.Substring(themeCandidate.LastIndexOf(@"\") + 1));
+          }
         }
-        themes.AddRange(themesArray);
       }
       catch (DirectoryNotFoundException)
       {
-        // The Themes directory was not found.  Ignore and return an empty string.
+        // The Themes directory was not found.  Returns on the skin default.
       }
       return themes;
     }
