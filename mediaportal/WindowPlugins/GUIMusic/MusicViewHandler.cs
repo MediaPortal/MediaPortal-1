@@ -362,6 +362,26 @@ namespace MediaPortal.GUI.Music
           // When searching for an album, we need to retrieve the AlbumArtist as well, because we could have same album names for different artists
           // We need also the Path to retrieve the coverart
           // We don't have an album table anymore, so change the table to search for to tracks here.
+
+          for (int i = 0; i < currentLevel; i++)
+          {
+            // get previous filter to see, if we had an album
+            FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[i];
+            if (defPrevious.Where == "album")
+            {
+              if (whereClause != "")
+              {
+                whereClause += " and ";
+              }
+
+              string selectedArtist = currentSong.AlbumArtist;
+              DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
+
+              whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
+              break;
+            }
+          }
+
           if (table == "album")
           {
             from = String.Format("* from tracks", GetField(defCurrent.Where));
@@ -380,19 +400,23 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        // get previous filter to see, if we had an album
-        FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
-        if (defPrevious.Where == "album")
+        for (int i = 0; i < currentLevel; i++)
         {
-          if (whereClause != "")
+          // get previous filter to see, if we had an album
+          FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[i];
+          if (defPrevious.Where == "album")
           {
-            whereClause += " and ";
+            if (whereClause != "")
+            {
+              whereClause += " and ";
+            }
+
+            string selectedArtist = currentSong.AlbumArtist;
+            DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
+
+            whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
+            break;
           }
-
-          string selectedArtist = currentSong.AlbumArtist;
-          DatabaseUtility.RemoveInvalidChars(ref selectedArtist);
-
-          whereClause += String.Format("strAlbumArtist like '%| {0} |%'", selectedArtist);
         }
 
         sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);

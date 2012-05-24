@@ -39,15 +39,32 @@ namespace MpeCore.Classes.InstallerType
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern int WriteProfileString(string lpszSection, string lpszKeyName, string lpszString);
 
-    [DllImport("user32.dll")]
-    public static extern int SendMessage(int hWnd, // handle to destination window 
-                                         uint Msg, // message 
-                                         int wParam, // first message parameter 
-                                         int lParam // second message parameter 
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    static extern IntPtr SendMessageTimeout(
+      IntPtr hWnd,
+      uint Msg,
+      UIntPtr wParam,
+      IntPtr lParam,
+      SendMessageTimeoutFlags fuFlags,
+      uint uTimeout,
+      out UIntPtr lpdwResult
       );
 
-    private const int WM_FONTCHANGE = 0x001D;
-    private const int HWND_BROADCAST = 0xffff;
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+    private const uint WM_FONTCHANGE = 0x001D;
+    private IntPtr HWND_BROADCAST = new IntPtr(0xffff);
+
+    [Flags]
+    enum SendMessageTimeoutFlags : uint
+    {
+      SMTO_NORMAL = 0x0,
+      SMTO_BLOCK = 0x1,
+      SMTO_ABORTIFHUNG = 0x2,
+      SMTO_NOTIMEOUTIFNOTHUNG = 0x8
+    }
 
     public new string Name
     {
@@ -70,9 +87,18 @@ namespace MpeCore.Classes.InstallerType
       string fontFilePath = fileItem.ExpandedDestinationFilename;
       if (AddFontResource(fontFilePath) != 0)
       {
-        SendMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
-        WriteProfileString("fonts", Path.GetFileNameWithoutExtension(fontFilePath) + " (TrueType)",
+        bool result;
+        //SendMessageTimeout(HWND_BROADCAST, WM_FONTCHANGE, UIntPtr.Zero, IntPtr.Zero, SendMessageTimeoutFlags.SMTO_NOTIMEOUTIFNOTHUNG, 10000, out result);
+        result = PostMessage(HWND_BROADCAST, WM_FONTCHANGE, IntPtr.Zero, IntPtr.Zero);
+
+        if (result)
+          WriteProfileString("fonts", Path.GetFileNameWithoutExtension(fontFilePath) + " (TrueType)",
                            Path.GetFileName(fontFilePath));
+        //TODO: Log error message or somehow inform user
+        //else
+        //{
+          //int err = Marshal.GetLastWin32Error();
+        //}
       }
     }
   }

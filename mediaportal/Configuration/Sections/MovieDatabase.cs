@@ -587,6 +587,10 @@ namespace MediaPortal.Configuration.Sections
         DlgMovieConflicts dlg = new DlgMovieConflicts();
         for (int i = 0; i < _conflictFiles.Count; ++i)
         {
+          if (_conflictFiles[i] == null)
+		  {
+            continue;
+		  }
           IMDBMovie currentMovie = (IMDBMovie)_conflictFiles[i];
           string strFileName = string.Empty;
           string path = currentMovie.Path;
@@ -3694,6 +3698,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // New filenames
         //
+        title = Util.Utils.MakeFileName(title);
         string strThumbNew = Path.GetDirectoryName(strThumb) + "\\" + title + "{" + id + "}.jpg";
         string strLargeThumbNew = Path.GetDirectoryName(largeThumb) + "\\" + title + "{" + id + "}L.jpg";
         //
@@ -3760,8 +3765,9 @@ namespace MediaPortal.Configuration.Sections
         //
         // New filenames
         //
-        string strThumbNew = Path.GetDirectoryName(strThumb) + "\\" + movie.Title + ".jpg";
-        string strLargeThumbNew = Path.GetDirectoryName(largeThumb) + "\\" + movie.Title + "L.jpg";
+        title = Util.Utils.MakeFileName(movie.Title);
+        string strThumbNew = Path.GetDirectoryName(strThumb) + "\\" + title + ".jpg";
+        string strLargeThumbNew = Path.GetDirectoryName(largeThumb) + "\\" + title + "L.jpg";
         //
         // Copy new files and delete old ones
         //
