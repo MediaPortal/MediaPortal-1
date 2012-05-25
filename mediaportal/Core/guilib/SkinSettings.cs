@@ -86,11 +86,19 @@ namespace MediaPortal.GUI.Library
       newString.Name = line;
       newString.Value = line;
       newString.Kind = kind;
+
+      // Create the setting as a property if not already present.
+      if (!GUIPropertyManager.PropertyIsDefined(newString.Name))
+      {
+        GUIPropertyManager.SetProperty(newString.Name, newString.Value);
+      }
+      else
+      {
+        newString.Value = GUIPropertyManager.GetProperty(newString.Name);
+      }
+
       int key = _skinStringSettings.Count;
       _skinStringSettings[key] = newString;
-
-      // Create the setting as a property.
-      GUIPropertyManager.SetProperty(newString.Name, newString.Value);
 
       return key;
     }
@@ -162,11 +170,27 @@ namespace MediaPortal.GUI.Library
       newBool.Name = setting;
       newBool.Value = false;
       newBool.Kind = kind;
+
+      // Create the setting as a property if not already present.  The boolean value is converted as a string representation.
+      if (!GUIPropertyManager.PropertyIsDefined(newBool.Name))
+      {
+        GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
+      }
+      else
+      {
+        try
+        {
+          newBool.Value = bool.Parse(GUIPropertyManager.GetProperty(newBool.Name));
+        }
+        catch (FormatException)
+        {
+          // Value is set to false.
+          Log.Warn("SkinSettings: Boolean setting value is not a valid boolean name={0} value={1}", newBool.Name, newBool.Value);
+        }
+      }
+
       int key = _skinBoolSettings.Count;
       _skinBoolSettings[key] = newBool;
-
-      // Create the setting as a property.  The boolean value is converted as a string representation.
-      GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
 
       return key;
     }
