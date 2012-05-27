@@ -164,7 +164,7 @@
       <posY>640</posY>
       <width>1060</width>
       <align>left</align>
-      <font>font10</font>
+      <font>font11</font>
       <textcolor>ivory</textcolor>
       <label>#infoservice.feed.titles</label>
       <animation effect="fade" time="250">VisibleChange</animation>
