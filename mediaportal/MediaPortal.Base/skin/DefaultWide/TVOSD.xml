@@ -30,7 +30,7 @@
       <label>#time</label>
       <align>right</align>
       <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <control>
@@ -38,9 +38,9 @@
       <type>image</type>
       <id>0</id>
       <posX>160</posX>
-      <posY>602</posY>
-      <width>645</width>
-      <height>27</height>
+      <posY>603</posY>
+      <width>642</width>
+      <height>25</height>
       <texture>osd_progress_background.png</texture>
       <visible>!control.hasfocus(1237)</visible>
     </control>
@@ -92,10 +92,10 @@
     <control>
       <description>End Time Info</description>
       <type>label</type>
-      <posX>810</posX>
+      <posX>915</posX>
       <posY>600</posY>
       <label>#currentremaining</label>
-      <align>left</align>
+      <align>right</align>
       <font>font14</font>
       <textcolor>ffffffff</textcolor>
       <visible>!control.hasfocus(1237)</visible>
