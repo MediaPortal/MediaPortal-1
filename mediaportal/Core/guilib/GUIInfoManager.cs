@@ -2455,9 +2455,19 @@ namespace MediaPortal.GUI.Library
         case SKIN_STRING:
           if (info.m_data2 != 0)
           {
-            string prop1 = SkinSettings.GetSkinString(info.m_data1);
-            string prop2 = m_stringParameters[info.m_data2];
+            string prop1 = "";
+            string prop1Name = GetMultiBoolInfoProperty(info.m_data1);
+            if (string.IsNullOrEmpty(prop1Name))
+            {
+              prop1Name = SkinSettings.GetSkinName(info.m_data1);
+              prop1 = SkinSettings.GetSkinString(info.m_data1);
+            }
+            else
+            {
+              prop1 = GUIPropertyManager.GetProperty(prop1Name);
+            }
 
+            string prop2 = m_stringParameters[info.m_data2];
             string value1 = GUIPropertyManager.Parse(prop1).Trim().ToLowerInvariant();
             string value2 = GUIPropertyManager.Parse(prop2).Trim().ToLowerInvariant();
 
@@ -2475,7 +2485,7 @@ namespace MediaPortal.GUI.Library
             }
 
             bReturn = (info.m_info < 0) ? !bReturn : bReturn;
-            AddMultiBoolInfoProperty(info, prop1);
+            AddMultiBoolInfoProperty(info, prop1Name);
             AddMultiBoolInfoProperty(info, prop2);
 
             // Do not cache the result for skin settings.  The results change based on user interactions.
@@ -2486,10 +2496,21 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            string skinProperty = SkinSettings.GetSkinString(info.m_data1);
+            string skinProperty = "";
+            string skinPropertyName = GetMultiBoolInfoProperty(info.m_data1);
+            if (string.IsNullOrEmpty(skinPropertyName))
+            {
+              skinPropertyName = SkinSettings.GetSkinName(info.m_data1);
+              skinProperty = SkinSettings.GetSkinString(info.m_data1);
+            }
+            else
+            {
+              skinProperty = GUIPropertyManager.GetProperty(skinPropertyName);
+            }
+
             bReturn = (GUIPropertyManager.Parse(skinProperty).Length != 0);
             bReturn = (info.m_info < 0) ? !bReturn : bReturn;
-            AddMultiBoolInfoProperty(info, skinProperty);
+            AddMultiBoolInfoProperty(info, skinPropertyName);
             AddMultiInfoBoolResult(info, bReturn);
           }
           return bReturn;
@@ -2651,6 +2672,8 @@ namespace MediaPortal.GUI.Library
     private static Dictionary<string, HashSet<GUIInfo>> m_cacheMultiInfoBoolProperties =
       new Dictionary<string, HashSet<GUIInfo>>();
 
+    private static Dictionary<int, string> m_cacheMultiInfoBoolPropertiesLookup = new Dictionary<int, string>();
+
     private static Dictionary<GUIInfo, bool> m_cacheMultiInfoBoolResults = new Dictionary<GUIInfo, bool>();
 
     /// <summary>
@@ -2671,6 +2694,7 @@ namespace MediaPortal.GUI.Library
           set = new HashSet<GUIInfo>();
           set.Add(info);
           m_cacheMultiInfoBoolProperties[property] = set;
+          m_cacheMultiInfoBoolPropertiesLookup[info.m_data1] = property;
         }
         else
         {
@@ -2680,6 +2704,20 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+    }
+
+    /// <summary>
+    /// Retrieves the property linked to the specifed key (should be GUIInfo.m_data1);
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    private static string GetMultiBoolInfoProperty(int key)
+    {
+      if (m_cacheMultiInfoBoolPropertiesLookup.ContainsKey(key))
+      {
+        return m_cacheMultiInfoBoolPropertiesLookup[key];
+      }
+      return null;
     }
 
     /// <summary>

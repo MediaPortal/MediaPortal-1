@@ -104,6 +104,21 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Retrieve a skin setting name using the specified key.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public static string GetSkinName(int key)
+    {
+      SkinString skin = null;
+      if (_skinStringSettings.TryGetValue(key, out skin))
+      {
+        return skin.Name;
+      }
+      return "";
+    }
+
+    /// <summary>
     /// Retrieve a skin string using the specified key.
     /// </summary>
     /// <param name="key"></param>
