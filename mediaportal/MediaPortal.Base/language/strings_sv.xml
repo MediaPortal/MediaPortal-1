@@ -1007,6 +1007,13 @@
     <String id="1219">Album Artister (Index)</String>
     <String id="1220">Sortera efter skapandedatum</String>
     <String id="1221">Sortera efter ändradatum</String>
+    <String id="1222">Grupper</String>
+    <String id="1223">Befintlig spellista funnen</String>
+    <String id="1224">Vill du rensa den nuvarande spellistan?</String>
+    <String id="1225">Lägg till objekt i kö</String>
+    <String id="1226">Köa samtliga objekt</String>
+    <String id="1240">Lås innehåll</String>
+    <String id="1241">Lås upp innehåll</String>
     <String id="1230">Tillagd datum:</String>
     <String id="1231">Senast spelad:</String>
     <String id="1300" prefix="Mina ">TV-serier</String>
@@ -1051,6 +1058,13 @@
     <String id="1600">Vill du stänga av?</String>
     <String id="1601">Vill du sätta i vänteläge?</String>
     <String id="1602">Vill du sätta i viloläge?</String>
+    <String id="1900">För gammalt skin</String>
+    <String id="1901">Ditt valda skin ({0}) är för gammalt. Detta kan orsaka problem när du kör MediaPortal. Av denna anledning har MediaPortal tillfälligt aktiverat ett förvalt skin. Om du ändå vill använda ditt valda skin, välj 'Ignorera och pröva'-knappen, men kom ihåg: Skriv INGA felrapporter med detta skin aktiverat!(för att slippa denna varning, vänta tills den försvinner automatiskt eller tryck på back/clear på din fjärrkontroll)</String>
+    <String id="1902">Visa inte detta meddelande igen</String>
+    <String id="1903">Ignorera och pröva ({0})...</String>
+    <String id="1910">Inkompatibla plugins</String>
+    <String id="1911">Följande plugins är inte kompatibla med denna versionen av MediaPortal och har automatiskt avaktiverats:Ignorera och pröva ({0})...</String>
+    <String id="1912">Fortsätt|Fortsätt ({0})...|Fortsätt ({0})...</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Hårddisk</String>
     <String id="1952">Fläkt</String>
@@ -1971,5 +1985,8 @@
     <String id="200087">Tysta</String>
     <String id="200090">Utgåva</String>
     <String id="200091">Kapitel</String>
+    <String id="200092">Tvingad endast</String>
+    <String id="200093">Montering av skiva tog för lång tid!</String>
+    <String id="200094">Vill du försöka i ytterligare 60 sekunder?</String>
   </Section>
 </Language>
