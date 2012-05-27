@@ -10,4 +10,29 @@
     <entry name="name">Skin default</entry>
     <entry name="name">No Animation on BasicHome</entry>
   </section>
+  <section name="tvguidecolors">
+    <entry name="Suche Film">FFD2691E,FFD2691E</entry>
+    <entry name="Suche zurücksetzen">FF00FFFF,FF00FFFF</entry>
+    <entry name="Suche Schauspieler">FF800080,FF800080</entry>
+    <entry name="Alle Filme dieses Schauspielers aktualisieren">FF800000,FF800000</entry>
+    <entry name="Alle Informationen dieses Schauspielers aktualisieren">FF90EE90,FF90EE90</entry>
+    <entry name="Fanart aktualisieren">FFFFD700,FFFFD700</entry>
+    <entry name="Dieses Verzeichnis aktualisieren">FF006400,FF006400</entry>
+    <entry name="guidecolorchannelbutton">FF0E517B</entry>
+    <entry name="guidecolorchannelbuttonselected">FF008000</entry>
+    <entry name="guidecolorgroupbutton">FF0E517B</entry>
+    <entry name="guidecolorgroupbuttonselected">FF008000</entry>
+    <entry name="guidecolorprogramselected">FF008000</entry>
+    <entry name="guidecolorprogramended">FF808080</entry>
+    <entry name="guidecolorborderhighlight">99FFFFFF</entry>
+    <entry name="defaultgenre">FF1D355B,FF0E517B</entry>
+    <entry name="Documentary">00000000,00000000</entry>
+    <entry name="Kids">00000000,00000000</entry>
+    <entry name="Movie">00000000,00000000</entry>
+    <entry name="Music">00000000,00000000</entry>
+    <entry name="News">00000000,00000000</entry>
+    <entry name="Other">00000000,00000000</entry>
+    <entry name="Special">00000000,00000000</entry>
+    <entry name="Sports">00000000,00000000</entry>
+  </section>
 </profile>
