@@ -57,12 +57,17 @@
     <String id="69">Lade Oberfläche ({0})...</String>
     <String id="70">Lade Anzeigeplugins...</String>
     <String id="71">Initialisiere Fenstermanager...</String>
-    <String id="100">Ansicht: kleine Symbole</String>
-    <String id="101">Ansicht: Liste</String>
+    <String id="90">Skin-Thema wählen</String>
+    <String id="94">Thema: </String>
+    <String id="95">Layout: </String>
+    <String id="96">Sortieren: </String>
+    <String id="97">Ansicht: </String>
+    <String id="100">Kleine Symbole</String>
+    <String id="101">Liste</String>
     <String id="102">Neue Dateien suchen / hinzufügen</String>
-    <String id="103">Sortiere: Name</String>
-    <String id="104">Sortiere: Datum</String>
-    <String id="105">Sortiere: Größe</String>
+    <String id="103">Name</String>
+    <String id="104">Datum</String>
+    <String id="105">Größe</String>
     <String id="106">Nein</String>
     <String id="107">Ja</String>
     <String id="108">Diashow</String>
@@ -222,11 +227,11 @@
     <String id="263">HTTP-Server:</String>
     <String id="264">Aufnehmen</String>
     <String id="265">Aufnahme stoppen</String>
-    <String id="266">Sortiere: Titelnummer</String>
-    <String id="267">Sortiere: Länge</String>
-    <String id="268">Sortiere: Titel</String>
-    <String id="269">Sortiere: Interpret</String>
-    <String id="270">Sortiere: Album</String>
+    <String id="266">Titelnummer</String>
+    <String id="267">Länge</String>
+    <String id="268">Titel</String>
+    <String id="269">Interpret</String>
+    <String id="270">Album</String>
     <String id="271">Häufig gehört</String>
     <String id="272">Overscanbereich oben links ausrichten</String>
     <String id="273">Overscanbereich unten rechts ausrichten</String>
@@ -319,11 +324,11 @@
     <String id="360">Bildschirmschoner</String>
     <String id="361">Diashow (alle Ordner)</String>
     <String id="362">Bildschirmschoner-Fadelevel</String>
-    <String id="363">Sortiere: Datei</String>
+    <String id="363">Datei</String>
     <String id="364">DD/DTS Mehrkanal durchschleifen</String>
-    <String id="365">Sortiere: Name</String>
-    <String id="366">Sortiere: Jahr</String>
-    <String id="367">Sortiere: Bewertung</String>
+    <String id="365">Name</String>
+    <String id="366">Jahr</String>
+    <String id="367">Bewertung</String>
     <String id="368">OFDB/IMDB</String>
     <String id="369">Titel</String>
     <String id="370">Gewitter</String>
@@ -373,7 +378,7 @@
     <String id="414">Kein Kommentar zum Album vorhanden!</String>
     <String id="415">Lade Vorschaubild...</String>
     <String id="416">Nicht verfügbar</String>
-    <String id="417">Ansicht: große Symbole</String>
+    <String id="417">Große Symbole</String>
     <String id="418" prefix="Meine ">Videos/Genres</String>
     <String id="419" prefix="Meine ">Videos/Schauspieler</String>
     <String id="420" prefix="Meine ">Videos/Jahr</String>
@@ -386,7 +391,7 @@
     <String id="427">Disc:</String>
     <String id="428">Richtige CD/DVD einlegen</String>
     <String id="429">Bitte folgende CD/DVD einlegen:</String>
-    <String id="430">Sortiere: DVD#</String>
+    <String id="430">DVD#</String>
     <String id="431">Kein Zwischenspeicher</String>
     <String id="432">Lösche Film aus der Datenbank</String>
     <String id="433">Soll dieser Film</String>
@@ -481,9 +486,9 @@
     <String id="523">Null-Schritt ist nicht zulässig!</String>
     <String id="524">3-Stunden-Schritt ist Maximum!</String>
     <String id="525">Sprungschritt ist bereits definiert</String>
-    <String id="527">Sortiere: Gesehen</String>
+    <String id="527">Gesehen</String>
     <String id="528">Album Interpret</String>
-    <String id="529">Ansicht: Cover-Liste</String>
+    <String id="529">Cover-Liste</String>
     <String id="530">Foto-Disc eingelegt! Öffnen?</String>
     <String id="531">Film-Disc eingelegt! Öffnen?</String>
     <String id="532">Musik-Disc eingelegt! Öffnen?</String>
@@ -551,10 +556,10 @@
     <String id="617">Neu...</String>
     <String id="618">Löschen</String>
     <String id="619">Datum/Zeit ändern</String>
-    <String id="620">Sortiere: Kanal</String>
-    <String id="621">Sortiere: Datum</String>
-    <String id="622">Sortiere: Name</String>
-    <String id="623">Sortiere: Typ</String>
+    <String id="620">Kanal</String>
+    <String id="621">Datum</String>
+    <String id="622">Name</String>
+    <String id="623">Typ</String>
     <String id="624">Aufräumen</String>
     <String id="625">Geplante Aufnahmen gelöscht:</String>
     <String id="626">Typ ändern</String>
@@ -599,24 +604,24 @@
     <String id="665" prefix="Mein ">Radio</String>
     <String id="666">Sender</String>
     <String id="667">Suchlauf</String>
-    <String id="668">Sortiere: Typ</String>
-    <String id="669">Sortiere: Genre</String>
-    <String id="670">Sortiere: Bitrate</String>
-    <String id="671">Sortiere: Gesehen</String>
+    <String id="668">Typ</String>
+    <String id="669">Genre</String>
+    <String id="670">Bitrate</String>
+    <String id="671">Gesehen</String>
     <String id="672">Wochentags aufnehmen</String>
     <String id="673">Textlauf-Geschwindigkeit</String>
     <String id="674">Oberflächen Einstellungen</String>
     <String id="675">Beispiel:</String>
     <String id="676">Gesehene Aufnahmen löschen?</String>
     <String id="677">mal</String>
-    <String id="678">Sortiere: Genre</String>
+    <String id="678">Genre</String>
     <String id="679">Wöchentlich</String>
     <String id="680">Wochentags</String>
     <String id="681">Warte</String>
     <String id="682">Nimmt auf</String>
     <String id="683">Fertig</String>
     <String id="684">Abgebrochen</String>
-    <String id="685">Sortiere: Status</String>
+    <String id="685">Status</String>
     <String id="686">Geboren:</String>
     <String id="687">Aktive Jahre:</String>
     <String id="688">Instrumente:</String>
@@ -658,7 +663,7 @@
     <String id="730">Diese Sendung wird derzeit aufgenommen.</String>
     <String id="731">Beim Löschen wird die Aufnahme beendet!</String>
     <String id="732">Sicher?</String>
-    <String id="733">Ansicht: Cover</String>
+    <String id="733">Cover</String>
     <String id="734">Bild:</String>
     <String id="735">Um 90° drehen</String>
     <String id="736">Keine Programminformationen verfügbar</String>
@@ -710,8 +715,8 @@
     <String id="783">Um 180° drehen</String>
     <String id="784">Um 270° drehen</String>
     <String id="789">Jetzt: </String>
-    <String id="790">Gleich: </String>
-    <String id="791">Ansicht: Cover-Flow</String>
+    <String id="790">Anschließend: </String>
+    <String id="791">Cover-Flow</String>
 	<String id="792">Ansichts-Menü</String>
     <String id="798">niedrig</String>
     <String id="799">hoch</String>
@@ -896,7 +901,7 @@
     <String id="1014">Erinnern bevor Sendung beginnt</String>
     <String id="1015">Erinnerung aufheben</String>
     <String id="1016">Erinnerung: Sendung beginnt in Kürze</String>
-    <String id="1017">Sortiere: Dauer</String>
+    <String id="1017">Dauer</String>
     <String id="1018">Sendung beginnt in {0} Minuten:</String>
     <String id="1019">Sendung beginnt gleich:</String>
     <String id="1020">Information</String>
@@ -1596,9 +1601,9 @@
     <String id="13013">Video wird geladen, bitte warten</String>
     <String id="13014">Durchsuche Verzeichnis</String>
     <String id="13015">Importiere Spiel</String>
-    <String id="13016">Sortiere: Veröffentlichung</String>
-    <String id="13017">Sortiere: Letzte</String>
-    <String id="13018">Sortiere: Wertung</String>
+    <String id="13016">Veröffentlichung</String>
+    <String id="13017">Letzte</String>
+    <String id="13018">Wertung</String>
     <String id="13031">Hersteller</String>
     <String id="13032">Meist gestartet</String>
     <String id="13033">Zuletzt gestartet</String>
@@ -1619,8 +1624,8 @@
     <String id="14013">Wollen Sie fortfahren ?</String>
     <String id="14014">Aktualisiere Online Informationen</String>
     <String id="14015">Aktualisierungen</String>
-    <String id="14016">Sortiere: Downloads</String>
-    <String id="14017">Sortiere: Bewertung</String>
+    <String id="14016">Downloads</String>
+    <String id="14017">Bewertung</String>
     <String id="14018">Aktualisierung installieren</String>
     <String id="16001">Partymix</String>
     <String id="19001" prefix="Mein ">Tetris</String>
