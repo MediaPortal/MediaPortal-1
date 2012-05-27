@@ -90,6 +90,46 @@
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
+    <description>default menubutton</description>
+    <type>menubutton</type>
+    <id>0</id>
+    <mode>spinlist</mode>
+    <width>170</width>
+    <height>32</height>
+    <textXOff>8</textXOff>
+    <textYOff>3</textYOff>
+    <textureUp>arrow_round_up_nofocus.png</textureUp>
+    <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+    <textureDown>arrow_round_down_nofocus.png</textureDown>
+    <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+    <spinWidth>18</spinWidth>
+    <spinHeight>18</spinHeight>
+    <spinXOff>13</spinXOff>
+    <spinTextXOff>7</spinTextXOff>
+    <spinTextYOff>2</spinTextYOff>
+    <spinalign>right</spinalign>
+    <spinvalign>middle</spinvalign>
+    <spintype>text</spintype>
+    <showrange>no</showrange>
+    <reverse>no</reverse>
+    <cycleItems>yes</cycleItems>
+    <dialogTitle></dialogTitle>
+    <dialogShowNumbers>no</dialogShowNumbers>
+    <font>font12</font>
+    <textcolor>ffffffff</textcolor>
+    <colordiffuse>ffffffff</colordiffuse>
+    <disabledcolor>ff808080</disabledcolor>
+    <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>
+    <dimColor>ff000000</dimColor>
+    <shadowAngle>45</shadowAngle>
+    <shadowDistance>1</shadowDistance>
+    <shadowColor>ff000000</shadowColor>
+    <textureFocus>button_focus.png</textureFocus>
+    <textureNoFocus>button_nofocus.png</textureNoFocus>
+    <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
+    <animation effect="zoom" start="105,105" end="100,100" time="0">unfocus</animation>
+  </control>
+  <control>
     <description>default updownbutton</description>
     <type>updownbutton</type>
     <id>0</id>
