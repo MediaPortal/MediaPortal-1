@@ -14,20 +14,6 @@
       <label>-</label>
     </control>
     <control>
-      <type>button</type>
-      <description>Dummy button</description>
-      <id>30</id>
-      <posX>1158</posX>
-      <label>-</label>
-    </control>
-    <control>
-      <type>button</type>
-      <description>Dummy button</description>
-      <id>31</id>
-      <posX>1158</posX>
-      <label>-</label>
-    </control>
-    <control>
       <description>BG</description>
       <type>image</type>
       <id>0</id>
