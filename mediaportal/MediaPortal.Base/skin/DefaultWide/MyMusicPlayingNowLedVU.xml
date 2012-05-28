@@ -7,6 +7,27 @@
   <define>#selecteditem:</define>
   <controls>
     <control>
+      <type>label</type>
+      <description>Dummy label</description>
+      <id>1</id>
+      <posX>2060</posX>
+      <label>-</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Dummy button</description>
+      <id>30</id>
+      <posX>2060</posX>
+      <label>-</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Dummy button</description>
+      <id>31</id>
+      <posX>2060</posX>
+      <label>-</label>
+    </control>
+    <control>
       <description>BG</description>
       <type>image</type>
       <id>0</id>
@@ -17,13 +38,6 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <import>common.music.play.fanart.xml</import>
-    <control>
-      <type>label</type>
-      <description>Dummy label</description>
-      <id>1</id>
-      <posX>2060</posX>
-      <label>-</label>
-    </control>
     <control>
       <id>0</id>
       <description>album/artist/genre etc info label</description>
@@ -226,6 +240,7 @@
       <font>font12</font>
       <textcolor>ivory</textcolor>
     </control>
+    
     <!-- *************************************************************************************************** -->
     <!-- *************************** Here are the top tracks / related tracks  ***************************** -->
     <!-- *************************************************************************************************** -->

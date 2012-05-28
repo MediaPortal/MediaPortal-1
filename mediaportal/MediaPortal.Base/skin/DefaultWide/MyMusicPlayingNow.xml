@@ -3,6 +3,7 @@
   <id>510</id>
   <defaultcontrol>33</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#usePlayFanart:Yes</define>
   <define>#selecteditem:</define>
   <controls>
     <control>
@@ -239,6 +240,7 @@
       <font>font12</font>
       <textcolor>ivory</textcolor>
     </control>
+    
     <!-- *************************************************************************************************** -->
     <!-- *************************** Here are the top tracks / related tracks  ***************************** -->
     <!-- *************************************************************************************************** -->
