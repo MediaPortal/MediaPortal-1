@@ -82,6 +82,7 @@ namespace MediaPortal.GUI.Library
           return enumer.Current.Key;
         }
       }
+
       SkinString newString = new SkinString();
       newString.Name = line;
       newString.Value = line;
@@ -429,30 +430,46 @@ namespace MediaPortal.GUI.Library
 
     private static void ClearBooleanSettings()
     {
+      ArrayList keysToRemove = new ArrayList();
       Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
       SkinBool bSetting;
       while (bEnumer.MoveNext())
       {
         bSetting = bEnumer.Current.Value;
-        GUIPropertyManager.RemoveProperty(bSetting.Name);
+        if (bSetting.Kind == Kind.PERSISTENT)  // Keep transient settings
+        {
+          GUIPropertyManager.RemoveProperty(bSetting.Name);
+          keysToRemove.Add(bEnumer.Current.Key);
+        }
       }
 
       // Clear our dictionary.
-      _skinBoolSettings.Clear();
+      foreach (int key in keysToRemove)
+      {
+        _skinBoolSettings.Remove(key);
+      }
     }
 
     private static void ClearStringSettings()
     {
+      ArrayList keysToRemove = new ArrayList();
       Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
       SkinString strSetting;
       while (strEnumer.MoveNext())
       {
         strSetting = strEnumer.Current.Value;
-        GUIPropertyManager.RemoveProperty(strSetting.Name);
+        if (strSetting.Kind == Kind.PERSISTENT)  // Keep transient settings
+        {
+          GUIPropertyManager.RemoveProperty(strSetting.Name);
+          keysToRemove.Add(strEnumer.Current.Key);
+        }
       }
 
       // Clear our dictionary.
-      _skinStringSettings.Clear();
+      foreach (int key in keysToRemove)
+      {
+        _skinStringSettings.Remove(key);
+      }
     }
 
     private static void ClearDiscreteSettings()
