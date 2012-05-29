@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>12</id>
@@ -22,8 +22,8 @@
     <control>
       <description>group element</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>Speed label</description>
         <type>label</type>
