@@ -1556,7 +1556,8 @@ namespace MediaPortal.MusicPlayer.BASS
           BassAsio.BASS_ASIO_ChannelEnable(false, 0, _asioProc, new IntPtr(_mixer));
 
           // and join the next channels to it
-          for (int i = 1; i < stream.ChannelInfo.chans; i++)
+          int numChannels = Math.Max(stream.ChannelInfo.chans, outputChannels);
+          for (int i = 1; i < numChannels; i++)
           {
             Log.Debug("BASS: Joining Asio Channel #{0}", i);
             BassAsio.BASS_ASIO_ChannelJoin(false, i, 0);
