@@ -503,10 +503,17 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             if (g_Player.IsMusic)
             {
-              g_Player.SeekStep(true);
-              string strStatus = g_Player.GetStepDescription();
+              if (Config.UseSkipSteps)
+              {
+                g_Player.SeekStep(true);
+                string strStatus = g_Player.GetStepDescription();
+                Log.Info("BASS: Skipping in stream for {0}", strStatus);  
+              }
+              else
+              {
+                Log.Info("BASS: Playback speed {0}", g_Player.Speed);
+              }
             }
-            //Console.WriteLine(strStatus);
             break;
           }
 
@@ -515,12 +522,20 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             if (g_Player.IsMusic)
             {
-              g_Player.SeekStep(false);
-              string strStatus = g_Player.GetStepDescription();
+              if (Config.UseSkipSteps)
+              {
+                g_Player.SeekStep(false);
+                string strStatus = g_Player.GetStepDescription();
+                Log.Info("BASS: Skipping in stream for {0}", strStatus);
+              }
+              else
+              {
+                Log.Info("BASS: Playback speed {0}", g_Player.Speed);
+              }
             }
-            //Console.WriteLine(strStatus);
             break;
           }
+
         case Action.ActionType.ACTION_TOGGLE_MUSIC_GAP:
           {
             _playBackType++;
@@ -2575,16 +2590,19 @@ namespace MediaPortal.MusicPlayer.BASS
         return;
       }
 
-      TimeSpan ts = DateTime.Now - _seekUpdate;
-      if (_speed > 1 && ts.TotalMilliseconds > 120)
+      if (!Config.UseSkipSteps)
       {
-        SeekForward(80 * _speed);
-        _seekUpdate = DateTime.Now;
-      }
-      else if (_speed < 0 && ts.TotalMilliseconds > 120)
-      {
-        SeekReverse(80 * -_speed);
-        _seekUpdate = DateTime.Now;
+        TimeSpan ts = DateTime.Now - _seekUpdate;
+        if (_speed > 1 && ts.TotalMilliseconds > 120)
+        {
+          SeekForward(80 * _speed);
+          _seekUpdate = DateTime.Now;
+        }
+        else if (_speed < 0 && ts.TotalMilliseconds > 120)
+        {
+          SeekReverse(80 * -_speed);
+          _seekUpdate = DateTime.Now;
+        }
       }
 
       if (VizManager == null)

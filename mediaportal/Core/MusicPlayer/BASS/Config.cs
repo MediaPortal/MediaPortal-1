@@ -64,6 +64,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private static float _asioBalance;
 
     private static bool _softStop;
+    private static bool _useSkipSteps;
     
     private static PlayBackType _playBackType;
 
@@ -139,6 +140,11 @@ namespace MediaPortal.MusicPlayer.BASS
       get { return _softStop; }
     }
 
+    public static bool UseSkipSteps
+    {
+      get { return _useSkipSteps; }
+    }
+
     public static PlayBackType PlayBack
     {
       get { return _playBackType; }
@@ -171,8 +177,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       get { return _vstHandles; }
     }
-
-
+    
     public static BASS_MIDI_FONT[] SoundFonts
     {
       get { return _soundFonts; }
@@ -252,6 +257,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         _softStop = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
+        _useSkipSteps = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
 
         _asioBalance = (float)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00f;
 

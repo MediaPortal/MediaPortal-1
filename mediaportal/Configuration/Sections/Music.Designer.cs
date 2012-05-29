@@ -73,6 +73,16 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageWASAPIPLayerSettings = new System.Windows.Forms.TabPage();
       this.WasapiExclusiveModeCkBox = new System.Windows.Forms.CheckBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPagePlayerUpmixSettings = new System.Windows.Forms.TabPage();
+      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbUpmixFiveDotOne = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbUpmixQuadro = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel10 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbUpmixStereo = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbUpmixMono = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.soundDeviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -124,16 +134,7 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
-      this.tabPagePlayerUpmixSettings = new System.Windows.Forms.TabPage();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbUpmixMono = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.cbUpmixStereo = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbUpmixQuadro = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel10 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbUpmixFiveDotOne = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.UseSkipStepsCheckBox = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -141,6 +142,8 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).BeginInit();
       this.tabPageASIOPlayerSettings.SuspendLayout();
       this.tabPageWASAPIPLayerSettings.SuspendLayout();
+      this.tabPagePlayerUpmixSettings.SuspendLayout();
+      this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.PlaySettingsTabPg.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -155,8 +158,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.SuspendLayout();
       this.groupBoxWinampVis.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
-      this.tabPagePlayerUpmixSettings.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -199,6 +200,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageBassPlayerSettings
       // 
+      this.tabPageBassPlayerSettings.Controls.Add(this.UseSkipStepsCheckBox);
       this.tabPageBassPlayerSettings.Controls.Add(this.mpLabel3);
       this.tabPageBassPlayerSettings.Controls.Add(this.BufferingSecondsLbl);
       this.tabPageBassPlayerSettings.Controls.Add(this.CrossFadeSecondsLbl);
@@ -229,7 +231,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // BufferingSecondsLbl
       // 
-      this.BufferingSecondsLbl.Location = new System.Drawing.Point(310, 196);
+      this.BufferingSecondsLbl.Location = new System.Drawing.Point(310, 230);
       this.BufferingSecondsLbl.Name = "BufferingSecondsLbl";
       this.BufferingSecondsLbl.Size = new System.Drawing.Size(80, 13);
       this.BufferingSecondsLbl.TabIndex = 9;
@@ -238,7 +240,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CrossFadeSecondsLbl
       // 
-      this.CrossFadeSecondsLbl.Location = new System.Drawing.Point(310, 172);
+      this.CrossFadeSecondsLbl.Location = new System.Drawing.Point(310, 206);
       this.CrossFadeSecondsLbl.Name = "CrossFadeSecondsLbl";
       this.CrossFadeSecondsLbl.Size = new System.Drawing.Size(80, 13);
       this.CrossFadeSecondsLbl.TabIndex = 6;
@@ -250,7 +252,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
-      this.hScrollBarBuffering.Location = new System.Drawing.Point(96, 196);
+      this.hScrollBarBuffering.Location = new System.Drawing.Point(96, 230);
       this.hScrollBarBuffering.Maximum = 8499;
       this.hScrollBarBuffering.Minimum = 1000;
       this.hScrollBarBuffering.Name = "hScrollBarBuffering";
@@ -265,7 +267,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
-      this.hScrollBarCrossFade.Location = new System.Drawing.Point(96, 172);
+      this.hScrollBarCrossFade.Location = new System.Drawing.Point(96, 206);
       this.hScrollBarCrossFade.Maximum = 16499;
       this.hScrollBarCrossFade.Name = "hScrollBarCrossFade";
       this.hScrollBarCrossFade.Size = new System.Drawing.Size(188, 17);
@@ -277,7 +279,7 @@ namespace MediaPortal.Configuration.Sections
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(20, 196);
+      this.label12.Location = new System.Drawing.Point(20, 230);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(52, 13);
       this.label12.TabIndex = 7;
@@ -287,7 +289,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.GaplessPlaybackChkBox.AutoSize = true;
       this.GaplessPlaybackChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(17, 118);
+      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(17, 161);
       this.GaplessPlaybackChkBox.Name = "GaplessPlaybackChkBox";
       this.GaplessPlaybackChkBox.Size = new System.Drawing.Size(108, 17);
       this.GaplessPlaybackChkBox.TabIndex = 3;
@@ -310,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
       // CrossFadingLbl
       // 
       this.CrossFadingLbl.AutoSize = true;
-      this.CrossFadingLbl.Location = new System.Drawing.Point(20, 172);
+      this.CrossFadingLbl.Location = new System.Drawing.Point(20, 206);
       this.CrossFadingLbl.Name = "CrossFadingLbl";
       this.CrossFadingLbl.Size = new System.Drawing.Size(68, 13);
       this.CrossFadingLbl.TabIndex = 4;
@@ -329,7 +331,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.FadeOnStartStopChkbox.AutoSize = true;
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 84);
+      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 128);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
       this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(128, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
@@ -439,6 +441,111 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel5.Size = new System.Drawing.Size(346, 13);
       this.mpLabel5.TabIndex = 0;
       this.mpLabel5.Text = "Playback via BASS using Windows Audio Session API (WasAPI) drivers";
+      // 
+      // tabPagePlayerUpmixSettings
+      // 
+      this.tabPagePlayerUpmixSettings.Controls.Add(this.mpGroupBox2);
+      this.tabPagePlayerUpmixSettings.Location = new System.Drawing.Point(4, 22);
+      this.tabPagePlayerUpmixSettings.Name = "tabPagePlayerUpmixSettings";
+      this.tabPagePlayerUpmixSettings.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPagePlayerUpmixSettings.Size = new System.Drawing.Size(424, 280);
+      this.tabPagePlayerUpmixSettings.TabIndex = 3;
+      this.tabPagePlayerUpmixSettings.Text = "Upmixing";
+      this.tabPagePlayerUpmixSettings.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox2
+      // 
+      this.mpGroupBox2.Controls.Add(this.cbUpmixFiveDotOne);
+      this.mpGroupBox2.Controls.Add(this.mpLabel11);
+      this.mpGroupBox2.Controls.Add(this.cbUpmixQuadro);
+      this.mpGroupBox2.Controls.Add(this.mpLabel10);
+      this.mpGroupBox2.Controls.Add(this.cbUpmixStereo);
+      this.mpGroupBox2.Controls.Add(this.mpLabel9);
+      this.mpGroupBox2.Controls.Add(this.cbUpmixMono);
+      this.mpGroupBox2.Controls.Add(this.mpLabel8);
+      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox2.Location = new System.Drawing.Point(6, 17);
+      this.mpGroupBox2.Name = "mpGroupBox2";
+      this.mpGroupBox2.Size = new System.Drawing.Size(412, 242);
+      this.mpGroupBox2.TabIndex = 0;
+      this.mpGroupBox2.TabStop = false;
+      this.mpGroupBox2.Text = "Upmix source to ...";
+      // 
+      // cbUpmixFiveDotOne
+      // 
+      this.cbUpmixFiveDotOne.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixFiveDotOne.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixFiveDotOne.FormattingEnabled = true;
+      this.cbUpmixFiveDotOne.Location = new System.Drawing.Point(167, 174);
+      this.cbUpmixFiveDotOne.Name = "cbUpmixFiveDotOne";
+      this.cbUpmixFiveDotOne.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixFiveDotOne.TabIndex = 7;
+      // 
+      // mpLabel11
+      // 
+      this.mpLabel11.AutoSize = true;
+      this.mpLabel11.Location = new System.Drawing.Point(14, 177);
+      this.mpLabel11.Name = "mpLabel11";
+      this.mpLabel11.Size = new System.Drawing.Size(69, 13);
+      this.mpLabel11.TabIndex = 6;
+      this.mpLabel11.Text = "Upmix 5.1 to:";
+      // 
+      // cbUpmixQuadro
+      // 
+      this.cbUpmixQuadro.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixQuadro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixQuadro.FormattingEnabled = true;
+      this.cbUpmixQuadro.Location = new System.Drawing.Point(167, 131);
+      this.cbUpmixQuadro.Name = "cbUpmixQuadro";
+      this.cbUpmixQuadro.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixQuadro.TabIndex = 5;
+      // 
+      // mpLabel10
+      // 
+      this.mpLabel10.AutoSize = true;
+      this.mpLabel10.Location = new System.Drawing.Point(14, 134);
+      this.mpLabel10.Name = "mpLabel10";
+      this.mpLabel10.Size = new System.Drawing.Size(69, 13);
+      this.mpLabel10.TabIndex = 4;
+      this.mpLabel10.Text = "Upmix 4.0 to:";
+      // 
+      // cbUpmixStereo
+      // 
+      this.cbUpmixStereo.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixStereo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixStereo.FormattingEnabled = true;
+      this.cbUpmixStereo.Location = new System.Drawing.Point(167, 85);
+      this.cbUpmixStereo.Name = "cbUpmixStereo";
+      this.cbUpmixStereo.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixStereo.TabIndex = 3;
+      // 
+      // mpLabel9
+      // 
+      this.mpLabel9.AutoSize = true;
+      this.mpLabel9.Location = new System.Drawing.Point(14, 88);
+      this.mpLabel9.Name = "mpLabel9";
+      this.mpLabel9.Size = new System.Drawing.Size(85, 13);
+      this.mpLabel9.TabIndex = 2;
+      this.mpLabel9.Text = "Upmix Stereo to:";
+      // 
+      // cbUpmixMono
+      // 
+      this.cbUpmixMono.BorderColor = System.Drawing.Color.Empty;
+      this.cbUpmixMono.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbUpmixMono.FormattingEnabled = true;
+      this.cbUpmixMono.Location = new System.Drawing.Point(167, 40);
+      this.cbUpmixMono.Name = "cbUpmixMono";
+      this.cbUpmixMono.Size = new System.Drawing.Size(221, 21);
+      this.cbUpmixMono.TabIndex = 1;
+      // 
+      // mpLabel8
+      // 
+      this.mpLabel8.AutoSize = true;
+      this.mpLabel8.Location = new System.Drawing.Point(14, 43);
+      this.mpLabel8.Name = "mpLabel8";
+      this.mpLabel8.Size = new System.Drawing.Size(81, 13);
+      this.mpLabel8.TabIndex = 0;
+      this.mpLabel8.Text = "Upmix Mono to:";
       // 
       // mpGroupBox1
       // 
@@ -1020,110 +1127,16 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
       // 
-      // tabPagePlayerUpmixSettings
+      // UseSkipStepsCheckBox
       // 
-      this.tabPagePlayerUpmixSettings.Controls.Add(this.mpGroupBox2);
-      this.tabPagePlayerUpmixSettings.Location = new System.Drawing.Point(4, 22);
-      this.tabPagePlayerUpmixSettings.Name = "tabPagePlayerUpmixSettings";
-      this.tabPagePlayerUpmixSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPagePlayerUpmixSettings.Size = new System.Drawing.Size(424, 280);
-      this.tabPagePlayerUpmixSettings.TabIndex = 3;
-      this.tabPagePlayerUpmixSettings.Text = "Upmixing";
-      this.tabPagePlayerUpmixSettings.UseVisualStyleBackColor = true;
-      // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Controls.Add(this.cbUpmixFiveDotOne);
-      this.mpGroupBox2.Controls.Add(this.mpLabel11);
-      this.mpGroupBox2.Controls.Add(this.cbUpmixQuadro);
-      this.mpGroupBox2.Controls.Add(this.mpLabel10);
-      this.mpGroupBox2.Controls.Add(this.cbUpmixStereo);
-      this.mpGroupBox2.Controls.Add(this.mpLabel9);
-      this.mpGroupBox2.Controls.Add(this.cbUpmixMono);
-      this.mpGroupBox2.Controls.Add(this.mpLabel8);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(6, 17);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(412, 242);
-      this.mpGroupBox2.TabIndex = 0;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Upmix source to ...";
-      // 
-      // mpLabel8
-      // 
-      this.mpLabel8.AutoSize = true;
-      this.mpLabel8.Location = new System.Drawing.Point(14, 43);
-      this.mpLabel8.Name = "mpLabel8";
-      this.mpLabel8.Size = new System.Drawing.Size(81, 13);
-      this.mpLabel8.TabIndex = 0;
-      this.mpLabel8.Text = "Upmix Mono to:";
-      // 
-      // cbUpmixMono
-      // 
-      this.cbUpmixMono.BorderColor = System.Drawing.Color.Empty;
-      this.cbUpmixMono.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbUpmixMono.FormattingEnabled = true;
-      this.cbUpmixMono.Location = new System.Drawing.Point(167, 40);
-      this.cbUpmixMono.Name = "cbUpmixMono";
-      this.cbUpmixMono.Size = new System.Drawing.Size(221, 21);
-      this.cbUpmixMono.TabIndex = 1;
-      // 
-      // cbUpmixStereo
-      // 
-      this.cbUpmixStereo.BorderColor = System.Drawing.Color.Empty;
-      this.cbUpmixStereo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbUpmixStereo.FormattingEnabled = true;
-      this.cbUpmixStereo.Location = new System.Drawing.Point(167, 85);
-      this.cbUpmixStereo.Name = "cbUpmixStereo";
-      this.cbUpmixStereo.Size = new System.Drawing.Size(221, 21);
-      this.cbUpmixStereo.TabIndex = 3;
-      // 
-      // mpLabel9
-      // 
-      this.mpLabel9.AutoSize = true;
-      this.mpLabel9.Location = new System.Drawing.Point(14, 88);
-      this.mpLabel9.Name = "mpLabel9";
-      this.mpLabel9.Size = new System.Drawing.Size(85, 13);
-      this.mpLabel9.TabIndex = 2;
-      this.mpLabel9.Text = "Upmix Stereo to:";
-      // 
-      // cbUpmixQuadro
-      // 
-      this.cbUpmixQuadro.BorderColor = System.Drawing.Color.Empty;
-      this.cbUpmixQuadro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbUpmixQuadro.FormattingEnabled = true;
-      this.cbUpmixQuadro.Location = new System.Drawing.Point(167, 131);
-      this.cbUpmixQuadro.Name = "cbUpmixQuadro";
-      this.cbUpmixQuadro.Size = new System.Drawing.Size(221, 21);
-      this.cbUpmixQuadro.TabIndex = 5;
-      // 
-      // mpLabel10
-      // 
-      this.mpLabel10.AutoSize = true;
-      this.mpLabel10.Location = new System.Drawing.Point(14, 134);
-      this.mpLabel10.Name = "mpLabel10";
-      this.mpLabel10.Size = new System.Drawing.Size(69, 13);
-      this.mpLabel10.TabIndex = 4;
-      this.mpLabel10.Text = "Upmix 4.0 to:";
-      // 
-      // cbUpmixFiveDotOne
-      // 
-      this.cbUpmixFiveDotOne.BorderColor = System.Drawing.Color.Empty;
-      this.cbUpmixFiveDotOne.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbUpmixFiveDotOne.FormattingEnabled = true;
-      this.cbUpmixFiveDotOne.Location = new System.Drawing.Point(167, 174);
-      this.cbUpmixFiveDotOne.Name = "cbUpmixFiveDotOne";
-      this.cbUpmixFiveDotOne.Size = new System.Drawing.Size(221, 21);
-      this.cbUpmixFiveDotOne.TabIndex = 7;
-      // 
-      // mpLabel11
-      // 
-      this.mpLabel11.AutoSize = true;
-      this.mpLabel11.Location = new System.Drawing.Point(14, 177);
-      this.mpLabel11.Name = "mpLabel11";
-      this.mpLabel11.Size = new System.Drawing.Size(69, 13);
-      this.mpLabel11.TabIndex = 6;
-      this.mpLabel11.Text = "Upmix 5.1 to:";
+      this.UseSkipStepsCheckBox.AutoSize = true;
+      this.UseSkipStepsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.UseSkipStepsCheckBox.Location = new System.Drawing.Point(17, 96);
+      this.UseSkipStepsCheckBox.Name = "UseSkipStepsCheckBox";
+      this.UseSkipStepsCheckBox.Size = new System.Drawing.Size(190, 17);
+      this.UseSkipStepsCheckBox.TabIndex = 15;
+      this.UseSkipStepsCheckBox.Text = "Use Skip steps on forward / rewind";
+      this.UseSkipStepsCheckBox.UseVisualStyleBackColor = true;
       // 
       // Music
       // 
@@ -1140,6 +1153,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageASIOPlayerSettings.PerformLayout();
       this.tabPageWASAPIPLayerSettings.ResumeLayout(false);
       this.tabPageWASAPIPLayerSettings.PerformLayout();
+      this.tabPagePlayerUpmixSettings.ResumeLayout(false);
+      this.mpGroupBox2.ResumeLayout(false);
+      this.mpGroupBox2.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.PlaySettingsTabPg.ResumeLayout(false);
@@ -1162,9 +1178,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.PerformLayout();
       this.groupBoxWinampVis.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
-      this.tabPagePlayerUpmixSettings.ResumeLayout(false);
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1258,5 +1271,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel9;
     private MPComboBox cbUpmixMono;
     private MPLabel mpLabel8;
+    private CheckBox UseSkipStepsCheckBox;
   }
 }

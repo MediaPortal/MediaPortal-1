@@ -2780,7 +2780,6 @@ public class MediaPortalApp : D3DApp, IRender
 
             //fast forward...
           case Action.ActionType.ACTION_FORWARD:
-          case Action.ActionType.ACTION_MUSIC_FORWARD:
             {
               if (g_Player.Paused)
               {
@@ -2790,9 +2789,23 @@ public class MediaPortalApp : D3DApp, IRender
               break;
             }
 
+          // Decide if we want to have CD style of FF or Skip steps
+          case Action.ActionType.ACTION_MUSIC_FORWARD:
+            {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+              }
+
+              if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
+              {
+                g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+              }
+              break;
+            }
+
             //fast rewind...
           case Action.ActionType.ACTION_REWIND:
-          case Action.ActionType.ACTION_MUSIC_REWIND:
             {
               if (g_Player.Paused)
               {
@@ -2800,6 +2813,21 @@ public class MediaPortalApp : D3DApp, IRender
               }
               g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
               break;
+            }
+
+          // Decide if we want to have CD style of Rew or Skip steps
+          case Action.ActionType.ACTION_MUSIC_REWIND:
+            {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+              }
+
+              if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
+              {
+                g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+              }
+              break;              
             }
         }
       }

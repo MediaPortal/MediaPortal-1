@@ -241,6 +241,7 @@ namespace MediaPortal.Configuration.Sections
         hScrollBarBuffering.Value = bufferingMS;
 
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
+        UseSkipStepsCheckBox.Checked = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
         StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
 
@@ -434,6 +435,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
         xmlwriter.SetValue("audioplayer", "buffering", hScrollBarBuffering.Value);
+        xmlwriter.SetValueAsBool("audioplayer", "useSkipSteps", UseSkipStepsCheckBox.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "fadeOnStartStop", FadeOnStartStopChkbox.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "gaplessPlayback", GaplessPlaybackChkBox.Checked);
         xmlwriter.SetValue("audioplayer", "streamOutputLevel", StreamOutputLevelNud.Value);
