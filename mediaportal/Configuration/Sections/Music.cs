@@ -174,8 +174,8 @@ namespace MediaPortal.Configuration.Sections
     {
       base.OnLoad(e);
 
-      hScrollBarBuffering_ValueChanged(null, null);
-      hScrollBarCrossFade_ValueChanged(null, null);
+      trackBarBuffering_Scroll(null, null);
+      trackBarCrossfade_Scroll(null, null);
       audioPlayerComboBox_SelectedIndexChanged(null, null);
       GaplessPlaybackChkBox_CheckedChanged(null, null);
     }
@@ -219,26 +219,26 @@ namespace MediaPortal.Configuration.Sections
           crossFadeMS = 4000;
         }
 
-        else if (crossFadeMS > hScrollBarCrossFade.Maximum)
+        else if (crossFadeMS > trackBarCrossfade.Maximum)
         {
-          crossFadeMS = hScrollBarCrossFade.Maximum;
+          crossFadeMS = trackBarCrossfade.Maximum;
         }
 
-        hScrollBarCrossFade.Value = crossFadeMS;
+        trackBarCrossfade.Value = crossFadeMS;
 
-        int bufferingMS = xmlreader.GetValueAsInt("audioplayer", "buffering", 5000);
+        int bufferingMS = xmlreader.GetValueAsInt("audioplayer", "buffering", 500);
 
-        if (bufferingMS < hScrollBarBuffering.Minimum)
+        if (bufferingMS < trackBarBuffering.Minimum)
         {
-          bufferingMS = hScrollBarBuffering.Minimum;
+          bufferingMS = trackBarBuffering.Minimum;
         }
 
-        else if (bufferingMS > hScrollBarBuffering.Maximum)
+        else if (bufferingMS > trackBarBuffering.Maximum)
         {
-          bufferingMS = hScrollBarBuffering.Maximum;
+          bufferingMS = trackBarBuffering.Maximum;
         }
 
-        hScrollBarBuffering.Value = bufferingMS;
+        trackBarBuffering.Value = bufferingMS;
 
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         UseSkipStepsCheckBox.Checked = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
@@ -433,8 +433,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "sounddevice", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).Name);
         xmlwriter.SetValue("audioplayer", "sounddeviceid", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).ID);
 
-        xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
-        xmlwriter.SetValue("audioplayer", "buffering", hScrollBarBuffering.Value);
+        xmlwriter.SetValue("audioplayer", "crossfade", trackBarCrossfade.Value);
+        xmlwriter.SetValue("audioplayer", "buffering", trackBarBuffering.Value);
         xmlwriter.SetValueAsBool("audioplayer", "useSkipSteps", UseSkipStepsCheckBox.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "fadeOnStartStop", FadeOnStartStopChkbox.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "gaplessPlayback", GaplessPlaybackChkBox.Checked);
@@ -837,6 +837,41 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
+    /// Get some information for the selected sound device
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void soundDeviceComboBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      int sounddevice = -1;
+      BASS_DEVICEINFO[] soundDeviceDescriptions = Bass.BASS_GetDeviceInfos();
+      for (int i = 0; i < soundDeviceDescriptions.Length; i++)
+      {
+        if (soundDeviceDescriptions[i].name == soundDeviceComboBox.Text)
+        {
+          sounddevice = i;
+          break;
+        }
+      }
+
+      // Find out the minimum Buffer length possible
+      Bass.BASS_Free();
+      if (Bass.BASS_Init(sounddevice, 48000, BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero, Guid.Empty))
+      {
+        BASS_INFO info = Bass.BASS_GetInfo();
+        if (info != null)
+        {
+          int currentBuffer = trackBarBuffering.Value;
+          if (currentBuffer < info.minbuf)
+          {
+            trackBarBuffering.Value = info.minbuf;
+          }
+          trackBarBuffering.Minimum = info.minbuf;
+        }
+      }
+    }
+
+    /// <summary>
     /// Show the ASIO Devices Control Panel
     /// </summary>
     /// <param name="sender"></param>
@@ -871,29 +906,19 @@ namespace MediaPortal.Configuration.Sections
       lbBalance.Text = String.Format("{0}", balance);
     }
 
-    private void hScrollBarCrossFade_ValueChanged(object sender, EventArgs e)
+    private void trackBarCrossfade_Scroll(object sender, EventArgs e)
     {
       float xFadeSecs = 0;
-
-      if (hScrollBarCrossFade.Value > 0)
-      {
-        xFadeSecs = (float)hScrollBarCrossFade.Value / 1000f;
-      }
-
+      xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
     }
-
-    private void hScrollBarBuffering_ValueChanged(object sender, EventArgs e)
+    
+    private void trackBarBuffering_Scroll(object sender, EventArgs e)
     {
-      float bufferingSecs = 0;
-
-      if (hScrollBarBuffering.Value > 0)
-      {
-        bufferingSecs = (float)hScrollBarBuffering.Value / 1000f;
-      }
-
+      float bufferingSecs = (float)trackBarBuffering.Value / 1000f;
       BufferingSecondsLbl.Text = string.Format("{0:f2} Seconds", bufferingSecs);
     }
+
 
     private void VisualizationsCmbBox_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -975,7 +1000,7 @@ namespace MediaPortal.Configuration.Sections
     {
       bool gaplessEnabled = GaplessPlaybackChkBox.Checked;
       CrossFadingLbl.Enabled = !gaplessEnabled;
-      hScrollBarCrossFade.Enabled = !gaplessEnabled;
+      trackBarCrossfade.Enabled = !gaplessEnabled;
       CrossFadeSecondsLbl.Enabled = !gaplessEnabled;
     }
 

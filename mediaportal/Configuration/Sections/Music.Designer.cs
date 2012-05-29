@@ -52,11 +52,12 @@ namespace MediaPortal.Configuration.Sections
       this.PlayerTabPg = new System.Windows.Forms.TabPage();
       this.tabControlPlayerSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageBassPlayerSettings = new System.Windows.Forms.TabPage();
+      this.trackBarCrossfade = new System.Windows.Forms.TrackBar();
+      this.trackBarBuffering = new System.Windows.Forms.TrackBar();
+      this.UseSkipStepsCheckBox = new System.Windows.Forms.CheckBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.BufferingSecondsLbl = new System.Windows.Forms.Label();
       this.CrossFadeSecondsLbl = new System.Windows.Forms.Label();
-      this.hScrollBarBuffering = new System.Windows.Forms.HScrollBar();
-      this.hScrollBarCrossFade = new System.Windows.Forms.HScrollBar();
       this.label12 = new System.Windows.Forms.Label();
       this.GaplessPlaybackChkBox = new System.Windows.Forms.CheckBox();
       this.StreamOutputLevelNud = new System.Windows.Forms.NumericUpDown();
@@ -134,11 +135,12 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
-      this.UseSkipStepsCheckBox = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
       this.tabPageBassPlayerSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarCrossfade)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarBuffering)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).BeginInit();
       this.tabPageASIOPlayerSettings.SuspendLayout();
       this.tabPageWASAPIPLayerSettings.SuspendLayout();
@@ -200,12 +202,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageBassPlayerSettings
       // 
+      this.tabPageBassPlayerSettings.Controls.Add(this.trackBarCrossfade);
+      this.tabPageBassPlayerSettings.Controls.Add(this.trackBarBuffering);
       this.tabPageBassPlayerSettings.Controls.Add(this.UseSkipStepsCheckBox);
       this.tabPageBassPlayerSettings.Controls.Add(this.mpLabel3);
       this.tabPageBassPlayerSettings.Controls.Add(this.BufferingSecondsLbl);
       this.tabPageBassPlayerSettings.Controls.Add(this.CrossFadeSecondsLbl);
-      this.tabPageBassPlayerSettings.Controls.Add(this.hScrollBarBuffering);
-      this.tabPageBassPlayerSettings.Controls.Add(this.hScrollBarCrossFade);
       this.tabPageBassPlayerSettings.Controls.Add(this.label12);
       this.tabPageBassPlayerSettings.Controls.Add(this.GaplessPlaybackChkBox);
       this.tabPageBassPlayerSettings.Controls.Add(this.StreamOutputLevelNud);
@@ -219,6 +221,44 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageBassPlayerSettings.TabIndex = 0;
       this.tabPageBassPlayerSettings.Text = "General Settings";
       this.tabPageBassPlayerSettings.UseVisualStyleBackColor = true;
+      // 
+      // trackBarCrossfade
+      // 
+      this.trackBarCrossfade.LargeChange = 500;
+      this.trackBarCrossfade.Location = new System.Drawing.Point(96, 165);
+      this.trackBarCrossfade.Maximum = 10000;
+      this.trackBarCrossfade.Name = "trackBarCrossfade";
+      this.trackBarCrossfade.Size = new System.Drawing.Size(188, 45);
+      this.trackBarCrossfade.TabIndex = 17;
+      this.trackBarCrossfade.TickFrequency = 100;
+      this.trackBarCrossfade.TickStyle = System.Windows.Forms.TickStyle.Both;
+      this.trackBarCrossfade.Value = 4000;
+      this.trackBarCrossfade.Scroll += new System.EventHandler(this.trackBarCrossfade_Scroll);
+      // 
+      // trackBarBuffering
+      // 
+      this.trackBarBuffering.LargeChange = 100;
+      this.trackBarBuffering.Location = new System.Drawing.Point(96, 216);
+      this.trackBarBuffering.Maximum = 2000;
+      this.trackBarBuffering.Minimum = 100;
+      this.trackBarBuffering.Name = "trackBarBuffering";
+      this.trackBarBuffering.Size = new System.Drawing.Size(188, 45);
+      this.trackBarBuffering.TabIndex = 16;
+      this.trackBarBuffering.TickFrequency = 100;
+      this.trackBarBuffering.TickStyle = System.Windows.Forms.TickStyle.Both;
+      this.trackBarBuffering.Value = 500;
+      this.trackBarBuffering.Scroll += new System.EventHandler(this.trackBarBuffering_Scroll);
+      // 
+      // UseSkipStepsCheckBox
+      // 
+      this.UseSkipStepsCheckBox.AutoSize = true;
+      this.UseSkipStepsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.UseSkipStepsCheckBox.Location = new System.Drawing.Point(17, 82);
+      this.UseSkipStepsCheckBox.Name = "UseSkipStepsCheckBox";
+      this.UseSkipStepsCheckBox.Size = new System.Drawing.Size(190, 17);
+      this.UseSkipStepsCheckBox.TabIndex = 15;
+      this.UseSkipStepsCheckBox.Text = "Use Skip steps on forward / rewind";
+      this.UseSkipStepsCheckBox.UseVisualStyleBackColor = true;
       // 
       // mpLabel3
       // 
@@ -240,46 +280,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CrossFadeSecondsLbl
       // 
-      this.CrossFadeSecondsLbl.Location = new System.Drawing.Point(310, 206);
+      this.CrossFadeSecondsLbl.Location = new System.Drawing.Point(310, 180);
       this.CrossFadeSecondsLbl.Name = "CrossFadeSecondsLbl";
       this.CrossFadeSecondsLbl.Size = new System.Drawing.Size(80, 13);
       this.CrossFadeSecondsLbl.TabIndex = 6;
       this.CrossFadeSecondsLbl.Text = "00.0 Seconds";
       this.CrossFadeSecondsLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
-      // hScrollBarBuffering
-      // 
-      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.hScrollBarBuffering.LargeChange = 500;
-      this.hScrollBarBuffering.Location = new System.Drawing.Point(96, 230);
-      this.hScrollBarBuffering.Maximum = 8499;
-      this.hScrollBarBuffering.Minimum = 1000;
-      this.hScrollBarBuffering.Name = "hScrollBarBuffering";
-      this.hScrollBarBuffering.Size = new System.Drawing.Size(188, 17);
-      this.hScrollBarBuffering.SmallChange = 100;
-      this.hScrollBarBuffering.TabIndex = 11;
-      this.hScrollBarBuffering.Value = 5000;
-      this.hScrollBarBuffering.ValueChanged += new System.EventHandler(this.hScrollBarBuffering_ValueChanged);
-      // 
-      // hScrollBarCrossFade
-      // 
-      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.hScrollBarCrossFade.LargeChange = 500;
-      this.hScrollBarCrossFade.Location = new System.Drawing.Point(96, 206);
-      this.hScrollBarCrossFade.Maximum = 16499;
-      this.hScrollBarCrossFade.Name = "hScrollBarCrossFade";
-      this.hScrollBarCrossFade.Size = new System.Drawing.Size(188, 17);
-      this.hScrollBarCrossFade.SmallChange = 100;
-      this.hScrollBarCrossFade.TabIndex = 10;
-      this.hScrollBarCrossFade.Value = 4000;
-      this.hScrollBarCrossFade.ValueChanged += new System.EventHandler(this.hScrollBarCrossFade_ValueChanged);
-      // 
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(20, 230);
+      this.label12.Location = new System.Drawing.Point(14, 230);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(52, 13);
       this.label12.TabIndex = 7;
@@ -289,7 +300,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.GaplessPlaybackChkBox.AutoSize = true;
       this.GaplessPlaybackChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(17, 161);
+      this.GaplessPlaybackChkBox.Location = new System.Drawing.Point(17, 138);
       this.GaplessPlaybackChkBox.Name = "GaplessPlaybackChkBox";
       this.GaplessPlaybackChkBox.Size = new System.Drawing.Size(108, 17);
       this.GaplessPlaybackChkBox.TabIndex = 3;
@@ -299,7 +310,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // StreamOutputLevelNud
       // 
-      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 48);
+      this.StreamOutputLevelNud.Location = new System.Drawing.Point(87, 45);
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
@@ -312,7 +323,7 @@ namespace MediaPortal.Configuration.Sections
       // CrossFadingLbl
       // 
       this.CrossFadingLbl.AutoSize = true;
-      this.CrossFadingLbl.Location = new System.Drawing.Point(20, 206);
+      this.CrossFadingLbl.Location = new System.Drawing.Point(14, 180);
       this.CrossFadingLbl.Name = "CrossFadingLbl";
       this.CrossFadingLbl.Size = new System.Drawing.Size(68, 13);
       this.CrossFadingLbl.TabIndex = 4;
@@ -321,7 +332,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(14, 50);
+      this.mpLabel1.Location = new System.Drawing.Point(14, 47);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(67, 13);
       this.mpLabel1.TabIndex = 0;
@@ -331,7 +342,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.FadeOnStartStopChkbox.AutoSize = true;
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 128);
+      this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 110);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
       this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(128, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
@@ -582,6 +593,7 @@ namespace MediaPortal.Configuration.Sections
       this.soundDeviceComboBox.Name = "soundDeviceComboBox";
       this.soundDeviceComboBox.Size = new System.Drawing.Size(289, 21);
       this.soundDeviceComboBox.TabIndex = 5;
+      this.soundDeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.soundDeviceComboBox_SelectedIndexChanged);
       // 
       // label2
       // 
@@ -1127,17 +1139,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
       // 
-      // UseSkipStepsCheckBox
-      // 
-      this.UseSkipStepsCheckBox.AutoSize = true;
-      this.UseSkipStepsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.UseSkipStepsCheckBox.Location = new System.Drawing.Point(17, 96);
-      this.UseSkipStepsCheckBox.Name = "UseSkipStepsCheckBox";
-      this.UseSkipStepsCheckBox.Size = new System.Drawing.Size(190, 17);
-      this.UseSkipStepsCheckBox.TabIndex = 15;
-      this.UseSkipStepsCheckBox.Text = "Use Skip steps on forward / rewind";
-      this.UseSkipStepsCheckBox.UseVisualStyleBackColor = true;
-      // 
       // Music
       // 
       this.Controls.Add(this.MusicSettingsTabCtl);
@@ -1148,6 +1149,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlPlayerSettings.ResumeLayout(false);
       this.tabPageBassPlayerSettings.ResumeLayout(false);
       this.tabPageBassPlayerSettings.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarCrossfade)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarBuffering)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).EndInit();
       this.tabPageASIOPlayerSettings.ResumeLayout(false);
       this.tabPageASIOPlayerSettings.PerformLayout();
@@ -1220,8 +1223,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel label1;
     private TabPage PlaySettingsTabPg;
     private CheckBox GaplessPlaybackChkBox;
-    private HScrollBar hScrollBarCrossFade;
-    private HScrollBar hScrollBarBuffering;
     private TabPage tabPageNowPlaying;
     private GroupBox groupBoxDynamicContent;
     private MPCheckBox checkBoxDisableTagLookups;
@@ -1272,5 +1273,7 @@ namespace MediaPortal.Configuration.Sections
     private MPComboBox cbUpmixMono;
     private MPLabel mpLabel8;
     private CheckBox UseSkipStepsCheckBox;
+    private TrackBar trackBarBuffering;
+    private TrackBar trackBarCrossfade;
   }
 }
