@@ -1450,6 +1450,7 @@ namespace MediaPortal.MusicPlayer.BASS
       return stream != null && (Bass.BASS_ChannelIsActive(stream.BassStream) == BASSActive.BASS_ACTIVE_PLAYING);
     }
 
+
     /// <summary>
     /// Displays Information about a BASS Exception
     /// </summary>
@@ -1672,7 +1673,6 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private float[,] CreateMixingMatrix(int inputChannels)
     {
-      Log.Debug("BASS: Creating mixing matrix...");
       switch (inputChannels)
       {
         case 1:
@@ -1695,6 +1695,7 @@ namespace MediaPortal.MusicPlayer.BASS
       switch (Config.UpmixMono)
       {
         case MonoUpMix.None:
+          Log.Info("BASS: No upmixing of Mono selected");
           break;
 
         case MonoUpMix.Stereo:
@@ -1703,7 +1704,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix = new float[2, 1];
           mixMatrix[0, 0] = 1;
           mixMatrix[1, 0] = 1;
-
+          Log.Info("BASS: Using Mono -> Stereo mixing matrix");
           break;
 
         case MonoUpMix.QuadraphonicPhonic:
@@ -1716,7 +1717,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[1, 0] = 1;
           mixMatrix[2, 0] = 1;
           mixMatrix[3, 0] = 1;
-
+          Log.Info("BASS: Using Mono -> Quadro mixing matrix");
           break;
 
         case MonoUpMix.FiveDotOne:
@@ -1733,7 +1734,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[3, 0] = 1;
           mixMatrix[4, 0] = 1;
           mixMatrix[5, 0] = 1;
-
+          Log.Info("BASS: Using Mono -> 5.1 mixing matrix");
           break;
 
         case MonoUpMix.SevenDotOne:
@@ -1754,7 +1755,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[5, 0] = 1;
           mixMatrix[6, 0] = 1;
           mixMatrix[7, 0] = 1;
-
+          Log.Info("BASS: Using Mono -> 7.1 mixing matrix");
           break;
       }
       return mixMatrix;
@@ -1767,6 +1768,7 @@ namespace MediaPortal.MusicPlayer.BASS
       switch (Config.UpmixStereo)
       {
         case StereoUpMix.None:
+          Log.Info("BASS: No upmixing of Stereo selected");
           break;
 
         case StereoUpMix.QuadraphonicPhonic:
@@ -1779,7 +1781,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[1, 1] = 1;
           mixMatrix[2, 0] = 1;
           mixMatrix[3, 1] = 1;
-
+          Log.Info("BASS: Using Stereo -> Quadro mixing matrix");
           break;
 
         case StereoUpMix.FiveDotOne:
@@ -1798,7 +1800,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[3, 1] = 0.5f;
           mixMatrix[4, 0] = 1;
           mixMatrix[5, 1] = 1;
-
+          Log.Info("BASS: Using Stereo -> 5.1 mixing matrix");
           break;
 
         case StereoUpMix.SevenDotOne:
@@ -1821,7 +1823,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[5, 1] = 1;
           mixMatrix[6, 0] = 1;
           mixMatrix[7, 1] = 1;
-
+          Log.Info("BASS: Using Stereo -> 7.1 mixing matrix");
           break;
       }
       return mixMatrix;
@@ -1834,6 +1836,7 @@ namespace MediaPortal.MusicPlayer.BASS
       switch (Config.UpmixQuadro)
       {
         case QuadraphonicUpMix.None:
+          Log.Info("BASS: No upmixing of Quadro selected");
           break;
 
         case QuadraphonicUpMix.FiveDotOne:
@@ -1852,7 +1855,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[3, 1] = 0.5f;
           mixMatrix[4, 2] = 1;
           mixMatrix[5, 3] = 1;
-
+          Log.Info("BASS: Using Quadro -> 5.1 mixing matrix");
           break;
 
         case QuadraphonicUpMix.SevenDotOne:
@@ -1875,7 +1878,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[5, 3] = 1;
           mixMatrix[6, 2] = 1;
           mixMatrix[7, 3] = 1;
-
+          Log.Info("BASS: Using Quadro -> 7.1 mixing matrix");
           break;
       }
       return mixMatrix;
@@ -1887,6 +1890,7 @@ namespace MediaPortal.MusicPlayer.BASS
       switch (Config.UpmixFiveDotOne)
       {
         case FiveDotOneUpMix.None:
+          Log.Info("BASS: No upmixing of 5.1 selected");
           break;
 
         case FiveDotOneUpMix.SevenDotOne:
@@ -1899,7 +1903,7 @@ namespace MediaPortal.MusicPlayer.BASS
           mixMatrix[5, 5] = 1;
           mixMatrix[6, 4] = 1;
           mixMatrix[7, 5] = 1;
-
+          Log.Info("BASS: Using 5.1 -> 7.1 mixing matrix");
           break;
       }
       return mixMatrix;
