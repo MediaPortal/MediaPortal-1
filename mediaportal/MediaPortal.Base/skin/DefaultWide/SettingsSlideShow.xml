@@ -21,8 +21,8 @@
     <control>
       <description>group element</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>Speed label</description>
         <type>label</type>
@@ -88,7 +88,7 @@
       </control>
       <control>
         <description>X-fade transitions</description>
-        <type>checkbutton</type>
+        <type>checkmark</type>
         <id>5</id>
         <posX>255</posX>
         <posY>307</posY>
@@ -102,7 +102,7 @@
       </control>
       <control>
         <description>Ken Buns transitions</description>
-        <type>checkbutton</type>
+        <type>checkmark</type>
         <id>6</id>
         <posX>255</posX>
         <posY>350</posY>
@@ -116,7 +116,7 @@
       </control>
       <control>
         <description>Random transitions</description>
-        <type>checkbutton</type>
+        <type>checkmark</type>
         <id>7</id>
         <posX>255</posX>
         <posY>392</posY>
@@ -130,7 +130,7 @@
       </control>
       <control>
         <description>Repeat/loop slideshows</description>
-        <type>checkbutton</type>
+        <type>checkmark</type>
         <id>8</id>
         <posX>255</posX>
         <posY>445</posY>
@@ -144,7 +144,7 @@
       </control>
       <control>
         <description>Auto shuffle slideshow</description>
-        <type>checkbutton</type>
+        <type>checkmark</type>
         <id>9</id>
         <posX>255</posX>
         <posY>487</posY>

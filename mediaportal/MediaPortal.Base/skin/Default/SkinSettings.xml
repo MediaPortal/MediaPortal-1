@@ -3,9 +3,9 @@
 <profile>
   <section name="booleansettings">
     <entry name="#skin.tvguide.usecolorsforbuttons">True</entry>
-    <entry name="#skin.tvguide.usecolorsforgenre">True</entry>
-    <entry name="#skin.tvguide.useborderhighlight">True</entry>
-    <entry name="#skin.tvguide.showgenrekey">True</entry>
+    <entry name="#skin.tvguide.usecolorsforgenre">False</entry>
+    <entry name="#skin.tvguide.useborderhighlight">False</entry>
+    <entry name="#skin.tvguide.showgenrekey">False</entry>
   </section>
   <section name="theme">
     <entry name="name">Skin default</entry>

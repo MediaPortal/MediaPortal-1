@@ -15,18 +15,18 @@
       <posX>84</posX>
       <posY>104</posY>
       <height>352</height>
-      <width>580</width>
+      <width>506</width>
       <texture>backslide2.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>101</posX>
       <posY>136</posY>
-      <layout>GridLayout(0, 8, 140, 8, 1)</layout>
+      <layout>GridLayout(0, 8, 70, 8, 1)</layout>
       <control>
         <description>MPEG-2 Video Codecs</description>
         <type>button</type>
