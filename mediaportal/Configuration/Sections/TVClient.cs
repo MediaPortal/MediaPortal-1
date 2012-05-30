@@ -71,6 +71,7 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox mpGroupBox4;
     private MPCheckBox mpCheckBoxEnableTTXTSub;
     private MPCheckBox mpCheckBoxEnableDVBSub;
+    private MPCheckBox mpCheckBoxAutoShowSubWhenTvStarts;
     private ColumnHeader columnHeader1;
     private ColumnHeader columnHeader2;
     private ColumnHeader columnHeader4;
@@ -115,6 +116,7 @@ namespace MediaPortal.Configuration.Sections
                                             };
 
     private MPCheckBox cbContinuousScrollGuide;
+    private MPCheckBox mpCheckBoxEnableCCSub;
     private TabPage tabPage2;
     private MPTabControl tabControl2;
     private MPTabPage tabPageGenreMap;
@@ -317,6 +319,8 @@ namespace MediaPortal.Configuration.Sections
 
         mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        mpCheckBoxEnableCCSub.Checked = xmlreader.GetValueAsBool("tvservice", "ccsubtitles", false);
+        mpCheckBoxAutoShowSubWhenTvStarts.Checked = xmlreader.GetValueAsBool("tvservice", "autoshowsubwhentvstarts", true);
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
@@ -370,6 +374,11 @@ namespace MediaPortal.Configuration.Sections
                 if (_genreMap.Count == 0)
                 {
                   LoadGenreMap(xmlreader);
+                }
+
+                if (!xmlreader.HasSection<string>("genreoptions"))
+                {
+                  xmlreader.SetValueAsBool("genreoptions", "specifympaaratedasmovie", true);  // Rated programs are movies
                 }
               }
 
@@ -540,6 +549,8 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
         xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "ccsubtitles", mpCheckBoxEnableCCSub.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "autoshowsubwhentvstarts", mpCheckBoxAutoShowSubWhenTvStarts.Checked);
         xmlwriter.SetValueAsBool("tvservice", "audiodualmono", enableAudioDualMonoModes.Checked);
         xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
         xmlwriter.SetValueAsBool("myradio", "hideAllChannelsGroup", cbHideAllChannels.Checked);
@@ -628,6 +639,8 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabPageSubtitles = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpCheckBoxEnableCCSub = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpCheckBoxAutoShowSubWhenTvStarts = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxEnableTTXTSub = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxEnableDVBSub = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -1163,21 +1176,45 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox4
       // 
+      this.mpGroupBox4.Controls.Add(this.mpCheckBoxEnableCCSub);
+      this.mpGroupBox4.Controls.Add(this.mpCheckBoxAutoShowSubWhenTvStarts);
       this.mpGroupBox4.Controls.Add(this.mpCheckBoxEnableTTXTSub);
       this.mpGroupBox4.Controls.Add(this.mpCheckBoxEnableDVBSub);
       this.mpGroupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox4.Location = new System.Drawing.Point(16, 308);
       this.mpGroupBox4.Name = "mpGroupBox4";
-      this.mpGroupBox4.Size = new System.Drawing.Size(432, 60);
+      this.mpGroupBox4.Size = new System.Drawing.Size(432, 86);
       this.mpGroupBox4.TabIndex = 10;
       this.mpGroupBox4.TabStop = false;
       this.mpGroupBox4.Text = "Subtitle settings";
+      // 
+      // mpCheckBoxEnableCCSub
+      // 
+      this.mpCheckBoxEnableCCSub.AutoSize = true;
+      this.mpCheckBoxEnableCCSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxEnableCCSub.Location = new System.Drawing.Point(244, 51);
+      this.mpCheckBoxEnableCCSub.Name = "mpCheckBoxEnableCCSub";
+      this.mpCheckBoxEnableCCSub.Size = new System.Drawing.Size(115, 17);
+      this.mpCheckBoxEnableCCSub.TabIndex = 12;
+      this.mpCheckBoxEnableCCSub.Text = "Enable CC subtitles";
+      this.mpCheckBoxEnableCCSub.UseVisualStyleBackColor = false;
+      // 
+      // mpCheckBoxAutoShowSubWhenTvStarts
+      // 
+      this.mpCheckBoxAutoShowSubWhenTvStarts.AutoSize = true;
+      this.mpCheckBoxAutoShowSubWhenTvStarts.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxAutoShowSubWhenTvStarts.Location = new System.Drawing.Point(8, 51);
+      this.mpCheckBoxAutoShowSubWhenTvStarts.Name = "mpCheckBoxAutoShowSubWhenTvStarts";
+      this.mpCheckBoxAutoShowSubWhenTvStarts.Size = new System.Drawing.Size(186, 17);
+      this.mpCheckBoxAutoShowSubWhenTvStarts.TabIndex = 12;
+      this.mpCheckBoxAutoShowSubWhenTvStarts.Text = "Autoshow subtitles when TV starts";
+      this.mpCheckBoxAutoShowSubWhenTvStarts.UseVisualStyleBackColor = false;
       // 
       // mpCheckBoxEnableTTXTSub
       // 
       this.mpCheckBoxEnableTTXTSub.AutoSize = true;
       this.mpCheckBoxEnableTTXTSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxEnableTTXTSub.Location = new System.Drawing.Point(239, 28);
+      this.mpCheckBoxEnableTTXTSub.Location = new System.Drawing.Point(244, 28);
       this.mpCheckBoxEnableTTXTSub.Name = "mpCheckBoxEnableTTXTSub";
       this.mpCheckBoxEnableTTXTSub.Size = new System.Drawing.Size(135, 17);
       this.mpCheckBoxEnableTTXTSub.TabIndex = 11;
@@ -1189,7 +1226,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpCheckBoxEnableDVBSub.AutoSize = true;
       this.mpCheckBoxEnableDVBSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxEnableDVBSub.Location = new System.Drawing.Point(9, 28);
+      this.mpCheckBoxEnableDVBSub.Location = new System.Drawing.Point(8, 28);
       this.mpCheckBoxEnableDVBSub.Name = "mpCheckBoxEnableDVBSub";
       this.mpCheckBoxEnableDVBSub.Size = new System.Drawing.Size(123, 17);
       this.mpCheckBoxEnableDVBSub.TabIndex = 7;
@@ -1502,6 +1539,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonRenameGenre.TabIndex = 16;
       this.buttonRenameGenre.Text = "Rename";
       this.buttonRenameGenre.UseVisualStyleBackColor = true;
+      this.buttonRenameGenre.Visible = false;
       this.buttonRenameGenre.Click += new System.EventHandler(this.mpRenameGenre_Click);
       // 
       // mpCheckBoxRatingAsMovie
@@ -1553,6 +1591,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonRemoveGenre.TabIndex = 6;
       this.buttonRemoveGenre.Text = "Remove";
       this.buttonRemoveGenre.UseVisualStyleBackColor = true;
+      this.buttonRemoveGenre.Visible = false;
       this.buttonRemoveGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
       // 
       // buttonNewGenre
@@ -1564,6 +1603,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonNewGenre.TabIndex = 5;
       this.buttonNewGenre.Text = "Add";
       this.buttonNewGenre.UseVisualStyleBackColor = true;
+      this.buttonNewGenre.Visible = false;
       this.buttonNewGenre.Click += new System.EventHandler(this.buttonNewGenre_Click);
       // 
       // buttonMapGenres
