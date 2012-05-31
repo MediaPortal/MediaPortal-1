@@ -207,7 +207,7 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
 Name          "${PRODUCT_NAME}"
-BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
+BrandingText  "${PRODUCT_NAME} ${VERSION_DISP} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0       # it's an official release
   OutFile "${git_OUT}\package-mediaportal.exe"
 !else                       # it's a git release
@@ -220,11 +220,11 @@ RequestExecutionLevel admin
 ShowInstDetails show
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName       "${PRODUCT_NAME}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductVersion    "${VERSION_DISP}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2011 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
@@ -754,7 +754,7 @@ Section -Post
   ; Write Uninstall Information
   WriteRegStr HKLM "${REG_UNINSTALL}" InstallPath        "$MPdir.Base"
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayName        "${PRODUCT_NAME}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION_DISP}"
   WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${PRODUCT_PUBLISHER}"
   WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${PRODUCT_WEB_SITE}"
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$MPdir.Base\MediaPortal.exe,0"
