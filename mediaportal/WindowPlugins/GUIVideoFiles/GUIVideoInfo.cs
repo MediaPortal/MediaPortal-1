@@ -1198,7 +1198,7 @@ namespace MediaPortal.GUI.Video
         (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading movie actors and roles
       pDlgProgress.Reset();
-      pDlgProgress.SetHeading(1257);
+      pDlgProgress.SetHeading(1301);
       pDlgProgress.SetLine(1, fetcher.MovieName);
       pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
@@ -1212,7 +1212,7 @@ namespace MediaPortal.GUI.Video
         (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the actor info
       pDlgProgress.Reset();
-      pDlgProgress.SetHeading(1258);
+      pDlgProgress.SetHeading(1302);
       pDlgProgress.SetLine(1, fetcher.MovieName);
       pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);

@@ -1016,15 +1016,13 @@
     <String id="1231">Last played:</String>
     <String id="1240">Lock content</String>
     <String id="1241">Unlock content</String>
-    <String id="1250">Search movie</String>
-    <String id="1251">Reset search</String>
-    <String id="1252">Search actor</String>
-    <String id="1253">Refresh all actor movies</String>
-    <String id="1254">Refresh selected actor info</String>
-    <String id="1255">Refresh fanart</String>
-    <String id="1256">Refresh current directory</String>
-    <String id="1257">Downloading movie actors and roles</String>
-    <String id="1258">Downloading actor info</String>
+    <String id="1250">Documentary</String>
+    <String id="1251">Kids</String>
+    <String id="1252">Movie</String>
+    <String id="1253">Music</String>
+    <String id="1254">News</String>
+    <String id="1255">Special</String>
+    <String id="1256">Sports</String>    
     <String id="1260">Set watched status</String>
     <String id="1261">No GrabberIndexFile found.</String>
     <String id="1262">Update Grabber scripts</String>
@@ -1058,7 +1056,16 @@
 		<String id="1290">Refresh selected movie</String>
 		<String id="1291">Auto-Refreshing is active.</String>
 		<String id="1292">Please wait to finish it first.</String>
-		<String id="1300" prefix="My ">TV Shows</String>
+		<String id="1293">Search movie</String>
+    <String id="1294">Reset search</String>
+    <String id="1295">Search actor</String>
+    <String id="1296">Refresh all actor movies</String>
+    <String id="1297">Refresh selected actor info</String>
+    <String id="1298">Refresh fanart</String>
+    <String id="1299">Refresh current directory</String>
+    <String id="1300" prefix="My ">TV Shows</String>
+    <String id="1301">Downloading movie actors and roles</String>
+    <String id="1302">Downloading actor info</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>

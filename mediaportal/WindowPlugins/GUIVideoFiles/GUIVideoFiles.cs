@@ -4539,7 +4539,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        heading = GUILocalizeStrings.Get(1257);
+        heading = GUILocalizeStrings.Get(1301);
       }
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(heading);
@@ -4563,7 +4563,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        heading = GUILocalizeStrings.Get(1258);
+        heading = GUILocalizeStrings.Get(1302);
       }
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(heading);
