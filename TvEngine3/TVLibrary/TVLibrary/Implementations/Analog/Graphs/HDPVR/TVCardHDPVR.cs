@@ -114,12 +114,8 @@ namespace TvLibrary.Implementations.Analog
         _encoderDeviceName = "Hauppauge Colossus TS Encoder " + deviceNumber;
       }
 
-      _mapSubChannels = new Dictionary<Int32, BaseSubChannel>();
       _supportsSubChannels = true;
-      _minChannel = 0;
-      _maxChannel = 128;
       _cardType = CardType.Analog;
-      _epgGrabbing = false;
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
       Configuration.writeConfiguration(_configuration);
     }
@@ -132,7 +128,7 @@ namespace TvLibrary.Implementations.Analog
     /// Method to check if card can tune to the channel specified
     /// </summary>
     /// <returns>true if card can tune to the channel otherwise false</returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if ((channel as AnalogChannel) == null || channel.IsRadio)
       {
@@ -207,65 +203,6 @@ namespace TvLibrary.Implementations.Analog
 
     #endregion
 
-    #region Channel linkage handling
-
-    /// <summary>
-    /// Starts scanning for linkage info
-    /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback) {}
-
-    /// <summary>
-    /// Stops/Resets the linkage scanner
-    /// </summary>
-    public void ResetLinkageScanner() {}
-
-    /// <summary>
-    /// Returns the channel linkages grabbed
-    /// </summary>
-    public List<PortalChannel> ChannelLinkages
-    {
-      get { return null; }
-    }
-
-    #endregion
-
-    #region epg & scanning
-
-    /// <summary>
-    /// Grabs the epg.
-    /// </summary>
-    /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    public void GrabEpg(BaseEpgGrabber callback) {}
-
-    /// <summary>
-    /// Start grabbing the epg while timeshifting
-    /// </summary>
-    public void GrabEpg() {}
-
-    /// <summary>
-    /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
-    /// </summary>
-    public void AbortGrabbing() {}
-
-    /// <summary>
-    /// returns a list of all epg data for each channel found.
-    /// </summary>
-    /// <value>The epg.</value>
-    public List<EpgChannel> Epg
-    {
-      get { return null; }
-    }
-
-    /// <summary>
-    /// returns the ITVScanning interface used for scanning channels
-    /// </summary>
-    public ITVScanning ScanningInterface
-    {
-      get { return null; }
-    }
-
-    #endregion
-
     #region tuning & recording
 
     /// <summary>
@@ -274,7 +211,7 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
       return Tune(subChannelId, channel);
     }
@@ -285,7 +222,7 @@ namespace TvLibrary.Implementations.Analog
     /// <param name="subChannelId">The sub channel id.</param>
     /// <param name="channel">The channel.</param>
     /// <returns>true if succeeded else false</returns>
-    public ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("HDPVR: Tune:{0}, {1}", subChannelId, channel);
       if (_graphState == GraphState.Idle)
@@ -331,7 +268,7 @@ namespace TvLibrary.Implementations.Analog
     {
       int id = _subChannelId++;
       Log.Log.Info("HDPVR: GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
-      HDPVRChannel subChannel = new HDPVRChannel(this, _deviceType, id, _filterTsWriter, _graphBuilder);
+      HDPVRChannel subChannel = new HDPVRChannel(id, this, _filterTsWriter);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
@@ -345,16 +282,15 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Get/Set the quality
     /// </summary>
-    public IQuality Quality
+    public override IQuality Quality
     {
       get { return _qualityControl; }
-      set { }
     }
 
     /// <summary>
     /// Property which returns true if card supports quality control
     /// </summary>
-    public bool SupportsQualityControl
+    public override bool SupportsQualityControl
     {
       get
       {
@@ -369,7 +305,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Reloads the quality control configuration
     /// </summary>
-    public void ReloadCardConfiguration()
+    public override void ReloadCardConfiguration()
     {
       if (_qualityControl != null)
       {
@@ -384,37 +320,22 @@ namespace TvLibrary.Implementations.Analog
     #region properties
 
     /// <summary>
-    /// A derrived class should update the signal informations of the tv cards
+    /// Update the tuner signal status statistics.
     /// </summary>
-    protected override void UpdateSignalQuality(bool force)
+    /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
+    protected override void UpdateSignalStatus(bool force)
     {
-      UpdateSignalQuality();
-    }
-
-    /// <summary>
-    /// When the tuner is locked onto a signal this property will return true
-    /// otherwise false
-    /// </summary>
-    protected override void UpdateSignalQuality()
-    {
-      TimeSpan ts = DateTime.Now - _lastSignalUpdate;
-      if (ts.TotalMilliseconds < 5000 || _graphState == GraphState.Idle)
+      if (_graphState == GraphState.Idle)
       {
         _tunerLocked = false;
+        _signalLevel = 0;
+        _signalQuality = 0;
       }
       else
       {
         _tunerLocked = true;
-      }
-      if (_tunerLocked)
-      {
         _signalLevel = 100;
         _signalQuality = 100;
-      }
-      else
-      {
-        _signalLevel = 0;
-        _signalQuality = 0;
       }
     }
 
@@ -439,7 +360,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Disposes this instance.
     /// </summary>
-    public virtual void Dispose()
+    public override void Dispose()
     {
       if (_graphBuilder == null)
         return;
@@ -804,52 +725,6 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    /// <summary>
-    /// Method which starts the graph
-    /// </summary>
-    public override void RunGraph(int subChannel)
-    {
-      bool graphRunning = GraphRunning();
-
-      if (_mapSubChannels.ContainsKey(subChannel))
-      {
-        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].OnGraphStart();
-      }
-
-      if (graphRunning)
-      {
-        Log.Log.Write("HDPVR: Graph already running");
-        return;
-      }
-
-      int hr = 0;
-      IMediaControl mediaCtrl = _graphBuilder as IMediaControl;
-      if (mediaCtrl == null)
-      {
-        Log.Log.WriteFile("HDPVR: RunGraph returns:0x{0:X}", hr);
-        throw new TvException("Unable to start graph");
-      }
-      Log.Log.WriteFile("HDPVR: RunGraph");
-      hr = mediaCtrl.Run();
-      if (hr < 0 || hr > 1)
-      {
-        Log.Log.WriteFile("HDPVR: RunGraph returns:0x{0:X}", hr);
-        throw new TvException("Unable to start graph");
-      }
-      if (GraphRunning())
-      {
-        Log.Log.Write("HDPVR: Graph running");
-      }
-      if (_mapSubChannels.ContainsKey(subChannel))
-      {
-        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].OnGraphStarted();
-      }
-    }
-
     #endregion
 
     #region private helper
@@ -1091,21 +966,6 @@ namespace TvLibrary.Implementations.Analog
         }
       }
     }
-
-    #endregion
-
-    #region abstract implemented Methods
-
-    /// <summary>
-    /// A derrived class should activate / deactivate the scanning
-    /// </summary>
-    protected override void OnScanning() {}
-
-    /// <summary>
-    /// A derrived class should activate / deactivate the epg grabber
-    /// </summary>
-    /// <param name="value">Mode</param>
-    protected override void UpdateEpgGrabber(bool value) {}
 
     #endregion
   }

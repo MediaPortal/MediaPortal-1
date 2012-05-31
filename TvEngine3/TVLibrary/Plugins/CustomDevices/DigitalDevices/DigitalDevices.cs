@@ -557,7 +557,7 @@ namespace TvEngine
       // We need a demux filter to test whether we can add any further CI filters
       // to the graph.
       IBaseFilter tmpDemux = (IBaseFilter)new MPEG2Demultiplexer();
-      hr = _graph.AddFilter(tmpDemux, "Temp MPEG2-Demux");
+      hr = _graph.AddFilter(tmpDemux, "Temp MPEG2 Demultiplexer");
       if (hr != 0)
       {
         Log.Debug("Digital Devices: failed to add test demux to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -872,10 +872,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("Digital Devices: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -895,7 +895,7 @@ namespace TvEngine
         Log.Debug("Digital Devices: command type {0} is not supported", command);
         return false;
       }
-      if (pmt == null || pmt.Length < 5)
+      if (pmt == null)
       {
         Log.Debug("Digital Devices: PMT not supplied");
         return true;
@@ -908,8 +908,7 @@ namespace TvEngine
         return true;
       }
 
-      int serviceId = (pmt[3] << 8) + pmt[4];
-      Log.Debug("Digital Devices: service ID is {0} (0x{1:x})", serviceId, serviceId);
+      Log.Debug("Digital Devices: service ID is {0} (0x{1:x})", pmt.ProgramNumber, pmt.ProgramNumber);
 
       // Disable messages from the CAM for the next 10 seconds. We do this to
       // avoid showing MMI messages which the driver tries to use unsuccessfully.
@@ -928,7 +927,7 @@ namespace TvEngine
       // can decrypt the service.
       int paramSize = sizeof(Int32);
       IntPtr buffer = Marshal.AllocCoTaskMem(paramSize);
-      Marshal.WriteInt32(buffer, serviceId | (int)DecryptChainingRestriction.None);
+      Marshal.WriteInt32(buffer, pmt.ProgramNumber | (int)DecryptChainingRestriction.None);
       int hr = _ciContexts[0].PropertySet.Set(CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
         buffer, paramSize,
         buffer, paramSize

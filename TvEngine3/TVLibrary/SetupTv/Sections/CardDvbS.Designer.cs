@@ -54,10 +54,10 @@ namespace SetupTv.Sections
       this.mpComboDiseqc3 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpComboDiseqc2 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpComboDiseqc1 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpBand4 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpBand3 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpBand2 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpBand1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboLnbType4 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboLnbType3 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboLnbType2 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpComboLnbType1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -279,10 +279,10 @@ namespace SetupTv.Sections
       this.tabPage1.Controls.Add(this.mpComboDiseqc3);
       this.tabPage1.Controls.Add(this.mpComboDiseqc2);
       this.tabPage1.Controls.Add(this.mpComboDiseqc1);
-      this.tabPage1.Controls.Add(this.mpBand4);
-      this.tabPage1.Controls.Add(this.mpBand3);
-      this.tabPage1.Controls.Add(this.mpBand2);
-      this.tabPage1.Controls.Add(this.mpBand1);
+      this.tabPage1.Controls.Add(this.mpComboLnbType4);
+      this.tabPage1.Controls.Add(this.mpComboLnbType3);
+      this.tabPage1.Controls.Add(this.mpComboLnbType2);
+      this.tabPage1.Controls.Add(this.mpComboLnbType1);
       this.tabPage1.Controls.Add(this.mpLabel3);
       this.tabPage1.Controls.Add(this.mpLNB4);
       this.tabPage1.Controls.Add(this.mpLNB3);
@@ -393,129 +393,81 @@ namespace SetupTv.Sections
       this.mpTransponder1.Size = new System.Drawing.Size(160, 21);
       this.mpTransponder1.TabIndex = 8;
       // 
-      // mpDisEqc4
+      // mpDiseqc4
       // 
       this.mpComboDiseqc4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc4.FormattingEnabled = true;
       this.mpComboDiseqc4.Location = new System.Drawing.Point(47, 87);
-      this.mpComboDiseqc4.Name = "mpDisEqc4";
+      this.mpComboDiseqc4.Name = "mpDiseqc4";
       this.mpComboDiseqc4.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc4.TabIndex = 18;
       // 
-      // mpDisEqc3
+      // mpDiseqc3
       // 
       this.mpComboDiseqc3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc3.FormattingEnabled = true;
       this.mpComboDiseqc3.Location = new System.Drawing.Point(47, 64);
-      this.mpComboDiseqc3.Name = "mpDisEqc3";
+      this.mpComboDiseqc3.Name = "mpDiseqc3";
       this.mpComboDiseqc3.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc3.TabIndex = 14;
       // 
-      // mpDisEqc2
+      // mpDiseqc2
       // 
       this.mpComboDiseqc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc2.FormattingEnabled = true;
       this.mpComboDiseqc2.Location = new System.Drawing.Point(47, 41);
-      this.mpComboDiseqc2.Name = "mpDisEqc2";
+      this.mpComboDiseqc2.Name = "mpDiseqc2";
       this.mpComboDiseqc2.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc2.TabIndex = 10;
       // 
-      // mpDisEqc1
+      // mpDiseqc1
       // 
       this.mpComboDiseqc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboDiseqc1.FormattingEnabled = true;
       this.mpComboDiseqc1.Location = new System.Drawing.Point(47, 18);
-      this.mpComboDiseqc1.Name = "mpDisEqc1";
+      this.mpComboDiseqc1.Name = "mpDiseqc1";
       this.mpComboDiseqc1.Size = new System.Drawing.Size(77, 21);
       this.mpComboDiseqc1.TabIndex = 6;
       // 
-      // mpBand4
+      // mpComboLnbType4
       // 
-      this.mpBand4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand4.FormattingEnabled = true;
-      this.mpBand4.Items.AddRange(new object[] {
-            "Ku-Linear (Universal)",
-            "Ku-Circular",
-            "C-Band",
-            "NA Bandstacked DP Ku-Hi (DBS)",
-            "NA Bandstacked DP Ku-Lo (FSS)",
-            "NA Bandstacked Ku-Hi (DBS)",
-            "NA Bandstacked Ku-Lo (FSS)",
-            "NA Bandstacked C",
-            "NA Legacy",
-            "NA Custom 1",
-            "NA Custom 2"});
-      this.mpBand4.Location = new System.Drawing.Point(128, 87);
-      this.mpBand4.Name = "mpBand4";
-      this.mpBand4.Size = new System.Drawing.Size(152, 21);
-      this.mpBand4.TabIndex = 19;
-      this.mpBand4.SelectedIndexChanged += new System.EventHandler(this.mpBand4_SelectedIndexChanged);
+      this.mpComboLnbType4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboLnbType4.FormattingEnabled = true;
+      this.mpComboLnbType4.Location = new System.Drawing.Point(128, 87);
+      this.mpComboLnbType4.Name = "mpComboLnbType4";
+      this.mpComboLnbType4.Size = new System.Drawing.Size(152, 21);
+      this.mpComboLnbType4.TabIndex = 19;
+      this.mpComboLnbType4.SelectedIndexChanged += new System.EventHandler(this.mpComboLnbType1_SelectedIndexChanged);
       // 
-      // mpBand3
+      // mpComboLnbType3
       // 
-      this.mpBand3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand3.FormattingEnabled = true;
-      this.mpBand3.Items.AddRange(new object[] {
-            "Ku-Linear (Universal)",
-            "Ku-Circular",
-            "C-Band",
-            "NA Bandstacked DP Ku-Hi (DBS)",
-            "NA Bandstacked DP Ku-Lo (FSS)",
-            "NA Bandstacked Ku-Hi (DBS)",
-            "NA Bandstacked Ku-Lo (FSS)",
-            "NA Bandstacked C",
-            "NA Legacy",
-            "NA Custom 1",
-            "NA Custom 2"});
-      this.mpBand3.Location = new System.Drawing.Point(128, 64);
-      this.mpBand3.Name = "mpBand3";
-      this.mpBand3.Size = new System.Drawing.Size(152, 21);
-      this.mpBand3.TabIndex = 15;
-      this.mpBand3.SelectedIndexChanged += new System.EventHandler(this.mpBand3_SelectedIndexChanged);
+      this.mpComboLnbType3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboLnbType3.FormattingEnabled = true;
+      this.mpComboLnbType3.Location = new System.Drawing.Point(128, 64);
+      this.mpComboLnbType3.Name = "mpComboLnbType3";
+      this.mpComboLnbType3.Size = new System.Drawing.Size(152, 21);
+      this.mpComboLnbType3.TabIndex = 15;
+      this.mpComboLnbType3.SelectedIndexChanged += new System.EventHandler(this.mpComboLnbType1_SelectedIndexChanged);
       // 
-      // mpBand2
+      // mpComboLnbType2
       // 
-      this.mpBand2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand2.FormattingEnabled = true;
-      this.mpBand2.Items.AddRange(new object[] {
-            "Ku-Linear (Universal)",
-            "Ku-Circular",
-            "C-Band",
-            "NA Bandstacked DP Ku-Hi (DBS)",
-            "NA Bandstacked DP Ku-Lo (FSS)",
-            "NA Bandstacked Ku-Hi (DBS)",
-            "NA Bandstacked Ku-Lo (FSS)",
-            "NA Bandstacked C",
-            "NA Legacy",
-            "NA Custom 1",
-            "NA Custom 2"});
-      this.mpBand2.Location = new System.Drawing.Point(128, 41);
-      this.mpBand2.Name = "mpBand2";
-      this.mpBand2.Size = new System.Drawing.Size(152, 21);
-      this.mpBand2.TabIndex = 11;
-      this.mpBand2.SelectedIndexChanged += new System.EventHandler(this.mpBand2_SelectedIndexChanged);
+      this.mpComboLnbType2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboLnbType2.FormattingEnabled = true;
+      this.mpComboLnbType2.Location = new System.Drawing.Point(128, 41);
+      this.mpComboLnbType2.Name = "mpComboLnbType2";
+      this.mpComboLnbType2.Size = new System.Drawing.Size(152, 21);
+      this.mpComboLnbType2.TabIndex = 11;
+      this.mpComboLnbType2.SelectedIndexChanged += new System.EventHandler(this.mpComboLnbType1_SelectedIndexChanged);
       // 
-      // mpBand1
+      // mpComboLnbType1
       // 
-      this.mpBand1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpBand1.FormattingEnabled = true;
-      this.mpBand1.Items.AddRange(new object[] {
-            "Ku-Linear (Universal)",
-            "Ku-Circular",
-            "C-Band",
-            "NA Bandstacked DP Ku-Hi (DBS)",
-            "NA Bandstacked DP Ku-Lo (FSS)",
-            "NA Bandstacked Ku-Hi (DBS)",
-            "NA Bandstacked Ku-Lo (FSS)",
-            "NA Bandstacked C",
-            "NA Legacy",
-            "NA Custom 1",
-            "NA Custom 2"});
-      this.mpBand1.Location = new System.Drawing.Point(128, 18);
-      this.mpBand1.Name = "mpBand1";
-      this.mpBand1.Size = new System.Drawing.Size(152, 21);
-      this.mpBand1.TabIndex = 7;
-      this.mpBand1.SelectedIndexChanged += new System.EventHandler(this.mpBand1_SelectedIndexChanged);
+      this.mpComboLnbType1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboLnbType1.FormattingEnabled = true;
+      this.mpComboLnbType1.Location = new System.Drawing.Point(128, 18);
+      this.mpComboLnbType1.Name = "mpComboLnbType1";
+      this.mpComboLnbType1.Size = new System.Drawing.Size(152, 21);
+      this.mpComboLnbType1.TabIndex = 7;
+      this.mpComboLnbType1.SelectedIndexChanged += new System.EventHandler(this.mpComboLnbType1_SelectedIndexChanged);
       // 
       // mpLabel3
       // 
@@ -524,7 +476,7 @@ namespace SetupTv.Sections
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(35, 13);
       this.mpLabel3.TabIndex = 3;
-      this.mpLabel3.Text = "Band:";
+      this.mpLabel3.Text = "LNB Type:";
       // 
       // mpLNB4
       // 
@@ -1328,7 +1280,7 @@ namespace SetupTv.Sections
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(35, 13);
       this.mpLabel4.TabIndex = 76;
-      this.mpLabel4.Text = "Band:";
+      this.mpLabel4.Text = "LNB Type:";
       // 
       // mpLabel2
       // 
@@ -1521,10 +1473,10 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboDiseqc3;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboDiseqc2;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboDiseqc1;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpBand4;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpBand3;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpBand2;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpBand1;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboLnbType4;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboLnbType3;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboLnbType2;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboLnbType1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpLNB4;
     private MediaPortal.UserInterface.Controls.MPCheckBox mpLNB3;

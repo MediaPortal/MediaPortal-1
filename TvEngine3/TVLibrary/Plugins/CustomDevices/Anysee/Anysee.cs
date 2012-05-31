@@ -41,9 +41,271 @@ namespace TvEngine
 
     private enum BdaExtensionProperty
     {
+      Rssi = 1,                       // signal strength metric
+      Cnr = 2,                        // carrier to noise ratio
       Ir = 4,
       PlatformInfo = 6,
+      Locked = 7,
+      NimMode = 8,
+      StatusInfo = 15,
+      DriverVersion = 18,
+      NimConfig = 19,
+      LnbInfo = 20,
+      Capabilities = 22,
+      BoardInfo = 23,
       Diseqc = 24
+    }
+
+    // PCB/product/revision
+    private enum AnyseePlatform : ushort
+    {
+      Pcb507T = 2,              // Anysee E30 - DVB-T
+      Pcb507H,                  // Anysee K30/K50 - External ATSC + NTSC
+      Pcb507S,                  // Anysee E30 S Plus (v1) - External DVB-S + Smartcard Interface
+      Pcb507C,                  // Anysee E30 C Plus (v1) - External DVB-C + analog PAL Smartcard Interface
+      Pcb507CD,                 // Anysee E30 Plus - DVB-T + Smartcard Interface
+      Pcb507HI,                 // Anysee K70 - ATSC + NTSC + DMB
+      Pcb507D,                  // Anysee E30 Combo Plus (v1) - External DVB-T + DVB-C + Smartcard Interface
+      Pcb507E,                  // Anysee E30 C Plus (v2) - External DVB-C + Smartcard Interface
+      Pcb507DC,                 // Anysee E30 C Plus (v3) - External DVB-C + Smartcard Interface
+      Pcb507S2,                 // Anysee E30 S2 Plus - External DVB-S2 + Smartcard Interface
+      Pcb507SI,                 // Anysee E30 S Plus (v2) - External DVB-S + Smartcard Interface
+      Pcb507PS,                 // Anysee E30P S - Internal DVB-S + Smartcard Interface [Optional]
+      Pcb507PS2,                // Anysee E30P S2 - Internal DVB-S2 + Smartcard Interface
+      Pcb507FA = 15,            // Anysee E30 TC Plus (v2)/E30 Plus/E30 C Plus - DVB-T + DVB-C + Smartcard Interface [Optional]
+      Pcb5M01G = 16,            // SLC 1GB NAND flash memory
+      Pcb508TC = 18,            // Anysee E7 TC - External DVB-T + DVB-C + CI + Smartcard Interface [Optional]
+      Pcb508S2,                 // Anysee E7 S2 - External DVB-S2 + CI + Smartcard Interface [Optional]
+      Pcb508T2C,                // Anysee E7 T2C - External DVB-T2 + DVB-C + CI + Smartcard Interface [Optional]
+      Pcb508PTC,                // Anysee E7P TC - Internal DVB-T + DVB-C + CI + Smartcard Interface [Optional]
+      Pcb508PS2,                // Anysee E7P S2 - Internal DVB-S2 + CI + Smartcard Interface [Optional]
+      Pcb508PT2C                // Anysee E7P T2C - Internal DVB-T2 + DVB-C + CI + Smartcard Interface [Optional]
+    }
+
+    // chip combinations
+    private enum AnyseeNim
+    {
+    	Unknown = 0,
+    	DNOS404Zx101x,
+    	DNOS404Zx102x,              // Samsung NIM - Zarlink MT352 (COFDM demod)
+    	DNOS404Zx103x,              // Samsung NIM - Zarlink ZL10353 (COFDM demod)
+    	TDVSH062P,                  // LG/Innotek NIM - LG DT3303 (8 VSB + 256/64 QAM demod), Philips TDA9887 (analog demod), Infineon TUA6034 (hybrid digital/analog terrestrial tuner)
+    	MT352_FMD1216ME,            // Zarlink (COFDM demod)/Philips (hybrid DVB-T/analog TV/FM tuner)
+    	ZL10353_FMD1216ME,          // Zarlink (COFDM demod)/Philips (hybrid DVB-T/analog TV/FM tuner)
+    	PN3030_ITD3010,             // ??? (DAB/DAB+/DMB/FM demod)/Integrant Technologies (DMB/FM tuner)
+    	DNOS881Zx121A,              // Samsung NIM
+    	STV0297J_DNOS881Zx121A,			// ST (QAM demod)/???
+    	DNQS441PH261A,					    // Samsung
+    	TDA10023HT_DTOS203IH102A,		// Philips/NXP/Trident (QAM demod)/??? (DVB-C tuner)
+    	DNBU10321IRT,
+    	FakeHW,                     // (simulation hardware)
+    	BS2N10WCC01,					      // "DVB-S2, Cosy NIM" - Conexant CX24116/CX24118 (QPSK, DVB-S2 QPSK/8PSK demod)
+    	ZL10353_XC5000,					    // Zarlink (COFDM demod)/Xceive (hybrid digital/analog tuner)
+    	TDA10023HT_XC5000,				  // Philips/NXP/Trident (QAM demod)/Xceive (hybrid digital/analog tuner)
+    	ZL10353_DTOS203IH102A,      // Zarlink (COFDM demod)/???
+    	ZL10353_DTOS403Ix102x,			// Zarlink (COFDM demod)/???
+    	TDA10023HT_DTOS403Ix102x,		// Philips/NXP/Trident (QAM demod)
+    	DNBU10512IST,					      // ST NIM - STV0903 (QPSK, DC II, DVB-S2 QPSK/8PSK demod), STV6110
+    	M88DS3002_M88TS2020,			  // LG Montage NIM - M88DS3002 (QPSK, DVB-S2 QPSK/8PSK/16APSK/32APSK demod), M88TS2020 (digital tuner)
+    	ZL10353_EN4020,					    // Zarlink (COFDM demod)/Entropic (hybrid digital/analog terrestrial/cable tuner)
+    	TDA10023HT_EN4020,				  // Philips/NXP/Trident (QAM demod)/Entropic (hybrid digital/analog terrestrial/cable tuner)
+    	ZL10353_TDA18212,				    // Zarlink (COFDM demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
+    	TDA10023HT_TDA18212,			  // Philips/NXP/Trident (QAM demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
+    	CXD2820_TDA18272,				    // ??? (DVB-T2 demod)/NXP DNOD44CDV086A (hybrid digital/analog terrestrial/cable tuner)
+    	DNOQ44QCV106A,					    // Samsung NIM - DVB-T2/C
+    }
+
+    private enum AnyseeNimMode
+    {
+		  None = 0,
+		  DvbS_Qpsk,
+      Qam16,
+      Qam32,
+      Qam64,
+      Qam128,
+      Qam256,
+      Vsb,
+      DvbT_Ofdm,
+      Ntsc,
+      PalBg,
+      PalI,
+      PalDk,
+      SecamL,
+      SecamLp,
+      Fm,
+      Dmb,
+      Dab,
+      Qam4,
+      Bpsk,
+      Am,
+      DvbS_Qam16Fec3_4,
+      DvbS_Qam16Fec7_8,
+      DvbS_8PskFec2_3,
+      DvbS_8PskFec5_6,
+      DvbS_8PskFec8_9,
+      DvbS_QpskFec1_2,
+      DvbS_QpskFec2_3,
+      DvbS_QpskFec3_4,
+      DvbS_QpskFec5_6,
+      DvbS_QpskFec6_7,
+      DvbS_QpskFec7_8,
+      DvbS2_QpskFec1_2,
+      DvbS2_QpskFec3_5,
+      DvbS2_QpskFec2_3,
+      DvbS2_QpskFec3_4,
+      DvbS2_QpskFec4_5,
+      DvbS2_QpskFec5_6,
+      DvbS2_QpskFec8_9,
+      DvbS2_QpskFec9_10,
+      DvbS2_8PskFec3_5,
+      DvbS2_8PskFec2_3,
+      DvbS2_8PskFec3_4,
+      DvbS2_8PskFec5_6,
+      DvbS2_8PskFec8_9,
+      DvbS2_8PskFec9_10,
+      DvbS2_16ApskFec2_3,
+      DvbS2_16ApskFec3_4,
+      DvbS2_16ApskFec4_5,
+      DvbS2_16ApskFec5_6,
+      DvbS2_16ApskFec8_9,
+      DvbS2_16ApskFec9_10,
+      DvbS2_32ApskFec3_4,
+      DvbS2_32ApskFec4_5,
+      DvbS2_32ApskFec5_6,
+      DvbS2_32ApskFec8_9,
+      DvbS2_32ApskFec9_10,
+      DtvFec1_2,
+      DtvFec2_3,
+      DtvFec6_7,
+      DvbS_8Psk,
+      DvbS2_Qpsk,
+      DvbS2_8Psk,
+      DvbS2_16Apsk,
+      DvbS2_32Apsk,
+      DvbS2_QpskFec1_3,
+      DvbS2_QpskFec1_4,
+      DvbS2_QpskFec2_5,
+      DvbT2_Ofdm,
+      AutoQam,
+      AutoOfdm                // DVB-T or DVB-T2
+    }
+
+    private enum AnyseeInversionMode
+    {
+    	None = 0,         // Normal
+    	Inverted,
+    	Auto,
+    	AutoNormalFirst   // Auto-detect, try normal inversion first
+    }
+
+    private enum AnyseeScanDirection
+    {
+      Up = 0,
+      Down
+    }
+
+    [Flags]
+    private enum AnyseeNimCapability
+    {
+      SymbolRate = 1,
+      SearchStep = 2,
+      Lnb = 4,
+      RollOff = 8,
+      Pilot = 16
+    }
+
+    private enum AnyseeBroadcastSystem
+    {
+      Unknown = 0,
+      Ntsc,
+      NtscM,
+      Atsc,
+      Dmb,
+      DirecTv,
+      Dab,
+      Pal,          // PAL and/or PAL-BG
+      Secam,        // SECAM and/or SECAM-L
+      DvbT,
+      DvbC,
+      DvbS,
+      DvbS2,
+      DvbH,
+      DvbHd,
+      IsdbT,
+      IsdbC,
+      IsdbS,
+      DmbTh,
+      NtscN,
+      NtscJ,
+      PalDk,
+      PalI,
+      PalM,
+      PalN,
+      SecamLp,
+      SecamDk,
+      Am,
+      Fm,
+      Dtv6MHz,
+      Dtv7MHz,
+      Dtv8MHz,
+      Dtv7_8MHz,    // 7 and/or 8 MHz
+      ClearQam,
+      DvbT2,
+      Mcns
+    }
+
+    private enum AnyseeBusType
+    {
+      Usb = 0,
+      Pci,
+      I2c,          // "I squared C"
+      VirtualUsb,
+      VirtualPci,
+      VirtualI2c
+    }
+
+    private enum AnyseeBoardType
+    {
+      Unknown = 0,
+      Analog,
+      Digital,
+      Hybrid,
+      TsEquipment,
+      NandFlashMemory
+    }
+
+    [Flags]
+    private enum AnyseeBoardProperty
+    {
+      None = 0,
+      HighSpeedUsb = 1,
+      MultiNim = 2,
+      PowerDown = 4
+    }
+
+    private enum AnyseeBoardMode
+    {
+      // USB
+      UsbTsBypass = 0,
+      UsbTsInput,
+      UsbTsOutput,
+
+      // asynchronous
+      AsyncFifoInput,
+      AsyncFifoOutput,
+
+      // synchronous
+      SyncFifoInput,
+      SyncFifoOutput,
+
+      Analog = 11,
+      Digital,
+      TransportStream,
+      AvCapture,
+      Unknown,              // "no setup"
+      GetFailure,
+      Gpio,                 // general purpose input/output
+      Gpif
     }
 
     private enum AnyseeToneBurst : byte
@@ -51,16 +313,6 @@ namespace TvEngine
       Off = 0,
       ToneBurst,
       DataBurst
-    }
-
-    private enum AnyseePlatform : ushort
-    {
-      Pcb508TC = 18,            // DVB-T + DVB-C + Smartcard Interface + CI
-      Pcb508S2,                 // DVB-S2 + Smartcard Interface + CI
-      Pcb508T2C,                // DVB-T2 + DVB-C + Smartcard Interface + CI
-      Pcb508PTC,                // PCI PCB508TC
-      Pcb508PS2,                // PCI PCB508S2
-      Pcb508PT2C                // PCI PCB508T2C
     }
 
     private enum AnyseeCamMenuKey   // CI_KEY_MAP
@@ -106,6 +358,7 @@ namespace TvEngine
       SetKey = 1105,            // CI_CONTROL_SET_KEY - send a key press to the CAM
       SetTdt = 1106,            // CI_CONTROL_SET_TDT - send TDT to the CAM
       ResetHardware = 1107,
+      SetTsBypass = 1109,       // Not documented - do *not* use!
       SetPmt = 1110,            // CI_CONTROL_SET_PMT - send PMT to the CAM
       IsOpenSetCallbacks = 2000 // CI_CONTROL_IS_PLUG_OPEN - check whether the CI API is open and set callback functions
     }
@@ -140,6 +393,100 @@ namespace TvEngine
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    private struct PlatformInfo
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
+      public byte[] KsProperty;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+      public byte[] FirmwareVersion;    // [0x04, 0x00] -> 0.4
+      public AnyseePlatform Platform;
+      private Int32 Reserved;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct StatusInfo
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
+      public byte[] KsProperty;
+      public AnyseeBroadcastSystem CurrentBroadcastSystem;
+      public AnyseeNimMode CurrentNimMode;
+      public Int32 CurrentFrequency;    // unit = kHz
+      public Int32 Unknown1;
+      public AnyseeNim NimType;
+      public Int32 Unknown2;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct DriverVersion
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
+      public byte[] KsProperty;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+      public byte[] Version;            // [0x58, 0x20, 0x06, 0x01] -> 1.6.20.58
+      private Int32 Reserved;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NimConfig
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
+      public byte[] KsProperty;
+	    public Int32 SymbolRate;      // unit = s/s (Baud)
+      public Int32 SweepRate;       // unit = Hz/s
+      public Int32 Frequency;       // unit = kHz
+      public Int32 CarrierOffset;   // unit = kHz
+      public byte Bandwidth;        // unit = Mhz
+      public AnyseeNim NimType;
+      public AnyseeNimMode AnalogNimMode;
+      public AnyseeNimMode DigitalNimMode;
+      public AnyseeInversionMode SignalInversion;
+      public AnyseeScanDirection ScanDirection;
+	  }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct LnbInfo
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
+      public byte[] KsProperty;
+      public Int32 UnknownFlags;
+      public Int32 SwitchFrequency; // unit = MHz
+      public Int32 HighLof;         // unit = MHz
+      public Int32 LowLof;          // unit = MHz
+      public Int32 EffectiveLof;    // unit = MHz
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
+      private byte[] Reserved;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct Capabilities
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
+      public byte[] KsProperty;
+      public Int32 MinFrequency;    // unit = kHz
+      public Int32 MaxFrequency;    // unit = kHz
+      public Int32 MinSymbolRate;   // unit = s/s (Baud)
+      public Int32 MaxSymbolRate;   // unit = s/s (Baud)
+      public Int32 MinSearchStep;   // unit = Hz
+      public Int32 MaxSearchStep;   // unit = Hz
+      public AnyseeNimCapability NimCapabilities;
+      public AnyseeBroadcastSystem PrimaryBroadcastSystem;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct BoardInfo
+    {
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
+      public byte[] KsProperty;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+      public byte[] FirmwareVersion;    // [0x04, 0x00, 0x00, 0x00] -> 0.4
+      public AnyseeBusType BusType;
+      public AnyseeBoardType BoardType;
+      public AnyseeBoardProperty BoardProperties;
+      public AnyseeBoardMode BoardMode;
+      private Int32 Reserved;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     private struct DiseqcMessage
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
@@ -150,16 +497,6 @@ namespace TvEngine
       public AnyseeToneBurst ToneBurst;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       public byte[] Padding;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct PlatformInfo
-    {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
-      public byte[] KsProperty;
-      public UInt16 Padding1;   // These bits do have a meaning.
-      public AnyseePlatform Platform;
-      public Int32 Padding2;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -390,11 +727,11 @@ namespace TvEngine
         _apiCount++;
         _apiIndex = _apiCount;
         Log.Debug("Anysee: loading API, API index = {0}", _apiIndex);
-        if (!File.Exists("Resources\\CIAPI" + _apiIndex + ".dll"))
+        if (!File.Exists("Plugins\\CustomDevices\\Resources\\CIAPI" + _apiIndex + ".dll"))
         {
           try
           {
-            File.Copy("Resources\\CIAPI.dll", "Resources\\CIAPI" + _apiIndex + ".dll");
+            File.Copy("Plugins\\CustomDevices\\Resources\\CIAPI.dll", "Plugins\\CustomDevices\\Resources\\CIAPI" + _apiIndex + ".dll");
           }
           catch (Exception ex)
           {
@@ -402,7 +739,7 @@ namespace TvEngine
             return;
           }
         }
-        _libHandle = LoadLibrary("Resources\\CIAPI" + _apiIndex + ".dll");
+        _libHandle = LoadLibrary("Plugins\\CustomDevices\\Resources\\CIAPI" + _apiIndex + ".dll");
         if (_libHandle == IntPtr.Zero || _libHandle == null)
         {
           Log.Debug("Anysee: failed to load the DLL");
@@ -755,9 +1092,21 @@ namespace TvEngine
     private static readonly Guid BdaExtensionPropertySet = new Guid(0xb8e78938, 0x899d, 0x41bd, 0xb5, 0xb4, 0x62, 0x69, 0xf2, 0x80, 0x18, 0x99);
 
     private const int KsPropertySize = 24;
+    private const int RssiSize = KsPropertySize + 8;
+    private const int CnrSize = KsPropertySize + 8;
+    private const int IrDataSize = KsPropertySize + 8;
+    private const int PlatformInfoSize = KsPropertySize + 8;
+    private const int LockedSize = KsPropertySize + 8;
+    private const int NimModeSize = KsPropertySize + 8;
+    private const int StatusInfoSize = KsPropertySize + 24;
+    private const int DriverVersionSize = KsPropertySize + 8;
+    private const int NimConfigSize = KsPropertySize + 40;
+    private const int LnbInfoSize = KsPropertySize + 40;
+    private const int CapabilitiesSize = KsPropertySize + 32;
+    private const int BoardInfoSize = KsPropertySize + 24;
     private const int DiseqcMessageSize = KsPropertySize + MaxDiseqcMessageLength + 8;
     private const int MaxDiseqcMessageLength = 16;
-    private const int PlatformInfoSize = KsPropertySize + 8;
+
     private const int MaxApiStringLength = 256;
     private const int MaxCamMenuEntries = 32;
     private const int CiStateInfoSize = 8 + MaxApiStringLength;
@@ -775,7 +1124,9 @@ namespace TvEngine
 
     private bool _isAnysee = false;
     private bool _isCiSlotPresent = false;
+    #pragma warning disable 0414
     private bool _isCamPresent = false;
+    #pragma warning restore 0414
     private bool _isCamReady = false;
     private AnyseeCiState _ciState = AnyseeCiState.Empty;
 
@@ -799,13 +1150,63 @@ namespace TvEngine
     {
       Log.Debug("Anysee: read device information");
 
+      Log.Debug("Anysee: reading NIM configuration");
+      for (int i = 0; i < NimConfigSize; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+      int returnedByteCount;
+      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.NimConfig,
+        _generalBuffer, NimConfigSize,
+        _generalBuffer, NimConfigSize,
+        out returnedByteCount
+      );
+      if (hr != 0 || returnedByteCount != NimConfigSize)
+      {
+        Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        // Most of the info here is not very relevant.
+        NimConfig info = (NimConfig)Marshal.PtrToStructure(_generalBuffer, typeof(NimConfig));
+        /*Log.Debug("  symbol rate      = {0} s/s", info.SymbolRate);
+        Log.Debug("  sweep rate       = {0} Hz/s", info.SweepRate);
+        Log.Debug("  frequency        = {0} kHz", info.Frequency);
+        Log.Debug("  carrier offset   = {0} kHz", info.CarrierOffset);
+        Log.Debug("  bandwidth        = {0} MHz", info.Bandwidth);*/
+        Log.Debug("  NIM type         = {0}", info.NimType);
+        /*Log.Debug("  analog mode      = {0}", info.AnalogNimMode);
+        Log.Debug("  digital mode     = {0}", info.DigitalNimMode);
+        Log.Debug("  inversion        = {0}", info.SignalInversion);
+        Log.Debug("  scan direction   = {0}", info.ScanDirection);*/
+      }
+
+      Log.Debug("Anysee: reading driver version");
+      for (int i = 0; i < DriverVersionSize; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DriverVersion,
+        _generalBuffer, DriverVersionSize,
+        _generalBuffer, DriverVersionSize,
+        out returnedByteCount
+      );
+      if (hr != 0 || returnedByteCount != DriverVersionSize)
+      {
+        Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        DriverVersion version = (DriverVersion)Marshal.PtrToStructure(_generalBuffer, typeof(DriverVersion));
+        Log.Debug("  version          = {0:x}.{1:x}.{2:x}.{3:x}", version.Version[3], version.Version[2], version.Version[1], version.Version[0]);
+      }
+
+      Log.Debug("Anysee: reading platform information");
       for (int i = 0; i < PlatformInfoSize; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
-
-      int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.PlatformInfo,
+      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.PlatformInfo,
         _generalBuffer, PlatformInfoSize,
         _generalBuffer, PlatformInfoSize,
         out returnedByteCount
@@ -813,20 +1214,73 @@ namespace TvEngine
       if (hr != 0 || returnedByteCount != PlatformInfoSize)
       {
         Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
+      }
+      else
+      {
+        PlatformInfo info = (PlatformInfo)Marshal.PtrToStructure(_generalBuffer, typeof(PlatformInfo));
+        Log.Debug("  platform         = {0}", info.Platform);
+        Log.Debug("  firmware version = {0}.{1}", info.FirmwareVersion[1], info.FirmwareVersion[0]);
+
+        if (info.Platform == AnyseePlatform.Pcb508S2 ||
+          info.Platform == AnyseePlatform.Pcb508TC ||
+          info.Platform == AnyseePlatform.Pcb508T2C ||
+          info.Platform == AnyseePlatform.Pcb508PS2 ||
+          info.Platform == AnyseePlatform.Pcb508PTC ||
+          info.Platform == AnyseePlatform.Pcb508PT2C)
+        {
+          _isCiSlotPresent = true;
+        }
       }
 
-      PlatformInfo info = (PlatformInfo)Marshal.PtrToStructure(_generalBuffer, typeof(PlatformInfo));
-      Log.Debug("  platform = {0}", info.Platform);
-
-      if (info.Platform == AnyseePlatform.Pcb508S2 ||
-        info.Platform == AnyseePlatform.Pcb508TC ||
-        info.Platform == AnyseePlatform.Pcb508T2C ||
-        info.Platform == AnyseePlatform.Pcb508PS2 ||
-        info.Platform == AnyseePlatform.Pcb508PTC ||
-        info.Platform == AnyseePlatform.Pcb508PT2C)
+      Log.Debug("Anysee: reading board information");
+      for (int i = 0; i < BoardInfoSize; i++)
       {
-        _isCiSlotPresent = true;
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.BoardInfo,
+        _generalBuffer, BoardInfoSize,
+        _generalBuffer, BoardInfoSize,
+        out returnedByteCount
+      );
+      if (hr != 0 || returnedByteCount != BoardInfoSize)
+      {
+        Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        DVB_MMI.DumpBinary(_generalBuffer, 0, BoardInfoSize);
+        BoardInfo info = (BoardInfo)Marshal.PtrToStructure(_generalBuffer, typeof(BoardInfo));
+        Log.Debug("  bus type         = {0}", info.BusType);
+        Log.Debug("  board type       = {0}", info.BoardType);
+        Log.Debug("  board properties = {0}", info.BoardProperties.ToString());
+        Log.Debug("  board mode       = {0}", info.BoardMode);
+      }
+
+      Log.Debug("Anysee: reading capabilities");
+      for (int i = 0; i < CapabilitiesSize; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.Capabilities,
+        _generalBuffer, CapabilitiesSize,
+        _generalBuffer, CapabilitiesSize,
+        out returnedByteCount
+      );
+      if (hr != 0 || returnedByteCount != CapabilitiesSize)
+      {
+        Log.Debug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      else
+      {
+        Capabilities capabilities = (Capabilities)Marshal.PtrToStructure(_generalBuffer, typeof(Capabilities));
+        Log.Debug("  min frequency    = {0} kHz", capabilities.MinFrequency);
+        Log.Debug("  max frequency    = {0} kHz", capabilities.MaxFrequency);
+        Log.Debug("  min symbol rate  = {0} s/s", capabilities.MinSymbolRate);
+        Log.Debug("  max symbol rate  = {0} s/s", capabilities.MaxSymbolRate);
+        Log.Debug("  min search step  = {0} Hz", capabilities.MinSearchStep);
+        Log.Debug("  max search step  = {0} Hz", capabilities.MaxSearchStep);
+        Log.Debug("  capabilities     = {0}", capabilities.NimCapabilities.ToString());
+        Log.Debug("  broadcast system = {0}", capabilities.PrimaryBroadcastSystem);
       }
     }
 
@@ -1107,7 +1561,7 @@ namespace TvEngine
       Log.Debug("Anysee: supported device detected");
       _isAnysee = true;
       _tunerDevicePath = tunerDevicePath;
-      _generalBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
+      _generalBuffer = Marshal.AllocCoTaskMem(NimConfigSize);
       return true;
     }
 
@@ -1254,10 +1708,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("Anysee: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1266,19 +1720,14 @@ namespace TvEngine
         Log.Debug("Anysee: the conditional access interface is not open");
         return false;
       }
-      if (!_isCamReady)
-      {
-        Log.Debug("Anysee: the CAM is not ready");
-        return false;
-      }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
         Log.Debug("Anysee: command type {0} is not supported", command);
         return false;
       }
-      if (pmt == null || pmt.Length < 12)
+      if (pmt == null)
       {
-        Log.Debug("Anysee: PMT not supplied or too short");
+        Log.Debug("Anysee: PMT not supplied");
         return true;
       }
 
@@ -1289,180 +1738,131 @@ namespace TvEngine
         return true;
       }
 
-      // Anysee tuners only support decrypting one channel at a time. We'll
-      // just send this PMT to the CAM regardless of the list management action.
+      // Anysee tuners only support decrypting one channel at a time. We'll just send this PMT to the CAM
+      // regardless of the list management action.
       PmtData pmtData = new PmtData();
-      pmtData.PmtByte6 = pmt[5];
-      pmtData.PcrPid = (UInt16)((pmt[8] & 0x1f << 8) + pmt[9]);
-      pmtData.ServiceId = (UInt16)((pmt[3] << 8) + pmt[4]);
+      pmtData.PmtByte6 = (byte)((pmt.Version << 1) | pmt.CurrentNextIndicator);
+      pmtData.PcrPid = pmt.PcrPid;
+      pmtData.ServiceId = pmt.ProgramNumber;
 
-      // Program CA descriptor data
-      int programCaDescriptorDataOffset = 2;  // 2 bytes reserved for the data length
-      int pmtOffset = 12;
-      int pmtProgramInfoEnd = ((pmt[10] & 0x0f) << 8) + pmt[11] + pmtOffset;
-      if (pmtProgramInfoEnd > pmt.Length - 4)
+      // Program CA descriptor data.
+      int offset = 2;   // 2 bytes reserved for the data length
+      pmtData.ProgramCaDescriptorData = new byte[MaxDescriptorDataLength];
+      foreach (Descriptor d in pmt.ProgramCaDescriptors)
       {
-        Log.Debug("Anysee: PMT program info length is invalid");
-        return false;
-      }
-      while (pmtOffset + 1 <= pmtProgramInfoEnd)
-      {
-        int descriptorTag = pmt[pmtOffset];
-        int descriptorLength = pmt[pmtOffset + 1];
-        if (pmtOffset + 2 + descriptorLength > pmtProgramInfoEnd)
+        byte[] descriptorData = d.GetRawData();
+        if (offset + descriptorData.Length >= MaxDescriptorDataLength)
         {
-          Log.Debug("Anysee: PMT program descriptor {0} ({1:x}) length is invalid", descriptorTag, descriptorTag);
+          Log.Debug("Anysee: PMT program CA descriptor data is too long");
           return false;
         }
-        // We only pass the conditional access descriptors to the interface.
-        if (descriptorTag == (byte)DescriptorType.ConditionalAccess)
-        {
-          if (programCaDescriptorDataOffset + descriptorLength + 2 > MaxDescriptorDataLength)
-          {
-            Log.Debug("Anysee: PMT program CA data is too long");
-            return false;
-          }
-          Buffer.BlockCopy(pmt, pmtOffset, pmtData.ProgramCaDescriptorData, programCaDescriptorDataOffset, descriptorLength + 2);
-          programCaDescriptorDataOffset += descriptorLength + 2;
-        }
-        pmtOffset += descriptorLength + 2;
+        Buffer.BlockCopy(descriptorData, 0, pmtData.ProgramCaDescriptorData, offset, descriptorData.Length);
+        offset += descriptorData.Length;
       }
-      if (pmtOffset != pmtProgramInfoEnd)
-      {
-        Log.Debug("Anysee: PMT corruption detected");
-        return false;
-      }
+      pmtData.ProgramCaDescriptorData[0] = (byte)((offset - 2) & 0xff);
+      pmtData.ProgramCaDescriptorData[1] = (byte)(((offset - 2) >> 8) & 0xff);
 
-      pmtData.ProgramCaDescriptorData[0] = (byte)((programCaDescriptorDataOffset - 2) & 0xff);
-      pmtData.ProgramCaDescriptorData[1] = (byte)(((programCaDescriptorDataOffset - 2) >> 8) & 0xff);
-
-      // Elementary streams
+      // Elementary streams.
       Log.Debug("Anysee: elementary streams");
       pmtData.EsPmt = new EsPmtData[MaxPmtElementaryStreams];
-      int esCount = 0;
-      int pmtEnd = ((pmt[1] & 0x0f) << 8) + pmt[2] + 3 - 4;   // = section length + first 3 bytes - CRC length
-      if (pmtEnd > pmt.Length - 4)
-      {
-        Log.Debug("Anysee: PMT section length is invalid");
-        return false;
-      }
-      while (pmtOffset + 4 <= pmtEnd)
+      UInt16 esCount = 0;
+      foreach (PmtElementaryStream es in pmt.ElementaryStreams)
       {
         // We want to add each video, audio, subtitle and teletext stream with their corresponding
-        // conditional access descriptors. To start with, we don't know what kind of stream this is. If we
-        // finish processing the stream type and descriptors and still don't know what type of stream it is
-        // then we exclude it.
-        pmtData.EsPmt[esCount].EsType = AnyseeEsType.Unknown;
-        byte streamType = pmt[pmtOffset];
-        int streamPid = ((pmt[pmtOffset + 1] & 0x1f) << 8) + pmt[pmtOffset + 2];
-        int esInfoLength = ((pmt[pmtOffset + 3] & 0x0f) << 8) + pmt[pmtOffset + 4];
-        pmtOffset += 5;
-        if (pmtOffset + esInfoLength > pmtEnd)
-        {
-          Log.Debug("Anysee: PMT elementary stream info length for PID {0} ({1:x}) is invalid", streamPid, streamPid);
-          return false;
-        }
+        // conditional access descriptors.
+        AnyseeEsType esType = AnyseeEsType.Unknown;
 
         // Can we determine the stream type from the PMT stream type?
-        pmtData.EsPmt[esCount].StreamType = streamType;
-        if (streamType == (byte)StreamType.Mpeg1Part2Video ||
-          streamType == (byte)StreamType.Mpeg2Part2Video ||
-          streamType == (byte)StreamType.Mpeg4Part2Video ||
-          streamType == (byte)StreamType.Mpeg4Part10Video)
+        if (es.StreamType == StreamType.Mpeg1Part2Video ||
+          es.StreamType == StreamType.Mpeg2Part2Video ||
+          es.StreamType == StreamType.Mpeg4Part2Video ||
+          es.StreamType == StreamType.Mpeg4Part10Video)
         {
-          pmtData.EsPmt[esCount].EsType = AnyseeEsType.Video;
+          esType = AnyseeEsType.Video;
         }
-        else if (streamType == (byte)StreamType.Mpeg1Part3Audio ||
-          streamType == (byte)StreamType.Mpeg2Part3Audio ||
-          streamType == (byte)StreamType.Mpeg2Part7Audio ||
-          streamType == (byte)StreamType.Mpeg4Part3Audio ||
-          streamType == (byte)StreamType.Ac3Audio ||
-          streamType == (byte)StreamType.EnhancedAc3Audio)
+        else if (es.StreamType == StreamType.Mpeg1Part3Audio ||
+          es.StreamType == StreamType.Mpeg2Part3Audio ||
+          es.StreamType == StreamType.Mpeg2Part7Audio ||
+          es.StreamType == StreamType.Mpeg4Part3Audio ||
+          es.StreamType == StreamType.Ac3Audio ||
+          es.StreamType == StreamType.EnhancedAc3Audio)
         {
-          pmtData.EsPmt[esCount].EsType = AnyseeEsType.Audio;
-        }
-
-        // Process the elementary stream descriptors.
-        pmtData.EsPmt[esCount].DescriptorData = new byte[MaxDescriptorDataLength];
-        int esCaDescriptorDataOffset = 2;   // 2 bytes reserved for the data length
-        while (esInfoLength >= 2)
-        {
-          byte descriptorTag = pmt[pmtOffset];
-          byte descriptorLength = pmt[pmtOffset + 1];
-          if (pmtOffset + descriptorLength + 2 > pmtEnd)
-          {
-            Log.Debug("Anysee: PMT elementary stream descriptor {0} ({1:x}) length for PID {2} ({3:x}) is invalid", descriptorTag, descriptorTag, streamPid, streamPid);
-            return false;
-          }
-
-          // If we don't yet know what type of stream this is, check the descriptor type.
-          if (pmtData.EsPmt[esCount].EsType == AnyseeEsType.Unknown)
-          {
-            if (descriptorTag == (byte)DescriptorType.VideoStream ||
-              descriptorTag == (byte)DescriptorType.Mpeg4Video ||
-              descriptorTag == (byte)DescriptorType.AvcVideo)
-            {
-              pmtData.EsPmt[esCount].EsType = AnyseeEsType.Video;
-            }
-            else if (descriptorTag == (byte)DescriptorType.AudioStream ||
-              descriptorTag == (byte)DescriptorType.Mpeg4Audio ||
-              descriptorTag == (byte)DescriptorType.Mpeg2AacAudio ||
-              descriptorTag == (byte)DescriptorType.Aac ||
-              descriptorTag == (byte)DescriptorType.Ac3 ||        // DVB
-              descriptorTag == (byte)DescriptorType.Ac3Audio ||   // ATSC
-              descriptorTag == (byte)DescriptorType.EnhancedAc3 ||
-              descriptorTag == (byte)DescriptorType.Dts)
-            {
-              pmtData.EsPmt[esCount].EsType = AnyseeEsType.Audio;
-            }
-            else if (descriptorTag == (byte)DescriptorType.Subtitling)
-            {
-              pmtData.EsPmt[esCount].EsType = AnyseeEsType.Subtitle;
-            }
-            else if (descriptorTag == (byte)DescriptorType.Teletext)
-            {
-              pmtData.EsPmt[esCount].EsType = AnyseeEsType.Teletext;
-            }
-          }
-
-          // We only pass the conditional access descriptors to the interface.
-          if (descriptorTag == (byte)DescriptorType.ConditionalAccess)
-          {
-            if (esCaDescriptorDataOffset + descriptorLength + 2 > MaxDescriptorDataLength)
-            {
-              Log.Debug("Anysee: PMT elementary stream {0} (0x{1:x}) CA data is too long", streamPid, streamPid);
-              return false;
-            }
-            Buffer.BlockCopy(pmt, pmtOffset, pmtData.EsPmt[esCount].DescriptorData, esCaDescriptorDataOffset, descriptorLength + 2);
-            esCaDescriptorDataOffset += descriptorLength + 2;
-          }
-          esInfoLength -= (descriptorLength + 2);
-          pmtOffset += descriptorLength + 2;
+          esType = AnyseeEsType.Audio;
         }
 
-        // We finished processing this stream, but do we actually want to keep it?
-        if (pmtData.EsPmt[esCount].EsType != AnyseeEsType.Unknown)
+        // Maybe the primary descriptor type will help?
+        if (esType == AnyseeEsType.Unknown)
         {
-          // Yes!
-          pmtData.EsPmt[esCount].DescriptorData[0] = (byte)((esCaDescriptorDataOffset - 2) & 0xff);
-          pmtData.EsPmt[esCount].DescriptorData[1] = (byte)(((esCaDescriptorDataOffset - 2) >> 8) & 0xff);
-          Log.Debug("  including PID {0} (0x{1:x}), stream type = {2} (0x{3:x}), category = {4}", streamPid, streamPid, streamType, streamType, pmtData.EsPmt[esCount].EsType);
-          esCount++;
-          if (esCount == MaxPmtElementaryStreams)
+          if (es.PrimaryDescriptorTag == DescriptorTag.VideoStream ||
+            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video ||
+            es.PrimaryDescriptorTag == DescriptorTag.AvcVideo)
           {
-            Log.Debug("Anysee: reached maximum number of included PIDs");
-            break;
+            esType = AnyseeEsType.Video;
+          }
+          else if (es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
+            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
+            es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
+            es.PrimaryDescriptorTag == DescriptorTag.Aac ||
+            es.PrimaryDescriptorTag == DescriptorTag.Ac3 ||        // DVB
+            es.PrimaryDescriptorTag == DescriptorTag.Ac3Audio ||   // ATSC
+            es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3 ||
+            es.PrimaryDescriptorTag == DescriptorTag.Dts)
+          {
+            esType = AnyseeEsType.Audio;
+          }
+          else if (es.PrimaryDescriptorTag == DescriptorTag.Subtitling)
+          {
+            esType = AnyseeEsType.Subtitle;
+          }
+          else if (es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
+            es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
+          {
+            esType = AnyseeEsType.Teletext;
           }
         }
-        else
+
+        // So do we actually want to keep this stream?
+        if (esType == AnyseeEsType.Unknown)
         {
           // Nope.
-          Log.Debug("  excluding PID {0} (0x{1:x}), stream type = {2} (0x{3:x})", streamPid, streamPid, streamType, streamType);
+          Log.Debug("  excluding PID {0} (0x{1:x}), stream type = {2})", es.Pid, es.Pid, es.StreamType);
+          continue;
+        }
+
+        // Yes!!!
+        Log.Debug("  including PID {0} (0x{1:x}), stream type = {2}, category = {3}", es.Pid, es.Pid, es.StreamType, esType);
+        EsPmtData esToKeep = new EsPmtData();
+        esToKeep.Pid = es.Pid;
+        esToKeep.EsType = esType;
+        esToKeep.StreamType = (byte)es.StreamType;
+
+        // Elementary stream CA descriptor data.
+        offset = 2;   // 2 bytes reserved for the data length
+        esToKeep.DescriptorData = new byte[MaxDescriptorDataLength];
+        foreach (Descriptor d in es.CaDescriptors)
+        {
+          byte[] descriptorData = d.GetRawData();
+          if (offset + descriptorData.Length >= MaxDescriptorDataLength)
+          {
+            Log.Debug("Anysee: PMT elementary stream {0} (0x{1:x}) CA data is too long", es.Pid, es.Pid);
+            return false;
+          }
+          Buffer.BlockCopy(descriptorData, 0, esToKeep.DescriptorData, offset, descriptorData.Length);
+          offset += descriptorData.Length;
+        }
+        esToKeep.DescriptorData[0] = (byte)((offset - 2) & 0xff);
+        esToKeep.DescriptorData[1] = (byte)(((offset - 2) >> 8) & 0xff);
+        pmtData.EsPmt[esCount++] = esToKeep;
+
+        if (esCount == MaxPmtElementaryStreams)
+        {
+          Log.Debug("Anysee: reached maximum number of included PIDs");
+          break;
         }
       }
 
       Log.Debug("Anysee: total included PIDs = {0}", esCount);
-      pmtData.EsCount = (UInt16)esCount;
+      pmtData.EsCount = esCount;
 
       lock (this)
       {
@@ -1612,7 +2012,7 @@ namespace TvEngine
       }
 
       Marshal.StructureToPtr(message, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
         _generalBuffer, DiseqcMessageSize,
@@ -1663,7 +2063,7 @@ namespace TvEngine
       lock (this)
       {
         Marshal.StructureToPtr(message, _generalBuffer, true);
-        DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
 
         hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
           _generalBuffer, DiseqcMessageSize,

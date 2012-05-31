@@ -102,16 +102,6 @@ namespace TvLibrary.Implementations
     protected DVBTeletext _teletextDecoder;
 
     /// <summary>
-    /// Struct of a ts header
-    /// </summary>
-    protected TSHelperTools.TSHeader _packetHeader;
-
-    /// <summary>
-    /// Instance of ts helper class
-    /// </summary>
-    protected TSHelperTools _tsHelper;
-
-    /// <summary>
     /// Instance of the current channel
     /// </summary>
     protected IChannel _currentChannel;
@@ -142,24 +132,9 @@ namespace TvLibrary.Implementations
     protected int _subChannelId;
 
     /// <summary>
-    /// Current state of the graph
-    /// </summary>
-    protected GraphState _graphState;
-
-    /// <summary>
     /// Scanning parameters
     /// </summary>
     protected ScanParameters _parameters;
-
-    /// <summary>
-    /// Indicates, if timeshifting is started
-    /// </summary>
-    protected bool _startTimeShifting;
-
-    /// <summary>
-    /// Indicates, if recording is started
-    /// </summary>
-    protected bool _startRecording;
 
     #endregion
 
@@ -168,16 +143,14 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseSubChannel"/> class.
     /// </summary>
-    protected BaseSubChannel()
+    protected BaseSubChannel(int subChannelId)
     {
+      _subChannelId = subChannelId;
       _teletextDecoder = new DVBTeletext();
       _timeshiftFileName = String.Empty;
       _recordingFileName = String.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       _dateTimeShiftStarted = DateTime.MinValue;
-      //_graphRunning = false;
-      _graphState = GraphState.Created;
-      _tsHelper = new TSHelperTools();
     }
 
     #endregion
@@ -311,17 +284,21 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StartTimeShifting(string fileName)
     {
+      Log.Log.Debug("BaseSubChannel: subchannel {0} start timeshifting to {1}", _subChannelId, fileName);
       try
       {
-        return OnStartTimeShifting(fileName);
+        OnStartTimeShifting(fileName);
+        _timeshiftFileName = fileName;
+        _dateTimeShiftStarted = DateTime.Now;
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        //cleanup
-        Log.Log.WriteFile("StartTimeShifting failed, cleaning up {0}", e.Message);
+        Log.Log.Debug("BaseSubChannel: failed to start timeshifting\r\n{0}", ex.ToString());
         StopTimeShifting();
+        return false;
       }
-      return false;
+
+      return true;
     }
 
     /// <summary>
@@ -330,13 +307,10 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StopTimeShifting()
     {
+      Log.Log.Debug("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
       OnStopTimeShifting();
-      _startTimeShifting = false;
-      _graphState = GraphState.Created;
-
-      _timeshiftFileName = "";
+      _timeshiftFileName = String.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
-
       return true;
     }
 
@@ -347,36 +321,16 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StartRecording(string fileName)
     {
+      Log.Log.Debug("BaseSubChannel: subchannel {0} start recording to {1}", _subChannelId, fileName);
       try
       {
-        Log.Log.WriteFile("StartRecording to {0}", fileName);
         OnStartRecording(fileName);
         _recordingFileName = fileName;
-
-        if (this is AnalogSubChannel)
-        {
-          Log.Log.Info("analog subch:{0} Started recording", _subChannelId);
-        }
-        else if (this is HDPVRChannel)
-        {
-          Log.Log.Info("HDPVR subch:{0} Started recording", _subChannelId);
-        }
-        else if (this is TvDvbChannel)
-        {
-          Log.Log.Info("DVB subch:{0} Started recording", _subChannelId);
-        }
-        else
-        {
-          Log.Log.Info("Unknown subch:{0} Started recording", _subChannelId);
-        }
-
         _dateRecordingStarted = DateTime.Now;
-        _graphState = GraphState.Recording;
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Log.Log.WriteFile("StartRecording failed, cleaning up {0}", e.Message);
-        //cleanup
+        Log.Log.Debug("BaseSubChannel: failed to start recording\r\n{0}", ex.ToString());
         StopRecording();
         return false;
       }
@@ -390,10 +344,9 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.Log.WriteFile("basesubchannel.StopRecording {}", this._subChannelId);
+      Log.Log.Debug("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
       OnStopRecording();
-      _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
-      _recordingFileName = "";
+      _recordingFileName = String.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       return true;
     }
@@ -442,26 +395,9 @@ namespace TvLibrary.Implementations
     /// <param name="ptr">pointer to the transport packet</param>
     public void ProcessPacket(IntPtr ptr)
     {
-      if (ptr == IntPtr.Zero) return;
-
-      _packetHeader = _tsHelper.GetHeader(ptr);
-      if (_packetHeader.SyncByte != 0x47)
+      if (_teletextDecoder != null)
       {
-        Log.Log.WriteFile("packet sync error");
-        return;
-      }
-      if (_packetHeader.TransportError)
-      {
-        Log.Log.WriteFile("packet transport error");
-        return;
-      }
-      // teletext
-      //if (_grabTeletext)
-      {
-        if (_teletextDecoder != null)
-        {
-          _teletextDecoder.SaveData(ptr);
-        }
+        _teletextDecoder.SaveData(ptr);
       }
     }
 
@@ -496,22 +432,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public void Decompose()
     {
-      if (this is AnalogSubChannel)
-      {
-        Log.Log.Info("analog subch:{0} Decompose()", _subChannelId);
-      }
-      else if (this is HDPVRChannel)
-      {
-        Log.Log.Info("HDPVR subch:{0} Decompose", _subChannelId);
-      }
-      else if (this is TvDvbChannel)
-      {
-        Log.Log.Info("DVB subch:{0} Decompose()", _subChannelId);
-      }
-      else
-      {
-        Log.Log.Info("Unknown subch:{0} Decompose()", _subChannelId);
-      }
+      Log.Log.Debug("BaseSubChannel: subchannel {0} decompose", _subChannelId);
 
       if (IsRecording)
       {
@@ -521,15 +442,14 @@ namespace TvLibrary.Implementations
       {
         StopTimeShifting();
       }
-      _timeshiftFileName = "";
-      _recordingFileName = "";
+      _timeshiftFileName = String.Empty;
+      _recordingFileName = String.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
       _dateRecordingStarted = DateTime.MinValue;
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
       }
-      _graphState = GraphState.Created;
       OnDecompose();
     }
 
@@ -550,18 +470,10 @@ namespace TvLibrary.Implementations
     public abstract void OnAfterTune();
 
     /// <summary>
-    /// Should be called when the graph is about to start
-    /// Resets the state 
-    /// If graph is already running, starts the pmt grabber to grab the
-    /// pmt for the new channel
-    /// </summary>
-    public abstract void OnGraphStart();
-
-    /// <summary>
     /// Should be called when the graph has been started
     /// sets up the pmt grabber to grab the pmt of the channel
     /// </summary>
-    public abstract void OnGraphStarted();
+    public abstract void OnGraphRunning();
 
     /// <summary>
     /// Should be called when graph is about to stop.
@@ -587,7 +499,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// A derrived class should start here the timeshifting on the tv card. It will be called from StartTimeshifting()
     /// </summary>
-    protected abstract bool OnStartTimeShifting(string fileName);
+    protected abstract void OnStartTimeShifting(string fileName);
 
     /// <summary>
     /// A derrived class should stop here the timeshifting on the tv card. It will be called from StopTimeshifting()
@@ -618,7 +530,7 @@ namespace TvLibrary.Implementations
 
     #endregion
 
-    #region abstract ITvSubChannel Member
+    #region abstract ITvSubChannel members
 
     /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false

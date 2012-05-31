@@ -31,147 +31,15 @@ using DirectShowLib.BDA;
 
 namespace TvLibrary.Implementations.DVB
 {
-  #region enums
-
-  /// <summary>
-  /// DVB service types - see ETSI EN 300 468
-  /// </summary>
-  public enum DvbServiceType
-  {
-    // (0x00 reserved)
-
-    /// <summary>
-    /// digital television service
-    /// </summary>
-    DigitalTelevision = 0x01,
-
-    /// <summary>
-    /// digital radio sound service
-    /// </summary>
-    DigitalRadio = 0x02,
-
-    /// <summary>
-    /// teletext service
-    /// </summary>
-    Teletext = 0x03,
-
-    /// <summary>
-    /// Near Video On Demand reference service
-    /// </summary>
-    NvodReference = 0x04,
-
-    /// <summary>
-    /// Near Video On Demand time-shifted service
-    /// </summary>
-    NvodTimeShifted = 0x05,
-
-    /// <summary>
-    /// mosaic service
-    /// </summary>
-    Mosaic = 0x06,
-
-    /// <summary>
-    /// FM radio service
-    /// </summary>
-    FmRadio = 0x07,
-
-    /// <summary>
-    /// DVB System Renewability Messages service
-    /// </summary>
-    DvbSrm = 0x08,
-
-    // (0x09 reserved)
-
-    /// <summary>
-    /// advanced codec digital radio sound service
-    /// </summary>
-    AdvancedCodecDigitalRadio = 0x0A,
-
-    /// <summary>
-    /// advanced codec mosaic service
-    /// </summary>
-    AdvancedCodecMosaic = 0x0B,
-
-    /// <summary>
-    /// data broadcast service
-    /// </summary>
-    DataBroadcast = 0x0C,
-
-    // (0x0d reserved for common interface use)
-
-    /// <summary>
-    /// Return Channel via Satellite map
-    /// </summary>
-    RcsMap = 0x0E,
-
-    /// <summary>
-    /// Return Channel via Satellite Forward Link Signalling
-    /// </summary>
-    RcsFls = 0x0F,
-
-    /// <summary>
-    /// DVB Multimedia Home Platform service
-    /// </summary>
-    DvbMhp = 0x10,
-
-    /// <summary>
-    /// MPEG 2 HD digital television service
-    /// </summary>
-    Mpeg2HdDigitalTelevision = 0x11,
-
-    // (0x12 to 0x15 reserved)
-
-    /// <summary>
-    /// advanced codec SD digital television service
-    /// </summary>
-    AdvancedCodecSdDigitalTelevision = 0x16,
-
-    /// <summary>
-    /// advanced codec SD Near Video On Demand time-shifted service
-    /// </summary>
-    AdvancedCodecSdNvodTimeShifted = 0x17,
-
-    /// <summary>
-    /// advanced codec SD Near Video On Demand reference service
-    /// </summary>
-    AdvancedCodecSdNvodReference = 0x18,
-
-    /// <summary>
-    /// advanced codec HD digital television
-    /// </summary>
-    AdvancedCodecHdDigitalTelevision = 0x19,
-
-    /// <summary>
-    /// advanced codec HD Near Video On Demand time-shifted service
-    /// </summary>
-    AdvancedCodecHdNvodTimeShifted = 0x1A,
-
-    /// <summary>
-    /// advanced codec HD Near Video On Demand reference service
-    /// </summary>
-    AdvancedCodecHdNvodReference = 0x1B,
-
-    /// <summary>
-    /// sky germany linked channels (option channels)
-    /// </summary>
-    SkyGermanyOptionChannel = 0xd3
-
-    // (0x1C to 0x7F reserved)
-    // (0x80 to 0xFE user defined)
-    // (0xFF reserved)
-  }
-
-  #endregion
-
   /// <summary>
   /// base class for scanning DVB tv/radio channels
   /// </summary>
-  public abstract class DvbBaseScanning : IHardwarePidFiltering, IChannelScanCallback, ITVScanning
+  public abstract class DvbBaseScanning : IChannelScanCallback, ITVScanning
   {
     #region variables
 
     private ITsChannelScan _analyzer;
-    protected readonly TvCardDvbBase _card;
+    private readonly TvCardDvbBase _card;
     private ManualResetEvent _event;
 
     /// <summary>
@@ -392,17 +260,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// Filters the pids.
-    /// </summary>
-    /// <param name="count">The count.</param>
-    /// <param name="pids">The pids.</param>
-    /// <returns></returns>
-    public int FilterPids(short count, IntPtr pids)
-    {
-      return 0;
-    }
-
     #region IChannelScanCallback Members
 
     /// <summary>
@@ -530,7 +387,7 @@ namespace TvLibrary.Implementations.DVB
 
     protected virtual bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
     {
-      // DVB/ATSC compliant services will be picked up here.
+      // DVB/ATSC compliant distinctServices will be picked up here.
       if (IsKnownServiceType(info.serviceType))
       {
         return true;
@@ -542,7 +399,7 @@ namespace TvLibrary.Implementations.DVB
       // fully/properly implement the specifications! In any case we need
       // to err on the side of caution and pick up any channels that TsWriter
       // says have video and/or audio streams until we can find a better
-      // way to properly identify TV and radio services.
+      // way to properly identify TV and radio distinctServices.
       if (hasVideo != 0)
       {
         info.serviceType = (int)DvbServiceType.DigitalTelevision;

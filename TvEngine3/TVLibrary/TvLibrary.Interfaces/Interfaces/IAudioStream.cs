@@ -28,33 +28,33 @@ namespace TvLibrary.Interfaces
   public enum AudioStreamType
   {
     /// <summary>
-    /// mpeg 1 audio
+    /// MPEG 1 audio
     /// </summary>
-    Mpeg1,
+    MPEG1,
     /// <summary>
-    /// mpeg 2 audio
+    /// MPEG 2 audio
     /// </summary>
-    Mpeg2,
+    MPEG2,
     /// <summary>
-    /// ac3 audio
+    /// AC-3 audio
     /// </summary>
     AC3,
     /// <summary>
-    /// aac audio
+    /// AAC audio
     /// </summary>
     AAC,
     /// <summary>
-    /// latm aac audio
+    /// LATM-AAC audio
     /// </summary>
     LATMAAC,
     /// <summary>
-    /// ac3 audio
+    /// Extended AC-3 audio
     /// </summary>
     EAC3,
     /// <summary>
     /// unknown audio
     /// </summary>
-    Unknown,
+    Unknown
   }
 
   /// <summary>

@@ -371,7 +371,6 @@ namespace TvLibrary.Implementations.Hybrid
     public IQuality Quality
     {
       get { return _internalCard.Quality; }
-      set { _internalCard.Quality = value; }
     }
 
     /// <summary>

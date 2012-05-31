@@ -79,7 +79,11 @@ void CCaGrabber::OnNewSection(CSection& section)
 
 		LogDebug("cagrabber: got ca version:%d %d", section.version_number,m_iCaVersion);
 		m_iCaVersion=section.version_number;
-		m_iCaLength=section.section_length;
+
+		// The + 3 is because the CAT data includes the table ID, section
+		// syntax indicator, and section length bytes on the front - we're
+		// literally passing the *whole* CAT...
+		m_iCaLength=section.section_length + 3;
 
 		memcpy(m_caData,section.Data,m_iCaLength);
 		if (memcmp(m_caData,m_caPrevData,m_iCaLength)!=0)

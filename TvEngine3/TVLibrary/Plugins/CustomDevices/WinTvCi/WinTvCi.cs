@@ -163,7 +163,9 @@ namespace TvEngine
     private static List<String> _devicesInUse = new List<string>();
 
     private bool _isWinTvCi = false;
+    #pragma warning disable 0414
     private bool _isCamPresent = false;
+    #pragma warning restore 0414
     private bool _isCamReady = false;
     private WinTvCiState _ciState = WinTvCiState.Empty;
 
@@ -639,10 +641,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("WinTV-CI: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -656,17 +658,12 @@ namespace TvEngine
         Log.Debug("WinTV-CI: device filter not added to the BDA filter graph");
         return false;
       }
-      if (!_isCamReady)
-      {
-        Log.Debug("WinTV-CI: the CAM is not ready");
-        return false;
-      }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
         Log.Debug("WinTV-CI: command type {0} is not supported", command);
         return false;
       }
-      if (pmt == null || pmt.Length == 0)
+      if (pmt == null)
       {
         Log.Debug("WinTV-CI: PMT not supplied");
         return true;
@@ -684,7 +681,8 @@ namespace TvEngine
       // would trick the module into decrypting multiple channels, however it didn't
       // work. So we'll just send this PMT to the CAM regardless of the list management
       // action.
-      int hr = WinTVCI_SendPMT(_winTvCiFilter, pmt, pmt.Length);
+      byte[] rawPmt = pmt.GetRawPmt();
+      int hr = WinTVCI_SendPMT(_winTvCiFilter, rawPmt, rawPmt.Length);
       if (hr == 0)
       {
         Log.Debug("WinTV-CI: result = success");

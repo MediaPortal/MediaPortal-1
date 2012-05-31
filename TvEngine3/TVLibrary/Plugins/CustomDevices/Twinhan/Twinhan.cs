@@ -1078,7 +1078,9 @@ namespace TvEngine
 
     private bool _isTwinhan = false;
     private bool _isTerraTec = false;
+    #pragma warning disable 0414
     private bool _isCamPresent = false;
+    #pragma warning restore 0414
     private bool _isCamReady = false;
     private bool _isPidFilterSupported = false;
     private bool _isPidFilterBypassSupported = true;
@@ -1873,18 +1875,12 @@ namespace TvEngine
       else if (channel is DVBSChannel)
       {
         DVBSChannel ch = channel as DVBSChannel;
-        int lowLof;
-        int highLof;
-        int switchFrequency;
-        BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out lowLof, out highLof, out switchFrequency);
-        if (BandTypeConverter.IsHighBand(ch, parameters))
-        {
-          tuningParams.Frequency = (UInt32)(ch.Frequency - (highLof * 1000));
-        }
-        else
-        {
-          tuningParams.Frequency = (UInt32)(ch.Frequency - (lowLof * 1000));
-        }
+        uint lnbLof;
+        uint lnbSwitchFrequency;
+        Polarisation polarisation;
+        BandTypeConverter.GetLnbTuningParameters(ch, parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
+
+        tuningParams.Frequency = (UInt32)(ch.Frequency - (lnbLof * 1000));
         tuningParams.SymbolRate = (UInt32)ch.SymbolRate;
         tuningParams.Modulation = 0;  // ???
       }
@@ -2185,10 +2181,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("Twinhan: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -2197,24 +2193,14 @@ namespace TvEngine
         Log.Debug("Twinhan: device not initialised or interface not supported");
         return false;
       }
-      if (!_isCamReady)
-      {
-        Log.Debug("Twinhan: the CAM is not ready");
-        return false;
-      }
-      if (pmt == null || pmt.Length == 0)
+      if (pmt == null)
       {
         Log.Debug("Twinhan: PMT not supplied");
         return true;
       }
 
       // Twinhan supports the standard CA PMT format.
-      byte[] caPmt;
-      if (!CaPmt.GetFromPmt(pmt, listAction, command, out caPmt))
-      {
-        Log.Debug("Twinhan: failed to generate CA PMT from PMT");
-        return false;
-      }
+      byte[] caPmt = pmt.GetCaPmt(listAction, command);
 
       // Send the data to the CAM. Use local buffers since PMT updates are asynchronous.
       IntPtr commandBuffer = Marshal.AllocCoTaskMem(CommandSize);

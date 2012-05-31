@@ -501,7 +501,9 @@ namespace TvEngine
     #region variables
 
     private bool _isDigitalEverywhere = false;
+    #pragma warning disable 0414
     private bool _isCamPresent = false;
+    #pragma warning restore 0414
     private bool _isCamReady = false;
 
     private IntPtr _generalBuffer = IntPtr.Zero;
@@ -1359,10 +1361,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("Digital Everywhere: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1371,27 +1373,24 @@ namespace TvEngine
         Log.Debug("Digital Everywhere: device not initialised or interface not supported");
         return false;
       }
-      if (!_isCamReady)
-      {
-        Log.Debug("Digital Everywhere: the CAM is not ready");
-        return false;
-      }
-      if (pmt == null || pmt.Length == 0)
+      if (pmt == null)
       {
         Log.Debug("Digital Everywhere: PMT not supplied");
         return true;
       }
-      if (pmt.Length > MaxPmtLength - 2)
+
+      byte[] rawPmt = pmt.GetRawPmt();
+      if (rawPmt.Length > MaxPmtLength - 2)
       {
         Log.Debug("Digital Everywhere: buffer capacity too small");
         return false;
       }
 
       CaData data = new CaData(DeCiMessageTag.Pmt);
-      data.DataLength = (ushort)(pmt.Length + 2);
+      data.DataLength = (ushort)(rawPmt.Length + 2);
       data.Data[0] = (byte)listAction;
       data.Data[1] = (byte)command;
-      Buffer.BlockCopy(pmt, 0, data.Data, 2, pmt.Length);
+      Buffer.BlockCopy(rawPmt, 0, data.Data, 2, rawPmt.Length);
 
       int hr;
       lock (this)

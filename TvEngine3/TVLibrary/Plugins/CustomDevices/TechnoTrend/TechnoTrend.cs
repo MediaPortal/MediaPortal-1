@@ -985,7 +985,9 @@ namespace TvEngine
 
     private bool _isTechnoTrend = false;
     private bool _isCiSlotPresent = false;
+    #pragma warning disable 0414
     private bool _isCamPresent = false;
+    #pragma warning restore 0414
     private bool _isCamReady = false;
     private byte _slotIndex = 0;
     private TtCiState _ciState = TtCiState.Unknown;
@@ -1760,34 +1762,19 @@ namespace TvEngine
         // Frequency is already specified in kHz (the base unit) so the
         // multiplier is set to 1.
         tuneRequest.Frequency = (uint)ch.Frequency;
-        tuneRequest.FrequencyMultiplier = 1;// 000;
-        tuneRequest.Polarisation = ch.Polarisation;
+        tuneRequest.FrequencyMultiplier = 1;
         tuneRequest.Diseqc = TtDiseqcPort.Null;
-        if (ch.ModulationType == ModulationType.ModNotSet)
-        {
-          tuneRequest.Modulation = ModulationType.ModQpsk;
-        }
-        else if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
-        {
-          tuneRequest.Modulation = ModulationType.Mod8Vsb;
-        }
-        // Other modulations are not explictly known to be supported, however
-        // we allow them to pass through.
-        else
-        {
-          tuneRequest.Modulation = ch.ModulationType;
-        }
+        tuneRequest.UseToneBurst = false;
+        tuneRequest.Modulation = ch.ModulationType;
         tuneRequest.SymbolRate = (uint)ch.SymbolRate;
         tuneRequest.SpectralInversion = SpectralInversion.Automatic;
 
-        int lowLof;
-        int highLof;
-        int switchFrequency;
-        BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out lowLof, out highLof, out switchFrequency);
-        tuneRequest.LnbHighBandLof = (uint)(1000 * highLof);
-        tuneRequest.LnbLowBandLof = (uint)(1000 * lowLof);
-        tuneRequest.LnbSwitchFrequency = (uint)(1000 * switchFrequency);
-        tuneRequest.UseToneBurst = false;
+        uint lnbLof;
+        uint lnbSwitchFrequency;
+        BandTypeConverter.GetLnbTuningParameters(ch, parameters, out lnbLof, out lnbSwitchFrequency, out tuneRequest.Polarisation);
+        tuneRequest.LnbHighBandLof = 1000 * lnbLof;
+        tuneRequest.LnbLowBandLof = 1000 * lnbLof;
+        tuneRequest.LnbSwitchFrequency = 1000 * lnbSwitchFrequency;
 
         Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
       }
@@ -1952,10 +1939,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("TechnoTrend: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1964,27 +1951,21 @@ namespace TvEngine
         Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
-      if (!_isCamReady)
-      {
-        Log.Debug("TechnoTrend: the CAM is not ready");
-        return false;
-      }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
         Log.Debug("TechnoTrend: command type {0} is not supported", command);
         return false;
       }
-      if (pmt == null || pmt.Length < 5)
+      if (pmt == null)
       {
         Log.Debug("TechnoTrend: PMT not supplied");
         return true;
       }
 
-      UInt16 serviceId = (UInt16)((pmt[3] << 8) + pmt[4]);
-      Log.Debug("TechnoTrend: service ID is {0} (0x{1:x})", serviceId, serviceId);
-      if (serviceId == 0)
+      Log.Debug("TechnoTrend: service ID is {0} (0x{1:x})", pmt.ProgramNumber, pmt.ProgramNumber);
+      if (pmt.ProgramNumber == 0)
       {
-        Log.Debug("TechnoTrend: service ID 0 cannot be descrambled");
+        Log.Debug("TechnoTrend: service 0 cannot be descrambled");
         return false;
       }
 
@@ -1992,7 +1973,7 @@ namespace TvEngine
       // the number of interactions with the CAM as they can cause glitches in recordings etc.
       if (command == CaPmtCommand.NotSelected)
       {
-        _descrambledServices.Remove(serviceId);
+        _descrambledServices.Remove(pmt.ProgramNumber);
         return true;
       }
 
@@ -2007,7 +1988,7 @@ namespace TvEngine
         bool found = false;
         while (en.MoveNext())
         {
-          if (en.Current == serviceId)
+          if (en.Current == pmt.ProgramNumber)
           {
             found = true;
             break;
@@ -2015,7 +1996,7 @@ namespace TvEngine
         }
         if (!found)
         {
-          _descrambledServices.Add(serviceId);
+          _descrambledServices.Add(pmt.ProgramNumber);
         }
       }
       else if (listAction == CaPmtListManagementAction.Only ||
@@ -2023,7 +2004,7 @@ namespace TvEngine
       {
         // "Only" and "first" actions mean start a new list.
         _descrambledServices = new List<UInt16>();
-        _descrambledServices.Add(serviceId);
+        _descrambledServices.Add(pmt.ProgramNumber);
       }
 
       // Wait until we have the full list before we send any commands to the CAM.

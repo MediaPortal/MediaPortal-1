@@ -308,7 +308,7 @@ namespace SetupTv.Dialogs
       this.label32.TabIndex = 95;
       this.label32.Text = "Modulation:";
       // 
-      // comboBoxDisEqc
+      // comboBoxDiseqc
       // 
       this.comboBoxDiseqc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDiseqc.FormattingEnabled = true;

@@ -399,44 +399,41 @@ namespace TvEngine
       }
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
+      uint lnbLof;
+      uint lnbSwitchFrequency;
+      Polarisation polarisation;
+      BandTypeConverter.GetLnbTuningParameters(dvbsChannel, parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
 
-      int lnbLowLof;
-      int lnbHighLof;
-      int lnbSwitchFrequency;
-      BandTypeConverter.GetDefaultLnbSetup(parameters, dvbsChannel.BandType, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency);
-
-      ProfPolarisation polarisation = ProfPolarisation.Horizontal;
-      if (dvbsChannel.Polarisation == Polarisation.LinearV || dvbsChannel.Polarisation == Polarisation.CircularR)
+      ProfPolarisation profPolarisation = ProfPolarisation.Horizontal;
+      if (polarisation == Polarisation.LinearV || polarisation == Polarisation.CircularR)
       {
-        polarisation = ProfPolarisation.Vertical;
+        profPolarisation = ProfPolarisation.Vertical;
       }
 
-      bool isHighBand = false;
-      uint lnbFrequency = (uint)lnbLowLof;
-      if (dvbsChannel.Frequency >= (lnbSwitchFrequency * 1000))
+      Prof22k tone22k = Prof22k.Off;
+      if (BandTypeConverter.IsHighBand(dvbsChannel, parameters))
       {
-        isHighBand = true;
-        lnbFrequency = (uint)lnbHighLof;
+        tone22k = Prof22k.On;
       }
 
       ProfToneBurst toneBurst = ProfToneBurst.Off;
-      if (dvbsChannel.Diseqc == DiseqcSwitchCommand.SimpleA)
+      if (dvbsChannel.Diseqc == DiseqcPort.SimpleA)
       {
         toneBurst = ProfToneBurst.ToneBurst;
       }
-      else if (dvbsChannel.Diseqc == DiseqcSwitchCommand.SimpleB)
+      else if (dvbsChannel.Diseqc == DiseqcPort.SimpleB)
       {
         toneBurst = ProfToneBurst.DataBurst;
       }
 
       BdaExtensionParams tuningParams = new BdaExtensionParams();
       tuningParams.Frequency = (uint)dvbsChannel.Frequency / 1000;
-      tuningParams.LnbLowBandLof = lnbFrequency;
-      tuningParams.LnbHighBandLof = lnbFrequency;
+      tuningParams.LnbLowBandLof = lnbLof;
+      tuningParams.LnbHighBandLof = lnbLof;
       tuningParams.SymbolRate = (uint)dvbsChannel.SymbolRate;
-      tuningParams.Polarisation = polarisation;
+      tuningParams.Polarisation = profPolarisation;
       tuningParams.LnbPower = ProfLnbPower.On;
-      tuningParams.Tone22k = isHighBand ? Prof22k.On : Prof22k.Off;
+      tuningParams.Tone22k = tone22k;
       tuningParams.ToneBurst = toneBurst;
       // DiSEqC commands are already sent using the raw command interface. No need to resend them and
       // unnecessarily slow down the tune request.
@@ -469,7 +466,7 @@ namespace TvEngine
     /// Control whether tone/data burst and 22 kHz legacy tone are used.
     /// </summary>
     /// <param name="toneBurstState">The tone/data burst state.</param>
-    /// <param name="tone22kState">The 22 kHz legacy tone state.</param>
+    /// <param name="tone22k">The 22 kHz legacy tone state.</param>
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public override bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {

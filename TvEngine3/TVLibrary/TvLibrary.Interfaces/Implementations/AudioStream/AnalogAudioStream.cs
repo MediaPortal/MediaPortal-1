@@ -47,7 +47,7 @@ namespace TvLibrary.Implementations.DVB
     public AnalogAudioStream()
     {
       _language = "";
-      _streamType = AudioStreamType.Mpeg2;
+      _streamType = AudioStreamType.MPEG2;
       _audioMode = TVAudioMode.Stereo;
       _audioPid = 0;
     }

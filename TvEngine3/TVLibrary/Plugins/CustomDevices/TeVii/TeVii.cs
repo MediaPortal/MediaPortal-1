@@ -432,7 +432,7 @@ namespace TvEngine
 
       if (!_isTeVii || _deviceIndex < 0)
       {
-        Log.Debug("TeVii: interface not supported");
+        Log.Debug("TeVii: device not initialised or interface not supported");
         return false;
       }
       if (!CanTuneChannel(channel))
@@ -442,21 +442,15 @@ namespace TvEngine
       }
 
       DVBSChannel ch = channel as DVBSChannel;
-      int lowLof;
-      int highLof;
-      int switchFrequency;
-      BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out lowLof, out highLof, out switchFrequency);
+      uint lnbLof;
+      uint lnbSwitchFrequency;
+      Polarisation polarisation;
+      BandTypeConverter.GetLnbTuningParameters(ch, parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
 
-      int lnbLof;
       bool toneOn = false;
       if (BandTypeConverter.IsHighBand(ch, parameters))
       {
-        lnbLof = highLof * 1000;
         toneOn = true;
-      }
-      else
-      {
-        lnbLof = lowLof * 1000;
       }
 
       // Override the default tone state with the state set in SetToneState().
@@ -469,8 +463,8 @@ namespace TvEngine
         toneOn = true;
       }
 
-      bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, lnbLof,
-        Translate(ch.Polarisation), toneOn, Translate(ch.ModulationType), Translate(ch.InnerFecRate));
+      bool result = TuneTransponder(_deviceIndex, (int)ch.Frequency, ch.SymbolRate * 1000, (int)(lnbLof * 1000),
+        Translate(polarisation), toneOn, Translate(ch.ModulationType), Translate(ch.InnerFecRate));
       if (result)
       {
         Log.Debug("TeVii: result = success");
@@ -505,7 +499,7 @@ namespace TvEngine
 
       if (!_isTeVii || _deviceIndex < 0)
       {
-        Log.Debug("TeVii: interface not supported");
+        Log.Debug("TeVii: device not initialised or interface not supported");
         return false;
       }
 
@@ -525,7 +519,7 @@ namespace TvEngine
 
       if (!_isTeVii || _deviceIndex < 0)
       {
-        Log.Debug("TeVii: interface not supported");
+        Log.Debug("TeVii: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)

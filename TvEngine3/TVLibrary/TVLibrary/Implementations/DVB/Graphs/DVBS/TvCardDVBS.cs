@@ -189,8 +189,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel to tune to.</param>
     protected override void Tune(IChannel channel)
     {
-      base.Tune(channel);
+      // Send DiSEqC commands (if necessary) before actually tuning in case the driver applies the commands
+      // during the tuning process.
       SendDiseqcCommands(channel as DVBSChannel);
+      base.Tune(channel);
     }
 
     /// <summary>
@@ -207,45 +209,21 @@ namespace TvLibrary.Implementations.DVB
         return null;
       }
 
-      // LNB frequency manipulation.
-      int lowOsc;
-      int highOsc;
-      int switchFrequency;
-      BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out highOsc, out switchFrequency);
-      // Convert MHz -> kHz.
-      lowOsc *= 1000;
-      highOsc *= 1000;
-      switchFrequency *= 1000;
-      Log.Log.Info("TvCardDvbS: LNB settings, low = {0}, high = {1}, switch = {2}", lowOsc, highOsc, switchFrequency);
-
-      // Setting the switch frequency to zero is the equivalent of saying that the switch frequency is
-      // irrelevant - that the 22 kHz tone state shouldn't depend on the transponder frequency.
-      if (switchFrequency == 0)
-      {
-        switchFrequency = 18000000;
-      }
-      // Some tuners (eg. Prof USB series) don't handle multiple LOFs correctly. We need to pass either
-      // the low or high frequency with the switch frequency.
-      int lof;
-      if (dvbsChannel.Frequency > switchFrequency)
-      {
-        lof = highOsc;
-      }
-      else
-      {
-        lof = lowOsc;
-      }
-      Log.Log.Info("TvCardDvbS: LNB translated settings, oscillator = {0}, switch = {1}", lof, switchFrequency);
-      _tuningSpace.put_LowOscillator(lof);
-      _tuningSpace.put_HighOscillator(lof);
-      _tuningSpace.put_LNBSwitch(switchFrequency);
+      uint lnbLof;
+      uint lnbSwitchFrequency;
+      Polarisation polarisation;
+      BandTypeConverter.GetLnbTuningParameters(dvbsChannel, _parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
+      lnbLof *= 1000;
+      _tuningSpace.put_LowOscillator((int)lnbLof);
+      _tuningSpace.put_HighOscillator((int)lnbLof);
+      _tuningSpace.put_LNBSwitch((int)lnbSwitchFrequency * 1000);
 
       ILocator locator;
       _tuningSpace.get_DefaultLocator(out locator);
       IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
       dvbsLocator.put_CarrierFrequency((int)dvbsChannel.Frequency);
       dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
-      dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
+      dvbsLocator.put_SignalPolarisation(polarisation);
       dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
       dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
 
@@ -293,9 +271,9 @@ namespace TvLibrary.Implementations.DVB
       // "raw" DiSEqC commands -> DiSEqC 1.0 (committed) -> tone burst (simple DiSEqC) -> 22 kHz tone on/off
 
       // Switch command.
-      bool sendCommand = channel.Diseqc != DiseqcSwitchCommand.None &&
-        channel.Diseqc != DiseqcSwitchCommand.SimpleA &&
-        channel.Diseqc != DiseqcSwitchCommand.SimpleB;
+      bool sendCommand = channel.Diseqc != DiseqcPort.None &&
+        channel.Diseqc != DiseqcPort.SimpleA &&
+        channel.Diseqc != DiseqcPort.SimpleB;
       if (sendCommand)
       {
         // If we get to here then there is a valid command to send, but we might not need/want to send it.
@@ -303,10 +281,10 @@ namespace TvLibrary.Implementations.DVB
           previousChannel != null &&
           previousChannel.Diseqc == channel.Diseqc &&
           (
-            (channel.Diseqc != DiseqcSwitchCommand.PortA &&
-            channel.Diseqc != DiseqcSwitchCommand.PortB &&
-            channel.Diseqc != DiseqcSwitchCommand.PortC &&
-            channel.Diseqc != DiseqcSwitchCommand.PortD)
+            (channel.Diseqc != DiseqcPort.PortA &&
+            channel.Diseqc != DiseqcPort.PortB &&
+            channel.Diseqc != DiseqcPort.PortC &&
+            channel.Diseqc != DiseqcPort.PortD)
             ||
             (previousChannel.Polarisation == channel.Polarisation &&
             wasHighBand == isHighBand)
@@ -323,13 +301,13 @@ namespace TvLibrary.Implementations.DVB
       else
       {
         byte command = 0xf0;
-        if (channel.Diseqc == DiseqcSwitchCommand.PortA ||
-          channel.Diseqc == DiseqcSwitchCommand.PortB ||
-          channel.Diseqc == DiseqcSwitchCommand.PortC ||
-          channel.Diseqc == DiseqcSwitchCommand.PortD)
+        int portNumber = BandTypeConverter.GetPortNumber(channel.Diseqc);
+        if (channel.Diseqc == DiseqcPort.PortA ||
+          channel.Diseqc == DiseqcPort.PortB ||
+          channel.Diseqc == DiseqcPort.PortC ||
+          channel.Diseqc == DiseqcPort.PortD)
         {
           Log.Log.Debug("TvCardDvbS: DiSEqC 1.0 switch command");
-          int portNumber = BandTypeConverter.GetPortNumber(channel.Diseqc);
           bool isHorizontal = channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL;
           command |= (byte)(isHighBand ? 1 : 0);
           command |= (byte)((isHorizontal) ? 2 : 0);
@@ -342,6 +320,7 @@ namespace TvLibrary.Implementations.DVB
         else
         {
           Log.Log.Debug("TvCardDvbS: DiSEqC 1.1 switch command");
+          command |= (byte)(portNumber - 1);
           if (!_diseqcController.SendCommand(new byte[4] { 0xe0, 0x10, 0x39, command }))
           {
             success = false;
@@ -372,11 +351,11 @@ namespace TvLibrary.Implementations.DVB
 
       // Tone burst and final state.
       ToneBurst toneBurst = ToneBurst.Off;
-      if (channel.Diseqc == DiseqcSwitchCommand.SimpleA)
+      if (channel.Diseqc == DiseqcPort.SimpleA)
       {
         toneBurst = ToneBurst.ToneBurst;
       }
-      else if (channel.Diseqc == DiseqcSwitchCommand.SimpleB)
+      else if (channel.Diseqc == DiseqcPort.SimpleB)
       {
         toneBurst = ToneBurst.DataBurst;
       }
@@ -424,7 +403,7 @@ namespace TvLibrary.Implementations.DVB
             dvbschannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
             dvbschannel.Pilot = (Pilot)detail.Pilot;
             dvbschannel.RollOff = (RollOff)detail.RollOff;
-            dvbschannel.Diseqc = (DiseqcSwitchCommand)detail.Diseqc;
+            dvbschannel.Diseqc = (DiseqcPort)detail.Diseqc;
           }
         }
         return this.CurrentChannel.IsDifferentTransponder(dvbschannel);

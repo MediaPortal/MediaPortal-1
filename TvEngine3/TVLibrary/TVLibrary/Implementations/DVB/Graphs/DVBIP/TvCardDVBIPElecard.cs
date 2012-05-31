@@ -36,8 +36,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="epgEvents">The EPG events interface.</param>
     /// <param name="device">The device.</param>
     /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
-    public TvCardDVBIPElecard(IEpgEvents epgEvents, DsDevice device, int sequence)
-      : base(epgEvents, device, sequence)
+    public TvCardDVBIPElecard(IEpgEvents epgEvents, DsDevice device, int sequenceNumber)
+      : base(epgEvents, device, sequenceNumber)
     {
       _defaultUrl = "elecard://0.0.0.0:1234:t=m2t/udp";
       _sourceFilterGuid = new Guid(0x62341545, 0x9318, 0x4671, 0x9d, 0x62, 0x9c, 0xaa, 0xcd, 0xd5, 0xd2, 0x0a);

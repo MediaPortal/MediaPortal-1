@@ -157,14 +157,8 @@ namespace TvLibrary.Implementations.DVB
     public TvCardDvbBase(IEpgEvents epgEvents, DsDevice device)
       : base(device)
     {
-      _lastSignalUpdate = DateTime.MinValue;
-      _mapSubChannels = new Dictionary<int, BaseSubChannel>();
-      _parameters = new ScanParameters();
       _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber(epgEvents, (ITVCard)this);
-      _minChannel = -1;
-      _maxChannel = -1;
       _supportsSubChannels = true;
-      _customDeviceInterfaces = new List<ICustomDevice>();
       Guid networkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
       _useInternalNetworkProvider = FilterGraphTools.IsThisComObjectInstalled(networkProviderClsId);
     }
@@ -179,22 +173,16 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId">The subchannel ID for the channel that is being scanned.</param>
     /// <param name="channel">The channel to scan.</param>
     /// <returns>the subchannel associated with the scanned channel</returns>
-    public virtual ITvSubChannel Scan(int subChannelId, IChannel channel)
+    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      return DoTune(subChannelId, channel, true);
-    }
-
-    public abstract ITVScanning ScanningInterface { get; }
-
-    /// <summary>
-    /// Tune to a specific channel.
-    /// </summary>
-    /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
-    /// <param name="channel">The channel to tune to.</param>
-    /// <returns>the subchannel associated with the tuned channel</returns>
-    public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
-    {
-      return DoTune(subChannelId, channel, false);
+      //TODO fix this pointless EPG grabbing logic!
+      _epgGrabbing = false;
+      if (_epgGrabberCallback != null && _epgGrabbing)
+      {
+        Log.Log.Epg("dvb:cancel epg->scanning");
+        _epgGrabberCallback.OnEpgCancelled();
+      }
+      return DoTune(subChannelId, channel);
     }
 
     /// <summary>
@@ -202,9 +190,19 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
     /// <param name="channel">The channel to tune to.</param>
-    /// <param name="ignorePmt">Don't throw an exception if PMT is not received.</param>
     /// <returns>the subchannel associated with the tuned channel</returns>
-    protected virtual ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePmt)
+    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    {
+      return DoTune(subChannelId, channel);
+    }
+
+    /// <summary>
+    /// Tune to a specific channel.
+    /// </summary>
+    /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the subchannel associated with the tuned channel</returns>
+    protected virtual ITvSubChannel DoTune(int subChannelId, IChannel channel)
     {
       Log.Log.Debug("TvCardDvbBase: tune channel, {0}", channel);
       bool newSubChannel = false;
@@ -304,6 +302,7 @@ namespace TvLibrary.Implementations.DVB
 
         _lastSignalUpdate = DateTime.MinValue;
         _mapSubChannels[subChannelId].OnAfterTune();
+        ConfigurePidFilter();
       }
       catch (Exception ex)
       {
@@ -319,21 +318,16 @@ namespace TvLibrary.Implementations.DVB
       _previousChannel = channel;
       try
       {
-        try
-        {
-          RunGraph(subChannelId);
-        }
-        catch (TvExceptionNoPMT)
-        {
-          if (!ignorePmt)
-          {
-            throw;
-          }
-        }
+        RunGraph(subChannelId);
+        StartDecrypting(subChannelId, false);
         return _mapSubChannels[subChannelId];
       }
       catch (Exception)
       {
+        // One potential reason for getting here is that signal could not be locked, and the reason for
+        // that may be that tuning failed. We always want to force a retune on the next tune request in
+        // this situation.
+        _previousChannel = null;
         if (_mapSubChannels[subChannelId] != null)
         {
           FreeSubChannel(subChannelId);
@@ -451,8 +445,7 @@ namespace TvLibrary.Implementations.DVB
       int id = _subChannelId++;
       Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
-      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, _conditionalAccess, _filterTIF,
-                                                 _filterTsWriter, id, channel);
+      TvDvbChannel subChannel = new TvDvbChannel(id, this, _filterTsWriter, _filterTIF);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
@@ -490,7 +483,6 @@ namespace TvLibrary.Implementations.DVB
           AddMpeg2DemuxerToGraph();
         }
         AddAndConnectBdaBoardFilters(_device);
-        AddBdaTransportFiltersToGraph();
         FilterGraphTools.SaveGraphFile(_graphBuilder, _device.Name + " - " + _cardType + " Graph.grf");
         GetTunerSignalStatistics();
         _graphState = GraphState.Created;
@@ -565,21 +557,16 @@ namespace TvLibrary.Implementations.DVB
         {
           dvbsChannel.ModulationType = ModulationType.ModQpsk;
         }
-        int lowOsc;
-        int hiOsc;
-        int lnbSwitch;
-        BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
-        Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
-        if (lnbSwitch == 0)
-        {
-          lnbSwitch = 18000;
-        }
+        uint lnbLof;
+        uint lnbSwitchFrequency;
+        Polarisation polarisation;
+        BandTypeConverter.GetLnbTuningParameters(dvbsChannel, _parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
         FrequencySettings fSettings = new FrequencySettings
                                         {
                                           Multiplier = 1000,
                                           Frequency = (uint)dvbsChannel.Frequency,
                                           Bandwidth = (uint)undefinedValue,
-                                          Polarity = dvbsChannel.Polarisation,
+                                          Polarity = polarisation,
                                           Range = (uint)undefinedValue
                                         };
         DigitalDemodulator2Settings dSettings = new DigitalDemodulator2Settings
@@ -597,9 +584,9 @@ namespace TvLibrary.Implementations.DVB
                                                   };
         LnbInfoSettings lSettings = new LnbInfoSettings
                                       {
-                                        LnbSwitchFrequency = (uint)lnbSwitch * 1000,
-                                        LowOscillator = (uint)lowOsc * 1000,
-                                        HighOscillator = (uint)hiOsc * 1000
+                                        LnbSwitchFrequency = lnbSwitchFrequency * 1000,
+                                        LowOscillator = lnbLof * 1000,
+                                        HighOscillator = lnbLof * 1000
                                       };
         DiseqcSatelliteSettings sSettings = new DiseqcSatelliteSettings
                                               {
@@ -767,134 +754,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    ///<summary>
-    /// Checks if the tuner is locked in and a sginal is present
-    ///</summary>
-    ///<returns>true, when the tuner is locked and a signal is present</returns>
-    ///<summary>
-    /// Checks if the tuner is locked in and a sginal is present
-    ///</summary>
-    ///<returns>true, when the tuner is locked and a signal is present</returns>
-    public override bool LockedInOnSignal()
-    {
-      //UpdateSignalQuality(true);
-      bool isLocked = false;
-      DateTime timeStart = DateTime.Now;
-      TimeSpan ts = timeStart - timeStart;
-      while (!isLocked && ts.TotalSeconds < _parameters.TimeOutTune)
-      {
-        for (int i = 0; i < _tunerStatistics.Count; i++)
-        {
-          IBDA_SignalStatistics stat = _tunerStatistics[i];
-
-          try
-          {
-            stat.get_SignalLocked(out isLocked);
-            if (isLocked)
-            {
-              break;
-            }
-          }
-          catch (COMException)
-          {
-            //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
-          }
-        }
-        if (!isLocked)
-        {
-          ts = DateTime.Now - timeStart;
-          Log.Log.WriteFile("dvb:  LockedInOnSignal waiting 20ms");
-          System.Threading.Thread.Sleep(20);
-        }
-      }
-
-      if (!isLocked)
-      {
-        Log.Log.WriteFile("dvb:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
-      }
-      else
-      {
-        Log.Log.WriteFile("dvb:  LockedInOnSignal ok");
-      }
-      return isLocked;
-    }
-
-    /// <summary>
-    /// Start the BDA filter graph (subject to a few conditions).
-    /// </summary>
-    /// <param name="subChannelId">The subchannel ID for the channel that is being started.</param>
-    public override void RunGraph(int subChannelId)
-    {
-      Log.Log.Debug("TvCardDvbBase: RunGraph()");
-      bool graphRunning = GraphRunning();
-
-      if (_mapSubChannels.ContainsKey(subChannelId))
-      {
-        if (graphRunning)
-        {
-          foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-          {
-            deviceInterface.OnGraphRunning(this, _mapSubChannels[subChannelId].CurrentChannel);
-            IPowerDevice powerDevice = deviceInterface as IPowerDevice;
-            if (powerDevice != null)
-            {
-              powerDevice.SetPowerState(true);
-            }
-          }
-          if (!LockedInOnSignal())
-          {
-            throw new TvExceptionNoSignal("TvCardDvbBase: failed to lock in on signal");
-          }
-        }
-        _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannelId].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannelId].OnGraphStart();
-      }
-
-      if (graphRunning)
-      {
-        Log.Log.Debug("TvCardDvbBase: graph already running");
-        return;
-      }
-      Log.Log.Debug("TvCardDvbBase: start graph");
-      int hr = ((IMediaControl)_graphBuilder).Run();
-      if (hr < 0 || hr > 1)
-      {
-        Log.Log.Debug("TvCardDvbBase: failed to start graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvException("TvCardDvbBase: failed to start graph");
-      }
-
-      //GetTunerSignalStatistics();
-      _epgGrabbing = false;
-      if (_mapSubChannels.ContainsKey(subChannelId))
-      {
-        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-        {
-          deviceInterface.OnGraphRunning(this, _mapSubChannels[subChannelId].CurrentChannel);
-          IPowerDevice powerDevice = deviceInterface as IPowerDevice;
-          if (powerDevice != null)
-          {
-            powerDevice.SetPowerState(true);
-          }
-        }
-        if (!LockedInOnSignal())
-        {
-          //Log.Log.WriteFile("Unable to tune to channel - no signal");
-          throw new TvExceptionNoSignal("TvCardDvbBase: failed to lock in on signal");
-        }
-        _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannelId].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannelId].OnGraphStarted();
-      }
-    }
-
-    /// <summary>
-    /// Check if the tuner can tune to a given channel.
-    /// </summary>
-    /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
-    public abstract bool CanTune(IChannel channel);
-
     /// <summary>
     /// Pause the BDA filter graph (subject to a few conditions).
     /// </summary>
@@ -905,6 +764,11 @@ namespace TvLibrary.Implementations.DVB
       {
         return;
       }
+      // One potential reason for getting here is that signal could not be locked, and the reason for
+      // that may be that tuning failed. We always want to force a retune on the next tune request in
+      // this situation.
+      _previousChannel = null;
+
       _epgGrabbing = false;
       _isScanning = false;
       FreeAllSubChannels();
@@ -985,6 +849,11 @@ namespace TvLibrary.Implementations.DVB
         {
           return;
         }
+        // One potential reason for getting here is that signal could not be locked, and the reason for
+        // that may be that tuning failed. We always want to force a retune on the next tune request in
+        // this situation.
+        _previousChannel = null;
+
         _epgGrabbing = false;
         _isScanning = false;
         FreeAllSubChannels();
@@ -1458,34 +1327,35 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void ConnectMpeg2DemuxToInfTee(ref IBaseFilter lastFilter)
     {
-      Log.Log.WriteFile("dvb:add Inf Tee filter");
+      // Add the infinite tee first.
+      Log.Log.Debug("TvCardDvbBase: add infinite tee filter");
       _infTee = (IBaseFilter)new InfTee();
-      int hr = _graphBuilder.AddFilter(_infTee, "Inf Tee");
+      int hr = _graphBuilder.AddFilter(_infTee, "Infinite Tee");
       if (hr != 0)
       {
-        Log.Log.Error("dvb:Add Inf Tee returns:0x{0:X}", hr);
-        throw new TvException("Unable to add InfTee");
+        Log.Log.Error("TvCardDvbBase: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvException("TvCardDvbBase: failed to add infinite tee");
       }
-      Log.Log.WriteFile("dvb:  Render ...->[inftee]");
+      Log.Log.Debug("TvCardDvbBase:   render ...->[inf tee]");
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTee);
       if (hr != 0)
       {
-        Log.Log.Error("dvb:Unable to connect InfTee returns:0x{0:X}", hr);
-        throw new TvExceptionGraphBuildingFailed("Could not connect InfTee Filter to last Filter");
+        Log.Log.Error("TvCardDvbBase: failed to render stream through the infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to render stream through the infinite tee");
       }
-      Log.Log.WriteFile("dvb:  Setting lastFilter to Inf Tee");
       lastFilter = _infTee;
-      //connect the [inftee main] -> [TIF MPEG2 Demultiplexer]
-      Log.Log.WriteFile("dvb:  Render [inftee]->[demux]");
-      IPin mainTeeOut = DsFindPin.ByDirection(_infTee, PinDirection.Output, 0);
+
+      // Now connect the infinite tee to the MPEG2 demultiplexer.
+      Log.Log.Debug("TvCardDvbBase:   render [inf tee]->[demux]");
+      IPin infTeeOut = DsFindPin.ByDirection(_infTee, PinDirection.Output, 0);
       IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-      hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
-      Release.ComObject("maintee pin0", mainTeeOut);
-      Release.ComObject("tifdemux pinin", demuxPinIn);
+      hr = _graphBuilder.Connect(infTeeOut, demuxPinIn);
+      Release.ComObject("inf tee pin output pin", infTeeOut);
+      Release.ComObject("MPEG 2 demux input pin", demuxPinIn);
       if (hr != 0)
       {
-        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  mainInfTee");
+        Log.Log.Error("TvCardDvbBase: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvException("TvCardDvbBase: failed to connect infinite tee");
       }
     }
 
@@ -1647,7 +1517,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
-    public virtual void Dispose()
+    public override void Dispose()
     {
       Decompose();
     }
@@ -1797,76 +1667,35 @@ namespace TvLibrary.Implementations.DVB
     #region signal quality, level etc
 
     /// <summary>
-    /// Updates the signal informations of the tv cards
+    /// Update the tuner signal status statistics.
     /// </summary>
-    protected override void UpdateSignalQuality(bool force)
+    /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
+    protected override void UpdateSignalStatus(bool force)
     {
       if (!force)
       {
         TimeSpan ts = DateTime.Now - _lastSignalUpdate;
         if (ts.TotalMilliseconds < 5000)
+        {
           return;
+        }
       }
       try
       {
-        if (GraphRunning() == false)
+        if (!GraphRunning() ||
+          CurrentChannel == null ||
+          !CheckThreadId() ||
+          _tunerStatistics == null ||
+          _tunerStatistics.Count == 0)
         {
           //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
-          _signalLevel = 0;
           _signalPresent = false;
+          _signalLevel = 0;
           _signalQuality = 0;
           return;
         }
-        if (CurrentChannel == null)
-        {
-          //System.Diagnostics.Debugger.Launch();
-          _tunerLocked = false;
-          _signalLevel = 0;
-          _signalPresent = false;
-          _signalQuality = 0;
-          return;
-        }
-        if (_filterNetworkProvider == null)
-        {
-          //System.Diagnostics.Debugger.Launch();
-          _tunerLocked = false;
-          _signalLevel = 0;
-          _signalPresent = false;
-          _signalQuality = 0;
-          return;
-        }
-        if (!CheckThreadId())
-        {
-          //System.Diagnostics.Debugger.Launch();
-          _tunerLocked = false;
-          _signalLevel = 0;
-          _signalPresent = false;
-          _signalQuality = 0;
-          return;
-        }
-        //Log.Log.WriteFile("dvb:UpdateSignalQuality");
-        //if we dont have an IBDA_SignalStatistics interface then return
-        if (_tunerStatistics == null)
-        {
-          //System.Diagnostics.Debugger.Launch();
-          _tunerLocked = false;
-          _signalLevel = 0;
-          _signalPresent = false;
-          _signalQuality = 0;
-          //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
-          return;
-        }
-        if (_tunerStatistics.Count == 0)
-        {
-          //System.Diagnostics.Debugger.Launch();
-          _tunerLocked = false;
-          _signalLevel = 0;
-          _signalPresent = false;
-          _signalQuality = 0;
-          //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
-          return;
-        }
+
         bool isTunerLocked = false;
         long signalQuality = 0;
         long signalStrength = 0;
@@ -1946,15 +1775,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// updates the signal quality/level and tuner locked statusses
-    /// </summary>    
-    /// 
-    protected override void UpdateSignalQuality()
-    {
-      UpdateSignalQuality(false);
-    }
-
     #endregion
 
     #region properties
@@ -1975,19 +1795,6 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_epgGrabbing && value == false)
         _interfaceEpgGrabber.Reset();
-    }
-
-    /// <summary>
-    /// Activates / deactivates the scanning
-    /// </summary>
-    protected override void OnScanning()
-    {
-      _epgGrabbing = false;
-      if (_epgGrabberCallback != null && _epgGrabbing)
-      {
-        Log.Log.Epg("dvb:cancel epg->scanning");
-        _epgGrabberCallback.OnEpgCancelled();
-      }
     }
 
     #endregion
@@ -2018,7 +1825,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    public override void StartLinkageScanner(BaseChannelLinkageScanner callback)
     {
       if (!CheckThreadId())
         return;
@@ -2030,7 +1837,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
-    public void ResetLinkageScanner()
+    public override void ResetLinkageScanner()
     {
       _interfaceChannelLinkageScanner.Reset();
     }
@@ -2038,7 +1845,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
-    public List<PortalChannel> ChannelLinkages
+    public override List<PortalChannel> ChannelLinkages
     {
       get
       {
@@ -2109,7 +1916,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Start grabbing the epg
     /// </summary>
-    public void GrabEpg(BaseEpgGrabber callback)
+    public override void GrabEpg(BaseEpgGrabber callback)
     {
       if (!CheckThreadId())
         return;
@@ -2126,7 +1933,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Start grabbing the epg while timeshifting
     /// </summary>
-    public void GrabEpg()
+    public override void GrabEpg()
     {
       if (_timeshiftingEPGGrabber.StartGrab())
         GrabEpg(_timeshiftingEPGGrabber);
@@ -2149,7 +1956,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
-    public void AbortGrabbing()
+    public override void AbortGrabbing()
     {
       Log.Log.Write("dvb:abort grabbing epg");
       if (_interfaceEpgGrabber != null)
@@ -2161,7 +1968,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
-    public List<EpgChannel> Epg
+    public override List<EpgChannel> Epg
     {
       get
       {
@@ -2415,34 +2222,6 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
-
-    #endregion
-
-    #region quality control
-
-    /// <summary>
-    /// Get/Set the quality
-    /// </summary>
-    /// <value></value>
-    public IQuality Quality
-    {
-      get { return null; }
-      set { if (value == null) Log.Log.WriteFile("Setting null quality control"); }
-    }
-
-    /// <summary>
-    /// Property which returns true if card supports quality control
-    /// </summary>
-    /// <value></value>
-    public bool SupportsQualityControl
-    {
-      get { return false; }
-    }
-
-    /// <summary>
-    /// Reloads the card configuration
-    /// </summary>
-    public void ReloadCardConfiguration() {}
 
     #endregion
 

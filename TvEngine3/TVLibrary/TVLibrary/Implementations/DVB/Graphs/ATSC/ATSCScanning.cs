@@ -32,25 +32,6 @@ namespace TvLibrary.Implementations.DVB
   public class ATSCScanning : DvbBaseScanning
   {
     /// <summary>
-    /// ATSC service types - see A/53 part 1
-    /// </summary>
-    protected enum AtscServiceType
-    {
-      /// <summary>
-      /// Analog Television (See A/65 [9])
-      /// </summary>
-      AnalogTelevision = 0x01,
-      /// <summary>
-      /// ATSC Digital Television (See A/53-3 [2])
-      /// </summary>
-      DigitalTelevision = 0x02,
-      /// <summary>
-      /// ATSC Audio (See A/53-3 [2])
-      /// </summary>
-      Audio = 0x03
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="ATSCScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>

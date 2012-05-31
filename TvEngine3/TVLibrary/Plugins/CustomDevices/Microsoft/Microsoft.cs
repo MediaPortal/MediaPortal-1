@@ -38,7 +38,7 @@ namespace TvEngine
     #region IBDA_DiseqCommand interface
 
     [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
-    Guid("F84E2AB0-3C6B-45E3-A0FC-8669D4B81F11"),
+    Guid("f84e2ab0-3c6b-45e3-a0fc-8669d4b81f11"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IBDA_DiseqCommand
     {

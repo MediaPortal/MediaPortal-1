@@ -505,7 +505,7 @@ namespace SetupTv.Sections
                     break;
                   case 3: //DVBSChannel
                     DVBSChannel dvbsChannel = new DVBSChannel();
-                    dvbsChannel.Diseqc = (DiseqcSwitchCommand)diseqc;
+                    dvbsChannel.Diseqc = (DiseqcPort)diseqc;
                     dvbsChannel.Polarisation = (Polarisation)polarisation;
                     dvbsChannel.FreeToAir = fta;
                     dvbsChannel.Frequency = frequency;
@@ -521,7 +521,7 @@ namespace SetupTv.Sections
                     dvbsChannel.SatelliteIndex = SatIndex;
                     dvbsChannel.ModulationType = (ModulationType)modulation;
                     dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)InnerFecRate;
-                    dvbsChannel.BandType = (BandType)band;
+                    dvbsChannel.LnbType = (LnbType)band;
                     dvbsChannel.Pilot = (Pilot)pilot;
                     dvbsChannel.RollOff = (RollOff)rollOff;
                     dvbsChannel.LogicalChannelNumber = channelNumber;

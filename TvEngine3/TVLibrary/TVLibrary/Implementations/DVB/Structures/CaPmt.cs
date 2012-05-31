@@ -169,27 +169,6 @@ namespace TvLibrary.Implementations.DVB.Structures
       CaPmtEsList = new List<CaPmtEs>();
     }
 
-    /// <summary>
-    /// Returns the EMM's found in the CAT.
-    /// </summary>
-    /// <returns></returns>
-    public List<ECMEMM> GetEMM()
-    {
-      List<ECMEMM> emms = new List<ECMEMM>();
-      if (DescriptorsCat == null)
-        return emms;
-      for (int i = 0; i < DescriptorsCat.Count; ++i)
-      {
-        byte[] descriptor = DescriptorsCat[i];
-        string tmp = "";
-        for (int x = 0; x < descriptor.Length; ++x)
-          tmp += String.Format("{0:X} ", descriptor[x]);
-        Log.Log.Info("emm len:{0:X} {1}", descriptor.Length, tmp);
-        Parse(descriptor, emms);
-      }
-      return emms;
-    }
-
     private static void Add(IList<ECMEMM> list, ECMEMM newEcm)
     {
       for (int i = 0; i < list.Count; ++i)
@@ -214,7 +193,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       {
         byte tag = descriptor[off];
         byte len = descriptor[off + 1];
-        if (tag == (byte)DescriptorType.ConditionalAccess)
+        if (tag == (byte)DescriptorTag.ConditionalAccess)
         {
           int offset;
           if (ecm.Pid != 0)
@@ -251,6 +230,16 @@ namespace TvLibrary.Implementations.DVB.Structures
             {
               //  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
               // 09 0D 01 00 E0 B6 02 E0 B7 00 6A E0 B9 00 6C
+              // 09       ca desc
+              // 0d       total length
+              // 01 00    ca system
+              // e0 b6    pid
+              // 02       "additional PID count"
+              //   e0 b7  pid
+              //   00 6a  provider id
+              //   e0 b9  pid
+              //   00 6c  provider id
+
               // 09 11 01 00 E0 C1 03 E0 92 41 01 E0 93 40 01 E0 C4 00 64
               if (descriptor[off + 6] > 0 || descriptor[off + 6] <= 9)
               {
@@ -284,6 +273,27 @@ namespace TvLibrary.Implementations.DVB.Structures
       }
       if (ecm.Pid > 0)
         Add(newEcms, ecm);
+    }
+
+    /// <summary>
+    /// Returns the EMM's found in the CAT.
+    /// </summary>
+    /// <returns></returns>
+    public List<ECMEMM> GetEMM()
+    {
+      List<ECMEMM> emms = new List<ECMEMM>();
+      if (DescriptorsCat == null)
+        return emms;
+      for (int i = 0; i < DescriptorsCat.Count; ++i)
+      {
+        byte[] descriptor = DescriptorsCat[i];
+        string tmp = "";
+        for (int x = 0; x < descriptor.Length; ++x)
+          tmp += String.Format("{0:X} ", descriptor[x]);
+        Log.Log.Info("emm len:{0:X} {1}", descriptor.Length, tmp);
+        Parse(descriptor, emms);
+      }
+      return emms;
     }
 
     ///<summary>

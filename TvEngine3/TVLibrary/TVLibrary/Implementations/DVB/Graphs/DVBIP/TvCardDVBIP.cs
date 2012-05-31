@@ -63,6 +63,7 @@ namespace TvLibrary.Implementations.DVB
       _cardType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterGuid = new Guid(0xd3dd4c59, 0xd3a7, 0x4b82, 0x97, 0x27, 0x7b, 0x92, 0x03, 0xeb, 0x67, 0xc0);
+      _stopGraph = true;  // Pause graph not supported.
 
       _sequenceNumber = sequenceNumber;
       if (_sequenceNumber > 0)
@@ -190,7 +191,7 @@ namespace TvLibrary.Implementations.DVB
     /// Start the BDA filter graph (subject to a few conditions).
     /// </summary>
     /// <param name="subChannelId">The subchannel ID for the channel that is being started.</param>
-    protected virtual void RunGraph(int subChannelId)
+    public override void RunGraph(int subChannelId)
     {
       // DVB-IP "tuning" (if there is such a thing) occurs during this stage of the process. We stop the
       // graph, then replace the stream source filter with a new filter that is configured to stream from
@@ -218,10 +219,6 @@ namespace TvLibrary.Implementations.DVB
           subchannel.OnGraphStopped();
         }
 
-        subchannel.AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        subchannel.AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        subchannel.OnGraphStart();
-
         DVBIPChannel ch = subchannel.CurrentChannel as DVBIPChannel;
         if (ch != null)
         {
@@ -235,12 +232,15 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("TvCardDvbIp: graph already running");
         return;
       }
-      Log.Log.Debug("TvCardDvbIp: start graph");
-      hr = (_graphBuilder as IMediaControl).Run();
-      if (hr < 0 || hr > 1)
+      else
       {
-        Log.Log.Debug("TvCardDvbIp: failed to start graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvException("TvCardDvbIp: failed to start graph");
+        Log.Log.Debug("TvCardDvbIp: start graph");
+        hr = (_graphBuilder as IMediaControl).Run();
+        if (hr < 0 || hr > 1)
+        {
+          Log.Log.Debug("TvCardDvbIp: failed to start graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          throw new TvException("TvCardDvbIp: failed to start graph");
+        }
       }
 
       _epgGrabbing = false;
@@ -255,9 +255,9 @@ namespace TvLibrary.Implementations.DVB
             powerDevice.SetPowerState(true);
           }
         }
-        subchannel.AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        subchannel.AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        subchannel.OnGraphStarted();
+        subchannel.AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(TvCardBase_OnAfterTuneEvent);
+        subchannel.AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(TvCardBase_OnAfterTuneEvent);
+        subchannel.OnGraphRunning();
       }
     }
 
@@ -324,14 +324,6 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Gets wether or not card supports pausing the graph.
-    /// </summary>
-    public override bool SupportsPauseGraph
-    {
-      get { return false; }
-    }
-
-    /// <summary>
     /// Stop the BDA filter graph (subject to a few conditions).
     /// </summary>
     public override void StopGraph()
@@ -348,7 +340,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// UpdateSignalQuality
     /// </summary>
-    protected override void UpdateSignalQuality()
+    protected override void UpdateSignalStatus()
     {
       if (GraphRunning() == false ||
         CurrentChannel == null ||

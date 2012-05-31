@@ -38,7 +38,7 @@ namespace TvLibrary.Channels
     #region constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DVBIPChannel"/> class.
+    /// Initialise a new instance of the <see cref="DVBIPChannel"/> class.
     /// </summary>
     public DVBIPChannel()
       : base()
@@ -46,7 +46,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DVBIPChannel"/> class using an existing instance.
+    /// Initialise a new instance of the <see cref="DVBIPChannel"/> class using an existing instance.
     /// </summary>
     /// <param name="channel">The chan</param>
     public DVBIPChannel(DVBIPChannel channel)

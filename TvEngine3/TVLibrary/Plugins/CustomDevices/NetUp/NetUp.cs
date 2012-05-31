@@ -920,21 +920,16 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("NetUP: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
       if (!_isNetUp || _propertySet == null)
       {
         Log.Debug("NetUP: device not initialised or interface not supported");
-        return false;
-      }
-      if (!_isCamPresent)
-      {
-        Log.Debug("NetUP: the CAM is not present");
         return false;
       }
       if (listAction == CaPmtListManagementAction.Add || listAction == CaPmtListManagementAction.Update)
@@ -947,18 +942,19 @@ namespace TvEngine
         Log.Debug("NetUP: command type {0} is not supported", command);
         return false;
       }
-      if (pmt == null || pmt.Length == 0)
+      if (pmt == null)
       {
         Log.Debug("NetUP: PMT not supplied");
         return true;
       }
 
       // The NetUP driver accepts standard PMT and converts it to CA PMT internally.
+      byte[] rawPmt = pmt.GetRawPmt();
       NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.PmtListChange | ((byte)listAction << 8) | (uint)command);
-      IntPtr buffer = Marshal.AllocCoTaskMem(pmt.Length);
-      Marshal.Copy(pmt, 0, buffer, pmt.Length);
+      IntPtr buffer = Marshal.AllocCoTaskMem(rawPmt.Length);
+      Marshal.Copy(rawPmt, 0, buffer, rawPmt.Length);
       //DVB_MMI.DumpBinary(buffer, 0, pmt.Length);
-      NetUpCommand ncommand = new NetUpCommand(code, buffer, pmt.Length, IntPtr.Zero, 0);
+      NetUpCommand ncommand = new NetUpCommand(code, buffer, rawPmt.Length, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       Marshal.FreeCoTaskMem(buffer);

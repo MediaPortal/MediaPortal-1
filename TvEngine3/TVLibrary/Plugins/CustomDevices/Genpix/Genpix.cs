@@ -60,7 +60,7 @@ namespace TvEngine
       PortC,
       PortD,
 
-      // Tone burst (simple DiSEqc)
+      // Tone burst (simple DiSEqC)
       ToneBurst,
       DataBurst,
 
@@ -71,8 +71,9 @@ namespace TvEngine
       Sw21PortA,
       Sw21PortB,
 
-      // SW42 - a 2 x 2-in-1 out switch with slightly different
-      // switching commands to the SW21.
+      // SW42 - a 2 x 2-in-1 out (ie. 2 satellites, 2 independent
+      // receivers) switch with slightly different switching
+      // commands to the SW21.
       Sw42PortA,
       Sw42PortB,
 
@@ -280,20 +281,18 @@ namespace TvEngine
         return false;
       }
 
-      DVBSChannel ch = channel as DVBSChannel;
-      int lnbLowLof;
-      int lnbHighLof;
-      int lnbSwitchFrequency;
-      BandTypeConverter.GetDefaultLnbSetup(parameters, ch.BandType, out lnbLowLof, out lnbHighLof, out lnbSwitchFrequency);
+      DVBSChannel dvbsChannel = channel as DVBSChannel;
       BdaExtensionParams command = new BdaExtensionParams();
-      command.Frequency = (uint)ch.Frequency / 1000;
-      command.LnbLowBandLof = (uint)lnbLowLof;
-      command.LnbHighBandLof = (uint)lnbHighLof;
-      command.LnbSwitchFrequency = (uint)lnbSwitchFrequency;
-      command.SymbolRate = (uint)ch.SymbolRate;
-      command.Polarisation = ch.Polarisation;
-      command.Modulation = ch.ModulationType;
-      command.InnerFecRate = ch.InnerFecRate;
+
+      BandTypeConverter.GetLnbTuningParameters(dvbsChannel, parameters, out command.LnbLowBandLof,
+              out command.LnbSwitchFrequency, out command.Polarisation
+      );
+
+      command.Frequency = (uint)dvbsChannel.Frequency / 1000;
+      command.LnbHighBandLof = command.LnbLowBandLof;
+      command.SymbolRate = (uint)dvbsChannel.SymbolRate;
+      command.Modulation = dvbsChannel.ModulationType;
+      command.InnerFecRate = dvbsChannel.InnerFecRate;
       command.SwitchPort = GenpixSwitchPort.None;
       command.DiseqcRepeats = 0;
 

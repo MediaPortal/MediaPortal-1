@@ -655,7 +655,7 @@ namespace TvDatabase
           return dvbcChannel;
         case 3: //DVBSChannel
           DVBSChannel dvbsChannel = new DVBSChannel();
-          dvbsChannel.Diseqc = (DiseqcSwitchCommand)detail.Diseqc;
+          dvbsChannel.Diseqc = (DiseqcPort)detail.Diseqc;
           dvbsChannel.Polarisation = (Polarisation)detail.Polarisation;
           dvbsChannel.FreeToAir = detail.FreeToAir;
           dvbsChannel.Frequency = detail.Frequency;
@@ -668,7 +668,7 @@ namespace TvDatabase
           dvbsChannel.ServiceId = detail.ServiceId;
           dvbsChannel.SymbolRate = detail.Symbolrate;
           dvbsChannel.TransportId = detail.TransportId;
-          dvbsChannel.BandType = (BandType)detail.Band;
+          dvbsChannel.LnbType = (LnbType)detail.Band;
           dvbsChannel.SatelliteIndex = detail.SatIndex;
           dvbsChannel.ModulationType = (ModulationType)detail.Modulation;
           dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
@@ -851,7 +851,7 @@ namespace TvDatabase
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
         diseqc = (int)dvbsChannel.Diseqc;
-        band = (int)dvbsChannel.BandType;
+        band = (int)dvbsChannel.LnbType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;
@@ -978,7 +978,7 @@ namespace TvDatabase
         symbolRate = dvbsChannel.SymbolRate;
         polarisation = (int)dvbsChannel.Polarisation;
         diseqc = (int)dvbsChannel.Diseqc;
-        band = (int)dvbsChannel.BandType;
+        band = (int)dvbsChannel.LnbType;
         satIndex = dvbsChannel.SatelliteIndex;
         modulation = (int)dvbsChannel.ModulationType;
         innerFecRate = (int)dvbsChannel.InnerFecRate;

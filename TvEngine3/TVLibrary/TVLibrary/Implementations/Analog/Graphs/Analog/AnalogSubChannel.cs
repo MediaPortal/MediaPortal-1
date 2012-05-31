@@ -47,8 +47,9 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Initializes a new instance of the <see cref="AnalogSubChannel"/> class.
     /// </summary>
-    internal AnalogSubChannel(TvCardAnalog card, int subchnnelId, TvAudio tvAudio, bool hasTeletext,
+    internal AnalogSubChannel(int subChannelId, TvCardAnalog card, TvAudio tvAudio, bool hasTeletext,
                               IBaseFilter mpFileWriter)
+      : base(subChannelId)
     {
       _card = card;
       _hasTeletext = hasTeletext;
@@ -56,7 +57,6 @@ namespace TvLibrary.Implementations.Analog
       _mpFileWriter = mpFileWriter;
       _mpRecord = (IMPRecord)_mpFileWriter;
       _mpRecord.AddChannel(ref _subChannelId);
-      _subChannelId = subchnnelId;
     }
 
     #endregion
@@ -96,29 +96,15 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// Should be called when the graph is about to start
-    /// Resets the state 
-    /// If graph is already running, starts the pmt grabber to grab the
-    /// pmt for the new channel
+    /// Should be called when the graph has been started
     /// </summary>
-    public override void OnGraphStart()
+    public override void OnGraphRunning()
     {
-      Log.Log.WriteFile("analog subch:{0} OnGraphStart", _subChannelId);
+      Log.Log.WriteFile("analog subch:{0} OnGraphRunning", _subChannelId);
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
       }
-      OnAfterTuneEvent();
-    }
-
-    /// <summary>
-    /// Should be called when the graph has been started
-    /// sets up the pmt grabber to grab the pmt of the channel
-    /// </summary>
-    public override void OnGraphStarted()
-    {
-      Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);
-      _dateTimeShiftStarted = DateTime.MinValue;
       OnAfterTuneEvent();
     }
 
@@ -149,15 +135,13 @@ namespace TvLibrary.Implementations.Analog
     /// sets the filename used for timeshifting
     /// </summary>
     /// <param name="fileName">timeshifting filename</param>
-    protected override bool OnStartTimeShifting(string fileName)
+    protected override void OnStartTimeShifting(string fileName)
     {
       if (_card.SupportsQualityControl && !IsRecording)
       {
         _card.Quality.StartPlayback();
       }
-      _timeshiftFileName = fileName;
       Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
-      Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
       ScanParameters parameters = _card.Parameters;
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
       _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
@@ -168,15 +152,13 @@ namespace TvLibrary.Implementations.Analog
       if (CurrentChannel == null)
       {
         Log.Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
-        return false;
+        throw new Exception("AnalogSubChannel: current channel is null");
       }
 
       // Important: this call needs to be made *before* the call to StartTimeShifting().
       _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
 
       _mpRecord.StartTimeShifting(_subChannelId);
-      _dateTimeShiftStarted = DateTime.Now;
-      return true;
     }
 
     /// <summary>
@@ -209,7 +191,6 @@ namespace TvLibrary.Implementations.Analog
       _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
 
       _mpRecord.StartRecord(_subChannelId);
-      _dateRecordingStarted = DateTime.Now;
     }
 
     /// <summary>

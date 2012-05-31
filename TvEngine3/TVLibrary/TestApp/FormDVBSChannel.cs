@@ -44,7 +44,7 @@ namespace TestApp
     {
       get
       {
-        _channel.BandType = BandType.Universal;
+        _channel.LnbType = LnbType.Universal;
         return _channel;
       }
       set
@@ -67,7 +67,7 @@ namespace TestApp
       _channel.TransportId = Int32.Parse(textBoxTSID.Text);
       _channel.ServiceId = Int32.Parse(textBoxSID.Text);
       _channel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
-      _channel.Diseqc = (DiseqcSwitchCommand)comboBoxDisEqc.SelectedIndex;
+      _channel.Diseqc = (DiseqcPort)comboBoxDisEqc.SelectedIndex;
       _channel.Polarisation = comboBoxPol.SelectedIndex == 0 ? Polarisation.LinearH : Polarisation.LinearV;
 
       Close();

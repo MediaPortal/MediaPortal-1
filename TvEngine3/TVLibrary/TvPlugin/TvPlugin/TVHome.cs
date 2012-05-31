@@ -3007,10 +3007,10 @@ namespace TvPlugin
             stream.StreamType = AudioStreamType.EAC3;
             break;
           case "Mpeg1":
-            stream.StreamType = AudioStreamType.Mpeg1;
+            stream.StreamType = AudioStreamType.MPEG1;
             break;
           case "Mpeg2":
-            stream.StreamType = AudioStreamType.Mpeg2;
+            stream.StreamType = AudioStreamType.MPEG2;
             break;
           case "AAC":
             stream.StreamType = AudioStreamType.AAC;

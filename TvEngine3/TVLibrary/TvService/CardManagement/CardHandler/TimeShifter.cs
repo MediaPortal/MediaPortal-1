@@ -395,16 +395,6 @@ namespace TvService
 
           Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
 
-          if (subchannel is TvDvbChannel)
-          {
-            if (!((TvDvbChannel)subchannel).PMTreceived)
-            {
-              Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
-              Stop(ref user);
-              return TvResult.UnableToStartGraph;
-            }
-          }
-
           if (subchannel is BaseSubChannel)
           {
             ((BaseSubChannel)subchannel).AudioVideoEvent += AudioVideoEventHandler;

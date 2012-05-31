@@ -200,7 +200,7 @@ namespace TvEngine
       public UInt32 DiseqcReceiveMessageLength;
 
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-      public byte[] Reserved2;
+      private byte[] Reserved2;
     }
 
     // Used to improve tuning speeds for older Conexant-based tuners.
@@ -1247,10 +1247,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("Turbosight: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1259,17 +1259,14 @@ namespace TvEngine
         Log.Debug("Turbosight: device not initialised or interface not supported");
         return false;
       }
-      if (!_isCamPresent)
-      {
-        Log.Debug("Turbosight: the CAM is not present");
-        return false;
-      }
-      if (pmt == null || pmt.Length == 0)
+      if (pmt == null)
       {
         Log.Debug("Turbosight: PMT not supplied");
         return true;
       }
-      if (pmt.Length > MaxPmtLength - 2)
+
+      byte[] rawPmt = pmt.GetRawPmt();
+      if (rawPmt.Length > MaxPmtLength - 2)
       {
         Log.Debug("Turbosight: buffer capacity too small");
         return false;
@@ -1279,15 +1276,14 @@ namespace TvEngine
       Marshal.WriteByte(_pmtBuffer, 0, (byte)listAction);
       Marshal.WriteByte(_pmtBuffer, 1, (byte)command);
       int offset = 2;
-      for (int i = 0; i < pmt.Length; i++)
+      for (int i = 0; i < rawPmt.Length; i++)
       {
-        Marshal.WriteByte(_pmtBuffer, offset, pmt[i]);
-        offset++;
+        Marshal.WriteByte(_pmtBuffer, offset++, rawPmt[i]);
       }
 
-      //DVB_MMI.DumpBinary(_pmtBuffer, 0, 2 + pmt.Length);
+      //DVB_MMI.DumpBinary(_pmtBuffer, 0, 2 + rawPmt.Length);
 
-      TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(pmt.Length + 2));
+      TBS_ci_SendPmt(_ciHandle, _pmtBuffer, (ushort)(rawPmt.Length + 2));
 
       Log.Debug("Turbosight: result = success");
       return true;

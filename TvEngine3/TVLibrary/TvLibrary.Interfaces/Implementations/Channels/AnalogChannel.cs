@@ -398,12 +398,12 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// Checks if the given channel is FTA. (Not scrambled)
+    /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
-    /// <returns>true, if the channel is FTA</returns>
     public bool FreeToAir
     {
       get { return true; }
+      set { }
     }
   }
 }

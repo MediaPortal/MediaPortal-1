@@ -66,7 +66,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Initializes a new instance of a <see cref="DVBBaseChannel"/> derived class instance using an
+    /// Initialise a new instance of a <see cref="DVBBaseChannel"/> derived instance using an
     /// existing instance.
     /// </summary>
     /// <param name="channel">The existing channel instance.</param>

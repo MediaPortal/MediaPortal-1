@@ -48,9 +48,8 @@ namespace TvLibrary.Interfaces
     bool IsDifferentTransponder(IChannel channel);
 
     /// <summary>
-    /// Checks if the given channel is FTA. (Not scrambled)
+    /// Get/set whether the channel is a free-to-air or encrypted channel.
     /// </summary>
-    /// <returns>true, if the channel is FTA</returns>
-    bool FreeToAir { get; }
+    bool FreeToAir { get; set; }
   }
 }

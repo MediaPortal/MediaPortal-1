@@ -26,15 +26,19 @@ namespace TvLibrary.Interfaces
   public enum VideoStreamType
   {
     /// <summary>
-    /// MPEG2 video
+    /// MPEG 1 video
+    /// </summary>
+    MPEG1,
+    /// <summary>
+    /// MPEG 2 video
     /// </summary>
     MPEG2,
     /// <summary>
-    /// MPEG4 video video
+    /// MPEG 4 (DivX, Xvid) video
     /// </summary>
     MPEG4,
     /// <summary>
-    /// H264 video video
+    /// H.264 AVC video
     /// </summary>
     H264,
     /// <summary>

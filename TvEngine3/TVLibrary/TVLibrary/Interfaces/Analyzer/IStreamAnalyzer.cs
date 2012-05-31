@@ -38,22 +38,4 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int OnPMTReceived(int pmtPid);
   } ;
-
-  /// <summary>
-  /// Interface for h/w pid filtering 
-  /// </summary>
-  [ComVisible(true), ComImport,
-   Guid("1F4566CD-61A1-4bf9-9544-9D4C4D120DB6"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IHardwarePidFiltering
-  {
-    /// <summary>
-    /// Sets the pids to filter.
-    /// </summary>
-    /// <param name="count">The count.</param>
-    /// <param name="pids">The pids.</param>
-    /// <returns></returns>
-    [PreserveSig]
-    int FilterPids(short count, IntPtr pids);
-  } ;
 }

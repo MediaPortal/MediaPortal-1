@@ -42,7 +42,7 @@ namespace TvLibrary.Channels
     #region constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ATSCChannel"/> class.
+    /// Initialise a new instance of the <see cref="ATSCChannel"/> class.
     /// </summary>
     public ATSCChannel()
     {
@@ -53,7 +53,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ATSCChannel"/> class using an existing instance.
+    /// Initialise a new instance of the <see cref="ATSCChannel"/> class using an existing instance.
     /// </summary>
     /// <param name="channel">The existing channel instance.</param>
     public ATSCChannel(ATSCChannel channel)

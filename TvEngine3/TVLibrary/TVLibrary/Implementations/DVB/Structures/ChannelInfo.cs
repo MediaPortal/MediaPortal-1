@@ -26,7 +26,7 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Implementations.DVB.Structures
 {
   /// <summary>
-  /// class holding all information about a channel including pids
+  /// class holding all information about a channel including pidSet
   /// </summary>
   public class ChannelInfo
   {
@@ -91,7 +91,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     public UInt16 pcrPid;
 
     /// <summary>
-    /// ArrayList of PidInfo containing all pids
+    /// ArrayList of PidInfo containing all pidSet
     /// </summary>
     public List<PidInfo> pids;
 
@@ -163,7 +163,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     }
 
     /// <summary>
-    /// Decodes the PMT supplied in buf and fills the pid table with all pids found
+    /// Decodes the PMT supplied in buf and fills the pid table with all pidSet found
     /// </summary>
     /// <param name="buf">The buf.</param>
     public void DecodePmt(byte[] buf)

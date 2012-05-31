@@ -345,15 +345,15 @@ namespace TvService
       TvCardBase card = _cardHandler.Card as TvCardBase;
       if (card != null)
       {
-        card.AfterTuneEvent -= new TvCardBase.OnAfterTuneDelegate(Card_OnAfterTuneEvent);
-        card.AfterTuneEvent += new TvCardBase.OnAfterTuneDelegate(Card_OnAfterTuneEvent);
+        card.AfterTuneEvent -= new TvCardBase.OnAfterTuneDelegate(CardTuner_OnAfterTuneEvent);
+        card.AfterTuneEvent += new TvCardBase.OnAfterTuneDelegate(CardTuner_OnAfterTuneEvent);
       }
       else
       {
         HybridCard hybridCard = _cardHandler.Card as HybridCard;
         if (hybridCard != null)
         {
-          hybridCard.AfterTuneEvent = new TvCardBase.OnAfterTuneDelegate(Card_OnAfterTuneEvent);
+          hybridCard.AfterTuneEvent = new TvCardBase.OnAfterTuneDelegate(CardTuner_OnAfterTuneEvent);
         }
       }
 
@@ -369,7 +369,7 @@ namespace TvService
 
     public delegate void OnBeforeTuneDelegate(ITvCardHandler cardHandler);
 
-    private void Card_OnAfterTuneEvent()
+    private void CardTuner_OnAfterTuneEvent()
     {
       if (OnAfterTuneEvent != null)
       {

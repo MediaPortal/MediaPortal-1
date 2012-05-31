@@ -104,16 +104,13 @@
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
     <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
-    <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\DisEqC\DiSEqCMotor.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\DVBIPScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIP.cs" />
-    <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPBuiltIn.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\TvCardDVBIPElecard.cs" />
     <Compile Include="Implementations\DVB\Graphs\TvDvbChannel.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
-    <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccess.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\ATSC\ATSCScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\ATSC\TvCardATSC.cs" />
@@ -121,7 +118,6 @@
     <Compile Include="Implementations\DVB\Graphs\DVBC\TvCardDVBC.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBS\DVBSScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBS\TvCardDVBS.cs" />
-    <Compile Include="Implementations\DVB\Graphs\SS2\DVBSkyStar2Helper.cs" />
     <Compile Include="Implementations\DVB\Graphs\SS2\TvCardDvbSS2.cs" />
     <Compile Include="Implementations\DVB\Structures\CaPmt.cs" />
     <Compile Include="Implementations\DVB\Structures\ChannelInfo.cs" />

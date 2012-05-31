@@ -202,515 +202,29 @@ namespace TvEngine
 
     #endregion
 
-    #region ICustomDevice members
-
     /// <summary>
-    /// The loading priority for this device type.
+    /// Find the video and audio elementary stream PIDs in a program map and record them in MD API structures.
     /// </summary>
-    public override byte Priority
+    /// <param name="pmt">The program map to read from.</param>
+    /// <param name="programToDecode">The MD API program information structure.</param>
+    /// <param name="pidsToDecode">The MD API PID list structure.</param>
+    private void RegisterVideoAndAudioPids(Pmt pmt, out Program82 programToDecode, out PidsToDecode pidsToDecode)
     {
-      get
-      {
-        // This plugin can easily be disabled on a per-tuner basis, so we will give it higher priority than
-        // hardware conditional access interfaces.
-        return 100;
-      }
-    }
+      Log.Debug("MD Plugin: registering video and audio PIDs");
+      programToDecode = new Program82();
+      pidsToDecode = new PidsToDecode();
 
-    /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
-    /// </summary>
-    public override String Name
-    {
-      get
-      {
-        return "MD Plugin";
-      }
-    }
+      programToDecode.ServiceId = pmt.ProgramNumber;
+      programToDecode.PcrPid = pmt.PcrPid;
 
-    /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed.
-    /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
-    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
-    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
-    {
-      Log.Debug("MD Plugin: initialising device");
-
-      if (tunerFilter == null)
-      {
-        Log.Debug("MD Plugin: tuner filter is null");
-        return false;
-      }
-      if (String.IsNullOrEmpty(tunerDevicePath))
-      {
-        Log.Debug("MD Plugin: tuner device path is not set");
-        return false;
-      }
-      if (_isMdPlugin)
-      {
-        Log.Debug("MD Plugin: device is already initialised");
-        return true;
-      }
-
-      // If there is no MD configuration folder then there is no softCAM plugin.
-      if (Directory.Exists("MDPLUGINS") == false)
-      {
-        Log.Debug("MD Plugin: plugin not configured");
-        return false;
-      }
-
-      // Get the tuner filter name. We use it as a prefix for the device configuration folder.
-      FilterInfo tunerFilterInfo;
-      int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
-      if (tunerFilterInfo.pGraph != null)
-      {
-        DsUtils.ReleaseComObject(tunerFilterInfo.pGraph);
-        tunerFilterInfo.pGraph = null;
-      }
-      if (hr != 0 || tunerFilterInfo.achName == null)
-      {
-        Log.Debug("MD Plugin: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-      _configurationFolderPrefix = tunerFilterInfo.achName;
-
-      try
-      {
-        // Look for a configuration file.
-        String configFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
-        int slotCount = 1;
-        XmlDocument doc = new XmlDocument();
-        XmlNode rootNode = null;
-        XmlNode tunerNode = null;
-        if (File.Exists(configFile))
-        {
-          Log.Debug("MD Plugin: searching for device configuration");
-          doc.Load(configFile);
-          rootNode = doc.SelectSingleNode("/cards");
-          if (rootNode != null)
-          {
-            XmlNodeList tunerList = doc.SelectNodes("/cards/card");
-            if (tunerList != null)
-            {
-              foreach (XmlNode node in tunerList)
-              {
-                // We found the configuration for the tuner.
-                if (tunerNode.Attributes["DevicePath"].Value.Equals(tunerDevicePath))
-                {
-                  tunerNode = node;
-                  break;
-                }
-              }
-            }
-          }
-        }
-        if (rootNode == null)
-        {
-          rootNode = doc.CreateElement("cards");
-        }
-        if (tunerNode == null)
-        {
-          Log.Debug("MD Plugin: creating device configuration");
-          tunerNode = doc.CreateElement("card");
-
-          // The "name" attribute is used as the configuration folder prefix.
-          XmlAttribute attr = doc.CreateAttribute("Name");
-          attr.InnerText = _configurationFolderPrefix;
-          tunerNode.Attributes.Append(attr);
-
-          // Used to identify the tuner.
-          attr = doc.CreateAttribute("DevicePath");
-          attr.InnerText = tunerDevicePath;
-          tunerNode.Attributes.Append(attr);
-
-          // Default: enable one instance of the plugin.
-          attr = doc.CreateAttribute("EnableMdapi");
-          attr.InnerText = slotCount.ToString();
-          tunerNode.Attributes.Append(attr);
-
-          rootNode.AppendChild(tunerNode);
-          doc.AppendChild(rootNode);
-          doc.Save(configFile);
-        }
-        else
-        {
-          try
-          {
-            _configurationFolderPrefix = tunerNode.Attributes["Name"].Value;
-            slotCount = Convert.ToInt32(tunerNode.Attributes["EnableMdapi"].Value);
-          }
-          catch (Exception)
-          {
-            // Assume that the plugin is enabled unless the parameter says "no".
-            if (tunerNode.Attributes["EnableMdapi"].Value.Equals("no"))
-            {
-              slotCount = 0;
-            }
-            tunerNode.Attributes["EnableMdapi"].Value = slotCount.ToString();
-            doc.Save(configFile);
-          }
-        }
-
-        if (slotCount > 0)
-        {
-          Log.Debug("MD Plugin: plugin is enabled for {0} decoding slot(s)", slotCount);
-          _isMdPlugin = true;
-          _slots = new List<DecodeSlot>(slotCount);
-          return true;
-        }
-
-        Log.Debug("MD Plugin: plugin is not enabled");
-        return false;
-      }
-      catch (Exception ex)
-      {
-        Log.Debug("MD Plugin: failed to create, load or read configuration\r\n{0}", ex.ToString());
-        return false;
-      }
-    }
-
-    #endregion
-
-    #region IAddOnDevice member
-
-    /// <summary>
-    /// Insert and connect the device's additional filter(s) into the BDA graph.
-    /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
-    /// </summary>
-    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
-    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
-    ///   connect the [first] device filter to.</param>
-    /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
-    {
-      Log.Debug("MD Plugin: add to graph");
-
-      if (!_isMdPlugin)
-      {
-        Log.Debug("MD Plugin: device not initialised or interface not supported");
-        return false;
-      }
-      if (graphBuilder == null)
-      {
-        Log.Debug("MD Plugin: graph builder is null");
-        return false;
-      }
-      if (lastFilter == null)
-      {
-        Log.Debug("MD Plugin: upstream filter is null");
-        return false;
-      }
-      if (_slots != null && _slots.Count > 0 && _slots[0].Filter != null)
-      {
-        Log.Debug("MD Plugin: {0} device filter(s) already in graph", _slots.Count);
-        return true;
-      }
-
-      // We need a reference to the graph builder's graph.
-      IGraphBuilder tmpGraph = null;
-      int hr = graphBuilder.GetFiltergraph(out tmpGraph);
-      if (hr != 0)
-      {
-        Log.Debug("MD Plugin: failed to get graph reference, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-      _graph = tmpGraph as IFilterGraph2;
-      if (_graph == null)
-      {
-        Log.Debug("MD Plugin: failed to get graph reference");
-        return false;
-      }
-
-      // Add an inf tee after the tuner/capture filter.
-      _infTee = (IBaseFilter)new InfTee();
-      hr = _graph.AddFilter(_infTee, "Inf Tee (MD Plugin)");
-      if (hr != 0)
-      {
-        Log.Debug("MD Plugin: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-      hr = graphBuilder.RenderStream(null, null, lastFilter, null, _infTee);
-      if (hr != 0)
-      {
-        Log.Debug("MD Plugin: failed to render stream through inf tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        _graph.RemoveFilter(_infTee);
-        DsUtils.ReleaseComObject(_infTee);
-        _infTee = null;
-        return false;
-      }
-      lastFilter = _infTee;
-
-      // Add one filter for each decoding slot.
-      IPin outputPin;
-      IPin inputPin;
-      for (int i = 0; i < _slots.Count; i++)
-      {
-        DecodeSlot slot = new DecodeSlot();
-        slot.Filter = (IBaseFilter)new MDAPIFilter();
-        slot.CurrentChannel = null;
-
-        // Add the filter to the graph.
-        hr = _graph.AddFilter(slot.Filter, "MDAPI Filter " + i);
-        if (hr != 0)
-        {
-          Log.Debug("MD Plugin: failed to add MD plugin filter {0} to graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-
-        // Connect the filter into the graph.
-        outputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
-        inputPin = DsFindPin.ByDirection(slot.Filter, PinDirection.Input, 0);
-        hr = _graph.Connect(outputPin, inputPin);
-        DsUtils.ReleaseComObject(outputPin);
-        outputPin = null;
-        DsUtils.ReleaseComObject(inputPin);
-        inputPin = null;
-        if (hr != 0)
-        {
-          Log.Debug("MD Plugin: failed to connect MD plugin filter {0} into the graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
-          return false;
-        }
-        lastFilter = slot.Filter;
-        _slots[i] = slot;
-
-        // Check whether the plugin supports extended capabilities.
-        IChangeChannel temp = slot.Filter as IChangeChannel;
-        try
-        {
-          temp.SetPluginsDirectory(_configurationFolderPrefix + i);
-        }
-        catch (Exception ex)
-        {
-          Log.Debug("MD Plugin: failed to set plugin directory\r\n{0}", ex.ToString());
-          return false;
-        }
-        IChangeChannel_Ex temp2 = slot.Filter as IChangeChannel_Ex;
-        if (temp2 != null)
-        {
-          Log.Debug("MD Plugin: extended capabilities supported");
-        }
-      }
-
-      return true;
-    }
-
-    #endregion
-
-    #region IConditionalAccessProvider members
-
-    /// <summary>
-    /// Open the conditional access interface. For the interface to be opened successfully it is expected
-    /// that any necessary hardware (such as a CI slot) is connected.
-    /// </summary>
-    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
-    public bool OpenInterface()
-    {
-      Log.Debug("MD Plugin: open conditional access interface");
-
-      if (!_isMdPlugin)
-      {
-        Log.Debug("MD Plugin: device not initialised or interface not supported");
-        return false;
-      }
-      if (_slots == null || _slots.Count == 0)
-      {
-        Log.Debug("MD Plugin: device filter(s) not added to the BDA filter graph");
-        return false;
-      }
-      if (_programmeBuffer != IntPtr.Zero)
-      {
-        Log.Debug("MD Plugin: interface is already open");
-        return false;
-      }
-
-      _programmeBuffer = Marshal.AllocCoTaskMem(Program82Size);
-      _pidBuffer = Marshal.AllocCoTaskMem(PidsToDecodeSize);
-
-      Log.Debug("MD Plugin: result = success");
-      return true;
-    }
-
-    /// <summary>
-    /// Close the conditional access interface.
-    /// </summary>
-    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
-    public bool CloseInterface()
-    {
-      Log.Debug("MD Plugin: close conditional access interface");
-
-      if (_programmeBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_programmeBuffer);
-        _programmeBuffer = IntPtr.Zero;
-      }
-      if (_pidBuffer != IntPtr.Zero)
-      {
-        Marshal.FreeCoTaskMem(_pidBuffer);
-        _pidBuffer = IntPtr.Zero;
-      }
-
-      Log.Debug("MD Plugin: result = true");
-      return true;
-    }
-
-    /// <summary>
-    /// Reset the conditional access interface.
-    /// </summary>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
-    ///   for the interface to be completely and successfully reset.</param>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool rebuildGraph)
-    {
-      Log.Debug("MD Plugin: reset conditional access interface");
-
-      // We have to rebuild the graph to reset anything.
-      rebuildGraph = true;
-      return true;
-    }
-
-    /// <summary>
-    /// Determine whether the conditional access interface is ready to receive commands.
-    /// </summary>
-    /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
-    public bool IsInterfaceReady()
-    {
-      Log.Debug("MD Plugin: is conditional access interface ready");
-
-      if (!_isMdPlugin || _slots == null)
-      {
-        Log.Debug("MD Plugin: device not initialised or interface not supported");
-        return false;
-      }
-      if (_programmeBuffer == IntPtr.Zero)
-      {
-        Log.Debug("MD Plugin: interface not opened");
-        return false;
-      }
-
-      // As far as we know, the interface is always ready as long as it is open.
-      Log.Debug("Turbosight: result = {0}", _slots.Count > 0);
-      return (_slots.Count > 0);
-    }
-
-    /// <summary>
-    /// Send a command to to the conditional access interface.
-    /// </summary>
-    /// <param name="channel">The channel information associated with the service which the command relates to.</param>
-    /// <param name="listAction">It is assumed that the interface may be able to decrypt one or more services
-    ///   simultaneously. This parameter gives the interface an indication of the number of services that it
-    ///   will be expected to manage.</param>
-    /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
-    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
-    {
-      Log.Debug("MD Plugin: send conditional access command, list action = {0}, command = {1}", listAction, command);
-
-      if (!_isMdPlugin || _slots == null)
-      {
-        Log.Debug("MD Plugin: device not initialised or interface not supported");
-        return true;  // Don't retry...
-      }
-      if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
-      {
-        Log.Debug("MD Plugin: command type {0} is not supported", command);
-        return false;
-      }
-      if (pmt == null || pmt.Length == 0)
-      {
-        Log.Debug("MD Plugin: PMT not supplied");
-        return true;
-      }
-      if (cat == null || cat.Length == 0)
-      {
-        Log.Debug("MD Plugin: CAT not supplied");
-        return true;
-      }
-      DVBBaseChannel dvbChannel = channel as DVBBaseChannel;
-      if (dvbChannel == null)
-      {
-        Log.Debug("MD Plugin: channel is not a DVB channel");
-        return true;
-      }
-
-      // Find the slot which is decoding the service (if there is one).
-      DecodeSlot freeSlot = null;
-      foreach (DecodeSlot slot in _slots)
-      {
-        DVBBaseChannel currentService = slot.CurrentChannel as DVBBaseChannel;
-        if (currentService != null && currentService.ServiceId == dvbChannel.ServiceId)
-        {
-          // "Not selected" means stop decrypting the service.
-          if (command == CaPmtCommand.NotSelected)
-          {
-            slot.CurrentChannel = null;
-            return true;
-          }
-          // "Ok descrambling" means start or continue decrypting the service. If we're already decrypting
-          // the service that is fine - this is an update.
-          else if (command == CaPmtCommand.OkDescrambling)
-          {
-            Log.Debug("MD Plugin: updating slot decrypting channel \"{0}\"", slot.CurrentChannel.Name);
-            freeSlot = slot;
-          }
-        }
-        else if (currentService != null && freeSlot == null)
-        {
-          freeSlot = slot;
-        }
-      }
-
-      if (command == CaPmtCommand.NotSelected)
-      {
-        // If we get to here then we were asked to stop decrypting
-        // a service that we were not decrypting. Strange...
-        Log.Debug("MD Plugin: received \"not selected\" request for channel that is not being decrypted");
-        return true;
-      }
-
-      if (freeSlot == null)
-      {
-        // If we get to here then we were asked to start decrypting
-        // a service, but we don't have any free slots to do it with.
-        Log.Debug("MD Plugin: no free decrypt slots");
-        return false;
-      }
-
-      // If we get to here then we need to try to start decrypting
-      // the service.
-      Program82 programToDecode = new Program82();
-      PidsToDecode pidsToDecode = new PidsToDecode();
-
-      // Set the fields that we are able to set.
-      if (dvbChannel.Name != null)
-      {
-        programToDecode.Name = dvbChannel.Name;
-      }
-      if (dvbChannel.Provider != null)
-      {
-        programToDecode.Provider = dvbChannel.Provider;
-      }
-
-      Log.Debug("MD Plugin: registering PIDs");
-      programToDecode.TransportStreamId = (UInt16)dvbChannel.TransportId;
-      programToDecode.ServiceId = (UInt16)dvbChannel.ServiceId;
-      programToDecode.PmtPid = (UInt16)dvbChannel.PmtPid;
-      /*ChannelInfo channelInfo = new ChannelInfo();
-      channelInfo.DecodePmt(pmt);
-      channelInfo.DecodeCat(cat);
-      programToDecode.PcrPid = channelInfo.pcrPid;
-      foreach (PidInfo pid in channelInfo.pids)
+      foreach (PmtElementaryStream es in pmt.ElementaryStreams)
       {
         // When using a plugin with extended support, we can just
         // specify the PIDs that need to be decoded.
         if (pidsToDecode.PidCount < MaxPidCount)
         {
-          pidsToDecode.Pids[pidsToDecode.PidCount++] = pid.pid;
+          // TODO: restrict to video, audio, subtitle and teletext PIDs???
+          pidsToDecode.Pids[pidsToDecode.PidCount++] = es.Pid;
         }
         else
         {
@@ -721,150 +235,203 @@ namespace TvEngine
         // Otherwise, we have to fill the specific PID fields in the
         // Program82 structure as best as we can. We'll keep the first
         // of each type of PID.
-        if (pid.isVideo && programToDecode.VideoPid == 0)
+        if (programToDecode.VideoPid == 0 &&
+            (es.StreamType == StreamType.Mpeg1Part2Video ||
+            es.StreamType == StreamType.Mpeg2Part2Video ||
+            es.StreamType == StreamType.Mpeg4Part2Video ||
+            es.StreamType == StreamType.Mpeg4Part10Video ||
+            es.PrimaryDescriptorTag == DescriptorTag.VideoStream ||
+            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video ||
+            es.PrimaryDescriptorTag == DescriptorTag.AvcVideo)
+        )
         {
-          programToDecode.VideoPid = pid.pid;
+          programToDecode.VideoPid = es.Pid;
         }
-        else if (pid.isAudio)
+        else if (programToDecode.AudioPid == 0 &&
+            (es.StreamType == StreamType.Mpeg1Part3Audio ||
+            es.StreamType == StreamType.Mpeg2Part3Audio ||
+            es.StreamType == StreamType.Mpeg2Part7Audio ||
+            es.StreamType == StreamType.Mpeg4Part3Audio ||
+            es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
+            es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
+            es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
+            es.PrimaryDescriptorTag == DescriptorTag.Aac)
+        )
         {
-          if (pid.isAC3Audio)
-          {
-            if (programToDecode.Ac3AudioPid == 0)
-            {
-              programToDecode.Ac3AudioPid = pid.pid;
-            }
-          }
-          else if (!pid.isEAC3Audio && programToDecode.AudioPid == 0)
-          {
-            programToDecode.AudioPid = pid.pid;
-          }
+          programToDecode.AudioPid = es.Pid;
         }
-        else if (pid.isTeletext && programToDecode.TeletextPid == 0)
+        else if (programToDecode.Ac3AudioPid == 0 &&
+            (es.StreamType == StreamType.Ac3Audio ||
+            es.StreamType == StreamType.EnhancedAc3Audio ||
+            es.PrimaryDescriptorTag == DescriptorTag.Ac3 ||        // DVB
+            es.PrimaryDescriptorTag == DescriptorTag.Ac3Audio ||   // ATSC
+            es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3)
+        )
         {
-          programToDecode.TeletextPid = pid.pid;
+          programToDecode.Ac3AudioPid = es.Pid;
+        }
+        else if (programToDecode.TeletextPid == 0 &&
+          (es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
+          es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
+        )
+        {
+          programToDecode.TeletextPid = es.Pid;
         }
       }
+    }
 
-      // We don't know what the actual service type is in this
-      // context, but we can at least indicate whether this is
-      // a TV or radio service.
-      programToDecode.ServiceType = (byte)(dvbChannel.IsTv ? DvbServiceType.DigitalTelevision : DvbServiceType.DigitalRadio);
-
-      Log.Debug("MD Plugin: TSID = {0} (0x{1:x}), SID = {2} (0x{3:x}), PMT PID = {4} (0x{5:x}), PCR PID = {6} (0x{7:x}), service type = {8}, " +
-                        "video PID = {9} (0x{10:x}), audio PID = {11} (0x{12:x}), AC3 PID = {13} (0x{14:x}), teletext PID = {15} (0x{16:x})",
-          programToDecode.TransportStreamId, programToDecode.TransportStreamId,
-          programToDecode.ServiceId, programToDecode.ServiceId,
-          programToDecode.PmtPid, programToDecode.PmtPid,
-          programToDecode.PcrPid, programToDecode.PcrPid,
-          programToDecode.ServiceType,
-          programToDecode.VideoPid, programToDecode.VideoPid,
-          programToDecode.AudioPid, programToDecode.AudioPid,
-          programToDecode.Ac3AudioPid, programToDecode.Ac3AudioPid,
-          programToDecode.TeletextPid, programToDecode.TeletextPid);
-
-      // Build a list of the ECMs and EMMs in the Program82
-      // CA systems member.
+    /// <summary>
+    /// Find the ECM and EMM PIDs in program map and conditional access table CA descriptors and record them
+    /// in MD API structures.
+    /// </summary>
+    /// <param name="pmt">The program map to read from.</param>
+    /// <param name="cat">The conditional access table to read from.</param>
+    /// <param name="programToDecode">The MD API program information structure.</param>
+    /// <returns>the number of ECM/EMM PID combinations registered</returns>
+    private UInt16 RegisterEcmAndEmmPids(Pmt pmt, Cat cat, ref Program82 programToDecode)
+    {
+      Log.Debug("MD Plugin: registering ECM and EMM details");
       UInt16 count = 0;   // This variable will be used to count the number of distinct ECM/EMM PID combinations.
       programToDecode.CaSystems = new CaSystem82[MaxCaSystemCount];
+      HashSet<UInt16> seenEcmPids = new HashSet<UInt16>();
+      Dictionary<UInt16, UInt32>.KeyCollection.Enumerator pidEn;
+      int i = 1;
 
-      Log.Debug("MD Plugin: registering ECM and EMM details");
-      List<ECMEMM> ecmList = channelInfo.caPMT.GetECM();
-      for (int i = 0; i < ecmList.Count && count < 32; i++)
+      // First get ECMs from the PMT program CA descriptors.
+      Log.Debug("MD Plugin: PMT program CA descriptors...");
+      List<Descriptor>.Enumerator descEn = pmt.ProgramCaDescriptors.GetEnumerator();
+      while (descEn.MoveNext() && count < 32)
       {
-        Log.Debug("MD Plugin: ECM #{0} CA ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i + 1, ecmList[i].CaId, ecmList[i].Pid, ecmList[i].ProviderId);
-
-        programToDecode.CaSystems[i].CaType = (UInt16)ecmList[i].CaId;
-        programToDecode.CaSystems[i].EcmPid = ecmList[i].Pid;
-        programToDecode.CaSystems[i].ProviderId = (uint)ecmList[i].ProviderId;
-        count++;
-        if (i == 0)
+        ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current.GetRawData(), 0);
+        if (cad == null)
         {
-          programToDecode.EcmPid = ecmList[i].Pid;   // Default...
+          Log.Debug("MD Plugin: invalid descriptor");
+          byte[] rawDescriptor = descEn.Current.GetRawData();
+          DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
+          continue;
         }
-      }
-
-      List<ECMEMM> emmList = channelInfo.caPMT.GetEMM();
-      for (int i = 0; i < emmList.Count; ++i)
-      {
-        Log.Debug("MD Plugin: EMM #{0} CA ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i + 1, emmList[i].CaId, emmList[i].Pid, emmList[i].ProviderId);
-
-        // Check if this EMM PID is linked to an ECM PID.
-        bool found = false;
-        for (int j = 0; j < ecmList.Count; j++)
+        pidEn = cad.Pids.Keys.GetEnumerator();
+        while (pidEn.MoveNext() && count < 32)
         {
-          if (emmList[i].CaId == ecmList[j].CaId && emmList[i].ProviderId == ecmList[j].ProviderId)
+          UInt16 pid = pidEn.Current;
+          Log.Debug("MD Plugin: ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
+          if (!seenEcmPids.Contains(pid))
           {
-            found = true;
-            programToDecode.CaSystems[j].EmmPid = emmList[i].Pid;
-            break;
-          }
-        }
-        if (!found && count < 32)
-        {
-          programToDecode.CaSystems[count].CaType = (UInt16)emmList[i].CaId;
-          programToDecode.CaSystems[count].EmmPid = emmList[i].Pid;
-          programToDecode.CaSystems[count].ProviderId = (UInt32)emmList[i].ProviderId;
-          count++;
-        }
-      }
-
-      programToDecode.CaSystemCount = count;
-      SetPreferredCaSystemIndex(ref programToDecode);
-
-      Log.Debug("MD Plugin: ECM PID = {0} (0x{1:x}, CA system count = {2}, CA index = {3}",
-                    programToDecode.EcmPid,
-                    programToDecode.EcmPid,
-                    programToDecode.CaSystemCount,
-                    programToDecode.CaId);
-      for (byte i = 0; i < count; i++)
-      {
-        Log.Debug("MD Plugin: #{0} CA type = {1} (0x{2:x}), ECM PID = {3} (0x{4:x}), EMM PID = {5} (0x{6:x}), provider = {7} (0x{8:x})",
-                      i + 1,
-                      programToDecode.CaSystems[i].CaType,
-                      programToDecode.CaSystems[i].CaType,
-                      programToDecode.CaSystems[i].EcmPid,
-                      programToDecode.CaSystems[i].EcmPid,
-                      programToDecode.CaSystems[i].EmmPid,
-                      programToDecode.CaSystems[i].EmmPid,
-                      programToDecode.CaSystems[i].ProviderId,
-                      programToDecode.CaSystems[i].ProviderId);
-      }*/
-
-      // Instruct the MD filter to decrypt the service.
-      Marshal.StructureToPtr(programToDecode, _programmeBuffer, true);
-      Marshal.StructureToPtr(pidsToDecode, _pidBuffer, true);
-      try
-      {
-        IChangeChannel_Ex changeEx = freeSlot.Filter as IChangeChannel_Ex;
-        if (changeEx != null)
-        {
-          changeEx.ChangeChannelTP82_Ex(_programmeBuffer, _pidBuffer);
-        }
-        else
-        {
-          IChangeChannel change = freeSlot.Filter as IChangeChannel;
-          if (change != null)
-          {
-            change.ChangeChannelTP82(_programmeBuffer);
+            Log.Debug("MD Plugin:   adding");
+            programToDecode.CaSystems[count].CaType = cad.CaSystemId;
+            programToDecode.CaSystems[count].EcmPid = pid;
+            programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
+            seenEcmPids.Add(pid);
+            if (count == 0)
+            {
+              programToDecode.EcmPid = pid;   // Default...
+            }
+            count++;
           }
           else
           {
-            throw new Exception("Failed to acquire interface on filter.");
+            Log.Debug("MD Plugin:   already seen");
           }
         }
-        freeSlot.CurrentChannel = channel;
-      }
-      catch (Exception ex)
-      {
-        Log.Debug("MD Plugin: failed to change channel\r\n{0}", ex.ToString());
-        return false;
       }
 
-      return true;
+      // Now get ECMs from the PMT elementary stream CA descriptors.
+      Log.Debug("MD Plugin: PMT elementary stream CA descriptors...");
+      List<PmtElementaryStream>.Enumerator esEn = pmt.ElementaryStreams.GetEnumerator();
+      while (esEn.MoveNext() && count < 32)
+      {
+        descEn = esEn.Current.CaDescriptors.GetEnumerator();
+        while (descEn.MoveNext() && count < 32)
+        {
+          ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current.GetRawData(), 0);
+          if (cad == null)
+          {
+            Log.Debug("MD Plugin: invalid descriptor");
+            byte[] rawDescriptor = descEn.Current.GetRawData();
+            DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
+            continue;
+          }
+          pidEn = cad.Pids.Keys.GetEnumerator();
+          while (pidEn.MoveNext() && count < 32)
+          {
+            UInt16 pid = pidEn.Current;
+            Log.Debug("MD Plugin: ECM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
+            if (!seenEcmPids.Contains(pid))
+            {
+              Log.Debug("MD Plugin:   adding");
+              programToDecode.CaSystems[count].CaType = cad.CaSystemId;
+              programToDecode.CaSystems[count].EcmPid = pid;
+              programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
+              seenEcmPids.Add(pid);
+              if (count == 0)
+              {
+                programToDecode.EcmPid = pid;   // Default...
+              }
+              count++;
+            }
+            else
+            {
+              Log.Debug("MD Plugin:   already seen");
+            }
+          }
+        }
+      }
+
+      // Finally get EMMs from the CAT descriptors.
+      Log.Debug("MD Plugin: CAT CA descriptors...");
+      descEn = cat.CaDescriptors.GetEnumerator();
+      while (descEn.MoveNext())
+      {
+        ConditionalAccessDescriptor cad = ConditionalAccessDescriptor.Decode(descEn.Current.GetRawData(), 0);
+        if (cad == null)
+        {
+          Log.Debug("MD Plugin: invalid descriptor");
+          byte[] rawDescriptor = descEn.Current.GetRawData();
+          DVB_MMI.DumpBinary(rawDescriptor, 0, rawDescriptor.Length);
+          continue;
+        }
+
+        pidEn = cad.Pids.Keys.GetEnumerator();
+        while (pidEn.MoveNext())
+        {
+          UInt16 pid = pidEn.Current;
+          Log.Debug("MD Plugin: EMM #{0} CA system ID = 0x{1:x}, PID = 0x{2:x}, provider = 0x{3:x}", i++, cad.CaSystemId, pid, cad.Pids[pid]);
+
+          // Check if this EMM PID is linked to an ECM PID.          
+          bool found = false;
+          for (int j = 0; j < count; j++)
+          {
+            if (programToDecode.CaSystems[j].CaType == cad.CaSystemId && programToDecode.CaSystems[j].ProviderId == cad.Pids[pid])
+            {
+              Log.Debug("MD Plugin:   linking to ECM 0x{1:x}", programToDecode.CaSystems[j].EcmPid);
+              found = true;
+              programToDecode.CaSystems[j].EmmPid = pid;
+              break;
+            }
+          }
+          if (!found && count < 32)
+          {
+            Log.Debug("MD Plugin:   adding");
+            programToDecode.CaSystems[count].CaType = cad.CaSystemId;
+            programToDecode.CaSystems[count].EmmPid = pid;
+            programToDecode.CaSystems[count].ProviderId = cad.Pids[pid];
+            count++;
+          }
+        }
+      }
+      if (count == 32)
+      {
+        Log.Debug("MD Plugin: unable to register all PIDs");
+      }
+
+      return count;
     }
 
-    #endregion
-
+    /// <summary>
+    /// Search the MD plugin configuration to determine which CA system, provider, EMM PID and ECM PID should
+    /// be preferred for use when decrypting.
+    /// </summary>
+    /// <param name="programToDecode">The MD API program information structure containing the options.</param>
     private void SetPreferredCaSystemIndex(ref Program82 programToDecode)
     {
       try
@@ -1104,6 +671,589 @@ namespace TvEngine
       }
     }
 
+    #region ICustomDevice members
+
+    /// <summary>
+    /// The loading priority for this device type.
+    /// </summary>
+    public override byte Priority
+    {
+      get
+      {
+        // This plugin can easily be disabled on a per-tuner basis, so we will give it higher priority than
+        // hardware conditional access interfaces.
+        return 100;
+      }
+    }
+
+    /// <summary>
+    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
+    /// name/number.
+    /// </summary>
+    public override String Name
+    {
+      get
+      {
+        return "MD Plugin";
+      }
+    }
+
+    /// <summary>
+    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
+    /// the ICustomDevice instance should be disposed.
+    /// </summary>
+    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
+    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
+    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    {
+      Log.Debug("MD Plugin: initialising device");
+
+      if (tunerFilter == null)
+      {
+        Log.Debug("MD Plugin: tuner filter is null");
+        return false;
+      }
+      if (String.IsNullOrEmpty(tunerDevicePath))
+      {
+        Log.Debug("MD Plugin: tuner device path is not set");
+        return false;
+      }
+      if (_isMdPlugin)
+      {
+        Log.Debug("MD Plugin: device is already initialised");
+        return true;
+      }
+
+      // If there is no MD configuration folder then there is no softCAM plugin.
+      if (Directory.Exists("MDPLUGINS") == false)
+      {
+        Log.Debug("MD Plugin: plugin not configured");
+        return false;
+      }
+
+      // Get the tuner filter name. We use it as a prefix for the device configuration folder.
+      FilterInfo tunerFilterInfo;
+      int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
+      if (tunerFilterInfo.pGraph != null)
+      {
+        DsUtils.ReleaseComObject(tunerFilterInfo.pGraph);
+        tunerFilterInfo.pGraph = null;
+      }
+      if (hr != 0 || tunerFilterInfo.achName == null)
+      {
+        Log.Debug("MD Plugin: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      _configurationFolderPrefix = tunerFilterInfo.achName;
+
+      try
+      {
+        // Look for a configuration file.
+        String configFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
+        int slotCount = 1;
+        XmlDocument doc = new XmlDocument();
+        XmlNode rootNode = null;
+        XmlNode tunerNode = null;
+        if (File.Exists(configFile))
+        {
+          Log.Debug("MD Plugin: searching for device configuration");
+          doc.Load(configFile);
+          rootNode = doc.SelectSingleNode("/cards");
+          if (rootNode != null)
+          {
+            XmlNodeList tunerList = doc.SelectNodes("/cards/card");
+            if (tunerList != null)
+            {
+              foreach (XmlNode node in tunerList)
+              {
+                // We found the configuration for the tuner.
+                if (tunerNode.Attributes["DevicePath"].Value.Equals(tunerDevicePath))
+                {
+                  tunerNode = node;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (rootNode == null)
+        {
+          rootNode = doc.CreateElement("cards");
+        }
+        if (tunerNode == null)
+        {
+          Log.Debug("MD Plugin: creating device configuration");
+          tunerNode = doc.CreateElement("card");
+
+          // The "name" attribute is used as the configuration folder prefix.
+          XmlAttribute attr = doc.CreateAttribute("Name");
+          attr.InnerText = _configurationFolderPrefix;
+          tunerNode.Attributes.Append(attr);
+
+          // Used to identify the tuner.
+          attr = doc.CreateAttribute("DevicePath");
+          attr.InnerText = tunerDevicePath;
+          tunerNode.Attributes.Append(attr);
+
+          // Default: enable one instance of the plugin.
+          attr = doc.CreateAttribute("EnableMdapi");
+          attr.InnerText = slotCount.ToString();
+          tunerNode.Attributes.Append(attr);
+
+          rootNode.AppendChild(tunerNode);
+          doc.AppendChild(rootNode);
+          doc.Save(configFile);
+        }
+        else
+        {
+          try
+          {
+            _configurationFolderPrefix = tunerNode.Attributes["Name"].Value;
+            slotCount = Convert.ToInt32(tunerNode.Attributes["EnableMdapi"].Value);
+          }
+          catch (Exception)
+          {
+            // Assume that the plugin is enabled unless the parameter says "no".
+            if (tunerNode.Attributes["EnableMdapi"].Value.Equals("no"))
+            {
+              slotCount = 0;
+            }
+            tunerNode.Attributes["EnableMdapi"].Value = slotCount.ToString();
+            doc.Save(configFile);
+          }
+        }
+
+        if (slotCount > 0)
+        {
+          Log.Debug("MD Plugin: plugin is enabled for {0} decoding slot(s)", slotCount);
+          _isMdPlugin = true;
+          _slots = new List<DecodeSlot>(slotCount);
+          return true;
+        }
+
+        Log.Debug("MD Plugin: plugin is not enabled");
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("MD Plugin: failed to create, load or read configuration\r\n{0}", ex.ToString());
+        return false;
+      }
+    }
+
+    #endregion
+
+    #region IAddOnDevice member
+
+    /// <summary>
+    /// Insert and connect the device's additional filter(s) into the BDA graph.
+    /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
+    /// </summary>
+    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
+    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
+    ///   connect the [first] device filter to.</param>
+    /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
+    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
+    {
+      Log.Debug("MD Plugin: add to graph");
+
+      if (!_isMdPlugin)
+      {
+        Log.Debug("MD Plugin: device not initialised or interface not supported");
+        return false;
+      }
+      if (graphBuilder == null)
+      {
+        Log.Debug("MD Plugin: graph builder is null");
+        return false;
+      }
+      if (lastFilter == null)
+      {
+        Log.Debug("MD Plugin: upstream filter is null");
+        return false;
+      }
+      if (_slots != null && _slots.Count > 0 && _slots[0].Filter != null)
+      {
+        Log.Debug("MD Plugin: {0} device filter(s) already in graph", _slots.Count);
+        return true;
+      }
+
+      // We need a reference to the graph builder's graph.
+      IGraphBuilder tmpGraph = null;
+      int hr = graphBuilder.GetFiltergraph(out tmpGraph);
+      if (hr != 0)
+      {
+        Log.Debug("MD Plugin: failed to get graph reference, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+      _graph = tmpGraph as IFilterGraph2;
+      if (_graph == null)
+      {
+        Log.Debug("MD Plugin: failed to get graph reference");
+        return false;
+      }
+
+      // Add an inf tee after the tuner/capture filter.
+      _infTee = (IBaseFilter)new InfTee();
+      hr = _graph.AddFilter(_infTee, "MD Plugin Infinite Tee");
+      if (hr != 0)
+      {
+        Log.Debug("MD Plugin: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
+      }
+      hr = graphBuilder.RenderStream(null, null, lastFilter, null, _infTee);
+      if (hr != 0)
+      {
+        Log.Debug("MD Plugin: failed to render stream through inf tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        _graph.RemoveFilter(_infTee);
+        DsUtils.ReleaseComObject(_infTee);
+        _infTee = null;
+        return false;
+      }
+      lastFilter = _infTee;
+
+      // Add one filter for each decoding slot.
+      IPin outputPin;
+      IPin inputPin;
+      for (int i = 0; i < _slots.Count; i++)
+      {
+        DecodeSlot slot = new DecodeSlot();
+        slot.Filter = (IBaseFilter)new MDAPIFilter();
+        slot.CurrentChannel = null;
+
+        // Add the filter to the graph.
+        hr = _graph.AddFilter(slot.Filter, "MDAPI Filter " + i);
+        if (hr != 0)
+        {
+          Log.Debug("MD Plugin: failed to add MD plugin filter {0} to graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
+          return false;
+        }
+
+        // Connect the filter into the graph.
+        outputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+        inputPin = DsFindPin.ByDirection(slot.Filter, PinDirection.Input, 0);
+        hr = _graph.Connect(outputPin, inputPin);
+        DsUtils.ReleaseComObject(outputPin);
+        outputPin = null;
+        DsUtils.ReleaseComObject(inputPin);
+        inputPin = null;
+        if (hr != 0)
+        {
+          Log.Debug("MD Plugin: failed to connect MD plugin filter {0} into the graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
+          return false;
+        }
+        lastFilter = slot.Filter;
+        _slots[i] = slot;
+
+        // Check whether the plugin supports extended capabilities.
+        IChangeChannel temp = slot.Filter as IChangeChannel;
+        try
+        {
+          temp.SetPluginsDirectory(_configurationFolderPrefix + i);
+        }
+        catch (Exception ex)
+        {
+          Log.Debug("MD Plugin: failed to set plugin directory\r\n{0}", ex.ToString());
+          return false;
+        }
+        IChangeChannel_Ex temp2 = slot.Filter as IChangeChannel_Ex;
+        if (temp2 != null)
+        {
+          Log.Debug("MD Plugin: extended capabilities supported");
+        }
+      }
+
+      return true;
+    }
+
+    #endregion
+
+    #region IConditionalAccessProvider members
+
+    /// <summary>
+    /// Open the conditional access interface. For the interface to be opened successfully it is expected
+    /// that any necessary hardware (such as a CI slot) is connected.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
+    public bool OpenInterface()
+    {
+      Log.Debug("MD Plugin: open conditional access interface");
+
+      if (!_isMdPlugin)
+      {
+        Log.Debug("MD Plugin: device not initialised or interface not supported");
+        return false;
+      }
+      if (_slots == null || _slots.Count == 0)
+      {
+        Log.Debug("MD Plugin: device filter(s) not added to the BDA filter graph");
+        return false;
+      }
+      if (_programmeBuffer != IntPtr.Zero)
+      {
+        Log.Debug("MD Plugin: interface is already open");
+        return false;
+      }
+
+      _programmeBuffer = Marshal.AllocCoTaskMem(Program82Size);
+      _pidBuffer = Marshal.AllocCoTaskMem(PidsToDecodeSize);
+
+      Log.Debug("MD Plugin: result = success");
+      return true;
+    }
+
+    /// <summary>
+    /// Close the conditional access interface.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
+    public bool CloseInterface()
+    {
+      Log.Debug("MD Plugin: close conditional access interface");
+
+      if (_programmeBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_programmeBuffer);
+        _programmeBuffer = IntPtr.Zero;
+      }
+      if (_pidBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_pidBuffer);
+        _pidBuffer = IntPtr.Zero;
+      }
+
+      Log.Debug("MD Plugin: result = true");
+      return true;
+    }
+
+    /// <summary>
+    /// Reset the conditional access interface.
+    /// </summary>
+    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    ///   for the interface to be completely and successfully reset.</param>
+    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
+    public bool ResetInterface(out bool rebuildGraph)
+    {
+      Log.Debug("MD Plugin: reset conditional access interface");
+
+      // We have to rebuild the graph to reset anything.
+      rebuildGraph = true;
+      return true;
+    }
+
+    /// <summary>
+    /// Determine whether the conditional access interface is ready to receive commands.
+    /// </summary>
+    /// <returns><c>true</c> if the interface is ready, otherwise <c>false</c></returns>
+    public bool IsInterfaceReady()
+    {
+      Log.Debug("MD Plugin: is conditional access interface ready");
+
+      if (!_isMdPlugin || _slots == null)
+      {
+        Log.Debug("MD Plugin: device not initialised or interface not supported");
+        return false;
+      }
+      if (_programmeBuffer == IntPtr.Zero)
+      {
+        Log.Debug("MD Plugin: interface not opened");
+        return false;
+      }
+
+      // As far as we know, the interface is always ready as long as it is open.
+      Log.Debug("Turbosight: result = {0}", _slots.Count > 0);
+      return (_slots.Count > 0);
+    }
+
+    /// <summary>
+    /// Send a command to to the conditional access interface.
+    /// </summary>
+    /// <param name="channel">The channel information associated with the service which the command relates to.</param>
+    /// <param name="listAction">It is assumed that the interface may be able to decrypt one or more services
+    ///   simultaneously. This parameter gives the interface an indication of the number of services that it
+    ///   will be expected to manage.</param>
+    /// <param name="command">The type of command.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
+    /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
+    {
+      Log.Debug("MD Plugin: send conditional access command, list action = {0}, command = {1}", listAction, command);
+
+      if (!_isMdPlugin || _slots == null)
+      {
+        Log.Debug("MD Plugin: device not initialised or interface not supported");
+        return true;  // Don't retry...
+      }
+      if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
+      {
+        Log.Debug("MD Plugin: command type {0} is not supported", command);
+        return false;
+      }
+      if (pmt == null)
+      {
+        Log.Debug("MD Plugin: PMT not supplied");
+        return true;
+      }
+      if (cat == null)
+      {
+        Log.Debug("MD Plugin: CAT not supplied");
+        return true;
+      }
+      DVBBaseChannel dvbChannel = channel as DVBBaseChannel;
+      if (dvbChannel == null)
+      {
+        Log.Debug("MD Plugin: channel is not a DVB channel");
+        return true;
+      }
+
+      // Find a free slot to decode this service. If this is the first or only service in the list then we
+      // can reset our slots. This may not be ideal in some cases
+      DecodeSlot freeSlot = null;
+      if (command == CaPmtCommand.OkDescrambling && (listAction == CaPmtListManagementAction.First || listAction == CaPmtListManagementAction.Only))
+      {
+        Log.Debug("MD Plugin: freeing all slots");
+        foreach (DecodeSlot slot in _slots)
+        {
+          slot.CurrentChannel = null;
+        }
+        freeSlot = _slots[0];
+      }
+      else
+      {
+        foreach (DecodeSlot slot in _slots)
+        {
+          DVBBaseChannel currentService = slot.CurrentChannel as DVBBaseChannel;
+          if (currentService != null && currentService.ServiceId == dvbChannel.ServiceId)
+          {
+            // "Not selected" means stop decrypting the service.
+            if (command == CaPmtCommand.NotSelected)
+            {
+              slot.CurrentChannel = null;
+              return true;
+            }
+            // "Ok descrambling" means start or continue decrypting the service. If we're already decrypting
+            // the service that is fine - this is an update.
+            else if (command == CaPmtCommand.OkDescrambling)
+            {
+              Log.Debug("MD Plugin: updating slot decrypting channel \"{0}\"", slot.CurrentChannel.Name);
+              freeSlot = slot;
+            }
+          }
+          else if (currentService != null && freeSlot == null)
+          {
+            freeSlot = slot;
+          }
+        }
+      }
+
+      if (command == CaPmtCommand.NotSelected)
+      {
+        // If we get to here then we were asked to stop decrypting
+        // a service that we were not decrypting. Strange...
+        Log.Debug("MD Plugin: received \"not selected\" request for channel that is not being decrypted");
+        return true;
+      }
+
+      if (freeSlot == null)
+      {
+        // If we get to here then we were asked to start decrypting
+        // a service, but we don't have any free slots to do it with.
+        Log.Debug("MD Plugin: no free decrypt slots");
+        return false;
+      }
+
+      // If we get to here then we need to try to start decrypting the service.
+      Program82 programToDecode;
+      PidsToDecode pidsToDecode;
+      RegisterVideoAndAudioPids(pmt, out programToDecode, out pidsToDecode);
+
+      // Set the fields that we are able to set.
+      if (dvbChannel.Name != null)
+      {
+        programToDecode.Name = dvbChannel.Name;
+      }
+      if (dvbChannel.Provider != null)
+      {
+        programToDecode.Provider = dvbChannel.Provider;
+      }
+      programToDecode.TransportStreamId = (UInt16)dvbChannel.TransportId;
+      programToDecode.PmtPid = (UInt16)dvbChannel.PmtPid;
+
+      // We don't know what the actual service type is in this
+      // context, but we can at least indicate whether this is
+      // a TV or radio service.
+      programToDecode.ServiceType = (byte)(dvbChannel.IsTv ? DvbServiceType.DigitalTelevision : DvbServiceType.DigitalRadio);
+
+      Log.Debug("MD Plugin: TSID = {0} (0x{1:x}), SID = {2} (0x{3:x}), PMT PID = {4} (0x{5:x}), PCR PID = {6} (0x{7:x}), service type = {8}, " +
+                        "video PID = {9} (0x{10:x}), audio PID = {11} (0x{12:x}), AC3 PID = {13} (0x{14:x}), teletext PID = {15} (0x{16:x})",
+          programToDecode.TransportStreamId, programToDecode.TransportStreamId,
+          programToDecode.ServiceId, programToDecode.ServiceId,
+          programToDecode.PmtPid, programToDecode.PmtPid,
+          programToDecode.PcrPid, programToDecode.PcrPid,
+          programToDecode.ServiceType,
+          programToDecode.VideoPid, programToDecode.VideoPid,
+          programToDecode.AudioPid, programToDecode.AudioPid,
+          programToDecode.Ac3AudioPid, programToDecode.Ac3AudioPid,
+          programToDecode.TeletextPid, programToDecode.TeletextPid);
+
+      programToDecode.CaSystemCount = RegisterEcmAndEmmPids(pmt, cat, ref programToDecode);
+      SetPreferredCaSystemIndex(ref programToDecode);
+
+      Log.Debug("MD Plugin: ECM PID = {0} (0x{1:x}, CA system count = {2}, CA index = {3}",
+                    programToDecode.EcmPid,
+                    programToDecode.EcmPid,
+                    programToDecode.CaSystemCount,
+                    programToDecode.CaId);
+      for (byte i = 0; i < programToDecode.CaSystemCount; i++)
+      {
+        Log.Debug("MD Plugin: #{0} CA type = {1} (0x{2:x}), ECM PID = {3} (0x{4:x}), EMM PID = {5} (0x{6:x}), provider = {7} (0x{8:x})",
+                      i + 1,
+                      programToDecode.CaSystems[i].CaType,
+                      programToDecode.CaSystems[i].CaType,
+                      programToDecode.CaSystems[i].EcmPid,
+                      programToDecode.CaSystems[i].EcmPid,
+                      programToDecode.CaSystems[i].EmmPid,
+                      programToDecode.CaSystems[i].EmmPid,
+                      programToDecode.CaSystems[i].ProviderId,
+                      programToDecode.CaSystems[i].ProviderId);
+      }
+
+      // Instruct the MD filter to decrypt the service.
+      Marshal.StructureToPtr(programToDecode, _programmeBuffer, true);
+      Marshal.StructureToPtr(pidsToDecode, _pidBuffer, true);
+      try
+      {
+        IChangeChannel_Ex changeEx = freeSlot.Filter as IChangeChannel_Ex;
+        if (changeEx != null)
+        {
+          changeEx.ChangeChannelTP82_Ex(_programmeBuffer, _pidBuffer);
+        }
+        else
+        {
+          IChangeChannel change = freeSlot.Filter as IChangeChannel;
+          if (change != null)
+          {
+            change.ChangeChannelTP82(_programmeBuffer);
+          }
+          else
+          {
+            throw new Exception("Failed to acquire interface on filter.");
+          }
+        }
+        freeSlot.CurrentChannel = channel;
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("MD Plugin: failed to change channel\r\n{0}", ex.ToString());
+        return false;
+      }
+
+      return true;
+    }
+
+    #endregion
+
     #region IDisposable member
 
     /// <summary>
@@ -1127,6 +1277,7 @@ namespace TvEngine
           if (slot.Filter != null)
           {
             _graph.RemoveFilter(slot.Filter);
+            DsUtils.ReleaseComObject(slot.Filter);
             slot.Filter = null;
           }
         }

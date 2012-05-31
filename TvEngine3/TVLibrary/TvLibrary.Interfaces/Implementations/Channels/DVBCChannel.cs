@@ -84,7 +84,7 @@ namespace TvLibrary.Channels
     #region constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DVBCChannel"/> class.
+    /// Initialise a new instance of the <see cref="DVBCChannel"/> class.
     /// </summary>
     public DVBCChannel()
       : base()
@@ -94,7 +94,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DVBCChannel"/> class using an existing instance.
+    /// Initialise a new instance of the <see cref="DVBCChannel"/> class using an existing instance.
     /// </summary>
     /// <param name="channel">The existing channel instance.</param>
     public DVBCChannel(DVBCChannel channel)
@@ -105,7 +105,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DVBCChannel"/> class using a <see cref="DVBCTuning"/>
+    /// Initialise a new instance of the <see cref="DVBCChannel"/> class using a <see cref="DVBCTuning"/>
     /// instance.
     /// </summary>
     /// <param name="tuningParameters">Core channel tuning parameters.</param>

@@ -1104,10 +1104,10 @@ namespace TvEngine
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table entry for the service.</param>
-    /// <param name="cat">The conditional access table entry for the service.</param>
+    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
-    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, byte[] pmt, byte[] cat)
+    public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       Log.Debug("KNC: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
@@ -1116,24 +1116,14 @@ namespace TvEngine
         Log.Debug("KNC: device not initialised or interface not supported");
         return false;
       }
-      if (!_isCamReady)
-      {
-        Log.Debug("KNC: the CAM is not ready");
-        return false;
-      }
-      if (pmt == null || pmt.Length == 0)
+      if (pmt == null)
       {
         Log.Debug("KNC: PMT not supplied");
         return true;
       }
 
       // KNC supports the standard CA PMT format.
-      byte[] caPmt;
-      if (!CaPmt.GetFromPmt(pmt, listAction, command, out caPmt))
-      {
-        Log.Debug("KNC: failed to generate CA PMT from PMT");
-        return false;
-      }
+      byte[] caPmt = pmt.GetCaPmt(listAction, command);
 
       // Send the data to the CAM. Use a local buffer since PMT updates are asynchronous.
       IntPtr pmtBuffer = Marshal.AllocCoTaskMem(caPmt.Length);

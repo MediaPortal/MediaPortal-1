@@ -82,7 +82,7 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
-  /// DVB MMI application information application type.
+  /// DVB MMI application information application types.
   /// </summary>
   public enum MmiApplicationType : byte
   {
@@ -97,7 +97,7 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
-  /// DVB MMI enquiry answer response type.
+  /// DVB MMI enquiry answer response types.
   /// </summary>
   public enum MmiResponseType : byte
   {
@@ -112,7 +112,7 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
-  /// DVB MMI message tag.
+  /// DVB MMI message tags.
   /// </summary>
   public enum MmiTag
   {
@@ -313,7 +313,7 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
-  /// Stream type.
+  /// MPEG, DVB and ATSC stream types.
   /// </summary>
   public enum StreamType
   {
@@ -447,11 +447,16 @@ namespace TvLibrary.Interfaces
   }
 
   /// <summary>
-  /// Descriptor type.
+  /// MPEG, DVB and ATSC descriptor tags.
   /// </summary>
-  public enum DescriptorType
+  public enum DescriptorTag
   {
     #region MPEG ISO/IEC 13818-1
+
+    /// <summary>
+    /// Reserved. This value is used as a synonym for "not set".
+    /// </summary>
+    Reserved = 0,
 
     /// <summary>
     /// MPEG video stream descriptor
@@ -597,7 +602,7 @@ namespace TvLibrary.Interfaces
 
     #endregion
 
-    #region DVB EN 300 468
+    #region DVB ETSI EN 300 468
 
     /// <summary>
     /// DVB network name descriptor
@@ -876,184 +881,1399 @@ namespace TvLibrary.Interfaces
     #endregion
   }
 
+  /// <summary>
+  /// DVB service types.
+  /// </summary>
+  public enum DvbServiceType
+  {
+    // (0x00 reserved)
+
+    /// <summary>
+    /// digital television service
+    /// </summary>
+    DigitalTelevision = 0x01,
+    /// <summary>
+    /// digital radio sound service
+    /// </summary>
+    DigitalRadio = 0x02,
+    /// <summary>
+    /// teletext service
+    /// </summary>
+    Teletext = 0x03,
+    /// <summary>
+    /// Near Video On Demand reference service
+    /// </summary>
+    NvodReference = 0x04,
+    /// <summary>
+    /// Near Video On Demand time-shifted service
+    /// </summary>
+    NvodTimeShifted = 0x05,
+    /// <summary>
+    /// mosaic service
+    /// </summary>
+    Mosaic = 0x06,
+    /// <summary>
+    /// FM radio service
+    /// </summary>
+    FmRadio = 0x07,
+    /// <summary>
+    /// DVB System Renewability Messages service
+    /// </summary>
+    DvbSrm = 0x08,
+
+    // (0x09 reserved)
+
+    /// <summary>
+    /// advanced codec digital radio sound service
+    /// </summary>
+    AdvancedCodecDigitalRadio = 0x0a,
+    /// <summary>
+    /// advanced codec mosaic service
+    /// </summary>
+    AdvancedCodecMosaic = 0x0b,
+    /// <summary>
+    /// data broadcast service
+    /// </summary>
+    DataBroadcast = 0x0c,
+
+    // (0x0d reserved for common interface use)
+
+    /// <summary>
+    /// Return Channel via Satellite map
+    /// </summary>
+    RcsMap = 0x0e,
+
+    /// <summary>
+    /// Return Channel via Satellite Forward Link Signalling
+    /// </summary>
+    RcsFls = 0x0f,
+    /// <summary>
+    /// DVB Multimedia Home Platform service
+    /// </summary>
+    DvbMhp = 0x10,
+    /// <summary>
+    /// MPEG 2 HD digital television service
+    /// </summary>
+    Mpeg2HdDigitalTelevision = 0x11,
+
+    // (0x12 to 0x15 reserved)
+
+    /// <summary>
+    /// advanced codec SD digital television service
+    /// </summary>
+    AdvancedCodecSdDigitalTelevision = 0x16,
+    /// <summary>
+    /// advanced codec SD Near Video On Demand time-shifted service
+    /// </summary>
+    AdvancedCodecSdNvodTimeShifted = 0x17,
+    /// <summary>
+    /// advanced codec SD Near Video On Demand reference service
+    /// </summary>
+    AdvancedCodecSdNvodReference = 0x18,
+    /// <summary>
+    /// advanced codec HD digital television
+    /// </summary>
+    AdvancedCodecHdDigitalTelevision = 0x19,
+    /// <summary>
+    /// advanced codec HD Near Video On Demand time-shifted service
+    /// </summary>
+    AdvancedCodecHdNvodTimeShifted = 0x1a,
+    /// <summary>
+    /// advanced codec HD Near Video On Demand reference service
+    /// </summary>
+    AdvancedCodecHdNvodReference = 0x1b,
+
+    // (0x1c to 0x7f reserved)
+    // (0x80 to 0xfe user defined)
+
+    /// <summary>
+    /// Sky Germany portal service (also known as linked or option services)
+    /// </summary>
+    SkyGermanyOptionChannel = 0xd3
+
+    // (0xff reserved)
+  }
+
+  /// <summary>
+  /// ATSC service types.
+  /// </summary>
+  public enum AtscServiceType
+  {
+    /// <summary>
+    /// analog television (see A/65 [9])
+    /// </summary>
+    AnalogTelevision = 0x01,
+    /// <summary>
+    /// ATSC digital television (see A/53 part 3 [2])
+    /// </summary>
+    DigitalTelevision = 0x02,
+    /// <summary>
+    /// ATSC audio (see A/53 part 3 [2])
+    /// </summary>
+    Audio = 0x03
+  }
+
   #endregion
 
-  public class CaPmt
+  /// <summary>
+  /// A class that models the transport stream conditional access table section defined in ISO/IEC 13818-1.
+  /// </summary>
+  public class Cat
   {
-    public static bool GetFromPmt(byte[] pmt, CaPmtListManagementAction listAction, CaPmtCommand command, out byte[] caPmt)
+    #region variables
+
+    private byte _tableId;
+    private byte _sectionSyntaxIndicator;
+    private UInt16 _sectionLength;
+    private byte _version;
+    private byte _currentNextIndicator;
+    private byte _sectionNumber;
+    private byte _lastSectionNumber;
+    private List<Descriptor> _descriptors;
+    private List<Descriptor> _caDescriptors;
+    private byte[] _crc;
+
+    private byte[] _rawCat;
+
+    #endregion
+
+    // This class has a specific purpose - decoding CAT data. Although it may be tempting, we want to
+    // prevent it being used for holding various other info. Therefore the only way you can get an instance
+    // is by calling Decode() with a valid CAT section.
+    private Cat()
     {
-      caPmt = null;
-      if (pmt == null || pmt.Length < 12)
+    }
+
+    #region properties
+
+    /// <summary>
+    /// The conditional access table ID. Expected to be 0x01.
+    /// </summary>
+    public byte TableId
+    {
+      get
       {
-        Log.Log.Debug("CA PMT: PMT not supplied or too short");
-        return false;
+        return _tableId;
+      }
+    }
+
+    /// <summary>
+    /// The conditional access section syntax indicator. Expected to be 1 (stored in this class as 0x80).
+    /// </summary>
+    public byte SectionSyntaxIndicator
+    {
+      get
+      {
+        return _sectionSyntaxIndicator;
+      }
+    }
+
+    /// <summary>
+    /// The length of the conditional access section, including the CRC but not the table ID, section syntax
+    /// indicator or section length bytes.
+    /// </summary>
+    public UInt16 SectionLength
+    {
+      get
+      {
+        return _sectionLength;
+      }
+    }
+
+    /// <summary>
+    /// The version number of the conditional access table.
+    /// </summary>
+    public byte Version
+    {
+      get
+      {
+        return _version;
+      }
+    }
+
+    /// <summary>
+    /// When non-zero, indicates that the condtional access table information is current. Otherwise,
+    /// indicates that the information will apply in the future.
+    /// </summary>
+    public byte CurrentNextIndicator
+    {
+      get
+      {
+        return _currentNextIndicator;
+      }
+    }
+
+    /// <summary>
+    /// The index corresponding with this section of the conditional access table.
+    /// </summary>
+    public byte SectionNumber
+    {
+      get
+      {
+        return _sectionNumber;
+      }
+    }
+
+    /// <summary>
+    /// The total number of sections (minus one) that comprise the complete conditional access table.
+    /// </summary>
+    public byte LastSectionNumber
+    {
+      get
+      {
+        return _lastSectionNumber;
+      }
+    }
+
+    /// <summary>
+    /// The descriptors for the service described by the conditional access table. Conditional access
+    /// descriptors are not included.
+    /// </summary>
+    public List<Descriptor> Descriptors
+    {
+      get
+      {
+        return _descriptors;
+      }
+    }
+
+    /// <summary>
+    /// The conditional access descriptors for the service described by the conditional access table.
+    /// </summary>
+    public List<Descriptor> CaDescriptors
+    {
+      get
+      {
+        return _caDescriptors;
+      }
+    }
+
+    /// <summary>
+    /// Cyclic redundancy check bytes for confirming the integrity of the conditional access section data.
+    /// </summary>
+    public byte[] Crc
+    {
+      get
+      {
+        return _crc;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Decode and check the validity of raw conditional access section data.
+    /// </summary>
+    /// <param name="data">The raw conditional access section data.</param>
+    /// <returns>a fully populated cat instance if the section is valid, otherwise <c>null</c></returns>
+    public static Cat Decode(byte[] data)
+    {
+      Log.Log.Debug("CAT: decode");
+      if (data == null || data.Length < 12)
+      {
+        Log.Log.Debug("CAT: CAT not supplied or too short");
+        return null;
       }
 
+      if (data[0] != 0x01)
+      {
+        Log.Log.Debug("CAT: invalid table ID");
+        return null;
+      }
+      if ((data[1] & 0x80) != 0x80)
+      {
+        Log.Log.Debug("CAT: section syntax indicator is not 1");
+        return null;
+      }
+      if ((data[1] & 0x40) != 0)
+      {
+        Log.Log.Debug("CAT: corruption detected (zero)");
+        return null;
+      }
+
+      Cat cat = new Cat();
+      cat._tableId = data[0];
+      cat._sectionSyntaxIndicator = (byte)(data[1] & 0x80);
+      cat._sectionLength = (UInt16)(((data[1] & 0x0f) << 8) + data[2]);
+      if (3 + cat._sectionLength > data.Length)
+      {
+        Log.Log.Debug("CAT: section length is invalid");
+        return null;
+      }
+
+      cat._version = (byte)((data[5] & 0x3e) >> 1);
+      cat._currentNextIndicator = (byte)(data[5] & 0x01);
+      cat._sectionNumber = data[6];
+      cat._lastSectionNumber = data[7];
+
+      // Descriptors.
+      int offset = 8;
+      int endDescriptors = data.Length - 4;
+      cat._descriptors = new List<Descriptor>();
+      cat._caDescriptors = new List<Descriptor>();
+      while (offset + 1 < endDescriptors)
+      {
+        Descriptor d = Descriptor.Decode(data, offset);
+        if (d == null)
+        {
+          Log.Log.Debug("CAT: descriptor {0} is invalid", cat._descriptors.Count + cat._caDescriptors.Count + 1);
+          return null;
+        }
+        offset += d.Length + 2;
+        if (d.Tag == DescriptorTag.ConditionalAccess)
+        {
+          cat._caDescriptors.Add(d);
+        }
+        else
+        {
+          cat._descriptors.Add(d);
+        }
+      }
+      if (offset != endDescriptors)
+      {
+        Log.Log.Debug("CAT: corruption detected (descriptors)");
+        return null;
+      }
+
+      cat._crc = new byte[4];
+      Buffer.BlockCopy(data, offset, cat._crc, 0, 4);
+
+      // Make a copy of the CAT so that changes made by the caller on the original array have no effect on
+      // our reference/copy.
+      cat._rawCat = new byte[data.Length];
+      Buffer.BlockCopy(data, 0, cat._rawCat, 0, data.Length);
+
+      //cat.Dump();
+
+      return cat;
+    }
+
+    /// <summary>
+    /// Retrieve the original conditional access section data that was decoded to create this Cat instance.
+    /// </summary>
+    /// <returns>the raw conditional access section data</returns>
+    public byte[] GetRawCat()
+    {
+      // Make a copy of our raw CAT for the caller. We copy so that subsequent changes made by the caller
+      // have no effect on our reference/copy.
+      byte[] outputCat = new byte[_rawCat.Length];
+      Buffer.BlockCopy(_rawCat, 0, outputCat, 0, _rawCat.Length);
+      return outputCat;
+    }
+
+    /// <summary>
+    /// For debug use.
+    /// </summary>
+    public void Dump()
+    {
+      Log.Log.Debug("CAT: dump...");
+      DVB_MMI.DumpBinary(_rawCat, 0, _rawCat.Length);
+      Log.Log.Debug("  table ID                 = {0}", _tableId);
+      Log.Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
+      Log.Log.Debug("  section length           = {0}", _sectionLength);
+      Log.Log.Debug("  version                  = {0}", _version);
+      Log.Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
+      Log.Log.Debug("  section number           = {0}", _sectionNumber);
+      Log.Log.Debug("  last section number      = {0}", _lastSectionNumber);
+      Log.Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      foreach (Descriptor d in _descriptors)
+      {
+        d.Dump();
+      }
+      foreach (Descriptor cad in _caDescriptors)
+      {
+        cad.Dump();
+      }
+    }
+  }
+
+  /// <summary>
+  /// A class that models the transport stream program map table section defined in ISO/IEC 13818-1.
+  /// </summary>
+  public class Pmt
+  {
+    #region variables
+
+    private byte _tableId;
+    private byte _sectionSyntaxIndicator;
+    private UInt16 _sectionLength;
+    private UInt16 _programNumber;
+    private byte _version;
+    private byte _currentNextIndicator;
+    private byte _sectionNumber;
+    private byte _lastSectionNumber;
+    private UInt16 _pcrPid;
+    private UInt16 _programInfoLength;
+    private List<Descriptor> _programDescriptors;
+    private List<Descriptor> _programCaDescriptors;
+    private List<PmtElementaryStream> _elementaryStreams;
+    private byte[] _crc;
+
+    private byte[] _rawPmt;
+
+    #endregion
+
+    // This class has a specific purpose - decoding and translating between various PMT formats. Although it
+    // may be tempting, we want to prevent it being used for holding various other info. Therefore the only
+    // way you can get an instance is by calling Decode() with a valid PMT section.
+    private Pmt()
+    {
+    }
+
+    #region properties
+
+    /// <summary>
+    /// The program map table ID. Expected to be 0x02.
+    /// </summary>
+    public byte TableId
+    {
+      get
+      {
+        return _tableId;
+      }
+    }
+
+    /// <summary>
+    /// The program map section syntax indicator. Expected to be 1 (stored in this class as 0x80).
+    /// </summary>
+    public byte SectionSyntaxIndicator
+    {
+      get
+      {
+        return _sectionSyntaxIndicator;
+      }
+    }
+
+    /// <summary>
+    /// The length of the program map section, including the CRC but not the table ID, section syntax
+    /// indicator or section length bytes.
+    /// </summary>
+    public UInt16 SectionLength
+    {
+      get
+      {
+        return _sectionLength;
+      }
+    }
+
+    /// <summary>
+    /// The program number (service ID) of the service that the program map describes.
+    /// </summary>
+    public UInt16 ProgramNumber
+    {
+      get
+      {
+        return _programNumber;
+      }
+    }
+
+    /// <summary>
+    /// The version number of the program map.
+    /// </summary>
+    public byte Version
+    {
+      get
+      {
+        return _version;
+      }
+    }
+
+    /// <summary>
+    /// When non-zero, indicates that the program map describes the service's current state. Otherwise,
+    /// indicates that the program map describes the next service state.
+    /// </summary>
+    public byte CurrentNextIndicator
+    {
+      get
+      {
+        return _currentNextIndicator;
+      }
+    }
+
+    /// <summary>
+    /// The index corresponding with this section of the program map. Expected to be zero.
+    /// </summary>
+    public byte SectionNumber
+    {
+      get
+      {
+        return _sectionNumber;
+      }
+    }
+
+    /// <summary>
+    /// The total number of sections (minus one) that comprise the complete program map. Expected to be zero.
+    /// </summary>
+    public byte LastSectionNumber
+    {
+      get
+      {
+        return _lastSectionNumber;
+      }
+    }
+
+    /// <summary>
+    /// The PID containing the program clock reference data for the service described by the program map.
+    /// </summary>
+    public UInt16 PcrPid
+    {
+      get
+      {
+        return _pcrPid;
+      }
+    }
+
+    /// <summary>
+    /// The total number of bytes in the program map program descriptors.
+    /// </summary>
+    public UInt16 ProgramInfoLength
+    {
+      get
+      {
+        return _programInfoLength;
+      }
+    }
+
+    /// <summary>
+    /// The descriptors for the service described by the program map. Conditional access descriptors are not
+    /// included.
+    /// </summary>
+    public List<Descriptor> ProgramDescriptors
+    {
+      get
+      {
+        return _programDescriptors;
+      }
+    }
+
+    /// <summary>
+    /// The conditional access descriptors for the service described by the program map.
+    /// </summary>
+    public List<Descriptor> ProgramCaDescriptors
+    {
+      get
+      {
+        return _programCaDescriptors;
+      }
+    }
+
+    /// <summary>
+    /// The elementary streams described in the program map.
+    /// </summary>
+    public List<PmtElementaryStream> ElementaryStreams
+    {
+      get
+      {
+        return _elementaryStreams;
+      }
+    }
+
+    /// <summary>
+    /// Cyclic redundancy check bytes for confirming the integrity of the program map section data.
+    /// </summary>
+    public byte[] Crc
+    {
+      get
+      {
+        return _crc;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Decode and check the validity of raw program map section data.
+    /// </summary>
+    /// <param name="data">The raw program map section data.</param>
+    /// <param name="camType">The type of CAM that the program map will be passed to.</param>
+    /// <returns>a fully populated Pmt instance if the section is valid, otherwise <c>null</c></returns>
+    public static Pmt Decode(byte[] data, CamType camType)
+    {
+      Log.Log.Debug("PMT: decode, CAM type = {0}", camType);
+      if (data == null || data.Length < 16)
+      {
+        Log.Log.Debug("PMT: PMT not supplied or too short");
+        return null;
+      }
+
+      if (data[0] != 0x02)
+      {
+        Log.Log.Debug("PMT: invalid table ID");
+        return null;
+      }
+      if ((data[1] & 0x80) != 0x80)
+      {
+        Log.Log.Debug("PMT: section syntax indicator is not 1");
+        return null;
+      }
+      if ((data[1] & 0x40) != 0)
+      {
+        Log.Log.Debug("PMT: corruption detected (zero)");
+        return null;
+      }
+      if (data[6] != 0)
+      {
+        Log.Log.Debug("PMT: section number is not zero");
+        return null;
+      }
+      if (data[7] != 0)
+      {
+        Log.Log.Debug("PMT: last section number is not zero");
+        return null;
+      }
+
+      Pmt pmt = new Pmt();
+      pmt._tableId = data[0];
+      pmt._sectionSyntaxIndicator = (byte)(data[1] & 0x80);
+      pmt._sectionLength = (UInt16)(((data[1] & 0x0f) << 8) + data[2]);
+      if (3 + pmt._sectionLength != data.Length)
+      {
+        Log.Log.Debug("PMT: section length is invalid");
+        return null;
+      }
+
+      pmt._programNumber = (UInt16)((data[3] << 8) + data[4]);
+      pmt._version = (byte)((data[5] & 0x3e) >> 1);
+      pmt._currentNextIndicator = (byte)(data[5] & 0x01);
+      pmt._sectionNumber = data[6];
+      pmt._lastSectionNumber = data[7];
+      pmt._pcrPid = (UInt16)(((data[8] & 0x1f) << 8) + data[9]);
+      pmt._programInfoLength = (UInt16)(((data[10] & 0x0f) << 8) + data[11]);
+      if (12 + pmt._programInfoLength + 4 > data.Length)
+      {
+        Log.Log.Debug("PMT: program info length is invalid");
+        return null;
+      }
+
+      // Program descriptors.
+      int offset = 12;
+      int endProgramDescriptors = offset + pmt._programInfoLength;
+      pmt._programDescriptors = new List<Descriptor>();
+      pmt._programCaDescriptors = new List<Descriptor>();
+      while (offset + 1 < endProgramDescriptors)
+      {
+        Descriptor d = Descriptor.Decode(data, offset);
+        if (d == null)
+        {
+          Log.Log.Debug("PMT: program descriptor {0} is invalid", pmt._programDescriptors.Count + pmt._programCaDescriptors.Count + 1);
+          return null;
+        }
+        offset += d.Length + 2;
+        if (d.Tag == DescriptorTag.ConditionalAccess)
+        {
+          pmt._programCaDescriptors.Add(d);
+        }
+        else
+        {
+          pmt._programDescriptors.Add(d);
+        }
+      }
+      if (offset != endProgramDescriptors)
+      {
+        Log.Log.Debug("PMT: corruption detected (program descriptors)");
+        return null;
+      }
+
+      // Elementary streams.
+      pmt._elementaryStreams = new List<PmtElementaryStream>();
+      int endEsData = data.Length - 4;
+      while (offset + 4 < endEsData)
+      {
+        PmtElementaryStream es = new PmtElementaryStream();
+        es.PrimaryDescriptorTag = DescriptorTag.Reserved;
+        es.StreamType = (StreamType)data[offset++];
+        es.Pid = (UInt16)(((data[offset] & 0x1f) << 8) + data[offset + 1]);
+        offset += 2;
+        es.EsInfoLength = (UInt16)(((data[offset] & 0x0f) << 8) + data[offset + 1]);
+        offset += 2;
+
+        // Elementary stream descriptors.
+        int endEsDescriptors = offset + es.EsInfoLength;
+        if (endEsDescriptors > endEsData)
+        {
+          Log.Log.Debug("PMT: elementary stream info length for PID {0} (0x{1:x}) is invalid", es.Pid, es.Pid);
+          return null;
+        }
+        es.Descriptors = new List<Descriptor>();
+        es.CaDescriptors = new List<Descriptor>();
+        while (offset + 1 < endEsDescriptors)
+        {
+          Descriptor d = Descriptor.Decode(data, offset);
+          if (d == null)
+          {
+            Log.Log.Debug("PMT: elementary stream descriptor {0} for PID {1} (0x{2:x}) is invalid", es.Descriptors.Count + es.CaDescriptors.Count + 1, es.Pid, es.Pid);
+            return null;
+          }
+          offset += d.Length + 2;
+          if (d.Tag == DescriptorTag.ConditionalAccess)
+          {
+            es.CaDescriptors.Add(d);
+          }
+          else
+          {
+            es.Descriptors.Add(d);
+            if (d.Tag == DescriptorTag.VideoStream ||
+              d.Tag == DescriptorTag.Mpeg4Video ||
+              d.Tag == DescriptorTag.AvcVideo ||
+              d.Tag == DescriptorTag.AudioStream ||
+              d.Tag == DescriptorTag.Mpeg4Audio ||
+              d.Tag == DescriptorTag.Mpeg2AacAudio ||
+              d.Tag == DescriptorTag.Aac ||
+              d.Tag == DescriptorTag.Ac3 ||        // DVB
+              d.Tag == DescriptorTag.Ac3Audio ||   // ATSC
+              d.Tag == DescriptorTag.EnhancedAc3 ||
+              d.Tag == DescriptorTag.Dts ||
+              d.Tag == DescriptorTag.Subtitling ||
+              d.Tag == DescriptorTag.Teletext ||
+              d.Tag == DescriptorTag.VbiTeletext)
+            {
+              es.PrimaryDescriptorTag = d.Tag;
+            }
+          }
+        }
+        if (offset != endEsDescriptors)
+        {
+          Log.Log.Debug("PMT: corruption detected (elementary stream descriptors)");
+          return null;
+        }
+
+        pmt.ElementaryStreams.Add(es);
+      }
+      if (offset != endEsData)
+      {
+        Log.Log.Debug("PMT: corruption detected (elementary stream data)");
+        return null;
+      }
+
+      pmt._crc = new byte[4];
+      Buffer.BlockCopy(data, offset, pmt._crc, 0, 4);
+
+      // Make a copy of the PMT so that changes made by the caller on the original array have no effect on
+      // our reference/copy.
+      pmt._rawPmt = new byte[data.Length];
+      Buffer.BlockCopy(data, 0, pmt._rawPmt, 0, data.Length);
+
+      // One last thing: for Astoncrypt 2 CAMs, we patch the stream type on AC3 streams...
+      if (camType == CamType.Astoncrypt2)
+      {
+        // Move to the first ES stream type.
+        offset = 12 + pmt._programInfoLength;
+        foreach (PmtElementaryStream es in pmt._elementaryStreams)
+        {
+          if (es.StreamType == StreamType.Mpeg2Part1PrivateData && es.PrimaryDescriptorTag == DescriptorTag.Ac3)
+          {
+            es.StreamType = StreamType.Ac3Audio;
+            pmt._rawPmt[offset] = (byte)StreamType.Ac3Audio;
+          }
+          offset += 5 + es.EsInfoLength;
+        }
+      }
+
+      //pmt.Dump();
+
+      return pmt;
+    }
+
+    /// <summary>
+    /// Retrieve the original program map section data that was decoded to create this Pmt instance.
+    /// </summary>
+    /// <returns>the raw program map section data</returns>
+    public byte[] GetRawPmt()
+    {
+      // Make a copy of our raw PMT for the caller. We copy so that subsequent changes made by the caller
+      // have no effect on our reference/copy.
+      byte[] outputPmt = new byte[_rawPmt.Length];
+      Buffer.BlockCopy(_rawPmt, 0, outputPmt, 0, _rawPmt.Length);
+      return outputPmt;
+    }
+
+    /// <summary>
+    /// Generate a conditional access program map command suitable for passing to an EN 50221 compliant
+    /// conditional access module.
+    /// </summary>
+    /// <param name="listAction">The context of the command (in terms of other services that the conditional
+    ///   access module will need to deal with.</param>
+    /// <param name="command">The type of conditional access command.</param>
+    /// <returns></returns>
+    public byte[] GetCaPmt(CaPmtListManagementAction listAction, CaPmtCommand command)
+    {
+      Log.Log.Debug("PMT: get CA PMT, list action = {0}, command = {1}", listAction, command);
       byte[] tempCaPmt = new byte[4096];
       tempCaPmt[0] = (byte)listAction;
-      tempCaPmt[1] = pmt[3];
-      tempCaPmt[2] = pmt[4];
-      tempCaPmt[3] = pmt[5];
+      tempCaPmt[1] = _rawPmt[3];
+      tempCaPmt[2] = _rawPmt[4];
+      tempCaPmt[3] = _rawPmt[5];
 
-      // program descriptors
-      int caPmtOffset = 6;
-      int caPmtProgramDescriptorsLength = 0;
-      int pmtOffset = 12;
-      int pmtProgramInfoEnd = ((pmt[10] & 0x0f) << 8) + pmt[11] + pmtOffset;
-      if (pmtProgramInfoEnd > pmt.Length - 4)
+      // Program descriptors. As per EN 50221, we only add conditional access descriptors to the CA PMT.
+      int offset = 6;
+      int programInfoLength = 0;
+      foreach (Descriptor d in _programCaDescriptors)
       {
-        Log.Log.Debug("CA PMT: program info length is invalid");
-        return false;
-      }
-      while (pmtOffset + 1 <= pmtProgramInfoEnd)
-      {
-        // As per EN 50221, we only add conditional access descriptors to the CA PMT.
-        byte descriptorTag = pmt[pmtOffset];
-        byte descriptorLength = pmt[pmtOffset + 1];
-        if (pmtOffset + 2 + descriptorLength > pmtProgramInfoEnd)
+        if (programInfoLength == 0)
         {
-          Log.Log.Debug("CA PMT: program descriptor {0} ({1:x}) length is invalid", descriptorTag, descriptorTag);
-          return false;
+          tempCaPmt[offset++] = (byte)command;
+          programInfoLength++;
         }
-        if (descriptorTag == (byte)DescriptorType.ConditionalAccess)
-        {
-          if (caPmtProgramDescriptorsLength == 0)
-          {
-            tempCaPmt[caPmtOffset++] = (byte)command;
-          }
-          Buffer.BlockCopy(pmt, pmtOffset, tempCaPmt, caPmtOffset, descriptorLength + 2);
-          caPmtProgramDescriptorsLength += descriptorLength + 2;
-          caPmtOffset += descriptorLength + 2;
-        }
-        pmtOffset += descriptorLength + 2;
-      }
-      if (pmtOffset != pmtProgramInfoEnd)
-      {
-        Log.Log.Debug("CA PMT: PMT corruption detected");
-        return false;
+        byte[] descriptorData = d.GetRawData();
+        Buffer.BlockCopy(descriptorData, 0, tempCaPmt, offset, descriptorData.Length);
+        offset += descriptorData.Length;
+        programInfoLength += descriptorData.Length;
       }
 
       // Set the program_info_length now that we know what the length is.
-      tempCaPmt[4] = (byte)((caPmtProgramDescriptorsLength >> 8) & 0x0f);
-      tempCaPmt[5] = (byte)(caPmtProgramDescriptorsLength & 0xff);
+      tempCaPmt[4] = (byte)((programInfoLength >> 8) & 0x0f);
+      tempCaPmt[5] = (byte)(programInfoLength & 0xff);
 
-      // elementary streams
-      int pmtEnd = ((pmt[1] & 0x0f) << 8) + pmt[2] + 3 - 4;   // = section length + first 3 bytes - CRC length
-      if (pmtEnd > pmt.Length - 4)
-      {
-        Log.Log.Debug("CA PMT: section length is invalid");
-        return false;
-      }
-      while (pmtOffset + 4 <= pmtEnd)
+      // Elementary streams.
+      foreach (PmtElementaryStream es in _elementaryStreams)
       {
         // We add each video, audio, subtitle and teletext stream with their corresponding conditional access
         // descriptors to the CA PMT. The first trick is to find out if the stream is one that we want to
-        // include. That requires checking the stream type and descriptor type(s).
-        byte streamType = pmt[pmtOffset];
-        int streamPid = ((pmt[pmtOffset + 1] & 0x01f) << 8) + pmt[pmtOffset + 2];
-        int esInfoLength = ((pmt[pmtOffset + 3] & 0x0f) << 8) + pmt[pmtOffset + 4];
-        if (pmtOffset + 5 + esInfoLength > pmtEnd)
+        // include. That requires checking the stream type and primary descriptor type.
+        if (es.StreamType == StreamType.Mpeg1Part2Video ||
+          es.StreamType == StreamType.Mpeg2Part2Video ||
+          es.StreamType == StreamType.Mpeg4Part2Video ||
+          es.StreamType == StreamType.Mpeg4Part10Video ||
+          es.StreamType == StreamType.Mpeg1Part3Audio ||
+          es.StreamType == StreamType.Mpeg2Part3Audio ||
+          es.StreamType == StreamType.Mpeg2Part7Audio ||
+          es.StreamType == StreamType.Mpeg4Part3Audio ||
+          es.StreamType == StreamType.Ac3Audio ||
+          es.StreamType == StreamType.EnhancedAc3Audio ||
+          es.PrimaryDescriptorTag == DescriptorTag.VideoStream ||
+          es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Video ||
+          es.PrimaryDescriptorTag == DescriptorTag.AvcVideo ||
+          es.PrimaryDescriptorTag == DescriptorTag.AudioStream ||
+          es.PrimaryDescriptorTag == DescriptorTag.Mpeg4Audio ||
+          es.PrimaryDescriptorTag == DescriptorTag.Mpeg2AacAudio ||
+          es.PrimaryDescriptorTag == DescriptorTag.Aac ||
+          es.PrimaryDescriptorTag == DescriptorTag.Ac3 ||        // DVB
+          es.PrimaryDescriptorTag == DescriptorTag.Ac3Audio ||   // ATSC
+          es.PrimaryDescriptorTag == DescriptorTag.EnhancedAc3 ||
+          es.PrimaryDescriptorTag == DescriptorTag.Dts ||
+          es.PrimaryDescriptorTag == DescriptorTag.Subtitling ||
+          es.PrimaryDescriptorTag == DescriptorTag.Teletext ||
+          es.PrimaryDescriptorTag == DescriptorTag.VbiTeletext)
         {
-          Log.Log.Debug("CA PMT: elementary stream info length for PID {0} ({1:x}) is invalid", streamPid, streamPid);
-          return false;
-        }
-        bool isStreamToInclude = false;
-        if (streamType == (byte)StreamType.Mpeg1Part2Video ||
-          streamType == (byte)StreamType.Mpeg2Part2Video ||
-          streamType == (byte)StreamType.Mpeg4Part2Video ||
-          streamType == (byte)StreamType.Mpeg4Part10Video ||
-          streamType == (byte)StreamType.Mpeg1Part3Audio ||
-          streamType == (byte)StreamType.Mpeg2Part3Audio ||
-          streamType == (byte)StreamType.Mpeg2Part7Audio ||
-          streamType == (byte)StreamType.Mpeg4Part3Audio ||
-          streamType == (byte)StreamType.Ac3Audio ||
-          streamType == (byte)StreamType.EnhancedAc3Audio)
-        {
-          isStreamToInclude = true;
-        }
-        else
-        {
-          // It isn't obvious from the stream type that this would be a stream that we want to include.
-          // Quickly step over the stream descriptors and use them to help us make the decision about whether
-          // to include this stream or not.
-          int length = esInfoLength;
-          int offset = pmtOffset + 5;   // This should point at the tag of the first descriptor.
-          while (length > 2)
-          {
-            byte descriptorTag = pmt[offset];
-            byte descriptorLength = pmt[offset + 1];
-            if (descriptorTag == (byte)DescriptorType.VideoStream ||
-              descriptorTag == (byte)DescriptorType.Mpeg4Video ||
-              descriptorTag == (byte)DescriptorType.AvcVideo ||
-              descriptorTag == (byte)DescriptorType.AudioStream ||
-              descriptorTag == (byte)DescriptorType.Mpeg4Audio ||
-              descriptorTag == (byte)DescriptorType.Mpeg2AacAudio ||
-              descriptorTag == (byte)DescriptorType.Aac ||
-              descriptorTag == (byte)DescriptorType.Ac3 ||        // DVB
-              descriptorTag == (byte)DescriptorType.Ac3Audio ||   // ATSC
-              descriptorTag == (byte)DescriptorType.EnhancedAc3 ||
-              descriptorTag == (byte)DescriptorType.Dts ||
-              descriptorTag == (byte)DescriptorType.Subtitling ||
-              descriptorTag == (byte)DescriptorType.Teletext)
-            {
-              isStreamToInclude = true;
-              break;
-            }
-            length -= (descriptorLength + 2);
-            offset += descriptorLength + 2;
-          }
-        }
+          tempCaPmt[offset++] = (byte)es.StreamType;
+          tempCaPmt[offset++] = (byte)((es.Pid >> 8) & 0x1f);
+          tempCaPmt[offset++] = (byte)(es.Pid & 0xff);
 
-        if (isStreamToInclude)
-        {
-          // We include video, audio, subtitle and teletext stream details and CA descriptors in the CA PMT.
-          Buffer.BlockCopy(pmt, pmtOffset, tempCaPmt, caPmtOffset, 3);
-          pmtOffset += 5;
-          caPmtOffset += 5;   // Skip the ES_info_length field until we know what the length is.
+          // Skip the ES_info_length field until we know what the length is.
+          int esInfoLengthOffset = offset;
+          offset += 2;
 
-          // elementary stream descriptors
-          int caPmtEsDescriptorsLength = 0;
-          while (esInfoLength >= 2)
+          // As per EN 50221, we only add conditional access descriptors to the CA PMT.
+          int esInfoLength = 0;
+          foreach (Descriptor d in es.CaDescriptors)
           {
-            // As per EN 50221, we only add conditional access descriptors to the CA PMT.
-            byte descriptorTag = pmt[pmtOffset];
-            byte descriptorLength = pmt[pmtOffset + 1];
-            if (pmtOffset + descriptorLength + 2 > pmtEnd)
+            if (esInfoLength == 0)
             {
-              Log.Log.Debug("CA PMT: elementary stream descriptor {0} ({1:x}) length for PID {2} ({3:x}) is invalid", descriptorTag, descriptorTag, streamPid, streamPid);
-              return false;
+              tempCaPmt[offset++] = (byte)command;
+              esInfoLength++;
             }
-            if (descriptorTag == (byte)DescriptorType.ConditionalAccess)
-            {
-              if (caPmtEsDescriptorsLength == 0)
-              {
-                tempCaPmt[caPmtOffset++] = (byte)command;
-              }
-              Buffer.BlockCopy(pmt, pmtOffset, tempCaPmt, caPmtOffset, descriptorLength + 2);
-              caPmtEsDescriptorsLength += descriptorLength + 2;
-              caPmtOffset += descriptorLength + 2;
-            }
-            esInfoLength -= (descriptorLength + 2);
-            pmtOffset += descriptorLength + 2;
+            byte[] descriptorData = d.GetRawData();
+            Buffer.BlockCopy(descriptorData, 0, tempCaPmt, offset, descriptorData.Length);
+            offset += descriptorData.Length;
+            esInfoLength += descriptorData.Length;
           }
-          tempCaPmt[caPmtOffset - caPmtEsDescriptorsLength - 2] = (byte)((caPmtEsDescriptorsLength >> 8) & 0x0f);
-          tempCaPmt[caPmtOffset - caPmtEsDescriptorsLength - 1] = (byte)(caPmtEsDescriptorsLength & 0xff);
-        }
-        else
-        {
-          // Skip over streams that we're not going to include.
-          pmtOffset += esInfoLength + 5;
+
+          // Set the ES_info_length now that we know what the length is.
+          tempCaPmt[esInfoLengthOffset++] = (byte)((esInfoLength >> 8) & 0x0f);
+          tempCaPmt[esInfoLengthOffset] = (byte)(esInfoLength & 0xff);
         }
       }
-      if (pmtOffset != pmtEnd)
+
+      // There is no length output parameter, so we need to resize tempCaPmt to match the number of
+      // meaningful CA PMT bytes.
+      byte[] caPmt = new byte[offset];
+      Buffer.BlockCopy(tempCaPmt, 0, caPmt, 0, offset);
+
+      DVB_MMI.DumpBinary(caPmt, 0, caPmt.Length);
+
+      return caPmt;
+    }
+
+    /// <summary>
+    /// For debug use.
+    /// </summary>
+    public void Dump()
+    {
+      Log.Log.Debug("PMT: dump...");
+      DVB_MMI.DumpBinary(_rawPmt, 0, _rawPmt.Length);
+      Log.Log.Debug("  table ID                 = {0}", _tableId);
+      Log.Log.Debug("  section syntax indicator = {0}", _sectionSyntaxIndicator);
+      Log.Log.Debug("  section length           = {0}", _sectionLength);
+      Log.Log.Debug("  program number           = {0} (0x{1:x})", _programNumber, _programNumber);
+      Log.Log.Debug("  version                  = {0}", _version);
+      Log.Log.Debug("  current next indicator   = {0}", _currentNextIndicator);
+      Log.Log.Debug("  section number           = {0}", _sectionNumber);
+      Log.Log.Debug("  last section number      = {0}", _lastSectionNumber);
+      Log.Log.Debug("  PCR PID                  = {0} (0x{1:x})", _pcrPid, _pcrPid);
+      Log.Log.Debug("  program info length      = {0}", _programInfoLength);
+      Log.Log.Debug("  CRC                      = 0x{0:x}{1:x}{2:x}{3:x}", _crc[0], _crc[1], _crc[2], _crc[3]);
+      Log.Log.Debug("  {0} descriptor(s)...", _programDescriptors.Count + _programCaDescriptors.Count);
+      foreach (Descriptor d in _programDescriptors)
       {
-        Log.Log.Debug("CA PMT: PMT corruption detected");
-        return false;
+        d.Dump();
+      }
+      foreach (Descriptor cad in _programCaDescriptors)
+      {
+        cad.Dump();
+      }
+      Log.Log.Debug("  {0} elementary stream(s)...", _elementaryStreams.Count);
+      foreach (PmtElementaryStream es in _elementaryStreams)
+      {
+        es.Dump();
+      }
+    }
+  }
+
+  /// <summary>
+  /// A class capable of holding elementary stream information for one stream in a program map.
+  /// </summary>
+  public class PmtElementaryStream
+  {
+    private StreamType _streamType;
+    private UInt16 _pid;
+    private UInt16 _esInfoLength;
+    private List<Descriptor> _descriptors;
+    private List<Descriptor> _caDescriptors;
+
+    private DescriptorTag _primaryDescriptorTag;
+
+    #region properties
+
+    /// <summary>
+    /// The elementary stream type.
+    /// </summary>
+    public StreamType StreamType
+    {
+      get
+      {
+        return _streamType;
+      }
+      set
+      {
+        _streamType = value;
+      }
+    }
+
+    /// <summary>
+    /// The elementary stream's PID.
+    /// </summary>
+    public UInt16 Pid
+    {
+      get
+      {
+        return _pid;
+      }
+      set
+      {
+        _pid = value;
+      }
+    }
+
+    /// <summary>
+    /// The total number of bytes in the elementary stream's descriptors.
+    /// </summary>
+    public UInt16 EsInfoLength
+    {
+      get
+      {
+        return _esInfoLength;
+      }
+      set
+      {
+        _esInfoLength = value;
+      }
+    }
+
+    /// <summary>
+    /// The elementary stream's descriptors. Conditional access descriptors are not included.
+    /// </summary>
+    public List<Descriptor> Descriptors
+    {
+      get
+      {
+        return _descriptors;
+      }
+      set
+      {
+        _descriptors = value;
+      }
+    }
+
+    /// <summary>
+    /// The elementary stream's conditional access descriptors.
+    /// </summary>
+    public List<Descriptor> CaDescriptors
+    {
+      get
+      {
+        return _caDescriptors;
+      }
+      set
+      {
+        _caDescriptors = value;
+      }
+    }
+
+    /// <summary>
+    /// The descriptor tag that best describes the elementary stream type. This property can be used to
+    /// quickly and precisely determine the stream type when the stream type property is not specific enough.
+    /// </summary>
+    public DescriptorTag PrimaryDescriptorTag
+    {
+      get
+      {
+        return _primaryDescriptorTag;
+      }
+      set
+      {
+        _primaryDescriptorTag = value;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// For debug use.
+    /// </summary>
+    public void Dump()
+    {
+      Log.Log.Debug("Elementary Stream: dump...");
+      Log.Log.Debug("  stream type = {0}", _streamType);
+      Log.Log.Debug("  PID         = {0} (0x{1:x})", _pid, _pid);
+      Log.Log.Debug("  length      = {0}", _esInfoLength);
+      Log.Log.Debug("  main tag    = {0}", _primaryDescriptorTag);
+      Log.Log.Debug("  {0} descriptor(s)...", _descriptors.Count + _caDescriptors.Count);
+      foreach (Descriptor d in _descriptors)
+      {
+        d.Dump();
+      }
+      foreach (Descriptor cad in _caDescriptors)
+      {
+        cad.Dump();
+      }
+    }
+  }
+
+  /// <summary>
+  /// A class that models the descriptor structure defined in ISO/IEC 13818-1.
+  /// </summary>
+  public class Descriptor
+  {
+    #region variables
+
+    /// <summary>
+    /// The descriptor's tag.
+    /// </summary>
+    protected DescriptorTag _tag;
+    /// <summary>
+    /// The descriptor data length.
+    /// </summary>
+    protected byte _length;
+    /// <summary>
+    /// The descriptor data.
+    /// </summary>
+    protected byte[] _data;
+
+    /// <summary>
+    /// The raw descriptor data (ie. including tag and length).
+    /// </summary>
+    protected byte[] _rawData;
+
+    #endregion
+
+    /// <summary>
+    /// Constructor. Protected to ensure instances can only be created by derived classes or by calling
+    /// Decode().
+    /// </summary>
+    protected Descriptor()
+    {
+    }
+
+    #region properties
+
+    /// <summary>
+    /// The descriptor's tag.
+    /// </summary>
+    public DescriptorTag Tag
+    {
+      get
+      {
+        return _tag;
+      }
+    }
+
+    /// <summary>
+    /// The descriptor data length.
+    /// </summary>
+    public byte Length
+    {
+      get
+      {
+        return _length;
+      }
+    }
+
+    /// <summary>
+    /// The descriptor data.
+    /// </summary>
+    public byte[] Data
+    {
+      get
+      {
+        return _data;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Decode raw descriptor data.
+    /// </summary>
+    /// <param name="data">The raw descriptor data.</param>
+    /// <param name="offset">The offset in the data array at which the descriptor starts.</param>
+    /// <returns>a fully populated Descriptor instance</returns>
+    public static Descriptor Decode(byte[] data, int offset)
+    {
+      if (offset + 1 >= data.Length)
+      {
+        return null;
+      }
+      Descriptor d = new Descriptor();
+      d._tag = (DescriptorTag)data[offset];
+      d._length = data[offset + 1];
+      if (offset + 2 + d._length >= data.Length)
+      {
+        return null;
+      }
+      d._data = new byte[d._length];
+      Buffer.BlockCopy(data, offset + 2, d._data, 0, d._length);
+
+      // Make a copy of the entire descriptor so that changes made by the caller on the original array have
+      // no effect on our reference/copy.
+      d._rawData = new byte[2 + d._length];
+      Buffer.BlockCopy(data, offset, d._rawData, 0, 2 + d._length);
+
+      return d;
+    }
+
+    /// <summary>
+    /// Retrieve the original descriptor data that was decoded to create this Descriptor instance.
+    /// </summary>
+    /// <returns>the raw program map section data</returns>
+    public byte[] GetRawData()
+    {
+      // Make a copy of our raw data for the caller. We copy so that subsequent changes made by the caller
+      // have no effect on our reference/copy.
+      byte[] outputDescriptor = new byte[_rawData.Length];
+      Buffer.BlockCopy(_rawData, 0, outputDescriptor, 0, _rawData.Length);
+      return outputDescriptor;
+    }
+
+    /// <summary>
+    /// For debug use.
+    /// </summary>
+    public virtual void Dump()
+    {
+      Log.Log.Debug("Descriptor: dump...");
+      Log.Log.Debug("  tag    = {0}", _tag);
+      Log.Log.Debug("  length = {0}", _length);
+      DVB_MMI.DumpBinary(_data, 0, _data.Length);
+    }
+  }
+
+  /// <summary>
+  /// A class that models the conditional access descriptor structure defined in ISO/IEC 13818-1.
+  /// </summary>
+  public class ConditionalAccessDescriptor : Descriptor
+  {
+    #region variables
+
+    private UInt16 _caSystemId;
+    private UInt16 _caPid;
+    private byte[] _privateData;
+    private Dictionary<UInt16, UInt32> _pids;
+
+    #endregion
+
+    #region properties
+
+    /// <summary>
+    /// The type of CA system applicable for the CA PID.
+    /// </summary>
+    public UInt16 CaSystemId
+    {
+      get
+      {
+        return _caSystemId;
+      }
+    }
+
+    /// <summary>
+    /// An encryption control or management message PID associated with the service to which this descriptor
+    /// is attached.
+    /// </summary>
+    public UInt16 CaPid
+    {
+      get
+      {
+        return _caPid;
+      }
+    }
+
+    /// <summary>
+    /// The private conditional access system data.
+    /// </summary>
+    public byte[] PrivateData
+    {
+      get
+      {
+        return _privateData;
+      }
+    }
+
+    /// <summary>
+    /// A dictionary of ECM/EMM PIDs and their associated provider ID, interpretted from the private
+    /// descriptor data.
+    /// </summary>
+    public Dictionary<UInt16, UInt32> Pids
+    {
+      get
+      {
+        return _pids;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Decode raw descriptor data.
+    /// </summary>
+    /// <param name="data">The raw descriptor data.</param>
+    /// <param name="offset">The offset in the data array at which the descriptor starts.</param>
+    /// <returns>a fully populated ConditionalAccessDescriptor instance</returns>
+    public static new ConditionalAccessDescriptor Decode(byte[] data, int offset)
+    {
+      ConditionalAccessDescriptor d = (ConditionalAccessDescriptor)Descriptor.Decode(data, offset);
+      if (d == null || d._length < 4)
+      {
+        return null;
+      }
+      offset = 2;
+      d._caSystemId = (UInt16)((data[offset] << 8) + data[offset + 1]);
+      offset += 2;
+      d._caPid = (UInt16)(((data[offset] & 0x1f) << 8) + data[offset + 1]);
+      offset += 2;
+
+      d._privateData = new byte[d._length - 4];
+      Buffer.BlockCopy(data, offset, d._privateData, 0, d._length - 4);
+
+      // Canal Plus...
+      UInt32 providerId;
+      d._pids = new Dictionary<UInt16, UInt32>();
+      if (d._caSystemId == 0x100)
+      {
+        if (d._privateData.Length >= 3 && d._privateData[2] == 0xff)
+        {
+          //  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
+          // 09 11 01 00 E6 43 00 6A FF 00 00 00 00 00 00 02 14 21 8C
+          // 09 11 01 00 E6 1C 41 01 FF FF FF FF FF FF FF FF FF 21 8C
+          d._pids.Add(d._caPid, (UInt32)(((d._privateData[0] & 0x1f) << 8) + d._privateData[1]));
+          // TODO: loop required here? Example of longer descriptor required.
+        }
+        else if (d._privateData.Length >= 5 && d._privateData[2] != 0xff)
+        {
+          d._pids.Add(d._caPid, 0);
+          int extraPidPairs = d._privateData[0];
+          offset = 1;
+          while (offset + 3 < d._privateData.Length)
+          {
+            //  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
+            // 09 11 01 00 E0 C1 03 E0 92 41 01 E0 93 40 01 E0 C4 00 64
+            // 09 0D 01 00 E0 B6 02 E0 B7 00 6A E0 B9 00 6C
+            // 09       CA descriptor tag
+            // 0d       total descriptor length (minus tag and length byte)
+            // 01 00    CA system ID
+            // e0 b6    PID
+            // 02       "additional PID pair count"
+            //   e0 b7  PID
+            //   00 6a  provider ID
+            //   e0 b9  PID
+            //   00 6c  provider ID
+            UInt16 pid = (UInt16)(((d._privateData[offset] & 0x1f) << 8) + d._privateData[offset + 1]);
+            offset += 2;
+            providerId = (UInt32)((d._privateData[offset] << 8) + d._privateData[offset + 1]);
+            offset += 2;
+            UInt32 oldProviderId = 0;
+            d._pids.TryGetValue(pid, out oldProviderId);
+            if (oldProviderId != 0)
+            {
+              Log.Log.Debug("CA Descriptor: overwriting provider ID {0} (0x{1:x}) for PID {2} (0x{3:x}) with value {4} (0x{5:x})",
+                      oldProviderId, oldProviderId, pid, pid, providerId, providerId);
+              d._pids[pid] = providerId;
+            }
+            else
+            {
+              d._pids.Add(pid, providerId);
+            }
+          }
+        }
+        return d;
       }
 
-      caPmt = new byte[caPmtOffset];
-      Buffer.BlockCopy(tempCaPmt, 0, caPmt, 0, caPmtOffset);
-      return true;
+      offset = 0;
+      bool foundProviderId = false;
+      while (offset + 1 < d._privateData.Length)
+      {
+        byte tagInd = d._privateData[offset++];
+        byte tagLen = d._privateData[offset++];
+        if (offset + tagLen <= d._privateData.Length)
+        {
+          if (tagInd == 0x14 && tagLen >= 3)
+          {
+            providerId = (UInt32)((d._privateData[offset] << 16) + (d._privateData[offset + 1] << 8) +
+                              d._privateData[offset + 2]);
+            // Some providers send wrong information in the provider id (Boxer),
+            // so reset the lower 4 bits for Via Access.
+            if (d._caSystemId == 0x500)
+            {
+              providerId = providerId & 0xfffff0;
+            }
+            foundProviderId = true;
+            d._pids.Add(d._caPid, providerId);
+            break;
+          }
+        }
+        offset += tagLen;
+      }
+      if (!foundProviderId)
+      {
+        d._pids.Add(d._caPid, 0);
+      }
+
+      return d;
+    }
+
+    /// <summary>
+    /// For debug use.
+    /// </summary>
+    public override void Dump()
+    {
+      Log.Log.Debug("CA Descriptor: dump...");
+      Log.Log.Debug("  tag          = {0}", _tag);
+      Log.Log.Debug("  length       = {0}", _length);
+      Log.Log.Debug("  CA system ID = {0} (0x{1:x})", _caSystemId, _caSystemId);
+      Log.Log.Debug("  CA PID       = {0} (0x{1:x})", _caPid, _caPid);
+      foreach (UInt16 pid in _pids.Keys)
+      {
+        Log.Log.Debug("  PID = {0} (0x{1:x}), provider = {2} (0x{3:x})", pid, pid, _pids[pid], _pids[pid]);
+      }
+      DVB_MMI.DumpBinary(_data, 0, _data.Length);
     }
   }
 

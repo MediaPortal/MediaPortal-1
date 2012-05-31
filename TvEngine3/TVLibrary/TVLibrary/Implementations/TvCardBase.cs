@@ -28,13 +28,17 @@ using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Device;
+using TvLibrary.Epg;
+using TvLibrary.ChannelLinkage;
+using DirectShowLib.BDA;
+using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations
 {
   /// <summary>
   /// Base class for all tv cards
   /// </summary>
-  public abstract class TvCardBase
+  public abstract class TvCardBase : ITVCard
   {
     #region events
 
@@ -51,7 +55,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Handles the after tune observer event.
     /// </summary>
-    protected void OnAfterTuneEvent()
+    protected void TvCardBase_OnAfterTuneEvent()
     {
       if (AfterTuneEvent != null)
       {
@@ -70,10 +74,19 @@ namespace TvLibrary.Implementations
     protected TvCardBase(DsDevice device)
     {
       _graphState = GraphState.Idle;
+      _mapSubChannels = new Dictionary<int, BaseSubChannel>();
+      _lastSignalUpdate = DateTime.MinValue;
+      _parameters = new ScanParameters();
+      _epgGrabbing = false;   // EPG grabbing not supported by default.
+      _customDeviceInterfaces = new List<ICustomDevice>();
+
       _device = device;
       _tunerDevice = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
+      if (device != null)
+      {
+        _name = device.Name;
+        _devicePath = device.DevicePath;
+      }
 
       if (_devicePath != null)
       {
@@ -127,11 +140,6 @@ namespace TvLibrary.Implementations
     /// Scanning Paramters
     /// </summary>
     protected ScanParameters _parameters;
-
-    /// <summary>
-    /// Instance of the conditional access
-    /// </summary>
-    protected ConditionalAccess _conditionalAccess;
 
     /// <summary>
     /// Dictionary of the corresponding sub channels
@@ -199,16 +207,6 @@ namespace TvLibrary.Implementations
     protected bool _supportsSubChannels;
 
     /// <summary>
-    /// Minimum analog channel number
-    /// </summary>
-    protected int _minChannel;
-
-    /// <summary>
-    /// Maximum analog channel number
-    /// </summary>
-    protected int _maxChannel;
-
-    /// <summary>
     /// Type of the card
     /// </summary>
     protected CardType _cardType;
@@ -270,10 +268,56 @@ namespace TvLibrary.Implementations
     protected CamType _camType = CamType.Default;
 
     /// <summary>
-    /// The numer of channels that the device is capable of or allowed to decrypt simultaneously. Zero means
+    /// The numer of channels that the device is capable of or permitted to decrypt simultaneously. Zero means
     /// there is no limit.
     /// </summary>
     protected int _decryptLimit = 0;
+
+    /// <summary>
+    /// The method that should be used to communicate the set of channels that the device's conditional access
+    /// interface needs to manage.
+    /// </summary>
+    /// <remarks>
+    /// First = Explicit management using Only, First, More and Last. This is the most widely supported set
+    ///         of commands, however they are not suitable for some interfaces (such as the Digital Devices
+    ///         interface).
+    /// Only = Always send Only. In most cases this will result in only one channel being decrypted. If other
+    ///         methods are not working reliably then this one should at least allow decrypting one channel
+    ///         reliably.
+    /// Add = Use Add, Update and Remove to pass changes to the interface. The full channel list is never
+    ///         passed. Most interfaces don't support these commands.
+    /// </remarks>
+    protected CaPmtListManagementAction _multiDecryptMode = CaPmtListManagementAction.First;
+
+    /// <summary>
+    /// Enable or disable waiting for the conditional interface to be ready before sending commands.
+    /// </summary>
+    protected bool _waitUntilCaInterfaceReady = true;
+
+    /// <summary>
+    /// The number of times to re-attempt decrypting the current service set when one or more services are
+    /// not able to be decrypted for whatever reason.
+    /// </summary>
+    /// <remarks>
+    /// Each available CA interface will be tried in order of priority. If decrypting is not started
+    /// successfully, all interfaces are retried until each interface has been tried
+    /// _decryptFailureRetryCount + 1 times, or until decrypting is successful.
+    /// </remarks>
+    protected int _decryptFailureRetryCount = 2;
+
+    /// <summary>
+    /// Force the device PID filter(s) to be enabled even when the tuning context (DVB-S vs. DVB-S2 etc.)
+    /// would not normally require them to be enabled. Enabling this setting also forces the filter to
+    /// remain active when the filter controller is not capable of passing all of the required PIDs. It is
+    /// recommended to disable this setting.
+    /// </summary>
+    protected bool _forceEnablePidFilter = false;
+
+    /// <summary>
+    /// Force the device PID filter(s) to be disabled even when the tuning context (DVB-S vs. DVB-S2 etc.)
+    /// would normally require them to be enabled. It is recommended to disable this setting.
+    /// </summary>
+    protected bool _forceDisablePidFilter = false;
 
     #endregion
 
@@ -360,23 +404,6 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// returns the min/max channel numbers for analog cards
-    /// </summary>
-    public int MinChannel
-    {
-      get { return _minChannel; }
-    }
-
-    /// <summary>
-    /// Gets the max channel.
-    /// </summary>
-    /// <value>The max channel.</value>
-    public int MaxChannel
-    {
-      get { return _maxChannel; }
-    }
-
-    /// <summary>
     /// Gets the device tuner type.
     /// </summary>
     public virtual CardType CardType
@@ -394,6 +421,44 @@ namespace TvLibrary.Implementations
     {
       return _name;
     }
+
+    #region tuning range properties
+
+    /// <summary>
+    /// Get the minimum channel number that the device is capable of tuning (only applicable for analog
+    /// tuners - should be removed if possible).
+    /// </summary>
+    /// <value>
+    /// <c>-1</c> if the property is not applicable, otherwise the minimum channel number that the device
+    /// is capable of tuning
+    /// </value>
+    public int MinChannel
+    {
+      get
+      {
+        return -1;
+      }
+    }
+
+    /// <summary>
+    /// Get the maximum channel number that the device is capable of tuning (only applicable for analog
+    /// tuners - should be removed if possible).
+    /// </summary>
+    /// <value>
+    /// <c>-1</c> if the property is not applicable, otherwise the maximum channel number that the device
+    /// is capable of tuning
+    /// </value>
+    public int MaxChannel
+    {
+      get
+      {
+        return -1;
+      }
+    }
+
+    #endregion
+
+    #region conditional access properties
 
     /// <summary>
     /// Does the device have a conditional access interface?
@@ -454,14 +519,54 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        if (_conditionalAccess == null)
+        //TODO
+/*        if (_mapSubChannels == null)
           return 0;
-        return _conditionalAccess.NumberOfChannelsDecrypting;
+        if (_mapSubChannels.Count == 0)
+          return 0;
+        //if (_decryptLimit == 0)
+          return 0; //CA disabled, so no channels are decrypting.
+
+        List<ConditionalAccessContext> filteredChannels = new List<ConditionalAccessContext>();
+
+        Dictionary<int, ConditionalAccessContext>.Enumerator en = _mapSubChannels.GetEnumerator();
+
+        while (en.MoveNext())
+        {
+          bool exists = false;
+          ConditionalAccessContext context = en.Current.Value;
+          if (context != null)
+          {
+            foreach (ConditionalAccessContext dvbService in filteredChannels)
+            {
+              if (dvbService.Channel != null && context.Channel != null)
+              {
+                if (dvbService.Channel.Equals(context.Channel))
+                {
+                  exists = true;
+                  break;
+                }
+              }
+            }
+            if (!exists)
+            {
+              if (context.Channel != null && !context.Channel.FreeToAir)
+              {
+                filteredChannels.Add(context);
+              }
+            }
+          }
+        }
+        return filteredChannels.Count;*/
+        return 0;
       }
     }
 
+    #endregion
+
     /// <summary>
-    /// Gets the interface for controlling the DiSEqC satellite dish motor.
+    /// Gets the interface for controlling a DiSEqC satellite dish motor (only applicable for satellite
+    /// tuners - should be removed if possible).
     /// </summary>
     /// <value>
     /// <c>null</c> if the tuner is not a satellite tuner or the tuner doesn't support controlling a motor,
@@ -488,11 +593,11 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// boolean indicating if tuner is locked to a signal
     /// </summary>
-    public bool IsTunerLocked
+    public virtual bool IsTunerLocked
     {
       get
       {
-        UpdateSignalQuality(true);
+        UpdateSignalStatus(true);
         return _tunerLocked;
       }
     }
@@ -504,7 +609,7 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        UpdateSignalQuality();
+        UpdateSignalStatus();
         if (_signalQuality < 0)
           _signalQuality = 0;
         if (_signalQuality > 100)
@@ -520,7 +625,7 @@ namespace TvLibrary.Implementations
     {
       get
       {
-        UpdateSignalQuality();
+        UpdateSignalStatus();
         if (_signalLevel < 0)
           _signalLevel = 0;
         if (_signalLevel > 100)
@@ -569,10 +674,6 @@ namespace TvLibrary.Implementations
       set
       {
         _isScanning = value;
-        if (_isScanning)
-        {
-          OnScanning();
-        }
       }
     }
 
@@ -592,7 +693,7 @@ namespace TvLibrary.Implementations
     ///   connect the [first] device filter to.</param>
     protected void LoadPlugins(IBaseFilter mainFilter, ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
     {
-      Log.Log.Debug("TvCardBase: loading custom device plugins");
+      Log.Log.Debug("TvCardBase: load custom device plugins");
 
       if (mainFilter == null)
       {
@@ -705,10 +806,10 @@ namespace TvLibrary.Implementations
           _customDeviceInterfaces.Add(d);
           if (_useConditionalAccessInterace)
           {
-            IConditionalAccessProvider caProvider = d as IConditionalAccessProvider;
-            if (caProvider != null)
+            _conditionalAccessInterface = d as IConditionalAccessProvider;
+            if (_conditionalAccessInterface != null)
             {
-              caProvider.OpenInterface();
+              _conditionalAccessInterface.OpenInterface();
             }
           }
         }
@@ -716,6 +817,297 @@ namespace TvLibrary.Implementations
       if (_customDeviceInterfaces.Count == 0)
       {
         Log.Log.Debug("TvCardBase: no plugins supported");
+      }
+    }
+
+    /// <summary>
+    /// Configure the device's PID filter(s) to enable receiving the PIDs for each of the current subchannels.
+    /// </summary>
+    protected void ConfigurePidFilter()
+    {
+      Log.Log.Debug("TvCardBase: configure PID filter");
+
+      if (_cardType == CardType.Analog || _cardType == CardType.RadioWebStream || _cardType == CardType.Unknown)
+      {
+        Log.Log.Debug("TvCardBase: unsupported device type {0}", _cardType);
+        return;
+      }
+      if (_mapSubChannels == null || _mapSubChannels.Count == 0)
+      {
+        Log.Log.Debug("TvCardBase: no subchannels");
+        return;
+      }
+
+      if (_forceDisablePidFilter)
+      {
+        Log.Log.Debug("TvCardBase: filtering is force-disabled");
+      }
+      else if (_forceEnablePidFilter)
+      {
+        Log.Log.Debug("TvCardBase: filtering is force-enabled");
+      }
+
+      List<UInt16> pidList = null;
+      ModulationType modulation = ModulationType.ModNotDefined;
+      bool checkedModulation = false;
+      foreach (ICustomDevice d in _customDeviceInterfaces)
+      {
+        IPidFilterController filter = d as IPidFilterController;
+        if (filter != null)
+        {
+          Log.Log.Debug("TvCardBase: found PID filter controller interface");
+
+          if (_forceDisablePidFilter)
+          {
+            filter.SetFilterPids(null, modulation, false);
+            continue;
+          }
+
+          if (pidList == null)
+          {
+            Log.Log.Debug("TvCardBase: assembling PID list");
+            HashSet<UInt16> pidSet = new HashSet<UInt16>();
+            pidList = new List<UInt16>();
+            foreach (ITvSubChannel subchannel in _mapSubChannels.Values)
+            {
+              TvDvbChannel dvbChannel = subchannel as TvDvbChannel;
+              if (dvbChannel != null && dvbChannel.Pids != null)
+              {
+                // Figure out the multiplex modulation scheme.
+                if (!checkedModulation)
+                {
+                  checkedModulation = true;
+                  ATSCChannel atscChannel = dvbChannel.CurrentChannel as ATSCChannel;
+                  if (atscChannel != null)
+                  {
+                    modulation = atscChannel.ModulationType;
+                  }
+                  else
+                  {
+                    DVBSChannel dvbsChannel = dvbChannel.CurrentChannel as DVBSChannel;
+                    if (dvbChannel != null)
+                    {
+                      modulation = dvbsChannel.ModulationType;
+                    }
+                    else
+                    {
+                      DVBCChannel dvbcChannel = dvbChannel.CurrentChannel as DVBCChannel;
+                      if (dvbcChannel != null)
+                      {
+                        modulation = dvbcChannel.ModulationType;
+                      }
+                    }
+                  }
+                }
+
+                // Build a distinct super-set of PIDs used by the subchannels.
+                foreach (UInt16 pid in dvbChannel.Pids)
+                {
+                  if (!pidSet.Contains(pid))
+                  {
+                    Log.Log.Debug("TvCardBase:   {0} (0x{1:x})", pid, pid);
+                    pidSet.Add(pid);
+                    pidList.Add(pid);
+                  }
+                }
+              }
+            }
+          }
+          filter.SetFilterPids(pidList, modulation, _forceEnablePidFilter);
+        }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="subChannelId">The ID of the subchannel being tuned or for which updated PMT has been found.</param>
+    /// <param name="isUpdate"><c>True</c> if the channel is already being decrypted.</param>
+    protected void StartDecrypting(int subChannelId, bool isUpdate)
+    {
+      Log.Log.Debug("TvCardBase: subchannel {0} start decrypting, mode = {1}, update = {2}", subChannelId, _multiDecryptMode, isUpdate);
+
+      if (_mapSubChannels == null || _mapSubChannels.Count == 0 || !_mapSubChannels.ContainsKey(subChannelId))
+      {
+        Log.Log.Debug("TvCardBase: subchannel not found");
+        return;
+      }
+      if (_mapSubChannels[subChannelId].CurrentChannel.FreeToAir)
+      {
+        Log.Log.Debug("TvCardBase: current service is not encrypted");
+        return;
+      }
+
+      // First build a distinct list of the services that we need to handle.
+      Log.Log.Debug("TvCardBase: assembling service list");
+      List<BaseSubChannel> distinctServices = new List<BaseSubChannel>();
+      if (_multiDecryptMode == CaPmtListManagementAction.Only || _multiDecryptMode == CaPmtListManagementAction.Add)
+      {
+        // We only manage the service associated with the subchannel.
+        distinctServices.Add(_mapSubChannels[subChannelId]);
+        Log.Log.Debug("TvCardBase:   {0}", _mapSubChannels[subChannelId].CurrentChannel.Name);
+        return;
+      }
+      else
+      {
+        Dictionary<int, BaseSubChannel>.ValueCollection.Enumerator en = _mapSubChannels.Values.GetEnumerator();
+        while (en.MoveNext())
+        {
+          IChannel service = en.Current.CurrentChannel;
+          // We don't need to decrypt free-to-air channels.
+          if (service.FreeToAir)
+          {
+            continue;
+          }
+
+          bool exists = false;
+          foreach (BaseSubChannel serviceToDecrypt in distinctServices)
+          {
+            AnalogChannel analogService = service as AnalogChannel;
+            if (analogService != null)
+            {
+              if (analogService.Frequency == ((AnalogChannel)serviceToDecrypt.CurrentChannel).Frequency &&
+                analogService.ChannelNumber == ((AnalogChannel)serviceToDecrypt.CurrentChannel).ChannelNumber)
+              {
+                exists = true;
+                break;
+              }
+            }
+            else
+            {
+              DVBBaseChannel digitalService = service as DVBBaseChannel;
+              if (digitalService != null)
+              {
+                if (digitalService.ServiceId == ((DVBBaseChannel)serviceToDecrypt.CurrentChannel).ServiceId)
+                {
+                  exists = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (!exists)
+          {
+            distinctServices.Add(en.Current);
+            Log.Log.Debug("TvCardBase:   {0}", service.Name);
+          }
+        }
+      }
+
+      if (_decryptLimit > 0 && distinctServices.Count > _decryptLimit)
+      {
+        Log.Log.Debug("TvCardBase: decrypt limit exceeded");
+        return;
+      }
+      if (distinctServices.Count == 0)
+      {
+        Log.Log.Debug("TvCardBase: no services to decrypt");
+        return;
+      }
+
+      // Identify the conditional access interface(s) and send the service list.
+      bool foundCaProvider = false;
+      for (int attempt = 1; attempt <= 3; attempt++)
+      {
+        if (attempt > 1)
+        {
+          Log.Log.Debug("TvCardBase: attempt {0}...", attempt);
+        }
+
+        foreach (ICustomDevice d in _customDeviceInterfaces)
+        {
+          IConditionalAccessProvider caProvider = d as IConditionalAccessProvider;
+          if (caProvider == null)
+          {
+            continue;
+          }
+
+          Log.Log.Debug("TvCardBase: CA provider {0}...", caProvider.Name);
+          foundCaProvider = true;
+
+          if (_waitUntilCaInterfaceReady && !caProvider.IsInterfaceReady())
+          {
+            Log.Log.Debug("TvCardBase: provider is not ready, waiting for up to 15 seconds", caProvider.Name);
+            DateTime startWait = DateTime.Now;
+            TimeSpan waitTime = new TimeSpan(0);
+            while (waitTime.TotalMilliseconds < 15000)
+            {
+              System.Threading.Thread.Sleep(200);
+              waitTime = DateTime.Now - startWait;
+              if (caProvider.IsInterfaceReady())
+              {
+                Log.Log.Debug("TvCardBase: provider ready after {0} ms", waitTime.TotalMilliseconds);
+                break;
+              }
+            }
+          }
+
+          // Ready or not, we send commands now.
+          Log.Log.Debug("TvCardBase: sending command(s)");
+          bool success = true;
+          TvDvbChannel digitalService;
+          CaPmtListManagementAction action = CaPmtListManagementAction.More;
+          for (int i = 0; i < distinctServices.Count; i++)
+          {
+            if (i == 0)
+            {
+              if (distinctServices.Count == 1)
+              {
+                if (_multiDecryptMode == CaPmtListManagementAction.Add)
+                {
+                  if (isUpdate)
+                  {
+                    action = CaPmtListManagementAction.Update;
+                  }
+                  else
+                  {
+                    action = CaPmtListManagementAction.Add;
+                  }
+                }
+                else
+                {
+                  action = CaPmtListManagementAction.Only;
+                }
+              }
+              else
+              {
+                action = CaPmtListManagementAction.First;
+              }
+            }
+            else if (i == distinctServices.Count - 1)
+            {
+              action = CaPmtListManagementAction.Last;
+            }
+            else
+            {
+              action = CaPmtListManagementAction.More;
+            }
+
+            digitalService = distinctServices[i] as TvDvbChannel;
+            if (digitalService == null)
+            {
+              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action,
+                                                        CaPmtCommand.OkDescrambling, null, null);
+            }
+            else
+            {
+              success &= caProvider.SendCommand(distinctServices[i].CurrentChannel, action,
+                                                        CaPmtCommand.OkDescrambling, digitalService.Pmt, digitalService.Cat);
+            }
+          }
+
+          // Are we done?
+          if (success)
+          {
+            return;
+          }
+        }
+
+        if (!foundCaProvider)
+        {
+          Log.Log.Debug("TvCardBase: no CA providers identified");
+          return;
+        }
       }
     }
 
@@ -772,13 +1164,54 @@ namespace TvLibrary.Implementations
     /// </summary>
     public virtual void BuildGraph() {}
 
-    ///<summary>
-    /// Checks if the tuner is locked in and a sginal is present
-    ///</summary>
-    ///<returns>true, when the tuner is locked and a signal is present</returns>
+    /// <summary>
+    /// Check if the tuner has acquired signal lock.
+    /// </summary>
+    /// <returns><c>true</c> if the tuner has locked in on signal, otherwise <c>false</c></returns>
     public virtual bool LockedInOnSignal()
     {
-      return false;
+      Log.Log.Debug("TvCardBase: check for signal lock");
+      _tunerLocked = false;
+      DateTime timeStart = DateTime.Now;
+      TimeSpan ts = timeStart - timeStart;
+      while (!_tunerLocked && ts.TotalSeconds < _parameters.TimeOutTune)
+      {
+        UpdateSignalStatus(true);
+        if (!_tunerLocked)
+        {
+          ts = DateTime.Now - timeStart;
+          Log.Log.Debug("TvCardBase:   waiting 20ms");
+          System.Threading.Thread.Sleep(20);
+        }
+      }
+
+      if (!_tunerLocked)
+      {
+        Log.Log.Debug("TvCardBase: failed to lock signal");
+      }
+      else
+      {
+        Log.Log.Debug("TvCardBase: locked");
+      }
+      return _tunerLocked;
+    }
+
+    /// <summary>
+    /// Reload the device configuration.
+    /// </summary>
+    public virtual void ReloadCardConfiguration()
+    {
+    }
+
+    /// <summary>
+    /// Get the device's ITVScanning interface, used for finding channels.
+    /// </summary>
+    public virtual ITVScanning ScanningInterface
+    {
+      get
+      {
+        return null;
+      }
     }
 
     #endregion
@@ -786,14 +1219,18 @@ namespace TvLibrary.Implementations
     #region abstract methods
 
     /// <summary>
-    /// A derrived class should update the signal informations of the tv cards
+    /// Update the tuner signal status statistics.
     /// </summary>
-    protected abstract void UpdateSignalQuality();
+    protected virtual void UpdateSignalStatus()
+    {
+      UpdateSignalStatus(false);
+    }
 
     /// <summary>
-    /// A derrived class should update the signal informations of the tv cards
+    /// Update the tuner signal status statistics.
     /// </summary>
-    protected abstract void UpdateSignalQuality(bool force);
+    /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
+    protected abstract void UpdateSignalStatus(bool force);
 
     /// <summary>
     /// Stops the current graph
@@ -808,22 +1245,205 @@ namespace TvLibrary.Implementations
     public abstract void PauseGraph();
 
     /// <summary>
-    /// Starts the graph
+    /// Start the BDA filter graph (subject to a few conditions).
     /// </summary>
-    public abstract void RunGraph(int subChannel);
+    /// <param name="subChannelId">The subchannel ID for the channel that is being started.</param>
+    public virtual void RunGraph(int subChannelId)
+    {
+      Log.Log.Debug("TvCardBase: RunGraph()");
+
+      if (GraphRunning())
+      {
+        Log.Log.Debug("TvCardBase: graph already running");
+      }
+      else
+      {
+        Log.Log.Debug("TvCardBase: start graph");
+        int hr = ((IMediaControl)_graphBuilder).Run();
+        if (hr < 0 || hr > 1)
+        {
+          Log.Log.Debug("TvCardBase: failed to start graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          throw new TvException("TvCardBase: failed to start graph");
+        }
+      }
+
+      _epgGrabbing = false;
+      if (_mapSubChannels.ContainsKey(subChannelId))
+      {
+        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
+        {
+          deviceInterface.OnGraphRunning(this, _mapSubChannels[subChannelId].CurrentChannel);
+          IPowerDevice powerDevice = deviceInterface as IPowerDevice;
+          if (powerDevice != null)
+          {
+            powerDevice.SetPowerState(true);
+          }
+        }
+        if (!LockedInOnSignal())
+        {
+          throw new TvExceptionNoSignal("TvCardBase: failed to lock in on signal");
+        }
+        _mapSubChannels[subChannelId].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(TvCardBase_OnAfterTuneEvent);
+        _mapSubChannels[subChannelId].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(TvCardBase_OnAfterTuneEvent);
+        _mapSubChannels[subChannelId].OnGraphRunning();
+      }
+    }
 
     /// <summary>
-    /// A derrived class should activate / deactivate the epg grabber
+    /// A derrived class may activate / deactivate the epg grabber
     /// </summary>
     /// <param name="value">Mode</param>
-    protected abstract void UpdateEpgGrabber(bool value);
-
-    /// <summary>
-    /// A derrived class should activate / deactivate the scanning
-    /// </summary>
-    protected abstract void OnScanning();
+    protected virtual void UpdateEpgGrabber(bool value)
+    {
+    }
 
     #endregion
+
+
+    #region scan/tune
+
+    /// <summary>
+    /// Check if the tuner can tune to a given channel.
+    /// </summary>
+    /// <param name="channel">The channel to check.</param>
+    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    public abstract bool CanTune(IChannel channel);
+
+    /// <summary>
+    /// Scan a specific channel.
+    /// </summary>
+    /// <param name="subChannelId">The subchannel ID for the channel that is being scanned.</param>
+    /// <param name="channel">The channel to scan.</param>
+    /// <returns>the subchannel associated with the scanned channel</returns>
+    public abstract ITvSubChannel Scan(int subChannelId, IChannel channel);
+
+    /// <summary>
+    /// Tune to a specific channel.
+    /// </summary>
+    /// <param name="subChannelId">The subchannel ID for the channel that is being tuned.</param>
+    /// <param name="channel">The channel to tune to.</param>
+    /// <returns>the subchannel associated with the tuned channel</returns>
+    public abstract ITvSubChannel Tune(int subChannelId, IChannel channel);
+
+    #endregion
+
+    #region quality control
+
+    /// <summary>
+    /// Check if the device supports stream quality control.
+    /// </summary>
+    /// <value></value>
+    public virtual bool SupportsQualityControl
+    {
+      get
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Get the device's quality control interface.
+    /// </summary>
+    public virtual IQuality Quality
+    {
+      get
+      {
+        return null;
+      }
+    }
+
+    #endregion
+
+    #region EPG
+
+    /// <summary>
+    /// Get the device's ITVEPG interface, used for grabbing electronic program guide data.
+    /// </summary>
+    public virtual ITVEPG EpgInterface
+    {
+      get
+      {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Abort grabbing electronic program guide data.
+    /// </summary>
+    public virtual void AbortGrabbing()
+    {
+    }
+
+    /// <summary>
+    /// Get the electronic program guide data found in a grab session.
+    /// </summary>
+    /// <value>EPG data if the device supports EPG grabbing and grabbing is complete, otherwise <c>null</c></value>
+    public virtual List<EpgChannel> Epg
+    {
+      get
+      {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Start grabbing electronic program guide data (idle EPG grabber).
+    /// </summary>
+    /// <param name="callback">The delegate to call when grabbing is complete or canceled.</param>
+    public virtual void GrabEpg(BaseEpgGrabber callback)
+    {
+    }
+
+    /// <summary>
+    /// Start grabbing electronic program guide data (timeshifting/recording EPG grabber).
+    /// </summary>
+    public virtual void GrabEpg()
+    {
+    }
+
+    #endregion
+
+    #region channel linkages
+
+    /// <summary>
+    /// Starts scanning for linkages.
+    /// </summary>
+    /// <param name="callback">The delegate to call when scanning is complete or canceled.</param>
+    public virtual void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    {
+    }
+
+    /// <summary>
+    /// Stop/reset the linkage scanner.
+    /// </summary>
+    public virtual void ResetLinkageScanner()
+    {
+    }
+
+    /// <summary>
+    /// Get the portal channels found by the linkage scanner.
+    /// </summary>
+    public virtual List<PortalChannel> ChannelLinkages
+    {
+      get
+      {
+        return null;
+      }
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Close interfaces, free memory and release COM object references.
+    /// </summary>
+    public virtual void Dispose()
+    {
+    }
+
+    #endregion
+
 
     #region subchannel management
 
@@ -947,7 +1567,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public ITvSubChannel GetSubChannel(int id)
     {
-      if (_mapSubChannels.ContainsKey(id))
+      if (_mapSubChannels != null && _mapSubChannels.ContainsKey(id))
       {
         return _mapSubChannels[id];
       }

@@ -28,7 +28,7 @@ namespace TvLibrary.Interfaces.Device
   /// <remarks>
   /// Note that there is a well defined order in which 22 kHz based tone commands may be sent: first one or
   /// more arbitrary DiSEqC 1.x or 2.x commands, optionally followed by one tone burst (also known as
-  /// simple DiSEqc) command, and finally the continuous tone may be turned on.
+  /// simple DiSEqC) command, and finally the continuous tone may be turned on.
   /// </remarks>
   public interface IDiseqcController : ICustomDevice
   {

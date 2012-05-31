@@ -214,7 +214,7 @@ namespace TvLibrary.Interfaces
     /// <summary>
     /// Get/Set the quality
     /// </summary>
-    IQuality Quality { get; set; }
+    IQuality Quality { get; }
 
     /// <summary>
     /// Property which returns true if card supports quality control

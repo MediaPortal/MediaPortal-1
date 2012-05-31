@@ -61,7 +61,7 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.TransportId = info.transportStreamID;
       dvbsChannel.PmtPid = info.network_pmt_PID;
       dvbsChannel.Diseqc = tuningChannel.Diseqc;
-      dvbsChannel.BandType = tuningChannel.BandType;
+      dvbsChannel.LnbType = tuningChannel.LnbType;
       dvbsChannel.FreeToAir = !info.scrambled;
       dvbsChannel.SatelliteIndex = tuningChannel.SatelliteIndex;
       dvbsChannel.ModulationType = tuningChannel.ModulationType;
