@@ -57,6 +57,9 @@
     <String id="69">Lade Oberfläche ({0})...</String>
     <String id="70">Lade Anzeigeplugins...</String>
     <String id="71">Initialisiere Fenstermanager...</String>
+    <String id="90">Skin-Thema wählen</String>
+    <String id="94">Thema: </String>
+    <String id="95">Layout: </String>
     <String id="96">Sortieren: </String>
     <String id="97">Ansicht: </String>
     <String id="100">Kleine Symbole</String>
@@ -1015,15 +1018,13 @@
     <String id="1231">Zuletzt gespielt:</String>
     <String id="1240">Inhalt sperren</String>
     <String id="1241">Inhalt freigeben</String>
-    <String id="1250">Suche Film</String>
-    <String id="1251">Suche zurücksetzen</String>
-    <String id="1252">Suche Schauspieler</String>
-    <String id="1253">Alle Filme dieses Schauspielers aktualisieren</String>
-    <String id="1254">Alle Informationen dieses Schauspielers aktualisieren</String>
-    <String id="1255">Fanart aktualisieren</String>
-    <String id="1256">Dieses Verzeichnis aktualisieren</String>
-    <String id="1257">Lade Schauspieler und Rollen</String>
-    <String id="1258">Lade Schauspieler-Informationen</String>
+    <String id="1250">Dokumentation</String>
+    <String id="1251">Kinderprogramm</String>
+    <String id="1252">Filme</String>
+    <String id="1253">Musik</String>
+    <String id="1254">Nachrichten</String>
+    <String id="1255">Spezial</String>
+    <String id="1256">Sport</String>
     <String id="1260">Als gesehen markieren</String>
     <String id="1261">Kein GrabberIndexFile gefunden.</String>
     <String id="1262">Grabber-Skripts aktualisieren</String>
@@ -1054,7 +1055,19 @@
 		<String id="1287">Titel (Index)</String>
 		<String id="1288">Schauspieler (Index)</String>
 		<String id="1289">Regisseure (Index)</String>
+		<String id="1290">Diesen Film aktualisieren</String>
+		<String id="1291">Automatische Aktualisierung aktiv.</String>
+		<String id="1292">Bitte warten Sie auf Abschluß dieser Aktion.</String>
+		<String id="1293">Suche Film</String>
+    <String id="1294">Suche zurücksetzen</String>
+    <String id="1295">Suche Schauspieler</String>
+    <String id="1296">Alle Filme dieses Schauspielers aktualisieren</String>
+    <String id="1297">Alle Informationen dieses Schauspielers aktualisieren</String>
+    <String id="1298">Fanart aktualisieren</String>
+    <String id="1299">Dieses Verzeichnis aktualisieren</String>
     <String id="1300" prefix="Meine ">TV-Serien</String>
+    <String id="1301">Lade Schauspieler und Rollen</String>
+    <String id="1302">Lade Schauspieler-Informationen</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
     <String id="1442">Textlauf horizontal</String>

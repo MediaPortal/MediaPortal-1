@@ -991,7 +991,7 @@
     <String id="1206">Programme est demarré pour {0} minutes</String>
     <String id="1207">Basculer vers {0} maintenant?</String>
     <String id="1208">Composer</String>
-	<String id="1209">Parties lu</String>
+    <String id="1209">Parties déja lu</String>
     <String id="1211">Reprendre la lecture depuis {0}</String>
     <String id="1212">Annuler rappel</String>
     <String id="1213">Écoutez cette station</String>
@@ -1019,8 +1019,6 @@
     <String id="1254">News</String>
     <String id="1255">Speciale</String>
     <String id="1256">Sportif</String>
-    <String id="1257">Téléchargement acteurs de cinéma et des rôles</String>
-    <String id="1258">Télécharger des infos acteurs</String>
     <String id="1260">Définir le statut regardé</String>
     <String id="1261">Pas de GrabberIndexFile trouvé.</String>
     <String id="1262">Mise à jour des scripts Grabber</String>
@@ -1062,6 +1060,8 @@
     <String id="1298">Actualiser fanart</String>
     <String id="1299">Actualiser le dossier courant</String>
     <String id="1300" prefix="Mes ">fichiers TV</String>
+    <String id="1301">Téléchargement acteurs de cinéma et des rôles</String>
+    <String id="1302">Télécharger les infos acteurs</String>
     <String id="1440" prefix="Mon ">Télétexte</String>
     <String id="1441">Télétexte</String>
     <String id="1442">Vitesse de défilement (hor.)</String>

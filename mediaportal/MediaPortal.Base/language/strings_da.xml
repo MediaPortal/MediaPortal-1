@@ -1028,8 +1028,6 @@
     <String id="1254">Nyheder</String>
     <String id="1255">Tema</String>
     <String id="1256">Sport</String>
-    <String id="1257">Henter skuespillere og roller</String>
-    <String id="1258">Henter info om skuespiller</String>
     <String id="1260">Markér som set</String>
     <String id="1261">Ingen GrabberIndexFile fundet</String>
     <String id="1262">Opdatér grabber scripts</String>
@@ -1071,6 +1069,8 @@
     <String id="1298">Opdatér fanart</String>
     <String id="1299">Opdatér nuværende bibliotek</String>
     <String id="1300" prefix="Mine ">TV-Udsendelser</String>
+    <String id="1301">Henter skuespillere og roller</String>
+    <String id="1302">Henter info om skuespiller</String>
     <String id="1440" prefix="Mit ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
     <String id="1442">Scroll hastighed (horisontal)</String>
