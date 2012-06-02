@@ -60,6 +60,9 @@ namespace TvPlugin
     protected Channel _currentChannel = null;
     protected int _numberOfBlocks = 4;
 
+    protected const int LOCALIZED_GENRE_STRING_BASE = 1250;
+    protected const int LOCALIZED_GENRE_STRING_MOVIE = 1252;
+
     protected bool _useBorderHighlight = false;
     protected bool _useColorsForButtons = false;
     protected bool _useColorsForGenres = false;
@@ -97,7 +100,7 @@ namespace TvPlugin
       GUIImage imgGenreColor = (GUIImage)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR);
       GUILabelControl labelGenreName = (GUILabelControl)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
 
-      // Do not render the key if the template controls are not present or are specified as not visible.
+      // Do not render the key if not required or the template controls are not present or are specified as not visible.
       if (imgGenreColor == null || labelGenreName == null || !imgGenreColor.Visible)
       {
         return;

@@ -43,9 +43,9 @@ namespace MediaPortal.Configuration.Sections
   public class DlgSkinSettings : MPConfigForm
   {
     private MPTabControl tabControlSkinSettings;
-    private TabPage tabPageTVGuideSettingsHidden;
-    private MPTabControl tabControlTVGuideSettings;
-    private MPTabPage tabPageGenreColors;
+    private TabPage tabPageTVGuideSettings;
+    private MPTabControl tabControlTvGuideSettings;
+    private MPTabPage tabPageTvGuideColors;
     private MPGroupBox groupGenreColors;
     private MPListView listViewGuideGenres;
     private ColumnHeader columnHeader9;
@@ -72,6 +72,19 @@ namespace MediaPortal.Configuration.Sections
     private WinCustomControls.ColorComboBox colorComboBoxPgmSel;
     private MPLabel mpLabel4;
     private WinCustomControls.ColorComboBox colorComboBoxPgmEnded;
+
+    protected const int LOCALIZED_GENRE_STRING_BASE = 1250;
+    protected const int LOCALIZED_GENRE_STRING_COUNT = 7;
+    protected List<string> _defaultGenreColors = new List<string>()
+	    {
+       "FFD2691E,FFD2691E",
+       "FF00FFFF,FF00FFFF",
+       "FF800080,FF800080",
+       "FF800000,FF800000",
+       "FF90EE90,FF90EE90",
+       "FFFFD700,FFFFD700",
+       "FF006400,FF006400"
+      };
 
     protected bool _guideColorsLoaded = false;
     protected long _guideColorProgramOnNow = 0;
@@ -101,10 +114,12 @@ namespace MediaPortal.Configuration.Sections
     private ListView listViewAvailableThemes;
     private ColumnHeader colName;
     private ColumnHeader colVersion;
-    private TabPage tabPageTVGuideSettings;
     private GroupBox gbGenreSettings;
     private CheckBox cbGenreColorKey;
     private CheckBox cbGenreColoring;
+    private TabPage tabPageTvGuideGeneral;
+    private CheckBox cbBorderHighlight;
+    private CheckBox cbColoredGuide;
 
     /// <summary>
     /// Required designer variable.
@@ -117,6 +132,12 @@ namespace MediaPortal.Configuration.Sections
       // Required for Windows Form Designer support
       //
       InitializeComponent();
+
+      // If TV is not used then remove the tabs for TV guide settings.
+      if (!UseTvServer)
+      {
+        this.tabControlSkinSettings.Controls.Remove(this.tabPageTVGuideSettings);
+      }
 
       // Identify the selected skin.
       _selectedSkin = listViewAvailableSkins.Items[listViewAvailableSkins.SelectedIndices[0]].Text;
@@ -158,9 +179,13 @@ namespace MediaPortal.Configuration.Sections
       this.listViewAvailableThemes = new System.Windows.Forms.ListView();
       this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.colVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.tabPageTVGuideSettingsHidden = new System.Windows.Forms.TabPage();
-      this.tabControlTVGuideSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
-      this.tabPageGenreColors = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.tabPageTVGuideSettings = new System.Windows.Forms.TabPage();
+      this.tabControlTvGuideSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageTvGuideGeneral = new System.Windows.Forms.TabPage();
+      this.gbGenreSettings = new System.Windows.Forms.GroupBox();
+      this.cbGenreColorKey = new System.Windows.Forms.CheckBox();
+      this.cbGenreColoring = new System.Windows.Forms.CheckBox();
+      this.tabPageTvGuideColors = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupGenreColors = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.listViewGuideGenres = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -189,34 +214,31 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxPgmSel = new MediaPortal.WinCustomControls.ColorComboBox();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.colorComboBoxPgmEnded = new MediaPortal.WinCustomControls.ColorComboBox();
-      this.tabPageTVGuideSettings = new System.Windows.Forms.TabPage();
-      this.gbGenreSettings = new System.Windows.Forms.GroupBox();
-      this.cbGenreColorKey = new System.Windows.Forms.CheckBox();
-      this.cbGenreColoring = new System.Windows.Forms.CheckBox();
       this.mpButtonOk = new System.Windows.Forms.Button();
       this.mpButtonCancel = new System.Windows.Forms.Button();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
+      this.cbBorderHighlight = new System.Windows.Forms.CheckBox();
+      this.cbColoredGuide = new System.Windows.Forms.CheckBox();
       this.tabControlSkinSettings.SuspendLayout();
       this.tabPageGeneral.SuspendLayout();
       this.groupBoxTheme.SuspendLayout();
       this.panelFitImage.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.previewPictureBox)).BeginInit();
-      this.tabPageTVGuideSettingsHidden.SuspendLayout();
-      this.tabControlTVGuideSettings.SuspendLayout();
-      this.tabPageGenreColors.SuspendLayout();
+      this.tabPageTVGuideSettings.SuspendLayout();
+      this.tabControlTvGuideSettings.SuspendLayout();
+      this.tabPageTvGuideGeneral.SuspendLayout();
+      this.gbGenreSettings.SuspendLayout();
+      this.tabPageTvGuideColors.SuspendLayout();
       this.groupGenreColors.SuspendLayout();
       this.groupGroupColor.SuspendLayout();
       this.groupChannelColors.SuspendLayout();
       this.groupDefaultColors.SuspendLayout();
-      this.tabPageTVGuideSettings.SuspendLayout();
-      this.gbGenreSettings.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControlSkinSettings
       // 
       this.tabControlSkinSettings.Controls.Add(this.tabPageGeneral);
-//      this.tabControlSkinSettings.Controls.Add(this.tabPageTVGuideSettingsHidden);
       this.tabControlSkinSettings.Controls.Add(this.tabPageTVGuideSettings);
       this.tabControlSkinSettings.Location = new System.Drawing.Point(17, 42);
       this.tabControlSkinSettings.Name = "tabControlSkinSettings";
@@ -299,43 +321,88 @@ namespace MediaPortal.Configuration.Sections
       this.colVersion.Text = "Version";
       this.colVersion.Width = 56;
       // 
-      // tabPageTVGuideSettingsHidden
+      // tabPageTVGuideSettings
       // 
-      this.tabPageTVGuideSettingsHidden.Controls.Add(this.tabControlTVGuideSettings);
-      this.tabPageTVGuideSettingsHidden.Location = new System.Drawing.Point(4, 22);
-      this.tabPageTVGuideSettingsHidden.Name = "tabPageTVGuideSettingsHidden";
-      this.tabPageTVGuideSettingsHidden.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageTVGuideSettingsHidden.Size = new System.Drawing.Size(464, 453);
-      this.tabPageTVGuideSettingsHidden.TabIndex = 5;
-      this.tabPageTVGuideSettingsHidden.Text = "TV guide";
-      this.tabPageTVGuideSettingsHidden.UseVisualStyleBackColor = true;
+      this.tabPageTVGuideSettings.Controls.Add(this.tabControlTvGuideSettings);
+      this.tabPageTVGuideSettings.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTVGuideSettings.Name = "tabPageTVGuideSettings";
+      this.tabPageTVGuideSettings.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageTVGuideSettings.Size = new System.Drawing.Size(464, 453);
+      this.tabPageTVGuideSettings.TabIndex = 5;
+      this.tabPageTVGuideSettings.Text = "TV guide";
+      this.tabPageTVGuideSettings.UseVisualStyleBackColor = true;
       // 
-      // tabControlTVGuideSettings
+      // tabControlTvGuideSettings
       // 
-      this.tabControlTVGuideSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.tabControlTvGuideSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControlTVGuideSettings.Controls.Add(this.tabPageGenreColors);
-      this.tabControlTVGuideSettings.HotTrack = true;
-      this.tabControlTVGuideSettings.Location = new System.Drawing.Point(6, 6);
-      this.tabControlTVGuideSettings.Name = "tabControlTVGuideSettings";
-      this.tabControlTVGuideSettings.SelectedIndex = 0;
-      this.tabControlTVGuideSettings.Size = new System.Drawing.Size(452, 441);
-      this.tabControlTVGuideSettings.TabIndex = 1;
-      this.tabControlTVGuideSettings.Visible = true;
+      this.tabControlTvGuideSettings.Controls.Add(this.tabPageTvGuideGeneral);
+      this.tabControlTvGuideSettings.Controls.Add(this.tabPageTvGuideColors);
+      this.tabControlTvGuideSettings.HotTrack = true;
+      this.tabControlTvGuideSettings.Location = new System.Drawing.Point(6, 6);
+      this.tabControlTvGuideSettings.Name = "tabControlTvGuideSettings";
+      this.tabControlTvGuideSettings.SelectedIndex = 0;
+      this.tabControlTvGuideSettings.Size = new System.Drawing.Size(452, 441);
+      this.tabControlTvGuideSettings.TabIndex = 1;
       // 
-      // tabPageGenreColors
+      // tabPageTvGuideGeneral
       // 
-      this.tabPageGenreColors.Controls.Add(this.groupGenreColors);
-      this.tabPageGenreColors.Controls.Add(this.groupGroupColor);
-      this.tabPageGenreColors.Controls.Add(this.groupChannelColors);
-      this.tabPageGenreColors.Controls.Add(this.groupDefaultColors);
-      this.tabPageGenreColors.Location = new System.Drawing.Point(4, 22);
-      this.tabPageGenreColors.Name = "tabPageGenreColors";
-      this.tabPageGenreColors.Size = new System.Drawing.Size(444, 415);
-      this.tabPageGenreColors.TabIndex = 1;
-      this.tabPageGenreColors.Text = "Colors";
-      this.tabPageGenreColors.UseVisualStyleBackColor = true;
+      this.tabPageTvGuideGeneral.Controls.Add(this.gbGenreSettings);
+      this.tabPageTvGuideGeneral.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTvGuideGeneral.Name = "tabPageTvGuideGeneral";
+      this.tabPageTvGuideGeneral.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageTvGuideGeneral.Size = new System.Drawing.Size(444, 415);
+      this.tabPageTvGuideGeneral.TabIndex = 2;
+      this.tabPageTvGuideGeneral.Text = "Settings";
+      this.tabPageTvGuideGeneral.UseVisualStyleBackColor = true;
+      // 
+      // gbGenreSettings
+      // 
+      this.gbGenreSettings.Controls.Add(this.cbColoredGuide);
+      this.gbGenreSettings.Controls.Add(this.cbBorderHighlight);
+      this.gbGenreSettings.Controls.Add(this.cbGenreColorKey);
+      this.gbGenreSettings.Controls.Add(this.cbGenreColoring);
+      this.gbGenreSettings.Location = new System.Drawing.Point(6, 6);
+      this.gbGenreSettings.Name = "gbGenreSettings";
+      this.gbGenreSettings.Size = new System.Drawing.Size(432, 117);
+      this.gbGenreSettings.TabIndex = 0;
+      this.gbGenreSettings.TabStop = false;
+      this.gbGenreSettings.Text = "Program color settings";
+      // 
+      // cbGenreColorKey
+      // 
+      this.cbGenreColorKey.AutoSize = true;
+      this.cbGenreColorKey.Location = new System.Drawing.Point(33, 67);
+      this.cbGenreColorKey.Name = "cbGenreColorKey";
+      this.cbGenreColorKey.Size = new System.Drawing.Size(136, 17);
+      this.cbGenreColorKey.TabIndex = 1;
+      this.cbGenreColorKey.Text = "Display genre color key";
+      this.cbGenreColorKey.UseVisualStyleBackColor = true;
+      // 
+      // cbGenreColoring
+      // 
+      this.cbGenreColoring.AutoSize = true;
+      this.cbGenreColoring.Location = new System.Drawing.Point(22, 44);
+      this.cbGenreColoring.Name = "cbGenreColoring";
+      this.cbGenreColoring.Size = new System.Drawing.Size(297, 17);
+      this.cbGenreColoring.TabIndex = 0;
+      this.cbGenreColoring.Text = "Enable program genre coloring (forces border highlighting)";
+      this.cbGenreColoring.UseVisualStyleBackColor = true;
+      this.cbGenreColoring.CheckedChanged += new System.EventHandler(this.cbGenreColoring_CheckedChanged);
+      // 
+      // tabPageTvGuideColors
+      // 
+      this.tabPageTvGuideColors.Controls.Add(this.groupGenreColors);
+      this.tabPageTvGuideColors.Controls.Add(this.groupGroupColor);
+      this.tabPageTvGuideColors.Controls.Add(this.groupChannelColors);
+      this.tabPageTvGuideColors.Controls.Add(this.groupDefaultColors);
+      this.tabPageTvGuideColors.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTvGuideColors.Name = "tabPageTvGuideColors";
+      this.tabPageTvGuideColors.Size = new System.Drawing.Size(444, 415);
+      this.tabPageTvGuideColors.TabIndex = 1;
+      this.tabPageTvGuideColors.Text = "Colors";
+      this.tabPageTvGuideColors.UseVisualStyleBackColor = true;
       // 
       // groupGenreColors
       // 
@@ -627,49 +694,6 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxPgmEnded.TabIndex = 0;
       this.colorComboBoxPgmEnded.Load += new System.EventHandler(this.colorComboBoxPgmEnded_Load);
       // 
-      // tabPageTVGuideSettings
-      // 
-      this.tabPageTVGuideSettings.Controls.Add(this.gbGenreSettings);
-      this.tabPageTVGuideSettings.Location = new System.Drawing.Point(4, 22);
-      this.tabPageTVGuideSettings.Name = "tabPageTVGuideSettings";
-      this.tabPageTVGuideSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageTVGuideSettings.Size = new System.Drawing.Size(464, 453);
-      this.tabPageTVGuideSettings.TabIndex = 7;
-      this.tabPageTVGuideSettings.Text = "TV guide";
-      this.tabPageTVGuideSettings.UseVisualStyleBackColor = true;
-      // 
-      // gbGenreSettings
-      // 
-      this.gbGenreSettings.Controls.Add(this.cbGenreColorKey);
-      this.gbGenreSettings.Controls.Add(this.cbGenreColoring);
-      this.gbGenreSettings.Location = new System.Drawing.Point(6, 6);
-      this.gbGenreSettings.Name = "gbGenreSettings";
-      this.gbGenreSettings.Size = new System.Drawing.Size(452, 83);
-      this.gbGenreSettings.TabIndex = 0;
-      this.gbGenreSettings.TabStop = false;
-      this.gbGenreSettings.Text = "Program genre settings";
-      // 
-      // cbGenreColorKey
-      // 
-      this.cbGenreColorKey.AutoSize = true;
-      this.cbGenreColorKey.Location = new System.Drawing.Point(25, 48);
-      this.cbGenreColorKey.Name = "cbGenreColorKey";
-      this.cbGenreColorKey.Size = new System.Drawing.Size(136, 17);
-      this.cbGenreColorKey.TabIndex = 1;
-      this.cbGenreColorKey.Text = "Display genre color key";
-      this.cbGenreColorKey.UseVisualStyleBackColor = true;
-      // 
-      // cbGenreColoring
-      // 
-      this.cbGenreColoring.AutoSize = true;
-      this.cbGenreColoring.Location = new System.Drawing.Point(14, 25);
-      this.cbGenreColoring.Name = "cbGenreColoring";
-      this.cbGenreColoring.Size = new System.Drawing.Size(170, 17);
-      this.cbGenreColoring.TabIndex = 0;
-      this.cbGenreColoring.Text = "Enable program genre coloring";
-      this.cbGenreColoring.UseVisualStyleBackColor = true;
-      this.cbGenreColoring.CheckedChanged += new System.EventHandler(this.cbGenreColoring_CheckedChanged);
-      // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(327, 537);
@@ -717,6 +741,27 @@ namespace MediaPortal.Configuration.Sections
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
+      // cbBorderHighlight
+      // 
+      this.cbBorderHighlight.AutoSize = true;
+      this.cbBorderHighlight.Location = new System.Drawing.Point(10, 90);
+      this.cbBorderHighlight.Name = "cbBorderHighlight";
+      this.cbBorderHighlight.Size = new System.Drawing.Size(201, 17);
+      this.cbBorderHighlight.TabIndex = 2;
+      this.cbBorderHighlight.Text = "Border highlight the selected program";
+      this.cbBorderHighlight.UseVisualStyleBackColor = true;
+      // 
+      // cbColoredGuide
+      // 
+      this.cbColoredGuide.AutoSize = true;
+      this.cbColoredGuide.Location = new System.Drawing.Point(10, 21);
+      this.cbColoredGuide.Name = "cbColoredGuide";
+      this.cbColoredGuide.Size = new System.Drawing.Size(247, 17);
+      this.cbColoredGuide.TabIndex = 3;
+      this.cbColoredGuide.Text = "Enable guide coloring (set colors on Colors tab)";
+      this.cbColoredGuide.UseVisualStyleBackColor = true;
+      this.cbColoredGuide.CheckedChanged += new System.EventHandler(this.cbColoredGuide_CheckedChanged);
+      // 
       // DlgSkinSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -736,9 +781,12 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxTheme.ResumeLayout(false);
       this.panelFitImage.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.previewPictureBox)).EndInit();
-      this.tabPageTVGuideSettingsHidden.ResumeLayout(false);
-      this.tabControlTVGuideSettings.ResumeLayout(false);
-      this.tabPageGenreColors.ResumeLayout(false);
+      this.tabPageTVGuideSettings.ResumeLayout(false);
+      this.tabControlTvGuideSettings.ResumeLayout(false);
+      this.tabPageTvGuideGeneral.ResumeLayout(false);
+      this.gbGenreSettings.ResumeLayout(false);
+      this.gbGenreSettings.PerformLayout();
+      this.tabPageTvGuideColors.ResumeLayout(false);
       this.groupGenreColors.ResumeLayout(false);
       this.groupGroupColor.ResumeLayout(false);
       this.groupGroupColor.PerformLayout();
@@ -746,17 +794,20 @@ namespace MediaPortal.Configuration.Sections
       this.groupChannelColors.PerformLayout();
       this.groupDefaultColors.ResumeLayout(false);
       this.groupDefaultColors.PerformLayout();
-      this.tabPageTVGuideSettings.ResumeLayout(false);
-      this.gbGenreSettings.ResumeLayout(false);
-      this.gbGenreSettings.PerformLayout();
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
+    public static bool UseTvServer
+    {
+      get { return File.Exists(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"); }
+    }
+
     private bool LoadGenreList(Settings xmlreader)
     {
+      int genreId;
       string genre;
       IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
 
@@ -764,7 +815,9 @@ namespace MediaPortal.Configuration.Sections
       // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
       foreach (var genreMapEntry in allGenres)
       {
-        genre = genreMapEntry.Key;
+        // The genremap key is an integer value that is added to a base value in order to locate the correct localized genre name string.
+        genreId = int.Parse(genreMapEntry.Key);
+        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
         _genreList.Add(genre);
       }
 
@@ -805,23 +858,22 @@ namespace MediaPortal.Configuration.Sections
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
       // If only one value is provided then that value is used for both.
       long color0;
-
-      foreach (string genre in _genreList)
+      for (int i = 0; i < _genreList.Count; i++)
       {
-        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", genre, String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
         if (temp.Count > 0)
         {
           color0 = GetColorFromString(temp[0]);
           if (temp.Count == 2)
           {
-            _genreColorsOnNow.Add(genre, color0);
-            _genreColorsOnLater.Add(genre, GetColorFromString(temp[1]));
+            _genreColorsOnNow.Add(_genreList[i], color0);
+            _genreColorsOnLater.Add(_genreList[i], GetColorFromString(temp[1]));
           }
           else if (temp.Count == 1)
           {
-            _genreColorsOnNow.Add(genre, color0);
-            _genreColorsOnLater.Add(genre, color0);
+            _genreColorsOnNow.Add(_genreList[i], color0);
+            _genreColorsOnLater.Add(_genreList[i], color0);
           }
         }
       }
@@ -841,23 +893,16 @@ namespace MediaPortal.Configuration.Sections
       xmlwriter.SetValue("tvguidecolors", "guidecolorborderhighlight", String.Format("{0:X8}", (uint)_guideColorBorderHighlight));
       xmlwriter.SetValue("tvguidecolors", "defaultgenre", String.Format("{0:X8}", (uint)_guideColorProgramOnNow) + "," + String.Format("{0:X8}", (uint)_guideColorProgramOnLater));
 
-      // TODO: Remove colors associated with deleted genre names.
-      // Best option may be to implement a xmlwriter.RemoveSection() method.
-      //foreach (var genre in _genresToBeRemoved)
-      //{
-      //  xmlwriter.RemoveEntry("tvguidecolors", genre);
-      //}
-
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
       // If only one value is provided then that value is used for both.
       long onNowColor;
       long onLaterColor;
 
-      foreach (string genre in _genreList)
+      for (int i = 0; i < _genreList.Count; i++)
       {
-        _genreColorsOnNow.TryGetValue(genre, out onNowColor);
-        _genreColorsOnLater.TryGetValue(genre, out onLaterColor);
-        xmlwriter.SetValue("tvguidecolors", genre, String.Format("{0:X8}", (uint)onNowColor) + "," + String.Format("{0:X8}", (uint)onLaterColor));
+        _genreColorsOnNow.TryGetValue(_genreList[i], out onNowColor);
+        _genreColorsOnLater.TryGetValue(_genreList[i], out onLaterColor);
+        xmlwriter.SetValue("tvguidecolors", i.ToString(), String.Format("{0:X8}", (uint)onNowColor) + "," + String.Format("{0:X8}", (uint)onLaterColor));
       }
     }
 
@@ -906,21 +951,10 @@ namespace MediaPortal.Configuration.Sections
 
     private void CreateDefaultGenreColors(Settings settings)
     {
-      // Insert a default collection of TV guide genres; up to 7 are defined.
-      List<string> defaultColors = new List<string>()
-	    {
-       "FFD2691E,FFD2691E",
-       "FF00FFFF,FF00FFFF",
-       "FF800080,FF800080",
-       "FF800000,FF800000",
-       "FF90EE90,FF90EE90",
-       "FFFFD700,FFFFD700",
-       "FF006400,FF006400"
-      };
-
-      for (int i = 0; i < 7; i++)
+      // Insert a default collection of TV guide genres.
+      for (int i = 0; i < LOCALIZED_GENRE_STRING_COUNT; i++)
       {
-        settings.SetValue("tvguidecolors", GUILocalizeStrings.Get(1250 + i), defaultColors[i]);
+        settings.SetValue("tvguidecolors", i.ToString(), _defaultGenreColors[i]);
       }
     }
 
@@ -956,9 +990,25 @@ namespace MediaPortal.Configuration.Sections
         PopulateGuideGenreList();
 
         // Need to read skin settings as string and parse to boolean to allow skin settings to have true/false values rather than yes/no values.
+        cbColoredGuide.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.usecolorsforbuttons", "False"));
         cbGenreColoring.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.usecolorsforgenre", "False"));
         cbGenreColorKey.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.showgenrekey", "False"));
+        cbBorderHighlight.Checked = bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.useborderhighlight", "False"));
+
+        cbGenreColoring.Enabled = cbColoredGuide.Checked;
         cbGenreColorKey.Enabled = cbGenreColoring.Checked;
+
+        if (cbColoredGuide.Checked)
+        {
+          if (!tabControlTvGuideSettings.Controls.Contains(tabPageTvGuideColors))
+          {
+            tabControlTvGuideSettings.Controls.Add(tabPageTvGuideColors);
+          }
+        }
+        else
+        {
+          tabControlTvGuideSettings.Controls.Remove(tabPageTvGuideColors);
+        }
       }
     }
 
@@ -1017,9 +1067,9 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValue("theme", "name", listViewAvailableThemes.SelectedItems[0].Text);
 
-        xmlwriter.SetValue("booleansettings", "#skin.tvguide.usecolorsforbuttons", true);
+        xmlwriter.SetValue("booleansettings", "#skin.tvguide.usecolorsforbuttons", cbColoredGuide.Checked);
         xmlwriter.SetValue("booleansettings", "#skin.tvguide.usecolorsforgenre", cbGenreColoring.Checked);
-        xmlwriter.SetValue("booleansettings", "#skin.tvguide.useborderhighlight", cbGenreColoring.Checked);
+        xmlwriter.SetValue("booleansettings", "#skin.tvguide.useborderhighlight", cbBorderHighlight.Checked);
         xmlwriter.SetValue("booleansettings", "#skin.tvguide.showgenrekey", cbGenreColorKey.Checked);
 
         SaveGuideColors(xmlwriter);
@@ -1212,6 +1262,37 @@ namespace MediaPortal.Configuration.Sections
       if (!cbGenreColorKey.Enabled)
       {
         cbGenreColorKey.Checked = false;
+      }
+
+      // Enforce border highighting when genres are colored.
+      if (cbGenreColoring.Checked)
+      {
+        cbBorderHighlight.Checked = true;
+        cbBorderHighlight.Enabled = false;
+      }
+      else
+      {
+        cbBorderHighlight.Enabled = true;
+      }
+    }
+
+    private void cbColoredGuide_CheckedChanged(object sender, EventArgs e)
+    {
+      if (cbColoredGuide.Checked)
+      {
+        cbGenreColoring.Enabled = true;
+        if (!tabControlTvGuideSettings.Controls.Contains(tabPageTvGuideColors))
+        {
+          tabControlTvGuideSettings.Controls.Add(tabPageTvGuideColors);
+        }
+      }
+      else
+      {
+        tabControlTvGuideSettings.Controls.Remove(tabPageTvGuideColors);
+        cbGenreColoring.Checked = false;
+        cbGenreColoring.Enabled = false;
+        cbGenreColorKey.Checked = false;
+        cbGenreColorKey.Enabled = false;
       }
     }
   }

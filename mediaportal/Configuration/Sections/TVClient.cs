@@ -121,8 +121,6 @@ namespace MediaPortal.Configuration.Sections
     private MPTabControl tabControl2;
     private MPTabPage tabPageGenreMap;
     private MPGroupBox groupBox4;
-    private MPButton buttonRemoveGenre;
-    private MPButton buttonNewGenre;
     private MPButton buttonMapGenres;
     private MPButton buttonUnmapGenres;
     private MPListView listViewProgramGenres;
@@ -133,13 +131,13 @@ namespace MediaPortal.Configuration.Sections
     private bool _SingleSeat;
     private MPListView listViewGuideGenres;
     private ColumnHeader columnHeader9;
-    private string _genreBeforeEdit;
+
+    protected const int LOCALIZED_GENRE_STRING_BASE = 1250;
+    protected const int LOCALIZED_GENRE_STRING_COUNT = 7;
 
     protected IList<string> _allProgramGenres;
     protected List<string> _genreList = new List<string>();
-    protected List<string> _genresToBeRemoved = new List<string>();
     protected IDictionary<string, string> _genreMap = new Dictionary<string, string>();
-    private MPButton buttonRenameGenre;
     private MPCheckBox mpCheckBoxRatingAsMovie;
 
     #endregion
@@ -158,6 +156,7 @@ namespace MediaPortal.Configuration.Sections
 
     private bool LoadGenreMap(Settings xmlreader)
     {
+      int genreId;
       string genre;
       List<string> programGenres;
       IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
@@ -166,8 +165,11 @@ namespace MediaPortal.Configuration.Sections
       // It is an error if a single "program" genre is mapped to more than one guide genre; behavior is undefined for this condition.
       foreach (var genreMapEntry in allGenres)
       {
-        genre = genreMapEntry.Key;
+        // The genremap key is an integer value that is added to a base value in order to locate the correct localized genre name string.
+        genreId = int.Parse(genreMapEntry.Key);
+        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
         _genreList.Add(genre);
+
         programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
 
         foreach (string programGenre in programGenres)
@@ -188,12 +190,6 @@ namespace MediaPortal.Configuration.Sections
 
     private void SaveGenreMap(Settings xmlwriter)
     {
-      // Remove deleted genre names.
-      foreach (var genre in _genresToBeRemoved)
-      {
-        xmlwriter.RemoveEntry("genremap", genre);
-      }
-
       // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
       string programGenreList;
       foreach (var genre in _genreList)
@@ -207,7 +203,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        xmlwriter.SetValue("genremap", genre, programGenreList.TrimEnd('{'));
+        // Write the genre map using the index of the genre as the key (entry name), see LoadGenreMap().
+        xmlwriter.SetValue("genremap", _genreList.IndexOf(genre).ToString(), programGenreList.TrimEnd('{'));
       }
     }
 
@@ -217,11 +214,10 @@ namespace MediaPortal.Configuration.Sections
       listViewGuideGenres.BeginUpdate();
       listViewGuideGenres.Items.Clear();
 
-      foreach (string genre in _genreList)
+      for (int i=0; i < _genreList.Count; i++)
       {
-        ListViewItem item = new ListViewItem(new string[] { genre });
-        item.Name = genre;
-        item.UseItemStyleForSubItems = false;
+        ListViewItem item = new ListViewItem(new string[] { _genreList[i] });
+        item.Name = _genreList[i];
         listViewGuideGenres.Items.Add(item);
       }
       listViewGuideGenres.EndUpdate();
@@ -300,9 +296,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void CreateDefaultGenres(Settings settings)
     {
-      for (int i = 0; i < 7; i++)
+      for (int i = 0; i < LOCALIZED_GENRE_STRING_COUNT; i++)
       {
-        settings.SetValue("genremap", GUILocalizeStrings.Get(1250 + i), String.Empty);  // Genre not mapped
+        settings.SetValue("genremap", GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + i), String.Empty);  // Genre not mapped
       }
     }
 
@@ -380,10 +376,10 @@ namespace MediaPortal.Configuration.Sections
                 {
                   xmlreader.SetValueAsBool("genreoptions", "specifympaaratedasmovie", true);  // Rated programs are movies
                 }
-              }
 
-              // Populate the guide genre list with names.
-              PopulateGuideGenreList();
+                // Populate the guide genre list with names.
+                PopulateGuideGenreList();
+              }
             }
           }
           catch (TargetInvocationException ex)
@@ -565,6 +561,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
 
         xmlwriter.SetValueAsBool("genreoptions", "specifympaaratedasmovie", mpCheckBoxRatingAsMovie.Checked);
+
         xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
         xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
         xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
@@ -669,12 +666,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl2 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageGenreMap = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.buttonRenameGenre = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpCheckBoxRatingAsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.listViewGuideGenres = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.buttonRemoveGenre = new MediaPortal.UserInterface.Controls.MPButton();
-      this.buttonNewGenre = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonMapGenres = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonUnmapGenres = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewProgramGenres = new MediaPortal.UserInterface.Controls.MPListView();
@@ -1512,11 +1506,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox4.Controls.Add(this.buttonRenameGenre);
       this.groupBox4.Controls.Add(this.mpCheckBoxRatingAsMovie);
       this.groupBox4.Controls.Add(this.listViewGuideGenres);
-      this.groupBox4.Controls.Add(this.buttonRemoveGenre);
-      this.groupBox4.Controls.Add(this.buttonNewGenre);
       this.groupBox4.Controls.Add(this.buttonMapGenres);
       this.groupBox4.Controls.Add(this.buttonUnmapGenres);
       this.groupBox4.Controls.Add(this.listViewProgramGenres);
@@ -1528,19 +1519,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Size = new System.Drawing.Size(441, 378);
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
-      // 
-      // buttonRenameGenre
-      // 
-      this.buttonRenameGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRenameGenre.Enabled = false;
-      this.buttonRenameGenre.Location = new System.Drawing.Point(138, 140);
-      this.buttonRenameGenre.Name = "buttonRenameGenre";
-      this.buttonRenameGenre.Size = new System.Drawing.Size(60, 22);
-      this.buttonRenameGenre.TabIndex = 16;
-      this.buttonRenameGenre.Text = "Rename";
-      this.buttonRenameGenre.UseVisualStyleBackColor = true;
-      this.buttonRenameGenre.Visible = false;
-      this.buttonRenameGenre.Click += new System.EventHandler(this.mpRenameGenre_Click);
       // 
       // mpCheckBoxRatingAsMovie
       // 
@@ -1564,7 +1542,6 @@ namespace MediaPortal.Configuration.Sections
       this.listViewGuideGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader9});
       this.listViewGuideGenres.HideSelection = false;
-      this.listViewGuideGenres.LabelEdit = true;
       this.listViewGuideGenres.Location = new System.Drawing.Point(6, 11);
       this.listViewGuideGenres.Name = "listViewGuideGenres";
       this.listViewGuideGenres.Size = new System.Drawing.Size(429, 123);
@@ -1572,39 +1549,12 @@ namespace MediaPortal.Configuration.Sections
       this.listViewGuideGenres.TabIndex = 14;
       this.listViewGuideGenres.UseCompatibleStateImageBehavior = false;
       this.listViewGuideGenres.View = System.Windows.Forms.View.Details;
-      this.listViewGuideGenres.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listViewGuideGenres_AfterLabelEdit);
-      this.listViewGuideGenres.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listViewGuideGenres_BeforeLabelEdit);
       this.listViewGuideGenres.SelectedIndexChanged += new System.EventHandler(this.listViewGuideGenres_SelectedIndexChanged);
       // 
       // columnHeader9
       // 
       this.columnHeader9.Text = "Guide Genre";
       this.columnHeader9.Width = 190;
-      // 
-      // buttonRemoveGenre
-      // 
-      this.buttonRemoveGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRemoveGenre.Enabled = false;
-      this.buttonRemoveGenre.Location = new System.Drawing.Point(72, 140);
-      this.buttonRemoveGenre.Name = "buttonRemoveGenre";
-      this.buttonRemoveGenre.Size = new System.Drawing.Size(60, 22);
-      this.buttonRemoveGenre.TabIndex = 6;
-      this.buttonRemoveGenre.Text = "Remove";
-      this.buttonRemoveGenre.UseVisualStyleBackColor = true;
-      this.buttonRemoveGenre.Visible = false;
-      this.buttonRemoveGenre.Click += new System.EventHandler(this.btnDeleteGenre_Click);
-      // 
-      // buttonNewGenre
-      // 
-      this.buttonNewGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNewGenre.Location = new System.Drawing.Point(6, 140);
-      this.buttonNewGenre.Name = "buttonNewGenre";
-      this.buttonNewGenre.Size = new System.Drawing.Size(60, 22);
-      this.buttonNewGenre.TabIndex = 5;
-      this.buttonNewGenre.Text = "Add";
-      this.buttonNewGenre.UseVisualStyleBackColor = true;
-      this.buttonNewGenre.Visible = false;
-      this.buttonNewGenre.Click += new System.EventHandler(this.buttonNewGenre_Click);
       // 
       // buttonMapGenres
       // 
@@ -1887,46 +1837,10 @@ namespace MediaPortal.Configuration.Sections
       if (listViewGuideGenres.SelectedItems.Count > 0)
       {
         PopulateGenreLists();
-        buttonRenameGenre.Enabled = true;
-        buttonRemoveGenre.Enabled = true;
-      }
-      else
-      {
-        buttonRenameGenre.Enabled = false;
-        buttonRemoveGenre.Enabled = false;
       }
     }
-
-    private void listViewGuideGenres_BeforeLabelEdit(object sender, System.Windows.Forms.LabelEditEventArgs e)
-    {
-      _genreBeforeEdit = listViewGuideGenres.SelectedItems[0].Text;
-    }
-
-    private void listViewGuideGenres_AfterLabelEdit(object sender, System.Windows.Forms.LabelEditEventArgs e)
-    {
-      // Don't create an empty string genre.
-      if (e.Label == null || e.Label.Trim().Length == 0)
-      {
-        return;
-      }
-
-      // Rename the guide genre and update genre map entries that match the pre-edit name.
-      _genreList.Remove(_genreBeforeEdit);
-      _genreList.Add(e.Label);
-
-      // Genre map.
-      Dictionary<string, string> genreMapCopy = new Dictionary<string, string>(_genreMap);
-      foreach (var genre in _genreMap)
-      {
-        if (genre.Value.Equals(_genreBeforeEdit))
-        {
-          genreMapCopy[genre.Key] = e.Label;
-        }
-      }
-      _genreMap = genreMapCopy;
-    }
-
-    private void buttonUnmapGenre_Click(object sender, EventArgs e)
+  
+     private void buttonUnmapGenre_Click(object sender, EventArgs e)
     {
       if (listViewGuideGenres.SelectedItems.Count > 0)
       {
@@ -1940,56 +1854,6 @@ namespace MediaPortal.Configuration.Sections
       {
         MapProgramGenres();
       }
-    }
-
-    private void btnDeleteGenre_Click(object sender, EventArgs e)
-    {
-      if (listViewGuideGenres.SelectedItems.Count > 0)
-      {
-        Dictionary<string, string> genreMapCopy = new Dictionary<string, string>(_genreMap);
-        foreach (ListViewItem genre in listViewGuideGenres.SelectedItems)
-        {
-          _genreList.Remove(genre.Text);
-          listViewGuideGenres.Items.Remove(genre);
-
-          // Queue this genre to be removed during save.
-          _genresToBeRemoved.Add(genre.Text);
-
-          // Remove entries from the genre map.
-          foreach (var genreMapEntry in _genreMap)
-          {
-            if (genre.Text.Equals(genreMapEntry.Value))
-            {
-              genreMapCopy.Remove(genreMapEntry.Key);
-            }
-          }
-        }
-        _genreMap = genreMapCopy;
-
-        listViewMappedGenres.Items.Clear();
-        listViewProgramGenres.Items.Clear();
-      }
-    }
-
-    private void buttonNewGenre_Click(object sender, EventArgs e)
-    {
-      DlgAddGenre dlg = new DlgAddGenre();
-
-      if (dlg.ShowDialog() == DialogResult.OK)
-      {
-        // Don't create an empty string genre.
-        if (dlg.Value != null && dlg.Value.Trim().Length != 0)
-        {
-          _genreList.Add(dlg.Value);
-          PopulateGuideGenreList();
-        }
-      }
-    }
-
-    private void mpRenameGenre_Click(object sender, EventArgs e)
-    {
-      ListViewItem selected = listViewGuideGenres.SelectedItems[0];
-      selected.BeginEdit();
     }
   }
 }

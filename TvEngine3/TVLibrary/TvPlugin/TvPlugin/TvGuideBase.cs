@@ -214,31 +214,30 @@ namespace TvPlugin
 
     private bool LoadGenreMap(Settings xmlreader)
     {
+      int genreId;
       string genre;
       List<string> programGenres;
       IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
 
       // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
       // It is an error if a single "program" genre is mapped to more than one genre color category; behavior is undefined for this condition.
-      var enumerator = allGenres.GetEnumerator();
-      if (enumerator != null)
+      foreach (var genreMapEntry in allGenres)
       {
-        while (enumerator.MoveNext())
-        {
-          genre = enumerator.Current.Key;
-          _genreList.Add(genre);
-          programGenres = new List<string>(enumerator.Current.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
+        genreId = int.Parse(genreMapEntry.Key);
+        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
+        _genreList.Add(genre);
 
-          foreach (string programGenre in programGenres)
+        programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
+
+        foreach (string programGenre in programGenres)
+        {
+          try
           {
-            try
-            {
-              _genreMap.Add(programGenre, genre);
-            }
-            catch (ArgumentException)
-            {
-              Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
-            }
+            _genreMap.Add(programGenre, genre);
+          }
+          catch (ArgumentException)
+          {
+            Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
           }
         }
       }
@@ -282,9 +281,9 @@ namespace TvPlugin
       long color0;
       long color1;
 
-      foreach (string genre in _genreList)
+      for (int i = 0; i < _genreList.Count; i++)
       {
-        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", genre, String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", i.ToString(), String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
 
         if (temp.Count > 0)
         {
@@ -293,13 +292,13 @@ namespace TvPlugin
           if (temp.Count == 2)
           {
             color1 = GetColorFromString(temp[1]);
-            _genreColorsOnNow.Add(genre, color0);
-            _genreColorsOnLater.Add(genre, color1);
+            _genreColorsOnNow.Add(_genreList[i], color0);
+            _genreColorsOnLater.Add(_genreList[i], color1);
           }
           else if (temp.Count == 1)
           {
-            _genreColorsOnNow.Add(genre, color0);
-            _genreColorsOnLater.Add(genre, color1);
+            _genreColorsOnNow.Add(_genreList[i], color0);
+            _genreColorsOnLater.Add(_genreList[i], color1);
           }
         }
       }
@@ -3245,8 +3244,7 @@ namespace TvPlugin
         GUIButton3PartControl img = GetControl(controlid) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
-          // Using colors for genres forces use of the border highlighting.
-          if (_useBorderHighlight || _useColorsForGenres)
+          if (_useBorderHighlight)
           {
             SetFocusBorder(ref img);
           }
@@ -3273,8 +3271,7 @@ namespace TvPlugin
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
-          // Using colors for genres forces use of the border highlighting.
-          if (_useBorderHighlight || _useColorsForGenres)
+          if (_useBorderHighlight)
           {
             SetFocusBorder(ref img);
           }
@@ -3906,7 +3903,7 @@ namespace TvPlugin
       string genre = "";
       if (_specifyMpaaRatedAsMovie && IsMPAA(program.Classification))
       {
-        genre = "Movie";
+        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_MOVIE);
       }
       else
       {
@@ -4764,6 +4761,19 @@ namespace TvPlugin
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       // won't occure
+      return true;
+    }
+
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selected)
+    {
+      // won't occure
+      selected = 0;
       return true;
     }
 
