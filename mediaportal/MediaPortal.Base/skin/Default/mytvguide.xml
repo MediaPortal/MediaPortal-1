@@ -412,7 +412,7 @@
       <description>Template for genre key color</description>
       <type>image</type>
       <id>110</id>
-      <posX>30</posX>
+      <posX>20</posX>
       <posY>552</posY>
       <width>22</width>
       <height>13</height>
@@ -421,11 +421,13 @@
     </control>
     <control>
       <description>Template for genre key name</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>111</id>
       <posY>550</posY>
+      <width>60</width>
+      <scrollStartDelaySec>10000</scrollStartDelaySec>
       <textcolor>FF6aa5cb</textcolor>
-      <font>font6</font>
+      <font>font8</font>
       <visible>skin.hassetting(#skin.tvguide.showgenrekey) + skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
   </controls>
