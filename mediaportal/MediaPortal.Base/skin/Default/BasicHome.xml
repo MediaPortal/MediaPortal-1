@@ -65,7 +65,7 @@
         <texture mask="picturethumbmask.png">missing_coverart.png</texture>
         <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
       </control>
-      <control>
+      <!--control>
         <type>multiimage</type>
         <id>0</id>
         <posX>472</posX>
@@ -98,7 +98,7 @@
         <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(5)">conditional</animation>
         <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
         <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
-      </control>
+      </control-->
       <control>
         <description>music logo</description>
         <type>image</type>
@@ -244,13 +244,13 @@
       <fadetime>1000</fadetime>
       <loop>yes</loop>
       <randomize>false</randomize>
-      <keepaspectratio>yes</keepaspectratio>
+      <keepaspectratio>no</keepaspectratio>
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <animation effect="zoom" start="100,100" end="120,120" time="100" condition="control.hasfocus(4)">conditional</animation>
       <visible>!player.hasvideo</visible>
     </control>
-    <control>
+    <!--control>
       <type>multiimage</type>
       <id>0</id>
       <posX>297</posX>
@@ -285,7 +285,7 @@
       <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
       <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <visible>!player.hasvideo</visible>
-    </control>
+    </control-->
     <import>common.time.xml</import>
     <!--     *******************************************************************************************  -->
     <!--     *************************             ACTION MENU          ********************************  -->

@@ -306,7 +306,26 @@
       <icon2OffsetX>10</icon2OffsetX>
       <icon2OffsetY>1</icon2OffsetY>
       <icon2InlineLabel1>yes</icon2InlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
+    <!--control>
+      <description>template for program not running button</description>
+      <type>button3part</type>
+      <id>36</id>
+      <textureFocusedLeft>tvguide_arrow_selected_left.png</textureFocusedLeft>
+      <textureNonFocusedLeft>tvguide_arrow_light_left.png</textureNonFocusedLeft>
+      <textureFocusedMid>tvguide_button_selected_middle.png</textureFocusedMid>
+      <textureNonFocusedMid>tvguide_button_light_middle.png</textureNonFocusedMid>
+      <textureFocusedRight>tvguide_arrow_selected_right.png</textureFocusedRight>
+      <textureNonFocusedRight>tvguide_arrow_light_right.png</textureNonFocusedRight>
+      <textureIcon2>tvguide_hd_program_not_on_now.png</textureIcon2>
+      <icon2Align>left</icon2Align>
+      <icon2VAlign>middle</icon2VAlign>
+      <icon2OffsetX>10</icon2OffsetX>
+      <icon2OffsetY>1</icon2OffsetY>
+      <icon2InlineLabel1>yes</icon2InlineLabel1>
+      <visible>!skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
+    </control-->
     <control>
       <description>template for program notify button</description>
       <type>button3part</type>
@@ -320,9 +339,10 @@
       <!-- The textureIcon is used for the notify indicator; these attributes help position the icon -->
       <iconAlign>right</iconAlign>
       <iconVAlign>middle</iconVAlign>
-      <iconOffsetX>10</iconOffsetX>
-      <iconOffsetY>0</iconOffsetY>
+      <iconOffsetX>0</iconOffsetX>
+      <iconOffsetY>3</iconOffsetY>
       <iconInlineLabel1>no</iconInlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
     <control>
       <description>template for program record button</description>
@@ -337,9 +357,10 @@
       <!-- The textureIcon is used for the record indicator; these attributes help position the icon -->
       <iconAlign>right</iconAlign>
       <iconVAlign>middle</iconVAlign>
-      <iconOffsetX>10</iconOffsetX>
-      <iconOffsetY>0</iconOffsetY>
+      <iconOffsetX>0</iconOffsetX>
+      <iconOffsetY>3</iconOffsetY>
       <iconInlineLabel1>no</iconInlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
     <control>
       <description>template for program partial record button</description>
@@ -357,18 +378,20 @@
       <iconOffsetX>10</iconOffsetX>
       <iconOffsetY>0</iconOffsetY>
       <iconInlineLabel1>no</iconInlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
     <control>
       <description>record pin</description>
       <type>image</type>
       <id>31</id>
-      <posX>1165</posX>
-      <posY>562</posY>
+      <posX>1225</posX>
+      <posY>553</posY>
+      <width>35</width>
+      <height>30</height>
       <align>left</align>
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>
-
     <control>
       <description>TvGroup button</description>
       <type>button3part</type>

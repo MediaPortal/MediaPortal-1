@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>600</id>
@@ -193,7 +193,7 @@
       <description>Current program genre</description>
       <type>label</type>
       <id>27</id>
-      <posX>688</posX>
+      <posX>1688</posX>
       <posY>546</posY>
       <width>478</width>
       <font>font12</font>
@@ -208,7 +208,7 @@
       <posX>196</posX>
       <posY>449</posY>
       <width>478</width>
-      <height>98</height>
+      <height>88</height>
       <font>font11</font>
       <label>#TV.Guide.Description</label>
       <shadowAngle>0</shadowAngle>
@@ -273,6 +273,97 @@
       <visible>Player.HasVideo</visible>
     </control>
     <control>
+      <description>template for program on now button</description>
+      <type>button3part</type>
+      <id>35</id>
+      <textureFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureFocusedLeft>
+      <textureNonFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureNonFocusedLeft>
+      <textureFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureFocusedMid>
+      <textureNonFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureNonFocusedMid>
+      <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
+      <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
+      <!-- This icon is used for the hd program indicator -->
+      <textureIcon2>tvguide_hd_program_on_now.png</textureIcon2>
+      <icon2Align>left</icon2Align>
+      <icon2VAlign>middle</icon2VAlign>
+      <icon2OffsetX>10</icon2OffsetX>
+      <icon2OffsetY>1</icon2OffsetY>
+      <icon2InlineLabel1>yes</icon2InlineLabel1>
+    </control>
+    <control>
+      <description>template for program not on now button</description>
+      <type>button3part</type>
+      <id>36</id>
+      <textureFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureFocusedLeft>
+      <textureNonFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureNonFocusedLeft>
+      <textureFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureFocusedMid>
+      <textureNonFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureNonFocusedMid>
+      <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
+      <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
+      <!-- This icon is used for the hd program indicator -->
+      <textureIcon2>tvguide_hd_program_not_on_now.png</textureIcon2>
+      <icon2Align>left</icon2Align>
+      <icon2VAlign>middle</icon2VAlign>
+      <icon2OffsetX>10</icon2OffsetX>
+      <icon2OffsetY>1</icon2OffsetY>
+      <icon2InlineLabel1>yes</icon2InlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
+    </control>
+    <control>
+      <description>template for program notify button</description>
+      <type>button3part</type>
+      <id>37</id>
+      <textureFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureFocusedLeft>
+      <textureNonFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureNonFocusedLeft>
+      <textureFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureFocusedMid>
+      <textureNonFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureNonFocusedMid>
+      <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
+      <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
+      <!-- The textureIcon is used for the notify indicator; these attributes help position the icon -->
+      <iconAlign>right</iconAlign>
+      <iconVAlign>middle</iconVAlign>
+      <iconOffsetX>0</iconOffsetX>
+      <iconOffsetY>3</iconOffsetY>
+      <iconInlineLabel1>no</iconInlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
+    </control>
+    <control>
+      <description>template for program record button</description>
+      <type>button3part</type>
+      <id>38</id>
+      <textureFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureFocusedLeft>
+      <textureNonFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureNonFocusedLeft>
+      <textureFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureFocusedMid>
+      <textureNonFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureNonFocusedMid>
+      <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
+      <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
+      <!-- The textureIcon is used for the record indicator; these attributes help position the icon -->
+      <iconAlign>right</iconAlign>
+      <iconVAlign>middle</iconVAlign>
+      <iconOffsetX>0</iconOffsetX>
+      <iconOffsetY>3</iconOffsetY>
+      <iconInlineLabel1>no</iconInlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
+    </control>
+    <control>
+      <description>template for program partial record button</description>
+      <type>button3part</type>
+      <id>39</id>
+      <textureFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureFocusedLeft>
+      <textureNonFocusedLeft overlay="tvguide_arrow_left_colorize_overlay.png">tvguide_arrow_left_colorize.png</textureNonFocusedLeft>
+      <textureFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureFocusedMid>
+      <textureNonFocusedMid overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</textureNonFocusedMid>
+      <textureFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureFocusedRight>
+      <textureNonFocusedRight overlay="tvguide_arrow_right_colorize_overlay.png">tvguide_arrow_right_colorize.png</textureNonFocusedRight>
+      <!-- The textureIcon is used for the partial record indicator; these attributes help position the icon -->
+      <iconAlign>right</iconAlign>
+      <iconVAlign>middle</iconVAlign>
+      <iconOffsetX>10</iconOffsetX>
+      <iconOffsetY>0</iconOffsetY>
+      <iconInlineLabel1>no</iconInlineLabel1>
+      <visible>skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
+    </control>
+    <control>
       <description>record pin</description>
       <type>image</type>
       <id>31</id>
@@ -316,6 +407,26 @@
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="rotate" end="-90" time="0">WindowOpen</animation>
+    </control>
+    <control>
+      <description>Template for genre key color</description>
+      <type>image</type>
+      <id>110</id>
+      <posX>30</posX>
+      <posY>552</posY>
+      <width>22</width>
+      <height>13</height>
+      <texture overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</texture>
+      <visible>skin.hassetting(#skin.tvguide.showgenrekey) + skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
+    </control>
+    <control>
+      <description>Template for genre key name</description>
+      <type>label</type>
+      <id>111</id>
+      <posY>550</posY>
+      <textcolor>FF6aa5cb</textcolor>
+      <font>font6</font>
+      <visible>skin.hassetting(#skin.tvguide.showgenrekey) + skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
     </control>
   </controls>
 </window>
