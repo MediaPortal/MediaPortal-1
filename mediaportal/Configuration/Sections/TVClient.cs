@@ -298,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
     {
       for (int i = 0; i < LOCALIZED_GENRE_STRING_COUNT; i++)
       {
-        settings.SetValue("genremap", GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + i), String.Empty);  // Genre not mapped
+        settings.SetValue("genremap", i.ToString(), String.Empty);  // Genre not mapped
       }
     }
 

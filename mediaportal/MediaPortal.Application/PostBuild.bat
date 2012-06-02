@@ -104,3 +104,8 @@ REM MPE
 xcopy %1\MPE\MpeCore\bin\%2\MpeCore.* . /Y /D
 xcopy %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* . /Y /D
 xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
+
+REM Configuration
+xcopy %1\Configuration\Wizards\*.* Wizards\ /Y /D
+xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
+xcopy %1\Configuration\WinCustomControls\bin\%2\WinCustomControls.* . /Y /D
