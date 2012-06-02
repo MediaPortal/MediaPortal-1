@@ -113,25 +113,6 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
   m_chOrder = *pChOrder;
 
-  // Try different speaker setup
-  if (FAILED(hr))
-  {
-    DWORD dwSpeakers = ((WAVEFORMATEXTENSIBLE *)pOutWfx)->dwChannelMask;
-    if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1)
-      dwSpeakers = KSAUDIO_SPEAKER_5POINT1_SURROUND;
-    else if (dwSpeakers == KSAUDIO_SPEAKER_5POINT1_SURROUND)
-      dwSpeakers = KSAUDIO_SPEAKER_5POINT1;
-    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1)
-      dwSpeakers = KSAUDIO_SPEAKER_7POINT1_SURROUND;
-    else if (dwSpeakers == KSAUDIO_SPEAKER_7POINT1_SURROUND)
-      dwSpeakers = KSAUDIO_SPEAKER_7POINT1;
-
-    if (dwSpeakers != pOutWfx->dwChannelMask)
-    {
-      pOutWfx->dwChannelMask = dwSpeakers;
-      hr = m_pNextSink->NegotiateFormat(pOutWfx, nApplyChangesDepth, pChOrder);
-    }
-  }
 
   if (FAILED(hr))
   {
@@ -168,7 +149,7 @@ HRESULT CChannelMixer::PutSample(IMediaSample *pSample)
   
   HRESULT hr = S_OK;
 
-  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt)
     bFormatChanged = !FormatsEqual((WAVEFORMATEXTENSIBLE*)pmt->pbFormat, m_pInputFormat);
 
   if (pSample->IsDiscontinuity() == S_OK)
