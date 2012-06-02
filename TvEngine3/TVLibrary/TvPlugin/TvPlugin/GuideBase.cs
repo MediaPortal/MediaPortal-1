@@ -98,7 +98,7 @@ namespace TvPlugin
     protected void RenderGenreKey()
     {
       GUIImage imgGenreColor = (GUIImage)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR);
-      GUILabelControl labelGenreName = (GUILabelControl)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
+      GUIFadeLabel labelGenreName = (GUIFadeLabel)GetControl((int)Controls.GENRE_COLOR_KEY_PAIR + 1);
 
       // Do not render the key if not required or the template controls are not present or are specified as not visible.
       if (imgGenreColor == null || labelGenreName == null || !imgGenreColor.Visible)
@@ -132,23 +132,32 @@ namespace TvPlugin
         img.SetPosition(xpos, imgGenreColor.YPosition);
         img.DoUpdate();
 
-        GUILabelControl label = GetControl(((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i)) as GUILabelControl;
+        GUIFadeLabel label = GetControl(((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i)) as GUIFadeLabel;
         if (label == null)
         {
-          label = new GUILabelControl(GetID, ((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i), 0, 0, labelGenreName.Width,
-                                      labelGenreName.Height, labelGenreName.FontName, String.Empty,
-                                      labelGenreName.TextColor, labelGenreName.TextAlignment, labelGenreName.TextVAlignment, false,
-                                      labelGenreName.ShadowAngle, labelGenreName.ShadowDistance, labelGenreName.ShadowColor);
+          label = new GUIFadeLabel(GetID, ((int)Controls.GENRE_COLOR_KEY_PAIR + 1) + (2 * i), 0, 0, labelGenreName.Width,
+                                   labelGenreName.Height, labelGenreName.FontName,
+                                   labelGenreName.TextColor, labelGenreName.TextAlignment, labelGenreName.TextVAlignment,
+                                   labelGenreName.ShadowAngle, labelGenreName.ShadowDistance, labelGenreName.ShadowColor,
+                                   string.Empty);
+
           label.AllocResources();
           GUIControl cntl = (GUIControl)label;
           this.Add(ref cntl);
         }
         label.Label = genreName;
         label.SetPosition(xpos + imgGenreColor.Width + 10, labelGenreName.YPosition);
+        label.ScrollStartDelay = labelGenreName.ScrollStartDelay;
         label.IsVisible = true;
 
         // Compute position of the next key.
-        xoffset += imgGenreColor.Width * 3 + label.TextWidth;
+        int w = label.Width;
+        if (label.TextWidth < label.Width)
+        {
+          w = label.TextWidth;
+        }
+
+        xoffset += (int)(imgGenreColor.Width * 2.3 + w);
         i++;
       }
     }

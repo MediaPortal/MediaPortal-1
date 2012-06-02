@@ -183,6 +183,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTvGuideSettings = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageTvGuideGeneral = new System.Windows.Forms.TabPage();
       this.gbGenreSettings = new System.Windows.Forms.GroupBox();
+      this.cbColoredGuide = new System.Windows.Forms.CheckBox();
+      this.cbBorderHighlight = new System.Windows.Forms.CheckBox();
       this.cbGenreColorKey = new System.Windows.Forms.CheckBox();
       this.cbGenreColoring = new System.Windows.Forms.CheckBox();
       this.tabPageTvGuideColors = new MediaPortal.UserInterface.Controls.MPTabPage();
@@ -218,8 +220,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpButtonCancel = new System.Windows.Forms.Button();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
-      this.cbBorderHighlight = new System.Windows.Forms.CheckBox();
-      this.cbColoredGuide = new System.Windows.Forms.CheckBox();
       this.tabControlSkinSettings.SuspendLayout();
       this.tabPageGeneral.SuspendLayout();
       this.groupBoxTheme.SuspendLayout();
@@ -266,7 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxTheme.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxTheme.Location = new System.Drawing.Point(6, 5);
       this.groupBoxTheme.Name = "groupBoxTheme";
-      this.groupBoxTheme.Size = new System.Drawing.Size(452, 165);
+      this.groupBoxTheme.Size = new System.Drawing.Size(452, 442);
       this.groupBoxTheme.TabIndex = 5;
       this.groupBoxTheme.TabStop = false;
       this.groupBoxTheme.Text = "Theme selection";
@@ -275,9 +275,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.panelFitImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.panelFitImage.Controls.Add(this.previewPictureBox);
-      this.panelFitImage.Location = new System.Drawing.Point(213, 22);
+      this.panelFitImage.Location = new System.Drawing.Point(12, 22);
       this.panelFitImage.Name = "panelFitImage";
-      this.panelFitImage.Size = new System.Drawing.Size(222, 123);
+      this.panelFitImage.Size = new System.Drawing.Size(430, 222);
       this.panelFitImage.TabIndex = 5;
       // 
       // previewPictureBox
@@ -287,7 +287,7 @@ namespace MediaPortal.Configuration.Sections
       this.previewPictureBox.Image = global::MediaPortal.Configuration.Properties.Resources.mplogo;
       this.previewPictureBox.Location = new System.Drawing.Point(0, 0);
       this.previewPictureBox.Name = "previewPictureBox";
-      this.previewPictureBox.Size = new System.Drawing.Size(222, 123);
+      this.previewPictureBox.Size = new System.Drawing.Size(430, 222);
       this.previewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.previewPictureBox.TabIndex = 5;
       this.previewPictureBox.TabStop = false;
@@ -302,10 +302,10 @@ namespace MediaPortal.Configuration.Sections
             this.colVersion});
       this.listViewAvailableThemes.FullRowSelect = true;
       this.listViewAvailableThemes.HideSelection = false;
-      this.listViewAvailableThemes.Location = new System.Drawing.Point(15, 22);
+      this.listViewAvailableThemes.Location = new System.Drawing.Point(11, 262);
       this.listViewAvailableThemes.MultiSelect = false;
       this.listViewAvailableThemes.Name = "listViewAvailableThemes";
-      this.listViewAvailableThemes.Size = new System.Drawing.Size(190, 123);
+      this.listViewAvailableThemes.Size = new System.Drawing.Size(430, 168);
       this.listViewAvailableThemes.TabIndex = 3;
       this.listViewAvailableThemes.UseCompatibleStateImageBehavior = false;
       this.listViewAvailableThemes.View = System.Windows.Forms.View.Details;
@@ -314,12 +314,12 @@ namespace MediaPortal.Configuration.Sections
       // colName
       // 
       this.colName.Text = "Name";
-      this.colName.Width = 126;
+      this.colName.Width = 329;
       // 
       // colVersion
       // 
       this.colVersion.Text = "Version";
-      this.colVersion.Width = 56;
+      this.colVersion.Width = 86;
       // 
       // tabPageTVGuideSettings
       // 
@@ -369,6 +369,27 @@ namespace MediaPortal.Configuration.Sections
       this.gbGenreSettings.TabIndex = 0;
       this.gbGenreSettings.TabStop = false;
       this.gbGenreSettings.Text = "Program color settings";
+      // 
+      // cbColoredGuide
+      // 
+      this.cbColoredGuide.AutoSize = true;
+      this.cbColoredGuide.Location = new System.Drawing.Point(10, 21);
+      this.cbColoredGuide.Name = "cbColoredGuide";
+      this.cbColoredGuide.Size = new System.Drawing.Size(247, 17);
+      this.cbColoredGuide.TabIndex = 3;
+      this.cbColoredGuide.Text = "Enable guide coloring (set colors on Colors tab)";
+      this.cbColoredGuide.UseVisualStyleBackColor = true;
+      this.cbColoredGuide.CheckedChanged += new System.EventHandler(this.cbColoredGuide_CheckedChanged);
+      // 
+      // cbBorderHighlight
+      // 
+      this.cbBorderHighlight.AutoSize = true;
+      this.cbBorderHighlight.Location = new System.Drawing.Point(10, 90);
+      this.cbBorderHighlight.Name = "cbBorderHighlight";
+      this.cbBorderHighlight.Size = new System.Drawing.Size(201, 17);
+      this.cbBorderHighlight.TabIndex = 2;
+      this.cbBorderHighlight.Text = "Border highlight the selected program";
+      this.cbBorderHighlight.UseVisualStyleBackColor = true;
       // 
       // cbGenreColorKey
       // 
@@ -740,27 +761,6 @@ namespace MediaPortal.Configuration.Sections
       this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      // 
-      // cbBorderHighlight
-      // 
-      this.cbBorderHighlight.AutoSize = true;
-      this.cbBorderHighlight.Location = new System.Drawing.Point(10, 90);
-      this.cbBorderHighlight.Name = "cbBorderHighlight";
-      this.cbBorderHighlight.Size = new System.Drawing.Size(201, 17);
-      this.cbBorderHighlight.TabIndex = 2;
-      this.cbBorderHighlight.Text = "Border highlight the selected program";
-      this.cbBorderHighlight.UseVisualStyleBackColor = true;
-      // 
-      // cbColoredGuide
-      // 
-      this.cbColoredGuide.AutoSize = true;
-      this.cbColoredGuide.Location = new System.Drawing.Point(10, 21);
-      this.cbColoredGuide.Name = "cbColoredGuide";
-      this.cbColoredGuide.Size = new System.Drawing.Size(247, 17);
-      this.cbColoredGuide.TabIndex = 3;
-      this.cbColoredGuide.Text = "Enable guide coloring (set colors on Colors tab)";
-      this.cbColoredGuide.UseVisualStyleBackColor = true;
-      this.cbColoredGuide.CheckedChanged += new System.EventHandler(this.cbColoredGuide_CheckedChanged);
       // 
       // DlgSkinSettings
       // 
