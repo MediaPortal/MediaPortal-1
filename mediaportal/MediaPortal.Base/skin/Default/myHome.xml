@@ -3,7 +3,7 @@
 <window>
   <id>0</id>
   <defaultcontrol>50</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
   <disabletopbar>yes</disabletopbar>
   <define>#selecteditem:</define>
   <define>#selectedindex:</define>
