@@ -10,19 +10,19 @@
     <entry name="name">Skin default</entry>
   </section>
   <section name="tvguidecolors">
-    <entry name="guidecolorchannelbutton">FF6495ED</entry>
-    <entry name="guidecolorchannelbuttonselected">FF606060</entry>
-    <entry name="guidecolorgroupbutton">FF6495ED</entry>
-    <entry name="guidecolorgroupbuttonselected">FF606060</entry>
-    <entry name="guidecolorprogramselected">FF606060</entry>
-    <entry name="guidecolorprogramended">FF303030</entry>
+    <entry name="guidecolorchannelbutton">FF404040</entry>
+    <entry name="guidecolorchannelbuttonselected">FF6495ED</entry>
+    <entry name="guidecolorgroupbutton">FF404040</entry>
+    <entry name="guidecolorgroupbuttonselected">FF6495ED</entry>
+    <entry name="guidecolorprogramselected">FF6495ED</entry>
+    <entry name="guidecolorprogramended">FF202020</entry>
     <entry name="guidecolorborderhighlight">FF6DF0FF</entry>
-    <entry name="defaultgenre">FF6495ED,FF6495ED</entry>
-    <entry name="0">FF18D22E,FF17D243</entry>
-    <entry name="1">FF00FFFF,FF00FFFF</entry>
-    <entry name="2">FFFA1919,FFF91B3A</entry>
+    <entry name="defaultgenre">FF404040,FF404040</entry>
+    <entry name="0">FF18D22E,FF18D22E</entry>
+    <entry name="1">FFFF69B4,FFFF69B4</entry>
+    <entry name="2">FFFA1919,FFFA1919</entry>
     <entry name="3">FF800000,FF800000</entry>
-    <entry name="4">FF90EE90,FF90EE90</entry>
+    <entry name="4">FF2169EE,FF2169EE</entry>
     <entry name="5">FFFFD700,FFFFD700</entry>
     <entry name="6">FF006400,FF006400</entry>
   </section>
