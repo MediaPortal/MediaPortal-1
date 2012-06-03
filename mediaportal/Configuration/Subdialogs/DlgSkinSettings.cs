@@ -529,6 +529,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxGroupSel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxGroupSel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxGroupSel.TabIndex = 10;
+      this.colorComboBoxGroupSel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnGroupSelColorChanged);
       this.colorComboBoxGroupSel.Load += new System.EventHandler(this.colorComboBoxGroupSel_Load);
       // 
       // mpLabel12
@@ -548,6 +549,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxGroup.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxGroup.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxGroup.TabIndex = 0;
+      this.colorComboBoxGroup.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnGroupColorChanged);
       this.colorComboBoxGroup.Load += new System.EventHandler(this.colorComboBoxGroup_Load);
       // 
       // groupChannelColors
@@ -580,6 +582,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxChannelSel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxChannelSel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxChannelSel.TabIndex = 10;
+      this.colorComboBoxChannelSel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnChannelSelColorChanged);
       this.colorComboBoxChannelSel.Load += new System.EventHandler(this.colorComboBoxChannelSel_Load);
       // 
       // mpLabel10
@@ -599,6 +602,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxChannel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxChannel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxChannel.TabIndex = 0;
+      this.colorComboBoxChannel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnChannelColorChanged);
       this.colorComboBoxChannel.Load += new System.EventHandler(this.colorComboBoxChannel_Load);
       // 
       // groupDefaultColors
@@ -637,6 +641,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxPgmOnLater.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmOnLater.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmOnLater.TabIndex = 16;
+      this.colorComboBoxPgmOnLater.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmOnLaterColorChanged);
       this.colorComboBoxPgmOnLater.Load += new System.EventHandler(this.colorComboBoxPgmOnLater_Load);
       // 
       // mpLabel15
@@ -656,6 +661,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxPgmOnNow.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmOnNow.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmOnNow.TabIndex = 14;
+      this.colorComboBoxPgmOnNow.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmOnNowColorChanged);
       this.colorComboBoxPgmOnNow.Load += new System.EventHandler(this.colorComboBoxPgmOnNow_Load);
       // 
       // mpLabel13
@@ -675,6 +681,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxPgmBorder.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmBorder.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmBorder.TabIndex = 12;
+      this.colorComboBoxPgmBorder.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmBorderColorChanged);
       this.colorComboBoxPgmBorder.Load += new System.EventHandler(this.colorComboBoxPgmBorder_Load);
       // 
       // mpLabel8
@@ -694,6 +701,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxPgmSel.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmSel.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmSel.TabIndex = 10;
+      this.colorComboBoxPgmSel.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmSelColorChanged);
       this.colorComboBoxPgmSel.Load += new System.EventHandler(this.colorComboBoxPgmSel_Load);
       // 
       // mpLabel4
@@ -713,6 +721,7 @@ namespace MediaPortal.Configuration.Sections
       this.colorComboBoxPgmEnded.SelectedColor = System.Drawing.Color.Black;
       this.colorComboBoxPgmEnded.Size = new System.Drawing.Size(103, 23);
       this.colorComboBoxPgmEnded.TabIndex = 0;
+      this.colorComboBoxPgmEnded.ColorChanged += new MediaPortal.WinCustomControls.ColorChangedHandler(this.OnPgmEndedColorChanged);
       this.colorComboBoxPgmEnded.Load += new System.EventHandler(this.colorComboBoxPgmEnded_Load);
       // 
       // mpButtonOk
