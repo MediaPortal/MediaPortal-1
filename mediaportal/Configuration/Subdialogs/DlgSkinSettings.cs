@@ -77,11 +77,11 @@ namespace MediaPortal.Configuration.Sections
     protected const int LOCALIZED_GENRE_STRING_COUNT = 7;
     protected List<string> _defaultGenreColors = new List<string>()
 	    {
-       "FFD2691E,FFD2691E",
-       "FF00FFFF,FF00FFFF",
-       "FF800080,FF800080",
+       "FF18D22E,FF18D22E",
+       "FFFF69B4,FFFF69B4",
+       "FFFA1919,FFFA1919",
        "FF800000,FF800000",
-       "FF90EE90,FF90EE90",
+       "FF2169EE,FF2169EE",
        "FFFFD700,FFFFD700",
        "FF006400,FF006400"
       };
@@ -838,13 +838,13 @@ namespace MediaPortal.Configuration.Sections
       List<string> temp;
 
       // Load supporting guide colors.
-      _guideColorChannelButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbutton", "ff0e517b"));
-      _guideColorChannelButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbuttonselected", "Green"));
-      _guideColorGroupButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbutton", "ff0e517b"));
-      _guideColorGroupButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbuttonselected", "Green"));
-      _guideColorProgramSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramselected", "Green"));
-      _guideColorProgramEnded = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramended", "Gray"));
-      _guideColorBorderHighlight = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorborderhighlight", "99ffffff"));
+      _guideColorChannelButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbutton", "FF404040"));
+      _guideColorChannelButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbuttonselected", "FF6495ED"));
+      _guideColorGroupButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbutton", "FF404040"));
+      _guideColorGroupButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbuttonselected", "FF6495ED"));
+      _guideColorProgramSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramselected", "FF6495ED"));
+      _guideColorProgramEnded = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramended", "FF202020"));
+      _guideColorBorderHighlight = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorborderhighlight", "FF6DF0FF"));
 
       // Load the default genre colors.
       temp = new List<string>((xmlreader.GetValueAsString("tvguidecolors", "defaultgenre", String.Empty)).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
@@ -860,8 +860,8 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        _guideColorProgramOnNow = 0xff1d355b; // Dark blue
-        _guideColorProgramOnLater = 0xff0e517b; // Light blue
+        _guideColorProgramOnNow = 0xFF404040; // Dark blue
+        _guideColorProgramOnLater = 0xFF404040; // Light blue
       }
 
       // Each genre color entry is a csv list.  The first value is the color for program "on now", the second value is for program "on later".
