@@ -1599,7 +1599,7 @@ namespace MediaPortal.MusicPlayer.BASS
           BASSWASAPIInit initFlags = BASSWASAPIInit.BASS_WASAPI_AUTOFORMAT;
 
           int frequency = stream.ChannelInfo.freq;
-          int chans = stream.ChannelInfo.chans;
+          int chans = outputChannels;
 
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
           if (_wasApiExclusiveMode)
