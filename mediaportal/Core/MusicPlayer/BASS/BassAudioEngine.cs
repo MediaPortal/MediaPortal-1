@@ -906,7 +906,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       bool result = false;
 
-      Log.Info("BASS: Using WasAPI device: {0}", Config.SoundDevice);
+      Log.Info("BASS: Using WASAPI device: {0}", Config.SoundDevice);
       BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
 
       _wasapiProc = new WASAPIPROC(WasApiCallback);
@@ -949,7 +949,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        Log.Error("BASS: Specified WasAPI device not found. BASS is disabled.");
+        Log.Error("BASS: Specified WASAPI device not found. BASS is disabled.");
       }
 
       return result;
@@ -1611,7 +1611,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
             if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
             {
-              Log.Warn("BASS: Stream can't be played in exclusive mode. Switch to shared mode.");
+              Log.Warn("BASS: Stream can't be played in WASAPI exclusive mode. Switch to WASAPI shared mode.");
               initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED;
               frequency = _wasapiDeviceInfo.mixfreq;
               chans = _wasapiDeviceInfo.mixchans;
@@ -1640,7 +1640,7 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
 
-            Log.Info("BASS: Wasapi Device successfully initialised");
+            Log.Info("BASS: WASAPI Device successfully initialised");
             Log.Info("BASS: ---------------------------------------------");
             Log.Info("BASS: Buffer Length: {0}", wasapiInfo.buflen);
             Log.Info("BASS: Channels: {0}", wasapiInfo.chans);

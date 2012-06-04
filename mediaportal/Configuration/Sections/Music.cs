@@ -90,7 +90,7 @@ namespace MediaPortal.Configuration.Sections
                                        {
                                          "BASS engine",
                                          "ASIO",
-                                         "WasAPI",
+                                         "WASAPI",
                                          "Internal dshow player",
                                        };
 
@@ -676,7 +676,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void audioPlayerComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-      // Check if we have selected either BASS; ASIO or WasAPI and only enable Playersettings and Vis then
+      // Check if we have selected either BASS; ASIO or WASAPI and only enable Playersettings and Vis then
       bool useBassEngine = audioPlayerComboBox.SelectedIndex < 3;
       tabControlPlayerSettings.Enabled = useBassEngine;
       tabPagePlayerUpmixSettings.Enabled = useBassEngine;
@@ -757,7 +757,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="player">
     /// 0 - Bass Directshow
     /// 1 - ASIO
-    /// 2 - WasApi
+    /// 2 - WASAPI
     /// 3 - Internal Dshow Player
     /// </param>
     private void GetAvailableSoundDevices(int player)

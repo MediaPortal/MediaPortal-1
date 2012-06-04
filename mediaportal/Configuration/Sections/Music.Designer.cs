@@ -430,7 +430,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageWASAPIPLayerSettings.Padding = new System.Windows.Forms.Padding(3);
       this.tabPageWASAPIPLayerSettings.Size = new System.Drawing.Size(424, 280);
       this.tabPageWASAPIPLayerSettings.TabIndex = 2;
-      this.tabPageWASAPIPLayerSettings.Text = "WasAPI";
+      this.tabPageWASAPIPLayerSettings.Text = "WASAPI";
       this.tabPageWASAPIPLayerSettings.UseVisualStyleBackColor = true;
       // 
       // WasapiExclusiveModeCkBox
@@ -441,7 +441,7 @@ namespace MediaPortal.Configuration.Sections
       this.WasapiExclusiveModeCkBox.Name = "WasapiExclusiveModeCkBox";
       this.WasapiExclusiveModeCkBox.Size = new System.Drawing.Size(161, 17);
       this.WasapiExclusiveModeCkBox.TabIndex = 3;
-      this.WasapiExclusiveModeCkBox.Text = "Use WasApi Exclusive Mode";
+      this.WasapiExclusiveModeCkBox.Text = "Use WASAPI Exclusive Mode";
       this.WasapiExclusiveModeCkBox.UseVisualStyleBackColor = true;
       // 
       // mpLabel5
@@ -451,7 +451,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(346, 13);
       this.mpLabel5.TabIndex = 0;
-      this.mpLabel5.Text = "Playback via BASS using Windows Audio Session API (WasAPI) drivers";
+      this.mpLabel5.Text = "Playback via BASS using Windows Audio Session API (WASAPI) drivers";
       // 
       // tabPagePlayerUpmixSettings
       // 
