@@ -382,12 +382,15 @@ namespace TvEngine
     #endregion
 
     #region structs
+    // These structs are all aligned to 8 byte boundaries.
 
     [StructLayout(LayoutKind.Sequential)]
     private struct IrData
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
+      [MarshalAs(UnmanagedType.Bool)]
       public bool Enable;
       public Int32 Key;         // bit 8 = repeat flag (0 = repeat), bits 7-0 = key code
     }
@@ -397,10 +400,11 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
       public byte[] FirmwareVersion;    // [0x04, 0x00] -> 0.4
       public AnyseePlatform Platform;
-      private Int32 Reserved;
+      private Int32 Padding;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -408,12 +412,15 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
       public AnyseeBroadcastSystem CurrentBroadcastSystem;
       public AnyseeNimMode CurrentNimMode;
+
       public Int32 CurrentFrequency;    // unit = kHz
       public Int32 Unknown1;
+
       public AnyseeNim NimType;
-      public Int32 Unknown2;
+      private Int32 Padding;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -421,9 +428,10 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
       public byte[] Version;            // [0x58, 0x20, 0x06, 0x01] -> 1.6.20.58
-      private Int32 Reserved;
+      private Int32 Padding;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -431,14 +439,21 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
 	    public Int32 SymbolRate;      // unit = s/s (Baud)
       public Int32 SweepRate;       // unit = Hz/s
+
       public Int32 Frequency;       // unit = kHz
       public Int32 CarrierOffset;   // unit = kHz
+
       public byte Bandwidth;        // unit = Mhz
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+      private byte[] Padding;
       public AnyseeNim NimType;
+
       public AnyseeNimMode AnalogNimMode;
       public AnyseeNimMode DigitalNimMode;
+
       public AnyseeInversionMode SignalInversion;
       public AnyseeScanDirection ScanDirection;
 	  }
@@ -448,10 +463,13 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
       public Int32 UnknownFlags;
       public Int32 SwitchFrequency; // unit = MHz
+
       public Int32 HighLof;         // unit = MHz
       public Int32 LowLof;          // unit = MHz
+
       public Int32 EffectiveLof;    // unit = MHz
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
       private byte[] Reserved;
@@ -462,12 +480,16 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
       public Int32 MinFrequency;    // unit = kHz
       public Int32 MaxFrequency;    // unit = kHz
+
       public Int32 MinSymbolRate;   // unit = s/s (Baud)
       public Int32 MaxSymbolRate;   // unit = s/s (Baud)
+
       public Int32 MinSearchStep;   // unit = Hz
       public Int32 MaxSearchStep;   // unit = Hz
+
       public AnyseeNimCapability NimCapabilities;
       public AnyseeBroadcastSystem PrimaryBroadcastSystem;
     }
@@ -477,13 +499,16 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
       public byte[] FirmwareVersion;    // [0x04, 0x00, 0x00, 0x00] -> 0.4
       public AnyseeBusType BusType;
+
       public AnyseeBoardType BoardType;
       public AnyseeBoardProperty BoardProperties;
+
       public AnyseeBoardMode BoardMode;
-      private Int32 Reserved;
+      private Int32 Padding;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -491,9 +516,11 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KsPropertySize)]
       public byte[] KsProperty;
+
       public Int32 MessageLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
       public byte[] Message;
+
       public AnyseeToneBurst ToneBurst;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       public byte[] Padding;
@@ -513,6 +540,7 @@ namespace TvEngine
     {
       public Int32 Size;
       public Int32 DeviceIndex;
+
       public ApiString Message;
     }
 
@@ -529,12 +557,16 @@ namespace TvEngine
     {
       public Int32 DeviceIndex;
       public Int32 SlotIndex;
+
       public Int32 HeaderCount;
       public Int32 EntryCount;
+
       public AnyseeMmiMessageType Type;
       public Int32 ExpectedAnswerLength;
+
       public Int32 KeyCount;
       public ApiString RootMenuTitle;
+
       public IntPtr Menu;
     }
 
@@ -557,6 +589,7 @@ namespace TvEngine
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDescriptorDataLength)]
       public byte[] ProgramCaDescriptorData;    // The first two bytes should specify the length of the descriptor data.
       private UInt16 Padding2;
+
       public UInt32 EsCount;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPmtElementaryStreams)]
       public EsPmtData[] EsPmt;
@@ -568,6 +601,7 @@ namespace TvEngine
       public UInt16 Pid;
       public AnyseeEsType EsType;
       public byte StreamType;
+
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDescriptorDataLength)]
       public byte[] DescriptorData;           // The first two bytes should specify the length of the descriptor data.
     }
@@ -925,6 +959,7 @@ namespace TvEngine
         {
           Marshal.WriteByte(infoBuffer, i, 0);
         }
+
         int numDevices = _getAnyseeDeviceCount(infoBuffer);
         Log.Debug("Anysee: number of devices = {0}", numDevices);
         if (numDevices == 0)

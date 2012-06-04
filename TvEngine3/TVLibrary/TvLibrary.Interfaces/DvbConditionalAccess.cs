@@ -1790,7 +1790,7 @@ namespace TvLibrary.Interfaces
       byte[] caPmt = new byte[offset];
       Buffer.BlockCopy(tempCaPmt, 0, caPmt, 0, offset);
 
-      DVB_MMI.DumpBinary(caPmt, 0, caPmt.Length);
+      //DVB_MMI.DumpBinary(caPmt, 0, caPmt.Length);
 
       return caPmt;
     }
@@ -2182,6 +2182,7 @@ namespace TvLibrary.Interfaces
         {
           //  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18
           // 09 11 01 00 E6 43 00 6A FF 00 00 00 00 00 00 02 14 21 8C
+          // 09 11 01 00 F6 BD 00 6D FF FF E0 00 00 00 00 00 00 2B 6D
           // 09 11 01 00 E6 1C 41 01 FF FF FF FF FF FF FF FF FF 21 8C
           d._pids.Add(d._caPid, (UInt32)(((d._privateData[0] & 0x1f) << 8) + d._privateData[1]));
           // TODO: loop required here? Example of longer descriptor required.

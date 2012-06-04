@@ -267,7 +267,7 @@ namespace TvEngine
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CiSlotInfo   // TYP_SLOT_INFO
     {
       public TtCiState Status;
@@ -277,7 +277,7 @@ namespace TvEngine
       public UInt16 NumberOfCaSystemIds;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct ConnectionDescription  // TYPE_CONNECT_DESCR
     {
       public TtConnectionType ConnectionType;
@@ -299,7 +299,7 @@ namespace TvEngine
       public byte Timeout;      // unit = 10 ms
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct FilterNames // TS_FilterNames
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
@@ -322,7 +322,7 @@ namespace TvEngine
     /// <summary>
     /// A structure for holding the full set of callback function and context pointers.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TtFullCiCallbacks
     {
       public OnTtSlotStatus OnSlotStatus;
@@ -371,7 +371,7 @@ namespace TvEngine
     /// <summary>
     /// A structure for holding a minimal ("slim") set of callback function and context pointers.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TtSlimCiCallbacks
     {
       public OnTtSlotStatus OnSlotStatus;
@@ -380,65 +380,86 @@ namespace TvEngine
       public IntPtr OnCAStatusContext;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TtDvbcTuneRequest
     {
       public TtDeviceType DeviceType;
       public UInt32 Frequency;                // unit = kHz
+
       public ModulationType Modulation;       // expected to be QAM 16, 32, 64, 128, or 256
       private FECMethod InnerFecMethod;
+
       private BinaryConvolutionCodeRate InnerFecRate;
       private FECMethod OuterFecMethod;
+
       private BinaryConvolutionCodeRate OuterFecRate;
       public UInt32 SymbolRate;               // unit = ks/s
+
       public SpectralInversion SpectralInversion;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
       private byte[] Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TtDvbsTuneRequest
     {
       public TtDeviceType DeviceType;
       public UInt32 Frequency;                // unit = kHz
+
       public UInt32 FrequencyMultiplier;
       public Polarisation Polarisation;
+
       private UInt32 Bandwidth;
       public TtDiseqcPort Diseqc;
+
       private UInt32 Transponder;
       public ModulationType Modulation;       // expected to be QPSK for DVB-S, 8 VSB for DVB-S2
+
       private FECMethod InnerFecMethod;
       private BinaryConvolutionCodeRate InnerFecRate;
+
       private FECMethod OuterFecMethod;
       private BinaryConvolutionCodeRate OuterFecRate;
+
       public UInt32 SymbolRate;               // unit = ks/s
       public SpectralInversion SpectralInversion;
+
       public UInt32 LnbHighBandLof;           // unit = kHz
       public UInt32 LnbLowBandLof;            // unit = kHz
+
       public UInt32 LnbSwitchFrequency;       // unit = kHz
+      [MarshalAs(UnmanagedType.Bool)]
       public bool UseToneBurst;               // This field turns tone burst on/off; use the Diseqc field to specify the tone state.
+
       private UInt32 Command;
       private UInt32 CommandCount;
+
       private UInt32 LnbSource;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
       private byte[] RawDiseqc;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TtDvbtTuneRequest
     {
       public TtDeviceType DeviceType;
       public UInt32 Frequency;                // unit = kHz
+
       public UInt32 FrequencyMultiplier;
       public UInt32 Bandwidth;                // unit = kHz
+
       public ModulationType Modulation;       // expected to be QAM 16, QAM 64, QAM 256, or QPSK
       private FECMethod InnerFecMethod;
+
       private BinaryConvolutionCodeRate InnerFecRate;
       private FECMethod OuterFecMethod;
+
       private BinaryConvolutionCodeRate OuterFecRate;
       public SpectralInversion SpectralInversion;
+
       private GuardInterval GuardInterval;
       private TransmissionMode TransmissionMode;
+
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 52)]
       private byte[] Padding;
     }
@@ -1007,7 +1028,7 @@ namespace TvEngine
     // by a separate callback. We use this variable to cache it.
     private String _camInputRequestContext = String.Empty;
 
-    private List<UInt16> _descrambledServices = null;
+    private HashSet<UInt16> _descrambledServices = null;
 
     #endregion
 
@@ -1653,6 +1674,7 @@ namespace TvEngine
         return;
       }
 
+      // We only need to tweak the modulation for DVB-S2 channels.
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)
       {
@@ -1662,16 +1684,6 @@ namespace TvEngine
       if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
       {
         ch.ModulationType = ModulationType.Mod8Vsb;
-      }
-      // I don't think any TechnoTrend tuners support demodulating modulation schemes more complex than
-      // 8 PSK. Nevertheless...
-      else if (ch.ModulationType == ModulationType.Mod16Apsk)
-      {
-        ch.ModulationType = ModulationType.Mod16Vsb;
-      }
-      else if (ch.ModulationType == ModulationType.Mod32Apsk)
-      {
-        ch.ModulationType = ModulationType.ModOqpsk;
       }
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }
@@ -1799,7 +1811,7 @@ namespace TvEngine
         return false;
       }
 
-      DVB_MMI.DumpBinary(_generalBuffer, 0, TuneRequestSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TuneRequestSize);
       TtApiResult result = bdaapiTune(_deviceHandle, _generalBuffer);
       Log.Debug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
@@ -1867,7 +1879,7 @@ namespace TvEngine
         Log.Debug("TechnoTrend: result = {0}", result);
         _isCiSlotPresent = true;
         _serviceBuffer = Marshal.AllocCoTaskMem(200);
-        _descrambledServices = new List<UInt16>();
+        _descrambledServices = new HashSet<UInt16>();
       }
       else
       {
@@ -1901,7 +1913,7 @@ namespace TvEngine
       _isCamPresent = false;
       _isCamReady = false;
       Log.Debug("TechnoTrend: result = success");
-      return false;
+      return true;
     }
 
     /// <summary>
@@ -1951,6 +1963,12 @@ namespace TvEngine
         Log.Debug("TechnoTrend: device not initialised or interface not supported");
         return false;
       }
+      if (!_isCiSlotPresent)
+      {
+        Log.Debug("TechnoTrend: CI slot not present");
+        // Don't retry - a restart is required for the CI slot to be connected.
+        return true;
+      }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
         Log.Debug("TechnoTrend: command type {0} is not supported", command);
@@ -1984,17 +2002,7 @@ namespace TvEngine
         listAction == CaPmtListManagementAction.More ||
         listAction == CaPmtListManagementAction.Last)
       {
-        List<UInt16>.Enumerator en = _descrambledServices.GetEnumerator();
-        bool found = false;
-        while (en.MoveNext())
-        {
-          if (en.Current == pmt.ProgramNumber)
-          {
-            found = true;
-            break;
-          }
-        }
-        if (!found)
+        if (!_descrambledServices.Contains(pmt.ProgramNumber))
         {
           _descrambledServices.Add(pmt.ProgramNumber);
         }
@@ -2003,7 +2011,7 @@ namespace TvEngine
         listAction == CaPmtListManagementAction.First)
       {
         // "Only" and "first" actions mean start a new list.
-        _descrambledServices = new List<UInt16>();
+        _descrambledServices = new HashSet<UInt16>();
         _descrambledServices.Add(pmt.ProgramNumber);
       }
 
@@ -2016,11 +2024,11 @@ namespace TvEngine
       // Send the updated list to the CAM.
       Log.Debug("TechnoTrend: service list");
       int i = 0;
-      List<ushort>.Enumerator en2 = _descrambledServices.GetEnumerator();
-      while (en2.MoveNext())
+      HashSet<UInt16>.Enumerator en = _descrambledServices.GetEnumerator();
+      while (en.MoveNext())
       {
-        Log.Debug("  {0} = {1} (0x{1:x4})", i + 1, en2.Current);
-        Marshal.WriteInt16(_serviceBuffer, 2 * i, (Int16)en2.Current);
+        Log.Debug("  {0} = {1} (0x{1:x4})", i + 1, en.Current);
+        Marshal.WriteInt16(_serviceBuffer, 2 * i, (Int16)en.Current);
         i++;
       }
 
@@ -2207,11 +2215,8 @@ namespace TvEngine
         Log.Debug("TechnoTrend: command too long, length = {0}", command.Length);
         return false;
       }
-      for (int i = 0; i < length; i++)
-      {
-        Marshal.WriteByte(_generalBuffer, i, command[i]);
-      }
-      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, length);
+      Marshal.Copy(command, 0, _generalBuffer, length);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, length);
 
       // It is okay to use any polarisation. We chose one that will supply 18 Volts to the LNB because it
       // moves dish motors faster.

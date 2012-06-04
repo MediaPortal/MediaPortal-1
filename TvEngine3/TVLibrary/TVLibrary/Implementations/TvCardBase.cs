@@ -1536,12 +1536,12 @@ namespace TvLibrary.Implementations
         }
         else
         {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, continueing graph");
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, continuing graph");
         }
       }
       else
       {
-        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
+        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continuing graph", _mapSubChannels.Count);
       }
     }
 

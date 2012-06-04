@@ -282,7 +282,7 @@ namespace TvLibrary.Implementations.DVB
           foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
           {
             bool forceGraphStart = false;
-            deviceInterface.OnBeforeTune(this, _previousChannel, ref _previousChannel, out forceGraphStart);
+            deviceInterface.OnBeforeTune(this, _previousChannel, ref tuneChannel, out forceGraphStart);
             if (forceGraphStart && !graphStarted)
             {
               RunGraph(-1);

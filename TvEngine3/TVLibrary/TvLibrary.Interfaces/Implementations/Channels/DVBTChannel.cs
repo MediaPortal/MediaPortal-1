@@ -117,7 +117,7 @@ namespace TvLibrary.Channels
     #region properties
 
     /// <summary>
-    /// Get/set the bandwidth for this channel's transmitter.
+    /// Get/set the bandwidth for this channel's transmitter. The bandwidth unit is MHz.
     /// </summary>
     public int Bandwidth
     {
@@ -126,7 +126,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Get/set the frequency offset for this channel's transmitter.
+    /// Get/set the frequency offset for this channel's transmitter. The offset unit is kHz.
     /// </summary>
     public int Offset
     {

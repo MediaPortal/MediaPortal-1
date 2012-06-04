@@ -557,7 +557,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Get/set the symbol rate for the channel's transponder.
+    /// Get/set the symbol rate for the channel's transponder. The symbol rate unit is ks/s.
     /// </summary>
     public int SymbolRate
     {

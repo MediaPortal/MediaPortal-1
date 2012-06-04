@@ -104,7 +104,7 @@ namespace TvEngine
       Dvbs2
     }
 
-    private enum TbsMmiMessage : byte
+    private enum TbsMmiMessageType : byte
     {
       Null = 0,
       ApplicationInfo = 0x01,     // PC <-->
@@ -234,6 +234,28 @@ namespace TvEngine
       private byte[] Reserved2;
     }
 
+    // MP internal message holder - purely for convenience.
+    private struct MmiMessage
+    {
+      public TbsMmiMessageType Type;
+      public Int32 Length;
+      public byte[] Message;
+
+      public MmiMessage(TbsMmiMessageType type, Int32 length)
+      {
+        Type = type;
+        Length = length;
+        Message = new byte[length];
+      }
+
+      public MmiMessage(TbsMmiMessageType type)
+      {
+        Type = type;
+        Length = 0;
+        Message = null;
+      }
+    }
+
     #endregion
 
     #region DLL imports
@@ -342,11 +364,8 @@ namespace TvEngine
     private Thread _mmiHandlerThread = null;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
 
-    // This is a first-in-first-out queue of messages that are ready to be passed to the CAM. Each message
-    // is preceded by a length byte which specifies the complete length of the message including the message
-    // code and any parameters. The length byte is followed by a message code (TbsMmiMessage). The final
-    // part of the message is zero or more bytes containing parameter data specific to the message type.
-    private List<byte> _mmiMessageQueue = null;
+    // This is a first-in-first-out queue of messages that are ready to be passed to the CAM.
+    private List<MmiMessage> _mmiMessageQueue = null;
 
     #endregion
 
@@ -374,7 +393,7 @@ namespace TvEngine
       {
         Log.Debug("Turbosight: starting new MMI handler thread");
         // Clear the message queue and buffers in preparation for [first] use.
-        _mmiMessageQueue = new List<byte>();
+        _mmiMessageQueue = new List<MmiMessage>();
         for (int i = 0; i < MmiMessageBufferSize; i++)
         {
           Marshal.WriteByte(_mmiMessageBuffer, i, 0);
@@ -398,7 +417,7 @@ namespace TvEngine
     private void MmiHandler()
     {
       Log.Debug("Turbosight: MMI handler thread start polling");
-      TbsMmiMessage message = TbsMmiMessage.Null;
+      TbsMmiMessageType message = TbsMmiMessageType.Null;
       ushort sendCount = 0;
       try
       {
@@ -420,9 +439,9 @@ namespace TvEngine
             {
               lock (this)
               {
-                _mmiMessageQueue = new List<byte>();
+                _mmiMessageQueue = new List<MmiMessage>();
               }
-              message = TbsMmiMessage.Null;
+              message = TbsMmiMessageType.Null;
             }
           }
 
@@ -434,7 +453,7 @@ namespace TvEngine
           }
 
           // Are we still trying to get a response?
-          if (message == TbsMmiMessage.Null)
+          if (message == TbsMmiMessageType.Null)
           {
             // No -> do we have a message to send?
             lock (this)
@@ -442,19 +461,19 @@ namespace TvEngine
               // Yes -> load it into the message buffer.
               if (_mmiMessageQueue.Count > 0)
               {
-                ushort messageLength = _mmiMessageQueue[0];
-                message = (TbsMmiMessage)_mmiMessageQueue[1];
+                message = _mmiMessageQueue[0].Type;
                 Log.Debug("Turbosight: sending message {0}", message);
-                for (ushort i = 0; i < messageLength; i++)
+                Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)message);
+                for (ushort i = 0; i < _mmiMessageQueue[0].Length; i++)
                 {
-                  Marshal.WriteByte(_mmiMessageBuffer, i, _mmiMessageQueue[i + 1]);
+                  Marshal.WriteByte(_mmiMessageBuffer, i + 1, _mmiMessageQueue[0].Message[i]);
                 }
                 sendCount = 0;
               }
               // No -> poll for unrequested messages from the CAM.
               else
               {
-                Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessage.GetMmi);
+                Marshal.WriteByte(_mmiMessageBuffer, 0, (byte)TbsMmiMessageType.GetMmi);
               }
             }
           }
@@ -466,15 +485,14 @@ namespace TvEngine
           }
 
           // Do we expect a response to this message?
-          if (message == TbsMmiMessage.EnterMenu || message == TbsMmiMessage.MenuAnswer || message == TbsMmiMessage.Answer || message == TbsMmiMessage.CloseMmi)
+          if (message == TbsMmiMessageType.EnterMenu || message == TbsMmiMessageType.MenuAnswer || message == TbsMmiMessageType.Answer || message == TbsMmiMessageType.CloseMmi)
           {
             // No -> remove this message from the queue and move on.
             lock (this)
             {
-              ushort messageLength = _mmiMessageQueue[0];
-              _mmiMessageQueue.RemoveRange(0, messageLength + 1);
+              _mmiMessageQueue.RemoveAt(0);
             }
-            message = TbsMmiMessage.Null;
+            message = TbsMmiMessageType.Null;
             if (_mmiMessageQueue.Count == 0)
             {
               Log.Debug("Turbosight: resuming polling...");
@@ -483,9 +501,9 @@ namespace TvEngine
           }
 
           // Yes, we expect a response -> check for a response.
-          TbsMmiMessage response = TbsMmiMessage.Null;
-          response = (TbsMmiMessage)Marshal.ReadByte(_mmiResponseBuffer, 4);
-          if (response == TbsMmiMessage.Null)
+          TbsMmiMessageType response = TbsMmiMessageType.Null;
+          response = (TbsMmiMessageType)Marshal.ReadByte(_mmiResponseBuffer, 4);
+          if (response == TbsMmiMessageType.Null)
           {
             // Responses don't always arrive quickly so give the CAM time to respond if
             // the response isn't ready yet.
@@ -494,18 +512,17 @@ namespace TvEngine
             // If we are waiting for a response to a message that we sent
             // directly and we haven't received a response after 10 requests
             // then give up and move on.
-            if (message != TbsMmiMessage.Null)
+            if (message != TbsMmiMessageType.Null)
             {
               sendCount++;
               if (sendCount >= 10)
               {
                 lock (this)
                 {
-                  ushort messageLength = _mmiMessageQueue[0];
-                  _mmiMessageQueue.RemoveRange(0, messageLength + 1);
+                  _mmiMessageQueue.RemoveAt(0);
                 }
                 Log.Debug("Turbosight: giving up on message {0}", message);
-                message = TbsMmiMessage.Null;
+                message = TbsMmiMessageType.Null;
                 if (_mmiMessageQueue.Count == 0)
                 {
                   Log.Debug("Turbosight: resuming polling...");
@@ -533,14 +550,13 @@ namespace TvEngine
             }
             // If we requested this response directly then remove the request
             // message from the queue.
-            if (message != TbsMmiMessage.Null)
+            if (message != TbsMmiMessageType.Null)
             {
               lock (this)
               {
-                ushort messageLength = _mmiMessageQueue[0];
-                _mmiMessageQueue.RemoveRange(0, messageLength + 1);
+                _mmiMessageQueue.RemoveAt(0);
               }
-              message = TbsMmiMessage.Null;
+              message = TbsMmiMessageType.Null;
               if (_mmiMessageQueue.Count == 0)
               {
                 Log.Debug("Turbosight: resuming polling...");
@@ -554,23 +570,22 @@ namespace TvEngine
           int j = 7;
           for (int i = 0; i < length; i++)
           {
-            responseBytes[i] = Marshal.ReadByte(_mmiResponseBuffer, j);
-            j++;
+            responseBytes[i] = Marshal.ReadByte(_mmiResponseBuffer, j++);
           }
 
-          if (response == TbsMmiMessage.ApplicationInfo)
+          if (response == TbsMmiMessageType.ApplicationInfo)
           {
             HandleApplicationInformation(responseBytes, length);
           }
-          else if (response == TbsMmiMessage.CaInfo)
+          else if (response == TbsMmiMessageType.CaInfo)
           {
             HandleCaInformation(responseBytes, length);
           }
-          else if (response == TbsMmiMessage.Menu)
+          else if (response == TbsMmiMessageType.Menu)
           {
             HandleMenu(responseBytes, length);
           }
-          else if (response == TbsMmiMessage.Enquiry)
+          else if (response == TbsMmiMessageType.Enquiry)
           {
             HandleEnquiry(responseBytes, length);
           }
@@ -588,14 +603,13 @@ namespace TvEngine
           }
           // If we requested this response directly then remove the request
           // message from the queue.
-          if (message != TbsMmiMessage.Null)
+          if (message != TbsMmiMessageType.Null)
           {
             lock (this)
             {
-              ushort messageLength = _mmiMessageQueue[0];
-              _mmiMessageQueue.RemoveRange(0, messageLength + 1);
+              _mmiMessageQueue.RemoveAt(0);
             }
-            message = TbsMmiMessage.Null;
+            message = TbsMmiMessageType.Null;
             if (_mmiMessageQueue.Count == 0)
             {
               Log.Debug("Turbosight: resuming polling...");
@@ -1132,7 +1146,7 @@ namespace TvEngine
       _mmiMessageBuffer = Marshal.AllocCoTaskMem(MmiMessageBufferSize);
       _mmiResponseBuffer = Marshal.AllocCoTaskMem(MmiResponseBufferSize);
       _pmtBuffer = Marshal.AllocCoTaskMem(1026);  // MaxPmtSize + 2
-      _mmiMessageQueue = new List<byte>();
+      _mmiMessageQueue = new List<MmiMessage>();
       _isCamPresent = Camavailable(_ciHandle);
 
       StartMmiHandlerThread();
@@ -1331,21 +1345,16 @@ namespace TvEngine
       lock (this)
       {
         // Close any existing sessions otherwise the CAM gets confused.
-        _mmiMessageQueue.Add(1);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.CloseMmi);
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CloseMmi));
         // We send an "application info" message because attempting to enter the menu will fail
         // if you don't get the application information first.
-        _mmiMessageQueue.Add(1);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.ApplicationInfo);
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.ApplicationInfo));
         // The CA information is just for information purposes.
-        _mmiMessageQueue.Add(1);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.CaInfo);
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CaInfo));
         // The main message.
-        _mmiMessageQueue.Add(1);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.EnterMenu);
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.EnterMenu));
         // We have to request a response.
-        _mmiMessageQueue.Add(1);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.GetMmi);
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
       }
       return true;
     }
@@ -1371,8 +1380,7 @@ namespace TvEngine
 
       lock (this)
       {
-        _mmiMessageQueue.Add(1);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.CloseMmi);
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.CloseMmi));
       }
       return true;
     }
@@ -1399,18 +1407,17 @@ namespace TvEngine
 
       lock (this)
       {
-        _mmiMessageQueue.Add(4);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.MenuAnswer);
-        _mmiMessageQueue.Add(0);
-        _mmiMessageQueue.Add(0);
-        _mmiMessageQueue.Add(choice);
+        MmiMessage selectMessage = new MmiMessage(TbsMmiMessageType.MenuAnswer, 3);
+        selectMessage.Message[0] = 0;
+        selectMessage.Message[1] = 0;
+        selectMessage.Message[2] = choice;
+        _mmiMessageQueue.Add(selectMessage);
         // Don't explicitly request a response for a "back" request as that
         // could choke the message queue with a message that the CAM
         // never answers.
         if (choice != 0)
         {
-          _mmiMessageQueue.Add(1);
-          _mmiMessageQueue.Add((byte)TbsMmiMessage.GetMmi);
+          _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
         }
       }
       return true;
@@ -1441,9 +1448,7 @@ namespace TvEngine
         return false;
       }
 
-      // The message queue requires that we can specify the entire length of the
-      // message with only one byte => answer size limit of 251.
-      if (answer.Length > 251)
+      if (answer.Length > 254)
       {
         Log.Debug("Turbosight: answer too long, length = {0}", answer.Length);
         return false;
@@ -1456,18 +1461,18 @@ namespace TvEngine
       }
       lock (this)
       {
-        _mmiMessageQueue.Add((byte)(answer.Length + 4));
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.Answer);
-        _mmiMessageQueue.Add((byte)(answer.Length + 1));
-        _mmiMessageQueue.Add(0);
-        _mmiMessageQueue.Add(responseType);
+        MmiMessage answerMessage = new MmiMessage(TbsMmiMessageType.Answer, answer.Length + 3);
+        answerMessage.Message[0] = (byte)(answer.Length + 1);
+        answerMessage.Message[1] = 0;
+        answerMessage.Message[2] = responseType;
+        int offset = 3;
         for (int i = 0; i < answer.Length; i++)
         {
-          _mmiMessageQueue.Add((byte)answer[i]);
+          answerMessage.Message[offset++] = (byte)answer[i];
         }
+        _mmiMessageQueue.Add(answerMessage);
         // We have to request a response.
-        _mmiMessageQueue.Add(1);
-        _mmiMessageQueue.Add((byte)TbsMmiMessage.GetMmi);
+        _mmiMessageQueue.Add(new MmiMessage(TbsMmiMessageType.GetMmi));
       }
       return true;
     }

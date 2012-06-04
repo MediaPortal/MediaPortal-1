@@ -153,17 +153,22 @@ namespace TvEngine
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcTxMessageLength)]
       public byte[] DiseqcTransmitMessage;
       public byte DiseqcTransmitMessageLength;
+
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcRxMessageLength)]
       public byte[] DiseqcReceiveMessage;
       public byte DiseqcReceiveMessageLength;
       private UInt16 Padding;
+
       public ProfToneModulation ToneModulation;
       public ProfDiseqcReceiveMode ReceiveMode;
+
       public BdaExtensionCommand Command;
       public Prof22k Tone22k;
       public ProfToneBurst ToneBurst;
       public byte MicroControllerParityErrors;        // Parity errors: 0 indicates no errors, binary 1 indicates an error.
-      public byte MicroControllerReplyErrors;         // 1 in bit i indicates error in byte i. 
+      public byte MicroControllerReplyErrors;         // 1 in bit i indicates error in byte i.
+
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsLastMessage;
       public ProfLnbPower LnbPower;
     }
@@ -290,6 +295,9 @@ namespace TvEngine
         Log.Debug("Prof: device not initialised or interface not supported");
         return;
       }
+
+      // For Prof tuners, the power needs to be turned on before the tune request is applied.
+      SetPowerState(true);
 
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)

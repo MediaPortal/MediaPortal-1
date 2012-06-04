@@ -108,7 +108,7 @@ namespace TvLibrary.Channels
     }
 
     /// <summary>
-    /// Get/set the carrier frequency for the channel.
+    /// Get/set the carrier frequency for the channel. The frequency unit is kHz.
     /// </summary>
     public long Frequency
     {

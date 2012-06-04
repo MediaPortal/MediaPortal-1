@@ -2499,10 +2499,7 @@ namespace TvLibrary.Implementations.DVB
       {
         return false;
       }
-      for (int i = 0; i < command.Length; ++i)
-      {
-        Marshal.WriteByte(_ptrDisEqc, i, command[i]);
-      }
+      Marshal.Copy(command, 0, _ptrDisEqc, command.Length);
       tuner4.SendDiSEqCCommand(command.Length, _ptrDisEqc);
       return true;
     }

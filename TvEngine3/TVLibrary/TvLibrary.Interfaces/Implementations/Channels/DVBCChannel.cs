@@ -119,7 +119,7 @@ namespace TvLibrary.Channels
     #region properties
 
     /// <summary>
-    /// Get/set the symbol rate for the channel's multiplex.
+    /// Get/set the symbol rate for the channel's multiplex. The symbol rate unit is ks/s.
     /// </summary>
     public int SymbolRate
     {

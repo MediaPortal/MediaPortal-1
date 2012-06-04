@@ -119,7 +119,7 @@ namespace TvEngine
       public byte Voltage;      // polarisation ???
       public byte Afc;
       public byte Diseqc;
-      public UInt16 SymbolRate; // unit = ksps
+      public UInt16 SymbolRate; // unit = ks/s
       public UInt16 Qam;        // modulation ???
       public UInt16 FecRate;
       public byte Norm;

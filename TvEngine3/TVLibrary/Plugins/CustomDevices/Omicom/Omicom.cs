@@ -152,9 +152,7 @@ namespace TvEngine
 
       if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
       {
-        // Note: using 8 VSB forces the driver to auto-detect the correct modulation. It may be better to
-        // use 8 PSK or the NBC modulations.
-        ch.ModulationType = ModulationType.Mod8Vsb;
+        ch.ModulationType = ModulationType.Mod8Psk;
       }
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }

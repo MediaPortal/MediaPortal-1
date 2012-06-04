@@ -263,7 +263,7 @@ namespace TvEngine
     private struct DvbsMultiplexParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
-      public UInt32 SymbolRate;           // unit = ksps, range = 1000 - 40000
+      public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
       public DeDiseqcPort Diseqc;
@@ -276,7 +276,7 @@ namespace TvEngine
       public bool CurrentTransponder;
       public DeDiseqcPort Diseqc;
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
-      public UInt32 SymbolRate;           // unit = ksps, range = 1000 - 40000
+      public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
       private UInt16 Padding;
@@ -300,7 +300,7 @@ namespace TvEngine
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       private byte[] Padding1;
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
-      public UInt32 SymbolRate;           // unit = ksps, range = 1000 - 40000
+      public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
       private UInt16 Padding2;
@@ -427,7 +427,7 @@ namespace TvEngine
     private struct QpskTuneParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 950000 - 2150000
-      public UInt16 SymbolRate;           // unit = ksps, range = 1000 - 40000
+      public UInt16 SymbolRate;           // unit = ks/s, range = 1000 - 40000
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
       public bool IsHighBand;
@@ -1634,7 +1634,6 @@ namespace TvEngine
     public override void Dispose()
     {
       CloseInterface();
-      SetPowerState(false);
       _propertySet = null;
       if (_generalBuffer != IntPtr.Zero)
       {

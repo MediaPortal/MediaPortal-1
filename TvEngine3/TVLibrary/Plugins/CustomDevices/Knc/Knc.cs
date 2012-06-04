@@ -922,6 +922,7 @@ namespace TvEngine
         return;
       }
 
+      // We only need to tweak the modulation for DVB-S2 channels.
       DVBSChannel ch = channel as DVBSChannel;
       if (ch == null)
       {
@@ -930,17 +931,7 @@ namespace TvEngine
 
       if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
       {
-        ch.ModulationType = ModulationType.Mod8Vsb;
-      }
-      // I don't think any KNC tuners or clones support demodulating modulation schemes more complex than
-      // 8 PSK. Nevertheless...
-      else if (ch.ModulationType == ModulationType.Mod16Apsk)
-      {
-        ch.ModulationType = ModulationType.Mod16Vsb;
-      }
-      else if (ch.ModulationType == ModulationType.Mod32Apsk)
-      {
-        ch.ModulationType = ModulationType.ModOqpsk;
+        ch.ModulationType = ModulationType.Mod8Psk;
       }
       Log.Debug("  modulation = {0}", ch.ModulationType);
     }
@@ -1294,10 +1285,8 @@ namespace TvEngine
         Log.Debug("KNC: command too long, length = {0}", command.Length);
         return false;
       }
-      for (int i = 0; i < length; i++)
-      {
-        Marshal.WriteByte(_diseqcBuffer, i, command[i]);
-      }
+
+      Marshal.Copy(command, 0, _diseqcBuffer, length);
       //DVB_MMI.DumpBinary(_diseqcBuffer, 0, length);
 
       bool success = KNCBDA_HW_DiSEqCWrite(_deviceIndex, _diseqcBuffer, (uint)length, 0);

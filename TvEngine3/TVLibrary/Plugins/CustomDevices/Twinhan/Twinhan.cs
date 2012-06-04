@@ -37,7 +37,7 @@ namespace TvEngine
   /// A class for handling conditional access and DiSEqC for Twinhan devices, including clones from TerraTec,
   /// TechniSat and Digital Rise.
   /// </summary>
-  public class Twinhan : BaseCustomDevice, IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
+  public class Twinhan : BaseCustomDevice, /*IAddOnDevice, ICustomTuner,*/ IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcController
   {
     #region enums
 
@@ -59,12 +59,15 @@ namespace TvEngine
       Secam = 0x0400,
       Svideo = 0x0800,
       Composite = 0x1000,
-      Fm = 0x2000
+      Fm = 0x2000,
+
+      RemoteControlSupported = 0x80000000
     }
 
     private enum TwinhanDeviceSpeed : byte
     {
-      Pci = 0xff,
+      Pci = 0xff,             // PCI
+      Pcie = 0xfe,            // PCI-express
       UsbLow = 0,             // USB 1.x
       UsbFull = 1,            // USB 1.x
       UsbHigh = 2             // USB 2.0
@@ -75,6 +78,17 @@ namespace TvEngine
       Unsupported = 0,
       ApiVersion1,
       ApiVersion2
+    }
+
+    [Flags]
+    private enum TwinhanSimulatorType : uint
+    {
+      Physical = 0,   // ie. not a simulator
+      VirtualDvbS = 1,
+      VirtualDvbT = 2,
+      VirtualDvbC = 4,
+      VirtualAtsc = 8,
+      MceVirtualDvbT = 16
     }
 
     private enum TwinhanCamType   // CAM_TYPE_ENUM
@@ -164,11 +178,13 @@ namespace TvEngine
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
       public String Name;                                     // Example: VP1020, VP3020C, VP7045...
+
       public TwinhanDeviceType Type;                          // Values are bitwise AND'ed together to produce the final device type.
       public TwinhanDeviceSpeed Speed;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
       public byte[] MacAddress;
       public TwinhanCiSupport CiSupport;
+
       public Int32 TsPacketLength;                            // 188 or 204
 
       // mm1352000: The following two bytes don't appear to always be set correctly.
@@ -194,8 +210,11 @@ namespace TvEngine
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
       public String HardwareInfo;                             // Example: "PCI DVB CX-878 with MCU series", "PCI ATSC CX-878 with MCU series", "7020/7021 USB-Sat", "7045/7046 USB-Ter" etc.
       public byte CiMmiFlags;                                 // Bit 0 = event mode support (0 => not supported, 1 => supported)
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 189)]
-      private byte[] Reserved;
+      private byte Reserved;
+      public TwinhanSimulatorType SimType;
+
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 184)]
+      private byte[] Reserved2;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -212,14 +231,17 @@ namespace TvEngine
     [StructLayout(LayoutKind.Sequential)]
     private struct LnbParams  // LNB_DATA
     {
+      [MarshalAs(UnmanagedType.I1)]
       public bool PowerOn;
       public TwinhanToneBurst ToneBurst;
       private UInt16 Padding;
+
       public UInt32 LowBandLof;                               // unit = kHz
       public UInt32 HighBandLof;                              // unit = kHz
       public UInt32 SwitchFrequency;                          // unit = kHz
       public Twinhan22k Tone22k;
       public TwinhanDiseqcPort DiseqcPort;
+      private UInt16 Padding2;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -263,7 +285,7 @@ namespace TvEngine
       public Int32 EntryCount = 0;
       public bool IsEnquiry = false;
       public bool IsBlindAnswer = false;
-      public Int32 ExpectedAnswerLength = 0;
+      public Int32 AnswerLength = 0;
       public String Prompt = String.Empty;
       public Int32 ChoiceIndex = 0;
       public String Answer = String.Empty;
@@ -274,6 +296,7 @@ namespace TvEngine
         if (isTerraTecFormat)
         {
           TerraTecMmiData mmiData = new TerraTecMmiData();
+          mmiData.AnswerLength = AnswerLength;
           mmiData.ChoiceIndex = ChoiceIndex;
           mmiData.Answer = Answer;
           mmiData.Type = Type;
@@ -282,6 +305,7 @@ namespace TvEngine
         else
         {
           DefaultMmiData mmiData = new DefaultMmiData();
+          mmiData.AnswerLength = AnswerLength;
           mmiData.ChoiceIndex = ChoiceIndex;
           mmiData.Answer = Answer;
           mmiData.Type = Type;
@@ -308,7 +332,7 @@ namespace TvEngine
           }
           IsEnquiry = mmiData.IsEnquiry;
           IsBlindAnswer = mmiData.IsBlindAnswer;
-          ExpectedAnswerLength = mmiData.ExpectedAnswerLength;
+          AnswerLength = mmiData.AnswerLength;
           Prompt = mmiData.Prompt;
           ChoiceIndex = mmiData.ChoiceIndex;
           Answer = mmiData.Answer;
@@ -331,7 +355,7 @@ namespace TvEngine
           }
           IsEnquiry = mmiData.IsEnquiry;
           IsBlindAnswer = mmiData.IsBlindAnswer;
-          ExpectedAnswerLength = mmiData.ExpectedAnswerLength;
+          AnswerLength = mmiData.AnswerLength;
           Prompt = mmiData.Prompt;
           ChoiceIndex = mmiData.ChoiceIndex;
           Answer = mmiData.Answer;
@@ -363,10 +387,12 @@ namespace TvEngine
       private UInt16 Padding1;
       public Int32 EntryCount;
 
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsEnquiry;
 
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
-      public Int32 ExpectedAnswerLength;
+      public Int32 AnswerLength;    // enquiry: expected answer length, enquiry answer: actual answer length
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Prompt;
 
@@ -374,7 +400,7 @@ namespace TvEngine
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Answer;
 
-      public Int32 Type;
+      public Int32 Type;            // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -399,10 +425,12 @@ namespace TvEngine
       public TerraTecMmiMenuEntry[] Entries;
       public Int32 EntryCount;
 
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsEnquiry;
 
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
-      public Int32 ExpectedAnswerLength;
+      public Int32 AnswerLength;    // enquiry: expected answer length, enquiry answer: actual answer length
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Prompt;
 
@@ -410,7 +438,7 @@ namespace TvEngine
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
       public String Answer;
 
-      public Int32 Type;
+      public Int32 Type;            // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
     }
 
     #endregion
@@ -434,14 +462,18 @@ namespace TvEngine
       // Note: these two fields are unioned - they are never both required in
       // a single tune request so the bytes are reused.
       [FieldOffset(4)]
-      public UInt32 SymbolRate;                               // unit = ksps
+      public UInt32 SymbolRate;                               // unit = ks/s
       [FieldOffset(4)]
-      public UInt32 Bandwidth;                                // unit = kHz
+      public UInt32 Bandwidth;                                // unit = MHz
 
       [FieldOffset(8)]
-      public UInt32 Modulation;                               // Number of bits per symbol.
-      [FieldOffset(12)]
+      public ModulationType Modulation;
+      [FieldOffset(12), MarshalAs(UnmanagedType.I1)]
       public bool LockWaitForResult;
+      [FieldOffset(13)]
+      private byte Padding1;
+      [FieldOffset(14)]
+      private UInt16 Padding2;
     }
 
     #endregion
@@ -490,11 +522,7 @@ namespace TvEngine
 
           // Fill the command buffer.
           byte[] guidAsBytes = CommandGuid.ToByteArray();
-          for (int i = 0; i < guidAsBytes.Length; i++)
-          {
-            Marshal.WriteByte(commandBuffer, i, guidAsBytes[i]);
-          }
-
+          Marshal.Copy(guidAsBytes, 0, commandBuffer, guidAsBytes.Length);
           Marshal.WriteInt32(commandBuffer, 16, (Int32)_controlCode);
           Marshal.WriteInt32(commandBuffer, 20, _inBuffer.ToInt32());
           Marshal.WriteInt32(commandBuffer, 24, _inBufferSize);
@@ -1095,6 +1123,7 @@ namespace TvEngine
 
     private IKsPropertySet _propertySet = null;
     private CardType _tunerType = CardType.Unknown;
+    private String _tunerFilterName = String.Empty;
 
     private TwinhanCiSupport _ciApiVersion = TwinhanCiSupport.Unsupported;
     private int _maxPidFilterPids = MaxPidFilterPids;
@@ -1156,17 +1185,6 @@ namespace TvEngine
         responseBuffer = IntPtr.Zero;
       }
     }
-
-      //TODO: hack for testing; should be removed before final merge.
-      /*if (
-        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-c ctuner") ||
-        _tunerDevice.Name.ToLowerInvariant().Equals("technisat udst7000bda dvb-t vtuner") ||
-        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-c)") ||
-        _tunerDevice.Name.ToLowerInvariant().Equals("terratec h7 digital tuner (dvb-t)")
-      )
-      {
-        return true;
-      }*/
 
     #region hardware/software information
 
@@ -1273,6 +1291,7 @@ namespace TvEngine
       Log.Debug("  company                     = {0}", driverInfo.Company);
       Log.Debug("  hardware info               = {0}", driverInfo.HardwareInfo);
       Log.Debug("  CI event mode supported     = {0}", (driverInfo.CiMmiFlags & 0x01) != 0);
+      Log.Debug("  simulator mode              = {0}", driverInfo.SimType);
     }
 
     #endregion
@@ -1385,14 +1404,14 @@ namespace TvEngine
               {
                 Log.Debug("Twinhan: enquiry");
                 Log.Debug("  blind     = {0}", mmi.IsBlindAnswer);
-                Log.Debug("  length    = {0}", mmi.ExpectedAnswerLength);
+                Log.Debug("  length    = {0}", mmi.AnswerLength);
                 Log.Debug("  text      = {0}", mmi.Prompt);
                 Log.Debug("  type      = {0}", mmi.Type);
                 if (_ciMenuCallbacks != null)
                 {
                   try
                   {
-                    _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer, (uint)mmi.ExpectedAnswerLength, mmi.Prompt);
+                    _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer, (uint)mmi.AnswerLength, mmi.Prompt);
                   }
                   catch (Exception ex)
                   {
@@ -1644,10 +1663,10 @@ namespace TvEngine
       }
       else
       {
-        String tunerName = tunerFilterInfo.achName.ToLowerInvariant();
-        if (tunerName.Contains("terratec") || tunerName.Contains("cinergy"))
+        _tunerFilterName = tunerFilterInfo.achName;
+        if (_tunerFilterName.ToLowerInvariant().Contains("terratec") || _tunerFilterName.ToLowerInvariant().Contains("cinergy"))
         {
-          Log.Debug("Twinhan: this device has a TerraTec driver installed");
+          Log.Debug("Twinhan: this device is using a TerraTec driver");
           _isTerraTec = true;
         }
       }
@@ -1671,9 +1690,11 @@ namespace TvEngine
     /// <param name="startGraphImmediately">Ensure that the tuner's BDA graph is started immediately.</param>
     public override void OnGraphBuilt(ITVCard tuner, out bool startGraphImmediately)
     {
-      // The TerraTec H7 and TechniSat CableStar Combo HD CI require the graph to be started as soon as it
-      // is built. The graph should not be stopped under any circumstances except when it is about to be
-      // dismantled.
+      // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
+      // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
+      // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
+      // subsequent tune requests.
+      // We start the graph immediately to prevent the graph from being left idle.
       startGraphImmediately = true;
     }
 
@@ -1701,12 +1722,13 @@ namespace TvEngine
       {
         return;
       }
-      if (ch.ModulationType == ModulationType.ModQpsk || ch.ModulationType == ModulationType.Mod8Psk)
+
+      // Modulation for DVB-S2 QPSK should be ModQpsk... which is what we already use to indicate DVB-S2 QPSK
+      // in our tuning parameter files.
+      if (ch.ModulationType == ModulationType.Mod8Psk)
       {
         ch.ModulationType = ModulationType.Mod8Vsb;
       }
-      // I don't think any Twinhan tuners or clones support demodulating modulation schemes more complex than
-      // 8 PSK. Nevertheless...
       else if (ch.ModulationType == ModulationType.Mod16Apsk)
       {
         ch.ModulationType = ModulationType.Mod16Vsb;
@@ -1738,14 +1760,103 @@ namespace TvEngine
     /// <param name="restartGraph">Allow the device's BDA graph to be stopped, but then restart it immediately.</param>
     public override void OnGraphStop(ITVCard tuner, out bool preventGraphStop, out bool restartGraph)
     {
-      // The TerraTec H7 and TechniSat CableStar Combo HD CI require the graph to be started as soon as it
-      // is built. The graph should not be stopped under any circumstances except when it is about to be
-      // dismantled.
-      preventGraphStop = true;
-      restartGraph = false;
+      // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
+      // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
+      // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
+      // subsequent tune requests.
+      // We restart the graph to avoid tuning issues.
+      preventGraphStop = false;
+      restartGraph = true;
+    }
+
+    /// <summary>
+    /// This callback is invoked before the device's BDA graph is paused.
+    /// </summary>
+    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="preventGraphPause">Prevent the device's BDA graph from being paused.</param>
+    /// <param name="restartGraph">Stop the device's BDA graph, and then restart it immediately.</param>
+    public override void OnGraphPause(ITVCard tuner, out bool preventGraphPause, out bool restartGraph)
+    {
+      // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
+      // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
+      // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
+      // subsequent tune requests.
+      // We restart the graph to avoid tuning issues.
+      preventGraphPause = false;
+      restartGraph = true;
     }
 
     #endregion
+
+    #endregion
+
+    #region IAddOnDevice member
+
+    /// <summary>
+    /// Insert and connect the device's additional filter(s) into the BDA graph.
+    /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
+    /// </summary>
+    /// <remarks>
+    /// This implementation exists only to provide a work around driver issues with the TerraTec H7 and TechniSat
+    /// CableStar Combo HD CI. The short summary is that older drivers wrongly indicate that the tuner filter is
+    /// also the capture filter, and this causes graph building to fail because TV Server does not attempt to add
+    /// a capture filter. According to user reports, the older drivers are more stable with respect to CI
+    /// performance when multiple devices are connected. See the following thread for more details:
+    /// http://forum.team-mediaportal.com/threads/tv-server-channel-scan-no-channels-detected.95913/
+    /// </remarks>
+    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
+    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
+    ///   connect the [first] device filter to.</param>
+    /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
+    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
+    {
+      Log.Debug("Twinhan: add to graph");
+
+      String lowerFilterName = _tunerFilterName.ToLowerInvariant();
+      if (
+        !lowerFilterName.Equals("technisat udst7000bda dvb-c ctuner") &&
+        !lowerFilterName.Equals("technisat udst7000bda dvb-t vtuner") &&
+        !lowerFilterName.Equals("terratec h7 digital tuner (dvb-c)") &&
+        !lowerFilterName.Equals("terratec h7 digital tuner (dvb-t)")
+      )
+      {
+        // No problem with non-H7 devices.
+        return true;
+      }
+
+      Log.Debug("Twinhan: TerraTec H7 compatible device detected");
+      bool captureFilterRequired = false;
+      IKsTopologyInfo topologyInfo = lastFilter as IKsTopologyInfo;
+      if (topologyInfo != null)
+      {
+        int categoryCount;
+        topologyInfo.get_NumCategories(out categoryCount);
+        for (int i = 0; i < categoryCount; i++)
+        {
+          Guid guid;
+          topologyInfo.get_Category(i, out guid);
+          if (guid == FilterCategory.BDASourceFiltersCategory)
+          {
+            captureFilterRequired = true;
+            break;
+          }
+        }
+      }
+      else
+      {
+        Log.Debug("Twinhan: filter does not have topology information, assuming filter not required");
+        return true;
+      }
+
+      if (!captureFilterRequired)
+      {
+        Log.Debug("Twinhan: filter is not a tuner filter so a capture filter is not required");
+        return true;
+      }
+      // TODO - add the capture/receiver filter... or maybe we can ask people who want to use the old drivers that
+      // exhibit this bug to mod their registry.
+      return true;
+    }
 
     #endregion
 
@@ -1843,34 +1954,15 @@ namespace TvEngine
         return false;
       }
 
+      int returnedByteCount;
+      int hr;
       TuningParams tuningParams = new TuningParams();
       if (channel is DVBCChannel)
       {
         DVBCChannel ch = channel as DVBCChannel;
         tuningParams.Frequency = (UInt32)ch.Frequency;
         tuningParams.SymbolRate = (UInt32)ch.SymbolRate;
-        UInt32 modulation = 0;
-        if (ch.ModulationType == ModulationType.Mod16Qam)
-        {
-          modulation = 16;
-        }
-        else if (ch.ModulationType == ModulationType.Mod32Qam)
-        {
-          modulation = 32;
-        }
-        else if (ch.ModulationType == ModulationType.Mod64Qam)
-        {
-          modulation = 64;
-        }
-        else if (ch.ModulationType == ModulationType.Mod128Qam)
-        {
-          modulation = 128;
-        }
-        else if (ch.ModulationType == ModulationType.Mod256Qam)
-        {
-          modulation = 256;
-        }
-        tuningParams.Modulation = modulation;
+        tuningParams.Modulation = ch.ModulationType;
       }
       else if (channel is DVBSChannel)
       {
@@ -1880,15 +1972,40 @@ namespace TvEngine
         Polarisation polarisation;
         BandTypeConverter.GetLnbTuningParameters(ch, parameters, out lnbLof, out lnbSwitchFrequency, out polarisation);
 
-        tuningParams.Frequency = (UInt32)(ch.Frequency - (lnbLof * 1000));
+        LnbParams lnbParams = new LnbParams();
+        lnbParams.PowerOn = true;
+        lnbParams.ToneBurst = TwinhanToneBurst.Off;
+        lnbParams.LowBandLof = lnbLof * 1000;
+        lnbParams.HighBandLof = lnbLof * 1000;
+        lnbParams.SwitchFrequency = lnbSwitchFrequency * 1000;
+        lnbParams.Tone22k = Twinhan22k.Off;
+        if (ch.Frequency > lnbSwitchFrequency * 1000)
+        {
+          lnbParams.Tone22k = Twinhan22k.On;
+        }
+        lnbParams.DiseqcPort = TwinhanDiseqcPort.PortA;
+
+        Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
+        TwinhanCommand lcommand = new TwinhanCommand(THBDA_IOCTL_SET_LNB_DATA, _generalBuffer, LnbParamsSize, IntPtr.Zero, 0);
+        hr = lcommand.Execute(_propertySet, out returnedByteCount);
+        if (hr == 0)
+        {
+          Log.Debug("Twinhan: result = success");
+        }
+        else
+        {
+          Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        }
+
+        tuningParams.Frequency = (UInt32)ch.Frequency;
         tuningParams.SymbolRate = (UInt32)ch.SymbolRate;
-        tuningParams.Modulation = 0;  // ???
+        tuningParams.Modulation = (ModulationType)1;
       }
       else if (channel is DVBTChannel)
       {
         DVBTChannel ch = channel as DVBTChannel;
         tuningParams.Frequency = (UInt32)ch.Frequency;
-        tuningParams.Bandwidth = (UInt32)(ch.Bandwidth * 1000);
+        tuningParams.Bandwidth = (UInt32)ch.Bandwidth;
         tuningParams.Modulation = 0;  // ???
       }
       else
@@ -1899,19 +2016,50 @@ namespace TvEngine
       tuningParams.LockWaitForResult = true;
 
       Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, TuningParamsSize);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, TuningParamsSize);
 
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_LOCK_TUNER, _generalBuffer, TuningParamsSize, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
+      hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
         Log.Debug("Twinhan: result = success");
-        return true;
+      }
+      else
+      {
+        Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
+      for (int i = 0; i < LnbParamsSize; i++)
+      {
+        Marshal.WriteByte(_generalBuffer, i, 0);
+      }
+      command = new TwinhanCommand(THBDA_IOCTL_GET_LNB_DATA, IntPtr.Zero, 0, _generalBuffer, LnbParamsSize);
+      hr = command.Execute(_propertySet, out returnedByteCount);
+      if (hr == 0)
+      {
+        Log.Debug("Twinhan: result = success");
+      }
+      else
+      {
+        Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+      DVB_MMI.DumpBinary(_generalBuffer, 0, LnbParamsSize);
+
+
+      Marshal.WriteInt32(_generalBuffer, 0);
+      command = new TwinhanCommand(THBDA_IOCTL_GET_SIGNAL_Q_S, IntPtr.Zero, 0, _generalBuffer, 4);
+      hr = command.Execute(_propertySet, out returnedByteCount);
+      if (hr == 0)
+      {
+        Log.Debug("Twinhan: result = success");
+        DVB_MMI.DumpBinary(_generalBuffer, 0, 4);
+      }
+      else
+      {
+        Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }
+
+      return true;
     }
 
     #endregion
@@ -2208,7 +2356,7 @@ namespace TvEngine
       try
       {
         Marshal.Copy(caPmt, 0, pmtBuffer, caPmt.Length);
-        DVB_MMI.DumpBinary(pmtBuffer, 0, caPmt.Length);
+        //DVB_MMI.DumpBinary(pmtBuffer, 0, caPmt.Length);
         TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_CI_SEND_PMT, pmtBuffer, caPmt.Length, IntPtr.Zero, 0);
         int returnedByteCount;
         int hr = tcommand.Execute(_propertySet, out returnedByteCount);
@@ -2375,6 +2523,7 @@ namespace TvEngine
       }
 
       MmiData mmi = new MmiData();
+      mmi.AnswerLength = answer.Length;
       mmi.Answer = answer;
       mmi.Type = 3;
       return SendMmi(mmi);
@@ -2392,49 +2541,12 @@ namespace TvEngine
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      Log.Debug("Twinhan: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
-
-      if (!_isTwinhan || _propertySet == null)
-      {
-        Log.Debug("Twinhan: device not initialised or interface not supported");
-        return false;
-      }
-
-      LnbParams lnbParams = new LnbParams();
-      lnbParams.PowerOn = true;
-      lnbParams.ToneBurst = TwinhanToneBurst.Off;
-      if (toneBurstState == ToneBurst.ToneBurst)
-      {
-        lnbParams.ToneBurst = TwinhanToneBurst.ToneBurst;
-      }
-      else if (toneBurstState == ToneBurst.DataBurst)
-      {
-        lnbParams.ToneBurst = TwinhanToneBurst.DataBurst;
-      }
-      // It is not critical to set the LNB frequencies as these are set
-      // on the tuning space in the tuning request.
-      lnbParams.LowBandLof = 0;
-      lnbParams.HighBandLof = 0;
-      lnbParams.SwitchFrequency = 0;
-      lnbParams.Tone22k = Twinhan22k.Off;
-      if (tone22kState == Tone22k.On)
-      {
-        lnbParams.Tone22k = Twinhan22k.On;
-      }
-      lnbParams.DiseqcPort = TwinhanDiseqcPort.Null;
-
-      Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_LNB_DATA, _generalBuffer, LnbParamsSize, IntPtr.Zero, 0);
-      int returnedByteCount;
-      int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
-      {
-        Log.Debug("Twinhan: result = success");
-        return true;
-      }
-
-      Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      return false;
+      // Not implemented.
+      // Note: as tempting as it may be, do *not* implement this function using the THBDA_IOCTL_SET_LNB_DATA
+      // IOCTL. There is some kind of interaction between the THBDA_IOCTL_SET_LNB_DATA and THBDA_IOCTL_SET_DiSEqC
+      // IOCTLs that I was not able to work out fully. The driver seems to get confused about DiSEqC, 22k or LNB
+      // settings when both IOCTLs are used.
+      return true;
     }
 
     /// <summary>
@@ -2473,6 +2585,10 @@ namespace TvEngine
       TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_SET_DiSEqC, _generalBuffer, DiseqcMessageSize, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = tcommand.Execute(_propertySet, out returnedByteCount);
+      /*if (hr != 0)
+      {
+        Log.Debug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      }*/
 
       // The above command seems to return HRESULT 0x8007001f (ERROR_GEN_FAILURE)
       // regardless of whether or not it was actually successful. I tested using

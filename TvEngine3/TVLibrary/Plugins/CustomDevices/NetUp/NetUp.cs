@@ -1207,10 +1207,8 @@ namespace TvEngine
         return false;
       }
 
-      for (int i = 0; i < command.Length; i++)
-      {
-        Marshal.WriteByte(_generalBuffer, i, command[i]);
-      }
+      Marshal.Copy(command, 0, _generalBuffer, command.Length);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, command.Length);
 
       NetUpCommand ncommand = new NetUpCommand(NetUpIoControl.Diseqc, _generalBuffer, command.Length, IntPtr.Zero, 0);
       int returnedByteCount;
