@@ -2195,18 +2195,17 @@ namespace MediaPortal.Util
       if (sSoundFile.Length == 0) return 0;
       if (!Util.Utils.FileExistsInCache(sSoundFile))
       {
-        string strSkin = GUIGraphicsContext.Skin;
-        if (Util.Utils.FileExistsInCache(strSkin + "\\sounds\\" + sSoundFile))
+        if (Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile)))
         {
-          sSoundFile = strSkin + "\\sounds\\" + sSoundFile;
+          sSoundFile = GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile);
         }
-        else if (Util.Utils.FileExistsInCache(strSkin + "\\" + sSoundFile + ".wav"))
+        else if (Util.Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav")))
         {
-          sSoundFile = strSkin + "\\" + sSoundFile + ".wav";
+          sSoundFile = GUIGraphicsContext.GetThemedSkinFile("\\" + sSoundFile + ".wav");
         }
         else
         {
-          Log.Info(@"Cannot find sound:{0}\sounds\{1} ", strSkin, sSoundFile);
+          Log.Info(@"Cannot find sound:{0} ", GUIGraphicsContext.GetThemedSkinFile("\\sounds\\" + sSoundFile));
           return 0;
         }
       }
@@ -3352,6 +3351,7 @@ namespace MediaPortal.Util
       {
         try
         {
+          string defaultBackground;
           string currentSkin = GUIGraphicsContext.Skin;
 
           // when launched by configuration exe this might be the case
@@ -3361,9 +3361,13 @@ namespace MediaPortal.Util
             {
               currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
             }
+            defaultBackground = currentSkin + @"\media\previewbackground.png";
+          }
+          else
+          {
+            defaultBackground = GUIGraphicsContext.GetThemedSkinFile(@"\media\previewbackground.png");
           }
 
-          string defaultBackground = currentSkin + @"\media\previewbackground.png";
 
           using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
           {

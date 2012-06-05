@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\videoFullScreen.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\videoFullScreen.xml"));
       GetID = (int)Window.WINDOW_FULLSCREEN_VIDEO;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       {

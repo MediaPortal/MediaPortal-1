@@ -128,7 +128,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\videoOSD.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\videoOSD.xml"));
       GetID = (int)Window.WINDOW_OSD;
       return bResult;
     }

@@ -30,6 +30,7 @@ namespace MediaPortal.GUI.Library
   {
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("font")] protected string _fontName;
@@ -420,6 +421,13 @@ namespace MediaPortal.GUI.Library
             //	or moves left/right. The control will 
             //	automatically select the current item.
             _ticks = DateTime.Now.Ticks;
+
+            // If this button has a click setting then execute the setting.
+            if (_onclick.Length != 0)
+            {
+              GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+            }
+
             return;
           }
         }

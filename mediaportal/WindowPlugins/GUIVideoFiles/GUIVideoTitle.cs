@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Video
     {
       currentFolder = string.Empty;
       handler.CurrentView = "369";
-      return Load(GUIGraphicsContext.Skin + @"\myvideoTitle.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myvideoTitle.xml"));
     }
 
     protected override string SerializeName
@@ -88,12 +88,6 @@ namespace MediaPortal.GUI.Video
           if (layouts == null)
           {
             layouts = new Layout[handler.Views.Count,50];
-
-            ArrayList viewStrings = new ArrayList();
-            viewStrings.Add("List");
-            viewStrings.Add("Icons");
-            viewStrings.Add("Big Icons");
-            viewStrings.Add("Filmstrip");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
@@ -509,14 +503,6 @@ namespace MediaPortal.GUI.Video
       }
       //move to next item
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, itemIndex + 1);
-    }
-
-    // Reset currentSelectedItem index if view is not title view
-    // Prevents wrong selected item if switch to title view from actors, years, genres..
-    protected override void OnShowViews()
-    {
-      _currentView = handler.CurrentLevelWhere;
-      base.OnShowViews();
     }
 
     protected override void OnInfo(int itemIndex)

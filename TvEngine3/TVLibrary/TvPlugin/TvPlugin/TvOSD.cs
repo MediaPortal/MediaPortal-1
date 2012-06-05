@@ -157,7 +157,7 @@ namespace TvPlugin
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
       }
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\tvOSD.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvOSD.xml"));
       return bResult;
     }
 

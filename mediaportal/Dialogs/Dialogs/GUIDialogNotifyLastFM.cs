@@ -36,7 +36,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogNotifyLastFM.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogNotifyLastFM.xml"));
     }
   }
 }

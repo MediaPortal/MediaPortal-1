@@ -294,7 +294,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\TvServerSetup.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\TvServerSetup.xml"));
     }
 
     public override void OnAction(Action action)

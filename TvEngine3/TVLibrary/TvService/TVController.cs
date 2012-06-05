@@ -3731,6 +3731,16 @@ namespace TvService
       return chanState;
     }
 
+    /// <summary>
+    /// Returns an ordered, distinct list of all program genres.
+    /// </summary>
+    /// <returns></returns>
+    public IList<string> GetGenres()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      return layer.GetGenres();
+    }
+
     #endregion
 
     #region streaming

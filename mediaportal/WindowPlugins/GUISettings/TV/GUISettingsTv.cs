@@ -51,7 +51,7 @@ namespace WindowPlugins.GUISettings.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_tv.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_tv.xml"));
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

@@ -117,7 +117,7 @@ namespace MediaPortal.Games.Tetris
       // pre-register the control class so that the factory knows how to create it
       GUIControlFactory.RegisterControl("tetris", typeof (MyTetrisControl));
 
-      return Load(GUIGraphicsContext.Skin + @"\mytetris.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytetris.xml"));
     }
 
     public override void OnAction(Action action)

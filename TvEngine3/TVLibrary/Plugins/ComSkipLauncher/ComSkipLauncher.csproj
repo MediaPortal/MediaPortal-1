@@ -72,6 +72,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TvLibrary.Utils">
+      <HintPath>..\..\TvLibrary.Utils\bin\Release\TvLibrary.Utils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">

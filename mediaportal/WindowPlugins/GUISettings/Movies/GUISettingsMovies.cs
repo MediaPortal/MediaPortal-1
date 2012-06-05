@@ -91,7 +91,7 @@ namespace WindowPlugins.GUISettings.TV
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_movies.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_movies.xml"));
     }
 
     protected override void OnPageLoad()

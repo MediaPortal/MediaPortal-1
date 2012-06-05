@@ -148,7 +148,7 @@ namespace MediaPortal.GUI.Music
       //added by Sam
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnNewAction);
-      return Load(GUIGraphicsContext.Skin + @"\myMusicplaylist.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myMusicplaylist.xml"));
     }
 
     public override void DeInit()

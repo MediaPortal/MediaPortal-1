@@ -38,7 +38,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.Skin + @"\myradioguide.xml");
+      bool result = Load(GUIGraphicsContext.GetThemedSkinFile(@"\myradioguide.xml"));
       Initialize();
       GetID = (int)Window.WINDOW_RADIO_GUIDE;
       return result;

@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Settings
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settingsScreen.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settingsScreen.xml"));
     }
 
     public override void OnAction(Action action)

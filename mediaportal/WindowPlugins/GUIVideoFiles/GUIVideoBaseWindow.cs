@@ -328,7 +328,7 @@ namespace MediaPortal.GUI.Video
 
       if (btnSortBy != null)
       {
-        btnSortBy.Label = strLine;
+        btnSortBy.Label = GUILocalizeStrings.Get(96) + strLine;
       }
 
       if (null != facadeLayout)

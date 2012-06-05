@@ -29,6 +29,8 @@ namespace MediaPortal.GUI.Library
     void SetHeading(string strLine);
     void DoModal(int dwParentId);
     void Reset();
+    void SelectOption(string keySelected);
+    bool ShowQuickNumbers { get; set; }
 
     string SelectedLabelText { get; }
     int SelectedId { get; }

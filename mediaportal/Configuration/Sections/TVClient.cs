@@ -20,12 +20,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+using MediaPortal.WinCustomControls;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -115,8 +117,28 @@ namespace MediaPortal.Configuration.Sections
 
     private MPCheckBox cbContinuousScrollGuide;
     private MPCheckBox mpCheckBoxEnableCCSub;
+    private TabPage tabPage2;
+    private MPTabControl tabControl2;
+    private MPTabPage tabPageGenreMap;
+    private MPGroupBox groupBox4;
+    private MPButton buttonMapGenres;
+    private MPButton buttonUnmapGenres;
+    private MPListView listViewProgramGenres;
+    private ColumnHeader columnHeader12;
+    private MPListView listViewMappedGenres;
+    private ColumnHeader columnHeader13;
 
     private bool _SingleSeat;
+    private MPListView listViewGuideGenres;
+    private ColumnHeader columnHeader9;
+
+    protected const int LOCALIZED_GENRE_STRING_BASE = 1250;
+    protected const int LOCALIZED_GENRE_STRING_COUNT = 7;
+
+    protected IList<string> _allProgramGenres;
+    protected List<string> _genreList = new List<string>();
+    protected IDictionary<string, string> _genreMap = new Dictionary<string, string>();
+    private MPCheckBox mpCheckBoxRatingAsMovie;
 
     #endregion
 
@@ -130,6 +152,154 @@ namespace MediaPortal.Configuration.Sections
       // Episode Options
       comboboxShowEpisodeInfo.Items.Clear();
       comboboxShowEpisodeInfo.Items.AddRange(ShowEpisodeOptions);
+    }
+
+    private bool LoadGenreMap(Settings xmlreader)
+    {
+      int genreId;
+      string genre;
+      List<string> programGenres;
+      IDictionary<string, string> allGenres = xmlreader.GetSection<string>("genremap");
+
+      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
+      // It is an error if a single "program" genre is mapped to more than one guide genre; behavior is undefined for this condition.
+      foreach (var genreMapEntry in allGenres)
+      {
+        // The genremap key is an integer value that is added to a base value in order to locate the correct localized genre name string.
+        genreId = int.Parse(genreMapEntry.Key);
+        genre = GUILocalizeStrings.Get(LOCALIZED_GENRE_STRING_BASE + genreId);
+        _genreList.Add(genre);
+
+        programGenres = new List<string>(genreMapEntry.Value.Split(new char[] { '{' }, StringSplitOptions.RemoveEmptyEntries));
+
+        foreach (string programGenre in programGenres)
+        {
+          try
+          {
+            _genreMap.Add(programGenre, genre);
+          }
+          catch (ArgumentException)
+          {
+            Log.Warn("TvGuideBase.cs: The following genre name appears more than once in the genre map: {0}", programGenre);
+          }
+        }
+      }
+
+      return _genreMap.Count > 0;
+    }
+
+    private void SaveGenreMap(Settings xmlwriter)
+    {
+      // Each genre map entry is a '{' delimited list of "program" genre names (those that may be compared with the genre from the program listings).
+      string programGenreList;
+      foreach (var genre in _genreList)
+      {
+        programGenreList = "";
+        foreach (var genreMapEntry in _genreMap)
+        {
+          if (genreMapEntry.Value.Equals(genre))
+          {
+            programGenreList += genreMapEntry.Key + "{";
+          }
+        }
+
+        // Write the genre map using the index of the genre as the key (entry name), see LoadGenreMap().
+        xmlwriter.SetValue("genremap", _genreList.IndexOf(genre).ToString(), programGenreList.TrimEnd('{'));
+      }
+    }
+
+    private void PopulateGuideGenreList()
+    {
+      // Populate the guide genre list with names.
+      listViewGuideGenres.BeginUpdate();
+      listViewGuideGenres.Items.Clear();
+
+      for (int i=0; i < _genreList.Count; i++)
+      {
+        ListViewItem item = new ListViewItem(new string[] { _genreList[i] });
+        item.Name = _genreList[i];
+        listViewGuideGenres.Items.Add(item);
+      }
+      listViewGuideGenres.EndUpdate();
+    }
+
+    private void PopulateGenreLists()
+    {
+      ListViewItem selectedGenre = listViewGuideGenres.SelectedItems[0];
+
+      listViewMappedGenres.BeginUpdate();
+      listViewProgramGenres.BeginUpdate();
+      
+      listViewMappedGenres.Items.Clear();
+      listViewProgramGenres.Items.Clear();
+
+      // Populate the list of mapped and program genres.
+      foreach (var genre in _genreMap)
+      {
+        // If the program genre is mapped to the selected genre then add it to the mapped list.
+        if (genre.Value.Equals(selectedGenre.Text))
+        {
+          listViewMappedGenres.Items.Add(genre.Key);
+        }
+      }
+
+      // Initially add all program genres that are not mapped to any guide genre to the list.
+      foreach (string genre in _allProgramGenres)
+      {
+        if (!_genreMap.ContainsKey(genre))
+        {
+          listViewProgramGenres.Items.Add(genre);
+        }
+      }
+
+      listViewMappedGenres.EndUpdate();
+      listViewProgramGenres.EndUpdate();
+    }
+
+    protected void MapProgramGenres()
+    {
+      ListViewItem selectedGenre = listViewGuideGenres.SelectedItems[0];
+
+      listViewMappedGenres.BeginUpdate();
+      listViewProgramGenres.BeginUpdate();
+
+      foreach (ListViewItem genre in listViewProgramGenres.SelectedItems)
+      {
+        listViewProgramGenres.Items.Remove(genre);
+        listViewMappedGenres.Items.Add(genre);
+
+        // Update the genre map.
+        _genreMap.Add(genre.Text, selectedGenre.Text);
+      }
+
+      listViewMappedGenres.EndUpdate();
+      listViewProgramGenres.EndUpdate();
+    }
+
+    protected void UnmapProgramGenres()
+    {
+      listViewMappedGenres.BeginUpdate();
+      listViewProgramGenres.BeginUpdate();
+
+      foreach (ListViewItem genre in listViewMappedGenres.SelectedItems)
+      {
+        listViewMappedGenres.Items.Remove(genre);
+        listViewProgramGenres.Items.Add(genre);
+
+        // Update the genre map.
+        _genreMap.Remove(genre.Text);
+      }
+
+      listViewMappedGenres.EndUpdate();
+      listViewProgramGenres.EndUpdate();
+    }
+
+    private void CreateDefaultGenres(Settings settings)
+    {
+      for (int i = 0; i < LOCALIZED_GENRE_STRING_COUNT; i++)
+      {
+        settings.SetValue("genremap", i.ToString(), String.Empty);  // Genre not mapped
+      }
     }
 
     public override void LoadSettings()
@@ -159,6 +329,7 @@ namespace MediaPortal.Configuration.Sections
                                                                              true);
         mpTextBoxMacAddress.Text = xmlreader.GetValueAsString("tvservice", "macAddress", "00:00:00:00:00:00");
 
+        mpCheckBoxRatingAsMovie.Checked = xmlreader.GetValueAsBool("genreoptions", "specifympaaratedasmovie", true);
         chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
         txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
@@ -171,6 +342,58 @@ namespace MediaPortal.Configuration.Sections
         comboboxShowEpisodeInfo.SelectedIndex = showEpisodeinfo;
       }
 
+      // Populate the list of program genres from the tv database.
+      Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+      if (assem != null)
+      {
+        Type[] types = assem.GetExportedTypes();
+        foreach (Type exportedType in types)
+        {
+          try
+          {
+            if (exportedType.Name == "TvServer")
+            {
+              Object genreObject = null;
+              genreObject = Activator.CreateInstance(exportedType);
+              MethodInfo methodInfo = exportedType.GetMethod("GetGenres", BindingFlags.Public | BindingFlags.Instance);
+              _allProgramGenres = methodInfo.Invoke(genreObject, null) as List<String>;
+
+              using (Settings xmlreader = new MPSettings())
+              {
+                // If the genre map does not contain any entries then we'll create an initial default map.
+                if (!xmlreader.HasSection<string>("genremap"))
+                {
+                  CreateDefaultGenres(xmlreader);
+                }
+
+                // Load the genre map from MP settings.
+                if (_genreMap.Count == 0)
+                {
+                  LoadGenreMap(xmlreader);
+                }
+
+                if (!xmlreader.HasSection<string>("genreoptions"))
+                {
+                  xmlreader.SetValueAsBool("genreoptions", "specifympaaratedasmovie", true);  // Rated programs are movies
+                }
+
+                // Populate the guide genre list with names.
+                PopulateGuideGenreList();
+              }
+            }
+          }
+          catch (TargetInvocationException ex)
+          {
+            Log.Warn("TVClient: Failed to load genres {0}", ex.ToString());
+            continue;
+          }
+          catch (Exception gex)
+          {
+            Log.Warn("TVClient: Failed to load settings {0}", gex.Message);
+          }
+        }
+      }
+
       mpCheckBoxIsWakeOnLanEnabled_CheckedChanged(null, null);
 
       // Enable this Panel if the TvPlugin exists in the plug-in Directory
@@ -178,7 +401,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
+        assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();
@@ -337,6 +560,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("tvservice", "isAutoMacAddressEnabled", mpCheckBoxIsAutoMacAddressEnabled.Checked);
         xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
 
+        xmlwriter.SetValueAsBool("genreoptions", "specifympaaratedasmovie", mpCheckBoxRatingAsMovie.Checked);
+
         xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
         xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
         xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
@@ -363,6 +588,8 @@ namespace MediaPortal.Configuration.Sections
           MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
                           MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
+
+        SaveGenreMap(xmlwriter);
       }
     }
 
@@ -435,6 +662,19 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxNotifyPlaySound = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtNotifyBefore = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabControl2 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageGenreMap = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpCheckBoxRatingAsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.listViewGuideGenres = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.buttonMapGenres = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonUnmapGenres = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewProgramGenres = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.listViewMappedGenres = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -451,6 +691,10 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.SuspendLayout();
       this.mpGroupBox8.SuspendLayout();
       this.mpGroupBox7.SuspendLayout();
+      this.tabPage2.SuspendLayout();
+      this.tabControl2.SuspendLayout();
+      this.tabPageGenreMap.SuspendLayout();
+      this.groupBox4.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpGroupBox2
@@ -540,6 +784,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTVGeneral.Controls.Add(this.tabPageAudioLanguages);
       this.tabControlTVGeneral.Controls.Add(this.tabPageSubtitles);
       this.tabControlTVGeneral.Controls.Add(this.tabPage1);
+      this.tabControlTVGeneral.Controls.Add(this.tabPage2);
       this.tabControlTVGeneral.Location = new System.Drawing.Point(0, 2);
       this.tabControlTVGeneral.Name = "tabControlTVGeneral";
       this.tabControlTVGeneral.SelectedIndex = 0;
@@ -1222,6 +1467,168 @@ namespace MediaPortal.Configuration.Sections
       this.txtNotifyBefore.TabIndex = 7;
       this.txtNotifyBefore.Text = "300";
       // 
+      // tabPage2
+      // 
+      this.tabPage2.Controls.Add(this.tabControl2);
+      this.tabPage2.Location = new System.Drawing.Point(4, 22);
+      this.tabPage2.Name = "tabPage2";
+      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage2.Size = new System.Drawing.Size(464, 419);
+      this.tabPage2.TabIndex = 5;
+      this.tabPage2.Text = "Guide settings";
+      this.tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // tabControl2
+      // 
+      this.tabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl2.Controls.Add(this.tabPageGenreMap);
+      this.tabControl2.HotTrack = true;
+      this.tabControl2.Location = new System.Drawing.Point(6, 6);
+      this.tabControl2.Name = "tabControl2";
+      this.tabControl2.SelectedIndex = 0;
+      this.tabControl2.Size = new System.Drawing.Size(452, 407);
+      this.tabControl2.TabIndex = 1;
+      // 
+      // tabPageGenreMap
+      // 
+      this.tabPageGenreMap.Controls.Add(this.groupBox4);
+      this.tabPageGenreMap.Location = new System.Drawing.Point(4, 22);
+      this.tabPageGenreMap.Name = "tabPageGenreMap";
+      this.tabPageGenreMap.Size = new System.Drawing.Size(444, 381);
+      this.tabPageGenreMap.TabIndex = 1;
+      this.tabPageGenreMap.Text = "Genre map";
+      this.tabPageGenreMap.UseVisualStyleBackColor = true;
+      // 
+      // groupBox4
+      // 
+      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox4.Controls.Add(this.mpCheckBoxRatingAsMovie);
+      this.groupBox4.Controls.Add(this.listViewGuideGenres);
+      this.groupBox4.Controls.Add(this.buttonMapGenres);
+      this.groupBox4.Controls.Add(this.buttonUnmapGenres);
+      this.groupBox4.Controls.Add(this.listViewProgramGenres);
+      this.groupBox4.Controls.Add(this.listViewMappedGenres);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox4.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.groupBox4.Location = new System.Drawing.Point(0, 0);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(441, 378);
+      this.groupBox4.TabIndex = 0;
+      this.groupBox4.TabStop = false;
+      // 
+      // mpCheckBoxRatingAsMovie
+      // 
+      this.mpCheckBoxRatingAsMovie.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpCheckBoxRatingAsMovie.AutoSize = true;
+      this.mpCheckBoxRatingAsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxRatingAsMovie.Location = new System.Drawing.Point(6, 353);
+      this.mpCheckBoxRatingAsMovie.Name = "mpCheckBoxRatingAsMovie";
+      this.mpCheckBoxRatingAsMovie.Size = new System.Drawing.Size(379, 17);
+      this.mpCheckBoxRatingAsMovie.TabIndex = 15;
+      this.mpCheckBoxRatingAsMovie.Text = "Automatically add programs with a movie rating to the \"Movie\" genre           ";
+      this.mpCheckBoxRatingAsMovie.UseVisualStyleBackColor = true;
+      // 
+      // listViewGuideGenres
+      // 
+      this.listViewGuideGenres.AllowDrop = true;
+      this.listViewGuideGenres.AllowRowReorder = true;
+      this.listViewGuideGenres.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.listViewGuideGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader9});
+      this.listViewGuideGenres.HideSelection = false;
+      this.listViewGuideGenres.Location = new System.Drawing.Point(6, 11);
+      this.listViewGuideGenres.Name = "listViewGuideGenres";
+      this.listViewGuideGenres.Size = new System.Drawing.Size(429, 123);
+      this.listViewGuideGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.listViewGuideGenres.TabIndex = 14;
+      this.listViewGuideGenres.UseCompatibleStateImageBehavior = false;
+      this.listViewGuideGenres.View = System.Windows.Forms.View.Details;
+      this.listViewGuideGenres.SelectedIndexChanged += new System.EventHandler(this.listViewGuideGenres_SelectedIndexChanged);
+      // 
+      // columnHeader9
+      // 
+      this.columnHeader9.Text = "Guide Genre";
+      this.columnHeader9.Width = 190;
+      // 
+      // buttonMapGenres
+      // 
+      this.buttonMapGenres.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonMapGenres.Location = new System.Drawing.Point(202, 228);
+      this.buttonMapGenres.MaximumSize = new System.Drawing.Size(36, 22);
+      this.buttonMapGenres.MinimumSize = new System.Drawing.Size(36, 22);
+      this.buttonMapGenres.Name = "buttonMapGenres";
+      this.buttonMapGenres.Size = new System.Drawing.Size(36, 22);
+      this.buttonMapGenres.TabIndex = 2;
+      this.buttonMapGenres.Text = "<<";
+      this.buttonMapGenres.UseVisualStyleBackColor = true;
+      this.buttonMapGenres.Click += new System.EventHandler(this.buttonMapGenre_Click);
+      // 
+      // buttonUnmapGenres
+      // 
+      this.buttonUnmapGenres.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonUnmapGenres.Location = new System.Drawing.Point(202, 268);
+      this.buttonUnmapGenres.MaximumSize = new System.Drawing.Size(36, 22);
+      this.buttonUnmapGenres.MinimumSize = new System.Drawing.Size(36, 22);
+      this.buttonUnmapGenres.Name = "buttonUnmapGenres";
+      this.buttonUnmapGenres.Size = new System.Drawing.Size(36, 22);
+      this.buttonUnmapGenres.TabIndex = 1;
+      this.buttonUnmapGenres.Text = ">>";
+      this.buttonUnmapGenres.UseVisualStyleBackColor = true;
+      this.buttonUnmapGenres.Click += new System.EventHandler(this.buttonUnmapGenre_Click);
+      // 
+      // listViewProgramGenres
+      // 
+      this.listViewProgramGenres.AllowDrop = true;
+      this.listViewProgramGenres.AllowRowReorder = true;
+      this.listViewProgramGenres.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewProgramGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader12});
+      this.listViewProgramGenres.FullRowSelect = true;
+      this.listViewProgramGenres.HideSelection = false;
+      this.listViewProgramGenres.Location = new System.Drawing.Point(244, 176);
+      this.listViewProgramGenres.Name = "listViewProgramGenres";
+      this.listViewProgramGenres.Size = new System.Drawing.Size(190, 167);
+      this.listViewProgramGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.listViewProgramGenres.TabIndex = 3;
+      this.listViewProgramGenres.UseCompatibleStateImageBehavior = false;
+      this.listViewProgramGenres.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader12
+      // 
+      this.columnHeader12.Text = "Unmapped Genres";
+      this.columnHeader12.Width = 184;
+      // 
+      // listViewMappedGenres
+      // 
+      this.listViewMappedGenres.AllowDrop = true;
+      this.listViewMappedGenres.AllowRowReorder = true;
+      this.listViewMappedGenres.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.listViewMappedGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader13});
+      this.listViewMappedGenres.FullRowSelect = true;
+      this.listViewMappedGenres.HideSelection = false;
+      this.listViewMappedGenres.Location = new System.Drawing.Point(6, 176);
+      this.listViewMappedGenres.Name = "listViewMappedGenres";
+      this.listViewMappedGenres.Size = new System.Drawing.Size(190, 167);
+      this.listViewMappedGenres.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.listViewMappedGenres.TabIndex = 0;
+      this.listViewMappedGenres.UseCompatibleStateImageBehavior = false;
+      this.listViewMappedGenres.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader13
+      // 
+      this.columnHeader13.Text = "Mapped Genres";
+      this.columnHeader13.Width = 184;
+      // 
       // TVClient
       // 
       this.Controls.Add(this.tabControlTVGeneral);
@@ -1254,6 +1661,11 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox8.PerformLayout();
       this.mpGroupBox7.ResumeLayout(false);
       this.mpGroupBox7.PerformLayout();
+      this.tabPage2.ResumeLayout(false);
+      this.tabControl2.ResumeLayout(false);
+      this.tabPageGenreMap.ResumeLayout(false);
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -1417,6 +1829,30 @@ namespace MediaPortal.Configuration.Sections
         mpNumericTextBoxWOLTimeOut.Enabled = false;
         mpCheckBoxIsAutoMacAddressEnabled.Enabled = false;
         mpTextBoxMacAddress.Enabled = false;
+      }
+    }
+
+    private void listViewGuideGenres_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (listViewGuideGenres.SelectedItems.Count > 0)
+      {
+        PopulateGenreLists();
+      }
+    }
+  
+     private void buttonUnmapGenre_Click(object sender, EventArgs e)
+    {
+      if (listViewGuideGenres.SelectedItems.Count > 0)
+      {
+        UnmapProgramGenres();
+      }
+    }
+
+    private void buttonMapGenre_Click(object sender, EventArgs e)
+    {
+      if (listViewGuideGenres.SelectedItems.Count > 0)
+      {
+        MapProgramGenres();
       }
     }
   }

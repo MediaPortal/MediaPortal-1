@@ -45,7 +45,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.Skin + @"\mytvguide.xml");
+      bool result = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvguide.xml"));
       GetID = (int)Window.WINDOW_TVGUIDE;
       Initialize();
       return result;

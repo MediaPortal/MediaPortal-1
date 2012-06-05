@@ -422,7 +422,7 @@ Section "MediaPortal core files (required)" SecCore
   ; Configuration
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
-  ; Core
+  File "${git_MP}\Configuration\bin\${BUILD_TYPE}\WinCustomControls.dll"  ; Core
   File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
   File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
   File "${git_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
@@ -536,6 +536,7 @@ SectionEnd
   ; Configuration
   Delete "$MPdir.Base\Configuration.exe"
   Delete "$MPdir.Base\Configuration.exe.config"
+  Delete "$MPdir.Base\WinCustomControls.dll"
   ; Core
   Delete "$MPdir.Base\Core.dll"
   Delete "$MPdir.Base\DirectShowLib.dll"

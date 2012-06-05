@@ -68,6 +68,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("onclick")] protected string _onclick = "";
 
     [XMLSkin("hover", "flipX")] protected bool _flipX = false;
     [XMLSkin("hover", "flipY")] protected bool _flipY = false;
@@ -1358,6 +1359,12 @@ namespace MediaPortal.GUI.Library
               GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                                   info.PluginID, 0, info);
               GUIGraphicsContext.SendMessage(message);
+
+              // If this button has a click setting then execute the setting.
+              if (_onclick.Length != 0)
+              {
+                GUIPropertyManager.Parse(_onclick, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+              }
             }
             break;
           }
