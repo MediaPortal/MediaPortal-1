@@ -73,6 +73,7 @@ namespace MediaPortal.Player
       _mixer = new Mixer.Mixer();
       _mixer.Open(0, isDigital);
       _volumeTable = volumeTable;
+      _mixer.ControlChanged += new Mixer.MixerEventHandler(mixer_ControlChanged);
     }
 
     #endregion Constructors
@@ -133,6 +134,8 @@ namespace MediaPortal.Player
           writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
         }
 
+        _instance._mixer.ControlChanged -= mixer_ControlChanged;
+
         _instance._mixer.SafeDispose();
         _instance._mixer = null;
       }
@@ -180,47 +183,27 @@ namespace MediaPortal.Player
 
     protected virtual void SetVolume(int volume)
     {
-      try
+      if (_mixer.IsMuted)
       {
-        _mixer.Volume = volume;
-
-        if (_mixer.IsMuted)
-        {
-          _mixer.IsMuted = false;
-        }
-
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUDIOVOLUME_CHANGED, 0, 0, 0, 0, 0, 0);
-        msg.Label = Instance.Step.ToString();
-        msg.Label2 = Instance.StepMax.ToString();
-        msg.Label3 = Instance.IsMuted.ToString();
-        GUIGraphicsContext.SendMessage(msg);
-
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
-            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
-        {
-          Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
-          GUIWindowManager.OnAction(showVolume);
-        }
+        _mixer.IsMuted = false;
       }
-      catch (Exception e)
-      {
-        Log.Info("VolumeHandler.SetVolume: {0}", e.Message);
-      }
+      _mixer.Volume = volume;
     }
 
     protected virtual void SetVolume(bool isMuted)
     {
+      _mixer.IsMuted = isMuted;
+    }
+
+    private void HandleGUIOnControlChange()
+    {
       try
       {
-        _mixer.IsMuted = isMuted;
-
-
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUDIOVOLUME_CHANGED, 0, 0, 0, 0, 0, 0);
         msg.Label = Instance.Step.ToString();
         msg.Label2 = Instance.StepMax.ToString();
         msg.Label3 = Instance.IsMuted.ToString();
         GUIGraphicsContext.SendMessage(msg);
-
 
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
@@ -231,8 +214,13 @@ namespace MediaPortal.Player
       }
       catch (Exception e)
       {
-        Log.Info("VolumeHandler.SetVolume: {0}", e.Message);
+        Log.Info("VolumeHandler.HandleGUIOnControlChange: {0}", e.ToString());
       }
+    } 
+
+    private static void mixer_ControlChanged(object sender, Mixer.MixerEventArgs e)
+    {
+      VolumeHandler.Instance.HandleGUIOnControlChange();
     }
 
     #endregion Methods
