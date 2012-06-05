@@ -1899,6 +1899,92 @@ namespace DShowNET.Helper
       }
     }
 
+    /// <summary>
+    /// Returns the friendly name of a moniker.
+    /// </summary>
+    /// <param name="mon">moniker</param>
+    /// <returns>friendly name</returns>
+    public static Guid GetCLSID(IMoniker mon)
+    {
+      String clsidString = GetFilterProperty(mon, "CLSID");
+      return String.IsNullOrEmpty(clsidString) ? Guid.Empty : new Guid(clsidString);
+    }
+
+    /// <summary>
+    /// Returns a propery from the Filter's property bag.
+    /// </summary>
+    /// <param name="mon">moniker</param>
+    /// <param name="propertyName">name of property</param>
+    /// <returns>friendly name</returns>
+    public static string GetFilterProperty(IMoniker mon, String propertyName)
+    {
+      if (mon == null)
+        return string.Empty;
+
+      object bagObj = null;
+      IPropertyBag bag = null;
+      try
+      {
+        IErrorLog errorLog = null;
+        Guid bagId = typeof(IPropertyBag).GUID;
+        mon.BindToStorage(null, null, ref bagId, out bagObj);
+        bag = (IPropertyBag)bagObj;
+        object val;
+        int hr = bag.Read(propertyName, out val, errorLog);
+        Marshal.ThrowExceptionForHR(hr);
+
+        string ret = val as string;
+        if (string.IsNullOrEmpty(ret))
+          throw new NotImplementedException("Filter: " + propertyName);
+
+        return ret;
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+      finally
+      {
+        bag = null;
+        if (bagObj != null)
+          Marshal.ReleaseComObject(bagObj);
+        bagObj = null;
+      }
+    }
+
+    /// <summary>
+    /// Checks and release filter as COM object.
+    /// </summary>
+    /// <param name="filterToRelease">any COM object to release</param>
+    public static bool TryRelease<TE>(ref TE filterToRelease) where TE : class
+    {
+      return TryRelease<TE>(ref filterToRelease, false);
+    }
+
+    /// <summary>
+    /// Checks and release filter as COM object.
+    /// </summary>
+    /// <param name="filterToRelease">any COM object to release</param>
+    /// <param name="releaseAllReferences">true to loop until all references are removed</param>
+    public static bool TryRelease<TE>(ref TE filterToRelease, bool releaseAllReferences) where TE : class
+    {
+      if (filterToRelease != null)
+      {
+        int remainingReferences;
+        do
+        {
+          remainingReferences = Marshal.ReleaseComObject(filterToRelease);
+          if (remainingReferences > 0)
+            Log.Info("Releasing filter {0}, remaining references: {1}", filterToRelease,
+                remainingReferences);
+
+        } while (remainingReferences > 0 && releaseAllReferences);
+        filterToRelease = default(TE);
+        return true;
+      }
+      return false;
+    }
+
     public static IPin FindPin(IBaseFilter filter, PinDirection dir, string strPinName)
     {
       int hr = 0;
