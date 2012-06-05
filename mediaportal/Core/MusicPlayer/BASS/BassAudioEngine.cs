@@ -2275,6 +2275,11 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
           }
+
+          if (!BassWasapi.BASS_WASAPI_Free())
+          {
+            Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
+          }
         }
 
         if (!Bass.BASS_StreamFree(_mixer))
