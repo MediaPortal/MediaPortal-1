@@ -316,7 +316,7 @@ namespace TvLibrary.Implementations.DVB
               try
               {
                 while (ts.TotalMilliseconds < timeoutPMT && !sendPmtToCamDone)
-                  //lets keep trying to send pmt2cam and at the same time obey the timelimit specified in timeoutPMT
+                //lets keep trying to send pmt2cam and at the same time obey the timelimit specified in timeoutPMT
                 {
                   ts = DateTime.Now - dtNow;
                   bool updatePids;
@@ -329,10 +329,14 @@ namespace TvLibrary.Implementations.DVB
                       if (_channelInfo != null)
                       {
                         SetMpegPidMapping(_channelInfo);
-                        if (_mdplugs != null && _channelInfo.scrambled)
+                        if (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(channel.Provider))
                         {
                           //_mdplugs.SetChannel(_currentChannel, _channelInfo, false);
                           _mdplugs.AddSubChannel(_subChannelId,_currentChannel, _channelInfo, false);
+                        }
+                        else
+                        {
+                          Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
                         }
                       }
                       Log.Log.Info("subch:{0} stop tif", _subChannelId);
@@ -1362,6 +1366,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public virtual int OnPMTReceived(int pmtPid)
     {
+      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
       if (_eventPMT != null)
       {
         Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(),
@@ -1380,10 +1385,14 @@ namespace TvLibrary.Implementations.DVB
               if (_channelInfo != null)
               {
                 SetMpegPidMapping(_channelInfo);
-                if (_mdplugs != null && _channelInfo.scrambled)
+                if (_mdplugs != null && _channelInfo.scrambled && _mdplugs.IsProviderSelected(CurrentDVBChannel.Provider))
                 {
                   //_mdplugs.SetChannel(_currentChannel, _channelInfo, true);
                   _mdplugs.AddSubChannel(_subChannelId, _currentChannel, _channelInfo, true);
+                }
+                else
+                {
+                  Log.Log.Debug("OnPMTReceived: MDAPI disabled. Possible reasons are _mdplugs=null or provider not listed");
                 }
               }
             }

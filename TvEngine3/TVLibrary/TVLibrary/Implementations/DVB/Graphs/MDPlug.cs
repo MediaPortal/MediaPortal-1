@@ -185,21 +185,12 @@ namespace TvLibrary.Implementations.DVB
         {
           XmlDocument doc = new XmlDocument();
           XmlNode rootNode = doc.CreateElement("cards");
-          XmlNode nodeCard = doc.CreateElement("card");
-          XmlAttribute attr = doc.CreateAttribute("DevicePath");
-          attr.InnerText = devicePath;
-          nodeCard.Attributes.Append(attr);
-          attr = doc.CreateAttribute("Name");
-          attr.InnerText = deviceName;
-          nodeCard.Attributes.Append(attr);
-          attr = doc.CreateAttribute("EnableMdapi");
-          attr.InnerText = "1";
+          XmlNode nodeNewCard = CreateCardSection(doc, devicePath, deviceName);
+          doc.AppendChild(rootNode);
+          rootNode.AppendChild(nodeNewCard);
+          doc.Save(xmlFile);
           //Fix null pointer problem on first run.
           InstanceNumber = 1;
-          nodeCard.Attributes.Append(attr);
-          rootNode.AppendChild(nodeCard);
-          doc.AppendChild(rootNode);
-          doc.Save(xmlFile);
           useMDAPI = true;
         }
         else
@@ -235,21 +226,12 @@ namespace TvLibrary.Implementations.DVB
             }
           if (!cardFound)
           {
-            XmlNode nodeNewCard = doc.CreateElement("card");
-            XmlAttribute attr = doc.CreateAttribute("DevicePath");
-            attr.InnerText = devicePath;
-            nodeNewCard.Attributes.Append(attr);
-            attr = doc.CreateAttribute("Name");
-            attr.InnerText = deviceName;
-            nodeNewCard.Attributes.Append(attr);
-            attr = doc.CreateAttribute("EnableMdapi");
-            attr.InnerText = "1";
-            //Fix null pointer problem on first run.
-            InstanceNumber = 1;
-            nodeNewCard.Attributes.Append(attr);
-            XmlNode rootNode = doc.SelectSingleNode("/cards");
+            XmlNode nodeNewCard = CreateCardSection(doc, devicePath, deviceName);
+            XmlNode rootNode = doc.SelectSingleNode("cards");
             rootNode.AppendChild(nodeNewCard);
             doc.Save(xmlFile);
+            //Fix null pointer problem on first run.
+            InstanceNumber = 1;
             useMDAPI = true;
           }
         }
@@ -262,9 +244,48 @@ namespace TvLibrary.Implementations.DVB
       return useMDAPI;
     }
 
+    private static XmlNode CreateCardSection(XmlDocument doc, string devicePath, string deviceName)
+    {
+      XmlNode nodeNewCard = doc.CreateElement("card");
+      XmlAttribute attr = doc.CreateAttribute("DevicePath");
+      attr.InnerText = devicePath;
+      nodeNewCard.Attributes.Append(attr);
+      attr = doc.CreateAttribute("Name");
+      attr.InnerText = deviceName;
+      nodeNewCard.Attributes.Append(attr);
+      attr = doc.CreateAttribute("EnableMdapi");
+      attr.InnerText = "1";
+      nodeNewCard.Attributes.Append(attr);
+      attr = doc.CreateAttribute("Provider");
+      attr.InnerText = "All";
+      nodeNewCard.Attributes.Append(attr);
+      return nodeNewCard;
+    }
+
     #endregion
 
     #region public method
+
+    ///<summary>
+    ///Check if Provider should be decrypted by MDAPI
+    ///</summary>
+    ///<param name="provider"></param>
+    ///<returns></returns>
+    public bool IsProviderSelected(string provider)
+    {
+      string xmlFile = AppDomain.CurrentDomain.BaseDirectory + "MDPLUGINS\\MDAPICards.xml";
+      XmlDocument doc = new XmlDocument();
+      doc.Load(xmlFile);
+      XmlNodeList cardList = doc.SelectNodes("/cards/card");
+      foreach (XmlNode nodeCard in cardList)
+      {
+        if (_cardFolder.Contains(nodeCard.Attributes["Name"].Value) && (nodeCard.Attributes["Provider"]==null || nodeCard.Attributes["Provider"].Value == "All" || (provider != null && nodeCard.Attributes["Provider"].Value.Contains(provider))))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
     /// <summary>
     /// Method release all the mdapi filters in ordinary fashion
@@ -487,7 +508,7 @@ namespace TvLibrary.Implementations.DVB
     #region constants
 
     [ComImport, Guid("72E6DB8F-9F33-4D1C-A37C-DE8148C0BE74")]
-    private class MDAPIFilter {} ;
+    private class MDAPIFilter { } ;
 
     #endregion
 
@@ -609,17 +630,20 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Name
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)] public byte[] Name; // to simulate c++ char Name[30]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Name; // to simulate c++ char Name[30]
 
       /// <summary>
       /// Provider
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)] public byte[] Provider;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Provider;
 
       /// <summary>
       /// Country
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)] public byte[] Country;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
+      public byte[] Country;
 
       /// <summary>
       /// Frequence
@@ -739,7 +763,8 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Filters
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] public byte[] Filters;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      public byte[] Filters;
 
       // to simulate struct PIDFilters Filters[MAX_PID_IDS];
 
@@ -751,14 +776,16 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// CA System82
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public CA_System82[] CA_System82;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+      public CA_System82[] CA_System82;
 
       // to simulate struct TCA_System CA_System[MAX_CA_SYSTEMS];
 
       /// <summary>
       /// CA Country
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] public byte[] CA_Country;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+      public byte[] CA_Country;
 
       /// <summary>
       /// Marker
@@ -783,7 +810,8 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// Extern Buffer
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] Extern_Buffer;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+      public byte[] Extern_Buffer;
     }
 
     /// <summary>
@@ -795,7 +823,8 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// PIDs
       /// </summary>
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)] public ushort[] Pids;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
+      public ushort[] Pids;
 
       /// <summary>
       /// Number of pids
