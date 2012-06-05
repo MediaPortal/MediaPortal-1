@@ -251,6 +251,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RegistryUtilities.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\FiltersPowerDVDAudioDecoder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -944,6 +947,7 @@
     <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
+    <None Include="Resources\codec_screwdriver.png" />
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />

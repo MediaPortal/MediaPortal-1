@@ -1050,6 +1050,23 @@ namespace DShowNET.Helper
       return bAllConnected;
     }
 
+    public static int IsPinConnected(DirectShowLib.IPin Pin, out bool Result)
+    {
+      DirectShowLib.IPin pTmp = null;
+      int hr = Pin.ConnectedTo(out pTmp);
+      if (hr == 0) Result = true;
+      else if (hr == DirectShowLib.DsResults.E_NotConnected)
+      {
+        // The pin is not connected.  Thsi is not an error for our purposes.
+        Result = false;
+        hr = 0;
+      }
+      else Result = true;     // Must assign Result before returning.
+
+      pTmp = null;
+      return hr;
+    }
+
     public static void DisconnectOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
       IEnumPins pinEnum;

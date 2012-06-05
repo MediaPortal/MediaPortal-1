@@ -198,6 +198,65 @@ namespace DShowNET.Helper
       }
     }
 
+    public static ArrayList GetFileSync()
+    {
+      ArrayList list = new ArrayList();
+      foreach (Filter filter in Filters.LegacyFilters)
+      {
+        bool add = false;
+        if (filter.MonikerString ==
+            @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{E436EBB5-524F-11CE-9F53-0020AF0BA770}")
+        {
+          add = true;
+        }
+        if (add)
+        {
+          list.Add(filter.Name);
+        }
+      }
+      return list;
+    }
+
+    public static ArrayList GetFilterSource()
+    {
+      ArrayList sources = new ArrayList();
+
+      foreach (Filter filter in Filters.LegacyFilters)
+      {
+        if (filter.Name.ToLowerInvariant().Contains("source"))
+        {
+          sources.Add(filter.Name);
+        }
+      }
+      return sources;
+    }
+
+    public static ArrayList GetFilterSplitter()
+    {
+      ArrayList sources = new ArrayList();
+
+      foreach (Filter filter in Filters.LegacyFilters)
+      {
+        if (filter.Name.ToLowerInvariant().Contains("splitter"))
+        {
+          sources.Add(filter.Name);
+        }
+      }
+      return sources;
+    }
+
+    public static ArrayList GetVideoCodec()
+    {
+      ArrayList list = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
+      return list;
+    }
+
+    public static ArrayList GetAudioCodec()
+    {
+      ArrayList list = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
+      return list;
+    }
+
     public static ArrayList GetFilters(Guid mediaType, Guid mediaSubType)
     {
       return GetFilters(mediaType, mediaSubType, (Merit)0x080001);
