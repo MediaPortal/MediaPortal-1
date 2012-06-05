@@ -434,10 +434,14 @@ namespace TvLibrary.Implementations.Analog
           return;
         }
       }
-      _tuner.UpdateSignalQuality();
-      _tunerLocked = _tuner.TunerLocked;
-      _signalLevel = _tuner.SignalLevel;
-      _signalQuality = _tuner.SignalQuality;
+
+      if (_tuner != null)
+      {
+        _tuner.UpdateSignalQuality();
+        _tunerLocked = _tuner.TunerLocked;
+        _signalLevel = _tuner.SignalLevel;
+        _signalQuality = _tuner.SignalQuality;
+      }
     }
 
     /// <summary>
