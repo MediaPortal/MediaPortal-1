@@ -99,5 +99,11 @@ namespace MediaPortal.Configuration.Sections
     {
       base.SaveSettings("Music");
     }
+
+    public override void OnSectionActivated()
+    {
+      base.Section = "Music";
+      base.OnSectionActivated();
+    }
   }
 }

@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
 using MediaPortal.Subtitle;
+using MediaPortal.Util;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
@@ -100,6 +101,8 @@ namespace MediaPortal.Player
     private static double[] _jumpPoints = null;
     private static bool _autoComSkip = false;
     private static bool _loadAutoComSkipSetting = true;
+
+    private static string _externalPlayerExtensions = string.Empty;
 
     #endregion
 
@@ -593,6 +596,8 @@ namespace MediaPortal.Player
       {
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
                   keepExclusiveModeOn);
+        // Get playing file for unmount handling
+        string currentFile = g_Player.CurrentFile;
         OnStopped();
 
         //since plugins could stop playback, we need to make sure that _player is not null.
@@ -636,9 +641,36 @@ namespace MediaPortal.Player
           RefreshRateChanger.AdaptRefreshRate();
         }
 
-        if (!String.IsNullOrEmpty(Util.DaemonTools.GetVirtualDrive()))
-          Util.DaemonTools.UnMount();
+        // No unmount for other ISO (avi-mkv ISO-crash in playlist after)
+        Util.Utils.IsDVDImage(currentFile, ref currentFile);
+        if (Util.Utils.IsISOImage(currentFile))
+        {
+          if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
+              IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
+              IsDvdDirectory(DaemonTools.GetVirtualDrive()))
+          {
+            DaemonTools.UnMount();
+          }
+        }
       }
+    }
+    
+    public static bool IsBDDirectory(string path)
+    {
+      if (File.Exists(path + @"\BDMV\index.bdmv"))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    public static bool IsDvdDirectory(string path)
+    {
+      if (File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+      {
+        return true;
+      }
+      return false;
     }
 
     public static void StopAndKeepTimeShifting()
@@ -844,6 +876,11 @@ namespace MediaPortal.Player
     }
 
     public static bool PlayDVD(string strPath)
+    {
+      return Play(strPath, MediaType.Video);
+    }
+
+    public static bool PlayBD(string strPath)
     {
       return Play(strPath, MediaType.Video);
     }
@@ -1214,11 +1251,12 @@ namespace MediaPortal.Player
         if (isImageFile)
         {
           if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO"))
-          {
-            _currentFilePlaying = strFile;
-            MediaPortal.Ripper.AutoPlay.ExamineCD(Util.DaemonTools.GetVirtualDrive(), true);
-            return true;
-          }
+             if (!File.Exists(Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv"))
+            {
+              _currentFilePlaying = strFile;
+              MediaPortal.Ripper.AutoPlay.ExamineCD(Util.DaemonTools.GetVirtualDrive(), true);
+              return true;
+            }
         }
 
         if (Util.Utils.IsDVD(strFile))
@@ -1299,13 +1337,35 @@ namespace MediaPortal.Player
             {
               bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
               bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
-
-              if ((!bInternalDVD && (extension == ".ifo" || extension == ".vob" || isImageFile)) ||
-                  (!bInternal && (extension != ".ifo" && extension != ".vob" && !isImageFile))) // external player used
+              
+              // External player extension filter
+              _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
+              if (!bInternal && !string.IsNullOrEmpty(_externalPlayerExtensions) && 
+                  extension != ".ifo" && extension != ".vob" && !Util.Utils.IsDVDImage(strFile))
+              {
+                // Do not use external player if file ext is not in the extension list
+                if (!CheckExtension(strFile))
+                  bInternal = true;
+              }
+              
+              if ((!bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob")) ||
+                  (!bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)) ||
+                  // No image and no DVD folder rips
+                  (!bInternal && !isImageFile && extension != ".ifo" && extension != ".vob") ||
+                  // BluRay image
+                  (!bInternal && isImageFile && Util.Utils.IsBDImage(strFile))) // external player used
               {
                 if (isImageFile)
                 {
+                  // Check for DVD ISO
                   strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
+                  if (!File.Exists(strFile))
+                  {
+                    // Check for BluRayISO
+                    strFile = Util.DaemonTools.GetVirtualDrive() + (@"\BDMV\index.bdmv");
+                    if (!File.Exists(strFile))
+                      return false;
+                  }
                 }
                 if (Util.Utils.PlayMovie(strFile))
                 {
@@ -1320,9 +1380,11 @@ namespace MediaPortal.Player
             }
           }
         }
+        // Still for BDISO strFile = ISO filename, convert it
+        Util.Utils.IsBDImage(strFile, ref strFile);
 
         _player = _factory.Create(strFile, type);
-
+        
         if (_player != null)
         {
           if (chapters != null)
@@ -3055,6 +3117,21 @@ namespace MediaPortal.Player
       {
         Log.Error("g_player: Error notifying user about unsuccessful playback of {0} - {1}", FileName, ex.ToString());
       }
+    }
+
+    private static bool CheckExtension(string filename)
+    {
+      char[] splitter = { ';' };
+      string[] extensions = _externalPlayerExtensions.Split(splitter);
+
+      foreach (string extension in extensions)
+      {
+        if (extension.Trim().Equals(Path.GetExtension(filename),StringComparison.OrdinalIgnoreCase))
+        {
+          return true;
+        }
+      }
+      return false;
     }
 
     #endregion

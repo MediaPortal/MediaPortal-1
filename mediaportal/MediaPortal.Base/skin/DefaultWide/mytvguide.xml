@@ -13,6 +13,17 @@
       <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
+      <description>background top overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>270</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+    </control>
+    <control>
       <description>Date Time</description>
       <type>label</type>
       <id>0</id>
@@ -231,7 +242,7 @@
       <id>26</id>
       <label>-</label>
       <font>font12</font>
-      <textcolor>ffffcc00</textcolor>
+      <textcolor>ffffffff</textcolor>
       <posX>10</posX>
       <posY>6</posY>
     </control>

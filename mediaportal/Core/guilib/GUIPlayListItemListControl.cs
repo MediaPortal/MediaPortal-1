@@ -830,6 +830,12 @@ namespace MediaPortal.GUI.Library
               dwColor = _downloadColor;
             }
           }
+
+          if (pItem.IsBdDvdFolder)
+          {
+            dwColor = _bdDvdDirectoryColor;
+          }
+
           int xpos = dwPosX;
           int ypos = dwPosY;
 
@@ -888,6 +894,11 @@ namespace MediaPortal.GUI.Library
           }
         }
 
+        if (pItem.IsBdDvdFolder)
+        {
+          dwColor = _bdDvdDirectoryColor;
+        }
+
         if (!gotFocus)
         {
           dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
@@ -913,6 +924,11 @@ namespace MediaPortal.GUI.Library
           {
             dwColor = _downloadColor;
           }
+        }
+
+        if (pItem.IsBdDvdFolder)
+        {
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (0 == _textOffsetX2)
@@ -971,6 +987,11 @@ namespace MediaPortal.GUI.Library
           {
             dwColor = _downloadColor;
           }
+        }
+
+        if (pItem.IsBdDvdFolder)
+        {
+          dwColor = _bdDvdDirectoryColor;
         }
 
         if (0 == _textOffsetX3)

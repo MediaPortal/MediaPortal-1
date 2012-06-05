@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
       <description>group element</description>
       <type>group</type>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -22,10 +24,10 @@
           <textYOff>1</textYOff>
           <textXOff2>421</textXOff2>
           <textYOff2>1</textYOff2>
-          <PinIconWidth>25</PinIconWidth>
+          <PinIconWidth>35</PinIconWidth>
           <PinIconHeight>25</PinIconHeight>
-          <PinIconXOff>421</PinIconXOff>
-          <PinIconYOff>3</PinIconYOff>
+          <PinIconXOff>747</PinIconXOff>
+          <PinIconYOff>6</PinIconYOff>
           <textureHeight>32</textureHeight>
           <itemWidth>18</itemWidth>
           <itemHeight>25</itemHeight>
@@ -122,7 +124,7 @@
           <zoomYPixels>30</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>yes</renderUnfocusText>
+          <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
           <textureMask>Picturethumbmask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>

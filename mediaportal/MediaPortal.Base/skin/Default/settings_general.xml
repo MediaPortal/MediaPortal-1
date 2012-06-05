@@ -6,6 +6,8 @@
   <allowoverlay>yes</allowoverlay>
   <controls>
     <import>common.settings.xml</import>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>

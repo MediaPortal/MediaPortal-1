@@ -106,6 +106,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("cards", "flipY")] protected bool _flipY = false;
     [XMLSkin("cards", "diffuse")] protected string _diffuseFilename = "";
     [XMLSkin("cards", "mask")] protected string _maskFilename = "";
+    [XMLSkinElement("bdDvdDirectoryColor")] protected long _bdDvdDirectoryColor = 0xFFFFFFFF;
 
     #endregion
 
@@ -1367,6 +1368,11 @@ namespace MediaPortal.GUI.Library
         _label1.Label = _labelText1;
       }
 
+      if (pItem.IsBdDvdFolder)
+      {
+        dwColor = _bdDvdDirectoryColor;
+      }
+
       _label1.TextColor = dwColor;
       _label1.UpdateVisibility();
       _label1.Render(timePassed);
@@ -1410,6 +1416,11 @@ namespace MediaPortal.GUI.Library
         {
           dwColor = _downloadColor;
         }
+      }
+
+      if (pItem.IsBdDvdFolder)
+      {
+        dwColor = _bdDvdDirectoryColor;
       }
 
       _label2.Label = _labelText2;

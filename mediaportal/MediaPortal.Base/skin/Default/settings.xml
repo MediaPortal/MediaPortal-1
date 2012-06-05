@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>4</id>
   <defaultcontrol>4</defaultcontrol>
@@ -11,10 +11,8 @@
     <control>
       <description>buttons</description>
       <type>group</type>
-      
-      
-      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="150" end="-300,0">WindowClose</animation>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
       <posX>279</posX>
       <posY>164</posY>
       <layout>StackLayout</layout>

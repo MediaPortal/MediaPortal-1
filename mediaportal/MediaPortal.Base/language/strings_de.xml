@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -1004,8 +1004,54 @@
   	<String id="1216">Disks</String>
     <String id="1220">Sortieren: Erstellungsdatum</String>
     <String id="1221">Sortieren: Änderungsdatum</String>
+    <String id="1222">Gruppen</String>
+    <String id="1223">Vorhandene Wiedergabeliste gefunden</String>
+    <String id="1224">Wollen Sie die aktuelle Wiedergabeliste leeren?</String>
+    <String id="1225">An Wiedergabeliste anhängen</String>
+    <String id="1226">Alles an Wiedergabeliste anhängen</String>
     <String id="1230">Hinzugefügt am:</String>
-    <String id="1231">Zuletzt gespielt am:</String>
+    <String id="1231">Zuletzt gespielt:</String>
+    <String id="1240">Inhalt sperren</String>
+    <String id="1241">Inhalt freigeben</String>
+    <String id="1250">Suche Film</String>
+    <String id="1251">Suche zurücksetzen</String>
+    <String id="1252">Suche Schauspieler</String>
+    <String id="1253">Alle Filme dieses Schauspielers aktualisieren</String>
+    <String id="1254">Alle Informationen dieses Schauspielers aktualisieren</String>
+    <String id="1255">Fanart aktualisieren</String>
+    <String id="1256">Dieses Verzeichnis aktualisieren</String>
+    <String id="1257">Lade Schauspieler und Rollen</String>
+    <String id="1258">Lade Schauspieler-Informationen</String>
+    <String id="1260">Als gesehen markieren</String>
+    <String id="1261">Kein GrabberIndexFile gefunden.</String>
+    <String id="1262">Grabber-Skripts aktualisieren</String>
+    <String id="1263">Standard-Grabber-Skript festlegen</String>
+    <String id="1264">Medien-Informationen aktualisieren</String>
+		<String id="1265">Benutzerdefinierte Gruppen</String>
+		<String id="1266">Gesehen</String>
+		<String id="1267">Ungesehen</String>
+		<String id="1268">Suche Regisseur</String>
+		<String id="1269">Regisseure</String>
+		<String id="1270">Film zu benutzerdefinierter Gruppe hinzufügen</String>
+		<String id="1271">Film aus benutzerdefinierter Gruppe löschen</String>
+		<String id="1272">Neue benutzerdefinierte Gruppe anlegen</String>
+		<String id="1273">Diese benutzerdefinierte Gruppe löschen</String>
+		<String id="1274">Studio:</String>
+		<String id="1275">Sprache:</String>
+		<String id="1276">Land:</String>
+		<String id="1277">Gestorben:</String>
+		<String id="1278">Angesehen:</String>
+		<String id="1279">Aktualisiert:</String>
+		<String id="1280">Scannen mit NFO-Datei(en)</String>
+		<String id="1281">nach Filmtitel</String>
+		<String id="1282">nach Regisseur</String>
+		<String id="1283">nach Schauspieler</String>
+		<String id="1284">nach Rolle des Schauspielers</String>
+		<String id="1285">nach Jahr</String>
+		<String id="1286">nach Altersfreigabe</String>
+		<String id="1287">Titel (Index)</String>
+		<String id="1288">Schauspieler (Index)</String>
+		<String id="1289">Regisseure (Index)</String>
     <String id="1300" prefix="Meine ">TV-Serien</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
@@ -1350,11 +1396,12 @@
     <String id="4555">Aktuelle Wiedergabeliste</String>
     <String id="4557">Alle zur Wiedergabeliste hinzufügen</String>
     <String id="4558">Neu hinzugefügt</String>
+    <String id="4559">Kürzlich angesehen</String>
     <String id="5900" prefix="Meine ">Kinotrailer</String>
     <String id="5901">Suche Filme</String>
     <String id="5902">Welche Filme zeigen?</String>
     <String id="5903">Neu hinzugefügte Filme</String>
-    <String id="5904">Häufig gesehene Filme</String>
+    <String id="5904">Häufig angesehene Filme</String>
     <String id="5905">Alle Filme</String>
     <String id="5906">Kinotrailer</String>
     <String id="5907">Ausschnitte</String>

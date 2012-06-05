@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -34,73 +34,73 @@
       <visible allowhiddenfocus="true">!Control.HasFocus(1237)</visible>
     </control>
     <control>
-      <description>label InfoMenu</description>
+      <description>label MainMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>570</posX>
-      <posY>480</posY>
+      <posX>534</posX>
+      <posY>418</posY>
       <label>Show Info</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(213)</visible>
     </control>
     <control>
       <description>label MainMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>570</posX>
-      <posY>480</posY>
+      <posX>534</posX>
+      <posY>418</posY>
       <label>Main Menu</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(997)</visible>
     </control>
     <control>
       <description>label SubtitleMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>570</posX>
-      <posY>480</posY>
+      <posX>534</posX>
+      <posY>418</posY>
       <label>Subtitle</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(218)</visible>
     </control>
     <control>
       <description>label VideopostionMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>570</posX>
-      <posY>480</posY>
+      <posX>534</posX>
+      <posY>418</posY>
       <label>Videoposition</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(220)</visible>
     </control>
     <control>
       <description>label MuteMenu</description>
       <type>label</type>
       <id>1</id>
-      <posX>570</posX>
-      <posY>480</posY>
+      <posX>534</posX>
+      <posY>418</posY>
       <label>Mute</label>
       <font>font11</font>
       <align>left</align>
-      <textcolor>white</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>Control.HasFocus(998)</visible>
     </control>
     <control>
       <description>Menue button</description>
       <type>button</type>
       <id>997</id>
-      <posX>567</posX>
+      <posX>572</posX>
       <posY>446</posY>
       <width>25</width>
-      <height>25</height>
+      <height>36</height>
       <onleft>213</onleft>
       <onright>998</onright>
       <ondown>997</ondown>
@@ -114,10 +114,10 @@
       <description>Mute button</description>
       <type>button</type>
       <id>998</id>
-      <posX>596</posX>
+      <posX>607</posX>
       <posY>446</posY>
       <width>25</width>
-      <height>25</height>
+      <height>36</height>
       <onleft>997</onleft>
       <onright>220</onright>
       <ondown>998</ondown>
@@ -131,10 +131,10 @@
       <description>Video Position Menu</description>
       <type>togglebutton</type>
       <id>220</id>
-      <posX>624</posX>
+      <posX>641</posX>
       <posY>446</posY>
       <width>25</width>
-      <height>25</height>
+      <height>36</height>
       <AltTextureFocus>osd_video_focus.png</AltTextureFocus>
       <AltTextureNoFocus>osd_video_nofocus.png</AltTextureNoFocus>
       <textureFocus>osd_video_focus.png</textureFocus>
@@ -151,10 +151,10 @@
       <description>Subtitles Menu</description>
       <type>togglebutton</type>
       <id>218</id>
-      <posX>652</posX>
+      <posX>675</posX>
       <posY>446</posY>
       <width>25</width>
-      <height>25</height>
+      <height>36</height>
       <AltTextureFocus>osd_subtitles_focus.png</AltTextureFocus>
       <AltTextureNoFocus>osd_subtitles_nofocus.png</AltTextureNoFocus>
       <textureFocus>osd_subtitles_focus.png</textureFocus>
@@ -171,19 +171,19 @@
       <description>Sub Menu Background (subtitles)</description>
       <type>image</type>
       <id>302</id>
-      <posX>180</posX>
-      <posY>265</posY>
-      <width>260</width>
-      <height>130</height>
-      <texture>osd_dialog.png</texture>
+      <posX>11</posX>
+      <posY>240</posY>
+      <width>125</width>
+      <height>175</height>
+      <texture>-</texture>
       <visible>no</visible>
     </control>
     <control>
       <description>SubTitle Delay label</description>
       <type>label</type>
       <id>850</id>
-      <posX>300</posX>
-      <posY>284</posY>
+      <posX>534</posX>
+      <posY>508</posY>
       <label>303</label>
       <font>font10</font>
       <textcolor>ffffffff</textcolor>
@@ -193,8 +193,8 @@
       <description>SubTitle Delay Slider</description>
       <type>slider</type>
       <id>800</id>
-      <posX>212</posX>
-      <posY>308</posY>
+      <posX>607</posX>
+      <posY>508</posY>
       <spintype>float</spintype>
       <showrange>yes</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
@@ -210,8 +210,8 @@
       <description>SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
       <id>801</id>
-      <posX>234</posX>
-      <posY>284</posY>
+      <posX>534</posX>
+      <posY>484</posY>
       <label>305</label>
       <MarkWidth>11</MarkWidth>
       <MarkHeight>16</MarkHeight>
@@ -227,8 +227,8 @@
       <description>Forced SubTitles On/Off Checkbox</description>
       <type>checkmark</type>
       <id>803</id>
-      <posX>350</posX>
-      <posY>284</posY>
+      <posX>607</posX>
+      <posY>484</posY>
       <label>Forced</label>
       <MarkWidth>11</MarkWidth>
       <MarkHeight>16</MarkHeight>
@@ -245,10 +245,10 @@
       <description>Sub Titles List Control</description>
       <type>listcontrol</type>
       <id>802</id>
-      <posX>222</posX>
-      <posY>334</posY>
-      <width>180</width>
-      <height>80</height>
+      <posX>556</posX>
+      <posY>524</posY>
+      <width>118</width>
+      <height>88</height>
       <font>font10</font>
       <textureHeight>20</textureHeight>
       <textXOff>-20</textXOff>
@@ -434,11 +434,11 @@
       <description>Sub Menu Background (video)</description>
       <type>image</type>
       <id>304</id>
-      <posX>180</posX>
-      <posY>265</posY>
-      <width>260</width>
-      <height>130</height>
-      <texture>osd_dialog.png</texture>
+      <posX>439</posX>
+      <posY>329</posY>
+      <width>259</width>
+      <height>229</height>
+      <texture>-</texture>
       <visible>no</visible>
     </control>
     <control>
@@ -519,8 +519,8 @@
       <description>Video Position label</description>
       <type>label</type>
       <id>750</id>
-      <posX>235</posX>
-      <posY>331</posY>
+      <posX>585</posX>
+      <posY>511</posY>
       <label>Video Position</label>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -530,8 +530,8 @@
       <description>Video Position Slider</description>
       <type>slider</type>
       <id>700</id>
-      <posX>223</posX>
-      <posY>302</posY>
+      <posX>573</posX>
+      <posY>492</posY>
       <spintype>int</spintype>
       <showrange>no</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>

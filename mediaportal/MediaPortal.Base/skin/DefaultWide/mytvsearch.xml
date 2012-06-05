@@ -24,7 +24,7 @@
       <label>#itemcount</label>
       <align>right</align>
       <font>font10</font>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>no</visible>
     </control>
     <control>
@@ -107,7 +107,7 @@
         <IconYOff>7</IconYOff>
         <PinIconXOff>810</PinIconXOff>
         <PinIconYOff>4</PinIconYOff>
-        <spinPosX>1150</spinPosX>
+        <spinPosX>1170</spinPosX>
         <spinPosY>470</spinPosY>
         <itemWidth>46</itemWidth>
         <itemHeight>46</itemHeight>
@@ -140,7 +140,7 @@
         <IconYOff>7</IconYOff>
         <PinIconXOff>810</PinIconXOff>
         <PinIconYOff>4</PinIconYOff>
-        <spinPosX>1150</spinPosX>
+        <spinPosX>1170</spinPosX>
         <spinPosY>470</spinPosY>
         <itemWidth>46</itemWidth>
         <itemHeight>46</itemHeight>
@@ -202,7 +202,7 @@
       <width>742</width>
       <label>#TV.Search.Time</label>
       <font>font11</font>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -228,7 +228,7 @@
       <width>742</width>
       <label>#TV.Search.Genre</label>
       <font>font10</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
@@ -240,7 +240,7 @@
       <label>#TV.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

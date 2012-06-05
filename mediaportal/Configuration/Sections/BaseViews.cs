@@ -57,6 +57,8 @@ namespace MediaPortal.Configuration.Sections
     private int _dragDropTargetIndex;
     private string _dragDropInitiatingGrid = "";
 
+    private string _section = string.Empty;
+
     #endregion
 
     #region Properties
@@ -98,6 +100,14 @@ namespace MediaPortal.Configuration.Sections
       {
         _sortBy.Clear();
         _sortBy.AddRange(value);
+      }
+    }
+
+    public string Section
+    {
+      set
+      {
+        _section = value ;
       }
     }
 
@@ -425,6 +435,36 @@ namespace MediaPortal.Configuration.Sections
         {
           dataGridViews.Rows[newSelection].Selected = true;
         }
+      }
+    }
+
+    /// <summary>
+    /// Set defaults views (will copy view files from MPProgram\defaults directory)
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void btnSetDefaults_Click(object sender, EventArgs e)
+    {
+      string defaultViews = Path.Combine(ViewHandler.DefaultsDirectory, _section + "Views.xml");
+      string customViews = Config.GetFile(Config.Dir.Config, _section + "Views.xml");
+
+      if (File.Exists(defaultViews))
+      {
+        File.Copy(defaultViews, customViews, true);
+
+        views.Clear();
+
+        try
+        {
+          using (FileStream fileStream = new FileInfo(customViews).OpenRead())
+          {
+            SoapFormatter formatter = new SoapFormatter();
+            views = (ArrayList)formatter.Deserialize(fileStream);
+            fileStream.Close();
+          }
+        }
+        catch (Exception) { }
+        LoadViews();
       }
     }
 
@@ -780,7 +820,8 @@ namespace MediaPortal.Configuration.Sections
         catch (Exception) {}
       }
     }
-
+    
     #endregion
+    
   }
 }

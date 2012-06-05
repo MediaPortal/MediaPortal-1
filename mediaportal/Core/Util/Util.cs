@@ -166,7 +166,7 @@ namespace MediaPortal.Util
       ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
 
     public static string VideoExtensionsDefault =
-      ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+      ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
 
     public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
     public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";
@@ -662,13 +662,39 @@ namespace MediaPortal.Util
             break;
           }
         }
+        //
         bool createVideoThumbs;
-        using (Profile.Settings xmlreader = new Profile.MPSettings())
+        bool getItemThumb = true;
+          
+        using (Settings xmlreader = new MPSettings())
         {
           createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          //
+          //Get movies shares and check for video thumb create
+          //
+          const int maximumShares = 128;
+          for (int index = 0; index < maximumShares; index++)
+          {
+            // Get share dir
+            string sharePath = String.Format("sharepath{0}", index);
+            string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+            // Get item dir
+            string itemDir = string.Empty;
+            if (!item.IsRemote)
+            {
+              itemDir = (GetParentDirectory(item.Path));
+            }
+            // Check if share dir correspond to item dir
+            if (AreEqual(shareDir, itemDir))
+            {
+              string thumbsCreate = String.Format("videothumbscreate{0}", index);
+              getItemThumb = xmlreader.GetValueAsBool("movies", thumbsCreate, true);
+              break;
+            }
+          }
         }
-
-        if (createVideoThumbs && !foundVideoThumb)
+        
+        if (createVideoThumbs && !foundVideoThumb && getItemThumb)
         {
           if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
               !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
@@ -721,6 +747,100 @@ namespace MediaPortal.Util
       }
     }
 
+    /// <summary>
+    /// Function to check share path and selected item path.
+    /// Item path can have deeper subdir level but must begin
+    /// with share path to return TRUE, selected item extra 
+    /// subdir levels will be ignored
+    /// </summary>
+    /// <param name="dir1">share path</param>
+    /// <param name="dir2">selected item path</param>
+    /// <returns>true: paths are equal, false: paths do not match</returns>
+    public static bool AreEqual(string dir1, string dir2)
+    {
+      if (dir1 == string.Empty | dir2 == string.Empty)
+        return false;
+
+      try
+      {
+        DirectoryInfo parent1 = new DirectoryInfo(dir1);
+        DirectoryInfo parent2 = new DirectoryInfo(dir2);
+
+        // Build a list of parents
+        List<string> folder1Parents = new List<string>();
+        List<string> folder2Parents = new List<string>();
+
+        while (parent1 != null)
+        {
+          folder1Parents.Add(parent1.Name);
+          parent1 = parent1.Parent;
+        }
+
+        while (parent2 != null)
+        {
+          folder2Parents.Add(parent2.Name);
+          parent2 = parent2.Parent;
+        }
+        // Share path can't be deeper than item path
+        if (folder1Parents.Count > folder2Parents.Count)
+        {
+          return false;
+        }
+        // Remove extra subdirs from item path
+        if (folder2Parents.Count > folder1Parents.Count)
+        {
+          int diff = folder2Parents.Count - folder1Parents.Count;
+          for (int i = 0; i < diff; i++)
+          {
+            folder2Parents.RemoveAt(0);
+          }
+        }
+
+        bool equal = true;
+        // Final check
+        for (int i = 0; i < folder1Parents.Count; i++)
+        {
+          if (folder1Parents[i] != folder2Parents[i])
+          {
+            equal = false;
+            break;
+          }
+        }
+        return equal;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
+    public static bool IsFolderDedicatedMovieFolder(string directory)
+    {
+      using (MPSettings xmlreader = new MPSettings())
+      {
+        const int maximumShares = 128;
+
+        for (int index = 0; index < maximumShares; index++)
+        {
+          // Get share dir
+          string sharePath = String.Format("sharepath{0}", index);
+          string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+          // Get item dir
+          string itemDir = string.Empty;
+          itemDir = (GetParentDirectory(directory));
+          
+          // Check if share dir correspond to item dir
+          if (AreEqual(shareDir, itemDir))
+          {
+            string eachFolderIsMovie = String.Format("eachfolderismovie{0}", index);
+            bool folderMovie = xmlreader.GetValueAsBool("movies", eachFolderIsMovie, false);
+            return folderMovie;
+          }
+        }
+      }
+      return false;
+    }
+
     public static void GetVideoThumb(object i)
     {
       GUIListItem item = (GUIListItem)i;
@@ -731,8 +851,8 @@ namespace MediaPortal.Util
         return;
       }
 
-      // Do not try to create thumbnails for DVDs
-      if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO"))
+      // Do not try to create thumbnails for DVDs/BDs
+      if (path.Contains("VIDEO_TS\\VIDEO_TS.IFO") || path.Contains("BDMV\\index.bdmv"))
       {
         return;
       }
@@ -1210,6 +1330,114 @@ namespace MediaPortal.Util
       if (strFile.Length < 2) return false;
       string strDrive = strFile.Substring(0, 2);
       if (getDriveType(strDrive) == 2) return true;
+      return false;
+    }
+
+    // Check if filename is from mounted ISO image
+    public static bool IsISOImage(string fileName)
+    {
+      string extension = Path.GetExtension(fileName).ToLower();
+      if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
+        return false;
+
+      string vDrive = DaemonTools.GetVirtualDrive();
+      string bDrive = Path.GetPathRoot(fileName);
+
+      if (vDrive == Util.Utils.RemoveTrailingSlash(bDrive))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is BluRay. Use after mounting image!!!
+    /// Returns changed filename as index.bdmv with full path if ISO is BluRay.
+    /// </summary>
+    /// <param name="bdIsoFilename"></param>
+    /// <param name="fileName"></param>
+    /// <returns>true/false and full index.bdmv path as filename</returns>
+    public static bool IsBDImage(string bdIsoFilename, ref string fileName)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(bdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string bdFilename = String.Format(@"{0}:\BDMV\index.bdmv", driverLetter);
+
+        if (File.Exists(bdFilename))
+        {
+          fileName = bdFilename;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is BluRay. Use after mounting image!!!
+    /// </summary>
+    /// <param name="bdIsoFilename"></param>
+    /// <returns></returns>
+    public static bool IsBDImage(string bdIsoFilename)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(bdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string fileName = String.Format(@"{0}:\BDMV\index.bdmv", driverLetter);
+
+        if (File.Exists(fileName))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is DVD. Use after mounting image!!!
+    /// </summary>
+    /// <param name="dvdIsoFilename"></param>
+    /// <returns>true/false</returns>
+    public static bool IsDVDImage(string dvdIsoFilename)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(dvdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+
+        if (File.Exists(fileName))
+        {
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Check if mounted image is DVD and returns full path video_ts.ifo as filename. Use after mounting image!!!
+    /// </summary>
+    /// <param name="dvdIsoFilename"></param>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public static bool IsDVDImage(string dvdIsoFilename, ref string fileName)
+    {
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(dvdIsoFilename)))
+      {
+        string drive = DaemonTools.GetVirtualDrive();
+        string driverLetter = drive.Substring(0, 1);
+        string dvdFileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+
+        if (File.Exists(dvdFileName))
+        {
+          fileName = dvdFileName;
+          return true;
+        }
+      }
       return false;
     }
 
@@ -1743,9 +1971,33 @@ namespace MediaPortal.Util
           {
             if (File.Exists(strPath))
             {
-              if (strParams.IndexOf("%filename%") >= 0)
-                strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
+              // %root% argument handling (TMT can only play BD/DVD/VCD images using root directory)
+              // other video files will go to the player with full path
+              if (strParams.IndexOf("%root%") >= 0)
+              {
+                DirectoryInfo dirInfo = new DirectoryInfo(strFile);
 
+                if (dirInfo.Parent != null)
+                {
+                  string dirLvl = dirInfo.Parent.ToString();
+
+                  // BluRay, DVD, VCD, HDDVD
+                  if (dirLvl.Equals("bdmv", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("video_ts", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("vcd", StringComparison.OrdinalIgnoreCase) ||
+                      dirLvl.Equals("hddvd_ts", StringComparison.OrdinalIgnoreCase))
+                  {
+                    dirInfo = new DirectoryInfo(dirInfo.Parent.FullName);
+                    if (dirInfo.Parent != null)
+                      strFile = dirInfo.Parent.FullName;
+                  }
+                  strParams = strParams.Replace("%root%", "\"" + strFile + "\"");
+                }
+              }
+              // %filename% argument handling
+              else if (strParams.IndexOf("%filename%") >= 0)
+                strParams = strParams.Replace("%filename%", "\"" + strFile + "\"");
+              
               Process movieplayer = new Process();
               string strWorkingDir = Path.GetFullPath(strPath);
               string strFileName = Path.GetFileName(strPath);

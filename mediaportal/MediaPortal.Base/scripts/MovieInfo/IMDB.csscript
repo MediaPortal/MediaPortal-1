@@ -30,7 +30,7 @@ internal class Grabber : IIMDBScriptGrabber
     if (match.Success)
       year = int.Parse(match.Groups[2].Value);
 	
-	// If year is empty try workaround
+    // If year is empty try workaround
     if (year == 0)
     {
       rx = new Regex(@"\+(\d\d\d\d$)");
@@ -43,17 +43,17 @@ internal class Grabber : IIMDBScriptGrabber
     }
 
     // Clean everything which looks like year from search string (leave year in brackets->IMDB likes that)
-    strSearch = Regex.Replace(strSearch, @"\+\d\d\d\d$", "");
-
+    //strSearch = Regex.Replace(strSearch, @"\+\d\d\d\d$", "");	
+	
     // If string contains tt number use it
     if (Regex.Match(strSearch, @"tt\d{7}").Success)
     {
       strSearch = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
-    }	
+    }
 	
 	MediaPortal.GUI.Library.Log.Info("IMDB Script search for: {0}", strSearch);
 	
-	try
+    try
     {
       string absoluteUri;
       string strUrl = "http://www.imdb.com/find?s=tt;q=" + strSearch;
@@ -109,14 +109,14 @@ internal class Grabber : IIMDBScriptGrabber
         //Check if direct find is true (film page)
         // Title
         string regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
-        string strTitle = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value.Trim();
+        string strTitle = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value.Replace("IMDb -", string.Empty).Trim();
         // Year
         string strYear = Regex.Match(strBody, regexPattern).Groups["movieYear"].Value;
         if (strTitle != string.Empty && strYear != string.Empty)
         {
           HTMLUtil htmlUtil = new HTMLUtil();
           htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-          IMDB.IMDBUrl url = new IMDB.IMDBUrl(absoluteUri, strTitle + " (IMDB)", "IMDB");
+          IMDB.IMDBUrl url = new IMDB.IMDBUrl(absoluteUri, strTitle, "IMDB");
           elements.Add(url);
         }
         //Film is found-exit
@@ -175,57 +175,25 @@ internal class Grabber : IIMDBScriptGrabber
             {
               rx = new Regex(@"^(.*)?[\[\(](19\d{2}|20\d{2})[\]\)]");
               match = rx.Match(imdbOptions);
-              yearIMDB = int.Parse(match.Groups[2].Value);
-              
-              if (year != yearIMDB && (year - yAcc) != yearIMDB && (year + yAcc) != yearIMDB)
+              if (match.Success)
               {
-                bSkipThisEntry = true;
+                yearIMDB = int.Parse(match.Groups[2].Value);
+
+                if (year != yearIMDB && (year - yAcc) != yearIMDB && (year + yAcc) != yearIMDB)
+                {
+                  bSkipThisEntry = true;
+                }
               }
-			      }
+	    }
 			
-			      if (bSkipThisEntry == false)
+            if (bSkipThisEntry == false)
             {
               //Original Movie title (Extension "IMDB")
               IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
+                ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions, "IMDB");
               elements.Add(url);
               iCount++;
-
-              string imdbAka = imdbEntry.Groups["aka"].Value;
-              Match imdbAlias = Regex.Match(imdbAka, @">aka\s""(?<alias>.*?)</p>",
-                                            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-              while (imdbAlias.Success)
-              {
-                // Pirppuli 6.1.2009: Added HTML entity decoding and quote stripping
-                imdbTitle = HttpUtility.HtmlDecode(imdbAlias.Groups["alias"].Value).Replace("\"", "");
-                //Aka names fix (Unicode chars as ASC) 5.4.2010 Deda -->HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value)
-                string imdbakaOptions =
-                  Regex.Replace(HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value), @"<(.|\n)*?>", " ",
-                                RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
-                if (Regex.Match(imdbakaOptions, "\\(\\d{4}").Success)
-                {
-                  int bracket = imdbakaOptions.IndexOf(")") + 1;
-                  string option = imdbakaOptions.Substring(bracket);
-                  imdbakaOptions = imdbakaOptions.Substring(0, 5) + ")" + option;
-                }
-                imdbTitle = imdbTitle.Replace("<em>", string.Empty);
-                imdbTitle = imdbTitle.Replace("</em>", string.Empty);
-
-                //Do not show TV series or Shows and Video Games
-                bool bSkipThisAkaEntry =
-                  imdbakaOptions.Contains("(TV series)") |
-                  imdbakaOptions.Contains("(VG)");
-
-                if (bSkipThisAkaEntry == false)
-                {
-                  //AKA movie title (extension "IMDB_With_AKA")
-                  url = new IMDB.IMDBUrl
-                    ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
-                  elements.Add(url);
-                }
-                imdbAlias = imdbAlias.NextMatch();
-              }
-            }
+	    }
             imdbEntry = imdbEntry.NextMatch();
             if (iCount > iLimit) break;
           }
@@ -289,57 +257,25 @@ internal class Grabber : IIMDBScriptGrabber
             {
               rx = new Regex(@"^(.*)?[\[\(](19\d{2}|20\d{2})[\]\)]");
               match = rx.Match(imdbOptions);
-              yearIMDB = int.Parse(match.Groups[2].Value);
-              
-              if (year != yearIMDB && (year - yAcc) != yearIMDB && (year + yAcc) != yearIMDB)
-              {
-                bSkipThisEntry = true;
-              }
-			      }
+              if (match.Success)
+	      {
+	        yearIMDB = int.Parse(match.Groups[2].Value);
+
+	        if (year != yearIMDB && (year - yAcc) != yearIMDB && (year + yAcc) != yearIMDB)
+	        {
+	          bSkipThisEntry = true;
+	        }
+	      }
+	    }
 			
-			      if (bSkipThisEntry == false)
+	    if (bSkipThisEntry == false)
             {
               //Original movie name (extension (" IMDB"))
               IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
+                ("http://www.imdb.com" + imdbURL, "*" + imdbTitle + " " + imdbOptions, "IMDB");
               elements.Add(url);
               iCount++;
-
-              string imdbAka = imdbEntry.Groups["aka"].Value;
-              Match imdbAlias = Regex.Match(imdbAka, @">aka\s""(?<alias>.*?)</p>",
-                                            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-              while (imdbAlias.Success)
-              {
-                // Pirppuli 6.1.2009: Added HTML entity decoding and quote stripping
-                imdbTitle = HttpUtility.HtmlDecode(imdbAlias.Groups["alias"].Value).Replace("\"", "");
-                //Aka names fix (Unicode chars as ASC) 5.4.2010 Deda -->HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value)
-                string imdbakaOptions =
-                  Regex.Replace(HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value), @"<(.|\n)*?>", " ",
-                                RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
-                if (Regex.Match(imdbakaOptions, "\\(\\d{4}").Success)
-                {
-                  int bracket = imdbakaOptions.IndexOf(")") + 1;
-                  string option = imdbakaOptions.Substring(bracket);
-                  imdbakaOptions = imdbakaOptions.Substring(0, 5) + ")" + option;
-                }
-                imdbTitle = imdbTitle.Replace("<em>", string.Empty);
-                imdbTitle = imdbTitle.Replace("</em>", string.Empty);
-
-                //Do not show TV series or TVshows and Video Games
-                bool bSkipThisAkaEntry =
-                  imdbakaOptions.Contains("(TV series)") |
-                  imdbakaOptions.Contains("(VG)");
-
-                if (bSkipThisAkaEntry == false)
-                {
-                  //AKA movie name (extension "IMDB_With_AKA")
-                  url = new IMDB.IMDBUrl
-                    ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
-                  elements.Add(url);
-                  imdbAlias = imdbAlias.NextMatch();
-                }
-              }
-            }
+			      }
             imdbEntry = imdbEntry.NextMatch();
             if (iCount > iLimit)
             {
@@ -367,8 +303,11 @@ internal class Grabber : IIMDBScriptGrabber
 
       string strAbsUrl;
       string strBody = GetPage(url.URL, "utf-8", out strAbsUrl);
+      
       if (string.IsNullOrEmpty(strBody))
+      {
         return false;
+      }
 
       string regexBlockPattern = string.Empty;
       string regexPattern = string.Empty;
@@ -388,14 +327,14 @@ internal class Grabber : IIMDBScriptGrabber
 			// Get covers
       movieDetails.ThumbURL = SearchCover(movieDetails.IMDBNumber, strBody);
 			
-      // Title
-      bool tryEng = true; // set-> false <-for original IMDB
+      // TMDB Title
+      bool useTMDB = false; // set-> false <-for original IMDB
 
       regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
-      string titleIMDB = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value;
+      string titleIMDB = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value.Replace("IMDb -", string.Empty);
       movieDetails.Title = HttpUtility.HtmlDecode(titleIMDB).Trim();
 
-      if (tryEng)
+      if (useTMDB)
       {
         string tmdbUrl = "http://api.themoviedb.org/2.1/Movie.imdbLookup/-/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
                          movieDetails.IMDBNumber;
@@ -413,22 +352,22 @@ internal class Grabber : IIMDBScriptGrabber
         }
       }
 	  
-	    // Year
+      // Year
       int year = int.Parse(Regex.Match(strBody, regexPattern).Groups["movieYear"].Value);
       movieDetails.Year = year;
 
       // Director
       regexBlockPattern =
-        @"<h5>Director[s]?:</h5>(?<directors_block>.*?)</div>|<h4[^>]*>[^D]*Director[s]?:[^<]*</h4>[^<]*(?<directors_block>.*?)</div>";
-      regexPattern = @"<a\s+href=""/name/nm\d{7}/""[^>]*>(?<movieDirectors>[^<]+)</a>";
+          @"<h4[^>]*>[^D]*Director[s]?:[^<]*</h4>[^<]*(?<directors_block>.*?)</div>";
+      regexPattern = @"href=""/name/nm\d{7}/""[^>]*>(?<movieDirectors>[^<]+)</a>";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
       movieDetails.Director = HttpUtility.HtmlDecode(Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value);
 
       // Writers
       regexBlockPattern =
-        "<h5>Writer[s]?.*?<div\\sclass=\"info-content\">.*?(?<writers_block>.*?)</div>|<h4[^>]*>[^W]*Writer[s]?:[^<]*</h4>[^<]*(?<writers_block>.*?)</div>";
+          "<h4[^>]*>[^W]*Writer[s]?:[^<]*</h4>[^<]*(?<writers_block>.*?)</div>";
       regexPattern =
-        "<a\\s+href=\"/name/nm\\d{7}[^>]*>(?<writer>[^<]+)</a>(?<role>.*?)<|<a\\s+href=\"/name/nm\\d{7}/\"[^>]*>(?<writer>[^<]+)</a>[\\s]*<[^>]*>(?<role>.*?)<|<a\\s+href=\"/name/nm\\d{7}/\"[^>]*>(?<writer>[^<]+)</a>(?<role>)";
+          @"href=""/name/nm\d{7}/""[^>]*>(?<writer>[^<]+)</a>(?<role>)";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Groups["writers_block"].Value;
       MatchCollection mcWriters = Regex.Matches(block, regexPattern);
       if (mcWriters.Count != 0)
@@ -444,20 +383,23 @@ internal class Grabber : IIMDBScriptGrabber
           strWriterRole = HttpUtility.HtmlDecode(mwriter.Groups["role"].Value);
           if (strWriterRole != string.Empty)
           {
-            writers = writers + strWriter + " " + strWriterRole + " ";
+            writers = writers + strWriter + " " + strWriterRole + " / ";
           }
           else
           {
-            writers = writers + strWriter + " ";
+            writers = writers + strWriter + " / ";
           }
         }
-        movieDetails.WritingCredits = writers.Replace("...", "").Trim();
+        try
+          {
+            writers = HttpUtility.HtmlDecode(writers.Remove(writers.LastIndexOf(" / ")));
+            movieDetails.WritingCredits = writers.Replace("...", "").Trim();
+          }
+          catch (Exception){}
       }
 
       // Actors
       regexBlockPattern = @"<table class=""cast"">.*?</table>|<table class=""cast_list"">.*?</table>";
-      //regexPattern = 
-      //  ";\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\"><a href=\"/character/ch[0-9]*/\">(?<role>.*?)<|;\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\">(?<role>.*?)<|<td[^<]*<a\\s+href=\"/name/nm\\d{7}/\"[^>]*>(?<actor>[^<]*)</a>.*?<div[^<]*<a\\s+href=\"/character/ch\\d{7}/\"[^>]*>(?<role>[^<]*)</a>";
       string others = @"td class=""nm""><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=""char"">(?<role>.*?)<";
       regexPattern =
             @"href=""/name/nm\d{7}/"".*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
@@ -521,8 +463,8 @@ internal class Grabber : IIMDBScriptGrabber
 
       // Genres
       regexBlockPattern =
-        @"<h5>Genre:</h5>(?<genres_block>.+?)</div>|<h4[^>]*>Genre[s]?:[^<]*</h4>(?<genres_block>.+?)</div>";
-      regexPattern = @"<a href=""(?:/Sections)?/[Gg]enre[s]?/[^/]+/?"">(?<movieGenres>.+?)</a>";
+        @"<h4[^>]*>Genre[s]?:[^<]*</h4>(?<genres_block>.+?)</div>";
+      regexPattern = @"""\s*href=""/[Gg]enre[s]?/(?<movieGenres>.+?)""";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
       MatchCollection mcGenre = Regex.Matches(block, regexPattern);
       string genre = string.Empty;
@@ -530,8 +472,12 @@ internal class Grabber : IIMDBScriptGrabber
       {
         genre = genre + m.Groups["movieGenres"] + " / ";
       }
-      movieDetails.Genre = HttpUtility.HtmlDecode(genre.Remove(genre.LastIndexOf(" / ")));
-
+      try
+      {
+        movieDetails.Genre = HttpUtility.HtmlDecode(genre.Remove(genre.LastIndexOf(" / ")));
+      }
+      catch (Exception){}
+      				
       // MPARating
       //
       // Get rating from main movie page if exists
@@ -539,8 +485,11 @@ internal class Grabber : IIMDBScriptGrabber
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
       regexPattern = @"alt=""(?<rating>.*?)""";
       string mCertUSA = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["rating"].Value.Replace("_", "-");
+      
       if (mCertUSA.ToLower().Contains("tv-"))
+      {
         mCertUSA = string.Empty;
+      }
 
       //Get all other ratings
       string mpaRating = string.Empty;
@@ -557,6 +506,7 @@ internal class Grabber : IIMDBScriptGrabber
       //Try to find rating according user country
       char[] splitter = { '|' };
       string[] landRating = tempRating.Split(splitter);
+      
       if (landRating.Length > 0)
       {
         for (int i = 0; i < landRating.Length; ++i)
@@ -571,13 +521,13 @@ internal class Grabber : IIMDBScriptGrabber
           if (mpaRating.Contains(land) | mpaRating.Contains(landcode))
           {
             if (mpaRating.Contains("("))
-              mpaRating = mpaRating.Substring(0, mpaRating.LastIndexOf("("));
+              mpaRating = mpaRating.Substring(0, mpaRating.IndexOf("("));
             movieDetails.MPARating = mpaRating.Substring(mpaRating.IndexOf(":") + 1).Trim();
             break;
           }
         }
         // No user country rating, try to set default as USA (if found in cert. list and not in  main page)
-          if (mCertUSA == string.Empty && movieDetails.MPARating == string.Empty) 
+          if ((mCertUSA == string.Empty || mCertUSA.ToLower().Contains("unrated") || mCertUSA.ToLower().Contains("approved")) && movieDetails.MPARating == string.Empty) 
           {
             for (int i = 0; i < landRating.Length; ++i)
             {
@@ -597,9 +547,9 @@ internal class Grabber : IIMDBScriptGrabber
         // No user country but IMDB usa rating from main page is there
         if (movieDetails.MPARating == string.Empty)
           movieDetails.MPARating = mCertUSA;
-        // No user country or IMDB USA, show all
-        //if (movieDetails.MPARating == string.Empty)
-        //  movieDetails.MPARating = tempRating.Trim();
+        // No user country or IMDB USA, show NR
+        if (movieDetails.MPARating == string.Empty)
+          movieDetails.MPARating = "NR";
       }
 
       // Runtime
@@ -634,10 +584,9 @@ internal class Grabber : IIMDBScriptGrabber
       movieDetails.Votes = votes.Replace(",", "");
 
       // Plot short
-      regexPattern =
-        @"<h5>Plot:</h5>[^>]+>\s+?(?<moviePlotShort>.+?)(?: \|)?\s+?<a|Users:.*?<p>(?<moviePlotShort>.+?)</p>";
+      regexPattern = @"itemprop=""description"">(?<moviePlotShort>[^<]+)<";
       string shortPlot = Regex.Match(strBody, regexPattern, RegexOptions.Singleline).Groups["moviePlotShort"].Value;
-      movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot));
+      movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot)).Trim();
 
       // Plot long
       string strPlotUrl = "http://www.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
@@ -665,12 +614,16 @@ internal class Grabber : IIMDBScriptGrabber
         }
         if (movieDetails.Plot == string.Empty)
           movieDetails.Plot = movieDetails.PlotOutline;
+				if (movieDetails.PlotOutline == string.Empty)
+          movieDetails.PlotOutline  = movieDetails.Plot;
       }
       catch (Exception)
       {
       }
 
       //User review
+      //string reviewUrl = "http://www.imdb.com/title/" + movieDetails.IMDBNumber + "/usercomments?filter=best&spoiler=hide";
+      //strBody = GetPage(reviewUrl, "utf-8", out strAbsUrl);
       //regexPattern = "<a\\shref=\"/user/.*?<p>(?<review>.*?)</p>";
       //Match strReview = Regex.Match(HttpUtility.HtmlDecode(strBody), regexPattern, RegexOptions.Singleline);
       //if (strReview.Success)
@@ -731,7 +684,8 @@ internal class Grabber : IIMDBScriptGrabber
       // Make the Webrequest
       //Log.Info("IMDB: get page:{0}", strURL);
       WebRequest req = WebRequest.Create(strUrl);
-			req.Headers.Add("Accept-Language", "en-US");
+	    req.Headers.Add("Accept-Language", "en-US");
+	    req.Timeout = 10000;
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();

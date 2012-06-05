@@ -22,7 +22,7 @@
       <type>label</type>
       <id>1</id>
       <posX>39</posX>
-      <posY>296</posY>
+      <posY>298</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -48,8 +48,8 @@
       <posY>304</posY>
       <width>334</width>
       <offset>0</offset>
-      <height>16</height>
-      <innerheight>20</innerheight>
+      <height>14</height>
+      <innerheight>18</innerheight>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
       <righttexture>-</righttexture>
@@ -61,7 +61,7 @@
       <type>label</type>
       <id>1</id>
       <posX>455</posX>
-      <posY>296</posY>
+      <posY>298</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>font14</font>
@@ -91,8 +91,8 @@
       <align>left</align>
       <label>#Play.Current.Plot</label>
       <seperator>⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅</seperator>
-      <font>font11</font>
-      <textcolor>white</textcolor>
+      <font>font12</font>
+      <textcolor>ivory</textcolor>
       <visible>control.hasfocus(1237)</visible>
       <shadowAngle>0</shadowAngle>
       <shadowDistance>0</shadowDistance>
@@ -107,37 +107,37 @@
       <posY>259</posY>
       <align>left</align>
       <label>#Play.Current.Title</label>
-      <font>font14</font>
-      <textcolor>ivory</textcolor>
+      <font>font18</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>Movie thumb</description>
       <type>image</type>
       <id>102</id>
-      <posX>607</posX>
+      <posX>590</posX>
       <posY>348</posY>
-      <texture>#Play.Current.Thumb</texture>
-      <height>158</height>
-      <width>109</width>
+      <texture mask="videothumbmask.png">#Play.Current.Thumb</texture>
+      <height>144</height>
+      <width>100</width>
       <keepaspectratio>no</keepaspectratio>
       <visible>control.hasfocus(1237)</visible>
     </control>
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>606</posX>
-      <posY>346</posY>
-      <height>162</height>
-      <width>112</width>
-      <texture>DVD Cover.png</texture>
+      <posX>590</posX>
+      <posY>348</posY>
+      <height>144</height>
+      <width>100</width>
+      <texture>Videothumbframe.png</texture>
       <visible>control.hasthumb(102)+control.hasfocus(1237)</visible>
     </control>
     <control>
       <description>vertical divider</description>
       <type>image</type>
       <id>1</id>
-      <posX>528</posX>
+      <posX>534</posX>
       <posY>260</posY>
       <height>64</height>
       <width>0</width>

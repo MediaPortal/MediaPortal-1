@@ -24,6 +24,7 @@ using System.Text;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Video;
 using MediaPortal.GUI.View;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
@@ -267,6 +268,8 @@ namespace WindowPlugins
 
     protected virtual void OnQueueItem(int item) {}
 
+    protected virtual void OnSearchNew() { }
+
     protected virtual void SelectCurrentItem()
     {
       if (facadeLayout == null)
@@ -385,6 +388,15 @@ namespace WindowPlugins
             if (isVideoWindow)
             {
               nNewWindow = (int)Window.WINDOW_VIDEO_TITLE;
+              // Reset search variables
+              if (GUIVideoTitle.CurrentView != handler.CurrentLevelWhere)
+              {
+                GUIVideoTitle.IsActorSearch = false;
+                GUIVideoTitle.IsMovieSearch = false;
+                GUIVideoTitle.ActorSearchString = string.Empty;
+                GUIVideoTitle.MovieSearchString = string.Empty;
+                GUIVideoTitle.MovieSearchDbFieldString = string.Empty;
+              }
             }
             else
             {

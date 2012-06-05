@@ -110,7 +110,7 @@
         <width>299</width>
         <label>-</label>
         <font>font13</font>
-        <textcolor>FFB2D4F5</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Description1</description>
@@ -122,7 +122,7 @@
         <height>132</height>
         <label>-</label>
         <font>font13</font>
-        <textcolor>FFB2D4F5</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
     </control>
   </controls>
