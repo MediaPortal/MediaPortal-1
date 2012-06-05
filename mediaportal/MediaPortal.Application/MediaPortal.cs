@@ -72,7 +72,7 @@ public class MediaPortalApp : D3DApp, IRender
 {
   #region vars
 
-  private Version SkinVersion = new Version(1, 2, 0, 0);
+  private Version SkinVersion = new Version(1, 3, 0, 0);
 
 #if AUTOUPDATE
   private ApplicationUpdateManager _updater = null;
