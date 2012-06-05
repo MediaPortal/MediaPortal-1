@@ -195,6 +195,7 @@ namespace SetupTv
         AddSection(new TvTimeshifting());
         AddSection(new TvSchedules());
         AddSection(new StreamingServer());
+        AddSection(new UserPriorities());
 
         AddSection(new TestService("Manual Control"));
         AddSection(new TestChannels("Test Channels"));

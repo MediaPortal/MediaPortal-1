@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
@@ -121,6 +123,8 @@ namespace TvService
       if (!context.DoesExists(user))
         return;
       context.GetUser(ref user, _cardHandler.DataBaseCard.IdCard);
+
+      Log.Debug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, user.SubChannel, _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.IdCard);                  
       context.Remove(user);
       if (!context.ContainsUsersForSubchannel(user.SubChannel))
       {
@@ -231,10 +235,32 @@ namespace TvService
           return null;
         }
       }
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
+      var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return null;
       return context.Users;
+    }
+
+    public bool HasEqualOrHigherPriority(IUser user)
+    {
+      bool hasEqualOrHigherPriority = false;
+      var context = _cardHandler.Card.Context as ITvCardContext;
+      if (context != null)
+      {
+        hasEqualOrHigherPriority = context.HasUserEqualOrHigherPriority(user);
+      }
+      return hasEqualOrHigherPriority;
+    }
+
+    public bool HasHighestPriority(IUser user)
+    {
+      bool hasHighestPriority = false;
+      var context = _cardHandler.Card.Context as ITvCardContext;
+      if (context != null)
+      {
+        hasHighestPriority = context.HasUserHighestPriority(user);
+      }
+      return hasHighestPriority;         
     }
   }
 }

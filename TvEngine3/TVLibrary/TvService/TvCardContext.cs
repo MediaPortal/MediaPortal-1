@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Timers;
 using TvControl;
@@ -161,7 +162,7 @@ namespace TvService
     {
       string username = user.Name;
       Log.Info("user:{0} remove", username);
-      IUser existingUser = _users.Find(t => t.Name.Equals(username));
+      IUser existingUser = _users.FirstOrDefault(t => t.Name.Equals(username));
       if (existingUser != null)
       {
         OnStopUser(existingUser);
@@ -172,8 +173,7 @@ namespace TvService
       {
         if (_users.Count > 0)
         {
-          IUser existingScheduler = _users.Find(t => t.IsAdmin);
-
+          IUser existingScheduler = _users.FirstOrDefault(t => t.IsAdmin);
           if (existingScheduler != null)
           {
             _owner = existingScheduler;
@@ -193,8 +193,7 @@ namespace TvService
     public void HeartBeatUser(IUser user)
     {
       //Log.Debug("user:{0} heartbeat received", user.Name);
-
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      IUser existingUser = _users.FirstOrDefault(t => t.Name == user.Name);
       if (existingUser != null)
       {
         existingUser.HeartBeat = DateTime.Now;
@@ -208,7 +207,7 @@ namespace TvService
     public void GetUser(ref IUser user)
     {
       User userCopy = (User)user.Clone();
-      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
+      IUser existingUser = _users.FirstOrDefault(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
       if (existingUser != null)
       {
         TvStoppedReason reason = user.TvStoppedReason;
@@ -225,7 +224,7 @@ namespace TvService
     public void GetUser(ref IUser user, int cardId)
     {
       User userCopy = (User)user.Clone();
-      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == cardId);
+      IUser existingUser = _users.FirstOrDefault(t => t.Name == userCopy.Name && t.CardId == cardId);
       if (existingUser != null)
       {
         TvStoppedReason reason = user.TvStoppedReason;
@@ -242,7 +241,7 @@ namespace TvService
     public void GetUser(ref IUser user, out bool exists)
     {
       User userCopy = (User)user.Clone();
-      IUser existingUser = _users.Find(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
+      IUser existingUser = _users.FirstOrDefault(t => t.Name == userCopy.Name && t.CardId == userCopy.CardId);
       if (existingUser != null)
       {
         TvStoppedReason reason = user.TvStoppedReason;
@@ -272,7 +271,7 @@ namespace TvService
     public void GetUser(int subChannelId, out IUser user)
     {
       user = null;
-      IUser existingUser = _users.Find(t => t.SubChannel == subChannelId);
+      IUser existingUser = _users.FirstOrDefault(t => t.SubChannel == subChannelId);
       if (existingUser != null)
       {
         user = (User)existingUser.Clone();
@@ -286,7 +285,7 @@ namespace TvService
     /// <param name = "reason">TvStoppedReason.</param>
     public void SetTimeshiftStoppedReason(IUser user, TvStoppedReason reason)
     {
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      IUser existingUser = _users.FirstOrDefault(t => t.Name == user.Name);
       if (existingUser != null)
       {
         existingUser.TvStoppedReason = reason;
@@ -299,7 +298,7 @@ namespace TvService
     /// <param name = "user">user.</param>
     public TvStoppedReason GetTimeshiftStoppedReason(IUser user)
     {
-      IUser existingUser = _usersOld.Find(t => t.Name == user.Name);
+      IUser existingUser = _usersOld.FirstOrDefault(t => t.Name == user.Name);
       if (existingUser != null)
       {
         User userFound = (User)existingUser.Clone();
@@ -310,7 +309,7 @@ namespace TvService
 
     public void UserNextAvailableSubchannel(IUser user)
     {
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      IUser existingUser = _users.FirstOrDefault(t => t.Name == user.Name);
       if (existingUser != null)
       {
         int nextSubchannel = -1;
@@ -327,6 +326,40 @@ namespace TvService
           existingUser.SubChannel = nextSubchannel + 1;
         }
       }
+    }
+
+    public bool HasUserEqualOrHigherPriority(IUser user)
+    {      
+      bool hasEqualOrHigherPriority;
+      ICollection<IUser> otherUsers = _users.Where(t => !t.Name.Equals(user.Name)).ToList();
+      if (otherUsers.Count == 0)
+      {
+        hasEqualOrHigherPriority = true;
+      }
+      else
+      {
+        int? maxPriority = otherUsers.Max(t => t.Priority);
+        hasEqualOrHigherPriority = (user.Priority >= maxPriority);
+      }
+
+      return hasEqualOrHigherPriority;
+    }
+
+    public bool HasUserHighestPriority(IUser user)
+    {
+      bool hasHighestPriority;
+      ICollection<IUser> otherUsers = _users.Where(t => !t.Name.Equals(user.Name)).ToList();
+      if (otherUsers.Count == 0)
+      {
+        hasHighestPriority = true;        
+      }
+      else
+      {
+        int? maxPriority = otherUsers.Max(t => t.Priority);
+        hasHighestPriority = (user.Priority > maxPriority);
+      }
+
+      return hasHighestPriority;
     }
 
     /// <summary>
@@ -387,7 +420,7 @@ namespace TvService
 
     public void OnZap(IUser user)
     {
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      IUser existingUser = _users.FirstOrDefault(t => t.Name == user.Name);
       if (existingUser != null)
       {
         Channel channel = Channel.Retrieve(user.IdChannel);

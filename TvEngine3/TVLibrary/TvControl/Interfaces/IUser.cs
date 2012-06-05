@@ -24,8 +24,17 @@ using System.Collections.Generic;
 
 namespace TvControl
 {
+  /// <summary>
+  /// User
+  /// </summary>
   public interface IUser
   {
+    /// <summary>
+    /// Gets an integer defining the user's card lock priority (higher number=higher priority)
+    /// </summary>    
+    /// <returns>user priority</returns>
+    int? Priority { get; set; }
+
     /// <summary>
     /// Gets a list of all channel states    
     /// </summary>    
