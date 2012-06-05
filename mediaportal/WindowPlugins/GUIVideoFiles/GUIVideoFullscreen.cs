@@ -765,6 +765,36 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
+        case Action.ActionType.ACTION_NEXT_VIDEO:
+          {
+            if (g_Player.VideoStreams > 1)
+            {
+              _showStatus = true;
+              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
+              g_Player.SwitchToNextVideo();
+
+              String language = g_Player.VideoLanguage(g_Player.CurrentVideoStream);
+              String languagetype = g_Player.VideoType(g_Player.CurrentVideoStream);
+              if (String.Equals(language, "Video") || String.Equals(language, "") || String.Equals(language, languagetype))
+              {
+                msg.Label = string.Format("{0} ({1}/{2})", languagetype,
+                                          g_Player.CurrentVideoStream + 1, g_Player.VideoStreams);
+              }
+              else
+              {
+                msg.Label = string.Format("{0} {1} ({2}/{3})", language,
+                                          languagetype,
+                                          g_Player.CurrentVideoStream + 1, g_Player.VideoStreams);
+              }
+
+              OnMessage(msg);
+              Log.Info("GUIVideoFullscreen: switched Video to {0}", msg.Label);
+            }
+          }
+          break;
+
         case Action.ActionType.ACTION_NEXT_SUBTITLE:
           {
             int subStreamsCount = g_Player.SubtitleStreams;
@@ -777,15 +807,15 @@ namespace MediaPortal.GUI.Video
               g_Player.SwitchToNextSubtitle();
               if (g_Player.EnableSubtitle)
               {
-                int streamId = g_Player.CurrentSubtitleStream;
-                string strName = g_Player.SubtitleName(streamId);
-                string langName = g_Player.SubtitleLanguage(streamId);
                 if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
                 {
                   msg.Label = "CC1";
                 }
                 else
                 {
+                  int streamId = g_Player.CurrentSubtitleStream;
+                  string strName = g_Player.SubtitleName(streamId);
+                  string langName = g_Player.SubtitleLanguage(streamId);
                   if (!string.IsNullOrEmpty(strName))
                     msg.Label = string.Format("{0} [{1}] ({2}/{3})", langName, strName.TrimStart(),
                                               streamId + 1, subStreamsCount);
@@ -1199,6 +1229,12 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(200090);
       }
 
+      // Video stream selection, show only when more than one streams exists
+      if (g_Player.VideoStreams > 1)
+      {
+        dlg.AddLocalizedString(200095);
+      }
+
       eAudioDualMonoMode dualMonoMode = g_Player.GetAudioDualMonoMode();
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
       {
@@ -1288,6 +1324,10 @@ namespace MediaPortal.GUI.Video
 
         case 200090:
           ShowEditionStreamsMenu();
+          break;
+
+        case 200095:
+          ShowVideoStreamsMenu();
           break;
 
         case 200091:
@@ -1421,6 +1461,52 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    // Add video stream selection to be able to switch video streams
+    private void ShowVideoStreamsMenu()
+    {
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(200095); // Video Streams
+
+      // get the number of videostreams in the current movie
+      int count = g_Player.VideoStreams;
+      // cycle through each videostream and add it to our list control
+      for (int i = 0; i < count; i++)
+      {
+        string videoType = g_Player.VideoType(i);
+        string videoLang = g_Player.VideoLanguage(i);
+        if (videoType == Strings.Unknown || String.Equals(videoType, "") ||
+            videoType.Equals(videoLang))
+        {
+          dlg.Add(videoLang);
+        }
+        else
+        {
+          dlg.Add(String.Format("{0} {1}", videoLang, videoType));
+        }
+      }
+
+      // select/focus the videostream, which is active atm
+      dlg.SelectedLabel = g_Player.CurrentVideoStream;
+
+      // show dialog and wait for result
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      if (dlg.SelectedLabel != g_Player.CurrentVideoStream)
+      {
+        g_Player.CurrentVideoStream = dlg.SelectedLabel;
+      }
+    }
+
     // Add audio stream selection to be able to switch audio streams in .ts recordings
     private void ShowAudioStreamsMenu()
     {
@@ -1519,7 +1605,7 @@ namespace MediaPortal.GUI.Video
           strLang = strLang.Substring(0, ipos);
         }
         string strName = g_Player.SubtitleName(i);
-        if (!string.IsNullOrEmpty(strName))
+        if (!string.IsNullOrEmpty(strName) && !strLang.Equals(strName))
         {
           dlg.Add(String.Format("{0} [{1}]", strLang.TrimEnd(), strName.TrimStart()));
         }

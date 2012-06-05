@@ -1989,5 +1989,6 @@
     <String id="200092">Forced Only</String>
     <String id="200093">Disc mount time out reached!</String>
     <String id="200094">Keep trying for further 60 seconds?</String>
+    <String id="200095">Video Stream</String>
   </Section>
 </Language>

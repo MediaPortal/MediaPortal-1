@@ -1919,9 +1919,11 @@
     <String id="200070">Veuillez vérifier la configuration du pare-feu</String>
     <String id="200071">Supprimer ce dossier et ses sous-dossiers ?</String>
     <String id="200072">Episodes suivants</String>
+    <String id="200090">Edition</String>
     <String id="200091">Chapitre</String>
     <String id="200092">Forcés Seulement</String>
     <String id="200093">Montage Disque/ISO (Temps d'attente atteint)!</String>
     <String id="200094">Essayer pendant encore 60 secondes?</String>
+    <String id="200095">Video Stream</String>
   </Section>
 </Language>

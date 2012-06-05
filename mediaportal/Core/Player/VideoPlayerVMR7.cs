@@ -1930,8 +1930,8 @@ namespace MediaPortal.Player
                     case StreamType.Unknown:
                     case StreamType.Subtitle:
                     case StreamType.Subtitle_file:
-                    case StreamType.Video:
                       break;
+                    case StreamType.Video:
                     case StreamType.Audio:
                     case StreamType.Edition:
                     case StreamType.PostProcessing:
@@ -2048,6 +2048,232 @@ namespace MediaPortal.Player
         EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, AMStreamSelectEnableFlags.Enable,
                      FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
         Log.Info("VideoPlayer:Edition Duration Change:{0}", m_dDuration);
+        return;
+      }
+    }
+
+    #endregion
+
+    #region video selection
+
+    /// <summary>
+    /// Property to get the language for an edition stream
+    /// </summary>
+    public override string VideoLanguage(int iStream)
+    {
+      #region return splitter IAMStreamSelect LCID
+
+      int LCIDCheck = FStreams.GetStreamInfos(StreamType.Video, iStream).LCID;
+
+      if (LCIDCheck != 0)
+      {
+        int size = Util.Win32API.GetLocaleInfo(LCIDCheck, 2, null, 0);
+        if (size > 0)
+        {
+          string languageName = new string(' ', size);
+          Util.Win32API.GetLocaleInfo(LCIDCheck, 2, languageName, size);
+
+          if (!string.IsNullOrEmpty(languageName))
+          {
+            if (languageName.Contains("\0"))
+              languageName = languageName.Substring(0, languageName.IndexOf("\0"));
+
+            if (languageName.Contains("("))
+              languageName = languageName.Substring(0, languageName.IndexOf("("));
+
+            return Util.Utils.TranslateLanguageString(languageName.Trim());
+          }
+        }
+      }
+
+      #endregion
+
+      string streamName = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^V: ", "");
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regex = new Regex(@"\[.+\]");
+      Regex regexMPS = new Regex(@"Video\s*-\s*(?<1>.+?),\s*.+?,\s*.+?,\s*.+?,\s*.+", RegexOptions.IgnoreCase);
+      Regex regexMPVIDEONoType = new Regex(@"^(.+?)(?<!]*,\s.+?)\s\((Video\s.+?)$");
+      Regex regexMPVIDEO = new Regex(@"^(.+?)]*,\s(.+?)\s\((Video\s.+?)$");
+      //Regex regexMPC = new Regex("([^, ]+)");
+      Match result = regex.Match(streamName);
+      Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPVIDEONoType = regexMPVIDEONoType.Match(streamName);
+      Match resultMPVIDEO = regexMPVIDEO.Match(streamName);
+      //Match resultMPC = regexMPC.Match(streamName);
+
+      if (result.Success)
+      {
+        //Cut off and translate the language part
+        string language = Util.Utils.TranslateLanguageString(streamName.Substring(result.Index + 1, result.Length - 2));
+        //Get the trackname part by removing the language part from the string.
+        streamName = regex.Replace(streamName, "").Trim();
+        //Put things back together
+        //streamName = language + (streamName == string.Empty ? "" : " [" + streamName + "]");
+        if (language.Length > 0) // && streamName.Length <= 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPS.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPVIDEO.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPVIDEO.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPVIDEONoType.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPVIDEONoType.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      // Remove extraneous info from splitter in parenthesis at end of line:
+      streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
+      return streamName;
+    }
+
+    public override string VideoType(int iStream)
+    {
+      string streamName = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+      string streamNameFalse = FStreams.GetStreamInfos(StreamType.Video, iStream).Name;
+
+      // No stream info from splitter
+      if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
+        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^V: ", "");
+
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regex = new Regex(@"\[.+\]");
+      //Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      Regex regexMPS = new Regex(@"Video\s*-\s*.+?,\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexMPSNoLang = new Regex(@"Video\s*-\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexLAVF =
+        new Regex(
+          @"(?:V:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?(?:\s*\[(?<Default>[^\]]*?)\])?$");
+      Regex regexMPC = new Regex(@"\S+,\s+(?<1>.+)");
+      Match result = regex.Match(streamName);
+      Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPSNoLang = regexMPSNoLang.Match(streamName);
+      Match resultMPC = regexMPC.Match(streamName);
+      Match resultLAVF = regexLAVF.Match(streamNameFalse);
+
+      if (resultLAVF.Success)
+      // check for LAVF response format, e.g.: 
+      // S: Title [Lang] (Info) when only Language in stream -> answer is S: Lang -> start to detect if [lang] is present if not replace Lang by "" 
+      {
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string lang = resultLAVF.Groups[2].Value;
+        string info = resultLAVF.Groups[3].Value;
+        if (!string.IsNullOrEmpty(info))
+        {
+          if (!string.IsNullOrEmpty(lang))
+          {
+            streamName = "" + lang_or_title + " [" + info + "]";
+          }
+          else
+          {
+            streamName = info;
+          }
+        }
+        else if (string.IsNullOrEmpty(info))
+        {
+          streamName = regex.Replace(streamName, "").Trim();
+        }
+      }
+      else if (result.Success)
+      {
+        //Get the trackname part by removing the language part from the string.
+        streamName = regex.Replace(streamName, "").Trim();
+      }
+      else if (resultMPS.Success)
+      // check for mpegsplitter response format, e.g.:      
+      {
+        string videoType = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (videoType.Length > 0)
+        {
+          streamName = videoType;
+        }
+      }
+      else if (resultMPSNoLang.Success)
+      // check for mpegsplitter response format:
+      {
+        string videoType = Util.Utils.TranslateLanguageString(resultMPSNoLang.Groups[1].Value);
+        if (videoType.Length > 0)
+        {
+          streamName = videoType;
+        }
+      }
+      else if (resultMPC.Success)
+      // check for mpc-hc Video response format, e.g.: 
+      {
+        string videoType = Util.Utils.TranslateLanguageString(resultMPC.Groups[1].Value);
+        if (videoType.Length > 0)
+        {
+          streamName = videoType;
+        }
+      }
+      // Remove extraneous info from splitter in parenthesis at end of line:      
+      streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
+      return streamName;
+    }
+
+    public override int VideoStreams
+    {
+      get { return FStreams.GetStreamCount(StreamType.Video); }
+    }
+
+    /// <summary>
+    /// Property to get/set the current edition stream
+    /// </summary>
+    public override int CurrentVideoStream
+    {
+      get
+      {
+        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Video); i++)
+        {
+          if (FStreams.GetStreamInfos(StreamType.Video, i).Current)
+          {
+            return i;
+          }
+        }
+        return 0;
+      }
+      set
+      {
+        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Video); i++)
+        {
+          if (FStreams.GetStreamInfos(StreamType.Video, i).Current)
+          {
+            FStreams.SetCurrentValue(StreamType.Video, i, false);
+          }
+        }
+        FStreams.SetCurrentValue(StreamType.Video, value, true);
+        EnableStream(FStreams.GetStreamInfos(StreamType.Video, value).Id, 0,
+                     FStreams.GetStreamInfos(StreamType.Video, value).Filter);
+        EnableStream(FStreams.GetStreamInfos(StreamType.Video, value).Id, AMStreamSelectEnableFlags.Enable,
+                     FStreams.GetStreamInfos(StreamType.Video, value).Filter);
+        Log.Info("VideoPlayer:Video Duration Change:{0}", m_dDuration);
         return;
       }
     }
