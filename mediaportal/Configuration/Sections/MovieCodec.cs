@@ -146,23 +146,23 @@ namespace MediaPortal.Configuration.Sections
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
           if (availableAudioFilters.Count > 0)
           {
-            bool Mpeg2DecFilterFound = false;
+            bool LAVAudioDecoderFound = false;
             bool DScalerFilterFound = false;
             audioCodec = (string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
-              if (filter.Equals("MPC - MPA Decoder Filter"))
+              if (filter.Equals("LAV Audio Decoder"))
               {
-                Mpeg2DecFilterFound = true;
+                LAVAudioDecoderFound = true;
               }
               if (filter.Equals("DScaler Audio Decoder"))
               {
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound)
+            if (LAVAudioDecoderFound)
             {
-              audioCodec = "MPC - MPA Decoder Filter";
+              audioCodec = "LAV Audio Decoder";
             }
             else if (DScalerFilterFound)
             {
@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
         if (videoCodec == string.Empty)
         {
           ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-          bool Mpeg2DecFilterFound = false;
+          bool LAVVideoDecoderFound = false;
           bool DScalerFilterFound = false;
           Log.Info(" - availableVideoFilters.Count = " + availableVideoFilters.Count.ToString());
           if (availableVideoFilters.Count > 0)
@@ -183,19 +183,19 @@ namespace MediaPortal.Configuration.Sections
             foreach (string filter in availableVideoFilters)
             {
               Log.Info(" - filter = (" + filter + ")");
-              if (filter.Equals("MPC - MPEG-2 Video Decoder (Gabest)"))
+              if (filter.Equals("LAV Video Decoder"))
               {
-                Log.Info(" - MPC - MPEG-2 Video Decoder (Gabest)");
-                Mpeg2DecFilterFound = true;
+                Log.Info(" - LAV Video Decoder");
+                LAVVideoDecoderFound = true;
               }
               if (filter.Equals("DScaler Mpeg2 Video Decoder"))
               {
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound)
+            if (LAVVideoDecoderFound)
             {
-              videoCodec = "MPC - MPEG-2 Video Decoder (Gabest)";
+              videoCodec = "LAV Video Decoder";
             }
             else if (DScalerFilterFound)
             {
