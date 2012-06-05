@@ -809,7 +809,7 @@ namespace MediaPortal.GUI.Video
               {
                 if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
                 {
-                  msg.Label = "CC1";
+                  msg.Label = "CC1 Analog";
                 }
                 else
                 {
@@ -1589,7 +1589,7 @@ namespace MediaPortal.GUI.Video
 
       if (g_Player.SupportsCC)
       {
-        dlg.Add("CC1");
+        dlg.Add("CC1 Analog");
       }
 
       // get the number of subtitles in the current movie
