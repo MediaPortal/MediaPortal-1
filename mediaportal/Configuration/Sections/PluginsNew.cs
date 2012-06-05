@@ -26,6 +26,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -288,6 +289,12 @@ namespace MediaPortal.Configuration.Sections
           {
             Type[] exportedTypes = pluginAssembly.GetExportedTypes();
             List<object> NonSetupWindows = new List<object>();
+
+            if (!exportedTypes.Any(t => t.IsClass && !t.IsAbstract && 
+                (typeof(ISetupForm).IsAssignableFrom(t) || typeof(GUIWindow).IsAssignableFrom(t))))
+            {
+              continue; // there are no plugins in the assembly, skip it
+            }
 
             foreach (Type type in exportedTypes)
             {
