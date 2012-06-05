@@ -479,14 +479,7 @@ namespace MediaPortal.GUI.Library
           GUIControl btn = _listButtons[buttonNr];
           if (btn != null)
           {
-            if (gotFocus || !Focus)
-            {
-              btn.ColourDiffuse = 0xffffffff;
-            }
-            else
-            {
-              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-            }
+            btn.ColourDiffuse = Color.FromArgb((int)_diffuseColor).ToArgb();
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);
