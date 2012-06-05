@@ -128,6 +128,13 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScaleHorizontal(ref _checkMarkWidth);
+      GUIGraphicsContext.ScaleVertical(ref _checkMarkHeight);
+    }
+
     /// <summary>
     /// Renders the GUICheckMarkControl.
     /// </summary>
