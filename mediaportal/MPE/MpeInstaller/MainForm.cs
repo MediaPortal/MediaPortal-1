@@ -272,8 +272,22 @@ namespace MpeInstaller
       packageClass = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass.GeneralInfo.Id);
       if (packageClass != null)
       {
-        UnInstall dlg = new UnInstall();
-        dlg.Execute(packageClass, true);
+        if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
+        {
+            if (
+              MessageBox.Show(
+                "Another version of this extension is installed\nand needs to be uninstalled first.\nDo you want to continue?\n" +
+                "Old extension version: " + packageClass.GeneralInfo.Version + "\n" +
+                "New extension version: " + pak.GeneralInfo.Version,
+                "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+              return;
+          UnInstall dlg = new UnInstall();
+          dlg.Execute(packageClass, false);
+        }
+        else
+        {
+          MpeCore.MpeInstaller.InstalledExtensions.Remove(packageClass);
+        }
         pak.CopyGroupCheck(packageClass);
       }
       pak.StartInstallWizard();
@@ -438,8 +452,16 @@ namespace MpeInstaller
             pak.GeneralInfo.Version + " \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo,
             MessageBoxIcon.Exclamation) != DialogResult.Yes)
           return false;
-      UnInstall dlg = new UnInstall();
-      dlg.Execute(packageClass, true);
+      // only uninstall previous version, if the new package has the setting to force uninstall of previous version on update
+      if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
+      {
+        UnInstall dlg = new UnInstall();
+        dlg.Execute(packageClass, true);
+      }
+      else
+      {
+        MpeCore.MpeInstaller.InstalledExtensions.Remove(packageClass);
+      }
       pak.CopyGroupCheck(packageClass);
       pak.Silent = true;
       pak.StartInstallWizard();
