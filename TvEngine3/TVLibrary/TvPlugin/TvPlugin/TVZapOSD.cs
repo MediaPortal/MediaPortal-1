@@ -282,7 +282,7 @@ namespace TvPlugin
 
     public void UpdateChannelInfo()
     {
-      if (LastError != null)
+      if (LastError == null)
       {
         channelNr = GetChannelNumber();
       }
