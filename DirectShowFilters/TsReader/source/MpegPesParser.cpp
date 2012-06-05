@@ -61,8 +61,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 			//hdrParser.DumpSequenceHeader(seq);
 			basicVideoInfo.width=seq.width;
 			basicVideoInfo.height=seq.height;
-			//basicVideoInfo.fps=1000 / (seq.ifps /10000);
-			basicVideoInfo.fps=10000000 / seq.ifps;
+			basicVideoInfo.fps=10000000.0 / (double)seq.ifps;
 			basicVideoInfo.arx=seq.arx;
 			basicVideoInfo.ary=seq.ary;
 			if (seq.progressive==0)
@@ -81,8 +80,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2,bool reset)
 			//hdrParser.DumpAvcHeader(avc);
 			basicVideoInfo.width=avc.width;
 			basicVideoInfo.height=avc.height;
-			//basicVideoInfo.fps=1000 / (avc.AvgTimePerFrame /10000);
-			basicVideoInfo.fps=10000000 / avc.AvgTimePerFrame;
+			basicVideoInfo.fps=10000000.0 / (double)avc.AvgTimePerFrame;
 			basicVideoInfo.arx=avc.arx;
 			basicVideoInfo.ary=avc.ary;
 			if (!avc.progressive)
