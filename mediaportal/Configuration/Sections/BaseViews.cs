@@ -136,6 +136,7 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Set up the Datagrid column and the DataTable to which the grid is bound
     /// </summary>
+
     private void SetupGrid()
     {
       // Declare and initialize local variables used
