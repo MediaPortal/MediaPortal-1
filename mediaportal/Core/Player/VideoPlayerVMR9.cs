@@ -1337,6 +1337,11 @@ namespace MediaPortal.Player
           mediaCtrl = null;
         }
 
+        if (Vmr9 != null)
+        {
+          Vmr9.Enable(false);
+        }
+
         if (mediaEvt != null)
         {
           hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
@@ -1431,15 +1436,6 @@ namespace MediaPortal.Player
         }
 
         #endregion
-
-        if (Vmr9 != null)
-        {
-          Vmr9.Enable(false);
-          Vmr9.SafeDispose();
-          Vmr9 = null;
-          Log.Info("VideoPlayer9: Cleanup VMR9");
-        }
-
         if (graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(graphBuilder);
@@ -1451,6 +1447,12 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(graphBuilder);
           graphBuilder = null;
           Log.Info("VideoPlayer9: Cleanup Graphbuilder");
+        }
+
+        if (Vmr9 != null)
+        {
+          Vmr9.SafeDispose();
+          Vmr9 = null;
         }
 
         GC.Collect();

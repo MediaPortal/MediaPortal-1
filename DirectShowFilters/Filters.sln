@@ -8,8 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TsReader", "TsReader\TsRead
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StreamingServer", "StreamingServer\StreamingServer.vcxproj", "{EACCF7EE-35F6-4A62-8C4A-64E1B0FF5A56}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MP_DVB_Subtitles", "DVBSubtitle2\DVBSubtitle2.vcxproj", "{68A0BF54-311B-4EB9-A859-398357D6B591}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPFileWriter", "MPWriter\MPWriter.vcxproj", "{4D369052-C13D-4013-91A7-688C86BC9652}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiveMedia555", "LiveMedia555\LiveMedia555.vcxproj", "{3C398BD4-5714-4802-AB86-D43ADD15B3C0}"
@@ -35,6 +33,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system", "..\mediaportal\Core.cpp\mpc-hc_subs\src\thirdparty\VirtualDub\system\system.vcxproj", "{C2082189-3ECB-4079-91FA-89D3C8A305C0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioRenderer", "MPAudioRenderer\AudioRenderer.vcxproj", "{D0620EF4-1313-40D5-9069-A82F6FE26994}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BDReader", "BDReader\BDReader.vcxproj", "{C0BE4419-A495-4933-9425-A79AF4FB30F6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MP_DVB_Subtitle_3", "DVBSubtitle3\DVBSubtitle3.vcxproj", "{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -148,6 +150,14 @@ Global
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release|Win32.ActiveCfg = Release|Win32
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release|Win32.Build.0 = Release|Win32
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release|x64.ActiveCfg = Release|Win32
+		{C0BE4419-A495-4933-9425-A79AF4FB30F6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C0BE4419-A495-4933-9425-A79AF4FB30F6}.Debug|x64.ActiveCfg = Debug|Win32
+		{C0BE4419-A495-4933-9425-A79AF4FB30F6}.Release|Win32.ActiveCfg = Release|Win32
+		{C0BE4419-A495-4933-9425-A79AF4FB30F6}.Release|x64.ActiveCfg = Release|Win32
+		{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}.Debug|x64.ActiveCfg = Debug|Win32
+		{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}.Release|Win32.ActiveCfg = Release|Win32
+		{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

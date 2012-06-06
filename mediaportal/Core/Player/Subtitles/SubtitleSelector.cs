@@ -143,7 +143,15 @@ namespace MediaPortal.Player.Subtitles
       using (Settings reader = new MPSettings())
       {
         preferedLanguages = new List<string>();
-        string languages = reader.GetValueAsString("tvservice", "preferredsublanguages", "");
+        string languages;
+        if (g_Player.IsDVD)
+        {
+          languages = BDPlayer.Settings.subtitleLang;          
+        }
+        else
+        {
+          languages = reader.GetValueAsString("tvservice", "preferredsublanguages", "");
+        }
         Log.Debug("SubtitleSelector: sublangs entry content: " + languages);
         StringTokenizer st = new StringTokenizer(languages, ";");
         while (st.HasMore)
@@ -453,7 +461,7 @@ namespace MediaPortal.Player.Subtitles
       }
       else if (options[option].isAuto)
       {
-        return "Auto:" + options[option].language;
+        return "Auto: " + options[option].language;
       }
       else if (options[option].type == SubtitleType.Teletext && options[option].entry.language.Trim().Length == 0)
       {
@@ -474,7 +482,7 @@ namespace MediaPortal.Player.Subtitles
       }
       else if (currentOption.isAuto)
       {
-        return "Auto:" + currentOption.language;
+        return "Auto: " + currentOption.language;
       }
       else if (currentOption.type == SubtitleType.Teletext && currentOption.entry.language.Trim().Length == 0)
       {

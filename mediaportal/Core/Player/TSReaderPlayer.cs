@@ -840,6 +840,17 @@ namespace MediaPortal.Player
             _mediaCtrl = null;
           }
 
+          if (_vmr9 != null)
+          {
+            _vmr9.Enable(false);
+          }
+
+          if (_mediaEvt != null)
+          {
+            hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+            _mediaEvt = null;
+          }
+
           _videoWin = _graphBuilder as IVideoWindow;
           if (_videoWin != null)
           {
@@ -847,18 +858,6 @@ namespace MediaPortal.Player
             Log.Info("TSReaderPlayer: Cleanup Get hr value {0}", hr);
             hr = _videoWin.put_Owner(IntPtr.Zero);
             _videoWin = null;
-          }
-
-          /*//Tourette BD
-          if (_vmr9 != null)
-          {
-            _vmr9.Enable(false);
-          }*/
-
-          if (_mediaEvt != null)
-          {
-            hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-            _mediaEvt = null;
           }
 
           _mediaSeeking = null;
@@ -965,14 +964,6 @@ namespace MediaPortal.Player
             filterCodec.line21CoreCCParser = null;
             Log.Debug("TSReaderPlayer: Cleanup line21CoreCCParser");
           }
-
-          if (_vmr9 != null)
-          {
-            _vmr9.Enable(false);
-            _vmr9.SafeDispose();
-            _vmr9 = null;
-          }
-
           if (_graphBuilder != null)
           {
             DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -993,13 +984,11 @@ namespace MediaPortal.Player
             _dvbSubRenderer = null;
           }
 
-          /*//Tourette BD
           if (_vmr9 != null)
           {
             _vmr9.SafeDispose();
             _vmr9 = null;
-            Log.Debug("TSReaderPlayer: Cleanup _vmr9");
-          }*/
+          }
 
           GUIGraphicsContext.form.Invalidate(true);
           _state = PlayState.Init;

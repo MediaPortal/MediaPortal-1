@@ -60,6 +60,7 @@ namespace MediaPortal.Player.Subtitles
     // how long to display subtitle
     public UInt64 timeOut; // in seconds
     public Int32 firstScanLine;
+    public Int32 horizontalPosition;
   }
 
   /*
@@ -132,6 +133,7 @@ namespace MediaPortal.Player.Subtitles
     public double presentTime; // NOTE: in seconds
     public double timeOut; // NOTE: in seconds
     public int firstScanLine;
+    public int horizontalPosition;
     public long id = 0;
     public Texture texture;
 
@@ -141,6 +143,10 @@ namespace MediaPortal.Player.Subtitles
       {
         subBitmap.SafeDispose();
         subBitmap = null;
+        unsafe
+        {
+          texture.UpdateUnmanagedPointer(null);
+        }
       }
 
       if (texture != null && !texture.Disposed)
@@ -383,8 +389,8 @@ namespace MediaPortal.Player.Subtitles
         {
           Log.Debug("SubtitleRenderer:  Bitmap: bpp=" + sub.bmBitsPixel + " planes " + sub.bmPlanes + " dim = " +
                     sub.bmWidth + " x " + sub.bmHeight + " stride : " + sub.bmWidthBytes);
-          Log.Debug("SubtitleRenderer: to = " + sub.timeOut + " ts=" + sub.timeStamp + " fsl=" + sub.firstScanLine +
-                    " (startPos = " + _startPos + ")");
+          Log.Debug("SubtitleRenderer: to = " + sub.timeOut + " ts=" + sub.timeStamp + " fsl=" + sub.firstScanLine + 
+            " h pos=" + sub.horizontalPosition + " (startPos = " + _startPos + ")");
 
           Subtitle subtitle = new Subtitle();
           subtitle.subBitmap = new Bitmap(sub.bmWidth, sub.bmHeight, PixelFormat.Format32bppArgb);
@@ -395,6 +401,7 @@ namespace MediaPortal.Player.Subtitles
           subtitle.screenHeight = (uint)sub.screenHeight;
           subtitle.screenWidth = (uint)sub.screenWidth;
           subtitle.firstScanLine = sub.firstScanLine;
+          subtitle.horizontalPosition = sub.horizontalPosition;
           subtitle.id = _subCounter++;
           //Log.Debug("Received Subtitle : " + subtitle.ToString());
 
@@ -521,6 +528,7 @@ namespace MediaPortal.Player.Subtitles
         subtitle.screenHeight = 576;
         subtitle.screenWidth = 720;
         subtitle.firstScanLine = 0;
+        subtitle.horizontalPosition = 0;
 
         Texture texture = null;
         try
@@ -650,7 +658,7 @@ namespace MediaPortal.Player.Subtitles
     {
       try
       {
-        _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub2");
+        _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub3");
         _subFilter = _filter as IDVBSubtitleSource;
         Log.Debug("SubtitleRenderer: CreateFilter success: " + (_filter != null) + " & " + (_subFilter != null));
       }
@@ -765,42 +773,24 @@ namespace MediaPortal.Player.Subtitles
             return;
           }
         }
-        //bool alphaTest = false;
-        bool alphaBlend = false;
-        VertexFormats vertexFormat = CustomVertex.TransformedColoredTextured.Format;
+        
+        VertexFormats vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
 
         try
         {
-          // store current settings so they can be restored when we are done
-          alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
-          vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
-
           int wx = 0, wy = 0, wwidth = 0, wheight = 0;
           float rationW = 1, rationH = 1;
 
-          if (GUIGraphicsContext.IsFullScreenVideo)
-          {
-            rationH = GUIGraphicsContext.Height / (float)_currentSubtitle.screenHeight;
-            rationW = rationH;
+          Rectangle src, dst;
+          VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
 
-            // Get the location to render the subtitle to
-            wx = GUIGraphicsContext.OverScanLeft +
-                 (int)(((float)(GUIGraphicsContext.Width - _currentSubtitle.width * rationW)) / 2);
-            wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)_currentSubtitle.firstScanLine);
-          }
-          else // Video overlay
-          {
-            rationH = GUIGraphicsContext.VideoWindow.Height / (float)_currentSubtitle.screenHeight;
-            rationW = rationH;
-
-            wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width / 2) -
-                 (int)(((float)_currentSubtitle.width * rationW) / 2);
-            wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)_currentSubtitle.firstScanLine);
-          }
-
+          rationH = dst.Height / (float)_currentSubtitle.screenHeight;
+          rationW = dst.Width / (float)_currentSubtitle.screenWidth;
+          wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
+          wy = dst.Y + (int)(rationH * (float)_currentSubtitle.firstScanLine);          
           wwidth = (int)((float)_currentSubtitle.width * rationW);
           wheight = (int)((float)_currentSubtitle.height * rationH);
-
+          
           // make sure the vertex buffer is ready and correct for the coordinates
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 
@@ -855,9 +845,10 @@ namespace MediaPortal.Player.Subtitles
       {
         Log.Debug("Subtitle: Creating vertex buffer");
         _vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
-                                         4, GUIGraphicsContext.DX9Device,
-                                         0, CustomVertex.TransformedTextured.Format,
-                                         GUIGraphicsContext.GetTexturePoolType());
+                                        4, GUIGraphicsContext.DX9Device,
+                                        Usage.Dynamic | Usage.WriteOnly,
+                                        CustomVertex.TransformedTextured.Format,
+                                        GUIGraphicsContext.GetTexturePoolType());
         _wx = _wy = _wwidth = _wheight = 0;
       }
 
@@ -878,7 +869,7 @@ namespace MediaPortal.Player.Subtitles
         // lower right
         verts[3] = new CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
 
-        _vertexBuffer.Unlock();
+        _vertexBuffer.SetData(verts, 0, LockFlags.None);
 
         // remember what the vertexBuffer is set to
         _wy = wy;

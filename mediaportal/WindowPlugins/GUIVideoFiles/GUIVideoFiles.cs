@@ -1317,7 +1317,7 @@ namespace MediaPortal.GUI.Video
           dlg.AddLocalizedString(831);
         }
 
-        dlg.AddLocalizedString(1256); // Refresh current directory
+        dlg.AddLocalizedString(1299); // Refresh current directory
         dlg.AddLocalizedString(1263); // Set default grabber
         dlg.AddLocalizedString(1262); // Update grabber scripts
       }
@@ -1496,7 +1496,7 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-        case 1256: // Refresh current directory
+        case 1299: // Refresh current directory
           {
             if (facadeLayout.ListLayout.ListItems.Count > 0 && !string.IsNullOrEmpty(_currentFolder))
             {

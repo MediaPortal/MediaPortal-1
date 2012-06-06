@@ -60,6 +60,13 @@ namespace MediaPortal.Configuration.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap blu_ray_regions {
+            get {
+                object obj = ResourceManager.GetObject("blu-ray_regions", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap codec_screwdriver {
             get {
                 object obj = ResourceManager.GetObject("codec_screwdriver", resourceCulture);

@@ -39,6 +39,7 @@ namespace MediaPortal.Configuration
   {
     public static bool _automaticMovieCodec = false;
     public static bool _automaticMovieFilter = false;
+    public static bool _automaticBDCodec = false;
 
     private enum StartupMode
     {

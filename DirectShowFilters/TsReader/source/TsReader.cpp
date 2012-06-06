@@ -1827,13 +1827,6 @@ HRESULT CTsReaderFilter::FindSubtitleFilter()
           //LogDebug("Testing that DVBSub3 works");
           m_pDVBSubtitle->Test(1);
         }
-        else if (!wcsicmp(L"MediaPortal DVBSub2", filterInfo.achName))
-        {
-          HRESULT fhr = pFilter->QueryInterface( IID_IDVBSubtitle2, ( void**)&m_pDVBSubtitle );
-          assert( fhr == S_OK);
-          //LogDebug("Testing that DVBSub2 works");
-          m_pDVBSubtitle->Test(1);
-        }
         filterInfo.pGraph->Release();
       }
       pFilter->Release();

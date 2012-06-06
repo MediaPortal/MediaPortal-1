@@ -255,6 +255,15 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sections\BD.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDCodec.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDCodec.designer.cs">
+      <DependentUpon>BDCodec.cs</DependentUpon>
+    </Compile>
     <Compile Include="RegistryUtilities.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -625,6 +634,7 @@
     <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="Resources\blu-ray_regions.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\00_plugin_other.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\01_plugin_other_off.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\02_plugin_window.png" />
@@ -663,6 +673,12 @@
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BD.resx">
+      <DependentUpon>BD.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BDCodec.resx">
+      <DependentUpon>BDCodec.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersPowerDVDAudioDecoder.resx">
       <DependentUpon>FiltersPowerDVDAudioDecoder.cs</DependentUpon>

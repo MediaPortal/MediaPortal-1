@@ -199,19 +199,16 @@ namespace MediaPortal.Player
     public IPlayer Create(string fileName, g_Player.MediaType type)
     {
       IPlayer newPlayer = null;
-      Log.Debug("PlayerFactory: Create {0} start before try", fileName);
       try
       {
         g_Player.MediaType? paramType = type as g_Player.MediaType?;
         if (paramType.HasValue)
         {
           newPlayer = Create(fileName, paramType);
-          Log.Debug("PlayerFactory: Create newPlayer fileName (OK) {0}, Param {1}", fileName, paramType);
         }
         else
         {
           newPlayer = Create(fileName, null);
-          Log.Debug("PlayerFactory: Create fileName {0}", fileName);
         }
       }
       catch (Exception ex)
@@ -237,7 +234,6 @@ namespace MediaPortal.Player
         if (aMediaType != null && aMediaType != g_Player.MediaType.Unknown)
         {
           localType = (g_Player.MediaType)aMediaType;
-          Log.Info("PlayerFactory: Create localType {0}", localType);
         }
 
         // Get settings only once
@@ -253,7 +249,6 @@ namespace MediaPortal.Player
             if (!Util.Utils.IsAudio(aFileName))
             {
               BassMusicPlayer.Player.FreeBass();
-              Log.Debug("PlayerFactory: Freebass aFileName {0}", aFileName);
             }
           }
 
@@ -282,11 +277,9 @@ namespace MediaPortal.Player
           }
 
           string extension = Path.GetExtension(aFileName).ToLower();
-
           if (extension == ".bdmv")
           {
-            return new VideoPlayerVMR9();
-            // return new BDPlayer();
+            return new BDPlayer();
           }
 
           if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" &&
@@ -323,27 +316,23 @@ namespace MediaPortal.Player
           if (extension == ".tsbuffer" || extension == ".ts" || extension == ".rec")
             //new support for Topfield recordings
           {
-            /*if (aFileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+            if (aFileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
             {
               if (aMediaType != null)
               {
-                Log.Debug("PlayerFactory: (Radio) localType {0}, aMediaType {1}", localType, aMediaType);
                 return new BaseTSReaderPlayer(localType);
               }
               else
               {
-                Log.Debug("PlayerFactory: (Radio)");
                 return new BaseTSReaderPlayer();
               }
-            }*/
+            }
             if (aMediaType != null)
             {
-              Log.Debug("PlayerFactory: TSReaderPlayer localType {0}, aMediaType {1}", localType, aMediaType);
               return new TSReaderPlayer(localType);
             }
             else
             {
-              Log.Debug("PlayerFactory: TSReaderPlayer");
               return new TSReaderPlayer();
             }
           }
