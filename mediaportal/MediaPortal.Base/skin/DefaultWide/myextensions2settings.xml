@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>803</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>background.jpg</texture>
+      <width>1280</width>
+      <height>720</height>
+    </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>106</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>Action_focus.png</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>320</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <posX>26</posX>
+        <posY>78</posY>
+        <width>367</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="300" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="300" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="300" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="300" end="-300,0" reversible="false">hidden</animation>
+        <posX>60</posX>
+        <posY>117</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>Sections</description>
+          <type>button</type>
+          <id>2</id>
+          <label>#MPEI.Translation.Sections.Label</label>
+          <onleft>50</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+        </control>
+      </control>
+    </control>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <visible>!Control.HasFocus(50)</visible>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+      <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="150" end="800,0">WindowClose</animation>
+      <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="300" reversible="false">hidden</animation>
+      <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="300" reversible="false">visible</animation>
+      <control>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <posX>88</posX>
+          <posY>131</posY>
+          <width>1173</width>
+          <height>450</height>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <scrollOffset>2</scrollOffset>
+					<textXOff>-20</textXOff>
+					<spinPosX>1160</spinPosX>
+					<spinPosY>540</spinPosY>
+        </control>
+      </control>
+    </control>
+		<control>
+      <type>label</type>
+      <posX>88</posX>
+      <posY>545</posY>
+      <width>500</width>
+      <label>#MPEI.Translation.Description.Label</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <font>font12</font>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+			<visible>!string.equals(#MPE.Selection.Description,)</visible>
+    </control>
+		<control>
+      <type>textboxscrollup</type>
+      <posX>88</posX>
+      <posY>580</posY>
+      <width>1170</width>
+      <height>100</height>
+      <font>font12</font>
+      <label>#MPE.Selection.Description</label>
+      <animation effect="Fade" time="250">WindowOpen</animation>
+      <animation effect="Fade" time="100">WindowClose</animation>
+    </control>
+  </controls>
+</window>
