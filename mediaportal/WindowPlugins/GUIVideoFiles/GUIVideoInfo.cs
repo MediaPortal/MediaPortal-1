@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.Video
         GUIListItem item = listActors.SelectedListItem;
         if (item != null && listActors.IsVisible)
         {
-          dlg.AddLocalizedString(1254); //Refresh actor info
+          dlg.AddLocalizedString(1297); //Refresh actor info
         }
       }
 
@@ -522,7 +522,7 @@ namespace MediaPortal.GUI.Video
       Profile.Settings xmlreader = new MPSettings();
       if (xmlreader.GetValueAsBool("moviedatabase", "usefanart", false))
       {
-        dlg.AddLocalizedString(1255); //Refresh fanart
+        dlg.AddLocalizedString(1298); //Refresh fanart
       }
       
       // Show dialog menu
@@ -534,11 +534,11 @@ namespace MediaPortal.GUI.Video
       }
       switch (dlg.SelectedId)
       {
-        case 1254: // Refresh actor info
+        case 1297: // Refresh actor info
           IMDBActor actor = VideoDatabase.GetActorInfo(listActors.SelectedListItem.ItemId);
           OnVideoArtistInfo(actor, true);
           break;
-        case 1255: // Refresh fanart
+        case 1298: // Refresh fanart
           OnFanartRefresh();
           break;
         case 1263: // Set deault grabber script
@@ -1379,7 +1379,7 @@ namespace MediaPortal.GUI.Video
           (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
-          dlgNotify.SetHeading(GUILocalizeStrings.Get(1255));
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(1298));
           dlgNotify.SetText(GUILocalizeStrings.Get(517));
           dlgNotify.DoModal(GetID);
         }
@@ -1402,7 +1402,7 @@ namespace MediaPortal.GUI.Video
           (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
-          dlgNotify.SetHeading(GUILocalizeStrings.Get(1255));
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(1298));
           dlgNotify.SetText(GUILocalizeStrings.Get(997));
           dlgNotify.DoModal(GetID);
         }

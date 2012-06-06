@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.Video
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
-      dlg.AddLocalizedString(1253); // Refresh all actor movies
+      dlg.AddLocalizedString(1296); // Refresh all actor movies
       dlg.AddLocalizedString(1290); // Refresh selected movie
 
       if (item.IsPlayed) // Movie in MP database
@@ -235,7 +235,7 @@ namespace MediaPortal.GUI.Video
       }
       switch (dlg.SelectedId)
       {
-        case 1253: // Refresh All actor movies
+        case 1296: // Refresh All actor movies
           _forceRefreshAll = true;
           OnRefreshMovie();
           break;
