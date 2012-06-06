@@ -1,0 +1,90 @@
+NSIS plug-in for getting a bit of CPU information.
+Version 1.2, July 2003.
+Typed and clicked by Peter Mason, CSIRO DEM MMTG.  mailto://peter.mason@csiro.au.
+The MHz timing was done using code that was pretty much copied from Pavlos
+Touboulidis' CPUTEST code.
+The lean exception handler wrapped around the timing code was done using Jeremy
+Gordon's tutorial on writing lightweight win32 exception handlers in assembler.
+(His web-page is www.GoDevTool.com.)
+The CPUID stuff was done using Intel and AMD's manuals on what CPUID means to them.
+
+
+There's only one routine here - tell() - and its output is a string on the NSIS
+stack.   This string always has the same fields in exactly the same place.
+(It's easier to extract values that way.)   It looks like this:
+
+INTELP=d AMD=add PPRO=b MMX=d SSE=b SSE2=b 3DNOW=d ARCH=dd LEVEL=dd NCPU=dd MHZ=ddddd RAM=dddd
+
+Here, "d" means a decimal digit (0..9), "a" means an alphabetic character (A..Z) and
+"b" means a boolean digit (0 or 1).
+
+ITELP: Values range [0..4].
+  0:    Not a genuine Intel CPU (or a very, VERY old one).
+  1:    Pentium or Pentium with MMX.
+        (Check the MMX field if you want to know about the CPU's MMX support.)
+  2:    Pentium Pro, II or Celeron.
+        (May or may not have MMX - PPros don't, the others do.  Check the MMX field.)
+  3:    Pentium III or P3 (old) Xeon.   (Always has MMX and SSE.)
+  4:    Pentium IV or (new) Xeon.   (Always has MMX, SSE and SSE2.)
+AMD:    A bit more complicated...
+  000:  Not an authentic AMD CPU (or a very, VERY old one).
+  Kdd:  An old K-series.   "dd" is either 05 for a K5 or 06 for a K6.
+        (Pentium compatible.   K5s have no MMX or 3DNOW.   K6s have standard MMX,
+        and later models have basic 3DNOW.)
+  Add:  An Athlon or a Duron.   "dd" is the model number (goes from 01 to 10).
+        (Pentium II compatible.   All of these have extended MMX and extended 3DNOW.
+        None have any SSE.)
+  Odd:  An Opteron.   "dd" gives the model number.
+        (Pentium IV compatible.   This CPU's got everything, it seems.)
+PPRO:   Values range [0..1].
+  0:    Not compatible with the Intel Pentium Pro processor.
+  1:    Compatible with the Intel Pentium Pro processor.
+MMX:    Values range [0..2].
+  0:    No MMX support.
+  1:    Standard Intel MMX support.
+  2:    Standard MMX support plus AMD MMX extensions.
+SSE:    Values range [0..1].
+  0:    No SSE support.
+  1:    Supports SSE (Intel's Streaming SIMD extensions, P3-style).
+SSE2:   Values range [0..1].
+  0:    No SSE2 support.
+  1:    Supports SSE2 (Intel's Streaming SIMD extensions 2, P4-style).
+3DNOW:  Values range [0..2].
+  0:    No 3DNOW support.
+  1:    Standard AMD 3DNOW support.
+  2:    Standard AMD 3DNOW support plus AMD 3DNOW extensions.
+ARCH:   Values range [00..10].
+  00:   32-bit Intel or compatible
+  01:   MIPS (did NT 3.5, apparently)
+  02:   DEC Alpha.   (Yes, DEC.   I can't bring myself to call it COMPAQ.)
+  03:   PowerPC
+  04:   SHX (?)
+  05:   ARM (Acorn Risc Machine, I presume.   Running Windows?)
+  06:   64-bit Intel.
+  07:   64-bit Alpha
+  08:   MSIL (?)
+  09:   64-bit AMD
+  10:   32-bit Intel doing Win64 (?)
+LEVEL:  "Processor level", like what you see in the main processor environment
+        variable.   Sort-of useless for Intel architecture.
+NCPU:   The number of processors available.   (Affected by that "Hyper" business
+        that the new XEONs can do, I think.)
+MHZ:    The CPU's internal clock speed in MHz (Approx).
+RAM:    The amount of RAM (physical memory) in megabytes (rounded).
+
+
+SIMPLE EXAMPLE
+Say you have an application BLOG for which you have two builds of the executable
+BLOG.EXE:  BLOG_GEN.EXE compiled for "Processor = Blend" (a general build) and
+BLOG_PRO.EXE compiled for "Processor = Pentium Pro" (will only work on a Pentium
+Pro or compatible or better).   Now you want to copy the best one out when a user
+installs BLOG.   You could have something like the following in your Install section:
+  cpudesc::tell
+  Pop $0                     ;full identification string in $0
+  StrCpy $1 $0 1, 22         ;pull out one character after PPRO=
+  IntFmt $2 "%u" $1          ; and turn it into a number
+  IntCmpU $2 1 +1 +3 +3      ;Anything not Pentium II / Pro -compatible gets blog_gen
+  File /oname=blog.exe "blog_source_directory\blog_gen.exe"
+  Goto +2
+  File /oname=blog.exe "blog_source_directory\blog_pro.exe"
+	... the rest of your Install section

@@ -120,6 +120,7 @@ Var MPTray_Running
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
+!include "${git_InstallScripts}\include\CPUDesc.nsh"
 
 !ifndef GIT_BUILD
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
@@ -493,7 +494,10 @@ Section "MediaPortal core files (required)" SecCore
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\DVBSubtitle3\bin\${BUILD_TYPE}\DVBSub3.ax"             "$MPdir.Base\DVBSub3.ax"          "$MPdir.Base"
   
   ; used for Mediaportal Audio Renderer
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
+  ${If} ${SSE2Supported} 
+  ${AndIf} ${AtLeastWinVista}
+    !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioRenderer\bin\${BUILD_TYPE}\mpaudiorenderer.ax"                "$MPdir.Base\mpaudiorenderer.ax"         "$MPdir.Base"
+  ${EndIf}
 
 SectionEnd
 !macro Remove_${SecCore}
@@ -521,7 +525,13 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\BDReader.ax"
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
   ; used for Mediaportal Audio Renderer
-  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mpaudiorenderer.ax"
+  ${If} ${FileExists} "$MPdir.Base\mpaudiorenderer.ax"
+	${If} ${SSE2Supported} 
+		!insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\mpaudiorenderer.ax"
+	${Else}
+		Delete  "$MPdir.Base\mpaudiorenderer.ax"
+	${EndIf}
+  ${EndIf}
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   !include "${git_MP}\Setup\uninstall.nsh"
