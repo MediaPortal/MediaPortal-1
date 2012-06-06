@@ -221,6 +221,9 @@
     <EmbeddedResource Include="MediaPortal.DeployTool.tr-TR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.zh-CN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseInstallationTypeDlg.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseInstallationTypeDlg.cs</DependentUpon>
