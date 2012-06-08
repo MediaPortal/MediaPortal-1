@@ -52,7 +52,7 @@
         <description>Use button colors for TVGuide</description>
         <type>checkbutton</type>
         <id>40</id>
-        <label>Enable colored buttons in TV EPG</label>
+        <label>1246</label>
         <width>350</width>
         <selected>#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.usecolorsforbuttons'))</onclick>
@@ -61,7 +61,7 @@
         <description>Use guide colors for genre</description>
         <type>checkbutton</type>
         <id>41</id>
-        <label>Enable colored genres in TV EPG</label>
+        <label>1247</label>
         <width>350</width>
         <selected>#(skin.hassetting('#skin.tvguide.usecolorsforgenre'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.usecolorsforgenre'))</onclick>
@@ -70,7 +70,7 @@
         <description>Use highlight</description>
         <type>checkbutton</type>
         <id>42</id>
-        <label>Border selected program in TV EPG</label>
+        <label>1248</label>
         <width>350</width>
         <selected>#(skin.hassetting('#skin.tvguide.useborderhighlight'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.useborderhighlight'))</onclick>
@@ -79,7 +79,7 @@
         <description>Show genre color key</description>
         <type>checkbutton</type>
         <id>43</id>
-        <label>Show genre color map in TV EPG</label>
+        <label>1249</label>
         <width>350</width>
         <selected>#(skin.hassetting('#skin.tvguide.showgenrekey'))</selected>
         <onclick>#(skin.togglesetting('#skin.tvguide.showgenrekey'))</onclick>
