@@ -426,6 +426,11 @@ namespace MediaPortal.Util
           // Forced check to avoid users messed configuration ( .ts remove from Videos extensions list)
           return true;
         }
+        if (extensionFile == ".bdmv")
+        {
+          // Forced check to avoid users messed configuration ( .bdmv remove from Videos extensions list)
+          return true;
+        }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
           return true;
         return m_VideoExtensions.Contains(extensionFile);
