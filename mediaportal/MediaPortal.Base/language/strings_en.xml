@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programmes</String>
@@ -1022,6 +1022,10 @@
     <String id="1231">Last played:</String>
     <String id="1240">Lock content</String>
     <String id="1241">Unlock content</String>
+    <String id="1246">Enable colored buttons in TV EPG</String>
+    <String id="1247">Enable colored genres in TV EPG</String>
+    <String id="1248">Border selected program in TV EPG</String>
+    <String id="1249">Show genre color map in TV EPG</String>
     <String id="1250">Documentary</String>
     <String id="1251">Kids</String>
     <String id="1252">Movie</String>

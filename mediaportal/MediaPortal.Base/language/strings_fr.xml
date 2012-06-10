@@ -1022,6 +1022,10 @@
     <String id="1231">Dernier joué:</String>
     <String id="1240">Verrouiller le contenu</String>
     <String id="1241">Déverrouiller le contenu</String>
+    <String id="1246">Activer la couleur des boutons dans TV EPG</String>
+    <String id="1247">Activer la couleur des genres dans TV EPG</String>
+    <String id="1248">Selection de la limite du programme dans TV EPG</String>
+    <String id="1249">Montrer la palette de couleur des genres dans TV EPG</String>
     <String id="1250">Documentaire</String>
     <String id="1251">Enfants</String>
     <String id="1252">Film</String>
