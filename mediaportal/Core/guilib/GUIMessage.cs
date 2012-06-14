@@ -129,6 +129,8 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_TV_ERROR_NOTIFY = 98, // morpheus_xx, tv error handling
       GUI_MSG_PLAY_DVD = 99, // chefkoch
       GUI_MSG_NOTIFY_REC = 100,
+      GUI_MSG_SKIN_CHANGED = 101,
+      GUI_MSG_VIDEOINFO_REFRESH = 102,
       PS_ONSTANDBY = 9999
     } ;
 

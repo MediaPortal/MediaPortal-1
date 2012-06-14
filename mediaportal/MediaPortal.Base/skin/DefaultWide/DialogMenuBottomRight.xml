@@ -15,8 +15,6 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
       <control>
         <type>image</type>
         <id>0</id>
@@ -37,7 +35,7 @@
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>
-        <description>Label text </description>
+        <description>Label text</description>
         <type>label</type>
         <id>5</id>
         <posX>384</posX>
@@ -47,7 +45,7 @@
         <textcolor>FFFFFFFF</textcolor>
       </control>
       <control>
-        <description>Label text </description>
+        <description>Label text</description>
         <type>label</type>
         <id>6</id>
         <posX>384</posX>

@@ -159,6 +159,15 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property which indicates what menu items can be shown
+    /// Used only at BDPlayer
+    /// </summary>
+    public virtual MenuItems ShowMenuItems
+    {
+      get { return MenuItems.All; }
+    }
+
+    /// <summary>
     /// Property which indicate if we're playing a TV recording or timeshifting file 
     /// </summary>
     public virtual bool IsTV
@@ -496,6 +505,36 @@ namespace MediaPortal.Player
     /// Property to get the type of an edition stream
     /// </summary>
     public virtual string EditionType(int iStream)
+    {
+      return Strings.Unknown;
+    }
+
+    public virtual int VideoStreams
+    {
+      get { return 1; }
+    }
+
+    /// <summary>
+    /// Property to get/set the current Video stream
+    /// </summary>
+    public virtual int CurrentVideoStream
+    {
+      get { return 0; }
+      set { }
+    }
+
+    /// <summary>
+    /// Property to get the name for an Video stream
+    /// </summary>
+    public virtual string VideoLanguage(int iStream)
+    {
+      return Strings.Unknown;
+    }
+
+    /// <summary>
+    /// Property to get the type of an Video stream
+    /// </summary>
+    public virtual string VideoType(int iStream)
     {
       return Strings.Unknown;
     }

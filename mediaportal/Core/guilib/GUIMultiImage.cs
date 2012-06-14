@@ -428,8 +428,8 @@ namespace MediaPortal.GUI.Library
           // If that didnt work, try to use relative pathing into the skin\Media folder
           if (imageFolder.Trim().Length == 0)
           {
-            //Log.Debug("GUIMultiImage - try relative pathing: " + GUIGraphicsContext.Skin + @"\Media\animations\" + _newPath);
-            imageFolder = GUIGraphicsContext.Skin + @"\Media\animations\" + _newPath;
+            //Log.Debug("GUIMultiImage - try relative pathing: " + GUIGraphicsContext.GetThemedSkinDirectory(@"\Media\animations\" + _newPath));
+            imageFolder = GUIGraphicsContext.GetThemedSkinDirectory(@"\Media\animations\" + _newPath);
 
             // If the folder doesnt exist, we have an invalid field, exit
             if (!Directory.Exists(imageFolder))

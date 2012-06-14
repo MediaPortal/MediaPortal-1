@@ -148,7 +148,7 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
-      return Load(GUIGraphicsContext.Skin + @"\mymusicgenres.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mymusicgenres.xml"));
     }
 
     protected override string SerializeName
@@ -239,6 +239,7 @@ namespace MediaPortal.GUI.Music
             sortStrings.Add("Year");
             sortStrings.Add("Disc#");
             sortStrings.Add("Composer");
+            sortStrings.Add("Times Played");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
@@ -499,7 +500,7 @@ namespace MediaPortal.GUI.Music
       FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
       if (filter.SqlOperator == "group")
       {
-        strThumb = GUIGraphicsContext.Skin + @"\media\alpha\" + item.Label + @".png";
+        strThumb = GUIGraphicsContext.GetThemedSkinFile(@"\media\alpha\" + item.Label + @".png");
         if (Util.Utils.FileExistsInCache(strThumb))
         {
           item.IconImage = strThumb;

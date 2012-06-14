@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>508</id>
   <defaultcontrol>20</defaultcontrol>
@@ -19,9 +20,9 @@
       <id>10</id>
       <posX>63</posX>
       <posY>104</posY>
-      <width>125</width>
+      <width>88</width>
       <height>125</height>
-      <texture mask="picturethumbmask.png">-</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png" mask="picturethumbmask.png">-</texture>
       <keepaspectratio>no</keepaspectratio>
     </control>
     <control>
@@ -30,9 +31,9 @@
       <id>1</id>
       <posX>63</posX>
       <posY>104</posY>
-      <width>125</width>
+      <width>88</width>
       <height>125</height>
-      <texture mask="picturethumbmask.png">picturethumbframe.png</texture>
+      <texture flipY="true" diffuse="Thumb_Mask.png" mask="picturethumbmask.png">picturethumbframe.png</texture>
       <keepaspectratio>no</keepaspectratio>
     </control>
     <control>
@@ -55,7 +56,7 @@
       <posY>230</posY>
       <label>4519</label>
       <font>font10</font>
-      <textcolor>ffb2d4f5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>fadelabel</type>
@@ -106,7 +107,7 @@
       <id>25</id>
       <posX>288</posX>
       <posY>168</posY>
-      <height>380</height>
+      <height>400</height>
       <onleft>20</onleft>
       <onright>25</onright>
       <onup>25</onup>
@@ -118,16 +119,16 @@
       <textXOff2>409</textXOff2>
       <font>font13</font>
       <textXOff>5</textXOff>
-      <itemHeight>40</itemHeight>
-      <itemWidth>40</itemWidth>
-      <textureHeight>55</textureHeight>
+      <itemHeight>56</itemHeight>
+      <itemWidth>39</itemWidth>
+      <textureHeight>70</textureHeight>
       <selectedColor>FFFF6600</selectedColor>
       <IconXOff>9</IconXOff>
       <IconYOff>7</IconYOff>
       <spaceBetweenItems>0</spaceBetweenItems>
-      <suffix>|</suffix>
+      <suffix>   |   </suffix>
       <textcolor2>FFFFFFFF</textcolor2>
-      <textYOff2>26</textYOff2>
+      <textYOff2>36</textYOff2>
       <unfocusedAlpha>170</unfocusedAlpha>
     </control>
     <control>

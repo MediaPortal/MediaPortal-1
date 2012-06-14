@@ -123,7 +123,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogTVConflict.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogTVConflict.xml"));
     }
 
     public override void Reset()

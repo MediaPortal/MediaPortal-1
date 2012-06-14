@@ -18,8 +18,12 @@
 
 #endregion
 
+using System;
+using System.Collections;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using System.Web;
 
 namespace MediaPortal.Video.Database
 {
@@ -32,7 +36,8 @@ namespace MediaPortal.Video.Database
     private int _mID = -1;
     private string _mStrDirector = string.Empty;
     private string _mStrWritingCredits = string.Empty;
-    private string _mStrGenre = string.Empty;
+    private string _mStrSingleGenre = string.Empty;
+    private string _mStrSingleUserGroup = string.Empty;
     private string _mStrTagLine = string.Empty;
     private string _mStrPlotOutline = string.Empty;
     private string _mStrPlot = string.Empty;
@@ -55,6 +60,7 @@ namespace MediaPortal.Video.Database
     private int _mIWatched;
     private int _mActorID = -1;
     private int _mGenreID = -1;
+    private int _mUserGroupID = -1;
     private string _mStrActor = string.Empty;
     private string _mStrgenre = string.Empty;
     // Movie DirectorID
@@ -63,6 +69,18 @@ namespace MediaPortal.Video.Database
     private string _mStrUserReview = string.Empty;
     // Fanart
     private string _mStrFanartURL = string.Empty;
+    // Date added
+    private string _dateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    // Date watched
+    private string _dateWatched = string.Empty;
+    // Studios
+    private string _mStrStudios = string.Empty;
+    // Country
+    private string _mStrCountry= string.Empty;
+    // Language
+    private string _mStrLanguage = string.Empty;
+    // Info update date
+    private string _lastUpdate = string.Empty;
 
     public IMDBMovie() {}
 
@@ -94,6 +112,12 @@ namespace MediaPortal.Video.Database
     {
       get { return _mGenreID; }
       set { _mGenreID = value; }
+    }
+
+    public int UserGroupID
+    {
+      get { return _mUserGroupID; }
+      set { _mUserGroupID = value; }
     }
 
     // Added DirectorID
@@ -147,8 +171,14 @@ namespace MediaPortal.Video.Database
 
     public string SingleGenre
     {
-      get { return _mStrGenre; }
-      set { _mStrGenre = value; }
+      get { return _mStrSingleGenre; }
+      set { _mStrSingleGenre = value; }
+    }
+
+    public string SingleUserGroup
+    {
+      get { return _mStrSingleUserGroup; }
+      set { _mStrSingleUserGroup = value; }
     }
 
     public string TagLine
@@ -268,11 +298,57 @@ namespace MediaPortal.Video.Database
       set { _mStrDatabase = value; }
     }
 
+    public string DateAdded
+    {
+      get { return _dateAdded; }
+      set { _dateAdded = value; }
+    }
+
+    public string DateWatched
+    {
+      get { return _dateWatched; }
+      set { _dateWatched = value; }
+    }
+
+    public string Studios
+    {
+      get { return _mStrStudios; }
+      set { _mStrStudios = value; }
+    }
+
+    public string Country
+    {
+      get { return _mStrCountry; }
+      set { _mStrCountry = value; }
+    }
+
+    public string Language
+    {
+      get { return _mStrLanguage; }
+      set { _mStrLanguage = value; }
+    }
+
+    public string LastUpdate
+    {
+      get { return _lastUpdate; }
+      set { _lastUpdate = value; }
+    }
+
     public void Reset()
     {
+      Reset(false);
+    }
+
+    public void Reset(bool resetId)
+    {
+      if (resetId)
+      {
+        _mID = -1;
+      }
       _mStrDirector = string.Empty;
       _mStrWritingCredits = string.Empty;
-      _mStrGenre = string.Empty;
+      _mStrSingleGenre = string.Empty;
+      _mStrSingleUserGroup = string.Empty;
       _mStrgenre = string.Empty;
       _mStrTagLine = string.Empty;
       _mStrPlotOutline = string.Empty;
@@ -294,47 +370,177 @@ namespace MediaPortal.Video.Database
       _mStrMpaRating = string.Empty;
       _mIRunTime = 0;
       _mIWatched = 0;
+      _dateAdded = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+      _dateWatched = string.Empty;
+      _mStrStudios = string.Empty;
+      _mStrCountry = string.Empty;
+      _mStrLanguage = string.Empty;
+      _lastUpdate = string.Empty;
     }
 
+    [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
     public void SetProperties(bool isFolder)
     {
-      // Title suffix for problem with covers and movie with the same name
+      SetProperties(isFolder, string.Empty);
+    }
+
+    public void SetProperties(bool isFolder, string file)
+    {
       string strThumb = GetStrThumb();
 
       GUIPropertyManager.SetProperty("#director", Director);
-      GUIPropertyManager.SetProperty("#genre", Genre);
+      GUIPropertyManager.SetProperty("#genre", Genre.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#cast", Cast);
       GUIPropertyManager.SetProperty("#dvdlabel", DVDLabel);
       GUIPropertyManager.SetProperty("#imdbnumber", IMDBNumber);
       GUIPropertyManager.SetProperty("#file", File);
-      GUIPropertyManager.SetProperty("#plot", Plot);
+      GUIPropertyManager.SetProperty("#plot", HttpUtility.HtmlDecode(Plot));
       GUIPropertyManager.SetProperty("#plotoutline", PlotOutline);
       GUIPropertyManager.SetProperty("#userreview", UserReview); // Added
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
+      GUIPropertyManager.SetProperty("#strrating", Rating.ToString(CultureInfo.CurrentCulture) + "/10");
       GUIPropertyManager.SetProperty("#tagline", TagLine);
-      GUIPropertyManager.SetProperty("#votes", Votes);
-      GUIPropertyManager.SetProperty("#credits", WritingCredits);
+      Int32 votes = 0;
+      string strVotes = string.Empty;
+      if (Int32.TryParse(Votes.Replace(".", string.Empty).Replace(",", string.Empty), out votes))
+      {
+        strVotes = String.Format("{0:N0}", votes);
+      }
+      GUIPropertyManager.SetProperty("#votes", strVotes);
+      GUIPropertyManager.SetProperty("#credits", WritingCredits.Replace(" /", ","));
       GUIPropertyManager.SetProperty("#thumb", strThumb);
       GUIPropertyManager.SetProperty("#title", Title);
       GUIPropertyManager.SetProperty("#year", Year.ToString());
-      GUIPropertyManager.SetProperty("#runtime", RunTime.ToString());
+      MPARating = Util.Utils.MakeFileName(MPARating);
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
+      GUIPropertyManager.SetProperty("#studios", Studios.Replace(" /", ","));
+      GUIPropertyManager.SetProperty("#country", Country);
+      GUIPropertyManager.SetProperty("#language", Language);
+      DateTime lastUpdate;
+      DateTime.TryParseExact(LastUpdate, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out lastUpdate);
+      GUIPropertyManager.SetProperty("#lastupdate", lastUpdate.ToShortDateString());
+
+      if (ID == -1)
+      {
+        if (IsEmpty)
+        {
+          GUIPropertyManager.SetProperty("#hideinfo", "true");
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#hideinfo", "false");
+        }
+        
+        SetDurationProperty(VideoDatabase.GetMovieId(file));
+      }
+      else
+      {
+        SetDurationProperty(ID);
+        GUIPropertyManager.SetProperty("#hideinfo", "false");
+      }
+      
+      // Movie id property (to set random movieId property for movies not in the database -> not scanned)
+      // FA handler use this property
+      // movieId is independant and it is related to videofile
+      if (!string.IsNullOrEmpty(file))
+      {
+        SetMovieIDProperty(file, isFolder);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#movieid", "-1");
+      }
+
+      // Watched property
       string strValue = "no";
+
       if (Watched > 0 && !isFolder)
       {
         strValue = "yes";
       }
+
       if (isFolder)
       {
         strValue = string.Empty;
       }
       GUIPropertyManager.SetProperty("#iswatched", strValue);
+
+      // Watched percent property
+      int percent = 0;
+      int timesWatched = 0;
+      VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), out percent, out timesWatched);
+      GUIPropertyManager.SetProperty("#watchedpercent", percent.ToString());
+      
+      // Watched count
+      if (!string.IsNullOrEmpty(file) && System.IO.File.Exists(file))
+      {
+        GUIPropertyManager.SetProperty("#watchedcount", timesWatched.ToString());
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#watchedcount", "-1");
+      }
+      
+      // MediaInfo Properties
+      try
+      {
+        ResetMediaInfoProperties();
+
+        if (!string.IsNullOrEmpty(file))
+        {
+          SetMediaInfoProperties(file);
+        }
+      }
+        
+      catch (Exception e)
+      {
+        Log.Error("IMDBMovie Media Info error: file:{0}, error:{1}", file, e);
+      }
+    }
+
+    public void SetDurationProperty(int movieId) 
+    {
+      if (RunTime <= 0)
+      {
+        IMDBMovie movie = new IMDBMovie();
+        VideoDatabase.GetMovieInfoById(movieId, ref movie);
+        RunTime = movie.RunTime;
+      }
+      GUIPropertyManager.SetProperty("#runtime", RunTime + 
+                              " " +
+                              GUILocalizeStrings.Get(2998) +
+                              " (" + Util.Utils.SecondsToHMString(RunTime * 60) + ")");
+
+      int duration = VideoDatabase.GetMovieDuration(movieId);
+
+      if (duration <= 0)
+      {
+        GUIPropertyManager.SetProperty("#videoruntime", string.Empty);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#videoruntime", Util.Utils.SecondsToHMSString(duration));
+      }
     }
 
     public void SetPlayProperties()
     {
+      SetPlayProperties(false);
+    }
+
+    public void SetPlayProperties(bool useNfo)
+    {
       // Title suffix for problem with covers and movie with the same name
-      string strThumb = GetStrThumb();
+      string strThumb = string.Empty;
+      
+      if (!useNfo)
+      {
+        strThumb = GetStrThumb();
+      }
+      else
+      {
+        strThumb = ThumbURL;
+      }
 
       GUIPropertyManager.SetProperty("#Play.Current.Director", Director);
       GUIPropertyManager.SetProperty("#Play.Current.Genre", Genre);
@@ -360,6 +566,89 @@ namespace MediaPortal.Video.Database
         strValue = "yes";
       }
       GUIPropertyManager.SetProperty("#Play.Current.IsWatched", strValue);
+    }
+
+    private void SetMovieIDProperty(string file, bool isFolder)
+    {
+      VirtualDirectory vDir = new VirtualDirectory();
+      int pin = 0;
+      vDir.LoadSettings("movies");
+
+      if (isFolder && !vDir.IsProtectedShare(file, out pin))
+      {
+        ArrayList mList = new ArrayList();
+        VideoDatabase.GetMoviesByPath(file, ref mList);
+        
+        if (mList.Count > 0)
+        {
+          Random rnd = new Random();
+          int r = rnd.Next(mList.Count);
+          IMDBMovie movieDetails = (IMDBMovie)mList[r];
+          mList.Clear();
+          VideoDatabase.GetFilesForMovie(movieDetails.ID, ref mList);
+
+          if (mList.Count > 0 && System.IO.File.Exists(mList[0].ToString()))
+          {
+            GUIPropertyManager.SetProperty("#movieid", movieDetails.ID.ToString());
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#movieid", "-1");
+          }
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#movieid", "-1");
+        }
+      }
+      else if (isFolder && vDir.IsProtectedShare(file, out pin))
+      {
+        GUIPropertyManager.SetProperty("#movieid", "-1");
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#movieid", ID.ToString());
+      }
+    }
+
+    private void ResetMediaInfoProperties()
+    {
+      GUIPropertyManager.SetProperty("#VideoCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoResolution", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioChannels", string.Empty);
+      GUIPropertyManager.SetProperty("#HasSubtitles", "false");
+      GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
+    }
+
+    private void SetMediaInfoProperties(string file)
+    {
+      SetMediaInfoProperties(file, false);
+    }
+
+    public void SetMediaInfoProperties(string file, bool refresh)
+    {
+      try 
+      {
+        VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
+
+        VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo, refresh);
+
+        string hasSubtitles = "false";
+
+        if (mInfo.HasSubtitles)
+        {
+          hasSubtitles = "true";
+        }
+
+        GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(mInfo.VideoCodec));
+        GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
+        GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(mInfo.AudioCodec));
+        GUIPropertyManager.SetProperty("#AudioChannels", mInfo.AudioChannels);
+        GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
+        GUIPropertyManager.SetProperty("#AspectRatio", mInfo.AspectRatio);
+      }
+      catch (Exception){}
     }
 
     private string GetStrThumb()

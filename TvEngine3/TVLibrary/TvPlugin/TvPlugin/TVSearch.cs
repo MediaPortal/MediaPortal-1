@@ -130,7 +130,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvsearch.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvsearch.xml"));
       LoadSettings();
       return bResult;
     }

@@ -72,7 +72,7 @@ namespace WindowPlugins.GUISettings
     public override bool Init()
     {
       //SkinDirectory = GUIGraphicsContext.Skin.Remove(GUIGraphicsContext.Skin.LastIndexOf(@"\")); 
-      return Load(GUIGraphicsContext.Skin + @"\settings_general.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_general.xml"));
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -218,7 +218,7 @@ namespace WindowPlugins.GUISettings
         if (String.Compare(skin, currentSkin, true) == 0)
         {
           btnSkin.Label = skin;
-          imgSkinPreview.SetFileName(Config.GetFile(Config.Dir.Skin, skin, @"media\preview.png"));
+          imgSkinPreview.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\preview.png"));
         }
       }
     }
@@ -287,11 +287,12 @@ namespace WindowPlugins.GUISettings
       SaveSettings();
       GUITextureManager.Clear();
       GUITextureManager.Init();
-      GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+      SkinSettings.Load();
+      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       GUIExpressionManager.ClearExpressionCache();
       GUIControlFactory.ClearReferences();
-      GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
+      GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID);
       GUIControl.FocusControl(GetID, btnSkin.GetID);
@@ -320,6 +321,10 @@ namespace WindowPlugins.GUISettings
       {
         BassMusicPlayer.Player.VisualizationWindow.Reinit();
       }
+
+      // Send a message that the skin has changed.
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msg);
     }
 
     private void OnLanguageChanged()
@@ -328,7 +333,7 @@ namespace WindowPlugins.GUISettings
       BackupButtons();
       SaveSettings();
       GUILocalizeStrings.ChangeLanguage(btnLanguage.Label);
-      GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..

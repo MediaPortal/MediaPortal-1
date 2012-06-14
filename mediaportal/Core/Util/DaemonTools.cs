@@ -21,8 +21,10 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
+using MediaPortal.Player;
 
 namespace MediaPortal.Util
 {
@@ -32,11 +34,13 @@ namespace MediaPortal.Util
   public class DaemonTools
   {
     private static string _Path;
+    private static string _DriveType;
     private static string _Drive;
     private static bool _Enabled;
     private static int _DriveNo;
     private static string _MountedIsoFile = string.Empty;
     private static HashSet<string> _supportedExtensions;
+    public static string VirtualCloneDrive = "vcd";
 
     static DaemonTools()
     {
@@ -46,6 +50,7 @@ namespace MediaPortal.Util
         _Path = xmlreader.GetValueAsString("daemon", "path", "");
         _Drive = xmlreader.GetValueAsString("daemon", "drive", "E:");
         _DriveNo = xmlreader.GetValueAsInt("daemon", "driveNo", 0);
+        _DriveType = xmlreader.GetValueAsString("daemon", "driveType", "");
         /*
          * DAEMON Tools supports the following image files:
          * cue/bin
@@ -93,6 +98,14 @@ namespace MediaPortal.Util
 
     public static bool Mount(string IsoFile, out string VirtualDrive)
     {
+      if (g_Player.Playing)
+      {
+        //string file = g_Player.CurrentFile;
+        //if (g_Player.CheckIfImage(file))
+        {
+          g_Player.Stop();
+        }
+      }
       VirtualDrive = string.Empty;
       if (IsoFile == null) return false;
       if (IsoFile == string.Empty) return false;
@@ -103,7 +116,14 @@ namespace MediaPortal.Util
       UnMount();
 
       IsoFile = Utils.RemoveTrailingSlash(IsoFile);
-      string strParams = String.Format("-mount {0},\"{1}\"", _DriveNo, IsoFile);
+      string strParams;
+      if (!_DriveType.Equals(VirtualCloneDrive))
+      {
+        strParams = String.Format("-mount {0}, {1},\"{2}\"", _DriveType, _DriveNo, IsoFile);
+      } else
+      {
+        strParams = String.Format("-mount {0},\"{1}\"", _DriveNo, IsoFile);
+      }
       Process p = Utils.StartProcess(_Path, strParams, true, true);
       int timeout = 0;
       while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 10000))
@@ -141,6 +161,7 @@ namespace MediaPortal.Util
           return false;
         }
       }
+      RemovableDriveHelper.SetMountTime(DateTime.Now);
       VirtualDrive = _Drive;
       _MountedIsoFile = IsoFile;
       Log.Debug("Mount time: {0}s", String.Format("{0:N}", (DateTime.Now - startTime).TotalSeconds));
@@ -153,7 +174,15 @@ namespace MediaPortal.Util
       if (!System.IO.File.Exists(_Path)) return;
       if (!System.IO.Directory.Exists(_Drive + @"\")) return;
 
-      string strParams = String.Format("-unmount {0}", _DriveNo);
+      string strParams;
+      if (!_DriveType.Equals(VirtualCloneDrive))
+      {
+        strParams = String.Format("-unmount {0},{1}", _DriveType, _DriveNo);
+      }
+      else
+      {
+        strParams = String.Format("-unmount {0}", _DriveNo);
+      }
       Process p = Utils.StartProcess(_Path, strParams, true, true);
       int timeout = 0;
       while (!p.HasExited && (timeout < 10000))
@@ -188,6 +217,14 @@ namespace MediaPortal.Util
       //  if (ext.Equals(extension))
       //    return true;
       //return false;
+    }
+
+    /// <summary>
+    /// Returns current mounted ISO filename with full path
+    /// </summary>
+    public static string MountedIsoFile
+    {
+      get { return _MountedIsoFile; }
     }
   }
 }

@@ -46,7 +46,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myfsteletext.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myfsteletext.xml"));
     }
 
     protected override void OnPageDestroy(int newWindowId)

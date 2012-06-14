@@ -4,8 +4,6 @@
   <defaultcontrol>99</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
@@ -13,6 +11,8 @@
       <width>1280</width>
       <height>720</height>
     </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>Channel name</description>
       <type>label</type>
@@ -230,7 +230,7 @@
       <posX>60</posX>
       <posY>438</posY>
       <width>404</width>
-      <height>26</height>
+      <height>20</height>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
@@ -238,11 +238,11 @@
       <type>progress</type>
       <id>25</id>
       <posX>62</posX>
-      <posY>442</posY>
+      <posY>440</posY>
       <width>400</width>
       <offset>0</offset>
-      <height>20</height>
-      <innerheight>20</innerheight>
+      <height>16</height>
+      <innerheight>16</innerheight>
       <texturebg>-</texturebg>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
@@ -267,7 +267,7 @@
       <posX>750</posX>
       <posY>438</posY>
       <width>404</width>
-      <height>26</height>
+      <height>20</height>
       <texture>osd_progress_background.png</texture>
     </control>
     <control>
@@ -278,8 +278,8 @@
       <posY>442</posY>
       <width>400</width>
       <offset>0</offset>
-      <height>20</height>
-      <innerheight>20</innerheight>
+      <height>16</height>
+      <innerheight>16</innerheight>
       <texturebg>-</texturebg>
       <lefttexture>-</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>

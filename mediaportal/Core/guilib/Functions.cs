@@ -655,5 +655,165 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion
+
+    #region Skin setting functions
+
+    [XMLSkinFunction("skin.hassetting")]
+    public static object SkinHasSetting(string setting)
+    {
+      int condition = GUIInfoManager.TranslateString("skin.hassetting(" + setting + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+
+    [XMLSkinFunction("skin.togglesetting")]
+    public static object SkinToggleSetting(string setting)
+    {
+      // Toggle the boolean setting to the opposite value.
+      int condition = GUIInfoManager.TranslateSingleString("skin.togglesetting(" + setting + ")");
+      bool newValue = !GUIInfoManager.GetBool(condition, 0);
+      GUIInfoManager.SetBool(condition, newValue, 0);
+      return newValue;
+    }
+
+    [XMLSkinFunction("skin.setstring")]
+    public static object SkinSetString(params object[] args)
+    {
+      // args[0] - setting name
+      // args[1] - (optional) new value
+      // args[2] - (optional) keyboard prompt
+      string newValue = "";
+ 
+      // Set the setting to the specified string.  If no value is specified then present the keyboard to input the value.
+      if (args.Length == 2)
+      {
+        int condition = GUIInfoManager.TranslateSingleString("skin.setstring(" + args[0] + ")");
+        newValue = args[1].ToString();
+        GUIInfoManager.SetString(condition, newValue, 0);
+      }
+      else
+      {
+        // No value was provided for the skin setting.  Display a keyboard and ask for a value.
+        string prompt = "";
+        if (args.Length >= 3)
+        {
+          newValue = args[1].ToString();
+          prompt = args[2].ToString();
+          GUILocalizeStrings.LocalizeLabel(ref prompt);
+        }
+
+        // Get the current value to initialize the keyboard.
+        int condition = GUIInfoManager.TranslateSingleString("skin.setstring(" + args[0] + "," + newValue + "," + prompt + ")");
+        string userInput = GUIInfoManager.GetString(condition, 0);
+
+        if (GetUserInputString(ref userInput, prompt))
+        {
+          GUIInfoManager.SetString(condition, userInput, 0);
+        }
+        else
+        {
+          // Keyboard cancelled; no value supplied and no input was entered into the keyboard.
+        }
+      }
+      return newValue;
+    }
+
+    private static bool GetUserInputString(ref string sString, string label)
+    {
+      IStandardKeyboard keyboard = (IStandardKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Text = sString;
+      keyboard.Label = label;
+      keyboard.DoModal(GUIWindowManager.ActiveWindowEx);
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+      return keyboard.IsConfirmed;
+    }
+
+    [XMLSkinFunction("skin.setbool")]
+    public static object SkinSetBool(params object[] args)
+    {
+      // args[0] - setting name
+      // args[1] - (optional) new value
+      bool newValue = true;
+
+      if (args.Length == 2)
+      {
+        newValue = bool.Parse(args[1].ToString());
+      }
+      int condition = GUIInfoManager.TranslateSingleString("skin.setbool(" + args[0] + ")");
+      GUIInfoManager.SetBool(condition, newValue, 0);
+      return newValue;
+    }
+
+    [XMLSkinFunction("skin.reset")]
+    public static object SkinReset(string setting)
+    {
+      // Resets the specifed setting.  Booleans are set false, strings are set to empty string.
+      SkinSettings.ResetSkinBool(setting);
+      SkinSettings.ResetSkinString(setting);
+      SkinSettings.Save();
+      return true;
+    }
+
+    [XMLSkinFunction("skin.resetsettings")]
+    public static object SkinResetSettings()
+    {
+      // Resets all settings.  Booleans are set false, strings are set to empty string.
+      SkinSettings.ResetAllSkinBool();
+      SkinSettings.ResetAllSkinString();
+      SkinSettings.Save();
+      return true;
+    }
+
+    [XMLSkinFunction("skin.hastheme")]
+    public static object SkinHasTheme(string theme)
+    {
+      int condition = GUIInfoManager.TranslateSingleString("skin.hastheme(" + theme + ")");
+      return GUIInfoManager.GetBool(condition, 0);
+    }
+
+    [XMLSkinFunction("skin.theme")]
+    public static object SkinTheme(params object[] args)
+    {
+      // args[0] - theme navigation direction; 1 moves to next, -1 moves to previous
+      // args[1] - (optional) the control id to focus on after the theme has been changed
+      int direction = 1;
+      int focusControlId = 0;
+      if (args.Length > 0)
+      {
+        direction = (int)args[0];
+
+        if (args.Length > 1)
+        {
+          focusControlId = (int)args[1];
+        }
+      }
+
+      return GUIThemeManager.ActivateThemeNext(direction, focusControlId);
+    }
+
+    [XMLSkinFunction("skin.settheme")]
+    public static object SkinSetTheme(params object[] args)
+    {
+      // args[0] - new skin theme name
+      // args[1] - (optional) the control id to focus on after the theme has been changed
+      int focusControlId = 0;
+      if (args.Length > 1)
+      {
+        focusControlId = (int)args[1];
+      }
+
+      return GUIThemeManager.ActivateThemeByName(args[0].ToString(), focusControlId);
+    }
+
+    #endregion
+
   }
 }

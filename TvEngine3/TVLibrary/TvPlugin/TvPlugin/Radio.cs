@@ -112,7 +112,7 @@ namespace TvPlugin
 
     public override bool Init()
     {      
-      return Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyRadio.xml"));
     }
 
     #region Serialisation

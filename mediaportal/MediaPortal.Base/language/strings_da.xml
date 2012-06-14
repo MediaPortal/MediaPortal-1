@@ -43,8 +43,8 @@
     <String id="42">Okt</String>
     <String id="43">Nov</String>
     <String id="44">Dec</String>
-    <String id="50">Mine DVDer</String>
-    <String id="51">Afspil disc</String>
+    <String id="50" prefix="Mine">DVDer</String>
+    <String id="51">Afspil disk</String>
     <String id="60">Venter på at TV service starter...</String>
     <String id="61">Venter {0} sekund(er) før start...</String>
     <String id="62">Initialiserer DirectX...</String>
@@ -57,12 +57,17 @@
     <String id="69">Indlæser skin ({0})...</String>
     <String id="70">Indlæser vindue-tilføjelser...</String>
     <String id="71">Initailiserer vindue-manageren...</String>
-    <String id="100">Vis: Ikoner</String>
-    <String id="101">Vis: Liste</String>
+    <String id="90">Vælg tema</String>
+    <String id="94">Tema:</String>
+    <String id="95">Vis:</String>
+    <String id="96">Sortering:</String>
+    <String id="97">Visning:</String>
+    <String id="100">Ikoner</String>
+    <String id="101">Liste</String>
     <String id="102">Scan</String>
-    <String id="103">Sortering: Navn</String>
-    <String id="104">Sortering: Dato</String>
-    <String id="105">Sortering: Størrelse</String>
+    <String id="103">Navn</String>
+    <String id="104">Dato</String>
+    <String id="105">Størrelse</String>
     <String id="106">Nej</String>
     <String id="107">Ja</String>
     <String id="108">Billedserie</String>
@@ -70,8 +75,8 @@
     <String id="110">Lav miniature</String>
     <String id="111">Genveje</String>
     <String id="112">PAUSE</String>
-    <String id="113">Mine Filer : Kilde</String>
-    <String id="114">Mine Filer : Destination</String>
+    <String id="113" prefix="Mine">Filer : Kilde</String>
+    <String id="114" prefix="Mine">Filer : Destination</String>
     <String id="115">Kopier</String>
     <String id="116">Flyt</String>
     <String id="117">Slet</String>
@@ -89,7 +94,7 @@
     <String id="129">Billedserie</String>
     <String id="130">Systeminfo</String>
     <String id="131">Skærm</String>
-    <String id="132">Album</String>
+    <String id="132">Albums</String>
     <String id="133">Kunstner</String>
     <String id="134">Filer</String>
     <String id="135">Genrer</String>
@@ -138,7 +143,7 @@
     <String id="178">Numre:</String>
     <String id="179">Sange</String>
     <String id="180">Varighed</String>
-    <String id="181">Vælg Album</String>
+    <String id="181">Vælg album</String>
     <String id="182">Numre</String>
     <String id="183">Omtale</String>
     <String id="184">Opdatér</String>
@@ -170,8 +175,8 @@
     <String id="210">Forrige</String>
     <String id="211">Søger efter programmer</String>
     <String id="212">Fundne programmer</String>
-    <String id="213">GUI Kalibrering</String>
-    <String id="214">Skærm Kalibrering</String>
+    <String id="213">GUI kalibrering</String>
+    <String id="214">Skærm kalibrering</String>
     <String id="215">Blødgør</String>
     <String id="216">Zoom</String>
     <String id="217">Stræk</String>
@@ -185,15 +190,15 @@
     <String id="225">Overgangstid</String>
     <String id="226">Aktivér PAL60</String>
     <String id="227">Aktivér CDDB</String>
-    <String id="228">Bland Playliste ved opstart</String>
-    <String id="229">HD Spindown tid (min)</String>
+    <String id="228">Bland playliste ved opstart</String>
+    <String id="229">HD spindown tid (min)</String>
     <String id="230">Filtre</String>
     <String id="231">Ingen</String>
     <String id="232">Punkt</String>
     <String id="233">Lineær</String>
     <String id="234">Anisotropisk</String>
     <String id="235">Quincunx</String>
-    <String id="236">Gaussisk Kubisk</String>
+    <String id="236">Gaussisk kubisk</String>
     <String id="237">Formindskelse:</String>
     <String id="238">Forstørrelse:</String>
     <String id="240">Autostart DVD-Film</String>
@@ -221,12 +226,12 @@
     <String id="262">Scripts Output</String>
     <String id="263">HTTP server:</String>
     <String id="264">Optag</String>
-    <String id="265">Stop Optagelse</String>
-    <String id="266">Sortering: Numre</String>
-    <String id="267">Sortering: Tid</String>
-    <String id="268">Sortering: Titel</String>
-    <String id="269">Sortering: Kunstner</String>
-    <String id="270">Sortering: Album</String>
+    <String id="265">Stop optagelse</String>
+    <String id="266">Numre</String>
+    <String id="267">Tid</String>
+    <String id="268">Titel</String>
+    <String id="269">Kunstner</String>
+    <String id="270">Album</String>
     <String id="271">Top 100</String>
     <String id="272">Øverste-venstre overscan kompensering</String>
     <String id="273">Nederste-højre overscan kompensering</String>
@@ -278,15 +283,15 @@
     <String id="319">Fejl ved reorganisering af sange</String>
     <String id="320">Søger efter kunstner...</String>
     <String id="321">Fejl ved reorganisering af kunstner</String>
-    <String id="322">Søger i genre...</String>
-    <String id="323">Fejl ved reorganisering af genre</String>
-    <String id="324">Søger efter opdateringer...</String>
-    <String id="325">Fejl ved reorganisering af opdateringer</String>
+    <String id="322">Søger i genrer...</String>
+    <String id="323">Fejl ved reorganisering af genrer</String>
+    <String id="324">Søger efter stier...</String>
+    <String id="325">Fejl ved reorganisering af stier</String>
     <String id="326">Søger i albums...</String>
     <String id="327">Fejl ved reorganisering af albums</String>
     <String id="328">Gemmer ændringer...</String>
     <String id="329">Fejl ved gemning af ændringer</String>
-    <String id="330">Dette varer nok et stykke tid...</String>
+    <String id="330">Dette tager nok et stykke tid...</String>
     <String id="331">Komprimerer database...</String>
     <String id="332">Fejl ved komprimering af database</String>
     <String id="333">Ønsker du at reorganisere musik-databasen?</String>
@@ -319,11 +324,11 @@
     <String id="360">Skærmbeskytter</String>
     <String id="361">Billedserie (alle)</String>
     <String id="362">Skærmbeskytter intensitetsniveau (%)</String>
-    <String id="363">Sortering: Filer</String>
+    <String id="363">Filer</String>
     <String id="364">DD/DTS Multikanal-gennemgang</String>
-    <String id="365">Sortering: Navn</String>
-    <String id="366">Sortering: År</String>
-    <String id="367">Sortering: Karakter</String>
+    <String id="365">Navn</String>
+    <String id="366">År</String>
+    <String id="367">Karakter</String>
     <String id="368">IMDB</String>
     <String id="369">Titel</String>
     <String id="370">Tordenvejr</String>
@@ -349,7 +354,7 @@
     <String id="390">Dis</String>
     <String id="391">Blæsende</String>
     <String id="392">Støvregn</String>
-    <String id="393">Frysende</String>
+    <String id="393">Frostvejr</String>
     <String id="394">Ikke tilgængelig</String>
     <String id="395">Dis</String>
     <String id="396">Vælg område</String>
@@ -373,20 +378,20 @@
     <String id="414">Ingen oplysninger for dette album</String>
     <String id="415">Henter miniature...</String>
     <String id="416">Ikke tilgængelig</String>
-    <String id="417">Vis: Store ikoner</String>
-    <String id="418">Mine Film/Genre</String>
-    <String id="419">Mine Film/Skuespillere</String>
-    <String id="420">Mine Film/År</String>
-    <String id="421">Mine Film/Titel</String>
+    <String id="417">Store ikoner</String>
+    <String id="418" prefix="MIne">Film/Genre</String>
+    <String id="419" prefix="Mine">Film/Skuespillere</String>
+    <String id="420" prefix="Mine">Film/År</String>
+    <String id="421" prefix="Mine">Film/Titel</String>
     <String id="422">Slet albuminformation</String>
     <String id="423">Slet CDDB data</String>
     <String id="424">Vælg</String>
-    <String id="425">Ingen albumdata fundet.</String>
-    <String id="426">Ingen CDDB-data fundet.</String>
+    <String id="425">Ingen albumdata fundet</String>
+    <String id="426">Ingen CDDB-data fundet</String>
     <String id="427">Disk:</String>
     <String id="428">Indsæt korrekt CD/DVD</String>
     <String id="429">Indsæt følgende CD/DVD</String>
-    <String id="430">Sortering: DVD#</String>
+    <String id="430">DVD#</String>
     <String id="431">Ingen Cache</String>
     <String id="432">Slet film fra database</String>
     <String id="433">Er du sikker på at du vil slette</String>
@@ -416,7 +421,7 @@
     <String id="457">Skift visning</String>
     <String id="458">B/Mærke</String>
     <String id="459">Undertekser</String>
-    <String id="460">Audio stream</String>
+    <String id="460">Lydspor</String>
     <String id="461">[aktiv]</String>
     <String id="462">Undertekster</String>
     <String id="463">Baggrundsbelysning</String>
@@ -425,11 +430,11 @@
     <String id="466">Gamma</String>
     <String id="467">Type</String>
     <String id="468">Flyt bjælken for at placere OSD</String>
-    <String id="469">OSD-Placering</String>
+    <String id="469">OSD-placering</String>
     <String id="470">Credits</String>
     <String id="471">Modchip</String>
     <String id="472">OSD Timeout</String>
-    <String id="473">Højkvalitets Resampling</String>
+    <String id="473">Højkvalitets resampling</String>
     <String id="474">Sluk</String>
     <String id="475">Kun musik</String>
     <String id="476">Musik&amp;film</String>
@@ -481,9 +486,9 @@
     <String id="523">Et spring trin på 0 er ikke tilladt!</String>
     <String id="524">3 timers spring er det maksimale!</String>
     <String id="525">Spring trin allerede defineret</String>
-    <String id="527">Sortering: Set</String>
-    <String id="528">Albummets Kunstner</String>
-    <String id="529">Vis: Store ikoner</String>
+    <String id="527">Set</String>
+    <String id="528">Albummets kunstner</String>
+    <String id="529">Store ikoner</String>
     <String id="530">Fotodisk isat, vil du se indholdet ?</String>
     <String id="531">Filmdisk isat, vil du se indholdet ?</String>
     <String id="532">Musikdisk isat, vil du se indholdet ?</String>
@@ -532,8 +537,8 @@
     <String id="596">Venter på side {0}/{1}...</String>
     <String id="599">Storm</String>
     <String id="600">TV-guide</String>
-    <String id="601">Optag NU !</String>
-    <String id="602">Kanal:</String>
+    <String id="601">Optag NU!</String>
+    <String id="602">Kanal</String>
     <String id="603">Planlagte optagelser</String>
     <String id="604">Optaget TV</String>
     <String id="605" prefix="Mit ">TV</String>
@@ -547,14 +552,14 @@
     <String id="613">Optag hver gang på alle kanaler</String>
     <String id="614">Optag hver uge på dette tidspunkt</String>
     <String id="615">Optag hver dag på dette tidspunkt</String>
-    <String id="616">Vælg optagelses-type</String>
+    <String id="616">Vælg optagelsestype</String>
     <String id="617">Ny</String>
     <String id="618">Slet</String>
-    <String id="619">Ændre Dato/Tid</String>
-    <String id="620">Sortering: Kanal</String>
-    <String id="621">Sortering: Dato</String>
-    <String id="622">Sortering: Navn</String>
-    <String id="623">Sortering: Type</String>
+    <String id="619">Ret dato/tid</String>
+    <String id="620">Kanal</String>
+    <String id="621">Dato</String>
+    <String id="622">Navn</String>
+    <String id="623">Type</String>
     <String id="624">Ryd op</String>
     <String id="625">Optagelser slettet:</String>
     <String id="626">Skift type</String>
@@ -599,28 +604,28 @@
     <String id="665" prefix="Min ">Radio</String>
     <String id="666">Stationer</String>
     <String id="667">Auto-justér</String>
-    <String id="668">Sortering: Type</String>
-    <String id="669">Sortering: Genre</String>
-    <String id="670">Sortering: Bitrate</String>
-    <String id="671">Sortering: Set</String>
+    <String id="668">Type</String>
+    <String id="669">Genre</String>
+    <String id="670">Bitrate</String>
+    <String id="671">Set</String>
     <String id="672">Optag Man-Fre</String>
     <String id="673">Scroll-hastighed</String>
     <String id="674">GUI-Indstillinger</String>
     <String id="675">Eksempel:</String>
     <String id="676">Slet sete optagelser?</String>
     <String id="677">gange</String>
-    <String id="678">Sortering: Genre</String>
+    <String id="678">Genre</String>
     <String id="679">Ugentlig</String>
     <String id="680">Man-Fre</String>
     <String id="681">Venter</String>
     <String id="682">Optager</String>
     <String id="683">Færdig</String>
     <String id="684">Annulleret</String>
-    <String id="685">Sortering: Status</String>
+    <String id="685">Status</String>
     <String id="686">Født</String>
     <String id="687">Aktiv i (år)</String>
     <String id="688">Instrumenter</String>
-    <String id="689">Bio.</String>
+    <String id="689">Bio</String>
     <String id="690">Diskografi (Album)</String>
     <String id="691">Diskografi (kompilationer, bokse)</String>
     <String id="692">TV-Streams</String>
@@ -658,9 +663,9 @@
     <String id="730">Denne optagelse er i gang. Hvis du sletter</String>
     <String id="731">vil optagelsen blive afbrudt.</String>
     <String id="732">Er du sikker?</String>
-    <String id="733">Vis: Filmklip</String>
+    <String id="733">Filmklip</String>
     <String id="734">Billede:</String>
-    <String id="735">Rotér</String>
+    <String id="735">Rotér 90°</String>
     <String id="736">Ingen EPG for denne kanal</String>
     <String id="737">Vis: Satellit</String>
     <String id="738">Vis: Temperatur</String>
@@ -707,11 +712,11 @@
     <String id="780">Vælg optagelsesmetode</String>
     <String id="781">Hurtig optagelse</String>
     <String id="782">Detaljeret optagelse</String>
-    <String id="783">Roter 180°</String>
-    <String id="784">Roter 270°</String>
+    <String id="783">Rotér 180°</String>
+    <String id="784">Rotér 270°</String>
     <String id="789">Nu: </String>
     <String id="790">Næste: </String>
-    <String id="791">Vis: Coverflow</String>
+    <String id="791">Coverflow</String>
     <String id="792">Visningsmenu</String>
     <String id="798">lav</String>
     <String id="799">høj</String>
@@ -859,7 +864,7 @@
     <String id="977">Der er intet frit kort</String>
     <String id="978">der kan vise denne kanal</String>
     <String id="979">Afspil optagelsen fra starten</String>
-    <String id="980">Afspil optagelse fra "live" punktet</String>
+    <String id="980">Afspil optagelsen fra "live" punktet</String>
     <String id="981">Afbryd denne udsendelse</String>
     <String id="982">Slet alle afsnittene</String>
     <String id="983" prefix="Mine ">Playlister</String>
@@ -896,7 +901,7 @@
     <String id="1014">Giv besked om programstart</String>
     <String id="1015">Giv ikke besked om programstart</String>
     <String id="1016">Programmet starter om 5 minutter</String>
-    <String id="1017">Sortering: Varighed</String>
+    <String id="1017">Varighed</String>
     <String id="1018">Program starter om {0} minutter</String>
     <String id="1019">Program starter snart</String>
     <String id="1020">Information</String>
@@ -904,17 +909,17 @@
     <String id="1022">returnere til vinduetilstand.</String>
     <String id="1023">Indgående opkald</String>
     <String id="1024">fra</String>
-    <String id="1025">En fejl opstod.</String>
-    <String id="1026">Se i log filerne for detaljer.</String>
+    <String id="1025">En fejl opstod</String>
+    <String id="1026">Se i logfilerne for detaljer</String>
     <String id="1027" prefix="Mine ">DVD'er</String>
     <String id="1028">By</String>
-    <String id="1029">Undertekst sprog</String>
+    <String id="1029">Undertekstsprog</String>
     <String id="1030">Luk ned</String>
     <String id="1031">Genstart</String>
     <String id="1032">Sov</String>
     <String id="1033">Der bliver optaget lige nu</String>
     <String id="1034">Intet signal!</String>
-    <String id="1035">TV kanalen er kodet!</String>
+    <String id="1035">TV-kanalen er kodet!</String>
     <String id="1036">Ingen video fundet</String>
     <String id="1037" prefix="Mit ">TV-Programinformation</String>
     <String id="1038">Optagelses-metode</String>
@@ -989,21 +994,83 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Indstillingsguide</String>
     <String id="1201">Afspil fra begyndelsen</String>
-    <String id="1202">Sortering: Auto</String>
+    <String id="1202">Auto</String>
     <String id="1203">Kommende episoder (aktive:{0})</String>
     <String id="1204">Afspil alle videoer i denne mappe</String>
-    <String id="1205">Sortering: Disc#</String>
+    <String id="1205">Disk#</String>
     <String id="1206">Programmet kører nu i {0} minutter</String>
     <String id="1207">Skift til {0} nu?</String>
-    <String id="1208">Sortering: Komponist</String>
+    <String id="1208">Komponist</String>
     <String id="1211">Fortsæt afspilning fra {0}</String>
     <String id="1212">Annullér påmindelse</String>
     <String id="1213">Lyt til denne station</String>
-    <String id="1220">Sortering: Oprettet</String>
-    <String id="1221">Sortering: Ændret</String>
+    <String id="1214">Komponister</String>
+    <String id="1215">Dirigenter</String>
+    <String id="1216">Disks</String>
+    <String id="1217">Kunstner numre</String>
+    <String id="1218">Albums efter alder</String>
+    <String id="1219">Albummets kunstner (Index)</String>
+    <String id="1220">Oprettet</String>
+    <String id="1221">Ændret</String>
+    <String id="1222">Grupper</String>
+    <String id="1223">Eksisterende playliste fundet</String>
+    <String id="1224">Vil du rydde den nuværende playliste?</String>
+    <String id="1225">Sæt i kø</String>
+    <String id="1226">Sæt alle i kø</String>
     <String id="1230">Dato tilføjet:</String>
     <String id="1231">Sidst spillet:</String>
+    <String id="1240">Lås indhold</String>
+    <String id="1241">lås indhold op</String>
+    <String id="1250">Dokumentar</String>
+    <String id="1251">Børn</String>
+    <String id="1252">Film</String>
+    <String id="1253">Musik</String>
+    <String id="1254">Nyheder</String>
+    <String id="1255">Tema</String>
+    <String id="1256">Sport</String>
+    <String id="1260">Markér som set</String>
+    <String id="1261">Ingen GrabberIndexFile fundet</String>
+    <String id="1262">Opdatér grabber scripts</String>
+    <String id="1263">Vælg som standard grabber script</String>
+    <String id="1264">Updater medieinfo</String>
+    <String id="1265">Brugergrupper</String>
+    <String id="1266">Set</String>
+    <String id="1267">Ikke set</String>
+    <String id="1268">Led efter instruktør</String>
+    <String id="1269">Instruktører</String>
+    <String id="1270">Tilføj film til brugergruppe</String>
+    <String id="1271">Fjern valgte film fra brugergruppe</String>
+    <String id="1272">Tilføj ny brugergruppe</String>
+    <String id="1273">Fjern valgte brugergruppe</String>
+    <String id="1274">Studie</String>
+    <String id="1275">Sprog</String>
+    <String id="1276">Land</String>
+    <String id="1277">Død</String>
+    <String id="1278">Set</String>
+    <String id="1279">Sidste opdatering</String>
+    <String id="1280">Scan ved at bruge nfo filer</String>
+    <String id="1281">Efter filmtitel</String>
+    <String id="1282">Efter instruktørnavn</String>
+    <String id="1283">Efter skuespillernavn</String>
+    <String id="1284">Efter skuespillerrolle</String>
+    <String id="1285">Efter år</String>
+    <String id="1286">Efter aldersgrænse (MPAA vurdering)</String>
+    <String id="1287">Titel (Index)</String>
+    <String id="1288">Skuespillere (Index)</String>
+    <String id="1289">Instruktører (Index)</String>
+    <String id="1290">Opdatér valgte film</String>
+    <String id="1291">Autoopdatering er i gang.</String>
+    <String id="1292">Vent venligst mens den bliver færdig.</String>
+    <String id="1293">Søg efter film</String>
+    <String id="1294">Nulstil søgning</String>
+    <String id="1295">Søg efter skuespiller</String>
+    <String id="1296">Opdatér alle skuespillerens film</String>
+    <String id="1297">Opdatér info om valgte skuespiller</String>
+    <String id="1298">Opdatér fanart</String>
+    <String id="1299">Opdatér nuværende bibliotek</String>
     <String id="1300" prefix="Mine ">TV-Udsendelser</String>
+    <String id="1301">Henter skuespillere og roller</String>
+    <String id="1302">Henter info om skuespiller</String>
     <String id="1440" prefix="Mit ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
     <String id="1442">Scroll hastighed (horisontal)</String>
@@ -1019,7 +1086,7 @@
     <String id="1498">Program/Kanal ikke fundet</String>
     <String id="1499">Intet signal</String>
     <String id="1500">Kan ikke starte tidsforskudt optagelse</String>
-    <String id="1501">Kort er inaktivt</String>
+    <String id="1501">Kort er deaktiveret</String>
     <String id="1502">Ingen frie kort</String>
     <String id="1503">Kanalen er kodet</String>
     <String id="1504">Intet billede/lyd detekteret</String>
@@ -1045,6 +1112,17 @@
     <String id="1600">Ønsker du at slukke?</String>
     <String id="1601">Ønsker du at afbryde?</String>
     <String id="1602">Ønsker du at gå i dvale?</String>
+    <String id="1900">Forældet skin</String>
+    <String id="1901">Det valgte skin ({0}) er forældet. Dette kan give anledning til problemer med at bruge MediaPortal. Derfor har MediaPortal midlertidigt skiftet til standard-skin. Hvis du alligevel vil prøve at bruge det forældede skin skal du klikke på 'Ignorer og prøv' knappen, men husk: Opret ikke fejlrapporter med dette skin! (for at lukke dette vindue kan du vente til det lukker automatisk eller trykke Tilbage/ESC på din fjernbetjening)</String>
+    <String id="1902">Vis ikke denne besked igen</String>
+    <String id="1903">Ignorer og prøv ({0})...</String>
+    <String id="1910">Inkompatible plugins</String>
+    <String id="1911">Følgende plugins er ikke kompatible med denne version af MediaPortal og blev derfor automatisk deaktivet:</String>
+    <String id="1912">Fortsæt|Fortsæt ({0})...|Fortsæt ({0})...</String>
+    <String id="1700">Popup menu</String>
+    <String id="1701">Vælg afspilning</String>
+    <String id="1702">Titel: #{0} - kapitler: {1}, varighed: {2}</String>
+    <String id="1703">Vælg fra alle titler</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Blæser</String>
@@ -1231,7 +1309,7 @@
     <String id="2212">Slet</String>
     <String id="2213">Flyt</String>
     <String id="2214">Vil du flytte de valgte filer?</String>
-    <String id="2215">Vent venligst, flytter filer.</String>
+    <String id="2215">Vent venligst, flytter filer</String>
     <String id="2216">Filer flyttet!</String>
     <String id="2217">Destinationsfilen eksisterer!</String>
     <String id="2218">Overskriv filen?</String>
@@ -1240,8 +1318,8 @@
     <String id="2221">Vil du slette den valgte fil?</String>
     <String id="2222">Filen er slettet!</String>
     <String id="2223">Papirkurv</String>
-    <String id="2224">Folder eksisterer!</String>
-    <String id="2225">Folder oprettet</String>
+    <String id="2224">Mappe eksisterer!</String>
+    <String id="2225">Mappe oprettet</String>
     <String id="2500">Ingen søgeord indtastet!</String>
     <String id="2501">Indtast gyldige søgeord</String>
     <String id="2502">Vælg din lokale Wikipedia:</String>
@@ -1347,6 +1425,7 @@
     <String id="4555">Aktiv playliste</String>
     <String id="4557">Tilføj alle til playliste</String>
     <String id="4558">For nylig tilføjet</String>
+    <String id="4559">For nylig set</String>
     <String id="5900" prefix="Mine ">Trailere</String>
     <String id="5901">Vis film</String>
     <String id="5902">Hvilke film skal vises?</String>
@@ -1385,7 +1464,7 @@
     <String id="6009">DVB Guide</String>
     <String id="6010">XMLTV EPG grabber</String>
     <String id="6011">DVB EPG:</String>
-    <String id="6012">Opdatér TV-guide fra følgende DVB kanaler:</String>
+    <String id="6012">Opdatér TV-guide fra følgende DVB-kanaler:</String>
     <String id="6013">Manuelt XML-TV</String>
     <String id="6014">TV setup</String>
     <String id="6015">DVD setup</String>
@@ -1464,7 +1543,7 @@
     <String id="9011">Kommentar:</String>
     <String id="9100" prefix="My ">MiniDisplay</String>
     <String id="9101">Plugin er ikke instillet</String>
-    <String id="9102">Venligst kør MediaPortal konfigurationen først!</String>
+    <String id="9102">Kør venligst MediaPortal konfigurationen først!</String>
     <String id="9103">Lille tastatur indstillinger</String>
     <String id="9104">Display indstillinger</String>
     <String id="9105">Display kontrol indstillinger</String>
@@ -1499,10 +1578,10 @@
     <String id="9134">Brug equalizer udjævning</String>
     <String id="9135">Forsink start</String>
     <String id="9136">Forsink tid</String>
-    <String id="9137">Vis title</String>
-    <String id="9138">Title tid</String>
-    <String id="9139">Title ofte</String>
-    <String id="9140">INGEN TASTETUR INDSTILLINGER</String>
+    <String id="9137">Vis titel</String>
+    <String id="9138">Titel tid</String>
+    <String id="9139">Titel hastighed</String>
+    <String id="9140">INGEN TASTATUR INDSTILLINGER</String>
     <String id="9141">Slå lille tastatur til</String>
     <String id="9142">Custom lille tastatur</String>
     <String id="9143">Tastetur kortlægning</String>
@@ -1546,9 +1625,9 @@
     <String id="13013">Henter video, vent venligst</String>
     <String id="13014">Søger i biblioteker</String>
     <String id="13015">Importerer spilbase fil</String>
-    <String id="13016">Sortering: Antal afspilninger</String>
-    <String id="13017">Sortering: Seneste</String>
-    <String id="13018">Sortering: Point</String>
+    <String id="13016">Antal afspilninger</String>
+    <String id="13017">Seneste</String>
+    <String id="13018">Vurdering</String>
     <String id="13031">Producent</String>
     <String id="13032">Oftest startet</String>
     <String id="13033">Senest Startet</String>
@@ -1565,7 +1644,7 @@
     <String id="14009">Ved næste start vil denne handling blive afviklet</String>
     <String id="14010">Download udvidelse</String>
     <String id="14011">Vælg en option</String>
-    <String id="14012">Ikke kompatibel af denne Mediaportal version!(Kræver version {0})</String>
+    <String id="14012">Ikke kompatibel med denne MediaPortal version!(Kræver version {0})</String>
     <String id="14013">Ønsker du at fortsætte?</String>
     <String id="14014">Updating online info</String>
     <String id="14015">Updateringer</String>
@@ -1672,7 +1751,7 @@
     <String id="33031">Andre numre markeret med: </String>
     <String id="33032">Dette albums topnummer kunne ikke</String>
     <String id="33033">blive fundet i din samling!</String>
-    <String id="33040">Kopiér 'Now Playing' spam til clipboard</String>
+    <String id="33040">Kopiér 'Now Playing' spam til udklipsholder</String>
     <String id="33041">Tilføj dette album til playliste</String>
     <String id="34000" prefix="Min ">Last.fm</String>
     <String id="34001">Start / Skift stream</String>
@@ -1782,12 +1861,12 @@
     <String id="100616" prefix="Min ">Indstillingsguide/Detekterede kort</String>
     <String id="100617" prefix="Min ">Indstillingsguide/Land</String>
     <String id="100618" prefix="Min ">Indstillingsguide/Søg</String>
-    <String id="100619" prefix="Min ">Indstillingsguide/DVBC/Land</String>
-    <String id="100620" prefix="Min ">Indstillingsguide/DVBC/Søg</String>
-    <String id="100621" prefix="Min ">Indstillingsguide/DVBS/LBN</String>
-    <String id="100622" prefix="Min ">Indstillingsguide/DVBS/LBN detaljer</String>
-    <String id="100623" prefix="Min ">Indstillingsguide/DVBS/Transponder</String>
-    <String id="100624" prefix="Min ">Indstillingsguide/DVBS/Søg</String>
+    <String id="100619" prefix="Min ">Indstillingsguide/DVB-C/Land</String>
+    <String id="100620" prefix="Min ">Indstillingsguide/DVB-C/Søg</String>
+    <String id="100621" prefix="Min ">Indstillingsguide/DVB-S/LBN</String>
+    <String id="100622" prefix="Min ">Indstillingsguide/DVB-S/LBN detaljer</String>
+    <String id="100623" prefix="Min ">Indstillingsguide/DVB-S/Transponder</String>
+    <String id="100624" prefix="Min ">Indstillingsguide/DVB-S/Søg</String>
     <String id="100625" prefix="Min ">Indstillingsguide/ATSC/Søg</String>
     <String id="100626" prefix="Min ">Indstillingsguide/Analog/Land</String>
     <String id="100627" prefix="Min ">Indstillingsguide/Analog/By</String>
@@ -1842,7 +1921,7 @@
     <String id="102010">Dato/Tid</String>
     <String id="102011">Kunstnerinformation</String>
     <String id="102012">Kontekstmenu</String>
-    <String id="102013">Sæt karakter</String>
+    <String id="102013">Sæt vurdering</String>
     <String id="102014">Billedinfo</String>
     <String id="102015">MiniMenu</String>
     <String id="102016">Besked</String>
@@ -1915,7 +1994,7 @@
     <String id="200034">Vælg venligst din by fra listen.</String>
     <String id="200035">Hvis din by ikke findes på listen skal du manuelt indstille kanaler.</String>
     <String id="200036">Manuel indstilling</String>
-    <String id="200037">Skip &gt;;</String>
+    <String id="200037">Spring over &gt;</String>
     <String id="200038">På en PC der også bruges til andre programmer</String>
     <String id="200039">Tilføj spring trin</String>
     <String id="200040">Fjern spring trin</String>
@@ -1965,5 +2044,9 @@
     <String id="200087">Mute</String>
     <String id="200090">Udgave</String>
     <String id="200091">Kapitel</String>
+    <String id="200092">Kun tvungen</String>
+    <String id="200093">Timeout for diskmount nået!</String>
+    <String id="200094">Prøv igen i 60 sekunder?</String>
+    <String id="200095">Video stream</String>
   </Section>
 </Language>

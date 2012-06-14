@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using MediaPortal.Utils;
@@ -90,6 +91,69 @@ namespace MediaPortal.Profile
         return null;
       }
       return entryNode.InnerText;
+    }
+
+    /// <summary>
+    /// Returns true if the specified settings section exists.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="section"></param>
+    /// <returns></returns>
+    public bool HasSection<T>(string section)
+    {
+      if (document == null)
+      {
+        return false;
+      }
+
+      XmlElement root = document.DocumentElement;
+      if (root == null)
+      {
+        return false;
+      }
+
+      //  Select the section node.
+      XmlNode node = root.SelectSingleNode(GetSectionsPath(section));
+
+      return (node != null);
+    }
+
+    /// <summary>
+    /// Get all of the settings entries in the specified section.
+    /// </summary>
+    /// <param name="section">Specified the name of the section to retrieve.</param>
+    /// <returns>A dictionary of all entries; key is the the "name" attribute.</returns>
+    public IDictionary<string,T> GetSection<T>(string section)
+    {
+      if (document == null)
+      {
+        return null;
+      }
+
+      XmlElement root = document.DocumentElement;
+      if (root == null)
+      {
+        return null;
+      }
+
+      //  Select all of the entry nodes in the section.
+      XmlNodeList nodes = root.SelectNodes(GetSectionsPath(section) + "/entry");
+
+      if (nodes == null)
+        return null;
+
+      IDictionary<string, T> entries = new Dictionary<string, T>();
+      IEnumerator enumerator = nodes.GetEnumerator();
+      if (enumerator != null)
+      {
+        while (enumerator.MoveNext())
+        {
+          string key = ((XmlNode)enumerator.Current).Attributes["name"].Value;
+          T value = (T)Convert.ChangeType(((XmlNode)enumerator.Current).InnerText, typeof(T));
+          entries.Add(key, value);
+        }
+      }
+      return entries;
     }
 
     public void Save()

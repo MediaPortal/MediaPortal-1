@@ -506,6 +506,12 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("HDPVR:  dispose completed");
     }
 
+    public void CancelTune(int subChannel)
+    {
+    }
+
+    public event OnNewSubChannelDelegate OnNewSubChannelEvent;
+
     #endregion
 
     #region graph handling

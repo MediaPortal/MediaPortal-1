@@ -41,7 +41,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\settings_Display_Equalizer.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_Display_Equalizer.xml"));
     }
 
     private void LoadSettings()

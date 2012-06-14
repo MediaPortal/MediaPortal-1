@@ -32,7 +32,7 @@
 #include "dx9allocatorpresenter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-//#include "..\..\alloctracing.h"
+#include "..\..\alloctracing.h"
 
 using namespace std;
 
@@ -64,7 +64,6 @@ char* m_RenderPrefix = "vmr9";
 LPDIRECT3DDEVICE9			    m_pDevice       = NULL;
 CVMR9AllocatorPresenter*	m_vmr9Presenter = NULL;
 MPEVRCustomPresenter*	    m_evrPresenter  = NULL;
-IMFVideoDisplayControl*   m_pControl      = NULL;
 IBaseFilter*				      m_pVMR9Filter   = NULL;
 IVMRSurfaceAllocator9*		m_allocator     = NULL;
 LONG						          m_iRecordingId  = 0;
@@ -603,26 +602,29 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPV
 }
 
 
-BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter, DWORD monitor)
+BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter, DWORD monitor)
 {
   HRESULT hr;
   m_RenderPrefix = "evr";
   LogRotate();
   // Make sure that we aren't trying to load the DLLs for second time
-  if(!m_bEVRLoaded)
+  if (!m_bEVRLoaded)
   {
     m_bEVRLoaded = LoadEVR();
-  }
-  if (!m_bEVRLoaded) 
-  {
-    Log("EVR libraries are not loaded. Cannot init EVR");
-    return FALSE;
+
+    if (!m_bEVRLoaded) 
+    {
+      Log("EVR libraries are not loaded. Cannot init EVR");
+      return FALSE;
+    }
   }
 
   m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
-  m_pVMR9Filter = evrFilter;
 
 #ifndef DEFAULT_PRESENTER
+
+  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, evrFilter, IsWin7());
+  m_pVMR9Filter = (*evrFilter);
 
   CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
   if (!pRenderer) 
@@ -630,8 +632,9 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,
     Log("Could not get IMFVideoRenderer");
     return FALSE;
   }
-  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, m_pVMR9Filter, IsWin7());
+
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
+  
   if (FAILED(hr))
   {
     Log("InitializeRenderer failed: 0x%x", hr);
@@ -658,6 +661,7 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,
     Log("EVR:Init() SetNumberOfStreams() failed 0x:%x",hr);
     return FALSE;
   }
+  pConfig.Release();
 
   return TRUE;
 }
@@ -667,22 +671,11 @@ void EvrDeinit()
 {
   try
   {
-    int refCount(0);
-    if (m_pControl) 
-    {
-      m_pControl->Release();
-      m_pControl = NULL;
-    }
-    if (m_evrPresenter!=NULL)
+    if (m_evrPresenter)
     {
       m_evrPresenter->ReleaseCallback();
-      refCount = m_evrPresenter->Release();
-      m_evrPresenter = NULL;
-      Log("EVRDeinit:m_evrPresenter release: %d", refCount);
     }
     m_evrPresenter = NULL;
-
-    //SAFE_RELEASE(m_pVMR9Filter);
     m_pVMR9Filter = NULL;
     
     // Do not unload DLLs when playback stops

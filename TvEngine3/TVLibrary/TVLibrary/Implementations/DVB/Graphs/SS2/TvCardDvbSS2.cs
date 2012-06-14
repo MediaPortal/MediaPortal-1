@@ -244,6 +244,10 @@ namespace TvLibrary.Implementations.DVB
       {
         throw;
       }
+      catch (TvExceptionTuneCancelled)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
@@ -263,6 +267,7 @@ namespace TvLibrary.Implementations.DVB
 
       try
       {
+        //FreePreviousChannelMDPlugs();
         int pmtPid;
         if (!BeforeTune(channel, ref subChannelId, out pmtPid))
         {
@@ -273,6 +278,8 @@ namespace TvLibrary.Implementations.DVB
           return null;
         }
         AfterTune(subChannelId, false);
+
+        _previousChannel = channel;
 
         Log.Log.WriteFile("ss2:tune done:{0:X}", pmtPid);
         return _mapSubChannels[subChannelId];
@@ -316,7 +323,9 @@ namespace TvLibrary.Implementations.DVB
 
     private bool DoTune()
     {
-      int hr = -1;
+      try
+      {
+        int hr = -1;
       int lockRetries = 0;
       while
         (((uint)hr == 0x90010115 || hr == -1) && lockRetries < 5)
@@ -353,6 +362,12 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       return true;
+      }
+      finally
+      {
+        _cancelTune = false;
+      }
+      
     }
 
     private bool BeforeTune(IChannel channel, ref int subChannelId, out int pmtPid)
@@ -755,19 +770,24 @@ namespace TvLibrary.Implementations.DVB
     /// Checks if the tuner is locked in and a sginal is present
     ///</summary>
     ///<returns>true, when the tuner is locked and a signal is present</returns>
-    public override bool LockedInOnSignal()
+    public override void LockInOnSignal()
     {
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
       while (!isLocked && ts.TotalSeconds < 2)
       {
+        if (_cancelTune)
+        {
+          Log.Log.WriteFile("dvb:  LockInOnSignal tune cancelled");
+          throw new TvExceptionTuneCancelled();
+        }
         int hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
         _interfaceB2C2TunerCtrl.CheckLock();
         if (((uint)hr) == 0x90010115)
         {
           ts = DateTime.Now - timeStart;
-          Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal waiting 20ms");
+          Log.Log.WriteFile("dvb-s ss2:  LockInOnSignal waiting 20ms");
           System.Threading.Thread.Sleep(20);
         }
         else
@@ -778,13 +798,10 @@ namespace TvLibrary.Implementations.DVB
 
       if (!isLocked)
       {
-        Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
+        Log.Log.WriteFile("dvb-s ss2:  LockInOnSignal could not lock onto channel - no signal or bad signal");
+        throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
       }
-      else
-      {
-        Log.Log.WriteFile("dvb-s ss2:  LockedInOnSignal ok");
-      }
-      return isLocked;
+      Log.Log.WriteFile("dvb-s ss2:  LockInOnSignal ok");
     }
 
     /// <summary>

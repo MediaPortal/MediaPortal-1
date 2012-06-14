@@ -297,7 +297,7 @@ namespace TestApp
         {
           File.Delete(fileName);
         }
-        _currentCard.SubChannels[0].StartRecording(false, fileName);
+        _currentCard.SubChannels[0].StartRecording(fileName);
         MessageBox.Show(this, "Recording to:" + fileName);
       }
     }
@@ -417,7 +417,7 @@ namespace TestApp
         MessageBox.Show(this, "Stopped recording");
         return;
       }
-      _currentCard.SubChannels[0].StartRecording(false, "recording.mpg");
+      _currentCard.SubChannels[0].StartRecording("recording.mpg");
       buttonRecordMpg.Text = "Stop .mpg record";
       MessageBox.Show(this, "Recording to recording.mpg");
     }

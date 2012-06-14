@@ -199,6 +199,10 @@ namespace TvLibrary.Implementations.DVB
       {
         throw;
       }
+      catch (TvExceptionTuneCancelled)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
@@ -227,6 +231,10 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
+      catch (TvExceptionTuneCancelled)
+      {
+        throw;
+      }
       catch (TvExceptionNoSignal)
       {
         throw;
@@ -234,7 +242,7 @@ namespace TvLibrary.Implementations.DVB
       catch (TvExceptionNoPMT)
       {
         throw;
-      }
+      }      
       catch (Exception ex)
       {
         Log.Log.Write(ex);

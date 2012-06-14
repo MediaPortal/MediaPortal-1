@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="no" availableDays="12" timezone="W. Europe Standard Time" version="2.0.1" />
+  <Info language="no" availableDays="8" timezone="W. Europe Standard Time" version="2.0.1" />
   <Channels>
     <Channel id="nrk1@nrk.no" siteId="nrktv1" />
     <Channel id="nrk2@nrk.no" siteId="nrktv2" />
@@ -8,106 +8,119 @@
     <Channel id="nrksuper@nrk.no" siteId="nrksuper" />
     <Channel id="sportn@viasat.no" siteId="sportn" /> 
     <Channel id="tv2.no" siteId="tv2" />
+	<Channel id="bliss@tv2.no" siteId="tv2bliss" />
     <Channel id="film@tv2.no" siteId="tv2film" />
-    <Channel id="zebra@tv2.no" siteId="tv2zebra" />    
-    <Channel id="nyhetskanalen@tv2.no" siteId="tv2nyhet" />
+	<Channel id="nyhetskanalen@tv2.no" siteId="tv2nyhet" />
     <Channel id="sport@tv2.no" siteId="tv2sport" />
-    <Channel id="bliss@tv2.no" siteId="tv2bliss" />
+    <Channel id="tv2prem@tv2.no" siteId="tv2prem" />
+	<Channel id="tv2prelg2@tv2.no" siteId="tv2prelg2" />
+	<Channel id="tv2prelg3@tv2.no" siteId="tv2prelg3" />
+    <Channel id="zebra@tv2.no" siteId="tv2zebra" />    
     <Channel id="tvnorge.no" siteId="tvn" />
     <Channel id="tvnorgehd.no" siteId="tvnhd" />
     <Channel id="fem@tvnorge.no" siteId="fem" />
     <Channel id="max@tvnorge.no" siteId="max" />
     <Channel id="tv3.no" siteId="tv3" />
+    <Channel id="canal9.no" siteId="canal9no" />
     <Channel id="viasat4@viasat.no" siteId="viasat4" />
+    <Channel id="sport@viasatsport.no" siteId="viaspo" />
+    <Channel id="vox.de" siteId="voxno" />
     <Channel id="3sat.de" siteId="3sat" />
     <Channel id="aljazint.int" siteId="aljazint" />
     <Channel id="animalplanet.com" siteId="animal" />
     <Channel id="animalplanethd.com" siteId="animalhd" />
-    <Channel id="bbcprime.com" siteId="bbcprime" />
-    <Channel id="bbcworld.com" siteId="bbcworld" />
-    <Channel id="bbcknow@bbc.co.uk" siteId="bbcknow" />
     <Channel id="bbcentertainment.com" siteId="bbcenter" />
-    <Channel id="bbclifestyle.com" siteId="bbclife" />
     <Channel id="bbchd@bbc.co.uk" siteId="bbchd" />
+    <Channel id="bbcknow@bbc.co.uk" siteId="bbcknow" />
+    <Channel id="bbclifestyle.com" siteId="bbclife" />
+    <Channel id="bbcworld.com" siteId="bbcworld" />
+    <Channel id="boom@cartoon-network.co.uk" siteId="boom" />
     <Channel id="action@canalplus.no" siteId="canplaction" />
-    <Channel id="comedy@canalplus.no" siteId="canplcomedy" />
-    <Channel id="drama@canalplus.no" siteId="canpldrama" />
+	<Channel id="drama@canalplus.no" siteId="canpldrama" />   
     <Channel id="first@canalplus.no" siteId="canplfirst" />
     <Channel id="hd@canalplus.no" siteId="canplfilmhd" />
-    <Channel id="hits@canalplus.no" siteId="canplhits" />
     <Channel id="sport1@canalplus.no" siteId="canplspo1" />
+    <Channel id="hits@canalplus.no" siteId="canplhits" />
+    <Channel id="hockey@canalplus.se" siteId="canplhoc" />   
+    <Channel id="comedy@canalplus.no" siteId="canplcomedy" />
+    <Channel id="canplsfk@canalplus.no" siteId="canplsfk" />
     <Channel id="sport2@canalplus.no" siteId="canplspo2" />
-    <Channel id="sporthd@canalplus.no" siteId="canplspohd" />
-    <Channel id="boom@cartoon-network.co.uk" siteId="boom" />
+    <Channel id="sport3@canalplus.no" siteId="canplspo3" />
+	<Channel id="sporthd@canalplus.no" siteId="canplspohd" />
     <Channel id="cartoonnetwork.no" siteId="cartoon" />
     <Channel id="club" siteId="club" />
-    <Channel id="cnbc@msn.com" siteId="cnbc" />
+    <Channel id="cnbc@msn.com" siteId="cnbc" />  
     <Channel id="CNBC_NGC" siteId="cnbcnatgeoch" />
     <Channel id="cnni-emea@cnn.com" siteId="cnn" />
-    <Channel id="dw-world.de" siteId="dw" />
     <Channel id="discovery@discovery.com" siteId="discov" />
+	<Channel id="world@discovery.com" siteId="dcivil" />
     <Channel id="hd@discoverychannel.co.uk" siteId="dischd" />
-    <Channel id="civilisation@discovery.com" siteId="dcivil" />
     <Channel id="sci_trek@discovery.com" siteId="dscitrek" />
-    <Channel id="travel_adventure@discovery.com" siteId="dtravel" />
     <Channel id="disneychannel.no" siteId="disney" />
+    <Channel id="ph@disneychannel.co.uk" siteId="disneyplay" />
     <Channel id="DisneyXD.tv" siteId="disneyxd" />
     <Channel id="dr1@dr.dk" siteId="dr1" />
     <Channel id="dr2@dr.dk" siteId="dr2" />
     <Channel id="dsf.de" siteId="dsf" />
-    <Channel id="eurosport@eurosport.com" siteId="eurospo" />
+    <Channel id="dw-world.de" siteId="dw" />
+    <Channel id="eentertainment.com" siteId="e" />
+    <Channel id="america@espn.com" siteId="espnam" />
+	<Channel id="eurosport@eurosport.com" siteId="eurospo" />
     <Channel id="eurosport2@eurosport.com" siteId="eurospo2" />
     <Channel id="HD@eurosport.com" siteId="eurospohd" />
-    <Channel id="extremesports.tv" siteId="extreme" />   
-    <Channel id="hallmarkchannel.com" siteId="hallmark" />  
-    <Channel id="history@viasat.no" siteId="viahis" />
-    <Channel id="thehistorychannel.co.uk" siteId="history" />
+    <Channel id="extremesports.tv" siteId="extreme" />
+    <Channel id="foxcrime@fox.com" siteId="foxcrime" />
+	<Channel id="thehistorychannel.co.uk" siteId="history" />
     <Channel id="hd@thehistorychannel.co.uk" siteId="historyhd" />
-    <Channel id="jetix.no" siteId="jetix" />
     <Channel id="kanal5.se" siteId="kanal5" />
     <Channel id="mtv@mtve.com" siteId="mtv" />
-    <Channel id="nationalgeographic.com" siteId="natgeoch" />
+	<Channel id="nationalgeographic.com" siteId="natgeoch" />
+	<Channel id="wild@nationalgeographic.co.uk" siteId="ngcwild" />
     <Channel id="hd@nationalgeographic.co.uk" siteId="ngchd" />
     <Channel id="nickelodeon.no" siteId="nickelod" />
-    <Channel id="playhouse@disney.no" siteId="disneyplay" /> 
-    <Channel id="pro-sieben.de" siteId="pro7" />
-    <Channel id="realitychannel.tv" siteId="reality" />
-    <Channel id="rtl.de" siteId="rtl1" />
-    <Channel id="rtl2.de" siteId="rtl2" />
-    <Channel id="hd@rush.com" siteId="rushhd" />
+    <Channel id="pro-sieben.de" siteId="pro7" />  
+	<Channel id="rtl.de" siteId="rtl1" />
+	<Channel id="hd@rush.no" siteId="rushhd" />
     <Channel id="sat1.de" siteId="sat1" />
-    <Channel id="Showtime" siteId="showtime" />
-    <Channel id="skynews@sky.com" siteId="skynews" />
+	<Channel id="Showtime" siteId="showtime" />
+	<Channel id="silver.no" siteId="silver" />
+    <Channel id="silverhd.no" siteId="silverhd" />
+	<Channel id="skynews@sky.com" siteId="skynews" />
     <Channel id="SKYNEWS_NGC" siteId="skyntgeo" />
-    <Channel id="star" siteId="star" />
     <Channel id="svt1@svt.se" siteId="svtv1" />
     <Channel id="svt2@svt.se" siteId="svtv2" />
-    <Channel id="tv3.se" siteId="tv3sve" />
-    <Channel id="tcm.com" siteId="tcm" />
+    <Channel id="hd@svt.se" siteId="svthd" />
+	<Channel id="tcm.com" siteId="tcm" />
     <Channel id="TCM_CARTOONNETWORK" siteId="tcmcartoon" />
-    <Channel id="thevoice.no" siteId="thevoicetv" />
-    <Channel id="toon@disney.no" siteId="toondisney" />
+    <Channel id="travel_adventure@discovery.com" siteId="dtravel" />
+    <Channel id="seven.com" siteId="seven" /> 
     <Channel id="travelchannel.com" siteId="travel" />
     <Channel id="tv2@tv2.dk" siteId="dtv2" />
-    <Channel id="tv3.dk" siteId="tv3dan" />
     <Channel id="3plus.dk" siteId="tv3pldan" />
+    <Channel id="tv3.dk" siteId="tv3dan" />
+    <Channel id="tv3.se" siteId="tv3sve" />
     <Channel id="tv4@tv4.se" siteId="tv4" />
     <Channel id="tv5.org" siteId="tv5" />
     <Channel id="tv8.se" siteId="tv8" />
-    <Channel id="tv1000@tv1000.no" siteId="tv1000" />
+	<Channel id="vh1.com" siteId="vh1" />
+    <Channel id="classic@vh1.co.uk" siteId="vh1classic" />
+	<Channel id="explorer@viasat.no" siteId="viaexpl" />
+	<Channel id="tv1000@tv1000.no" siteId="tv1000" />
     <Channel id="action@tv1000.no" siteId="tv1kaction" />
     <Channel id="classic@tv1000.no" siteId="tv1kclassic" />
     <Channel id="family@tv1000.no" siteId="tv1kfamily" />
     <Channel id="nordic@tv1000.no" siteId="tv1knordic" />
-    <Channel id="vh1.com" siteId="vh1" />
-    <Channel id="classic@vh1.co.uk" siteId="vh1classic" />
-    <Channel id="explorer@viasat.no" siteId="viaexpl" />
-    <Channel id="sport@viasatsport.no" siteId="viaspo" />
-    <Channel id="sport2@viasatsport.no" siteId="viaspo2" />
-    <Channel id="sport3@viasatsport.no" siteId="viaspo3" />
-    <Channel id="ztv.se" siteId="ztvsve" />
-    <Channel id="silver.no" siteId="silver" />
-    <Channel id="silverhd.no" siteId="silverhd" />
+	<Channel id="viagolf@viasat.no" siteId="viagolf" />
+	<Channel id="history@viasat.no" siteId="viahis" />
+	<Channel id="hockey@viasat.se" siteId="viahoc" />
+	<Channel id="sport3@viasatsport.no" siteId="viaspo3" />
+	<Channel id="vianatcrime@viasat.no" siteId="vianatcrime" />
+	<Channel id="sport2@viasatsport.no" siteId="viaspo2" />
+	<Channel id="viaspohd@viasat.no" siteId="viaspohd" />
+	<Channel id="viatv6@viasat.no" siteId="viatv6" />
+	<Channel id="zeetv.co.uk" siteId="zeetv" />
+	<Channel id="realitychannel.tv" siteId="reality" />
+	<Channel id="ztv.se" siteId="ztvsve" />    
   </Channels>
   <Listing type="Html">
     <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" user-agent="Mozilla/4.0 (compatible; MSIE 7.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)" />

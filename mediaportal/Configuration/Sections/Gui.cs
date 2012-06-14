@@ -135,10 +135,12 @@ namespace MediaPortal.Configuration.Sections
       {
         previewPictureBox.Image = null;
         previewPictureBox.Visible = false;
+        mpButtonEditSkinSettings.Enabled = false;
         return;
       }
       string currentSkin = listViewAvailableSkins.SelectedItems[0].Text;
       string previewFile = Path.Combine(Path.Combine(SkinDirectory, currentSkin), @"media\preview.png");
+      mpButtonEditSkinSettings.Enabled = true;
 
       //
       // Clear image
@@ -261,6 +263,18 @@ namespace MediaPortal.Configuration.Sections
         Process.Start(@"http://www.team-mediaportal.com/MP1/skingallery");
       }
       catch {}
+    }
+
+    private void mpButtonEditSkinSettings_Click(object sender, EventArgs e)
+    {
+      DlgSkinSettings dlg = new DlgSkinSettings(listViewAvailableSkins);
+      dlg.ShowInTaskbar = false;
+      dlg.MaximizeBox = false;
+      dlg.MinimizeBox = false;
+
+      if (dlg.ShowDialog() == DialogResult.OK)
+      {
+      }
     }
   }
 }

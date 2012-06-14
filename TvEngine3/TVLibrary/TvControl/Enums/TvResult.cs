@@ -92,6 +92,10 @@ namespace TvControl
     /// <summary>
     /// No PMT found
     /// </summary>
-    NoPmtFound
+    NoPmtFound,
+    /// <summary>
+    /// A tune operation was cancelled
+    /// </summary>
+    TuneCancelled
   }
 }

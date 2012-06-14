@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<section>
+	<!--28.03.2012 verified-->
+	<!--Do not edit or delete this file or MyVideos will stop to fetch movie data-->
+		
+	<GUIVideoArtistInfo>
+		<string><!--0-->
+			<![CDATA[http://m.imdb.com/title/{0}]]>
+		</string>
+		<string><!--1-->
+			<![CDATA[<h1>Plot\sSummary</h1>\s+<p>(?<moviePlot>.+?)</p>]]>
+		</string>
+		<string><!--2-->
+			<![CDATA[http://m.imdb.com/title/{0}/plotsummary]]>
+		</string>
+		<string><!--3-->
+			<![CDATA[<section\sclass="plot".*?<p>(?<moviePlot>.*?)</p>]]>
+		</string>
+		<string><!--4-->
+			<![CDATA[title"\scontent="(?<movieTitle>.*?)[(](?<movieYear>.{4})[)]]]>
+		</string>
+		<string><!--5-->
+			<![CDATA[(<h1>Director</h1>|<h1>Directors</h1>)\s+<p>\s+<a\shref=".*?>(?<director>.*?)</a>]]>
+		</string>
+		<string><!--6-->
+			<![CDATA[<h1>Genre</h1>\s+<p>(?<genre>.+?)</p>]]>
+		</string>
+		<string><!--7-->
+			<![CDATA[<h1>Rated</h1>\s+<p>(?<rating>.+?)</p>]]>
+		</string>
+		<string><!--8-->
+			<![CDATA[<div\sclass="label">\s+<div\sclass="title">\s+<a\shref="/name/.*?>(?<actor>.*?)<]]>
+		</string>
+		<string><!--9-->
+			<![CDATA[<div\sclass="poster">\s+<a\shref="(?<poster>.*?)"]]>
+		</string>
+	</GUIVideoArtistInfo>
+	
+	<FanArt>
+		<string><!--0 Normal link-->
+			<![CDATA[http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/]]>
+		</string>
+		<string><!--1 Buged linke-->
+			<![CDATA[http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//]]>
+		</string>
+		<string><!--2 Normal link-->
+			<![CDATA[http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/]]>
+		</string>
+		<string><!--3 Buged link-->
+			<![CDATA[http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//]]>
+		</string>
+		<string><!--4-->
+			<![CDATA[<image\stype="backdrop"\surl="(?<BackDrop>.*?)"]]>
+		</string>
+		<string><!--5-->
+			<![CDATA[original]]>
+		</string>
+	</FanArt>
+	
+	<IMDBPoster>
+		<string><!--0-->
+			<![CDATA[http://www.imdb.com/title/]]>
+		</string>
+		<string><!--1-->
+			<![CDATA[id="img_primary">.*?src='/rg/title-overview/primary/images.*?href="(?<defaultPic>.*?)"]]>
+		</string>
+		<string><!--2-->
+			<![CDATA[http://www.imdb.com]]>
+		</string>
+		<string><!--3-->
+			<![CDATA[<img[\s]id=.*?alt=.*?src="(?<jpg>.*?jpg)]]>
+		</string>
+		<string><!--4-->
+			<![CDATA[http://www.imdb.com/title/]]>
+		</string>
+		<string><!--5-->
+			<![CDATA[/mediaindex?refine=product]]>
+		</string>
+		<string><!--6-->
+			<![CDATA[(?<PIC>/media/rm\d*/tt\d*)]]>
+		</string>
+		<string><!--7-->
+			<![CDATA[<img[\s]id=.*?alt=.*?src="(?<jpg>.*?jpg)]]>
+		</string>
+	</IMDBPoster>
+	
+	<IMDBActors>
+		<string><!--0-->
+			<![CDATA[/fullcredits#cast]]>
+		</string>
+		<string><!--1-->
+			<![CDATA[name="director[s]"(?<directors_block>.*?)<h5>]]>
+		</string>
+		<string><!--2-->
+			<![CDATA[<a\s+href="/name/(?<idDirector>nm\d{7})/"[^>]*>(?<movieDirectors>[^<]+)</a>]]>
+		</string>
+		<string><!--3-->
+			<![CDATA[Writer[s]?:\s*</h4>[^<]*(?<writers_block>.*?)</div>]]>
+		</string>
+		<string><!--4-->
+			<![CDATA[/writer-\d/.*?/name/(?<imdbWriterId>nm\d{7})/"[\s]+>(?<writer>.*?)</a>\s+<span>(?<wrole>[(].*?[)])</span>|/writer-\d/.*?/name/(?<imdbWriterId>nm\d{7})/"[\s]+>(?<writer>.*?)</a>]]>
+		</string>
+		<string><!--5-->
+			<![CDATA[<table class="cast">.*?</table>|<table class="cast_list">.*?</table>]]>
+		</string>
+		<string><!--6-->
+			<![CDATA[<td[^<]*<a\s+href="/name/(?<imdbActorID>nm\d{7})/"[^>]*>(?<actor>[^<]*)</a>.*?<td.class="char">(?<role>.*?)<*?</td>]]>
+		</string>
+	</IMDBActors>
+	
+	<IMPAwardsposter>
+		<string><!--0-->
+			<![CDATA[http://www.google.com/search?as_q=]]>
+		</string>
+		<string><!--1-->
+			<![CDATA[+poster&as_sitesearch=www.impawards.com]]>
+		</string>
+		<string><!--2-->
+			<![CDATA[www.impawards.com[^"& <].*?(?<year>\d{4}/).*?html]]>
+		</string>
+		<string><!--3-->
+			<![CDATA[tt\d{7}]]>
+		</string>
+		<string><!--4-->
+			<![CDATA[.*?\d{4}./*?]]>
+		</string>
+		<string><!--5-->
+			<![CDATA[posters/.*?.jpg]]>
+		</string>
+		<string><!--6-->
+			<![CDATA[thumbs/imp_(?<poster>.*?.jpg)]]>
+		</string>
+	</IMPAwardsposter>
+	
+	<TMDBPosters>
+		<string><!--0-->
+			<![CDATA[http://api.themoviedb.org/2.1/Movie.getImages/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/]]>
+		</string>
+		<string><!--1-->
+			<![CDATA[<poster.*</poster>]]>
+		</string>
+		<string><!--2-->
+			<![CDATA[<image\surl="(?<cover>http://cf2.imgobject.com/t/p/w500/.*?)"]]>
+		</string>
+		<string><!--3-->
+			<![CDATA[http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/]]>
+		</string>
+		<string><!--4-->
+			<![CDATA[<image\stype="poster"\surl="(?<cover>http://cf2.imgobject.com/t/p/w500/.*?jpg)"]]>
+		</string>
+	</TMDBPosters>
+	
+	<TMDBActorImages>
+		<string><!--0-->
+			<![CDATA[http://api.themoviedb.org/2.1/Person.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/]]>
+		</string>
+		<string><!--1-->
+			<![CDATA[<image\stype="profile"\surl="(?<cover>.*?)"]]>
+		</string>
+	</TMDBActorImages>
+	
+	<IMDBActorInfoMain>
+		<string><!--0 skip to end of-->
+			<![CDATA[<title>]]>
+		</string>
+		<string><!--1 extract to (ref value)-->
+			<![CDATA[</title>]]>
+		</string>
+		<string><!--2 value !equal-->
+			<![CDATA[imdb name search]]>
+		</string>
+		<string><!--3 skip to start of no case-->
+			<![CDATA[Popular names]]>
+		</string>
+		<string><!--4 skip to end of-->
+			<![CDATA[<table>]]>
+		</string>
+		<string><!--5 extract to (ref popular block)-->
+			<![CDATA[</table>]]>
+		</string>
+		<string><!--6 skip to start of-->
+			<![CDATA[href="/name/]]>
+		</string>
+		<string><!--7 skip to end of-->
+			<![CDATA[href="]]>
+		</string>
+		<string><!--8 extract to (ref url)-->
+			<![CDATA["]]>
+		</string>
+		<string><!--9 skip to end of-->
+			<![CDATA[Image()).src='/rg/find-name-]]>
+		</string>
+		<string><!--10 skip to end of-->
+			<![CDATA[';">]]>
+		</string>
+		<string><!--11 extract to (ref name)-->
+			<![CDATA[</a>]]>
+		</string>
+		<string><!--12 skip to end of-->
+			<![CDATA[<small>(]]>
+		</string>
+		<string><!--13 extract to (ref role)-->
+			<![CDATA[,]]>
+		</string>
+		<string><!--14 skip to end of (iterate next or exit loop)-->
+			<![CDATA[</tr>]]>
+		</string>
+		<string><!--15 skip to start of no case-->
+			<![CDATA[Exact Matches]]>
+		</string>
+		<string><!--16 skip to end of-->
+			<![CDATA[<table>]]>
+		</string>
+		<string><!--17 extract to (ref exact block)-->
+			<![CDATA[</table>]]>
+		</string>
+		<string><!--18 skip to start of no case-->
+			<![CDATA[Approx Matches]]>
+		</string>
+		<string><!--19 skip to end of-->
+			<![CDATA[<table>]]>
+		</string>
+		<string><!--20 extract to (ref Approx block)-->
+			<![CDATA[</table>]]>
+		</string>
+		<string><!--21 skip to start of-->
+			<![CDATA[href="/name/]]>
+		</string>
+		<string><!--22 skip to end of-->
+			<![CDATA[href="]]>
+		</string>
+		<string><!--23 extract to (ref url)-->
+			<![CDATA["]]>
+		</string>
+		<string><!--24 skip to end of-->
+			<![CDATA[Image()).src='/rg/find-name-]]>
+		</string>
+		<string><!--25 skip to end of-->
+			<![CDATA[';">]]>
+		</string>
+		<string><!--26 extract to (ref name)-->
+			<![CDATA[</a>]]>
+		</string>
+		<string><!--27 skip to end of-->
+			<![CDATA[<small>(]]>
+		</string>
+		<string><!--28 extract to (ref role)-->
+			<![CDATA[,]]>
+		</string>
+	</IMDBActorInfoMain>
+	
+	<IMDBActorInfoDetails>
+		<string><!--0 skip to end of-->
+			<![CDATA[<title>]]>
+		</string>
+		<string><!--1 extract to (ref name)-->
+			<![CDATA[- IMDb</title>]]>
+		</string>
+		<string><!--2 skip to start of-->
+			<![CDATA[<td id="img_primary"]]>
+		</string>
+		<string><!--3 extract to (thumb block)-->
+			<![CDATA[</td>]]>
+		</string>
+		<string><!--4 skip to end of-->
+			<![CDATA[<img src="]]>
+		</string>
+		<string><!--5 extract to (ref actor thumb)-->
+			<![CDATA["]]>
+		</string>
+		<string><!--6 skip to end of-->
+			<![CDATA[>Born:</h4>]]>
+		</string>
+		<string><!--7 skip to end of-->
+			<![CDATA[birth_monthday=]]>
+		</string>
+		<string><!--8 skip to end of-->
+			<![CDATA[>]]>
+		</string>
+		<string><!--9 extract to (ref born 1)-->
+			<![CDATA[<]]>
+		</string>
+		<string><!--10 skip to end of-->
+			<![CDATA[year=]]>
+		</string>
+		<string><!--11 extract to (ref born 2)-->
+			<![CDATA["]]>
+		</string>
+		<string><!--12 skip to end of-->
+			<![CDATA[>Died:</h4>]]>
+		</string>
+		<string><!--13 skip to end of-->
+			<![CDATA[death_monthday=]]>
+		</string>
+		<string><!--14 skip o end of-->
+			<![CDATA[>]]>
+		</string>
+		<string><!--15 extract (ref death date1)-->
+			<![CDATA[<]]>
+		</string>
+		<string><!--16 skip to end of-->
+			<![CDATA[death_date=]]>
+		</string>
+		<string><!--17 extract to (ref death date2)-->
+			<![CDATA["]]>
+		</string>
+		<string><!--18 skip to end of-->
+			<![CDATA[birth_place=]]>
+		</string>
+		<string><!--19 skip to end of-->
+			<![CDATA[>]]>
+		</string>
+		<string><!--20 extract to (ref place of birth)-->
+			<![CDATA[<]]>
+		</string>
+		<string><!--21 skip to end of-->
+			<![CDATA[death_place=]]>
+		</string>
+		<string><!--22 skip to end of-->
+			<![CDATA[>]]>
+		</string>
+		<string><!--23 extract to (ref place of death)-->
+			<![CDATA[<]]>
+		</string>
+		<string><!--24 skip to end of-->
+			<![CDATA[<td id="overview-top">]]>
+		</string>
+		<string><!--25 skip to end of-->
+			<![CDATA[<p>]]>
+		</string>
+		<string><!--26 extract to (ref mini bio)-->
+			<![CDATA[See full bio</a>]]>
+		</string>
+		<string><!--27 not ends with-->
+			<![CDATA[/]]>
+		</string>
+		<string><!--28 bioUrl1-->
+			<![CDATA[/bio]]>
+		</string>
+		<string><!--29 else bioUrl2-->
+			<![CDATA[bio]]>
+		</string>
+		<string><!--30 skip to end of-->
+			<![CDATA[<h5>Mini Biography</h5>]]>
+		</string>
+		<string><!--31 skip to end of-->
+			<![CDATA[<div class="wikipedia_bio">]]>
+		</string>
+		<string><!--32 extract to (ref biography wiki)-->
+			<![CDATA[</div>]]>
+		</string>
+		<string><!--33 skip to end of-->
+			<![CDATA[<h5>Mini Biography</h5>]]>
+		</string>
+		<string><!--34 extract to (ref biography)-->
+			<![CDATA[</p>]]>
+		</string>
+		<string><!--35 skip to end of-->
+			<![CDATA[name="Director">Director</a>]]>
+		</string>
+		<string><!--36 skip to end of (it's director)-->
+			<![CDATA[</div>]]>
+		</string>
+		<string><!--37 skip to end of-->
+			<![CDATA[name="Writer">Writer</a>]]>
+		</string>
+		<string><!--38 skip to end of (it's writer)-->
+			<![CDATA[</div>]]>
+		</string>
+		<string><!--39 skip to end of-->
+			<![CDATA[name="Actress">Actress</a>]]>
+		</string>
+		<string><!--40 skip to end of (it's actor)-->
+			<![CDATA[name="Actor">Actor</a>]]>
+		</string>
+		<string><!--41 skip to end of-->
+			<![CDATA[name="Writer">Writer</a>]]>
+		</string>
+		<string><!--42 skip to end of (writer movies)-->
+			<![CDATA[</div>]]>
+		</string>
+		<string><!--43 skip to end of-->
+			<![CDATA[name="Director">Director</a>]]>
+		</string>
+		<string><!--44 skip to end of (director movies)-->
+			<![CDATA[</div>]]>
+		</string>
+		<string><!--45 replace (See full bio »)-->
+			<![CDATA[<See full bio »]]>
+		</string>
+	</IMDBActorInfoDetails>
+	
+	<IMDBActorInfoMovies>
+		<string><!--0 extract to (ref movies block)-->
+			<![CDATA[<div id]]>
+		</string>
+		<string><!--1 skip start of (loop by value)-->
+			<![CDATA[<span class="year_column"]]>
+		</string>
+		<string><!--2 extract to (ref movie)-->
+			<![CDATA[<div class]]>
+		</string>
+		<string><!--3-->
+			<![CDATA[</li>]]>
+		</string>
+		<string><!--4 skip to end of-->
+			<![CDATA[title/]]>
+		</string>
+		<string><!--5 extract to (ref movie imdbId)-->
+			<![CDATA[/]]>
+		</string>
+		<string><!--6 skip to end of-->
+			<![CDATA[<a]]>
+		</string>
+		<string><!--7 skip to end of-->
+			<![CDATA[>]]>
+		</string>
+		<string><!--8 extract to (ref movie title)-->
+			<![CDATA[<br/>]]>
+		</string>
+		<string><!--9 skip to start of-->
+			<![CDATA[year_column">20]]>
+		</string>
+		<string><!--10 skip to end of-->
+			<![CDATA[>]]>
+		</string>
+		<string><!--11 extract to (ref year 20xx)-->
+			<![CDATA[<]]>
+		</string>
+		<string><!--12 skip to start of-->
+			<![CDATA[year_column">19]]>
+		</string>
+		<string><!--12 skip to end of-->
+			<![CDATA[>]]>
+		</string>
+		<string><!--14 extract to (ref year 19xx)-->
+			<![CDATA[<]]>
+		</string>
+		<string><!--15 skip to end of-->
+			<![CDATA[<br/>]]>
+		</string>
+		<string><!--16 extract to (ref role1)-->
+			<![CDATA[<]]>
+		</string>
+		<string><!--17 skip to end of-->
+			<![CDATA[<br/>]]>
+		</string>
+		<string><!--18 extract to (ref role2)-->
+			<![CDATA[</a>]]>
+		</string>		
+	</IMDBActorInfoMovies>
+	
+	<IMDBActorSkipNoMovies>
+		<string>
+			<![CDATA[[(](short|documentary)[)]|video\s(short|game)|tv\s(mini-series|series|short|documentary|special)|documentary\s(short)]]>
+		</string>
+	</IMDBActorSkipNoMovies>
+	
+	<GUIVideoInfo>
+		<string><!--0-->
+			<![CDATA[<h5>Runtime:</h5>.*?(?<movieRuntime>\d+)\smin\s+|(?<movieRuntime>\d+)\smin]]>
+		</string>
+		<string><!--1-->
+			<![CDATA[ratingValue">(?<movieScore>\d+.\d+)</span>]]>
+		</string>
+		<string><!--2-->
+			<![CDATA["ratingCount">(?<moviePopularity>.*?)<]]>
+		</string>
+	</GUIVideoInfo>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		

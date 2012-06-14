@@ -60,7 +60,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogRating.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogRating.xml"));
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

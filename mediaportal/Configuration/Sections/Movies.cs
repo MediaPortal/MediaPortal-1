@@ -51,7 +51,6 @@ namespace MediaPortal.Configuration.Sections
     private readonly string m_strDefaultAudioLanguageISO = "EN";
     private MPTabPage tabPage1;
     private MPGroupBox groupBox1;
-    private MPCheckBox checkBoxEachFolderIsMovie;
     private MPCheckBox checkBoxShowWatched;
     private MPButton fileNameButton;
     private MPTextBox folderNameTextBox;
@@ -99,6 +98,10 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabelAVDelayTime;
     private MPLabel mpLabelAVDelay;
     private NumericUpDown delayVideoTextBox;
+    private TrackBar playedPercentageTrackBar;
+    private MPLabel percentPlayedLabel;
+    private NumericUpDown playedPercentageTB;
+    private MPCheckBox chbKeepFoldersTogether;
     private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
@@ -127,8 +130,6 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        checkBoxEachFolderIsMovie.Checked = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
-
         string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         playListFolder += @"\My Playlists";
 
@@ -152,6 +153,11 @@ namespace MediaPortal.Configuration.Sections
         subEnginesCombo.SelectedItem = xmlreader.GetValueAsString("subtitles", "engine", "MPC-HC");
         subPaths.Text = xmlreader.GetValueAsString("subtitles", "paths", @".\,.\Subtitles\");
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
+        chbKeepFoldersTogether.Checked = xmlreader.GetValueAsBool("movies", "keepfolderstogether", false);
+        // Played percentage settings
+        ShowHidePlayedPercentage(checkBoxShowWatched.Checked);
+        playedPercentageTrackBar.Value = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
+        playedPercentageTB.Value = playedPercentageTrackBar.Value;
 
         comSkipCheckBox.Checked = xmlreader.GetValueAsBool("comskip", "automaticskip", false);
 
@@ -229,10 +235,11 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("movies", "repeat", repeatPlaylistCheckBox.Checked);
         xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);
         xmlwriter.SetValue("movies", "playallinfolder", comboBoxPlayAll.SelectedIndex);
+        xmlwriter.SetValueAsBool("movies", "keepfolderstogether", chbKeepFoldersTogether.Checked);
 
         xmlwriter.SetValueAsBool("movies", "markwatched", checkBoxShowWatched.Checked);
-        xmlwriter.SetValueAsBool("movies", "eachFolderIsMovie", checkBoxEachFolderIsMovie.Checked);
-
+        xmlwriter.SetValue("movies", "playedpercentagewatched", playedPercentageTrackBar.Value);
+        
         xmlwriter.SetValueAsBool("comskip", "automaticskip", comSkipCheckBox.Checked);
 
         xmlwriter.SetValue("subtitles", "engine", subEnginesCombo.SelectedItem);
@@ -344,8 +351,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBoxComSkip = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comSkipCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.playedPercentageTB = new System.Windows.Forms.NumericUpDown();
+      this.percentPlayedLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxPlayAll = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.playedPercentageTrackBar = new System.Windows.Forms.TrackBar();
       this.checkBoxShowWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -358,6 +367,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.chbKeepFoldersTogether = new MediaPortal.UserInterface.Controls.MPCheckBox();
       tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -377,6 +387,8 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.delayVideoTextBox)).BeginInit();
       this.mpGroupBoxComSkip.SuspendLayout();
       this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.playedPercentageTB)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.playedPercentageTrackBar)).BeginInit();
       this.tabControl1.SuspendLayout();
       this.mpTabPage1.SuspendLayout();
       this.mpGroupBox4.SuspendLayout();
@@ -395,8 +407,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       mpGroupBox3.Controls.Add(this.mpSubEngineCommentLabel);
       mpGroupBox3.Controls.Add(mpLabel2);
       mpGroupBox3.Controls.Add(this.subEnginesCombo);
@@ -454,8 +466,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabelSubSelectMode);
       this.mpGroupBox1.Controls.Add(this.subtitlesSelectionComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -520,7 +532,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel3.Size = new System.Drawing.Size(396, 36);
       this.mpLabel3.TabIndex = 15;
       this.mpLabel3.Text = "* - supported by MPC-HC engine only / using forced sub option, all other subtitle" +
-          "s are available for switching (except idx/sub format)";
+    "s are available for switching (except idx/sub format)";
       // 
       // subPosRelativeCheckBox
       // 
@@ -623,8 +635,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.subStyleOverrideCheckBox);
       this.mpGroupBox2.Controls.Add(this.opaqueBoxRadioButton);
       this.mpGroupBox2.Controls.Add(this.borderOutlineRadioButton);
@@ -734,8 +746,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesFontTextBox
       // 
-      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesFontTextBox.BorderColor = System.Drawing.Color.Empty;
       this.subtitlesFontTextBox.Location = new System.Drawing.Point(129, 19);
       this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
@@ -754,7 +766,7 @@ namespace MediaPortal.Configuration.Sections
       // labelPlayAll
       // 
       labelPlayAll.AutoSize = true;
-      labelPlayAll.Location = new System.Drawing.Point(16, 147);
+      labelPlayAll.Location = new System.Drawing.Point(17, 208);
       labelPlayAll.Name = "labelPlayAll";
       labelPlayAll.Size = new System.Drawing.Size(191, 13);
       labelPlayAll.TabIndex = 11;
@@ -774,13 +786,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBoxVideoAudioDelay
       // 
-      this.mpGroupBoxVideoAudioDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxVideoAudioDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBoxVideoAudioDelay.Controls.Add(this.delayVideoTextBox);
       this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabelAVDelayTime);
       this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabelAVDelay);
       this.mpGroupBoxVideoAudioDelay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxVideoAudioDelay.Location = new System.Drawing.Point(16, 261);
+      this.mpGroupBoxVideoAudioDelay.Location = new System.Drawing.Point(16, 316);
       this.mpGroupBoxVideoAudioDelay.Name = "mpGroupBoxVideoAudioDelay";
       this.mpGroupBoxVideoAudioDelay.Size = new System.Drawing.Size(432, 49);
       this.mpGroupBoxVideoAudioDelay.TabIndex = 12;
@@ -827,11 +839,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBoxComSkip
       // 
-      this.mpGroupBoxComSkip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxComSkip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBoxComSkip.Controls.Add(this.comSkipCheckBox);
       this.mpGroupBoxComSkip.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxComSkip.Location = new System.Drawing.Point(16, 206);
+      this.mpGroupBoxComSkip.Location = new System.Drawing.Point(16, 261);
       this.mpGroupBoxComSkip.Name = "mpGroupBoxComSkip";
       this.mpGroupBoxComSkip.Size = new System.Drawing.Size(432, 49);
       this.mpGroupBoxComSkip.TabIndex = 11;
@@ -851,11 +863,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.chbKeepFoldersTogether);
+      this.groupBox1.Controls.Add(this.playedPercentageTB);
+      this.groupBox1.Controls.Add(this.percentPlayedLabel);
       this.groupBox1.Controls.Add(labelPlayAll);
       this.groupBox1.Controls.Add(this.comboBoxPlayAll);
-      this.groupBox1.Controls.Add(this.checkBoxEachFolderIsMovie);
+      this.groupBox1.Controls.Add(this.playedPercentageTrackBar);
       this.groupBox1.Controls.Add(this.checkBoxShowWatched);
       this.groupBox1.Controls.Add(this.fileNameButton);
       this.groupBox1.Controls.Add(this.folderNameTextBox);
@@ -864,10 +879,33 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 186);
+      this.groupBox1.Size = new System.Drawing.Size(432, 239);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // playedPercentageTB
+      // 
+      this.playedPercentageTB.Enabled = false;
+      this.playedPercentageTB.Location = new System.Drawing.Point(352, 154);
+      this.playedPercentageTB.Name = "playedPercentageTB";
+      this.playedPercentageTB.Size = new System.Drawing.Size(48, 20);
+      this.playedPercentageTB.TabIndex = 14;
+      this.playedPercentageTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.playedPercentageTB.Value = new decimal(new int[] {
+            95,
+            0,
+            0,
+            0});
+      this.playedPercentageTB.ValueChanged += new System.EventHandler(this.playedPercentageTB_ValueChanged);
+      // 
+      // percentPlayedLabel
+      // 
+      this.percentPlayedLabel.Location = new System.Drawing.Point(34, 131);
+      this.percentPlayedLabel.Name = "percentPlayedLabel";
+      this.percentPlayedLabel.Size = new System.Drawing.Size(299, 18);
+      this.percentPlayedLabel.TabIndex = 13;
+      this.percentPlayedLabel.Text = "Played time percentage needed to mark video as watched";
       // 
       // comboBoxPlayAll
       // 
@@ -879,21 +917,23 @@ namespace MediaPortal.Configuration.Sections
             "By Date",
             "Shuffle",
             "Always ask"});
-      this.comboBoxPlayAll.Location = new System.Drawing.Point(226, 144);
+      this.comboBoxPlayAll.Location = new System.Drawing.Point(226, 205);
       this.comboBoxPlayAll.Name = "comboBoxPlayAll";
       this.comboBoxPlayAll.Size = new System.Drawing.Size(185, 21);
       this.comboBoxPlayAll.TabIndex = 8;
       // 
-      // checkBoxEachFolderIsMovie
+      // playedPercentageTrackBar
       // 
-      this.checkBoxEachFolderIsMovie.AutoSize = true;
-      this.checkBoxEachFolderIsMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxEachFolderIsMovie.Location = new System.Drawing.Point(19, 112);
-      this.checkBoxEachFolderIsMovie.Name = "checkBoxEachFolderIsMovie";
-      this.checkBoxEachFolderIsMovie.Size = new System.Drawing.Size(181, 17);
-      this.checkBoxEachFolderIsMovie.TabIndex = 7;
-      this.checkBoxEachFolderIsMovie.Text = "Every movie has its own directory";
-      this.checkBoxEachFolderIsMovie.UseVisualStyleBackColor = true;
+      this.playedPercentageTrackBar.BackColor = System.Drawing.Color.White;
+      this.playedPercentageTrackBar.Enabled = false;
+      this.playedPercentageTrackBar.Location = new System.Drawing.Point(26, 154);
+      this.playedPercentageTrackBar.Maximum = 100;
+      this.playedPercentageTrackBar.Name = "playedPercentageTrackBar";
+      this.playedPercentageTrackBar.Size = new System.Drawing.Size(320, 45);
+      this.playedPercentageTrackBar.TabIndex = 5;
+      this.playedPercentageTrackBar.TickFrequency = 5;
+      this.playedPercentageTrackBar.Value = 95;
+      this.playedPercentageTrackBar.Scroll += new System.EventHandler(this.playedPercentageTrackBar_Scroll);
       // 
       // checkBoxShowWatched
       // 
@@ -901,12 +941,13 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxShowWatched.Checked = true;
       this.checkBoxShowWatched.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxShowWatched.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowWatched.Location = new System.Drawing.Point(19, 89);
+      this.checkBoxShowWatched.Location = new System.Drawing.Point(19, 77);
       this.checkBoxShowWatched.Name = "checkBoxShowWatched";
       this.checkBoxShowWatched.Size = new System.Drawing.Size(381, 17);
       this.checkBoxShowWatched.TabIndex = 6;
       this.checkBoxShowWatched.Text = "Mark every already watched file (deactivate for performance with many files)";
       this.checkBoxShowWatched.UseVisualStyleBackColor = true;
+      this.checkBoxShowWatched.CheckedChanged += new System.EventHandler(this.checkBoxShowWatched_CheckedChanged);
       // 
       // fileNameButton
       // 
@@ -921,8 +962,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderNameTextBox.Location = new System.Drawing.Point(133, 28);
       this.folderNameTextBox.Name = "folderNameTextBox";
@@ -933,7 +974,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.repeatPlaylistCheckBox.AutoSize = true;
       this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(19, 66);
+      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(19, 54);
       this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
       this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(152, 17);
       this.repeatPlaylistCheckBox.TabIndex = 5;
@@ -950,9 +991,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(tabPage3);
       this.tabControl1.Controls.Add(mpTabPage2);
@@ -975,8 +1016,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox4
       // 
-      this.mpGroupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox4.Controls.Add(this.mpLabel7);
       this.mpGroupBox4.Controls.Add(this.defaultAudioLanguageComboBox);
       this.mpGroupBox4.Controls.Add(this.mpLabel8);
@@ -999,8 +1040,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultAudioLanguageComboBox
       // 
-      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(136, 51);
@@ -1019,8 +1060,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 24);
@@ -1028,6 +1069,17 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(280, 21);
       this.defaultSubtitleLanguageComboBox.Sorted = true;
       this.defaultSubtitleLanguageComboBox.TabIndex = 7;
+      // 
+      // chbKeepFoldersTogether
+      // 
+      this.chbKeepFoldersTogether.AutoSize = true;
+      this.chbKeepFoldersTogether.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chbKeepFoldersTogether.Location = new System.Drawing.Point(19, 100);
+      this.chbKeepFoldersTogether.Name = "chbKeepFoldersTogether";
+      this.chbKeepFoldersTogether.Size = new System.Drawing.Size(209, 17);
+      this.chbKeepFoldersTogether.TabIndex = 15;
+      this.chbKeepFoldersTogether.Text = "Keep DVD and BluRay folders together";
+      this.chbKeepFoldersTogether.UseVisualStyleBackColor = true;
       // 
       // Movies
       // 
@@ -1052,6 +1104,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBoxComSkip.PerformLayout();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.playedPercentageTB)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.playedPercentageTrackBar)).EndInit();
       this.tabControl1.ResumeLayout(false);
       this.mpTabPage1.ResumeLayout(false);
       this.mpGroupBox4.ResumeLayout(false);
@@ -1211,6 +1265,44 @@ namespace MediaPortal.Configuration.Sections
             Marshal.ReleaseComObject(vobSub);
         }
       }
+    }
+
+    private void checkBoxShowWatched_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxShowWatched.Checked)
+      {
+        ShowHidePlayedPercentage(true);
+      }
+      else
+      {
+        ShowHidePlayedPercentage(false);
+      }
+    }
+
+    private void playedPercentageTrackBar_Scroll(object sender, EventArgs e)
+    {
+      playedPercentageTB.Value = playedPercentageTrackBar.Value;
+    }
+
+    private void ShowHidePlayedPercentage(bool status)
+    {
+      if (status)
+      {
+        playedPercentageTrackBar.Enabled = true;
+        playedPercentageTB.Enabled = true;
+        percentPlayedLabel.Enabled = true;
+      }
+      else
+      {
+        playedPercentageTrackBar.Enabled = false;
+        playedPercentageTB.Enabled = false;
+        percentPlayedLabel.Enabled = false;
+      }
+    }
+
+    private void playedPercentageTB_ValueChanged(object sender, EventArgs e)
+    {
+      playedPercentageTrackBar.Value = (int)playedPercentageTB.Value;
     }
   }
 }

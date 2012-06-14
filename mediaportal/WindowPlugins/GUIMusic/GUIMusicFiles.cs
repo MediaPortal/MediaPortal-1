@@ -340,7 +340,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\mymusicsongs.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mymusicsongs.xml"));
     }
 
     public override void OnAction(Action action)
@@ -1203,7 +1203,17 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      SwitchLayout();
+      if (AllowLayout(CurrentLayout) == false)
+      {
+        // Switch to next valid layout.
+        string layoutName = Enum.GetName(typeof(GUIFacadeControl.Layout), (int)CurrentLayout + 1);
+        GUIFacadeControl.Layout nextLayout = GetLayoutNumber(layoutName);
+        SwitchToNextAllowedLayout(nextLayout);
+      }
+      else
+      {
+        SwitchLayout();
+      }
 
       UpdateButtonStates();
     }

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>512</id>
   <defaultcontrol>4</defaultcontrol>
@@ -16,8 +16,6 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
       <control>
         <type>image</type>
         <id>0</id>
@@ -42,8 +40,8 @@
         <type>button</type>
         <id>4</id>
         <posX>614</posX>
-        <posY>413</posY>
-        <width>32</width>
+        <posY>417</posY>
+        <width>28</width>
         <height>32</height>
         <textureFocus>dialogue_ok_focus.png</textureFocus>
         <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>

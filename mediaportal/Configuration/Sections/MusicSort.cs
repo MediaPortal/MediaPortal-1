@@ -38,20 +38,20 @@ namespace MediaPortal.Configuration.Sections
 
     private string[] sortModes = {
                                    "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename",
-                                   "Rating", "Album Artist", "Year", "DiscID", "Composer"
+                                   "Rating", "Album Artist", "Year", "DiscID", "Composer", "Times Played"
                                  };
 
     private string[] defaultSortTags1 = {
                                           defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
                                           defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultAlbumTrackTag,
                                           defaultFileTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
-                                          defaultTrackTag, defaultTrackTag
+                                          defaultTrackTag, defaultTrackTag, defaultTrackTag
                                         };
 
     private string[] defaultSortTags2 = {
                                           "%duration%", "%date%", "%filesize%", "%duration%", "%duration%",
                                           "%duration%", "%duration%", "%album%", "%filesize%", "%rating%",
-                                          "%duration%", "%year%", "%disc#%", "%duration%"
+                                          "%duration%", "%year%", "%disc#%", "%duration%", "%timesplayed%"
                                         };
 
     private string[] sortTags1 = new string[20];
@@ -124,6 +124,7 @@ namespace MediaPortal.Configuration.Sections
       string composer = "Roger Waters";
       string filename = "comfortably numb.mp3";
       string rating = "8.2";
+      string timesPlayed = "3";
 
       string line1 = tbSortLeft.Text;
       string line2 = tbSortRight.Text;
@@ -155,6 +156,8 @@ namespace MediaPortal.Configuration.Sections
       line2 = Util.Utils.ReplaceTag(line2, "%disc#%", discNr);
       line1 = Util.Utils.ReplaceTag(line1, "%composer%", composer);
       line2 = Util.Utils.ReplaceTag(line2, "%composer%", composer);
+      line1 = Util.Utils.ReplaceTag(line1, "%timesplayed%", timesPlayed);
+      line2 = Util.Utils.ReplaceTag(line2, "%timesplayed%", timesPlayed);
 
       while (line1.Length < 25)
       {
@@ -221,8 +224,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.groupBox4);
       this.groupBox3.Controls.Add(this.textBoxSample);
       this.groupBox3.Controls.Add(this.label19);
@@ -261,7 +264,7 @@ namespace MediaPortal.Configuration.Sections
       this.label15.Size = new System.Drawing.Size(94, 91);
       this.label15.TabIndex = 15;
       this.label15.Text = "filename\r\nfilesize of song\r\nduration of song\r\nsong rating\r\nfile date\r\nname of com" +
-          "poser\r\ngenre of track";
+    "poser\r\ngenre of track";
       // 
       // label18
       // 
@@ -271,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
       this.label18.Size = new System.Drawing.Size(78, 91);
       this.label18.TabIndex = 14;
       this.label18.Text = "%filename% =\r\n%filesize% =\r\n%duration% =\r\n%rating% =\r\n%date% =\r\n%composer% =\r\n%ge" +
-          "nre% =\r\n";
+    "nre% =\r\n";
       this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // label16
@@ -279,26 +282,26 @@ namespace MediaPortal.Configuration.Sections
       this.label16.AutoSize = true;
       this.label16.Location = new System.Drawing.Point(94, 24);
       this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(101, 91);
+      this.label16.Size = new System.Drawing.Size(189, 104);
       this.label16.TabIndex = 13;
       this.label16.Text = "name of artist\r\nsong title\r\nname of album artist\r\nname of album\r\ndisc number\r\ntra" +
-          "cknumber\r\nyear of song";
+    "cknumber\r\nyear of song\r\nnumber of times track has been played";
       // 
       // label17
       // 
       this.label17.AutoSize = true;
       this.label17.Location = new System.Drawing.Point(6, 24);
       this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(82, 91);
+      this.label17.Size = new System.Drawing.Size(87, 104);
       this.label17.TabIndex = 12;
       this.label17.Text = "%artist% =\r\n%title% =\r\n%albumartist% =\r\n%album% =\r\n%disc#% =\r\n%track% =\r\n%year% =" +
-          "\r\n";
+    "\r\n%timesplayed% =";
       this.label17.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // textBoxSample
       // 
-      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
       this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSample.Location = new System.Drawing.Point(96, 102);

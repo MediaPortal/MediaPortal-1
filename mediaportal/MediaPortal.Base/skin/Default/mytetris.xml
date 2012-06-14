@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>7776</id>
   <defaultcontrol>10</defaultcontrol>
@@ -9,7 +9,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>720</width>
       <height>576</height>
     </control>
@@ -19,10 +19,8 @@
       <description>button group</description>
       <type>group</type>
       <!-- animations in this screen are equal for all objects, because nextblock-image got it's animation by tetris control, but it's possition is in scoreboard -->
-      
-      
-      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="150" end="800,0">WindowClose</animation>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <posX>39</posX>
       <posY>96</posY>
       <layout>StackLayout</layout>
@@ -45,10 +43,8 @@
     <control>
       <description>info group</description>
       <type>group</type>
-      
-      
-      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="150" end="800,0">WindowClose</animation>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <control>
         <description>Scoreboard background</description>
         <type>image</type>
@@ -136,10 +132,8 @@
     <control>
       <description>group element</description>
       <type>group</type>
-      
-      
-      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="150" end="800,0">WindowClose</animation>
+      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <control>
         <description>Tetris control</description>
         <type>tetris</type>

@@ -10,7 +10,7 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>1280</width>
       <height>720</height>
     </control>
@@ -22,7 +22,7 @@
       <defaultcontrol>2</defaultcontrol>
       <onexit>50</onexit>
       <buttonX>0</buttonX>
-      <buttonY>0</buttonY>
+      <buttonY>-60</buttonY>
       <buttonwidth>106</buttonwidth>
       <buttonheight>720</buttonheight>
       <textureFocus>-</textureFocus>
@@ -169,12 +169,16 @@
           <visible>!Control.HasFocus(50)</visible>
           <control>
             <description>View-As</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>2</id>
-            <label>100</label>
+            <label></label>
             <onright>50</onright>
             <onup>17</onup>
             <ondown>3</ondown>
+            <mode>dialoglist</mode>
+            <dialogTitle>792</dialogTitle>
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>95</valuePrefixText>
           </control>
           <control>
             <description>Sort</description>
@@ -245,7 +249,7 @@
       <posY>191</posY>
       <width>215</width>
       <height>202</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">missing_Coverart.png</texture>
+      <texture mask="Picturethumbmask.png">missing_coverart_radio.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
@@ -256,7 +260,7 @@
       <posY>191</posY>
       <width>215</width>
       <height>202</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
@@ -267,7 +271,7 @@
       <posY>191</posY>
       <width>215</width>
       <height>202</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">picturethumbframe.png</texture>
+      <texture>picturethumbframe.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
@@ -278,8 +282,9 @@
       <posX>78</posX>
       <posY>412</posY>
       <width>355</width>
-      <label>Info:</label>
-      <font>font14</font>
+      <label>#(L(1020)):</label>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>

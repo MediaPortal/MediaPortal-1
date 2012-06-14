@@ -1,19 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
-    <import>common.window.xml</import>
-    <import>common.time.xml</import>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>720</width>
       <height>576</height>
     </control>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
     <control>
       <id>500</id>
       <type>image</type>
@@ -21,9 +22,9 @@
       <posY>266</posY>
       <width>137</width>
       <height>110</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="Picturethumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
+      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
@@ -32,7 +33,7 @@
       <posY>266</posY>
       <width>137</width>
       <height>110</height>
-      <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbframe.png</texture>
+      <texture>Picturethumbframe.png</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
     </control>
     <control>
@@ -52,14 +53,18 @@
       <posY>96</posY>
       <layout>StackLayout</layout>
       <control>
-        <type>button</type>
+        <type>menubutton</type>
         <description>View-As button</description>
         <id>2</id>
         <onleft>2</onleft>
         <onright>50</onright>
         <onup>17</onup>
         <ondown>3</ondown>
-        <label>100</label>
+        <label></label>
+        <mode>dialoglist</mode>
+        <dialogTitle>792</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>95</valuePrefixText>
       </control>
       <control>
         <type>sortbutton</type>
@@ -71,14 +76,18 @@
         <label>620</label>
       </control>
       <control>
-        <type>button</type>
+        <type>menubutton</type>
         <description>All,Genre,Channel button</description>
         <id>5</id>
         <onleft>5</onleft>
         <onright>50</onright>
         <onup>3</onup>
         <ondown>6</ondown>
-        <label>457</label>
+        <label></label>
+        <mode>dialoglist</mode>
+        <dialogTitle>499</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>97</valuePrefixText>
       </control>
       <control>
         <type>button</type>
@@ -121,7 +130,7 @@
       <posY>408</posY>
       <align>left</align>
       <width>382</width>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <label>#TV.RecordedTV.Channel      #TV.RecordedTV.Time</label>
       <font>font12</font>
     </control>
@@ -135,7 +144,7 @@
       <label>#TV.RecordedTV.Title</label>
       <align>left</align>
       <font>font14</font>
-      <textcolor>gainsboro</textcolor>
+      <textcolor>ivory</textcolor>
     </control>
     <control>
       <description>Current program Genre</description>
@@ -146,7 +155,7 @@
       <width>382</width>
       <label>#TV.RecordedTV.Genre</label>
       <font>font10</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>!string.equals(#TV.RecordedTV.Genre,-)</visible>
     </control>
     <control>

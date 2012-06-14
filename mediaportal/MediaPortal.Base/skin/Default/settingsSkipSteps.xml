@@ -22,8 +22,8 @@
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>55</posX>
       <posY>150</posY>
       <layout>StackLayout</layout>
@@ -54,11 +54,11 @@
     <control>
       <description>skip steps seconds</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>288</posX>
       <posY>149</posY>
-      <layout>StackLayout(25)</layout>
+      <layout>StackLayout(35)</layout>
       <control>
         <type>label</type>
         <description>skip steps seconds</description>
@@ -114,11 +114,11 @@
     <control>
       <description>skip steps minutes</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>432</posX>
       <posY>149</posY>
-      <layout>StackLayout(25)</layout>
+      <layout>StackLayout(35)</layout>
       <control>
         <description>skip steps minutes</description>
         <type>label</type>
@@ -217,11 +217,11 @@
     <control>
       <description>skip steps hours</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>576</posX>
       <posY>149</posY>
-      <layout>StackLayout(25)</layout>
+      <layout>StackLayout(35)</layout>
       <control>
         <description>skip steps hours</description>
         <type>label</type>
@@ -243,7 +243,7 @@
         <description>Step 14</description>
         <type>checkmark</type>
         <id>15</id>
-        <label> 1.5</label>
+        <label>  1.5</label>
         <align>right</align>
         <onleft>7</onleft>
         <onright>15</onright>
@@ -276,8 +276,8 @@
     <control>
       <description>skip steps labels</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <dimColor>0xFFFFFFFF</dimColor>
       <control>
         <description>Current config static</description>

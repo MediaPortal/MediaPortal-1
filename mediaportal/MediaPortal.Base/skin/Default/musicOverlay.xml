@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2004</id>
   <defaultcontrol>2</defaultcontrol>
   <controls>
     <control>
+      <description>rectangle image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>16</posX>
+      <posY>437</posY>
+      <width>202</width>
+      <height>144</height>
+      <texture mask="picturethumbmask.png">blue.png</texture>
+      <colordiffuse>90ffffff</colordiffuse>
+    </control>
+    <control>
       <description>play time label</description>
       <type>label</type>
       <id>2</id>
-      <posX>180</posX>
-      <posY>544</posY>
+      <posX>160</posX>
+      <posY>468</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -18,10 +30,10 @@
       <description>music logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>67</posX>
-      <posY>456</posY>
-      <width>80</width>
-      <height>80</height>
+      <posX>47</posX>
+      <posY>446</posY>
+      <width>64</width>
+      <height>64</height>
       <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <texture mask="picturethumbmask.png">missing_coverart.png</texture>
@@ -31,10 +43,10 @@
       <description>music logo</description>
       <type>image</type>
       <id>87</id>
-      <posX>67</posX>
-      <posY>456</posY>
-      <width>80</width>
-      <height>80</height>
+      <posX>47</posX>
+      <posY>446</posY>
+      <width>64</width>
+      <height>64</height>
       <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <texture mask="picturethumbmask.png">#Play.Current.Thumb</texture>
@@ -43,10 +55,10 @@
       <description>music logo</description>
       <type>image</type>
       <id>86</id>
-      <posX>67</posX>
-      <posY>456</posY>
-      <width>80</width>
-      <height>80</height>
+      <posX>47</posX>
+      <posY>446</posY>
+      <width>64</width>
+      <height>64</height>
       <keepaspectratio>no</keepaspectratio>
       <centered>yes</centered>
       <texture mask="picturethumbmask.png">#Play.Current.ArtistThumb</texture>
@@ -56,58 +68,58 @@
       <description>music rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>67</posX>
-      <posY>456</posY>
-      <width>80</width>
-      <height>80</height>
-      <texture mask="picturethumbmask.png">picturethumbframe.png</texture>
+      <posX>47</posX>
+      <posY>446</posY>
+      <width>64</width>
+      <height>64</height>
+      <texture>picturethumbframe.png</texture>
       <centered>yes</centered>
     </control>
     <control>
       <description>play logo</description>
       <type>image</type>
       <id>3</id>
-      <posX>169</posX>
+      <posX>121</posX>
       <posY>464</posY>
-      <width>35</width>
-      <height>35</height>
+      <width>29</width>
+      <height>29</height>
       <texture>play_enabled.png</texture>
     </control>
     <control>
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>169</posX>
+      <posX>121</posX>
       <posY>464</posY>
-      <width>35</width>
-      <height>35</height>
+      <width>29</width>
+      <height>29</height>
       <texture>pause_enabled.png</texture>
     </control>
     <control>
       <description>FF logo</description>
       <type>image</type>
       <id>7</id>
-      <posX>169</posX>
+      <posX>121</posX>
       <posY>464</posY>
-      <width>35</width>
-      <height>35</height>
+      <width>29</width>
+      <height>29</height>
       <texture>fastforward_enabled.png</texture>
     </control>
     <control>
       <description>RW logo</description>
       <type>image</type>
       <id>8</id>
-      <posX>169</posX>
+      <posX>121</posX>
       <posY>464</posY>
-      <width>35</width>
-      <height>35</height>
+      <width>29</width>
+      <height>29</height>
       <texture>rew_enabled.png</texture>
     </control>
     <control>
       <description>Gap / Normal Icon</description>
       <type>image</type>
       <id>10</id>
-      <posX>177</posX>
+      <posX>129</posX>
       <posY>510</posY>
       <width>24</width>
       <height>21</height>
@@ -118,7 +130,7 @@
       <description>Gapless Icon</description>
       <type>image</type>
       <id>11</id>
-      <posX>177</posX>
+      <posX>129</posX>
       <posY>510</posY>
       <width>24</width>
       <height>21</height>
@@ -129,7 +141,7 @@
       <description>Crossfade Icon</description>
       <type>image</type>
       <id>12</id>
-      <posX>177</posX>
+      <posX>129</posX>
       <posY>510</posY>
       <width>24</width>
       <height>21</height>
@@ -139,15 +151,14 @@
     <control>
       <description>album/artist/genre etc info label</description>
       <type>fadelabel</type>
-      <width>112</width>
-      <height>29</height>
-      <posX>43</posX>
-      <posY>546</posY>
-      <font>font12</font>
-      <label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
-      <textcolor>EFFFFFFF</textcolor>
       <id>5</id>
+      <height>29</height>
+      <posX>24</posX>
+      <posY>540</posY>
+      <width>188</width>
+      <font>font12</font>
+      <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album\r#(L(435)) #Play.Current.Track\r#(L(436)) #Play.Current.Year</label>
+      <textcolor>EFFFFFFF</textcolor>
     </control>
-    
-</controls>
+  </controls>
 </window>

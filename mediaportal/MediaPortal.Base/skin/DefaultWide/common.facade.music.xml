@@ -5,10 +5,8 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      
-      
-      <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>composite control consisting of a list control and a thumbnail panel</description>
         <type>facadeview</type>
@@ -17,6 +15,8 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
+          <posY>170</posY>
+          <height>530</height>
           <onleft>2</onleft>
           <onright>2</onright>
           <scrollOffset>2</scrollOffset>
@@ -31,7 +31,7 @@
           <height>593</height>
           <font>font13</font>
           <font2>font13</font2>
-          <selectedColor>80000000</selectedColor>
+          <selectedColor>ff6FAFE1</selectedColor>
           <textcolor>ffffffff</textcolor>
           <selectedColor2>ffffffff</selectedColor2>
           <textcolor2>ffffffff</textcolor2>
@@ -44,8 +44,8 @@
           <spaceBetweenItems>0</spaceBetweenItems>
           <textureHeight>112</textureHeight>
           <scrollOffset>1</scrollOffset>
-          <textureFocus>album_background_focus.png</textureFocus>
-          <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+          <textureFocus>list_sub_focus.png</textureFocus>
+          <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
           <onleft>2</onleft>
           <onright>50</onright>
           <onup>2</onup>
@@ -56,27 +56,27 @@
           <type>thumbnailpanel</type>
           <dimColor>90ffffff</dimColor>
           <id>50</id>
-          <posX>80</posX>
-          <posY>160</posY>
-          <width>1280</width>
-          <height>548</height>
+          <posX>60</posX>
+          <posY>110</posY>
+          <width>1200</width>
+          <height>640</height>
           <scrollOffset>0</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
           <textureWidthBig>155</textureWidthBig>
           <textureHeightBig>155</textureHeightBig>
-          <itemWidthBig>191</itemWidthBig>
-          <itemHeightBig>215</itemHeightBig>
-          <itemWidth>145</itemWidth>
-          <itemHeight>165</itemHeight>
+          <itemWidthBig>170</itemWidthBig>
+          <itemHeightBig>195</itemHeightBig>
+          <itemWidth>120</itemWidth>
+          <itemHeight>145</itemHeight>
           <thumbWidthBig>155</thumbWidthBig>
           <thumbHeightBig>155</thumbHeightBig>
           <thumbPosXBig>0</thumbPosXBig>
           <thumbPosYBig>0</thumbPosYBig>
           <thumbWidth>110</thumbWidth>
           <thumbHeight>110</thumbHeight>
-          <thumbPosX>1</thumbPosX>
-          <thumbPosY>1</thumbPosY>
+          <thumbPosX>0</thumbPosX>
+          <thumbPosY>0</thumbPosY>
           <thumbZoom>no</thumbZoom>
           <enableFocusZoom>no</enableFocusZoom>
           <zoomXPixels>40</zoomXPixels>
@@ -94,6 +94,7 @@
           <font>font10</font>
           <spinCanFocus>no</spinCanFocus>
           <dimColor>80ffffff</dimColor>
+          <spinPosY>675</spinPosY>
         </control>
         <control>
           <description>Filmstrip view</description>
@@ -102,20 +103,20 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <scrollOffset>2</scrollOffset>
-          <posX>80</posX>
-          <posY>255</posY>
-          <width>1300</width>
+          <posX>60</posX>
+          <posY>280</posY>
+          <width>1180</width>
           <height>720</height>
           <onup>2</onup>
           <onleft>2</onleft>
-          <thumbWidth>205</thumbWidth>
-          <thumbHeight>205</thumbHeight>
+          <thumbWidth>200</thumbWidth>
+          <thumbHeight>200</thumbHeight>
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
-          <itemWidth>231</itemWidth>
-          <itemHeight>231</itemHeight>
-          <textureWidth>205</textureWidth>
-          <textureHeight>205</textureHeight>
+          <itemWidth>190</itemWidth>
+          <itemHeight>210</itemHeight>
+          <textureWidth>200</textureWidth>
+          <textureHeight>200</textureHeight>
           <imageFolder>Picturethumbframe.png</imageFolder>
           <imageFolderFocus>Picturethumbframe.png</imageFolderFocus>
           <frame>Picturethumbframe.png</frame>
@@ -123,15 +124,21 @@
           <textureMask>Picturethumbmask.png</textureMask>
           <thumbs mask="Picturethumbmask.png"></thumbs>
           <background>emtpy.png</background>
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
+          <InfoImage></InfoImage>
           <showFrame>yes</showFrame>
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
           <showInfoImage>no</showInfoImage>
           <keepaspectratio>no</keepaspectratio>
           <dimColor>80ffffff</dimColor>
-          <thumbAnimation effect="zoom" start="100,100" end="130,130" time="70">focus</thumbAnimation>
-          <thumbAnimation effect="zoom" start="130,130" end="100,100" time="70">unfocus</thumbAnimation>
+          <spinPosX>-800</spinPosX>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>270</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <thumbAnimation effect="zoom" start="100,100" end="150,150" time="200" tween="circle" ease="inout">focus</thumbAnimation>
+          <thumbAnimation effect="zoom" start="150,150" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
         </control>
         <control>
           <description>Cover Flow view</description>
@@ -155,12 +162,12 @@
           <offsetY>0</offsetY>
           <selectedOffsetY>0</selectedOffsetY>
           <speed>8</speed>
-          <backgroundHeight>250</backgroundHeight>
+          <backgroundHeight>80</backgroundHeight>
           <backgroundWidth>1280</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>470</backgroundY>
+          <backgroundY>430</backgroundY>
           <backgroundDiffuse>FF000000</backgroundDiffuse>
-          <background>background2.png</background>
+          <background>roof.png</background>
           <showBackground>yes</showBackground>
           <foregroundHeight>720</foregroundHeight>
           <foregroundWidth>1280</foregroundWidth>
@@ -170,8 +177,8 @@
           <foreground>coverflow_foreground.png</foreground>
           <showForeground>no</showForeground>
           <showFrame>yes</showFrame>
-          <frame>Picture_cover2.png</frame>
-          <frameFocus>Picture_cover2.png</frameFocus>
+          <frame>Picturethumbframe.png</frame>
+          <frameFocus>Picturethumbframe.png</frameFocus>
           <frameWidth>360</frameWidth>
           <frameHeight>360</frameHeight>
           <spinSpeed>8</spinSpeed>
@@ -181,7 +188,7 @@
           <font1>font13</font1>
           <font2>font10</font2>
           <label1>#selecteditem</label1>
-          <label2>#selecteditem2</label2>
+          <label2></label2>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>FFFF0000</remoteColor>
           <playedColor>FFA0D0FF</playedColor>
@@ -197,9 +204,9 @@
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
           <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
-          <scrollbarYOff>455</scrollbarYOff>
+          <scrollbarYOff>435</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards flipY="yes" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbmask.png</cards>
+          <cards mask="Picturethumbmask.png">Picturethumbmask.png</cards>
           <subitems>
             <subitem>
               <![CDATA[                 <controls>
@@ -210,205 +217,210 @@
                 <posY>0</posY>
                 <width>360</width>
                 <height>360</height>
-                <texture flipY="yes" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbmask.png</texture>
+                <texture mask="Picturethumbmask.png">blue.png</texture>
               </control>
               <control>
-              <description>Music Details</description>
-              <type>label</type>
-              <posX>20</posX>
-              <posY>10</posY>
-              <width>320</width>
-              <label>102001</label>
-              <font>font10</font>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>32</posY>
-              <width>320</width>
-              <label>#(L(171)) #music.albumArtist</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>54</posY>
-              <width>320</width>
-              <label>#(L(170)) #music.album</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>76</posY>
-              <width>320</width>
-              <label>#(L(179)): #music.title</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>98</posY>
-              <width>320</width>
-              <label>#(L(178)) # #music.track</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>120</posY>
-              <width>320</width>
-              <label>#(L(437)) #music.duration</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>142</posY>
-              <width>320</width>
-              <label>Filetype: #music.filetype</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>166</posY>
-              <width>320</width>
-              <label>Codec: #music.codec</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>188</posY>
-              <width>320</width>
-              <label>Bitrate: #music.bitrate</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>210</posY>
-              <width>320</width>
-              <label>BPM: #music.bpm</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>232</posY>
-              <width>320</width>
-              <label>#(L(627)) #music.channels</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>254</posY>
-              <width>320</width>
-              <label>Samplerate: #music.samplerate</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>276</posY>
-              <width>320</width>
-              <label>Date added: #music.dateadded</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-            <control>
-              <description>General Info</description>
-              <type>fadelabel</type>
-              <posX>20</posX>
-              <posY>298</posY>
-              <width>320</width>
-              <label>Last played: #music.datelastplayed</label>
-              <font>font10</font>
-              <align>left</align>
-              <textcolor>gainsboro</textcolor>
-              <shadowAngle>0</shadowAngle>
-              <shadowDistance>0</shadowDistance>
-            </control>
-          </controls>]]></subitem>
-      </subitems>
-    </control>
-    <control>
-      <description>playlist listcontrol</description>
-      <type>playlistcontrol</type>
-      <id>50</id>
-      <onleft>2</onleft>
-      <onright>2</onright>
-      <scrollOffset>2</scrollOffset>
-      <itemWidth>32</itemWidth>
-      <itemHeight>32</itemHeight>
-      <IconXOff>12</IconXOff>
-      <IconYOff>4</IconYOff>
+                <description>Music Details</description>
+                <type>label</type>
+                <posX>20</posX>
+                <posY>10</posY>
+                <width>320</width>
+                <label>102001</label>
+                <font>font10</font>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>32</posY>
+                <width>320</width>
+                <label>#(L(171)) #music.albumArtist</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>54</posY>
+                <width>320</width>
+                <label>#(L(170)) #music.album</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>76</posY>
+                <width>320</width>
+                <label>#(L(179)): #music.title</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>98</posY>
+                <width>320</width>
+                <label>#(L(178)) # #music.track</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>120</posY>
+                <width>320</width>
+                <label>#(L(437)) #music.duration</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>142</posY>
+                <width>320</width>
+                <label>Filetype: #music.filetype</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>166</posY>
+                <width>320</width>
+                <label>Codec: #music.codec</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>188</posY>
+                <width>320</width>
+                <label>Bitrate: #music.bitrate</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>210</posY>
+                <width>320</width>
+                <label>BPM: #music.bpm</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>232</posY>
+                <width>320</width>
+                <label>#(L(627)) #music.channels</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>254</posY>
+                <width>320</width>
+                <label>Samplerate: #music.samplerate</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>276</posY>
+                <width>320</width>
+                <label>Date added: #music.dateadded</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+              <control>
+                <description>General Info</description>
+                <type>fadelabel</type>
+                <posX>20</posX>
+                <posY>298</posY>
+                <width>320</width>
+                <label>Last played: #music.datelastplayed</label>
+                <font>font10</font>
+                <align>left</align>
+                <textcolor>ivory</textcolor>
+                <shadowAngle>0</shadowAngle>
+                <shadowDistance>0</shadowDistance>
+              </control>
+            </controls>]]></subitem>
+        </subitems>
+      </control>
+      <control>
+        <description>playlist listcontrol</description>
+        <type>playlistcontrol</type>
+        <id>50</id>
+        <posY>170</posY>
+        <height>530</height>
+        <upBtnXOffset>660</upBtnXOffset>
+        <downBtnXOffset>700</downBtnXOffset>
+        <deleteBtnXOffset>740</deleteBtnXOffset>
+        <onleft>2</onleft>
+        <onright>2</onright>
+        <scrollOffset>2</scrollOffset>
+        <itemWidth>32</itemWidth>
+        <itemHeight>32</itemHeight>
+        <IconXOff>12</IconXOff>
+        <IconYOff>4</IconYOff>
+      </control>
     </control>
   </control>
-</control>
 </controls>
 </window>

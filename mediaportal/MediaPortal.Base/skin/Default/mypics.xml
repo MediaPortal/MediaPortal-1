@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2</id>
   <defaultcontrol>2</defaultcontrol>
@@ -9,19 +9,46 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>Background.png</texture>
+      <texture>background.jpg</texture>
       <width>720</width>
       <height>576</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
+    <!--control>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <texture>#selectedthumb</texture>
+      <centered>yes</centered>
+      <colordiffuse>30ffffff</colordiffuse>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>Overlay for FanArt</description>
+      <id>0</id>
+      <type>image</type>
+      <posx>0</posx>
+      <posy>0</posy>
+      <width>1280</width>
+      <height>720</height>
+      <texture>backgroundthumbsview.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="fade" time="70">visible</animation>
+      <animation effect="fade" time="300" delay="500">hidden</animation>
+    </control-->
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
       <defaultcontrol>2</defaultcontrol>
       <onexit>50</onexit>
       <buttonX>0</buttonX>
-      <buttonY>0</buttonY>
+      <buttonY>-60</buttonY>
       <buttonwidth>59</buttonwidth>
       <buttonheight>576</buttonheight>
       <textureFocus>-</textureFocus>
@@ -33,19 +60,19 @@
         <type>image</type>
         <posX>14</posX>
         <posY>62</posY>
-        <width>206</width>
+        <width>230</width>
         <height>472</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
         <visible>!Control.HasFocus(50)</visible>
-        <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="150" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
         <description>group element</description>
         <type>group</type>
-        <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
-        <animation effect="slide" time="150" end="-300,0" reversible="false">hidden</animation>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
         <visible>!Control.HasFocus(50)</visible>
         <control>
           <description>caption of the selected item</description>
@@ -108,9 +135,9 @@
           <overlay>yes</overlay>
           <id>600</id>
           <posX>39</posX>
-          <posY>365</posY>
+          <posY>340</posY>
           <width>68</width>
-          <height>68</height>
+          <height>96</height>
           <keepaspectratio>no</keepaspectratio>
           <centered>yes</centered>
           <texture mask="Picturethumbmask.png">#Play.Current.Thumb</texture>
@@ -122,9 +149,9 @@
           <overlay>yes</overlay>
           <id>1</id>
           <posX>39</posX>
-          <posY>365</posY>
+          <posY>340</posY>
           <width>68</width>
-          <height>68</height>
+          <height>96</height>
           <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
           <visible>!Control.HasFocus(50) + player.hasmedia + control.hasthumb(600)</visible>
         </control>
@@ -149,7 +176,7 @@
           <height>16</height>
           <offset>0</offset>
           <height>16</height>
-          <innerheight>16</innerheight>
+          <innerheight>20</innerheight>
           <texturebg>-</texturebg>
           <lefttexture>-</lefttexture>
           <midtexture>osd_progress_mid.png</midtexture>
@@ -160,20 +187,24 @@
         <control>
           <description>group element</description>
           <type>group</type>
-          <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
-          <animation effect="slide" time="150" end="-300,0" reversible="false">hidden</animation>
+          <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+          <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
           <posX>39</posX>
           <posY>96</posY>
           <layout>StackLayout</layout>
           <visible>!Control.HasFocus(50)</visible>
           <control>
             <description>View-As</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>2</id>
-            <label>100</label>
+            <label></label>
             <onright>50</onright>
             <onup>17</onup>
             <ondown>3</ondown>
+            <mode>dialoglist</mode>
+            <dialogTitle>792</dialogTitle>
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>95</valuePrefixText>
           </control>
           <control>
             <description>Sort</description>
@@ -186,12 +217,16 @@
           </control>
           <control>
             <description>Switch View</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>5</id>
-            <label>457</label>
+            <label></label>
             <onright>50</onright>
             <ondown>6</ondown>
             <onup>3</onup>
+            <mode>dialoglist</mode>
+            <dialogTitle>499</dialogTitle>
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>97</valuePrefixText>
           </control>
           <control>
             <description>SlideShow button</description>
@@ -208,8 +243,18 @@
             <id>7</id>
             <label>361</label>
             <onright>50</onright>
-            <ondown>2</ondown>
+            <ondown>9876</ondown>
             <onup>6</onup>
+          </control>
+          <control>
+            <description>Picture Settings</description>
+            <type>button</type>
+            <id>9876</id>
+            <label>5</label>
+            <hyperlink>12</hyperlink>
+            <onup>7</onup>
+            <ondown>2</ondown>
+            <onright>50</onright>
           </control>
         </control>
       </control>
@@ -226,7 +271,7 @@
       <centered>yes</centered>
       <texture mask="Picturethumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
@@ -237,7 +282,7 @@
       <height>200</height>
       <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -246,10 +291,11 @@
       <posX>43</posX>
       <posY>329</posY>
       <width>199</width>
-      <label>Info:</label>
-      <font>font14</font>
+      <label>#(L(1020)):</label>
+      <font>font12</font>
+      <textcolor>ff6FAFE1</textcolor>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -261,7 +307,7 @@
       <label>#selecteditem</label>
       <font>font14</font>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -273,16 +319,7 @@
       <label>#selecteditem2</label>
       <font>font14</font>
       <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
-    </control>
-    <control>
-      <description>BG2</description>
-      <type>image</type>
-      <id>1</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>backgroundthumbsview.png</texture>
-      <visible>facadeview.largeicons|facadeview.smallicons</visible>
+      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
   </controls>
 </window>

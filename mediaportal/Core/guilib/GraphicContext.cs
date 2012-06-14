@@ -106,6 +106,7 @@ namespace MediaPortal.GUI.Library
 
     public static Device DX9Device = null; // pointer to current DX9 device
     private static string m_strSkin = ""; // name of the current skin
+    private static string m_strTheme = ""; // name of the current skin theme
     private static bool m_bFullScreenVideo = false; // boolean indicating if we're in GUI or fullscreen video/tv mode
     private static IntPtr m_ipActiveForm; // pointer to the current GDI window
     private static Rectangle m_RectVideo; // rectangle of the video preview window
@@ -841,12 +842,95 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Get/set current skin name
+    /// Get/set current skin folder path
     /// </summary>
     public static string Skin
     {
-      set { m_strSkin = Config.GetSubFolder(Config.Dir.Skin, value); }
+      set { 
+        m_strSkin = Config.GetSubFolder(Config.Dir.Skin, value);
+        m_strTheme = m_strSkin; // The default theme is the skin itself.
+      }
       get { return m_strSkin; }
+    }
+
+    /// <summary>
+    /// Convenience property to get just the name of the skin.
+    /// </summary>
+    public static string SkinName
+    {
+      get { return m_strSkin.Substring(m_strSkin.LastIndexOf(@"\") + 1); }
+    }
+
+    /// <summary>
+    /// Get/set current skin theme folder path.  Returns the default skin path if no theme folder found.
+    /// </summary>
+    public static string Theme
+    {
+      set { m_strTheme = Skin + (value != GUIThemeManager.THEME_SKIN_DEFAULT ? @"\Themes\" + value : ""); }
+      get { return m_strTheme; }
+    }
+
+    /// <summary>
+    /// Convenience property to get just the name of the skin theme.
+    /// </summary>
+    public static string ThemeName
+    {
+      get {
+        if (m_strTheme.Contains(@"\Themes\"))
+        {
+          return m_strTheme.Substring(m_strTheme.LastIndexOf(@"\") + 1);
+        }
+        return GUIThemeManager.THEME_SKIN_DEFAULT;
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the current theme has the specified file.
+    /// </summary>
+    /// <param name="filename"></param>
+    /// <returns></returns>
+    public static bool HasThemeSpecificSkinFile(string filename)
+    {
+      // Do not check for files in the default theme (base skin).
+      if (ThemeName != GUIThemeManager.THEME_SKIN_DEFAULT)
+      {
+        return File.Exists(Theme + filename);
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Return a themed version of the requested skin filename, otherwise return the default skin filename.  Use a path to media to get images.
+    /// </summary>
+    /// <param name="xmlfilename"></param>
+    /// <returns></returns>
+    public static string GetThemedSkinFile(string filename)
+    {
+      if (File.Exists(Theme + filename))
+      {
+        return Theme + filename;
+      }
+      else
+      {
+        return Skin + filename;
+      }
+    }
+
+    /// <summary>
+    /// Return a themed version of the requested directory, otherwise return the default skin directory.
+    /// </summary>
+    /// <param name="xmlfilename"></param>
+    /// <returns></returns>
+    public static string GetThemedSkinDirectory(string dir)
+    {
+      if (Directory.Exists(Theme + dir))
+      {
+        return Theme + dir;
+      }
+      else
+      {
+        return Skin + dir;
+      }
     }
 
     /// <summary>
@@ -1633,7 +1717,7 @@ namespace MediaPortal.GUI.Library
 
       _cameras.Clear();
       _cameras.Add(new Point(Width / 2, Height / 2));
-      UpdateCameraPosition(_cameras[0]);
+      UpdateCameraPosition(_cameras[_cameras.Count-1]);
       // reset the final transform and window transforms
       UpdateFinalTransform(_guiTransform);
     }
@@ -1724,19 +1808,28 @@ namespace MediaPortal.GUI.Library
 
     public static void SetCameraPosition(Point camera)
     {
-      // offset the camera from our current location (this is in XML coordinates) and scale it up to
-      // the screen resolution
-      Point cam = new Point(camera.X, camera.Y);
-
+      // Position the camera relative to the default camera location (the geometric center of the screen).
+      // The default camera is always camera [0].
+      Point cam = new Point(
+        _cameras[0].X + camera.X,
+        _cameras[0].Y + camera.Y);
 
       _cameras.Add(cam);
-      UpdateCameraPosition(_cameras[0]);
+      UpdateCameraPosition(_cameras[_cameras.Count-1]);
     }
 
     public static void RestoreCameraPosition()
     {
-      _cameras.RemoveAt(0);
-      UpdateCameraPosition(_cameras[0]);
+      // It's an error to remove the default camera.
+      if (_cameras.Count > 1)
+      {
+        _cameras.RemoveAt(_cameras.Count - 1);
+      }
+      else
+      {
+        Log.Error("GUIGraphicsContext: RestoreCameraPosition() - attempt to remove the default camera; calls to set a camera position should not be made from Render().");
+      }
+      UpdateCameraPosition(_cameras[_cameras.Count-1]);
     }
 
     public static void UpdateCameraPosition(Point camera)

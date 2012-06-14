@@ -38,7 +38,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvtuningdetails.xml"));
       return bResult;
     }
 

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>8900</id>
   <defaultcontrol>2</defaultcontrol>
@@ -27,8 +27,6 @@
       <textcolor>FFFFFFFF</textcolor>
       <font>font10</font>
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
-      
-      
     </control>
     <control>
       <description>Selected item Label</description>
@@ -40,14 +38,10 @@
       <label>#selecteditem</label>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
-      
-      
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
       <control>
         <description>Sort by Name/Date/Channel</description>
         <type>sortbutton</type>
@@ -124,8 +118,6 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
       <control>
         <description>listcontrol</description>
         <type>listcontrol</type>
@@ -188,8 +180,6 @@
       <label>#Radio.Search.Title</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Current channel</description>
@@ -200,9 +190,7 @@
       <label>#Radio.Search.Channel</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Current program time</description>
@@ -213,9 +201,7 @@
       <label>#Radio.Search.Time</label>
       <align>left</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Description1</description>
@@ -228,8 +214,6 @@
       <label>#Radio.Search.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>genre</description>
@@ -240,9 +224,7 @@
       <label>#Radio.Search.Genre</label>
       <align>right</align>
       <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
-      
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>
 </window>

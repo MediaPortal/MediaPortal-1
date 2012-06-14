@@ -76,6 +76,45 @@ namespace MediaPortal.Profile
   }
 
   /// <summary>
+  /// SKSettings allows to read and write SkinSetting.xml configuration file.  Each skin can have its own file (same filename different path).
+  /// (wrapper class to unify path handling)
+  /// </summary>
+  public class SKSettings : Settings
+  {
+    private static string _configPathName;
+
+    public static string ConfigPathName
+    {
+      get
+      {
+        // Always form the path since switching between skins will cause different files to be returned.
+        _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, "SkinSettings.xml");
+        return _configPathName;
+      }
+      set
+      {
+        _configPathName = value;
+        if (!Path.IsPathRooted(_configPathName))
+        {
+          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, _configPathName);
+        }
+      }
+    }
+
+    private static SKSettings _instance;
+
+    public static SKSettings Instance
+    {
+      get { return _instance ?? (_instance = new SKSettings()); }
+    }
+
+    // public constructor should be made/private protected, we should encourage the usage of Instance
+
+    public SKSettings()
+      : base(ConfigPathName) { }
+  }
+
+  /// <summary>
   /// Settings allows to read and write any xml configuration file
   /// </summary>
   public class Settings : IDisposable
@@ -85,7 +124,8 @@ namespace MediaPortal.Profile
 
     public Settings(string fileName, bool isCached)
     {
-      xmlFileName = Path.GetFileName(fileName).ToLowerInvariant();
+      // Each skin may have its own SkinSettings.xml file so we need to use the entire path to detect a cache hit.
+      xmlFileName = Path.GetFullPath(fileName).ToLowerInvariant();
 
       _isCached = isCached;
 
@@ -99,6 +139,16 @@ namespace MediaPortal.Profile
         if (_isCached)
           xmlCache.Add(xmlFileName, xmlDoc);
       }
+    }
+
+    public bool HasSection<T>(string section)
+    {
+      return xmlDoc.HasSection<T>(section);
+    }
+
+    public IDictionary<string, T> GetSection<T>(string section)
+    {
+      return xmlDoc.GetSection<T>(section);
     }
 
     public string GetValue(string section, string entry)

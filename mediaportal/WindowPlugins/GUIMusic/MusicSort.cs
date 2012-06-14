@@ -56,6 +56,7 @@ namespace MediaPortal.GUI.Music
       Year = 11, // Used Internally, when Sorting by Date is selected from GUI and Year defined as DefaultSort
       DiscID = 12,
       Composer = 13,
+      TimesPlayed = 14
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -108,6 +109,8 @@ namespace MediaPortal.GUI.Music
       int iRating2 = 0;
       int iDuration1 = 0;
       int iDuration2 = 0;
+      int iTimesPlayed1 = 0;
+      int iTimesPlayed2 = 0;
 
       if (item1.FileInfo != null)
       {
@@ -441,6 +444,26 @@ namespace MediaPortal.GUI.Music
           {
             return String.Compare(strComposer2, strComposer1, true);
           }
+
+        case SortMethod.TimesPlayed:
+          if (tag1 != null)
+          {
+            iTimesPlayed1 = tag1.TimesPlayed;
+          }
+          if (tag2 != null)
+          {
+            iTimesPlayed2 = tag2.TimesPlayed;
+          }
+
+          if (bAscending)
+          {
+            return iTimesPlayed1.CompareTo(iTimesPlayed2);
+          }
+          else
+          {
+            return iTimesPlayed2.CompareTo(iTimesPlayed1);
+          }
+
       }
       return 0;
     }

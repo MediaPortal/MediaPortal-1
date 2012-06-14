@@ -16,14 +16,14 @@
       <posY>120</posY>
       <width>478</width>
       <height>336</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
-      <colordiffuse>eeffffff</colordiffuse>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <description>group element</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="800,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="800,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <control>
         <description>Speed label</description>
         <type>label</type>
@@ -99,6 +99,7 @@
         <onup>4</onup>
         <ondown>6</ondown>
         <align>right</align>
+        <width>253</width>
       </control>
       <control>
         <description>Ken Buns transitions</description>
@@ -112,6 +113,7 @@
         <onup>5</onup>
         <ondown>7</ondown>
         <align>right</align>
+        <width>253</width>
       </control>
       <control>
         <description>Random transitions</description>
@@ -125,6 +127,7 @@
         <onup>6</onup>
         <ondown>8</ondown>
         <align>right</align>
+        <width>253</width>
       </control>
       <control>
         <description>Repeat/loop slideshows</description>
@@ -138,6 +141,7 @@
         <onup>7</onup>
         <ondown>9</ondown>
         <align>right</align>
+        <width>253</width>
       </control>
       <control>
         <description>Auto shuffle slideshow</description>
@@ -151,6 +155,7 @@
         <onup>8</onup>
         <ondown>99</ondown>
         <align>right</align>
+        <width>253</width>
       </control>
     </control>
   </controls>
