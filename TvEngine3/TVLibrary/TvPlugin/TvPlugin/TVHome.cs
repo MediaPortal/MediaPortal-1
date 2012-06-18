@@ -2113,7 +2113,11 @@ namespace TvPlugin
           Log.Debug("TVHome.ShowFullScreenWindowTVHandler - setting chapters: " + strChapters);
           Log.Debug("TVHome.ShowFUllScreenWindowTVHandler - setting jumppoints: " + strJumpPoints);
         }
-        
+        else
+        {
+          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
+          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
+        }
         // watching TV
         if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
         {
