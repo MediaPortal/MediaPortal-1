@@ -72,6 +72,7 @@
 !define MEMENTO_REGISTRY_KEY  "${REG_UNINSTALL}"
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
+!define SETUP_TV_FOLDER       "$PROGRAMFILES\Team MediaPortal\SetupTV"
 
 ; import version from shared file
 !include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
@@ -149,7 +150,7 @@ Var frominstall
 ;!define MUI_STARTMENUPAGE_REGISTRY_KEY        "${REG_UNINSTALL}"
 ;!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME  StartMenuGroup
 !define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN      "$INSTDIR\SetupTV.exe"
+!define MUI_FINISHPAGE_RUN      "${SETUP_TV_FOLDER}\SetupTV.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Run TV-Server Configuration"
 #!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\readme.txt
 #!define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
@@ -386,18 +387,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "${COMMON_APPDATA}\xmltv"
   File /r /x .git "${TVSERVER.BASE}\xmltv\*"
 
-  ; The Plugin Directory
-  SetOutPath "$INSTDIR\Plugins"
-  File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
-  File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
-  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
-  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
-  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
-;  File "${git_TVServer}\Server\Plugins\TvMovie\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.TvMovie.dll"
-  File "${git_TVServer}\Server\Plugins\XmlTvImport\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
-  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPG.dll"
-  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
-
   ; Rest of Files
   SetOutPath "$INSTDIR"
   File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
@@ -405,8 +394,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"  
   File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster.Learn\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.exe"
   File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
-  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
-  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
   File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
   File "${git_TVServer}\Server\TVDatabase\Entities\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
   File "${git_TVServer}\Server\TVDatabase\EntityModel\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
@@ -435,9 +422,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttdvbacc.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
-
-  File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
+  File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
+
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   ; binary used for skystar2 support
   File "${git_DirectShowFilters}\dvblib\bin\${BUILD_TYPE}\dvblib.dll"
@@ -447,6 +434,39 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 ;  File "${TVSERVER.BASE}\TVService.exe.config"
   File "${TVSERVER.BASE}\log4net.config"
   File "${TVSERVER.BASE}\TvSetupLog.config"
+  
+    ; The Plugin Directory
+  SetOutPath "$INSTDIR\Plugins"
+  File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  File "${git_TVServer}\Server\Plugins\TvMovie\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  File "${git_TVServer}\Server\Plugins\XmlTvImport\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  
+    ; Rest of Files
+  SetOutPath "${SETUP_TV_FOLDER}"
+  File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
+  File "${git_TVServer}\Server\TVDatabase\Entities\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  File "${git_TVServer}\Server\TVDatabase\EntityModel\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  File "${git_TVServer}\Server\TvService\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
+  File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -472,16 +492,16 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ExecWait '"$INSTDIR\TVService.exe" /install'
   ${LOG_TEXT} "INFO" "Finished Installing TVService"
 
-  SetOutPath $INSTDIR
+  SetOutPath "${SETUP_TV_FOLDER}"
   ${If} $noDesktopSC != 1
-    CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe" "" "$INSTDIR\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+    CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe" "" "${SETUP_TV_FOLDER}\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
   ${EndIf}
 
   ;${If} $noStartMenuSC != 1
     ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
     CreateDirectory "${STARTMENU_GROUP}"
-    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe"  "" "${SETUP_TV_FOLDER}\SetupTV.exe"  0 "" "" "TV-Server Configuration"
     CreateDirectory "${COMMON_APPDATA}\log"
     CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
 
@@ -505,7 +525,7 @@ ${MementoSectionEnd}
   #---------------------------------------------------------------------------
   ${If} $UnInstallMode == 1
   ${OrIf} $UnInstallMode == 2
-    ExecWait '"$INSTDIR\SetupTv.exe" /Delete-db'
+    ExecWait '"${SETUP_TV_FOLDER}\SetupTv.exe" /Delete-db'
   ${EndIf}
 
   #---------------------------------------------------------------------------
@@ -546,18 +566,6 @@ ${MementoSectionEnd}
   ; Remove XMLTV data dir
   Delete "${COMMON_APPDATA}\xmltv\xmltv.dtd"
 
-  ; Remove Plugins
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
-;  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.TvMovie.dll"
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.WebEPG.dll"
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
-  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
-  RMDir "$INSTDIR\Plugins"
-
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
   Delete "$INSTDIR\DirectShowLib.dll"
@@ -566,8 +574,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\dvblib.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.Plugins.Base.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.Plugins.ServerBlaster.Learn.exe"
-  Delete "$INSTDIR\SetupTv.exe"
-  Delete "$INSTDIR\SetupTv.exe.config"
+  Delete "$INSTDIR\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+  Delete "$INSTDIR\Mediaportal.TV.Server.TVService.Interfaces.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.TvControl.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.Entities.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
@@ -583,6 +591,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   Delete "$INSTDIR\Mediaportal.TV.Server.SetupControls.dll"
+  Delete "$INSTDIR\EntityFramework.dll"
+  Delete "$INSTDIR\EntityFramework.xml"
 
   ; 3rd party assemblys
   Delete "$INSTDIR\dxerr9.dll"
@@ -595,6 +605,54 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\tevii.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
   Delete "$INSTDIR\Interop.SHDocVw.dll"
+  
+  ; Remove SetupTV Plugins files installed
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  RMDir "$INSTDIR\Plugins"
+
+  ; Remove SetupTV Plugins files installed
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  RMDir "${SETUP_TV_FOLDER}\Plugins"
+  
+  ; And finally remove SetupTV files installed
+  ; Leave the directory in place, as it might contain user modified files
+  Delete "${SETUP_TV_FOLDER}\DirectShowLib.dll"
+  Delete "${SETUP_TV_FOLDER}\Common.Utils.dll"
+  ; binary used for skystar2 support
+  Delete "${SETUP_TV_FOLDER}\dvblib.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.Plugins.Base.dll"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe.config"
+  Delete "${SETUP_TV_FOLDER}\Core.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvControl.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
+  Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
@@ -610,17 +668,50 @@ ${MementoSectionEnd}
 ${MementoSection} "MediaPortal TV Client plugin" SecClient
   ${LOG_TEXT} "INFO" "Installing MediaPortal TV Client plugin..."
 
+
+  SetOutPath "${SETUP_TV_FOLDER}"
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe" "" "${SETUP_TV_FOLDER}\SetupTV.exe" 0 "" "" "MediaPortal TV Server"
+  ${EndIf}
+
+  ;${If} $noStartMenuSC != 1
+    ;!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    ; We need to create the StartMenu Dir. Otherwise the CreateShortCut fails
+    CreateDirectory "${STARTMENU_GROUP}"
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "${SETUP_TV_FOLDER}\SetupTV.exe"  "" "${SETUP_TV_FOLDER}\SetupTV.exe"  0 "" "" "TV-Server Configuration"
+    CreateDirectory "${COMMON_APPDATA}\log"
+    CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
+
+    WriteINIStr "${STARTMENU_GROUP}\Quick Setup Guide.url"  "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide"
+    WriteINIStr "${STARTMENU_GROUP}\Help.url"               "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
+    WriteINIStr "${STARTMENU_GROUP}\web site.url"           "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+    # [OBSOLETE] CreateShortcut "${STARTMENU_GROUP}\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
+    ;!insertmacro MUI_STARTMENU_WRITE_END
+  ;${EndIf}
+
   ; Kill running Programs
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${KillProcess} "MediaPortal.exe"
   ${KillProcess} "configuration.exe"
+  ${KillProcess} "SetupTv.exe"
 
   SetOverwrite on
 
   ${LOG_TEXT} "INFO" "MediaPortal Installed at: $MPdir.Base"
+  ${LOG_TEXT} "INFO" "MediaPortal SetupTV Installed at: ${SETUP_TV_FOLDER}"
   ${LOG_TEXT} "INFO" "MediaPortalPlugins are at: $MPdir.Plugins"
   
   #---------------------------- File Copy ----------------------
+  ; Tuning Parameter Directory
+  SetOutPath "${COMMON_APPDATA}\TuningParameters"
+  File /r /x .git "${TVSERVER.BASE}\TuningParameters\*"
+  ; WebEPG Grabbers Directory
+  SetOutPath "${COMMON_APPDATA}\WebEPG"
+  File /r /x .git "${TVSERVER.BASE}\WebEPG\*"
+  ; XMLTV Data Directory
+  SetOutPath "${COMMON_APPDATA}\xmltv"
+  File /r /x .git "${TVSERVER.BASE}\xmltv\*"
+  
   ; Common Files
   SetOutPath "$MPdir.Base"
   File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
@@ -636,15 +727,44 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${EXTBIN}\MySql.Data.dll"
   File "${EXTBIN}\MySql.Data.Entity.dll"
   File "${EXTBIN}\EntityFramework.dll"
-  File "${EXTBIN}\EntityFramework.xml" 
-
-  ;Gentle.Config
-;  SetOutPath "$MPdir.Config"
-;  File "${git_Common_MP_TVE3}\Gentle.config"
+  File "${EXTBIN}\EntityFramework.xml"
 
   ; The Plugins
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_TVServer}\TvPlugin\bin\${BUILD_TYPE}\TvPlugin.dll"
+  
+  ; Rest of Files
+  SetOutPath "${SETUP_TV_FOLDER}"
+  File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\SetupTv.exe.config"
+  File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_TVServer}\Server\TvControl\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvControl.dll"
+  File "${git_TVServer}\Server\TVDatabase\Entities\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  File "${git_TVServer}\Server\TVDatabase\EntityModel\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  File "${git_TVServer}\Server\TvService\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  File "${git_TVServer}\Server\ServiceAgents\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  File "${git_TVServer}\Server\RuleBasedScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  File "${git_TVServer}\Server\TVDatabase\TvBusinessLayer\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
+  File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  
+  ; The Plugin Directory
+  SetOutPath "${SETUP_TV_FOLDER}\Plugins"
+  File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  File "${git_TVServer}\Server\Plugins\ServerBlaster\ServerBlaster\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  File "${git_TVServer}\Server\Plugins\TvMovie\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  File "${git_TVServer}\Server\Plugins\XmlTvImport\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPG\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  File "${git_TVServer}\Server\Plugins\WebEPG\WebEPGPlugin\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
@@ -685,20 +805,72 @@ ${MementoSectionEnd}
   Delete "$MPdir.Plugins\Windows\TvPlugin.dll"
 
   ; Common Files
-  Delete "$MPdir.Base\Mediaportal.TV.Server.TvControl.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.TVDatabase.Entities.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.TVService.Interfaces.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.RuleBasedScheduler.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.Plugins.Base.dll"
-  Delete "$MPdir.Base\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll" 
-  Delete "$MPdir.Base\log4net.dll"
-  Delete "$MPdir.Base\MySql.Data.dll"
-  Delete "$MPdir.Base\MySql.Data.Entity.dll"
-  Delete "$MPdir.Base\EntityFramework.dll"
-  Delete "$MPdir.Base\EntityFramework.xml"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvControl.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.Plugins.Base.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll" 
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\MySql.Data.dll"
+  Delete "${SETUP_TV_FOLDER}\MySql.Data.Entity.dll"
+  Delete "${SETUP_TV_FOLDER}\EntityFramework.dll"
+  Delete "${SETUP_TV_FOLDER}\EntityFramework.xml"
+  
+  ${LOG_TEXT} "INFO" "remove files..."
+  ; Remove TuningParameters
+  RMDir /r "${COMMON_APPDATA}\TuningParameters"
+  ; Remove WebEPG subdirs (grabbers & channels)
+  RMDir /r "${COMMON_APPDATA}\WebEPG\channels"
+  RMDir /r "${COMMON_APPDATA}\WebEPG\grabbers"
+  ; Remove XMLTV data dir
+  Delete "${COMMON_APPDATA}\xmltv\xmltv.dtd"
+
+  ; Remove SetupTV Plugins files installed
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.ServerBlaster.dll"
+;  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.TvMovie.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPG.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.WebEPGImport.dll"
+  Delete "${SETUP_TV_FOLDER}\Plugins\Mediaportal.TV.Server.Plugins.XmlTvImport.dll"
+  RMDir "${SETUP_TV_FOLDER}\Plugins"
+  
+  ; And finally remove SetupTV files installed
+  ; Leave the directory in place, as it might contain user modified files
+  Delete "${SETUP_TV_FOLDER}\DirectShowLib.dll"
+  Delete "${SETUP_TV_FOLDER}\Common.Utils.dll"
+  ; binary used for skystar2 support
+  Delete "${SETUP_TV_FOLDER}\dvblib.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.Plugins.Base.dll"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe"
+  Delete "${SETUP_TV_FOLDER}\SetupTv.exe.config"
+  Delete "${SETUP_TV_FOLDER}\Core.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvControl.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Entities.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.EntityModel.dll"
+  Delete "${SETUP_TV_FOLDER}\log4net.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.TvBusinessLayer.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.Interfaces.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
+  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
+  Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
+
+  ; remove Start Menu shortcuts
+  Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
+  Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
+
+  ; remove SetupTV folder
+  RMDir "${SETUP_TV_FOLDER}"
 !macroend
 
 ${MementoSectionDone}
@@ -771,7 +943,7 @@ Section -Post
   WriteRegStr HKLM "${REG_UNINSTALL}" DisplayVersion     "${VERSION}"
   WriteRegStr HKLM "${REG_UNINSTALL}" Publisher          "${PRODUCT_PUBLISHER}"
   WriteRegStr HKLM "${REG_UNINSTALL}" URLInfoAbout       "${PRODUCT_WEB_SITE}"
-  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "$INSTDIR\SetupTv.exe,0"
+  WriteRegStr HKLM "${REG_UNINSTALL}" DisplayIcon        "${SETUP_TV_FOLDER}\SetupTv.exe,0"
   WriteRegStr HKLM "${REG_UNINSTALL}" UninstallString    "$INSTDIR\uninstall-tve3.exe"
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoModify 1
   WriteRegDWORD HKLM "${REG_UNINSTALL}" NoRepair 1
@@ -794,7 +966,7 @@ Section -Post
 	  ${EndIf}
 	
 	  ${LOG_TEXT} "INFO" "Starting SetupTv.exe $R0..."
-	  ExecWait '"$INSTDIR\SetupTV.exe" $R0'
+	  ExecWait '"${SETUP_TV_FOLDER}\SetupTV.exe" $R0'
   ${EndIf}
       
 SectionEnd
