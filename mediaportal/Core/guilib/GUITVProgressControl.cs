@@ -418,6 +418,7 @@ namespace MediaPortal.GUI.Library
       int xoff = GUIGraphicsContext.ScaleHorizontal(3);
       xPos = _positionX + iWidthLeft + _fillBackgroundOffsetX + xoff;
       int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height / 2) - (_fillBackgroundHeight / 2);
+      iWidth -= 2*xoff;
       if (yPos < _positionY)
       {
         yPos = _positionY;
