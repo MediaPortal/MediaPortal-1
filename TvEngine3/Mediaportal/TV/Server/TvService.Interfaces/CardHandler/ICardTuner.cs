@@ -70,5 +70,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// <param name="channel">channel.</param>
     /// <returns>true if card can tune to the channel otherwise false</returns>
     bool CanTune(IChannel channel);
+
+    void FreeAllTimeshiftingSubChannels(ref IUser user);
   }
 }

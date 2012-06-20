@@ -48,8 +48,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IQueryable<Program> GetNextProgramsForChannelGroup(int idGroup)
     {
       IQueryable<int> channels = GetQuery<Channel>(c => c.GroupMaps.Any(g => g.idGroup == idGroup)).Select(g => g.idChannel);
-      DateTime now = DateTime.Now;
-      //IQueryable<Program> programs = GetQuery<Program>().Where(p => channelList.Contains(p.idChannel) && p.startTime > now).GroupBy(p => p.idChannel).Select(pg => pg.OrderBy(p => p.startTime).FirstOrDefault());
+      DateTime now = DateTime.Now;      
 
       var q = GetQuery<Program>().Where(p =>
             channels.Contains(p.idChannel) && p.startTime > now)
@@ -213,8 +212,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
 
     public IQueryable<Program> GetProgramsByStartEndTimes(DateTime startTime, DateTime endTime)
-    {
-      //Expression<Func<Program, bool>> a = Utility.And<Program>(p => p.Channel.visibleInGuide, p => p.Channel.visibleInGuide);
+    {      
       var query = GetQuery<Program>(p => p.Channel.visibleInGuide && p.startTime < endTime && p.endTime > startTime);
       return query;
     }

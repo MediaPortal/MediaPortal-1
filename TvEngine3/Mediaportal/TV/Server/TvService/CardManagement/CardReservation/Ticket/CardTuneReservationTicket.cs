@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
     private readonly List<IUser> _inactiveUsers = new List<IUser>();
     private readonly List<IUser> _activeUsers = new List<IUser>();
     private readonly List<KeyValuePair<string, IUser>> _users = new List<KeyValuePair<string, IUser>>();
-    private readonly int _ownerSubchannel = -1;
+    private readonly ISubChannel _ownerSubchannel = null;
     private readonly bool _isOwner;    
     private readonly int _idCard;
     private readonly int _numberOfChannelsDecrypting;
@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
       List<IUser> inactiveUsers, 
       List<IUser> activeUsers, 
       List<KeyValuePair<string, IUser>> users, 
-      int ownerSubchannel, 
+      ISubChannel ownerSubchannel, 
       bool isOwner, 
       int idCard, 
       int numberOfChannelsDecrypting, 
@@ -138,7 +138,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Ticket
       get { return _users; }
     }
 
-    public int OwnerSubchannel
+    public ISubChannel OwnerSubchannel
     {
       get { return _ownerSubchannel; }
     }

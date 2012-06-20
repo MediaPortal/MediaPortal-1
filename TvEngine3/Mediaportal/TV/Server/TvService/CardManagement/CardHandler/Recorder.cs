@@ -40,7 +40,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// Initializes a new instance of the <see cref="Recording"/> class.
     /// </summary>
     /// <param name="cardHandler">The card handler.</param>
-    public Recorder(ITvCardHandler cardHandler) : base(cardHandler)
+    public Recorder(ITvCardHandler cardHandler) : base()
     {
       string recordingFolder = cardHandler.DataBaseCard.recordingFolder;
 
@@ -61,11 +61,12 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           recordingFolder = SetDefaultRecordingFolder(cardHandler);
           Directory.CreateDirectory(recordingFolder); //if it fails, then nothing works reliably.
-        }        
+        }
       }
 
       _cardHandler = cardHandler;
-      _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").value == "yes");
+      _timeshiftingEpgGrabberEnabled = (SettingsManagement.GetSetting("timeshiftingEpgGrabberEnabled", "no").value ==
+                                        "yes");
     }
 
     private static string SetDefaultRecordingFolder(ITvCardHandler cardHandler)
@@ -119,62 +120,59 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 
         _eventTimeshift.Reset();
         if (_cardHandler.DataBaseCard.enabled)
-            {
-          var context = _cardHandler.Card.Context as TvCardContext;
-          if (context != null)
+        {                              
+          _cardHandler.UserManagement.RefreshUser(ref user);
+          int timeshiftingSubChannel = _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name);
+          ITvSubChannel subchannel = GetSubChannel(timeshiftingSubChannel);
+          if (subchannel != null)
           {
-          context.GetUser(ref user);
-            ITvSubChannel subchannel = GetSubChannel(user.SubChannel);
-            if (subchannel != null)
-            {
-          _subchannel = subchannel;
+            _subchannel = subchannel;
 
-          fileName = fileName.Replace("\r\n", " ");
-              fileName = Path.ChangeExtension(fileName, ".ts");
+            fileName = fileName.Replace("\r\n", " ");
+            fileName = Path.ChangeExtension(fileName, ".ts");
 
-              bool useErrorDetection = true;
-          if (useErrorDetection)
-          {
-            // fix mantis 0002807: A/V detection for recordings is not working correctly 
-            // reset the events ONLY before attaching the observer, at a later position it can already miss the a/v callback.
-                if (IsTuneCancelled())
-                {
-                  result = TvResult.TuneCancelled;
-                  return result;
-                }
-            _eventVideo.Reset();
-            _eventAudio.Reset();
-            Log.Debug("Recorder.start add audioVideoEventHandler");
-                AttachAudioVideoEventHandler(subchannel);                
-          }
-
-          Log.Write("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.idCard, fileName);
-              bool recStarted = subchannel.StartRecording(fileName);
-              if (recStarted)
-          {
-            fileName = subchannel.RecordingFileName;
-            context.Owner = user;
+            bool useErrorDetection = true;
             if (useErrorDetection)
             {
-                  bool isScrambled;
-                  if (WaitForFile(ref user, out isScrambled))
+              // fix mantis 0002807: A/V detection for recordings is not working correctly 
+              // reset the events ONLY before attaching the observer, at a later position it can already miss the a/v callback.
+              if (IsTuneCancelled())
               {
-                    result = TvResult.Succeeded;
+                result = TvResult.TuneCancelled;
+                return result;
+              }
+              _eventVideo.Reset();
+              _eventAudio.Reset();
+              Log.Debug("Recorder.start add audioVideoEventHandler");
+              AttachAudioVideoEventHandler(subchannel);
+            }
+
+            Log.Write("card: StartRecording {0} {1}", _cardHandler.DataBaseCard.idCard, fileName);
+            bool recStarted = subchannel.StartRecording(fileName);
+            if (recStarted)
+            {
+              fileName = subchannel.RecordingFileName;
+              _cardHandler.UserManagement.SetOwnerSubChannel(timeshiftingSubChannel, user.Name);              
+              if (useErrorDetection)
+              {
+                bool isScrambled;
+                if (WaitForFile(ref user, out isScrambled))
+                {
+                  result = TvResult.Succeeded;
                 }
                 else
                 {
-                    DetachAudioVideoEventHandler(subchannel);
-                    result = GetFailedTvResult(isScrambled);
-                }
+                  DetachAudioVideoEventHandler(subchannel);
+                  result = GetFailedTvResult(isScrambled);
                 }
               }
             }
-          }
+          }          
         }
-            else
+        else
         {
           result = TvResult.CardIsDisabled;
-          }
+        }
         if (result == TvResult.Succeeded)
         {
           StartTimeShiftingEPGgrabber(user);
@@ -188,11 +186,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       finally
       {
         _eventTimeshift.Set();
-        _cancelled = false;        
+        _cancelled = false;
         if (result != TvResult.Succeeded)
-        {          
-          HandleFailedRecording(ref user, fileName);                    
-    }
+        {
+          HandleFailedRecording(ref user, fileName);
+        }
       }
       return result;
     }
@@ -202,7 +200,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       Log.Write("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.idCard, fileName);
       string cardRecordingFolderName = _cardHandler.DataBaseCard.recordingFolder;
       Stop(ref user);
-      _cardHandler.UserManagement.RemoveUser(user);
+      _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
 
       string recordingfolderName = System.IO.Path.GetDirectoryName(fileName);
       if (recordingfolderName == cardRecordingFolderName)
@@ -228,70 +226,65 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       {
         if (_cardHandler.DataBaseCard.enabled)
         {
-        Log.Write("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.idCard, user.Name);
-          var context = _cardHandler.Card.Context as TvCardContext;
-          if (context != null)
-        {
-            if (user.IsAdmin)
+          Log.Write("card: StopRecording card={0}, user={1}", _cardHandler.DataBaseCard.idCard, user.Name);
+          if (user.UserType == UserType.Scheduler)
           {
-              stop = StopRecording(ref user, context);
-              if (stop)
+            stop = StopRecording(ref user);
+            /*if (stop)
             {
-                SetContextOwnerToNextRecUser(context);
-            }
+              SetContextOwnerToNextRecUser(context);
+            }*/
           }
-          }
-          else
-          {
-            Log.Write("card: StopRecording context null");
-          }
-            }
+        }
       }
       catch (Exception ex)
-            {
+      {
         Log.Write(ex);
-            }
+      }
       return stop;
-          }
+    }
 
-    private bool StopRecording(ref IUser user, TvCardContext context)
-          {
+    private bool StopRecording(ref IUser user)
+    {
       bool stop = false;
-      context.GetUser(ref user);
-      ITvSubChannel subchannel = GetSubChannel(user.SubChannel);
-            if (subchannel != null)
-            {
+      var recentSubChannelId = _cardHandler.UserManagement.GetRecentSubChannelId(user.Name);
+      user = _cardHandler.UserManagement.GetUser(recentSubChannelId);
+      ITvSubChannel subchannel = GetSubChannel(recentSubChannelId);
+      if (subchannel != null)
+      {
         subchannel.StopRecording();
-        _cardHandler.Card.FreeSubChannel(user.SubChannel);
-        if (subchannel.IsTimeShifting == false || context.Users.Count <= 1)
-              {
-          _cardHandler.UserManagement.RemoveUser(user);
-              }
+        _cardHandler.Card.FreeSubChannel(recentSubChannelId);
+        if (subchannel.IsTimeShifting == false || _cardHandler.UserManagement.Users.Count <= 1)
+        {
+          _cardHandler.UserManagement.RemoveUser(user, _cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
+        }
         stop = true;
-            }
+      }
       else
       {
-        Log.Write("card: StopRecording subchannel null, skipping");        
+        Log.Write("card: StopRecording subchannel null, skipping");
       }
       return stop;
     }
 
     private void SetContextOwnerToNextRecUser(ITvCardContext context)
     {
+      //todo gibman - is this even needed, as its taken care of in usermanagement ?
+      /*
       IDictionary<string, IUser> users = context.Users;
-      foreach (KeyValuePair<string, IUser> t in users)
+      foreach (IUser user in users.Values)
       {
-        ITvSubChannel subchannel = GetSubChannel(t.Value.SubChannel);
+        ITvSubChannel subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
         if (subchannel != null)
         {
           if (subchannel.IsRecording)
           {
-            Log.Write("card: StopRecording setting new context owner on user '{0}'", t.Value.Name);
-            context.Owner = t.Value;
+            Log.Write("card: StopRecording setting new context owner on user '{0}'", user.Name);
+            context.Owner = user;
             break;
           }
         }
-      }
+      }*/
     }
 
     /// <summary>
@@ -323,12 +316,12 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       bool isRecording = false;
       try
       {
-        var subchannel = GetSubChannel(ref user);
+        var subchannel = GetSubChannel(ref user, _cardHandler.UserManagement.GetRecentChannelId(user.Name));
         if (subchannel != null)
         {
           isRecording = subchannel.IsRecording;
-          }
         }
+      }
       catch (Exception ex)
       {
         Log.Write(ex);
@@ -345,13 +338,13 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       string recordingFileName = "";
       try
-      {
-        ITvSubChannel subchannel = GetSubChannel(ref user);
+      {        
+        ITvSubChannel subchannel = GetSubChannel(ref user, _cardHandler.UserManagement.GetRecentChannelId(user.Name));
         if (subchannel != null)
         {
-          recordingFileName = subchannel.RecordingFileName; 
-          }
+          recordingFileName = subchannel.RecordingFileName;
         }
+      }
       catch (Exception ex)
       {
         Log.Write(ex);
@@ -369,17 +362,17 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       DateTime recordingStarted = DateTime.MinValue;
       try
       {
-        ITvSubChannel subchannel = GetSubChannel(ref user);
+        ITvSubChannel subchannel = GetSubChannel(ref user, _cardHandler.UserManagement.GetRecentChannelId(user.Name));
         if (subchannel != null)
         {
           recordingStarted = subchannel.RecordingStarted;
-          }
         }
+      }
       catch (Exception ex)
       {
         Log.Write(ex);
       }
       return recordingStarted;
     }
-        }
+  }
 }

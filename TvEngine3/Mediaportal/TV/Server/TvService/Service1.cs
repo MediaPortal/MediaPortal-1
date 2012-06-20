@@ -84,11 +84,17 @@ namespace Mediaportal.TV.Server.TVService
     /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-      Log.WriteFile("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
-      _unhandledExceptionInThread = Thread.CurrentThread;
-      ExitCode = -1; //tell windows that the service failed.      
-      OnStop(); //cleanup
-      Environment.Exit(-1);
+      try
+      {
+        Log.WriteFile("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
+        _unhandledExceptionInThread = Thread.CurrentThread;
+        ExitCode = -1; //tell windows that the service failed.      
+        OnStop(); //cleanup
+      }
+      finally
+      {
+        Environment.Exit(-1);
+      }            
     }
 
 
@@ -209,7 +215,7 @@ namespace Mediaportal.TV.Server.TVService
         {
           Thread.Sleep(20);
         }
-      }
+      }      
     }    
 
     private void debug()
@@ -246,7 +252,7 @@ namespace Mediaportal.TV.Server.TVService
       map.idChannel = dr1.idChannel;
       map.idCard = card1.idCard;
 
-      dr1.ChannelMaps.Add(map);
+      dr1.ChannelMaps.AddSubChannelOrUser(map);
 
       dr1 = ChannelManagement.SaveChannel(dr1);
 
@@ -254,7 +260,7 @@ namespace Mediaportal.TV.Server.TVService
       map2.idChannel = dr2.idChannel;
       map2.idCard = card1.idCard;
 
-      dr2.ChannelMaps.Add(map2);
+      dr2.ChannelMaps.AddSubChannelOrUser(map2);
 
       dr2 = ChannelManagement.SaveChannel(dr2);
       */
@@ -307,9 +313,9 @@ namespace Mediaportal.TV.Server.TVService
         credit.role += "abc";
         credit.person += "abc";
       }      
-      prg.ProgramCredits.Add(credit);
+      prg.ProgramCredits.AddSubChannelOrUser(credit);
 
-      programs.Add(prg);
+      programs.AddSubChannelOrUser(prg);
 
       importParams.ProgramList = new ProgramList(programs);
 
@@ -396,7 +402,9 @@ namespace Mediaportal.TV.Server.TVService
         _tvServiceThread.Join();
         Log.Write("tvService thread aborted.");
         _tvServiceThread = null;
-      }      
+      }
+      base.OnStop();
+      ExitCode = 0;
     } 
   }
 
@@ -902,9 +910,7 @@ namespace Mediaportal.TV.Server.TVService
           //Check for unsupported operating systems
           OSPrerequisites.OSPrerequisites.OsCheck(false);
 
-          _powerEventThread = new Thread(PowerEventThread);
-          _powerEventThread.Name = "PowerEventThread";
-          _powerEventThread.IsBackground = true;
+          _powerEventThread = new Thread(PowerEventThread) {Name = "PowerEventThread", IsBackground = true};
           _powerEventThread.Start();
           ServiceManager.Instance.InternalControllerService.Init();
           StartPlugins();
@@ -926,8 +932,9 @@ namespace Mediaportal.TV.Server.TVService
       {
         //wait for thread to exit. eg. when stopping tvservice       
         Log.Error("TvService OnStart failed : {0}", ex.ToString());
-        _started = true; // otherwise the onstop code will not complete.
-        OnStop();
+        //_started = true; // otherwise the onstop code will not complete.
+        //OnStop();
+        throw;
       }
     }
   }

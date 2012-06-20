@@ -93,7 +93,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         if (card.enabled == false)
           continue;
-        if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
           continue;
         mpComboBoxCard.Items.Add(new CardInfo(card));
       }

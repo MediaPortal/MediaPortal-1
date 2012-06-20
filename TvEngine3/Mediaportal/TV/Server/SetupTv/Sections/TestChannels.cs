@@ -611,184 +611,16 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void UpdateCardStatus()
     {
-      if (!ServiceHelper.IsRestrictedMode && ServiceHelper.IsStopped) return;
-      if (_cards == null) return;
-      if (_cards.Count == 0) return;
-      try
+      if (_cards == null)
       {
-        ListViewItem item;
-        int off = 0;
-        foreach (Card card in _cards)
-        {
-          IUser user = new User();
-          user.CardId = card.idCard;
-          if (off >= mpListView1.Items.Count)
-          {
-            item = mpListView1.Items.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-            item.SubItems.Add("");
-          }
-          else
-          {
-            item = mpListView1.Items[off];
-          }
-
-          bool cardPresent = ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard);
-          if (!cardPresent)
-          {
-            item.SubItems[0].Text = card.idCard.ToString();
-            item.SubItems[1].Text = "n/a";
-            item.SubItems[2].Text = "n/a";
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.name;
-            item.SubItems[7].Text = "0";
-            off++;
-            continue;
-          }
-
-          ColorLine(card, item);
-          VirtualCard vcard = new VirtualCard(user);
-          item.SubItems[0].Text = card.idCard.ToString();
-          item.SubItems[0].Tag = card.idCard;
-          item.SubItems[1].Text = vcard.Type.ToString();
-
-          if (card.enabled == false)
-          {
-            item.SubItems[0].Text = card.idCard.ToString();
-            item.SubItems[1].Text = vcard.Type.ToString();
-            item.SubItems[2].Text = "disabled";
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.name;
-            item.SubItems[7].Text = "0";
-            off++;
-            continue;
-          }
-
-          IDictionary<string, IUser> usersForCard = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
-          if (usersForCard == null)
-          {
-            string tmp = "idle";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            item.SubItems[2].Text = tmp;
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.name;
-            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
-            off++;
-            continue;
-          }
-          if (usersForCard.Count == 0)
-          {
-            string tmp = "idle";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            item.SubItems[2].Text = tmp;
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.name;
-            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
-            off++;
-            continue;
-          }
-
-
-          bool userFound = false;
-          foreach (IUser user1 in usersForCard.Values)             
-          {
-            string tmp = "idle";
-            // Check if the card id fits. Hybrid cards share the context and therefor have
-            // the same users.
-            if (user1.CardId != card.idCard)
-            {
-              continue;
-            }
-            userFound = true;
-            vcard = new VirtualCard(user1);
-            item.SubItems[0].Text = card.idCard.ToString();
-            item.SubItems[0].Tag = card.idCard;
-            item.SubItems[1].Text = vcard.Type.ToString();
-            if (vcard.IsTimeShifting) tmp = "Timeshifting";
-            if (vcard.IsRecording && vcard.User.IsAdmin) tmp = "Recording";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            if (vcard.IsTimeShifting && vcard.IsGrabbingEpg) tmp = "Timeshifting (Grabbing EPG)";
-            if (vcard.IsRecording && vcard.User.IsAdmin && vcard.IsGrabbingEpg) tmp = "Recording (Grabbing EPG)";
-            item.SubItems[2].Text = tmp;
-            tmp = vcard.IsScrambled ? "yes" : "no";
-            item.SubItems[4].Text = tmp;
-            string channelDisplayName;
-            if (_channelNames.TryGetValue(vcard.IdChannel, out channelDisplayName))
-            {
-              item.SubItems[3].Text = channelDisplayName;
-            }
-            else
-            {
-              item.SubItems[3].Text = vcard.ChannelName;
-            }
-            item.SubItems[5].Text = user1.Name;
-            item.SubItems[6].Text = card.name;
-            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
-            off++;
-
-            if (off >= mpListView1.Items.Count)
-            {
-              item = mpListView1.Items.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-              item.SubItems.Add("");
-            }
-            else
-            {
-              item = mpListView1.Items[off];
-            }
-          }
-          // If we haven't found a user that fits, than it is a hybrid card which is inactive
-          // This means that the card is idle.
-          if (!userFound)
-          {
-            item.SubItems[2].Text = "idle";
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.name;
-            item.SubItems[7].Text = Convert.ToString(ServiceAgents.Instance.ControllerServiceAgent.GetSubChannels(card.idCard));
-            ;
-            off++;
-          }
-        }
-        for (int i = off; i < mpListView1.Items.Count; ++i)
-        {
-          item = mpListView1.Items[i];
-          item.SubItems[0].Text = "";
-          item.SubItems[1].Text = "";
-          item.SubItems[2].Text = "";
-          item.SubItems[3].Text = "";
-          item.SubItems[4].Text = "";
-          item.SubItems[5].Text = "";
-          item.SubItems[6].Text = "";
-          item.SubItems[7].Text = "";
-        }
+        return;
       }
-      catch (Exception ex)
+      if (_cards.Count == 0)
       {
-        Log.Write(ex);
+        return;
       }
+
+      Utils.UpdateCardStatus(mpListView1);      
     }
 
     private void ColorLine(Card card, ListViewItem item)
@@ -972,18 +804,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void btnCustom_Click(object sender, EventArgs e)
     {
-      TvResult result;
-      long mSecsElapsed;
+      bool result;      
       IVirtualCard card;      
 
-      Channel tv3_plus = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(9);
-      Channel tv3 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(125);
+      Channel dr1 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(1);
+      Channel dr2 = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(2);
 
-      Channel nosignal = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(5651);
+      
 
-      IUser low = UserFactory.CreateBasicUser("low", 1);
-      IUser low2 = UserFactory.CreateBasicUser("low2", 1);
-      IUser high = UserFactory.CreateBasicUser("high", 5);
+      IUser low = UserFactory.CreateBasicUser("dr1", 1);
+      IUser low2 = UserFactory.CreateBasicUser("dr2", 1);
+
+      TvResult tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref low, dr1.idChannel, out card);
+      low.CardId = card.Id;
+      Thread.Sleep(2000);
+      
+      result = ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(ref low, 0, dr1.idChannel);      
+
+      Thread.Sleep(1000);
+      tvresult = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref low, dr2.idChannel, out card);
+      low.CardId = card.Id;
 
       //StartTimeshifting(tv3, low, 0, out mSecsElapsed, out result, out card);      
 
@@ -997,7 +837,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       //StartTimeshifting(tv3_plus, low2, 0, out mSecsElapsed, out result, out card);      
 
-      StartTimeshifting(tv3, high, 0, out mSecsElapsed, out result, out card);
+      //StartTimeshifting(tv3, high, 0, out mSecsElapsed, out result, out card);
 
       //Thread.Sleep(3000);
 

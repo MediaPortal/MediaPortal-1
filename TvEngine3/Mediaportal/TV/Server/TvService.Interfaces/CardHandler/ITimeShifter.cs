@@ -38,21 +38,23 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    DateTime TimeShiftStarted(IUser user);
+    DateTime TimeShiftStarted(IUser user, int idChannel);
 
     /// <summary>
     /// Start timeshifting.
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
+    /// <param name="subChannelId"> </param>
+    /// <param name="idChannel"> </param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    TvResult Start(ref IUser user, ref string fileName);
+    TvResult Start(ref IUser user, ref string fileName, int subChannelId, int idChannel);
 
     /// <summary>
     /// Stops the time shifting.
     /// </summary>
     /// <returns></returns>    
-    bool Stop(ref IUser user);
+    bool Stop(ref IUser user, int idChannel);
 
     /// <summary>
     /// Fetches the stream quality information

@@ -64,7 +64,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         return DialogResult.None;
       }
 
-      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.displayName, user.CardId, user.SubChannel, user.Name,
+      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.displayName, user.CardId, "n/a", user.Name,
                _card.TimeShiftFileName);
       _player = new Player();
       _player.Play(_card.TimeShiftFileName, this);

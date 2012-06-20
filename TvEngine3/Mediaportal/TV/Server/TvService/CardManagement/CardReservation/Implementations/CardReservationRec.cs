@@ -53,15 +53,15 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
       set { _recDetail = value; }
     }  
     
-    protected override bool OnStartTune(IUser user)
+    protected override bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel)
     {
       bool startRecordingOnDisc = true;
       if (ServiceManager.Instance.InternalControllerService.SupportsSubChannels(_cardInfo.Card.idCard) == false)
-      {
+      {        
         Log.Write("Scheduler : record, now start timeshift");
         string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", _cardInfo.Card.timeshiftingFolder, _cardInfo.Id,
-                                                 user.SubChannel);
-        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartTimeShifting(ref user, ref timeshiftFileName));
+                                                 tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartTimeShifting(ref user, ref timeshiftFileName, idChannel));
       }
 
       if (startRecordingOnDisc)

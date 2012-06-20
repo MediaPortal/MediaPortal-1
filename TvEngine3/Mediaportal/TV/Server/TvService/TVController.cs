@@ -18,6 +18,8 @@
 
 #endregion
 
+#region usings
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -39,6 +41,7 @@ using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
@@ -64,6 +67,8 @@ using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVService.Scheduler;
 using Mediaportal.TV.Server.TVService.Services;
 using RecordingManagement = Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.RecordingManagement;
+
+#endregion
 
 namespace Mediaportal.TV.Server.TVService
 {
@@ -178,8 +183,6 @@ namespace Mediaportal.TV.Server.TVService
     {
       get { return _cards; }
     }
-
-
 
     #region CI Menu action functions
 
@@ -301,38 +304,6 @@ namespace Mediaportal.TV.Server.TVService
 
     #endregion
 
-    /*
-            /// <summary>
-            /// Determines whether the specified card is the local pc or not.
-            /// </summary>
-            /// <param name="card">Card</param>
-            /// <returns>
-            /// 	<c>true</c> if the specified host name is local; otherwise, <c>false</c>.
-            /// </returns>
-            bool IsLocal(Card card)
-            {
-              if (ValidateTvControllerParams(card)) return false;
-              return _cards[card.idCard].IsLocal;
-            }
-        */
-
-
-
-    /// <summary>
-    /// Checks if there's a card which is not in use
-    /// </summary>
-    /// <returns>true if there is a card no user has locked</returns>
-    public bool IsAnyCardIdle()
-    {
-      Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
-      while (en.MoveNext())
-      {
-        ITvCardHandler card = en.Current.Value;
-        if (card.IsIdle)
-          return true;
-      }
-      return false;
-    }
 
     /// <summary>
     /// Determines whether the card is in use
@@ -367,37 +338,12 @@ namespace Mediaportal.TV.Server.TVService
       return user;
     }
 
-    /// <summary>
-    /// Locks the card for the specified user
-    /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <param name="user">The user.</param>
-    public void LockCard(int cardId, IUser user)
-    {
-      if (ValidateTvControllerParams(user) || (ValidateTvControllerParams(cardId)))
-      {
-        return;
-      }
-      _cards[cardId].UserManagement.Lock(user);
-    }
-
-    /// <summary>
-    /// Unlocks the card.
-    /// </summary>
-    /// <param name="user">The user.</param>
-    public void UnlockCard(IUser user)
-    {
-      if (ValidateTvControllerParams(user) || (ValidateTvControllerParams(user.CardId)))
-      {
-        return;
-      }
-      _cards[user.CardId].UserManagement.Unlock(user);
-    }
-
     public void Init()
     {
       Log.Info("Controller: Initializing TVServer");
       bool result = false;
+
+      Exception ex = null;
 
       for (int i = 0; i < 5 && !result; i++)
       {
@@ -408,23 +354,37 @@ namespace Mediaportal.TV.Server.TVService
           {
             DeInit();
           }
-          catch (Exception)
+          catch (Exception e)
           {
+            ex = e;
             Log.Error("Controller: Error while deinit TvServer in Init");
           }
-
           Thread.Sleep(3000);
         }
         Log.Info("Controller: {0} init attempt", (i + 1));
-        result = InitController();
+        try
+        {
+          InitController();
+        }
+        catch (Exception e)
+        {
+          ex = e;          
+        }
+        result = (ex == null);
       }
 
       if (result)
+      {
         Log.Info("Controller: TVServer initialized okay");
+      }
       else
+      {
         Log.Info("Controller: Failed to initialize TVServer");
-
-      return;
+        if (ex != null)
+        {
+          throw ex;
+        }
+      }
     }
 
 
@@ -434,7 +394,7 @@ namespace Mediaportal.TV.Server.TVService
     /// start the epg grabber and scheduler
     /// and check if its supposed to be a master or slave controller
     /// </summary>
-    private bool InitController()
+    private void InitController()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
@@ -683,11 +643,10 @@ namespace Mediaportal.TV.Server.TVService
       catch (Exception ex)
       {
         Log.Write("TvControllerException: {0}\r\n{1}", ex.ToString(), ex.StackTrace);
-        return false;
+        throw;
       }
 
-      Log.Info("Controller: initalized");
-      return true;
+      Log.Info("Controller: initalized");      
     }
 
     private void SetupTvServerEventDispatcher()
@@ -837,7 +796,7 @@ namespace Mediaportal.TV.Server.TVService
     /// </summary>
     /// <param name="cardId">id of the card.</param>
     /// <value>true if enabled, otherwise false</value>
-    public bool Enabled(int cardId)
+    public bool IsCardEnabled(int cardId)
     {
       if (ValidateTvControllerParams(cardId))
         return false;
@@ -888,7 +847,7 @@ namespace Mediaportal.TV.Server.TVService
     /// Method to check if card is currently present and detected
     /// </summary>
     /// <returns>true if card is present otherwise false</returns>		
-    public bool CardPresent(int cardId)
+    public bool IsCardPresent(int cardId)
     {
       bool cardPresent = false;
       if (cardId > 0)
@@ -898,7 +857,7 @@ namespace Mediaportal.TV.Server.TVService
           string devicePath = _cards[cardId].Card.DevicePath;
           if (devicePath.Length > 0)
           {
-            // Remove it from the local card collection
+            // RemoveUser it from the local card collection
             cardPresent =
               (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
                 FirstOrDefault();
@@ -923,11 +882,11 @@ namespace Mediaportal.TV.Server.TVService
       string devicePath = _cards[cardId].Card.DevicePath;
       if (devicePath.Length > 0)
       {
-        // Remove database instance
+        // RemoveUser database instance
         TVDatabase.TVBusinessLayer.CardManagement.DeleteCard(cardId);
-        // Remove it from the card collection
+        // RemoveUser it from the card collection
         _cards.Remove(cardId);
-        // Remove it from the local card collection
+        // RemoveUser it from the local card collection
         _localCardCollection.Cards.Remove(_cards[cardId].Card);
       }
     }
@@ -948,12 +907,47 @@ namespace Mediaportal.TV.Server.TVService
     /// Gets the current channel.
     /// </summary>
     /// <param name="user">User</param>
+    /// <param name="idChannel"> </param>
     /// <returns>channel</returns>
-    public IChannel CurrentChannel(ref IUser user)
+    public IChannel CurrentChannel(ref IUser user, int idChannel)
     {
       if (ValidateTvControllerParams(user))
         return null;
-      return _cards[user.CardId].CurrentChannel(ref user);
+      RefreshUserFromSpecificContext(ref user);
+      return _cards[user.CardId].CurrentChannel(ref user, idChannel);
+    }
+
+    private void RefreshTimeshiftingUserFromAnyContext(ref IUser user)
+    {
+      foreach (ITvCardHandler cardHandler in CardCollection.Values)
+      {
+        int subChId = cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name);
+        if (subChId > -1)
+        {
+          cardHandler.UserManagement.RefreshUser(ref user);          
+          return;           
+        }        
+        /*IUser userExisting;
+        bool foundUser = cardHandler.UserManagement.Users.TryGetValue(user.Name, out userExisting);
+        if (foundUser)
+        {
+          if (cardHandler.UserManagement.GetTimeshiftingChannelId (userExisting.Name) > 0)
+          {
+            user = userExisting;
+            return;
+          }
+        }*/
+      }
+      user.CardId = -1;
+    }
+
+    private void RefreshUserFromSpecificContext(ref IUser user)
+    {
+      if (user != null && user.CardId > 0)
+      {
+        ITvCardHandler tvCardHandler = _cards[user.CardId];
+        tvCardHandler.UserManagement.RefreshUser(ref user);        
+      }      
     }
 
     /// <summary>
@@ -965,6 +959,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return -1;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].CurrentDbChannel(ref user);
     }
 
@@ -977,7 +972,9 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return "";
-      return _cards[user.CardId].CurrentChannelName(ref user);
+      RefreshUserFromSpecificContext(ref user);
+      ITvCardHandler tvCardHandler = _cards[user.CardId];
+      return tvCardHandler.CurrentChannelName(ref user, tvCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
     }
 
 
@@ -1037,14 +1034,38 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return "";
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Recorder.FileName(ref user);
     }
 
-    public string TimeShiftFileName(ref IUser user)
+    public string TimeShiftFileName(string userName, int cardId)
     {
-      if (ValidateTvControllerParams(user))
+      if (!IsValidTvControllerParams(userName, cardId))
+      {
         return "";
+      }
+
+      IUser user = GetUserFromSpecificContext(userName, cardId);
+      if (ValidateTvControllerParams(user))
+      {
+        return "";
+      }
       return _cards[user.CardId].TimeShifter.FileName(ref user);
+    }
+
+    private IUser GetUserFromSpecificContext(string userName, int cardId)
+    {
+      IUser user = null;
+      if (cardId > 0)
+      {
+        ITvCardHandler tvCardHandler = _cards[cardId];
+        if (tvCardHandler  != null)
+        {
+          user = tvCardHandler.UserManagement.GetUser(userName);
+        }
+      }
+            
+      return user;
     }
 
     /// <summary>
@@ -1057,6 +1078,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return false;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].TimeShifter.GetCurrentFilePosition(ref user, ref position, ref bufferId);
     }
 
@@ -1069,6 +1091,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return false;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].TimeShifter.IsTimeShifting(ref user);
     }
 
@@ -1101,6 +1124,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return null;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].GetCurrentVideoStream(user);
     }
 
@@ -1201,17 +1225,20 @@ namespace Mediaportal.TV.Server.TVService
 
         foreach (IUser user in users.Values)
         {
-          IUser userCopy = (IUser)user.Clone();
-          if (tvcard.CurrentChannelName(ref userCopy) == null)
+          if (user.UserType == UserType.Scheduler)
           {
-            continue;
-          }
-          if (tvcard.CurrentDbChannel(ref userCopy) == idChannel)
-          {
-            if (tvcard.Recorder.IsRecording(ref userCopy))
+            IUser userCopy = (IUser) user.Clone();
+            if (tvcard.CurrentChannelName(ref userCopy, tvcard.UserManagement.GetTimeshiftingChannelId(user.Name)) == null)
             {
-              card = GetVirtualCard(userCopy);
-              return true;
+              continue;
+            }
+            if (tvcard.CurrentDbChannel(ref userCopy) == idChannel)
+            {
+              if (tvcard.Recorder.IsRecording(ref userCopy))
+              {
+                card = GetVirtualCard(userCopy);
+                return true;
+              }
             }
           }
         }
@@ -1260,34 +1287,47 @@ namespace Mediaportal.TV.Server.TVService
       isTS = false;
       card = null;
       Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
-      ITvCardHandler tvcard;
       IUser recUser = null;
       while (en.MoveNext())
       {
-        tvcard = en.Current.Value;
+        ITvCardHandler tvcard = en.Current.Value;
         IDictionary<string, IUser> users = tvcard.UserManagement.Users;
         foreach (IUser user in users.Values)
         {
-          IUser userCopy = (IUser)user.Clone();
-          if (tvcard.CurrentChannelName(ref userCopy) == null)
+          foreach (var subchannel in user.SubChannels.Values)
           {
-            continue;
-          }
-          if (tvcard.CurrentChannelName(ref userCopy) == channelName)
-          {
-            if (!isREC)
+            IUser userCopy = (IUser) user.Clone();
+            if (tvcard.CurrentChannelName(ref userCopy, subchannel.IdChannel) == null)
             {
-              isREC = tvcard.Recorder.IsRecording(ref userCopy);
-              if (isREC)
+              continue;
+            }
+            if (tvcard.CurrentChannelName(ref userCopy, subchannel.IdChannel) == channelName)
+            {
+              if (userCopy.UserType == UserType.Scheduler)
               {
-                recUser = user;
+                if (!isREC)
+                {
+                  isREC = tvcard.Recorder.IsRecording(ref userCopy);
+                  if (isREC)
+                  {
+                    recUser = user;
+                  }
+                } 
+              } 
+              else if (!isTS)
+              {
+                isTS = tvcard.TimeShifter.IsTimeShifting(ref userCopy);
               }
             }
-            if (!isTS)
+            if (isTS && isREC)
             {
-              isTS = tvcard.TimeShifter.IsTimeShifting(ref userCopy);
+              break;
             }
           }
+        }
+        if (isTS && isREC)
+        {
+          break;
         }
       }
 
@@ -1311,6 +1351,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return false;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Recorder.IsRecording(ref user);
     }
 
@@ -1347,6 +1388,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return false;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.IsGrabbingTeletext(user);
     }
 
@@ -1360,6 +1402,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return false;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.HasTeletext(user);
     }
 
@@ -1373,6 +1416,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return new TimeSpan(0, 0, 15);
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.TeletextRotation(user, pageNumber);
     }
 
@@ -1381,11 +1425,12 @@ namespace Mediaportal.TV.Server.TVService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime TimeShiftStarted(IUser user)
+    public DateTime TimeShiftStarted(IUser user, int idChannel)
     {
       if (ValidateTvControllerParams(user))
         return DateTime.MinValue;
-      return _cards[user.CardId].TimeShifter.TimeShiftStarted(user);
+      RefreshUserFromSpecificContext(ref user);
+      return _cards[user.CardId].TimeShifter.TimeShiftStarted(user, idChannel);
     }
 
     /// <summary>
@@ -1397,6 +1442,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return DateTime.MinValue;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Recorder.RecordingStarted(user);
     }
 
@@ -1426,7 +1472,13 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return false;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].IsScrambled(ref user);
+    }
+
+    public bool IsScrambled(int cardId, int subChannel)
+    {
+      return _cards[cardId].IsScrambled(subChannel);
     }
 
     /// <summary>
@@ -1485,6 +1537,7 @@ namespace Mediaportal.TV.Server.TVService
       }
       try
       {
+        RefreshUserFromSpecificContext(ref user);
         int cardId = user.CardId;
         ITvCardHandler cardHandler = _cards[cardId];
         if (cardHandler.DataBaseCard.enabled == false)
@@ -1521,7 +1574,7 @@ namespace Mediaportal.TV.Server.TVService
         ICardReservation cardreservationImpl = new CardReservationTimeshifting();
         try
         {
-          ticket = cardreservationImpl.RequestCardTuneReservation(tvCardHandler, channel, user);
+          ticket = cardreservationImpl.RequestCardTuneReservation(tvCardHandler, channel, user, idChannel);
           result = Tune(ref user, channel, idChannel, ticket);
         }
         catch (Exception)
@@ -1565,6 +1618,7 @@ namespace Mediaportal.TV.Server.TVService
       }
       try
       {
+        RefreshUserFromSpecificContext(ref user);
         int cardId = user.CardId;
         ITvCardHandler cardHandler = _cards[cardId];
         if (cardHandler.DataBaseCard.enabled == false)
@@ -1609,6 +1663,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return;
+      RefreshUserFromSpecificContext(ref user);
       _cards[user.CardId].Teletext.GrabTeletext(user, onOff);
     }
 
@@ -1623,6 +1678,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return new byte[] { 1 };
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.GetTeletextPage(user, pageNumber, subPageNumber);
     }
 
@@ -1636,6 +1692,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return -1;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.SubPageCount(user, pageNumber);
     }
 
@@ -1648,6 +1705,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return -1;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.GetTeletextRedPageNumber(user);
     }
 
@@ -1660,6 +1718,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return -1;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.GetTeletextGreenPageNumber(user);
     }
 
@@ -1672,6 +1731,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return -1;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.GetTeletextYellowPageNumber(user);
     }
 
@@ -1684,6 +1744,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return -1;
+      RefreshUserFromSpecificContext(ref user);
       return _cards[user.CardId].Teletext.GetTeletextBluePageNumber(user);
     }
 
@@ -1695,53 +1756,62 @@ namespace Mediaportal.TV.Server.TVService
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref IUser user, ref string fileName)
+    public TvResult StartTimeShifting(ref IUser user, ref string fileName, int idChannel)
     {
       if (ValidateTvControllerParams(user))
         return TvResult.UnknownError;
       try
       {
+        RefreshUserFromSpecificContext(ref user);
         int cardId = user.CardId;
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), (User)user));
         StopEPGgrabber();
 
         bool isTimeShifting;
+        ITvCardHandler tvCardHandler = _cards[cardId];
         try
         {
-          isTimeShifting = _cards[cardId].TimeShifter.IsTimeShifting(ref user);
+          isTimeShifting = tvCardHandler.TimeShifter.IsTimeShifting(ref user);
         }
         catch (Exception ex)
         {
           isTimeShifting = false;
           Log.Error("Exception in checking  " + ex.Message);
         }
-        TvResult result = _cards[cardId].TimeShifter.Start(ref user, ref fileName);
+        int subChannelId = tvCardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name);
+        TvResult result = tvCardHandler.TimeShifter.Start(ref user, ref fileName, subChannelId, idChannel);
         if (result == TvResult.Succeeded)
         {
           if (!isTimeShifting)
-          {
-            Log.Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, user.SubChannel, fileName);
+          {            
+            Log.Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, subChannelId, fileName);
             if (File.Exists(fileName))
-            {
-              _streamer.Start();
+            {                            
+              if (_streamer != null)
+              {                
+                _streamer.Start();                                
+                //  Default to tv
+                MediaTypeEnum mediaType = MediaTypeEnum.TV;
 
-              //  Default to tv
-              MediaTypeEnum mediaType = MediaTypeEnum.TV;
+                ITvSubChannel subChannel = tvCardHandler.Card.GetSubChannel(subChannelId);
 
-              ITvSubChannel subChannel = _cards[cardId].Card.GetSubChannel(user.SubChannel);
+                if (subChannel != null && subChannel.CurrentChannel != null)
+                {
+                  mediaType = subChannel.CurrentChannel.MediaType;
+                }
+                else
+                {
+                  Log.Error("ParkedSubChannel or CurrentChannel is null when starting streaming");
+                }
 
-              if (subChannel != null && subChannel.CurrentChannel != null)
-              {
-                mediaType = subChannel.CurrentChannel.MediaType;
+                var stream = new RtspStream(String.Format("stream{0}.{1}", cardId, subChannelId), fileName,
+                                                  tvCardHandler.Card, mediaType);
+                _streamer.AddStream(stream); 
               }
               else
               {
-                Log.Error("SubChannel or CurrentChannel is null when starting streaming");
+                Log.Error("could not start streaming server.");
               }
-
-              var stream = new RtspStream(String.Format("stream{0}.{1}", cardId, user.SubChannel), fileName,
-                                                 _cards[cardId].Card, mediaType);
-              _streamer.AddStream(stream);
             }
             else
             {
@@ -1768,26 +1838,120 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return;
-      _cards[user.CardId].StopCard(user);
+      RefreshUserFromSpecificContext(ref user);
+      _cards[user.CardId].StopCard();
     }
+
+    public bool ParkTimeShifting(ref IUser user, double duration, int idChannel)
+    {      
+      bool result = false;      
+      //if (!ValidateTvControllerParams(user))
+      {
+        try
+        {          
+          ITvCardHandler cardHandler = GetCardHandlerByChannel(idChannel, TvUsage.Timeshifting);
+          if (cardHandler != null)
+          {
+            if (cardHandler.DataBaseCard.enabled)
+            {
+              RefreshTimeshiftingUserFromAnyContext(ref user);
+              if (cardHandler.TimeShifter.IsTimeShifting(ref user))
+              {
+                Fire(this, new TvServerEventArgs(TvServerEventType.TimeShiftingParked, GetVirtualCard(user), (User)user));
+                Log.Write("Controller: ParkTimeShifting {0}", cardHandler.DataBaseCard.idCard);
+                cardHandler.ParkedUserManagement.ParkUser(ref user, duration, idChannel);
+                UpdateChannelStatesForUsers();
+                result = true;
+              }
+            } 
+          }
+          else
+          {
+            Log.Error("StopTimeShifting - could not find channel to park. {0} - {1} - {2}", user.Name, idChannel, duration);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+        }
+      }
+      return result;
+    }
+
+    private int GetTimeShiftingChannelIdFromContext (IUser user)
+    {      
+      int currentCardId = user.CardId;
+      int timeshiftingChannelId = -1;
+      if (currentCardId > 0)
+      {
+        ITvCardHandler timeShiftingCardHandler = CardCollection[currentCardId];        
+        if (timeShiftingCardHandler != null)
+        {
+          timeshiftingChannelId = timeShiftingCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name);
+        }  
+      }
+      
+      return timeshiftingChannelId;
+    }
+
+    public bool UnParkTimeShifting(ref IUser user, double duration, int idChannel, out IVirtualCard card)
+    {
+      bool result = false;
+      card = null;
+      try
+      {                
+        ITvCardHandler cardHandler = GetCardHandlerByParkedChannelAndDuration(idChannel, duration);
+        if (cardHandler != null)
+        {
+          if (cardHandler.DataBaseCard.enabled)
+          {            
+            RefreshTimeshiftingUserFromAnyContext(ref user);
+            int timeshiftingChannelId = GetTimeShiftingChannelIdFromContext(user);
+            
+            Log.Write("Controller: UnParkTimeShifting {0}", cardHandler.DataBaseCard.idCard);
+            cardHandler.ParkedUserManagement.UnParkUser(ref user, duration, idChannel);
+            VirtualCard virtualCard = GetVirtualCard(user);
+            card = virtualCard;
+
+            Fire(this, new TvServerEventArgs(TvServerEventType.TimeShiftingUnParked, virtualCard, (User)user));
+            if (timeshiftingChannelId > 0)
+            {
+              StopTimeShifting(ref user, timeshiftingChannelId); // 'StopTimeShifting' already calls UpdateChannelStatesForUsers
+            }
+            else
+            {
+              UpdateChannelStatesForUsers();
+            }            
+            result = true;            
+          } 
+        }
+        else
+        {
+          Log.Error("StopTimeShifting - could not find channel to unpark. {0} - {1} - {2}", user.Name, idChannel, duration);          
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+      
+      return result;
+    }
+
+    
 
     public void PauseCard(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return;
-      _cards[user.CardId].PauseCard(user);
+      RefreshUserFromSpecificContext(ref user);
+      _cards[user.CardId].PauseCard();
     }
 
     public bool StopTimeShifting(ref IUser user, TvStoppedReason reason)
     {
-      if (ValidateTvControllerParams(user))
-        return false;
-      _cards[user.CardId].UserManagement.SetTvStoppedReason(user, reason);
-
-      user.TvStoppedReason = reason;
-      Fire(this, new TvServerEventArgs(TvServerEventType.ForcefullyStoppedTimeShifting, GetVirtualCard(user), (User)user));
-
-      return StopTimeShifting(ref user);
+      ITvCardHandler tvCardHandler = _cards[user.CardId];
+      return StopTimeShifting(ref user, reason, tvCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
     }
 
     public TvStoppedReason GetTvStoppedReason(IUser user)
@@ -1797,11 +1961,12 @@ namespace Mediaportal.TV.Server.TVService
 
       try
       {
+        RefreshUserFromSpecificContext(ref user);
         if (_cards[user.CardId].DataBaseCard.enabled == false)
           return TvStoppedReason.UnknownReason;
         //if (!CardPresent(user.CardId)) return TvStoppedReason.UnknownReason;
 
-        return _cards[user.CardId].UserManagement.GetTvStoppedReason(user);
+        return _cards[user.CardId].UserManagement.GetTimeshiftStoppedReason(user);
       }
       catch (Exception ex)
       {
@@ -1810,12 +1975,20 @@ namespace Mediaportal.TV.Server.TVService
       return TvStoppedReason.UnknownReason;
     }
 
-    /// <summary>
-    /// Stops the time shifting.
-    /// </summary>
-    /// <param name="user">User</param>
-    /// <returns></returns>
-    public bool StopTimeShifting(ref IUser user)
+    public bool StopTimeShifting(ref IUser user, TvStoppedReason reason, int channelId)
+    {
+      if (ValidateTvControllerParams(user))
+        return false;
+      RefreshUserFromSpecificContext(ref user);
+      _cards[user.CardId].UserManagement.SetTimeshiftStoppedReason(user, reason);      
+
+      user.TvStoppedReason = reason;
+      Fire(this, new TvServerEventArgs(TvServerEventType.ForcefullyStoppedTimeShifting, GetVirtualCard(user), (User)user));
+
+      return StopTimeShifting(ref user, channelId);
+    }
+
+    public bool StopTimeShifting(ref IUser user, int channelId)
     {
       if (ValidateTvControllerParams(user))
       {
@@ -1823,32 +1996,42 @@ namespace Mediaportal.TV.Server.TVService
       }
       try
       {
-        int cardId = user.CardId;
-        ITvCardHandler tvcard = _cards[cardId];
-        if (tvcard.DataBaseCard.enabled == false)
+        //RefreshUserFromSpecificContext(ref user);        
+        //RefreshTimeshiftingUserFromAnyContext(ref user);
+        ITvCardHandler tvcard = GetCardHandlerByUserAndChannel(user.Name, channelId);        
+        if (tvcard != null)
         {
-          return true;
-        }
-
-
-        HybridCard hybridCard = tvcard.Card as HybridCard;
-        if (hybridCard != null)
-        {
-          if (!hybridCard.IsCardIdActive(cardId))
+          int cardId = tvcard.DataBaseCard.idCard;          
+          if (tvcard.DataBaseCard.enabled == false)
           {
             return true;
           }
+
+
+          var hybridCard = tvcard.Card as HybridCard;
+          if (hybridCard != null)
+          {
+            if (!hybridCard.IsCardIdActive(cardId))
+            {
+              return true;
+            }
+          }
+
+          tvcard.UserManagement.RefreshUser(ref user);
+          if (!tvcard.TimeShifter.IsTimeShifting(ref user))
+            return true;
+          Fire(this, new TvServerEventArgs(TvServerEventType.EndTimeShifting, GetVirtualCard(user), (User)user));
+
+          if (tvcard.Recorder.IsRecording(ref user))
+            return true;
+
+          Log.Write("Controller: StopTimeShifting {0}", cardId);
+          return DoStopTimeShifting(ref user, cardId, channelId);
         }
-
-        if (false == tvcard.TimeShifter.IsTimeShifting(ref user))
-          return true;
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndTimeShifting, GetVirtualCard(user), (User)user));
-
-        if (tvcard.Recorder.IsRecording(ref user))
-          return true;
-
-        Log.Write("Controller: StopTimeShifting {0}", cardId);
-        return DoStopTimeShifting(ref user, cardId);
+        else
+        {
+          Log.Error("StopTimeShifting - could not find channel to stop. {0} - {1}", user.Name, channelId);
+        }
       }
       catch (Exception ex)
       {
@@ -1858,7 +2041,78 @@ namespace Mediaportal.TV.Server.TVService
       return false;
     }
 
-    private bool DoStopTimeShifting(ref IUser user, int cardId)
+    private ITvCardHandler GetCardHandlerByParkedChannelAndDuration(int channelId, double duration)
+    {            
+      foreach (ITvCardHandler cardHandler in _cards.Values)
+      {        
+        foreach (IUser user in cardHandler.UserManagement.Users.Values)
+        {
+          int subchannelId = cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, channelId, TvUsage.Parked);
+          if (subchannelId > -1)
+          {
+            bool hasParkedUserWithDuration = cardHandler.ParkedUserManagement.HasParkedUserWithDuration(subchannelId, duration);
+            if (hasParkedUserWithDuration)
+            {              
+              return cardHandler;              
+            }            
+          }          
+        }        
+      }
+      return null;
+    }
+
+    private ITvCardHandler GetCardHandlerByChannel (int channelId, TvUsage tvUsage)
+    {
+      foreach (ITvCardHandler cardHandler in _cards.Values)
+      {        
+        foreach (IUser user in cardHandler.UserManagement.Users.Values)
+        {
+          if (cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, channelId, tvUsage) > -1)
+          {
+            return cardHandler;
+          }          
+        }        
+      }
+      return null;
+    }
+
+    private ITvCardHandler GetCardHandlerByUserAndChannel(string userName, int channelId)
+    {
+      ITvCardHandler tvCardHandler = null;
+      foreach (ITvCardHandler card in _cards.Values)
+      {
+        IUser user = card.UserManagement.GetUser(userName);
+        if (user != null)
+        {
+          if (card.UserManagement.GetSubChannelIdByChannelId(user.Name, channelId) > -1)
+          {
+            tvCardHandler = card;
+            break;
+          }          
+        }        
+      }
+
+      return tvCardHandler;
+    }
+
+    /// <summary>
+    /// Stops the time shifting.
+    /// </summary>
+    /// <param name="user">User</param>
+    /// <param name="channelId"> </param>
+    /// <returns></returns>
+    public bool StopTimeShifting(ref IUser user)
+    {      
+      RefreshTimeshiftingUserFromAnyContext(ref user);
+      int timeshiftingChannelId = GetTimeShiftingChannelIdFromContext(user);
+      if (timeshiftingChannelId > 0)
+      {        
+        return StopTimeShifting(ref user, timeshiftingChannelId); 
+      }
+      return false;
+    }
+
+    private bool DoStopTimeShifting(ref IUser user, int cardId, int idChannel)
     {
       if (IsGrabbingEpg(cardId))
       {
@@ -1870,16 +2124,19 @@ namespace Mediaportal.TV.Server.TVService
       bool stopped = false;
       if (ticket != null)
       {
-        stopped = CardReservationHelper.Stop(tvcard, ref user, ticket);
+        stopped = CardReservationHelper.Stop(tvcard, ref user, ticket, idChannel);
         if (stopped)
         {
           //we must not stop streaming if subchannel is still in use.
-          ITvCardContext context = (ITvCardContext)_cards[user.CardId].Card.Context;
-          if (!context.ContainsUsersForSubchannel(user.SubChannel))
+          ITvCardHandler tvCardHandler = _cards[user.CardId];          
+          int subChannelByChannelId = tvCardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);
+          if (!tvCardHandler.UserManagement.ContainsUsersForSubchannel(subChannelByChannelId))
           {
             Log.Write("Controller:Timeshifting stopped on card:{0}", cardId);
-            int subChannel = user.SubChannel;
-            _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
+            if (_streamer != null)
+            {
+              _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannelByChannelId));
+            }
           }
           StartEPGgrabber();
           UpdateChannelStatesForUsers();
@@ -1900,6 +2157,7 @@ namespace Mediaportal.TV.Server.TVService
       {
         return TvResult.UnknownError;
       }
+      RefreshUserFromSpecificContext(ref user);
       StopEPGgrabber();
       TvResult result = _cards[user.CardId].Recorder.Start(ref user, ref fileName);
 
@@ -1926,6 +2184,7 @@ namespace Mediaportal.TV.Server.TVService
       {
         return false;
       }
+      RefreshUserFromSpecificContext(ref user);
       bool result = _cards[user.CardId].Recorder.Stop(ref user);
 
       if (result)
@@ -2030,7 +2289,10 @@ namespace Mediaportal.TV.Server.TVService
           return false;
         }
 
-        _streamer.RemoveFile(rec.fileName);
+        if (_streamer != null)
+        {
+          _streamer.RemoveFile(rec.fileName);
+        }
         bool result = RecordingFileHandler.DeleteRecordingOnDisk(rec.fileName);
         if (result)
         {
@@ -2113,23 +2375,27 @@ namespace Mediaportal.TV.Server.TVService
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>
-    /// <param name="channelId">channel id</param>
+    /// <param name="userName"> </param>
     /// <returns>
     /// id of Schedule or -1 if  card not recording
     /// </returns>
-    public int GetRecordingSchedule(int cardId, int channelId)
+    public int GetRecordingSchedule(int cardId, string userName)
     {
       try
       {
+        
         if (ValidateTvControllerParams(cardId))
         {
           return -1;
         }
-        if (_cards[cardId].DataBaseCard.enabled == false)
+        ITvCardHandler tvCardHandler = _cards[cardId];
+        if (!tvCardHandler.DataBaseCard.enabled)
         {
           return -1;
         }
-        //if (!CardPresent(cardId)) return -1;
+                
+        IUser user = tvCardHandler.UserManagement.GetUser(userName);
+        int channelId = tvCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name);
         return _scheduler.GetRecordingScheduleForCard(cardId, channelId);
       }
       catch (Exception ex)
@@ -2145,37 +2411,46 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (ValidateTvControllerParams(user))
         return null;
-      return _cards[user.CardId].Audio.Streams(user);
+      RefreshUserFromSpecificContext(ref user);
+
+      ITvCardHandler tvCardHandler = _cards[user.CardId];
+      int idChannel = tvCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name);
+      return tvCardHandler.Audio.Streams(user, idChannel);
     }
 
-    public IAudioStream GetCurrentAudioStream(IUser user)
+    public IAudioStream GetCurrentAudioStream(IUser user, int idChannel)
     {
       if (ValidateTvControllerParams(user))
         return null;
-      return _cards[user.CardId].Audio.GetCurrent(user);
+      RefreshUserFromSpecificContext(ref user);
+      return _cards[user.CardId].Audio.GetCurrent(user, idChannel);
     }
 
-    public void SetCurrentAudioStream(IUser user, IAudioStream stream)
+    public void SetCurrentAudioStream(IUser user, IAudioStream stream, int idChannel)
     {
       if (ValidateTvControllerParams(user))
         return;
-      _cards[user.CardId].Audio.Set(user, stream);
+      RefreshUserFromSpecificContext(ref user);
+      _cards[user.CardId].Audio.Set(user, stream, idChannel);
     }
 
     public string GetStreamingUrl(IUser user)
     {
       if (ValidateTvControllerParams(user))
+      {
         return "";
+      }
       try
       {
-        if (_cards[user.CardId].DataBaseCard.enabled == false)
+        RefreshUserFromSpecificContext(ref user);
+        ITvCardHandler tvCardHandler = _cards[user.CardId];
+        if (tvCardHandler.DataBaseCard.enabled == false)
         {
           return "";
         }
 
-
         return String.Format("rtsp://{0}:{1}/stream{2}.{3}", _hostName, _streamer.Port, user.CardId,
-                             user.SubChannel);
+                             tvCardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
       }
       catch (Exception)
       {
@@ -2199,7 +2474,7 @@ namespace Mediaportal.TV.Server.TVService
         try
         {
           if (File.Exists(recording.fileName))
-          {
+          {            
             _streamer.Start();
             string streamName = String.Format("{0:X}", recording.fileName.GetHashCode());
             RtspStream stream = new RtspStream(streamName, recording.fileName, recording.title);
@@ -2270,13 +2545,16 @@ namespace Mediaportal.TV.Server.TVService
     {
       if (File.Exists(fileName))
       {
-        _streamer.Start();
-        string streamName = String.Format("{0:X}", fileName.GetHashCode());
-        RtspStream stream = new RtspStream(streamName, fileName, streamName);
-        _streamer.AddStream(stream);
-        string url = String.Format("rtsp://{0}:{1}/{2}", _hostName, _streamer.Port, streamName);
-        Log.Info("Controller: streaming url:{0} file:{1}", url, fileName);
-        return url;
+        if (_streamer != null)
+        {
+          _streamer.Start();
+          string streamName = String.Format("{0:X}", fileName.GetHashCode());
+          RtspStream stream = new RtspStream(streamName, fileName, streamName);
+          _streamer.AddStream(stream);
+          string url = String.Format("rtsp://{0}:{1}/{2}", _hostName, _streamer.Port, streamName);
+          Log.Info("Controller: streaming url:{0} file:{1}", url, fileName);
+          return url;
+        }
       }
       return "";
     }
@@ -2292,20 +2570,21 @@ namespace Mediaportal.TV.Server.TVService
     /// </summary>
     public void FreeCards()
     {
-      Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
-      while (enumerator.MoveNext())
+
+      foreach (ITvCardHandler tvCardHandler in _cards.Values)
       {
-        KeyValuePair<int, ITvCardHandler> key = enumerator.Current;
-        Log.Info("Controller: dispose card:{0}", key.Value.CardName);
+        Log.Info("Controller: dispose card:{0}", tvCardHandler.CardName);
         try
         {
-          key.Value.Dispose();
+          tvCardHandler.ParkedUserManagement.CancelAllParkedUsers();
+          tvCardHandler.StopCard();
+          tvCardHandler.Dispose();
         }
         catch (Exception ex)
         {
           Log.Write(ex);
         }
-      }
+      }      
     }
 
     /// <summary>
@@ -2376,6 +2655,7 @@ namespace Mediaportal.TV.Server.TVService
       TvResult result = TvResult.UnknownError;
       card = null;
       cardChanged = false;
+      RefreshTimeshiftingUserFromAnyContext(ref user);
       if (user != null)
       {
         user.Priority = UserFactory.GetDefaultPriority(user.Name, user.Priority);
@@ -2420,10 +2700,12 @@ namespace Mediaportal.TV.Server.TVService
       return result;
     }
 
+   
+
     private ICollection<ICardTuneReservationTicket> IterateCardsUntilTimeshifting(ref IUser user, Channel channel, bool forceCardId, ICollection<CardDetail> freeCardsForReservation, out bool cardChanged, ref TvResult result, ref IVirtualCard card)
-    {
+    {      
       cardChanged = false;
-      VirtualCard initialCard = GetValidVirtualCard(user);
+      VirtualCard initialCard = GetValidVirtualCard(user); //todo fix
       string intialTimeshiftingFilename = GetIntialTimeshiftingFilename(initialCard);
       var cardResImpl = new CardReservationTimeshifting();
       ICollection<ICardTuneReservationTicket> tickets = null;
@@ -2433,7 +2715,7 @@ namespace Mediaportal.TV.Server.TVService
       while (moreCardsAvailable && !HasTvSucceeded(result))
       {
         tickets = CardReservationHelper.RequestCardReservations(user, freeCardsForReservation, cardResImpl,
-                                                                freeCardsIterated);
+                                                                freeCardsIterated, channel.idChannel);
         if (HasTickets(tickets))
         {
           var cardAllocationTicket = new AdvancedCardAllocationTicket(tickets);
@@ -2486,7 +2768,7 @@ namespace Mediaportal.TV.Server.TVService
       return freeCardsIterated;
     }
 
-    private bool IterateTicketsUntilTimeshifting(ref IUser user, Channel channel, ICollection<ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, string intialTimeshiftingFilename, ICollection<CardDetail> freeCards, int maxCards, ref IVirtualCard card, ref TvResult result, ref int cardsIterated, out bool cardChanged)
+    private bool IterateTicketsUntilTimeshifting(ref IUser userBefore, Channel channel, ICollection<ICardTuneReservationTicket> tickets, CardReservationTimeshifting cardResImpl, string intialTimeshiftingFilename, ICollection<CardDetail> freeCards, int maxCards, ref IVirtualCard card, ref TvResult result, ref int cardsIterated, out bool cardChanged)
     {
       cardChanged = false;
       int failedCardId = -1;
@@ -2500,48 +2782,87 @@ namespace Mediaportal.TV.Server.TVService
         {
           break;
         }
-        IUser userCopy = UserFactory.CreateBasicUser(user.Name, cardInfo.Id, user.Priority, user.IsAdmin);
+        var newCardId = cardInfo.Id;
+        IUser userNow = UserFactory.CreateBasicUser(userBefore.Name, newCardId, userBefore.Priority, userBefore.UserType);
         SetupTimeShiftingFolders(cardInfo);
-        ITvCardHandler tvcard = _cards[cardInfo.Id];
+        ITvCardHandler tvcard = _cards[newCardId];
         try
         {
           ICardTuneReservationTicket ticket = GetTicketByCardId(cardInfo, tickets);
           if (ticket == null)
           {
             Log.Write("Controller: StartTimeShifting - could not find cardreservation on card:{0}",
-                      userCopy.CardId);
+                      userNow.CardId);
             HandleAllCardsBusy(tickets, out result, out failedCardId, cardInfo, tvcard);
             continue;
           }
           cardsIterated++;
           bool isTimeshifting = ticket.IsAnySubChannelTimeshifting;
+          bool existingOwnerFoundOnSameChannel = false;
           if (isTimeshifting)
           {
             RemoveInactiveUsers(ticket);
-            if (!IsTransponderAvailable(user, maxCards, cardInfo, cardIteration, tvcard, ticket))
+
+            if (ticket.IsSameTransponder)
             {
-              HandleAllCardsBusy(tickets, out result, out failedCardId, cardInfo, tvcard);
-              continue;
+              existingOwnerFoundOnSameChannel = ExistingOwnerFoundOnSameChannel(ticket);
+              if (existingOwnerFoundOnSameChannel)
+              {
+                Log.Write("Controller: leech user={0} inherits subch={1}", userBefore.Name, ticket.OwnerSubchannel.Id);                
+                userNow.CardId = ticket.CardId;
+                ITvCardHandler tvCardHandler = _cards[ticket.CardId];
+
+                //we can't have a user both park the channel as well as watch it, since the subchannel needs sharing, which cant be done.
+                if (ticket.OwnerSubchannel.TvUsage == TvUsage.Parked)
+                {
+                  //todo: ideally, ask the client if its ok to either : 1) unpark channel or .. 2) cancel park and watch live
+                  tvCardHandler.ParkedUserManagement.CancelParkedUserBySubChannelId(userBefore.Name, ticket.OwnerSubchannel.Id);
+                  ISubChannel subch = tvCardHandler.UserManagement.GetSubChannel(userBefore.Name, ticket.OwnerSubchannel.Id);
+                  if (subch != null)
+                  {
+                    subch.TvUsage = TvUsage.Timeshifting;                    
+                  }
+                }
+                else
+                {
+                  tvCardHandler.UserManagement.AddSubChannelOrUser(userNow, ticket.OwnerSubchannel.IdChannel, ticket.OwnerSubchannel.Id); 
+                }                
+              }
             }
+            else
+            {              
+              if (!IsTransponderAvailable(maxCards, ticket, tvcard, cardInfo, cardIteration, channel.idChannel))
+              {
+                HandleAllCardsBusy(tickets, out result, out failedCardId, cardInfo, tvcard);
+                continue;
+              }              
+            }            
           }
 
-          //tune to the new channel                  
-          IChannel tuneChannel = cardInfo.TuningDetail;
-          result = CardTune(ref userCopy, tuneChannel, channel, ticket, cardResImpl);
-          if (!HasTvSucceeded(result))
+          if (!existingOwnerFoundOnSameChannel)
           {
-            HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
-            StopTimeShifting(ref userCopy);
-            continue; //try next card            
+            //tune to the new channel                  
+            IChannel tuneChannel = cardInfo.TuningDetail;
+            result = CardTune(ref userNow, tuneChannel, channel, ticket, cardResImpl);
+            if (!HasTvSucceeded(result))
+            {
+              HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
+              StopTimeShifting(ref userNow, channel.idChannel);
+              continue; //try next card            
+            }
           }
 
           //reset failedCardId incase previous card iteration failed.
           failedCardId = -1;
           CardReservationHelper.CancelAllCardReservations(tickets, _cards);
-          Log.Info("control2:{0} {1} {2}", userCopy.Name, userCopy.CardId, userCopy.SubChannel);
-          card = GetVirtualCard(userCopy);
+          Log.Info("control2:{0} {1} {2}", userNow.Name, userNow.CardId, tvcard.UserManagement.GetSubChannelIdByChannelId(userNow.Name, channel.idChannel));
+          card = GetVirtualCard(userNow);
           card.NrOfOtherUsersTimeshiftingOnCard = ticket.NumberOfOtherUsersOnSameChannel;
-          RemoveUserFromOtherCards(card.Id, userCopy);
+          var currentCardId = userBefore.CardId;
+          if (currentCardId > 0 && currentCardId != newCardId)
+          {
+            RemoveUserFromOtherCards(userNow.Name, currentCardId); 
+          }          
           UpdateChannelStatesForUsers();
         }
         catch (Exception)
@@ -2557,9 +2878,11 @@ namespace Mediaportal.TV.Server.TVService
         }
         finally
         {
+          cardIteration++;
+
           if (failedCardId > 0)
           {
-            user.FailedCardId = failedCardId;
+            userBefore.FailedCardId = failedCardId;
           }
           if (!HasTvSucceeded(result))
           {
@@ -2571,9 +2894,8 @@ namespace Mediaportal.TV.Server.TVService
           }
           else
           {
-            cardChanged = GetCardChanged(card, intialTimeshiftingFilename);
+            cardChanged = HasCardChanged(card, intialTimeshiftingFilename);
           }
-          cardIteration++;
         }
         break; //if we made it to the bottom, then we have a successful timeshifting.          
       } //end of foreach      
@@ -2592,28 +2914,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       HandleTvException(tickets, out failedCardId, cardInfo, tvcard);
       result = TvResult.AllCardsBusy;
-    }
-
-    private bool IsTransponderAvailable(IUser user, int maxCards,
-                                                CardDetail cardInfo, int cardIteration, ITvCardHandler tvcard,
-                                                ICardTuneReservationTicket ticket)
-    {
-      bool isTimeshiftingChannelAvailable = true;
-      if (ticket.IsSameTransponder)
-      {
-        SameTransponder(user, ticket);
-      }
-      else
-      {
-        bool isDifferentTransponderAvail = DifferentTransponder(maxCards, ticket, tvcard,
-                                                                cardInfo, cardIteration);
-        if (!isDifferentTransponderAvail)
-        {
-          isTimeshiftingChannelAvailable = false;
-        }
-      }
-      return isTimeshiftingChannelAvailable;
-    }
+    }    
 
     private static bool HasTvSucceeded(TvResult result)
     {
@@ -2651,9 +2952,9 @@ namespace Mediaportal.TV.Server.TVService
       return tickets.FirstOrDefault(t => t.CardId == cardInfo.Id);
     }
 
-    private bool DifferentTransponder(int maxCards, ICardTuneReservationTicket ticket, ITvCardHandler tvcard, CardDetail cardInfo, int cardIteration)
+    private bool IsTransponderAvailable(int maxCards, ICardTuneReservationTicket ticket, ITvCardHandler tvcard, CardDetail cardInfo, int cardIteration, int idChannel)
     {
-      bool isDifferentTransponderAvail = false;
+      bool isTransponderAvailable = false;
       bool foundAnyUsersOnCard = FoundAnyUsersOnCard(ticket);
       if (foundAnyUsersOnCard)
       {
@@ -2662,7 +2963,7 @@ namespace Mediaportal.TV.Server.TVService
         {
           bool kickLeechingUsersIfNoMoreCardsAvail = KickLeechingUsersIfNoMoreCardsAvail(tvcard, cardInfo, ticket,
                                                                                           cardIteration,
-                                                                                          maxCards);
+                                                                                          maxCards, idChannel);
           bool cardsAvailable = ((cardIteration + 1) < maxCards);
           if (!kickLeechingUsersIfNoMoreCardsAvail && cardsAvailable)
           {
@@ -2673,7 +2974,7 @@ namespace Mediaportal.TV.Server.TVService
           }
           else
           {
-            isDifferentTransponderAvail = true;
+            isTransponderAvailable = true;
           }
         }
         else
@@ -2685,19 +2986,11 @@ namespace Mediaportal.TV.Server.TVService
       }
       else
       {
-        isDifferentTransponderAvail = true;
+        isTransponderAvailable = true;
       }
-      return isDifferentTransponderAvail;
+      return isTransponderAvailable;
     }
-
-    private static void SameTransponder(IUser user, ICardTuneReservationTicket ticket)
-    {
-      bool existingOwnerFoundOnSameChannel = ExistingOwnerFoundOnSameChannel(ticket);
-      if (existingOwnerFoundOnSameChannel)
-      {
-        InheritSubChannelFromOwner(user, ticket);
-      }
-    }
+    
 
     private static void UpdateFreeCardsIterated(ICollection<int> freeCardsIterated, IEnumerable<CardDetail> freeCards)
     {
@@ -2721,13 +3014,7 @@ namespace Mediaportal.TV.Server.TVService
     {
       bool hasTickets = (tickets.Count > 0);
       return hasTickets;
-    }
-
-    private static void InheritSubChannelFromOwner(IUser user, ICardTuneReservationTicket ticket)
-    {
-      Log.Write("Controller: leech user={0} inherits subch={1}", user.Name, ticket.OwnerSubchannel);
-      user.SubChannel = ticket.OwnerSubchannel;
-    }
+    }    
 
     private static bool FoundCandidateForKicking(ICardTuneReservationTicket ticket)
     {
@@ -2741,10 +3028,10 @@ namespace Mediaportal.TV.Server.TVService
 
     private static bool ExistingOwnerFoundOnSameChannel(ICardTuneReservationTicket ticket)
     {
-      return (ticket.OwnerSubchannel > -1);
+      return (ticket.OwnerSubchannel != null);
     }
 
-    private bool KickLeechingUsersIfNoMoreCardsAvail(ITvCardHandler tvcard, CardDetail cardInfo, ICardTuneReservationTicket ticket, int cardIteration, int maxCards)
+    private bool KickLeechingUsersIfNoMoreCardsAvail(ITvCardHandler tvcard, CardDetail cardInfo, ICardTuneReservationTicket ticket, int cardIteration, int maxCards, int idChannel)
     {
       bool kickLeechingUsersIfNoMoreCardsAvail = false;
 
@@ -2756,29 +3043,32 @@ namespace Mediaportal.TV.Server.TVService
         {
           IUser activeUser = ticket.ActiveUsers[j];
 
-          string channelInfo = Convert.ToString(activeUser.IdChannel);
-          if (activeUser.IdChannel > 0)
+          foreach (ISubChannel subchannel in activeUser.SubChannels.Values)
           {
-            Channel ch = ChannelManagement.GetChannel(activeUser.IdChannel);
-            if (ch != null)
+            string channelInfo = Convert.ToString(subchannel.IdChannel);
+            if (subchannel.IdChannel > 0)
             {
-              channelInfo = ch.displayName;
+              Channel ch = ChannelManagement.GetChannel(subchannel.IdChannel);
+              if (ch != null)
+              {
+                channelInfo = ch.displayName;
+              }
+
+              Log.Write(
+                "Controller: kicking leech user '{0}' with prio={1} off card={2} on channel={3} (subchannel #{4}) since owner '{5}' with prio={6} (subchannel #{7}) changed transponder and there are no more cards available",
+                activeUser.Name,
+                activeUser.Priority,
+                cardInfo.Card.name,
+                channelInfo,
+                subchannel.Id,
+                user.Name,
+                user.Priority,
+                tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+
+              StopTimeShifting(ref activeUser, TvStoppedReason.OwnerChangedTS, subchannel.IdChannel);
+              kickLeechingUsersIfNoMoreCardsAvail = true;
             }
-          }
-
-          Log.Write(
-            "Controller: kicking leech user '{0}' with prio={1} off card={2} on channel={3} (subchannel #{4}) since owner '{5}' with prio={6} (subchannel #{7}) changed transponder and there are no more cards available",
-            activeUser.Name,
-            activeUser.Priority,
-            cardInfo.Card.name,
-            channelInfo,
-            activeUser.SubChannel,
-            user.Name,
-            user.Priority,
-            user.SubChannel);
-
-          StopTimeShifting(ref activeUser, TvStoppedReason.OwnerChangedTS);
-          kickLeechingUsersIfNoMoreCardsAvail = true;
+          }          
         }
       }
       return kickLeechingUsersIfNoMoreCardsAvail;
@@ -2787,12 +3077,8 @@ namespace Mediaportal.TV.Server.TVService
     private static void GetUser(ITvCardHandler tvcard, ref IUser user)
     {
       if (user != null)
-      {
-        var context = tvcard.Card.Context as ITvCardContext;
-        if (context != null)
-        {
-          context.GetUser(ref user);
-        }
+      {        
+        tvcard.UserManagement.RefreshUser(ref user);        
       }
     }
 
@@ -2801,13 +3087,16 @@ namespace Mediaportal.TV.Server.TVService
       for (int i = 0; i < ticket.InactiveUsers.Count; i++)
       {
         IUser inactiveUser = ticket.InactiveUsers[i];
-        Log.Debug("controller: RemoveInactiveUsers {0}", inactiveUser.Name);
-        StopTimeShifting(ref inactiveUser);
-        //removing inactive user which shouldnt happen, but atleast its better than having timeshfiting fail.
+        foreach (var subchannel in inactiveUser.SubChannels.Values)
+        {
+          Log.Debug("controller: RemoveInactiveUsers {0}", inactiveUser.Name);
+          StopTimeShifting(ref inactiveUser, subchannel.IdChannel);
+          //removing inactive user which shouldnt happen, but atleast its better than having timeshfiting fail. 
+        }        
       }
     }
 
-    private static bool GetCardChanged(IVirtualCard card, string intialTimeshiftingFilename)
+    private static bool HasCardChanged(IVirtualCard card, string intialTimeshiftingFilename)
     {
       bool cardChanged = false;
       if (card != null && card.TimeShiftFileName != null)
@@ -3238,7 +3527,7 @@ namespace Mediaportal.TV.Server.TVService
       {
         return;
       }
-
+      RefreshUserFromSpecificContext(ref user);
       _cards[user.CardId].Epg.Stop(user);
     }
 
@@ -3286,26 +3575,30 @@ namespace Mediaportal.TV.Server.TVService
         IDictionary<string, IUser> users = tvcard.UserManagement.Users;
         foreach (IUser user in users.Values)        
         {
-          IUser userCopy = (IUser)user.Clone();
-          string tmpChannel = tvcard.CurrentChannelName(ref userCopy);
-          if (string.IsNullOrEmpty(tmpChannel))
+          IUser userCopy = (IUser)user.Clone();         
+          foreach(var subchannel in userCopy.SubChannels.Values)
           {
-            continue;
-          }
-          int idChannel = tvcard.CurrentDbChannel(ref userCopy);
-          if (tvcard.Recorder.IsRecording(ref userCopy))
-          {
-            if (result.ContainsKey(idChannel))
+            string tmpChannel = tvcard.CurrentChannelName(ref userCopy, subchannel.IdChannel);
+            if (string.IsNullOrEmpty(tmpChannel))
             {
-              result.Remove(idChannel);
+              continue;
             }
-            result.Add(idChannel, ChannelState.recording);
-          }
-          else if (tvcard.TimeShifter.IsTimeShifting(ref userCopy))
-          {
-            if (!result.ContainsKey(idChannel))
+
+            int idChannel = subchannel.IdChannel;
+            if (tvcard.Recorder.IsRecording(ref userCopy))
             {
-              result.Add(idChannel, ChannelState.timeshifting);
+              if (result.ContainsKey(idChannel))
+              {
+                result.Remove(idChannel);
+              }
+              result.Add(idChannel, ChannelState.recording);
+            }
+            else if (tvcard.TimeShifter.IsTimeShifting(ref userCopy))
+            {
+              if (!result.ContainsKey(idChannel))
+              {
+                result.Add(idChannel, ChannelState.timeshifting);
+              }
             }
           }
         }
@@ -3339,36 +3632,42 @@ namespace Mediaportal.TV.Server.TVService
         foreach (IUser user in users.Values)
         {
           IUser userCopy = (IUser)user.Clone();
-          string tmpChannel = tvcard.CurrentChannelName(ref userCopy);
-          if (string.IsNullOrEmpty(tmpChannel))
+
+          foreach (ISubChannel subchannel in userCopy.SubChannels.Values)
           {
-            continue;
-          }
-          if (tvcard.Recorder.IsRecording(ref userCopy))
-          {
-            currentRecChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
-          }
-          else if (tvcard.TimeShifter.IsTimeShifting(ref userCopy))
-          {
-            currentTSChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
-          }
-          else
-          {
-            ChannelState cState = GetChannelState(tvcard.CurrentDbChannel(ref userCopy), userCopy);
-            if (cState == ChannelState.tunable)
+            int idChannel = subchannel.IdChannel;
+
+            string tmpChannel = tvcard.CurrentChannelName(ref userCopy, idChannel);
+            if (string.IsNullOrEmpty(tmpChannel))
             {
-              currentAvailChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
+              continue;
+            }
+            if (user.UserType == UserType.Scheduler && tvcard.Recorder.IsRecording(ref userCopy))
+            {
+              currentRecChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
+            }
+            else if (tvcard.TimeShifter.IsTimeShifting(ref userCopy))
+            {
+              currentTSChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
             }
             else
             {
-              currentUnavailChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
+              ChannelState cState = GetChannelState(tvcard.CurrentDbChannel(ref userCopy), userCopy);
+              if (cState == ChannelState.tunable)
+              {
+                currentAvailChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
+              }
+              else
+              {
+                currentUnavailChannels.Add(tvcard.CurrentDbChannel(ref userCopy));
+              }
             }
           }
         }
       }
     }
 
-    public Dictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached()
+    public IDictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached()
     {
       return _channelStatesCachedForIdleUser;
     }
@@ -3377,11 +3676,11 @@ namespace Mediaportal.TV.Server.TVService
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>    
     /// <param name="user"></param>      
-    public Dictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
+    public IDictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
     {
-      Dictionary<int, ChannelState> allChannelStatesCached = null;
+      IDictionary<int, ChannelState> allChannelStatesCached = null;
 
-      if (user != null && user.CardId > 0 && _cards.Count() > 0)
+      if (user != null && user.CardId > 0 && _cards.Any())
       {
         IDictionary<string, IUser> users = _cards[user.CardId].UserManagement.Users;
         IUser u;
@@ -3416,7 +3715,7 @@ namespace Mediaportal.TV.Server.TVService
       if (user != null)
       {
         user.Priority = UserFactory.GetDefaultPriority(user.Name);
-        Dictionary<int, ChannelState> channelStates = GetAllChannelStatesCached(user);
+        IDictionary<int, ChannelState> channelStates = GetAllChannelStatesCached(user);
 
         if (channelStates != null)
         {
@@ -3649,7 +3948,7 @@ namespace Mediaportal.TV.Server.TVService
 
     #region private members
 
-    private Dictionary<int, ChannelState> _channelStatesCachedForIdleUser = new Dictionary<int, ChannelState>();
+    private IDictionary<int, ChannelState> _channelStatesCachedForIdleUser = new Dictionary<int, ChannelState>();
 
     private void UpdateChannelStatesForUsers()
     {
@@ -3690,7 +3989,7 @@ namespace Mediaportal.TV.Server.TVService
       }
       _channelStates.SetChannelStatesForAllUsers(_tvChannelListGroups);
 
-      IUser idleUser = new User("idle", false, 0);
+      IUser idleUser = new User("idle", UserType.Normal, 0);
       idleUser.ChannelStates = new Dictionary<int, ChannelState>();
 
       ThreadPool.QueueUserWorkItem(delegate { _channelStates.SetChannelStatesForUser(_tvChannelListGroups, ref idleUser); });
@@ -3719,46 +4018,25 @@ namespace Mediaportal.TV.Server.TVService
       {
         return false;
       }
-      return _cards[cardId].UserManagement.IsOwner(user);
+      RefreshUserFromSpecificContext(ref user);
+      return _cards[cardId].UserManagement.IsOwner(user.Name);
     }
 
     /// <summary>
     /// Removes the user from other cards then the one specified
     /// </summary>
-    /// <param name="cardId">The card id.</param>
-    /// <param name="user">The user.</param>
-    public void RemoveUserFromOtherCards(int cardId, IUser user)
+    /// <param name="userName"> </param>
+    /// <param name="newCardId">The card id.</param>    
+    /// <param name="currentCardId"> </param>
+    public void RemoveUserFromOtherCards(string userName, int currentCardId)
     {
-      if (user.CardId > 0)
+      var tvCardHandler = CardCollection[currentCardId];      
+      IUser user = tvCardHandler.UserManagement.GetUser(userName);
+      if (user != null)
       {
-        IUser newUser = (IUser)user.Clone();
-        IEnumerator<KeyValuePair<int, ITvCardHandler>> enumerator = CardCollection.GetEnumerator();
-
-        ITVCard card = CardCollection[user.CardId].Card;
-        while (enumerator.MoveNext())
-        {
-          KeyValuePair<int, ITvCardHandler> key = enumerator.Current;
-          if (key.Key == cardId)
-            continue;
-
-          if (key.Value.Card.Context == card.Context)
-            continue;
-
-          var context = key.Value.Card.Context as ITvCardContext;
-          if (context != null)
-          {
-            if (context.DoesExists(newUser))
-            {
-              newUser.CardId = key.Key;
-              Log.Debug("RemoveUserFromOtherCards : {0} - {1}", newUser.Name, newUser.CardId);
-              StopTimeShifting(ref newUser);
-            }
-          }
-          else
-          {
-            continue;
-          }
-        }
+        Log.Debug("RemoveUserFromOtherCards : {0} - {1}", user.Name, user.CardId);
+        int timeshiftingChannelId = tvCardHandler.UserManagement.GetTimeshiftingChannelId(user.Name);
+        StopTimeShifting(ref user, timeshiftingChannelId);
       }
     }
 
@@ -3788,33 +4066,31 @@ namespace Mediaportal.TV.Server.TVService
 
       try
       {
-        if (_cards[user.CardId].DataBaseCard.enabled == false)
+        RefreshUserFromSpecificContext(ref user);
+        ITvCardHandler tvCardHandler = _cards[user.CardId];
+        if (!tvCardHandler.DataBaseCard.enabled)
         {
           return TvResult.CardIsDisabled;
         }
 
         if (ticket.ConflictingSubchannelFound)
         {
-          var context = _cards[user.CardId].Card.Context as ITvCardContext;
-          if (context != null)
-          {
-            context.UserNextAvailableSubchannel(user);
-          }
+          tvCardHandler.UserManagement.GetNextAvailableSubchannel(user.Name);
         }
 
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), (User)user, channel));
 
-        _cards[user.CardId].Tuner.OnAfterTuneEvent -= Tuner_OnAfterTuneEvent;
-        _cards[user.CardId].Tuner.OnBeforeTuneEvent -= Tuner_OnBeforeTuneEvent;
+        tvCardHandler.Tuner.OnAfterTuneEvent -= Tuner_OnAfterTuneEvent;
+        tvCardHandler.Tuner.OnBeforeTuneEvent -= Tuner_OnBeforeTuneEvent;
 
-        _cards[user.CardId].Tuner.OnAfterTuneEvent += Tuner_OnAfterTuneEvent;
-        _cards[user.CardId].Tuner.OnBeforeTuneEvent += Tuner_OnBeforeTuneEvent;
+        tvCardHandler.Tuner.OnAfterTuneEvent += Tuner_OnAfterTuneEvent;
+        tvCardHandler.Tuner.OnBeforeTuneEvent += Tuner_OnBeforeTuneEvent;
 
         cardResTS.OnStartCardTune += CardResTsOnStartCardTune;
-        TvResult result = cardResTS.CardTune(_cards[user.CardId], ref user, channel, dbChannel, ticket);
+        TvResult result = cardResTS.CardTune(tvCardHandler, ref user, channel, dbChannel, ticket);
         cardResTS.OnStartCardTune -= CardResTsOnStartCardTune;
 
-        Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
+        Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, tvCardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, dbChannel.idChannel));
 
         return result;
       }
@@ -3824,9 +4100,9 @@ namespace Mediaportal.TV.Server.TVService
       }
     }
 
-    TvResult CardResTsOnStartCardTune(ref IUser user, ref string fileName)
+    TvResult CardResTsOnStartCardTune(ref IUser user, ref string fileName, int idChannel)
     {
-      return StartTimeShifting(ref user, ref fileName);
+      return StartTimeShifting(ref user, ref fileName, idChannel);
     }
 
     private void Tuner_OnBeforeTuneEvent(ITvCardHandler cardHandler)
@@ -3882,7 +4158,7 @@ namespace Mediaportal.TV.Server.TVService
       {
         return null;
       }
-
+      RefreshUserFromSpecificContext(ref user);
       var card = new VirtualCard(user)
       {
         RecordingFormat = _cards[user.CardId].DataBaseCard.recordingFormat,
@@ -3946,7 +4222,7 @@ namespace Mediaportal.TV.Server.TVService
 
     private bool ValidateTvControllerParams(int cardId, bool checkCardPresent)
     {
-      if (cardId < 0 || !_cards.ContainsKey(cardId) || (checkCardPresent && !CardPresent(cardId)))
+      if (cardId < 0 || !_cards.ContainsKey(cardId) || (checkCardPresent && !IsCardPresent(cardId)))
       {
 #if DEBUG
         StackTrace st = new StackTrace(true);
@@ -3954,7 +4230,7 @@ namespace Mediaportal.TV.Server.TVService
         Log.Error(
           "TVController:" + sf.GetMethod().Name +
           " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId,
-          _cards.ContainsKey(cardId), CardPresent(cardId));
+          _cards.ContainsKey(cardId), IsCardPresent(cardId));
         Log.Error("{0}", st);
 #endif
         return true;
@@ -3967,9 +4243,36 @@ namespace Mediaportal.TV.Server.TVService
       return ValidateTvControllerParams(cardId, true);
     }
 
-    private bool ValidateTvControllerParams(IUser user)
+    private bool IsValidTvControllerParams(string userName, int cardId)
     {
-      if (user == null || user.CardId < 0 || !_cards.ContainsKey(user.CardId) || (!CardPresent(user.CardId)))
+      bool isValidTvControllerParams = (userName != null && cardId > 0 && _cards.ContainsKey(cardId) && IsCardPresent(cardId));
+                             
+      if (!isValidTvControllerParams)
+      {
+#if DEBUG
+        var st = new StackTrace(true);
+        StackFrame sf = st.GetFrame(0);
+
+        if (cardId > 0)
+        {
+          Log.Error(
+            "TVController:" + sf.GetMethod().Name +
+            " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2} CardPresent(cardId) {3}",
+            userName, cardId, _cards.ContainsKey(cardId), IsCardPresent(cardId));
+        }
+        else
+        {
+          Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
+        }
+        Log.Error("{0}", st);
+#endif
+      }
+      return isValidTvControllerParams;
+    }
+
+    private bool ValidateTvControllerParams(IUser user)
+    {      
+      if (user == null || user.CardId < 0 || !_cards.ContainsKey(user.CardId) || (!IsCardPresent(user.CardId)))
       {
 #if DEBUG
         StackTrace st = new StackTrace(true);
@@ -3980,7 +4283,7 @@ namespace Mediaportal.TV.Server.TVService
           Log.Error(
             "TVController:" + sf.GetMethod().Name +
             " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2} CardPresent(cardId) {3}",
-            user, user.CardId, _cards.ContainsKey(user.CardId), CardPresent(user.CardId));
+            user, user.CardId, _cards.ContainsKey(user.CardId), IsCardPresent(user.CardId));
         }
         else
         {
@@ -4130,7 +4433,8 @@ namespace Mediaportal.TV.Server.TVService
       IUser tmpUser = new User();
       foreach (ITvCardHandler cardhandler in this.CardCollection.Values)
       {
-        cardhandler.StopCard(tmpUser);
+        cardhandler.ParkedUserManagement.CancelAllParkedUsers();
+        cardhandler.StopCard();
       }
     }
 
@@ -4201,6 +4505,8 @@ namespace Mediaportal.TV.Server.TVService
       _tvServerEventDispatcher.UnRegister(username);
     }
 
+    
+
     public IDictionary<string, byte[]> GetPluginBinaries()
     {
       var fileStreams = new Dictionary<string, byte[]>();
@@ -4220,6 +4526,266 @@ namespace Mediaportal.TV.Server.TVService
       }
       
       return fileStreams;
-    }   
+    }
+
+    public IList<StreamPresentation> ListAllStreamingChannels()
+    {
+      IList<StreamPresentation> streams = new List<StreamPresentation>();
+            
+      foreach (ITvCardHandler cardHandler in _cards.Values)
+      {
+        if (!cardHandler.DataBaseCard.enabled)
+        {
+          continue;
+        }
+        int idCard = cardHandler.DataBaseCard.idCard;
+        if (!IsCardPresent(idCard))
+        {
+          continue;
+        }        
+
+        IDictionary<string, IUser> users = cardHandler.UserManagement.Users;
+        if (users != null)
+        {
+          foreach (IUser user in users.Values)
+          {
+            IVirtualCard vcard;
+            var userCopy = (IUser)user.Clone();
+            bool isRecording = IsRecording(CurrentDbChannel(ref userCopy), out vcard);
+            bool isTimeShifting = IsTimeShifting(ref userCopy);
+            if (isTimeShifting || isRecording)
+            {
+              foreach (ISubChannel subchannel in user.SubChannels.Values)
+              {
+                bool isParked = subchannel.TvUsage == TvUsage.Parked;
+                double parkedDuration = 0;
+                DateTime parkedAt = DateTime.MinValue;
+
+                if (isParked)
+                {
+                  //lets get duration etc.
+                  cardHandler.ParkedUserManagement.IsUserParkedOnChannel(user.Name, subchannel.IdChannel, out parkedDuration,
+                                                                    out parkedAt);
+                }
+
+                var streamPresentation = new StreamPresentation(ChannelManagement.GetChannel(subchannel.IdChannel), user,
+                                                                isParked, isRecording, isTimeShifting, parkedDuration,
+                                                                parkedAt, IsScrambled(idCard, subchannel.Id));
+                streams.Add(streamPresentation);
+              }
+            }
+          }
+        }        
+      }
+      return streams;
+    }
+
+    public bool IsAnyCardParkedByUser(string userName)
+    {
+      bool isCardParkedByUser = false;
+      try
+      {          
+        IEnumerable<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
+        foreach (Card card in cards)
+        {
+          if (!card.enabled)
+          {
+            continue;
+          }
+          if (!IsCardPresent(card.idCard))
+          {
+            continue;
+          }
+          IDictionary<string, IUser> users = GetUsersForCard(card.idCard);
+          if (users != null)
+          {
+            foreach (IUser user in users.Values.Where(user => card.idCard == user.CardId))
+            {
+              int cardId = user.CardId;
+              ITvCardHandler tvcard = _cards[cardId];
+              isCardParkedByUser = tvcard.ParkedUserManagement.IsUserParkedOnAnyChannel(user.Name);
+              if (isCardParkedByUser)
+              {
+                break;
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+
+      return isCardParkedByUser;
+    }
+
+    public IList<CardPresentation> ListAllCards()
+    {
+      IList<CardPresentation> cardPresentations = new List<CardPresentation>();
+      IEnumerable<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
+
+      foreach (Card card in cards)
+      {
+        ITvCardHandler cardHandler;
+        bool hasCard = _cards.TryGetValue(card.idCard, out cardHandler);
+
+        if (!hasCard)
+        {
+          continue;          
+        }
+
+        bool isEnabled = card.enabled;
+        bool isAvailable = IsCardPresent(card.idCard);
+                
+        if (!isEnabled)
+        {
+          string cardType = Type(card.idCard).ToString();
+          var cardPresentation = new CardPresentation(cardType, card.idCard, card.name)
+                                   {SubChannelsCountOk = true, SubChannels = 0, State = "disabled"};
+          cardPresentations.Add(cardPresentation);
+        }
+        else if (!isAvailable)
+        {
+          var cardPresentation = new CardPresentation("n/a", card.idCard, card.name) { SubChannelsCountOk = true, SubChannels = 0, State = "n/a" };          
+          cardPresentations.Add(cardPresentation);
+        }
+        else
+        {
+          string cardType = Type(card.idCard).ToString();          
+          IDictionary<string, IUser> users = GetUsersForCard(card.idCard);
+
+          int subChannels = GetSubChannels(card.idCard);
+          if (users.Count == 0)
+          {
+            var cardPresentation = new CardPresentation(cardType, card.idCard, card.name) { SubChannels = subChannels, SubChannelsCountOk = (subChannels == 0), Idle = true, State = "Idle" };
+
+            bool isScanning = IsScanning(card.idCard);
+            if (isScanning)
+            {
+              cardPresentation.State = "Scanning";
+              cardPresentation.UserName = "n/a";
+              cardPresentation.ChannelName = "n/a";
+              cardPresentation.IsScrambled = "n/a";
+              cardPresentation.IsOwner = "no";
+            }
+
+            cardPresentations.Add(cardPresentation);
+          }
+          else
+          {
+            HashSet<int> subchannelsInUse = new HashSet<int>();
+            ICollection<IUser> usersCopy = new List<IUser>(users.Values); //avoid threading issues, make a copy.
+            foreach (IUser user in usersCopy)
+            {
+              if (user.CardId == card.idCard)
+              {
+                bool isOwner = IsOwner(user.CardId, user);
+                foreach (ISubChannel subchannel in user.SubChannels.Values)
+                {
+
+                  if (!subchannelsInUse.Contains(subchannel.Id))
+                  {
+                    subchannelsInUse.Add(subchannel.Id);
+                  }
+
+                  bool isScrambled = IsScrambled(user.CardId, subchannel.Id);
+                  var cardPresentation = new CardPresentation(cardType, card.idCard, card.name)
+                                           {
+                                             SubChannels = subChannels,
+                                             SubChannelsCountOk = true,
+                                             Idle = false,                                             
+                                             UserName = user.Name,
+                                             ChannelName =
+                                               ChannelManagement.GetChannel(subchannel.IdChannel).displayName,
+                                             IsScrambled = isScrambled ? "yes" : "no",
+                                             IsOwner = isOwner ? "yes" : "no",
+                                           };
+
+                  double parkedDuration;
+                  DateTime parkedAt;
+                  bool isParked = cardHandler.ParkedUserManagement.IsUserParkedOnChannel(user.Name, subchannel.IdChannel,
+                                                                                         out parkedDuration,
+                                                                                         out parkedAt);
+                  string state = "n/a";
+
+                  if (user.UserType == UserType.Scheduler)
+                  {
+                    state = "Recording";
+                  }
+                  else if (user.UserType == UserType.EPG)
+                  {
+                    state = "Grabbing EPG";
+                  }
+                  else if (user.UserType == UserType.Scanner)
+                  {
+                    state = "Scanning";
+                  }
+                  else if (user.UserType == UserType.Normal)
+                  {
+                    state = "Timeshifting";
+                    if (isParked)
+                    {
+                      state += " (PARK@" + parkedAt.ToShortTimeString() + ")";
+                    }
+                  }
+
+                  if (user.UserType != UserType.EPG)
+                  {
+                    bool isGrabbingEpg = IsGrabbingEpg(card.idCard);
+                    if (isGrabbingEpg)
+                    {
+                      state += " (Grabbing EPG)";
+                    }
+                  }
+                  cardPresentation.State = state;
+                  cardPresentations.Add(cardPresentation);
+                }
+              }
+            }
+
+            if (subChannels != subchannelsInUse.Count)
+            {
+              foreach (CardPresentation cardPresentation in cardPresentations)
+              {
+                if (cardPresentation.CardId == card.idCard)
+                cardPresentation.SubChannelsCountOk = false;
+              }
+            }
+          }
+        }
+      }
+      return cardPresentations;
+    }
+
+   
+
+
+    public bool CanUserParkTimeshifting(IUser user)
+    {
+      bool canUserParkTimeshifting = false;
+      if (!ValidateTvControllerParams(user))
+      {
+        try
+        {
+          RefreshUserFromSpecificContext(ref user);
+          int cardId = user.CardId;
+          ITvCardHandler tvcard = _cards[cardId];
+          if (tvcard.DataBaseCard.enabled)
+          {
+            if (tvcard.TimeShifter.IsTimeShifting(ref user))
+            {
+              canUserParkTimeshifting = !tvcard.ParkedUserManagement.IsUserParkedOnAnyChannel(user.Name);
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+        }
+      }
+      
+      return canUserParkTimeshifting;
+    }
   }
 }

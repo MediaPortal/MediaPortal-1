@@ -32,6 +32,9 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Services
   /// </summary>  
   public interface IUser
   {
+    [DataMember]
+    UserType UserType { get; }
+
     /// <summary>
     /// Gets an integer defining the user's card lock priority (higher number=higher priority)
     /// </summary>    
@@ -59,34 +62,13 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Services
     /// <value>The card id.</value>
     [DataMember]
     int CardId { get; set; }
-
-    /// <summary>
-    /// Gets or sets the database id channel.
-    /// </summary>
-    /// <value>The id channel.</value>
-    [DataMember]
-    int IdChannel { get; set; }
-
-    /// <summary>
-    /// Gets or sets the subchannel id.
-    /// </summary>
-    /// <value>The subchannel id.</value>
-    [DataMember]
-    int SubChannel { get; set; }
-
+  
     /// <summary>
     /// Gets or sets the name.
     /// </summary>
     /// <value>The name.</value>
     [DataMember]
-    string Name { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this instance is admin.
-    /// </summary>
-    /// <value><c>true</c> if this instance is admin; otherwise, <c>false</c>.</value>
-    [DataMember]
-    bool IsAdmin { get; set; }
+    string Name { get; set; }    
 
     /// <summary>
     /// Gets or sets the history.
@@ -101,6 +83,8 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Services
     [DataMember]
     TvStoppedReason TvStoppedReason { get; set; }
 
+    
+
     /// <summary>
     /// Creates a new object that is a copy of the current instance.
     /// </summary>
@@ -108,5 +92,8 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.Services
     /// A new object that is a copy of this instance.
     /// </returns>
     object Clone();
+
+    [DataMember]
+    SortedDictionary<int, ISubChannel> SubChannels { get; set; }        
   }
 }

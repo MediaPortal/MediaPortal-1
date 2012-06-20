@@ -96,7 +96,15 @@ namespace Mediaportal.TV.Server.TVControl.Events
     /// <summary>
     /// Event indicating that new channelstate data is available
     /// </summary>
-    ChannelStatesChanged
+    ChannelStatesChanged,
+    /// <summary>
+    /// Event indicating that timeshifting was parked by user
+    /// </summary>
+    TimeShiftingParked,
+    /// <summary>
+    /// Event indicating that timeshifting was unparked by user
+    /// </summary>
+    TimeShiftingUnParked
   } ;
 
   [Serializable]

@@ -227,7 +227,7 @@ namespace Mediaportal.TV.Server.SetupTV
         IList<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card dbsCard in cards)
         {
-          if (dbsCard.enabled && ServiceAgents.Instance.ControllerServiceAgent.CardPresent(dbsCard.idCard))
+          if (dbsCard.enabled && ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(dbsCard.idCard))
           {
             CardType type = ServiceAgents.Instance.ControllerServiceAgent.Type(dbsCard.idCard);
             int cardId = dbsCard.idCard;

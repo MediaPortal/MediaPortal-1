@@ -1259,10 +1259,15 @@
     <String id="2514">Gå tilbage til teksten</String>
     <String id="2515">Billeder</String>
     <String id="2516" prefix="Min ">Wikipedia</String>
+    <String id="2549">eller parker og genoptag senere?</String>
     <String id="2550">Vil du virkelig stoppe live TV?</String>
     <String id="2551">(tidsforskydning vil gå tabt)</String>
     <String id="2552">Stop</String>
     <String id="2553">Afspil</String>
+    <String id="2554">Parker</String>
+    <String id="2555">Genoptag kanal fra [{0}]</String>
+    <String id="2556">Genoptag kanal ?</String>
+    <String id="2557">Hvis ikke vil du se live TV.</String>
     <String id="2599">Ubesluttet</String>
     <String id="2600">Engelsk</String>
     <String id="2601">Tysk</String>

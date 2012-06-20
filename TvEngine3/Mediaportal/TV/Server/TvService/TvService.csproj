@@ -98,6 +98,9 @@
     <Compile Include="CardManagement\CardAllocation\ChannelStates.cs" />
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocationStatic.cs" />
     <Compile Include="CardManagement\CardHandler\AudioStreams.cs" />
+    <Compile Include="CardManagement\CardHandler\OwnerSubChannel.cs" />
+    <Compile Include="CardManagement\CardHandler\ParkedUser.cs" />
+    <Compile Include="CardManagement\CardHandler\ParkedUserManagement.cs" />
     <Compile Include="CardManagement\CardHandler\TimeShifterBase.cs" />
     <Compile Include="CardManagement\CardReservation\Ticket\CardReservationTicketBase.cs" />
     <Compile Include="CardManagement\CardReservation\Ticket\CardStopReservationTicket.cs" />
@@ -190,6 +193,10 @@
     <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\Presentation\Presentation.csproj">
+      <Project>{FB53D159-8115-4155-921D-F64E0072A633}</Project>
+      <Name>Presentation</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>

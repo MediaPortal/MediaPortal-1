@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
+using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -106,9 +107,9 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// Method to check if card is currently present and detected
     /// </summary>
     /// <returns>true if card is present otherwise false</returns>
-    public bool CardPresent(int cardId)
+    public bool IsCardPresent(int cardId)
     {
-      return Service.CardPresent(cardId);
+      return Service.IsCardPresent(cardId);
     }
 
     /// <summary>
@@ -235,11 +236,11 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>
-    /// <param name="channelId">channel id</param>
+    /// <param name="userName"> </param>
     /// <returns>id of Schedule or -1 if  card not recording</returns>
-    public int GetRecordingSchedule(int cardId, int channelId)
+    public int GetRecordingSchedule(int cardId, string userName)
     {
-      return Service.GetRecordingSchedule(cardId, channelId);
+      return Service.GetRecordingSchedule(cardId, userName);
     }
 
     /// <summary>
@@ -392,7 +393,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>
     /// <param name="user"></param>
-    public Dictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
+    public IDictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
     {
       return Service.GetAllChannelStatesCached(user);
     }
@@ -588,10 +589,11 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// Gets the tv/radio channel on which the card is currently tuned
     /// </summary>
     /// <param name="user">The user.</param>
+    /// <param name="idChannel"> </param>
     /// <returns>IChannel</returns>
-    public IChannel CurrentChannel(ref IUser user)
+    public IChannel CurrentChannel(ref IUser user, int idChannel)
     {
-      return Service.CurrentChannel(ref user);
+      return Service.CurrentChannel(ref user, idChannel);
     }
 
     /// <summary>
@@ -630,13 +632,14 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// <summary>
     /// Returns the current filename used for timeshifting
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
+    /// <param name="cardId"> </param>
     /// <returns>
     /// timeshifting filename null when not timeshifting
     /// </returns>
-    public string TimeShiftFileName(ref IUser user)
+    public string TimeShiftFileName(string userName, int cardId)
     {
-      return Service.TimeShiftFileName(ref user);
+      return Service.TimeShiftFileName(userName, cardId);
     }
 
     /// <summary>
@@ -803,6 +806,16 @@ namespace Mediaportal.TV.Server.TVService.Services
       Service.StopCard(user);
     }
 
+    public bool ParkTimeShifting(ref IUser user, double duration, int idChannel)
+    {
+      return Service.ParkTimeShifting(ref user, duration, idChannel);
+    }
+
+    public bool UnParkTimeShifting(ref IUser user, double duration, int idChannel, out IVirtualCard card)
+    {
+      return Service.UnParkTimeShifting(ref user, duration, idChannel, out card);
+    }
+
     /// <summary>
     /// Query what card would be used for timeshifting on any given channel
     /// </summary>
@@ -875,6 +888,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     /// Stops the time shifting.
     /// </summary>
     /// <param name="user">user credentials.</param>
+    /// <param name="channelId"> </param>
     /// <returns>true if success otherwise false</returns>
     public bool StopTimeShifting(ref IUser user)
     {
@@ -1151,7 +1165,25 @@ namespace Mediaportal.TV.Server.TVService.Services
       return Service.GetPluginBinaries();
     }
 
+    public IList<StreamPresentation> ListAllStreamingChannels()
+    {
+      return Service.ListAllStreamingChannels();
+    }
 
+    public bool CanUserParkTimeshifting(IUser user)
+    {
+      return Service.CanUserParkTimeshifting(user);
+    }
+
+    public bool IsAnyCardParkedByUser(string userName)
+    {
+      return Service.IsAnyCardParkedByUser(userName);
+    }
+
+    public IList<CardPresentation> ListAllCards()
+    {
+      return Service.ListAllCards();
+    }
 
     #endregion
   }

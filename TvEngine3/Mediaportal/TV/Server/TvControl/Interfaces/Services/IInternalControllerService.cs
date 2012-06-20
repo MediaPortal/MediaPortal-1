@@ -54,7 +54,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     void Init();
     event TvServerEventHandler OnTvServerEvent;
-    Dictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached();
+    IDictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached();
     IDictionary<int, ITvCardHandler> CardCollection { get; }
     bool AllCardsIdle { get; }
 
@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </summary>
     /// <param name="cardId">id of the card.</param>
     /// <value>true if enabled, otherwise false</value>
-    bool Enabled(int cardId);
+    bool IsCardEnabled(int cardId);
 
     List<IVirtualCard> GetAllRecordingCards();
 
@@ -111,7 +111,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     List<EpgChannel> Epg(int cardId);
 
     bool SupportsSubChannels(int cardId);
-    TvResult StartTimeShifting(ref IUser user, ref string timeshiftFileName);
+    TvResult StartTimeShifting(ref IUser user, ref string timeshiftFileName, int idChannel);
 
     /// <summary>
     /// Stops the grabbing epg.
@@ -132,5 +132,8 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     void UnRegisterUserForCiMenu(string username);
     void RegisterUserForTvServerEvents(string username);
     void UnRegisterUserForTvServerEvents(string username);
+    bool StopTimeShifting(ref IUser user, TvStoppedReason reason, int channelId);
+    bool StopTimeShifting(ref IUser user, int channelId);
+    bool IsScrambled(int cardId, int subChannel);
   }
 }

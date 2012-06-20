@@ -12,6 +12,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
+using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.LinqKit;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -753,6 +754,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         Log.Error("ChannelManagement.GetAllChannelsByGroupIdAndMediaType ex={0}", ex);
         throw;
       }
-    }
+    }    
   }
 }

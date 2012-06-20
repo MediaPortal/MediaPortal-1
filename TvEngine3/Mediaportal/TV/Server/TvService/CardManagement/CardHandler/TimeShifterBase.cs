@@ -24,7 +24,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     protected readonly ManualResetEvent _eventTimeshift = new ManualResetEvent(true);
     protected ITvSubChannel _subchannel; // the active sub channel to record        
 
-    protected TimeShifterBase(ITvCardHandler cardHandler)
+    protected TimeShifterBase()
     {
       _eventAudio.Reset();
       _eventVideo.Reset();
@@ -82,21 +82,18 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       return _cancelled;
     }
 
-    protected ITvSubChannel GetSubChannel(ref IUser user)
+    protected ITvSubChannel GetSubChannel(ref IUser user, int idChannel)
     {
       ITvSubChannel subchannel = null;
       if (_cardHandler.DataBaseCard.enabled)
       {
-        var context = _cardHandler.Card.Context as TvCardContext;
-        if (context != null)
-        {
-          bool userExists;
-          context.GetUser(ref user, out userExists);
-          if (userExists)
-          {
-            subchannel = GetSubChannel(user.SubChannel);
-          }          
-        }        
+        bool userExists;       
+        _cardHandler.UserManagement.RefreshUser(ref user, out userExists);
+          
+        if (userExists)
+        {            
+          subchannel = GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+        }          
       }
       
       return subchannel;
@@ -127,7 +124,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       scrambled = false;
 
-      if (_cardHandler.DataBaseCard.enabled == false)
+      if (!_cardHandler.DataBaseCard.enabled)
       {
         return false;
       }
@@ -232,7 +229,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       if (_timeshiftingEpgGrabberEnabled)
       {
-        Channel channel = ChannelManagement.GetChannel(user.IdChannel);
+        Channel channel = ChannelManagement.GetChannel(_cardHandler.UserManagement.GetRecentChannelId(user.Name));
         if (channel.grabEpg)
         {
           _cardHandler.Card.GrabEpg();

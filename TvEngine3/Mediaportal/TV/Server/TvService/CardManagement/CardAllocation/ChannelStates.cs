@@ -67,7 +67,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
 
         if (u == null)
           continue;
-        if (u.IsAdmin)
+        if (u.UserType == UserType.Scheduler)
           continue; //scheduler users do not need to have their channelstates set.
 
         try
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
           IDictionary<string, IUser> usersAvail = cardHandler.UserManagement.Users;
           if (usersAvail != null)
           {
-            foreach (KeyValuePair<string, IUser> tmpUser in usersAvail.Where(tmpUser => !tmpUser.Value.IsAdmin)) 
+            foreach (KeyValuePair<string, IUser> tmpUser in usersAvail.Where(tmpUser => tmpUser.Value.UserType != UserType.Scheduler)) 
             {
                 tmpUser.Value.ChannelStates = new Dictionary<int, ChannelState>();
                 allUsers.Add(tmpUser.Value);
@@ -290,7 +290,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
       foreach (IUser user in allUsers) 
       {
         //ignore admin users, like scheduler
-        if (!user.IsAdmin)
+        if (user.UserType != UserType.Scheduler)
         {
           bool checkTransponder = CheckTransponder(user, tvcard, tuningDetail);
         if (checkTransponder)

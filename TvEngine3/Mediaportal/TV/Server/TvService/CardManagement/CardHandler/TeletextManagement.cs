@@ -24,6 +24,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
@@ -50,19 +51,22 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       try
       {
+        bool grabTeletext = false;
         if (_cardHandler.DataBaseCard.enabled == false)
         {
           return false;
         }        
+        
+        _cardHandler.UserManagement.RefreshUser(ref user);
 
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return false;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-        if (subchannel == null)
-          return false;
-        return subchannel.GrabTeletext;
+
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingChannelId(user.Name));
+        if (subchannel != null)
+        {
+          grabTeletext = subchannel.GrabTeletext;              
+        }
+
+        return grabTeletext;
       }
       catch (Exception ex)
       {
@@ -79,19 +83,23 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <returns>yes if channel has teletext otherwise false</returns>
     public bool HasTeletext(IUser user)
     {
+      bool hasTeletext = false;
       if (_cardHandler.DataBaseCard.enabled == false)
       {
         return false;
       }
+      
+      _cardHandler.UserManagement.RefreshUser(ref user);
 
-      var context = _cardHandler.Card.Context as ITvCardContext;
-      if (context == null)
-        return false;
-      context.GetUser(ref user);
-      ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-      if (subchannel == null)
-        return false;
-      return subchannel.HasTeletext;
+
+      ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(_cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+      if (subchannel != null)
+      {
+        hasTeletext = subchannel.HasTeletext;
+      }          
+      
+
+      return hasTeletext;
     }
 
     /// <summary>
@@ -108,12 +116,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return new TimeSpan(0, 0, 0, 15);
         }       
+        
+        _cardHandler.UserManagement.RefreshUser(ref user);
 
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return new TimeSpan(0, 0, 0, 15);
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return new TimeSpan(0, 0, 0, 15);
         return subchannel.TeletextDecoder.RotationTime(pageNumber);
@@ -138,12 +145,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return;
         }       
-
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+        
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return;
         subchannel.GrabTeletext = onOff;
@@ -170,12 +175,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return new byte[] {1};
         }      
+        
+        _cardHandler.UserManagement.RefreshUser(ref user);
 
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return new byte[] {1};
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return new byte[] {1};
         if (subchannel.TeletextDecoder == null)
@@ -203,12 +207,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return -1;
         }
-        
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return -1;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+                
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
         if (subchannel.TeletextDecoder == null)
@@ -235,12 +237,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return -1;
         }
-       
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return -1;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+               
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
         if (subchannel.TeletextDecoder == null)
@@ -267,12 +267,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return -1;
         }
-        
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return -1;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+                
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
         if (subchannel.TeletextDecoder == null)
@@ -299,12 +297,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return -1;
         }
-
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return -1;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+        
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
         if (subchannel.TeletextDecoder == null)
@@ -331,12 +327,10 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return -1;
         }
-      
-        var context = _cardHandler.Card.Context as ITvCardContext;
-        if (context == null)
-          return -1;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+              
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subchannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, _cardHandler.UserManagement.GetTimeshiftingSubChannel(user.Name));
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return -1;
         if (subchannel.TeletextDecoder == null)

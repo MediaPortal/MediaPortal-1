@@ -27,10 +27,18 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
 
     private void UserDisconnectedFromService(string username)
     {
-      lock (_disconnectedHeartbeatUsersLock)
+      //bool isAnyCardParkedByUser = ServiceManager.Instance.InternalControllerService.IsAnyCardParkedByUser(username);
+      //if (!isAnyCardParkedByUser)
       {
-        _diconnectedHeartbeatUsers[username] = DateTime.Now;
+        lock (_disconnectedHeartbeatUsersLock)
+        {
+          _diconnectedHeartbeatUsers[username] = DateTime.Now;
+        }
       }
+      //else
+     // {
+      //  Log.Info("HeartbeatManager: will not monitor parked user '{0}'", username);
+     // }
     }
 
     #region public methods
@@ -119,20 +127,22 @@ namespace Mediaportal.TV.Server.TVService.EventDispatchers
               if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
               {
                 Log.Write("HeartbeatManager: idle user found: {0}", username);
-                IEnumerator<KeyValuePair<int, ITvCardHandler>> enumerator =
-                  ServiceManager.Instance.InternalControllerService.CardCollection.GetEnumerator();
-
-                while (enumerator.MoveNext())
+                IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
+                foreach (ITvCardHandler card in cards.Values)
                 {
-                  KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-                  IDictionary<string, IUser> users = keyPair.Value.UserManagement.Users;
+                  IDictionary<string, IUser> users = card.UserManagement.Users;
                   IUser tmpUser;
                   bool foundUser = users.TryGetValue(username, out tmpUser);
                   if (foundUser)
-                  {
-                    Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
-                    ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref tmpUser,
-                                                                                       TvStoppedReason.HeartBeatTimeOut);
+                  {                    
+                    int timeshiftingChannelId = card.UserManagement.GetTimeshiftingChannelId(tmpUser.Name);
+                    if (timeshiftingChannelId > 0)
+                    {
+                      Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
+                      ServiceManager.Instance.InternalControllerService.StopTimeShifting(ref tmpUser,
+                                                                                       TvStoppedReason.HeartBeatTimeOut, timeshiftingChannelId);
+                    }
+                    
                     lock (_disconnectedHeartbeatUsersLock)
                     {
                       if (_diconnectedHeartbeatUsers.ContainsKey(username))

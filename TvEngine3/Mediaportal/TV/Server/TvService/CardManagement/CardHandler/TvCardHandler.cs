@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -30,6 +31,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.CardHandler;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
+using Mediaportal.TV.Server.TVService.Services;
 
 namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 {
@@ -37,11 +39,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
   {
     #region variables
 
-    
-    private bool _isLocal;
     private ITVCard _card;
     private Card _dbsCard;
-    private readonly UserManagement _userManagementManagement;
+    private readonly UserManagement _userManagement;
+    private readonly IParkedUserManagement _parkedUserManagement;
+
     private readonly DisEqcManagement _disEqcManagement;
     private readonly TeletextManagement _teletext;
     private readonly ChannelScanning _scanner;
@@ -50,7 +52,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     private readonly Recorder _recorder;
     private readonly TimeShifter _timerShifter;
     private readonly CardTuner _tuner;
-    private ICiMenuActions _ciMenu;
+    private ICiMenuActions _ciMenu;    
 
     #endregion
 
@@ -63,7 +65,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     {
       _dbsCard = dbsCard;
       Card = card;
-      _userManagementManagement = new UserManagement(this);
+      _userManagement = new UserManagement(this);
+      _parkedUserManagement = new ParkedUserManagement(this);
+
       _disEqcManagement = new DisEqcManagement(this);
       _teletext = new TeletextManagement(this);
       _scanner = new ChannelScanning(this);
@@ -71,7 +75,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       _audioStreams = new AudioStreams(this);
       _tuner = new CardTuner(this);
       _recorder = new Recorder(this);
-      _timerShifter = new TimeShifter(this);
+      _timerShifter = new TimeShifter(this);      
     }
 
     #endregion
@@ -108,14 +112,17 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
 
     #endregion
 
-    /// <summary>
-    /// Gets the users.
-    /// </summary>
-    /// <value>The users.</value>
+
     public IUserManagement UserManagement
     {
-      get { return _userManagementManagement; }
+      get { return _userManagement; }
     }
+
+
+    public IParkedUserManagement ParkedUserManagement
+    {
+      get { return _parkedUserManagement; }
+    }    
 
     /// <summary>
     /// Gets the diseqc handler.
@@ -485,12 +492,16 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     public void Dispose()
     {
       _card.Dispose();
-    }
+    }    
+
+    
 
     public void SetParameters()
     {
       if (_card == null)
+      {
         return;
+      }
       ScanParameters settings = new ScanParameters();
       
       settings.TimeOutTune = Int32.Parse(SettingsManagement.GetSetting("timeoutTune", "2").value);
@@ -516,8 +527,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// Gets the current channel.
     /// </summary>
     /// <param name="user">The user.</param>
+    /// <param name="idChannel"> </param>
     /// <returns>channel</returns>
-    public IChannel CurrentChannel(ref IUser user)
+    public IChannel CurrentChannel(ref IUser user, int idChannel)
     {
       try
       {
@@ -525,14 +537,17 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return null;
         }
-       
-        var context = _card.Context as ITvCardContext;
-        if (context == null)
+               
+        if (Context == null)
+        {
           return null;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+        }
+        _userManagement.RefreshUser(ref user);
+        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
         if (subchannel == null)
+        {
           return null;
+        }
         return subchannel.CurrentChannel;
       }
       catch(ThreadAbortException)
@@ -557,10 +572,9 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       {
         if (_dbsCard.enabled == false)
           return -1;
-        
-        var context = _card.Context as ITvCardContext;
-        context.GetUser(ref user);
-        return user.IdChannel;
+
+        _userManagement.RefreshUser(ref user);
+        return _userManagement.GetTimeshiftingChannelId(user.Name);
       }
       catch (ThreadAbortException)
       {
@@ -573,12 +587,18 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       }
     }
 
+    private ITvCardContext Context
+    {
+      get { return _card.Context as ITvCardContext; }
+    }
+
     /// <summary>
     /// Gets the current channel name.
     /// </summary>
     /// <param name="user">The user.</param>
+    /// <param name="idChannel"> </param>
     /// <returns>channel</returns>
-    public string CurrentChannelName(ref IUser user)
+    public string CurrentChannelName(ref IUser user, int idChannel)
     {
       try
       {
@@ -586,12 +606,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return "";
         }
-
-        var context = _card.Context as ITvCardContext;
-        if (context == null)
+        
+        if (Context == null)
           return "";
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+        _userManagement.RefreshUser(ref user);
+        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
         if (subchannel == null)
           return "";
         if (subchannel.CurrentChannel == null)
@@ -622,12 +641,39 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
         {
           return true;
         }
-       
-        var context = _card.Context as ITvCardContext;
-        if (context == null)
+               
+        if (Context == null)
           return false;
-        context.GetUser(ref user);
-        ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+        _userManagement.RefreshUser(ref user);
+        ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(user.Name));
+        if (subchannel == null)
+          return false;
+        return (false == subchannel.IsReceivingAudioVideo);
+      }
+      catch (ThreadAbortException)
+      {
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        return false;
+      }
+    }
+
+    public bool IsScrambled(int subchannelId)
+    {
+      try
+      {
+        if (_dbsCard.enabled == false)
+        {
+          return true;
+        }
+        
+        if (Context == null)
+          return false;
+
+        ITvSubChannel subchannel = _card.GetSubChannel(subchannelId);
         if (subchannel == null)
           return false;
         return (false == subchannel.IsReceivingAudioVideo);
@@ -647,26 +693,28 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// <summary>
     /// Pauses the card.
     /// </summary>
-    public void PauseCard(IUser user)
+    public void PauseCard()
     {
       try
       {
         if (_dbsCard.enabled == false)
         {
           return;
-        }        
-        Log.Info("Pausecard");
-        //remove all subchannels, except for this user...
-        ITvSubChannel[] channels = _card.SubChannels;
-        for (int i = 0; i < channels.Length; ++i)
-        {
-          _card.FreeSubChannel(channels[i].SubChannelId);
         }
 
-        var context = _card.Context as ITvCardContext;
-        if (context != null)
+        if (_parkedUserManagement.HasAnyParkedUsers())
         {
-          context.Clear();
+          Log.Info("unable to Pausecard since there are parked channels");
+          return;
+        }
+
+        Log.Info("Pausecard");
+        //remove all subchannels, except for this user...
+        FreeAllSubChannels();
+        
+        if (Context != null)
+        {
+          _userManagement.Clear();
         }
 
         if (_card.SupportsPauseGraph)
@@ -687,32 +735,35 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       }
     }
 
+   
+
     /// <summary>
     /// Stops the card.
     /// </summary>
-    public void StopCard(IUser user)
+    public void StopCard()
     {
       try
       {
-        if (_dbsCard.enabled == false)
+        if (!_dbsCard.enabled)
         {
+          return;
+        }
+
+        if (_parkedUserManagement.HasAnyParkedUsers())
+        {
+          Log.Info("unable to Stopcard since there are parked channels");
           return;
         }
       
         Log.Info("Stopcard");
 
         //remove all subchannels, except for this user...
-        ITvSubChannel[] channels = _card.SubChannels;
-        for (int i = 0; i < channels.Length; ++i)
-        {
-          _card.FreeSubChannel(channels[i].SubChannelId);
-        }
+        FreeAllSubChannels();        
 
-        var context = _card.Context as ITvCardContext;
-        if (context != null)
-        {
-          context.Clear();
-        }
+        
+        
+        _userManagement.Clear();
+        
         _card.StopGraph();
       }
       catch (ThreadAbortException)
@@ -722,6 +773,16 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       {
         Log.Write(ex);
       }
+    }
+
+    private void FreeAllSubChannels()
+    {
+      ITvSubChannel[] channels = _card.SubChannels;
+      foreach (ITvSubChannel tvSubChannel in channels)
+      {
+        _card.FreeSubChannel(tvSubChannel.SubChannelId);
+      }
+
     }
 
     /// <summary>
@@ -734,12 +795,13 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
       {
         return null;
       }
-      
-      var context = _card.Context as ITvCardContext;
-      if (context == null)
+            
+      if (Context == null)
+      {
         return null;
-      context.GetUser(ref user);
-      ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
+      }
+      _userManagement.RefreshUser(ref user);
+      ITvSubChannel subchannel = _card.GetSubChannel(_userManagement.GetTimeshiftingSubChannel(user.Name));
       if (subchannel == null)
         return null;
       return subchannel.GetCurrentVideoStream;

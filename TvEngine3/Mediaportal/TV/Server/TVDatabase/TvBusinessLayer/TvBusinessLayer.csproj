@@ -139,6 +139,10 @@
       <Project>{4D0F06A3-DE88-4395-823F-67B27DE30E81}</Project>
       <Name>EntityModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Presentation\Presentation.csproj">
+      <Project>{FB53D159-8115-4155-921D-F64E0072A633}</Project>
+      <Name>Presentation</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

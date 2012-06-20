@@ -142,23 +142,12 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     public void Stop(IUser user)
     {
       Log.Epg("EpgGrabbing: Stop - user {0}", user.Name);
-      var context = _cardHandler.Card.Context as ITvCardContext;
-      if (context != null)
+      _cardHandler.UserManagement.RemoveUser(user);
+      int recentSubChannelId = _cardHandler.UserManagement.GetRecentSubChannelId(user.Name);
+      if (recentSubChannelId > -1 && !_cardHandler.UserManagement.ContainsUsersForSubchannel(recentSubChannelId))
       {
-        context.Remove(user);
-        if (context.ContainsUsersForSubchannel(user.SubChannel) == false)
-        {
-          if (user.SubChannel > -1)
-          {
-            _cardHandler.Card.FreeSubChannel(user.SubChannel);
-          }
-        }
-      }
-      else
-      {
-        Log.Epg("EpgGrabbing: Stop - context == null");
-      }
-
+        _cardHandler.Card.FreeSubChannel(recentSubChannelId);        
+      }      
       _cardHandler.Card.IsEpgGrabbing = false;
     }
   }

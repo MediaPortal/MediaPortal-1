@@ -64,7 +64,7 @@ namespace Mediaportal.TV.TvPlugin
       _timer = new Timer();
       _timer.Stop();
       // check every 15 seconds for notifies
-      new User {IsAdmin = false, Name = "Free channel checker"};
+      new User {Name = "Free channel checker"};
       _timer.Interval = 15000;
       _timer.Enabled = true;
       _timer.Tick += new EventHandler(_timer_Tick);

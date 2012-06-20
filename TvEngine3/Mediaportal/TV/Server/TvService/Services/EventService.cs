@@ -7,6 +7,7 @@ using Mediaportal.TV.Server.TVControl.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVService.Services
 {
@@ -22,7 +23,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     private static readonly object _subscribersLock = new object();
     private static readonly IDictionary<string, Subscriber> _subscribers = new ConcurrentDictionary<string, Subscriber>();       
 
-    public delegate void UserDisconnectedFromServiceDelegate(string username);
+    public delegate void UserDisconnectedFromServiceDelegate(string userName);
     public static UserDisconnectedFromServiceDelegate UserDisconnectedFromService;
 
     #region IDisposable

@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
       bool isCardPresent = false;
       try
       {
-        if (ServiceManager.Instance.InternalControllerService.CardPresent(cardId))
+        if (ServiceManager.Instance.InternalControllerService.IsCardPresent(cardId))
         {
           isCardPresent = true;
         }
@@ -269,7 +269,8 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
             {
               Log.Info("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
             }
-            int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);            
+            int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
+            //bool isParked = IsCardParkedOnOtherChannel(cardHandler, dbChannel.idChannel);
             var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
                                                  nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
@@ -297,6 +298,11 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
         Log.Info("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
+
+    /*private bool IsCardParkedOnOtherChannel(ITvCardHandler cardHandler, int idChannel)
+    {
+      return cardHandler.IsCardParkedOnOtherChannel(idChannel);
+    }*/
 
     private static bool CanCardDecodeChannel(ITvCardHandler cardHandler, IChannel tuningDetail)
     {

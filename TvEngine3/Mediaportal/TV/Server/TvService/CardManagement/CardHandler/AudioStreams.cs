@@ -48,38 +48,47 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// Gets the available audio streams.
     /// </summary>
     /// <value>The available audio streams.</value>
-    public IAudioStream[] Streams(IUser user)
+    public IAudioStream[] Streams(IUser user, int idChannel)
     {
-      if (_cardHandler.DataBaseCard.enabled == false)
-        return new List<IAudioStream>().ToArray();
-
-      var context = _cardHandler.Card.Context as ITvCardContext;
-      if (context == null)
-        return new List<IAudioStream>().ToArray();
-      context.GetUser(ref user);
-      ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-      if (subchannel == null)
-        return new List<IAudioStream>().ToArray();
-      return subchannel.AvailableAudioStreams.ToArray();
+      var audioStreams = new List<IAudioStream>().ToArray();
+      if (_cardHandler.DataBaseCard.enabled)
+      {
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subChannelIdByChannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);
+        if (subChannelIdByChannelId > -1)
+        {
+          ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subChannelIdByChannelId);
+          if (subchannel != null)
+          {
+            audioStreams = subchannel.AvailableAudioStreams.ToArray();
+          } 
+        }
+      }
+                          
+      return audioStreams;
     }
 
     /// <summary>
     /// Gets the current audio stream.
     /// </summary>
     /// <returns></returns>
-    public IAudioStream GetCurrent(IUser user)
+    public IAudioStream GetCurrent(IUser user, int idChannel)
     {
-      if (_cardHandler.DataBaseCard.enabled == false)
-        return null;     
-
-      var context = _cardHandler.Card.Context as ITvCardContext;
-      if (context == null)
-        return null;
-      context.GetUser(ref user);
-      ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-      if (subchannel == null)
-        return null;
-      return subchannel.CurrentAudioStream;
+      IAudioStream currentAudioStream = null;
+      if (_cardHandler.DataBaseCard.enabled)
+      {        
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        int subChannelIdByChannelId = _cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel);
+        if (subChannelIdByChannelId > -1)
+        {
+          ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(subChannelIdByChannelId);
+          if (subchannel != null)
+          {
+            currentAudioStream = subchannel.CurrentAudioStream;
+          }         
+        }        
+      }
+      return currentAudioStream;
     }
 
     /// <summary>
@@ -87,29 +96,22 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardHandler
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="stream">The stream.</param>
-    public void Set(IUser user, IAudioStream stream)
+    /// <param name="idChannel"> </param>
+    public void Set(IUser user, IAudioStream stream, int idChannel)
     {
-      if (_cardHandler.DataBaseCard.enabled == false)
+      if (_cardHandler.DataBaseCard.enabled)
       {
-        return;
-      }
-
-      var context = _cardHandler.Card.Context as ITvCardContext;
-      if (context == null)
-      {
-        Log.WriteFile("card: SetCurrentAudioStream: TvCardContext == null");
-        return;
-      }
-
-      context.GetUser(ref user);
-      ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
-      if (subchannel == null)
-      {
-        Log.WriteFile("card: SetCurrentAudioStream: ITvSubChannel == null");
-        return;
-      }
-
-      subchannel.CurrentAudioStream = stream;
+        _cardHandler.UserManagement.RefreshUser(ref user);
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(_cardHandler.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
+        if (subchannel != null)
+        {
+          subchannel.CurrentAudioStream = stream;          
+        }
+        else
+        {
+          Log.WriteFile("card: SetCurrentAudioStream: ITvSubChannel == null");
+        }        
+      }        
     }
 
     #endregion

@@ -105,7 +105,7 @@ namespace Mediaportal.TV.TvPlugin
         Log.Error("TvTimeShiftPositionWatcher: TimeShiftGetCurrentFilePosition failed.");
         return;
       }
-      snapshotBufferFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(ref u) + bufferId.ToString() + ".ts";
+      snapshotBufferFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(u.Name, u.CardId) + bufferId.ToString() + ".ts";
       Log.Debug("TvTimeShiftPositionWatcher: Snapshot done - position: {0}, filename: {1}", snapshotBuferPosition, snapshotBufferFile);
     }
     private static void CheckRecordingStatus()
@@ -168,7 +168,7 @@ namespace Mediaportal.TV.TvPlugin
         Int64 currentPosition = -1;
         if (ServiceAgents.Instance.ControllerServiceAgent.TimeShiftGetCurrentFilePosition(ref u, ref currentPosition, ref bufferId))
         {
-          string currentFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(ref u) + bufferId.ToString() + ".ts";
+          string currentFile = ServiceAgents.Instance.ControllerServiceAgent.TimeShiftFileName(u.Name, u.CardId) + bufferId.ToString() + ".ts";
           Log.Info("**");
           Log.Info("**");
           Log.Info("**");

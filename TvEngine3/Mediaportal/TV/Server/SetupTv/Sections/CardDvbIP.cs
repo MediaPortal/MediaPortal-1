@@ -115,7 +115,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
-        else if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
+        else if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
         {
           MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;

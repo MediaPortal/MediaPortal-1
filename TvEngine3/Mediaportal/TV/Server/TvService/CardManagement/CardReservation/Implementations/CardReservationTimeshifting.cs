@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardReservation.Impleme
   {
     #region Overrides of CardReservationBase    
 
-    protected override bool OnStartTune(IUser user)
+    protected override bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel)
     {
       return true;
     }

@@ -3,6 +3,7 @@ using System.Linq;
 using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -69,7 +70,7 @@ namespace Mediaportal.TV.Server.TVService.Services
     {
       var allChannelsByGroupIdAndMediaType = ChannelManagement.GetAllChannelsByGroupIdAndMediaType(idGroup, mediaType, include);
       return allChannelsByGroupIdAndMediaType;
-    }
+    }    
 
     public IList<Channel> GetChannelsByName(string channelName)
     {

@@ -86,6 +86,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_YES_NO = 100,
       WINDOW_DIALOG_PROGRESS = 101,
       WINDOW_DIALOG_PLAY_STOP = 102,
+      WINDOW_DIALOG_PLAY_STOP_PARK = 103,
       WINDOW_MUSIC_PLAYLIST = 500,
       WINDOW_MUSIC_FILES = 501,
       WINDOW_MUSIC_GENRE = 504,
@@ -165,7 +166,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
-      WINDOW_SEARCH_RADIO = 8900 // gemx
+      WINDOW_SEARCH_RADIO = 8900, // gemx
 
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
@@ -174,6 +175,8 @@ namespace MediaPortal.GUI.Library
       /// if window may not be jumped to directly via InputMapper,
       /// add it to blacklist in InputMappingForm!!!
       /// (windows with DIALOG in the enum name are blacklisted automatically)
+      
+      
     }
 
     #endregion

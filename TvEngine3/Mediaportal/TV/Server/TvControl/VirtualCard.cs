@@ -271,9 +271,8 @@ namespace Mediaportal.TV.Server.TVControl
     /// <summary>
     /// Gets the available audio streams.
     /// </summary>
-    /// <value>The available audio streams.</value>
-    [XmlIgnore]
-    public IEnumerable<IAudioStream> AvailableAudioStreams
+    /// <value>The available audio streams.</value>    
+    public IEnumerable<IAudioStream> AvailableAudioStreams 
     {
       get
       {
@@ -292,6 +291,7 @@ namespace Mediaportal.TV.Server.TVControl
         }
         return null;
       }
+     
     }
 
     /// <summary>
@@ -332,7 +332,7 @@ namespace Mediaportal.TV.Server.TVControl
             return -1;
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().GetRecordingSchedule(User.CardId, User.IdChannel);
+          return GlobalServiceProvider.Get<IControllerService>().GetRecordingSchedule(User.CardId, User.Name);
         }
         catch (Exception)
         {
@@ -347,8 +347,8 @@ namespace Mediaportal.TV.Server.TVControl
     /// stream 
     /// </summary>
     /// <returns>URL containing the RTSP adress on which the card transmits its stream</returns>
-    [XmlIgnore]
-    public string RTSPUrl
+    
+    public string RTSPUrl 
     {
       get
       {
@@ -367,6 +367,7 @@ namespace Mediaportal.TV.Server.TVControl
         }
         return "";
       }
+      
     }
 
 
@@ -462,7 +463,7 @@ namespace Mediaportal.TV.Server.TVControl
           //return GlobalServiceProvider.Get<IControllerService>().IsRecording(ref _user); //we will never get anything useful out of this, since the rec user is called schedulerxyz and not ex. user.name = htpc
           IVirtualCard vc = null;
           bool isRec = WaitFor<bool>.Run(CommandTimeOut, () => GlobalServiceProvider.Get<IControllerService>().IsRecording(IdChannel, out vc));
-          return (isRec && vc.Id == Id && vc.User.IsAdmin);
+          return (isRec && vc.Id == Id && vc.User.UserType == UserType.Scheduler);
         }
         catch (Exception)
         {
@@ -566,7 +567,7 @@ namespace Mediaportal.TV.Server.TVControl
             return "";
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().TimeShiftFileName(ref _user);
+          return GlobalServiceProvider.Get<IControllerService>().TimeShiftFileName(User.Name, User.CardId);
         }
         catch (Exception)
         {
@@ -645,7 +646,14 @@ namespace Mediaportal.TV.Server.TVControl
             return null;
           }
           RemoteControl.HostName = _server;
-          return GlobalServiceProvider.Get<IControllerService>().CurrentChannel(ref _user);
+
+          foreach (ISubChannel subchannel in _user.SubChannels.Values)
+          {
+            if (subchannel.TvUsage == TvUsage.Timeshifting)
+            {
+              return GlobalServiceProvider.Get<IControllerService>().CurrentChannel(ref _user, subchannel.IdChannel);
+            }
+          }          
         }
         catch (Exception)
         {

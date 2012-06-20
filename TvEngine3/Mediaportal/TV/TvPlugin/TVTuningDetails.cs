@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using MediaPortal.GUI.Library;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
@@ -55,7 +56,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         try
         {
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.HasCiMenuSupport", TVHome.Card.CiMenuSupported().ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.HasCiMenuSupport", TVHome.Card.CiMenuSupported().ToString(CultureInfo.InvariantCulture));
         }
         catch (System.Exception ex)
         {

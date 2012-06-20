@@ -93,6 +93,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftWaitForTimeshifting", "15").value), 1, 30);
       numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
         Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("timeshiftMaxFreeCardsToTry", "0").value), 0, 100);
+      numericParkedStreamTimeout.Value = ValueSanityCheck(Convert.ToDecimal(ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue("parkedStreamTimeout", "5").value), 1, 300);
     }
 
     public override void SaveSettings()
@@ -103,6 +104,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftWaitForUnscrambled", numericUpDownWaitUnscrambled.Value.ToString());
       ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftWaitForTimeshifting", numericUpDownWaitTimeshifting.Value.ToString());
       ServiceAgents.Instance.SettingServiceAgent.SaveSetting("timeshiftMaxFreeCardsToTry", numericUpDownMaxFreeCardsToTry.Value.ToString());
+      ServiceAgents.Instance.SettingServiceAgent.SaveSetting("parkedStreamTimeout", numericParkedStreamTimeout.Value.ToString());
     }
 
     #endregion

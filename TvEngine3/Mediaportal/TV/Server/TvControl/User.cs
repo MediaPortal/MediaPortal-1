@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
@@ -34,11 +35,13 @@ namespace Mediaportal.TV.Server.TVControl
   [DataContract]
   public class User : ICloneable, IUser
   {
-    [DataMember]
-    private string _hostName;
+    #region private members
+
+    [DataMember] 
+    private UserType _userType;
 
     [DataMember]
-    private bool _isAdmin;
+    private string _hostName;
 
     [DataMember]
     private int _cardId;
@@ -47,13 +50,8 @@ namespace Mediaportal.TV.Server.TVControl
     private int _failedCardId;
 
     [DataMember]
-    private int _subChannel;
-
-    [DataMember]
-    private int _idChannel;
-
-    [DataMember]
     private TvStoppedReason _timeshiftStoppedReason;
+
     [NonSerialized]
     private object _history;
 
@@ -63,71 +61,64 @@ namespace Mediaportal.TV.Server.TVControl
     [DataMember]
     private int? _priority;
 
+    [DataMember]
+    private SortedDictionary<int, ISubChannel> _subChannels; //key is subChannelId
+
+    #endregion
+
+    #region constructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
     public User()
     {
+      _userType = UserType.Normal;
       _priority = null;
       _hostName = Dns.GetHostName();
-      _isAdmin = false;
       _cardId = -1;
       _failedCardId = -1;
-      _idChannel = -1;
-      _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
       _channelStates = new Dictionary<int, ChannelState>();
+      _subChannels = new SortedDictionary<int, ISubChannel>();
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
     /// <param name="name">The name.</param>
-    /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
-    public User(string name, bool isAdmin)
-    {
-      _priority = null;
+    /// <param name="userType"> </param>    
+    public User(string name, UserType userType) : this()
+    {      
       _hostName = name;
-      _isAdmin = isAdmin;
-      _cardId = -1;
-      _subChannel = -1;
-      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
-      _channelStates = new Dictionary<int, ChannelState>();
+      _userType = userType;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
+    /// <param name="name">The name.</param>    
+    /// <param name="userType"> </param>
     /// <param name="cardId">The card id.</param>
-    public User(string name, bool isAdmin, int cardId)
-    {
-      _priority = null;
-      _hostName = name;
-      _isAdmin = isAdmin;
-      _cardId = cardId;
-      _subChannel = -1;
-      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
-      _channelStates = new Dictionary<int, ChannelState>();
+    public User(string name, UserType userType, int cardId) : this(name, userType)
+    {      
+      _cardId = cardId;     
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>
     /// <param name="name">The name.</param>
-    /// <param name="isAdmin">if set to <c>true</c> [is admin].</param>
+    /// <param name="userType"> </param>
     /// <param name="cardId">The card id.</param>
     /// <param name="priority">card lock priority</param>
-    public User(string name, bool isAdmin, int cardId, int priority)
-    {
-      _hostName = name;
-      _isAdmin = isAdmin;
-      _cardId = cardId;
-      _subChannel = -1;
-      _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
-      _priority = priority;
+    public User(string name, UserType userType, int cardId, int priority)
+      : this(name, userType, cardId)
+    {     
+      _priority = priority;           
     }
+
+    #endregion    
 
     /// <summary>
     /// Gets an integer defining the user's card lock priority (higher number=higher priority)
@@ -168,27 +159,7 @@ namespace Mediaportal.TV.Server.TVControl
       get { return _cardId; }
       set { _cardId = value; }
     }
-
-    /// <summary>
-    /// Gets or sets the database id channel.
-    /// </summary>
-    /// <value>The id channel.</value>
-    public int IdChannel
-    {
-      get { return _idChannel; }
-      set { _idChannel = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the subchannel id.
-    /// </summary>
-    /// <value>The subchannel id.</value>
-    public int SubChannel
-    {
-      get { return _subChannel; }
-      set { _subChannel = value; }
-    }
-
+    
     /// <summary>
     /// Gets or sets the name.
     /// </summary>
@@ -197,17 +168,7 @@ namespace Mediaportal.TV.Server.TVControl
     {
       get { return _hostName; }
       set { _hostName = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this instance is admin.
-    /// </summary>
-    /// <value><c>true</c> if this instance is admin; otherwise, <c>false</c>.</value>
-    public bool IsAdmin
-    {
-      get { return _isAdmin; }
-      set { _isAdmin = value; }
-    }
+    }    
 
     /// <summary>
     /// Gets or sets the history.
@@ -228,6 +189,12 @@ namespace Mediaportal.TV.Server.TVControl
       set { _timeshiftStoppedReason = value; }
     }
 
+    public SortedDictionary<int, ISubChannel> SubChannels
+    {
+      get { return _subChannels; }
+      set { _subChannels = value; }
+    }
+
     #region ICloneable Members
 
     /// <summary>
@@ -238,17 +205,27 @@ namespace Mediaportal.TV.Server.TVControl
     /// </returns>
     public object Clone()
     {
-      IUser user = new User();
-      user.Name = _hostName;
-      user.IsAdmin = _isAdmin;
-      user.CardId = _cardId;
-      user.SubChannel = _subChannel;
-      user.IdChannel = _idChannel;
-      user.TvStoppedReason = _timeshiftStoppedReason;
-      user.Priority = _priority;
+      var user = new User(_hostName, _userType, _cardId, _priority.GetValueOrDefault())
+                    {                                              
+                      SubChannels = new SortedDictionary<int, ISubChannel>(_subChannels),
+                      History = _history,
+                      ChannelStates = new Dictionary<int, ChannelState>(_channelStates),
+                      FailedCardId = _failedCardId,
+                      TvStoppedReason = _timeshiftStoppedReason                      
+                    };
+
       return user;
     }
 
+    public UserType UserType
+    {
+      get { return _userType; }
+    }
+
+
     #endregion
+
+
+   
   }
 }

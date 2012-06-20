@@ -806,7 +806,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
           return;
         }
-        if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
         {
           MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
           return;
@@ -1060,7 +1060,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
           return;
         }
-        if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
+        if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
           return;
@@ -1683,7 +1683,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           MessageBox.Show(this, "Card is disabled, please enable the card before checking quality control");
           return;
         }
-        else if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
+        else if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
         {
           MessageBox.Show(this, "Card is not found, please make sure card is present before checking quality control");
           return;

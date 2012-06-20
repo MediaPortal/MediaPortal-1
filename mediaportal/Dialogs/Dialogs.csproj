@@ -151,6 +151,7 @@
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Dialogs\GUIDialogPlayStop.cs" />
     <Compile Include="Dialogs\GUIDialogCIMenu.cs" />
     <Compile Include="Dialogs\GUIDialogIncompatiblePlugins.cs" />
     <Compile Include="Dialogs\GUIDialogMenu.cs">
@@ -158,7 +159,7 @@
     </Compile>
     <Compile Include="Dialogs\GUIDialogNotifyLastFM.cs" />
     <Compile Include="Dialogs\GUIDialogOldSkin.cs" />
-    <Compile Include="Dialogs\GUIDialogPlayStop.cs" />
+    <Compile Include="Dialogs\GUIDialogPlayStopPark.cs" />
     <Compile Include="Dialogs\GUIDialogDateTime.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -24,6 +24,7 @@ using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
 namespace Mediaportal.TV.Server.TVControl
@@ -38,16 +39,16 @@ namespace Mediaportal.TV.Server.TVControl
     public const string SCHEDULER_TAGNAME = "PriorityScheduler";
     public const string CUSTOM_TAGNAME = "PrioritiesCustom";
 
-    private const string NAME_EPG = "epg";
-    private const bool IS_ADMIN_EPG = false;
+    public const string NAME_EPG = "epg";
+    //private const bool IS_ADMIN_EPG = false;
 
-    private const string NAME_SCHEDULER = "scheduler";
+    public const string NAME_SCHEDULER = "scheduler";
     
     private const int PRIORITY_MAX_VALUE = 100;
     private const int PRIORITY_MIN_VALUE = 1;
 
-    private const bool IS_ADMIN_SCHEDULER = true;
-    private const bool IS_ADMIN_USER = false;    
+    //private const bool IS_ADMIN_SCHEDULER = true;
+    //private const bool IS_ADMIN_USER = false;    
 
     private static readonly int _priorityEpg;
     private static readonly int _priorityUser;
@@ -110,20 +111,20 @@ namespace Mediaportal.TV.Server.TVControl
 
     public static IUser CreateEpgUser()
     {
-      IUser egpUser = new User(NAME_EPG, IS_ADMIN_EPG, -1, _priorityEpg);
+      IUser egpUser = new User(NAME_EPG, UserType.EPG, -1, _priorityEpg);
       return egpUser;
     }
 
     public static IUser CreateSchedulerUser(int scheduleId, int cardId)
     {
       string name = NAME_SCHEDULER + scheduleId;
-      IUser schedulerUser = new User(name, IS_ADMIN_SCHEDULER, cardId, _priorityScheduler);
+      IUser schedulerUser = new User(name, UserType.Scheduler, cardId, _priorityScheduler);
       return schedulerUser;  
     }
 
     public static IUser CreateSchedulerUser()
     {
-      IUser schedulerUser = new User("", true);
+      IUser schedulerUser = new User("", UserType.Scheduler);
       return schedulerUser;
     }
 
@@ -134,13 +135,13 @@ namespace Mediaportal.TV.Server.TVControl
 
     public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority)
     {
-      return CreateBasicUser(name, cardId, defaultPriority, IS_ADMIN_USER);
+      return CreateBasicUser(name, cardId, defaultPriority, UserType.Normal); //used by setuptv-testchannels
     }
 
-    public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority, bool isAdmin)
+    public static IUser CreateBasicUser(string name, int cardId, int? defaultPriority, UserType userType)
     {
       int priorityCustomUser = GetDefaultPriority(name, defaultPriority);
-      IUser basicUser = new User(name, isAdmin, cardId, priorityCustomUser);
+      IUser basicUser = new User(name, userType, cardId, priorityCustomUser);
       return basicUser;  
     }
 

@@ -12,17 +12,24 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     {
       static ObjectContextManager ()
       {
-        var model = new Model();
-
-        if (!model.DatabaseExists())
+        try
         {
-          Log.Info("DataBase does not exist. Creating database...");
-          model.CreateDatabase();
-        }
+          var model = new Model();
 
-        DropConstraint(model, "Recordings", "FK_ChannelRecording");
-        DropConstraint(model, "Recordings", "FK_RecordingProgramCategory");
-        DropConstraint(model, "Recordings", "FK_ScheduleRecording");          
+          if (!model.DatabaseExists())
+          {
+            Log.Info("DataBase does not exist. Creating database...");
+            model.CreateDatabase();
+          }
+          DropConstraint(model, "Recordings", "FK_ChannelRecording");
+          DropConstraint(model, "Recordings", "FK_RecordingProgramCategory");
+          DropConstraint(model, "Recordings", "FK_ScheduleRecording");    
+        }
+        catch(Exception ex)
+        {
+          Log.Error("ObjectContextManager : error opening database. Is the SQL engine running ?", ex);
+          throw;
+        }        
       }
 
       public static Model CreateDbContext

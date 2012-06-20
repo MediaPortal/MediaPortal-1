@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
+using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
@@ -40,6 +41,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
   /// </summary>
   [ServiceContract(Namespace = "http://www.team-mediaportal.com")]
   [ServiceKnownType(typeof(User))]
+  [ServiceKnownType(typeof(SubChannel))]
   [ServiceKnownType(typeof(VirtualCard))]
   [ServiceKnownType(typeof(TvResult))]
   [ServiceKnownType(typeof(DVBTChannel))]
@@ -104,7 +106,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </summary>
     /// <returns>true if card is present otherwise false</returns>
     [OperationContract]
-    bool CardPresent(int cardId);
+    bool IsCardPresent(int cardId);
 
     /// <summary>
     /// Method to remove a non-present card from the local card collection
@@ -206,10 +208,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>
-    /// <param name="channelId">channel id</param>
+    /// <param name="userName"> </param>
     /// <returns>id of Schedule or -1 if  card not recording</returns>
     [OperationContract]
-    int GetRecordingSchedule(int cardId, int channelId);
+    int GetRecordingSchedule(int cardId, string userName);
 
 
 
@@ -336,7 +338,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// </summary>
     /// <param name="user"></param>
     [OperationContract]
-    Dictionary<int, ChannelState> GetAllChannelStatesCached(IUser user);
+    IDictionary<int, ChannelState> GetAllChannelStatesCached(IUser user);
 
     /// <summary>
     /// Finds out whether a channel is currently tuneable or not
@@ -492,9 +494,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Gets the tv/radio channel on which the card is currently tuned
     /// </summary>
     /// <param name="user">The user.</param>
+    /// <param name="idChannel"> </param>
     /// <returns>IChannel</returns>
     [OperationContract]
-    IChannel CurrentChannel(ref IUser user);
+    IChannel CurrentChannel(ref IUser user, int idChannel);
 
     /// <summary>
     /// returns the id of the current channel.
@@ -526,12 +529,13 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <summary>
     /// Returns the current filename used for timeshifting
     /// </summary>
-    /// <param name="user">The user.</param>
+    /// <param name="userName"> </param>
+    /// <param name="cardId"> </param>
     /// <returns>
     /// timeshifting filename null when not timeshifting
     /// </returns>
     [OperationContract]
-    string TimeShiftFileName(ref IUser user);
+    string TimeShiftFileName(string userName, int cardId);
 
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
@@ -675,6 +679,25 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract]
     void StopCard(IUser user);
 
+    /// <summary>
+    /// Park timeshifting for the user supplied
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="duration"> </param>
+    /// <param name="idChannel"></param>
+    /// <returns></returns>
+    [OperationContract]
+    bool ParkTimeShifting(ref IUser user, double duration, int idChannel);
+
+    /// <summary>
+    /// UnPark timeshifting for the user supplied
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="duration"> </param>
+    /// <param name="idChannel"></param>
+    /// <returns></returns>
+    [OperationContract]
+    bool UnParkTimeShifting(ref IUser user, double duration, int idChannel, out IVirtualCard card);
 
     /// <summary>
     /// Query what card would be used for timeshifting on any given channel
@@ -739,6 +762,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// Stops the time shifting.
     /// </summary>
     /// <param name="user">user credentials.</param>
+    /// <param name="channelId"> </param>
     /// <returns>true if success otherwise false</returns>
     [OperationContract]
     bool StopTimeShifting(ref IUser user);
@@ -973,5 +997,17 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
 
     [OperationContract]    
     IDictionary<string, byte[]> GetPluginBinaries();
+
+    [OperationContract]    
+    IList<StreamPresentation> ListAllStreamingChannels();
+
+    [OperationContract]    
+    bool CanUserParkTimeshifting(IUser user);
+
+    [OperationContract]
+    bool IsAnyCardParkedByUser(string userName);
+
+    [OperationContract]
+    IList<CardPresentation> ListAllCards();
   }
 }

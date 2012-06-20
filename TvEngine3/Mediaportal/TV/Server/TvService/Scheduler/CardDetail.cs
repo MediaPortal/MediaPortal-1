@@ -35,6 +35,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
     private readonly int _priority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
+    private bool _isParked;
 
     /// <summary>
     /// ctor
@@ -44,7 +45,8 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
     /// <param name="detail">tuning detail</param>
     /// <param name="sameTransponder">indicates whether it is the same transponder</param>
     /// <param name="numberOfOtherUsers"></param>
-    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers)
+    /// <param name="isParked"> </param>
+    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers/*, bool isParked*/)
     {
       _sameTransponder = sameTransponder;
       _cardId = id;
@@ -52,6 +54,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       _detail = detail;
       _priority = _card.priority;
       _numberOfOtherUsers = numberOfOtherUsers;
+      //_isParked = isParked;
     }
 
     /// <summary>
@@ -105,6 +108,11 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
       set { _numberOfOtherUsers = value; }
     }
 
+    /*public bool IsParked
+    {
+      get { return _isParked; }
+    }*/
+
     #region IComparable<CardInfo> Members
 
     // higher priority means that this one should be more to the front of the list
@@ -133,9 +141,7 @@ namespace Mediaportal.TV.Server.TVService.Scheduler
         {
           return 1;
         }
-        {
         return 0;
-      }
       }
 
       if (SameTransponder)

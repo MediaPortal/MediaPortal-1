@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         {
           if (!card.enabled)
             continue;
-          if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
+          if (!ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard))
             continue;
 
           IDictionary<string, IUser> users = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
@@ -214,13 +214,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           {
             if (u.Value.Name == user.Name || u.Value.Name == "setuptv")
             {
-              Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(u.Value.IdChannel);
-
-              if (ch.displayName == client.Description)
+              foreach(var subchannel in u.Value.SubChannels.Values)
               {
-                user.CardId = card.idCard;
-                break;
-              }
+                Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(subchannel.IdChannel);
+                if (ch.displayName == client.Description)
+                {
+                  user.CardId = card.idCard;
+                  break;
+                } 
+              }              
             }
           }
           if (user.CardId > -1)

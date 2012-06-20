@@ -120,6 +120,7 @@
     <Compile Include="Interfaces\Services\ISettingService.cs" />
     <Compile Include="RemoteControl.cs" />
     <Compile Include="ServiceHelper.cs" />
+    <Compile Include="SubChannel.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserFactory.cs" />
     <Compile Include="Util.cs" />
@@ -134,6 +135,10 @@
     <ProjectReference Include="..\TVDatabase\Entities\Entities.csproj">
       <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
       <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\Presentation\Presentation.csproj">
+      <Project>{FB53D159-8115-4155-921D-F64E0072A633}</Project>
+      <Name>Presentation</Name>
     </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>

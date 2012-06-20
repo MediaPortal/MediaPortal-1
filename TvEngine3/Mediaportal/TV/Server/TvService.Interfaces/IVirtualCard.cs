@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// Gets the available audio streams.
     /// </summary>
     /// <value>The available audio streams.</value>
-    [XmlIgnore]
+
     IEnumerable<IAudioStream> AvailableAudioStreams { get; }
 
     /// <summary>
@@ -83,7 +83,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// stream 
     /// </summary>
     /// <returns>URL containing the RTSP adress on which the card transmits its stream</returns>
-    [XmlIgnore]
     string RTSPUrl { get; }
 
     /// <summary>

@@ -41,6 +41,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Player.PostProcessing;
 using Mediaportal.TV.Server.TVService.Interfaces;
+using Mediaportal.TV.Server.TVService.Interfaces.Services;
 using Mediaportal.TV.Server.TVService.ServiceAgents;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
@@ -907,21 +908,61 @@ namespace Mediaportal.TV.TvPlugin
           if (g_Player.IsTimeShifting)
           {
             Log.Debug("TVFullscreen: user request to stop");
-            GUIDialogPlayStop dlgPlayStop =
-              (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
-            if (dlgPlayStop != null)
+
+
+            //bool canUserParkTimeShifting = ServiceAgents.Instance.ControllerServiceAgent.CanUserParkTimeshifting(TVHome.Card.User);
+            //if (canUserParkTimeShifting)
             {
-              dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
-              dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
-              dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
-              dlgPlayStop.SetDefaultToStop(false);
-              dlgPlayStop.DoModal(GetID);
-              if (dlgPlayStop.IsStopConfirmed)
+              GUIDialogPlayStopPark dlgPlayStopPark =
+               (GUIDialogPlayStopPark)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP_PARK);
+              if (dlgPlayStopPark != null)
               {
-                Log.Debug("TVFullscreen: stop confirmed");
-                g_Player.Stop();
-              }
+                dlgPlayStopPark.SetHeading(GUILocalizeStrings.Get(605)); //tv
+                dlgPlayStopPark.SetLine(1, GUILocalizeStrings.Get(2550)); //Do you really want to STOP live TV ?
+                dlgPlayStopPark.SetLine(2, GUILocalizeStrings.Get(2551)); //(timeshift buffer will be lost)
+                dlgPlayStopPark.SetLine(3, GUILocalizeStrings.Get(2549)); //or PARK live TV and resume later?
+                dlgPlayStopPark.SetDefaultToStop(false);
+                dlgPlayStopPark.DoModal(GetID);
+                if (dlgPlayStopPark.IsParkConfirmed)
+                {
+                  Log.Debug("TVFullscreen: IsParkConfirmed");
+                  var userCopy = TVHome.Card.User.Clone() as IUser;
+                  ServiceAgents.Instance.ControllerServiceAgent.ParkTimeShifting(ref userCopy, g_Player.Duration, TVHome.Card.IdChannel);
+                  try
+                  {
+                    //TVHome.ParkChannel = true;
+                    g_Player.Stop();
+                  }
+                  finally
+                  {
+                    //TVHome.ParkChannel = false;              
+                  }                  
+                }
+                else if (dlgPlayStopPark.IsStopConfirmed)
+                {
+                  Log.Debug("TVFullscreen: stop confirmed");
+                  g_Player.Stop();
+                }
+              } 
             }
+            /*else
+            {
+              GUIDialogPlayStop dlgPlayStop =
+               (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
+              if (dlgPlayStop != null)
+              {
+                dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+                dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+                dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+                dlgPlayStop.SetDefaultToStop(false);
+                dlgPlayStop.DoModal(GetID);
+                if (dlgPlayStop.IsStopConfirmed)
+                {
+                  Log.Debug("TVFullscreen: stop confirmed");
+                  g_Player.Stop();
+                }
+              } 
+            } */           
           }
           break;
       }

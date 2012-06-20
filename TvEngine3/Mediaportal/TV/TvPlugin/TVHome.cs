@@ -45,13 +45,12 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl;
 using Mediaportal.TV.Server.TVControl.Events;
-using Mediaportal.TV.Server.TVControl.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Events;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
-
+using Mediaportal.TV.Server.TVDatabase.Presentation;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.CiMenu;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
@@ -102,7 +101,7 @@ namespace Mediaportal.TV.TvPlugin
       LABEL_REC_INFO = 22,
       IMG_REC_RECTANGLE = 23,
     }
-
+    
     [Flags]
     public enum LiveTvStatus
     {
@@ -431,10 +430,11 @@ namespace Mediaportal.TV.TvPlugin
       UpdateStateOfRecButton();
     }
 
-    private static Dictionary<int, ChannelState> _tvChannelStatesList = new Dictionary<int, ChannelState>();
+    private static IDictionary<int, ChannelState> _tvChannelStatesList = new Dictionary<int, ChannelState>();
     private readonly static object _channelStatesLock = new object();
+    
 
-    private void OnChannelStatesChanged(Dictionary<int, ChannelState> channelStates)
+    private void OnChannelStatesChanged(IDictionary<int, ChannelState> channelStates)
     {
       lock (_channelStatesLock)
       {
@@ -1963,6 +1963,9 @@ namespace Mediaportal.TV.TvPlugin
       SaveSettings();
       Card.User.Name = new User().Name;
       Card.StopTimeShifting();
+      
+
+      Card.StopTimeShifting();
 
       _recoverTV = false;
       _playbackStopped = true;
@@ -2218,103 +2221,284 @@ namespace Mediaportal.TV.TvPlugin
       }
     }
 
+
     private void OnActiveStreams()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
+      if (dlg != null)
       {
-        return;
-      }
-      dlg.Reset();
-      dlg.SetHeading(692); // Active Tv Streams
-      int selected = 0;
+        dlg.Reset();
+        dlg.SetHeading(692); // Active Tv Streams
+        int selected = 0;
 
-      IEnumerable<Card> cards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
-      List<Channel> channels = new List<Channel>();
-      int count = 0;
-      List<IUser> _users = new List<IUser>();
-      foreach (Card card in cards)
-      {
-        if (card.enabled == false)
+        IList<StreamPresentation> streamingChannels = ServiceAgents.Instance.ControllerServiceAgent.ListAllStreamingChannels();
+        int count = 0;
+        foreach (StreamPresentation streaming in streamingChannels)
         {
-          continue;
-        }
-        if (!ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard))
-        {
-          continue;
-        }
-        IDictionary<string, IUser> users = ServiceAgents.Instance.ControllerServiceAgent.GetUsersForCard(card.idCard);
-        if (users == null)
-        {
-          return;
-        }
-        foreach (IUser user in users.Values)
-        {          
-          if (card.idCard != user.CardId)
+          GUIListItem item = new GUIListItem();
+
+          Channel ch = streaming.Channel;
+          IUser user = streaming.User;
+          bool isParked = streaming.IsParked;
+          bool isRecording = streaming.IsRecording;          
+          int idChannel = ch.idChannel;
+          item.Label = ch.displayName;
+
+          if (isParked)
           {
-            continue;
+            item.Label += " [parked @ " + streaming.ParkedAt.ToShortTimeString() +"]";
           }
-          bool isRecording;
-          bool isTimeShifting;
-          IVirtualCard tvcard = new VirtualCard(user, ServiceAgents.Instance.Hostname);
-          isRecording = tvcard.IsRecording;
-          isTimeShifting = tvcard.IsTimeShifting;
-          if (isTimeShifting || (isRecording && !isTimeShifting))
+
+          item.Label2 = user.Name;
+          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.displayName);
+          if (string.IsNullOrEmpty(strLogo))
           {
-            IUser userCopy = (IUser)user.Clone();
-            int idChannel = tvcard.IdChannel;
-            userCopy = tvcard.User;
-            Channel ch = ServiceAgents.Instance.ChannelServiceAgent.GetChannel(idChannel);
-            channels.Add(ch);
-            GUIListItem item = new GUIListItem();
-            item.Label = ch.displayName;
-            item.Label2 = userCopy.Name;
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.displayName);
-            if (string.IsNullOrEmpty(strLogo))
+            strLogo = "defaultVideoBig.png";
+          }
+          item.IconImage = strLogo;
+          if (isRecording)
+          {
+            item.PinImage = Thumbs.TvRecordingIcon;
+          }
+          else
+          {
+            item.PinImage = "";
+          }
+          dlg.Add(item);          
+          if (Card != null && Card.IdChannel == idChannel)
+          {
+            selected = count;
+          }
+          count++;          
+        }
+
+        if (streamingChannels.Count == 0)
+        {
+          GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          if (pDlgOK != null)
+          {
+            pDlgOK.SetHeading(692); //my tv
+            pDlgOK.SetLine(1, GUILocalizeStrings.Get(1511)); // No Active streams
+            pDlgOK.SetLine(2, "");
+            pDlgOK.DoModal(this.GetID);
+          }          
+        }
+        else
+        {
+          dlg.SelectedLabel = selected;
+          dlg.DoModal(this.GetID);
+          if (dlg.SelectedLabel >= 0)
+          {
+            StreamPresentation streamingChannel = streamingChannels[dlg.SelectedLabel];
+
+            if (streamingChannel.IsParked)
             {
-              strLogo = "defaultVideoBig.png";
-            }
-            item.IconImage = strLogo;
-            if (isRecording)
-            {
-              item.PinImage = Thumbs.TvRecordingIcon;
-            }
-            else
-            {
-              item.PinImage = "";
-            }
-            dlg.Add(item);
-            _users.Add(userCopy);
-            if (Card != null && Card.IdChannel == idChannel)
-            {
-              selected = count;
-            }
-            count++;
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              if (dlgYesNo != null)
+              {
+                dlgYesNo.SetHeading(GUILocalizeStrings.Get(2555, new[] {streamingChannel.User.Name})); //"Unpark channel by [" + streamingChannel.User.Name + "] ?"
+                dlgYesNo.SetLine(1, GUILocalizeStrings.Get(2556)); //"Unpark and resume channel?"
+                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(2557)); //"If not you will watch TV from live point."
+                dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));  //are you sure
+                dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+                if (dlgYesNo.IsConfirmed)
+                {
+                  ViewParkedChannel(streamingChannel);
+                  return;
+                }
+              }          
+            }            
+
+            ViewChannel(streamingChannel.Channel);
           }
         }
       }
-      if (channels.Count == 0)
+    }
+
+    private static void ViewParkedChannel(StreamPresentation streamingChannel)
+    {                 
+      ViewParkedChannelAndCheck(streamingChannel.Channel, streamingChannel.ParkedDuration, streamingChannel.User.CardId);
+      UpdateProgressPercentageBar();
+    }
+
+    public static bool ViewParkedChannelAndCheck(Channel channel, double parkedDuration, int newCardId)
+    {
+      if (!Connected)
       {
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-        if (pDlgOK != null)
-        {
-          pDlgOK.SetHeading(692); //my tv
-          pDlgOK.SetLine(1, GUILocalizeStrings.Get(1511)); // No Active streams
-          pDlgOK.SetLine(2, "");
-          pDlgOK.DoModal(this.GetID);
-        }
-        return;
-      }
-      dlg.SelectedLabel = selected;
-      dlg.DoModal(this.GetID);
-      if (dlg.SelectedLabel < 0)
-      {
-        return;
+        return false;
       }
 
-      IVirtualCard vCard = new VirtualCard(_users[dlg.SelectedLabel], ServiceAgents.Instance.Hostname);
-      Channel channel = Navigator.GetChannel(vCard.IdChannel).Entity;
-      ViewChannel(channel);
+      _status.Clear();
+
+      _doingChannelChange = false;
+
+      try
+      {
+        bool doContinue;
+        bool checkResult = PreTuneChecks(channel, out doContinue);
+        if (doContinue == false)
+          return checkResult;
+
+        _doingChannelChange = true;
+
+
+        IUser user = new User();
+        if (Card != null)
+        {
+          user.CardId = Card.Id;
+        }
+
+        if ((g_Player.Playing && g_Player.IsTimeShifting && !g_Player.Stopped) && (g_Player.IsTV || g_Player.IsRadio))
+        {
+          _status.Set(LiveTvStatus.WasPlaying);
+        }
+
+        //Start timeshifting the new tv channel
+
+        IVirtualCard card;      
+
+        //Added by joboehl - If any major related to the timeshifting changed during the start, restart the player.           
+        if (newCardId != -1 && Card.Id != newCardId)
+        {
+          _status.Set(LiveTvStatus.CardChange);
+          RegisterCiMenu(newCardId);
+        }
+
+        // we need to stop player HERE if card has changed.        
+        if (_status.AllSet(LiveTvStatus.WasPlaying | LiveTvStatus.CardChange))
+        {
+          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId,
+                    Card.RTSPUrl);
+          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
+          Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
+        }
+        if (_status.IsSet(LiveTvStatus.WasPlaying))
+        {
+          RenderBlackImage();
+          g_Player.PauseGraph();
+        }
+        else
+        {
+          // if CI menu is not attached due to card change, do it if graph was not playing 
+          // (some handlers use polling threads that get stopped on graph stop)
+          if (_status.IsNotSet(LiveTvStatus.CardChange))
+            RegisterCiMenu(newCardId);
+        }
+
+        // if card was not changed
+        if (_status.IsNotSet(LiveTvStatus.CardChange))
+        {
+          g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
+        }
+
+        bool succeeded = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(ref user,
+                                                                                       parkedDuration,
+                                                                                       channel.idChannel,
+                                                                                       out card);
+
+        bool cardChanged = card.Id != Card.Id;
+
+        if (_status.IsSet(LiveTvStatus.WasPlaying))
+        {
+          if (card != null)
+            g_Player.OnZapping((int)card.Type);
+          else
+            g_Player.OnZapping(-1);
+        }
+
+
+        if (!succeeded)
+        {
+          //timeshifting new channel failed. 
+          g_Player.Stop();
+
+          // ensure right channel name, even if not watchable:Navigator.Channel = channel; 
+          ChannelTuneFailedNotifyUser(TvResult.UnknownError, _status.IsSet(LiveTvStatus.WasPlaying), channel);
+
+          _doingChannelChange = true; // keep fullscreen false;
+          return true; // "success"
+        }
+
+        if (cardChanged)
+        {
+          _status.Set(LiveTvStatus.CardChange);
+          if (card != null)
+          {
+            RegisterCiMenu(card.Id);
+          }
+          _status.Reset(LiveTvStatus.WasPlaying);
+        }
+        else
+        {
+          _status.Reset(LiveTvStatus.CardChange);
+          _status.Set(LiveTvStatus.SeekToEnd);
+        }
+            
+
+        // Update channel navigator
+        if (Navigator.Channel.Entity != null &&
+            (channel.idChannel != Navigator.Channel.Entity.idChannel || (Navigator.LastViewedChannel == null)))
+        {
+          Navigator.LastViewedChannel = Navigator.Channel.Entity;
+        }
+        Log.Info("succeeded:{0} {1}", succeeded, card);
+        Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
+
+
+        if (parkedDuration > 0)
+        {
+          Seek(true, parkedDuration);
+        }
+        else
+        {
+          Seek(true, 0);          
+        }
+        
+
+        // continue graph
+        g_Player.ContinueGraph();
+        if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange) || (g_Player.Playing && !(g_Player.IsTV || g_Player.IsRadio)))
+        {
+          StartPlay();
+
+          // if needed seek to end
+          if (_status.IsSet(LiveTvStatus.SeekToEndAfterPlayback))
+          {
+            double dTime = g_Player.Duration - 5;
+            g_Player.SeekAbsolute(dTime);
+          }
+        }
+        try
+        {
+
+          TvTimeShiftPositionWatcher.SetNewChannel(channel.idChannel);
+        }
+        catch
+        {
+          //ignore, error already logged
+        }
+
+        _playbackStopped = false;
+        _doingChannelChange = false;
+        _ServerNotConnectedHandled = false;
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("TvPlugin:ViewParkedChannelAndCheck Exception {0}", ex.ToString());
+        _doingChannelChange = false;
+        Card.User.Name = new User().Name;
+        g_Player.Stop();
+        Card.StopTimeShifting();
+        return false;
+      }
+      finally
+      {
+        StopRenderBlackImage();
+        _userChannelChanged = false;
+        FireOnChannelChangedEvent();
+        Navigator.UpdateCurrentChannel();
+      }
     }
 
     private void OnRecord()
@@ -3261,13 +3445,7 @@ namespace Mediaportal.TV.TvPlugin
       }
       Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.displayName);
 
-      //if a channel is untunable, then there is no reason to carry on or even stop playback.
-      var userCopy = Card.User.Clone() as IUser;
-      if (userCopy != null) 
-      {
-        userCopy.Name = Dns.GetHostName();
-        ChannelState CurrentChanState = ServiceAgents.Instance.ControllerServiceAgent.GetChannelState(channel.idChannel, userCopy);        
-      }      
+      //if a channel is untunable, then there is no reason to carry on or even stop playback.            
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
       if ((channel.mediaType != (int)MediaTypeEnum.Radio && g_Player.IsRadio) || (channel.mediaType == (int)MediaTypeEnum.Radio && !g_Player.IsRadio))
@@ -3335,9 +3513,6 @@ namespace Mediaportal.TV.TvPlugin
     /// <returns></returns>
     public static bool ViewChannelAndCheck(Channel channel)
     {
-      bool checkResult;
-      bool doContinue;
-
       if (!Connected)
       {
         return false;
@@ -3349,12 +3524,12 @@ namespace Mediaportal.TV.TvPlugin
 
       try
       {
-        checkResult = PreTuneChecks(channel, out doContinue);
+        bool doContinue;
+        bool checkResult = PreTuneChecks(channel, out doContinue);
         if (doContinue == false)
           return checkResult;
 
         _doingChannelChange = true;
-        TvResult succeeded;
 
 
         IUser user = new User();
@@ -3410,7 +3585,7 @@ namespace Mediaportal.TV.TvPlugin
           g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
         }
         bool cardChanged;
-        succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, channel.idChannel, out card, out cardChanged);
+        TvResult succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(ref user, channel.idChannel, out card, out cardChanged);
 
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
@@ -3461,7 +3636,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         Log.Info("succeeded:{0} {1}", succeeded, card);
         Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
-
+        
         // if needed seek to end
         if (_status.IsSet(LiveTvStatus.SeekToEnd))
         {
@@ -3525,8 +3700,7 @@ namespace Mediaportal.TV.TvPlugin
     public static void ViewChannel(Channel channel)
     {
       ViewChannelAndCheck(channel);      
-      UpdateProgressPercentageBar();
-      return;
+      UpdateProgressPercentageBar();      
     }
 
     /// <summary>
@@ -3599,6 +3773,12 @@ namespace Mediaportal.TV.TvPlugin
         }
       }
     }
+
+    /*public static bool ParkChannel
+    {
+      get { return _parkChannel; }
+      set { _parkChannel = value; }
+    }*/
 
     private static void StartPlay()
     {
@@ -3677,6 +3857,11 @@ namespace Mediaportal.TV.TvPlugin
     private static void SeekToEnd(bool zapping)
     {
       double duration = g_Player.Duration;
+      Seek(zapping, duration);
+    }
+
+    private static void Seek(bool zapping, double duration)
+    {      
       double position = g_Player.CurrentPosition;
 
       bool useRtsp = UseRTSP();

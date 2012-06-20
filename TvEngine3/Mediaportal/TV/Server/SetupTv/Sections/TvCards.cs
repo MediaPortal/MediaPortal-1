@@ -239,7 +239,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           item.SubItems.Add(card.name);
 
           //check if card is really available before setting to enabled.
-          bool cardPresent = ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard);
+          bool cardPresent = ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard);
           if (!cardPresent)
           {
             item.SubItems.Add("No");
@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (enabled)
       {
         Card card = (Card)mpListView1.SelectedItems[0].Tag;
-        enabled = !ServiceAgents.Instance.ControllerServiceAgent.CardPresent(card.idCard);
+        enabled = !ServiceAgents.Instance.ControllerServiceAgent.IsCardPresent(card.idCard);
       }
       UpdateEditButtonState();
       buttonRemove.Enabled = enabled;

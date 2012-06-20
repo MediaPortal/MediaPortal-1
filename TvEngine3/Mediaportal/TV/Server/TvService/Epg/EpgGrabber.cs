@@ -142,7 +142,7 @@ namespace Mediaportal.TV.Server.TVService.Epg
         try
         {
           RemoteControl.HostName = SettingsManagement.GetSetting("hostname").value;
-          if (!ServiceManager.Instance.InternalControllerService.CardPresent(card.idCard))
+          if (!ServiceManager.Instance.InternalControllerService.IsCardPresent(card.idCard))
           {
             continue;
           }

@@ -116,7 +116,7 @@ namespace Mediaportal.TV.Server.TVService.CardManagement.CardAllocation
       return numberOfUsersOnCurrentChannel;
     }
 
-    protected override bool IsFreeToAir(ITvCardHandler tvcard, ref IUser user)
+    protected override bool IsFreeToAir(ITvCardHandler tvcard, ref IUser user, int idChannel)
     {
       bool isFreeToAir = true;
       ICardTuneReservationTicket ticket = _tickets.FirstOrDefault(t => t.CardId == tvcard.DataBaseCard.idCard);

@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardReservation
     int NumberOfUsersOnSameCurrentChannel { get; }
 
     int Id { get; }
-    int OwnerSubchannel { get; }    
+    ISubChannel OwnerSubchannel { get; }    
     int CardId { get; }
     int NumberOfChannelsDecrypting { get; }
     bool IsCamAlreadyDecodingChannel { get; }
