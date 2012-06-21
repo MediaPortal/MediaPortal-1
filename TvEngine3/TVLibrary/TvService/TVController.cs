@@ -58,7 +58,7 @@ namespace TvService
 
     #region variables
 
-    private readonly IDictionary<int, bool> _cardPresent = new Dictionary<int, bool>();
+    private readonly Dictionary<int, bool> _cardPresent = new Dictionary<int, bool>();
     private readonly TvBusinessLayer _layer = new TvBusinessLayer();
     private readonly ICardAllocation _cardAllocation;
     private readonly ChannelStates _channelStates;
@@ -188,7 +188,7 @@ namespace TvService
       _cardAllocation = new AdvancedCardAllocation(_layer, this);
     }
 
-    public IDictionary<int, ITvCardHandler> CardCollection
+    public Dictionary<int, ITvCardHandler> CardCollection
     {
       get { return _cards; }
     }
