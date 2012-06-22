@@ -81,6 +81,7 @@ namespace MediaPortal.Video.Database
     private string _mStrLanguage = string.Empty;
     // Info update date
     private string _lastUpdate = string.Empty;
+    private bool _isEmpty = true;
 
     public IMDBMovie() {}
 
@@ -96,10 +97,13 @@ namespace MediaPortal.Video.Database
       {
         if ((_mStrTitle != string.Empty) && (_mStrTitle != Strings.Unknown))
         {
-          return false;
+          _isEmpty = false;
+          return _isEmpty;
         }
-        return true;
+        _isEmpty = true;
+        return _isEmpty;
       }
+      set { _isEmpty = value; }
     }
 
     public int ActorID
@@ -376,6 +380,7 @@ namespace MediaPortal.Video.Database
       _mStrCountry = string.Empty;
       _mStrLanguage = string.Empty;
       _lastUpdate = string.Empty;
+      _isEmpty = true;
     }
 
     [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
@@ -422,7 +427,7 @@ namespace MediaPortal.Video.Database
 
       if (ID == -1)
       {
-        if (IsEmpty)
+        if (_isEmpty)
         {
           GUIPropertyManager.SetProperty("#hideinfo", "true");
         }
